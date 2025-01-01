@@ -23,6 +23,10 @@ COPY README.md .
 COPY tailwind.config.ts .
 COPY .gitignore .
 COPY seeds ./seeds
+COPY drizzle.config.ts .
+COPY drizzle ./drizzle
+COPY src ./src
+COPY .env .
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at run time
