@@ -1,11 +1,13 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:18-alpine
+FROM node
 
-WORKDIR /src
+WORKDIR /project
+
+COPY . /project
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+#COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -13,20 +15,6 @@ RUN \
   # Allow install without lockfile, so example works even without Node.js installed locally
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
-
-COPY next.config.ts .
-COPY tsconfig.json .
-COPY eslint.config.mjs .
-COPY Makefile .
-COPY postcss.config.mjs .
-COPY README.md .
-COPY tailwind.config.ts .
-COPY .gitignore .
-COPY seeds ./seeds
-COPY drizzle.config.ts .
-COPY drizzle ./drizzle
-COPY src ./src
-COPY .env .
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line to disable telemetry at run time

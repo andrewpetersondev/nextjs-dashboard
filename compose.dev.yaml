@@ -1,6 +1,6 @@
 services:
-  app:
-    container_name: app
+  web-app:
+    container_name: web-app
     build:
       context: .
       dockerfile: dev.Dockerfile
@@ -15,8 +15,8 @@ services:
     #    env_file:
     #      - .env
     volumes:
-      - ./app:/src/app
-      - ./public:/src/public
+      - ./src:/project/src
+      - ./public:/project/public
     restart: unless-stopped
     ports:
       - "3000:3000"
