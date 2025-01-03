@@ -1,40 +1,71 @@
 // use drizzle's built-in seed generation
 
+import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { seed } from "drizzle-seed";
 import { users, customers, invoices, revenue, people } from "@/src/db/schema";
+import { Pool } from "pg";
 
 // async function seedUsers() {
-//     const db = drizzle(process.env.DATABASE_URL!)
-//     await seed(db, { users }, { count: 10 });
+//   const pool = new Pool({
+//     host: "localhost",
+//     user: "user",
+//     database: "postgres",
+//     connectionString: process.env.DATABASE_URL,
+//   });
+//   const db = drizzle({ client: pool });
+//   await seed(db, { users }, { count: 10 });
 // }
-// seedUsers().then(r => console.log(r))
+// seedUsers().then((r) => console.log(r));
 
 // async function seedCustomers() {
-//     const db = drizzle(process.env.DATABASE_URL!)
-//     await seed(db, { customers }, { count: 10 });
+// const pool = new Pool({
+//   host: "localhost",
+//   user: "user",
+//   database: "postgres",
+//   connectionString: process.env.DATABASE_URL,
+// });
+// const db = drizzle({ client: pool });
+//   await seed(db, { customers }, { count: 10 });
 // }
-// seedCustomers().then(r => console.log(r))
-//
+
+// seedCustomers().then((r) => console.log(r));
+
 // async function seedInvoices() {
-//     const db = drizzle(process.env.DATABASE_URL!)
-//     await seed(db, { invoices }, { count: 10 });
+// const pool = new Pool({
+//   host: "localhost",
+//   user: "user",
+//   database: "postgres",
+//   connectionString: process.env.DATABASE_URL,
+// });
+// const db = drizzle({ client: pool });
+//   await seed(db, { invoices }, { count: 10 });
 // }
-// seedInvoices().then(r => console.log(r))
-//
+
+// seedInvoices().then((r) => console.log(r));
+
 // async function seedRevenue() {
-//     const db = drizzle(process.env.DATABASE_URL!)
-//     await seed(db, { revenue }, { count: 10 });
+// const pool = new Pool({
+//   host: "localhost",
+//   user: "user",
+//   database: "postgres",
+//   connectionString: process.env.DATABASE_URL,
+// });
+// const db = drizzle({ client: pool });
+//   await seed(db, { revenue }, { count: 10 });
 // }
-// seedRevenue().then(r => console.log(r))
+
+// seedRevenue().then((r) => console.log(r));
 
 async function seedPeople() {
-  const db = drizzle(process.env.DATABASE_URL!);
+  const pool = new Pool({
+    host: "localhost",
+    user: "user",
+    database: "postgres",
+    connectionString: process.env.DATABASE_URL,
+  });
+  const db = drizzle({ client: pool });
   await seed(db, { people }, { count: 10 });
 }
 
-async function main() {
-  seedPeople().then((r) => console.log(r));
-}
-
-main();
+seedPeople().then((r) => console.log(r));

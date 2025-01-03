@@ -10,31 +10,32 @@ async function seedUsers() {
 }
 
 seedUsers().then((r) => console.log(r));
+// seedUsers();
 
 async function seedCustomers() {
   const db = drizzle(process.env.DATABASE_URL!);
   await seed(db, { customers }, { count: 10 });
 }
 
-seedCustomers().then((r) => console.log(r));
+// seedCustomers().then((r) => console.log(r));
 
 async function seedInvoices() {
   const db = drizzle(process.env.DATABASE_URL!);
   await seed(db, { invoices }, { count: 10 });
 }
 
-seedInvoices().then((r) => console.log(r));
+// seedInvoices().then((r) => console.log(r));
 
 async function seedRevenue() {
   const db = drizzle(process.env.DATABASE_URL!);
   await seed(db, { revenue }, { count: 10 });
 }
 
-seedRevenue().then((r) => console.log(r));
+// seedRevenue().then((r) => console.log(r));
 
 async function seedPeople() {
   const db = drizzle(process.env.DATABASE_URL!);
   await seed(db, { people }, { count: 10 });
 }
 
-seedPeople().then((r) => console.log(r));
+// seedPeople().then((r) => console.log(r));
