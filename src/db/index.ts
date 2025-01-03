@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq } from "drizzle-orm";
-import { peopleTable } from "./schema";
+import { people } from "@/db/schema";
 
 // connection option 1
 // import 'dotenv/config';
@@ -30,16 +30,16 @@ const db = drizzle(process.env.DATABASE_URL!);
 // const db = drizzle({ client: pool });
 
 async function main() {
-  const person: typeof peopleTable.$inferInsert = {
+  const person: typeof people.$inferInsert = {
     name: "John",
     age: 30,
     email: "john@example.com",
   };
 
-  await db.insert(peopleTable).values(person);
+  await db.insert(people).values(person);
   console.log("New person created!");
 
-  const people = await db.select().from(peopleTable);
+  const people = await db.select().from(people);
   console.log("Getting all people from the database: ", people);
   /*
     const people: {
@@ -51,14 +51,14 @@ async function main() {
     */
 
   await db
-    .update(peopleTable)
+    .update(people)
     .set({
       age: 31,
     })
-    .where(eq(peopleTable.email, person.email));
+    .where(eq(people.email, person.email));
   console.log("person info updated!");
 
-  await db.delete(peopleTable).where(eq(peopleTable.email, person.email));
+  await db.delete(people).where(eq(people.email, person.email));
   console.log("person deleted!");
 }
 

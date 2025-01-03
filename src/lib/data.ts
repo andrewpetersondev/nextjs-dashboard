@@ -6,8 +6,8 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
-} from "./definitions";
-import { formatCurrency } from "./utils";
+} from "@/lib/definitions";
+import { formatCurrency } from "@/lib/utils";
 
 export async function fetchRevenue() {
   try {

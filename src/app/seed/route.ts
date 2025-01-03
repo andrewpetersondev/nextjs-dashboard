@@ -1,6 +1,6 @@
 // app imports
 import bcrypt from "bcrypt";
-import { invoices, customers, revenue, users } from "../lib/placeholder-data";
+import { invoices, customers, revenue, users } from "@/lib/placeholder-data";
 // vercel imports
 import { db } from "@vercel/postgres";
 

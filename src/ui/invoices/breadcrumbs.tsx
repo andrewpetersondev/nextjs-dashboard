@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import Link from "next/link";
-import { lusitana } from "@/src/app/ui/fonts";
+import { lusitana } from "@/ui/fonts";
 
 interface Breadcrumb {
   label: string;

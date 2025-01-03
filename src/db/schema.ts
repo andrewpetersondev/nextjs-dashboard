@@ -21,7 +21,7 @@ export const people = pgTable("people", {
 // EXAMINE usersTable.$INFER_INSERT in index.ts. IT AUTOMATICALLY SOLVES THE PROBLEM
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar({length: 255}).notNull(),
+  name: varchar({ length: 255 }).notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
 });
@@ -30,7 +30,7 @@ export const invoices = pgTable("invoices", {
   id: uuid("id").defaultRandom().primaryKey(),
   customer_id: uuid("customer_id").notNull(),
   amount: integer().notNull(),
-  status: varchar({length: 255}).notNull(),
+  status: varchar({ length: 255 }).notNull(),
   date: date().notNull(),
 });
 
@@ -40,12 +40,12 @@ export const invoices = pgTable("invoices", {
 // EXAMINE usersTable.$INFER_INSERT in index.ts. IT AUTOMATICALLY SOLVES THE PROBLEM
 export const customers = pgTable("customers", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar({length: 255}).notNull(),
+  name: varchar({ length: 255 }).notNull(),
   email: text("email").notNull().unique(),
   phone: text("phone").notNull(),
 });
 
 export const revenue = pgTable("revenue", {
-  month: varchar({length: 4}).notNull().unique(),
+  month: varchar({ length: 4 }).notNull().unique(),
   revenue: integer().notNull(),
 });

@@ -2,7 +2,7 @@
 
 import { drizzle } from "drizzle-orm/node-postgres";
 import { seed } from "drizzle-seed";
-import { users, customers, invoices, revenue, people } from "@/src/db/schema";
+import { users, customers, invoices, revenue, people } from "@/db/schema";
 
 // async function seedUsers() {
 //     const db = drizzle(process.env.DATABASE_URL!)
