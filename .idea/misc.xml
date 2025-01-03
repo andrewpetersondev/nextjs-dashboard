@@ -25,7 +25,4 @@
       </profile-state>
     </entry>
   </component>
-  <component name="TypeScriptCompiler">
-    <option name="useTypesFromServer" value="true" />
-  </component>
 </project>
