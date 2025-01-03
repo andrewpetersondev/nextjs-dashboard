@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq } from "drizzle-orm";
-import { people } from "@/db/schema";
+import { people } from "@/src/db/schema";
 
 // connection option 1
 // import 'dotenv/config';

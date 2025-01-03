@@ -1,5 +1,5 @@
-import { lusitana } from "@/ui/fonts";
-import { Revenue } from "@/lib/definitions";
+import { lusitana } from "@/src/ui/fonts";
+import { Revenue } from "@/src/lib/definitions";
 
 // This component is representational only.
 // For data visualization UI, check out:

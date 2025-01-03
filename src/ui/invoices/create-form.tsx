@@ -1,4 +1,4 @@
-import { CustomerField } from "@/lib/definitions";
+import { CustomerField } from "@/src/lib/definitions";
 import Link from "next/link";
 import {
   CheckIcon,
