@@ -6,6 +6,9 @@ WORKDIR /project
 
 COPY . /project
 
+RUN corepack enable \
+  && corepack prepare pnpm@latest --activate
+
 # Copy the startup script into the container
 COPY start-dev.sh ./start-dev.sh
 
