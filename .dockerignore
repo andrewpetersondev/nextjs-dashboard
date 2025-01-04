@@ -1,3 +1,6 @@
+# Ignore Mounts while in development
+/src
+/public
 
 # Ignore build folders
 node_modules
