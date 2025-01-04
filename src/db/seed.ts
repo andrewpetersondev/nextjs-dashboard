@@ -1,71 +1,63 @@
-// use drizzle's built-in seed generation
-
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
 import { seed } from "drizzle-seed";
-import { users, customers, invoices, revenue, people } from "@/src/db/schema";
-import { Pool } from "pg";
+import { customers, invoices, people, revenue, users } from "@/src/db/schema";
+import { db } from "@/src/db/database";
 
-// async function seedUsers() {
-//   const pool = new Pool({
-//     host: "localhost",
-//     user: "user",
-//     database: "postgres",
-//     connectionString: process.env.DATABASE_URL,
-//   });
-//   const db = drizzle({ client: pool });
-//   await seed(db, { users }, { count: 10 });
-// }
-// seedUsers().then((r) => console.log(r));
+function runSeeds() {
+  const tables = [users, customers, invoices, revenue, people];
 
-// async function seedCustomers() {
-// const pool = new Pool({
-//   host: "localhost",
-//   user: "user",
-//   database: "postgres",
-//   connectionString: process.env.DATABASE_URL,
-// });
-// const db = drizzle({ client: pool });
-//   await seed(db, { customers }, { count: 10 });
-// }
-
-// seedCustomers().then((r) => console.log(r));
-
-// async function seedInvoices() {
-// const pool = new Pool({
-//   host: "localhost",
-//   user: "user",
-//   database: "postgres",
-//   connectionString: process.env.DATABASE_URL,
-// });
-// const db = drizzle({ client: pool });
-//   await seed(db, { invoices }, { count: 10 });
-// }
-
-// seedInvoices().then((r) => console.log(r));
-
-// async function seedRevenue() {
-// const pool = new Pool({
-//   host: "localhost",
-//   user: "user",
-//   database: "postgres",
-//   connectionString: process.env.DATABASE_URL,
-// });
-// const db = drizzle({ client: pool });
-//   await seed(db, { revenue }, { count: 10 });
-// }
-
-// seedRevenue().then((r) => console.log(r));
-
-async function seedPeople() {
-  const pool = new Pool({
-    host: "localhost",
-    user: "user",
-    database: "postgres",
-    connectionString: process.env.DATABASE_URL,
+  tables.forEach(async (table) => {
+    try {
+      await seed(db, { table }, { count: 10 });
+      console.log(`Seeding ${table} completed successfully!`);
+    } catch (e) {
+      console.error(`Error seeding ${table}:`, e);
+    }
   });
-  const db = drizzle({ client: pool });
-  await seed(db, { people }, { count: 10 });
 }
 
-seedPeople().then((r) => console.log(r));
+runSeeds();
+
+// async function seedUsers() {
+//   try {
+//     await seed(db, { users }, { count: 10 });
+//     console.log("Seeding users completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding users:", e);
+//   }
+// }
+
+// async function seedCustomers() {
+//   try {
+//     await seed(db, { customers }, { count: 10 });
+//     console.log("Seeding customers completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding customers:", e);
+//   }
+// }
+
+// async function seedInvoices() {
+//   try {
+//     await seed(db, { invoices }, { count: 10 });
+//     console.log("Seeding invoices completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding invoices:", e);
+//   }
+// }
+
+// async function seedRevenue() {
+//   try {
+//     await seed(db, { revenue }, { count: 10 });
+//     console.log("Seeding revenues completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding revenue:", e);
+//   }
+// }
+
+// async function seedPeople() {
+//   try {
+//     await seed(db, { people }, { count: 10 });
+//     console.log("Seeding people completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding people:", e);
+//   }
+// }

@@ -15,10 +15,6 @@ export const people = pgTable("people", {
   email: varchar({ length: 255 }).notNull().unique(),
 });
 
-// this is an extension
-// i will need to generate and empty migration file with drizzle-kit generate --custom
-// in the generated file add, CREATE EXTENSION IF NOT EXISTS uuid-ossp:
-// EXAMINE usersTable.$INFER_INSERT in index.ts. IT AUTOMATICALLY SOLVES THE PROBLEM
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar({ length: 255 }).notNull(),
@@ -34,10 +30,6 @@ export const invoices = pgTable("invoices", {
   date: date().notNull(),
 });
 
-// this is an extension
-// i will need to generate and empty migration file with drizzle-kit generate --custom
-// in the generated file add, CREATE EXTENSION IF NOT EXISTS uuid-ossp:
-// EXAMINE usersTable.$INFER_INSERT in index.ts. IT AUTOMATICALLY SOLVES THE PROBLEM
 export const customers = pgTable("customers", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar({ length: 255 }).notNull(),

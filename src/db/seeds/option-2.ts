@@ -24,5 +24,5 @@ async function seedUsers() {
   await db.insert(users).values(hashedUsers);
 }
 
-// seedUsers().then((r) => console.log(r));
-seedUsers();
+seedUsers().then((r) => console.log(r));
+// seedUsers();
