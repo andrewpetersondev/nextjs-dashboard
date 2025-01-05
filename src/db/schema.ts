@@ -1,43 +1,36 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  text,
-  uuid,
-  date,
-} from "drizzle-orm/pg-core";
+import * as p from "drizzle-orm/pg-core";
 
 // drizzle example
-export const people = pgTable("people", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 255 }).notNull(),
-  age: integer().notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
+export const people = p.pgTable("people", {
+  id: p.integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: p.varchar({ length: 255 }).notNull(),
+  age: p.integer().notNull(),
+  email: p.varchar({ length: 255 }).notNull().unique(),
 });
 
-export const users = pgTable("users", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
+export const users = p.pgTable("users", {
+  id: p.uuid("id").defaultRandom().primaryKey(),
+  name: p.varchar({ length: 255 }).notNull(),
+  email: p.text("email").notNull().unique(),
+  password: p.text("password").notNull(),
 });
 
-export const invoices = pgTable("invoices", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  customer_id: uuid("customer_id").notNull(),
-  amount: integer().notNull(),
-  status: varchar({ length: 255 }).notNull(),
-  date: date().notNull(),
+export const invoices = p.pgTable("invoices", {
+  id: p.uuid("id").defaultRandom().primaryKey(),
+  customer_id: p.uuid("customer_id").notNull(),
+  amount: p.integer().notNull(),
+  status: p.varchar({ length: 255 }).notNull(),
+  date: p.date().notNull(),
 });
 
-export const customers = pgTable("customers", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  email: text("email").notNull().unique(),
-  phone: text("phone").notNull(),
+export const customers = p.pgTable("customers", {
+  id: p.uuid("id").defaultRandom().primaryKey(),
+  name: p.varchar({ length: 255 }).notNull(),
+  email: p.text("email").notNull().unique(),
+  phone: p.text("phone").notNull(),
 });
 
-export const revenue = pgTable("revenue", {
-  month: varchar({ length: 4 }).notNull().unique(),
-  revenue: integer().notNull(),
+export const revenue = p.pgTable("revenue", {
+  month: p.varchar({ length: 4 }).notNull().unique(),
+  revenue: p.integer().notNull(),
 });

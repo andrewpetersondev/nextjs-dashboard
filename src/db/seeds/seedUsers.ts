@@ -19,7 +19,7 @@ try {
 } catch (error) {
   console.error("Error during seeding:", error);
 } finally {
-  pool.end();
+  pool.end().then((r) => console.log("Connection closed", r));
 }
 
 async function seedUsers() {

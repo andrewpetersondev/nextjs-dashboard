@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import {
   invoices as invoicesPlaceholderData,
-  customers as customersPlaceholderData,
+  // customers as customersPlaceholderData,
   revenue as revenuePlaceholderData,
   users as usersPlaceholderData,
 } from "@/src/lib/placeholder-data";
 
 import { db } from "@/src/db/database";
-import { users, invoices, customers, revenue } from "@/src/db/schema";
+import { users, invoices, revenue } from "@/src/db/schema";
 
 async function seedUsers() {
   try {
@@ -54,13 +54,23 @@ async function seedRevenue() {
 
 export async function GET() {
   try {
-    seedUsers();
+    await seedUsers();
     // await seedCustomers();
-    seedInvoices();
-    seedRevenue();
+    await seedInvoices();
+    await seedRevenue();
 
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }
 }
+
+// Option 2
+// export async function GET() {
+//   try {
+//     await Promise.all([seedUsers(), seedInvoices(), seedRevenue()]);
+//     return Response.json({ message: "Database seeded successfully" });
+//   } catch (error) {
+//     return Response.json({ error }, { status: 500 });
+//   }
+// }
