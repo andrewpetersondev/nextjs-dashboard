@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
+    "seed-db": "pnpm dlx tsx ./src/db/seed.ts",
+    "update-schema": "pnpm dlx drizzle-kit push"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

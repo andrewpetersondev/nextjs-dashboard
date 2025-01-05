@@ -1,7 +1,7 @@
 // use local seed file @/app/lib/placeholder-data
 import "dotenv/config";
 import bcrypt from "bcrypt";
-import { users as usersPlaceholderData } from "@/src/lib/placeholder-data";
+import { users as usersPlaceholderData } from "@/src/db/placeholder-data";
 import { users } from "@/src/db/schema";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";

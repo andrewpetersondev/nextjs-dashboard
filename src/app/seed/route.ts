@@ -4,7 +4,7 @@ import {
   // customers as customersPlaceholderData,
   revenue as revenuePlaceholderData,
   users as usersPlaceholderData,
-} from "@/src/lib/placeholder-data";
+} from "@/src/db/placeholder-data";
 
 import { db } from "@/src/db/database";
 import { users, invoices, revenue } from "@/src/db/schema";

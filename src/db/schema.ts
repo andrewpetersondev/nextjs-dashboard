@@ -1,4 +1,5 @@
 import * as p from "drizzle-orm/pg-core";
+import * as drizzle from "drizzle-orm";
 
 // drizzle example
 export const people = p.pgTable("people", {
@@ -27,7 +28,6 @@ export const customers = p.pgTable("customers", {
   id: p.uuid("id").defaultRandom().primaryKey(),
   name: p.varchar({ length: 255 }).notNull(),
   email: p.text("email").notNull().unique(),
-  phone: p.text("phone").notNull(),
 });
 
 export const revenue = p.pgTable("revenue", {
