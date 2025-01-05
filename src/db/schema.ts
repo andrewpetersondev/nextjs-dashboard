@@ -1,5 +1,4 @@
 import * as p from "drizzle-orm/pg-core";
-import * as drizzle from "drizzle-orm";
 
 // drizzle example
 export const people = p.pgTable("people", {
