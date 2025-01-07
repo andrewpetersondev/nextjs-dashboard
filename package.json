@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
-    "seed-db": "pnpm dlx tsx ./src/db/seed.ts",
-    "schema-update": "npx drizzle-kit push"
+    "reset-db": "dlx tsx ./src/db/reset.ts",
+    "seed-db": "dlx tsx ./src/db/seed.ts",
+    "schema-update": "dlx drizzle-kit push",
+    "schema-update2": "npx drizzle-kit push",
+    "update-package-manager": "corepack prepare pnpm@<version> --activate"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -47,5 +49,5 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
-  "packageManager": "pnpm@9.15.2"
+  "packageManager": "pnpm@9.15.3"
 }
