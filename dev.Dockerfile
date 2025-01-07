@@ -10,7 +10,7 @@ WORKDIR /project
 RUN corepack enable
 
 # Copy the .npmrc file into the container to enforce pnpm as the package manager
-COPY .npmrc .npmrc
+#COPY .npmrc .npmrc
 
 # Copy only package manager files first to leverage Docker caching and optimize builds
 COPY package.json pnpm-lock.yaml* package-lock.json* yarn.lock* ./
