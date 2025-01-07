@@ -33,13 +33,15 @@ RUN if [ -f pnpm-lock.yaml ]; then \
 COPY . /project
 
 # Set default command to start the development server
-CMD if [ -f pnpm-lock.yaml ]; then \
-      pnpm dev; \
-    elif [ -f yarn.lock ]; then \
-      yarn dev; \
-    elif [ -f package-lock.json ]; then \
-      npm run dev; \
-    else \
-      echo "Error: No lock file found (pnpm-lock.yaml, yarn.lock, or package-lock.json). Please use a supported package manager." >&2; \
-      exit 1; \
-    fi
+#CMD if [ -f pnpm-lock.yaml ]; then \
+#      pnpm dev; \
+#    elif [ -f yarn.lock ]; then \
+#      yarn dev; \
+#    elif [ -f package-lock.json ]; then \
+#      npm run dev; \
+#    else \
+#      echo "Error: No lock file found (pnpm-lock.yaml, yarn.lock, or package-lock.json). Please use a supported package manager." >&2; \
+#      exit 1; \
+#    fi
+
+CMD ["sh", "-c", "if [ -f pnpm-lock.yaml ]; then pnpm dev; elif [ -f yarn.lock ]; then yarn dev; elif [ -f package-lock.json ]; then npm run dev; else echo 'Error: No lock file found (pnpm-lock.yaml, yarn.lock, or package-lock.json). Please use a supported package manager.' >&2; exit 1; fi"]
