@@ -4,34 +4,29 @@ services:
     build:
       context: .
       dockerfile: dev.Dockerfile
-      args:
-        CACHEBUST: ${CACHEBUST:-1}
     depends_on:
       db:
         condition: service_healthy
-    # Set environment variables directly in the compose file
     environment:
-      #      ENV_VARIABLE: ${ENV_VARIABLE}
-      #      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
-    # Set environment variables based on the .env file
-    #    env_file:
-    #      - .env
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - .env
     volumes:
-      - ./src:/project/src
-      - ./public:/project/public
-    restart: unless-stopped
+      - .:/project
+    restart: ${RESTART_POLICY:-no}
     ports:
-      #      - "3000:3000"
       - "${WEB_PORT:-3000}:3000"
     networks:
       - my_network
-    profiles: ["dev", "test"]
-
-  # Add more containers below (nginx, postgres, etc.)
+    healthcheck:
+      test: curl -f http://localhost:3000 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
   db:
     image: postgres
-    restart: unless-stopped
+    restart: ${RESTART_POLICY:-no}
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=postgres
@@ -39,20 +34,16 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      #      - "5432:5432"
       - "${DB_PORT:-5432}:5432"
     networks:
       - my_network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles: ["dev", "test"]
 volumes:
   db-data:
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
 networks:
   my_network:
     name: my_network
