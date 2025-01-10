@@ -18,12 +18,14 @@ export default async function CustomersTable({
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+              {/* Mobile View: Displaying each customer in a card layout */}
               <div className="md:hidden">
                 {customers?.map((customer) => (
                   <div
                     key={customer.id}
                     className="mb-2 w-full rounded-md bg-white p-4"
                   >
+                    {/* Customer info: name, profile picture, and email */}
                     <div className="flex items-center justify-between border-b pb-4">
                       <div>
                         <div className="mb-2 flex items-center">
@@ -43,6 +45,8 @@ export default async function CustomersTable({
                         </p>
                       </div>
                     </div>
+
+                    {/* Customer financial details: pending and paid amounts */}
                     <div className="flex w-full items-center justify-between border-b py-5">
                       <div className="flex w-1/2 flex-col">
                         <p className="text-xs">Pending</p>
@@ -53,13 +57,18 @@ export default async function CustomersTable({
                         <p className="font-medium">{customer.total_paid}</p>
                       </div>
                     </div>
+
+                    {/* Customer invoice total */}
                     <div className="pt-4 text-sm">
                       <p>{customer.total_invoices} invoices</p>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Desktop View: Displaying customers in a table layout */}
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+                {/* Table header with column names */}
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
@@ -80,9 +89,11 @@ export default async function CustomersTable({
                   </tr>
                 </thead>
 
+                {/* Table body with customer details */}
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {customers.map((customer) => (
                     <tr key={customer.id} className="group">
+                      {/* Customer name and profile picture */}
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Image
@@ -95,15 +106,23 @@ export default async function CustomersTable({
                           <p>{customer.name}</p>
                         </div>
                       </td>
+
+                      {/* Customer email */}
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.email}
                       </td>
+
+                      {/* Total invoices */}
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.total_invoices}
                       </td>
+
+                      {/* Total pending amount */}
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.total_pending}
                       </td>
+
+                      {/* Total paid amount */}
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {customer.total_paid}
                       </td>
