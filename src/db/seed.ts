@@ -1,35 +1,58 @@
 import { db } from "@/src/db/database";
-import { customers, invoices, revenue, users } from "@/src/db/schema";
 import {
-  users as placeholderUsers,
-  customers as placeholderCustomers,
-  // invoices as placeholderInvoices,
-  revenue as placeholderRevenue,
+  users,
+  // customers, invoices, revenue
+} from "@/src/db/schema";
+import {
+  users as usersPlaceholderData,
+  // customers as customersPlaceholderData,
+  // invoices as invoicesPlaceholderData,
+  // revenue as revenuesPlaceHolderData,
 } from "@/src/db/placeholder-data";
+import bcrypt from "bcrypt";
 
 async function seedUsers() {
+  console.log("seeding users...");
   try {
-    await db.insert(users).values(placeholderUsers);
-    console.log("Seeding users completed successfully!");
+    const saltRounds = 10;
+    const hashedUsers = await Promise.all(
+      usersPlaceholderData.map(async (user) => ({
+        ...user,
+        password: await bcrypt.hash(user.password, saltRounds),
+      })),
+    );
+    await db.insert(users).values(hashedUsers);
+    console.log("Users inserted!");
   } catch (e) {
-    console.error("Error seeding users:", e);
+    console.error("Error seeding users...");
+    console.error(e);
   }
 }
 
-async function seedCustomers() {
-  try {
-    const customerData = placeholderCustomers.map(({ id, name, email }) => ({
-      id,
-      name,
-      email,
-      phone: "N/A", // Assuming phone isn't provided in placeholder data.
-    }));
-    await db.insert(customers).values(customerData);
-    console.log("Seeding customers completed successfully!");
-  } catch (e) {
-    console.error("Error seeding customers:", e);
-  }
-}
+// async function seedCustomers() {
+//   try {
+//     const customerData = placeholderCustomers.map(({ id, name, email }) => ({
+//       id,
+//       name,
+//       email,
+//     }));
+//     await db.insert(customers).values(customerData);
+//     console.log("Seeding customers completed successfully!");
+//   } catch (e) {
+//     console.error("Error seeding customers:", e);
+//   }
+// }
+
+// async function seedCustomers() {
+//   try {
+//     console.log("seeding customers ...");
+//     await db.insert(customers).values(customersPlaceholderData);
+//     console.log("customers inserted!");
+//   } catch (e) {
+//     console.error("Error seeding customers...");
+//     console.error(e);
+//   }
+// }
 
 // async function seedInvoices() {
 //   try {
@@ -48,23 +71,36 @@ async function seedCustomers() {
 //   }
 // }
 
-async function seedRevenue() {
-  try {
-    await db.insert(revenue).values(placeholderRevenue);
-    console.log("Seeding revenue completed successfully!");
-  } catch (e) {
-    console.error("Error seeding revenue:", e);
-  }
-}
+// async function seedInvoices() {
+//   try {
+//     console.log("seeding invoices...");
+//     await db.insert(invoices).values(invoicesPlaceholderData);
+//     console.log("Invoices inserted!");
+//   } catch (e) {
+//     console.error("Error seeding invoices...");
+//     console.error(e);
+//   }
+// }
+
+// async function seedRevenue() {
+//   try {
+//     console.log("seeding revenue...");
+//     await db.insert(revenue).values(revenuesPlaceHolderData);
+//     console.log("Revenue inserted!");
+//   } catch (e) {
+//     console.error("Error seeding revenue...");
+//     console.error(e);
+//   }
+// }
 
 // Run all seeds
 async function runSeeds() {
   await seedUsers();
-  await seedCustomers();
+  // await seedCustomers();
   // await seedInvoices();
-  await seedRevenue();
+  // await seedRevenue();
 }
 
-runSeeds()
-  .then(() => console.log("All seeding completed!"))
-  .catch((error) => console.error("Seeding process failed:", error));
+runSeeds().then(() =>
+  console.log("Seed function ran. Check to see if the data was inserted."),
+);

@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset-db": "dlx tsx ./src/db/reset.ts",
-    "seed-db": "dlx tsx ./src/db/seed.ts",
-    "schema-update": "dlx drizzle-kit push",
-    "schema-update2": "npx drizzle-kit push",
+    "create-schema": "psql ./src/db/createSchema.sql",
+    "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
+    "seed-db": "pnpm dlx tsx ./src/db/seed.ts",
+    "schema-update": "npx drizzle-kit push",
+    "schema-update2": "pnpm dlx drizzle-kit push",
     "update-package-manager": "corepack prepare pnpm@<version> --activate"
   },
   "dependencies": {

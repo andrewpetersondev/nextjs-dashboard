@@ -25,4 +25,7 @@
       </profile-state>
     </entry>
   </component>
+  <component name="ProjectResources">
+    <xml-schema-version>XMLSchema_1_1</xml-schema-version>
+  </component>
 </project>
