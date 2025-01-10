@@ -4,8 +4,11 @@ services:
     build:
       context: .
       dockerfile: dev.Dockerfile
+      args:
+        CACHEBUST: ${CACHEBUST:-1}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     # Set environment variables directly in the compose file
     environment:
       #      ENV_VARIABLE: ${ENV_VARIABLE}
@@ -19,9 +22,12 @@ services:
       - ./public:/project/public
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      #      - "3000:3000"
+      - "${WEB_PORT:-3000}:3000"
     networks:
       - my_network
+    profiles: ["dev", "test"]
+
   # Add more containers below (nginx, postgres, etc.)
   db:
     image: postgres
@@ -33,9 +39,16 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      #      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     networks:
       - my_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles: ["dev", "test"]
 volumes:
   db-data:
 # Define a network, which allows containers to communicate
