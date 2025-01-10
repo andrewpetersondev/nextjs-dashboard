@@ -9,10 +9,15 @@
     "lint": "next lint",
     "create-schema": "psql ./src/db/createSchema.sql",
     "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
-    "seed-db": "pnpm dlx tsx ./src/db/seed.ts",
+    "seed-db": "pnpm dlx tsx ./src/db/seed-generator/best-seed.ts",
     "schema-update": "npx drizzle-kit push",
     "schema-update2": "pnpm dlx drizzle-kit push",
-    "update-package-manager": "corepack prepare pnpm@<version> --activate"
+    "update-package-manager": "corepack prepare pnpm@<version> --activate",
+    "drizzle:seed": "dotenv -e .env tsx src/db/bestSeed.ts",
+    "drizzle:seed1": "pnpm dlx tsx src/db/bestSeed.ts",
+    "drizzle:seed2": "pnpm dlx dotenv -e .env tsx src/db/bestSeed.ts",
+    "drizzle:seed3": "dotenv -e .env.development tsx src/db/bestSeed.ts",
+    "drizzle:seed4": "tsx src/db/bestSeed.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -40,6 +45,7 @@
     "@types/pg": "^8.11.10",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
+    "dotenv-cli": "^8.0.0",
     "drizzle-kit": "^0.30.1",
     "eslint": "^9.17.0",
     "eslint-config-next": "15.1.3",
