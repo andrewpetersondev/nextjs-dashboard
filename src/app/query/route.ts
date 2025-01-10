@@ -1,6 +1,6 @@
 import { db } from "@/src/db/database";
 import { invoices, customers } from "@/src/db/schema";
-import { eq, gt } from "drizzle-orm/";
+import { eq } from "drizzle-orm/";
 
 async function listInvoices() {
   const data = await db

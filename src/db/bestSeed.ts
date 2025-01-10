@@ -92,8 +92,18 @@ async function main() {
       },
     },
     invoices: {
+      count: 15,
       columns: {
-        amount: f.int({ minValue: 100, maxValue: 10000 }),
+        amount: f.weightedRandom([
+          {
+            weight: 1 / 15, // For first record
+            value: f.default({ defaultValue: 1000 }),
+          },
+          {
+            weight: 14 / 15, // For remaining records
+            value: f.int({ minValue: 100, maxValue: 10000 }),
+          },
+        ]),
         date: f.date({ minDate: "2023-01-01", maxDate: "2024-01-01" }),
         paymentStatus: f.valuesFromArray({ values: ["pending", "paid"] }),
       },
