@@ -1,26 +1,28 @@
-// import { db } from "@vercel/postgres";
+import { db } from "@/src/db/database";
+import { invoices, customers } from "@/src/db/schema";
+import { eq, gt } from "drizzle-orm/";
 
-// const client = await db.connect();
-
-// async function listInvoices() {
-// 	const data = await client.sql`
-//     SELECT invoices.amount, customers.name
-//     FROM invoices
-//     JOIN customers ON invoices.customer_id = customers.id
-//     WHERE invoices.amount = 666;
-//   `;
-
-// 	return data.rows;
-// }
+async function listInvoices() {
+  const data = await db
+    .select({ amount: invoices.amount, customerName: customers.name })
+    .from(invoices)
+    .innerJoin(customers, eq(invoices.customer_id, customers.id))
+    .where(eq(invoices.amount, 1000));
+  return data;
+}
 
 export async function GET() {
-  return Response.json({
-    message:
-      "Uncomment this file and remove this line. You can delete this file when you are finished.",
-  });
-  // try {
-  // 	return Response.json(await listInvoices());
-  // } catch (error) {
-  // 	return Response.json({ error }, { status: 500 });
-  // }
+  try {
+    const invoiceData = await listInvoices();
+    return new Response(JSON.stringify({ invoices: invoiceData }), {
+      status: 200,
+    });
+    // return Response.json(await listInvoices());
+  } catch (error) {
+    console.error("Error fetching invoices:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch invoices" }), {
+      status: 500,
+    });
+    // return Response.json({ error }, { status: 500 });
+  }
 }
