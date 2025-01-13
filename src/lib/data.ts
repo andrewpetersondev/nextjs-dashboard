@@ -15,11 +15,31 @@ import { customers, invoices, revenue } from "@/src/db/schema";
 import { desc, count, eq } from "drizzle-orm";
 
 export async function fetchRevenue(): Promise<Revenue[]> {
+  const monthOrder = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   try {
     const data: { revenue: number; month: string }[] = await db
       .select()
       .from(revenue);
-    return data;
+
+    const orderedData = data.sort(
+      (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
+    );
+
+    console.log("data", orderedData);
+    return orderedData;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch revenue data.");
