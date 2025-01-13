@@ -31,7 +31,7 @@ export async function fetchLatestInvoices(): Promise<
     amount: string;
     email: string;
     id: string;
-    image_url: string | null;
+    image_url: string;
     name: string;
   }[]
 > {
@@ -40,7 +40,7 @@ export async function fetchLatestInvoices(): Promise<
       amount: number;
       email: string;
       id: string;
-      image_url: string | null;
+      image_url: string;
       name: string;
     }[] = await db
       .select({
@@ -59,7 +59,7 @@ export async function fetchLatestInvoices(): Promise<
       amount: string;
       name: string;
       email: string;
-      image_url: string | null;
+      image_url: string;
       id: string;
     }[] = data.map((invoice) => ({
       ...invoice,
