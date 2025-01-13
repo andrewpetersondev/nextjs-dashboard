@@ -38,7 +38,7 @@ export async function fetchRevenue(): Promise<Revenue[]> {
       (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
     );
 
-    console.log("data", orderedData);
+    // console.log("data", orderedData);
     return orderedData;
   } catch (error) {
     console.error("Database Error:", error);
