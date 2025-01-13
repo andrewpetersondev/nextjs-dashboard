@@ -12,7 +12,7 @@ import {
 } from "@/src/lib/definitions";
 import { formatCurrency } from "@/src/lib/utils";
 import { customers, invoices, revenue } from "@/src/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, count, eq } from "drizzle-orm";
 
 export async function fetchRevenue(): Promise<Revenue[]> {
   try {
@@ -73,45 +73,37 @@ export async function fetchLatestInvoices(): Promise<
   }
 }
 
-fetchLatestInvoices().then((response) => {
-  console.log("response", response);
-});
+// fetchLatestInvoices().then((response) => {
+//   console.log("response", response);
+// });
 
 export async function fetchCardData() {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*)
-                                        FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*)
-                                         FROM customers`;
-    const invoiceStatusPromise = sql`SELECT SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END)    AS "paid",
-                                                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-                                         FROM invoices`;
-
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
-
-    const numberOfInvoices = Number(data[0].rows[0].count ?? "0");
-    const numberOfCustomers = Number(data[1].rows[0].count ?? "0");
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? "0");
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? "0");
-
+    const invoiceCount: number = await db.$count(invoices);
+    const customerCount: number = await db.$count(customers);
+    const paidInvoices: number = await db.$count(
+      invoices,
+      eq(invoices.paymentStatus, "paid"),
+    );
+    const pendingInvoices: number = await db.$count(
+      invoices,
+      eq(invoices.paymentStatus, "pending"),
+    );
     return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
+      invoiceCount,
+      customerCount,
+      paidInvoices,
+      pendingInvoices,
     };
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch card data.");
   }
 }
+
+// fetchCardData().then((response) => {
+//   console.log("response", response);
+// });
 
 const ITEMS_PER_PAGE = 6;
 
