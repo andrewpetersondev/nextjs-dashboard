@@ -216,3 +216,7 @@ export function InvoicesTableSkeleton() {
     </div>
   );
 }
+
+export function InvoicesSearchSkeleton() {
+  return <div>Invoices Search Skeleotn</div>;
+}
