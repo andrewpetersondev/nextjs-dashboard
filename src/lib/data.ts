@@ -37,25 +37,24 @@ export async function fetchRevenue(): Promise<Revenue[]> {
   }
 }
 
+type FetchLatestInvoicesData = {
+  amount: number;
+  email: string;
+  id: string;
+  image_url: string;
+  name: string;
+  paymentStatus: string | null;
+};
+
+type ModifiedLatestInvoicesData = Omit<FetchLatestInvoicesData, "amount"> & {
+  amount: string;
+};
+
 export async function fetchLatestInvoices(): Promise<
-  {
-    amount: string;
-    email: string;
-    id: string;
-    image_url: string;
-    name: string;
-    paymentStatus: string;
-  }[]
+  ModifiedLatestInvoicesData[]
 > {
   try {
-    const data: {
-      amount: number;
-      email: string;
-      id: string;
-      image_url: string;
-      name: string;
-      paymentStatus: string;
-    }[] = await db
+    const data: FetchLatestInvoicesData[] = await db
       .select({
         amount: invoices.amount,
         name: customers.name,
@@ -69,17 +68,12 @@ export async function fetchLatestInvoices(): Promise<
       .orderBy(desc(invoices.date))
       .limit(5);
 
-    const latestInvoices: {
-      amount: string;
-      name: string;
-      email: string;
-      image_url: string;
-      id: string;
-      paymentStatus: string;
-    }[] = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
+    const latestInvoices: ModifiedLatestInvoicesData[] = data.map(
+      (invoice) => ({
+        ...invoice,
+        amount: formatCurrency(invoice.amount),
+      }),
+    );
 
     return latestInvoices;
   } catch (error) {
@@ -158,6 +152,7 @@ export async function fetchFilteredInvoices(
           ilike(customers.email, `%${query}%`),
           ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
           ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
+          ilike(sql<string>`${invoices.paymentStatus}::text`, `%${query}%`),
         ),
       )
       .orderBy(desc(invoices.date))
