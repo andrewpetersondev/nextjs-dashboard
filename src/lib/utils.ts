@@ -1,4 +1,4 @@
-import { Revenue } from "@/src/lib/definitions";
+import { Revenue } from "@/src/types/definitions";
 
 export const formatCurrency = (amount: number): string => {
   return (amount / 100).toLocaleString("en-US", {
@@ -21,7 +21,12 @@ export const formatDateToLocal = (
   return formatter.format(date);
 };
 
-export const generateYAxis = (revenue: Revenue[]) => {
+export const generateYAxis = (
+  revenue: {
+    month: string;
+    revenue: number;
+  }[],
+) => {
   // Calculate what labels we need to display on the y-axis
   // based on highest record and in 1000s
   const yAxisLabels = [];
