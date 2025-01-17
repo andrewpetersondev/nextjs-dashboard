@@ -8,7 +8,6 @@ services:
       db:
         condition: service_healthy
     environment:
-      ENV_VARIABLE: ${ENV_VARIABLE}
       POSTGRES_HOST: db
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -19,7 +18,7 @@ services:
       - .:/project
     restart: "no"
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "3000:3000"
     networks:
       - my_network
     healthcheck:
@@ -42,7 +41,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5432:5432"
     networks:
       - my_network
     healthcheck:

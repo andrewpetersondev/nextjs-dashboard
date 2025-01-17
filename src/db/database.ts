@@ -3,9 +3,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 
 // export const db = drizzle({
 //   connection: {
-//     connectionString: process.env.DATABASE_URL!,
+//     connectionString: process.env.POSTGRES_URL!,
 //     // ssl: true,
 //   },
 // });
 
-export const db = drizzle(process.env.DATABASE_URL!);
+export const db = drizzle(process.env.POSTGRES_URL!);
