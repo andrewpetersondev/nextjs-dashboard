@@ -5,7 +5,7 @@ import { db } from "@/src/db/database";
 import { invoices } from "@/src/db/schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import {eq, sql} from "drizzle-orm";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -60,4 +60,9 @@ export async function updateInvoice(id: string, formData: FormData) {
     .where(eq(invoices.id, id));
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
+}
+
+export async function deleteInvoice(id: string) {
+  await db.delete(invoices).where(eq(invoices.id, id));
+  revalidatePath('/dashboard/invoices');
 }
