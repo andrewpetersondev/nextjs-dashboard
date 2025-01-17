@@ -35,7 +35,7 @@ export async function createInvoice(formData: FormData) {
   await db.insert(invoices).values({
     customerId: customerId,
     amount: amountInCents,
-    paymentStatus: status,
+    status: status,
     date: date,
   });
   revalidatePath("/dashboard/invoices");
