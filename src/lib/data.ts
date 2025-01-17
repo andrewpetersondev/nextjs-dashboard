@@ -198,8 +198,6 @@ export async function fetchFilteredInvoices2(
       count: data[0]?.count ?? 0,
     };
 
-    console.log(result)
-
     return result;
   } catch (error) {
     console.error("Database Error:", error);
@@ -241,10 +239,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
             count: data[0]?.count ?? 0,
         };
 
-        console.log(result)
-
         //     const totalPages = Math.ceil(Number(count) / ITEMS_PER_PAGE);
-//     return totalPages;
 
         return Math.ceil(result.count / ITEMS_PER_PAGE);
     } catch (error) {
@@ -254,7 +249,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 }
 
 export async function fetchInvoicesPagesById(id: string) {
-    console.log("fetchInvoicesPagesById = ", id);
+    // console.log("fetchInvoicesPagesById = ", id);
         try {
             const data = await db
                 .select({
@@ -271,8 +266,6 @@ export async function fetchInvoicesPagesById(id: string) {
             throw new Error("Failed to fetch total number of invoices.");
         }
 }
-
-
 
 export async function fetchCustomers() {
   try {
