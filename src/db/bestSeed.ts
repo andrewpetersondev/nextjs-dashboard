@@ -70,7 +70,7 @@ async function main() {
       columns: {
         name: f.valuesFromArray({ values: customerFullNames, isUnique: true }),
         email: f.valuesFromArray({ values: customerEmails, isUnique: true }),
-        image_url: f.valuesFromArray({
+        imageUrl: f.valuesFromArray({
           values: customerImageUrls,
           isUnique: true,
         }),
@@ -97,10 +97,10 @@ async function main() {
           },
         ]),
         date: f.date({ minDate: "2024-01-01", maxDate: "2025-01-01" }),
-        paymentStatus: f.valuesFromArray({ values: ["pending", "paid"] }),
+        status: f.valuesFromArray({ values: ["pending", "paid"] }),
       },
     },
-    revenue: {
+    revenues: {
       count: 12,
       columns: {
         month: f.valuesFromArray({ values: months, isUnique: true }),
