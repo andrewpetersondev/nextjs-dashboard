@@ -1,4 +1,5 @@
 import * as p from "drizzle-orm/pg-core";
+import * as orm from "drizzle-orm";
 
 export const users = p.pgTable("users", {
   id: p.uuid().defaultRandom().primaryKey(),
@@ -14,6 +15,10 @@ export const customers = p.pgTable("customers", {
   image_url: p.varchar({ length: 255 }).notNull(),
 });
 
+export const customersRelations = orm.relations(customers, ({ many }) => ({
+  invoices: many(invoices),
+}));
+
 export const paymentStatusEnum = p.pgEnum("paymentStatus", ["pending", "paid"]);
 
 export const invoices = p.pgTable("invoices", {
@@ -26,6 +31,13 @@ export const invoices = p.pgTable("invoices", {
   paymentStatus: paymentStatusEnum().default("pending"),
   date: p.date().notNull(),
 });
+
+export const invoicesRelations = orm.relations(invoices, ({ one }) => ({
+  customers: one(customers, {
+    fields: [invoices.customer_id],
+    references: [customers.id],
+  }),
+}));
 
 export const revenue = p.pgTable("revenue", {
   month: p.varchar({ length: 4 }).notNull().unique(),
