@@ -83,7 +83,7 @@ export type CustomerField = {
 
 export type InvoiceForm = {
   id: string;
-  customer_id: string;
+  customerId: string;
   amount: number;
-  status: "pending" | "paid";
+  status: "pending" | "paid" | null;
 };

@@ -248,7 +248,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
     }
 }
 
-export async function fetchInvoicesPagesById(id: string) {
+/*export async function fetchInvoicesPagesById(id: string) {
         try {
             const data = await db
                 .select({
@@ -264,7 +264,7 @@ export async function fetchInvoicesPagesById(id: string) {
             console.error("Database Error:", error);
             throw new Error("Failed to fetch total number of invoices.");
         }
-}
+}*/
 
 export async function fetchCustomers() {
   try {
@@ -275,7 +275,6 @@ export async function fetchCustomers() {
       })
       .from(customers)
       .orderBy(asc(customers.name));
-      console.log("fetch customers = ", data);
     return data;
   } catch (e) {
     console.error("Database Error:", e);
@@ -285,14 +284,20 @@ export async function fetchCustomers() {
 
 export async function fetchInvoiceById(id: string) {
   try {
-      const data = await db.select({
-          id: invoices.id,
-          amount: invoices.amount,
-          paymentStatus: invoices.status,
-          customer_id: invoices.customerId,
-      }).from(invoices).where(eq(invoices.id, id));
-      console.log("fetch invoices by id = ", data);
-      return data;
+    const data = await db
+      .select({
+        id: invoices.id,
+        amount: invoices.amount,
+        status: invoices.status,
+        customerId: invoices.customerId,
+      })
+      .from(invoices)
+      .where(eq(invoices.id, id));
+
+    const result = data.map((item) => ({
+        ...item, amount: item.amount / 100
+    }))
+    return result[0];
   } catch (e) {
     console.error("Database Error:", e);
     throw new Error("Failed to fetch invoice by id.");
