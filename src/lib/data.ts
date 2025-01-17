@@ -1,8 +1,7 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
 import { customers, invoices, revenues } from "@/db/schema";
-import { count, desc, eq, ilike, or, SQL, sql, inArray, asc } from "drizzle-orm";
-import {revenue} from "@/db/placeholder-data";
+import {  desc, eq, ilike, or, sql, asc } from "drizzle-orm";
 
 type Revenue = { month: string; revenue: number };
 
