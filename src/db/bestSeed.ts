@@ -36,18 +36,7 @@ const customerImageUrls = [
 ];
 
 const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 interface User {
@@ -79,9 +68,12 @@ async function main() {
     customers: {
       count: 6,
       columns: {
-        name: f.valuesFromArray({ values: customerFullNames }),
-        email: f.valuesFromArray({ values: customerEmails }),
-        image_url: f.valuesFromArray({ values: customerImageUrls }),
+        name: f.valuesFromArray({ values: customerFullNames, isUnique: true }),
+        email: f.valuesFromArray({ values: customerEmails, isUnique: true }),
+        image_url: f.valuesFromArray({
+          values: customerImageUrls,
+          isUnique: true,
+        }),
       },
       with: {
         invoices: [
@@ -104,7 +96,7 @@ async function main() {
             value: f.int({ minValue: 100, maxValue: 10000 }),
           },
         ]),
-        date: f.date({ minDate: "2023-01-01", maxDate: "2024-01-01" }),
+        date: f.date({ minDate: "2024-01-01", maxDate: "2025-01-01" }),
         paymentStatus: f.valuesFromArray({ values: ["pending", "paid"] }),
       },
     },
@@ -112,7 +104,7 @@ async function main() {
       count: 12,
       columns: {
         month: f.valuesFromArray({ values: months, isUnique: true }),
-        revenue: f.int({ minValue: 100000, maxValue: 900000 }),
+        revenue: f.int({ minValue: 100, maxValue: 10000 }),
       },
     },
   }));
