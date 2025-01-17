@@ -1,7 +1,8 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
-import { customers, invoices, revenue } from "@/db/schema";
-import { count, desc, eq, ilike, or, SQL, sql, inArray } from "drizzle-orm";
+import { customers, invoices, revenues } from "@/db/schema";
+import { count, desc, eq, ilike, or, SQL, sql, inArray, asc } from "drizzle-orm";
+import {revenue} from "@/db/placeholder-data";
 
 type Revenue = { month: string; revenue: number };
 
@@ -13,7 +14,7 @@ export async function fetchRevenue(): Promise<Revenue[]> {
   try {
     const data: { revenue: number; month: string }[] = await db
       .select()
-      .from(revenue);
+      .from(revenues);
 
     const orderedData: { month: string; revenue: number }[] = data.sort(
       (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
@@ -48,13 +49,13 @@ export async function fetchLatestInvoices(): Promise<
       .select({
         amount: invoices.amount,
         name: customers.name,
-        image_url: customers.image_url,
+        image_url: customers.imageUrl,
         email: customers.email,
         id: invoices.id,
-        paymentStatus: invoices.paymentStatus,
+        paymentStatus: invoices.status,
       })
       .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .innerJoin(customers, eq(invoices.customerId, customers.id))
       .orderBy(desc(invoices.date))
       .limit(5);
 
@@ -79,11 +80,11 @@ export async function fetchCardData() {
     const customerCount: number = await db.$count(customers);
     const paidInvoices: number = await db.$count(
       invoices,
-      eq(invoices.paymentStatus, "paid"),
+      eq(invoices.status, "paid"),
     );
     const pendingInvoices: number = await db.$count(
       invoices,
-      eq(invoices.paymentStatus, "pending"),
+      eq(invoices.status, "pending"),
     );
     return {
       invoiceCount,
@@ -125,18 +126,18 @@ export async function fetchFilteredInvoices(
         date: invoices.date,
         name: customers.name,
         email: customers.email,
-        image_url: customers.image_url,
-        paymentStatus: invoices.paymentStatus,
+        image_url: customers.imageUrl,
+        paymentStatus: invoices.status,
       })
       .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .innerJoin(customers, eq(invoices.customerId, customers.id))
       .where(
         or(
           ilike(customers.name, `%${query}%`),
           ilike(customers.email, `%${query}%`),
           ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
           ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.paymentStatus}::text`, `%${query}%`),
+          ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
         ),
       )
       .orderBy(desc(invoices.date))
@@ -173,20 +174,20 @@ export async function fetchFilteredInvoices2(
           date: invoices.date,
           name: customers.name,
           email: customers.email,
-          image_url: customers.image_url,
-          paymentStatus: invoices.paymentStatus,
+          image_url: customers.imageUrl,
+          paymentStatus: invoices.status,
         },
         count: sql<number>`count(*) over()`,
       })
       .from(invoices)
-      .innerJoin(customers, eq(invoices.customer_id, customers.id))
+      .innerJoin(customers, eq(invoices.customerId, customers.id))
       .where(
         or(
           ilike(customers.name, `%${query}%`),
           ilike(customers.email, `%${query}%`),
           ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
           ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.paymentStatus}::text`, `%${query}%`),
+          ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
         ),
       )
       .orderBy(desc(invoices.date))
@@ -207,7 +208,6 @@ export async function fetchFilteredInvoices2(
 
 
 export async function fetchInvoicesPages(query: string): Promise<number> {
-    console.log("fetchInvoicesPages fn, query = ", query);
     try {
         const data = await db
             .select({
@@ -217,20 +217,20 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
                     date: invoices.date,
                     name: customers.name,
                     email: customers.email,
-                    image_url: customers.image_url,
-                    paymentStatus: invoices.paymentStatus,
+                    image_url: customers.imageUrl,
+                    paymentStatus: invoices.status,
                 },
                 count: sql<number>`count(*) over()`,
             })
             .from(invoices)
-            .innerJoin(customers, eq(invoices.customer_id, customers.id))
+            .innerJoin(customers, eq(invoices.customerId, customers.id))
             .where(
                 or(
                     ilike(customers.name, `%${query}%`),
                     ilike(customers.email, `%${query}%`),
                     ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
                     ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-                    ilike(sql<string>`${invoices.paymentStatus}::text`, `%${query}%`),
+                    ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
                 ),
             )
 
@@ -249,14 +249,13 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 }
 
 export async function fetchInvoicesPagesById(id: string) {
-    // console.log("fetchInvoicesPagesById = ", id);
         try {
             const data = await db
                 .select({
                         id: invoices.id,
                         amount: invoices.amount,
                         date: invoices.date,
-                        paymentStatus: invoices.paymentStatus,
+                        paymentStatus: invoices.status,
                 })
                 .from(invoices)
                 .where(eq(invoices.id, id))
@@ -275,13 +274,51 @@ export async function fetchCustomers() {
         name: customers.name,
       })
       .from(customers)
-      .orderBy(desc(customers.name));
+      .orderBy(asc(customers.name));
+      console.log("fetch customers = ", data);
     return data;
   } catch (e) {
     console.error("Database Error:", e);
     throw new Error("Failed to fetch all customers.");
   }
 }
+
+export async function fetchInvoiceById(id: string) {
+  try {
+      const data = await db.select({
+          id: invoices.id,
+          amount: invoices.amount,
+          paymentStatus: invoices.status,
+          customer_id: invoices.customerId,
+      }).from(invoices).where(eq(invoices.id, id));
+      console.log("fetch invoices by id = ", data);
+      return data;
+  } catch (e) {
+    console.error("Database Error:", e);
+    throw new Error("Failed to fetch invoice by id.");
+  }
+}
+
+// export async function fetchInvoiceDetailsById(id: string) {
+//   try {
+//     const invoice = await db
+//       .select({
+//         id: invoices.id,
+//         amount: invoices.amount,
+//         paymentStatus: invoices.paymentStatus,
+//         customer_id: invoices.customer_id,
+//         name: customers.name,
+//       })
+//       .from(invoices)
+//       .innerJoin(customers, eq(invoices.customer_id, customers.id))
+//       .where(eq(invoices.id, id));
+//     console.log("fetch invoice details by id = ", invoice);
+//     return invoice;
+//   } catch (e) {
+//     console.error("Database Error:", e);
+//     throw new Error("Failed to fetch invoice by id.");
+//   }
+// }
 
 export async function fetchFilteredCustomers(query: string) {
   return query;
