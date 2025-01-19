@@ -12,6 +12,10 @@ start-development: ## Start the development docker container.
 stop-development: ## Stop the development docker container.
 	docker compose -f ${COMPOSE_FILE} down
 
+.PHONY: rebuild-development-no-cache
+rebuild-development-no-cache: ## Rebuild the container to reinstall dependencies.
+	docker compose -f ${COMPOSE_FILE} build --no-cache
+
 .PHONY: clear-cache
 clear-cache:
-	docker builder prune --all --force
+	docker builder prune --all
