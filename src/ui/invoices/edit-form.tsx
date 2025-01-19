@@ -1,6 +1,5 @@
 "use client";
 
-import { CustomerField, InvoiceForm } from "@/src/types/definitions";
 import {
   CheckIcon,
   ClockIcon,
@@ -9,8 +8,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "@/src/ui/button";
-import { updateInvoice, State } from "@/lib/actions";
+import { updateInvoice } from "@/actions/invoice-update";
 import { useActionState } from "react";
+import { InvoiceState, CustomerField, InvoiceForm } from "@/types/definitions";
 
 export default function EditInvoiceForm({
   invoice,
@@ -19,7 +19,7 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
-  const initialState: State = { message: null, errors: {} };
+  const initialState: InvoiceState = { message: null, errors: {} };
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   return (
@@ -72,11 +72,11 @@ export default function EditInvoiceForm({
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
             {state.errors?.amount &&
-                state.errors.amount.map((error: string) => (
-                    <p className="mt-2 text-sm text-red-500" key={error}>
-                      {error}
-                    </p>
-                ))}
+              state.errors.amount.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
           </div>
         </div>
 
