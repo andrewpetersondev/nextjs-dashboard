@@ -1,15 +1,23 @@
-// probably going to delete
+import "server-only";
+import bcrypt from "bcryptjs";
 
-// import 'server-only'
-// import bcrypt from "bcryptjs";
-//
-// export const saltAndHashPassword  = ({password}) => {
-//     try {
-//         const saltRounds = 10;
-//         const hashedPassword = bcrypt.hash(password, saltRounds);
-//         return hashedPassword;
-//     }catch (error) {
-//         console.error(error)
-//         return new Error("Error hashing password")
-//     }
-// };
+const SALT_ROUNDS = 10;
+
+// Simplify function parameters and rename it for clarity
+export const hashPassword = async (password: string): Promise<string> => {
+  try {
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+  } catch (error) {
+    console.error("Error while hashing password:", error);
+    throw error; // Keep error propagation as required
+  }
+};
+
+export const comparePassword = async (
+  password: string,
+  hashedPassword: string,
+): Promise<boolean> => {
+  return await bcrypt.compare(password, hashedPassword);
+};
