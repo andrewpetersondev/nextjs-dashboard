@@ -134,6 +134,14 @@ export type SignupFormStateOptionB = {
   };
 };*/
 
+export const LoginFormSchema =  z.object({
+  email: z.string().email({ message: "Please enter a valid email." }).trim(),
+  password: z
+    .string()
+    .min(6, { message: "Be at least 6 characters long" })
+})
+
+
 export type InvoiceState = {
   errors?: {
     customerId?: string[];

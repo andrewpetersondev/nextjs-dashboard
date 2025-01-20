@@ -2,15 +2,25 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { users } from "@/src/db/schema";
-import { db } from "@/db/database"
+import { db } from "@/db/database";
 
 const mockUsers = [
   {
-    username: "cool username",
-    email: "me@mail.com",
+    username: "username1",
+    email: "username1@mail.com",
     password: "password",
-  }
-]
+  },
+  {
+    username: "username2",
+    email: "username2@mail.com",
+    password: "password",
+  },
+  {
+    username: "username3",
+    email: "username3@mail.com",
+    password: "password",
+  },
+];
 
 async function seedUsers() {
   const saltRounds = 10;
@@ -40,8 +50,8 @@ async function seedUsers() {
 // })();
 
 try {
-  seedUsers()
-}catch (e) {
-  console.error(e)
-  throw new Error("some soort of error")
+  seedUsers();
+} catch (e) {
+  console.error(e);
+  throw new Error("some soort of error");
 }

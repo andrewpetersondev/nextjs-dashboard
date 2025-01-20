@@ -9,12 +9,15 @@
     "start": "next start",
     "lint": "next lint",
     "create-schema": "psql ./src/db/createSchema.sql",
+    "create-auth-secret": "pnpx auth secret",
     "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
     "schema-update": "npx drizzle-kit push",
     "update-package-manager": "corepack prepare pnpm@<version> --activate",
     "drizzle:seed": "pnpm dlx tsx src/db/bestSeed.ts"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.7.4",
+    "@auth/pg-adapter": "^1.7.4",
     "@heroicons/react": "^2.2.0",
     "@next/env": "^15.1.5",
     "@tailwindcss/forms": "^0.5.10",
@@ -27,6 +30,7 @@
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",
     "drizzle-seed": "^0.3.0",
+    "drizzle-zod": "^0.6.1",
     "eslint-plugin-drizzle": "^0.2.3",
     "next": "15.1.5",
     "next-auth": "5.0.0-beta.25",
