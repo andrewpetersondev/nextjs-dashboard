@@ -9,7 +9,7 @@ import {
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@/ui/button";
 import { useActionState } from "react";
-import { authenticate } from "@/actions/auth-actions";
+import { authenticate } from "@/actions/auth-authenticate";
 
 export default function LoginForm() {
   const [errorMessage, formAction, isPending] = useActionState(

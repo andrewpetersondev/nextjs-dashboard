@@ -9,8 +9,8 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/src/ui/button";
-import { createInvoice } from "@/actions/invoice-create";
-import { useActionState } from "react";
+// import { createInvoice } from "@/actions/invoice-create";
+// import { useActionState } from "react";
 import { InvoiceState } from "@/types/definitions";
 
 export default function CreateInvoiceForm({
@@ -18,10 +18,11 @@ export default function CreateInvoiceForm({
 }: {
   customers: CustomerField[];
 }) {
-  const initialState: InvoiceState = { message: null, errors: {} };
-  const [state, formAction] = useActionState(createInvoice, initialState);
+  // const initialState: InvoiceState = { message: null, errors: {} };
+  // const [state, formAction] = useActionState(createInvoice, initialState);
   return (
-    <form action={formAction}>
+    // <form action={formAction}>
+    <form>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">

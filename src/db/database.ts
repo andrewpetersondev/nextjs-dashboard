@@ -10,5 +10,3 @@ const pool = new Pool({
 export const db = drizzle({ client: pool });
 
 console.log("[Database] Connected: ", process.env.POSTGRES_URL)
-
-// await pool.end() // Here you can use node-pg pool, that was created before db

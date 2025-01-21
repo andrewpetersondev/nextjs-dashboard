@@ -56,7 +56,7 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
     if (!userId) {
       return { message: "Failed to retrieve user ID." };
     }
-     await createSession(userId);
+    await createSession(userId);
   } catch (error) {
     console.error(error);
     return {
@@ -65,9 +65,10 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
     };
   }
   // Return a success indicator for the client to process.
-  return {
-    success: true,
-    message: "User created successfully.",
-    redirect: redirect("/dashboard"),
-  };
+  redirect("/dashboard");
+  // return {
+  //   success: true,
+  //   message: "User created successfully.",
+  //   redirect: redirect("/dashboard"),
+  // };
 }
