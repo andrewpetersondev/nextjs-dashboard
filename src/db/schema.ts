@@ -7,6 +7,7 @@ import {
   integer,
   date,
   timestamp,
+  text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -59,10 +60,9 @@ export const revenues = pgTable("revenues", {
 
 export const sessions = pgTable("sessions", {
   id: uuid().defaultRandom().primaryKey(),
-  token: varchar({ length: 100 }).unique(),
+  token: text("token"),
   expiresAt: timestamp().notNull(),
-  tokenNumber: integer().unique(),
-  userId: uuid().references(() => users.id, { onDelete: 'cascade' })
+  userId: uuid().references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

@@ -3,6 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { db } from "@/db/database";
 import { sessions } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -13,7 +14,7 @@ type SessionPayload = {
     // token: string;
     sessionId: string;
     expiresAt: Date;
-    // userId: string;
+    userId: string;
     // tokenNumber: number;
   };
 };
@@ -58,12 +59,18 @@ export async function createSession(id: string) {
       user: {
         sessionId,
         expiresAt,
+        userId: id,
       },
     };
     const sessionToken = await encrypt(sessionPayload);
     if (!sessionToken) {
       throw new Error("Failed to encrypt session payload.");
     }
+    await db
+        .update(sessions)
+        .set({ token: sessionToken })
+        .where(eq(sessions.id, sessionId));
+
     const cookieStore = await cookies();
     cookieStore.set("session", sessionToken, {
       httpOnly: true,
