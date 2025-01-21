@@ -56,6 +56,9 @@ importers:
       eslint-plugin-drizzle:
         specifier: ^0.2.3
         version: 0.2.3(eslint@9.18.0(jiti@1.21.7))
+      jose:
+        specifier: ^5.9.6
+        version: 5.9.6
       next:
         specifier: 15.1.5
         version: 15.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
