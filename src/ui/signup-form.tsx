@@ -1,4 +1,5 @@
 "use client";
+
 import { lusitana } from "@/ui/fonts";
 import { AtSymbolIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/ui/button";
@@ -97,7 +98,7 @@ export default function SignupForm() {
         <Button className="mt-4 w-full" disabled={pending} type="submit">
           Sign Up <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
-        {state?.message && <p className="text-green-500">{state.message}</p>}
+        {state?.message && <p className="text-blue-500">{state.message}</p>}
       </div>
     </form>
   );

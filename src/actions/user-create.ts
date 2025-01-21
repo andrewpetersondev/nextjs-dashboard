@@ -64,11 +64,5 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
       message: "Failed to create user. Please try again.",
     };
   }
-  // Return a success indicator for the client to process.
   redirect("/dashboard");
-  // return {
-  //   success: true,
-  //   message: "User created successfully.",
-  //   redirect: redirect("/dashboard"),
-  // };
 }
