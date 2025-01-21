@@ -14,14 +14,46 @@ export const verifySession = cache(async () => {
   const session = await decrypt(cookie);
 
   // console.log("dal--> verifySession -->cookie", cookie); // returns long cookie hash
-  console.log("dal--> verifySession --> session", session); // returns {user:{sessionId: aaa, expiresAt:aaa, userId: aaa}, iat: aaa, exp: aaa }
+  // console.log("dal--> verifySession --> session", session); // returns {user:{sessionId: aaa, expiresAt:aaa, userId: aaa}, iat: aaa, exp: aaa }
 
   if (!session?.user?.userId) {
     // Do NOT redirect here; just return false
-    return { isAuth: false, userId: null };
+    return { isAuth: false, userId: null, user: null };
   }
+  const userId = session.user.userId;
 
-  return { isAuth: true, userId: session.user.userId };
+  try {
+    // Query the database to fetch the user's role by ID
+    const user = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        role: users.role, // Fetch role from the database
+      })
+      .from(users)
+      .where(eq(users.id, userId));
+
+    if (!user.length) {
+      // If no user is found, consider the user unauthenticated
+      return { isAuth: false, userId: null, user: null };
+    }
+
+    // Return session info and user details
+    return {
+      isAuth: true,
+      userId,
+      user: {
+        id: user[0].id,
+        username: user[0].username,
+        email: user[0].email,
+        role: user[0].role, // Include role in the response
+      },
+    };
+  } catch (error) {
+    console.error("Failed to verify session and fetch user:", error);
+    return { isAuth: false, userId: null, user: null }; // Graceful fallback
+  }
 });
 
 // Use this wrapper for actions that require a valid session
@@ -59,31 +91,3 @@ export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 }
-
-// export const getUser = cache(async () => {
-//   const session = await verifySession();
-//
-//   console.log("dal--> getuser -->session", session);
-//   console.log("{session}", { session });
-//
-//   if (!session) return null;
-//
-//   try {
-//     const search = await db
-//       .select({
-//         id: users.id,
-//         username: users.username,
-//         email: users.email,
-//       })
-//       .from(users)
-//       .where(eq(users.id, session.userId));
-//     console.log("search", search);
-//     const user = search[0];
-//     console.log("user", user);
-//     return user;
-//   } catch (error) {
-//     console.error("Failed to fetch user:", error);
-//     console.log("Failed to fetch user");
-//     return null;
-//   }
-// });
