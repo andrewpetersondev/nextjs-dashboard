@@ -6,6 +6,7 @@ import {
   AnyPgColumn,
   integer,
   date,
+  timestamp,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -30,11 +31,11 @@ export const customersRelations = relations(customers, ({ many }) => ({
 export const statusEnum = pgEnum("status", ["pending", "paid"]);
 
 export const invoices = pgTable("invoices", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: uuid().defaultRandom().primaryKey(),
   customerId: uuid("customer_id")
     .notNull()
     .references((): AnyPgColumn => customers.id),
-  amount: integer("amount").notNull(),
+  amount: integer().notNull(),
   status: statusEnum().default("pending"),
   date: date().notNull(),
 });
@@ -47,6 +48,26 @@ export const invoicesRelations = relations(invoices, ({ one }) => ({
 }));
 
 export const revenues = pgTable("revenues", {
+  // id: uuid().defaultRandom().primaryKey(),
   month: varchar({ length: 4 }).notNull().unique(),
   revenue: integer().notNull(),
 });
+
+export const databaseSessions = pgTable("database_sessions", {
+  id: uuid().defaultRandom().primaryKey(),
+  sessionToken: varchar("session_token", { length: 64 }).notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references((): AnyPgColumn => users.id),
+});
+
+export const databaseSessionsRelations = relations(
+  databaseSessions,
+  ({ one }) => ({
+    users: one(users, {
+      fields: [databaseSessions.userId],
+      references: [users.id],
+    }),
+  }),
+);
