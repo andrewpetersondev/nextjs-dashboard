@@ -17,6 +17,10 @@ export const users = pgTable("users", {
   password: varchar({ length: 255 }).notNull(),
 });
 
+export const usersRelations = relations(users, ({ many }) => ({
+  sessions: many(sessions),
+}));
+
 export const customers = pgTable("customers", {
   id: uuid().defaultRandom().primaryKey(),
   name: varchar({ length: 50 }).notNull(),
@@ -32,7 +36,7 @@ export const statusEnum = pgEnum("status", ["pending", "paid"]);
 
 export const invoices = pgTable("invoices", {
   id: uuid().defaultRandom().primaryKey(),
-  customerId: uuid("customer_id")
+  customerId: uuid()
     .notNull()
     .references((): AnyPgColumn => customers.id),
   amount: integer().notNull(),
@@ -53,21 +57,17 @@ export const revenues = pgTable("revenues", {
   revenue: integer().notNull(),
 });
 
-export const databaseSessions = pgTable("database_sessions", {
+export const sessions = pgTable("sessions", {
   id: uuid().defaultRandom().primaryKey(),
-  sessionToken: varchar("session_token", { length: 64 }).notNull().unique(),
-  expiresAt: timestamp("expires_at").notNull(),
-  userId: uuid("user_id")
-    .notNull()
-    .references((): AnyPgColumn => users.id),
+  token: varchar({ length: 100 }).unique(),
+  expiresAt: timestamp().notNull(),
+  tokenNumber: integer().unique(),
+  userId: uuid().references(() => users.id, { onDelete: 'cascade' })
 });
 
-export const databaseSessionsRelations = relations(
-  databaseSessions,
-  ({ one }) => ({
-    users: one(users, {
-      fields: [databaseSessions.userId],
-      references: [users.id],
-    }),
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
   }),
-);
+}));

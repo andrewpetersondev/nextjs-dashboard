@@ -4,7 +4,7 @@ import { createUserInDB } from "@/lib/data";
 import { z } from "zod";
 import { hashPassword } from "@/utils/password";
 import { createSession } from "@/lib/session";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 
 const SignupFormSchema = z.object({
   username: z
@@ -56,7 +56,7 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
     if (!userId) {
       return { message: "Failed to retrieve user ID." };
     }
-    await createSession(userId);
+     await createSession(userId);
   } catch (error) {
     console.error(error);
     return {
@@ -65,7 +65,6 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
     };
   }
   // Return a success indicator for the client to process.
-  console.log("userCreate: success");
   return {
     success: true,
     message: "User created successfully.",
