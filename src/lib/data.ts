@@ -2,7 +2,7 @@ import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
 import { customers, invoices, revenues, users } from "@/db/schema";
 import { desc, eq, ilike, or, sql, asc } from "drizzle-orm";
-import { User } from "@/types/definitions";
+// import { User } from "@/types/definitions";
 
 type Revenue = { month: string; revenue: number };
 
@@ -30,7 +30,6 @@ export async function fetchRevenue(): Promise<Revenue[]> {
     const orderedData: { month: string; revenue: number }[] = data.sort(
       (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
     );
-
     // console.log("data", orderedData);
     return orderedData;
   } catch (error) {
@@ -387,11 +386,14 @@ export async function createUserInDB({
   password: string;
 }) {
   try {
-    const data = await db.insert(users).values({
-      username: username,
-      email: email,
-      password: password,
-    }).returning({insertedId: users.id});
+    const data = await db
+      .insert(users)
+      .values({
+        username: username,
+        email: email,
+        password: password,
+      })
+      .returning({ insertedId: users.id });
     return data;
   } catch (error) {
     console.error("Database Error:", error);
