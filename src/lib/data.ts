@@ -1,13 +1,25 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
-import { customers, invoices, revenues } from "@/db/schema";
-import {  desc, eq, ilike, or, sql, asc } from "drizzle-orm";
+import { customers, invoices, revenues, users } from "@/db/schema";
+import { desc, eq, ilike, or, sql, asc } from "drizzle-orm";
+import { User } from "@/types/definitions";
 
 type Revenue = { month: string; revenue: number };
 
 export async function fetchRevenue(): Promise<Revenue[]> {
   const monthOrder = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   try {
@@ -71,7 +83,6 @@ export async function fetchLatestInvoices(): Promise<
     throw new Error("Failed to fetch the latest invoices.");
   }
 }
-
 
 export async function fetchCardData() {
   try {
@@ -162,7 +173,7 @@ type FilteredInvoiceData = {
 export async function fetchFilteredInvoices2(
   query: string,
   currentPage: number,
-) :Promise<{data: FilteredInvoiceData[], count: number}>{
+): Promise<{ data: FilteredInvoiceData[]; count: number }> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
     const data = await db
@@ -205,46 +216,45 @@ export async function fetchFilteredInvoices2(
   }
 }
 
-
 export async function fetchInvoicesPages(query: string): Promise<number> {
-    try {
-        const data = await db
-            .select({
-                record: {
-                    id: invoices.id,
-                    amount: invoices.amount,
-                    date: invoices.date,
-                    name: customers.name,
-                    email: customers.email,
-                    image_url: customers.imageUrl,
-                    paymentStatus: invoices.status,
-                },
-                count: sql<number>`count(*) over()`,
-            })
-            .from(invoices)
-            .innerJoin(customers, eq(invoices.customerId, customers.id))
-            .where(
-                or(
-                    ilike(customers.name, `%${query}%`),
-                    ilike(customers.email, `%${query}%`),
-                    ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
-                    ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-                    ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
-                ),
-            )
+  try {
+    const data = await db
+      .select({
+        record: {
+          id: invoices.id,
+          amount: invoices.amount,
+          date: invoices.date,
+          name: customers.name,
+          email: customers.email,
+          image_url: customers.imageUrl,
+          paymentStatus: invoices.status,
+        },
+        count: sql<number>`count(*) over()`,
+      })
+      .from(invoices)
+      .innerJoin(customers, eq(invoices.customerId, customers.id))
+      .where(
+        or(
+          ilike(customers.name, `%${query}%`),
+          ilike(customers.email, `%${query}%`),
+          ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
+          ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
+          ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
+        ),
+      );
 
-        const result = {
-            data: data.map((item) => item.record),
-            count: data[0]?.count ?? 0,
-        };
+    const result = {
+      data: data.map((item) => item.record),
+      count: data[0]?.count ?? 0,
+    };
 
-        //     const totalPages = Math.ceil(Number(count) / ITEMS_PER_PAGE);
+    //     const totalPages = Math.ceil(Number(count) / ITEMS_PER_PAGE);
 
-        return Math.ceil(result.count / ITEMS_PER_PAGE);
-    } catch (error) {
-        console.error("Database Error:", error);
-        throw new Error("Failed to fetch total number of invoices.");
-    }
+    return Math.ceil(result.count / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of invoices.");
+  }
 }
 
 /*export async function fetchInvoicesPagesById(id: string) {
@@ -294,8 +304,9 @@ export async function fetchInvoiceById(id: string) {
       .where(eq(invoices.id, id));
 
     const result = data.map((item) => ({
-        ...item, amount: item.amount / 100
-    }))
+      ...item,
+      amount: item.amount / 100,
+    }));
     return result[0];
   } catch (e) {
     console.error("Database Error:", e);
@@ -362,3 +373,29 @@ export async function fetchFilteredCustomers(query: string) {
 //     throw new Error("Failed to fetch customer table.");
 //   }
 // }
+
+// do I need to omit id? Omit<User, "id">? but id how to do that in parameter
+// type CreateUser = Omit<User, "id">
+
+export async function createUserInDB({
+  username,
+  email,
+  password,
+}: {
+  username: string;
+  email: string;
+  password: string;
+}) {
+  try {
+    const data = await db.insert(users).values({
+      username: username,
+      email: email,
+      password: password,
+    }).returning({insertedId: users.id});
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to create user in database.");
+    //   throw error;
+  }
+}
