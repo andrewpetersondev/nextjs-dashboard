@@ -10,12 +10,9 @@ const encodedKey = new TextEncoder().encode(secretKey);
 
 type SessionPayload = {
   user: {
-    // id: string;
-    // token: string;
     sessionId: string;
     expiresAt: Date;
     userId: string;
-    // tokenNumber: number;
   };
 };
 
@@ -28,16 +25,18 @@ export async function encrypt(payload: SessionPayload) {
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = "") {
-  console.log("decrypt session", session);
+export async function decrypt(
+  session: string | undefined = "",
+): Promise<SessionPayload | null> {
+  // console.log("decrypt session", session);
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
-    return payload;
+    return payload as SessionPayload;
   } catch (error) {
-    console.error(error);
-    console.log("Failed to verify session");
+    console.error("Failed to verify session", error);
+    return null;
   }
 }
 
@@ -67,9 +66,9 @@ export async function createSession(id: string) {
       throw new Error("Failed to encrypt session payload.");
     }
     await db
-        .update(sessions)
-        .set({ token: sessionToken })
-        .where(eq(sessions.id, sessionId));
+      .update(sessions)
+      .set({ token: sessionToken })
+      .where(eq(sessions.id, sessionId));
 
     const cookieStore = await cookies();
     cookieStore.set("session", sessionToken, {
