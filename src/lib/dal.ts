@@ -7,28 +7,28 @@ import { db } from "@/db/database";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { validate as isUUID } from "uuid";
+import { redirect } from "next/navigation";
 
 // Define the structure of your session payload
 interface SessionPayload {
   user: {
     userId: string;
     role: string;
-    expiresAt: number;
+    expiresAt: Date;
   };
 }
 
 export async function verifySession() {
   const cookie = (await cookies()).get("session")?.value;
-  // const session = await decrypt(cookie);
   if (!cookie) {
     return null;
   }
   try {
     // Decrypt the session cookie
-    const session = (await decrypt(cookie)) as SessionPayload | null;
+    const session = (await decrypt(cookie)) as SessionPayload;
 
     // Check if session is valid and not expired
-    if (!session || Date.now() > session.user.expiresAt) {
+    if (!session || new Date() > session.user.expiresAt) {
       return null;
     }
 
@@ -46,9 +46,14 @@ export async function verifySession() {
 
 // Use this wrapper for actions that require a valid session
 export async function requireValidSession() {
-  const { isAuth, userId } = await verifySession();
+  const { isAuthenticated, userId, role, expiresAt } = await verifySession();
 
-  if (!isAuth) {
+  if (!session) {
+    redirect("/login");
+    return;
+  }
+
+  if (!isAuthenticated) {
     redirect("/login");
   }
 
