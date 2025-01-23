@@ -10,10 +10,10 @@
     "lint": "next lint",
     "create-schema": "psql ./src/db/createSchema.sql",
     "create-auth-secret": "pnpx auth secret",
-    "reset-db": "pnpm dlx tsx ./src/db/reset.ts",
+    "reset-db": "pnpm dlx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push",
     "update-package-manager": "corepack prepare pnpm@<version> --activate",
-    "drizzle:seed": "pnpm dlx tsx src/db/bestSeed.ts"
+    "drizzle:seed": "pnpm dlx tsx src/db/seeds/bestSeed.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",

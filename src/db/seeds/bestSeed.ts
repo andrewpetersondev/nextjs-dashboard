@@ -1,10 +1,10 @@
 import { seed } from "drizzle-seed";
-import * as schema from "./schema";
+import * as schema from "../schema";
 import "dotenv/config";
 
 // import dotenv from "dotenv";
 // import { drizzle } from "drizzle-orm/node-postgres";
-import { db } from "./database";
+import { db } from "../database";
 
 // dotenv.config();
 
@@ -36,7 +36,18 @@ const customerImageUrls = [
 ];
 
 const months = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 interface User {

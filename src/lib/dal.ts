@@ -18,6 +18,7 @@ interface SessionPayload {
   };
 }
 
+// uses cookies for verification
 export async function verifySession() {
   const cookie = (await cookies()).get("session")?.value;
   if (!cookie) {
@@ -60,6 +61,7 @@ export async function requireValidSession() {
   return userId;
 }
 
+// this reads cookies, then makes a db call to get more information about the user
 export const getUser = cache(async () => {
   const { isAuth, userId } = await verifySession();
   if (!isAuth || !userId || !isUUID(userId)) return null;
@@ -70,16 +72,19 @@ export const getUser = cache(async () => {
         id: users.id,
         username: users.username,
         email: users.email,
+        role: users.role,
       })
       .from(users)
       .where(eq(users.id, userId));
-    return search[0] || null;
+    const result = search[0] || null;
+    return result;
   } catch (error) {
     console.error("Failed to fetch user:", error);
     return null;
   }
 });
 
+// not using this anywhere, deleteSession has the same code
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
