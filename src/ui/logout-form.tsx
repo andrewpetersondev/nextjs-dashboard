@@ -1,14 +1,11 @@
 import { PowerIcon } from "@heroicons/react/24/outline";
-import { logout } from "@/lib/dal";
-
-// import { logout } from "@/actions/auth-logout";
+import { logout } from "@/actions/auth-logout";
 
 export async function LogoutForm() {
   return (
     <form
       action={async () => {
         "use server";
-        // await deleteSession();
         await logout();
       }}
     >

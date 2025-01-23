@@ -186,7 +186,9 @@ export async function fetchFilteredInvoices2(
           image_url: customers.imageUrl,
           paymentStatus: invoices.status,
         },
-        count: sql<number>`count(*) over()`,
+        count: sql<number>`count
+                    (*)
+                    over()`,
       })
       .from(invoices)
       .innerJoin(customers, eq(invoices.customerId, customers.id))
@@ -228,7 +230,9 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
           image_url: customers.imageUrl,
           paymentStatus: invoices.status,
         },
-        count: sql<number>`count(*) over()`,
+        count: sql<number>`count
+                    (*)
+                    over()`,
       })
       .from(invoices)
       .innerJoin(customers, eq(invoices.customerId, customers.id))
@@ -375,29 +379,3 @@ export async function fetchFilteredCustomers(query: string) {
 
 // do I need to omit id? Omit<User, "id">? but id how to do that in parameter
 // type CreateUser = Omit<User, "id">
-
-export async function createUserInDB({
-  username,
-  email,
-  password,
-}: {
-  username: string;
-  email: string;
-  password: string;
-}) {
-  try {
-    const data = await db
-      .insert(users)
-      .values({
-        username: username,
-        email: email,
-        password: password,
-      })
-      .returning({ insertedId: users.id });
-    return data;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to create user in database.");
-    //   throw error;
-  }
-}
