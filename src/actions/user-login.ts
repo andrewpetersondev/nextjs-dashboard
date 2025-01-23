@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { comparePassword } from "@/utils/password"; // A utility for comparing hashed password
+import { comparePassword } from "@/lib/password"; // A utility for comparing hashed password
 import { createSession } from "@/lib/session"; // To create a session upon successful login
 import { db } from "@/db/database";
 import { users } from "@/db/schema";

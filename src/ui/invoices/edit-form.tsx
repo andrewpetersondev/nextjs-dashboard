@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Button } from "@/src/ui/button";
 import { updateInvoice } from "@/actions/invoice-update";
 import { useActionState } from "react";
-import { InvoiceState, CustomerField, InvoiceForm } from "@/types/definitions";
+import { InvoiceState, CustomerField, InvoiceForm } from "@/lib/definitions";
 
 export default function EditInvoiceForm({
   invoice,

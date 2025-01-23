@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = 10;
 
-// Simplify function parameters and rename it for clarity
 export const hashPassword = async (password: string): Promise<string> => {
   try {
     const salt = await bcrypt.genSalt(SALT_ROUNDS);
