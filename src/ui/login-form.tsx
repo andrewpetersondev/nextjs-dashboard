@@ -75,13 +75,13 @@ export default function LoginForm() {
         <Button type="submit" className="mt-4 w-full" aria-disabled={pending}>
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
-        <div
-          className="flex h-8 items-end space-x-1"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {state?.message && <p className="text-blue-500">{state.message}</p>}
-        </div>
+      </div>
+      <div
+        className="flex h-8 items-end space-x-1"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {state?.message && <p className="text-blue-500">{state.message}</p>}
       </div>
     </form>
   );
