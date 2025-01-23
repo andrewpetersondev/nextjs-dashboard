@@ -1,6 +1,6 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
-import { customers, invoices, revenues, users } from "@/db/schema";
+import { customers, invoices, revenues } from "@/db/schema";
 import { desc, eq, ilike, or, sql, asc } from "drizzle-orm";
 // import { User } from "@/types/definitions";
 
@@ -186,9 +186,7 @@ export async function fetchFilteredInvoices2(
           image_url: customers.imageUrl,
           paymentStatus: invoices.status,
         },
-        count: sql<number>`count
-                    (*)
-                    over()`,
+        count: sql<number>`count * over()`,
       })
       .from(invoices)
       .innerJoin(customers, eq(invoices.customerId, customers.id))
@@ -230,9 +228,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
           image_url: customers.imageUrl,
           paymentStatus: invoices.status,
         },
-        count: sql<number>`count
-                    (*)
-                    over()`,
+        count: sql<number>`count * over()`,
       })
       .from(invoices)
       .innerJoin(customers, eq(invoices.customerId, customers.id))

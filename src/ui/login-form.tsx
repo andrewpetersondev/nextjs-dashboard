@@ -5,7 +5,7 @@ import { AtSymbolIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@/ui/button";
 import { useActionState } from "react";
-import { userLogin } from "@/actions/user-login";
+import { userLogin } from "@/actions/users";
 // import { useFormStatus } from "react-dom";
 
 export default function LoginForm() {
@@ -56,7 +56,7 @@ export default function LoginForm() {
                 name="password"
                 placeholder="Enter password"
                 required
-                minLength={6}
+                // minLength={6}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>

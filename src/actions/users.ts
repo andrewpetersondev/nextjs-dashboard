@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { comparePassword, hashPassword } from "@/lib/password"; // A utility for comparing hashed password
-import { createSession } from "@/lib/session"; // To create a session upon successful login
+import { createSession, deleteSession } from "@/lib/session"; // To create a session upon successful login
 import { redirect } from "next/navigation";
 import { db } from "@/db/database";
 import { users } from "@/db/schema";
@@ -146,4 +146,9 @@ export async function userLogin(state: LoginFormState, formData: FormData) {
     return { message: "An unexpected error occurred. Please try again." };
   }
   redirect("/dashboard");
+}
+
+export async function logout() {
+  await deleteSession();
+  redirect("/");
 }

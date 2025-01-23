@@ -5,7 +5,7 @@ export default async function MiddlewareCard() {
   const userId = session?.userId;
   const role = session?.role;
   const authy = session?.isAuthenticated;
-  const expires = session?.expiresAt;
+  // const expires = session?.expiresAt;
 
   return (
     <div>
@@ -14,7 +14,7 @@ export default async function MiddlewareCard() {
       {authy && <p>true</p>}
       {!authy && <p>false</p>}
       <p>{authy}</p>
-      <p>{expires}</p>
+      {/*<p>{expires}</p>*/}
     </div>
   );
 }

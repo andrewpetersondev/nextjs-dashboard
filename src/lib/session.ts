@@ -39,7 +39,7 @@ export async function decrypt(
   }
 }
 
-// since role is assigned in db, users will always have a role of "user" on first login and when loggin in for the first time after cookie expires
+// since role is assigned in db, users will always have a role of "user" on first login and when logging in for the first time after cookie expires
 export async function createSession(id: string) {
   try {
     const now = new Date();

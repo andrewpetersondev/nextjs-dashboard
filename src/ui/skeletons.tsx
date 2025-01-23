@@ -218,5 +218,5 @@ export function InvoicesTableSkeleton() {
 }
 
 export function InvoicesSearchSkeleton() {
-  return <div>Invoices Search Skeleotn</div>;
+  return <div>Invoices Search Skeleton</div>;
 }

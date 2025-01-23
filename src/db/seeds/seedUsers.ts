@@ -53,5 +53,5 @@ try {
   seedUsers();
 } catch (e) {
   console.error(e);
-  throw new Error("some soort of error");
+  throw new Error("some sort of error");
 }
