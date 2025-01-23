@@ -40,6 +40,7 @@ export async function userLogin(state: LoginFormState, formData: FormData) {
       .select({
         id: users.id,
         email: users.email,
+        role: users.role,
         password: users.password,
       })
       .from(users)

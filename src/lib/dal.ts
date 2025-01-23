@@ -3,58 +3,46 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { decrypt } from "@/lib/session";
-import { redirect } from "next/navigation";
 import { db } from "@/db/database";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { validate as isUUID } from "uuid";
 
-export const verifySession = cache(async () => {
+// Define the structure of your session payload
+interface SessionPayload {
+  user: {
+    userId: string;
+    role: string;
+    expiresAt: number;
+  };
+}
+
+export async function verifySession() {
   const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
-
-  // console.log("dal--> verifySession -->cookie", cookie); // returns long cookie hash
-  // console.log("dal--> verifySession --> session", session); // returns {user:{sessionId: aaa, expiresAt:aaa, userId: aaa}, iat: aaa, exp: aaa }
-
-  if (!session?.user?.userId) {
-    // Do NOT redirect here; just return false
-    return { isAuth: false, userId: null, user: null };
+  // const session = await decrypt(cookie);
+  if (!cookie) {
+    return null;
   }
-  const userId = session.user.userId;
-
   try {
-    // Query the database to fetch the user's role by ID
-    const user = await db
-      .select({
-        id: users.id,
-        username: users.username,
-        email: users.email,
-        role: users.role, // Fetch role from the database
-      })
-      .from(users)
-      .where(eq(users.id, userId));
+    // Decrypt the session cookie
+    const session = (await decrypt(cookie)) as SessionPayload | null;
 
-    if (!user.length) {
-      // If no user is found, consider the user unauthenticated
-      return { isAuth: false, userId: null, user: null };
+    // Check if session is valid and not expired
+    if (!session || Date.now() > session.user.expiresAt) {
+      return null;
     }
 
-    // Return session info and user details
     return {
-      isAuth: true,
-      userId,
-      user: {
-        id: user[0].id,
-        username: user[0].username,
-        email: user[0].email,
-        role: user[0].role, // Include role in the response
-      },
+      isAuthenticated: true,
+      userId: session.user.userId,
+      role: session.user.role,
+      expiresAt: session.user.expiresAt,
     };
   } catch (error) {
-    console.error("Failed to verify session and fetch user:", error);
-    return { isAuth: false, userId: null, user: null }; // Graceful fallback
+    console.error("Session verification failed:", error);
+    return null;
   }
-});
+}
 
 // Use this wrapper for actions that require a valid session
 export async function requireValidSession() {

@@ -2,7 +2,7 @@ import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { db } from "@/db/database";
-import { sessions } from "@/db/schema";
+import { sessions, users } from "@/db/schema";
 import { eq, and, gt } from "drizzle-orm";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -13,6 +13,7 @@ type SessionPayload = {
     sessionId: string;
     expiresAt: Date;
     userId: string;
+    role: string;
   };
 };
 
@@ -38,6 +39,7 @@ export async function decrypt(
   }
 }
 
+// since role is assigned in db, users will always have a role of "user" on first login and when loggin in for the first time after cookie expires
 export async function createSession(id: string) {
   try {
     const now = new Date();
@@ -47,13 +49,16 @@ export async function createSession(id: string) {
       .select({
         id: sessions.id,
         token: sessions.token,
+        role: users.role,
       })
       .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
       .where(and(eq(sessions.userId, id), gt(sessions.expiresAt, now)))
       .limit(1);
     if (activeSession.length) {
       const sessionId = activeSession[0].id;
-      await updateSession(id, sessionId);
+      const userRole = activeSession[0].role;
+      await updateSession(id, sessionId, userRole!);
     } else {
       // if user does not exist or does not have session token, then create one
       const data = await db
@@ -72,6 +77,7 @@ export async function createSession(id: string) {
           sessionId,
           expiresAt,
           userId: id,
+          role: "user",
         },
       };
       const sessionToken = await encrypt(sessionPayload);
@@ -101,13 +107,18 @@ export async function createSession(id: string) {
 }
 
 // user has a valid session in db, so extend it. they might not have cookies locally
-export async function updateSession(id: string, sessionId: string) {
+export async function updateSession(
+  id: string,
+  sessionId: string,
+  userRole: string,
+) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const sessionPayload = {
     user: {
       sessionId: sessionId,
       expiresAt: expiresAt,
       userId: id,
+      role: userRole,
     },
   };
   const updatedSessionToken = await encrypt(sessionPayload);
