@@ -40,51 +40,6 @@ export async function decrypt(
 
 export async function createSession(id: string) {
   try {
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    const data = await db
-      .insert(sessions)
-      .values({
-        userId: id,
-        expiresAt: expiresAt,
-      })
-      .returning({ id: sessions.id });
-    const sessionId = data[0]?.id;
-    if (!sessionId) {
-      throw new Error("Failed to create session in the database.");
-    }
-    const sessionPayload = {
-      user: {
-        sessionId,
-        expiresAt,
-        userId: id,
-      },
-    };
-    const sessionToken = await encrypt(sessionPayload);
-    if (!sessionToken) {
-      throw new Error("Failed to encrypt session payload.");
-    }
-    await db
-      .update(sessions)
-      .set({ token: sessionToken })
-      .where(eq(sessions.id, sessionId));
-
-    const cookieStore = await cookies();
-    cookieStore.set("session", sessionToken, {
-      httpOnly: true,
-      secure: true,
-      expires: expiresAt,
-      sameSite: "lax",
-      path: "/",
-    });
-    return true;
-  } catch (error) {
-    console.error("Error in createSession:", error);
-    throw new Error("Failed to create session.");
-  }
-}
-
-export async function createSession2(id: string) {
-  try {
     const now = new Date();
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
     // check to see if user has non-expired session token

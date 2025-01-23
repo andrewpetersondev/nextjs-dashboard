@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { hashPassword } from "@/lib/password";
-import { createSession2 } from "@/lib/session";
+import { createSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { db } from "@/db/database";
 import { users } from "@/db/schema";
@@ -83,7 +83,7 @@ export async function userCreate(state: SignupFormState, formData: FormData) {
     if (!userId) {
       return { message: "Failed to retrieve user ID." };
     }
-    await createSession2(userId);
+    await createSession(userId);
   } catch (error) {
     console.error(error);
     return {
