@@ -5,11 +5,11 @@ import { AtSymbolIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@/ui/button";
 import { useActionState } from "react";
-import { userLogin } from "@/actions/user-login";
+import { userLogin2 } from "@/actions/user-login";
 // import { useFormStatus } from "react-dom";
 
 export default function LoginForm() {
-  const [state, action, pending] = useActionState(userLogin, undefined);
+  const [state, action, pending] = useActionState(userLogin2, undefined);
   // const { pending, data, method, action } = useFormStatus();
 
   return (

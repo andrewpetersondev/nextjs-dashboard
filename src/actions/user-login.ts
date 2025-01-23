@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { comparePassword } from "@/lib/password"; // A utility for comparing hashed password
-import { createSession } from "@/lib/session"; // To create a session upon successful login
+import { createSession2 } from "@/lib/session"; // To create a session upon successful login
 import { db } from "@/db/database";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -59,6 +59,50 @@ export async function userLogin(state: LoginFormState, formData: FormData) {
 
     // Create a session upon successful login
     await createSession(user[0].id);
+  } catch (error) {
+    console.error("Failed to log in user:", error);
+    return { message: "An unexpected error occurred. Please try again." };
+  }
+  redirect("/dashboard");
+}
+
+export async function userLogin2(state: LoginFormState, formData: FormData) {
+  console.log("server-action --> user-login --> userLogin2");
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { email, password } = validatedFields.data;
+
+  try {
+    // Fetch the user by email from the database
+    const user = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        password: users.password,
+      })
+      .from(users)
+      .where(eq(users.email, email));
+
+    if (!user.length) {
+      return { message: "Invalid email or password." };
+    }
+
+    const validPassword = await comparePassword(password, user[0].password);
+    if (!validPassword) {
+      return { message: "Invalid email or password." };
+    }
+
+    // Create a session (reuse or update the session as needed)
+    await createSession2(user[0].id);
   } catch (error) {
     console.error("Failed to log in user:", error);
     return { message: "An unexpected error occurred. Please try again." };

@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { db } from "@/db/database";
 import { sessions } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -79,6 +79,114 @@ export async function createSession(id: string) {
       path: "/",
     });
     return true;
+  } catch (error) {
+    console.error("Error in createSession:", error);
+    throw new Error("Failed to create session.");
+  }
+}
+
+export async function createSession2(userId: string) {
+  console.log("createSession2 --> param (userId) = ", userId);
+  try {
+    const now = new Date();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
+
+    // Search for an active, unexpired session token
+    const activeSession = await db
+      .select({
+        id: sessions.id,
+        token: sessions.token,
+      })
+      .from(sessions)
+      .where(and(eq(sessions.userId, userId), gt(sessions.expiresAt, now)))
+      .limit(1);
+
+    if (activeSession.length) {
+      // If an active session exists, update its expiration date and return it
+      const sessionId = activeSession[0].id;
+
+      await db
+        .update(sessions)
+        .set({ expiresAt })
+        .where(eq(sessions.id, sessionId));
+
+      const sessionPayload = {
+        user: {
+          sessionId,
+          expiresAt,
+          userId,
+        },
+      };
+
+      console.log("sessionPayload", sessionPayload);
+
+      const sessionToken = await encrypt(sessionPayload);
+      console.log("sessionToken", sessionToken);
+      await db
+        .update(sessions)
+        .set({ token: sessionToken })
+        .where(eq(sessions.id, sessionId));
+
+      const cookieStore = await cookies();
+      console.log("cookieStore", cookieStore);
+      cookieStore.set("session", sessionToken, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return true;
+    } else {
+      // If no session exists, create a new one
+      console.log("no active session");
+      const data = await db
+        .insert(sessions)
+        .values({
+          userId,
+          expiresAt,
+        })
+        .returning({ id: sessions.id });
+
+      console.log("data", data);
+      const sessionId = data[0]?.id;
+      console.log("sessionId", sessionId);
+      if (!sessionId) {
+        throw new Error("Failed to create session in the database.");
+      }
+
+      const sessionPayload = {
+        user: {
+          sessionId,
+          expiresAt,
+          userId,
+        },
+      };
+
+      const sessionToken = await encrypt(sessionPayload);
+      console.log("sessionToken", sessionToken);
+      if (!sessionToken) {
+        throw new Error("Failed to encrypt session payload.");
+      }
+
+      await db
+        .update(sessions)
+        .set({ token: sessionToken })
+        .where(eq(sessions.id, sessionId));
+
+      const cookieStore = await cookies();
+      console.log("cookieStore", cookieStore);
+      cookieStore.set("session", sessionToken, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return true;
+    }
   } catch (error) {
     console.error("Error in createSession:", error);
     throw new Error("Failed to create session.");
