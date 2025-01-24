@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "@/src/ui/button";
-import { updateInvoice } from "@/actions/invoices";
+import { updateInvoice } from "@/server-actions/invoices";
 import { useActionState } from "react";
 import { InvoiceState, CustomerField, InvoiceForm } from "@/lib/definitions";
 

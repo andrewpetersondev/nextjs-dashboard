@@ -1,5 +1,5 @@
 import { PowerIcon } from "@heroicons/react/24/outline";
-import { logout } from "@/actions/users";
+import { logout } from "@/server-actions/users";
 
 export async function LogoutForm() {
   return (

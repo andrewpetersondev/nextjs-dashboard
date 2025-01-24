@@ -1,11 +1,7 @@
-// This file contains type definitions for your data.
-// It describes the shape of the data, and what data type each property should accept.
-// For simplicity of teaching, we're manually defining these types.
-// However, these types are generated automatically if you're using an ORM such as Prisma.
+import { z } from "zod";
 
 export type User = {
-  id: string;
-  // name: string;
+  id: string; // name: string;
   username: string;
   email: string;
   password: string;
@@ -22,8 +18,7 @@ export type Invoice = {
   id: string;
   customer_id: string;
   amount: number;
-  date: string;
-  // In TypeScript, this is called a string union type.
+  date: string; // In TypeScript, this is called a string union type.
   // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
   status: "pending" | "paid";
 };
@@ -89,8 +84,6 @@ export type InvoiceForm = {
   status: "pending" | "paid" | null;
 };
 
-import { z } from "zod";
-/*
 export const SignupFormSchema = z.object({
   username: z
     .string()
@@ -99,17 +92,16 @@ export const SignupFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }).trim(),
   password: z
     .string()
-    .min(6, { message: "Be at least 6 characters long" })
+    .min(8, { message: "Be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
+    .regex(/[0-9]/, { message: "Contain at least one number." })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Contain at least one special character.",
+    })
     .trim(),
-});*/
+});
 
-/*export type SignupField = {
-  username: string;
-  email: string;
-  password: string;
-};*/
-
-/*export type SignupFormState =
+export type SignupFormState =
   | {
       errors?: {
         username?: string[];
@@ -118,24 +110,22 @@ export const SignupFormSchema = z.object({
       };
       message?: string;
     }
-  | undefined;*/
+  | undefined;
 
-/*
-export type SignupFormStateOptionB = {
-  errors?: {
-    username?: string[];
-    email?: string[];
-    password?: string[];
-  };
-};*/
-
-export const LoginFormSchema =  z.object({
+export const LoginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }).trim(),
-  password: z
-    .string()
-    .min(6, { message: "Be at least 6 characters long" })
-})
+  password: z.string().min(8, { message: "Password is required." }).trim(),
+});
 
+export type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
 
 export type InvoiceState = {
   errors?: {
@@ -159,3 +149,12 @@ export const InvoiceFormSchema = z.object({
   }),
   date: z.string(),
 });
+
+export type SessionPayload = {
+  user: {
+    sessionId: string;
+    expiresAt: Date;
+    userId: string;
+    role: string;
+  };
+};

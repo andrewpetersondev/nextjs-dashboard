@@ -21,26 +21,24 @@ Here's a more complete example to illustrate how this might be used:
 'use server'
 
 export async function signup(formData: FormData) {
-    // Validate form data
-    const name = formData.get('name')
-    const email = formData.get('email')
-    const password = formData.get('password')
+	// Validate form data
+	const name = formData.get('name')
+	const email = formData.get('email')
+	const password = formData.get('password')
 
-    // Perform server-side logic like user creation
-    try {
-        // Example: Create user in database
-        // const user = await createUser({ name, email, password })
+	// Perform server-side logic like user creation
+	try {
+		// Example: Create user in database
+		// const user = await createUser({ name, email, password })
 
-        return {
-            success: true,
-            message: 'User signed up successfully'
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: 'Signup failed'
-        }
-    }
+		return {
+			success: true, message: 'User signed up successfully'
+		}
+	} catch(error) {
+		return {
+			success: false, message: 'Signup failed'
+		}
+	}
 }
 ```
 
@@ -57,23 +55,20 @@ When used in a form, it might look like this:
 'use client'
 
 import {useActionState} from 'react'
-import {signup} from './auth-actions'
+import {signup} from './auth-server-actions'
 
 export default function SignupForm() {
-    const [state, formAction] = useActionState(signup, {
-        success: false,
-        message: ''
-    })
+	const [state, formAction] = useActionState(signup, {
+		success: false, message: ''
+	})
 
-    return (
-        <form action={formAction}>
-            <input type="text" name="name" required/>
-            <input type="email" name="email" required/>
-            <input type="password" name="password" required/>
-            <button type="submit">Sign Up</button>
-            {state.message && <p>{state.message}</p>}
-        </form>
-    )
+	return (<form action={formAction}>
+			<input type="text" name="name" required/>
+			<input type="email" name="email" required/>
+			<input type="password" name="password" required/>
+			<button type="submit">Sign Up</button>
+			{state.message && <p>{state.message}</p>}
+		</form>)
 }
 ```
 
