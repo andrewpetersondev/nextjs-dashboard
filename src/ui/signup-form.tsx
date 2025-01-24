@@ -1,15 +1,15 @@
 "use client";
 
 import { lusitana } from "@/ui/fonts";
-import { AtSymbolIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { AtSymbolIcon, KeyIcon, UserIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/ui/button";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { userCreate } from "@/actions/users";
+import { signup } from "@/server-actions/users";
 import { useActionState } from "react";
 // import { useFormStatus } from "react-dom";
 
 export default function SignupForm() {
-  const [state, action, pending] = useActionState(userCreate, undefined);
+  const [state, action, pending] = useActionState(signup, undefined);
   // const { pending, data, method, action } = useFormStatus();
   return (
     <form action={action} className="space-y-3">
@@ -33,9 +33,9 @@ export default function SignupForm() {
                 type="text"
                 placeholder="Enter your username"
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                required
+                // required
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
           {state?.errors?.username && (
@@ -55,7 +55,7 @@ export default function SignupForm() {
                 name="email"
                 type="email"
                 placeholder="Enter your email"
-                required
+                // required
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -77,7 +77,7 @@ export default function SignupForm() {
                 id="password"
                 name="password"
                 type="password"
-                required
+                // required
                 // minLength={6}
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -86,10 +86,12 @@ export default function SignupForm() {
           </div>
           {state?.errors?.password && (
             <div>
-              <p>Password must:</p>
+              <p className="text-red-500">Password must:</p>
               <ul>
                 {state.errors.password.map((error) => (
-                  <li key={error}>- {error}</li>
+                  <li className="text-red-500" key={error}>
+                    - {error}
+                  </li>
                 ))}
               </ul>
             </div>

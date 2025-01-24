@@ -51,8 +51,8 @@
       "@/utils/*": [
         "src/utils/*"
       ],
-      "@/actions/*": [
-        "src/actions/*"
+      "@/server-actions/*": [
+        "src/server-actions/*"
       ]
     }
   },
