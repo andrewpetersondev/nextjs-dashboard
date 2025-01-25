@@ -196,13 +196,15 @@ export const InvoiceFormSchema = z.object({
   date: z.string(),
 });
 
+type UserRole = "admin" | "user";
+
 // type of parameters for encrypt()
 // return type for encrypt() is string
 export type SessionPayload = {
   user: {
     userId: string;
-    role: string;
-    expiresAt: Date;
+    role: UserRole;
+    expiresAt: string;
   };
 };
 
@@ -213,7 +215,7 @@ export type Session =
       user: {
         isAuthorized: boolean;
         userId: string;
-        role: string;
+        role: UserRole;
         expiresAt: Date;
       };
       iat: number;
