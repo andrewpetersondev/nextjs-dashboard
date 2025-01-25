@@ -1,7 +1,7 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
 import { customers, invoices, revenues } from "@/db/schema";
-import { desc, eq, ilike, or, sql, asc } from "drizzle-orm";
+import { desc, eq, ilike, or, sql, asc, count, sum } from "drizzle-orm";
 // import { User } from "@/types/definitions";
 
 type Revenue = { month: string; revenue: number };
@@ -27,7 +27,10 @@ export async function fetchRevenue(): Promise<Revenue[]> {
       .select()
       .from(revenues);
 
-    const orderedData: { month: string; revenue: number }[] = data.sort(
+    const orderedData: {
+      month: string;
+      revenue: number;
+    }[] = data.sort(
       (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
     );
     // console.log("data", orderedData);
@@ -172,7 +175,10 @@ type FilteredInvoiceData = {
 export async function fetchFilteredInvoices2(
   query: string,
   currentPage: number,
-): Promise<{ data: FilteredInvoiceData[]; count: number }> {
+): Promise<{
+  data: FilteredInvoiceData[];
+  count: number;
+}> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
     const data = await db
@@ -256,23 +262,23 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
   }
 }
 
-/*export async function fetchInvoicesPagesById(id: string) {
-        try {
-            const data = await db
-                .select({
-                        id: invoices.id,
-                        amount: invoices.amount,
-                        date: invoices.date,
-                        paymentStatus: invoices.status,
-                })
-                .from(invoices)
-                .where(eq(invoices.id, id))
-            return data;
-        } catch (error) {
-            console.error("Database Error:", error);
-            throw new Error("Failed to fetch total number of invoices.");
-        }
-}*/
+export async function fetchInvoicesPagesById(id: string) {
+  try {
+    const data = await db
+      .select({
+        id: invoices.id,
+        amount: invoices.amount,
+        date: invoices.date,
+        paymentStatus: invoices.status,
+      })
+      .from(invoices)
+      .where(eq(invoices.id, id));
+    return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of invoices.");
+  }
+}
 
 export async function fetchCustomers() {
   try {
@@ -313,29 +319,58 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-// export async function fetchInvoiceDetailsById(id: string) {
-//   try {
-//     const invoice = await db
-//       .select({
-//         id: invoices.id,
-//         amount: invoices.amount,
-//         paymentStatus: invoices.paymentStatus,
-//         customer_id: invoices.customer_id,
-//         name: customers.name,
-//       })
-//       .from(invoices)
-//       .innerJoin(customers, eq(invoices.customer_id, customers.id))
-//       .where(eq(invoices.id, id));
-//     console.log("fetch invoice details by id = ", invoice);
-//     return invoice;
-//   } catch (e) {
-//     console.error("Database Error:", e);
-//     throw new Error("Failed to fetch invoice by id.");
-//   }
-// }
+export async function fetchInvoiceDetailsById(id: string) {
+  try {
+    const invoice = await db
+      .select({
+        id: invoices.id,
+        amount: invoices.amount,
+        paymentStatus: invoices.status,
+        customer_id: invoices.customerId,
+        name: customers.name,
+      })
+      .from(invoices)
+      .innerJoin(customers, eq(invoices.customerId, customers.id))
+      .where(eq(invoices.id, id));
+    console.log("fetch invoice details by id = ", invoice);
+    return invoice;
+  } catch (e) {
+    console.error("Database Error:", e);
+    throw new Error("Failed to fetch invoice by id.");
+  }
+}
 
+// @formatter:off
 export async function fetchFilteredCustomers(query: string) {
-  return query;
+  console.log(query);
+  try {
+    const searchCustomers = await db
+      .select({
+        id: customers.id,
+        name: customers.name,
+        email: customers.email,
+        image_url: customers.imageUrl,
+        total_invoices: count(invoices.id),
+        total_pending: sql<number> `sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'pending')`,
+        total_paid: sql<number> `sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'paid')`,
+      })
+      .from(customers)
+      .leftJoin(invoices, eq(customers.id, invoices.customerId))
+      .where(query ? ilike(customers.name, query) : undefined)
+      .groupBy(customers.id)
+      .orderBy(asc(customers.name));
+
+    const list = searchCustomers.map((item) => ({
+      ...item,
+      total_pending: formatCurrency(item.total_pending),
+      total_paid: formatCurrency(item.total_paid),
+    }));
+    console.log("list = ", list);
+    return list;
+  } catch (error) {
+    console.error("Fetch Filtered Customers Error:", error);
+    throw new Error("Failed to fetch customer table.");
+  }
 }
 
 // export async function fetchFilteredCustomers(query: string) {
