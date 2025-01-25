@@ -1,10 +1,10 @@
-import { verifySession } from "@/lib/dal";
+import { verifySessionOptimistic } from "@/lib/dal";
 
 export default async function MiddlewareCard() {
-  const session = await verifySession();
+  const session = await verifySessionOptimistic();
   const userId = session?.userId;
   const role = session?.role;
-  const authy = session?.isAuthenticated;
+  const authy = session?.isAuthorized;
   // const expires = session?.expiresAt;
 
   return (
