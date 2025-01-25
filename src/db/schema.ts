@@ -17,7 +17,7 @@ export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   username: varchar("username", { length: 50 }).notNull(),
   email: varchar("email", { length: 50 }).notNull().unique(),
-  role: roleEnum("role").default("user"),
+  role: roleEnum("role").default("user").notNull(),
   password: varchar("password", { length: 255 }).notNull(),
 });
 
@@ -44,7 +44,7 @@ export const invoices = pgTable("invoices", {
     .notNull()
     .references((): AnyPgColumn => customers.id),
   amount: integer("amount").notNull(),
-  status: statusEnum("status").default("pending"),
+  status: statusEnum("status").default("pending").notNull(),
   date: date("date").notNull(),
 });
 

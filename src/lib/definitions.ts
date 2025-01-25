@@ -28,6 +28,22 @@ export type Revenue = {
   revenue: number;
 };
 
+export type FetchLatestInvoicesData = {
+  amount: number;
+  email: string;
+  id: string;
+  image_url: string;
+  name: string;
+  paymentStatus: string;
+};
+
+export type ModifiedLatestInvoicesData = Omit<
+  FetchLatestInvoicesData,
+  "amount"
+> & {
+  amount: string;
+};
+
 export type LatestInvoice = {
   id: string;
   name: string;
@@ -41,6 +57,16 @@ export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
   amount: number;
 };
 
+export type FetchFilteredInvoicesData = {
+  id: string;
+  amount: number;
+  date: string;
+  name: string;
+  email: string;
+  image_url: string;
+  paymentStatus: "pending" | "paid";
+};
+
 export type InvoicesTable = {
   id: string;
   customer_id: string;
@@ -50,6 +76,16 @@ export type InvoicesTable = {
   date: string;
   amount: number;
   status: "pending" | "paid";
+};
+
+export type FilteredInvoiceData = {
+  id: string;
+  amount: number;
+  date: string;
+  name: string;
+  email: string;
+  image_url: string;
+  paymentStatus: "pending" | "paid";
 };
 
 export type CustomersTableType = {
@@ -63,14 +99,24 @@ export type CustomersTableType = {
 };
 
 export type FormattedCustomersTable = {
-  id: string;
-  name: string;
   email: string;
+  id: string;
   image_url: string;
+  name: string;
   total_invoices: number;
-  total_pending: string;
   total_paid: string;
+  total_pending: string;
 };
+
+// export type FormattedCustomersTable = {
+//   id: string;
+//   name: string;
+//   email: string;
+//   image_url: string;
+//   total_invoices: number;
+//   total_pending: string;
+//   total_paid: string;
+// };
 
 export type CustomerField = {
   id: string;
@@ -150,11 +196,27 @@ export const InvoiceFormSchema = z.object({
   date: z.string(),
 });
 
+// type of parameters for encrypt()
+// return type for encrypt() is string
 export type SessionPayload = {
   user: {
-    sessionId: string;
-    expiresAt: Date;
     userId: string;
     role: string;
+    expiresAt: Date;
   };
 };
+
+// type of parameters for decrypt() = string || undefined = ""
+//  return type for decrypt()
+export type Session =
+  | {
+      user: {
+        isAuthorized: boolean;
+        userId: string;
+        role: string;
+        expiresAt: Date;
+      };
+      iat: number;
+      exp: number;
+    }
+  | undefined;

@@ -13,7 +13,7 @@
     "reset-db": "pnpm dlx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push",
     "update-package-manager": "corepack prepare pnpm@<version> --activate",
-    "drizzle:seed": "pnpm dlx tsx src/db/seeds/bestSeed.ts"
+    "drizzle:seed": "pnpx tsx src/db/seeds/bestSeed.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",
@@ -38,6 +38,7 @@
     "pg": "^8.13.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "server-only": "^0.0.1",
     "use-debounce": "^10.0.4",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
