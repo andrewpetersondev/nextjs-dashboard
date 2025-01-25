@@ -1,23 +1,12 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
+import { type SessionPayload, type Session } from "@/lib/definitions";
 import { cookies } from "next/headers";
-import { db } from "@/db/database";
-import { sessions, users } from "@/db/schema";
-import { eq, and, gt } from "drizzle-orm";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
-type SessionPayload = {
-  user: {
-    sessionId: string;
-    expiresAt: Date;
-    userId: string;
-    role: string;
-  };
-};
-
-export async function encrypt(payload: SessionPayload) {
+export async function encrypt(payload: SessionPayload): Promise<string> {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -27,121 +16,67 @@ export async function encrypt(payload: SessionPayload) {
 
 export async function decrypt(
   session: string | undefined = "",
-): Promise<SessionPayload | null> {
+): Promise<Session> {
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ["HS256"],
-    });
-    return payload as SessionPayload;
-  } catch (error) {
-    console.error("Failed to verify session", error);
-    return null;
-  }
-}
-
-// since role is assigned in db, users will always have a role of "user" on first login and when logging in for the first time after cookie expires
-export async function createSession(id: string) {
-  try {
-    const now = new Date();
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
-    // check to see if user has non-expired session token
-    const activeSession = await db
-      .select({
-        id: sessions.id,
-        token: sessions.token,
-        role: users.role,
-      })
-      .from(sessions)
-      .innerJoin(users, eq(sessions.userId, users.id))
-      .where(and(eq(sessions.userId, id), gt(sessions.expiresAt, now)))
-      .limit(1);
-    if (activeSession.length) {
-      const sessionId = activeSession[0].id;
-      const userRole = activeSession[0].role;
-      await updateSession(id, sessionId, userRole!);
-    } else {
-      // if user does not exist or does not have session token, then create one
-      const data = await db
-        .insert(sessions)
-        .values({
-          userId: id,
-          expiresAt: expiresAt,
-        })
-        .returning({ insertedId: sessions.id });
-      const sessionId = data[0]?.insertedId;
-      if (!sessionId) {
-        throw new Error("Failed to create session in the database.");
-      }
-      const sessionPayload = {
-        user: {
-          sessionId,
-          expiresAt,
-          userId: id,
-          role: "user",
-        },
-      };
-      const sessionToken = await encrypt(sessionPayload);
-      if (!sessionToken) {
-        throw new Error(
-          "Failed to encrypt session payload when creating a new user and session.",
-        );
-      }
-      await db
-        .update(sessions)
-        .set({ token: sessionToken })
-        .where(eq(sessions.id, sessionId));
-      const cookieStore = await cookies();
-      cookieStore.set("session", sessionToken, {
-        httpOnly: true,
-        secure: true,
-        expires: expiresAt,
-        sameSite: "lax",
-        path: "/",
-      });
-      return true;
+    const { payload }: { payload: Session } = await jwtVerify(
+      session,
+      encodedKey,
+      {
+        algorithms: ["HS256"],
+      },
+    );
+    // console.log("payload = session = ", payload);
+    if (!payload || !payload.user) {
+      return undefined;
     }
+    return payload;
   } catch (error) {
-    console.error("Error in createSession:", error);
-    throw new Error("Failed to create session.");
+    console.log("Failed to verify session", error);
   }
 }
 
-// user has a valid session in db, so extend it. they might not have cookies locally
-export async function updateSession(
-  id: string,
-  sessionId: string,
-  userRole: string,
-) {
+export async function createSession(userId: string): Promise<void> {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const sessionPayload = {
-    user: {
-      sessionId: sessionId,
-      expiresAt: expiresAt,
-      userId: id,
-      role: userRole,
-    },
-  };
-  const updatedSessionToken = await encrypt(sessionPayload);
-  if (!updatedSessionToken) {
-    throw new Error("Failed to encrypt updated session payload.");
-  }
-  await db
-    .update(sessions)
-    .set({ expiresAt, token: updatedSessionToken })
-    .where(eq(sessions.id, sessionId));
-
+  const session = await encrypt({ user: { userId, role: "user", expiresAt } });
   const cookieStore = await cookies();
-  cookieStore.set("session", updatedSessionToken, {
+
+  cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
     sameSite: "lax",
     path: "/",
   });
-  return true;
+}
+
+export async function updateSession(): Promise<null | void> {
+  const session = (await cookies()).get("session")?.value;
+  const payload = await decrypt(session);
+
+  if (!session || !payload) {
+    return null;
+  }
+
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+  const cookieStore = await cookies();
+  cookieStore.set("session", session, {
+    httpOnly: true,
+    secure: true,
+    expires: expires,
+    sameSite: "lax",
+    path: "/",
+  });
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 }
+
+// how to include db sessions
+// To create and manage database sessions, you'll need to follow these steps:
+// Create a table in your database to store session and data (or check if your Auth Library handles this).
+// Implement functionality to insert, update, and delete sessions
+// Encrypt the session ID before storing it in the user's browser, and ensure the database and cookie stay in
+// sync (this is optional, but recommended for optimistic auth checks in Middleware).
