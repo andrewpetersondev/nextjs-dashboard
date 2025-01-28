@@ -196,27 +196,40 @@ export const InvoiceFormSchema = z.object({
   date: z.string(),
 });
 
-type UserRole = "admin" | "user";
+export const EncryptPayloadSchema = z.object({
+  user: z.object({
+    userId: z.string().uuid(),
+    role: z.enum(["admin", "user"]),
+    expiresAt: z.number(),
+  }),
+});
 
-// type of parameters for encrypt()
-// return type for encrypt() is string
-export type SessionPayload = {
+export type EncryptPayload = {
   user: {
     userId: string;
-    role: UserRole;
-    expiresAt: string;
+    role: string;
+    expiresAt: number;
   };
 };
 
+export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
+  user: EncryptPayloadSchema.shape.user.extend({
+    isAuthorized: z?.boolean(),
+    expiresAt: z?.number(),
+  }),
+  iat: z.number(),
+  exp: z.number(),
+});
+
 // type of parameters for decrypt() = string || undefined = ""
 //  return type for decrypt()
-export type Session =
+export type DecryptPayload =
   | {
       user: {
         isAuthorized: boolean;
         userId: string;
-        role: UserRole;
-        expiresAt: Date;
+        role: "admin" | "user";
+        expiresAt: number;
       };
       iat: number;
       exp: number;

@@ -256,4 +256,5 @@ export async function fetchFilteredCustomers(query: string) {
     console.error("Fetch Filtered Customers Error:", error);
     throw new Error("Failed to fetch customer table.");
   }
+  
 }
