@@ -24,53 +24,46 @@ import {
 // hardcode in the user role to signup()
 // signup () can be part of the DAL because verifySessionOptimistic() is impossible without database sessions
 export async function signup(state: SignupFormState, formData: FormData) {
-  // 1. Get data from form and validate it
-  const validatedFields = SignupFormSchema.safeParse({
-    username: formData.get("username"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
+  console.log("signup");
+  try {
+    const validatedFields = SignupFormSchema.safeParse({
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+
+    const { username, email, password } = validatedFields.data;
+
+    const hashedPassword = await hashPassword(password);
+
+    const data = await db
+      .insert(users)
+      .values({
+        username: username,
+        email: email,
+        password: hashedPassword,
+      })
+      .returning({ insertedId: users.id });
+
+    const userId = data[0]?.insertedId;
+
+    console.log("userId = ", userId);
+
+    if (!userId) {
+      return { message: "Failed to create account. Please try again." };
+    }
+
+    await createSession(userId);
+  } catch (error) {
+    console.error("Failed to create user:", error);
   }
-
-  // 2. Prepare data for insertion into database
-  const { username, email, password } = validatedFields.data;
-
-  const hashedPassword = await hashPassword(password);
-
-  // 3. Insert the user into the database or call an Library API
-  // 3. Is this the Data Access Layer - (DAL)??
-  const data = await db
-    .insert(users)
-    .values({
-      username: username,
-      email: email,
-      password: hashedPassword,
-    })
-    .returning({ insertedId: users.id });
-  const userId = data[0]?.insertedId;
-
-  if (!userId) {
-    return { message: "Failed to create account. Please try again." };
-  }
-
-  // 4. Create user session
-  await createSession(userId);
-
-  // 5. Redirect user
   redirect("/dashboard");
-  // try {
-  // } catch (error) {
-  //   console.error(error);
-  //   return {
-  //     success: false,
-  //     message: "Failed to create user. Please try again.",
-  //   };
-  // }
 }
 
 export async function login(
@@ -97,7 +90,7 @@ export async function login(
     // Fetch the user by email from the database
     const user = await db
       .select({
-        id: users.id,
+        userId: users.id,
         email: users.email,
         role: users.role,
         password: users.password,
@@ -112,7 +105,7 @@ export async function login(
       return { message: "Invalid email or password." };
     }
     // Create a session (reuse or update the session as needed)
-    await createSession(user[0].id);
+    await createSession(user[0].userId);
   } catch (error) {
     console.error("Failed to log in user:", error);
     return { message: "An unexpected error occurred. Please try again." };
