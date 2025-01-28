@@ -2,15 +2,15 @@ services:
   web-app:
     container_name: web-app
     build:
-      context: .
-      dockerfile: dev.Dockerfile
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     depends_on:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - ../.env
     volumes:
-      - .:/project:cached
+      - ../..:/workspaces:cached
     restart: "no"
     ports:
       - "3000:3000"
@@ -22,13 +22,14 @@ services:
       timeout: 5s
       retries: 3
       start_period: 40s
-
+    command: sleep infinity
+    # network_mode: service:db
 
   db:
-    image: postgres
-    restart: "no"
+    image: postgres:latest
+    restart: unless-stopped
     env_file:
-      - .env
+      - ../.env
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
@@ -36,12 +37,14 @@ services:
     networks:
       - my_network
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+
 volumes:
   db-data:
+
 networks:
   my_network:
     name: my_network
