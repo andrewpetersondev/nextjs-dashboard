@@ -1,0 +1,64 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
+{
+	"name": "Node.js & PostgreSQL Devcontainer",
+	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
+	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"dockerComposeFile": [
+		"../compose.dev.yaml"
+	],
+	// The 'service' property is the name of the service for the container that VS Code should
+	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+	"service": "web-app",
+	// The optional 'workspaceFolder' property is the path VS Code should open by default when
+	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	// "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/project",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": ["3000:3000", "5432:5432", "63342:63342", "9229:9229"],
+	// Use 'portsAttributes' to set  default properties for specific forwarded ports.
+	"portsAttributes": {
+		"3000": {
+			"label": "Next.js Server",
+			"onAutoForward": "notify"
+		},
+		"5432": {
+			"label": "PostgreSQL Server",
+			"onAutoForward": "notify"
+		},
+		"63342": {
+			"label": "WebStorm Debugger",
+			"onAutoForward": "notify"
+		},
+		"9229": {
+			"label": "Node.js Debugger",
+			"onAutoForward": "notify"
+		}
+	},
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+	// "onCreateCommand": 
+	// updateContentCommand: "sed -i 's/3000/3001/g' .env",
+	// "updateContentCommand": 
+	// Uncomment the next line to run commands after the container is created.
+	// "postCreateCommand": "cat /etc/os-release",
+	// "postCreateCommand": 
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"ms-azuretools.vscode-docker",
+				"dbaeumer.vscode-eslint"
+			]
+		}
+	}
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}

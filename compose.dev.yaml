@@ -7,15 +7,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      POSTGRES_HOST: db
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     env_file:
       - .env
     volumes:
-      - .:/project
+      - .:/project:cached
     restart: "no"
     ports:
       - "3000:3000"
@@ -32,10 +27,6 @@ services:
   db:
     image: postgres
     restart: "no"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     env_file:
       - .env
     volumes:
