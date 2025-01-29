@@ -2,7 +2,7 @@
 
 FROM node
 
-WORKDIR /workspaces
+WORKDIR /project/nextjs-dashboard
 
 # Enable Corepack to manage pnpm automatically
 RUN corepack enable

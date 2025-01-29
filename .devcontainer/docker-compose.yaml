@@ -1,19 +1,19 @@
 services:
-  web-app:
-    container_name: web-app
+  node-server:
+    container_name: node-server
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     depends_on:
-      db:
+      postgres-db:
         condition: service_healthy
     env_file:
       - ../.env
     volumes:
-      - ../..:/workspaces:cached
-    restart: "no"
+      - ../:/project/nextjs-dashboard:cached
+    restart: 'unless-stopped'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - my_network
     healthcheck:
@@ -23,27 +23,28 @@ services:
       retries: 3
       start_period: 40s
     command: sleep infinity
-    # network_mode: service:db
+    # network_mode: service:postgres-db
 
-  db:
+  postgres-db:
+    container_name: postgres-db
     image: postgres:latest
     restart: unless-stopped
     env_file:
       - ../.env
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres-db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - my_network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ['CMD', 'pg_isready', '-U', 'postgres']
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  db-data:
+  postgres-db-data:
 
 networks:
   my_network:
