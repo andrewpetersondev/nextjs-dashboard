@@ -1,30 +1,43 @@
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug Server",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/server/index.js", // Adjust the path to your server entry point
-            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-            "env": {
-                "NODE_ENV": "development",
-                "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/postgres"
-            },
-            "sourceMaps": true,
-            "restart": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Debug Frontend",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/src",
-            "sourceMaps": true,
-            "sourceMapPathOverrides": {
-                "webpack:///src/*": "${webRoot}/*"
-            }
-        }
-    ]
-}
+// {
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "name": "Debug Server",
+//             "type": "node",
+//             "request": "launch",
+//             "program": "${workspaceFolder}/server/index.js", // Adjust the path to your server entry point
+//             "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+//             "env": {
+//                 "NODE_ENV": "development",
+//                 "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/postgres"
+//             },
+//             "sourceMaps": true,
+//             "restart": true,
+//             "console": "integratedTerminal"
+//         },
+//         {
+//             "name": "Debug Frontend",
+//             "type": "chrome",
+//             "request": "launch",
+//             "url": "http://localhost:3000",
+//             "webRoot": "${workspaceFolder}/src",
+//             "sourceMaps": true,
+//             "sourceMapPathOverrides": {
+//                 "webpack:///src/*": "${webRoot}/*"
+//             }
+//         },
+//         {
+//             "name": "Attach to Node",
+//             "type": "node",
+//             "request": "attach",
+//             "port": 9229,
+//             "address": "localhost",
+//             "localRoot": "${workspaceFolder}",
+//             "remoteRoot": "/project/nextjs-dashboard",
+//             "restart": true,
+//             "skipFiles": [
+//                 "<node_internals>/**"
+//             ]
+//         }
+//     ]
+// }
