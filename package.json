@@ -9,11 +9,11 @@
     "start": "next start",
     "lint": "next lint",
     "create-schema": "psql ./src/db/createSchema.sql",
-    "create-auth-secret": "pnpx auth secret",
-    "reset-db": "pnpm dlx tsx src/db/seeds/reset.ts",
+    "create-auth-secret": "npx auth secret",
+    "reset-db": "npx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push",
     "update-package-manager": "corepack prepare pnpm@<version> --activate",
-    "drizzle:seed": "pnpx tsx src/db/seeds/bestSeed.ts"
+    "drizzle:seed": "npx tsx src/db/seeds/bestSeed.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",
@@ -64,6 +64,5 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.22.0"
-  },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+  }
 }

@@ -1,11 +1,5 @@
-# Ignore Mounts while in development
-src/
-public/
-
 # Dependency Artifacts
-node_modules/
-
-
+node_modules
 
 # Ignore build folders
 .next/
@@ -29,3 +23,8 @@ pnpm-debug.log
 # Ignore git-related files
 .git/
 .gitignore
+
+# Docker-related files
+.devcontainer/
+Dockerfile
+compose.yaml
