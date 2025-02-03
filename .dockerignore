@@ -16,7 +16,6 @@ pnpm-debug.log
 
 # Ignore dependency installation and output folders
 .DS_Store
-.vscode/
 .idea/
 *.swp
 

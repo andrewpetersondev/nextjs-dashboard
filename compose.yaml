@@ -1,39 +1,42 @@
-# version: '3.8'
-
 name: nextjs-dashboard
 
 services:
   web:
+    container_name: web
+    restart: no
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules # Prevent node_modules from being overwritten
     depends_on:
       db:
         condition: service_healthy
-        restart: true
     env_file:
       - .env
     ports:
       - "3000:3000"
       - "9229:9229"
     command: npm run dev
-    # command: tail -f /dev/null  # **Updated command to keep the container running**
+    environment:
+      - NODE_ENV=development
+    #      - DEBUG=true
     develop:
       watch:
-        - action: sync
-          path: .
+        - path: .
+          action: sync
           target: /workspace
           ignore:
             - node_modules
-        # - action: sync+restart
-        #   path: ./proxy/nginx.conf
-        #   target: /etc/nginx/conf.d/default.conf
-    environment:
-      - DEBUG=true
-      - NODE_ENV=development
-    # profiles:
-      # - debug
-
+            - .next
+            - .git
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:3000 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
   db:
     container_name: dashboard-db
     image: postgres:17
@@ -43,13 +46,10 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
-    pre_stop:
-      - command: "echo 'Stopping the container ...' "
-      - user: postgres
-      # - privileged:
-      # - working directory:
-      # - environment:
+      - "5432:5432"
+    #    pre_stop:
+    #      - command: "echo 'Stopping the container ...' "
+    #      - user: postgres
     post_start:
       - command: sh -c "until pg_isready -U postgres; do sleep 1; done"
         user: postgres
@@ -57,17 +57,39 @@ services:
         user: postgres
       - command: psql -U postgres -d postgres -c "CREATE SCHEMA IF NOT EXISTS myschema"
         user: postgres
-      # - privileged:
-      # - working directory:
-      # - environment:
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 10s
 
+  # why does this create so many running containers even though i am not running any docker containers
+  # it is literally creating them from death
+  #  web-debug:
+  #    container_name: web-debug
+  #    extends:
+  #      service: web
+  #    depends_on: # depends_on and volumes_from was removed by ghcc
+  #      web:
+  #        condition: service_healthy
+  #    volumes_from:
+  #      - web
+  #    command: ''
+  #    ports:
+  #      - "9229:9229" # debugging port for node
+  #    environment:
+  #      - DEBUG=true
+  #    profiles:
+  #      - debug
+
+  # commenting out until I figure out how to extend multiple services onto one base service
+  #  web-test:
+  #    extends:
+  #      service: web
+  #    command: npm run test
+  #    profiles:
+  #      - test
+
 volumes:
   db-data:
-
-

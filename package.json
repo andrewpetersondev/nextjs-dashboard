@@ -8,11 +8,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "debug": "NODE_OPTIONS='--inspect' next dev --turbopack",
+    "debug2": "NODE_OPTIONS='--inspect=0.0.0.0:9229' next dev --turbopack",
     "create-schema": "psql ./src/db/createSchema.sql",
     "create-auth-secret": "npx auth secret",
     "reset-db": "npx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push",
-    "update-package-manager": "corepack prepare pnpm@<version> --activate",
     "drizzle:seed": "npx tsx src/db/seeds/bestSeed.ts"
   },
   "dependencies": {
@@ -58,6 +59,7 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^15.14.0",
+    "nodemon": "^3.1.9",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
