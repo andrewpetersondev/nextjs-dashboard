@@ -1,7 +1,7 @@
 import { db } from "@/db/database";
 import { formatCurrency } from "@/lib/utils";
 import { customers, invoices, revenues } from "@/db/schema";
-import { desc, eq, ilike, or, sql, asc, count, sum } from "drizzle-orm";
+import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
 import {
   CustomerField,
   FetchFilteredInvoicesData,

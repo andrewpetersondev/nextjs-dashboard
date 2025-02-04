@@ -1,0 +1,34 @@
+version: '3.8'
+name: nextjs-dashboard
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app  # Mount entire project directory
+      - /app/node_modules  # Prevent node_modules from being overwritten
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Debugging port
+    command: npm run dev -- --inspect=0.0.0.0:9229
+    environment:
+      - NODE_ENV=development
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules
+            - .next
+            - .git
+
+  #  db:
+  # Your existing DB configuration remains the same

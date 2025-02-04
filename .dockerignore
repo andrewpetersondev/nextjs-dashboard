@@ -22,8 +22,14 @@ pnpm-debug.log
 # Ignore git-related files
 .git/
 .gitignore
+.github/
 
 # Docker-related files
 .devcontainer/
 Dockerfile
 compose.yaml
+
+
+.run/
+notdevcontainer/
+Notes/
