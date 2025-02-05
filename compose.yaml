@@ -2,69 +2,74 @@ name: nextjs-dashboard
 
 services:
   web:
-    container_name: web
-    restart: no
     build:
       context: .
-      dockerfile: Dockerfile
-    develop:
-      watch:
-        - path: .
-          action: rebuild
-          target: /workspace
-          ignore:
-            - node_modules
-            - .next
-            - .git
-        - path: ./src
-          action: sync
-          target: /workspace/src
-          ignore:
-            - node_modules
-            - .next
-            - .git
-    depends_on:
-      - db
-    env_file:
-      - .env
+      target: dev
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=dashboard
+      - SESSION_SECRET=${SESSION_SECRET}
+      - POSTGRES_URL=${POSTGRES_URL}
+      - NODE_OPTIONS=--inspect=0.0.0.0:9229
+      #     - NODE_OPTIONS=--experimental-json-modules
+      #  - NODE_OPTIONS=--inspect=0.0.0.0
     ports:
       - "3000:3000"
       - "9229:9229"
-    command: npm run dev
-    environment:
-       - NODE_OPTIONS=--inspect=0.0.0.0:9229 # source-maps are enabled by default in development
-    networks:
-      - default
-    healthcheck: # this might be causing containers to start unintentionally
-      test: [ "CMD-SHELL", "curl -f http://localhost:3000 || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 90s
+    depends_on:
+      - db
+    #        condition: service_healthy
+    volumes:
+      - .:/usr/src/workspace
+    working_dir: /usr/src/workspace
+    command: npm run debug
+    #    develop:
+    #      watch:
+    #        - path: .
+    #          action: rebuild
+    #          target: /workspace
+    #          ignore:
+    #            - node_modules
+    #            - .next
+    #            - .git
+    #        - path: ./src
+    #          action: sync
+    #          target: /workspace/src
+    #          ignore:
+    #            - node_modules
+    #            - .next
+    #            - .git
+    #    healthcheck:
+    #      test: [ "CMD-SHELL", "curl -f http://localhost:3000 || exit 1" ]
+    #      interval: 30s
+    #      timeout: 10s
+    #      retries: 3
+    #      start_period: 10s
+    restart: no
 
 
   db:
-    container_name: dashboard-db
     image: postgres:17
     restart: unless-stopped
-    env_file:
-      - .env
+    user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 10s
-      retries: 5
-      start_period: 60s
-      timeout: 10s
-    networks:
-      - default
+    environment:
+      - POSTGRES_DB=dashboard
+      - SESSION_SECRET=${SESSION_SECRET}
+      - POSTGRES_URL=${POSTGRES_URL}
+    expose:
+      - 5432
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+#      interval: 10s
+#      retries: 5
+#      start_period: 10s
+#      timeout: 10s
 
 volumes:
   db-data:
 
-networks:
-  default:
-    name: dashboard-network
+

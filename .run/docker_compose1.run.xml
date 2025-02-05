@@ -1,12 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="dev" type="js.build_tools.npm" singleton="false" nameIsGenerated="true">
-    <package-json value="$PROJECT_DIR$/package.json" />
-    <command value="run" />
-    <scripts>
-      <script value="dev" />
-    </scripts>
-    <node-interpreter value="project" />
-    <envs />
+  <configuration default="false" name="docker_compose1" type="NodeJSConfigurationType" singleton="false" application-parameters="dev" path-to-js-file="node_modules/next/dist/bin/next" working-dir="$PROJECT_DIR$">
+    <EXTENSION ID="NodeDockerComposeRunConfigurationExtension" commandLine="up --build" />
     <EXTENSION ID="com.intellij.lang.javascript.buildTools.npm.rc.StartBrowserRunConfigurationExtension">
       <browser name="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" start="true" with-js-debugger="true" url="http://localhost:3000/" />
     </EXTENSION>
