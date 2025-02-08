@@ -1,0 +1,36 @@
+{
+  "name": "Existing Docker Compose (Extend)",
+  "dockerComposeFile": [
+    "compose.yaml"
+  ],
+  "service": "server",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [
+    3000,
+    // App Port
+    5432,
+    // Database Port
+    9229
+    // Debugger Port
+  ],
+  "runServices": [
+    "db",
+    "server"
+  ],
+  "customizations": {
+    "jetbrains": {
+      "settings": {
+        "com.intellij:app:EditorSettings.is_ensure_newline_at_eof": true,
+        "com.intellij:app:GeneralSettings.autoSaveIfInactive": true,
+        "com.intellij:app:GeneralSettings.inactiveTimeout": 10,
+        "org.jetbrains.plugins.github:app:GithubSettings.clone_git_using_ssh": true,
+        "com.intellij:app:XmlEditorOptions.showCssInlineColorPreview": true,
+        "com.intellij:app:XmlEditorOptions.tagTreeHighlightingEnabled": false,
+        "com.intellij:app:EmmetOptions.previewEnabled": true,
+        "com.intellij:app:HttpConfigurable.use_proxy_pac": true,
+        "org.intellij.plugins.markdown:app:MarkdownCodeInsightSettings.renumberListsOnType": true
+      },
+      "backend": "IntelliJ"
+    }
+  }
+}
