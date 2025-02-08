@@ -26,8 +26,7 @@ services:
     build:
       context: .
       target: dev
-    env_file:
-      - ../.env
+    env_file: ../.env
     environment:
       - NODE_OPTIONS=--inspect=0.0.0.0:9229
     ports:
@@ -58,8 +57,7 @@ services:
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    env_file:
-      - ../.env
+    env_file: ../.env
     ports:
       - *db-port
     healthcheck: *db-healthcheck
