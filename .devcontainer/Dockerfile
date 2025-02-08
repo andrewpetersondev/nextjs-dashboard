@@ -6,7 +6,7 @@ WORKDIR /usr/src/workspace
 EXPOSE 3000 9229
 COPY ../package*.json ./
 RUN npm install
-COPY . .
+COPY .. .
 
 # Development stage
 FROM builder as dev
