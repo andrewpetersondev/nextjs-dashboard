@@ -5,8 +5,7 @@ FROM node:23 as builder
 WORKDIR /usr/src/workspace
 EXPOSE 3000 9229
 COPY package*.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm install
+RUN npm install
 COPY . .
 
 # Development stage
