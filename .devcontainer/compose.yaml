@@ -1,0 +1,68 @@
+name: nextjs-dashboard
+
+x-ports:
+  app-port: &app-port "3000:3000"
+  debug-port: &debug-port "9229:9229"
+  db-port: &db-port "5432:5432"
+
+x-healthcheck:
+  &healthcheck
+  test: [ "CMD-SHELL", "curl -f http://localhost:3000 || exit 1" ]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
+
+x-db-healthcheck:
+  &db-healthcheck
+  test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+  interval: 10s
+  timeout: 10s
+  retries: 5
+  start_period: 10s
+
+services:
+  server:
+    build:
+      context: .
+      target: dev
+    env_file:
+      - ../.env
+    environment:
+      - NODE_OPTIONS=--inspect=0.0.0.0:9229
+    ports:
+      - *app-port
+      - *debug-port
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/workspace
+    working_dir: /usr/src/workspace
+    command: npm run dev
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /workspace/src
+          ignore:
+            - node_modules
+            - .next
+            - .git
+    healthcheck: *healthcheck
+    restart: no
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file:
+      - ../.env
+    ports:
+      - *db-port
+    healthcheck: *db-healthcheck
+
+volumes:
+  db-data:
