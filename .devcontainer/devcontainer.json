@@ -17,6 +17,10 @@
     "db",
     "server"
   ],
+  onCreateCommand: [
+    "npm",
+    "install"
+  ],
   "customizations": {
     "jetbrains": {
       "settings": {
