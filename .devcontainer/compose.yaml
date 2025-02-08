@@ -38,12 +38,12 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/usr/src/workspace
+      - ..:/usr/src/workspace
     working_dir: /usr/src/workspace
     command: npm run dev
     develop:
       watch:
-        - path: ./src
+        - path: ../src
           action: sync
           target: /workspace/src
           ignore:

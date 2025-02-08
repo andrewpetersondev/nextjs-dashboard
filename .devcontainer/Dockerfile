@@ -4,7 +4,7 @@
 FROM node:23 as builder
 WORKDIR /usr/src/workspace
 EXPOSE 3000 9229
-COPY package*.json ./
+COPY ../package*.json ./
 RUN npm install
 COPY . .
 
