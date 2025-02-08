@@ -29,6 +29,8 @@ services:
     env_file: ../.env
     environment:
       - NODE_OPTIONS=--inspect=0.0.0.0:9229
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=dashboard
     ports:
       - *app-port
       - *debug-port
