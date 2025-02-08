@@ -6,7 +6,7 @@ WORKDIR /usr/src/workspace
 EXPOSE 3000 9229
 COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm install --include=dev
+    npm install
 COPY . .
 
 # Development stage

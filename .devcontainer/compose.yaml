@@ -58,6 +58,9 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     env_file: ../.env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=dashboard
     ports:
       - *db-port
     healthcheck: *db-healthcheck
