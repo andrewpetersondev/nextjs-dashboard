@@ -7,21 +7,18 @@
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [
     3000,
-    // App Port
     5432,
-    // Database Port
     9229
-    // Debugger Port
   ],
   "runServices": [
     "db",
     "server"
   ],
-  "containerEnv": {
-  },
+  //  "containerEnv": {},
   "customizations": {
     "jetbrains": {
       "settings": {
+        "JavaScript:app:JSEditorOptions.start_string_interpolation_on_typing": true,
         "com.intellij:app:EditorSettings.is_ensure_newline_at_eof": true,
         "com.intellij:app:GeneralSettings.autoSaveIfInactive": true,
         "com.intellij:app:GeneralSettings.inactiveTimeout": 10,
