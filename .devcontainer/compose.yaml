@@ -47,9 +47,9 @@ services:
           action: sync
           target: /workspace/src
           ignore:
-            - node_modules
-            - .next
-            - .git
+            - ../node_modules
+            - ../.next
+            - ../.git
     healthcheck: *healthcheck
     restart: no
 

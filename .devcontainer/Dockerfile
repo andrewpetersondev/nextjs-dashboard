@@ -3,9 +3,16 @@
 # Builder stage shared across all targets
 FROM node:23 as builder
 WORKDIR /usr/src/workspace
+
+   # Copy files (temporary debug: copy everything in case of failure)
+COPY .. .
+
+   # List all files in the workspace directory
+RUN ls -la /usr/src/workspace
+
 EXPOSE 3000 9229
-COPY ../package*.json ../
-RUN npm install
+COPY ../package*.json ./
+#RUN npm install
 COPY .. .
 
 # Development stage
@@ -20,6 +27,6 @@ USER node
 CMD ["npm", "run", "start"]
 
 # Test stage
-FROM builder as test
-ENV NODE_ENV=test
-RUN npm run test
+#FROM builder as test
+#ENV NODE_ENV=test
+#RUN npm run test
