@@ -3,7 +3,5 @@ node_modules
 .next/
 .DS_Store
 *.swp
-.git/
-.gitignore
 build/
 dist/
