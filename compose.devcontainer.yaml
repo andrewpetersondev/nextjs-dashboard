@@ -29,8 +29,6 @@ services:
     env_file: .env
     environment:
       - NODE_OPTIONS=--inspect=0.0.0.0:9229
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=dashboard
     ports:
       - *app-port
       - *debug-port
@@ -38,26 +36,21 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ..:/usr/src/workspace
+      - .:/usr/src/workspace
       - /usr/src/workspace/node_modules
-    working_dir: /usr/src/workspace
-    command: npm run dev
+    command: npm run dev -- --watch
     develop:
       watch:
-        - path: ..
+        - path: .
           action: sync+restart
           target: /workspace
           ignore:
-            - ../node_modules
-            - ../.next
-            - ../.git
-        - path: ../src
+            - node_modules
+            - .next
+            - .git
+        - path: /src
           action: sync
           target: /workspace/src
-          ignore:
-            - ../node_modules
-            - ../.next
-            - ../.git
     healthcheck: *healthcheck
     restart: no
 

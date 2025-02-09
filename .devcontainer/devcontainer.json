@@ -1,7 +1,7 @@
 {
   "name": "Existing Docker Compose (Extend)",
   "dockerComposeFile": [
-    "compose.yaml"
+    "../compose.devcontainer.yaml"
   ],
   "service": "server",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -14,7 +14,6 @@
     "db",
     "server"
   ],
-  //  "containerEnv": {},
   "customizations": {
     "jetbrains": {
       "settings": {
@@ -24,10 +23,7 @@
         "com.intellij:app:GeneralSettings.inactiveTimeout": 10,
         "org.jetbrains.plugins.github:app:GithubSettings.clone_git_using_ssh": true,
         "com.intellij:app:XmlEditorOptions.showCssInlineColorPreview": true,
-        "com.intellij:app:XmlEditorOptions.tagTreeHighlightingEnabled": false,
-        "com.intellij:app:EmmetOptions.previewEnabled": true,
-        "com.intellij:app:HttpConfigurable.use_proxy_pac": true,
-        "org.intellij.plugins.markdown:app:MarkdownCodeInsightSettings.renumberListsOnType": true
+        "com.intellij:app:XmlEditorOptions.tagTreeHighlightingEnabled": false
       },
       "backend": "IntelliJ"
     }
