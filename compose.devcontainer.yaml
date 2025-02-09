@@ -25,6 +25,7 @@ services:
   server:
     build:
       context: .
+      dockerfile: devcontainer.Dockerfile
       target: dev
     env_file: .env
     environment:
