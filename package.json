@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect=0.0.0.0:9229' next dev --turbopack",
+    "dev": "next dev --turbopack",
+    "dev1": "NODE_OPTIONS='--inspect=0.0.0.0:9229' next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "debug2": "next dev --turbopack",
     "debug": "NODE_OPTIONS='--inspect=0.0.0.0:9229' next dev --turbopack",
     "create-schema": "psql ./src/db/createSchema.sql",
     "create-auth-secret": "npx auth secret",

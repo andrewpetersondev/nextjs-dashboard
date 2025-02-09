@@ -26,7 +26,7 @@ services:
     build:
       context: .
       target: dev
-    env_file: ../.env
+    env_file: .env
     environment:
       - NODE_OPTIONS=--inspect=0.0.0.0:9229
       - POSTGRES_USER=postgres
@@ -39,10 +39,18 @@ services:
         condition: service_healthy
     volumes:
       - ..:/usr/src/workspace
+      - /usr/src/workspace/node_modules
     working_dir: /usr/src/workspace
     command: npm run dev
     develop:
       watch:
+        - path: ..
+          action: sync+restart
+          target: /workspace
+          ignore:
+            - ../node_modules
+            - ../.next
+            - ../.git
         - path: ../src
           action: sync
           target: /workspace/src
@@ -59,7 +67,7 @@ services:
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    env_file: ../.env
+    env_file: .env
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=dashboard

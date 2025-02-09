@@ -4,15 +4,14 @@
 FROM node:23 AS builder
 WORKDIR /usr/src/workspace
 
-   # Copy files (temporary debug: copy everything in case of failure)
-COPY .. .
-
-   # List all files in the workspace directory
-RUN ls -la /usr/src/workspace
+# Copy files (temporary debug: copy everything in case of failure)
+#COPY .. .
+# List all files in the workspace directory
+#RUN ls -la /usr/src/workspace
 
 EXPOSE 3000 9229
 COPY ../package*.json ./
-#RUN npm install
+# RUN npm install
 COPY .. .
 
 # Development stage
