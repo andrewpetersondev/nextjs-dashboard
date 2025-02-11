@@ -3,16 +3,34 @@
     "dockerComposeFile": "../compose.yaml",
     "service": "nextjs",
     "workspaceFolder": "/project",
-    "forwardPorts": [3000, 5432, 9229],
+    "forwardPorts": [
+        3000,
+        5432,
+        9229
+    ],
     "customizations": {
         "vscode": {
-            "settings": {},
             "extensions": [
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode",
                 "ms-azuretools.vscode-docker",
-                "bradlc.vscode-tailwindcss"
-            ]
+                "bradlc.vscode-tailwindcss",
+                "ms-ossdata.vscode-postgresql",
+                "ms-vscode.vscode-typescript-next",
+                "ms-vscode.js-debug-nightly",
+                "emilast.logfilehighlighter",
+                "streetsidesoftware.code-spell-checker"
+            ],
+            "settings": {
+                "pgsql.connections": [
+                    {
+                        "server": "postgres",
+                        "database": "dashboard",
+                        "user": "postgres",
+                        "password": "postgres"
+                    }
+                ]
+            }
         }
     },
     "mounts": [
