@@ -7,9 +7,9 @@
         {
             "type": "node",
             "request": "attach",
-            "name": "Docker: Attach to Node",
-            "remoteRoot": "/workspace",
-            "port": 9229,
+            "name": "Attach to Docker",
+            "remoteRoot": "/project",
+            "port": 9230, // Changed port
             "address": "localhost",
             "localRoot": "${workspaceFolder}",
             "protocol": "inspector"
@@ -21,7 +21,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${file}"
+            "program": "${workspaceFolder}/node_modules/.bin/next",
+            "args": ["dev"]
         }
     ]
 }

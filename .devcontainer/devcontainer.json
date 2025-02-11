@@ -1,0 +1,30 @@
+{
+    "name": "Next.js & TypeScript",
+    "dockerComposeFile": "../compose.yaml",
+    "service": "nextjs",
+    "workspaceFolder": "/project",
+    "forwardPorts": [3000, 5432, 9230],
+    "postCreateCommand": "npm install && npm install -g npm@11",
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "ms-azuretools.vscode-docker",
+                "bradlc.vscode-tailwindcss"
+            ]
+        }
+    },
+    "containerEnv": {
+        "NODE_OPTIONS": "--inspect=0.0.0.0:9230",
+        "NODE_ENV": "development"
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
+        "source=postgres-data,target=/var/lib/postgresql/data,type=volume"
+    ],
+    "remoteEnv": {
+        "DOTENV_CONFIG_PATH": "/project/.env"
+    }
+}

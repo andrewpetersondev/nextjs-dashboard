@@ -5,3 +5,5 @@ node_modules
 *.swp
 build/
 dist/
+.git
+.gitignore

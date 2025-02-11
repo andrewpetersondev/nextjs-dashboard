@@ -1,27 +1,35 @@
-version: '3.8'
+# version: '3.8'
 services:
-  web:
-    build: .
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /project
+    volumes:
+      - .:/project
+      - /project/node_modules
     ports:
       - "3000:3000"
-      - "9229:9229"
-    command: npm run dev --watch
-    volumes:
-      - .:/workspace
+      - "9230:9230"
+    command: npm run dev
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
-      - NODE_OPTIONS=--inspect=0.0.0.0:9229
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/dashboard
-    profiles:
-      - debug
-  db:
-    image: postgres:17
+      DUMB_VARIABLE: "dumb value"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     env_file:
       - .env
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      DUMB_VARIABLE: "dumb value"
+
+
 volumes:
-  db-data:
+  postgres-data:
