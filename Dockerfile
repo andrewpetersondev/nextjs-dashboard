@@ -3,7 +3,7 @@ FROM node
 WORKDIR /project
 
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm install -g npm@11
 
 COPY . .
 

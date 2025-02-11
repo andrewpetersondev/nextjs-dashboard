@@ -4,7 +4,6 @@
     "service": "nextjs",
     "workspaceFolder": "/project",
     "forwardPorts": [3000, 5432, 9229],
-    "postCreateCommand": "npm install && npm install -g npm@11",
     "customizations": {
         "vscode": {
             "settings": {},
@@ -16,15 +15,8 @@
             ]
         }
     },
-    "containerEnv": {
-        // "NODE_OPTIONS": "--inspect=0.0.0.0:9229",
-        "NODE_ENV": "development"
-    },
     "mounts": [
         "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
         "source=postgres-data,target=/var/lib/postgresql/data,type=volume"
-    ],
-    "remoteEnv": {
-        "DOTENV_CONFIG_PATH": "/project/.env"
-    }
+    ]
 }

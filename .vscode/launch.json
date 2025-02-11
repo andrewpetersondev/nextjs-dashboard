@@ -5,24 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach to Next.js",
             "type": "node",
             "request": "attach",
-            "name": "Attach to Docker",
-            "remoteRoot": "/project",
             "port": 9229,
             "address": "localhost",
-            "localRoot": "${workspaceFolder}",
-            "protocol": "inspector"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
+            "restart": true,
+            "protocol": "inspector",
             "skipFiles": [
                 "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/node_modules/.bin/next",
-            "args": ["dev"]
+            ]
+        },
+        {
+            "name": "Debug Client-Side",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug Full Stack",
+            "configurations": ["Attach to Next.js", "Debug Client-Side"]
         }
     ]
 }

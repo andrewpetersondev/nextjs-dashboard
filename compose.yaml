@@ -5,17 +5,18 @@ services:
       context: .
       dockerfile: Dockerfile
     working_dir: /project
-    volumes:
-      - .:/project
-      - /project/node_modules
     ports:
       - "3000:3000"
       - "9229:9229"
-    command: npm run dev
+    volumes:
+      - .:/project
+      - /project/node_modules
     env_file:
       - .env
     environment:
-      DUMB_VARIABLE: "dumb value"
+       NODE_ENV: development
+       NODE_OPTIONS: --inspect=0.0.0.0:9229
+    command: npm run dev
     depends_on:
       - postgres
 
@@ -27,9 +28,6 @@ services:
       - "5432:5432"
     env_file:
       - .env
-    environment:
-      DUMB_VARIABLE: "dumb value"
-
 
 volumes:
   postgres-data:

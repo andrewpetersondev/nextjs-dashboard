@@ -10,6 +10,7 @@
 6. Dockerfile, docker compose, devcontainers
 7. Drizzle ORM
 8. PostgreSQL
+9. NPM 
 
 ## Project  Outline
 
@@ -31,16 +32,16 @@ Your response should take into consideration that NODE_ENV=development
 
 Docker-specific instructions:
 
-Configure Docker Compose to use the --watch flag for continuous monitoring during development.
-Ensure that the Next.js and PostgreSQL containers are linked correctly.
 Mount the necessary volumes for code and database persistence.
 
 Debugging instructions:
 
-Set up a remote debugging configuration in vscode for your Next.js application running in the Docker container.
-
-Use breakpoints, step-by-step execution, and variable inspections in WebStorm for debugging.
+Set up a remote debugging configuration in vscode for your Next.js application running in the Devcontainer.
 
 I am using VS Code.
 
 Make sure local code and remote code is syncing.
+
+## NPM
+
+if script is already created in package.json, run with npm.
