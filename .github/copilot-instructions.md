@@ -37,6 +37,10 @@ Mount the necessary volumes for code and database persistence.
 
 Debugging instructions:
 
-Set up a remote debugging configuration in WebStorm for your Next.js application running in the Docker container.
+Set up a remote debugging configuration in vscode for your Next.js application running in the Docker container.
 
 Use breakpoints, step-by-step execution, and variable inspections in WebStorm for debugging.
+
+I am using VS Code.
+
+Make sure local code and remote code is syncing.

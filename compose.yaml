@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    command: npm run dev --watch
+    volumes:
+      - .:/workspace
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--inspect=0.0.0.0:9229
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/dashboard
+    profiles:
+      - debug
+  db:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  db-data:
