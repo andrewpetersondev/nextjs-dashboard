@@ -10,7 +10,7 @@ services:
       - /project/node_modules
     ports:
       - "3000:3000"
-      - "9230:9230"
+      - "9229:9229"
     command: npm run dev
     env_file:
       - .env

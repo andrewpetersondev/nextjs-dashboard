@@ -9,7 +9,7 @@
             "request": "attach",
             "name": "Attach to Docker",
             "remoteRoot": "/project",
-            "port": 9230, // Changed port
+            "port": 9229,
             "address": "localhost",
             "localRoot": "${workspaceFolder}",
             "protocol": "inspector"

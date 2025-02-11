@@ -1,9 +1,6 @@
-FROM node:23-alpine
+FROM node
 
 WORKDIR /project
-
-# Install Git
-RUN apk update && apk add --no-cache git
 
 COPY package*.json ./
 RUN npm install
