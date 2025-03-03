@@ -4,7 +4,6 @@ import LoginForm from "@/ui/login-form";
 export default function LoginPage() {
   const x = 5;
   const y = 10;
-  console.log("Login Page");
   console.log("Login Page , ",x + y);
 
   return (

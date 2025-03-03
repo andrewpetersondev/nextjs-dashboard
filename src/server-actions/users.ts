@@ -24,7 +24,6 @@ import {
 // hardcode in the user role to signup()
 // signup () can be part of the DAL because verifySessionOptimistic() is impossible without database sessions
 export async function signup(state: SignupFormState, formData: FormData) {
-  console.log("signup");
   try {
     const validatedFields = SignupFormSchema.safeParse({
       username: formData.get("username"),
@@ -33,6 +32,7 @@ export async function signup(state: SignupFormState, formData: FormData) {
     });
 
     if (!validatedFields.success) {
+      // console.log("Validation failed:", validatedFields.error.flatten().fieldErrors);
       return {
         errors: validatedFields.error.flatten().fieldErrors,
       };
@@ -41,6 +41,7 @@ export async function signup(state: SignupFormState, formData: FormData) {
     const { username, email, password } = validatedFields.data;
 
     const hashedPassword = await hashPassword(password);
+    // console.log("Password hashed successfully");
 
     const data = await db
       .insert(users)
@@ -53,17 +54,22 @@ export async function signup(state: SignupFormState, formData: FormData) {
 
     const userId = data[0]?.insertedId;
 
-    console.log("userId = ", userId);
+    // console.log("userId = ", userId);
 
     if (!userId) {
+      console.log("Failed to create account");
       return { message: "Failed to create account. Please try again." };
     }
 
     await createSession(userId);
+    // console.log("Session created successfully");
+
+  
   } catch (error) {
     console.error("Failed to create user:", error);
+    return { message: "An unexpected error occurred. Please try again." };
   }
-  redirect("/dashboard");
+    return redirect("/dashboard");
 }
 
 export async function login(
@@ -104,13 +110,13 @@ export async function login(
     if (!validPassword) {
       return { message: "Invalid email or password." };
     }
-    // Create a session (reuse or update the session as needed)
     await createSession(user[0].userId);
+
   } catch (error) {
     console.error("Failed to log in user:", error);
     return { message: "An unexpected error occurred. Please try again." };
   }
-  redirect("/dashboard");
+      redirect("/dashboard");
 }
 
 export async function logout() {

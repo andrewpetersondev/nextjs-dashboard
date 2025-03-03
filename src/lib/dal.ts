@@ -39,8 +39,6 @@ export const verifySessionOptimistic = cache(async () => {
 
   const session = await decrypt(cookie);
 
-  const session = await decrypt(cookie);
-
   if (!session || !session.user || !session.user.userId) {
     console.error("Invalid session or missing user information");
     redirect("/login");

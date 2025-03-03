@@ -213,25 +213,8 @@ export type EncryptPayload = {
 };
 
 export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-  user: EncryptPayloadSchema.shape.user.extend({
-    isAuthorized: z?.boolean(),
-    expiresAt: z?.number(),
-  }),
   iat: z.number(),
   exp: z.number(),
 });
 
-// type of parameters for decrypt() = string || undefined = ""
-//  return type for decrypt()
-export type DecryptPayload =
-  | {
-      user: {
-        isAuthorized: boolean;
-        userId: string;
-        role: "admin" | "user";
-        expiresAt: number;
-      };
-      iat: number;
-      exp: number;
-    }
-  | undefined;
+export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
