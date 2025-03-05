@@ -25,13 +25,9 @@ export const generateYAxis = (
     revenue: number;
   }[],
 ) => {
-  // Calculate what labels we need to display on the y-axis
-  // based on highest record and in the 1000s
   const yAxisLabels = [];
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-  // console.log(highestRecord);
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
-  // console.log(topLabel);
 
   for (let i = topLabel; i >= 0; i -= 100000) {
     yAxisLabels.push(`$${i / 1000}K`);
@@ -41,14 +37,10 @@ export const generateYAxis = (
 };
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
-  // If the total number of pages is 7 or less,
-  // display all pages without any ellipsis.
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // If the current page is among the first 3 pages,
-  // show the first 3, an ellipsis, and the last 2 pages.
   if (currentPage <= 3) {
     return [1, 2, 3, "...", totalPages - 1, totalPages];
   }

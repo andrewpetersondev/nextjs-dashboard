@@ -1,7 +1,6 @@
 import { verifySessionOptimistic } from "@/lib/dal";
 import AdminDashboard from "@/ui/dashboard/admin-dashboard";
 import UserDashboard from "@/ui/dashboard/user-dashboard";
-import { redirect } from "next/navigation";
 import MiddlewareCard from "@/ui/dashboard/middleware-card";
 
 export default async function Page() {
@@ -14,14 +13,12 @@ export default async function Page() {
         <AdminDashboard />
       </div>
     );
-  } else if (userRole === "user") {
+  } else {
     return (
       <div>
         <MiddlewareCard />
         <UserDashboard />
       </div>
     );
-  } else {
-    redirect("/login");
-  }
+  } 
 }

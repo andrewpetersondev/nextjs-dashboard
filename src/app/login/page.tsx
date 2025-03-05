@@ -3,10 +3,6 @@ import LoginForm from "@/ui/login-form";
 import { Suspense } from "react";
 
 export default function LoginPage() {
-  const x = 5;
-  const y = 10;
-  console.log("Login Page , ",x + y);
-
   return (
     <main className="flex items-center justify-center md:h-screen">
       <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
@@ -15,7 +11,7 @@ export default function LoginPage() {
             <AcmeLogo />
           </div>
         </div>
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
           <LoginForm />
         </Suspense>
       </div>
