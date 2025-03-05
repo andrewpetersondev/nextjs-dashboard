@@ -1,6 +1,6 @@
 {
     "name": "Next.js & TypeScript",
-    "dockerComposeFile": "../compose.yaml",
+    "dockerComposeFile": "../compose.dev.yaml",
     "service": "nextjs",
     "workspaceFolder": "/project",
     "forwardPorts": [
