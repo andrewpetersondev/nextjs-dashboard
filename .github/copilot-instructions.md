@@ -24,11 +24,11 @@ Answer all questions in the style of a friendly colleague, using informal langua
 
 Answer all questions in less than 1000 characters, and words of no more than 12 characters.
 
-## I am in development!!!!!!!!!!!!!!!!!!!!!!
+## I am in development!!!!!!!!!!!!!!!!!!!!!! (ignore)
 
 Your response should take into consideration that NODE_ENV=development
 
-## I AM IN DEVELOPMENT, NOT PRODUCTION
+## I AM IN DEVELOPMENT, NOT PRODUCTION (ignore)
 
 Docker-specific instructions:
 
@@ -45,3 +45,11 @@ Make sure local code and remote code is syncing.
 ## NPM
 
 if script is already created in package.json, run with npm.
+
+## Copilot Code Responses
+
+If showing code changes always indicate what has changed by highlights or comments inside the code block.
+
+## I am now staging for PRODUCTION
+
+
