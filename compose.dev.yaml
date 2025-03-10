@@ -1,5 +1,5 @@
-# version: '3.8'
 services:
+
   nextjs:
     build:
       context: .
@@ -19,6 +19,10 @@ services:
     command: npm run dev
     depends_on:
       - postgres
+    user: "myuser"
+    secrets:
+      - connection_string
+      - db_password
 
   postgres:
     image: postgres:latest
@@ -28,16 +32,28 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    secrets:
+      - db_password
+      - connection_string
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
       - postgres
+    secrets:
+      - db_password
+      - connection_string
 
 volumes:
   postgres-data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  connection_string:
+    file: ./secrets/connection_string.txt

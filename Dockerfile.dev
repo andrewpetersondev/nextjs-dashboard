@@ -1,11 +1,12 @@
-FROM node
-
+FROM node AS base
 WORKDIR /project
+EXPOSE 3000 9229
 
+RUN useradd -ms /bin/bash myuser
+
+FROM base AS dev
 COPY package*.json ./
 RUN npm install && npm install -g npm@11 && npm install
-
 COPY . .
-
-EXPOSE 3000 9229
+USER myuser 
 CMD ["npm", "run", "dev"]

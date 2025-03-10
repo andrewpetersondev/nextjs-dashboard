@@ -2,13 +2,20 @@ import "dotenv/config";
 import {drizzle} from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 import pg from "pg";
+import fs from "fs";
 
-const {Pool} = pg;
+const { Pool } = pg;
+
+const connectionString = fs.readFileSync("/run/secrets/connection_string", "utf8").trim();
 
 const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL!,
+    connectionString: connectionString,
     max: 10,
 });
 
-// export const db = drizzle({ client: pool });
-export const db = drizzle({client: pool, schema});
+pool.on('error', (error: Error) => {
+    console.error('Unexpected error on idle client', error);
+});
+
+export const db = drizzle({ client: pool, schema });
+

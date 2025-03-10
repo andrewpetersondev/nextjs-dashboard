@@ -1,0 +1,64 @@
+# filepath: /project/compose.production.yaml
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    working_dir: /project
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    command: npm run start
+    depends_on:
+      - postgres
+    secrets:
+      - db_password
+      - connection_string
+      - postgres_user
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+
+  postgres:
+    image: postgres:17-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB_FILE: /run/secrets/connection_string
+    secrets:
+      - db_password
+      - connection_string
+      - postgres_user
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $(cat /run/secrets/postgres_user)"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+
+volumes:
+  postgres-data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  connection_string:
+    file: ./secrets/connection_string.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt

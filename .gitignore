@@ -44,3 +44,7 @@ next-env.d.ts
 
 # docker secrets
 password.txt
+secrets/
+
+# Notes
+Notes/

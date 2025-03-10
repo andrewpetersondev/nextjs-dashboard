@@ -15,7 +15,6 @@
                 "esbenp.prettier-vscode",
                 "ms-azuretools.vscode-docker",
                 "bradlc.vscode-tailwindcss",
-                "ms-ossdata.vscode-postgresql",
                 "ms-vscode.vscode-typescript-next",
                 "ms-vscode.js-debug-nightly",
                 "emilast.logfilehighlighter",

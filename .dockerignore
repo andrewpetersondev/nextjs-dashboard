@@ -7,3 +7,10 @@ build/
 dist/
 .git
 .gitignore
+
+# Unnecessary files and Notes
+Notes/
+containers/
+
+# Secrets for the project
+secrets/
