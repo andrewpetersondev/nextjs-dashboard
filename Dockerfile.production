@@ -2,28 +2,30 @@
 
 FROM node:23-alpine AS build
 WORKDIR /project
-
-# Copy only package.json and package-lock.json
+# Copy package files first to leverage caching
 COPY package*.json ./ 
+RUN npm install -g npm@latest
 RUN npm ci
-
-# Copy the rest of the files
-COPY . . 
+# Copy the rest of the source code
+COPY . .
 RUN npm run build
 
-FROM node:23-alpine
+FROM node:23-alpine AS runtime
 WORKDIR /project
-
-# Copy only necessary files from the build stage
+# Copy only what's needed for production
 COPY --from=build /project/package*.json ./ 
-COPY --from=build /project/build ./build 
-
-# Install production dependencies
-RUN npm ci --only=production
-
-# Set environment variable
-ENV NODE_ENV=production
-
+RUN npm ci --omit=dev
+# Copy the built application
+COPY --from=build /project/.next ./.next
+COPY --from=build /project/public ./public
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+# Set correct permissions for the project directory
+RUN chown -R myuser:myuser /project
+# Verify permissions (optional, for debugging)
+RUN ls -l /project
+# Switch to non-root user for better security
+USER myuser
 EXPOSE 3000
-USER node
-CMD ["npm", "start"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["npm", "run", "start"]

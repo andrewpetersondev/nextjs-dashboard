@@ -8,5 +8,6 @@ FROM base AS dev
 COPY package*.json ./
 RUN npm install && npm install -g npm@11 && npm install
 COPY . .
+RUN chown -R myuser:myuser /project/node_modules
 USER myuser 
 CMD ["npm", "run", "dev"]

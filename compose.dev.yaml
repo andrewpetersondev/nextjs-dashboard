@@ -10,12 +10,17 @@ services:
       - "9229:9229"
     volumes:
       - .:/project
-      - /project/node_modules
+      # - /project/node_modules
     env_file:
       - .env
     environment:
        NODE_ENV: development
        NODE_OPTIONS: --inspect=0.0.0.0:9229
+       SESSION_SECRET_FILE: /run/secrets/session_secret
+       CONNECTION_STRING_FILE: /run/secrets/connection_string
+       DB_PASSWORD_FILE: /run/secrets/db_password
+       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    entrypoint: ["/bin/sh", "-c", "export CONNECTION_STRING=$(cat /run/secrets/connection_string) && export DB_PASSWORD=$(cat /run/secrets/db_password) && export SESSION_SECRET=$(cat /run/secrets/session_secret) && exec npm run dev"]
     command: npm run dev
     depends_on:
       - postgres
@@ -23,6 +28,8 @@ services:
     secrets:
       - connection_string
       - db_password
+      - session_secret
+      - postgres_password
 
   postgres:
     image: postgres:latest
@@ -32,15 +39,19 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     secrets:
       - db_password
       - connection_string
+      - postgres_password
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     ports:
       - "5050:80"
     depends_on:
@@ -48,6 +59,7 @@ services:
     secrets:
       - db_password
       - connection_string
+      - postgres_password
 
 volumes:
   postgres-data:
@@ -57,3 +69,8 @@ secrets:
     file: ./secrets/db_password.txt
   connection_string:
     file: ./secrets/connection_string.txt
+  session_secret:
+    file: ./secrets/session_secret.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+ 

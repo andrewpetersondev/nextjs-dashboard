@@ -2,11 +2,11 @@ import "dotenv/config";
 import {drizzle} from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 import pg from "pg";
-import fs from "fs";
 
 const { Pool } = pg;
 
-const connectionString = fs.readFileSync("/run/secrets/connection_string", "utf8").trim();
+const connectionString = process.env.connection_string!;
+console.log("connectionString", connectionString);
 
 const pool = new Pool({
     connectionString: connectionString,
