@@ -18,7 +18,8 @@
                 "ms-vscode.vscode-typescript-next",
                 "ms-vscode.js-debug-nightly",
                 "emilast.logfilehighlighter",
-                "streetsidesoftware.code-spell-checker"
+                "streetsidesoftware.code-spell-checker",
+                "ms-ossdata.vscode-postgresql"
             ],
             "settings": {
                 "pgsql.connections": [

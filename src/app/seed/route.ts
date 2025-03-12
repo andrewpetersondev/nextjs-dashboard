@@ -82,3 +82,11 @@
 // //     return Response.json({ error }, { status: 500 });
 // //   }
 // // }
+
+
+// Basic GET handler to return a simple response
+export async function GET() {
+  return new Response(JSON.stringify({ message: "GET request received" }), {
+    status: 200,
+  });
+}

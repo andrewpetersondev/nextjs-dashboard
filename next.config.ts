@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
+    // nodeMiddleware: true,
   // ppr: "incremental",
   // turbo: {
   //   logLevel: "info", // Options include: 'bug', 'fatal', 'error', 'warning', 'hint', 'note', 'suggestions', 'info'
