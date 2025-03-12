@@ -2,12 +2,14 @@ FROM node AS base
 WORKDIR /project
 EXPOSE 3000 9229
 
-RUN useradd -ms /bin/bash myuser
-
 FROM base AS dev
 COPY package*.json ./
 RUN npm install && npm install -g npm@11 && npm install
 COPY . .
-RUN chown -R myuser:myuser /project/node_modules
-USER myuser 
-CMD ["npm", "run", "dev"]
+RUN chown -R node:node /project/node_modules
+USER node 
+
+# Add a step to initialize the database and create the schema
+CMD ["sh", "-c", "npm run schema-update && npm run drizzle-seed && npm run dev"] 
+
+# is this line causing a problem? because it assumes the postgres service is already running. if the postgres service is not running, then i cant run the schema-update command.

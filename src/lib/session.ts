@@ -13,8 +13,8 @@ import { cookies } from "next/headers";
 // Verify environment variables
 const verifyEnvironmentVariables = () => {
   const requiredEnvVars = [
-    'CONNECTION_STRING',
-    'DB_PASSWORD',
+    'POSTGRES_URL',
+    'POSTGRES_PASSWORD',
     'SESSION_SECRET'
   ];
 

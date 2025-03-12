@@ -9,11 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-schema": "psql ./src/db/createSchema.sql",
     "create-auth-secret": "npx auth secret",
     "reset-db": "npx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push",
-    "drizzle:seed": "npx tsx src/db/seeds/bestSeed.ts",
+    "drizzle-seed": "npx tsx src/db/seeds/bestSeed.ts",
     "update-next": "npm install next@latest"
   },
   "dependencies": {

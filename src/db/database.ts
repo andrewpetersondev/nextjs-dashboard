@@ -5,11 +5,11 @@ import pg from "pg";
 
 const { Pool } = pg;
 
-const connectionString = process.env.connection_string!;
-console.log("connectionString", connectionString);
+const connectionString = process.env.POSTGRES_URL!;
+console.log("Postgres connectionString ", connectionString);
 
 const pool = new Pool({
-    connectionString: connectionString,
+    connectionString: connectionString!,
     max: 10,
 });
 

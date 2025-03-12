@@ -21,11 +21,11 @@ COPY --from=build /project/public ./public
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 # Set correct permissions for the project directory
-RUN chown -R myuser:myuser /project
+RUN chown -R node:node /project
 # Verify permissions (optional, for debugging)
 RUN ls -l /project
 # Switch to non-root user for better security
-USER myuser
+USER node
 EXPOSE 3000
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["npm", "run", "start"]
