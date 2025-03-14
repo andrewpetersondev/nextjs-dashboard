@@ -16,7 +16,7 @@ services:
       - .env
     environment:
       NODE_ENV: development
-      # NODE_OPTIONS: --inspect=0.0.0.0:9229
+      NODE_OPTIONS: --inspect=0.0.0.0:9229
       SESSION_SECRET_FILE: /run/secrets/session_secret
       POSTGRES_DB_FILE: /run/secrets/postgres_db
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
