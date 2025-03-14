@@ -1,15 +1,21 @@
-FROM node AS base
-WORKDIR /project
+FROM node:latest
+
 EXPOSE 3000 9229
 
-FROM base AS dev
+WORKDIR /project
+
+RUN apt-get update && apt-get install -y postgresql-client
+
 COPY package*.json ./
+
 RUN npm install && npm install -g npm@11 && npm install
+
 COPY . .
+
+RUN chmod +x /project/docker-entrypoint.sh
+
 RUN chown -R node:node /project/node_modules
-USER node 
 
-# Add a step to initialize the database and create the schema
-CMD ["sh", "-c", "npm run schema-update && npm run drizzle-seed && npm run dev"] 
+USER node
 
-# is this line causing a problem? because it assumes the postgres service is already running. if the postgres service is not running, then i cant run the schema-update command.
+CMD ["npm", "run", "dev"]

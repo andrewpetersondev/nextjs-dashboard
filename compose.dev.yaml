@@ -7,110 +7,86 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
+    # post_start:
+      # - command: "npx drizzle-kit push --config drizzle.config.ts"
     volumes:
       - .:/project
-      - /project/node_modules # This line would mount the node_modules directory of the container to the host, ensuring the host and container use the same node_modules.
+      - /project/node_modules
     env_file:
       - .env
     environment:
       NODE_ENV: development
-      NODE_OPTIONS: --inspect=0.0.0.0:9229
+      # NODE_OPTIONS: --inspect=0.0.0.0:9229
       SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_DB_FILE: /run/secrets/postgres_db
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_URL_FILE: /run/secrets/postgres_url
-      POSTGRES_HOST_FILE: /run/secrets/postgres_host
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT_FILE: /run/secrets/postgres_port
-      POSTGRES_DB_FILE: /run/secrets/postgres_db
-    entrypoint: ["/bin/sh", "/project/docker-entrypoint.sh"] 
+      POSTGRES_USER: ${POSTGRES_USER}
+    entrypoint: ["/bin/sh", "/project/docker-entrypoint.sh"]
     command: ["npm", "run", "dev"]
-    # command: npm run schema-update && npm run drizzle-seed && npm run dev
     depends_on:
       - postgres
     user: "node"
     secrets:
       - session_secret
+      - postgres_db
       - postgres_password
       - postgres_url
-      - postgres_host
-      - postgres_user
       - postgres_port
-      - postgres_db
+    networks:
+      - dashboard-network
 
   postgres:
     image: postgres:latest
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./postgres-certs:/var/lib/postgresql/certs:ro
     ports:
       - "5432:5432"
     env_file:
       - .env
     environment:
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB_FILE: /run/secrets/postgres_db
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_url
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PORT_FILE: /run/secrets/postgres_port
-      POSTGRES_HOST_FILE: /run/secrets/postgres_host
-      # POSTGRES_SSL_MODE: require
-      POSTGRES_HOST_AUTH_METHOD: trust
-    user: "postgres"
     secrets:
-      - postgres_password
-      - postgres_url
-      - postgres_user
-      - postgres_port
       - postgres_db
-      - postgres_host
-    # command: ["sh", "-c", "psql -U postgres -c 'CREATE DATABASE dashboard;' || true && docker-entrypoint.sh postgres" ]
-    command: >
-      postgres -c ssl=on
-               -c ssl_cert_file=/var/lib/postgresql/certs/server.crt
-               -c ssl_key_file=/var/lib/postgresql/certs/server.key
-
+      - postgres_password
+    user: "postgres"
+    networks:
+      - dashboard-network
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_DB_FILE: /run/secrets/postgres_db
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PORT_FILE: /run/secrets/postgres_port
-      POSTGRES_HOST_FILE: /run/secrets/postgres_host
-      POSTGRES_URL_FILE: /run/secrets/postgres_url
     ports:
       - "5050:80"
     depends_on:
       - postgres
     user: "pgadmin"
-    secrets:
-      - postgres_password
-      - postgres_user
-      - postgres_port
-      - postgres_db
-      - postgres_host
-      - postgres_url
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - dashboard-network
 
 volumes:
   postgres-data:
+  pgadmin-data:
 
 secrets:
   session_secret:
     file: ./secrets/session_secret.txt
+  postgres_db:
+    file: ./secrets/postgres_db.txt
   postgres_password:
     file: ./secrets/postgres_password.txt
   postgres_url:
     file: ./secrets/postgres_url.txt
-  postgres_host:
-    file: ./secrets/postgres_host.txt
-  postgres_user:
-    file: ./secrets/postgres_user.txt
   postgres_port:
     file: ./secrets/postgres_port.txt
-  postgres_db:
-    file: ./secrets/postgres_db.txt
-  
-  
+
+networks:
+  dashboard-network:

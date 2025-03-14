@@ -20,21 +20,22 @@
                 "emilast.logfilehighlighter",
                 "streetsidesoftware.code-spell-checker",
                 "ms-ossdata.vscode-postgresql"
-            ],
-            "settings": {
-                "pgsql.connections": [
-                    {
-                        "server": "postgres",
-                        "database": "dashboard",
-                        "user": "postgres",
-                        "password": "postgres"
-                    }
-                ]
-            }
+            ]
+            // "settings": {
+            //     "pgsql.connections": [
+            //         {
+            //             "server": "postgres",
+            //             "database": "dashboard",
+            //             "user": "postgres",
+            //             "password": "postgres"
+            //         }
+            //     ]
+            // }
         }
     },
     "mounts": [
         "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
-        "source=postgres-data,target=/var/lib/postgresql/data,type=volume"
+        "source=postgres-data,target=/var/lib/postgresql/data,type=volume",
+        "source=pgadmin-data,target=/var/lib/pgadmin,type=volume"
     ]
 }

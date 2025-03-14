@@ -1,33 +1,48 @@
-import "dotenv/config";
-import fs from "fs";
+import 'envConfig.ts'
 import { defineConfig } from "drizzle-kit";
+import fs from 'fs';
 
-// Function to read secrets from Docker secrets files
-const readSecret = (path: string) => fs.readFileSync(path, 'utf8').trim();
+const user = process.env.POSTGRES_USER;
 
-// Read the secrets
-const connectionString = readSecret('/run/secrets/postgres_url');
-const host = readSecret('/run/secrets/postgres_host');
-const database = readSecret('/run/secrets/postgres_db');
+const postgresPortFile = process.env.POSTGRES_PORT_FILE!;
+const postgresPort = fs.readFileSync(postgresPortFile, 'utf8').trim();
+const portNumber = Number(postgresPort);
 
-console.log("Postgres connectionString", connectionString);
-console.log("Postgres host", host);
+const postgresDbFile = process.env.POSTGRES_DB_FILE!;
+const database = fs.readFileSync(postgresDbFile, 'utf8').trim();
+
+const postgresPasswordFile = process.env.POSTGRES_PASSWORD_FILE!;
+const password = fs.readFileSync(postgresPasswordFile, 'utf8').trim();
+
+console.log("Postgres port", portNumber);
+console.log("Postgres user", user);
 console.log("Postgres database", database);
+console.log("Postgres password", password);
+
+if (!portNumber || !user || !database || !password) { 
+  console.error("Missing required environment variables:");
+  if (!portNumber) console.error("POSTGRES_PORT is not set");
+  if (!user) console.error("POSTGRES_USER is not set");
+  if (!database) console.error("POSTGRES_DB is not set");
+  if (!password) console.error("POSTGRES_PASSWORD is not set");
+  process.exit(1);
+}
 
 export default defineConfig({
   out: "./src/db/drizzle",
   schema: "./src/db/schema.ts",
   dialect: "postgresql",
+  
   dbCredentials: {
-    url: connectionString,
-    host: host,
+    host: "postgres",
+    port: portNumber,
+    user: user,
+    password: password,
     database: database,
-    ssl: {
-      rejectUnauthorized: true,
-      cert: fs.readFileSync('/run/secrets/server.crt', 'utf8'),
-      key: fs.readFileSync('/run/secrets/server.key', 'utf8'),
-      ca: fs.readFileSync('/run/secrets/ca.crt', 'utf8'),
-    }
+    ssl: false,
+  },
+  migrations: {
+    schema: 'public', 
   },
   schemaFilter: ["public"],
   verbose: true,
