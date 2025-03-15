@@ -1,11 +1,21 @@
-FROM node
+FROM node:latest
+
+EXPOSE 3000 9229
 
 WORKDIR /project
 
+RUN apt-get update && apt-get install -y postgresql-client
+
 COPY package*.json ./
+
 RUN npm install && npm install -g npm@11 && npm install
 
 COPY . .
 
-EXPOSE 3000 9229
+RUN chmod +x /project/entrypoint.sh
+
+RUN chown -R node:node /project/node_modules
+
+USER node
+
 CMD ["npm", "run", "dev"]

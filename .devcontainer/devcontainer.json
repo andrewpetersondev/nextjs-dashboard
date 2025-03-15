@@ -6,7 +6,8 @@
     "forwardPorts": [
         3000,
         5432,
-        9229
+        9229,
+        8080
     ],
     "customizations": {
         "vscode": {
@@ -15,26 +16,27 @@
                 "esbenp.prettier-vscode",
                 "ms-azuretools.vscode-docker",
                 "bradlc.vscode-tailwindcss",
-                "ms-ossdata.vscode-postgresql",
                 "ms-vscode.vscode-typescript-next",
                 "ms-vscode.js-debug-nightly",
                 "emilast.logfilehighlighter",
-                "streetsidesoftware.code-spell-checker"
-            ],
-            "settings": {
-                "pgsql.connections": [
-                    {
-                        "server": "postgres",
-                        "database": "dashboard",
-                        "user": "postgres",
-                        "password": "postgres"
-                    }
-                ]
-            }
+                "streetsidesoftware.code-spell-checker",
+                "ms-ossdata.vscode-postgresql"
+            ]
+            // "settings": {
+            //     "pgsql.connections": [
+            //         {
+            //             "server": "postgres",
+            //             "database": "dashboard",
+            //             "user": "postgres",
+            //             "password": "postgres"
+            //         }
+            //     ]
+            // }
         }
     },
     "mounts": [
         "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
-        "source=postgres-data,target=/var/lib/postgresql/data,type=volume"
+        "source=postgres-data,target=/var/lib/postgresql/data,type=volume",
+        "source=pgadmin-data,target=/var/lib/pgadmin,type=volume"
     ]
 }

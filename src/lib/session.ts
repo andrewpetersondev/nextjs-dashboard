@@ -8,32 +8,63 @@ import {
 } from "@/lib/definitions";
 import { cookies } from "next/headers";
 
-const getEncodedKey = () => {
-  const secret = process.env.SESSION_SECRET;
+console.log("session.ts")
+console.log("process.env = ", process.env);
+
+// Verify environment variables
+const verifyEnvironmentVariables = () => {
+  const requiredEnvVars = [
+    'POSTGRES_URL',
+    'POSTGRES_PASSWORD',
+    'SESSION_SECRET'
+  ];
+
+  requiredEnvVars.forEach(envVar => {
+    const value = process.env[envVar];
+    if (value) {
+      console.log(`Environment variable ${envVar} is set: ${value}`);
+    } else {
+      console.error(`Environment variable ${envVar} is not set`);
+    }
+  });
+};
+
+// Call the verification function
+verifyEnvironmentVariables();
+
+const getEncodedKey = async () => {
+  const secret = process.env.SESSION_SECRET!;
+  console.log("secret = ", secret);
   if (!secret) {
     throw new Error("SESSION_SECRET is not defined");
   }
   return new TextEncoder().encode(secret);
 };
 
-const encodedKey: Uint8Array<ArrayBufferLike> = getEncodedKey();
+// Remove top-level await
+let encodedKey: Uint8Array;
+
+const initializeEncodedKey = async () => {
+  encodedKey = await getEncodedKey();
+};
+
+// Call this function at the start of your application
+initializeEncodedKey();
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
+  await initializeEncodedKey(); // Ensure the key is initialized
   try {
     const validatedFields = EncryptPayloadSchema.safeParse(payload);
-
     if (!validatedFields.success) {
       throw new Error("Invalid session payload: Missing required fields");
     }
-
     const validatedPayload = validatedFields.data;
-
     const jwt = await new SignJWT(validatedPayload)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("30 d")
       .sign(encodedKey);
-    console.log("encrypt jwt after  sign = ", jwt);
+    // console.log("encrypt jwt after sign = ", jwt);
     return jwt;
   } catch (error) {
     console.error("Error during JWT creation:", error);
@@ -44,6 +75,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 export async function decrypt(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
+  await initializeEncodedKey(); // Ensure the key is initialized
   if (!session) {
     return undefined;
   }
@@ -51,10 +83,8 @@ export async function decrypt(
     const { payload } = (await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     })) as { payload: DecryptPayload };
-
     const validatedFields = DecryptPayloadSchema.safeParse(payload);
     // console.log("decrypt validatedFields = ", validatedFields);
-
     if (!validatedFields.success) {
       console.error(
         "Invalid session payload",
@@ -64,7 +94,6 @@ export async function decrypt(
     }
     const validatedPayload = validatedFields.data;
     // console.log("decrypt validatedPayload = ", validatedPayload);
-    
     return validatedPayload;
   } catch (error) {
     console.error("Failed to verify session", error);
@@ -75,11 +104,9 @@ export async function decrypt(
 export async function createSession(userId: string): Promise<void> {
   try {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();
-
     const session = await encrypt({
       user: { userId: userId, role: "user", expiresAt: expiresAt },
     });
-
     try {
       const cookieStore = await cookies();
       cookieStore.set("session", session, {
@@ -101,29 +128,21 @@ export async function createSession(userId: string): Promise<void> {
 
 export async function updateSession(): Promise<null | void> {
   const session = (await cookies()).get("session")?.value;
-
   if (!session) {
     return null;
   }
-
   const payload = await decrypt(session);
-
   if (!payload || !payload.user) {
     return null;
   }
-
   const now = Date.now();
   const expiration = new Date(payload?.user?.expiresAt).getTime();
-
   if (now > expiration) {
     return null;
   }
-
   const { user } = payload;
-
   try {
     const newExpiration = new Date(expiration + 1000 * 60 * 60 * 24).getTime();
-
     const minimalPayload = {
       user: {
         userId: user.userId,
@@ -131,11 +150,8 @@ export async function updateSession(): Promise<null | void> {
         expiresAt: newExpiration,
       },
     };
-
     const updatedToken = await encrypt(minimalPayload);
-
     // console.log("updateSession updatedToken = ", updatedToken);
-
     const cookieStore = await cookies();
     cookieStore.set("session", updatedToken, {
       httpOnly: true,

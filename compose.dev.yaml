@@ -1,6 +1,5 @@
-# version: '3.8'
 services:
-  nextjs:
+  web:
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -8,36 +7,64 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
+    # post_start:
+      # - command: "npx drizzle-kit push --config drizzle.config.ts"
     volumes:
       - .:/project
-      - /project/node_modules
-    env_file:
-      - .env
     environment:
-       NODE_ENV: development
-       NODE_OPTIONS: --inspect=0.0.0.0:9229
-    command: npm run dev
+      NODE_ENV: development
+      NODE_OPTIONS: --inspect=0.0.0.0:9229
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_url
+      PG_POOL_MAX: 25
+      PG_POOL_MIN: 5
+      PG_POOL_IDLE_TIMEOUT: 10000
+      PG_POOL_CONNECTION_TIMEOUT: 10000
+    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    command: ["npm", "run", "dev"]
     depends_on:
-      - postgres
+      - db
+    user: "node"
+    secrets:
+      - session_secret
+      - postgres_password
+      - postgres_url
+    networks:
+      - dashboard-network
 
-  postgres:
+  db:
     image: postgres:latest
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    env_file:
-      - .env
-
-  pgadmin:
-    image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    networks:
+      - dashboard-network
+
+  adminer:
+    image: adminer:latest
     ports:
-      - "5050:80"
+    - "8080:8080"
+    networks:
+      - dashboard-network
     depends_on:
-      - postgres
+      - web
 
 volumes:
-  postgres-data:
+  db-data:
+
+secrets:
+  session_secret:
+    file: ./secrets/session_secret.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  postgres_url:
+    file: ./secrets/postgres_url.txt
+
+networks:
+  dashboard-network:

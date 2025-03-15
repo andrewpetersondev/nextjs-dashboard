@@ -2,29 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
-// 1. Specify protected and public routes
 const protectedRoutes = ["/dashboard"];
 const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
-  // 2. Check if the current route is protected or public
+
+  console.log("Middleware running for", req.nextUrl.pathname);
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  // 3. Decrypt the session from the cookie
+  // Retrieve the session cookie
   const cookie = (await cookies()).get("session")?.value;
   console.log("Cookie:", cookie);
+
+  // Decrypt the session cookie to get the session data
   const session = await decrypt(cookie);
   console.log("Session:", session);
 
-  // 4. Redirect to /login if the user is not authenticated
+  // If the route is protected and the user is not authenticated, redirect to the login page
   if (isProtectedRoute && !session?.user?.userId) {
     console.log("Redirecting to /login");
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  // 5. Redirect to /dashboard if the user is authenticated
+  // If the route is public and the user is authenticated, redirect to the dashboard
   if (
     isPublicRoute &&
     session?.user?.userId &&
@@ -34,10 +36,12 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 
+  // Allow the request to proceed if no redirection is needed
   return NextResponse.next();
 }
 
 // Routes Middleware should not run on
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  // runtime: "nodejs"
 };

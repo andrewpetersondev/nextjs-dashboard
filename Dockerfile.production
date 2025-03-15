@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1
+
+FROM node:23-alpine AS build
+WORKDIR /project
+# Copy package files first to leverage caching
+COPY package*.json ./ 
+RUN npm install -g npm@latest
+RUN npm ci
+# Copy the rest of the source code
+COPY . .
+RUN npm run build
+
+FROM node:23-alpine AS runtime
+WORKDIR /project
+# Copy only what's needed for production
+COPY --from=build /project/package*.json ./ 
+RUN npm ci --omit=dev
+# Copy the built application
+COPY --from=build /project/.next ./.next
+COPY --from=build /project/public ./public
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+# Set correct permissions for the project directory
+RUN chown -R node:node /project
+# Verify permissions (optional, for debugging)
+RUN ls -l /project
+# Switch to non-root user for better security
+USER node
+EXPOSE 3000
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["npm", "run", "start"]
