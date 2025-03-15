@@ -30,19 +30,15 @@ export async function signup(state: SignupFormState, formData: FormData) {
       email: formData.get("email"),
       password: formData.get("password"),
     });
-
     if (!validatedFields.success) {
       // console.log("Validation failed:", validatedFields.error.flatten().fieldErrors);
       return {
         errors: validatedFields.error.flatten().fieldErrors,
       };
     }
-
     const { username, email, password } = validatedFields.data;
-
     const hashedPassword = await hashPassword(password);
     // console.log("Password hashed successfully");
-
     const data = await db
       .insert(users)
       .values({
@@ -51,25 +47,19 @@ export async function signup(state: SignupFormState, formData: FormData) {
         password: hashedPassword,
       })
       .returning({ insertedId: users.id });
-
     const userId = data[0]?.insertedId;
-
     // console.log("userId = ", userId);
-
     if (!userId) {
       console.log("Failed to create account");
       return { message: "Failed to create account. Please try again." };
     }
-
     await createSession(userId);
     // console.log("Session created successfully");
-
-  
   } catch (error) {
     console.error("Failed to create user:", error);
     return { message: "An unexpected error occurred. Please try again." };
   }
-    return redirect("/dashboard");
+  return redirect("/dashboard");
 }
 
 export async function login(
@@ -77,9 +67,9 @@ export async function login(
   formData: FormData,
 ): Promise<
   | {
-      errors: { email?: string[] | undefined; password?: string[] | undefined };
-      message?: undefined;
-    }
+    errors: { email?: string[] | undefined; password?: string[] | undefined };
+    message?: undefined;
+  }
   | { message: string; errors?: undefined }
 > {
   const validatedFields = LoginFormSchema.safeParse({
@@ -111,12 +101,11 @@ export async function login(
       return { message: "Invalid email or password." };
     }
     await createSession(user[0].userId);
-
   } catch (error) {
     console.error("Failed to log in user:", error);
     return { message: "An unexpected error occurred. Please try again." };
   }
-      redirect("/dashboard");
+  redirect("/dashboard");
 }
 
 export async function logout() {

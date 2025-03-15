@@ -16,8 +16,4 @@ until pg_isready -h db -U postgres; do
   sleep 2
 done
 
-# these are created by default in the postgres image
-# psql -h db -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'" | grep -q 1 || psql -h db -U postgres -c "CREATE DATABASE $POSTGRES_DB"
-# psql -h db -U postgres -d $POSTGRES_DB -c 'CREATE SCHEMA IF NOT EXISTS public;' || true
-
 exec "$@"

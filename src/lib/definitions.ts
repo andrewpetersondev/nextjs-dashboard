@@ -149,13 +149,13 @@ export const SignupFormSchema = z.object({
 
 export type SignupFormState =
   | {
-      errors?: {
-        username?: string[];
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    errors?: {
+      username?: string[];
+      email?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export const LoginFormSchema = z.object({
@@ -165,12 +165,12 @@ export const LoginFormSchema = z.object({
 
 export type LoginFormState =
   | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    errors?: {
+      email?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export type InvoiceState = {

@@ -12,8 +12,7 @@
     "create-auth-secret": "npx auth secret",
     "reset-db": "npx tsx src/db/seeds/reset.ts",
     "schema-update": "npx drizzle-kit push --config drizzle.config.ts",
-    "drizzle-seed": "npx tsx src/db/seeds/bestSeed.ts",
-    "update-next": "npm install next@latest"
+    "drizzle-seed": "npx tsx src/db/seeds/bestSeed.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",

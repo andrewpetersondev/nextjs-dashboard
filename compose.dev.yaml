@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
-    # post_start:
+      # post_start:
       # - command: "npx drizzle-kit push --config drizzle.config.ts"
     volumes:
       - .:/project
@@ -21,8 +21,8 @@ services:
       PG_POOL_MIN: 5
       PG_POOL_IDLE_TIMEOUT: 10000
       PG_POOL_CONNECTION_TIMEOUT: 10000
-    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
-    command: ["npm", "run", "dev"]
+    entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
+    command: [ "npm", "run", "dev" ]
     depends_on:
       - db
     user: "node"
@@ -49,7 +49,7 @@ services:
   adminer:
     image: adminer:latest
     ports:
-    - "8080:8080"
+      - "8080:8080"
     networks:
       - dashboard-network
     depends_on:
@@ -57,6 +57,7 @@ services:
 
 volumes:
   db-data:
+
 
 secrets:
   session_secret:

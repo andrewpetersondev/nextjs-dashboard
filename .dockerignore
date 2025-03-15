@@ -1,4 +1,3 @@
-
 node_modules/
 .next/
 .DS_Store
@@ -14,4 +13,4 @@ containers/
 
 # Secrets for the project
 secrets/
-postgres-certs/
+certs/

@@ -18,7 +18,6 @@ Docker Setup uses:
 - adminer image for adminer service
 - secrets
 
-
 Environments
 - Development
 - Production

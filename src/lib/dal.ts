@@ -31,19 +31,15 @@ import { redirect } from "next/navigation";
 
 export const verifySessionOptimistic = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;
-
   if (!cookie) {
     console.error("No session cookie found");
     redirect("/login");
   }
-
   const session = await decrypt(cookie);
-
   if (!session || !session.user || !session.user.userId) {
     console.error("Invalid session or missing user information");
     redirect("/login");
   }
-
   return {
     isAuthorized: true,
     userId: session.user.userId,

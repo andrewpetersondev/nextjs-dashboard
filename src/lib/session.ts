@@ -8,17 +8,12 @@ import {
 } from "@/lib/definitions";
 import { cookies } from "next/headers";
 
-console.log("session.ts")
-console.log("process.env = ", process.env);
-
-// Verify environment variables
 const verifyEnvironmentVariables = () => {
   const requiredEnvVars = [
     'POSTGRES_URL',
     'POSTGRES_PASSWORD',
     'SESSION_SECRET'
   ];
-
   requiredEnvVars.forEach(envVar => {
     const value = process.env[envVar];
     if (value) {
@@ -29,7 +24,6 @@ const verifyEnvironmentVariables = () => {
   });
 };
 
-// Call the verification function
 verifyEnvironmentVariables();
 
 const getEncodedKey = async () => {

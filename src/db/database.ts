@@ -4,19 +4,13 @@ import * as schema from "./schema";
 import pg from "pg";
 import fs from "fs";
 
-console.log("database.ts");
-console.log("process.env = ", process.env);
-
 const postgresUrlFile = process.env.POSTGRES_URL_FILE!;
 const url = fs.readFileSync(postgresUrlFile, 'utf8').trim();
-
-console.log("Postgres URL", url);
 
 if (!url) {
     console.error("Missing required POSTGRES_URL environment variables:");
     process.exit(1);
 }
-console.log("Postgres connectionString = ", url);
 
 const { Pool } = pg;
 

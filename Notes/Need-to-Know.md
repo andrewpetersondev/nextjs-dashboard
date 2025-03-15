@@ -1,3 +1,0 @@
-# Need to Know
-
-## Debugging
