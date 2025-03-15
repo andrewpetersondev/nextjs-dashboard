@@ -12,7 +12,7 @@ RUN npm install && npm install -g npm@11 && npm install
 
 COPY . .
 
-RUN chmod +x /project/docker-entrypoint.sh
+RUN chmod +x /project/entrypoint.sh
 
 RUN chown -R node:node /project/node_modules
 

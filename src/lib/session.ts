@@ -8,7 +8,8 @@ import {
 } from "@/lib/definitions";
 import { cookies } from "next/headers";
 
-// console.log("process.env = ", process.env);
+console.log("session.ts")
+console.log("process.env = ", process.env);
 
 // Verify environment variables
 const verifyEnvironmentVariables = () => {
