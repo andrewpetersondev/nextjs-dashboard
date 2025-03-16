@@ -1,4 +1,4 @@
-// import bcrypt from "bcrypt";
+// import bcryptjs from "bcryptjs";
 // import {
 //   invoices as invoicesPlaceholderData,
 //   customers as customersPlaceholderData,
@@ -16,7 +16,7 @@
 //     const hashedUsers = await Promise.all(
 //       usersPlaceholderData.map(async (user) => ({
 //         ...user,
-//         password: await bcrypt.hash(user.password, saltRounds),
+//         password: await bcryptjs.hash(user.password, saltRounds),
 //       })),
 //     );
 //     await db.insert(users).values(hashedUsers);

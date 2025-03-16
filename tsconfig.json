@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    // is this necessary?
+    "types": [
+      "node",
+      "jest",
+      "next",
+      "react",
+      "react-dom"
+    ],
     "target": "esnext",
     "lib": [
       "dom",

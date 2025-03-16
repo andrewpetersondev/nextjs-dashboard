@@ -1,6 +1,6 @@
 // use local seed file @/app/lib/placeholder-data
 import "dotenv/config";
-import bcrypt from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import { users } from "@/db/schema";
 import { db } from "@/db/database";
 
@@ -27,7 +27,7 @@ async function seedUsers() {
   const hashedUsers = await Promise.all(
     mockUsers.map(async (user) => ({
       ...user,
-      password: await bcrypt.hash(user.password, saltRounds),
+      password: await bcryptjs.hash(user.password, saltRounds),
     })),
   );
   await db

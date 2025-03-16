@@ -9,7 +9,7 @@ import {
   // invoices as invoicesPlaceholderData,
   // revenue as revenuesPlaceHolderData,
 } from "@/db/seeds/placeholder-data";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 async function seedUsers() {
   console.log("seeding users...");
@@ -18,7 +18,7 @@ async function seedUsers() {
     const hashedUsers = await Promise.all(
       usersPlaceholderData.map(async (user) => ({
         ...user,
-        password: await bcrypt.hash(user.password, saltRounds),
+        password: await bcryptjs.hash(user.password, saltRounds),
       })),
     );
     await db.insert(users).values(hashedUsers);
