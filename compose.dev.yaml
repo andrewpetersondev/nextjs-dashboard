@@ -17,10 +17,6 @@ services:
       SESSION_SECRET_FILE: /run/secrets/session_secret
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_URL_FILE: /run/secrets/postgres_url
-      PG_POOL_MAX: 25
-      PG_POOL_MIN: 5
-      PG_POOL_IDLE_TIMEOUT: 10000
-      PG_POOL_CONNECTION_TIMEOUT: 10000
     entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
     command: [ "npm", "run", "dev" ]
     depends_on:
@@ -82,6 +78,18 @@ services:
 
 volumes:
   db-data:
+
+    # profiles:
+    #   testing:
+    #     services:
+    #       web:
+    #         environment:
+    #           NODE_ENV: test
+    #           SESSION_SECRET_FILE: /run/secrets/session_secret
+    #           POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    #           POSTGRES_URL_FILE: /run/secrets/postgres_url
+    #         entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
+    #         command: [ "npm", "run", "test" ]
 
 
 secrets:

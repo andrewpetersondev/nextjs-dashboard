@@ -30,6 +30,7 @@ Main Topics
     - prompt engineering practices
 1. NODE_ENV=DEVELOPMENT, NODE_ENV=TESTING, NODE_ENV=PRODUCTION
 1. TailwindCSS v4
+1. Test Containers
 
 
 ## Next Steps

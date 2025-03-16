@@ -105,7 +105,9 @@ const config: Config = {
     "^@/db/(.*)$": "<rootDir>/src/db/$1",
     "^@/ui/(.*)$": "<rootDir>/src/ui/$1",
     "^@/lib/(.*)$": "<rootDir>/src/lib/$1",
-    "^@/server-actions/(.*)$": "<rootDir>/src/server-actions/$1"
+    "^@/server-actions/(.*)$": "<rootDir>/src/server-actions/$1",
+    "^@/__tests__/(.*)$": "<rootDir>/src/__tests__/$1",
+    "^@/__mocks__/(.*)$": "<rootDir>/src/__mocks__/$1"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
