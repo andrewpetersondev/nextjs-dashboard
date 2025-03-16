@@ -16,4 +16,6 @@ until pg_isready -h db -U postgres; do
   sleep 2
 done
 
+npm install
+
 exec "$@"

@@ -8,13 +8,15 @@ RUN apt-get update && apt-get install -y postgresql-client
 
 COPY package*.json ./
 
-RUN npm install && npm install -g npm@11 && npm install
+RUN npm install
 
 COPY . .
 
 RUN chmod +x /project/entrypoint.sh
 
 RUN chown -R node:node /project/node_modules
+
+RUN npm install -g npm@latest
 
 USER node
 

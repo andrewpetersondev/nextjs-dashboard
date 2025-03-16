@@ -29,6 +29,7 @@ Main Topics
 1. Github AI Chat
     - prompt engineering practices
 1. NODE_ENV=DEVELOPMENT, NODE_ENV=TESTING, NODE_ENV=PRODUCTION
+1. TailwindCSS v4
 
 
 ## Next Steps

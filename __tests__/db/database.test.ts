@@ -28,7 +28,7 @@ describe('Database Connection', () => {
     });
 
     it('should create the db object and perform a query', async () => {
-        const result = await db.query('SELECT 1');
+        const result = await db.execute('SELECT 1');
         expect(result).toEqual({ rows: [] });
     });
 });
