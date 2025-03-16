@@ -33,6 +33,31 @@ services:
     networks:
       - dashboard-network
 
+  #  run with docker compose -f compose.dev.yaml run testing-web
+  # testing-web:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   working_dir: /project
+  #   volumes:
+  #     - .:/project
+  #   environment:
+  #     NODE_ENV: test
+  #     SESSION_SECRET_FILE: /run/secrets/session_secret
+  #     POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+  #     POSTGRES_URL_FILE: /run/secrets/postgres_url
+  #   entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
+  #   command: [ "npm", "run", "test" ]
+  #   depends_on:
+  #     - db
+  #   user: "node"
+  #   secrets:
+  #     - session_secret
+  #     - postgres_password
+  #     - postgres_url
+  #   networks:
+  #     - dashboard-network
+
   db:
     image: postgres:latest
     volumes:

@@ -6,6 +6,7 @@ build/
 dist/
 .git
 .gitignore
+.swc/
 
 # Unnecessary files and Notes
 Notes/
