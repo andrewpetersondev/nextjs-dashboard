@@ -5,7 +5,7 @@ import {
   type EncryptPayload,
   EncryptPayloadSchema,
   DecryptPayloadSchema,
-} from "@/lib/definitions";
+} from "@/src/lib/definitions";
 import { cookies } from "next/headers";
 
 const verifyEnvironmentVariables = () => {

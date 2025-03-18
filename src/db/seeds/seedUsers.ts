@@ -1,8 +1,8 @@
-// use local seed file @/app/lib/placeholder-data
+// use local seed file @/src/app/lib/placeholder-data
 import "dotenv/config";
 import bcryptjs from "bcryptjs";
-import { users } from "@/db/schema";
-import { db } from "@/db/database";
+import { users } from "@/src/db/schema";
+import { db } from "@/src/db/database";
 
 const mockUsers = [
   {

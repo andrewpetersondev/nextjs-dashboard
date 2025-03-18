@@ -1,4 +1,4 @@
-import { verifySessionOptimistic } from "@/lib/dal";
+import { verifySessionOptimistic } from "@/src/lib/dal";
 
 export default async function MiddlewareCard() {
   const session = await verifySessionOptimistic();

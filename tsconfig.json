@@ -39,21 +39,6 @@
       "@/src/*": [
         "src/*"
       ],
-      "@/app/*": [
-        "src/app/*"
-      ],
-      "@/db/*": [
-        "src/db/*"
-      ],
-      "@/ui/*": [
-        "src/ui/*"
-      ],
-      "@/lib/*": [
-        "src/lib/*"
-      ],
-      "@/server-actions/*": [
-        "src/server-actions/*"
-      ]
     }
   },
   "include": [
@@ -61,8 +46,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/__tests__/**/*.ts",
-    "src/__tests__/**/*.tsx"
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

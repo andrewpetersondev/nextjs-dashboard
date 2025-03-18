@@ -22,11 +22,11 @@ import "server-only";
 
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { decrypt } from "@/lib/session";
+import { decrypt } from "@/src/lib/session";
 // import { validate as isUUID } from "uuid";
 import { redirect } from "next/navigation";
-// import { db } from "@/db/database";
-// import { sessions, users } from "@/db/schema";
+// import { db } from "@/src/db/database";
+// import { sessions, users } from "@/src/db/schema";
 // import { eq } from "drizzle-orm";
 
 export const verifySessionOptimistic = cache(async () => {

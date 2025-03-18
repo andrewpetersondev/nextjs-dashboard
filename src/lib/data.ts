@@ -1,6 +1,6 @@
-import { db } from "@/db/database";
-import { formatCurrency } from "@/lib/utils";
-import { customers, invoices, revenues } from "@/db/schema";
+import { db } from "@/src/db/database";
+import { formatCurrency } from "@/src/lib/utils";
+import { customers, invoices, revenues } from "@/src/db/schema";
 import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
 import {
   CustomerField,
@@ -8,7 +8,7 @@ import {
   FetchLatestInvoicesData,
   ModifiedLatestInvoicesData,
   Revenue,
-} from "@/lib/definitions";
+} from "@/src/lib/definitions";
 
 // @formatter:off
 export async function fetchRevenue(): Promise<Revenue[]> {
@@ -256,5 +256,5 @@ export async function fetchFilteredCustomers(query: string) {
     console.error("Fetch Filtered Customers Error:", error);
     throw new Error("Failed to fetch customer table.");
   }
-  
+
 }
