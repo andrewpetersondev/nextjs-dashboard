@@ -7,7 +7,7 @@ If showing code changes always indicate what has changed by highlights or commen
 Next.js Application uses:
 - App Router
 - Typescript
-- Jest
+- Vitest
 - turbopack 
 - import aliases
 

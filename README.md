@@ -10,7 +10,7 @@ Main Topics
 1. PostgreSQL Database
 1. Drizzle ORM
     - migrations
-1. Jest
+1. Vitest
 1. Docker
 1. Docker Compose
 1. Typescript
@@ -41,7 +41,7 @@ Where am I?
 
 Today's Work
 - when containers are created, properly initialize db with schema and seed
-- set up Jest for TESTING
+- set up Vitest for Unit TESTING
 
 
 
