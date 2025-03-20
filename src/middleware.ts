@@ -7,22 +7,22 @@ const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
 
-  console.log("Middleware running for", req.nextUrl.pathname);
+  // console.log("Middleware running for", req.nextUrl.pathname);
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
   // Retrieve the session cookie
   const cookie = (await cookies()).get("session")?.value;
-  console.log("Cookie:", cookie);
+  // console.log("Cookie:", cookie);
 
   // Decrypt the session cookie to get the session data
   const session = await decrypt(cookie);
-  console.log("Session:", session);
+  // console.log("Session:", session);
 
   // If the route is protected and the user is not authenticated, redirect to the login page
   if (isProtectedRoute && !session?.user?.userId) {
-    console.log("Redirecting to /login");
+    // console.log("Redirecting to /login");
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
@@ -32,7 +32,7 @@ export default async function middleware(req: NextRequest) {
     session?.user?.userId &&
     !req.nextUrl.pathname.startsWith("/dashboard")
   ) {
-    console.log("Redirecting to /dashboard");
+    // console.log("Redirecting to /dashboard");
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 

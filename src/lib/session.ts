@@ -28,7 +28,7 @@ verifyEnvironmentVariables();
 
 const getEncodedKey = async () => {
   const secret = process.env.SESSION_SECRET!;
-  console.log("secret = ", secret);
+  // console.log("secret = ", secret);
   if (!secret) {
     throw new Error("SESSION_SECRET is not defined");
   }
