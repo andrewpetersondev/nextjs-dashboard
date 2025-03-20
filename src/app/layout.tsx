@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scheme-light dark:scheme-dark">
+    <html lang="en" className="scheme-normal dark:scheme-dark">
       <body className={`${inter.className} antialiased`}>
       <ThemeToggle />
       {children}
