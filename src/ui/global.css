@@ -1,8 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+    --color-dark-background: var(--color-neutral-500);
 }
 
 /*
@@ -37,3 +36,9 @@ input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*.dark-mode {*/
+/*    @apply dark:bg-gray-800 dark:text-white;*/
+/*}*/
