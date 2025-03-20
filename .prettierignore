@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+build
+.github
+.idea
+.vscode
+public
+secrets
+storage

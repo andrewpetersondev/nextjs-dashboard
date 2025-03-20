@@ -7,11 +7,11 @@ export SESSION_SECRET=$(cat /run/secrets/session_secret)
 export POSTGRES_PASSWORD=$(cat /run/secrets/postgres_password)
 export POSTGRES_URL=$(cat /run/secrets/postgres_url)
 
-#echo "Loading environment variables in entrypoint.sh..."
-#echo "SESSION_SECRET=$SESSION_SECRET"
-#echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
-#echo "POSTGRES_URL=$POSTGRES_URL"
-#echo "Environment variables loaded..."
+# echo "Loading environment variables in entrypoint.sh..."
+# echo "SESSION_SECRET=$SESSION_SECRET"
+# echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
+# echo "POSTGRES_URL=$POSTGRES_URL"
+# echo "Environment variables loaded..."
 
 until pg_isready -h db -U postgres; do
   echo "waiting for postgres"

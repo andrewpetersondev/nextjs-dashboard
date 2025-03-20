@@ -4,6 +4,8 @@
 
 If showing code changes always indicate what has changed by highlights or comments inside the code block.
 
+When using GitHub Copilot Chat in the Webstorm IDE, always use blue color to show the code suggestions in the chat panel.
+
 Next.js Application uses:
 - App Router
 - Typescript
