@@ -16,5 +16,6 @@
         "PGPASSWORD",
         "pgsql",
         "tektur"
-    ]
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

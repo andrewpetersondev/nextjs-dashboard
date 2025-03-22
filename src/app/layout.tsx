@@ -1,8 +1,7 @@
 import "@/src/ui/global.css";
-import { inter } from "@/src/ui/fonts";
 import { Metadata } from "next";
 import React from "react";
-import ThemeToggle from "@/src/ui/theme-toggle";
+import { inter } from "@/src/ui/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -18,9 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-primary dark">
-      <body className={`${inter.className} antialiased h-full`}>
-        <ThemeToggle />
+    <html lang="en">
+      <body className={`h-full antialiased ${inter.className}`}>
         {children}
       </body>
     </html>
