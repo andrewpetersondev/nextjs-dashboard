@@ -1,44 +1,86 @@
 @import 'tailwindcss';
 
 @theme {
+    /* fonts */
+    /* use two fonts, one for headings and one for body text */
+    /* fonts need primary, secondary, + action colors */
+    --font-eyegrab: "tektur", sans-serif;
+    --color-eyegrab: var(--color-white)
+
+    --font-readme: "Inter", sans-serif;
+    --color-readme: var(--color-gray-400);
+    --color-readme-accent: var(--color-gray-600);
+
+    /*  colors */
+    /* backgrounds need primary, secondary, and action colors */
+    --color-primary: var(--color-blue-900);
+    --color-primary-accent: var(--color-blue-950);
+    --color-primary-active: var(--color-blue-800);
+    --color-primary-disabled: var(--color-blue-300);
+    --color-primary-focus: var(--color-blue-700);
+    --color-text: var(--color-gray-400);
+    --color-text-accent: var(--color-gray-600);
+    --color-text-warning: var(--color-red-500);
+    --color-text-success: var(--color-green-600);
+    --color-text-disabled: var(--color-gray-300);
+/* dark mode colors */
     --color-dark-background: var(--color-neutral-500);
+
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+.font-eyegrab {
+  font-family: var(--font-eyegrab);
+}
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
-}
-
 input[type='number'] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
-
 input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
 input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+}
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/*.dark-mode {*/
-/*    @apply dark:bg-gray-800 dark:text-white;*/
-/*}*/
+.dark .dark-mode {
+    background-color: var(--color-dark-background);
+    @apply text-white;
+}
+
+body {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    font-family: var(--font-readme);
+}
+
+.button {
+  background-color: var(--color-primary-accent);
+  /* border:  */
+  color: var(--color-text);
+}
+
+.button:hover {
+  background-color: var(--color-primary-accent);
+}
+
+.button:active {
+  background-color: var(--color-primary-active);
+}
+
+.button:disabled {
+  background-color: var(--color-primary-disabled);
+  color: var(--color-text-disabled);
+}
+
+.button:focus {
+  outline: 2px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+

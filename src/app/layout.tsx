@@ -18,10 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-gray-50 scheme-normal dark:scheme-dark">
+    <html lang="en" className="h-full bg-primary dark">
       <body className={`${inter.className} antialiased h-full`}>
-      <ThemeToggle />
-      {children}
+        <ThemeToggle />
+        {children}
       </body>
     </html>
   );

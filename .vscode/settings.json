@@ -5,12 +5,16 @@
         "cpus",
         "dpage",
         "emilast",
+        "eyegrab",
+        "Gotisch",
+        "Grenze",
         "ilike",
         "logfilehighlighter",
         "Lusitana",
         "Millis",
         "ossdata",
         "PGPASSWORD",
-        "pgsql"
+        "pgsql",
+        "tektur"
     ]
 }
