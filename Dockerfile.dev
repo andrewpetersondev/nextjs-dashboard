@@ -1,23 +1,15 @@
-FROM node:latest
-
-EXPOSE 3000 9229
-
-WORKDIR /project
-
+FROM node:latest AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN apt-get update && apt-get install -y postgresql-client
-
-COPY package*.json ./
-
-RUN npm install
-
+RUN corepack enable pnpm
+WORKDIR /project
+# If lock file does not exist, will there be a problem? yes, it will.
+COPY package.json ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 COPY . .
-
 RUN chmod +x /project/entrypoint.sh
-
 RUN chown -R node:node /project/node_modules
-
-RUN npm install -g npm@latest
-
 USER node
-
-CMD ["npm", "run", "dev"]
+EXPOSE 3000 9229
+CMD [ "pnpm", "dev" ]

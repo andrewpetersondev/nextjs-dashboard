@@ -7,6 +7,7 @@ dist/
 .git
 .gitignore
 .swc/
+*.md
 
 # Unnecessary files and Notes
 Notes/
