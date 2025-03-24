@@ -34,8 +34,7 @@ Environments
 ## Package Versions
 
 ```json
-{
-  "dependencies": {
+ "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@next/env": "^15.2.2",
     "@tailwindcss/forms": "^0.5.10",
@@ -57,15 +56,15 @@ Environments
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.19.0",
     "@headlessui/react": "^2.2.0",
-    "@tailwindcss/postcss": "^4.0.14",
+    "@tailwindcss/postcss": "^4.0.15",
     "@testcontainers/postgresql": "^10.21.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.13.11",
     "@types/pg": "^8.11.11",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
@@ -73,7 +72,7 @@ Environments
     "depcheck": "^1.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-seed": "^0.3.1",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-drizzle": "^0.2.3",
@@ -88,5 +87,5 @@ Environments
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
-  }
-}
+  },
+```

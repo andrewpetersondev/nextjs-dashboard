@@ -1,24 +1,30 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Switch } from '@headlessui/react'
+import { useState, useEffect } from "react";
+import { Switch } from "@headlessui/react";
 
 export default function ThemeToggle() {
-  // when theme = true, dark mode is enabled
-  const [theme, setTheme] = useState(false)
+  const [theme, setTheme] = useState(false);
 
   useEffect(() => {
-    const storedTheme = JSON.parse(localStorage.getItem('theme') || 'false')
-    setTheme(storedTheme)
-    document.documentElement.classList.toggle('dark', storedTheme)
-  }, [])
+    const storedTheme = JSON.parse(localStorage.getItem("theme") || "false");
+    setTheme(storedTheme);
+    document.documentElement.setAttribute(
+      "data-theme",
+      storedTheme ? "dark" : "light",
+    );
+  }, []);
 
   const toggleTheme = () => {
-    const updatedTheme = !theme
-    setTheme(updatedTheme)
-    localStorage.setItem('theme', JSON.stringify(updatedTheme))
-    document.documentElement.classList.toggle('dark', updatedTheme)
-  }
+    const updatedTheme = !theme;
+    setTheme(updatedTheme);
+    localStorage.setItem("theme", JSON.stringify(updatedTheme));
+    document.documentElement.setAttribute(
+      "data-theme",
+      updatedTheme ? "dark" : "light",
+    );
+    document.documentElement.classList.toggle("dark", updatedTheme);
+  };
 
   return (
     <Switch
@@ -46,11 +52,15 @@ export default function ThemeToggle() {
           aria-hidden="true"
           className="absolute inset-0 flex size-full items-center justify-center opacity-0 transition-opacity duration-100 ease-out group-data-checked:opacity-100 group-data-checked:duration-200 group-data-checked:ease-in"
         >
-          <svg fill="currentColor" viewBox="0 0 12 12" className="size-3 text-indigo-600">
+          <svg
+            fill="currentColor"
+            viewBox="0 0 12 12"
+            className="size-3 text-indigo-600"
+          >
             <path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
           </svg>
         </span>
       </span>
     </Switch>
-  )
+  );
 }

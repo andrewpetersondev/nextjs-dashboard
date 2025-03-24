@@ -1,43 +1,31 @@
 @import "tailwindcss";
 
-@theme {
-  /* fonts */
+/* Global custom variables */
+:root {
   --font-eyegrab: "tektur", sans-serif;
-  --color-eyegrab: var(--color-white);
-
   --font-readme: "Inter", sans-serif;
-  --color-readme: var(--color-gray-300);
-  --color-readme-accent: var(--color-gray-600);
-  --color-readme-warning: var(--color-red-500);
-  --color-readme-success: var(--color-green-600);
-  --color-readme-disabled: var(--color-gray-300);
-
-  /*  colors */
-  --color-primary: var(--color-blue-900);
-  --color-primary-accent: var(--color-blue-950);
-  --color-primary-active: var(--color-blue-800);
-  --color-primary-disabled: var(--color-blue-300);
-  --color-primary-focus: var(--color-blue-700);
-
-  /* dark mode colors */
-  --color-dark-background: var(--color-neutral-500);
+  --font-family: var(--font-readme);
+  /* if i use color-scheme, then i can not test with the theme toggle that i made.
+   i have to change the firefox setting*/
+  /* i can also use the toggle in devtools */
+  color-scheme: light dark;
 }
 
-@layer base {
+@theme {
+  --color-coolasfuck: light-dark(var(--color-red-500), var(--color-blue-500));
+  --color-bg-primary: light-dark(var(--color-blue-100), var(--color-blue-900));
+  --color-bg-secondary: light-dark(var(--color-blue-200), var(--color-blue-800));
+  --color-bg-accent: light-dark(var(--color-blue-300), var(--color-blue-700));
+  --color-bg-active: light-dark(var(--color-blue-400), var(--color-blue-600));
+  --color-bg-disabled: light-dark(var(--color-blue-500), var(--color-blue-500));
+  --color-text-primary: light-dark(var(--color-gray-900), var(--color-gray-200));
+  --color-text-secondary: light-dark(var(--color-gray-700), var(--color-gray-400));
+  --color-text-accent: light-dark(var(--color-gray-500), var(--color-gray-500));
+  --color-text-disabled: light-dark(var(--color-gray-400), var(--color-gray-600));
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
-
-.dark .dark-mode {
-  background-color: var(--color-dark-background);
-  @apply text-white;
-}
-
-body {
-  background-color: var(--color-primary);
-  color: var(--color-readme);
-  font-family: var(--font-readme);
-}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 h1,
 h2,
@@ -45,31 +33,30 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-eyegrab);
-  color: var(--color-eyegrab);
+  font-family: var(--font-eyegrab), sans-serif;
+  color: var(--color-text-accent);
 }
 
 .button {
-  background-color: var(--color-primary-accent);
-  /* border:  */
-  color: var(--color-readme-accent);
+  background-color: var(--color-bg-accent);
+  color: var(--color-text-accent);
 }
 
 .button:hover {
-  background-color: var(--color-primary-accent);
+  background-color: var(--color-bg-accent);
 }
 
 .button:active {
-  background-color: var(--color-primary-active);
+  background-color: var(--color-bg-active);
 }
 
 .button:disabled {
-  background-color: var(--color-primary-disabled);
+  background-color: var(--color-bg-disabled);
   color: var(--color-text-disabled);
 }
 
 .button:focus {
-  outline: 2px solid var(--color-primary-focus);
+  outline: 2px solid var(--color-bg-accent);
   outline-offset: 2px;
 }
 
