@@ -51,3 +51,7 @@ postgres-certs/
 # Notes
 Notes/
 storage/
+
+# pnpm store
+# should pnpm store be ignored?
+.pnpm-store

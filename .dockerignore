@@ -10,10 +10,10 @@ dist/
 *.md
 
 # Unnecessary files and Notes
-Notes/
-containers/
 storage/
 
 # Secrets for the project
 secrets/
-certs/
+
+# should pnpm store be ignored?
+.pnpm-store
