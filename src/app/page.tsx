@@ -8,7 +8,7 @@ export default function Page() {
     <main className="flex min-h-screen flex-col p-6">
       <AcmeLogo />
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-primary-accent px-6 py-10 md:w-2/5 md:px-20">
+        <div className="flex flex-col justify-center gap-6 rounded-lg bg-bg-accent px-6 py-10 md:w-2/5 md:px-20">
           <p className="font-bold text-xl md:text-3xl md:leading-normal">
             <strong className="text-readme-accent font-bold">
               Welcome to Acme.
@@ -21,7 +21,7 @@ export default function Page() {
           </p>
           <Link
             href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+            className="flex items-center gap-5 self-start rounded-lg bg-bg-active px-6 py-3 text-sm font-medium transition-colors hover:bg-bg-hover md:text-base"
           >
             <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
           </Link>
