@@ -15,8 +15,8 @@ export default function InvoiceStatus({
       className={clsx(
         "inline-flex items-center rounded-full px-2 py-1 text-xs",
         {
-          "bg-gray-100 text-gray-500": paymentStatus === "pending",
-          "bg-green-500 text-white": paymentStatus === "paid",
+          "bg-bg-accent text-text-primary": paymentStatus === "pending",
+          "bg-bg-secondary text-text-secondary": paymentStatus === "paid",
         },
       )}
     >

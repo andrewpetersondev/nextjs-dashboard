@@ -8,6 +8,7 @@
   /* if i use color-scheme, then i can not test with the theme toggle that i made.
    i have to change the firefox setting*/
   /* i can also use the toggle in devtools */
+  /* added utility class to <html> and <body> instead*/
   color-scheme: light dark;
 }
 
