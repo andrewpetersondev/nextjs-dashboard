@@ -23,13 +23,13 @@ export default function InvoiceStatus({
       {paymentStatus === "pending" ? (
         <>
           Pending
-          <ClockIcon className="ml-1 w-4 text-gray-500" />
+          <ClockIcon className="ml-1 w-4 text-text-accent" />
         </>
       ) : null}
       {paymentStatus === "paid" ? (
         <>
           Paid
-          <CheckIcon className="ml-1 w-4 text-white" />
+          <CheckIcon className="ml-1 w-4 text-text-primary" />
         </>
       ) : null}
     </span>

@@ -17,13 +17,13 @@ export default async function CustomersTable({
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+            <div className="overflow-hidden rounded-md bg-bg-accent p-2 md:pt-0">
               {/* Mobile View: Displaying each customer in a card layout */}
               <div className="md:hidden">
                 {customers?.map((customer) => (
                   <div
                     key={customer.id}
-                    className="mb-2 w-full rounded-md bg-white p-4"
+                    className="mb-2 w-full rounded-md bg-bg-primary p-4"
                   >
                     {/* Customer info: name, profile picture, and email */}
                     <div className="flex items-center justify-between border-b pb-4">
@@ -40,7 +40,7 @@ export default async function CustomersTable({
                             <p>{customer.name}</p>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-text-primary">
                           {customer.email}
                         </p>
                       </div>
@@ -67,9 +67,9 @@ export default async function CustomersTable({
               </div>
 
               {/* Desktop View: Displaying customers in a table layout */}
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+              <table className="hidden min-w-full rounded-md text-text-primary md:table">
                 {/* Table header with column names */}
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+                <thead className="rounded-md bg-bg-accent text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Name
@@ -90,11 +90,11 @@ export default async function CustomersTable({
                 </thead>
 
                 {/* Table body with customer details */}
-                <tbody className="divide-y divide-gray-200 text-gray-900">
+                <tbody className="divide-y divide-bg-primary text-text-primary">
                   {customers.map((customer) => (
                     <tr key={customer.id} className="group">
                       {/* Customer name and profile picture */}
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-bg-accent py-5 pl-4 pr-3 text-sm text-text-primary group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Image
                             src={customer.image_url}
@@ -108,22 +108,22 @@ export default async function CustomersTable({
                       </td>
 
                       {/* Customer email */}
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-bg-accent px-4 py-5 text-sm">
                         {customer.email}
                       </td>
 
                       {/* Total invoices */}
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-bg-accent px-4 py-5 text-sm">
                         {customer.total_invoices}
                       </td>
 
                       {/* Total pending amount */}
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-bg-accent px-4 py-5 text-sm">
                         {customer.total_pending}
                       </td>
 
                       {/* Total paid amount */}
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                      <td className="whitespace-nowrap bg-bg-accent px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {customer.total_paid}
                       </td>
                     </tr>
