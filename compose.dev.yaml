@@ -7,8 +7,7 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
-      # post_start:
-      # - command: "npx drizzle-kit push --config drizzle.config.ts"
+      - "9230:9230"
     volumes:
       - .:/project
     environment:
