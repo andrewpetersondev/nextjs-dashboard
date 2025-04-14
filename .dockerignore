@@ -3,11 +3,20 @@ node_modules/
 .DS_Store
 *.swp
 build/
-dist/
 .git
 .gitignore
 .swc/
 *.md
+
+# Logs
+logs
+*.log
+
+# Build Artifacts
+dist
+
+# Ignore test coverage reports
+coverage
 
 # Unnecessary files and Notes
 storage/

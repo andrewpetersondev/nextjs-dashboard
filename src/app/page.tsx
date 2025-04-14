@@ -14,7 +14,11 @@ export default function Page() {
               Welcome to Acme.
             </strong>{" "}
             This is the example for the{" "}
-            <a href="https://nextjs.org/learn/" className="underline">
+            <a
+              href="https://nextjs.org/learn/"
+              className="underline"
+              data-testid="nextjs-course-link"
+            >
               Next.js Learn Course
             </a>
             , brought to you by Vercel.
@@ -22,6 +26,7 @@ export default function Page() {
           <Link
             href="/login"
             className="flex items-center gap-5 self-start rounded-lg bg-bg-active px-6 py-3 text-sm font-medium transition-colors hover:bg-bg-hover md:text-base"
+            data-testid="login-button"
           >
             <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
           </Link>
