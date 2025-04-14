@@ -1,28 +1,40 @@
-FROM node:23 AS base
+# Use a specific version of the Node.js image for consistency
+FROM node:23.11.0 AS base
+
+# Set environment variables for pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
+# Install necessary packages
 RUN apt-get update && apt-get install -y postgresql-client
+
+# Enable pnpm using corepack
 RUN corepack enable pnpm
+
+# Set the working directory
 WORKDIR /project
 
-# Install dependencies
-COPY package.json pnpm-lock.yaml ./
+# Install dependencies with caching
+COPY package.json pnpm-lock.yaml entrypoint.sh ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     --mount=type=cache,target=/root/.cache/pnpm \
     pnpm install
 
-# Copy source code
-COPY . .
+# Copy source code and set permissions in one step
+COPY --chown=node:node . .
 
-# Set permissions
+# Set permissions for the entrypoint script
 RUN chmod +x /project/entrypoint.sh
-RUN chown -R node:node /project/node_modules
 
-# Switch to non-root user
+# Switch to non-root user for security
 USER node
 
 # Expose ports
-EXPOSE 3000 9229
+EXPOSE 3000 9229 9230
+
+# Add a healthcheck to ensure the application is running
+#HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+#  CMD curl -f http://localhost:3000/ || exit 1
 
 # Command to run the application
 CMD [ "pnpm", "dev" ]
