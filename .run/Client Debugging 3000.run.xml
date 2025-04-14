@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Client Debugging 3000" type="JavascriptDebugType" focusToolWindowBeforeRun="true" uri="http://localhost:3000" useFirstLineBreakpoints="true">
+    <method v="2" />
+  </configuration>
+</component>
