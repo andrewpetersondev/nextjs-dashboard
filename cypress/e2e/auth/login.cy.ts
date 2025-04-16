@@ -140,4 +140,11 @@ describe("Login Tests", () => {
       .should("be.visible")
       .and("contain", "Invalid email or password");
   });
+
+  it("use custom command to login", () => {
+    cy.clearLocalStorage();
+    cy.fixture("user.json").then((user) => {
+      cy.login(user.email, user.password);
+    });
+  });
 });

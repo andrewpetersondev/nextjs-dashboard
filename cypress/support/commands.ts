@@ -14,7 +14,7 @@ Cypress.Commands.add("login", (email: string, password: string) => {
   cy.session(
     email,
     () => {
-      cy.visit("/login");
+      cy.visit("/login"); // set in login.cy.ts
       cy.get('[data-cy="login-email-input"]').type(email);
       cy.get('[data-cy="login-password-input"]').type(password);
       cy.get('[data-cy="login-button"]').click();
@@ -25,6 +25,7 @@ Cypress.Commands.add("login", (email: string, password: string) => {
       validate: () => {
         cy.getCookie("session").should("exist");
       },
+      cacheAcrossSpecs: true,
     },
   );
 });
