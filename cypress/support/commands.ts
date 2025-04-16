@@ -9,7 +9,6 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-// TODO: this file is not used
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.session(
     email,
@@ -29,13 +28,3 @@ Cypress.Commands.add("login", (email: string, password: string) => {
     },
   );
 });
-
-// Cypress.Commands.add("login2", (email: string, password: string) => {
-//   cy.intercept({ method: "POST", url: "http://localhost:3000/login" }).as(
-//     "loginRequest",
-//   );
-//   cy.get('[data-cy="login-email-input"]').type(email);
-//   cy.get('[data-cy="login-password-input"]').type(password);
-//   cy.get('[data-cy="login-button"]').click();
-//   cy.wait("@loginRequest");
-// });
