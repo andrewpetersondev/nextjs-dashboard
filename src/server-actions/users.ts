@@ -62,14 +62,16 @@ export async function signup(state: SignupFormState, formData: FormData) {
   return redirect("/dashboard");
 }
 
+// TODO : invalid credentials returns status code of 200
+// TODO : valid credentials return status code of 303
 export async function login(
   state: LoginFormState,
   formData: FormData,
 ): Promise<
   | {
-    errors: { email?: string[] | undefined; password?: string[] | undefined };
-    message?: undefined;
-  }
+      errors: { email?: string[] | undefined; password?: string[] | undefined };
+      message?: undefined;
+    }
   | { message: string; errors?: undefined }
 > {
   const validatedFields = LoginFormSchema.safeParse({

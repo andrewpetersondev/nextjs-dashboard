@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    // is this necessary?
     "types": [
       "node",
       "next",
       "react",
-      "react-dom"
+      "react-dom",
     ],
     "target": "esnext",
     "lib": [
@@ -46,8 +45,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "__tests__/**/*.ts",
-    "__tests__/**/*.tsx"
+    "./cypress.d.types"
   ],
   "exclude": [
     "node_modules"

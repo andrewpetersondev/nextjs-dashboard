@@ -15,8 +15,11 @@ logs
 # Build Artifacts
 dist
 
+# Testing
 # Ignore test coverage reports
 coverage
+cypress/screenshots
+cypress/videos
 
 # Unnecessary files and Notes
 storage/

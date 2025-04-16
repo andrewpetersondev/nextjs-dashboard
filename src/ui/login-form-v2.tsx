@@ -59,11 +59,14 @@ export default function LoginFormV2() {
                     placeholder="steve@jobs.com"
                     autoComplete="email"
                     className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-base  outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    data-cy="login-email-input"
                   />
                 </div>
               </div>
               {state?.errors?.email && (
-                <p className="text-text-error">{state.errors.email}</p>
+                <p data-cy="login-email-errors" className="text-text-error">
+                  {state.errors.email}
+                </p>
               )}
               {/* Password */}
               <div>
@@ -81,6 +84,7 @@ export default function LoginFormV2() {
                     required
                     autoComplete="current-password"
                     className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-base  outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    data-cy="login-password-input"
                   />
                 </div>
               </div>
@@ -89,7 +93,11 @@ export default function LoginFormV2() {
                   <p>Password must:</p>
                   <ul>
                     {state.errors.password.map((error) => (
-                      <li key={error} className="text-text-error">
+                      <li
+                        key={error}
+                        data-cy="login-password-errors"
+                        className="text-text-error"
+                      >
                         - {error}
                       </li>
                     ))}
@@ -147,6 +155,7 @@ export default function LoginFormV2() {
                 <Button
                   type="submit"
                   aria-disabled={pending}
+                  data-cy="login-button"
                   className="flex w-full justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-md bg-bg-accent px-3 py-2 text-sm font-semibold ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:ring-transparent"
                 >
                   Sign in
@@ -159,7 +168,9 @@ export default function LoginFormV2() {
               aria-atomic="true"
             >
               {state?.message && (
-                <p className="text-text-error">{state.message}</p>
+                <p data-cy="login-message-errors" className="text-text-error">
+                  {state.message}
+                </p>
               )}
             </div>
 
