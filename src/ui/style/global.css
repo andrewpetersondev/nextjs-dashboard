@@ -36,7 +36,7 @@
   --color-text-disabled: light-dark(var(--color-gray-400), var(--color-gray-600));
   --color-bg-disabled: light-dark(var(--color-blue-500), var(--color-blue-500));
 
-    --color-text-error: light-dark(var(--color-red-500), var(--color-red-500));
+  --color-text-error: light-dark(var(--color-red-500), var(--color-red-500));
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

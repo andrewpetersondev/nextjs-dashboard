@@ -173,7 +173,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
     return totalPages;
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch total number of invoices.");
+    throw new Error("Failed to fetch the total number of invoices.");
   }
 }
 
@@ -254,7 +254,6 @@ export async function fetchFilteredCustomers(query: string) {
     return list;
   } catch (error) {
     console.error("Fetch Filtered Customers Error:", error);
-    throw new Error("Failed to fetch customer table.");
+    throw new Error("Failed to fetch the customer table.");
   }
-
 }

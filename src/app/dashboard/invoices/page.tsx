@@ -2,7 +2,7 @@ import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";
 import Table from "@/src/ui/invoices/table";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
-import { lusitana } from "@/src/ui/fonts";
+import { lusitana } from "@/src/ui/style/fonts";
 import { InvoicesTableSkeleton } from "@/src/ui/skeletons";
 import { Suspense } from "react";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";

@@ -6,31 +6,31 @@ Main Topics
     - authentication
     - authorization
     - Default Runtime = Node, except middleware defaults to edge runtime
-1. React.js
-1. PostgreSQL Database
-1. Drizzle ORM
+2. React.js
+3. PostgreSQL Database
+4. Drizzle ORM
     - migrations
-1. Vitest
-1. Docker
-1. Docker Compose
-1. Typescript
-1. Configurations for all
-1. Debugging in Development
-1. Testing in Development
-    - Unit Testing
-    - Integration Testing
-    - End-to-End Testing
-    - Functional Testing
-    - Performance Testing
-    - Security Testing
-1. Dev Containers vs Docker Compose
-    - debugging
-    - testing
-1. Github AI Chat
-    - prompt engineering practices
-1. NODE_ENV=DEVELOPMENT, NODE_ENV=TESTING, NODE_ENV=PRODUCTION
-1. TailwindCSS v4
-1. Test Containers
+5. Vitest
+6. Docker
+7. Docker Compose
+8. Typescript
+9. Configurations for all
+10. Debugging in Development
+11. Testing in Development
+     - Unit Testing
+     - Integration Testing
+     - End-to-End Testing
+     - Functional Testing
+     - Performance Testing
+     - Security Testing
+12. Dev Containers vs Docker Compose
+     - debugging
+     - testing
+13. Github AI Chat
+     - prompt engineering practices
+14. NODE_ENV=DEVELOPMENT, NODE_ENV=TESTING, NODE_ENV=PRODUCTION
+15. TailwindCSS v4
+16. Test Containers
 
 
 ## Next Steps

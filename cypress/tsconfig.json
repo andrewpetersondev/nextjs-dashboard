@@ -12,8 +12,6 @@
     "baseUrl": "..",
     "paths": {
       "@/*": ["./*"],
-      "@/src/*": ["src/*"],
-      "@/ui/*": ["src/ui/*"]
     },
     "types": ["cypress", "node"],
     "allowJs": true,

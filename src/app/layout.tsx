@@ -1,7 +1,7 @@
-import "@/src/ui/global.css";
+import "@/src/ui/style/global.css";
 import { Metadata } from "next";
 import React from "react";
-import { inter } from "@/src/ui/fonts";
+import { inter } from "@/src/ui/style/fonts";
 
 export const metadata: Metadata = {
   title: {

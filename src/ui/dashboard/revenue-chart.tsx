@@ -1,4 +1,4 @@
-import { lusitana } from "@/src/ui/fonts";
+import { lusitana } from "@/src/ui/style/fonts";
 import { generateYAxis } from "@/src/lib/utils";
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import { fetchRevenue } from "@/src/lib/data";

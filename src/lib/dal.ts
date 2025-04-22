@@ -1,7 +1,7 @@
 import "server-only";
 
 // Data Access Layer centralizes data requests and authorization logic.
-// Cookies (aka Stateless Sessions) and Database Sessions should have their  own DAL & DTO layers
+// Cookies (aka Stateless Sessions) and Database Sessions should have their own DAL & DTO layers
 // The DAL should include a function that verifies the user's session as they interact with your application.
 // At the very least, the function should check if the session is valid,
 // then redirect or return the user information needed to make further requests.

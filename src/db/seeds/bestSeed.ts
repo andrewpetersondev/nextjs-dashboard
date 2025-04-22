@@ -99,7 +99,7 @@ async function main() {
       columns: {
         amount: f.weightedRandom([
           {
-            weight: 1 / 15, // For first record
+            weight: 1 / 15, // For the first record
             value: f.default({ defaultValue: 1000 }),
           },
           {
