@@ -1,31 +1,32 @@
+# Dependency directories
 node_modules/
+.pnpm-store
+
+# Build artifacts
 .next/
+build/
+dist/
+.swc/
+
+# Operating system files
 .DS_Store
 *.swp
-build/
-.git
-.gitignore
-.swc/
-*.md
 
 # Logs
-logs
+logs/
 *.log
 
-# Build Artifacts
-dist
+# Test-related files
+coverage/
+cypress/screenshots/
+cypress/videos/
 
-# Testing
-# Ignore test coverage reports
-coverage
-cypress/screenshots
-cypress/videos
-
-# Unnecessary files and Notes
-storage/
-
-# Secrets for the project
+# Secrets
 secrets/
 
-# should pnpm store be ignored?
-.pnpm-store
+# Miscellaneous
+storage/
+.github/
+.idea/
+.run/
+.vscode/

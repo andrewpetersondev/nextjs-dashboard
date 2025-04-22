@@ -1,57 +1,71 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+# ================================
+# IDE and Editor Configuration
+# ================================
 .idea/
+.DS_Store
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
+# ================================
+# Dependencies
+# ================================
+node_modules/
+.pnpm-store/
 .yarn/*
+.pnp
+.pnp.*
+
+# Include specific Yarn files
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# ================================
+# Testing and Coverage
+# ================================
+coverage/
 .swc/
 
-# next.js
-/.next/
-/out/
+# ================================
+# Build Artifacts
+# ================================
+.next/
+.out/
+build/
 
-# production
-/build
+# ================================
+# Environment Files
+# ================================
+.env*
+next-env.d.ts
+*.tsbuildinfo
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# ================================
+# Debug Logs
+# ================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ================================
+# Vercel Configuration
+# ================================
+.vercel/
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# docker secrets
+# ================================
+# Docker and Secrets
+# ================================
 password.txt
-secrets/
 postgres-certs/
+secrets/
 
-# Notes
+# ================================
+# Other/Miscellaneous Files
+# ================================
 Notes/
 storage/
+*.pem
 
-# pnpm store
-# should pnpm store be ignored?
-.pnpm-store
+# Cypress generated JS files
+cypress/support/*.js
+cypress/support/*.js.map

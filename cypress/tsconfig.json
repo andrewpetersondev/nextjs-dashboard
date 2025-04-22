@@ -3,9 +3,22 @@
     "target": "es5",
     "lib": ["es5", "dom"],
     "sourceMap": true,
-    "types": ["cypress", "node"]
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./*"],
+      "@/src/*": ["src/*"],
+      "@/ui/*": ["src/ui/*"]
+    },
+    "types": ["cypress", "node"],
+    "allowJs": true,
+    "noEmit": true
   },
-  "include": ["**/*.{js,jsx,ts, tsx}",
-    "../cypress.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "exclude": ["node_modules"]
 }
