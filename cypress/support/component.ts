@@ -1,3 +1,14 @@
+/// <reference types="cypress" />
+import './component.d.ts'
+
+import "./commands";
+
+// import "../../src/ui/global.css";
+
+// import { mount } from "cypress/react";
+
+// Cypress.Commands.add("mount", mount);
+
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.
@@ -12,17 +23,3 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-
-import "./commands";
-
-import { mount } from "cypress/react";
-
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      mount: typeof mount;
-    }
-  }
-}
-
-Cypress.Commands.add("mount", mount);
