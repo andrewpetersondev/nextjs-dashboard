@@ -1,4 +1,4 @@
-import "@/src/ui/style/global.css";
+import "@/src/app/globals.css";
 import { Metadata } from "next";
 import React from "react";
 import { inter } from "@/src/ui/style/fonts";
