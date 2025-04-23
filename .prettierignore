@@ -1,0 +1,10 @@
+.devcontainer
+.github
+.idea
+.next
+.pnpm-store
+.run
+.vscode
+node_modules
+public
+storage

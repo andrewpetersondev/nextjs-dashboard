@@ -5,7 +5,6 @@ import LoginFormV2 from "@/src/ui/login-form-v2";
 
 describe("Login Form", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3000/login");
     cy.mount(<LoginFormV2 />);
   });
 

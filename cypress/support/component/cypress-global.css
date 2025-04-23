@@ -1,0 +1,38 @@
+/* Simplified global styles for Cypress component tests */
+/* Note: If components require Tailwind CSS classes, you may need to import Tailwind separately
+   or add the specific utility classes needed for your tests */
+:root {
+  --font-eyegrab: "tektur", sans-serif;
+  --font-readme: "Inter", sans-serif;
+  --font-family: var(--font-readme);
+  color-scheme: light;
+}
+
+/* Basic styles for headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-eyegrab), sans-serif;
+}
+
+/* Basic button styles */
+.button {
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.button:hover {
+  background-color: #d1d5db;
+}
+
+.button:active {
+  background-color: #9ca3af;
+}
+
+.button:disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+}
+
+.button:focus {
+  outline: 2px solid #6b7280;
+  outline-offset: 2px;
+}
