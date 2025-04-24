@@ -5,19 +5,22 @@ services:
       dockerfile: Dockerfile.dev
     working_dir: /project
     ports:
-      - "3000:3000"
-      - "9229:9229"
-      - "9230:9230"
+      - "3000:3000" # Next.js application
+      - "9229:9229" # Node.js inspector for debugging
+      - "9230:9230" # Additional debug port for tests
     volumes:
-      - .:/project
+      - .:/project:delegated # Source code with performance optimization
+      - node_modules:/project/node_modules # Named volume for node_modules
+      - pnpm-store:/pnpm/store # Named volume for pnpm store
     environment:
       NODE_ENV: development
-      NODE_OPTIONS: --inspect=0.0.0.0:9229
+      #      NODE_OPTIONS: --inspect=0.0.0.0:9229
       SESSION_SECRET_FILE: /run/secrets/session_secret
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_URL_FILE: /run/secrets/postgres_url
-    entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
-    command: [ "pnpm", "dev" ]
+      NEXT_TELEMETRY_DISABLED: 1 # Disable telemetry
+    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    command: ["pnpm", "dev"]
     depends_on:
       - db
     user: "node"
@@ -28,31 +31,6 @@ services:
     networks:
       - dashboard-network
 
-  #  run with docker compose -f compose.dev.yaml run testing-web
-  # testing-web:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.dev
-  #   working_dir: /project
-  #   volumes:
-  #     - .:/project
-  #   environment:
-  #     NODE_ENV: test
-  #     SESSION_SECRET_FILE: /run/secrets/session_secret
-  #     POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-  #     POSTGRES_URL_FILE: /run/secrets/postgres_url
-  #   entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
-  #   command: [ "npm", "run", "test" ]
-  #   depends_on:
-  #     - db
-  #   user: "node"
-  #   secrets:
-  #     - session_secret
-  #     - postgres_password
-  #     - postgres_url
-  #   networks:
-  #     - dashboard-network
-
   db:
     image: postgres:latest
     volumes:
@@ -61,6 +39,8 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+#      POSTGRES_USER: postgres
+#      PGDATA: /var/lib/postgresql/data/pgdata
     secrets:
       - postgres_password
     networks:
@@ -70,26 +50,18 @@ services:
     image: adminer:latest
     ports:
       - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: flat # Use a cleaner design
     networks:
       - dashboard-network
     depends_on:
-      - web
+      - db
 
 volumes:
   db-data:
-
-    # profiles:
-    #   testing:
-    #     services:
-    #       web:
-    #         environment:
-    #           NODE_ENV: test
-    #           SESSION_SECRET_FILE: /run/secrets/session_secret
-    #           POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    #           POSTGRES_URL_FILE: /run/secrets/postgres_url
-    #         entrypoint: [ "/bin/sh", "/project/entrypoint.sh" ]
-    #         command: [ "npm", "run", "test" ]
-
+  node_modules: # Named volume for node_modules
+  pnpm-store: # Named volume for pnpm store
 
 secrets:
   session_secret:
