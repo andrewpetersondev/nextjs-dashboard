@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
     "build": "next build",
     "start": "next start",
@@ -37,7 +37,7 @@
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.42.0",
+    "drizzle-orm": "^0.43.0",
     "drizzle-zod": "^0.7.1",
     "jose": "^6.0.10",
     "next": "^15.3.1",

@@ -30,11 +30,11 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
       drizzle-orm:
-        specifier: ^0.42.0
-        version: 0.42.0(@types/pg@8.11.14)(pg@8.15.5)
+        specifier: ^0.43.0
+        version: 0.43.0(@types/pg@8.11.14)(pg@8.15.5)
       drizzle-zod:
         specifier: ^0.7.1
-        version: 0.7.1(drizzle-orm@0.42.0(@types/pg@8.11.14)(pg@8.15.5))(zod@3.24.3)
+        version: 0.7.1(drizzle-orm@0.43.0(@types/pg@8.11.14)(pg@8.15.5))(zod@3.24.3)
       jose:
         specifier: ^6.0.10
         version: 6.0.10
@@ -122,7 +122,7 @@ importers:
         version: 0.31.0
       drizzle-seed:
         specifier: ^0.3.1
-        version: 0.3.1(drizzle-orm@0.42.0(@types/pg@8.11.14)(pg@8.15.5))
+        version: 0.3.1(drizzle-orm@0.43.0(@types/pg@8.11.14)(pg@8.15.5))
       eslint:
         specifier: ^9.25.1
         version: 9.25.1(jiti@2.4.2)
@@ -2523,8 +2523,8 @@ packages:
     resolution: {integrity: sha512-pcKVT+GbfPA+bUovPIilgVOoq+onNBo/YQBG86sf3/GFHkN6lRJPm1l7dKN0IMAk57RQoIm4GUllRrasLlcaSg==}
     hasBin: true
 
-  drizzle-orm@0.42.0:
-    resolution: {integrity: sha512-pS8nNJm2kBNZwrOjTHJfdKkaU+KuUQmV/vk5D57NojDq4FG+0uAYGMulXtYT///HfgsMF0hnFFvu1ezI3OwOkg==}
+  drizzle-orm@0.43.0:
+    resolution: {integrity: sha512-OF6ZOtpGJs3CNXHGwKLfP+mYXEzTnXNL/WRXgAGR+SrtPl6quIBbTPEQZNQ6HhVQchMmJeaezBIcpFBpJD3x+g==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -7858,20 +7858,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.42.0(@types/pg@8.11.14)(pg@8.15.5):
+  drizzle-orm@0.43.0(@types/pg@8.11.14)(pg@8.15.5):
     optionalDependencies:
       '@types/pg': 8.11.14
       pg: 8.15.5
 
-  drizzle-seed@0.3.1(drizzle-orm@0.42.0(@types/pg@8.11.14)(pg@8.15.5)):
+  drizzle-seed@0.3.1(drizzle-orm@0.43.0(@types/pg@8.11.14)(pg@8.15.5)):
     dependencies:
       pure-rand: 6.1.0
     optionalDependencies:
-      drizzle-orm: 0.42.0(@types/pg@8.11.14)(pg@8.15.5)
+      drizzle-orm: 0.43.0(@types/pg@8.11.14)(pg@8.15.5)
 
-  drizzle-zod@0.7.1(drizzle-orm@0.42.0(@types/pg@8.11.14)(pg@8.15.5))(zod@3.24.3):
+  drizzle-zod@0.7.1(drizzle-orm@0.43.0(@types/pg@8.11.14)(pg@8.15.5))(zod@3.24.3):
     dependencies:
-      drizzle-orm: 0.42.0(@types/pg@8.11.14)(pg@8.15.5)
+      drizzle-orm: 0.43.0(@types/pg@8.11.14)(pg@8.15.5)
       zod: 3.24.3
 
   dunder-proto@1.0.1:
