@@ -67,5 +67,7 @@ storage/
 *.pem
 
 # Cypress generated JS files
-cypress/support/*.js
-cypress/support/*.js.map
+cypress/**/*.js
+cypress/**/*.jsx
+cypress/**/*.js.map
+cypress/**/*.jsx.map
