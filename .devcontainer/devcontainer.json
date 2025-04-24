@@ -7,6 +7,7 @@
         3000,
         5432,
         9229,
+        9230,
         8080
     ],
     "customizations": {
@@ -24,8 +25,10 @@
             ]
         }
     },
-    "mounts": [
-        "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
-        "source=postgres-data,target=/var/lib/postgresql/data,type=volume"
-    ]
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
+    "source=node_modules,target=/project/node_modules,type=volume",
+    "source=pnpm-store,target=/pnpm/store,type=volume"
+  ],
+  "remoteUser": "node"
 }
