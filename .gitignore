@@ -66,8 +66,17 @@ Notes/
 storage/
 *.pem
 
+# ================================
 # Cypress generated JS files
+# ================================
 cypress/**/*.js
 cypress/**/*.jsx
 cypress/**/*.js.map
 cypress/**/*.jsx.map
+
+# ================================
+# Cypress
+# ================================
+cypress/videos
+cypress/screenshots
+cypress/downloads
