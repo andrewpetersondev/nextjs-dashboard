@@ -5,7 +5,7 @@ export default defineConfig({
     screenshotOnRunFailure: true,
     video: true,
     baseUrl: "http://localhost:3000",
-    supportFile: "cypress/support/e2e/e2e.ts",
+    supportFile: "cypress/support/e2e.ts",
   },
   component: {
     screenshotOnRunFailure: true,
@@ -14,7 +14,7 @@ export default defineConfig({
       framework: "next",
       bundler: "webpack",
     },
-    indexHtmlFile: "cypress/support/component/component-index.html",
-    supportFile: "cypress/support/component/component.ts",
+    indexHtmlFile: "cypress/support/component-index.html",
+    supportFile: "cypress/support/component.ts",
   },
 });

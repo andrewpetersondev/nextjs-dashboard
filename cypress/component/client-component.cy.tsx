@@ -1,4 +1,4 @@
-import ClientComponent from "@/src/ui/client-component";
+import ClientComponent from "../../src/ui/client-component";
 
 describe("ClientComponent", () => {
   it("mounts", () => {

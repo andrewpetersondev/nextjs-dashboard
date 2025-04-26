@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-// This file contains shared commands that can be used by both component and e2e tests
-
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.session(
     email,
@@ -21,3 +19,5 @@ Cypress.Commands.add("login", (email: string, password: string) => {
     },
   );
 });
+
+// This file contains shared commands that can be used by both component and e2e tests

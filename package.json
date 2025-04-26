@@ -21,13 +21,15 @@
     "component": "cypress open --component",
     "component:headless": "cypress run --component",
     "docker:build": "docker compose -f compose.dev.yaml build",
-    "docker:up": "docker compose -f compose.dev.yaml up -d",
+    "docker:up": "docker compose -f compose.dev.yaml up --build -d",
     "docker:down": "docker compose -f compose.dev.yaml down",
     "docker:logs": "docker compose -f compose.dev.yaml logs -f",
     "docker:test": "./docker-test.sh",
     "docker:clean": "docker compose -f compose.dev.yaml down -v",
     "docker:restart": "pnpm docker:down && pnpm docker:up",
-    "docker:dev": "pnpm docker:up && pnpm docker:logs"
+    "docker:dev": "pnpm docker:up && pnpm docker:logs",
+    "clean:cypress": "rm -rf cypress/**/*.js cypress/**/*.js.map",
+    "pretest": "pnpm clean:cypress"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
