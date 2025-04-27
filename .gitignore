@@ -69,6 +69,8 @@ storage/
 # ================================
 # Cypress generated JS files
 # ================================
+cypress.config.js
+cypress.config.js.map
 cypress/**/*.js
 cypress/**/*.jsx
 cypress/**/*.js.map

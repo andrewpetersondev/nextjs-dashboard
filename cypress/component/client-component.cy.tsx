@@ -5,6 +5,13 @@ describe("ClientComponent", () => {
     cy.mount(<ClientComponent />);
   });
 
+  it("should render with custom mount and options", () => {
+    cy.mount(<ClientComponent />, {
+      log: true,
+      strict: true,
+    });
+  });
+
   it("displays initial-counter value of 0", () => {
     cy.mount(<ClientComponent />);
     cy.contains("Current count: 0");

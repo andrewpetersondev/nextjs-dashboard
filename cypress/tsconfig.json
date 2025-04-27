@@ -2,11 +2,10 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es5", "dom"],
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "jsx": "preserve",
     "types": ["cypress", "node"],
-    "baseUrl": "."
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx"
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "../cypress.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "cypress.d.ts", "../cypress.config.ts"]
 }

@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import { mount } from "cypress/react";
+import { MountOptions, MountReturn } from "cypress/react";
+import { ReactNode } from "react";
 
 declare global {
   namespace Cypress {
@@ -11,7 +12,10 @@ declare global {
        * @param options Additional mounting options
        * @example cy.mount(<MyComponent />)
        */
-      mount: typeof mount;
+      mount(
+        component: ReactNode,
+        options?: Partial<MountOptions>,
+      ): Chainable<MountReturn>;
       /**
        * Custom command to log in a user
        * @param email The user's email
@@ -22,5 +26,3 @@ declare global {
     }
   }
 }
-
-export {};
