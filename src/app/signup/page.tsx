@@ -5,5 +5,5 @@ export default function SignupPage() {
     <main>
       <SignupFormV2 />
     </main>
-  )
+  );
 }
