@@ -10,11 +10,11 @@ import { cookies } from "next/headers";
 
 const verifyEnvironmentVariables = () => {
   const requiredEnvVars = [
-    'POSTGRES_URL',
-    'POSTGRES_PASSWORD',
-    'SESSION_SECRET'
+    "POSTGRES_URL",
+    "POSTGRES_PASSWORD",
+    "SESSION_SECRET",
   ];
-  requiredEnvVars.forEach(envVar => {
+  requiredEnvVars.forEach((envVar) => {
     const value = process.env[envVar];
     if (value) {
       console.log(`Environment variable ${envVar} is set: ${value}`);

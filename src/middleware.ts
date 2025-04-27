@@ -6,7 +6,6 @@ const protectedRoutes = ["/dashboard"];
 const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
-
   // console.log("Middleware running for", req.nextUrl.pathname);
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);

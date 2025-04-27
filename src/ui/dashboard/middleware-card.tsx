@@ -10,7 +10,7 @@ export default async function MiddlewareCard() {
     <div>
       <p>{userId}</p>
       <p>{role}</p>
-      <p>{authy ? 'Authorized' : 'Not Authorized'}</p>
+      <p>{authy ? "Authorized" : "Not Authorized"}</p>
     </div>
   );
 }
