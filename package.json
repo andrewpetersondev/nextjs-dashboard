@@ -79,6 +79,7 @@
     "eslint-plugin-cypress": "^4.3.0",
     "eslint-plugin-drizzle": "^0.2.3",
     "eslint-plugin-next": "^0.0.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.0.0",
     "lightningcss": "^1.29.3",
     "postcss": "^8.5.3",
