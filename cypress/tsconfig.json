@@ -1,11 +1,15 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es5", "dom"],
     "types": ["cypress", "node"],
+    //    "target": "es5",
+    //    "lib": ["es5", "dom"],
+    "allowJs": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx"
+    "isolatedModules": true
+    //    "allowSyntheticDefaultImports": true,
+    //    "jsx": "react-jsx"
   },
   "include": ["**/*.ts", "**/*.tsx", "cypress.d.ts", "../cypress.config.ts"]
 }
