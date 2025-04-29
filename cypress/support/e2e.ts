@@ -1,3 +1,4 @@
+/// <reference types="../cypress.d.ts" />
 /// <reference types="cypress" />
 
 // Import shared commands

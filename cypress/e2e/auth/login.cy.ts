@@ -1,4 +1,55 @@
-/// <reference types="cypress" />
+describe("Login Tests", () => {
+  beforeEach(() => {
+    cy.visit("/login");
+  });
+
+  it("logs in successfully with valid credentials", () => {
+    cy.get('[data-cy="login-email-input"]').type("test@mail.com");
+    cy.get('[data-cy="login-password-input"]').type("Password123!");
+    cy.get('[data-cy="login-button"]').click();
+    cy.url().should("include", "/dashboard");
+  });
+
+  it("use fixture to log in successfully", () => {
+    cy.fixture("user.json").then((user) => {
+      expect(user.email).to.equal("testuser@mail.com");
+      expect(user.password).to.equal("Password123!");
+      cy.get('[data-cy="login-email-input"]').type(user.email);
+      cy.get('[data-cy="login-password-input"]').type(user.password);
+      cy.get('[data-cy="login-button"]').click();
+      cy.url().should("include", "/dashboard");
+    });
+  });
+
+  it("shows an error message for invalid email", () => {
+    cy.get('[data-cy="login-email-input"]').type("invalid@mail.com");
+    cy.get('[data-cy="login-password-input"]').type("Password123!");
+    cy.get('[data-cy="login-button"]').click();
+    // todo : implement a method based on the server response
+    cy.wait(2000);
+    cy.get('[data-cy="login-message-errors"]')
+      .should("be.visible")
+      .and("contain", "Invalid email or password");
+  });
+
+  it("shows an error message for invalid password", () => {
+    cy.get('[data-cy="login-email-input"]').type("testuser@mail.com");
+    cy.get('[data-cy="login-password-input"]').type("invalidpassword");
+    cy.get('[data-cy="login-button"]').click();
+    // todo : implement a method based on the server response
+    cy.wait(2000);
+    cy.get('[data-cy="login-message-errors"]')
+      .should("be.visible")
+      .and("contain", "Invalid email or password");
+  });
+
+  it("use custom command to login", () => {
+    cy.clearLocalStorage();
+    cy.fixture("user.json").then((user) => {
+      cy.login(user.email, user.password);
+    });
+  });
+});
 
 // describe("Login Tests", () => {
 //   const loginUrl = "/login";
@@ -95,56 +146,3 @@
 //       .and("contain", "Something went wrong. Please try again later.");
 //   });
 // });
-
-describe("Login Tests", () => {
-  beforeEach(() => {
-    cy.visit("/login");
-  });
-
-  it("logs in successfully with valid credentials", () => {
-    cy.get('[data-cy="login-email-input"]').type("test@mail.com");
-    cy.get('[data-cy="login-password-input"]').type("Password123!");
-    cy.get('[data-cy="login-button"]').click();
-    cy.url().should("include", "/dashboard");
-  });
-
-  it("use fixture to log in successfully", () => {
-    cy.fixture("user.json").then((user) => {
-      expect(user.email).to.equal("testuser@mail.com");
-      expect(user.password).to.equal("Password123!");
-      cy.get('[data-cy="login-email-input"]').type(user.email);
-      cy.get('[data-cy="login-password-input"]').type(user.password);
-      cy.get('[data-cy="login-button"]').click();
-      cy.url().should("include", "/dashboard");
-    });
-  });
-
-  it("shows an error message for invalid email", () => {
-    cy.get('[data-cy="login-email-input"]').type("invalid@mail.com");
-    cy.get('[data-cy="login-password-input"]').type("Password123!");
-    cy.get('[data-cy="login-button"]').click();
-    // todo : implement a method based on the server response
-    cy.wait(2000);
-    cy.get('[data-cy="login-message-errors"]')
-      .should("be.visible")
-      .and("contain", "Invalid email or password");
-  });
-
-  it("shows an error message for invalid password", () => {
-    cy.get('[data-cy="login-email-input"]').type("testuser@mail.com");
-    cy.get('[data-cy="login-password-input"]').type("invalidpassword");
-    cy.get('[data-cy="login-button"]').click();
-    // todo : implement a method based on the server response
-    cy.wait(2000);
-    cy.get('[data-cy="login-message-errors"]')
-      .should("be.visible")
-      .and("contain", "Invalid email or password");
-  });
-
-  it("use custom command to login", () => {
-    cy.clearLocalStorage();
-    cy.fixture("user.json").then((user) => {
-      cy.login(user.email, user.password);
-    });
-  });
-});

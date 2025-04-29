@@ -2,12 +2,10 @@ import AcmeLogo from "@/src/ui/acme-logo";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Image from "next/image";
-import ClientComponent from "@/src/ui/client-component";
 
 export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">
-      <ClientComponent />
       <AcmeLogo />
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
         <div className="flex flex-col justify-center gap-6 rounded-lg bg-bg-accent px-6 py-10 md:w-2/5 md:px-20">
@@ -40,6 +38,8 @@ export default function Page() {
             height={760}
             alt="Screenshots of the dashboard project showing desktop version"
             className="hidden md:block"
+            priority={true}
+            // sizes="(min-width: 768px), 60vw 100vw"
           />
           <Image
             src="/hero-mobile.png"
@@ -47,6 +47,8 @@ export default function Page() {
             height={620}
             alt="Screenshot of the dashboard project showing mobile version"
             className="block md:hidden"
+            priority={true}
+            // sizes="(max-width: 767px) 100vw, 1px"
           />
         </div>
       </div>
