@@ -2,7 +2,6 @@ import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";
 import Table from "@/src/ui/invoices/table";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
-import { lusitana } from "@/src/ui/style/fonts";
 import { InvoicesTableSkeleton } from "@/src/ui/skeletons";
 import { Suspense } from "react";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
@@ -26,7 +25,7 @@ export default async function Page(props: {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl`}>Invoices</h1>
+        <h1 className="text-2xl">Invoices</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Suspense fallback={<InvoicesSearchSkeleton />}>
