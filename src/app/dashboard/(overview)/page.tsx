@@ -16,7 +16,6 @@ export default async function Page() {
   } else {
     return (
       <div>
-        <MiddlewareCard />
         <UserDashboard />
       </div>
     );
