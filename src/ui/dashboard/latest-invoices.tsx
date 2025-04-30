@@ -9,7 +9,7 @@ export default async function LatestInvoices() {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <h2 className="mb-4 text-xl md:text-2xl">Latest Invoices</h2>
-      <div className="flex grow flex-col justify-between rounded-xl bg-bg-accent p-4">
+      <div className="flex grow flex-col justify-between rounded-xl bg-bg-secondary p-4">
         <div className="bg-bg-primary px-6">
           {latestInvoices.map((invoice, i) => {
             return (
@@ -46,9 +46,9 @@ export default async function LatestInvoices() {
             );
           })}
         </div>
-        <div className="flex items-center pb-2 pt-6">
-          <ArrowPathIcon className="h-5 w-5 text-text-primary" />
-          <h3 className="ml-2 text-sm text-text-primary">Updated just now</h3>
+        <div className="flex items-center pb-2 pt-6 text-text-primary">
+          <ArrowPathIcon className="h-5 w-5" />
+          <h3 className="ml-2">Updated just now</h3>
         </div>
       </div>
     </div>

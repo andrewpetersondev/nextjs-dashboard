@@ -3,7 +3,7 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 export default function AcmeLogo() {
   return (
     <div
-      className="flex h-20 shrink-0 items-end rounded-lg bg-bg-secondary text-text-primary p-4 shadow-sm"
+      className="flex h-20 shrink-0 items-end rounded-lg bg-bg-secondary text-text-primary p-4"
       data-testid="acme-logo"
     >
       <div className="flex flex-row items-center leading-none text-3xl md:text-5xl">

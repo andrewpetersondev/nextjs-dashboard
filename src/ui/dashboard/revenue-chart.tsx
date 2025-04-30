@@ -15,7 +15,7 @@ export default async function RevenueChart() {
     <div className="w-full md:col-span-4">
       <h2 className="mb-4 text-xl md:text-2xl">Recent Revenue</h2>
 
-      <div className="rounded-xl bg-bg-accent p-4">
+      <div className="rounded-xl bg-bg-secondary p-4">
         <div className="sm:grid-cols-13 mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-bg-primary p-4 md:gap-4">
           <div
             className="mb-6 hidden flex-col justify-between text-sm text-text-primary sm:flex"
@@ -40,9 +40,9 @@ export default async function RevenueChart() {
             </div>
           ))}
         </div>
-        <div className="flex items-center pb-2 pt-6">
-          <CalendarIcon className="h-5 w-5 text-text-secondary" />
-          <h3 className="ml-2 text-sm text-text-secondary">Last 12 months</h3>
+        <div className="flex items-center pb-2 pt-6 text-text-primary">
+          <CalendarIcon className="h-5 w-5" />
+          <h3 className="ml-2">Last 12 months</h3>
         </div>
       </div>
     </div>

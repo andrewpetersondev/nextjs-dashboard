@@ -38,12 +38,12 @@ export function Card({
   const Icon = iconMap[type];
 
   return (
-    <div className="rounded-xl bg-bg-accent p-2 shadow-xs">
+    <div className="rounded-xl bg-bg-secondary text-text-secondary p-2 shadow-xs">
       <div className="flex p-4">
         {Icon ? <Icon className="h-5 w-5 text-text-primary" /> : null}
-        <h3 className="ml-2 text-sm font-medium">{title}</h3>
+        <h3 className="ml-2 font-bold">{title}</h3>
       </div>
-      <p className="truncate rounded-xl bg-bg-primary text-text-secondary px-4 py-8 text-center text-2xl">
+      <p className="truncate rounded-xl px-4 py-8 text-center text-2xl">
         {value}
       </p>
     </div>

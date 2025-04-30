@@ -28,7 +28,7 @@ export default function EditInvoiceForm({
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   return (
     <form action={formAction}>
-      <div className="rounded-md bg-bg-accent p-4 md:p-6">
+      <div className="rounded-md bg-bg-secondary p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
@@ -89,7 +89,7 @@ export default function EditInvoiceForm({
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
-          <div className="rounded-md border border-bg-accent bg-bg-primary px-[14px] py-3">
+          <div className="rounded-md border border-bg-accent px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
@@ -114,11 +114,11 @@ export default function EditInvoiceForm({
                   type="radio"
                   value="paid"
                   defaultChecked={invoice.status === "paid"}
-                  className="h-4 w-4 cursor-pointer border-bg-accent bg-bg-secondary text-gray-600 focus:ring-2"
+                  className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-secondary px-3 py-1.5 text-xs font-medium"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 text-xs font-medium text-text-primary"
                 >
                   Paid <CheckIcon className="h-4 w-4" />
                 </label>
@@ -134,7 +134,12 @@ export default function EditInvoiceForm({
         >
           Cancel
         </Link>
-        <Button type="submit">Edit Invoice</Button>
+        <Button
+          className="bg-bg-active font-medium hover:bg-bg-hover rounded-lg px-4 text-text-primary transition-colors"
+          type="submit"
+        >
+          Edit Invoice
+        </Button>
       </div>
     </form>
   );

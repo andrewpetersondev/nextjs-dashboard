@@ -20,9 +20,13 @@
   );
   --color-bg-primary: light-dark(var(--color-gray-100), var(--color-gray-950));
 
-  --color-text-secondary: light-dark(
+  --color-text-secondary-2: light-dark(
     var(--color-gray-600),
     var(--color-gray-400)
+  );
+  --color-text-secondary: light-dark(
+    var(--color-neutral-900),
+    var(--color-neutral-100)
   );
   --color-bg-secondary: light-dark(
     var(--color-gray-200),

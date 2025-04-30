@@ -69,16 +69,13 @@ function PaginationNumber({
   position?: "first" | "last" | "middle" | "single";
   isActive: boolean;
 }) {
-  const className = clsx(
-    "flex h-10 w-10 items-center justify-center text-sm border",
-    {
-      "rounded-l-md": position === "first" || position === "single",
-      "rounded-r-md": position === "last" || position === "single",
-      "z-10 bg-bg-active border-bg-active text-text-active": isActive,
-      "hover:bg-bg-hover": !isActive && position !== "middle",
-      "text-text-primary": position === "middle",
-    },
-  );
+  const className = clsx("flex h-10 w-10 items-center justify-center border", {
+    "rounded-l-md": position === "first" || position === "single",
+    "rounded-r-md": position === "last" || position === "single",
+    "z-10 border-bg-active border-2 border-bg-focus text-text-active": isActive,
+    "hover:bg-bg-hover": !isActive && position !== "middle",
+    "text-text-secondary": position === "middle",
+  });
 
   return isActive || position === "middle" ? (
     <div className={className}>{page}</div>
