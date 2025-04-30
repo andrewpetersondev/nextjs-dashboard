@@ -7,11 +7,11 @@ export default function ClientComponent() {
 
   return (
     <div className="p-4 text-center">
-      <h3 className="text-xl font-semibold mb-4">Counter Component</h3>
+      <h3 className="mb-4 text-xl font-semibold">Counter Component</h3>
       <p className="mb-4">Current count: {count}</p>
       <button
         onClick={() => setCount(count + 1)}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        className="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
       >
         Increment
       </button>

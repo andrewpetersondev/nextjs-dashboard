@@ -5,18 +5,22 @@ This project is a dashboard application built with Next.js, React, PostgreSQL, a
 ## Main Technologies
 
 1. **Next.js & React**
+
    - Server and client components
    - Middleware for authentication and authorization
    - Edge and Node.js runtimes
 
 2. **Database**
+
    - PostgreSQL
    - Drizzle ORM for database operations and migrations
 
 3. **Styling**
+
    - TailwindCSS v4
 
 4. **Testing**
+
    - Cypress for component and E2E testing
    - Vitest (planned)
    - Test Containers

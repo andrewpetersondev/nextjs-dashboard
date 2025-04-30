@@ -30,7 +30,8 @@
     "docker:dev": "pnpm docker:up && pnpm docker:logs",
     "docker:root": " docker exec -u root -it nextjs-dashboard-web-1 /bin/bash",
     "clean:cypress": "rm -rf cypress/**/*.js cypress/**/*.js.map",
-    "pretest": "pnpm clean:cypress"
+    "pretest": "pnpm clean:cypress",
+    "reformat:project": "pnpm prettier --write ."
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -87,6 +88,7 @@
     "lightningcss": "^1.29.3",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "start-server-and-test": "^2.0.11",
     "stylelint-config-prettier": "^9.0.5",

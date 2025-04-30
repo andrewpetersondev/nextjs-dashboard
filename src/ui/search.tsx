@@ -28,22 +28,14 @@ export default function Search({ placeholder }: { placeholder: string }) {
       </label>
       <input
         // className="peer block w-full rounded-md border border-text-active py-[9px] pl-10 text-sm outline-2 placeholder:text-text-disabled"
-        className="peer block w-full rounded-md border border-[color:var(--color-text-active)]
-                 bg-[color:var(--color-bg-primary)] text-[color:var(--color-text-primary)]
-                 py-[9px] pl-10 text-sm outline-2
-                 placeholder:text-[color:var(--color-text-disabled)]
-                 hover:border-[color:var(--color-text-hover)]
-                 focus:border-[color:var(--color-text-focus)]
-                 focus:outline-none focus:ring-2
-                 focus:ring-[color:var(--color-bg-focus)] focus:ring-opacity-20
-                 transition-colors duration-200"
+        className="peer focus:ring-opacity-20 block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-sm text-[color:var(--color-text-primary)] outline-2 transition-colors duration-200 placeholder:text-[color:var(--color-text-disabled)] hover:border-[color:var(--color-text-hover)] focus:border-[color:var(--color-text-focus)] focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:outline-none"
         placeholder={placeholder}
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
         defaultValue={searchParams.get("query")?.toString()}
       />
-      <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-text-focus" />
+      <MagnifyingGlassIcon className="peer-focus:text-text-focus absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
     </div>
   );
 }

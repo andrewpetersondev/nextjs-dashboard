@@ -8,17 +8,17 @@ export default async function RevenueChart() {
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);
   if (!revenue || revenue.length === 0) {
-    return <p className="mt-4 text-text-error">No data available.</p>;
+    return <p className="text-text-error mt-4">No data available.</p>;
   }
 
   return (
     <div className="w-full md:col-span-4">
       <h2 className="mb-4 text-xl md:text-2xl">Recent Revenue</h2>
 
-      <div className="rounded-xl bg-bg-secondary p-4">
-        <div className="sm:grid-cols-13 mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-bg-primary p-4 md:gap-4">
+      <div className="bg-bg-secondary rounded-xl p-4">
+        <div className="bg-bg-primary mt-0 grid grid-cols-12 items-end gap-2 rounded-md p-4 sm:grid-cols-13 md:gap-4">
           <div
-            className="mb-6 hidden flex-col justify-between text-sm text-text-primary sm:flex"
+            className="text-text-primary mb-6 hidden flex-col justify-between text-sm sm:flex"
             style={{ height: `${chartHeight}px` }}
           >
             {yAxisLabels.map((label) => (
@@ -29,18 +29,18 @@ export default async function RevenueChart() {
           {revenue.map((month) => (
             <div key={month.month} className="flex flex-col items-center gap-2">
               <div
-                className="w-full rounded-md bg-bg-accent"
+                className="bg-bg-accent w-full rounded-md"
                 style={{
                   height: `${(chartHeight / topLabel) * month.revenue}px`,
                 }}
               ></div>
-              <p className="-rotate-90 text-sm text-text-primary sm:rotate-0">
+              <p className="text-text-primary -rotate-90 text-sm sm:rotate-0">
                 {month.month}
               </p>
             </div>
           ))}
         </div>
-        <div className="flex items-center pb-2 pt-6 text-text-primary">
+        <div className="text-text-primary flex items-center pt-6 pb-2">
           <CalendarIcon className="h-5 w-5" />
           <h3 className="ml-2">Last 12 months</h3>
         </div>

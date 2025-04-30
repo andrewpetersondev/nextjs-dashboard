@@ -43,7 +43,7 @@ export default function LoginFormV2() {
                   required
                   placeholder="steve@jobs.com"
                   autoComplete="email"
-                  className="block w-full rounded-md  px-3 py-1.5 text-text-secondary ring-1 ring-inset ring-bg-focus placeholder:text-text-disabled focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="text-text-secondary ring-bg-focus placeholder:text-text-disabled focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
                   data-cy="login-email-input"
                 />
               </div>
@@ -57,7 +57,7 @@ export default function LoginFormV2() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm/6 font-medium text-text-secondary"
+                className="text-text-secondary block text-sm/6 font-medium"
               >
                 Password
               </label>
@@ -68,7 +68,7 @@ export default function LoginFormV2() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-inset ring-bg-accent placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
                   data-cy="login-password-input"
                 />
               </div>
@@ -95,7 +95,7 @@ export default function LoginFormV2() {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="col-start-1 row-start-1 h-4 w-4 rounded border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus"
+                      className="border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus col-start-1 row-start-1 h-4 w-4 rounded"
                     />
                     <svg
                       fill="none"
@@ -113,7 +113,7 @@ export default function LoginFormV2() {
                 </div>
                 <label
                   htmlFor="remember-me"
-                  className="block text-sm/6 text-text-primary"
+                  className="text-text-primary block text-sm/6"
                 >
                   Remember me
                 </label>
@@ -122,7 +122,7 @@ export default function LoginFormV2() {
               <div className="text-sm/6">
                 <a
                   href="#"
-                  className="font-semibold text-text-secondary hover:text-text-hover"
+                  className="text-text-secondary hover:text-text-hover font-semibold"
                 >
                   Forgot password?
                 </a>
@@ -135,7 +135,7 @@ export default function LoginFormV2() {
                 type="submit"
                 aria-disabled={pending}
                 data-cy="login-button"
-                className="flex w-full justify-center rounded-md bg-bg-active px-3 py-1.5 text-sm/6 font-semibold text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-focus"
+                className="bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 Sign in
               </Button>
@@ -160,10 +160,10 @@ export default function LoginFormV2() {
                 aria-hidden="true"
                 className="absolute inset-0 flex items-center"
               >
-                <div className="w-full border-t border-bg-accent" />
+                <div className="border-bg-accent w-full border-t" />
               </div>
               <div className="relative flex justify-center text-sm/6 font-medium">
-                <span className="bg-bg-primary px-6 text-text-secondary">
+                <span className="bg-bg-primary text-text-secondary px-6">
                   Or continue with
                 </span>
               </div>
@@ -173,7 +173,7 @@ export default function LoginFormV2() {
             <div className="mt-6 grid grid-cols-2 gap-4">
               <a
                 href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus"
+                className="bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
                   <path
@@ -198,13 +198,13 @@ export default function LoginFormV2() {
 
               <a
                 href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus"
+                className="bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
               >
                 <svg
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   aria-hidden="true"
-                  className="size-5 text-text-accent"
+                  className="text-text-accent size-5"
                 >
                   <path
                     fillRule="evenodd"
@@ -218,11 +218,11 @@ export default function LoginFormV2() {
           </div>
         </div>
 
-        <p className="mt-10 text-center text-sm/6 text-text-accent">
+        <p className="text-text-accent mt-10 text-center text-sm/6">
           Not a member?{" "}
           <Link
             href="/signup"
-            className="font-semibold text-text-secondary hover:text-text-hover"
+            className="text-text-secondary hover:text-text-hover font-semibold"
           >
             Sign up here
           </Link>

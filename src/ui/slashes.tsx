@@ -11,7 +11,7 @@ export default function Slashes() {
         <Image
           src="/customers/amy-burns.png"
           alt="customer image"
-          className="rounded-full ml-10"
+          className="ml-10 rounded-full"
           width={100}
           height={100}
         />

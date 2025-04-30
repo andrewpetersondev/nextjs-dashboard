@@ -13,3 +13,6 @@ coverage
 node_modules
 public
 storage
+
+# Temporarily removing Cypress Files
+cypress

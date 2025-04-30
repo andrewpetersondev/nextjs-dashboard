@@ -8,7 +8,7 @@ interface BoxProps {
 
 const Box: React.FC<BoxProps> = ({ children }) => {
   return (
-    <div className="col-start-4 row-span-full row-start-1 max-sm:hidden text-gray-50/10 border-x border-x-current bg-[size:10px_10px] bg-fixed bg-[image:repeating-linear-gradient(315deg,var(--color-white)_0,var(--color-white)_0.25px,_transparent_0,_transparent_50%)] p-5">
+    <div className="col-start-4 row-span-full row-start-1 border-x border-x-current bg-[image:repeating-linear-gradient(315deg,var(--color-white)_0,var(--color-white)_0.25px,_transparent_0,_transparent_50%)] bg-[size:10px_10px] bg-fixed p-5 text-gray-50/10 max-sm:hidden">
       {children}
     </div>
   );

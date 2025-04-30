@@ -28,7 +28,7 @@ export default function EditInvoiceForm({
   const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
   return (
     <form action={formAction}>
-      <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+      <div className="bg-bg-secondary rounded-md p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
@@ -38,7 +38,7 @@ export default function EditInvoiceForm({
             <select
               id="customer"
               name="customerId"
-              className="peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary"
+              className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
               defaultValue={invoice.customerId}
             >
               <option value="" disabled>
@@ -50,7 +50,7 @@ export default function EditInvoiceForm({
                 </option>
               ))}
             </select>
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-primary" />
+            <UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
           </div>
         </div>
 
@@ -68,16 +68,16 @@ export default function EditInvoiceForm({
                 step="0.01"
                 defaultValue={invoice.amount}
                 placeholder="Enter USD amount"
-                className="peer block w-full rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-primary"
+                className="peer border-bg-accent placeholder:text-text-primary block w-full rounded-md border py-2 pl-10 text-sm outline-2"
                 aria-describedby="customer-error"
               />
-              <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-primary peer-focus:text-text-focus" />
+              <CurrencyDollarIcon className="text-text-primary peer-focus:text-text-focus pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
             </div>
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
             {state.errors?.amount &&
               state.errors.amount.map((error: string) => (
-                <p className="mt-2 text-sm text-text-error" key={error}>
+                <p className="text-text-error mt-2 text-sm" key={error}>
                   {error}
                 </p>
               ))}
@@ -89,7 +89,7 @@ export default function EditInvoiceForm({
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
-          <div className="rounded-md border border-bg-accent px-[14px] py-3">
+          <div className="border-bg-accent rounded-md border px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
@@ -98,11 +98,11 @@ export default function EditInvoiceForm({
                   type="radio"
                   value="pending"
                   defaultChecked={invoice.status === "pending"}
-                  className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
+                  className="border-bg-primary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
                 />
                 <label
                   htmlFor="pending"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 text-xs font-medium text-text-primary"
+                  className="bg-bg-accent text-text-primary ml-2 flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
                 >
                   Pending <ClockIcon className="h-4 w-4" />
                 </label>
@@ -114,11 +114,11 @@ export default function EditInvoiceForm({
                   type="radio"
                   value="paid"
                   defaultChecked={invoice.status === "paid"}
-                  className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
+                  className="border-bg-primary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 text-xs font-medium text-text-primary"
+                  className="bg-bg-accent text-text-primary ml-2 flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
                 >
                   Paid <CheckIcon className="h-4 w-4" />
                 </label>
@@ -130,12 +130,12 @@ export default function EditInvoiceForm({
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard/invoices"
-          className="flex h-10 items-center rounded-lg bg-bg-accent px-4 text-sm font-medium text-text-primary transition-colors hover:bg-bg-hover"
+          className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
         >
           Cancel
         </Link>
         <Button
-          className="bg-bg-active font-medium hover:bg-bg-hover rounded-lg px-4 text-text-primary transition-colors"
+          className="bg-bg-active hover:bg-bg-hover text-text-primary rounded-lg px-4 font-medium transition-colors"
           type="submit"
         >
           Edit Invoice

@@ -21,7 +21,7 @@ export default function SignupFormV2() {
           width={40}
           height={40}
         />
-        <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-text-secondary">
+        <h2 className="text-text-secondary mt-6 text-center text-2xl/9 font-bold tracking-tight">
           Sign up for an account
         </h2>
       </div>
@@ -35,7 +35,7 @@ export default function SignupFormV2() {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm/6 font-medium text-text-secondary"
+                className="text-text-secondary block text-sm/6 font-medium"
               >
                 Username
               </label>
@@ -46,9 +46,9 @@ export default function SignupFormV2() {
                   type="text"
                   required
                   autoComplete="username"
-                  className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-inset ring-bg-accent placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
                 />
-                <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+                <UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
               </div>
             </div>
             {state?.errors?.username && (
@@ -58,7 +58,7 @@ export default function SignupFormV2() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm/6 font-medium text-text-secondary"
+                className="text-text-secondary block text-sm/6 font-medium"
               >
                 Email address
               </label>
@@ -69,9 +69,9 @@ export default function SignupFormV2() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-inset ring-bg-accent placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
                 />
-                <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+                <AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
               </div>
             </div>
             {state?.errors?.email && (
@@ -81,7 +81,7 @@ export default function SignupFormV2() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm/6 font-medium text-text-secondary"
+                className="text-text-secondary block text-sm/6 font-medium"
               >
                 Password
               </label>
@@ -92,7 +92,7 @@ export default function SignupFormV2() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-inset ring-bg-accent placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function SignupFormV2() {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="col-start-1 row-start-1 h-4 w-4 rounded border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus"
+                      className="border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus col-start-1 row-start-1 h-4 w-4 rounded"
                     />
                     <svg
                       fill="none"
@@ -134,7 +134,7 @@ export default function SignupFormV2() {
                 </div>
                 <label
                   htmlFor="remember-me"
-                  className="block text-sm/6 text-text-primary"
+                  className="text-text-primary block text-sm/6"
                 >
                   Remember me
                 </label>
@@ -143,7 +143,7 @@ export default function SignupFormV2() {
               <div className="text-sm/6">
                 <a
                   href="#"
-                  className="font-semibold text-text-secondary hover:text-text-hover"
+                  className="text-text-secondary hover:text-text-hover font-semibold"
                 >
                   Forgot password?
                 </a>
@@ -155,7 +155,7 @@ export default function SignupFormV2() {
               <Button
                 type="submit"
                 aria-disabled={pending}
-                className="flex w-full justify-center rounded-md bg-bg-active px-3 py-1.5 text-sm/6 font-semibold text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-focus"
+                className="bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 Sign up
               </Button>
@@ -178,10 +178,10 @@ export default function SignupFormV2() {
                 aria-hidden="true"
                 className="absolute inset-0 flex items-center"
               >
-                <div className="w-full border-t border-bg-accent" />
+                <div className="border-bg-accent w-full border-t" />
               </div>
               <div className="relative flex justify-center text-sm/6 font-medium">
-                <span className="bg-bg-primary px-6 text-text-secondary">
+                <span className="bg-bg-primary text-text-secondary px-6">
                   Or sign up with
                 </span>
               </div>
@@ -191,7 +191,7 @@ export default function SignupFormV2() {
             <div className="mt-6 grid grid-cols-2 gap-4">
               <a
                 href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus"
+                className="bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
                   <path
@@ -216,7 +216,7 @@ export default function SignupFormV2() {
 
               <a
                 href="#"
-                className="flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus"
+                className="bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
               >
                 <svg
                   fill="currentColor"
@@ -236,11 +236,11 @@ export default function SignupFormV2() {
           </div>
         </div>
 
-        <p className="mt-10 text-center text-sm/6 text-text-accent">
+        <p className="text-text-accent mt-10 text-center text-sm/6">
           Already a member?{" "}
           <Link
             href="/login"
-            className="font-semibold text-text-secondary hover:text-text-hover"
+            className="text-text-secondary hover:text-text-hover font-semibold"
           >
             Sign in here
           </Link>

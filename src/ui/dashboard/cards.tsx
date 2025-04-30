@@ -38,9 +38,9 @@ export function Card({
   const Icon = iconMap[type];
 
   return (
-    <div className="rounded-xl bg-bg-secondary text-text-secondary p-2 shadow-xs">
+    <div className="bg-bg-secondary text-text-secondary rounded-xl p-2 shadow-xs">
       <div className="flex p-4">
-        {Icon ? <Icon className="h-5 w-5 text-text-primary" /> : null}
+        {Icon ? <Icon className="text-text-primary h-5 w-5" /> : null}
         <h3 className="ml-2 font-bold">{title}</h3>
       </div>
       <p className="truncate rounded-xl px-4 py-8 text-center text-2xl">
