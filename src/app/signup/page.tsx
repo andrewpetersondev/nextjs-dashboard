@@ -2,7 +2,7 @@ import SignupFormV2 from "@/src/ui/signup-form-v2";
 
 export default function SignupPage() {
   return (
-    <main>
+    <main className="h-full">
       <SignupFormV2 />
     </main>
   );

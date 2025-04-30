@@ -5,8 +5,6 @@ import { useActionState } from "react";
 import { login } from "@/src/server-actions/users";
 import Image from "next/image";
 import Link from "next/link";
-import Dots from "@/src/ui/dots";
-import Slashes from "@/src/ui/slashes";
 
 export default function LoginFormV2() {
   const [state, action, pending] = useActionState(login, undefined);
@@ -37,7 +35,7 @@ export default function LoginFormV2() {
           </h2>
         </div>
 
-        {/* Container for login form, social logins, and link to sign up page*/}
+        {/* Container for the log-in form, social logins, and link to the sign-up page*/}
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
             {/* form with email and password */}
@@ -251,8 +249,6 @@ export default function LoginFormV2() {
             </Link>
           </p>
         </div>
-        <Dots />
-        <Slashes />
       </div>
     </>
   );
