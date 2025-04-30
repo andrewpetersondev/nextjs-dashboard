@@ -20,22 +20,19 @@ export default function LoginFormV2() {
           width={40}
           height={40}
         />
-        <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-text-secondary">
+        <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight">
           Sign in to your account
         </h2>
       </div>
 
-      {/* Container for login form, social logins, and link to sign up page*/}
+      {/* Container for the log-in form, social logins, and link to the sign-up page*/}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+        <div className="bg-bg-secondary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
           {/* form with email and password */}
           <form action={action} className="space-y-6">
             {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-text-secondary"
-              >
+              <label htmlFor="email" className="block text-sm/6 font-medium">
                 Email address
               </label>
               <div className="mt-2">
@@ -46,7 +43,7 @@ export default function LoginFormV2() {
                   required
                   placeholder="steve@jobs.com"
                   autoComplete="email"
-                  className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-inset ring-bg-accent placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
+                  className="block w-full rounded-md  px-3 py-1.5 text-text-secondary ring-1 ring-inset ring-bg-focus placeholder:text-text-disabled focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
                   data-cy="login-email-input"
                 />
               </div>

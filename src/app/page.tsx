@@ -8,15 +8,12 @@ export default function Page() {
     <main className="flex min-h-screen flex-col p-6">
       <AcmeLogo />
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-bg-accent px-6 py-10 md:w-2/5 md:px-20">
-          <p className="font-bold text-xl md:text-3xl md:leading-normal">
-            <strong className="text-readme-accent font-bold">
-              Welcome to Acme.
-            </strong>{" "}
-            This is the example for the{" "}
+        <div className="flex flex-col justify-center gap-6 rounded-lg bg-bg-secondary px-6 py-10 md:w-2/5 md:px-20">
+          <p className="text-xl font-bold md:text-3xl md:leading-normal">
+            <strong>Welcome to Acme.</strong> This is the example for the{" "}
             <a
               href="https://nextjs.org/learn/"
-              className="underline"
+              className="text-text-active underline hover:text-text-hover"
               data-testid="nextjs-course-link"
             >
               Next.js Learn Course
@@ -25,7 +22,7 @@ export default function Page() {
           </p>
           <Link
             href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-bg-active px-6 py-3 text-sm font-medium transition-colors hover:bg-bg-hover md:text-base"
+            className="flex items-center gap-5 self-start rounded-md bg-bg-active px-6 py-3 text-sm font-semibold text-text-active shadow-sm transition-colors hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-focus md:text-base"
             data-testid="login-button"
           >
             <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
@@ -39,7 +36,6 @@ export default function Page() {
             alt="Screenshots of the dashboard project showing desktop version"
             className="hidden md:block"
             priority={true}
-            // sizes="(min-width: 768px), 60vw 100vw"
           />
           <Image
             src="/hero-mobile.png"
@@ -48,7 +44,6 @@ export default function Page() {
             alt="Screenshot of the dashboard project showing mobile version"
             className="block md:hidden"
             priority={true}
-            // sizes="(max-width: 767px) 100vw, 1px"
           />
         </div>
       </div>

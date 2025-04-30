@@ -13,30 +13,62 @@
 }
 
 @theme {
-  /* the main colors of the page should be primary and accent */
-  --color-text-primary: light-dark(var(--color-gray-900), var(--color-gray-200));
-  --color-bg-primary: light-dark(var(--color-gray-100), var(--color-gray-900));
+  /* === BASE COLORS === */
+  --color-text-primary: light-dark(
+    var(--color-gray-800),
+    var(--color-gray-100)
+  );
+  --color-bg-primary: light-dark(var(--color-gray-100), var(--color-gray-950));
 
-  --color-text-accent: light-dark(var(--color-gray-500), var(--color-gray-500));
-  --color-bg-accent: light-dark(var(--color-gray-300), var(--color-gray-700));
+  --color-text-secondary: light-dark(
+    var(--color-gray-600),
+    var(--color-gray-400)
+  );
+  --color-bg-secondary: light-dark(
+    var(--color-gray-200),
+    var(--color-gray-850)
+  );
 
-  /* secondary is for components or text that needs to pop out to user */
-  --color-text-secondary: light-dark(var(--color-gray-700), var(--color-gray-400));
-  --color-bg-secondary: light-dark(var(--color-blue-200), var(--color-blue-800));
+  --color-text-accent: light-dark(
+    var(--color-indigo-600),
+    var(--color-indigo-300)
+  );
+  --color-bg-accent: light-dark(
+    var(--color-indigo-100),
+    var(--color-indigo-700)
+  );
 
-  --color-text-active: light-dark(var(--color-gray-700), var(--color-gray-400));
-  --color-bg-active: light-dark(var(--color-blue-400), var(--color-blue-600));
+  /* === INTERACTIVE STATES === */
+  --color-text-hover: light-dark(
+    var(--color-indigo-700),
+    var(--color-indigo-300)
+  );
+  --color-bg-hover: light-dark(
+    var(--color-indigo-200),
+    var(--color-indigo-600)
+  );
 
-  --color-text-hover: light-dark(var(--color-gray-600), var(--color-gray-300));
-  --color-bg-hover: light-dark(var(--color-orange-300), var(--color-orange-300));
+  --color-text-active: light-dark(var(--color-gray-700), var(--color-gray-200));
+  --color-bg-active: light-dark(
+    var(--color-indigo-500),
+    var(--color-indigo-500)
+  );
 
-  --color-text-focus: light-dark(var(--color-gray-800), var(--color-gray-500));
-  --color-bg-focus: light-dark(var(--color-blue-500), var(--color-blue-500));
+  --color-text-focus: light-dark(var(--color-gray-900), var(--color-gray-100));
+  --color-bg-focus: light-dark(
+    var(--color-indigo-300),
+    var(--color-indigo-600)
+  );
 
-  --color-text-disabled: light-dark(var(--color-gray-400), var(--color-gray-600));
-  --color-bg-disabled: light-dark(var(--color-blue-500), var(--color-blue-500));
+  --color-text-disabled: light-dark(
+    var(--color-gray-400),
+    var(--color-gray-600)
+  );
+  --color-bg-disabled: light-dark(var(--color-gray-300), var(--color-gray-700));
 
-  --color-text-error: light-dark(var(--color-red-500), var(--color-red-500));
+  /* === ERROR === */
+  --color-text-error: light-dark(var(--color-red-700), var(--color-red-300));
+  --color-bg-error: light-dark(var(--color-red-100), var(--color-red-900));
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -49,7 +81,38 @@ h4,
 h5,
 h6 {
   font-family: var(--font-eyegrab), sans-serif;
+  color: var(--color-text-primary);
+}
+
+p {
   color: var(--color-text-secondary);
+}
+
+input,
+textarea,
+select {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-bg-accent);
+}
+
+input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+input:focus {
+  outline: 2px solid var(--color-bg-focus);
+  outline-offset: 2px;
+}
+
+input:disabled {
+  background-color: var(--color-bg-disabled);
+  color: var(--color-text-disabled);
+}
+
+label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-readme);
 }
 
 .button {
