@@ -26,7 +26,7 @@
   );
   --color-bg-secondary: light-dark(
     var(--color-gray-200),
-    var(--color-gray-850)
+    var(--color-gray-800)
   );
 
   --color-text-accent: light-dark(
@@ -82,67 +82,4 @@ h5,
 h6 {
   font-family: var(--font-eyegrab), sans-serif;
   color: var(--color-text-primary);
-}
-
-p {
-  color: var(--color-text-secondary);
-}
-
-input,
-textarea,
-select {
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-bg-accent);
-}
-
-input::placeholder {
-  color: var(--color-text-secondary);
-}
-
-input:focus {
-  outline: 2px solid var(--color-bg-focus);
-  outline-offset: 2px;
-}
-
-input:disabled {
-  background-color: var(--color-bg-disabled);
-  color: var(--color-text-disabled);
-}
-
-label {
-  color: var(--color-text-secondary);
-  font-family: var(--font-readme);
-}
-
-.button {
-  background-color: var(--color-bg-accent);
-  color: var(--color-text-accent);
-}
-
-.button:hover {
-  background-color: var(--color-bg-accent);
-}
-
-.button:active {
-  background-color: var(--color-bg-active);
-}
-
-.button:disabled {
-  background-color: var(--color-bg-disabled);
-  color: var(--color-text-disabled);
-}
-
-.button:focus {
-  outline: 2px solid var(--color-bg-accent);
-  outline-offset: 2px;
-}
-
-@layer utilities {
-  .bg-grid-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ccc' stroke-width='1'%3E%3Cpath d='M0 39.5h40M0 29.5h40M0 19.5h40M0 9.5h40M0 .5h40M39.5 0v40M29.5 0v40M19.5 0v40M9.5 0v40M.5 0v40'/%3E%3C/g%3E%3C/svg%3E");
-  }
-  .bg-dot-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ccc' fill-opacity='0.4'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
-  }
 }
