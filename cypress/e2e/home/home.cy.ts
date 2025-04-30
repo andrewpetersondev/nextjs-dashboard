@@ -162,7 +162,7 @@ describe("Layout and Page Components", () => {
         if (device.includes("tablet")) {
           it("should maintain an aspect ratio of images in the tablet view", () => {
             cy.get('img[alt*="desktop version"]').should(($img) => {
-              const aspectRatio = $img.naturalWidth / $img[0].naturalHeight;
+              const aspectRatio = $img[0].naturalWidth / $img[0].naturalHeight;
               expect(aspectRatio).to.be.closeTo(1000 / 760, 0.1);
             });
           });

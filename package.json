@@ -21,7 +21,7 @@
     "component": "cypress open --component",
     "component:headless": "rm -f cypress.config.js && cypress run --component",
     "docker:build": "docker compose -f compose.dev.yaml build",
-    "docker:up": "docker compose -f compose.dev.yaml up --build -d",
+    "docker:up": "docker compose -f compose.dev.yaml up --build",
     "docker:down": "docker compose -f compose.dev.yaml down",
     "docker:logs": "docker compose -f compose.dev.yaml logs -f",
     "docker:test": "./docker-test.sh",
