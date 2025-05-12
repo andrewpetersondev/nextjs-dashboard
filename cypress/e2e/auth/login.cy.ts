@@ -2,15 +2,17 @@
 /// <reference types="cypress" />
 
 describe("Login Tests", () => {
+  const loginUrl = "/login";
+  const dashboardUrl = "/dashboard";
   beforeEach(() => {
-    cy.visit("/login");
+    cy.visit(loginUrl);
   });
 
   it("logs in successfully with valid credentials", () => {
     cy.get('[data-cy="login-email-input"]').type("user@mail.com");
     cy.get('[data-cy="login-password-input"]').type("Password123!");
     cy.get('[data-cy="login-button"]').click();
-    cy.url().should("include", "/dashboard");
+    cy.url().should("include", dashboardUrl);
   });
 
   it("use fixture to log in successfully", () => {
@@ -24,7 +26,7 @@ describe("Login Tests", () => {
       cy.get('[data-cy="login-password-input"]').type(user.password);
       cy.get('[data-cy="login-button"]').click();
       // everything works until /dashboard
-      cy.url().should("include", "/dashboard");
+      cy.url().should("include", dashboardUrl);
     });
   });
 

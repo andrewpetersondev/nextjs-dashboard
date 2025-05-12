@@ -1,6 +1,7 @@
 import { seed } from "drizzle-seed";
 import * as schema from "../schema";
 import "dotenv/config";
+import { hashPassword } from "../../lib/password";
 
 // import dotenv from "dotenv";
 // import { drizzle } from "drizzle-orm/node-postgres";
@@ -60,12 +61,11 @@ const users: User[] = [
   {
     username: "user",
     email: "user@mail.com",
-    password: "Password123!", // Note: You'll need to hash this before seeding
+    password: await hashPassword("Password123!"),
   },
 ];
 
 async function main() {
-  // const db = drizzle(process.env.DATABASE_URL!);
 
   await seed(db, schema).refine((f) => ({
     users: {

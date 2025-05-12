@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "create-auth-secret": "dlx auth secret",
-    "reset-db": "tsx src/db/seeds/reset.ts",
+    "reset-db": "pnpm dlx tsx src/db/seeds/reset.ts",
     "schema-update": "drizzle-kit push --config drizzle.config.ts",
     "drizzle-seed": "tsx src/db/seeds/bestSeed.ts",
     "update-drizzle-kit": "drizzle-kit up --config drizzle.config.ts",

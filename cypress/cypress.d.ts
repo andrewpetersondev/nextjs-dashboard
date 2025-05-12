@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
-import { MountOptions, MountReturn } from "cypress/react";
-import { ReactNode } from "react";
+import type { MountOptions, MountReturn } from "cypress/react";
+import type { ReactNode } from "react";
 
 declare global {
   namespace Cypress {
