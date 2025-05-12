@@ -59,7 +59,7 @@ interface User {
 const users: User[] = [
   {
     username: "user",
-    email: "user@nextmail.com",
+    email: "user@mail.com",
     password: "Password123!", // Note: You'll need to hash this before seeding
   },
 ];

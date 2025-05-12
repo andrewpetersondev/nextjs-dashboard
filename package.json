@@ -12,7 +12,6 @@
     "create-auth-secret": "dlx auth secret",
     "reset-db": "tsx src/db/seeds/reset.ts",
     "schema-update": "drizzle-kit push --config drizzle.config.ts",
-    "schema-update-initial": "drizzle-kit push:pg --config drizzle.config.ts",
     "drizzle-seed": "tsx src/db/seeds/bestSeed.ts",
     "update-drizzle-kit": "drizzle-kit up --config drizzle.config.ts",
     "cypress:open": "cypress open",

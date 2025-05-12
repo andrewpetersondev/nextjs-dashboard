@@ -1,10 +1,13 @@
+/// <reference types="../../cypress.d.ts" />
+/// <reference types="cypress" />
+
 describe("Login Tests", () => {
   beforeEach(() => {
     cy.visit("/login");
   });
 
   it("logs in successfully with valid credentials", () => {
-    cy.get('[data-cy="login-email-input"]').type("test@mail.com");
+    cy.get('[data-cy="login-email-input"]').type("user@mail.com");
     cy.get('[data-cy="login-password-input"]').type("Password123!");
     cy.get('[data-cy="login-button"]').click();
     cy.url().should("include", "/dashboard");
@@ -12,11 +15,15 @@ describe("Login Tests", () => {
 
   it("use fixture to log in successfully", () => {
     cy.fixture("user.json").then((user) => {
-      expect(user.email).to.equal("testuser@mail.com");
+      if (!user.email || !user.password) {
+        throw new Error('Missing required user data in fixture')
+      }
+      expect(user.email).to.equal("user@mail.com");
       expect(user.password).to.equal("Password123!");
       cy.get('[data-cy="login-email-input"]').type(user.email);
       cy.get('[data-cy="login-password-input"]').type(user.password);
       cy.get('[data-cy="login-button"]').click();
+      // everything works until /dashboard
       cy.url().should("include", "/dashboard");
     });
   });

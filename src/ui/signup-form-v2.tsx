@@ -47,12 +47,15 @@ export default function SignupFormV2() {
                   required
                   autoComplete="username"
                   className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
+                  data-cy="signup-username-input"
                 />
                 <UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
               </div>
             </div>
             {state?.errors?.username && (
-              <p className="text-text-error">{state.errors.username}</p>
+              <p className="text-text-error" data-cy="signup-username-errors">
+                {state.errors.username}
+              </p>
             )}
             {/* Email */}
             <div>
@@ -70,12 +73,15 @@ export default function SignupFormV2() {
                   required
                   autoComplete="email"
                   className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
+                  data-cy="signup-email-input"
                 />
                 <AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
               </div>
             </div>
             {state?.errors?.email && (
-              <p className="text-text-error">{state.errors.email}</p>
+              <p data-cy="signup-email-errors" className="text-text-error">
+                {state.errors.email}
+              </p>
             )}
             {/* Password */}
             <div>
@@ -93,6 +99,7 @@ export default function SignupFormV2() {
                   required
                   autoComplete="current-password"
                   className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
+                  data-cy="signup-password-input"
                 />
               </div>
             </div>
@@ -101,7 +108,9 @@ export default function SignupFormV2() {
                 <p>Password must:</p>
                 <ul>
                   {state.errors.password.map((error) => (
-                    <li key={error}>- {error}</li>
+                    <li data-cy="signup-password-errors" key={error}>
+                      - {error}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -156,6 +165,7 @@ export default function SignupFormV2() {
                 type="submit"
                 aria-disabled={pending}
                 className="bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+                data-cy="signup-submit-button"
               >
                 Sign up
               </Button>
@@ -167,7 +177,9 @@ export default function SignupFormV2() {
             aria-atomic="true"
           >
             {state?.message && (
-              <p className="text-bg-active">{state.message}</p>
+              <p data-cy="signup-message-errors" className="text-bg-active">
+                {state.message}
+              </p>
             )}
           </div>
 

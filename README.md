@@ -2,6 +2,13 @@
 
 This project is a dashboard application built with Next.js, React, PostgreSQL, and Drizzle ORM, containerized with Docker for development.
 
+## Get Started
+
+1. Open root container and run `npx drizzle-kit push`
+2. comment out "import server-only" in src/db/database.ts, then run "pnpm dlx tsx src/db/seeds/bestSeed.ts" in root container
+3. replace "import server-only" in database.ts
+4.
+
 ## Main Technologies
 
 1. **Next.js & React**
