@@ -1,13 +1,13 @@
 # Use a specific version of the Node.js image for consistency
 # Using LTS version for better stability
-FROM node:23.11.0 AS base
+FROM node AS base
 
 # Set environment variables
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NODE_ENV=development
 
- # changed from pnpm_store_path
+# changed from pnpm_store_path
 ENV PNPM_STORE_DIR="/pnpm/store"
 
 # Install necessary packages and clean up in a single layer to reduce image size
@@ -18,7 +18,7 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && corepack enable \
-    && corepack prepare pnpm@10.9.0 --activate
+    && corepack prepare pnpm@latest --activate
 # pnpm version must match pnpm version on local machine
 
 # Add this line to make pnpm use the store directory we specified
