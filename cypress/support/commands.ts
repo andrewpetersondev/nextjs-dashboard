@@ -21,4 +21,23 @@ Cypress.Commands.add("login", (email: string, password: string) => {
   );
 });
 
+type TestUser = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+Cypress.Commands.add("createTestUser", (user: TestUser) => {
+  cy.task("db:seedUser", user).then((result) => {
+    expect(result).to.eq("User created");
+  });
+});
+
+
+Cypress.Commands.add("deleteTestUser", (email: string) => {
+  cy.task("db:deleteUser", email).then((result) => {
+    expect(result).to.eq("User deleted");
+  });
+});
+
 // This file contains shared commands that can be used by both component and e2e tests
