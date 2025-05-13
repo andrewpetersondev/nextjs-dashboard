@@ -5,6 +5,13 @@ import type { ReactNode } from "react";
 
 declare global {
   namespace Cypress {
+
+    type TestUser = {
+      username: string;
+      email: string;
+      password: string;
+    };
+
     interface Chainable {
       /**
        * Custom command to mount a React component in Cypress
@@ -25,18 +32,34 @@ declare global {
       login(email: string, password: string): Chainable<void>;
 
       /**
+      *  Cypress task for directly inserting into the database within tests
+      */
+      task(
+        name: "createTestUser",
+        user: { username: string; email: string; password: string },
+      ): Chainable<any[]>;
+
+      /**
+      *  Cypress task for directly removing from the database within tests
+      */
+      task(
+        name: "deleteTestUser",
+        user: { username: string; email: string; password: string },
+      ): Chainable<any[]>;
+
+      /**
        * Custom command to create a test user in the database
        * @param user The user object containing username, email, and password
        * @example cy.createTestUser({ username: 'testuser', email: 'testuser@example.com', password: 'Password123!' })
        */
+      // createTestUser(user: TestUser): Chainable<void>;
 
-      createTestUser(user: TestUser): Chainable<void>;
       /**
        * Custom command to delete a test user
        * @param email The user's email
        * @example cy.deleteTestUser('user@example.com')
        */
-      deleteTestUser(email: string): Chainable<void>;
+      // deleteTestUser(email: string): Chainable<void>;
     }
   }
 }
