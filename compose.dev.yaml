@@ -34,7 +34,7 @@ services:
     networks:
       - dashboard-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/"] # Check if the web service is up
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -106,7 +106,12 @@ services:
     # 👇 Add this line to prevent auto-start
     profiles: ["e2e"]
 
-    # run with docker compose -f compose.dev.yaml --profile e2e up cypress
+    # run with
+    # for headless mode
+    # docker compose -f compose.dev.yaml --profile e2e up cypress
+    # docker compose -f compose.dev.yaml --profile e2e up --build?
+    # for interactive mode (which will not work)
+    # docker compose -f compose.dev.yaml --profile e2e run --rm cypress npx cypress open --e2e
 
   adminer:
     image: adminer:latest

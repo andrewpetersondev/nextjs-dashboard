@@ -5,20 +5,20 @@ describe("Signup Tests", () => {
   const signupUrl = "/signup";
   const dashboardUrl = "/dashboard";
   const testUser = {
-    username: "cypress signup",
-    email: "biggy@mail.com",
+    username: "testuser",
+    email: "testuser@mail.com",
     password: "Password123!",
   };
 
   beforeEach(() => {
     cy.visit(signupUrl);
-
   });
 
   afterEach(() => {
     cy.task("logToConsole", "Deleting test user...");
-    // Delete the test user after each test
-    // cy.task("deleteTestUser", testUser.email);
+    cy.task("db:delete", testUser.email).then((result) => {
+      cy.task("logToConsole", result);
+    });
   });
 
   it("registers successfully with valid credentials", () => {

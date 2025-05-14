@@ -4,20 +4,20 @@ import { users } from "./src/db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineConfig({
-  env: {
-    // do i set postgres url here?
-    fuck: "some_value",
-    greeting: "fuck off"
-  },
+  // env: {
+  // do i set postgres url here?
+  // fuck: "some_value",
+  // greeting: "fuck off"
+  // },
   e2e: {
     supportFile: "cypress/support/e2e.ts",
     specPattern: "cypress/e2e/**/*.{cy,spec}.ts",
     screenshotOnRunFailure: true,
     video: true,
-    baseUrl: "http://localhost:3000",
+    // baseUrl: "http://localhost:3000",
     setupNodeEvents(on, config) {
-      console.log("env", process.env);
-      console.log("config", config);
+      // console.log("env", process.env);
+      // console.log("config", config);
       on("task", {
 
         "logToConsole": (message) => {
