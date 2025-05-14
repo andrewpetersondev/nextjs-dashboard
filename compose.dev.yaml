@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile.dev
     working_dir: /project
     ports:
-      - "3000:3000" # Next.js application
-      - "9229:9229" # Node.js inspector for debugging
-      - "9230:9230" # Additional debug port for tests
+      - "3000:3000"
+      - "9229:9229"
+      - "9230:9230"
     volumes:
       - .:/project:cached # Source code with performance optimization
       - node_modules:/project/node_modules:delegated # Named volume for node_modules
@@ -18,7 +18,8 @@ services:
       SESSION_SECRET_FILE: /run/secrets/session_secret
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_URL_FILE: /run/secrets/postgres_url
-      NEXT_TELEMETRY_DISABLED: 1 # Disable telemetry
+      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
+      NEXT_TELEMETRY_DISABLED: 1
     entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
     command: ["pnpm", "dev"]
     depends_on:
@@ -28,6 +29,7 @@ services:
     secrets:
       - session_secret
       - postgres_password
+      - postgres_testdb_url
       - postgres_url
     networks:
       - dashboard-network
@@ -37,11 +39,9 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5432:5432" # Host port 5432 -> Container port 5432
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    #      POSTGRES_USER: postgres
-    #      PGDATA: /var/lib/postgresql/data/pgdata
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -57,16 +57,16 @@ services:
     volumes:
       - testDB-data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
-    env_file:
-      - .env.test
+      - "5433:5432" # Host port 5433 -> Container port 5432
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    secrets:
+      - postgres_testdb_password
     networks:
       - dashboard-network
 
@@ -76,7 +76,7 @@ services:
       - "8080:8080"
     environment:
       ADMINER_DEFAULT_SERVER: db
-      ADMINER_DESIGN: flat # Use a cleaner design
+      ADMINER_DESIGN: flat
     networks:
       - dashboard-network
     depends_on:
@@ -84,9 +84,9 @@ services:
 
 volumes:
   db-data:
-  testDB-data: # Volume for test database
-  node_modules: # Named volume for node_modules
-  pnpm-store: # Named volume for pnpm store
+  testDB-data:
+  node_modules:
+  pnpm-store:
 
 secrets:
   session_secret:
@@ -95,6 +95,29 @@ secrets:
     file: ./secrets/postgres_password.txt
   postgres_url:
     file: ./secrets/postgres_url.txt
+  postgres_testdb_url:
+    file: ./secrets/postgres_testdb_url.txt
+  postgres_testdb_password:
+    file: ./secrets/postgres_testdb_password.txt
 
 networks:
   dashboard-network:
+
+# Example connection URLs:
+
+# From host:
+#   db:     postgres://user:password@localhost:5432/database
+#   testDB: postgres://user:password@localhost:5433/database
+
+# From another container:
+#   db:     postgres://user:password@db:5432/database
+#   testDB: postgres://user:password@testDB:5432/database
+
+# NOTE:
+# - Use postgres://user:password@db:5432/database for services running inside Docker (e.g., web service).
+# - Use postgres://user:password@localhost:5432/database for local development outside Docker.
+# - Set your Docker secrets accordingly for each environment.
+
+# TIP:
+# Always run Drizzle schema/migration commands inside the 'web' container
+# to ensure correct database connectivity (use: db as hostname).

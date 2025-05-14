@@ -69,9 +69,9 @@ export async function login(
   formData: FormData,
 ): Promise<
   | {
-      errors: { email?: string[] | undefined; password?: string[] | undefined };
-      message?: undefined;
-    }
+    errors: { email?: string[] | undefined; password?: string[] | undefined };
+    message?: undefined;
+  }
   | { message: string; errors?: undefined }
 > {
   const validatedFields = LoginFormSchema.safeParse({
@@ -112,5 +112,17 @@ export async function login(
 
 export async function logout() {
   await deleteSession();
+  redirect("/");
+}
+
+export async function deleteUser(userId: string) {
+  try {
+    await db
+      .delete(users)
+      .where(eq(users.id, userId));
+  } catch (error) {
+    console.error("Failed to delete user:", error);
+    throw new Error("An unexpected error occurred. Please try again.");
+  }
   redirect("/");
 }

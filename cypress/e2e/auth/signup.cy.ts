@@ -12,15 +12,16 @@ describe("Signup Tests", () => {
 
   beforeEach(() => {
     cy.visit(signupUrl);
+
   });
 
   afterEach(() => {
+    cy.task("logToConsole", "Deleting test user...");
     // Delete the test user after each test
-    cy.deleteTestUser(testUser.email);
+    // cy.task("deleteTestUser", testUser.email);
   });
 
   it("registers successfully with valid credentials", () => {
-    cy.createTestUser(testUser); // Create a new user before the test
     cy.get('[data-cy="signup-username-input"]').type(testUser.username);
     cy.get('[data-cy="signup-email-input"]').type(testUser.email);
     cy.get('[data-cy="signup-password-input"]').type(testUser.password);

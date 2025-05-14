@@ -14,19 +14,21 @@ const verifyEnvironmentVariables = () => {
     "POSTGRES_PASSWORD",
     "SESSION_SECRET",
   ];
-  requiredEnvVars.forEach((envVar) => {
+  for (const envVar of requiredEnvVars) {
     const value = process.env[envVar];
     if (value) {
-      console.log(`Environment variable ${envVar} is set: ${value}`);
+      // console.log(`Environment variable ${envVar} is set: ${value}`);
     } else {
       console.error(`Environment variable ${envVar} is not set`);
     }
-  });
+  }
+
 };
 
 verifyEnvironmentVariables();
 
 const getEncodedKey = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const secret = process.env.SESSION_SECRET!;
   // console.log("secret = ", secret);
   if (!secret) {

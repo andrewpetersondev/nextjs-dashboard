@@ -54,7 +54,7 @@ The project includes a fully configured Docker development environment that addr
    mkdir -p secrets
    echo "your-session-secret" > secrets/session_secret.txt
    echo "your-postgres-password" > secrets/postgres_password.txt
-   echo "postgres://postgres:your-postgres-password@db:5432/postgres" > secrets/postgres_url.txt
+   echo "postgres://user:password@db:5432/database" > secrets/postgres_url.txt
    ```
 
 2. **Start the development environment**

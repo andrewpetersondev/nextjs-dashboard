@@ -5,7 +5,9 @@ import { eq } from "drizzle-orm";
 
 export default defineConfig({
   env: {
-    postgres_url: "postgres://postgres:postgres@testDB:5432/postgres",
+    // do i set postgres url here?
+    fuck: "some_value",
+    greeting: "fuck off"
   },
   e2e: {
     supportFile: "cypress/support/e2e.ts",
@@ -17,6 +19,12 @@ export default defineConfig({
       console.log("env", process.env);
       console.log("config", config);
       on("task", {
+
+        "logToConsole": (message) => {
+          console.log("log: ", message);
+          return null;
+        },
+
         "createTestUser": async (user) => {
           const insertedUser = await db.insert(users).values(user).returning({ username: users.username, email: users.email, password: users.password });
           return insertedUser ? "User created" : "User creation failed";

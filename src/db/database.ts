@@ -1,23 +1,14 @@
-// import "server-only";
+import "server-only";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
 
-// Optional: fallback to process.env.NODE_ENV === 'test' if you like
-const isTestEnv = process.env.APP_ENV === "test";
-console.log("isTestEnv", isTestEnv);
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
+const postgresUrlFile = process.env.POSTGRES_URL_FILE!;
+const url = fs.readFileSync(postgresUrlFile, "utf8").trim();
 
-let url: string | undefined;
-
-if (isTestEnv && process.env.POSTGRES_URL) {
-  url = process.env.POSTGRES_URL;
-} else if (process.env.POSTGRES_URL_FILE) {
-  const filePath = path.resolve(process.cwd(), process.env.POSTGRES_URL_FILE);
-  if (fs.existsSync(filePath)) {
-    url = fs.readFileSync(filePath, "utf8").trim();
-  }
-}
+console.log("database.ts ...");
+console.log("DRIZZLE CONNECTING TO:", url);
 
 if (!url) {
   console.error("Postgres URL could not be determined.");
