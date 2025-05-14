@@ -1,5 +1,5 @@
 import { defineConfig } from "cypress";
-import { db } from "./src/db/database";
+import { db } from "./src/db/test-database";
 import { users } from "./src/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -25,11 +25,11 @@ export default defineConfig({
           return null;
         },
 
-        "createTestUser": async (user) => {
+        "db:insert": async (user) => {
           const insertedUser = await db.insert(users).values(user).returning({ username: users.username, email: users.email, password: users.password });
           return insertedUser ? "User created" : "User creation failed";
         },
-        "deleteTestUser": async (email) => {
+        "db:delete": async (email) => {
           const deletedUser = await db.delete(users).where(eq(users.email, email));
           return deletedUser ? "User deleted" : "User deletion failed";
         },

@@ -13,6 +13,7 @@ declare global {
     };
 
     interface Chainable {
+
       /**
        * Custom command to mount a React component in Cypress
        * @param component The React component to mount
@@ -23,6 +24,7 @@ declare global {
         component: ReactNode,
         options?: Partial<MountOptions>,
       ): Chainable<MountReturn>;
+
       /**
        * Custom command to log in a user
        * @param email The user's email
@@ -32,10 +34,19 @@ declare global {
       login(email: string, password: string): Chainable<void>;
 
       /**
+       * Custom task to log to console
+       * @example cy.task('logToConsole', 'Hello, world!')
+       */
+      task(
+        name: "logToConsole",
+        message: string,
+      ),
+
+      /**
       *  Cypress task for directly inserting into the database within tests
       */
       task(
-        name: "createTestUser",
+        name: "db:insert",
         user: { username: string; email: string; password: string },
       ): Chainable<any[]>;
 
@@ -43,7 +54,7 @@ declare global {
       *  Cypress task for directly removing from the database within tests
       */
       task(
-        name: "deleteTestUser",
+        name: "db:delete",
         user: { username: string; email: string; password: string },
       ): Chainable<any[]>;
 
@@ -60,6 +71,7 @@ declare global {
        * @example cy.deleteTestUser('user@example.com')
        */
       // deleteTestUser(email: string): Chainable<void>;
+
     }
   }
 }

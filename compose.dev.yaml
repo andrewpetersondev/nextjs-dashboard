@@ -33,6 +33,11 @@ services:
       - postgres_url
     networks:
       - dashboard-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/"] # Check if the web service is up
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:latest
@@ -69,6 +74,39 @@ services:
       - postgres_testdb_password
     networks:
       - dashboard-network
+
+  cypress:
+    image: cypress/included:14.3.3 # Match your Cypress version
+    working_dir: /e2e
+    volumes:
+      - .:/e2e
+      - node_modules:/e2e/node_modules
+    environment:
+      # Pass through any env vars your app needs for testing
+      NODE_ENV: development
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_url
+      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
+      NEXT_TELEMETRY_DISABLED: 1
+      # Optionally, set CYPRESS_baseUrl if needed
+      CYPRESS_baseUrl: http://web:3000
+    depends_on:
+      web:
+        condition: service_healthy
+    secrets:
+      - session_secret
+      - postgres_password
+      - postgres_testdb_url
+      - postgres_url
+    networks:
+      - dashboard-network
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["npx cypress run --e2e"]
+    # 👇 Add this line to prevent auto-start
+    profiles: ["e2e"]
+
+    # run with docker compose -f compose.dev.yaml --profile e2e up cypress
 
   adminer:
     image: adminer:latest

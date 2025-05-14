@@ -6,6 +6,7 @@ describe("Login Tests", () => {
   const dashboardUrl = "/dashboard";
   beforeEach(() => {
     cy.visit(loginUrl);
+    cy.task("logToConsole", "Visiting login page...");
   });
 
   it("logs in successfully with valid credentials", () => {
