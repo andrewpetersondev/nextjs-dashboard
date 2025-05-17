@@ -151,13 +151,6 @@ services:
     profiles: ["e2e"]
 
     # run with
-    # for headless mode
-    # docker compose -f compose.dev.yaml --profile e2e up cypress
-    # docker compose -f compose.dev.yaml --profile e2e up --build?
-    # for interactive mode (which will not work)
-    # docker compose -f compose.dev.yaml --profile e2e run --rm cypress npx cypress open --e2e
-
-    # run with
     # docker compose -f compose.dev.yaml --profile e2e up --build web-e2e cypress
 
   adminer:

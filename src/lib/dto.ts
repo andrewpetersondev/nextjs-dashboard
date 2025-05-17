@@ -22,6 +22,7 @@ import "server-only";
 // import { getUser } from "@/src/lib/dal";
 // import type { User } from "@/src/lib/definitions";
 
+// Remove or comment out any db import and usage
 // import { db } from "@/src/db/database";
 // import { eq } from "drizzle-orm";
 // import { users } from "@/src/db/schema";

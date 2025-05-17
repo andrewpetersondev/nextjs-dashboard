@@ -1,4 +1,9 @@
-// import "server-only";
+// Only import "server-only" if not running in Cypress context
+if (!process.env.CYPRESS) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    // @ts-ignore
+    import("server-only");
+}
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 // import * as fs from 'node:fs/promises';
