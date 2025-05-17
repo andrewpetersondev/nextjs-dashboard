@@ -3,7 +3,7 @@ import {
   uuid,
   varchar,
   pgEnum,
-  AnyPgColumn,
+  type AnyPgColumn,
   integer,
   date,
   timestamp,

@@ -1,6 +1,6 @@
 import "@/src/app/globals.css";
-import { Metadata } from "next";
-import React from "react";
+import type { Metadata } from "next";
+import type React from "react";
 import { inter } from "@/src/ui/style/fonts";
 
 export const metadata: Metadata = {

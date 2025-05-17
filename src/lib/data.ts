@@ -1,8 +1,10 @@
+import "server-only";
+
 import { db } from "@/src/db/database";
-import { formatCurrency } from "@/src/lib/utils";
+import { formatCurrency } from "@/src/lib/utils.server";
 import { customers, invoices, revenues } from "@/src/db/schema";
 import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
-import {
+import type {
   CustomerField,
   FetchFilteredInvoicesData,
   FetchLatestInvoicesData,

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
 import InvoiceStatus from "@/src/ui/invoices/status";
-import { formatCurrency, formatDateToLocal } from "@/src/lib/utils";
+import { formatCurrency, formatDateToLocal } from "@/src/lib/utils.server";
 import { fetchFilteredInvoices } from "@/src/lib/data";
 
 export default async function InvoicesTable({

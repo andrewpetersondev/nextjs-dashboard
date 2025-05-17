@@ -1,13 +1,11 @@
-import { seed } from "drizzle-seed";
-import * as schema from "../schema";
+// ANY FILE THAT IS USED FOR CLI TOOLING CANNOT HAVE IMPORT "SERVER-ONLY"
+// DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
+
 import "dotenv/config";
-import { hashPassword } from "../../lib/password";
-
-// import dotenv from "dotenv";
-// import { drizzle } from "drizzle-orm/node-postgres";
+import { seed } from "drizzle-seed";
 import { db } from "../test-database";
-
-// dotenv.config();
+import * as schema from "../schema";
+import { hashPassword } from "../../lib/password";
 
 const customerFullNames = [
     "Evil Rabbits",
@@ -55,25 +53,49 @@ interface User {
     username: string;
     email: string;
     password: string;
+    role: "admin" | "user";
 }
 
-const users: User[] = [
+const userSeed: User[] = [
     {
         username: "user",
         email: "user@mail.com",
         password: await hashPassword("Password123!"),
+        role: "user",
+    },
+    {
+        username: "admin",
+        email: "admin@mail.com",
+        password: await hashPassword("AdminPassword123!"),
+        role: "admin",
     },
 ];
 
 async function main() {
 
+    // Check if the database is empty
+    const { rows: userCount } = await db.execute("SELECT COUNT(*) FROM users") as { rows: { count: number }[] };
+    const { rows: customerCount } = await db.execute("SELECT COUNT(*) FROM customers") as { rows: { count: number }[] };
+    const { rows: invoiceCount } = await db.execute("SELECT COUNT(*) FROM invoices") as { rows: { count: number }[] };
+    const { rows: revenueCount } = await db.execute("SELECT COUNT(*) FROM revenues") as { rows: { count: number }[] };
+    if (
+        userCount[0].count > 0 ||
+        customerCount[0].count > 0 ||
+        invoiceCount[0].count > 0 ||
+        revenueCount[0].count > 0
+    ) {
+        console.log("Database is not empty. Exiting...");
+        return;
+    }
+
     await seed(db, schema).refine((f) => ({
         users: {
-            count: 1,
+            count: 2,
             columns: {
-                username: f.default({ defaultValue: users[0].username }),
-                email: f.default({ defaultValue: users[0].email }),
-                password: f.default({ defaultValue: users[0].password }),
+                username: f.valuesFromArray({ values: userSeed.map(u => u.username), isUnique: true }),
+                email: f.valuesFromArray({ values: userSeed.map(u => u.email), isUnique: true }),
+                password: f.valuesFromArray({ values: userSeed.map(u => u.password), isUnique: true }),
+                role: f.valuesFromArray({ values: userSeed.map(u => u.role), isUnique: true }),
             },
         },
         customers: {
@@ -121,4 +143,7 @@ async function main() {
     }));
 }
 
-main();
+main().catch((error) => {
+    console.error("Error seeding database:", error);
+    process.exit(1);
+});
