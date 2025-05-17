@@ -24,7 +24,7 @@
     "docker:down": "docker compose -f compose.dev.yaml down",
     "docker:logs": "docker compose -f compose.dev.yaml logs -f",
     "docker:restart": "pnpm docker:down && pnpm docker:up",
-    "docker:root": " docker exec -u root -it nextjs-dashboard-web-1 /bin/bash",
+    "docker:root": " docker exec -u root -it web /bin/bash",
     "docker:test": "./docker-test.sh",
     "docker:up": "docker compose -f compose.dev.yaml up --build",
     "drizzle-reset-db": "pnpm dlx tsx src/db/seeds/reset.ts",

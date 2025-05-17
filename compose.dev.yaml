@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: web
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -43,6 +44,7 @@ services:
 
   # --- E2E web service (uses test DB, but NODE_ENV=development for Next.js) ---
   web-e2e:
+    container_name: web-e2e
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -83,6 +85,7 @@ services:
     profiles: ["e2e"]
 
   db:
+    container_name: db
     image: postgres:latest
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -101,6 +104,7 @@ services:
       - dashboard-network
 
   testDB:
+    container_name: testDB
     image: postgres:latest
     volumes:
       - testDB-data:/var/lib/postgresql/data
@@ -119,6 +123,7 @@ services:
       - dashboard-network
 
   cypress:
+    container_name: cypress
     image: cypress/included:14.3.3 # Match your Cypress version
     working_dir: /e2e
     volumes:
@@ -154,6 +159,7 @@ services:
     # docker compose -f compose.dev.yaml --profile e2e up --build web-e2e cypress
 
   adminer:
+    container_name: adminer
     image: adminer:latest
     ports:
       - "8080:8080"

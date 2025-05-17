@@ -51,5 +51,8 @@ USER node
 # 9230: Additional debug port for tests
 EXPOSE 3000 9229 9230
 
+# Set the entrypoint to the script
+ENTRYPOINT [ "/project/entrypoint.sh" ]
+
 # Command to run the application
 CMD [ "pnpm", "dev" ]
