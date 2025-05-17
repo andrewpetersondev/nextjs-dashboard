@@ -1,9 +1,10 @@
-import SignupFormV2 from "@/src/ui/signup-form-v2";
+
+import { SignupForm } from "@/src/ui/auth/signup-form";
 
 export default function SignupPage() {
-  return (
-    <main className="h-full">
-      <SignupFormV2 />
-    </main>
-  );
+	return (
+		<main className="h-full">
+			<SignupForm />
+		</main>
+	);
 }

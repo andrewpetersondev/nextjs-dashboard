@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import LoginFormV2 from "@/src/ui/login-form-v2";
+import LoginForm from "@/src/ui/auth/login-form";
 
 export default function LoginPage() {
-  return (
-    <main className="h-full">
-      <Suspense fallback={<div>Loading ...</div>}>
-        <LoginFormV2 />
-      </Suspense>
-    </main>
-  );
+	return (
+		<main className="h-full">
+			<Suspense fallback={<div>Loading ...</div>}>
+				<LoginForm />
+			</Suspense>
+		</main>
+	);
 }
