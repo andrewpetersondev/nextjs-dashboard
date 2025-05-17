@@ -30,7 +30,6 @@ verifyEnvironmentVariables();
 const getEncodedKey = async () => {
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const secret = process.env.SESSION_SECRET!;
-  // console.log("secret = ", secret);
   if (!secret) {
     throw new Error("SESSION_SECRET is not defined");
   }
@@ -44,11 +43,10 @@ const initializeEncodedKey = async () => {
   encodedKey = await getEncodedKey();
 };
 
-// Call this function at the start of your application
 initializeEncodedKey();
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
-  await initializeEncodedKey(); // Ensure the key is initialized
+  await initializeEncodedKey();
   try {
     const validatedFields = EncryptPayloadSchema.safeParse(payload);
     if (!validatedFields.success) {
@@ -60,7 +58,6 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
       .setIssuedAt()
       .setExpirationTime("30 d")
       .sign(encodedKey);
-    // console.log("encrypt jwt after sign = ", jwt);
     return jwt;
   } catch (error) {
     console.error("Error during JWT creation:", error);
@@ -71,7 +68,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 export async function decrypt(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
-  await initializeEncodedKey(); // Ensure the key is initialized
+  await initializeEncodedKey();
   if (!session) {
     return undefined;
   }
@@ -80,7 +77,6 @@ export async function decrypt(
       algorithms: ["HS256"],
     })) as { payload: DecryptPayload };
     const validatedFields = DecryptPayloadSchema.safeParse(payload);
-    // console.log("decrypt validatedFields = ", validatedFields);
     if (!validatedFields.success) {
       console.error(
         "Invalid session payload",
@@ -89,7 +85,6 @@ export async function decrypt(
       return undefined;
     }
     const validatedPayload = validatedFields.data;
-    // console.log("decrypt validatedPayload = ", validatedPayload);
     return validatedPayload;
   } catch (error) {
     console.error("Failed to verify session", error);
@@ -147,7 +142,6 @@ export async function updateSession(): Promise<null | void> {
       },
     };
     const updatedToken = await encrypt(minimalPayload);
-    // console.log("updateSession updatedToken = ", updatedToken);
     const cookieStore = await cookies();
     cookieStore.set("session", updatedToken, {
       httpOnly: true,
@@ -156,7 +150,6 @@ export async function updateSession(): Promise<null | void> {
       sameSite: "lax",
       path: "/",
     });
-    // console.log("DecryptPayload successfully updated");
   } catch (error) {
     console.error("updateSession error: ", error);
   }

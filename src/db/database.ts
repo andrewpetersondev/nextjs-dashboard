@@ -1,3 +1,6 @@
+// this file should be server-only, but then I can not test or seed
+// import "server-only"; // uncomment for production
+
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as fs from 'node:fs/promises';

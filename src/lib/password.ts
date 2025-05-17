@@ -10,7 +10,7 @@ export const hashPassword = async (password: string): Promise<string> => {
     return hashedPassword;
   } catch (error) {
     console.error("Error while hashing password:", error);
-    throw error; // Keep error propagation as required
+    throw error;
   }
 };
 

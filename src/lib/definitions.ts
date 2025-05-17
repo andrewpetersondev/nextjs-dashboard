@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export type User = {
-  id: string; // name: string;
+  id: string;
   username: string;
   email: string;
   password: string;
@@ -18,8 +18,7 @@ export type Invoice = {
   id: string;
   customer_id: string;
   amount: number;
-  date: string; // In TypeScript, this is called a string union type.
-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
+  date: string;
   status: "pending" | "paid";
 };
 
@@ -108,16 +107,6 @@ export type FormattedCustomersTable = {
   total_pending: string;
 };
 
-// export type FormattedCustomersTable = {
-//   id: string;
-//   name: string;
-//   email: string;
-//   image_url: string;
-//   total_invoices: number;
-//   total_pending: string;
-//   total_paid: string;
-// };
-
 export type CustomerField = {
   id: string;
   name: string;
@@ -149,13 +138,13 @@ export const SignupFormSchema = z.object({
 
 export type SignupFormState =
   | {
-      errors?: {
-        username?: string[];
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    errors?: {
+      username?: string[];
+      email?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export const LoginFormSchema = z.object({
@@ -165,12 +154,12 @@ export const LoginFormSchema = z.object({
 
 export type LoginFormState =
   | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    errors?: {
+      email?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export type InvoiceState = {

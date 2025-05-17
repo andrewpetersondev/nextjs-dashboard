@@ -62,8 +62,6 @@ export async function signup(state: SignupFormState, formData: FormData) {
   return redirect("/dashboard");
 }
 
-// TODO : invalid credentials returns status code of 200
-// TODO : valid credentials return status code of 303
 export async function login(
   state: LoginFormState,
   formData: FormData,
