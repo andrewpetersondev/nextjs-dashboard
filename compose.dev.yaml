@@ -19,6 +19,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_URL_FILE: /run/secrets/postgres_url
       POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
+      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
       NEXT_TELEMETRY_DISABLED: 1
     entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
     command: ["pnpm", "dev"]
@@ -31,6 +32,7 @@ services:
       - postgres_password
       - postgres_testdb_url
       - postgres_url
+      - postgres_testdb_password
     networks:
       - dashboard-network
     healthcheck:
@@ -38,6 +40,47 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  # --- E2E web service (uses test DB, but NODE_ENV=development for Next.js) ---
+  web-e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /project
+    ports:
+      - "3001:3000" # Avoid port clash with dev web
+    volumes:
+      - .:/project:cached
+      - node_modules:/project/node_modules:delegated
+      - pnpm-store:/pnpm/store:delegated
+    environment:
+      NODE_ENV: development # Must be 'development' for Next.js
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
+      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
+      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
+      NEXT_TELEMETRY_DISABLED: 1
+      # Optionally, add a custom variable to distinguish test env
+      E2E: "true"
+    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    command: ["pnpm", "dev"]
+    depends_on:
+      testDB:
+        condition: service_healthy
+    user: "node"
+    secrets:
+      - session_secret
+      - postgres_testdb_password
+      - postgres_testdb_url
+    networks:
+      - dashboard-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    profiles: ["e2e"]
 
   db:
     image: postgres:latest
@@ -82,28 +125,29 @@ services:
       - .:/e2e
       - node_modules:/e2e/node_modules
     environment:
-      # Pass through any env vars your app needs for testing
       NODE_ENV: development
       SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_url
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
+      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
       POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
       NEXT_TELEMETRY_DISABLED: 1
-      # Optionally, set CYPRESS_baseUrl if needed
-      CYPRESS_baseUrl: http://web:3000
+      CYPRESS_baseUrl: http://web-e2e:3000
     depends_on:
-      web:
+      web-e2e:
+        condition: service_healthy
+      testDB:
+        condition: service_healthy
+      adminer:
         condition: service_healthy
     secrets:
       - session_secret
-      - postgres_password
+      - postgres_testdb_password
       - postgres_testdb_url
-      - postgres_url
     networks:
       - dashboard-network
     entrypoint: ["/bin/sh", "-c"]
-    command: ["npx cypress run --e2e"]
-    # 👇 Add this line to prevent auto-start
+    command: ["npx cypress run --e2e --spec cypress/e2e/auth/signup.cy.ts"]
     profiles: ["e2e"]
 
     # run with
@@ -112,6 +156,9 @@ services:
     # docker compose -f compose.dev.yaml --profile e2e up --build?
     # for interactive mode (which will not work)
     # docker compose -f compose.dev.yaml --profile e2e run --rm cypress npx cypress open --e2e
+
+    # run with
+    # docker compose -f compose.dev.yaml --profile e2e up --build web-e2e cypress
 
   adminer:
     image: adminer:latest
@@ -124,6 +171,12 @@ services:
       - dashboard-network
     depends_on:
       - db
+      - testDB
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   db-data:

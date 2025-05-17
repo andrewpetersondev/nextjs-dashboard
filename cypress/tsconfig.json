@@ -1,7 +1,6 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["cypress", "node"],
     "allowJs": true,
     "noEmit": true,
     "esModuleInterop": true,

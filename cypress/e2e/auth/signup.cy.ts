@@ -12,13 +12,16 @@ describe("Signup Tests", () => {
 
   beforeEach(() => {
     cy.visit(signupUrl);
+    // cy.task("db:delete", testUser.email).then((result) => {
+    //   cy.task("logToConsole", result);
+    // });
   });
 
   afterEach(() => {
     cy.task("logToConsole", "Deleting test user...");
-    cy.task("db:delete", testUser.email).then((result) => {
-      cy.task("logToConsole", result);
-    });
+    // cy.task("db:delete", testUser.email).then((result) => {
+    //   cy.task("logToConsole", result);
+    // });
   });
 
   it("registers successfully with valid credentials", () => {
