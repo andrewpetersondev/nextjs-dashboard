@@ -1,8 +1,8 @@
 "use client";
 
 import { login } from "@/src/server-actions/users";
-import { EmailField } from "@/src/ui/auth/email-field";
-import { PasswordField } from "@/src/ui/auth/password-field";
+import { InputField } from "@/src/ui/auth/input-field";
+import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
@@ -30,8 +30,31 @@ export default function LoginForm() {
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-secondary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 					<form action={action} className="space-y-6" noValidate>
-						<EmailField error={state?.errors?.email} />
-						<PasswordField error={state?.errors?.password} />
+						<InputField
+							id="email"
+							name="email"
+							type="email"
+							label="Email address"
+							autoComplete="email"
+							required
+							icon={<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							error={state?.errors?.email}
+							dataCy="login-email-input"
+							placeholder="steve@jobs.com"
+						/>
+						<InputField
+							id="password"
+							name="password"
+							type="password"
+							label="Password"
+							autoComplete="current-password"
+							required
+							icon={<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							error={state?.errors?.password}
+							dataCy="login-password-input"
+							placeholder="Enter your password"
+							describedById="login-password-errors"
+						/>
 
 						<div className="flex items-center justify-between">
 							<RememberMeCheckbox />

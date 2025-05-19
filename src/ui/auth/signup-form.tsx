@@ -4,10 +4,9 @@ import { Button } from "@/src/ui/button";
 import { useActionState } from "react";
 import { signup } from "@/src/server-actions/users";
 import Link from "next/link";
-import { AtSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
+import { AtSymbolIcon, UserIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { memo } from "react";
-import { PasswordField } from "@/src/ui/auth/password-field";
 import { InputField } from "@/src/ui/auth/input-field";
 import AuthSwitchLink from "./auth-switch-link";
 import Heading from "./heading";
@@ -61,7 +60,6 @@ export const SignupForm: FC = () => {
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 					<form action={action} className="space-y-6" autoComplete="off" noValidate>
-						{/* Username */}
 						<InputField
 							id="username"
 							name="username"
@@ -73,7 +71,6 @@ export const SignupForm: FC = () => {
 							error={state?.errors?.username}
 							dataCy="signup-username-input"
 						/>
-						{/* Email */}
 						<InputField
 							id="email"
 							name="email"
@@ -86,12 +83,14 @@ export const SignupForm: FC = () => {
 							dataCy="signup-email-input"
 							placeholder="steve@jobs.com"
 						/>
-						<PasswordField
+						<InputField
 							id="password"
 							name="password"
+							type="password"
 							label="Password"
 							autoComplete="new-password"
 							required
+							icon={<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
 							error={state?.errors?.password}
 							dataCy="signup-password-input"
 							placeholder="Enter your password"
