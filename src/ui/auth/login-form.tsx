@@ -7,7 +7,7 @@ import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 import Heading from "@/src/ui/auth/heading";
-import { Button } from "@/src/ui/button";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { useActionState } from "react";
 import React from "react";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
@@ -28,7 +28,7 @@ export default function LoginForm() {
 			<Heading text="Log in to your account" />
 
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-				<div className="bg-bg-secondary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 					<form action={action} className="space-y-6" noValidate>
 						<InputField
 							id="email"
@@ -62,14 +62,12 @@ export default function LoginForm() {
 						</div>
 
 						<div>
-							<Button
-								type="submit"
-								aria-disabled={pending}
+							<AuthSubmitButton
+								pending={pending}
 								data-cy="login-button"
-								className="bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
 							>
-								Sign in
-							</Button>
+								Log In
+							</AuthSubmitButton>
 						</div>
 					</form>
 

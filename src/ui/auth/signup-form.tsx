@@ -1,39 +1,15 @@
 "use client";
 
-import { Button } from "@/src/ui/button";
 import { useActionState } from "react";
 import { signup } from "@/src/server-actions/users";
 import Link from "next/link";
 import { AtSymbolIcon, UserIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
-import { memo } from "react";
 import { InputField } from "@/src/ui/auth/input-field";
 import AuthSwitchLink from "./auth-switch-link";
 import Heading from "./heading";
 import { SocialLoginButton } from "./social-login-button";
-
-type SocialButtonProps = Readonly<{
-	href: string;
-	icon: React.ReactElement;
-	children: React.ReactNode;
-}>;
-
-/**
- * Social login button.
- */
-const SocialButton: FC<SocialButtonProps> = memo(({ href, icon, children }) => (
-	<a
-		href={href}
-		className="bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
-		tabIndex={0}
-		aria-label={`Sign up with ${typeof children === "string" ? children : "provider"}`}
-	>
-		{icon}
-		<span>{children}</span>
-	</a>
-));
-
-SocialButton.displayName = "SocialButton";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 
 type SignupFormState = Readonly<{
 	errors?: {
@@ -143,14 +119,12 @@ export const SignupForm: FC = () => {
 						</div>
 
 						<div>
-							<Button
-								type="submit"
-								aria-disabled={pending}
-								className="bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+							<AuthSubmitButton
+								pending={pending}
 								data-cy="signup-submit-button"
 							>
-								Sign up
-							</Button>
+								Sign Up
+							</AuthSubmitButton>
 						</div>
 					</form>
 					<div
