@@ -6,7 +6,6 @@ import { PasswordField } from "@/src/ui/auth/password-field";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
-import { GitHubIcon, GoogleIcon } from "@/src/ui/auth/icons";
 import Heading from "@/src/ui/auth/heading";
 import { Button } from "@/src/ui/button";
 import { useActionState } from "react";
@@ -79,19 +78,17 @@ export default function LoginForm() {
 						</div>
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
+								provider="Google"
 								href="/api/auth/google"
-								icon={<GoogleIcon />}
+								mode="login"
 								data-cy="login-google"
-							>
-								Google
-							</SocialLoginButton>
+							/>
 							<SocialLoginButton
+								provider="GitHub"
 								href="/api/auth/github"
-								icon={<GitHubIcon />}
+								mode="login"
 								data-cy="login-github"
-							>
-								GitHub
-							</SocialLoginButton>
+							/>
 						</div>
 					</div>
 				</div>
