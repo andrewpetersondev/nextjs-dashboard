@@ -3,13 +3,14 @@
 import { Button } from "@/src/ui/button";
 import { useActionState } from "react";
 import { signup } from "@/src/server-actions/users";
-import Image from "next/image";
 import Link from "next/link";
 import { AtSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
 import { memo } from "react";
 import { PasswordField } from "@/src/ui/auth/password-field";
 import { InputField } from "@/src/ui/auth/input-field";
+import AuthSwitchLink from "./auth-switch-link";
+import Heading from "./heading";
 
 type SocialButtonProps = Readonly<{
 	href: string;
@@ -36,8 +37,8 @@ SocialButton.displayName = "SocialButton";
 
 type SignupFormState = Readonly<{
 	errors?: {
-		username?: string;
-		email?: string;
+		username?: string[];
+		email?: string[];
 		password?: string[];
 	};
 	message?: string;
@@ -49,24 +50,12 @@ type SignupFormState = Readonly<{
  * Production-ready, accessible, and testable signup form for Next.js App Router.
  */
 export const SignupForm: FC = () => {
-	const [state, action, pending] = useActionState<SignupFormState, FormData>(signup, undefined);
+	const [state, action, pending] = useActionState<SignupFormState, FormData>(signup, { errors: undefined, message: undefined });
 
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-			{/* Logo and heading */}
-			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-				<Image
-					alt="Your Company"
-					src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-					className="mx-auto h-10 w-auto"
-					width={40}
-					height={40}
-					priority
-				/>
-				<h2 className="text-text-secondary mt-6 text-center text-2xl/9 font-bold tracking-tight">
-					Sign up for an account
-				</h2>
-			</div>
+
+			<Heading text="Sign up for an account" />
 
 			{/* Form container */}
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -241,15 +230,11 @@ export const SignupForm: FC = () => {
 						</div>
 					</div>
 				</div>
-				<p className="text-text-accent mt-10 text-center text-sm/6">
-					Already a member?{" "}
-					<Link
-						href="/login"
-						className="text-text-secondary hover:text-text-hover font-semibold"
-					>
-						Sign in here
-					</Link>
-				</p>
+				<AuthSwitchLink
+					prompt="Already a member?"
+					href="/login"
+					linkText="Sign in here"
+				/>
 			</div>
 		</div>
 	);

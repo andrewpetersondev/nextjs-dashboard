@@ -8,10 +8,10 @@ import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 import { GitHubIcon, GoogleIcon } from "@/src/ui/auth/icons";
 import Heading from "@/src/ui/auth/heading";
-import NotAMember from "@/src/ui/auth/not-a-member";
 import { Button } from "@/src/ui/button";
 import { useActionState } from "react";
 import React from "react";
+import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
 
 type LoginState = {
 	errors?: {
@@ -95,7 +95,11 @@ export default function LoginForm() {
 						</div>
 					</div>
 				</div>
-				<NotAMember />
+				<AuthSwitchLink
+					prompt="Not a member?"
+					href="/signup"
+					linkText="Sign up here"
+				/>
 			</div>
 		</div>
 	);
