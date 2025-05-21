@@ -1,15 +1,15 @@
-import { CardWrapper } from "@/src/ui/dashboard/cards";
-import RevenueChart from "@/src/ui/dashboard/revenue-chart";
-import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
-import { lusitana } from "@/src/ui/style/fonts";
+import { CardWrapper } from "@/ui/dashboard/cards";
+import RevenueChart from "@/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/ui/dashboard/latest-invoices";
+import { lusitana } from "@/ui/style/fonts";
 import { Suspense } from "react";
 import {
   RevenueChartSkeleton,
   LatestInvoicesSkeleton,
   CardsSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/ui/skeletons";
 
-export default function AdminDashboard() {
+const AdminDashboard: React.FC = () => {
   return (
     <main>
       <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
@@ -30,4 +30,6 @@ export default function AdminDashboard() {
       </div>
     </main>
   );
-}
+};
+
+export default AdminDashboard;
