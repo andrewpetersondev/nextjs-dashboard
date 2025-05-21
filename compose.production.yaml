@@ -1,0 +1,53 @@
+services:
+  app:
+    container_name: nextjs_app
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_url
+    depends_on:
+      - db_prod
+    restart: unless-stopped
+    user: "node"
+    secrets:
+      - session_secret
+      - postgres_password
+      - postgres_url
+    networks:
+      - dashboard-network
+
+  db_prod:
+    container_name: postgres_db_prod
+    image: postgres:17-alpine
+    volumes:
+      - db_prod_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    networks:
+      - dashboard-network
+    restart: unless-stopped
+
+volumes:
+  db_prod_data:
+
+secrets:
+  session_secret:
+    file: ./secrets/session_secret.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  postgres_url:
+    file: ./secrets/postgres_url.txt
+
+networks:
+  dashboard-network:
