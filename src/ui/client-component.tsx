@@ -11,7 +11,7 @@ export default function ClientComponent() {
       <p className="mb-4">Current count: {count}</p>
       <button
         onClick={() => setCount(count + 1)}
-        className="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
+        className="rounded bg-bg-accent px-4 py-2 text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
       >
         Increment
       </button>

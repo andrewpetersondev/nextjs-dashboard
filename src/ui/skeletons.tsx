@@ -104,7 +104,7 @@ export function DashboardSkeleton() {
 
 export function TableRowSkeleton() {
   return (
-    <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+    <tr className="w-full border-b border-bg-primary last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
       {/* Customer Name and Image */}
       <td className="relative overflow-hidden py-3 pr-3 pl-6 whitespace-nowrap">
         <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ export function InvoicesMobileSkeleton() {
       <div className="flex w-full items-center justify-between pt-4">
         <div>
           <div className="bg-bg-accent h-6 w-16 rounded-sm"></div>
-          <div className="mt-2 h-6 w-24 rounded-sm bg-gray-100"></div>
+          <div className="mt-2 h-6 w-24 rounded-sm bg-bg-primary"></div>
         </div>
         <div className="flex justify-end gap-2">
           <div className="bg-bg-accent h-10 w-10 rounded-sm"></div>
