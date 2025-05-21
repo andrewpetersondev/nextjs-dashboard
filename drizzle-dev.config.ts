@@ -14,8 +14,8 @@ if (!url) {
   process.exit(1);
 }
 
-console.log("drizzle-dev.config.ts ...");
-console.log("DRIZZLE CONFIG CONNECTING TO:", url);
+// console.log("drizzle-dev.config.ts ...");
+// console.log("DRIZZLE CONFIG CONNECTING TO:", url);
 
 export default defineConfig({
   out: "./src/db/drizzle/",

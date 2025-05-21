@@ -14,8 +14,8 @@ if (!url) {
     process.exit(1);
 }
 
-console.log("drizzle-test.config.ts ...");
-console.log("DRIZZLE-TEST CONFIG CONNECTING TO:", url);
+// console.log("drizzle-test.config.ts ...");
+// console.log("DRIZZLE-TEST CONFIG CONNECTING TO:", url);
 
 // WRONG inside Docker:
 // postgres://user:password@testDB:5433/database
