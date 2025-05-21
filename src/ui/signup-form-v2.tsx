@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/src/ui/button";
+import { Button } from "@/ui/button";
 import { useActionState } from "react";
-import { signup } from "@/src/server-actions/users";
+import { signup } from "@/server-actions/users";
 import Image from "next/image";
 import Link from "next/link";
 import { AtSymbolIcon, UserIcon } from "@heroicons/react/24/outline";

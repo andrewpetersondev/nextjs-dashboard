@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/src/ui/button";
+import { Button } from "@/ui/button";
 import { useActionState } from "react";
-import { login } from "@/src/server-actions/users";
+import { login } from "@/server-actions/users";
 import Image from "next/image";
 import Link from "next/link";
 

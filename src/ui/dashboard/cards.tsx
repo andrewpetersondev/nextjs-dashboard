@@ -4,7 +4,7 @@ import {
   InboxIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { fetchCardData } from "@/src/lib/data";
+import { fetchCardData } from "@/lib/data";
 
 const iconMap = {
   collected: BanknotesIcon,

@@ -1,6 +1,6 @@
 // Server-only utilities (Node.js APIs, database, etc.)
 
-// Example: import { db } from "@/src/db/database";
+// Example: import { db } from "@/db/database";
 // export async function seedDatabase() { ... }
 
 import "server-only";

@@ -1,6 +1,6 @@
-import Form from "@/src/ui/invoices/edit-form";
-import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
-import { fetchCustomers, fetchInvoiceById } from "@/src/lib/data";
+import Form from "@/ui/invoices/edit-form";
+import Breadcrumbs from "@/ui/invoices/breadcrumbs";
+import { fetchCustomers, fetchInvoiceById } from "@/lib/data";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 

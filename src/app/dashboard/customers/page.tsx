@@ -1,5 +1,5 @@
-import { fetchFilteredCustomers } from "@/src/lib/data";
-import CustomersTable from "@/src/ui/customers/table";
+import { fetchFilteredCustomers } from "@/lib/data";
+import CustomersTable from "@/ui/customers/table";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

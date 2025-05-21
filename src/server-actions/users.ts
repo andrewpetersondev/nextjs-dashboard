@@ -1,17 +1,17 @@
 "use server";
 
-import { comparePassword, hashPassword } from "@/src/lib/password";
-import { createSession, deleteSession } from "@/src/lib/session";
+import { comparePassword, hashPassword } from "@/lib/password";
+import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { db } from "@/src/db/database";
-import { users } from "@/src/db/schema";
+import { db } from "@/db/database";
+import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import {
   SignupFormSchema,
   type SignupFormState,
   LoginFormSchema,
   type LoginFormState,
-} from "@/src/lib/definitions";
+} from "@/lib/definitions";
 
 // TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
 // To create a cookie I need users.id, sessions.userId, expiresAt, users.role

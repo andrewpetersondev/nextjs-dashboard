@@ -16,7 +16,7 @@
 // }
 
 // filepath: /Users/ap/code/examples/tailwind-plus-spotlight/spotlight-ts/src/components/MyComponent.tsx
-import { Background } from "@/src/ui/background";
+import { Background } from "@/ui/background";
 
 export const MyComponent = () => {
   return (

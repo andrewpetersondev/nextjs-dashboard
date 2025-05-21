@@ -4,10 +4,10 @@
 //   customers as customersPlaceholderData,
 //   revenue as revenuePlaceholderData,
 //   users as usersPlaceholderData,
-// } from "@/src/db/placeholder-data";
+// } from "@/db/placeholder-data";
 //
-// import { db } from "@/src/db/database";
-// import { users, invoices, revenue, customers } from "@/src/db/schema";
+// import { db } from "@/db/database";
+// import { users, invoices, revenue, customers } from "@/db/schema";
 //
 // async function seedUsers() {
 //   console.log("seeding users...");

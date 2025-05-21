@@ -1,17 +1,17 @@
 "use client";
 
-import { login } from "@/src/server-actions/users";
-import { InputField } from "@/src/ui/auth/input-field";
+import { login } from "@/server-actions/users";
+import { InputField } from "@/ui/auth/input-field";
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
-import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
-import Heading from "@/src/ui/auth/heading";
-import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
+import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
+import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
+import { SocialLoginButton } from "@/ui/auth/social-login-button";
+import Heading from "@/ui/auth/heading";
+import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { useActionState } from "react";
 import React from "react";
-import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
-import DemoUser from "@/src/ui/auth/demo-user";
+import AuthSwitchLink from "@/ui/auth/auth-switch-link";
+import DemoUser from "@/ui/auth/demo-user";
 
 type LoginState = {
 	errors?: {

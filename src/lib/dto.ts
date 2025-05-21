@@ -19,13 +19,13 @@ import "server-only";
 // whole objects being passed to the client, you can use strategies such as specifying what fields are safe to be
 // exposed to the client.
 
-// import { getUser } from "@/src/lib/dal";
-// import type { User } from "@/src/lib/definitions";
+// import { getUser } from "@/lib/dal";
+// import type { User } from "@/lib/definitions";
 
 // Remove or comment out any db import and usage
-// import { db } from "@/src/db/database";
+// import { db } from "@/db/database";
 // import { eq } from "drizzle-orm";
-// import { users } from "@/src/db/schema";
+// import { users } from "@/db/schema";
 
 // function canSeeUsername(viewer: User) {
 //   return true;

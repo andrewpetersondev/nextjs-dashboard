@@ -1,7 +1,7 @@
 import Link from "next/link";
-import NavLinks from "@/src/ui/dashboard/nav-links";
-import AcmeLogo from "@/src/ui/acme-logo";
-import { LogoutForm } from "@/src/ui/logout-form";
+import NavLinks from "@/ui/dashboard/nav-links";
+import AcmeLogo from "@/ui/acme-logo";
+import { LogoutForm } from "@/ui/logout-form";
 
 export default function SideNav() {
   return (

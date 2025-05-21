@@ -1,14 +1,14 @@
-import { db } from "@/src/db/database";
+import { db } from "@/db/database";
 import {
   users,
   // customers, invoices, revenue
-} from "@/src/db/schema";
+} from "@/db/schema";
 import {
   users as usersPlaceholderData,
   // customers as customersPlaceholderData,
   // invoices as invoicesPlaceholderData,
   // revenue as revenuesPlaceHolderData,
-} from "@/src/db/seeds/placeholder-data";
+} from "@/db/seeds/placeholder-data";
 import bcryptjs from "bcryptjs";
 
 async function seedUsers() {

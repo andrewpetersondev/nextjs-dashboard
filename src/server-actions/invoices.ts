@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { InvoiceFormSchema, type InvoiceState } from "@/src/lib/definitions";
+import { InvoiceFormSchema, type InvoiceState } from "@/lib/definitions";
 import { eq } from "drizzle-orm";
-import { db } from "@/src/db/database";
-import { invoices } from "@/src/db/schema";
+import { db } from "@/db/database";
+import { invoices } from "@/db/schema";
 
 const CreateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
 

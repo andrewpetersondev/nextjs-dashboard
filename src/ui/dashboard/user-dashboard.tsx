@@ -1,12 +1,12 @@
-import { CardWrapper } from "@/src/ui/dashboard/cards";
-import RevenueChart from "@/src/ui/dashboard/revenue-chart";
-import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
+import { CardWrapper } from "@/ui/dashboard/cards";
+import RevenueChart from "@/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/ui/dashboard/latest-invoices";
 import { Suspense } from "react";
 import {
   RevenueChartSkeleton,
   LatestInvoicesSkeleton,
   CardsSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/ui/skeletons";
 
 export default function UserDashboard() {
   return (

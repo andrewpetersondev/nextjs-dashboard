@@ -1,8 +1,8 @@
 import "server-only";
 
-import { db } from "@/src/db/database";
-import { formatCurrency } from "@/src/lib/utils";
-import { customers, invoices, revenues } from "@/src/db/schema";
+import { db } from "@/db/database";
+import { formatCurrency } from "@/lib/utils";
+import { customers, invoices, revenues } from "@/db/schema";
 import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
 
 export type InvoicesTable = {

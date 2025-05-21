@@ -9,8 +9,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
-      ]
+        "src/*"
+      ],
+      "@/cypress/*": [
+        "cypress/*"
+      ],
     },
     "types": [
       "node",
