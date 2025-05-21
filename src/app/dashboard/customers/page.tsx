@@ -1,6 +1,6 @@
 import { fetchFilteredCustomers } from "@/src/lib/data";
 import CustomersTable from "@/src/ui/customers/table";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Customers",

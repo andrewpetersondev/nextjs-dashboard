@@ -6,7 +6,7 @@ import { InvoicesTableSkeleton } from "@/src/ui/skeletons";
 import { Suspense } from "react";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
 import { fetchInvoicesPages } from "@/src/lib/data";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Invoices",

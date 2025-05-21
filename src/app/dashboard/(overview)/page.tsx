@@ -13,11 +13,10 @@ export default async function Page() {
         <AdminDashboard />
       </div>
     );
-  } else {
-    return (
-      <div>
-        <UserDashboard />
-      </div>
-    );
   }
+  return (
+    <div>
+      <UserDashboard />
+    </div>
+  );
 }

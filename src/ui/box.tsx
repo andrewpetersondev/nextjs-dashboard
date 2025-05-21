@@ -1,6 +1,6 @@
 // ignore this file and use container.tsx instead
 
-import React from "react";
+import type React from "react";
 
 interface BoxProps {
   children: React.ReactNode;

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { lusitana } from "@/src/ui/style/fonts";
 import Search from "@/src/ui/search";
-import { FormattedCustomersTable } from "@/src/lib/definitions";
+import type { FormattedCustomersTable } from "@/src/lib/definitions";
 
 export default async function CustomersTable({
   customers,

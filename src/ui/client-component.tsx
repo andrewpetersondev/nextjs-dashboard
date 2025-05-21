@@ -10,6 +10,7 @@ export default function ClientComponent() {
       <h3 className="mb-4 text-xl font-semibold">Counter Component</h3>
       <p className="mb-4">Current count: {count}</p>
       <button
+        type="button"
         onClick={() => setCount(count + 1)}
         className="rounded bg-bg-accent px-4 py-2 text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
       >
