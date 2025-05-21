@@ -31,14 +31,12 @@ export async function signup(state: SignupFormState, formData: FormData) {
       password: formData.get("password"),
     });
     if (!validatedFields.success) {
-      // console.log("Validation failed:", validatedFields.error.flatten().fieldErrors);
       return {
         errors: validatedFields.error.flatten().fieldErrors,
       };
     }
     const { username, email, password } = validatedFields.data;
     const hashedPassword = await hashPassword(password);
-    // console.log("Password hashed successfully");
     const data = await db
       .insert(users)
       .values({
@@ -48,13 +46,11 @@ export async function signup(state: SignupFormState, formData: FormData) {
       })
       .returning({ insertedId: users.id });
     const userId = data[0]?.insertedId;
-    // console.log("userId = ", userId);
     if (!userId) {
       console.log("Failed to create account");
       return { message: "Failed to create account. Please try again." };
     }
     await createSession(userId);
-    // console.log("Session created successfully");
   } catch (error) {
     console.error("Failed to create user:", error);
     return { message: "An unexpected error occurred. Please try again." };
@@ -83,7 +79,6 @@ export async function login(
   }
   const { email, password } = validatedFields.data;
   try {
-    // Fetch the user by email from the database
     const user = await db
       .select({
         userId: users.id,

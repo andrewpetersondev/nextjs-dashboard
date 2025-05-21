@@ -35,7 +35,6 @@ const verifyEnvironmentVariables = () => {
   for (const envVar of requiredEnvVars) {
     const value = process.env[envVar];
     if (value) {
-      // console.log(`Environment variable ${envVar} is set: ${value}`);
     } else {
       console.error(`Environment variable ${envVar} is not set`);
     }
@@ -53,7 +52,6 @@ const getEncodedKey = async () => {
   return new TextEncoder().encode(secret);
 };
 
-// Remove top-level await
 let encodedKey: Uint8Array;
 
 const initializeEncodedKey = async () => {

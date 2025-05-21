@@ -50,7 +50,6 @@ export type LatestInvoice = {
   amount: string;
 };
 
-// The database returns a number for amount, but we later format it to a string with the formatCurrency function
 export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
   amount: number;
 };
@@ -103,7 +102,6 @@ export async function fetchRevenue(): Promise<Revenue[]> {
     }[] = data.sort(
       (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
     );
-    // console.log("data", orderedData);
     return orderedData;
   } catch (error) {
     console.error("Database Error:", error);
@@ -231,10 +229,6 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
     const result = data[0].count;
     const totalPages = Math.ceil(result / ITEMS_PER_PAGE);
 
-    // console.log("fetch invoices pages");
-    // console.log("result ", result);
-    // console.log("totalPages ", totalPages);
-
     return totalPages;
   } catch (error) {
     console.error("Database Error:", error);
@@ -259,8 +253,6 @@ export async function fetchInvoiceById(id: string) {
       ...item,
       amount: item.amount / 100,
     }));
-    // console.log("fetch invoice by id = ", result);
-    // console.log("result[0] = ", result[0]);
     return result[0];
   } catch (error) {
     console.error("Database Error:", error);
@@ -287,7 +279,6 @@ export async function fetchCustomers(): Promise<CustomerField[]> {
 
 // @formatter:off
 export async function fetchFilteredCustomers(query: string) {
-  // console.log(query);
   try {
     const searchCustomers = await db
       .select({
@@ -315,7 +306,6 @@ export async function fetchFilteredCustomers(query: string) {
       total_pending: formatCurrency(item.total_pending),
       total_paid: formatCurrency(item.total_paid),
     }));
-    // console.log("list = ", list);
     return list;
   } catch (error) {
     console.error("Fetch Filtered Customers Error:", error);

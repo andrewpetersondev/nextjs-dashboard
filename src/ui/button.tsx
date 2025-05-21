@@ -5,7 +5,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-// Uses semantic utility classes for color/states
 export function Button({ children, className, ...rest }: ButtonProps) {
   return (
     <button
