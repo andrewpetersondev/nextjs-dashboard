@@ -11,6 +11,7 @@ import { SocialLoginButton } from "./social-login-button";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { RememberMeCheckbox } from "./remember-me-checkbox";
 import { ForgotPasswordLink } from "./forgot-password-link";
+import DemoUser  from "@/src/ui/auth/demo-user";
 
 type SignupFormState = Readonly<{
 	errors?: {
@@ -116,6 +117,7 @@ export const SignupForm: FC = () => {
 								</span>
 							</div>
 						</div>
+						<DemoUser text="Sign up as Demo User" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
 								provider="Google"

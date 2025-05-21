@@ -1,17 +1,22 @@
 import clsx from "clsx";
-import React from "react";
+import type React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
-// this button does not use dynamic styling from globals.css
-// todo: add dynamic styling from globals.css
+
+// Uses semantic utility classes for color/states
 export function Button({ children, className, ...rest }: ButtonProps) {
   return (
     <button
       {...rest}
       className={clsx(
-        "flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50",
+        "flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline-none",
+        "bg-bg-accent text-text-accent",
+        "hover:bg-bg-hover hover:text-text-hover",
+        "active:bg-bg-active active:text-text-active",
+        "focus-visible:outline focus-visible:outline-bg-focus focus-visible:outline-offset-2",
+        "disabled:bg-bg-disabled disabled:text-text-disabled disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:bg-bg-disabled aria-disabled:text-text-disabled aria-disabled:cursor-not-allowed aria-disabled:opacity-50",
         className,
       )}
     >

@@ -99,7 +99,7 @@ export default function LoginForm() {
 								</span>
 							</div>
 						</div>
-						<DemoUser />
+						<DemoUser text="Login as Demo User" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
 								provider="Google"
