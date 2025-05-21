@@ -1,12 +1,30 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
-import {
-  type DecryptPayload,
-  type EncryptPayload,
-  EncryptPayloadSchema,
-  DecryptPayloadSchema,
-} from "@/src/lib/definitions";
 import { cookies } from "next/headers";
+import { z } from "zod";
+
+export const EncryptPayloadSchema = z.object({
+  user: z.object({
+    userId: z.string().uuid(),
+    role: z.enum(["admin", "user"]),
+    expiresAt: z.number(),
+  }),
+});
+
+export type EncryptPayload = {
+  user: {
+    userId: string;
+    role: string;
+    expiresAt: number;
+  };
+};
+
+export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
+  iat: z.number(),
+  exp: z.number(),
+});
+
+export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
 
 const verifyEnvironmentVariables = () => {
   const requiredEnvVars = [
@@ -22,7 +40,6 @@ const verifyEnvironmentVariables = () => {
       console.error(`Environment variable ${envVar} is not set`);
     }
   }
-
 };
 
 verifyEnvironmentVariables();
@@ -117,6 +134,8 @@ export async function createSession(userId: string): Promise<void> {
   }
 }
 
+// This function is not used.
+// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 export async function updateSession(): Promise<null | void> {
   const session = (await cookies()).get("session")?.value;
   if (!session) {

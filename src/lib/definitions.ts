@@ -22,71 +22,6 @@ export type Invoice = {
   status: "pending" | "paid";
 };
 
-export type Revenue = {
-  month: string;
-  revenue: number;
-};
-
-export type FetchLatestInvoicesData = {
-  amount: number;
-  email: string;
-  id: string;
-  image_url: string;
-  name: string;
-  paymentStatus: string;
-};
-
-export type ModifiedLatestInvoicesData = Omit<
-  FetchLatestInvoicesData,
-  "amount"
-> & {
-  amount: string;
-};
-
-export type LatestInvoice = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
-};
-
-// The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
-  amount: number;
-};
-
-export type FetchFilteredInvoicesData = {
-  id: string;
-  amount: number;
-  date: string;
-  name: string;
-  email: string;
-  image_url: string;
-  paymentStatus: "pending" | "paid";
-};
-
-export type InvoicesTable = {
-  id: string;
-  customer_id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  date: string;
-  amount: number;
-  status: "pending" | "paid";
-};
-
-export type FilteredInvoiceData = {
-  id: string;
-  amount: number;
-  date: string;
-  name: string;
-  email: string;
-  image_url: string;
-  paymentStatus: "pending" | "paid";
-};
-
 export type CustomersTableType = {
   id: string;
   name: string;
@@ -105,11 +40,6 @@ export type FormattedCustomersTable = {
   total_invoices: number;
   total_paid: string;
   total_pending: string;
-};
-
-export type CustomerField = {
-  id: string;
-  name: string;
 };
 
 export type InvoiceForm = {
@@ -185,25 +115,4 @@ export const InvoiceFormSchema = z.object({
   date: z.string(),
 });
 
-export const EncryptPayloadSchema = z.object({
-  user: z.object({
-    userId: z.string().uuid(),
-    role: z.enum(["admin", "user"]),
-    expiresAt: z.number(),
-  }),
-});
 
-export type EncryptPayload = {
-  user: {
-    userId: string;
-    role: string;
-    expiresAt: number;
-  };
-};
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-  iat: z.number(),
-  exp: z.number(),
-});
-
-export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;

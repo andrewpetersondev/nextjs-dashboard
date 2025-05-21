@@ -1,16 +1,79 @@
 import "server-only";
 
 import { db } from "@/src/db/database";
-import { formatCurrency } from "@/src/lib/utils.server";
+import { formatCurrency } from "@/src/lib/utils";
 import { customers, invoices, revenues } from "@/src/db/schema";
 import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
-import type {
-  CustomerField,
-  FetchFilteredInvoicesData,
+
+export type InvoicesTable = {
+  id: string;
+  customer_id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  date: string;
+  amount: number;
+  status: "pending" | "paid";
+};
+
+export type FilteredInvoiceData = {
+  id: string;
+  amount: number;
+  date: string;
+  name: string;
+  email: string;
+  image_url: string;
+  paymentStatus: "pending" | "paid";
+};
+
+export type FetchLatestInvoicesData = {
+  amount: number;
+  email: string;
+  id: string;
+  image_url: string;
+  name: string;
+  paymentStatus: string;
+};
+
+export type ModifiedLatestInvoicesData = Omit<
   FetchLatestInvoicesData,
-  ModifiedLatestInvoicesData,
-  Revenue,
-} from "@/src/lib/definitions";
+  "amount"
+> & {
+  amount: string;
+};
+
+export type LatestInvoice = {
+  id: string;
+  name: string;
+  image_url: string;
+  email: string;
+  amount: string;
+};
+
+// The database returns a number for amount, but we later format it to a string with the formatCurrency function
+export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
+  amount: number;
+};
+
+export type FetchFilteredInvoicesData = {
+  id: string;
+  amount: number;
+  date: string;
+  name: string;
+  email: string;
+  image_url: string;
+  paymentStatus: "pending" | "paid";
+};
+
+export type CustomerField = {
+  id: string;
+  name: string;
+};
+
+export type Revenue = {
+  month: string;
+  revenue: number;
+};
 
 // @formatter:off
 export async function fetchRevenue(): Promise<Revenue[]> {

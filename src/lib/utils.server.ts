@@ -14,7 +14,7 @@ export const formatCurrency = async (amount: number): Promise<string> => {
 
 export const formatDateToLocal = async (
     dateStr: string,
-    locale: string = "en-US",
+    locale = "en-US",
 ): Promise<string> => {
     const date = new Date(dateStr);
     const options: Intl.DateTimeFormatOptions = {

@@ -1,4 +1,4 @@
-import { generateYAxis } from "@/src/lib/utils.server";
+import { generateYAxis } from "@/src/lib/utils";
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import { fetchRevenue } from "@/src/lib/data";
 
@@ -6,7 +6,7 @@ export default async function RevenueChart() {
   const revenue = await fetchRevenue();
   const chartHeight = 350;
 
-  const { yAxisLabels, topLabel } = await generateYAxis(revenue);
+  const { yAxisLabels, topLabel } = generateYAxis(revenue);
 
   if (!revenue || revenue.length === 0) {
     return <p className="text-text-error mt-4">No data available.</p>;
