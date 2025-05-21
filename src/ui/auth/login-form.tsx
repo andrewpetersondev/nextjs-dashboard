@@ -70,7 +70,7 @@ export default function LoginForm() {
 							</AuthSubmitButton>
 						</div>
 					</form>
-
+					{/* does this error div ever get used? */}
 					<div
 						className="flex h-8 items-end space-x-1"
 						aria-live="polite"
@@ -82,6 +82,7 @@ export default function LoginForm() {
 							</p>
 						)}
 					</div>
+					{/* does this error div ever get used? */}
 
 					<div>
 						<div className="relative mt-10">
