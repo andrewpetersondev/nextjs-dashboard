@@ -124,3 +124,56 @@ export async function deleteUser(userId: string) {
   }
   redirect("/");
 }
+
+export async function demoUser() {
+  const DEMO_EMAIL = "demo@demo.com";
+  const DEMO_USERNAME = "Demo User";
+  const DEMO_PASSWORD = "demopassword";
+
+  let user: Array<{ userId: string; email: string; role: string }>;
+  try {
+    user = await db
+      .select({
+        userId: users.id,
+        email: users.email,
+        role: users.role,
+      })
+      .from(users)
+      .where(eq(users.email, DEMO_EMAIL));
+  } catch (error) {
+    console.error("Failed to query demo user:", error);
+    return { message: "An unexpected error occurred. Please try again." };
+  }
+
+  let demoUserId: string;
+  if (user.length) {
+    demoUserId = user[0].userId;
+  } else {
+    try {
+      const hashedPassword = await hashPassword(DEMO_PASSWORD);
+      const data = await db
+        .insert(users)
+        .values({
+          username: DEMO_USERNAME,
+          email: DEMO_EMAIL,
+          password: hashedPassword,
+        })
+        .returning({ insertedId: users.id });
+      demoUserId = data[0]?.insertedId;
+      if (!demoUserId) {
+        return { message: "Failed to create demo user. Please try again." };
+      }
+    } catch (error) {
+      console.error("Failed to create demo user:", error);
+      return { message: "An unexpected error occurred. Please try again." };
+    }
+  }
+  try {
+    await createSession(demoUserId);
+  } catch (error) {
+    console.error("Failed to create session for demo user:", error);
+    return { message: "An unexpected error occurred. Please try again." };
+  }
+
+  return redirect("/dashboard");
+}

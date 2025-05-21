@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 export const GoogleIcon = memo(() => (
-	<svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+	<svg viewBox="0 0 24 24" aria-hidden="true" className="size-5">
 		<path d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z" fill="#EA4335" />
 		<path d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z" fill="#4285F4" />
 		<path d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z" fill="#FBBC05" />
@@ -11,7 +11,7 @@ export const GoogleIcon = memo(() => (
 GoogleIcon.displayName = "GoogleIcon";
 
 export const GitHubIcon = memo(() => (
-	<svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" className="text-text-accent size-5">
+	<svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" className="size-5">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"

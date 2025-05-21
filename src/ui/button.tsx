@@ -4,7 +4,8 @@ import React from "react";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
-
+// this button does not use dynamic styling from globals.css
+// todo: add dynamic styling from globals.css
 export function Button({ children, className, ...rest }: ButtonProps) {
   return (
     <button

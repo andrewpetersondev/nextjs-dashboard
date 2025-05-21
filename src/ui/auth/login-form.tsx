@@ -11,6 +11,7 @@ import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { useActionState } from "react";
 import React from "react";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
+import DemoUser from "@/src/ui/auth/demo-user";
 
 type LoginState = {
 	errors?: {
@@ -98,6 +99,7 @@ export default function LoginForm() {
 								</span>
 							</div>
 						</div>
+						<DemoUser />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
 								provider="Google"
