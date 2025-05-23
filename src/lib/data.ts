@@ -1,9 +1,10 @@
 import "server-only";
 
-import { db } from "@/db/database";
-import { formatCurrency } from "@/lib/utils";
-import { customers, invoices, revenues } from "@/db/schema";
+import { db } from "@/src/db/database";
+import { formatCurrency } from "@/src/lib/utils";
+import { customers, invoices, revenues } from "@/src/db/schema";
 import { desc, eq, ilike, or, sql, asc, count } from "drizzle-orm";
+import type { CustomerField } from "@/src/lib/definitions";
 
 export type InvoicesTable = {
   id: string;
@@ -62,11 +63,6 @@ export type FetchFilteredInvoicesData = {
   email: string;
   image_url: string;
   paymentStatus: "pending" | "paid";
-};
-
-export type CustomerField = {
-  id: string;
-  name: string;
 };
 
 export type Revenue = {

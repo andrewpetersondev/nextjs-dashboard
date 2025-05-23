@@ -1,6 +1,6 @@
-import { demoUser } from '@/server-actions/users'
+import { demoUser } from '@/src/server-actions/users'
 import type { JSX } from 'react'
-import { Button } from '@/ui/button'
+import { Button } from '@/src/ui/button'
 
 export default function DemoUser({ text }: { text: string }): JSX.Element {
   return (

@@ -9,11 +9,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
-      ],
-      "@/cypress/*": [
-        "cypress/*"
-      ],
+        "./*"
+      ]
     },
     "types": [
       "node",
@@ -30,6 +27,7 @@
   ],
   "exclude": [
     "node_modules",
-    "cypress"
+    "cypress",
+    "storage"
   ]
 }

@@ -1,7 +1,7 @@
-import Search from "@/ui/search";
-import type { FormattedCustomersTable } from "@/lib/definitions";
-import MobileTable from "@/ui/customers/mobile-table";
-import DesktopTable from "@/ui/customers/desktop-table";
+import Search from "@/src/ui/search";
+import type { FormattedCustomersTable } from "@/src/lib/definitions";
+import MobileTable from "@/src/ui/customers/mobile-table";
+import DesktopTable from "@/src/ui/customers/desktop-table";
 
 export default async function CustomersTable({
   customers,

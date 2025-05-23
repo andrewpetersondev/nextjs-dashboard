@@ -1,13 +1,13 @@
-import { CardWrapper } from "@/ui/dashboard/cards";
-import RevenueChart from "@/ui/dashboard/revenue-chart";
-import LatestInvoices from "@/ui/dashboard/latest-invoices";
-import { lusitana } from "@/ui/style/fonts";
+import { CardWrapper } from "@/src/ui/dashboard/cards";
+import RevenueChart from "@/src/ui/dashboard/revenue-chart";
+import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
+import { lusitana } from "@/src/ui/style/fonts";
 import { Suspense } from "react";
 import {
   RevenueChartSkeleton,
   LatestInvoicesSkeleton,
   CardsSkeleton,
-} from "@/ui/skeletons";
+} from "@/src/ui/skeletons";
 
 const AdminDashboard: React.FC = () => {
   return (

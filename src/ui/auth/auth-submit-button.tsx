@@ -1,4 +1,4 @@
-import { Button } from "@/ui/button";
+import { Button } from "@/src/ui/button";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type AuthSubmitButtonProps = {

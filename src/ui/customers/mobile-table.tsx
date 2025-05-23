@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import type { FormattedCustomersTable } from '@/lib/definitions'
+import type { FormattedCustomersTable } from '@/src/lib/definitions'
 
 export default async function MobileTable({ customers }: { customers: FormattedCustomersTable[] }) {
   return (

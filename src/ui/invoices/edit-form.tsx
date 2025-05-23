@@ -7,14 +7,14 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Button } from "@/ui/button";
-import { updateInvoice } from "@/server-actions/invoices";
+import { Button } from "@/src/ui/button";
+import { updateInvoice } from "@/src/server-actions/invoices";
 import { useActionState } from "react";
 import type {
   InvoiceState,
   CustomerField,
   InvoiceForm,
-} from "@/lib/definitions";
+} from "@/src/lib/definitions";
 
 export default function EditInvoiceForm({
   invoice,

@@ -1,4 +1,4 @@
-import { verifySessionOptimistic } from "@/lib/dal";
+import { verifySessionOptimistic } from "@/src/lib/dal";
 
 export default async function MiddlewareCard() {
   const session = await verifySessionOptimistic();
@@ -8,8 +8,8 @@ export default async function MiddlewareCard() {
 
   return (
     <div>
-      <p>{userId}</p>
-      <p>{role}</p>
+      <p>User Id: {userId}</p>
+      <p>Role: {role}</p>
       <p>{authy ? "Authorized" : "Not Authorized"}</p>
     </div>
   );

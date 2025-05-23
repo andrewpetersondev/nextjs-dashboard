@@ -1,4 +1,4 @@
-import Heading from "@/ui/auth/heading";
+import Heading from "@/src/ui/auth/heading";
 
 export default function ForgotPasswordPage() {
     return (

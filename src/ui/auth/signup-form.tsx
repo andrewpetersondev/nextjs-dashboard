@@ -1,17 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
-import { signup } from "@/server-actions/users";
+import { signup } from "@/src/server-actions/users";
 import { AtSymbolIcon, UserIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import type { FC } from "react";
-import { InputField } from "@/ui/auth/input-field";
+import { InputField } from "@/src/ui/auth/input-field";
 import AuthSwitchLink from "./auth-switch-link";
 import Heading from "./heading";
 import { SocialLoginButton } from "./social-login-button";
-import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { RememberMeCheckbox } from "./remember-me-checkbox";
 import { ForgotPasswordLink } from "./forgot-password-link";
-import DemoUser from "@/ui/auth/demo-user";
+import DemoUser from "@/src/ui/auth/demo-user";
 
 type SignupFormState = Readonly<{
 	errors?: {

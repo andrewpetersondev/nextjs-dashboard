@@ -1,14 +1,14 @@
 import Link from "next/link";
-import NavLinks from "@/ui/dashboard/nav-links";
-import AcmeLogo from "@/ui/acme-logo";
-import { LogoutForm } from "@/ui/logout-form";
+import NavLinks from "@/src/ui/dashboard/nav-links";
+import AcmeLogo from "@/src/ui/acme-logo";
+import { LogoutForm } from "@/src/ui/logout-form";
 
 export default function SideNav() {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
         className="bg-bg-secondary mb-2 flex h-20 items-end justify-start rounded-md md:h-40"
-        href="/public"
+        href="/"
       >
         <AcmeLogo />
       </Link>

@@ -1,6 +1,6 @@
-import { generateYAxis } from "@/lib/utils";
+import { generateYAxis } from "@/src/lib/utils";
 import { CalendarIcon } from "@heroicons/react/16/solid";
-import { fetchRevenue } from "@/lib/data";
+import { fetchRevenue } from "@/src/lib/data";
 
 export default async function RevenueChart() {
   const revenue = await fetchRevenue();
