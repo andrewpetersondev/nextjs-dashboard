@@ -3,6 +3,7 @@ import { lusitana } from "@/ui/style/fonts";
 import Search from "@/ui/search";
 import type { FormattedCustomersTable } from "@/lib/definitions";
 
+
 export default async function CustomersTable({
   customers,
 }: {
@@ -90,11 +91,11 @@ export default async function CustomersTable({
                 </thead>
 
                 {/* Table body with customer details */}
-                <tbody className="divide-bg-primary text-text-primary divide-y">
+                <tbody className="bg-bg-primary divide-bg-accent text-text-primary divide-y">
                   {customers.map((customer) => (
-                    <tr key={customer.id} className="group">
+                    <tr key={customer.id} className="group cursor-pointer hover:bg-bg-active">
                       {/* Customer name and profile picture */}
-                      <td className="bg-bg-accent text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Image
                             src={customer.image_url}
@@ -108,22 +109,22 @@ export default async function CustomersTable({
                       </td>
 
                       {/* Customer email */}
-                      <td className="bg-bg-accent px-4 py-5 text-sm whitespace-nowrap">
+                      <td className="px-4 py-5 text-sm whitespace-nowrap">
                         {customer.email}
                       </td>
 
                       {/* Total invoices */}
-                      <td className="bg-bg-accent px-4 py-5 text-sm whitespace-nowrap">
+                      <td className="px-4 py-5 text-sm whitespace-nowrap">
                         {customer.total_invoices}
                       </td>
 
                       {/* Total pending amount */}
-                      <td className="bg-bg-accent px-4 py-5 text-sm whitespace-nowrap">
+                      <td className="px-4 py-5 text-sm whitespace-nowrap">
                         {customer.total_pending}
                       </td>
 
                       {/* Total paid amount */}
-                      <td className="bg-bg-accent px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                      <td className="px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {customer.total_paid}
                       </td>
                     </tr>
