@@ -7,6 +7,13 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=production
+      - SESSION_SECRET_FILE=/run/secrets/session_secret
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_URL_FILE=/run/secrets/postgres_url
+    secrets:
+      - session_secret
+      - postgres_password
+      - postgres_url
     depends_on:
       - db
     networks:
@@ -15,9 +22,9 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
     ports:
       - '5432:5432'
     volumes:
@@ -39,6 +46,14 @@ services:
 
 volumes:
   postgres_data:
+
+secrets:
+  session_secret:
+    file: ./secrets/session_secret
+  postgres_password:
+    file: ./secrets/postgres_password
+  postgres_url:
+    file: ./secrets/postgres_url
 
 networks:
   my_network:

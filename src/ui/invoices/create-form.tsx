@@ -49,12 +49,11 @@ export default function CreateInvoiceForm({
             <UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.customerId &&
-              state.errors.customerId.map((error: string) => (
-                <p className="text-text-error mt-2 text-sm" key={error}>
-                  {error}
-                </p>
-              ))}
+            {state.errors?.customerId?.map((error: string) => (
+              <p className="text-text-error mt-2 text-sm" key={error}>
+                {error}
+              </p>
+            ))}
           </div>
         </div>
 
