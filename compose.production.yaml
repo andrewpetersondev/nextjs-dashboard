@@ -1,53 +1,46 @@
 services:
-  app:
-    container_name: nextjs_app
+  web:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    working_dir: /app
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
-      NODE_ENV: production
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_url
+      - NODE_ENV=production
     depends_on:
-      - db_prod
-    restart: unless-stopped
-    user: "node"
-    secrets:
-      - session_secret
-      - postgres_password
-      - postgres_url
+      - db
     networks:
-      - dashboard-network
+      - my_network
 
-  db_prod:
-    container_name: postgres_db_prod
-    image: postgres:17-alpine
-    volumes:
-      - db_prod_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+  db:
+    image: postgres:latest
     environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    secrets:
-      - postgres_password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - dashboard-network
-    restart: unless-stopped
+      - my_network
+
+  cron:
+    image: alpine/curl
+    command: >
+      sh -c "
+        echo '*/10 * * * * curl -X POST http://web:3000/db/clear' > /etc/crontabs/root && \
+        crond -f -l 2
+      "
+    depends_on:
+      - web
+    networks:
+      - my_network
 
 volumes:
-  db_prod_data:
-
-secrets:
-  session_secret:
-    file: ./secrets/session_secret.txt
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-  postgres_url:
-    file: ./secrets/postgres_url.txt
+  postgres_data:
 
 networks:
-  dashboard-network:
+  my_network:
+    name: my_network
+    driver: bridge

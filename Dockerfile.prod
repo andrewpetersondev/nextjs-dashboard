@@ -1,53 +1,34 @@
-# Stage 1: Build stage
-FROM node:20-alpine AS builder
-
-# Set environment variables
+# Global variables
+FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV PNPM_STORE_DIR="/pnpm/store"
 ENV NODE_ENV=production
-
-# Enable corepack and prepare pnpm
-RUN apk add --no-cache curl \
+RUN apt-get update && apt-get install -y curl \
     && corepack enable \
     && corepack prepare pnpm@latest --activate \
     && pnpm config set store-dir "$PNPM_STORE_DIR"
 
-# Set working directory
+# Stage 1: Install dependencies
+FROM base AS deps
 WORKDIR /app
-
-# Copy package files
 COPY package.json pnpm-lock.yaml ./
-
-# Install only production dependencies
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy source code
+# Stage 2: Build the application
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build the Next.js app
 RUN pnpm build
 
-# Stage 2: Runtime stage
-FROM node:20-alpine AS runner
 
-# Set environment
-ENV NODE_ENV=production
-
-# Set working directory
+# Stage 3: Production Server
+FROM base AS runner
 WORKDIR /app
-
-# Copy only the output and runtime deps from the build stage
+ENV NODE_ENV=production
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-# Use a non-root user (node)
-USER node
-
-# Expose only the necessary port
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
-
-# Start the application
 CMD ["node", "server.js"]

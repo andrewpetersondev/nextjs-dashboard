@@ -37,7 +37,7 @@
     "drizzle-update-drizzle-kit-testDB": "pnpm drizzle-kit up --config=drizzle-test.config.ts",
     "lint": "next lint",
     "reformat:project": "pnpm prettier --write .",
-    "start": "next start"
+    "start": "node .next/standalone/server.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
