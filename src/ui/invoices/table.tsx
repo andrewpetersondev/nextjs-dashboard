@@ -1,8 +1,6 @@
-import Image from "next/image";
-import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import InvoiceStatus from "@/src/ui/invoices/status";
-import { formatCurrency, formatDateToLocal } from "@/src/lib/utils";
 import { fetchFilteredInvoices } from "@/src/lib/data";
+import DesktopTable from "@/src/ui/invoices/desktop-table";
+import MobileTable from "@/src/ui/invoices/mobile-table";
 
 export default async function InvoicesTable({
   query,
@@ -17,112 +15,8 @@ export default async function InvoicesTable({
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="bg-bg-accent rounded-lg p-2 md:pt-0">
-          {/* mobile */}
-          <div className="md:hidden">
-            {invoices?.map((invoice) => (
-              <div
-                key={invoice.id}
-                className="bg-bg-primary mb-2 w-full rounded-md p-4"
-              >
-                <div className="flex items-center justify-between border-b pb-4">
-                  <div>
-                    <div className="mb-2 flex items-center">
-                      <Image
-                        src={invoice.image_url}
-                        className="mr-2 rounded-full"
-                        width={28}
-                        height={28}
-                        alt={`${invoice.name}'s profile picture`}
-                      />
-                      <p>{invoice.name}</p>
-                    </div>
-                    <p className="text-text-primary text-sm">{invoice.email}</p>
-                  </div>
-                  <InvoiceStatus
-                    paymentStatus={invoice.paymentStatus || "unknown"}
-                  />
-                </div>
-                <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-xl font-medium">
-                      {formatCurrency(invoice.amount)}
-                    </p>
-                    <p>{formatDateToLocal(invoice.date)}</p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <UpdateInvoice id={invoice.id} />
-                    <DeleteInvoice id={invoice.id} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* desktop table */}
-          <table className="text-text-primary hidden min-w-full md:table">
-            <thead className="rounded-lg text-left text-sm font-normal">
-              <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Email
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Date
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Status
-                </th>
-                <th scope="col" className="relative py-3 pr-3 pl-6">
-                  <span className="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-bg-primary">
-              {invoices?.map((invoice) => (
-                <tr
-                  key={invoice.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                >
-                  <td className="py-3 pr-3 pl-6 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src={invoice.image_url}
-                        className="rounded-full"
-                        width={28}
-                        height={28}
-                        alt={`${invoice.name}'s profile picture`}
-                      />
-                      <p>{invoice.name}</p>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    {invoice.email}
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    {formatCurrency(invoice.amount)}
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    {formatDateToLocal(invoice.date)}
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    <InvoiceStatus
-                      paymentStatus={invoice.paymentStatus || "unknown"}
-                    />
-                  </td>
-                  <td className="py-3 pr-3 pl-6 whitespace-nowrap">
-                    <div className="flex justify-end gap-3">
-                      <UpdateInvoice id={invoice.id} />
-                      <DeleteInvoice id={invoice.id} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <MobileTable invoices={invoices} />
+          <DesktopTable invoices={invoices} />
         </div>
       </div>
     </div>
