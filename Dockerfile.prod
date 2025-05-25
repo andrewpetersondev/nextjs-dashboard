@@ -7,7 +7,6 @@ ENV NODE_ENV=production
 ENV PNPM_STORE_DIR="/pnpm/store"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    postgresql-client \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -45,18 +44,5 @@ COPY --from=builder --chown=node:node /app/.next ./.next
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-COPY --from=builder --chown=node:node /app/package.json ./package.json
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/drizzle-dev.config.ts ./drizzle-dev.config.ts
-COPY --from=builder --chown=node:node /app/entrypoint-production.sh ./entrypoint-production.sh
-COPY --from=builder --chown=node:node /app/envConfig.ts ./envConfig.ts
-COPY --from=builder --chown=node:node /app/next.config.ts ./next.config.ts
-
-# Ensure the entrypoint script is executable
-RUN chmod +x /app/entrypoint-production.sh
-
 EXPOSE 3000
-
-ENTRYPOINT [ "/app/entrypoint-production.sh" ]
-
 CMD ["node", "server.js"]
