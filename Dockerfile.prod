@@ -4,10 +4,7 @@ FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV NODE_ENV=production
-# changed from pnpm_store_path
 ENV PNPM_STORE_DIR="/pnpm/store"
-
-# Install necessary packages and clean up in a single layer to reduce image size
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     postgresql-client \
@@ -36,21 +33,27 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/entrypoint-production.sh ./entrypoint-production.sh
 COPY --chown=node:node . .
+RUN chmod +x /app/entrypoint-production.sh
 RUN pnpm build
-
 
 # Stage 3: Production Server
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 USER node
-# Copy only the necessary files for Next.js standalone
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/entrypoint-production.sh ./entrypoint-production.sh
+COPY --from=builder --chown=node:node /app/.next ./.next
+COPY --from=builder --chown=node:node /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/package.json ./package.json
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/drizzle-dev.config.ts ./drizzle-dev.config.ts
+COPY --from=builder --chown=node:node /app/entrypoint-production.sh ./entrypoint-production.sh
+COPY --from=builder --chown=node:node /app/envConfig.ts ./envConfig.ts
+COPY --from=builder --chown=node:node /app/next.config.ts ./next.config.ts
+
+# Ensure the entrypoint script is executable
+RUN chmod +x /app/entrypoint-production.sh
 
 EXPOSE 3000
 

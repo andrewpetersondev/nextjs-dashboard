@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   title: "Invoices",
 };
 
+export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+
 export default async function Page(props: {
   searchParams?: Promise<{
     query?: string;

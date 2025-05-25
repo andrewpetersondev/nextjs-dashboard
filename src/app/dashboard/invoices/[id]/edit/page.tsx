@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Edit Invoice",
 };
 
+export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = params.id;

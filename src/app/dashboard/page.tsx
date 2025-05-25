@@ -3,6 +3,8 @@ import AdminDashboard from "@/src/ui/dashboard/admin-dashboard";
 import UserDashboard from "@/src/ui/dashboard/user-dashboard";
 import MiddlewareCard from "@/src/ui/dashboard/middleware-card";
 
+export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+
 export default async function Page() {
   const session = await verifySessionOptimistic();
   const userRole = session?.role;

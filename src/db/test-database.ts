@@ -1,16 +1,14 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as fs from 'node:fs/promises';
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-const postgresTestDbUrlFile = process.env.POSTGRES_TESTDB_URL_FILE!;
-const url = await fs.readFile(postgresTestDbUrlFile, "utf8");
+let url: string;
 
-console.log("test-database.ts ...");
-console.log("DRIZZLE CONNECTING TO:", url);
-
-if (!url) {
-    console.error("Postgres URL could not be determined.");
+if (process.env.POSTGRES_TESTDB_URL) {
+    url = process.env.POSTGRES_TESTDB_URL;
+    console.log("test-database.ts ...");
+    console.log("DRIZZLE CONNECTING TO:", url);
+} else {
+    console.error("postgres testdb url is not set.");
     process.exit(1);
 }
 
