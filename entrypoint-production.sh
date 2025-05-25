@@ -6,7 +6,7 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
-log "Starting entrypoint script"
+log "Starting production entrypoint script"
 
 # Load secrets into environment variables
 log "Loading secrets"
@@ -16,29 +16,15 @@ export POSTGRES_TESTDB_URL=$(cat /run/secrets/postgres_testdb_url)
 export POSTGRES_URL=$(cat /run/secrets/postgres_url)
 export SESSION_SECRET=$(cat /run/secrets/session_secret)
 
-log "Ensuring testDB exists"
-TEST_DB_NAME="postgres_test"
-TEST_DB_USER="postgres" # or your test DB user
-TEST_DB_HOST="testDB"       # or 'testDB' if you want to target the testDB container, or your DB host (use 'localhost' if running locally)
-TEST_DB_PORT="5432"     # default PostgreSQL port
-
-# Try to create testDB if it doesn't exist
-PGPASSWORD="$POSTGRES_TESTDB_PASSWORD" psql -U "$TEST_DB_USER" -h "$TEST_DB_HOST" -p "$TEST_DB_PORT" -tc "SELECT 1 FROM pg_database WHERE datname = '$TEST_DB_NAME';" | grep -q 1 || \
-PGPASSWORD="$POSTGRES_TESTDB_PASSWORD" createdb -U "$TEST_DB_USER" -h "$TEST_DB_HOST" -p "$TEST_DB_PORT" "$TEST_DB_NAME"
-
 log "Database Migrations"
 echo "Running database migrations..."
 pnpm drizzle-schema-update
-pnpm drizzle-schema-update-testDB
 
 log "Database Seeding"
 echo "Seeding database (if needed)..."
 
 log "Seeding Dev Database..."
 pnpm drizzle-seed
-
-log "Seeding Test Database..."
-pnpm drizzle-seed-testDB
 
 log "Entrypoint script completed, executing command: $@"
 echo "Starting Next.js app..."

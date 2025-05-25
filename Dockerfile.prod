@@ -1,25 +1,41 @@
 # Global variables
 FROM node:24-slim AS base
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV PNPM_STORE_DIR="/pnpm/store"
 ENV NODE_ENV=production
-RUN apt-get update && apt-get install -y curl \
+# changed from pnpm_store_path
+ENV PNPM_STORE_DIR="/pnpm/store"
+
+# Install necessary packages and clean up in a single layer to reduce image size
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    postgresql-client \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
     && corepack enable \
-    && corepack prepare pnpm@latest --activate \
-    && pnpm config set store-dir "$PNPM_STORE_DIR"
+    && corepack prepare pnpm@latest --activate
+
+RUN pnpm config set store-dir "$PNPM_STORE_DIR"
+
+WORKDIR /app
 
 # Stage 1: Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod
+COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY --chown=node:node entrypoint-production.sh /app/entrypoint-production.sh
+RUN chmod +x /app/entrypoint-production.sh
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prod
 
 # Stage 2: Build the application
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app/entrypoint-production.sh ./entrypoint-production.sh
+COPY --chown=node:node . .
 RUN pnpm build
 
 
@@ -27,9 +43,17 @@ RUN pnpm build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+USER node
+# Copy only the necessary files for Next.js standalone
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/src ./src
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/entrypoint-production.sh ./entrypoint-production.sh
+
 EXPOSE 3000
+
+ENTRYPOINT [ "/app/entrypoint-production.sh" ]
+
 CMD ["node", "server.js"]

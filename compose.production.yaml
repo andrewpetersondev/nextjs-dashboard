@@ -1,15 +1,21 @@
 services:
   web:
+    container_name: web
     build:
       context: .
       dockerfile: Dockerfile.prod
+    working_dir: /app
+    volumes:
+      - .:/app:cached
+      - prod_node_modules:/app/node_modules:delegated
+      - prod_pnpm-store:/pnpm/store:delegated
     ports:
       - '3000:3000'
     environment:
-      - NODE_ENV=production
-      - SESSION_SECRET_FILE=/run/secrets/session_secret
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
-      - POSTGRES_URL_FILE=/run/secrets/postgres_url
+      NODE_ENV: production
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_URL_FILE: /run/secrets/postgres_url
     secrets:
       - session_secret
       - postgres_password
@@ -22,13 +28,16 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      # POSTGRES_USER: postgres
+      # POSTGRES_PASSWORD: password
+      # POSTGRES_DB: postgres
     ports:
       - '5432:5432'
+    secrets:
+      - postgres_password
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - nextjs_dashboard_prod_data:/var/lib/postgresql/data
     networks:
       - my_network
 
@@ -45,7 +54,10 @@ services:
       - my_network
 
 volumes:
-  postgres_data:
+  nextjs_dashboard_prod_data:
+  prod_node_modules:
+  prod_pnpm-store:
+
 
 secrets:
   session_secret:
