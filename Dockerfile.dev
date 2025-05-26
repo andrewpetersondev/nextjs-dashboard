@@ -31,8 +31,8 @@ WORKDIR /project
 COPY --chown=node:node package.json pnpm-lock.yaml ./
 
 # Copy entrypoint script
-COPY --chown=node:node entrypoint.sh /project/entrypoint.sh
-RUN chmod +x /project/entrypoint.sh
+COPY --chown=node:node entrypoint-development.sh /project/entrypoint-development.sh
+RUN chmod +x /project/entrypoint-development.sh
 
 # Install dependencies using pnpm with cache mount
 # Using pnpm frozen lockfile for consistent installs
@@ -52,7 +52,7 @@ USER node
 EXPOSE 3000 9229 9230
 
 # Set the entrypoint to the script
-ENTRYPOINT [ "/project/entrypoint.sh" ]
+ENTRYPOINT [ "/project/entrypoint-development.sh" ]
 
 # Command to run the application
 CMD [ "pnpm", "dev" ]

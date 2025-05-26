@@ -15,7 +15,7 @@ services:
       - pnpm-store:/pnpm/store:delegated # Named volume for pnpm store
     env_file:
       - .env.development
-    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    entrypoint: ["/bin/sh", "/project/entrypoint-development.sh"]
     command: ["pnpm", "dev"]
     depends_on:
       db:
@@ -47,7 +47,7 @@ services:
     environment:
       # Optionally, add a custom variable to distinguish test env
       E2E: "true"
-    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    entrypoint: ["/bin/sh", "/project/entrypoint-development.sh"]
     command: ["pnpm", "dev"]
     depends_on:
       testDB:
@@ -80,7 +80,7 @@ services:
     # environment:
       # Optionally, add a custom variable to distinguish test env
       # E2E: "true"
-    entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
+    entrypoint: ["/bin/sh", "/project/entrypoint-development.sh"]
     command: ["pnpm", "dev"]
     depends_on:
       testDB:
