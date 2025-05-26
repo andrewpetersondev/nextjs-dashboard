@@ -50,10 +50,10 @@ cypress/results/
 # Secrets and environment variables
 # ================================
 # .env
-.env.local
-.env.development
-.env.test
+# .env.development
 # .env.production
+.env.local
+.env.test
 secrets/
 *.pem
 *.key

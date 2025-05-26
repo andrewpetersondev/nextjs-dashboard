@@ -13,27 +13,14 @@ services:
       - .:/project:cached # Source code with performance optimization
       - node_modules:/project/node_modules:delegated # Named volume for node_modules
       - pnpm-store:/pnpm/store:delegated # Named volume for pnpm store
-    environment:
-      NODE_ENV: development
-      #      NODE_OPTIONS: --inspect=0.0.0.0:9229
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_url
-      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      NEXT_TELEMETRY_DISABLED: 1
+    env_file:
+      - .env.development
     entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
     command: ["pnpm", "dev"]
     depends_on:
       db:
         condition: service_healthy
     user: "node"
-    secrets:
-      - session_secret
-      - postgres_password
-      - postgres_testdb_url
-      - postgres_url
-      - postgres_testdb_password
     networks:
       - dashboard-network
     healthcheck:
@@ -55,14 +42,9 @@ services:
       - .:/project:cached
       - node_modules:/project/node_modules:delegated
       - pnpm-store:/pnpm/store:delegated
+    env_file:
+      - .env.development
     environment:
-      NODE_ENV: development # Must be 'development' for Next.js
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      NEXT_TELEMETRY_DISABLED: 1
       # Optionally, add a custom variable to distinguish test env
       E2E: "true"
     entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
@@ -71,10 +53,6 @@ services:
       testDB:
         condition: service_healthy
     user: "node"
-    secrets:
-      - session_secret
-      - postgres_testdb_password
-      - postgres_testdb_url
     networks:
       - dashboard-network
     healthcheck:
@@ -97,14 +75,9 @@ services:
       - .:/project:cached
       - node_modules:/project/node_modules:delegated
       - pnpm-store:/pnpm/store:delegated
-    environment:
-      NODE_ENV: development # Must be 'development' for Next.js
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      NEXT_TELEMETRY_DISABLED: 1
+    env_file:
+      - .env.development
+    # environment:
       # Optionally, add a custom variable to distinguish test env
       # E2E: "true"
     entrypoint: ["/bin/sh", "/project/entrypoint.sh"]
@@ -113,10 +86,6 @@ services:
       testDB:
         condition: service_healthy
     user: "node"
-    secrets:
-      - session_secret
-      - postgres_testdb_password
-      - postgres_testdb_url
     networks:
       - dashboard-network
     healthcheck:
@@ -133,15 +102,13 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432" # Host port 5432 -> Container port 5432
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    env_file:
+      - .env.development
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-    secrets:
-      - postgres_password
     networks:
       - dashboard-network
 
@@ -152,15 +119,13 @@ services:
       - testDB-data:/var/lib/postgresql/data
     ports:
       - "5433:5432" # Host port 5433 -> Container port 5432
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
+    env_file:
+      - .env.development
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-    secrets:
-      - postgres_testdb_password
     networks:
       - dashboard-network
 
@@ -171,14 +136,9 @@ services:
     volumes:
       - .:/e2e
       - node_modules:/e2e/node_modules
+    env_file:
+      - .env.development
     environment:
-      NODE_ENV: development
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
-      NEXT_TELEMETRY_DISABLED: 1
       CYPRESS_baseUrl: http://web-e2e:3000
     depends_on:
       web-e2e:
@@ -187,10 +147,6 @@ services:
         condition: service_healthy
       adminer:
         condition: service_healthy
-    secrets:
-      - session_secret
-      - postgres_testdb_password
-      - postgres_testdb_url
     networks:
       - dashboard-network
     entrypoint: ["/bin/sh", "-c"]
@@ -207,14 +163,9 @@ services:
     volumes:
       - .:/component
       - node_modules:/component/node_modules
+    env_file:
+      - .env.development
     environment:
-      NODE_ENV: development
-      SESSION_SECRET_FILE: /run/secrets/session_secret
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_URL_FILE: /run/secrets/postgres_testdb_url
-      POSTGRES_TESTDB_PASSWORD_FILE: /run/secrets/postgres_testdb_password
-      POSTGRES_TESTDB_URL_FILE: /run/secrets/postgres_testdb_url
-      NEXT_TELEMETRY_DISABLED: 1
       CYPRESS_baseUrl: http://web-component:3000
     depends_on:
       web-component:
@@ -223,10 +174,6 @@ services:
         condition: service_healthy
       adminer:
         condition: service_healthy
-    secrets:
-      - session_secret
-      - postgres_testdb_password
-      - postgres_testdb_url
     networks:
       - dashboard-network
     entrypoint: ["/bin/sh", "-c"]
@@ -261,17 +208,17 @@ volumes:
   node_modules:
   pnpm-store:
 
-secrets:
-  session_secret:
-    file: ./secrets/session_secret.txt
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-  postgres_url:
-    file: ./secrets/postgres_url.txt
-  postgres_testdb_url:
-    file: ./secrets/postgres_testdb_url.txt
-  postgres_testdb_password:
-    file: ./secrets/postgres_testdb_password.txt
+# secrets:
+#   session_secret:
+#     file: ./secrets/session_secret.txt
+#   postgres_password:
+#     file: ./secrets/postgres_password.txt
+#   postgres_url:
+#     file: ./secrets/postgres_url.txt
+#   postgres_testdb_url:
+#     file: ./secrets/postgres_testdb_url.txt
+#   postgres_testdb_password:
+#     file: ./secrets/postgres_testdb_password.txt
 
 networks:
   dashboard-network:

@@ -7,15 +7,16 @@ import { defineConfig } from "drizzle-kit";
 // CORRECT inside Docker:
 // postgres://user:password@testDB:5432/database
 
-console.log("drizzle-test.config.ts ...");
 
 let url: string;
 
-if (process.env.POSTGRES_TESTDB_URL_EXTERNAL) {
-    url = process.env.POSTGRES_TESTDB_URL_EXTERNAL;
-    console.log("Using POSTGRES_TESTDB_URL_EXTERNAL from .env");
+if (process.env.POSTGRES_URL_TESTDB) {
+    console.log("drizzle-test.config.ts ...");
+    url = process.env.POSTGRES_URL_TESTDB;
+    console.log("Using POSTGRES_URL_TESTDB from .env.development", url);
 } else {
-    console.log("postgres url not found in .env");
+    console.log("drizzle-test.config.ts ...");
+    console.log("POSTGRES_URL_TESTDB not found in .env.development");
     process.exit(1);
 }
 

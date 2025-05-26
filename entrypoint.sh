@@ -1,4 +1,5 @@
 #!/bin/sh
+
 set -e
 
 # Print a message with timestamp
@@ -7,24 +8,21 @@ log() {
 }
 
 log "Starting entrypoint script"
-
-# Load secrets into environment variables
-log "Loading secrets"
-export POSTGRES_PASSWORD=$(cat /run/secrets/postgres_password)
-export POSTGRES_TESTDB_PASSWORD=$(cat /run/secrets/postgres_testdb_password)
-export POSTGRES_TESTDB_URL=$(cat /run/secrets/postgres_testdb_url)
-export POSTGRES_URL=$(cat /run/secrets/postgres_url)
-export SESSION_SECRET=$(cat /run/secrets/session_secret)
+log "Loading environment variables from .env.development"
+# Note: Environment variables should already be loaded from .env.development
+# or passed directly to the container
 
 log "Ensuring testDB exists"
-TEST_DB_NAME="postgres_test"
-TEST_DB_USER="postgres" # or your test DB user
-TEST_DB_HOST="testDB"       # or 'testDB' if you want to target the testDB container, or your DB host (use 'localhost' if running locally)
-TEST_DB_PORT="5432"     # default PostgreSQL port
+# Use environment variables directly
+TEST_DB_NAME="${POSTGRES_TEST_DB}"
+TEST_DB_USER="${POSTGRES_TEST_USER}"
+TEST_DB_HOST="testDB"  # Container service name
+TEST_DB_PORT="5432"    # Default PostgreSQL port
 
 # Try to create testDB if it doesn't exist
-PGPASSWORD="$POSTGRES_TESTDB_PASSWORD" psql -U "$TEST_DB_USER" -h "$TEST_DB_HOST" -p "$TEST_DB_PORT" -tc "SELECT 1 FROM pg_database WHERE datname = '$TEST_DB_NAME';" | grep -q 1 || \
-PGPASSWORD="$POSTGRES_TESTDB_PASSWORD" createdb -U "$TEST_DB_USER" -h "$TEST_DB_HOST" -p "$TEST_DB_PORT" "$TEST_DB_NAME"
+log "Checking if test database exists: ${TEST_DB_NAME}"
+PGPASSWORD="${POSTGRES_TEST_PASSWORD}" psql -U "${TEST_DB_USER}" -h "${TEST_DB_HOST}" -p "${TEST_DB_PORT}" -tc "SELECT 1 FROM pg_database WHERE datname = '${TEST_DB_NAME}';" | grep -q 1 || \
+PGPASSWORD="${POSTGRES_TEST_PASSWORD}" createdb -U "${TEST_DB_USER}" -h "${TEST_DB_HOST}" -p "${TEST_DB_PORT}" "${TEST_DB_NAME}"
 
 log "Database Migrations"
 echo "Running database migrations..."
