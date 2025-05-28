@@ -35,6 +35,11 @@ build/
 # ================================
 # Environment Files
 # ================================
+.env
+.env.local
+.env.development
+.env.test
+.env.production
 .env*
 next-env.d.ts
 *.tsbuildinfo

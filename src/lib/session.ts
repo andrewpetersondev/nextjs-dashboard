@@ -29,7 +29,6 @@ export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
 const verifyEnvironmentVariables = () => {
   const requiredEnvVars = [
     "POSTGRES_URL",
-    "POSTGRES_PASSWORD",
     "SESSION_SECRET",
   ];
   for (const envVar of requiredEnvVars) {
