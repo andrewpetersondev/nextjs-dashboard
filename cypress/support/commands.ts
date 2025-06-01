@@ -21,14 +21,14 @@ Cypress.Commands.add('login', (user) => {
   // cy.url().should('include', '/dashboard');
 });
 
-Cypress.Commands.add('createTestUser', (user) => {
+Cypress.Commands.add('createUser', (user) => {
   cy.log('Creating test user', user.email);
   cy.task('db:insert', user).then((result) => {
     cy.log('db:insert result', result);
   });
 });
 
-Cypress.Commands.add('deleteTestUser', (email) => {
+Cypress.Commands.add('deleteUser', (email) => {
   cy.log('Deleting test user', email);
   cy.task('db:delete', email).then((result) => {
     cy.log('db:delete result', result);

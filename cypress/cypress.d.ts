@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 declare global {
   namespace Cypress {
 
-    type TestUser = {
+    type User = {
       username: string;
       email: string;
       password: string;
@@ -46,16 +46,16 @@ declare global {
        * Custom command to create a test user directly in the database (bypasses UI/API).
        * Use this for setting up test data quickly.
        * @param user The user object containing username, email, and password
-       * @example cy.createTestUser({ username: 'testuser', email: 'testuser@example.com', password: 'Password123!' })
+       * @example cy.createUser({ username: 'testuser', email: 'testuser@example.com', password: 'Password123!' })
        */
-      createTestUser(user: TestUser): Chainable<void>;
+      createUser(user: User): Chainable<void>;
 
       /**
        * Custom command to delete a test user directly from the database (bypasses UI/API).
        * @param email The user's email
-       * @example cy.deleteTestUser('user@example.com')
+       * @example cy.deleteUser('user@example.com')
        */
-      deleteTestUser(email: string): Chainable<void>;
+      deleteUser(email: string): Chainable<void>;
 
       /**
        * Custom task to log to console
@@ -71,7 +71,7 @@ declare global {
       */
       task(
         name: "db:insert",
-        user: { username: string; email: string; password: string },
+        user: User,
       ): Chainable<string>;
 
       /**
