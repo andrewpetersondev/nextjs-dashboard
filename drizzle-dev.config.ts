@@ -16,7 +16,7 @@ if (process.env.POSTGRES_URL) {
   process.exit(1);
 }
 export default defineConfig({
-  out: "./src/db/drizzle/",
+  out: "./src/db/drizzle/dev/",
   schema: "./src/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
