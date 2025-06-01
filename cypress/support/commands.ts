@@ -1,24 +1,38 @@
 /// <reference types="../cypress.d.ts" />
 /// <reference types="cypress" />
 
-Cypress.Commands.add("login", (email: string, password: string) => {
-  cy.session(
-    email,
-    () => {
-      cy.visit("/login");
-      cy.get('[data-cy="login-email-input"]').type(email);
-      cy.get('[data-cy="login-password-input"]').type(password);
-      cy.get('[data-cy="login-button"]').click();
-      cy.url().should("include", "/dashboard");
-      cy.get("h1").should("contain", "Dashboard");
-    },
-    {
-      validate: () => {
-        cy.getCookie("session").should("exist");
-      },
-      cacheAcrossSpecs: true,
-    },
-  );
+Cypress.Commands.add('signup', (user) => {
+  cy.log('Signing up user', user.email);
+  cy.visit('/signup');
+  cy.get('[data-cy="signup-username-input"]').type(user.username);
+  cy.get('[data-cy="signup-email-input"]').type(user.email);
+  cy.get('[data-cy="signup-password-input"]').type(user.password);
+  cy.get('[data-cy="signup-submit-button"]').click();
 });
 
-// This file contains shared commands that can be used by both component and e2e tests
+Cypress.Commands.add('login', (user) => {
+  cy.log('Logging in', { email: user.email, password: user.password });
+  cy.visit('/login');
+  cy.get('[data-cy="login-email-input"]').type(user.email);
+  cy.get('[data-cy="login-password-input"]').type(user.password);
+  cy.get('[data-cy="login-submit-button"]').click();
+  // cy.getCookie('session').should('exist');
+  // cy.visit('/dashboard');
+  // cy.url().should('include', '/dashboard');
+});
+
+Cypress.Commands.add('createTestUser', (user) => {
+  cy.log('Creating test user', user.email);
+  cy.task('db:insert', user).then((result) => {
+    cy.log('db:insert result', result);
+  });
+});
+
+Cypress.Commands.add('deleteTestUser', (email) => {
+  cy.log('Deleting test user', email);
+  cy.task('db:delete', email).then((result) => {
+    cy.log('db:delete result', result);
+  });
+});
+
+

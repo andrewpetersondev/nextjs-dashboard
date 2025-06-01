@@ -65,7 +65,7 @@ export default function LoginForm() {
 						<div>
 							<AuthSubmitButton
 								pending={pending}
-								data-cy="login-button"
+								data-cy="login-submit-button"
 							>
 								Log In
 							</AuthSubmitButton>

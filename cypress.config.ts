@@ -4,6 +4,8 @@ import { users } from "./src/db/schema";
 import { eq } from "drizzle-orm";
 
 export default defineConfig({
+	screenshotsFolder: "cypress/screenshots",
+	videosFolder: "cypress/videos",
 	e2e: {
 		supportFile: "cypress/support/e2e.ts",
 		specPattern: "cypress/e2e/**/*.{cy,spec}.ts",
@@ -13,16 +15,19 @@ export default defineConfig({
 		setupNodeEvents(on, config) {
 			on("task", {
 
-				"logToConsole": (message) => {
+				"logToConsole": (message: string) => {
 					console.log("log: ", message);
 					return null;
 				},
-				"db:insert": async (user) => {
+				"db:insert": async (user: { username: string; email: string; password: string }) => {
 					const insertedUser = await db.insert(users).values(user).returning({ username: users.username, email: users.email, password: users.password });
 					return insertedUser ? "User created" : "User creation failed";
 				},
-				"db:delete": async (email) => {
-					const deletedUser = await db.delete(users).where(eq(users.email, email));
+				"db:delete": async (email: string) => {
+					const found = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
+					if (!found.length) return "User not found";
+					const userId = found[0].id;
+					const deletedUser = await db.delete(users).where(eq(users.id, userId));
 					return deletedUser ? "User deleted" : "User deletion failed";
 				},
 			});
