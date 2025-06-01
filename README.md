@@ -1,73 +1,95 @@
 # Next.js Dashboard Project
 
-This project is a dashboard application built with Next.js, React, PostgreSQL, and Drizzle ORM, containerized with Docker for development.
+A modern dashboard application built with Next.js, React, PostgreSQL, and Drizzle ORM. The project is fully containerized for local development and testing with Docker Compose, **except for the Next.js app, which runs outside Docker**.
+**Reason:** Passing secrets from HashiCorp Vault into Docker containers was more trouble than it was worth; running Next.js outside Docker allows direct, secure access to secrets via environment variables.
 
-## Get Started
+---
 
-1. Open root container and run `npx drizzle-kit push`
-2. comment out "import server-only" in src/db/database.ts, then run "pnpm dlx tsx src/db/seeds/bestSeed.ts" in root container
-3. replace "import server-only" in database.ts
-4.
+## Table of Contents
 
-## Main Technologies
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Docker Development Setup](#docker-development-setup)
+- [Available Commands](#available-commands)
+- [Accessing Services](#accessing-services)
+- [Testing](#testing)
+- [Debugging](#debugging)
+- [Recent Improvements](#recent-improvements)
+- [Next Steps](#next-steps)
 
-1. **Next.js & React**
+---
 
-   - Server and client components
-   - Middleware for authentication and authorization
-   - Edge and Node.js runtimes
+## Features
 
-2. **Database**
+- **Next.js 15+ (App Router)**
+- **TypeScript 5+** with strict typing
+- **React 19+** and React DOM 19+
+- **Tailwind CSS 4+** for styling
+- **PostgreSQL 17+** with Drizzle ORM 0.4+
+- **Docker Compose** for local development (except Next.js app)
+- **Cypress** for E2E and component testing
+- **Adminer** for database UI
+- **Secure secrets management** via HashiCorp Vault
 
-   - PostgreSQL
-   - Drizzle ORM for database operations and migrations
+---
 
-3. **Styling**
+## Tech Stack
 
-   - TailwindCSS v4
+- **Frontend:** Next.js, React, Tailwind CSS
+- **Backend:** Node.js, Next.js API routes, Drizzle ORM
+- **Database:** PostgreSQL
+- **Testing:** Cypress (E2E & component), Vitest (planned)
+- **Containerization:** Docker, Docker Compose (except Next.js app)
+- **CI/CD:** GitHub Actions (lint, type-check, test, build, deploy)
+- **Linting/Formatting:** ESLint, Prettier
 
-4. **Testing**
+---
 
-   - Cypress for component and E2E testing
-   - Vitest (planned)
-   - Test Containers
-
-5. **Development Environment**
-   - Docker and Docker Compose CLI
-   - TypeScript
-   - Debugging configuration
-
-## Docker Development Setup
-
-The project includes a fully configured Docker development environment that addresses common issues with Node.js, Next.js, and pnpm in containers.
+## Getting Started
 
 ### Prerequisites
 
-- Docker installed with Docker Compose CLI
-- Node.js and pnpm installed locally (for running scripts)
+- Docker & Docker Compose CLI
+- Node.js (v24+) and pnpm installed locally
+- [HashiCorp Vault](https://www.vaultproject.io/) CLI for secrets management
 
-### Getting Started
+### Initial Setup
 
-1. **Create required secrets files**
+1. **Configure secrets using HashiCorp Vault:**
+
+   Store your secrets in Vault and export them as environment variables before starting the Next.js app.
+   _Example:_
 
    ```bash
-   mkdir -p secrets
-   echo "your-session-secret" > secrets/session_secret.txt
-   echo "your-postgres-password" > secrets/postgres_password.txt
-   echo "postgres://user:password@db:5432/database" > secrets/postgres_url.txt
+   export SESSION_SECRET=$(vault kv get -field=session_secret secret/nextjs-dashboard)
+   export POSTGRES_PASSWORD=$(vault kv get -field=postgres_password secret/nextjs-dashboard)
+   export POSTGRES_URL=$(vault kv get -field=postgres_url secret/nextjs-dashboard)
    ```
 
-2. **Start the development environment**
+   Alternatively, use [HCP Vault Secrets](https://developer.hashicorp.com/vault/tutorials/cloud/cloud-secrets) to inject secrets for CLI commands:
+
+   ```bash
+   hcp vault-secrets run -- pnpm next dev
+   ```
+
+2. **Start Docker services (database, Adminer, Cypress, etc):**
 
    ```bash
    pnpm docker:dev
    ```
 
-   This will build and start all containers, and show the logs.
+   This builds and starts all containers except the Next.js app.
 
-3. **Initialize the database (first time only)**
+3. **Start the Next.js app locally (outside Docker):**
 
-   Once the containers are running:
+   ```bash
+   hcp vault-secrets run -- pnpm next dev
+   ```
+
+   The app will use secrets from your environment.
+
+4. **Initialize the database (first time only):**
 
    ```bash
    pnpm docker:up
@@ -75,47 +97,113 @@ The project includes a fully configured Docker development environment that addr
    docker compose -f compose.dev.yaml exec web pnpm drizzle-seed
    ```
 
-### Available Docker Commands
+---
 
-The following npm/pnpm scripts are available for working with Docker:
+## Docker Development Setup
 
-- `pnpm docker:build` - Build the Docker containers
-- `pnpm docker:up` - Start the Docker containers in detached mode
-- `pnpm docker:down` - Stop the Docker containers
-- `pnpm docker:logs` - Show the logs from the Docker containers
-- `pnpm docker:test` - Run tests to verify the Docker setup
-- `pnpm docker:clean` - Stop the Docker containers and remove volumes
-- `pnpm docker:restart` - Restart the Docker containers
-- `pnpm docker:dev` - Start the Docker containers and show the logs (main development command)
+- **All services** (db, testDB, adminer, cypress) are orchestrated via Docker Compose.
+- **Next.js app runs outside Docker** to simplify secrets management with HashiCorp Vault.
+- **Secrets** are never committed—use Vault or environment variables.
+- **Database schema and seed scripts** are run automatically on container creation.
 
-### Accessing Services
+---
 
-- **Next.js Application**: http://localhost:3000
-- **Adminer (Database UI)**: http://localhost:8080
-- **PostgreSQL**: localhost:5432
+## CLI Usage with Vault
 
-### Debugging
+Some CLI commands require secrets from Vault. Use `hcp vault-secrets run --` to ensure secrets are available in the environment.
 
-The Next.js application in the container is configured with the Node.js inspector enabled. You can:
+**Examples:**
 
-1. Use the `debug` npm script inside the container
-2. Connect to the debugger using your IDE (e.g., VS Code or WebStorm) on port 9229
+- Next.js (dev/build/start):
+  ```bash
+  hcp vault-secrets run -- pnpm next dev --turbopack
+  hcp vault-secrets run -- pnpm next build --turbopack
+  hcp vault-secrets run -- pnpm next start
+  ```
+- Drizzle Kit:
+  ```bash
+  hcp vault-secrets run -- pnpm drizzle-kit up --config=drizzle-test.config.ts
+  hcp vault-secrets run -- pnpm drizzle-kit generate --config=drizzle-test.config.ts
+  ```
+
+See [docs/cli.md](docs/cli.md) for more details.
+
+---
+
+## Available Commands
+
+| Command                             | Description                                   |
+| ----------------------------------- | --------------------------------------------- |
+| `pnpm docker:build`                 | Build Docker containers                       |
+| `pnpm docker:up`                    | Start containers in detached mode             |
+| `pnpm docker:down`                  | Stop containers                               |
+| `pnpm docker:logs`                  | Show container logs                           |
+| `pnpm docker:test`                  | Run Docker setup tests                        |
+| `pnpm docker:clean`                 | Stop containers and remove volumes            |
+| `pnpm docker:restart`               | Restart containers                            |
+| `pnpm docker:dev`                   | Start containers and show logs (main command) |
+| `pnpm drizzle-schema-update`        | Push schema changes to dev database           |
+| `pnpm drizzle-seed`                 | Seed dev database                             |
+| `pnpm drizzle-schema-update-testDB` | Push schema to test database                  |
+| `pnpm drizzle-seed-testDB`          | Seed test database                            |
+| `pnpm cyp:test:e2e`                 | Run Cypress E2E tests in Docker               |
+
+---
+
+## Accessing Services
+
+- **Next.js App:** [http://localhost:3000](http://localhost:3000) (runs locally, not in Docker)
+- **Adminer (DB UI):** [http://localhost:8080](http://localhost:8080)
+- **PostgreSQL:** `localhost:5432`
+
+---
+
+## Startup Reference
+
+See [docs/startup.md](docs/startup.md) for detailed startup instructions for each service, including Docker commands for PostgreSQL and Adminer, and production Next.js startup.
+
+---
+
+## Testing
+
+- **E2E & Component:** Cypress (run in Docker)
+- **Unit Testing:** Vitest (planned)
+- **Test DB:** Isolated PostgreSQL instance for tests
+- **Coverage:** High coverage required; external dependencies and DB are mocked in tests
+
+---
+
+## Debugging
+
+- The Next.js app can be debugged locally using Node.js inspector.
+- Use the `debug` script or connect your IDE (VS Code/WebStorm) to port `9229`.
+
+---
 
 ## Recent Improvements
 
-The Docker setup has been refactored according to best practices:
+- Consistent base image versions for Docker
+- Optimized Docker layers and image size
+- Non-root user and secure file permissions
+- Improved logging and error handling
+- Robust dependency installation
+- [See details in DOCKER-IMPROVEMENTS.md](./DOCKER-IMPROVEMENTS.md)
 
-- Using specific versions of base images for consistency
-- Optimized for layer caching and smaller image sizes
-- Improved security with non-root user and proper file permissions
-- Simplified configuration with proper startup order
-- Better developer experience with improved logging and error handling
-- Fixed dependency installation issues with a more robust approach
-
-For detailed information about the improvements, see [DOCKER-IMPROVEMENTS.md](./DOCKER-IMPROVEMENTS.md).
+---
 
 ## Next Steps
 
-- Implement automatic database schema and seed initialization on container creation
-- Set up Vitest for unit testing
+- Automate DB schema and seed initialization on container creation
+- Add Vitest for unit testing
 - Create a production Dockerfile with multi-stage builds
+
+---
+
+## Security & Best Practices
+
+- **Secrets:** Use HashiCorp Vault or env vars; never commit secrets
+- **Input Validation:** All user input is sanitized and validated
+- **OWASP:** Follows OWASP web security best practices
+- **Linting/Formatting:** Enforced via ESLint and Prettier in CI
+
+---
