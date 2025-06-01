@@ -16,9 +16,8 @@ Cypress.Commands.add('login', (user) => {
   cy.get('[data-cy="login-email-input"]').type(user.email);
   cy.get('[data-cy="login-password-input"]').type(user.password);
   cy.get('[data-cy="login-submit-button"]').click();
-  // cy.getCookie('session').should('exist');
-  // cy.visit('/dashboard');
-  // cy.url().should('include', '/dashboard');
+  cy.url().should('include', '/dashboard');
+  cy.log('Login successful, redirected to dashboard');
 });
 
 Cypress.Commands.add('createUser', (user) => {
