@@ -41,7 +41,9 @@ export default function LoginForm() {
 							icon={<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
 							error={state?.errors?.email}
 							dataCy="login-email-input"
+							describedById="login-email-errors"
 							placeholder="steve@jobs.com"
+							autoFocus
 						/>
 						<InputField
 							id="password"

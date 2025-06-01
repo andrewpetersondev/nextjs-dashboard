@@ -28,11 +28,11 @@ declare global {
       /**
        * Custom command to log in a user via the application's login form (UI only, no API).
        * Fills out and submits the login form as a user would.
-       * @param email The user's email
-       * @param password The user's password
+       * @param user The user object containing username, email, and password
+       * @param options Optional parameters to control assertions after login
        * @example cy.login('user@example.com', 'password123')
        */
-      login(user: { username: string; email: string; password: string }): Chainable<void>;
+      login(user: { username: string; email: string; password: string }, options?: { assertSuccess?: boolean }): Chainable<void>;
 
       /**
        * Custom command to sign up a user via the application's signup flow (UI only, no API).

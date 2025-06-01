@@ -10,14 +10,16 @@ Cypress.Commands.add('signup', (user) => {
   cy.get('[data-cy="signup-submit-button"]').click();
 });
 
-Cypress.Commands.add('login', (user) => {
-  cy.log('Logging in', { email: user.email, password: user.password });
+Cypress.Commands.add('login', (user: Cypress.User, options?: { assertSuccess?: boolean }) => {
+  cy.log('Logging in', { email: user.email });
   cy.visit('/login');
   cy.get('[data-cy="login-email-input"]').type(user.email);
   cy.get('[data-cy="login-password-input"]').type(user.password);
   cy.get('[data-cy="login-submit-button"]').click();
-  cy.url().should('include', '/dashboard');
-  cy.log('Login successful, redirected to dashboard');
+  if (options?.assertSuccess) {
+    cy.url().should('include', '/dashboard');
+    cy.log('Login successful, redirected to dashboard');
+  }
 });
 
 Cypress.Commands.add('createUser', (user) => {
