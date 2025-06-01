@@ -1,3 +1,6 @@
+// this file should be server-only, but then I can not test or seed
+// import "server-only"; // uncomment for production
+
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 
@@ -13,4 +16,4 @@ if (process.env.POSTGRES_URL_TESTDB) {
     process.exit(1);
 }
 
-export const db = drizzle(url);
+export const testDB = drizzle(url);

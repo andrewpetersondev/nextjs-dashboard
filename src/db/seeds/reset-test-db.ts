@@ -1,9 +1,9 @@
 import * as schema from "@/src/db/schema";
 import { reset } from "drizzle-seed";
-import { db } from "@/src/db/test-database";
+import { testDB } from "@/src/db/test-database";
 
 async function main() {
-    await reset(db, schema);
+    await reset(testDB, schema);
 }
 
 main().then(() =>

@@ -11,6 +11,7 @@ if (process.env.POSTGRES_URL) {
   console.log("database.ts ...");
   console.log("DRIZZLE CONNECTING TO:", url);
 } else {
+  console.log("database.ts ...");
   console.error("POSTGRES_URL is not set.");
   process.exit(1);
 }

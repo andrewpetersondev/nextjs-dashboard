@@ -3,7 +3,7 @@
 
 import "dotenv/config";
 import { seed } from "drizzle-seed";
-import { db } from "../test-database";
+import { testDB } from "../test-database";
 import * as schema from "../schema";
 import { hashPassword } from "../../lib/password";
 
@@ -74,10 +74,10 @@ const userSeed: User[] = [
 async function main() {
 
     // Check if the database is empty
-    const { rows: userCount } = await db.execute("SELECT COUNT(*) FROM users") as { rows: { count: number }[] };
-    const { rows: customerCount } = await db.execute("SELECT COUNT(*) FROM customers") as { rows: { count: number }[] };
-    const { rows: invoiceCount } = await db.execute("SELECT COUNT(*) FROM invoices") as { rows: { count: number }[] };
-    const { rows: revenueCount } = await db.execute("SELECT COUNT(*) FROM revenues") as { rows: { count: number }[] };
+    const { rows: userCount } = await testDB.execute("SELECT COUNT(*) FROM users") as { rows: { count: number }[] };
+    const { rows: customerCount } = await testDB.execute("SELECT COUNT(*) FROM customers") as { rows: { count: number }[] };
+    const { rows: invoiceCount } = await testDB.execute("SELECT COUNT(*) FROM invoices") as { rows: { count: number }[] };
+    const { rows: revenueCount } = await testDB.execute("SELECT COUNT(*) FROM revenues") as { rows: { count: number }[] };
     if (
         userCount[0].count > 0 ||
         customerCount[0].count > 0 ||
@@ -88,7 +88,7 @@ async function main() {
         return;
     }
 
-    await seed(db, schema).refine((f) => ({
+    await seed(testDB, schema).refine((f) => ({
         users: {
             count: 2,
             columns: {
