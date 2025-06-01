@@ -56,7 +56,7 @@
     "react-dom": "^19.1.0",
     "server-only": "^0.0.1",
     "use-debounce": "^10.0.4",
-    "zod": "^3.25.45"
+    "zod": "^3.25.46"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.14.4",
