@@ -15,6 +15,13 @@
       "when": 1748971967382,
       "tag": "0001_many_anthem",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748974350275,
+      "tag": "0002_little_goblin_queen",
+      "breakpoints": true
     }
   ]
 }

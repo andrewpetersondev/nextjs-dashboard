@@ -5,6 +5,7 @@ import {
 	integer,
 	pgEnum,
 	pgTable,
+	serial,
 	text,
 	timestamp,
 	uuid,
@@ -19,6 +20,12 @@ export const users = pgTable("users", {
 	email: varchar("email", { length: 50 }).notNull().unique(),
 	role: roleEnum("role").default("user").notNull(),
 	password: varchar("password", { length: 255 }).notNull(),
+});
+
+export const demoUserCounters = pgTable("demo_user_counters", {
+	id: serial("id").primaryKey(),
+	role: text("role").notNull(),
+	count: integer("count").notNull().default(0),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
