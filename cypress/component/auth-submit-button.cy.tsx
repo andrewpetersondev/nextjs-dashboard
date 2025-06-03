@@ -8,14 +8,20 @@ describe("AuthSubmitButton", () => {
 
 	it("is disabled when pending", () => {
 		cy.mount(<AuthSubmitButton pending>Submit</AuthSubmitButton>);
-		cy.get("button").should("be.disabled");
+		cy.get("button").should("have.attr", "aria-disabled", "true");
 	});
 
 	it("calls onClick handler when clicked", () => {
-		const onClick = cy.stub();
+		let clicked = false;
+		const onClick = () => {
+			clicked = true;
+		};
 		cy.mount(<AuthSubmitButton onClick={onClick}>Submit</AuthSubmitButton>);
-		cy.get("button").click();
-		cy.wrap(onClick).should("have.been.called");
+		cy.get("button")
+			.click()
+			.then(() => {
+				expect(clicked).to.be.true;
+			});
 	});
 
 	it("has the correct class names", () => {
