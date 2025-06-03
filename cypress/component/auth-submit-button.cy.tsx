@@ -25,7 +25,4 @@ describe("AuthSubmitButton", () => {
 		cy.get("button").should("have.class", "hover:bg-bg-hover");
 		cy.get("button").should("have.class", "focus-visible:outline-bg-focus");
 	});
-
 });
-
-

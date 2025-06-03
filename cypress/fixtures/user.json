@@ -1,5 +1,5 @@
 {
-  "username": "fixtureuser",
-  "email": "fixtureuser@example.com",
-  "password": "Password123!"
+	"username": "fixtureuser",
+	"email": "fixtureuser@example.com",
+	"password": "Password123!"
 }
