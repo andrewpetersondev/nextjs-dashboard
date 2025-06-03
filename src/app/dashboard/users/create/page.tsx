@@ -1,4 +1,3 @@
-import { fetchUsers } from "@/src/lib/data";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import CreateUserForm from "@/src/ui/users/create-user-form";
 import type { Metadata } from "next";
@@ -11,9 +10,6 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-	const users = await fetchUsers();
-
-	console.log("Fetched users:", users);
 	return (
 		<main>
 			<Breadcrumbs

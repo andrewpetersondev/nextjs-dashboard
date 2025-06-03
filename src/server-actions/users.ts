@@ -3,6 +3,8 @@
 import { db } from "@/src/db/database";
 import { users } from "@/src/db/schema";
 import {
+	CreateUserFormSchema,
+	type CreateUserFormState,
 	LoginFormSchema,
 	type LoginFormState,
 	SignupFormSchema,
@@ -175,4 +177,45 @@ export async function demoUser() {
 	return redirect("/dashboard");
 }
 
-// export async function createUser() { }
+export async function createUser(
+	state: CreateUserFormState,
+	formData: FormData,
+) {
+	try {
+		const validatedFields = CreateUserFormSchema.safeParse({
+			username: formData.get("username"),
+			email: formData.get("email"),
+			password: formData.get("password"),
+			role: formData.get("role"),
+		});
+
+		if (!validatedFields.success) {
+			return { errors: validatedFields.error.flatten().fieldErrors };
+		}
+
+		const { username, email, password, role } = validatedFields.data;
+
+		const hashedPassword = await hashPassword(password);
+		const data = await db
+			.insert(users)
+			.values({
+				username: username,
+				email: email,
+				password: hashedPassword,
+				role: role,
+			})
+			.returning({ insertedId: users.id });
+		const userId = data[0]?.insertedId;
+		if (!userId) {
+			console.log("Failed to create an account");
+			return {
+				message: "Failed to create an account on Users Page. Please try again.",
+			};
+		}
+	} catch (error) {
+		console.error("Failed to create user: ", error);
+		return { message: "An unexpected error occurred. Please try again." };
+	}
+	// return redirect(`/dashboard/users?query=${email}`);
+	return redirect("/dashboard/users/");
+}

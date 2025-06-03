@@ -1,6 +1,6 @@
 import { fetchCustomers, fetchInvoiceById } from "@/src/lib/data";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
-import Form from "@/src/ui/invoices/edit-form";
+import EditInvoiceForm from "@/src/ui/invoices/edit-form";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -32,7 +32,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 					},
 				]}
 			/>
-			<Form invoice={invoice} customers={customers} />
+			<EditInvoiceForm invoice={invoice} customers={customers} />
 		</main>
 	);
 }

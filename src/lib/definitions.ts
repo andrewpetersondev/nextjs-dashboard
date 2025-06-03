@@ -7,11 +7,17 @@ export type User = {
 	password: string;
 };
 
-export type CreateUserFormState = SignupFormState & {
-	errors?: {
-		role?: string[];
-	};
-};
+export type CreateUserFormState =
+	| {
+			errors?: {
+				username?: string[];
+				email?: string[];
+				password?: string[];
+				role?: string[];
+			};
+			message?: string;
+	  }
+	| undefined;
 
 export const CreateUserFormSchema = z.object({
 	username: z
