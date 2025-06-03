@@ -23,6 +23,5 @@
         "pgsql",
         "tektur",
         "TESTDB"
-    ],
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    ]
 }

@@ -1,6 +1,7 @@
 import SideNav from "@/src/ui/dashboard/sidenav";
 import type React from "react";
 
+// todo: revert to false? investigate
 export const experimental_ppr = true;
 
 export default function Layout({ children }: { children: React.ReactNode }) {

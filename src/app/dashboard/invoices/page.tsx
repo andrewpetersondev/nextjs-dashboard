@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 
-export default async function Page(props: {
+export default async function Page(dynamicURL: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
   }>;
 }) {
-  const searchParams = await props.searchParams;
+  const searchParams = await dynamicURL.searchParams;
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
   const totalPages = await fetchInvoicesPages(query);
