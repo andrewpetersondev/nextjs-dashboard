@@ -3,15 +3,18 @@
 import {
 	DocumentDuplicateIcon,
 	HomeIcon,
+	LockClosedIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
-const links = [
+type NavLinksProps = {
+	role?: string;
+};
+
+const baseLinks = [
 	{ name: "Home", href: "/dashboard", icon: HomeIcon },
 	{
 		name: "Invoices",
@@ -21,8 +24,19 @@ const links = [
 	{ name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ role }: NavLinksProps) {
 	const pathname = usePathname();
+	const links = [...baseLinks];
+
+	// Only add Users link for admin
+	if (role === "admin") {
+		links.push({
+			name: "Users",
+			href: "/dashboard/users",
+			icon: LockClosedIcon,
+		});
+	}
+
 	return (
 		<>
 			{links.map((link) => {

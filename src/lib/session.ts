@@ -9,18 +9,17 @@ import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const verifyEnvironmentVariables = () => {
-	const requiredEnvVars = ["POSTGRES_URL", "SESSION_SECRET"];
-	for (const envVar of requiredEnvVars) {
-		const value = process.env[envVar];
-		if (value) {
-		} else {
-			console.error(`Environment variable ${envVar} is not set`);
-		}
-	}
-};
-
-verifyEnvironmentVariables();
+// const verifyEnvironmentVariables = () => {
+// 	const requiredEnvVars = ["POSTGRES_URL", "SESSION_SECRET"];
+// 	for (const envVar of requiredEnvVars) {
+// 		const value = process.env[envVar];
+// 		if (value) {
+// 		} else {
+// 			console.error(`Environment variable ${envVar} is not set`);
+// 		}
+// 	}
+// };
+// verifyEnvironmentVariables();
 
 const getEncodedKey = async () => {
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -30,13 +29,11 @@ const getEncodedKey = async () => {
 	}
 	return new TextEncoder().encode(secret);
 };
-
 let encodedKey: Uint8Array;
 
 const initializeEncodedKey = async () => {
 	encodedKey = await getEncodedKey();
 };
-
 // initializeEncodedKey();
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
@@ -98,29 +95,25 @@ export async function decrypt(
 	}
 }
 
-// todo: implement a non-default role
-export async function createSession(userId: string): Promise<void> {
+export async function createSession(
+	userId: string,
+	role: string,
+): Promise<void> {
 	try {
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();
 		const session = await encrypt({
-			user: { userId: userId, role: "user", expiresAt: expiresAt },
+			user: { userId, role, expiresAt },
 		});
-		try {
-			const cookieStore = await cookies();
-			cookieStore.set("session", session, {
-				httpOnly: true,
-				secure: process.env.NODE_ENV === "production",
-				expires: new Date(expiresAt),
-				sameSite: "lax",
-				path: "/",
-			});
-		} catch (error) {
-			console.error("cookie store set error: ");
-			console.error(error);
-		}
+		const cookieStore = await cookies();
+		cookieStore.set("session", session, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			expires: new Date(expiresAt),
+			sameSite: "lax",
+			path: "/",
+		});
 	} catch (error) {
-		console.error("createSession error: ");
-		console.error(error);
+		console.error("createSession error: ", error);
 	}
 }
 

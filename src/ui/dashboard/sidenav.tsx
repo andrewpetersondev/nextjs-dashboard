@@ -1,5 +1,5 @@
 import AcmeLogo from "@/src/ui/acme-logo";
-import NavLinks from "@/src/ui/dashboard/nav-links";
+import NavLinksWrapper from "@/src/ui/dashboard/nav-links-wrapper";
 import { LogoutForm } from "@/src/ui/logout-form";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default function SideNav() {
 				<AcmeLogo />
 			</Link>
 			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-y-2 md:space-x-0">
-				<NavLinks />
+				<NavLinksWrapper />
 				<div className="bg-bg-secondary hidden h-auto w-full grow rounded-md md:block" />
 				<LogoutForm />
 			</div>

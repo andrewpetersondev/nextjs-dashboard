@@ -56,7 +56,7 @@ export async function signup(state: SignupFormState, formData: FormData) {
 			console.log("Failed to create account");
 			return { message: "Failed to create account. Please try again." };
 		}
-		await createSession(userId);
+		await createSession(userId, "user");
 	} catch (error) {
 		console.error("Failed to create user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
@@ -101,7 +101,7 @@ export async function login(
 		if (!validPassword) {
 			return { message: "Invalid email or password." };
 		}
-		await createSession(user[0].userId);
+		await createSession(user[0].userId, user[0].role);
 	} catch (error) {
 		console.error("Failed to log in user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
@@ -169,7 +169,7 @@ export async function demoUser() {
 		}
 	}
 	try {
-		await createSession(demoUserId);
+		await createSession(demoUserId, "user");
 	} catch (error) {
 		console.error("Failed to create session for demo user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
