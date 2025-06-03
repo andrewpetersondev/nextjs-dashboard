@@ -1,4 +1,4 @@
-import { fetchLatestInvoices } from "@/src/lib/data";
+import { fetchLatestInvoices } from "@/src/lib/query/invoices";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";

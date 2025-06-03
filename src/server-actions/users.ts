@@ -14,6 +14,7 @@ import {
 	type LoginFormState,
 	SignupFormSchema,
 	type SignupFormState,
+	type UserRole,
 } from "@/src/lib/definitions/users";
 
 // TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
@@ -64,6 +65,22 @@ export async function signup(state: SignupFormState, formData: FormData) {
 	return redirect("/dashboard");
 }
 
+/**
+ * Authenticates a user with the provided email and password.
+ *
+ * Validates the input using `LoginFormSchema`, checks the user's credentials against the database,
+ * and creates a session on successful authentication. Redirects to the dashboard on success.
+ *
+ * @param state - The current form state (not used, reserved for future extensibility).
+ * @param formData - The form data containing `email` and `password` fields.
+ * @returns An object with validation errors, a message on failure, or redirects on success.
+ *
+ * @example
+ * const result = await login(state, formData);
+ * if (result?.errors) {
+ *   // handle validation errors
+ * }
+ */
 export async function login(
 	state: LoginFormState,
 	formData: FormData,
@@ -124,15 +141,13 @@ export async function deleteUser(userId: string) {
 	redirect("/");
 }
 
-type DemoRole = "user" | "guest" | "admin";
-
 /**
  * Creates a new unique demo user for the given role and logs them in.
  * Uses the auto-incremented id from demoUserCounters for unique email/username.
  * @param role - The role for the demo user ("user", "guest", or "admin").
  */
 export async function demoUser(
-	role: DemoRole = "user",
+	role: UserRole = "user",
 ): Promise<never | { message: string }> {
 	// Validate role input
 	if (!["user", "guest", "admin"].includes(role)) {
@@ -187,6 +202,13 @@ export async function demoUser(
 	return redirect("/dashboard");
 }
 
+/**
+ * Creates a new user from the protected /dashboard/users/create/page.tsx.
+ * This function is used to create a user account with the provided form data.
+ * @param state - The state of the form, which is not used in this function but can be extended for future use.
+ * @param formData - The FormData object containing the user details.
+ * @returns A redirect to the users page or an error message if the user creation fails.
+ */
 export async function createUser(
 	state: CreateUserFormState,
 	formData: FormData,

@@ -1,4 +1,4 @@
-import { fetchInvoicesPages } from "@/src/lib/data";
+import { fetchInvoicesPages } from "@/src/lib/query/invoices";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import Pagination from "@/src/ui/invoices/pagination";
 import Table from "@/src/ui/invoices/table";

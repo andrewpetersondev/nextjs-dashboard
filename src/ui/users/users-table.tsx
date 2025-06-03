@@ -1,4 +1,4 @@
-import { fetchFilteredUsers } from "@/src/lib/data";
+import { fetchFilteredUsers } from "@/src/lib/query/users";
 import { UpdateUser } from "@/src/ui/users/buttons";
 
 export default async function UsersTable({

@@ -1,5 +1,6 @@
-import { fetchUserById, fetchUsers } from "@/src/lib/data";
+import { fetchUserById, fetchUsers } from "@/src/lib/query/users";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
+// import EditUserForm from "@/src/ui/users/edit-user-form";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -31,12 +32,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 				]}
 			/>
 			<section>
-				this page should only be accessible to admins.
-				<p>Only admins can edit user profiles.</p>
-				<p>Regular users can only view their own profile.</p>
 				<p>Admins can edit any profile.</p>
 			</section>
-			{/* <Form profile={profile} customers={customers} /> */}
+			{/*<EditUserForm user={user} users={users} />*/}
 		</main>
 	);
 }

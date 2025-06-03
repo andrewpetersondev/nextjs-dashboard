@@ -1,9 +1,11 @@
 import "server-only";
+
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
+	type UserSessionRole,
 } from "@/src/lib/definitions/session";
 import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
@@ -97,7 +99,7 @@ export async function decrypt(
 
 export async function createSession(
 	userId: string,
-	role: string,
+	role: UserSessionRole = "user",
 ): Promise<void> {
 	try {
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();

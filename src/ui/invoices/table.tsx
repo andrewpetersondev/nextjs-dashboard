@@ -1,4 +1,4 @@
-import { fetchFilteredInvoices } from "@/src/lib/data";
+import { fetchFilteredInvoices } from "@/src/lib/query/invoices";
 import DesktopTable from "@/src/ui/invoices/desktop-table";
 import MobileTable from "@/src/ui/invoices/mobile-table";
 

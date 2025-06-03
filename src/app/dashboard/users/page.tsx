@@ -1,4 +1,4 @@
-import { fetchUsersPages } from "@/src/lib/data";
+import { fetchUsersPages } from "@/src/lib/query/users";
 import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";

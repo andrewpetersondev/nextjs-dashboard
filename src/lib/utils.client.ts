@@ -1,4 +1,5 @@
 "use client";
+
 export const generatePagination = (currentPage: number, totalPages: number) => {
 	if (totalPages <= 7) {
 		return Array.from({ length: totalPages }, (_, i) => i + 1);

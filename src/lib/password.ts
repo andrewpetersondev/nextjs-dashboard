@@ -1,3 +1,5 @@
+import "server-only";
+
 import bcryptjs from "bcryptjs";
 
 const SALT_ROUNDS = 10;
