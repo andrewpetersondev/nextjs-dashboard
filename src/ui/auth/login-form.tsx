@@ -3,6 +3,7 @@
 import { login } from "@/src/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
+import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
 import DemoUser from "@/src/ui/auth/demo-user";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import Heading from "@/src/ui/auth/heading";
@@ -108,6 +109,7 @@ export default function LoginForm() {
 							</div>
 						</div>
 						<DemoUser text="Login as Demo User" />
+						<DemoAdminUser text="Login as Demo Admin" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
 								provider="Google"

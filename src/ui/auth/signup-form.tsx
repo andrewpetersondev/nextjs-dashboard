@@ -2,6 +2,7 @@
 
 import { signup } from "@/src/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
+import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
 import DemoUser from "@/src/ui/auth/demo-user";
 import { InputField } from "@/src/ui/auth/input-field";
 import {
@@ -9,7 +10,7 @@ import {
 	LockClosedIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
-import { useActionState } from "react";
+import React, { useActionState } from "react";
 import type { FC } from "react";
 import AuthSwitchLink from "./auth-switch-link";
 import { ForgotPasswordLink } from "./forgot-password-link";
@@ -44,12 +45,7 @@ export const SignupForm: FC = () => {
 			{/* Form container */}
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-					<form
-						action={action}
-						className="space-y-6"
-						autoComplete="off"
-						noValidate
-					>
+					<form action={action} className="space-y-6" autoComplete="off">
 						<InputField
 							id="username"
 							name="username"
@@ -136,6 +132,7 @@ export const SignupForm: FC = () => {
 							</div>
 						</div>
 						<DemoUser text="Sign up as Demo User" />
+						<DemoAdminUser text="Sign up as Demo Admin" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
 								provider="Google"

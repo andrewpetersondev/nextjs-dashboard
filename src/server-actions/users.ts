@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/src/db/database";
-import { users } from "@/src/db/schema";
+import { demoUserCounters, users } from "@/src/db/schema";
 import { comparePassword, hashPassword } from "@/src/lib/password";
 import { createSession, deleteSession } from "@/src/lib/session";
 import { eq } from "drizzle-orm";
@@ -124,54 +124,63 @@ export async function deleteUser(userId: string) {
 	redirect("/");
 }
 
-// TODO: This function will not work with simultaneous users logging in. Fix this by creating a new table to count the total number of times the demo user has been created. Then, use javascript to append a number to the email and username, so that each demo user is unique. This will allow multiple users to log in at the same time without overwriting each other's sessions.
-export async function demoUser() {
-	const DEMO_EMAIL = "demo@demo.com";
-	const DEMO_USERNAME = "Demo User";
-	const DEMO_PASSWORD = "demopassword";
+type DemoRole = "user" | "guest" | "admin";
 
-	let user: Array<{ userId: string; email: string; role: string }>;
+/**
+ * Creates a new unique demo user for the given role and logs them in.
+ * Uses the auto-incremented id from demoUserCounters for unique email/username.
+ * @param role - The role for the demo user ("user", "guest", or "admin").
+ */
+export async function demoUser(
+	role: DemoRole = "user",
+): Promise<never | { message: string }> {
+	// Validate role input
+	if (!["user", "guest", "admin"].includes(role)) {
+		return { message: "Invalid demo user role." };
+	}
+
+	let counterId: number;
 	try {
-		user = await db
-			.select({
-				userId: users.id,
-				email: users.email,
-				role: users.role,
-			})
-			.from(users)
-			.where(eq(users.email, DEMO_EMAIL));
+		// Insert a new counter row and get the unique id
+		const [counter] = await db
+			.insert(demoUserCounters)
+			.values({ role, count: 1 })
+			.returning({ id: demoUserCounters.id });
+		counterId = counter.id;
 	} catch (error) {
-		console.error("Failed to query demo user:", error);
+		console.error("[demoUser] Failed to create demo user counter:", error);
 		return { message: "An unexpected error occurred. Please try again." };
 	}
 
+	const DEMO_PASSWORD = "Password123!";
+	const uniqueEmail = `demo+${role}${counterId}@demo.com`;
+	const uniqueUsername = `Demo ${role.charAt(0).toUpperCase() + role.slice(1)} ${counterId}`;
+
 	let demoUserId: string;
-	if (user.length) {
-		demoUserId = user[0].userId;
-	} else {
-		try {
-			const hashedPassword = await hashPassword(DEMO_PASSWORD);
-			const data = await db
-				.insert(users)
-				.values({
-					username: DEMO_USERNAME,
-					email: DEMO_EMAIL,
-					password: hashedPassword,
-				})
-				.returning({ insertedId: users.id });
-			demoUserId = data[0]?.insertedId;
-			if (!demoUserId) {
-				return { message: "Failed to create demo user. Please try again." };
-			}
-		} catch (error) {
-			console.error("Failed to create demo user:", error);
-			return { message: "An unexpected error occurred. Please try again." };
-		}
-	}
 	try {
-		await createSession(demoUserId, "user");
+		const hashedPassword = await hashPassword(DEMO_PASSWORD);
+		const [user] = await db
+			.insert(users)
+			.values({
+				username: uniqueUsername,
+				email: uniqueEmail,
+				password: hashedPassword,
+				role,
+			})
+			.returning({ id: users.id });
+		demoUserId = user.id;
+		if (!demoUserId) {
+			return { message: "Failed to create demo user. Please try again." };
+		}
 	} catch (error) {
-		console.error("Failed to create session for demo user:", error);
+		console.error("[demoUser] Failed to create demo user:", error);
+		return { message: "An unexpected error occurred. Please try again." };
+	}
+
+	try {
+		await createSession(demoUserId, role);
+	} catch (error) {
+		console.error("[demoUser] Failed to create session for demo user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
 	}
 
