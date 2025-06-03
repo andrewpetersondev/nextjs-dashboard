@@ -2,6 +2,11 @@
 
 import { db } from "@/src/db/database";
 import { users } from "@/src/db/schema";
+import { comparePassword, hashPassword } from "@/src/lib/password";
+import { createSession, deleteSession } from "@/src/lib/session";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+
 import {
 	CreateUserFormSchema,
 	type CreateUserFormState,
@@ -9,11 +14,7 @@ import {
 	type LoginFormState,
 	SignupFormSchema,
 	type SignupFormState,
-} from "@/src/lib/definitions";
-import { comparePassword, hashPassword } from "@/src/lib/password";
-import { createSession, deleteSession } from "@/src/lib/session";
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
+} from "@/src/lib/definitions/users";
 
 // TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
 /*

@@ -2,7 +2,10 @@
 
 import { db } from "@/src/db/database";
 import { invoices } from "@/src/db/schema";
-import { InvoiceFormSchema, type InvoiceState } from "@/src/lib/definitions";
+import {
+	InvoiceFormSchema,
+	type InvoiceState,
+} from "@/src/lib/definitions/invoices";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";

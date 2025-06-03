@@ -1,30 +1,13 @@
 import "server-only";
+import {
+	type DecryptPayload,
+	DecryptPayloadSchema,
+	type EncryptPayload,
+	EncryptPayloadSchema,
+} from "@/src/lib/definitions/session";
+import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { z } from "zod";
-
-export const EncryptPayloadSchema = z.object({
-	user: z.object({
-		userId: z.string().uuid(),
-		role: z.enum(["admin", "user"]),
-		expiresAt: z.number(),
-	}),
-});
-
-export type EncryptPayload = {
-	user: {
-		userId: string;
-		role: string;
-		expiresAt: number;
-	};
-};
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-	iat: z.number(),
-	exp: z.number(),
-});
-
-export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
 
 const verifyEnvironmentVariables = () => {
 	const requiredEnvVars = ["POSTGRES_URL", "SESSION_SECRET"];
@@ -54,14 +37,26 @@ const initializeEncodedKey = async () => {
 	encodedKey = await getEncodedKey();
 };
 
-initializeEncodedKey();
+// initializeEncodedKey();
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
 	await initializeEncodedKey();
 	try {
 		const validatedFields = EncryptPayloadSchema.safeParse(payload);
+		// if (!validatedFields.success) {
+		// 	throw new Error("Invalid session payload: Missing required fields");
+		// }
 		if (!validatedFields.success) {
-			throw new Error("Invalid session payload: Missing required fields");
+			// Log structured error for observability
+			console.error("Session payload validation failed", {
+				errors: validatedFields.error.flatten().fieldErrors,
+				payload,
+			});
+			// Throw custom error with details (do not leak sensitive data)
+			throw new ValidationError(
+				"Invalid session payload: Missing or invalid required fields",
+				validatedFields.error.flatten().fieldErrors,
+			);
 		}
 		const validatedPayload = validatedFields.data;
 		const jwt = await new SignJWT(validatedPayload)
@@ -103,6 +98,7 @@ export async function decrypt(
 	}
 }
 
+// todo: implement a non-default role
 export async function createSession(userId: string): Promise<void> {
 	try {
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();

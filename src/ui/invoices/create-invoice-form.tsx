@@ -1,7 +1,7 @@
 "use client";
 
-import type { CustomerField } from "@/src/lib/definitions";
-import type { InvoiceState } from "@/src/lib/definitions";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { InvoiceState } from "@/src/lib/definitions/invoices";
 import { createInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {

@@ -39,53 +39,6 @@ export const CreateUserFormSchema = z.object({
 	}),
 });
 
-export type Customer = {
-	id: string;
-	name: string;
-	email: string;
-	image_url: string;
-};
-
-export type CustomerField = {
-	id: string;
-	name: string;
-};
-
-export type Invoice = {
-	id: string;
-	customer_id: string;
-	amount: number;
-	date: string;
-	status: "pending" | "paid";
-};
-
-export type CustomersTableType = {
-	id: string;
-	name: string;
-	email: string;
-	image_url: string;
-	total_invoices: number;
-	total_pending: number;
-	total_paid: number;
-};
-
-export type FormattedCustomersTable = {
-	email: string;
-	id: string;
-	image_url: string;
-	name: string;
-	total_invoices: number;
-	total_paid: string;
-	total_pending: string;
-};
-
-export type InvoiceForm = {
-	id: string;
-	customerId: string;
-	amount: number;
-	status: "pending" | "paid" | null;
-};
-
 export const SignupFormSchema = z.object({
 	username: z
 		.string()
@@ -128,26 +81,3 @@ export type LoginFormState =
 			message?: string;
 	  }
 	| undefined;
-
-export type InvoiceState = {
-	errors?: {
-		customerId?: string[];
-		amount?: string[];
-		status?: string[];
-	};
-	message?: string | null;
-};
-
-export const InvoiceFormSchema = z.object({
-	id: z.string(),
-	customerId: z.string({
-		invalid_type_error: "Invalid customer id",
-	}),
-	amount: z.coerce
-		.number()
-		.gt(0, { message: "Amount must be greater than $0." }),
-	status: z.enum(["pending", "paid"], {
-		invalid_type_error: "Please select a status",
-	}),
-	date: z.string(),
-});

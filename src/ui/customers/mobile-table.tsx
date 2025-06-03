@@ -1,4 +1,4 @@
-import type { FormattedCustomersTable } from "@/src/lib/definitions";
+import type { FormattedCustomersTable } from "@/src/lib/definitions/customers";
 import Image from "next/image";
 
 export default async function MobileTable({

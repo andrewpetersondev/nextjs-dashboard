@@ -1,10 +1,7 @@
 "use client";
 
-import type {
-	CustomerField,
-	InvoiceForm,
-	InvoiceState,
-} from "@/src/lib/definitions";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { InvoiceForm, InvoiceState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {

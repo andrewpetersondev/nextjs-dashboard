@@ -2,68 +2,14 @@ import "server-only";
 
 import { db } from "@/src/db/database";
 import { customers, invoices, revenues, users } from "@/src/db/schema";
-import type { CustomerField } from "@/src/lib/definitions";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type {
+	FetchFilteredInvoicesData,
+	FetchLatestInvoicesData,
+	ModifiedLatestInvoicesData,
+} from "@/src/lib/definitions/invoices";
 import { formatCurrency } from "@/src/lib/utils";
 import { asc, count, desc, eq, ilike, or, sql } from "drizzle-orm";
-
-export type InvoicesTable = {
-	id: string;
-	customer_id: string;
-	name: string;
-	email: string;
-	image_url: string;
-	date: string;
-	amount: number;
-	status: "pending" | "paid";
-};
-
-export type FilteredInvoiceData = {
-	id: string;
-	amount: number;
-	date: string;
-	name: string;
-	email: string;
-	image_url: string;
-	paymentStatus: "pending" | "paid";
-};
-
-export type FetchLatestInvoicesData = {
-	amount: number;
-	email: string;
-	id: string;
-	image_url: string;
-	name: string;
-	paymentStatus: string;
-};
-
-export type ModifiedLatestInvoicesData = Omit<
-	FetchLatestInvoicesData,
-	"amount"
-> & {
-	amount: string;
-};
-
-export type LatestInvoice = {
-	id: string;
-	name: string;
-	image_url: string;
-	email: string;
-	amount: string;
-};
-
-export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
-	amount: number;
-};
-
-export type FetchFilteredInvoicesData = {
-	id: string;
-	amount: number;
-	date: string;
-	name: string;
-	email: string;
-	image_url: string;
-	paymentStatus: "pending" | "paid";
-};
 
 export type Revenue = {
 	month: string;
