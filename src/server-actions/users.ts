@@ -14,15 +14,18 @@ import {
 } from "@/src/lib/definitions";
 
 // TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
-// To create a cookie I need users.id, sessions.userId, expiresAt, users.role
-// users.id is created in database
-// sessions.userId is created in db, may not be necessary because it gives the same info as users.id
-// expiresAt is created in code and encrypt ()
-// for  now, every user's role is set to "user" by default from the db.
-// soon I will determine who is an admin based off an enumerated list of email addresses.
-// i do not have access to  users.role in signup () because the only thing that gets returned is users.id, so i will
-// hardcode in the user role to signup()
-// signup () can be part of the DAL because verifySessionOptimistic() is impossible without database sessions
+/*
+*  To create a cookie I need users.id, sessions.userId, expiresAt, users.role
+*  users.id is created in database
+*  sessions.userId is created in db, may not be necessary because it gives the same info as users.id
+* expiresAt is created in code and encrypt ()
+* for  now, every user's role is set to "user" by default from the db.
+*  soon I will determine who is an admin based off an enumerated list of email addresses.
+* i do not have access to  users.role in signup () because the only thing that gets returned is users.id, so i will
+* hardcode in the user role to signup()
+* signup () can be part of the DAL because verifySessionOptimistic() is impossible without database sessions
+* */
+// TODO: may need to update zod to use .safeParseAsync()
 export async function signup(state: SignupFormState, formData: FormData) {
   try {
     const validatedFields = SignupFormSchema.safeParse({
@@ -120,6 +123,7 @@ export async function deleteUser(userId: string) {
   redirect("/");
 }
 
+// TODO: This function will not work with simultaneous users logging in. Fix this by creating a new table to count the total number of times the demo user has been created. Then, use javascript to append a number to the email and username, so that each demo user is unique. This will allow multiple users to log in at the same time without overwriting each other's sessions.
 export async function demoUser() {
   const DEMO_EMAIL = "demo@demo.com";
   const DEMO_USERNAME = "Demo User";
@@ -172,3 +176,5 @@ export async function demoUser() {
 
   return redirect("/dashboard");
 }
+
+// export async function createUser() { }
