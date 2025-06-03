@@ -1,9 +1,8 @@
 "use client";
 
 import { createUser } from "@/src/server-actions/users";
-import { FieldError } from "@/src/ui/auth/field-error";
 import { InputField } from "@/src/ui/auth/input-field";
-import { Button } from "@/src/ui/button";
+import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button";
 import {
 	AtSymbolIcon,
 	LockClosedIcon,
@@ -37,7 +36,7 @@ export default function CreateUserForm() {
 					type="text"
 					label="Username"
 					autoComplete="username"
-					required
+					required={true}
 					icon={
 						<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 					}
@@ -50,7 +49,7 @@ export default function CreateUserForm() {
 					type="email"
 					label="Email address"
 					autoComplete="email"
-					required
+					required={true}
 					icon={
 						<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 					}
@@ -64,7 +63,7 @@ export default function CreateUserForm() {
 					type="password"
 					label="Password"
 					autoComplete="new-password"
-					required
+					required={true}
 					icon={
 						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 					}
@@ -87,7 +86,7 @@ export default function CreateUserForm() {
 						<option value="admin">Admin</option>
 						<option value="user">User</option>
 					</select>
-					<div id="customer-error" aria-live="polite" aria-atomic="true">
+					<div id="create-user-error" aria-live="polite" aria-atomic="true">
 						{state.errors?.role?.map((error: string) => (
 							<p className="text-text-error mt-2 text-sm" key={error}>
 								{error}
@@ -103,7 +102,12 @@ export default function CreateUserForm() {
 				>
 					Cancel
 				</Link>
-				<Button type="submit">Create User</Button>
+				<CreateUserSubmitButton
+					pending={pending}
+					data-cy="create-user-submit-button"
+				>
+					Create User
+				</CreateUserSubmitButton>
 			</div>
 		</form>
 	);

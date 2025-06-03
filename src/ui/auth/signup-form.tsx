@@ -56,7 +56,7 @@ export const SignupForm: FC = () => {
 							type="text"
 							label="Username"
 							autoComplete="username"
-							required
+							required={true}
 							icon={
 								<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
@@ -69,7 +69,7 @@ export const SignupForm: FC = () => {
 							type="email"
 							label="Email address"
 							autoComplete="email"
-							required
+							required={true}
 							icon={
 								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
@@ -83,7 +83,7 @@ export const SignupForm: FC = () => {
 							type="password"
 							label="Password"
 							autoComplete="new-password"
-							required
+							required={true}
 							icon={
 								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}

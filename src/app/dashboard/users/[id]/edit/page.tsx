@@ -14,8 +14,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const params = await props.params;
 	const id = params.id;
 	const [user, users] = await Promise.all([fetchUserById(id), fetchUsers()]);
-	console.log("Fetched user data:", user);
-	console.log("Fetched all users data:", users);
+
 	if (!user) {
 		notFound();
 	}

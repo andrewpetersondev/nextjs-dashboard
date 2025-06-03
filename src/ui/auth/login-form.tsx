@@ -35,14 +35,14 @@ export default function LoginForm() {
 
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-					<form action={action} className="space-y-6" noValidate>
+					<form action={action} className="space-y-6">
 						<InputField
 							id="email"
 							name="email"
 							type="email"
 							label="Email address"
 							autoComplete="email"
-							required
+							required={true}
 							icon={
 								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
@@ -50,7 +50,7 @@ export default function LoginForm() {
 							dataCy="login-email-input"
 							describedById="login-email-errors"
 							placeholder="steve@jobs.com"
-							autoFocus
+							autoFocus={true}
 						/>
 						<InputField
 							id="password"
@@ -58,7 +58,7 @@ export default function LoginForm() {
 							type="password"
 							label="Password"
 							autoComplete="current-password"
-							required
+							required={true}
 							icon={
 								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
