@@ -2,16 +2,15 @@ import "./envConfig";
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-console.log("drizzle-dev.config.ts ...");
-
 let url: string;
 
 if (process.env.POSTGRES_URL) {
+	console.log("drizzle-dev.config.ts ...");
 	url = process.env.POSTGRES_URL;
-	console.log("Using POSTGRES_URL from .env");
+	console.log("Using POSTGRES_URL from hcp vault", url);
 } else {
 	console.log("drizzle-dev.config.ts ...");
-	console.log("postgres url not found in .env");
+	console.log("POSTGRES_URL not found in hcp vault");
 	process.exit(1);
 }
 export default defineConfig({
