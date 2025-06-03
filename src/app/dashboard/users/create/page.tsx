@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   title: "Create User",
 };
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+// force this page to be dynamic, so it doesn't get cached
+export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const users = await fetchUsers();
@@ -17,7 +18,10 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: "Users", href: "/dashboard/users" },
+          {
+            label: "Users",
+            href: "/dashboard/users",
+          },
           {
             label: "Create User",
             href: "/dashboard/users/create",
