@@ -1,28 +1,33 @@
 "use client";
 
 import { login } from "@/src/server-actions/users";
-import { InputField } from "@/src/ui/auth/input-field";
-import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
-import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
-import Heading from "@/src/ui/auth/heading";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import { useActionState } from "react";
-import React from "react";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
 import DemoUser from "@/src/ui/auth/demo-user";
+import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
+import Heading from "@/src/ui/auth/heading";
+import { InputField } from "@/src/ui/auth/input-field";
+import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
+import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
+import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { useActionState } from "react";
+import React from "react";
 
-type LoginState = {
-	errors?: {
-		email?: string[];
-		password?: string[];
-	};
-	message?: string;
-} | undefined;
+type LoginState =
+	| {
+			errors?: {
+				email?: string[];
+				password?: string[];
+			};
+			message?: string;
+	  }
+	| undefined;
 
 export default function LoginForm() {
-	const [state, action, pending] = useActionState<LoginState, FormData>(login, undefined);
+	const [state, action, pending] = useActionState<LoginState, FormData>(
+		login,
+		undefined,
+	);
 
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -38,7 +43,9 @@ export default function LoginForm() {
 							label="Email address"
 							autoComplete="email"
 							required
-							icon={<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							icon={
+								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+							}
 							error={state?.errors?.email}
 							dataCy="login-email-input"
 							describedById="login-email-errors"
@@ -52,7 +59,9 @@ export default function LoginForm() {
 							label="Password"
 							autoComplete="current-password"
 							required
-							icon={<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							icon={
+								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+							}
 							error={state?.errors?.password}
 							dataCy="login-password-input"
 							placeholder="Enter your password"
@@ -65,10 +74,7 @@ export default function LoginForm() {
 						</div>
 
 						<div>
-							<AuthSubmitButton
-								pending={pending}
-								data-cy="login-submit-button"
-							>
+							<AuthSubmitButton pending={pending} data-cy="login-submit-button">
 								Log In
 							</AuthSubmitButton>
 						</div>

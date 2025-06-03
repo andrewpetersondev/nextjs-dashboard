@@ -3,24 +3,24 @@ import CustomersTable from "@/src/ui/customers/table";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Customers",
+	title: "Customers",
 };
 
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 export default async function Page(props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
+	searchParams?: Promise<{
+		query?: string;
+		page?: string;
+	}>;
 }) {
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || "";
+	const searchParams = await props.searchParams;
+	const query = searchParams?.query || "";
 
-  const customers = await fetchFilteredCustomers(query);
+	const customers = await fetchFilteredCustomers(query);
 
-  return (
-    <main>
-      <CustomersTable customers={customers} />
-    </main>
-  );
+	return (
+		<main>
+			<CustomersTable customers={customers} />
+		</main>
+	);
 }

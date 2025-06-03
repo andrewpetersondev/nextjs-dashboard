@@ -2,36 +2,36 @@ import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 export default function InvoiceStatus({
-  paymentStatus,
+	paymentStatus,
 }: {
-  paymentStatus: string | null;
+	paymentStatus: string | null;
 }) {
-  if (!paymentStatus) {
-    return null; // Safely render nothing if paymentStatus is null
-  }
+	if (!paymentStatus) {
+		return null; // Safely render nothing if paymentStatus is null
+	}
 
-  return (
-    <span
-      className={clsx(
-        "inline-flex items-center rounded-full px-2 py-1 text-xs",
-        {
-          "bg-bg-accent text-text-primary": paymentStatus === "pending",
-          "bg-bg-secondary text-text-secondary": paymentStatus === "paid",
-        },
-      )}
-    >
-      {paymentStatus === "pending" ? (
-        <>
-          Pending
-          <ClockIcon className="text-text-accent ml-1 w-4" />
-        </>
-      ) : null}
-      {paymentStatus === "paid" ? (
-        <>
-          Paid
-          <CheckIcon className="text-text-primary ml-1 w-4" />
-        </>
-      ) : null}
-    </span>
-  );
+	return (
+		<span
+			className={clsx(
+				"inline-flex items-center rounded-full px-2 py-1 text-xs",
+				{
+					"bg-bg-accent text-text-primary": paymentStatus === "pending",
+					"bg-bg-secondary text-text-secondary": paymentStatus === "paid",
+				},
+			)}
+		>
+			{paymentStatus === "pending" ? (
+				<>
+					Pending
+					<ClockIcon className="text-text-accent ml-1 w-4" />
+				</>
+			) : null}
+			{paymentStatus === "paid" ? (
+				<>
+					Paid
+					<CheckIcon className="text-text-primary ml-1 w-4" />
+				</>
+			) : null}
+		</span>
+	);
 }

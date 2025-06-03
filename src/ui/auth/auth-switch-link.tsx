@@ -6,7 +6,11 @@ type AuthSwitchLinkProps = {
 	linkText: string;
 };
 
-export default function AuthSwitchLink({ prompt, href, linkText }: AuthSwitchLinkProps) {
+export default function AuthSwitchLink({
+	prompt,
+	href,
+	linkText,
+}: AuthSwitchLinkProps) {
 	return (
 		<p className="text-text-accent mt-10 text-center text-sm/6">
 			{prompt}{" "}

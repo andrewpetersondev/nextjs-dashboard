@@ -1,17 +1,21 @@
 "use client";
 
-import { useActionState } from "react";
 import { signup } from "@/src/server-actions/users";
-import { AtSymbolIcon, UserIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import type { FC } from "react";
-import { InputField } from "@/src/ui/auth/input-field";
-import AuthSwitchLink from "./auth-switch-link";
-import Heading from "./heading";
-import { SocialLoginButton } from "./social-login-button";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import { RememberMeCheckbox } from "./remember-me-checkbox";
-import { ForgotPasswordLink } from "./forgot-password-link";
 import DemoUser from "@/src/ui/auth/demo-user";
+import { InputField } from "@/src/ui/auth/input-field";
+import {
+	AtSymbolIcon,
+	LockClosedIcon,
+	UserIcon,
+} from "@heroicons/react/24/outline";
+import { useActionState } from "react";
+import type { FC } from "react";
+import AuthSwitchLink from "./auth-switch-link";
+import { ForgotPasswordLink } from "./forgot-password-link";
+import Heading from "./heading";
+import { RememberMeCheckbox } from "./remember-me-checkbox";
+import { SocialLoginButton } from "./social-login-button";
 
 type SignupFormState = Readonly<{
 	errors?: {
@@ -28,7 +32,10 @@ type SignupFormState = Readonly<{
  * Production-ready, accessible, and testable signup form for Next.js App Router.
  */
 export const SignupForm: FC = () => {
-	const [state, action, pending] = useActionState<SignupFormState, FormData>(signup, { errors: undefined, message: undefined });
+	const [state, action, pending] = useActionState<SignupFormState, FormData>(
+		signup,
+		{ errors: undefined, message: undefined },
+	);
 
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -37,7 +44,12 @@ export const SignupForm: FC = () => {
 			{/* Form container */}
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-					<form action={action} className="space-y-6" autoComplete="off" noValidate>
+					<form
+						action={action}
+						className="space-y-6"
+						autoComplete="off"
+						noValidate
+					>
 						<InputField
 							id="username"
 							name="username"
@@ -45,7 +57,9 @@ export const SignupForm: FC = () => {
 							label="Username"
 							autoComplete="username"
 							required
-							icon={<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							icon={
+								<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+							}
 							error={state?.errors?.username}
 							dataCy="signup-username-input"
 						/>
@@ -56,7 +70,9 @@ export const SignupForm: FC = () => {
 							label="Email address"
 							autoComplete="email"
 							required
-							icon={<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							icon={
+								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+							}
 							error={state?.errors?.email}
 							dataCy="signup-email-input"
 							placeholder="steve@jobs.com"
@@ -68,7 +84,9 @@ export const SignupForm: FC = () => {
 							label="Password"
 							autoComplete="new-password"
 							required
-							icon={<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />}
+							icon={
+								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+							}
 							error={state?.errors?.password}
 							dataCy="signup-password-input"
 							placeholder="Enter your password"
@@ -143,5 +161,3 @@ export const SignupForm: FC = () => {
 		</div>
 	);
 };
-
-

@@ -3,26 +3,26 @@
 import { useEffect } from "react";
 
 export default function SignupError({
-  error,
-  reset,
+	error,
+	reset,
 }: {
-  error: Error & { digest?: string };
-  reset: () => void;
+	error: Error & { digest?: string };
+	reset: () => void;
 }) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+	useEffect(() => {
+		console.error(error);
+	}, [error]);
 
-  return (
-    <main className="flex h-full flex-col items-center justify-center">
-      <h2 className="text-center">Something went wrong!</h2>
-      <button
-        type="button"
-        className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
-        onClick={() => reset()}
-      >
-        Try again
-      </button>
-    </main>
-  );
+	return (
+		<main className="flex h-full flex-col items-center justify-center">
+			<h2 className="text-center">Something went wrong!</h2>
+			<button
+				type="button"
+				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
+				onClick={() => reset()}
+			>
+				Try again
+			</button>
+		</main>
+	);
 }

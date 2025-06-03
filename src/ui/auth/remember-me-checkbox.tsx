@@ -31,5 +31,5 @@ export function RememberMeCheckbox() {
 				Remember me
 			</label>
 		</div>
-	)
+	);
 }

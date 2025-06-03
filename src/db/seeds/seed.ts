@@ -1,32 +1,32 @@
 import { db } from "@/src/db/database";
 import {
-  users,
-  // customers, invoices, revenue
+	users,
+	// customers, invoices, revenue
 } from "@/src/db/schema";
 import {
-  users as usersPlaceholderData,
-  // customers as customersPlaceholderData,
-  // invoices as invoicesPlaceholderData,
-  // revenue as revenuesPlaceHolderData,
+	users as usersPlaceholderData,
+	// customers as customersPlaceholderData,
+	// invoices as invoicesPlaceholderData,
+	// revenue as revenuesPlaceHolderData,
 } from "@/src/db/seeds/placeholder-data";
 import bcryptjs from "bcryptjs";
 
 async function seedUsers() {
-  console.log("seeding users...");
-  try {
-    const saltRounds = 10;
-    const hashedUsers = await Promise.all(
-      usersPlaceholderData.map(async (user) => ({
-        ...user,
-        password: await bcryptjs.hash(user.password, saltRounds),
-      })),
-    );
-    await db.insert(users).values(hashedUsers);
-    console.log("Users inserted!");
-  } catch (e) {
-    console.error("Error seeding users...");
-    console.error(e);
-  }
+	console.log("seeding users...");
+	try {
+		const saltRounds = 10;
+		const hashedUsers = await Promise.all(
+			usersPlaceholderData.map(async (user) => ({
+				...user,
+				password: await bcryptjs.hash(user.password, saltRounds),
+			})),
+		);
+		await db.insert(users).values(hashedUsers);
+		console.log("Users inserted!");
+	} catch (e) {
+		console.error("Error seeding users...");
+		console.error(e);
+	}
 }
 
 // async function seedCustomers() {
@@ -95,12 +95,12 @@ async function seedUsers() {
 
 // Run all seeds
 async function runSeeds() {
-  await seedUsers();
-  // await seedCustomers();
-  // await seedInvoices();
-  // await seedRevenue();
+	await seedUsers();
+	// await seedCustomers();
+	// await seedInvoices();
+	// await seedRevenue();
 }
 
 runSeeds().then(() =>
-  console.log("Seed function ran. Check to see if the data was inserted."),
+	console.log("Seed function ran. Check to see if the data was inserted."),
 );

@@ -1,43 +1,43 @@
 // use local seed file @/src/app/lib/placeholder-data
 import "dotenv/config";
-import bcryptjs from "bcryptjs";
-import { users } from "@/src/db/schema";
 import { db } from "@/src/db/database";
+import { users } from "@/src/db/schema";
+import bcryptjs from "bcryptjs";
 
 const mockUsers = [
-  {
-    username: "username1",
-    email: "username1@mail.com",
-    password: "password",
-  },
-  {
-    username: "username2",
-    email: "username2@mail.com",
-    password: "password",
-  },
-  {
-    username: "username3",
-    email: "username3@mail.com",
-    password: "password",
-  },
+	{
+		username: "username1",
+		email: "username1@mail.com",
+		password: "password",
+	},
+	{
+		username: "username2",
+		email: "username2@mail.com",
+		password: "password",
+	},
+	{
+		username: "username3",
+		email: "username3@mail.com",
+		password: "password",
+	},
 ];
 
 async function seedUsers() {
-  const saltRounds = 10;
-  const hashedUsers = await Promise.all(
-    mockUsers.map(async (user) => ({
-      ...user,
-      password: await bcryptjs.hash(user.password, saltRounds),
-    })),
-  );
-  await db
-    .insert(users)
-    .values(hashedUsers)
-    .then(() => {
-      console.log("Users inserted successfully");
-      console.log("Hashed Users", hashedUsers);
-    })
-    .catch((error) => console.error("Error inserting users:", error));
+	const saltRounds = 10;
+	const hashedUsers = await Promise.all(
+		mockUsers.map(async (user) => ({
+			...user,
+			password: await bcryptjs.hash(user.password, saltRounds),
+		})),
+	);
+	await db
+		.insert(users)
+		.values(hashedUsers)
+		.then(() => {
+			console.log("Users inserted successfully");
+			console.log("Hashed Users", hashedUsers);
+		})
+		.catch((error) => console.error("Error inserting users:", error));
 }
 
 // (async () => {
@@ -50,8 +50,8 @@ async function seedUsers() {
 // })();
 
 try {
-  seedUsers();
+	seedUsers();
 } catch (e) {
-  console.error(e);
-  throw new Error("some sort of error");
+	console.error(e);
+	throw new Error("some sort of error");
 }

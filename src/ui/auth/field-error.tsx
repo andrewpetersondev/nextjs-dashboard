@@ -7,7 +7,12 @@ export interface FieldErrorProps {
 	label?: string;
 }
 
-export const FieldError = memo(function FieldError({ id, error, dataCy, label }: FieldErrorProps) {
+export const FieldError = memo(function FieldError({
+	id,
+	error,
+	dataCy,
+	label,
+}: FieldErrorProps) {
 	// This component is now used for all field errors (email, username, password)
 	if (!error?.length) return null;
 	return (

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { GoogleIcon, GitHubIcon } from "./icons";
+import { GitHubIcon, GoogleIcon } from "./icons";
 
 type Provider = "Google" | "GitHub";
 

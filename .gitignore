@@ -87,3 +87,11 @@ cypress/**/*.jsx.map
 cypress/videos
 cypress/screenshots
 cypress/downloads
+
+# ================================
+# Until I properly configure Biome.js
+# ================================
+.github/
+.run/
+.vscode/
+cypress/

@@ -20,31 +20,31 @@ import "server-only";
 // Using Data Transfer Objects (DTO) to only return the necessary data
 // Optionally use Middleware to perform optimistic checks.
 
-import { cache } from "react";
-import { cookies } from "next/headers";
 import { decrypt } from "@/src/lib/session";
+import { cookies } from "next/headers";
 // import { validate as isUUID } from "uuid";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 // import { db } from "@/src/db/database";
 // import { sessions, users } from "@/src/db/schema";
 // import { eq } from "drizzle-orm";
 
 export const verifySessionOptimistic = cache(async () => {
-  const cookie = (await cookies()).get("session")?.value;
-  if (!cookie) {
-    console.error("No session cookie found");
-    redirect("/login");
-  }
-  const session = await decrypt(cookie);
-  if (!session || !session.user || !session.user.userId) {
-    console.error("Invalid session or missing user information");
-    redirect("/login");
-  }
-  return {
-    isAuthorized: true,
-    userId: session.user.userId,
-    role: session.user.role,
-  };
+	const cookie = (await cookies()).get("session")?.value;
+	if (!cookie) {
+		console.error("No session cookie found");
+		redirect("/login");
+	}
+	const session = await decrypt(cookie);
+	if (!session || !session.user || !session.user.userId) {
+		console.error("Invalid session or missing user information");
+		redirect("/login");
+	}
+	return {
+		isAuthorized: true,
+		userId: session.user.userId,
+		role: session.user.role,
+	};
 });
 
 // this reads cookies, then makes a db call to get more information about the user
