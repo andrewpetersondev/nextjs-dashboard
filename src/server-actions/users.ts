@@ -45,7 +45,11 @@ export async function signup(state: SignupFormState, formData: FormData) {
 				errors: validatedFields.error.flatten().fieldErrors,
 			};
 		}
-		const { username, email, password } = validatedFields.data;
+		const { username, email, password } = validatedFields.data as {
+			username: string;
+			email: string;
+			password: string;
+		};
 		const hashedPassword = await hashPassword(password);
 		const data = await db
 			.insert(users)
@@ -206,16 +210,12 @@ export async function demoUser(
 }
 
 /**
- * Creates a new user from the protected /dashboard/users/create/page.tsx.
- * This function is used to create a user account with the provided form data.
- * @param state - The state of the form, which is not used in this function but can be extended for future use.
- * @param formData - The FormData object containing the user details.
- * @returns A redirect to the users page or an error message if the user creation fails.
+ * Create a new user from the protected /dashboard/users/create/page.tsx.
  */
 export async function createUser(
 	state: CreateUserFormState,
 	formData: FormData,
-) {
+): Promise<CreateUserFormState> {
 	try {
 		const validatedFields = CreateUserFormSchema.safeParse({
 			username: formData.get("username"),
@@ -234,25 +234,24 @@ export async function createUser(
 		const data = await db
 			.insert(users)
 			.values({
-				username: username,
-				email: email,
+				username,
+				email,
 				password: hashedPassword,
-				role: role,
+				role,
 			})
 			.returning({ insertedId: users.id });
-		const userId = data[0]?.insertedId;
+		const userId: string | undefined = data[0]?.insertedId;
 		if (!userId) {
 			console.error("Failed to create an account");
 			return {
 				message: "Failed to create an account on Users Page. Please try again.",
 			};
 		}
+		return { message: "User created successfully." };
 	} catch (error) {
 		console.error("Failed to create user: ", error);
 		return { message: "An unexpected error occurred. Please try again." };
 	}
-	// return redirect(`/dashboard/users?query=${email}`);
-	return redirect("/dashboard/users/");
 }
 
 export async function editUser(

@@ -14,21 +14,19 @@ import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { useActionState } from "react";
 import React from "react";
 
-type LoginState =
-	| {
-			errors?: {
-				email?: string[];
-				password?: string[];
-			};
-			message?: string;
-	  }
-	| undefined;
+type LoginState = {
+	errors?: {
+		email?: string[];
+		password?: string[];
+	};
+	message?: string;
+};
 
 export default function LoginForm() {
-	const [state, action, pending] = useActionState<LoginState, FormData>(
-		login,
-		undefined,
-	);
+	const [state, action, pending] = useActionState<LoginState, FormData>(login, {
+		errors: {},
+		message: "",
+	});
 
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">

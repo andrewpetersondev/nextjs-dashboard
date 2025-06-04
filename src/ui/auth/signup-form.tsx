@@ -35,7 +35,7 @@ type SignupFormState = Readonly<{
 export const SignupForm: FC = () => {
 	const [state, action, pending] = useActionState<SignupFormState, FormData>(
 		signup,
-		{ errors: undefined, message: undefined },
+		{ errors: {}, message: "" },
 	);
 
 	return (

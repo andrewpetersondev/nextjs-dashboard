@@ -26,7 +26,7 @@ export default function CreateUserForm() {
 	const [state, action, pending] = useActionState<
 		CreateUserFormState,
 		FormData
-	>(createUser, { errors: undefined, message: undefined });
+	>(createUser, { errors: {}, message: "" });
 	return (
 		// todo: remove noValidate after development
 		<form action={action} className="space-y-6" autoComplete="off" noValidate>

@@ -1,3 +1,6 @@
 # TODO
 
-- [ ] remove console.log from production-ready code
+- [x] remove console.log from production-ready code
+- [ ] delete user function
+- [ ] fine-tune users page and functions
+- [ ] refactor definitions
