@@ -1,4 +1,4 @@
-import type { FormattedCustomersTable } from "@/src/lib/definitions/customers";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import DesktopTable from "@/src/ui/customers/desktop-table";
 import MobileTable from "@/src/ui/customers/mobile-table";
 import Search from "@/src/ui/search";
@@ -6,7 +6,7 @@ import Search from "@/src/ui/search";
 export default async function CustomersTable({
 	customers,
 }: {
-	customers: FormattedCustomersTable[];
+	customers: FormattedCustomersTableRow[];
 }) {
 	return (
 		<div className="w-full">

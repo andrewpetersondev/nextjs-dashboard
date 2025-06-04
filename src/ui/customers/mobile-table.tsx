@@ -1,9 +1,9 @@
-import type { FormattedCustomersTable } from "@/src/lib/definitions/customers";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import Image from "next/image";
 
 export default async function MobileTable({
 	customers,
-}: { customers: FormattedCustomersTable[] }) {
+}: { customers: FormattedCustomersTableRow[] }) {
 	return (
 		<div className="md:hidden">
 			{customers?.map((customer) => (
@@ -17,7 +17,7 @@ export default async function MobileTable({
 							<div className="mb-2 flex items-center">
 								<div className="flex items-center gap-3">
 									<Image
-										src={customer.image_url}
+										src={customer.imageUrl}
 										className="rounded-full"
 										alt={`${customer.name}'s profile picture`}
 										width={28}
@@ -34,17 +34,17 @@ export default async function MobileTable({
 					<div className="flex w-full items-center justify-between border-b py-5">
 						<div className="flex w-1/2 flex-col">
 							<p className="text-xs">Pending</p>
-							<p className="font-medium">{customer.total_pending}</p>
+							<p className="font-medium">{customer.totalPending}</p>
 						</div>
 						<div className="flex w-1/2 flex-col">
 							<p className="text-xs">Paid</p>
-							<p className="font-medium">{customer.total_paid}</p>
+							<p className="font-medium">{customer.totalPaid}</p>
 						</div>
 					</div>
 
 					{/* Customer invoice total */}
 					<div className="pt-4 text-sm">
-						<p>{customer.total_invoices} invoices</p>
+						<p>{customer.totalInvoices} invoices</p>
 					</div>
 				</div>
 			))}

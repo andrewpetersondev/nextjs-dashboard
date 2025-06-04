@@ -4,8 +4,8 @@ import { db } from "@/src/db/database";
 import { customers, invoices, revenues } from "@/src/db/schema";
 import type {
 	CustomerField,
-	CustomersTable,
-	FormattedCustomersTable,
+	CustomersTableRow,
+	FormattedCustomersTableRow,
 } from "@/src/lib/definitions/customers";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 import { formatCurrency } from "@/src/lib/utils";
@@ -86,17 +86,17 @@ export async function fetchCustomers(): Promise<CustomerField[]> {
 }
 export async function fetchFilteredCustomers(
 	query: string,
-): Promise<FormattedCustomersTable[]> {
+): Promise<FormattedCustomersTableRow[]> {
 	try {
-		const searchCustomers: CustomersTable[] = await db
+		const searchCustomers: CustomersTableRow[] = await db
 			.select({
 				id: customers.id,
 				name: customers.name,
 				email: customers.email,
-				image_url: customers.imageUrl,
-				total_invoices: count(invoices.id),
-				total_pending: sql<number>`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'pending')`,
-				total_paid: sql<number>`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'paid')`,
+				imageUrl: customers.imageUrl,
+				totalInvoices: count(invoices.id),
+				totalPending: sql<number>`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'pending')`,
+				totalPaid: sql<number>`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'paid')`,
 			})
 			.from(customers)
 			.leftJoin(invoices, eq(customers.id, invoices.customerId))
@@ -110,10 +110,10 @@ export async function fetchFilteredCustomers(
 			.orderBy(asc(customers.name));
 
 		// Map to FormattedCustomersTable type
-		const list: FormattedCustomersTable[] = searchCustomers.map((item) => ({
+		const list: FormattedCustomersTableRow[] = searchCustomers.map((item) => ({
 			...item,
-			total_pending: formatCurrency(item.total_pending),
-			total_paid: formatCurrency(item.total_paid),
+			totalPending: formatCurrency(item.totalPending),
+			totalPaid: formatCurrency(item.totalPaid),
 		}));
 		return list;
 	} catch (error) {

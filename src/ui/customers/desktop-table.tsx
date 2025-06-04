@@ -1,9 +1,9 @@
-import type { FormattedCustomersTable } from "@/src/lib/definitions/customers";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import Image from "next/image";
 
 export default async function DesktopTable({
 	customers,
-}: { customers: FormattedCustomersTable[] }) {
+}: { customers: FormattedCustomersTableRow[] }) {
 	return (
 		<table className="text-text-primary hidden min-w-full rounded-md md:table">
 			{/* Table header with column names */}
@@ -38,7 +38,7 @@ export default async function DesktopTable({
 						<td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
 							<div className="flex items-center gap-3">
 								<Image
-									src={customer.image_url}
+									src={customer.imageUrl}
 									className="rounded-full"
 									alt={`${customer.name}'s profile picture`}
 									width={28}
@@ -55,17 +55,17 @@ export default async function DesktopTable({
 
 						{/* Total invoices */}
 						<td className="px-4 py-5 text-sm whitespace-nowrap">
-							{customer.total_invoices}
+							{customer.totalInvoices}
 						</td>
 
 						{/* Total pending amount */}
 						<td className="px-4 py-5 text-sm whitespace-nowrap">
-							{customer.total_pending}
+							{customer.totalPending}
 						</td>
 
 						{/* Total paid amount */}
 						<td className="px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
-							{customer.total_paid}
+							{customer.totalPaid}
 						</td>
 					</tr>
 				))}

@@ -1,69 +1,71 @@
 import { z as zod } from "zod";
 
-// --- Types ---
+// --- Entity Types ---
 
 /**
- * Customer entity type.
+ * Represents a customer entity.
  */
 export type Customer = {
 	id: string;
 	name: string;
 	email: string;
-	image_url: string;
+	imageUrl: string;
 };
 
 /**
- * Customer field type (for select options, etc).
+ * Represents a customer field for select options.
  */
-export type CustomerField = {
-	id: string;
-	name: string;
-};
+export type CustomerField = Pick<Customer, "id" | "name">;
 
 /**
- * Customers table row type.
+ * Represents a row in the customers table (raw).
  */
-export type CustomersTable = {
+export type CustomersTableRow = {
 	id: string;
 	name: string;
 	email: string;
-	image_url: string;
-	total_invoices: number;
-	total_pending: number;
-	total_paid: number;
+	imageUrl: string;
+	totalInvoices: number;
+	totalPending: number;
+	totalPaid: number;
 };
 
 /**
- * Formatted customers table row for UI.
+ * Represents a formatted row for the customers table in the UI.
  */
-export type FormattedCustomersTable = {
+export type FormattedCustomersTableRow = {
 	id: string;
 	name: string;
 	email: string;
-	image_url: string;
-	total_invoices: number;
-	total_paid: string;
-	total_pending: string;
+	imageUrl: string;
+	totalInvoices: number;
+	totalPending: string;
+	totalPaid: string;
 };
 
-/**
- * State for customer form.
- */
-export type CustomerFormState =
-	| {
-			errors?: Partial<Record<keyof CustomerFormFields, string[]>>;
-			message?: string;
-	  }
-	| undefined;
+// --- Form Types ---
 
 /**
- * Fields for customer form.
+ * Fields for the customer form.
  */
 export type CustomerFormFields = {
 	name: string;
 	email: string;
-	image_url: string;
+	imageUrl: string;
 };
+
+/**
+ * Generic form state type for customer forms.
+ */
+export type FormState<TFields extends Record<string, unknown>> = {
+	errors?: Partial<Record<keyof TFields, string[]>>;
+	message?: string;
+};
+
+/**
+ * State for the customer form.
+ */
+export type CustomerFormState = FormState<CustomerFormFields>;
 
 // --- Validation Schemas ---
 
@@ -76,42 +78,8 @@ export const CustomerFormSchema = zod.object({
 		.min(2, { message: "Name must be at least two characters long." })
 		.trim(),
 	email: zod.string().email({ message: "Please enter a valid email." }).trim(),
-	image_url: zod
+	imageUrl: zod
 		.string()
 		.url({ message: "Please enter a valid image URL." })
 		.trim(),
 });
-
-/*
-export type Customer = {
-	id: string;
-	name: string;
-	email: string;
-	image_url: string;
-};
-
-export type CustomerField = {
-	id: string;
-	name: string;
-};
-
-export type CustomersTableType = {
-	id: string;
-	name: string;
-	email: string;
-	image_url: string;
-	total_invoices: number;
-	total_pending: number;
-	total_paid: number;
-};
-
-export type FormattedCustomersTable = {
-	email: string;
-	id: string;
-	image_url: string;
-	name: string;
-	total_invoices: number;
-	total_paid: string;
-	total_pending: string;
-};
-*/
