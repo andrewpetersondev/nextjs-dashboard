@@ -1,3 +1,5 @@
+"use client";
+
 import type { EditUserFormState, User } from "@/src/lib/definitions/users";
 import { editUser } from "@/src/server-actions/users";
 import { useActionState } from "react";
