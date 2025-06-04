@@ -91,7 +91,7 @@ async function main() {
 		invoiceCount[0].count > 0 ||
 		revenueCount[0].count > 0
 	) {
-		console.log("Database is not empty. Exiting...");
+		console.error("Database is not empty. Exiting...");
 		return;
 	}
 

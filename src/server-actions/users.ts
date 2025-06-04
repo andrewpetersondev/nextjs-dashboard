@@ -57,7 +57,7 @@ export async function signup(state: SignupFormState, formData: FormData) {
 			.returning({ insertedId: users.id });
 		const userId = data[0]?.insertedId;
 		if (!userId) {
-			console.log("Failed to create account");
+			console.error("Failed to create account");
 			return { message: "Failed to create account. Please try again." };
 		}
 		await createSession(userId, "user");
@@ -242,7 +242,7 @@ export async function createUser(
 			.returning({ insertedId: users.id });
 		const userId = data[0]?.insertedId;
 		if (!userId) {
-			console.log("Failed to create an account");
+			console.error("Failed to create an account");
 			return {
 				message: "Failed to create an account on Users Page. Please try again.",
 			};
