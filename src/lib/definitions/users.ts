@@ -1,4 +1,4 @@
-import { z as zod } from "zod"; // Use import alias for cleaner imports
+import { z as zod } from "zod";
 
 // --- Types ---
 
@@ -18,35 +18,36 @@ export type User = {
  */
 export type UserRole = "admin" | "user" | "guest";
 
+// --- Form State Types ---
+
 /**
- * State for create user form.
+ * Generic form state type for forms with fields of type TFields.
  */
-export type CreateUserFormState =
+type FormState<TFields> =
 	| {
-			errors?: Partial<Record<keyof CreateUserFormFields, string[]>>;
+			errors?: Partial<Record<keyof TFields, string[]>>;
 			message?: string;
 	  }
 	| undefined;
+
+/**
+ * State for create user form.
+ */
+export type CreateUserFormState = FormState<CreateUserFormFields>;
 
 /**
  * State for signup form.
  */
-export type SignupFormState =
-	| {
-			errors?: Partial<Record<keyof SignupFormFields, string[]>>;
-			message?: string;
-	  }
-	| undefined;
-
+export type SignupFormState = FormState<SignupFormFields>;
 /**
  * State for login form.
  */
-export type LoginFormState =
-	| {
-			errors?: Partial<Record<keyof LoginFormFields, string[]>>;
-			message?: string;
-	  }
-	| undefined;
+export type LoginFormState = FormState<LoginFormFields>;
+
+/**
+ * State for edit form.
+ */
+export type EditUserFormState = FormState<EditUserFormFields>;
 
 // --- Form Field Types ---
 
@@ -75,6 +76,16 @@ export type SignupFormFields = {
 export type LoginFormFields = {
 	email: string;
 	password: string;
+};
+
+/**
+ * Fields for edit user form.
+ */
+export type EditUserFormFields = {
+	username?: string;
+	email?: string;
+	password?: string;
+	role?: UserRole;
 };
 
 // --- Validation Schemas ---
@@ -126,4 +137,25 @@ export const SignupFormSchema = zod.object({
 export const LoginFormSchema = zod.object({
 	email: zod.string().email({ message: "Please enter a valid email." }).trim(),
 	password: zod.string().min(8, { message: "Password is required." }).trim(),
+});
+
+/**
+ * Zod schema for edit user form validation.
+ */
+export const EditUserFormSchema = zod.object({
+	username: zod
+		.string()
+		.min(2, { message: "Username must be at least two characters long." })
+		.trim(),
+	email: zod.string().email({ message: "Please enter a valid email." }).trim(),
+	password: zod
+		.string()
+		.min(5, { message: "Be at least five characters long" })
+		.regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
+		.regex(/[0-9]/, { message: "Contain at least one number." })
+		// .regex(/[^a-zA-Z0-9]/, { message: "Contain at least one special character." })
+		.trim(),
+	role: zod.enum(["admin", "user", "guest"], {
+		invalid_type_error: "Please select a role",
+	}),
 });

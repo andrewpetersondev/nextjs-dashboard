@@ -21,6 +21,7 @@ type CreateUserFormState = Readonly<{
 	message?: string;
 }>;
 
+// TODO: return success or failure message
 export default function CreateUserForm() {
 	const [state, action, pending] = useActionState<
 		CreateUserFormState,

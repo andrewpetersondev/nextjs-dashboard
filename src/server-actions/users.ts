@@ -10,12 +10,15 @@ import { redirect } from "next/navigation";
 import {
 	CreateUserFormSchema,
 	type CreateUserFormState,
+	EditUserFormSchema,
+	type EditUserFormState,
 	LoginFormSchema,
 	type LoginFormState,
 	SignupFormSchema,
 	type SignupFormState,
 	type UserRole,
 } from "@/src/lib/definitions/users";
+import { revalidatePath } from "next/cache";
 
 // TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
 /*
@@ -250,4 +253,41 @@ export async function createUser(
 	}
 	// return redirect(`/dashboard/users?query=${email}`);
 	return redirect("/dashboard/users/");
+}
+
+export async function editUser(
+	id: string,
+	prevState: EditUserFormState,
+	formData: FormData,
+) {
+	const validatedFields = EditUserFormSchema.safeParse({
+		userId: formData.get("userId"),
+		username: formData.get("username"),
+		email: formData.get("email"),
+		password: formData.get("password"),
+		role: formData.get("role"),
+	});
+	if (!validatedFields.success) {
+		return {
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to Update User.",
+		};
+	}
+	const { username, email, password, role } = validatedFields.data;
+	try {
+		await db
+			.update(users)
+			.set({
+				username: username,
+				email: email,
+				password: password,
+				role: role,
+			})
+			.where(eq(users.id, id));
+	} catch (error) {
+		console.error(error);
+		return { message: "Database Error. Failed to Update User." };
+	}
+	revalidatePath("/dashboard/users");
+	redirect("/dashboard/users");
 }

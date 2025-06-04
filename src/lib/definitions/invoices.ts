@@ -7,7 +7,7 @@ import { z as zod } from "zod";
  */
 export type Invoice = {
 	id: string;
-	customer_id: string;
+	customerId: string;
 	amount: number;
 	date: string;
 	status: InvoiceStatus;
@@ -34,7 +34,7 @@ export type InvoiceFormFields = {
 export type InvoiceFormState =
 	| {
 			errors?: Partial<Record<keyof InvoiceFormFields, string[]>>;
-			message?: string | null;
+			message: string;
 	  }
 	| undefined;
 

@@ -10,7 +10,6 @@ import type {
 import { formatCurrency } from "@/src/lib/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 
-// @formatter:off
 export async function fetchLatestInvoices(): Promise<
 	ModifiedLatestInvoicesData[]
 > {
@@ -45,7 +44,6 @@ export async function fetchLatestInvoices(): Promise<
 
 const ITEMS_PER_PAGE = 6;
 
-// @formatter:off
 export async function fetchFilteredInvoices(
 	query: string,
 	currentPage: number,
@@ -83,7 +81,6 @@ export async function fetchFilteredInvoices(
 	}
 }
 
-// @formatter:off
 export async function fetchInvoicesPages(query: string): Promise<number> {
 	try {
 		const data = await db
@@ -112,7 +109,6 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 	}
 }
 
-// @formatter:off
 export async function fetchInvoiceById(id: string) {
 	try {
 		const data = await db
@@ -121,6 +117,7 @@ export async function fetchInvoiceById(id: string) {
 				amount: invoices.amount,
 				status: invoices.status,
 				customerId: invoices.customerId,
+				date: invoices.date,
 			})
 			.from(invoices)
 			.where(eq(invoices.id, id));

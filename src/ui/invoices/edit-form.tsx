@@ -1,7 +1,7 @@
 "use client";
 
 import type { CustomerField } from "@/src/lib/definitions/customers";
-import type { InvoiceForm, InvoiceState } from "@/src/lib/definitions/invoices";
+import type { Invoice, InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
@@ -17,16 +17,18 @@ export default function EditInvoiceForm({
 	invoice,
 	customers,
 }: {
-	invoice: InvoiceForm;
+	invoice: Invoice;
 	customers: CustomerField[];
 }) {
-	const initialState: InvoiceState = { message: null, errors: {} };
+	const initialState: InvoiceFormState = { message: "", errors: {} };
 	const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
-	const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+	const [state, formAction, isPending] = useActionState(
+		updateInvoiceWithId,
+		initialState,
+	);
 	return (
 		<form action={formAction}>
 			<div className="bg-bg-secondary rounded-md p-4 md:p-6">
-				{/* Customer Name */}
 				<div className="mb-4">
 					<label htmlFor="customer" className="mb-2 block text-sm font-medium">
 						Choose customer
@@ -51,7 +53,6 @@ export default function EditInvoiceForm({
 					</div>
 				</div>
 
-				{/* Invoice Amount */}
 				<div className="mb-4">
 					<label htmlFor="amount" className="mb-2 block text-sm font-medium">
 						Choose an amount
@@ -80,7 +81,6 @@ export default function EditInvoiceForm({
 					</div>
 				</div>
 
-				{/* Invoice Status */}
 				<fieldset>
 					<legend className="mb-2 block text-sm font-medium">
 						Set the invoice status
@@ -133,6 +133,7 @@ export default function EditInvoiceForm({
 				<Button
 					className="bg-bg-active hover:bg-bg-hover text-text-primary rounded-lg px-4 font-medium transition-colors"
 					type="submit"
+					disabled={isPending}
 				>
 					Edit Invoice
 				</Button>

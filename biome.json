@@ -8,7 +8,16 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": [
+			"node_modules",
+			".next",
+			"./src/db/drizzle/**/*",
+			"pnpm-lock.yaml",
+			"next-env.d.ts",
+			"./.run/**/*",
+			"./.vscode/**/*",
+			"./.idea/**/*"
+		]
 	},
 	"formatter": {
 		"enabled": true,

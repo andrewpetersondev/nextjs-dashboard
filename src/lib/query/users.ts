@@ -2,13 +2,16 @@ import "server-only";
 
 import { db } from "@/src/db/database";
 import { users } from "@/src/db/schema";
+import type { User } from "@/src/lib/definitions/users";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 export async function fetchUserById(id: string) {
 	try {
 		const data = await db.select().from(users).where(eq(users.id, id));
 		console.log("Fetched user data:", data);
-		return data;
+		const user = data[0];
+		console.log("User found:", user);
+		return user;
 	} catch (error) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch user by id.");

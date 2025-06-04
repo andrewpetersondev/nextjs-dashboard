@@ -1,6 +1,6 @@
-import { fetchUserById, fetchUsers } from "@/src/lib/query/users";
+import { fetchUserById } from "@/src/lib/query/users";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
-// import EditUserForm from "@/src/ui/users/edit-user-form";
+import EditUserForm from "@/src/ui/users/edit-user-form";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -14,8 +14,7 @@ export const dynamic = "force-dynamic";
 export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const params = await props.params;
 	const id = params.id;
-	const [user, users] = await Promise.all([fetchUserById(id), fetchUsers()]);
-
+	const user = await fetchUserById(id);
 	if (!user) {
 		notFound();
 	}
@@ -34,7 +33,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 			<section>
 				<p>Admins can edit any profile.</p>
 			</section>
-			{/*<EditUserForm user={user} users={users} />*/}
+			<EditUserForm user={user} />
 		</main>
 	);
 }

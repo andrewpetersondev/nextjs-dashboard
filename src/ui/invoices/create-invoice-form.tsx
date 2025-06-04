@@ -1,7 +1,7 @@
 "use client";
 
 import type { CustomerField } from "@/src/lib/definitions/customers";
-import type { InvoiceState } from "@/src/lib/definitions/invoices";
+import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { createInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
@@ -18,13 +18,14 @@ export default function CreateInvoiceForm({
 }: {
 	customers: CustomerField[];
 }) {
-	const initialState: InvoiceState = { message: null, errors: {} };
-	const [state, formAction] = useActionState(createInvoice, initialState);
+	const initialState: InvoiceFormState = { message: "", errors: {} };
+	const [state, formAction, isPending] = useActionState(
+		createInvoice,
+		initialState,
+	);
 	return (
 		<form action={formAction}>
-			{/*<form>*/}
 			<div className="bg-bg-accent rounded-md p-4 md:p-6">
-				{/* Customer Name */}
 				<div className="mb-4">
 					<label htmlFor="customer" className="mb-2 block text-sm font-medium">
 						Choose customer
@@ -57,7 +58,6 @@ export default function CreateInvoiceForm({
 					</div>
 				</div>
 
-				{/* Invoice Amount */}
 				<div className="mb-4">
 					<label htmlFor="amount" className="mb-2 block text-sm font-medium">
 						Choose an amount
@@ -77,7 +77,6 @@ export default function CreateInvoiceForm({
 					</div>
 				</div>
 
-				{/* Invoice Status */}
 				<fieldset>
 					<legend className="mb-2 block text-sm font-medium">
 						Set the invoice status
@@ -125,7 +124,9 @@ export default function CreateInvoiceForm({
 				>
 					Cancel
 				</Link>
-				<Button type="submit">Create Invoice</Button>
+				<Button type="submit" disabled={isPending}>
+					Create Invoice
+				</Button>
 			</div>
 		</form>
 	);
