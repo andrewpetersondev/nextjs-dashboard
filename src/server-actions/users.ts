@@ -20,46 +20,38 @@ import {
 } from "@/src/lib/definitions/users";
 import { revalidatePath } from "next/cache";
 
-// TODO: Rewrite all functions for stateless authentication by creating cookies on the server.
-/*
- *  To create a cookie I need users.id, sessions.userId, expiresAt, users.role
- *  users.id is created in database
- *  sessions.userId is created in db, may not be necessary because it gives the same info as users.id
- * expiresAt is created in code and encrypt ()
- * for  now, every user's role is set to "user" by default from the db.
- *  soon I will determine who is an admin based off an enumerated list of email addresses.
- * i do not have access to  users.role in signup () because the only thing that gets returned is users.id, so i will
- * hardcode in the user role to signup()
- * signup () can be part of the DAL because verifySessionOptimistic() is impossible without database sessions
- * */
-// TODO: may need to update zod to use .safeParseAsync()
-export async function signup(state: SignupFormState, formData: FormData) {
-	try {
-		const validatedFields = SignupFormSchema.safeParse({
-			username: formData.get("username"),
-			email: formData.get("email"),
-			password: formData.get("password"),
-		});
-		if (!validatedFields.success) {
-			return {
-				errors: validatedFields.error.flatten().fieldErrors,
-			};
-		}
-		const { username, email, password } = validatedFields.data as {
-			username: string;
-			email: string;
-			password: string;
+// --- Signup ---
+export async function signup(
+	_prevState: SignupFormState,
+	formData: FormData,
+): Promise<SignupFormState> {
+	const validated = SignupFormSchema.safeParse({
+		username: formData.get("username"),
+		email: formData.get("email"),
+		password: formData.get("password"),
+	});
+	if (!validated.success) {
+		return {
+			errors: validated.error.flatten().fieldErrors,
+			message: "Validation failed. Please check your input.",
 		};
+	}
+	const { username, email, password } = validated.data as {
+		username: string;
+		email: string;
+		password: string;
+	};
+	try {
 		const hashedPassword = await hashPassword(password);
-		const data = await db
+		const [user] = await db
 			.insert(users)
 			.values({
-				username: username,
-				email: email,
+				username,
+				email,
 				password: hashedPassword,
 			})
 			.returning({ insertedId: users.id });
-		const userId = data[0]?.insertedId;
+		const userId = user?.insertedId;
 		if (!userId) {
 			console.error("Failed to create account");
 			return { message: "Failed to create account. Please try again." };
@@ -69,47 +61,31 @@ export async function signup(state: SignupFormState, formData: FormData) {
 		console.error("Failed to create user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
 	}
-	return redirect("/dashboard");
+
+	redirect("/dashboard");
 }
 
-/**
- * Authenticates a user with the provided email and password.
- *
- * Validates the input using `LoginFormSchema`, checks the user's credentials against the database,
- * and creates a session on successful authentication. Redirects to the dashboard on success.
- *
- * @param state - The current form state (not used, reserved for future extensibility).
- * @param formData - The form data containing `email` and `password` fields.
- * @returns An object with validation errors, a message on failure, or redirects on success.
- *
- * @example
- * const result = await login(state, formData);
- * if (result?.errors) {
- *   // handle validation errors
- * }
- */
+// --- Login ---
 export async function login(
-	state: LoginFormState,
+	_prevState: LoginFormState,
 	formData: FormData,
-): Promise<
-	| {
-			errors: { email?: string[] | undefined; password?: string[] | undefined };
-			message?: undefined;
-	  }
-	| { message: string; errors?: undefined }
-> {
-	const validatedFields = LoginFormSchema.safeParse({
+): Promise<LoginFormState> {
+	const validated = LoginFormSchema.safeParse({
 		email: formData.get("email"),
 		password: formData.get("password"),
 	});
-	if (!validatedFields.success) {
+
+	if (!validated.success) {
 		return {
-			errors: validatedFields.error.flatten().fieldErrors,
+			errors: validated.error.flatten().fieldErrors,
+			message: "Validation failed. Please check your input.",
 		};
 	}
-	const { email, password } = validatedFields.data;
+
+	const { email, password } = validated.data;
+
 	try {
-		const user = await db
+		const [user] = await db
 			.select({
 				userId: users.id,
 				email: users.email,
@@ -118,14 +94,18 @@ export async function login(
 			})
 			.from(users)
 			.where(eq(users.email, email));
-		if (!user.length) {
+
+		if (!user) {
 			return { message: "Invalid email or password." };
 		}
-		const validPassword = await comparePassword(password, user[0].password);
+
+		const validPassword = await comparePassword(password, user.password);
+
 		if (!validPassword) {
 			return { message: "Invalid email or password." };
 		}
-		await createSession(user[0].userId, user[0].role);
+
+		await createSession(user.userId, user.role);
 	} catch (error) {
 		console.error("Failed to log in user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
@@ -133,12 +113,14 @@ export async function login(
 	redirect("/dashboard");
 }
 
-export async function logout() {
+// --- Logout ---
+export async function logout(): Promise<void> {
 	await deleteSession();
 	redirect("/");
 }
 
-export async function deleteUser(userId: string) {
+// --- Delete User ---
+export async function deleteUser(userId: string): Promise<void> {
 	try {
 		await db.delete(users).where(eq(users.id, userId));
 	} catch (error) {
@@ -148,30 +130,30 @@ export async function deleteUser(userId: string) {
 	redirect("/");
 }
 
-/**
- * Creates a new unique demo user for the given role and logs them in.
- * Uses the auto-incremented id from demoUserCounters for unique email/username.
- * @param role - The role for the demo user ("user", "guest", or "admin").
- */
+// --- Demo User ---
 export async function demoUser(
 	role: UserRole = "user",
-): Promise<never | { message: string }> {
-	// Validate role input
+): Promise<{ message?: string; success: boolean }> {
 	if (!["user", "guest", "admin"].includes(role)) {
-		return { message: "Invalid demo user role." };
+		return { message: "Invalid demo user role.", success: false };
 	}
 
 	let counterId: number;
 	try {
-		// Insert a new counter row and get the unique id
 		const [counter] = await db
 			.insert(demoUserCounters)
 			.values({ role, count: 1 })
 			.returning({ id: demoUserCounters.id });
 		counterId = counter.id;
 	} catch (error) {
-		console.error("[demoUser] Failed to create demo user counter:", error);
-		return { message: "An unexpected error occurred. Please try again." };
+		console.error("[demoUser] Failed to create demo user counter:", {
+			error,
+			role,
+		});
+		return {
+			message: "An unexpected error occurred. Please try again.",
+			success: false,
+		};
 	}
 
 	const DEMO_PASSWORD = "Password123!";
@@ -192,46 +174,62 @@ export async function demoUser(
 			.returning({ id: users.id });
 		demoUserId = user.id;
 		if (!demoUserId) {
-			return { message: "Failed to create demo user. Please try again." };
+			return {
+				message: "Failed to create demo user. Please try again.",
+				success: false,
+			};
 		}
 	} catch (error) {
-		console.error("[demoUser] Failed to create demo user:", error);
-		return { message: "An unexpected error occurred. Please try again." };
+		console.error("[demoUser] Failed to create demo user:", {
+			error,
+			role,
+			email: uniqueEmail,
+		});
+		return {
+			message: "An unexpected error occurred. Please try again.",
+			success: false,
+		};
 	}
 
 	try {
 		await createSession(demoUserId, role);
 	} catch (error) {
-		console.error("[demoUser] Failed to create session for demo user:", error);
-		return { message: "An unexpected error occurred. Please try again." };
+		console.error("[demoUser] Failed to create session for demo user:", {
+			error,
+			demoUserId,
+			role,
+		});
+		return {
+			message: "An unexpected error occurred. Please try again.",
+			success: false,
+		};
 	}
 
-	return redirect("/dashboard");
+	redirect("/dashboard");
 }
 
-/**
- * Create a new user from the protected /dashboard/users/create/page.tsx.
- */
+// --- Create User (Admin) ---
 export async function createUser(
-	state: CreateUserFormState,
+	_prevState: CreateUserFormState,
 	formData: FormData,
 ): Promise<CreateUserFormState> {
+	const validated = CreateUserFormSchema.safeParse({
+		username: formData.get("username"),
+		email: formData.get("email"),
+		password: formData.get("password"),
+		role: formData.get("role"),
+	});
+
+	if (!validated.success) {
+		return { errors: validated.error.flatten().fieldErrors };
+	}
+
+	const { username, email, password, role } = validated.data;
+
 	try {
-		const validatedFields = CreateUserFormSchema.safeParse({
-			username: formData.get("username"),
-			email: formData.get("email"),
-			password: formData.get("password"),
-			role: formData.get("role"),
-		});
-
-		if (!validatedFields.success) {
-			return { errors: validatedFields.error.flatten().fieldErrors };
-		}
-
-		const { username, email, password, role } = validatedFields.data;
-
 		const hashedPassword = await hashPassword(password);
-		const data = await db
+
+		const [user] = await db
 			.insert(users)
 			.values({
 				username,
@@ -240,53 +238,58 @@ export async function createUser(
 				role,
 			})
 			.returning({ insertedId: users.id });
-		const userId: string | undefined = data[0]?.insertedId;
+
+		const userId: string | undefined = user?.insertedId;
+
 		if (!userId) {
 			console.error("Failed to create an account");
 			return {
 				message: "Failed to create an account on Users Page. Please try again.",
 			};
 		}
+
 		return { message: "User created successfully." };
 	} catch (error) {
 		console.error("Failed to create user: ", error);
+
 		return { message: "An unexpected error occurred. Please try again." };
 	}
 }
 
+// --- Edit User ---
 export async function editUser(
 	id: string,
-	prevState: EditUserFormState,
+	_prevState: EditUserFormState,
 	formData: FormData,
-) {
-	const validatedFields = EditUserFormSchema.safeParse({
+): Promise<EditUserFormState> {
+	const validated = EditUserFormSchema.safeParse({
 		userId: formData.get("userId"),
 		username: formData.get("username"),
 		email: formData.get("email"),
 		password: formData.get("password"),
 		role: formData.get("role"),
 	});
-	if (!validatedFields.success) {
+
+	if (!validated.success) {
 		return {
-			errors: validatedFields.error.flatten().fieldErrors,
+			errors: validated.error.flatten().fieldErrors,
 			message: "Missing Fields. Failed to Update User.",
 		};
 	}
-	const { username, email, password, role } = validatedFields.data;
+
+	const { username, email, password, role } = validated.data;
+
 	try {
-		await db
-			.update(users)
-			.set({
-				username: username,
-				email: email,
-				password: password,
-				role: role,
-			})
-			.where(eq(users.id, id));
+		const updateData: Record<string, unknown> = { username, email, role };
+		if (password && password.trim() !== "") {
+			updateData.password = await hashPassword(password);
+		}
+		await db.update(users).set(updateData).where(eq(users.id, id));
 	} catch (error) {
-		console.error(error);
+		console.error("[editUser] Database Error:", { error, userId: id });
 		return { message: "Database Error. Failed to Update User." };
 	}
+
 	revalidatePath("/dashboard/users");
 	redirect("/dashboard/users");
 }
