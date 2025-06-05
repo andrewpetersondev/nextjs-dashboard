@@ -1,4 +1,4 @@
-import { z as zod } from "zod";
+import { z as zod } from "@/src/lib/definitions/zod-alias";
 
 // --- Types ---
 

@@ -1,4 +1,4 @@
-import { type ZodType, z as zod } from "zod";
+import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 
 /**
  * Allowed user roles.
