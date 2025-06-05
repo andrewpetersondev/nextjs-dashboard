@@ -18,7 +18,7 @@ export async function fetchLatestInvoices(): Promise<
 			.select({
 				amount: invoices.amount,
 				name: customers.name,
-				image_url: customers.imageUrl,
+				imageUrl: customers.imageUrl,
 				email: customers.email,
 				id: invoices.id,
 				paymentStatus: invoices.status,
@@ -57,7 +57,7 @@ export async function fetchFilteredInvoices(
 				date: invoices.date,
 				name: customers.name,
 				email: customers.email,
-				image_url: customers.imageUrl,
+				imageUrl: customers.imageUrl,
 				paymentStatus: invoices.status,
 			})
 			.from(invoices)

@@ -40,7 +40,7 @@ export default function DesktopTable({
 						<td className="py-3 pr-3 pl-6 whitespace-nowrap">
 							<div className="flex items-center gap-3">
 								<Image
-									src={invoice.image_url}
+									src={invoice.imageUrl}
 									className="rounded-full"
 									width={28}
 									height={28}

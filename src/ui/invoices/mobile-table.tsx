@@ -18,7 +18,7 @@ export default function MobileTable({
 						<div>
 							<div className="mb-2 flex items-center">
 								<Image
-									src={invoice.image_url}
+									src={invoice.imageUrl}
 									className="mr-2 rounded-full"
 									width={28}
 									height={28}

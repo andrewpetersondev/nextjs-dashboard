@@ -1,85 +1,73 @@
-import { z as zod } from "zod";
+import { z as zod } from "@/src/lib/definitions/zod-alias";
 
-// --- Types ---
+// --- Invoice Status ---
 
-/**
- * Invoice entity type.
- */
-export type Invoice = {
+export const INVOICE_STATUSES = ["pending", "paid"] as const;
+export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+
+// --- Entity Types ---
+
+/** Invoice entity type. */
+export interface Invoice {
 	id: string;
 	customerId: string;
 	amount: number;
 	date: string;
 	status: InvoiceStatus;
-};
+}
 
-/**
- * Allowed invoice statuses.
- */
-export type InvoiceStatus = "pending" | "paid";
+// --- Form Types ---
 
-/**
- * Invoice form fields.
- */
+/** Invoice form fields. Use `type` and ensure all keys are string. */
 export type InvoiceFormFields = {
 	id: string;
 	customerId: string;
 	amount: number;
 	status: InvoiceStatus | null;
+	date?: string;
 };
 
-/**
- * State for invoice form.
- */
-export type InvoiceFormState =
-	| {
-			errors?: Partial<Record<keyof InvoiceFormFields, string[]>>;
-			message: string;
-	  }
-	| undefined;
+/** Generic form state type for invoice forms. */
+export type FormState<TFields extends Record<string, unknown>> = {
+	errors?: Partial<Record<keyof TFields, string[]>>;
+	message: string;
+};
 
-/**
- * Invoices table row type.
- */
-export type InvoicesTable = {
+/** State for the invoice form. */
+export type InvoiceFormState = FormState<InvoiceFormFields>;
+
+// --- Table and Data Types ---
+
+export interface InvoicesTableRow {
 	id: string;
-	customer_id: string;
+	customerId: string;
 	name: string;
 	email: string;
-	image_url: string;
+	imageUrl: string;
 	date: string;
 	amount: number;
 	status: InvoiceStatus;
-};
+}
 
-/**
- * Filtered invoice data for UI.
- */
-export type FilteredInvoiceData = {
+export interface FilteredInvoiceData {
 	id: string;
 	amount: number;
 	date: string;
 	name: string;
 	email: string;
-	image_url: string;
+	imageUrl: string;
 	paymentStatus: InvoiceStatus;
-};
+}
 
-/**
- * Data shape for fetching latest invoices.
- */
-export type FetchLatestInvoicesData = {
+export interface FetchLatestInvoicesData {
+	id: string;
 	amount: number;
 	email: string;
-	id: string;
-	image_url: string;
+	imageUrl: string;
 	name: string;
 	paymentStatus: string;
-};
+}
 
-/**
- * Modified latest invoices data with string amount.
- */
 export type ModifiedLatestInvoicesData = Omit<
 	FetchLatestInvoicesData,
 	"amount"
@@ -87,174 +75,51 @@ export type ModifiedLatestInvoicesData = Omit<
 	amount: string;
 };
 
-/**
- * Latest invoice for dashboard.
- */
-export type LatestInvoice = {
+export interface LatestInvoice {
 	id: string;
 	name: string;
-	image_url: string;
+	imageUrl: string;
 	email: string;
 	amount: string;
-};
+}
 
-/**
- * Raw latest invoice with numeric amount.
- */
 export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
 	amount: number;
 };
 
-/**
- * Data shape for fetching filtered invoices.
- */
-export type FetchFilteredInvoicesData = {
+export interface FetchFilteredInvoicesData {
 	id: string;
 	amount: number;
 	date: string;
 	name: string;
 	email: string;
-	image_url: string;
+	imageUrl: string;
 	paymentStatus: InvoiceStatus;
-};
+}
 
 // --- Validation Schemas ---
 
-/**
- * Zod schema for invoice form validation.
- */
+/** Zod schema for invoice form validation. */
 export const InvoiceFormSchema = zod.object({
 	id: zod.string(),
-	customerId: zod.string({
-		invalid_type_error: "Invalid customer id",
-	}),
+	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
 	amount: zod.coerce
 		.number()
 		.gt(0, { message: "Amount must be greater than $0." }),
-	status: zod.enum(["pending", "paid"], {
+	status: zod.enum(INVOICE_STATUSES, {
 		invalid_type_error: "Please select a status",
 	}),
-	date: zod.string(),
+	date: zod.string().optional(),
 });
 
-/**
- * Zod schema for creating an invoice (omit id and date).
- */
+/** Zod schema for creating an invoice (omit id and date). */
 export const CreateInvoiceSchema = InvoiceFormSchema.omit({
 	id: true,
 	date: true,
 });
 
-/**
- * Zod schema for updating an invoice (omit id and date).
- */
+/** Zod schema for updating an invoice (omit id and date). */
 export const UpdateInvoiceSchema = InvoiceFormSchema.omit({
 	id: true,
 	date: true,
 });
-
-/* * Invoice management types and schemas.
-// import { z } from "zod";
-//
-// export type Invoice = {
-// 	id: string;
-// 	customer_id: string;
-// 	amount: number;
-// 	date: string;
-// 	status: "pending" | "paid";
-// };
-//
-// export type InvoiceForm = {
-// 	id: string;
-// 	customerId: string;
-// 	amount: number;
-// 	status: "pending" | "paid" | null;
-// };
-//
-// export type InvoiceState = {
-// 	errors?: {
-// 		customerId?: string[];
-// 		amount?: string[];
-// 		status?: string[];
-// 	};
-// 	message?: string | null;
-// };
-//
-// export const InvoiceFormSchema = z.object({
-// 	id: z.string(),
-// 	customerId: z.string({
-// 		invalid_type_error: "Invalid customer id",
-// 	}),
-// 	amount: z.coerce
-// 		.number()
-// 		.gt(0, { message: "Amount must be greater than $0." }),
-// 	status: z.enum(["pending", "paid"], {
-// 		invalid_type_error: "Please select a status",
-// 	}),
-// 	date: z.string(),
-// });
-//
-// export type InvoicesTable = {
-// 	id: string;
-// 	customer_id: string;
-// 	name: string;
-// 	email: string;
-// 	image_url: string;
-// 	date: string;
-// 	amount: number;
-// 	status: "pending" | "paid";
-// };
-//
-// export type FilteredInvoiceData = {
-// 	id: string;
-// 	amount: number;
-// 	date: string;
-// 	name: string;
-// 	email: string;
-// 	image_url: string;
-// 	paymentStatus: "pending" | "paid";
-// };
-//
-// export type FetchLatestInvoicesData = {
-// 	amount: number;
-// 	email: string;
-// 	id: string;
-// 	image_url: string;
-// 	name: string;
-// 	paymentStatus: string;
-// };
-//
-// export type ModifiedLatestInvoicesData = Omit<
-// 	FetchLatestInvoicesData,
-// 	"amount"
-// > & {
-// 	amount: string;
-// };
-//
-// export type LatestInvoice = {
-// 	id: string;
-// 	name: string;
-// 	image_url: string;
-// 	email: string;
-// 	amount: string;
-// };
-//
-// export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
-// 	amount: number;
-// };
-//
-// export type FetchFilteredInvoicesData = {
-// 	id: string;
-// 	amount: number;
-// 	date: string;
-// 	name: string;
-// 	email: string;
-// 	image_url: string;
-// 	paymentStatus: "pending" | "paid";
-// };
-//
-// export const CreateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
-//
-// export const UpdateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
-
- */

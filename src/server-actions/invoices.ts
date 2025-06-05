@@ -76,6 +76,7 @@ export async function updateInvoice(
 				status: status,
 			})
 			.where(eq(invoices.id, id));
+		// return { message: "Invoice Updated Successfully." };
 	} catch (e) {
 		console.error(e);
 		return { message: "Database Error: Failed to Update Invoice." };
