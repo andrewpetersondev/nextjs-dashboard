@@ -3,6 +3,7 @@
 import { db } from "@/src/db/database";
 import { invoices } from "@/src/db/schema";
 import {
+	type CreateInvoiceResult,
 	CreateInvoiceSchema,
 	type InvoiceFormState,
 	UpdateInvoiceSchema,
@@ -11,72 +12,85 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+/**
+ * Create a new invoice.
+ * - Returns consistent result shape for UI.
+ * - Only uses _prevState for React API compatibility.
+ */
 export async function createInvoice(
-	prevState: InvoiceFormState,
+	_prevState: CreateInvoiceResult,
 	formData: FormData,
-) {
-	const validatedFields = CreateInvoiceSchema.safeParse({
+): Promise<CreateInvoiceResult> {
+	const validated = CreateInvoiceSchema.safeParse({
 		customerId: formData.get("customerId"),
 		amount: formData.get("amount"),
 		status: formData.get("status"),
 	});
 
-	if (!validatedFields.success) {
+	if (!validated.success) {
 		return {
-			errors: validatedFields.error.flatten().fieldErrors,
+			errors: validated.error.flatten().fieldErrors,
 			message: "Missing Fields. Failed to Create Invoice.",
+			success: false,
 		};
 	}
-	const { customerId, amount, status } = validatedFields.data;
+
+	const { customerId, amount, status } = validated.data;
 	const amountInCents = amount * 100;
 	const date = new Date().toISOString().split("T")[0];
 	try {
 		await db.insert(invoices).values({
-			customerId: customerId,
+			customerId,
 			amount: amountInCents,
-			status: status,
-			date: date,
+			status,
+			date,
 		});
 	} catch (e) {
 		console.error(e);
 		return {
+			errors: {},
 			message: "Database Error. Failed to Create Invoice.",
+			success: false,
 		};
 	}
 	revalidatePath("/dashboard/invoices");
 	redirect("/dashboard/invoices");
 }
 
+/**
+ * Update an existing invoice.
+ * - Returns consistent result shape for UI.
+ * - Only uses _prevState for React API compatibility.
+ */
 export async function updateInvoice(
 	id: string,
-	prevState: InvoiceFormState,
+	_prevState: InvoiceFormState,
 	formData: FormData,
-) {
-	const validatedFields = UpdateInvoiceSchema.safeParse({
+): Promise<InvoiceFormState> {
+	const validated = UpdateInvoiceSchema.safeParse({
 		customerId: formData.get("customerId"),
 		amount: formData.get("amount"),
 		status: formData.get("status"),
 	});
 
-	if (!validatedFields.success) {
+	if (!validated.success) {
 		return {
-			errors: validatedFields.error.flatten().fieldErrors,
+			errors: validated.error.flatten().fieldErrors,
 			message: "Missing Fields. Failed to Update Invoice.",
 		};
 	}
 
-	const { customerId, amount, status } = validatedFields.data;
+	const { customerId, amount, status } = validated.data;
 	const amountInCents = amount * 100;
 	try {
 		await db
 			.update(invoices)
 			.set({
-				customerId: customerId,
+				customerId,
 				amount: amountInCents,
-				status: status,
+				status,
 			})
 			.where(eq(invoices.id, id));
-		// return { message: "Invoice Updated Successfully." };
 	} catch (e) {
 		console.error(e);
 		return { message: "Database Error: Failed to Update Invoice." };
@@ -86,7 +100,11 @@ export async function updateInvoice(
 	redirect("/dashboard/invoices");
 }
 
-export async function deleteInvoice(id: string) {
+/**
+ * Delete an invoice by ID.
+ * - No return value, but logs errors.
+ */
+export async function deleteInvoice(id: string): Promise<void> {
 	try {
 		await db.delete(invoices).where(eq(invoices.id, id));
 	} catch (e) {

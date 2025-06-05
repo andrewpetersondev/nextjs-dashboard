@@ -97,6 +97,16 @@ export interface FetchFilteredInvoicesData {
 	paymentStatus: InvoiceStatus;
 }
 
+/**
+ * Result type for createInvoice server action.
+ * Always includes errors/message for form state compatibility.
+ */
+export type CreateInvoiceResult = {
+	errors?: Partial<Record<keyof InvoiceFormFields, string[]>>;
+	message: string;
+	success: boolean;
+};
+
 // --- Validation Schemas ---
 
 /** Zod schema for invoice form validation. */

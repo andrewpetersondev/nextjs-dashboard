@@ -1,7 +1,7 @@
 "use client";
 
 import type { CustomerField } from "@/src/lib/definitions/customers";
-import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
+import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices";
 import { createInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
@@ -18,13 +18,17 @@ export default function CreateInvoiceForm({
 }: {
 	customers: CustomerField[];
 }) {
-	const initialState: InvoiceFormState = { message: "", errors: {} };
-	const [state, formAction, isPending] = useActionState(
+	const initialState: CreateInvoiceResult = {
+		message: "",
+		errors: {},
+		success: false,
+	};
+	const [state, action, isPending] = useActionState(
 		createInvoice,
 		initialState,
 	);
 	return (
-		<form action={formAction}>
+		<form action={action}>
 			<div className="bg-bg-accent rounded-md p-4 md:p-6">
 				<div className="mb-4">
 					<label htmlFor="customer" className="mb-2 block text-sm font-medium">
