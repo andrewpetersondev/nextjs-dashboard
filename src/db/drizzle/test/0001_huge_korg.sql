@@ -1,1 +1,0 @@
-ALTER TYPE "public"."role" ADD VALUE 'guest' BEFORE 'admin';

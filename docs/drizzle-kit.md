@@ -15,6 +15,16 @@ pnpm drizzle-kit check
 pnpm drizzle-kit up
 pnpm drizzle-kit studio
 ```
+### Two Strategies for Migrations
+
+1. **generate** then **migrate**:  
+   - Use `drizzle-kit generate` to create migration files based on your Drizzle schema.  
+   - Use `drizzle-kit migrate` to apply these migrations to your database.
+2. **push**:  
+   - Use `drizzle-kit push` to push your Drizzle schema to the database, creating the necessary tables and columns. 
+   - This is useful if for development purposes because it allows you to quickly set up your database schema without manually writing migration files. Or destroy and recreate the database schema from scratch.
+  
+
 ### Drizzle Kit Command Overview
 
 **`drizzle-kit generate`**  

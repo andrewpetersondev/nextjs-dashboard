@@ -32,7 +32,6 @@ docker run --name dashboard-adminer \
   --network dashboard-network \
   -p 8080:8080 \
   -e ADMINER_DEFAULT_SERVER=dashboard-postgres \
-  -e ADMINER_DESIGN=flat \
   -d adminer:latest
 ```
 
@@ -43,6 +42,17 @@ Login Details:
 - **Username**: `{your_postgres_user}`
 - **Password**: `{your_postgres_password}`
 - **Database**: `{your_postgres_db}`
+
+### TEST DATABASE NEEDS TO BE CREATED MANUALLY
+
+- Easily create a test database using Adminer
+- _OR_ **make life difficult** and create it manually using the CLI.
+
+```bash
+docker exec -it dashboard-postgres psql -U {your_postgres_user} -c "CREATE DATABASE postgres_test;"
+````
+
+- _OR_ **automate it for no reason** by ...
 
 ## Next.js
 

@@ -14,4 +14,4 @@ if (process.env.POSTGRES_URL_TESTDB) {
 	process.exit(1);
 }
 
-export const testDB = drizzle(url);
+export const testDB = drizzle({ connection: url, casing: "snake_case" });

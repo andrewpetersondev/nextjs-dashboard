@@ -21,6 +21,7 @@ if (process.env.POSTGRES_URL_TESTDB) {
 export default defineConfig({
 	out: "./src/db/drizzle/test/",
 	schema: "./src/db/schema.ts",
+	casing: "snake_case",
 	dialect: "postgresql",
 	dbCredentials: {
 		url: url,
