@@ -1,10 +1,11 @@
+import type { PaymentStatus } from "@/src/lib/definitions/invoices";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 export default function InvoiceStatus({
 	paymentStatus,
 }: {
-	paymentStatus: string | null;
+	paymentStatus: PaymentStatus | null;
 }) {
 	if (!paymentStatus) {
 		return null; // Safely render nothing if paymentStatus is null
