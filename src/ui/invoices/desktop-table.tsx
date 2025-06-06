@@ -58,7 +58,7 @@ export default function DesktopTable({
 						</td>
 						<td className="px-3 py-3 whitespace-nowrap">
 							<InvoiceStatus
-								paymentStatus={invoice.paymentStatus || "unknown"}
+								status={invoice.status || "unknown"}
 							/>
 						</td>
 						<td className="py-3 pr-3 pl-6 whitespace-nowrap">

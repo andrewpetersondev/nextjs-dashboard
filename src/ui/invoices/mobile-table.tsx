@@ -28,7 +28,7 @@ export default function MobileTable({
 							</div>
 							<p className="text-text-primary text-sm">{invoice.email}</p>
 						</div>
-						<InvoiceStatus paymentStatus={invoice.paymentStatus || "unknown"} />
+						<InvoiceStatus status={invoice.status || "unknown"} />
 					</div>
 					<div className="flex w-full items-center justify-between pt-4">
 						<div>

@@ -11,7 +11,7 @@ import type {
 	InvoiceId,
 	LatestInvoiceDbRow,
 	ModifiedLatestInvoicesData,
-	PaymentStatus,
+	Status,
 } from "@/src/lib/definitions/invoices";
 import { formatCurrency } from "@/src/lib/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
@@ -25,8 +25,8 @@ export function brandCustomerId(id: string): CustomerId {
 	return id as CustomerId;
 }
 
-export function brandPaymentStatus(status: string): PaymentStatus {
-	return status as PaymentStatus;
+export function brandStatus(status: string): Status {
+	return status as Status;
 }
 
 // --- Fetch latest invoices ---
@@ -41,7 +41,7 @@ export async function fetchLatestInvoices(): Promise<
 				imageUrl: customers.imageUrl,
 				email: customers.email,
 				id: invoices.id,
-				paymentStatus: invoices.status,
+				status: invoices.status,
 			})
 			.from(invoices)
 			.innerJoin(customers, eq(invoices.customerId, customers.id))
@@ -51,7 +51,7 @@ export async function fetchLatestInvoices(): Promise<
 		return data.map((invoice) => ({
 			...invoice,
 			id: brandInvoiceId(invoice.id),
-			paymentStatus: brandPaymentStatus(invoice.paymentStatus),
+			status: brandStatus(invoice.status),
 			amount: formatCurrency(invoice.amount),
 		}));
 	} catch (error: unknown) {
@@ -77,7 +77,7 @@ export async function fetchFilteredInvoices(
 				name: customers.name,
 				email: customers.email,
 				imageUrl: customers.imageUrl,
-				paymentStatus: invoices.status,
+				status: invoices.status,
 			})
 			.from(invoices)
 			.innerJoin(customers, eq(invoices.customerId, customers.id))
@@ -94,11 +94,11 @@ export async function fetchFilteredInvoices(
 			.limit(ITEMS_PER_PAGE)
 			.offset(offset);
 
-		// --- Fix: Brand id and paymentStatus ---
+		// --- Fix: Brand id and status ---
 		return data.map((invoice) => ({
 			...invoice,
 			id: brandInvoiceId(invoice.id),
-			paymentStatus: brandPaymentStatus(invoice.paymentStatus),
+			status: brandStatus(invoice.status),
 		}));
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
@@ -142,7 +142,7 @@ export async function fetchInvoiceById(
 			.select({
 				id: invoices.id,
 				amount: invoices.amount,
-				paymentStatus: invoices.status,
+				status: invoices.status,
 				customerId: invoices.customerId,
 				date: invoices.date,
 			})
@@ -153,7 +153,7 @@ export async function fetchInvoiceById(
 			? {
 					id: brandInvoiceId(data[0].id),
 					amount: data[0].amount / 100,
-					status: brandPaymentStatus(data[0].paymentStatus),
+					status: brandStatus(data[0].status),
 					customerId: brandCustomerId(data[0].customerId),
 					date: data[0].date,
 				}

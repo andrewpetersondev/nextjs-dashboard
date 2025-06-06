@@ -7,15 +7,12 @@ export type InvoiceId = string & { readonly __brand: unique symbol };
 export type CustomerId = string & { readonly __brand: unique symbol };
 
 /** Invoice status enum for stricter typing */
-export enum PaymentStatusEnum {
+export enum StatusEnum {
 	Pending = "pending",
 	Paid = "paid",
 }
-export const INVOICE_STATUSES = [
-	PaymentStatusEnum.Pending,
-	PaymentStatusEnum.Paid,
-] as const;
-export type PaymentStatus = (typeof INVOICE_STATUSES)[number];
+export const INVOICE_STATUSES = [StatusEnum.Pending, StatusEnum.Paid] as const;
+export type Status = (typeof INVOICE_STATUSES)[number];
 
 /** Invoice entity type. */
 export interface Invoice {
@@ -23,7 +20,7 @@ export interface Invoice {
 	readonly customerId: CustomerId;
 	readonly amount: number;
 	readonly date: string; // ISO 8601
-	readonly status: PaymentStatus;
+	readonly status: Status;
 }
 
 /** Invoice form fields. */
@@ -31,7 +28,7 @@ export type InvoiceFormFields = {
 	id: InvoiceId | "";
 	customerId: CustomerId | "";
 	amount: number | "";
-	status: PaymentStatus;
+	status: Status;
 	date?: string;
 };
 
@@ -44,7 +41,7 @@ export type InvoiceFormState = FormState<InvoiceFormFields>;
 export interface DbRowBase<Id = string, Status = string> {
 	id: Id;
 	amount: number;
-	paymentStatus: Status;
+	status: Status;
 }
 
 // Latest invoices DB row (extends base)
@@ -79,7 +76,7 @@ export interface InvoicesTableRow {
 	readonly imageUrl: string;
 	readonly date: string;
 	readonly amount: number;
-	readonly status: PaymentStatus;
+	readonly status: Status;
 }
 
 /** Filtered invoice data for API responses. */
@@ -90,7 +87,7 @@ export interface FilteredInvoiceData {
 	readonly name: string;
 	readonly email: string;
 	readonly imageUrl: string;
-	readonly paymentStatus: PaymentStatus;
+	readonly status: Status;
 }
 
 /** Data shape for fetching latest invoices. */
@@ -100,7 +97,7 @@ export interface FetchLatestInvoicesData {
 	readonly email: string;
 	readonly imageUrl: string;
 	readonly name: string;
-	readonly paymentStatus: PaymentStatus;
+	readonly status: Status;
 }
 
 /** Modified latest invoices data with string amount. */
@@ -133,7 +130,7 @@ export interface FetchFilteredInvoicesData {
 	readonly name: string;
 	readonly email: string;
 	readonly imageUrl: string;
-	readonly paymentStatus: PaymentStatus;
+	readonly status: Status;
 }
 
 /**
