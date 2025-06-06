@@ -38,6 +38,38 @@ export type InvoiceFormFields = {
 /** State for the invoice form. */
 export type InvoiceFormState = FormState<InvoiceFormFields>;
 
+// --- Table Row Types (RAW) ---
+
+// Base interface for raw DB rows
+export interface DbRowBase<Id = string, Status = string> {
+	id: Id;
+	amount: number;
+	paymentStatus: Status;
+}
+
+// Latest invoices DB row (extends base)
+export interface LatestInvoiceDbRow extends DbRowBase<string, string> {
+	name: string;
+	imageUrl: string;
+	email: string;
+}
+
+// Filtered invoices DB row (extends base)
+export interface FilteredInvoiceDbRow extends DbRowBase<string, string> {
+	date: string;
+	name: string;
+	email: string;
+	imageUrl: string;
+}
+
+// Invoice by ID DB row (extends base)
+export interface InvoiceByIdDbRow extends DbRowBase<string, string> {
+	customerId: string;
+	date: string;
+}
+
+// --- Table Row Types (UI) ---
+
 /** Row type for invoices table. */
 export interface InvoicesTableRow {
 	readonly id: InvoiceId;

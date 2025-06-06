@@ -1,4 +1,5 @@
 import { fetchCustomers } from "@/src/lib/data";
+import { brandInvoiceId } from "@/src/lib/query/invoices";
 import { fetchInvoiceById } from "@/src/lib/query/invoices";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditInvoiceForm from "@/src/ui/invoices/edit-form";
@@ -15,7 +16,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const params: { id: string } = await props.params;
 	const id: string = params.id;
 	const [invoice, customers] = await Promise.all([
-		fetchInvoiceById(id),
+		fetchInvoiceById(brandInvoiceId(id)),
 		fetchCustomers(),
 	]);
 	if (!invoice) {

@@ -4,33 +4,37 @@ import { db } from "@/src/db/database";
 import { customers, invoices } from "@/src/db/schema";
 import type {
 	CustomerId,
+	FetchFilteredInvoicesData,
+	FilteredInvoiceDbRow,
+	Invoice,
+	InvoiceByIdDbRow,
 	InvoiceId,
-	// FetchFilteredInvoicesData,
-	// FetchLatestInvoicesData,
+	LatestInvoiceDbRow,
 	ModifiedLatestInvoicesData,
 	PaymentStatus,
 } from "@/src/lib/definitions/invoices";
 import { formatCurrency } from "@/src/lib/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 
-// --- Fix: Cast id and paymentStatus to branded types ---
-function brandInvoiceId(id: string): InvoiceId {
+// --- Branded type helpers ---
+export function brandInvoiceId(id: string): InvoiceId {
 	return id as InvoiceId;
 }
 
-function brandCustomerId(id: string): CustomerId {
+export function brandCustomerId(id: string): CustomerId {
 	return id as CustomerId;
 }
 
-function brandPaymentStatus(status: string): PaymentStatus {
+export function brandPaymentStatus(status: string): PaymentStatus {
 	return status as PaymentStatus;
 }
 
+// --- Fetch latest invoices ---
 export async function fetchLatestInvoices(): Promise<
 	ModifiedLatestInvoicesData[]
 > {
 	try {
-		const data = await db
+		const data: LatestInvoiceDbRow[] = await db
 			.select({
 				amount: invoices.amount,
 				name: customers.name,
@@ -44,18 +48,13 @@ export async function fetchLatestInvoices(): Promise<
 			.orderBy(desc(invoices.date))
 			.limit(5);
 
-		// --- Fix: Brand id and paymentStatus ---
-		const latestInvoices: ModifiedLatestInvoicesData[] = data.map(
-			(invoice) => ({
-				...invoice,
-				id: brandInvoiceId(invoice.id),
-				paymentStatus: brandPaymentStatus(invoice.paymentStatus),
-				amount: formatCurrency(invoice.amount),
-			}),
-		);
-
-		return latestInvoices;
-	} catch (error) {
+		return data.map((invoice) => ({
+			...invoice,
+			id: brandInvoiceId(invoice.id),
+			paymentStatus: brandPaymentStatus(invoice.paymentStatus),
+			amount: formatCurrency(invoice.amount),
+		}));
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch the latest invoices.");
 	}
@@ -63,13 +62,14 @@ export async function fetchLatestInvoices(): Promise<
 
 const ITEMS_PER_PAGE = 6;
 
+// --- Fetch filtered invoices ---
 export async function fetchFilteredInvoices(
 	query: string,
 	currentPage: number,
-) {
+): Promise<FetchFilteredInvoicesData[]> {
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 	try {
-		const data = await db
+		const data: FilteredInvoiceDbRow[] = await db
 			.select({
 				id: invoices.id,
 				amount: invoices.amount,
@@ -100,12 +100,13 @@ export async function fetchFilteredInvoices(
 			id: brandInvoiceId(invoice.id),
 			paymentStatus: brandPaymentStatus(invoice.paymentStatus),
 		}));
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch invoices.");
 	}
 }
 
+// --- Fetch invoice pages count ---
 export async function fetchInvoicesPages(query: string): Promise<number> {
 	try {
 		const data: { count: number }[] = await db
@@ -124,39 +125,40 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 				),
 			);
 
-		const result: number = data[0].count;
-		const totalPages: number = Math.ceil(result / ITEMS_PER_PAGE);
-
-		return totalPages;
-	} catch (error) {
+		const result: number = data[0]?.count ?? 0;
+		return Math.ceil(result / ITEMS_PER_PAGE);
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch the total number of invoices.");
 	}
 }
 
-export async function fetchInvoiceById(id: string) {
+// --- Fetch invoice by ID ---
+export async function fetchInvoiceById(
+	id: InvoiceId,
+): Promise<Invoice | undefined> {
 	try {
-		const data = await db
+		const data: InvoiceByIdDbRow[] = await db
 			.select({
 				id: invoices.id,
 				amount: invoices.amount,
-				status: invoices.status,
+				paymentStatus: invoices.status,
 				customerId: invoices.customerId,
 				date: invoices.date,
 			})
 			.from(invoices)
 			.where(eq(invoices.id, id));
 
-		// --- Fix: Brand id, status, customerId ---
-		const result = data.map((item) => ({
-			...item,
-			id: brandInvoiceId(item.id),
-			status: brandPaymentStatus(item.status),
-			customerId: brandCustomerId(item.customerId),
-			amount: item.amount / 100,
-		}));
-		return result[0];
-	} catch (error) {
+		return data.length > 0
+			? {
+					id: brandInvoiceId(data[0].id),
+					amount: data[0].amount / 100,
+					status: brandPaymentStatus(data[0].paymentStatus),
+					customerId: brandCustomerId(data[0].customerId),
+					date: data[0].date,
+				}
+			: undefined;
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch invoice by id.");
 	}

@@ -9,9 +9,9 @@ import { asc, count, eq, ilike, or } from "drizzle-orm";
  */
 export async function fetchUserById(id: string): Promise<User | undefined> {
 	try {
-		const data = await db.select().from(users).where(eq(users.id, id));
+		const data: User[] = await db.select().from(users).where(eq(users.id, id));
 		return data[0] as User | undefined;
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch user by id.");
 	}
@@ -22,9 +22,12 @@ export async function fetchUserById(id: string): Promise<User | undefined> {
  */
 export async function fetchUsers(): Promise<User[]> {
 	try {
-		const data = await db.select().from(users).orderBy(asc(users.username));
+		const data: User[] = await db
+			.select()
+			.from(users)
+			.orderBy(asc(users.username));
 		return data as User[];
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch users.");
 	}
@@ -34,9 +37,9 @@ export async function fetchUsers(): Promise<User[]> {
  * Fetch total user pages for pagination.
  */
 export async function fetchUsersPages(query: string): Promise<number> {
-	const ITEMS_PER_PAGE_USERS = 2;
+	const ITEMS_PER_PAGE_USERS: number = 2;
 	try {
-		const data = await db
+		const data: { count: number }[] = await db
 			.select({
 				count: count(users.id),
 			})
@@ -47,9 +50,9 @@ export async function fetchUsersPages(query: string): Promise<number> {
 					ilike(users.email, `%${query}%`),
 				),
 			);
-		const result = data[0].count;
+		const result: number = data[0].count;
 		return Math.ceil(result / ITEMS_PER_PAGE_USERS);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch the total number of users.");
 	}
@@ -62,10 +65,10 @@ export async function fetchFilteredUsers(
 	query: string,
 	currentPage: number,
 ): Promise<User[]> {
-	const ITEMS_PER_PAGE_USERS = 2;
-	const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
+	const ITEMS_PER_PAGE_USERS: number = 2;
+	const offset: number = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
 	try {
-		const data = await db
+		const data: User[] = await db
 			.select()
 			.from(users)
 			.where(
@@ -78,7 +81,7 @@ export async function fetchFilteredUsers(
 			.limit(ITEMS_PER_PAGE_USERS)
 			.offset(offset);
 		return data as User[];
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch filtered users.");
 	}
