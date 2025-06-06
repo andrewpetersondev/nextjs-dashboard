@@ -3,18 +3,34 @@ import "server-only";
 import { db } from "@/src/db/database";
 import { customers, invoices } from "@/src/db/schema";
 import type {
-	FetchFilteredInvoicesData,
-	FetchLatestInvoicesData,
+	CustomerId,
+	InvoiceId,
+	// FetchFilteredInvoicesData,
+	// FetchLatestInvoicesData,
 	ModifiedLatestInvoicesData,
+	PaymentStatus,
 } from "@/src/lib/definitions/invoices";
 import { formatCurrency } from "@/src/lib/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
+
+// --- Fix: Cast id and paymentStatus to branded types ---
+function brandInvoiceId(id: string): InvoiceId {
+	return id as InvoiceId;
+}
+
+function brandCustomerId(id: string): CustomerId {
+	return id as CustomerId;
+}
+
+function brandPaymentStatus(status: string): PaymentStatus {
+	return status as PaymentStatus;
+}
 
 export async function fetchLatestInvoices(): Promise<
 	ModifiedLatestInvoicesData[]
 > {
 	try {
-		const data: FetchLatestInvoicesData[] = await db
+		const data = await db
 			.select({
 				amount: invoices.amount,
 				name: customers.name,
@@ -28,9 +44,12 @@ export async function fetchLatestInvoices(): Promise<
 			.orderBy(desc(invoices.date))
 			.limit(5);
 
+		// --- Fix: Brand id and paymentStatus ---
 		const latestInvoices: ModifiedLatestInvoicesData[] = data.map(
 			(invoice) => ({
 				...invoice,
+				id: brandInvoiceId(invoice.id),
+				paymentStatus: brandPaymentStatus(invoice.paymentStatus),
 				amount: formatCurrency(invoice.amount),
 			}),
 		);
@@ -50,7 +69,7 @@ export async function fetchFilteredInvoices(
 ) {
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 	try {
-		const data: FetchFilteredInvoicesData[] = await db
+		const data = await db
 			.select({
 				id: invoices.id,
 				amount: invoices.amount,
@@ -74,7 +93,13 @@ export async function fetchFilteredInvoices(
 			.orderBy(desc(invoices.date))
 			.limit(ITEMS_PER_PAGE)
 			.offset(offset);
-		return data;
+
+		// --- Fix: Brand id and paymentStatus ---
+		return data.map((invoice) => ({
+			...invoice,
+			id: brandInvoiceId(invoice.id),
+			paymentStatus: brandPaymentStatus(invoice.paymentStatus),
+		}));
 	} catch (error) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch invoices.");
@@ -83,7 +108,7 @@ export async function fetchFilteredInvoices(
 
 export async function fetchInvoicesPages(query: string): Promise<number> {
 	try {
-		const data = await db
+		const data: { count: number }[] = await db
 			.select({
 				count: count(invoices.id),
 			})
@@ -99,8 +124,8 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 				),
 			);
 
-		const result = data[0].count;
-		const totalPages = Math.ceil(result / ITEMS_PER_PAGE);
+		const result: number = data[0].count;
+		const totalPages: number = Math.ceil(result / ITEMS_PER_PAGE);
 
 		return totalPages;
 	} catch (error) {
@@ -122,8 +147,12 @@ export async function fetchInvoiceById(id: string) {
 			.from(invoices)
 			.where(eq(invoices.id, id));
 
+		// --- Fix: Brand id, status, customerId ---
 		const result = data.map((item) => ({
 			...item,
+			id: brandInvoiceId(item.id),
+			status: brandPaymentStatus(item.status),
+			customerId: brandCustomerId(item.customerId),
 			amount: item.amount / 100,
 		}));
 		return result[0];
