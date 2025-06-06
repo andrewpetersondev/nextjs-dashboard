@@ -1,3 +1,4 @@
+import type { FormState } from "@/src/lib/definitions/form";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
 // --- Entity Types ---
@@ -52,14 +53,6 @@ export type CustomerFormFields = {
 	name: string;
 	email: string;
 	imageUrl: string;
-};
-
-/**
- * Generic form state type for customer forms.
- */
-export type FormState<TFields extends Record<string, unknown>> = {
-	errors?: Partial<Record<keyof TFields, string[]>>;
-	message?: string;
 };
 
 /**

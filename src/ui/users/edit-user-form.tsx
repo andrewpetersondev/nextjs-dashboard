@@ -1,11 +1,14 @@
 "use client";
-
-import type { EditUserFormState, User } from "@/src/lib/definitions/users";
+import type { FormState } from "@/src/lib/definitions/form";
+import type { EditUserFormFields, User } from "@/src/lib/definitions/users";
 import { editUser } from "@/src/server-actions/users";
 import { useActionState } from "react";
 
 export default function EditUserForm({ user }: { user: User }) {
-	const initialState: EditUserFormState = { message: "", errors: {} };
+	const initialState: FormState<EditUserFormFields> = {
+		message: "",
+		errors: {},
+	};
 	const updateUserWithId = editUser.bind(null, user.id);
 	const [state, action, isPending] = useActionState(
 		updateUserWithId,

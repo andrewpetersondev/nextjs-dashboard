@@ -1,3 +1,4 @@
+import type { FormState } from "@/src/lib/definitions/form";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
 // --- Invoice Status ---
@@ -25,12 +26,6 @@ export type InvoiceFormFields = {
 	amount: number;
 	status: InvoiceStatus | null;
 	date?: string;
-};
-
-/** Generic form state type for invoice forms. */
-export type FormState<TFields extends Record<string, unknown>> = {
-	errors?: Partial<Record<keyof TFields, string[]>>;
-	message: string;
 };
 
 /** State for the invoice form. */

@@ -1,14 +1,11 @@
+import type { FormState } from "@/src/lib/definitions/form";
 import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 
-/**
- * Allowed user roles.
- */
+// --- User Roles ---
 export const USER_ROLES = ["admin", "user", "guest"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-/**
- * User entity type.
- */
+// --- User Entity ---
 export interface User {
 	id: string;
 	username: string;
@@ -17,7 +14,13 @@ export interface User {
 	password: string;
 }
 
-// --- Base User Form Fields ---
+// --- Action Result Type ---
+export type ActionResult = {
+	message?: string;
+	success: boolean;
+};
+
+// --- User Form Fields ---
 export interface BaseUserFormFields {
 	username: string;
 	email: string;
@@ -25,33 +28,22 @@ export interface BaseUserFormFields {
 	[key: string]: unknown; // Allow additional fields for flexibility
 }
 
-// --- Create User Form Fields ---
 export interface CreateUserFormFields extends BaseUserFormFields {
 	role: UserRole;
 }
 
-// --- Signup Form Fields (no role) ---
 export type SignupFormFields = Omit<CreateUserFormFields, "role">;
-
-// --- Login Form Fields (email + password only) ---
 export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
-
-// --- Edit User Form Fields (all optional) ---
 export type EditUserFormFields = Partial<CreateUserFormFields>;
 
-// --- Form State Types (generic) ---
-export type FormState<TFields extends Record<string, unknown>> = {
-	errors?: Partial<Record<keyof TFields, string[]>>;
-	message?: string;
-};
-
+// --- Form State Aliases (for clarity, but all use FormState<T>) ---
 export type CreateUserFormState = FormState<CreateUserFormFields>;
 export type SignupFormState = FormState<SignupFormFields>;
 export type LoginFormState = FormState<LoginFormFields>;
 export type EditUserFormState = FormState<EditUserFormFields>;
 
-// --- Zod Schemas (reuse base) ---
-const BaseUserFormSchema = zod.object({
+// --- Zod Schemas ---
+export const BaseUserFormSchema = zod.object({
 	username: zod
 		.string()
 		.min(2, { message: "Username must be at least two characters long." })

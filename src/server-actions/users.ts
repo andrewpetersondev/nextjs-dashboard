@@ -7,42 +7,48 @@ import { createSession, deleteSession } from "@/src/lib/session";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
+import type { FormState } from "@/src/lib/definitions/form";
 import {
+	type ActionResult,
+	type CreateUserFormFields,
 	CreateUserFormSchema,
-	type CreateUserFormState,
+	type EditUserFormFields,
 	EditUserFormSchema,
-	type EditUserFormState,
+	type LoginFormFields,
 	LoginFormSchema,
-	type LoginFormState,
+	type SignupFormFields,
 	SignupFormSchema,
-	type SignupFormState,
 	type UserRole,
 } from "@/src/lib/definitions/users";
 import { revalidatePath } from "next/cache";
 
 // --- Signup ---
 export async function signup(
-	_prevState: SignupFormState,
+	_prevState: FormState<SignupFormFields>,
 	formData: FormData,
-): Promise<SignupFormState> {
+): Promise<FormState<SignupFormFields>> {
 	const validated = SignupFormSchema.safeParse({
 		username: formData.get("username"),
 		email: formData.get("email"),
 		password: formData.get("password"),
 	});
+
 	if (!validated.success) {
 		return {
 			errors: validated.error.flatten().fieldErrors,
 			message: "Validation failed. Please check your input.",
 		};
 	}
+
 	const { username, email, password } = validated.data as {
 		username: string;
 		email: string;
 		password: string;
 	};
+
 	try {
-		const hashedPassword = await hashPassword(password);
+		const hashedPassword: string = await hashPassword(password);
+
 		const [user] = await db
 			.insert(users)
 			.values({
@@ -51,11 +57,14 @@ export async function signup(
 				password: hashedPassword,
 			})
 			.returning({ insertedId: users.id });
-		const userId = user?.insertedId;
+
+		const userId: string = user?.insertedId;
+
 		if (!userId) {
 			console.error("Failed to create account");
 			return { message: "Failed to create account. Please try again." };
 		}
+
 		await createSession(userId, "user");
 	} catch (error) {
 		console.error("Failed to create user:", error);
@@ -67,9 +76,9 @@ export async function signup(
 
 // --- Login ---
 export async function login(
-	_prevState: LoginFormState,
+	_prevState: FormState<LoginFormFields>,
 	formData: FormData,
-): Promise<LoginFormState> {
+): Promise<FormState<LoginFormFields>> {
 	const validated = LoginFormSchema.safeParse({
 		email: formData.get("email"),
 		password: formData.get("password"),
@@ -99,7 +108,10 @@ export async function login(
 			return { message: "Invalid email or password." };
 		}
 
-		const validPassword = await comparePassword(password, user.password);
+		const validPassword: boolean = await comparePassword(
+			password,
+			user.password,
+		);
 
 		if (!validPassword) {
 			return { message: "Invalid email or password." };
@@ -131,9 +143,7 @@ export async function deleteUser(userId: string): Promise<void> {
 }
 
 // --- Demo User ---
-export async function demoUser(
-	role: UserRole = "user",
-): Promise<{ message?: string; success: boolean }> {
+export async function demoUser(role: UserRole = "user"): Promise<ActionResult> {
 	if (!["user", "guest", "admin"].includes(role)) {
 		return { message: "Invalid demo user role.", success: false };
 	}
@@ -144,6 +154,7 @@ export async function demoUser(
 			.insert(demoUserCounters)
 			.values({ role, count: 1 })
 			.returning({ id: demoUserCounters.id });
+
 		counterId = counter.id;
 	} catch (error) {
 		console.error("[demoUser] Failed to create demo user counter:", {
@@ -161,8 +172,10 @@ export async function demoUser(
 	const uniqueUsername = `Demo ${role.charAt(0).toUpperCase() + role.slice(1)} ${counterId}`;
 
 	let demoUserId: string;
+
 	try {
 		const hashedPassword = await hashPassword(DEMO_PASSWORD);
+
 		const [user] = await db
 			.insert(users)
 			.values({
@@ -172,7 +185,9 @@ export async function demoUser(
 				role,
 			})
 			.returning({ id: users.id });
+
 		demoUserId = user.id;
+
 		if (!demoUserId) {
 			return {
 				message: "Failed to create demo user. Please try again.",
@@ -210,9 +225,9 @@ export async function demoUser(
 
 // --- Create User (Admin) ---
 export async function createUser(
-	_prevState: CreateUserFormState,
+	_prevState: FormState<CreateUserFormFields>,
 	formData: FormData,
-): Promise<CreateUserFormState> {
+): Promise<FormState<CreateUserFormFields>> {
 	const validated = CreateUserFormSchema.safeParse({
 		username: formData.get("username"),
 		email: formData.get("email"),
@@ -259,9 +274,9 @@ export async function createUser(
 // --- Edit User ---
 export async function editUser(
 	id: string,
-	_prevState: EditUserFormState,
+	_prevState: FormState<EditUserFormFields>,
 	formData: FormData,
-): Promise<EditUserFormState> {
+): Promise<FormState<EditUserFormFields>> {
 	const validated = EditUserFormSchema.safeParse({
 		userId: formData.get("userId"),
 		username: formData.get("username"),
@@ -281,9 +296,11 @@ export async function editUser(
 
 	try {
 		const updateData: Record<string, unknown> = { username, email, role };
+
 		if (password && password.trim() !== "") {
 			updateData.password = await hashPassword(password);
 		}
+
 		await db.update(users).set(updateData).where(eq(users.id, id));
 	} catch (error) {
 		console.error("[editUser] Database Error:", { error, userId: id });
