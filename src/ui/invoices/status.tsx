@@ -5,12 +5,8 @@ import clsx from "clsx";
 export default function InvoiceStatus({
 	paymentStatus,
 }: {
-	paymentStatus: PaymentStatus | null;
+	paymentStatus: PaymentStatus;
 }) {
-	if (!paymentStatus) {
-		return null; // Safely render nothing if paymentStatus is null
-	}
-
 	return (
 		<span
 			className={clsx(
@@ -21,18 +17,18 @@ export default function InvoiceStatus({
 				},
 			)}
 		>
-			{paymentStatus === "pending" ? (
+			{paymentStatus === "pending" && (
 				<>
 					Pending
 					<ClockIcon className="text-text-accent ml-1 w-4" />
 				</>
-			) : null}
-			{paymentStatus === "paid" ? (
+			)}
+			{paymentStatus === "paid" && (
 				<>
 					Paid
 					<CheckIcon className="text-text-primary ml-1 w-4" />
 				</>
-			) : null}
+			)}
 		</span>
 	);
 }
