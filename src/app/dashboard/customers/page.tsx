@@ -1,4 +1,5 @@
 import { fetchFilteredCustomers } from "@/src/lib/data";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import CustomersTable from "@/src/ui/customers/table";
 import type { Metadata } from "next";
 
@@ -13,10 +14,16 @@ export default async function Page(props: {
 		page?: string;
 	}>;
 }) {
-	const searchParams = await props.searchParams;
-	const query = searchParams?.query || "";
+	const searchParams:
+		| {
+				query?: string;
+				page?: string;
+		  }
+		| undefined = await props.searchParams;
+	const query: string = searchParams?.query || "";
 
-	const customers = await fetchFilteredCustomers(query);
+	const customers: FormattedCustomersTableRow[] =
+		await fetchFilteredCustomers(query);
 
 	return (
 		<main>

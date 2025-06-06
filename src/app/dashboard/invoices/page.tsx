@@ -21,10 +21,15 @@ export default async function Page(dynamicURL: {
 		page?: string;
 	}>;
 }) {
-	const searchParams = await dynamicURL.searchParams;
-	const query = searchParams?.query || "";
-	const currentPage = Number(searchParams?.page) || 1;
-	const totalPages = await fetchInvoicesPages(query);
+	const searchParams:
+		| {
+				query?: string;
+				page?: string;
+		  }
+		| undefined = await dynamicURL.searchParams;
+	const query: string = searchParams?.query || "";
+	const currentPage: number = Number(searchParams?.page) || 1;
+	const totalPages: number = await fetchInvoicesPages(query);
 
 	return (
 		<div className="w-full">

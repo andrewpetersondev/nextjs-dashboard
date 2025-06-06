@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-	const params = await props.params;
-	const id = params.id;
+	const params: { id: string } = await props.params;
+	const id: string = params.id;
 	const [invoice, customers] = await Promise.all([
 		fetchInvoiceById(id),
 		fetchCustomers(),

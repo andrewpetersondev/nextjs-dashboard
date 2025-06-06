@@ -1,3 +1,4 @@
+import type { User } from "@/src/lib/definitions/users";
 import { fetchUserById } from "@/src/lib/query/users";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
@@ -12,9 +13,9 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
-	const params = await props.params;
-	const id = params.id;
-	const user = await fetchUserById(id);
+	const params: { id: string } = await props.params;
+	const id: string = params.id;
+	const user: User | undefined = await fetchUserById(id);
 	if (!user) {
 		notFound();
 	}
