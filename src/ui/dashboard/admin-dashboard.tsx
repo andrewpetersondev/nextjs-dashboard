@@ -6,15 +6,12 @@ import {
 	LatestInvoicesSkeleton,
 	RevenueChartSkeleton,
 } from "@/src/ui/skeletons";
-import { lusitana } from "@/src/ui/style/fonts";
 import { Suspense } from "react";
 
-const AdminDashboard: React.FC = () => {
+export default function AdminDashboard() {
 	return (
 		<main>
-			<h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-				Admin Dashboard
-			</h1>
+			<h1 className="mb-4 text-xl md:text-2xl">Admin Dashboard</h1>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper />
@@ -30,6 +27,4 @@ const AdminDashboard: React.FC = () => {
 			</div>
 		</main>
 	);
-};
-
-export default AdminDashboard;
+}

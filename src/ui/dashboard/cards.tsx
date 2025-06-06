@@ -40,7 +40,7 @@ export function Card({
 	return (
 		<div className="bg-bg-secondary text-text-secondary rounded-xl p-2 shadow-xs">
 			<div className="flex p-4">
-				{Icon ? <Icon className="text-text-primary h-5 w-5" /> : null}
+				<Icon className="text-text-primary h-5 w-5" />
 				<h3 className="ml-2 font-bold">{title}</h3>
 			</div>
 			<p className="truncate rounded-xl px-4 py-8 text-center text-2xl">
