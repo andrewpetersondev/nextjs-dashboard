@@ -16,8 +16,7 @@ export async function fetchUserById(id: string): Promise<UserDTO> {
 			.from(users)
 			.where(eq(users.id, id));
 		const user = data[0] as UserEntity;
-		const cleanData = toUserDTO(user);
-		return cleanData;
+		return toUserDTO(user);
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch user by id.");

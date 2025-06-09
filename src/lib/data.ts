@@ -12,7 +12,7 @@ import { formatCurrency } from "@/src/lib/utils";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 
 export async function fetchRevenue(): Promise<Revenue[]> {
-	const monthOrder = [
+	const monthOrder: string[] = [
 		"Jan",
 		"Feb",
 		"Mar",
@@ -30,10 +30,9 @@ export async function fetchRevenue(): Promise<Revenue[]> {
 	try {
 		const data: Revenue[] = await db.select().from(revenues);
 
-		const orderedData: Revenue[] = data.sort(
+		return data.sort(
 			(a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
 		);
-		return orderedData;
 	} catch (error) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch revenue data.");
@@ -71,14 +70,13 @@ export async function fetchCardData(): Promise<{
 
 export async function fetchCustomers(): Promise<CustomerField[]> {
 	try {
-		const data: CustomerField[] = await db
+		return await db
 			.select({
 				id: customers.id,
 				name: customers.name,
 			})
 			.from(customers)
 			.orderBy(asc(customers.name));
-		return data;
 	} catch (e) {
 		console.error("Database Error:", e);
 		throw new Error("Failed to fetch all customers.");
@@ -110,12 +108,11 @@ export async function fetchFilteredCustomers(
 			.orderBy(asc(customers.name));
 
 		// Map to FormattedCustomersTable type
-		const list: FormattedCustomersTableRow[] = searchCustomers.map((item) => ({
+		return searchCustomers.map((item) => ({
 			...item,
 			totalPending: formatCurrency(item.totalPending),
 			totalPaid: formatCurrency(item.totalPaid),
 		}));
-		return list;
 	} catch (error) {
 		console.error("Fetch Filtered Customers Error:", error);
 		throw new Error("Failed to fetch the customer table.");

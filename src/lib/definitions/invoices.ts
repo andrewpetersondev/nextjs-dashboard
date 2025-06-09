@@ -45,14 +45,14 @@ export interface DbRowBase<Id = string, Status = string> {
 }
 
 // Latest invoices DB row (extends base)
-export interface LatestInvoiceDbRow extends DbRowBase<string, string> {
+export interface LatestInvoiceDbRow extends DbRowBase {
 	name: string;
 	imageUrl: string;
 	email: string;
 }
 
 // Filtered invoices DB row (extends base)
-export interface FilteredInvoiceDbRow extends DbRowBase<string, string> {
+export interface FilteredInvoiceDbRow extends DbRowBase {
 	date: string;
 	name: string;
 	email: string;
@@ -60,7 +60,7 @@ export interface FilteredInvoiceDbRow extends DbRowBase<string, string> {
 }
 
 // Invoice by ID DB row (extends base)
-export interface InvoiceByIdDbRow extends DbRowBase<string, string> {
+export interface InvoiceByIdDbRow extends DbRowBase {
 	customerId: string;
 	date: string;
 }

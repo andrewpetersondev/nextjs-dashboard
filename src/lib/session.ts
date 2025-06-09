@@ -43,12 +43,11 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 			);
 		}
 		const validatedPayload = validatedFields.data;
-		const jwt = await new SignJWT(validatedPayload)
+		return await new SignJWT(validatedPayload)
 			.setProtectedHeader({ alg: "HS256" })
 			.setIssuedAt()
 			.setExpirationTime("30 d")
 			.sign(encodedKey);
-		return jwt;
 	} catch (error) {
 		console.error("Error during JWT creation:", error);
 		throw new Error("DecryptPayload encryption failed");
@@ -74,8 +73,7 @@ export async function decrypt(
 			);
 			return undefined;
 		}
-		const validatedPayload = validatedFields.data;
-		return validatedPayload;
+		return validatedFields.data;
 	} catch (error) {
 		console.error("Failed to verify session", error);
 		return undefined;
