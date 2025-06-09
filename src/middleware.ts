@@ -1,3 +1,4 @@
+import type { DecryptPayload } from "@/src/lib/definitions/session";
 import { decrypt } from "@/src/lib/session";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
@@ -7,16 +8,16 @@ const publicRoutes: string[] = ["/login", "/signup", "/"];
 const adminRoutes: string[] = ["/dashboard/users"];
 
 export default async function middleware(req: NextRequest) {
-	const path = req.nextUrl.pathname;
+	const path: string = req.nextUrl.pathname;
 	const isProtectedRoute: boolean = protectedRoutes.includes(path);
 	const isPublicRoute: boolean = publicRoutes.includes(path);
 	const isAdminRoute: boolean = adminRoutes.includes(path);
 
 	// Retrieve the session cookie
-	const cookie = (await cookies()).get("session")?.value;
+	const cookie: string | undefined = (await cookies()).get("session")?.value;
 
 	// Decrypt the session cookie to get the session data
-	const session = await decrypt(cookie);
+	const session: DecryptPayload | undefined = await decrypt(cookie);
 
 	// If the route is protected and the user is not authenticated, redirect to the login page
 	if (isProtectedRoute && !session?.user?.userId) {
