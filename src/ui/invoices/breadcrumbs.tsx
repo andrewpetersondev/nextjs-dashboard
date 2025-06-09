@@ -1,4 +1,3 @@
-import { lusitana } from "@/src/ui/style/fonts";
 import { clsx } from "clsx";
 import Link from "next/link";
 
@@ -15,7 +14,7 @@ export default function Breadcrumbs({
 }) {
 	return (
 		<nav aria-label="Breadcrumb" className="mb-6 block">
-			<ol className={clsx(lusitana.className, "flex text-xl md:text-2xl")}>
+			<ol className={clsx("flex text-xl md:text-2xl")}>
 				{breadcrumbs.map((breadcrumb, index) => (
 					<li
 						key={breadcrumb.href}
@@ -25,6 +24,7 @@ export default function Breadcrumbs({
 						)}
 					>
 						<Link href={breadcrumb.href}>{breadcrumb.label}</Link>
+						{/*todo, do i want a null return value to be possible?*/}
 						{index < breadcrumbs.length - 1 ? (
 							<span className="mx-3 inline-block">/</span>
 						) : null}

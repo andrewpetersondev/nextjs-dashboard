@@ -2,15 +2,15 @@ import { decrypt } from "@/src/lib/session";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/dashboard"];
-const publicRoutes = ["/login", "/signup", "/"];
-const adminRoutes = ["/dashboard/users"];
+const protectedRoutes: string[] = ["/dashboard"];
+const publicRoutes: string[] = ["/login", "/signup", "/"];
+const adminRoutes: string[] = ["/dashboard/users"];
 
 export default async function middleware(req: NextRequest) {
 	const path = req.nextUrl.pathname;
-	const isProtectedRoute = protectedRoutes.includes(path);
-	const isPublicRoute = publicRoutes.includes(path);
-	const isAdminRoute = adminRoutes.includes(path);
+	const isProtectedRoute: boolean = protectedRoutes.includes(path);
+	const isPublicRoute: boolean = publicRoutes.includes(path);
+	const isAdminRoute: boolean = adminRoutes.includes(path);
 
 	// Retrieve the session cookie
 	const cookie = (await cookies()).get("session")?.value;

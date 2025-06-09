@@ -89,6 +89,13 @@ hcp vault-secrets run -- pnpm drizzle-kit up --config=drizzle-test.config.ts
 
 To generate the Drizzle Kit schema, use:
 
+- Use drizzle-kit generate to create migration files based on your Drizzle schema.
+- Use drizzle-kit migrate to apply these migrations to your database.
+
 ```bash
 hcp vault-secrets run -- pnpm drizzle-kit generate --config=drizzle-test.config.ts
+
+hcp vault-secrets run -- pnpm drizzle-kit migrate --config=drizzle-test.config.ts
+
+
 ```

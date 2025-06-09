@@ -20,6 +20,9 @@ export const users = pgTable("users", {
 	email: varchar("email", { length: 50 }).notNull().unique(),
 	role: roleEnum("role").default("user").notNull(),
 	password: varchar("password", { length: 255 }).notNull(),
+	sensitiveData: varchar("sensitive_data", { length: 50 })
+		.notNull()
+		.default("cantTouchThis"),
 });
 
 export const demoUserCounters = pgTable("demo_user_counters", {
