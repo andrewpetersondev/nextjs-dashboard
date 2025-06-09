@@ -11,18 +11,6 @@ import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-// const verifyEnvironmentVariables = () => {
-// 	const requiredEnvVars = ["POSTGRES_URL", "SESSION_SECRET"];
-// 	for (const envVar of requiredEnvVars) {
-// 		const value = process.env[envVar];
-// 		if (value) {
-// 		} else {
-// 			console.error(`Environment variable ${envVar} is not set`);
-// 		}
-// 	}
-// };
-// verifyEnvironmentVariables();
-
 const getEncodedKey = async () => {
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const secret = process.env.SESSION_SECRET!;
@@ -31,20 +19,17 @@ const getEncodedKey = async () => {
 	}
 	return new TextEncoder().encode(secret);
 };
+
 let encodedKey: Uint8Array;
 
 const initializeEncodedKey = async () => {
 	encodedKey = await getEncodedKey();
 };
-// initializeEncodedKey();
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
 	await initializeEncodedKey();
 	try {
 		const validatedFields = EncryptPayloadSchema.safeParse(payload);
-		// if (!validatedFields.success) {
-		// 	throw new Error("Invalid session payload: Missing required fields");
-		// }
 		if (!validatedFields.success) {
 			// Log structured error for observability
 			console.error("Session payload validation failed", {

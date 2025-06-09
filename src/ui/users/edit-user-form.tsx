@@ -1,10 +1,11 @@
 "use client";
+import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
-import type { EditUserFormFields, User } from "@/src/lib/definitions/users";
+import type { EditUserFormFields } from "@/src/lib/definitions/users";
 import { editUser } from "@/src/server-actions/users";
 import { useActionState } from "react";
 
-export default function EditUserForm({ user }: { user: User }) {
+export default function EditUserForm({ user }: { user: UserDTO }) {
 	const initialState: FormState<EditUserFormFields> = {
 		message: "",
 		errors: {},

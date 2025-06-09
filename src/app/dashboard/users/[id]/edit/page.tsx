@@ -1,9 +1,10 @@
-import type { User } from "@/src/lib/definitions/users";
+import type { UserDTO } from "@/src/dto/user.dto";
 import { fetchUserById } from "@/src/lib/query/users";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { forbidden } from "next/navigation";
+import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Edit User",
@@ -12,12 +13,17 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: {
+	params: Promise<{ id: string }>;
+}): Promise<JSX.Element> {
 	const params: { id: string } = await props.params;
 	const id: string = params.id;
-	const user: User | undefined = await fetchUserById(id);
-	if (!user) {
-		notFound();
+	// note: should user be able to be undefined?
+	// there should always be a valid user, since this a protected by middleware
+	const user: UserDTO = await fetchUserById(id);
+	if (!user.role.includes("admin")) {
+		// throw new Error("You are not allowed to edit this user.");
+		forbidden();
 	}
 	return (
 		<main>

@@ -1,16 +1,23 @@
 import "server-only";
 import { db } from "@/src/db/database";
+import type { UserEntity } from "@/src/db/entities/user";
 import { users } from "@/src/db/schema";
-import type { User } from "@/src/lib/definitions/users";
+import type { UserDTO } from "@/src/dto/user.dto";
+import { toUserDTO } from "@/src/mappers/user.mapper";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**
  * Fetch a user by ID.
  */
-export async function fetchUserById(id: string): Promise<User | undefined> {
+export async function fetchUserById(id: string): Promise<UserDTO> {
 	try {
-		const data: User[] = await db.select().from(users).where(eq(users.id, id));
-		return data[0] as User | undefined;
+		const data: UserEntity[] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, id));
+		const user = data[0] as UserEntity;
+		const cleanData = toUserDTO(user);
+		return cleanData;
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch user by id.");
@@ -20,13 +27,13 @@ export async function fetchUserById(id: string): Promise<User | undefined> {
 /**
  * Fetch all users.
  */
-export async function fetchUsers(): Promise<User[]> {
+export async function fetchUsers(): Promise<UserEntity[]> {
 	try {
-		const data: User[] = await db
+		const data: UserEntity[] = await db
 			.select()
 			.from(users)
 			.orderBy(asc(users.username));
-		return data as User[];
+		return data as UserEntity[];
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch users.");
@@ -64,11 +71,11 @@ export async function fetchUsersPages(query: string): Promise<number> {
 export async function fetchFilteredUsers(
 	query: string,
 	currentPage: number,
-): Promise<User[]> {
+): Promise<UserEntity[]> {
 	const ITEMS_PER_PAGE_USERS: number = 2;
 	const offset: number = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
 	try {
-		const data: User[] = await db
+		const data: UserEntity[] = await db
 			.select()
 			.from(users)
 			.where(
@@ -80,7 +87,7 @@ export async function fetchFilteredUsers(
 			.orderBy(asc(users.username))
 			.limit(ITEMS_PER_PAGE_USERS)
 			.offset(offset);
-		return data as User[];
+		return data as UserEntity[];
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch filtered users.");

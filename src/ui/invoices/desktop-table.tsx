@@ -57,9 +57,7 @@ export default function DesktopTable({
 							{formatDateToLocal(invoice.date)}
 						</td>
 						<td className="px-3 py-3 whitespace-nowrap">
-							<InvoiceStatus
-								status={invoice.status || "unknown"}
-							/>
+							<InvoiceStatus status={invoice.status} />
 						</td>
 						<td className="py-3 pr-3 pl-6 whitespace-nowrap">
 							<div className="flex justify-end gap-3">

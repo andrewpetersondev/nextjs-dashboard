@@ -5,15 +5,6 @@ import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 export const USER_ROLES = ["admin", "user", "guest"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-// --- User Entity ---
-export interface User {
-	id: string;
-	username: string;
-	email: string;
-	role: UserRole;
-	password: string;
-}
-
 // --- Action Result Type ---
 export type ActionResult = {
 	message?: string;
