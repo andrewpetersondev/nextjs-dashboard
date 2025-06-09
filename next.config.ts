@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
 	output: "standalone",
 	experimental: {
 		ppr: "incremental",
+		authInterrupts: true,
 	},
 };
 
