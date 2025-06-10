@@ -1,6 +1,7 @@
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import CreateUserForm from "@/src/ui/users/create-user-form";
 import type { Metadata } from "next";
+import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Create User",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
+export default async function Page(): Promise<JSX.Element> {
 	return (
 		<main>
 			<Breadcrumbs

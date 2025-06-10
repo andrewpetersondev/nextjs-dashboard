@@ -3,9 +3,9 @@ import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { EditUserFormFields } from "@/src/lib/definitions/users";
 import { editUser } from "@/src/server-actions/users";
-import { useActionState } from "react";
+import { type JSX, useActionState } from "react";
 
-export default function EditUserForm({ user }: { user: UserDTO }) {
+export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 	const initialState: FormState<EditUserFormFields> = {
 		message: "",
 		errors: {},

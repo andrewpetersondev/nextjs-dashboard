@@ -1,11 +1,14 @@
 import { ContainerInner, ContainerOuter } from "@/src/ui/container";
 import clsx from "clsx";
-import { forwardRef } from "react";
+import { type JSX, forwardRef } from "react";
 
 export const Background = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div"> & { pattern?: "grid" | "dot" }
->(function Background({ className, children, pattern, ...props }, ref) {
+>(function Background(
+	{ className, children, pattern, ...props },
+	ref,
+): JSX.Element {
 	const patternClass =
 		pattern === "grid"
 			? "bg-grid-pattern"

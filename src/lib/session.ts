@@ -13,7 +13,7 @@ import { cookies } from "next/headers";
 
 const getEncodedKey = async () => {
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	const secret = process.env.SESSION_SECRET!;
+	const secret: string = process.env.SESSION_SECRET!;
 	if (!secret) {
 		throw new Error("SESSION_SECRET is not defined");
 	}
@@ -42,7 +42,13 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 				validatedFields.error.flatten().fieldErrors,
 			);
 		}
-		const validatedPayload = validatedFields.data;
+		const validatedPayload: {
+			user: {
+				userId: string;
+				role: "user" | "admin";
+				expiresAt: number;
+			};
+		} = validatedFields.data;
 		return await new SignJWT(validatedPayload)
 			.setProtectedHeader({ alg: "HS256" })
 			.setIssuedAt()

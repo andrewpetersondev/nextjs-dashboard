@@ -19,7 +19,7 @@ export default function InvoicesError({
 			<button
 				type="button"
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
-				onClick={() => reset()}
+				onClick={(): void => reset()}
 			>
 				Try again
 			</button>

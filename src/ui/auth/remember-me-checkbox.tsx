@@ -1,4 +1,6 @@
-export function RememberMeCheckbox() {
+import type { JSX } from "react";
+
+export function RememberMeCheckbox(): JSX.Element {
 	return (
 		<div className="flex gap-3">
 			<div className="flex h-6 shrink-0 items-center">

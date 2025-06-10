@@ -1,7 +1,8 @@
 import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import type { JSX } from "react";
 
-export function CreateUser() {
+export function CreateUser(): JSX.Element {
 	return (
 		<Link
 			href="/dashboard/users/create"
@@ -13,7 +14,7 @@ export function CreateUser() {
 	);
 }
 
-export function UpdateUser({ id }: { id: string }) {
+export function UpdateUser({ id }: { id: string }): JSX.Element {
 	return (
 		<Link
 			href={`/dashboard/users/${id}/edit`}

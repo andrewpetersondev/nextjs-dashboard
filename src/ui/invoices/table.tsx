@@ -1,6 +1,8 @@
+import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { fetchFilteredInvoices } from "@/src/lib/query/invoices";
 import DesktopTable from "@/src/ui/invoices/desktop-table";
 import MobileTable from "@/src/ui/invoices/mobile-table";
+import type { JSX } from "react";
 
 export default async function InvoicesTable({
 	query,
@@ -8,8 +10,11 @@ export default async function InvoicesTable({
 }: {
 	query: string;
 	currentPage: number;
-}) {
-	const invoices = await fetchFilteredInvoices(query, currentPage);
+}): Promise<JSX.Element> {
+	const invoices: FetchFilteredInvoicesData[] = await fetchFilteredInvoices(
+		query,
+		currentPage,
+	);
 
 	return (
 		<div className="mt-6 flow-root">

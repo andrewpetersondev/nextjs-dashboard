@@ -1,10 +1,11 @@
 import { logout } from "@/src/server-actions/users";
 import { PowerIcon } from "@heroicons/react/24/outline";
+import type { JSX } from "react";
 
-export async function LogoutForm() {
+export async function LogoutForm(): Promise<JSX.Element> {
 	return (
 		<form
-			action={async () => {
+			action={async (): Promise<void> => {
 				"use server";
 				await logout();
 			}}

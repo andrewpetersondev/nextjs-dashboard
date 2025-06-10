@@ -1,7 +1,8 @@
 import { FaceFrownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import type { JSX } from "react";
 
-export default function NotFound() {
+export default function NotFound(): JSX.Element {
 	return (
 		<main className="flex h-full flex-col items-center justify-center gap-2">
 			<FaceFrownIcon className="w-10 text-text-disabled" />

@@ -9,11 +9,13 @@ import {
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { JSX } from "react";
 
 type NavLinksProps = {
 	role?: string;
 };
 
+// todo: strictly define types for links
 const baseLinks = [
 	{ name: "Home", href: "/dashboard", icon: HomeIcon },
 	{
@@ -25,7 +27,7 @@ const baseLinks = [
 ];
 
 export default function NavLinks({ role }: NavLinksProps) {
-	const pathname = usePathname();
+	const pathname: string = usePathname();
 	const links = [...baseLinks];
 
 	// Only add Users link for admin
@@ -39,7 +41,7 @@ export default function NavLinks({ role }: NavLinksProps) {
 
 	return (
 		<>
-			{links.map((link) => {
+			{links.map((link): JSX.Element => {
 				const LinkIcon = link.icon;
 				return (
 					<Link

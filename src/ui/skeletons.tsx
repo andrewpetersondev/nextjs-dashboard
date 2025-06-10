@@ -1,7 +1,9 @@
+import type { JSX } from "react";
+
 const shimmer =
 	"before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-linear-to-r before:from-transparent before:via-white/60 before:to-transparent";
 
-export function CardSkeleton() {
+export function CardSkeleton(): JSX.Element {
 	return (
 		<div
 			className={`${shimmer} bg-bg-accent relative overflow-hidden rounded-xl p-2 shadow-xs`}
@@ -17,7 +19,7 @@ export function CardSkeleton() {
 	);
 }
 
-export function CardsSkeleton() {
+export function CardsSkeleton(): JSX.Element {
 	return (
 		<>
 			<CardSkeleton />
@@ -28,7 +30,7 @@ export function CardsSkeleton() {
 	);
 }
 
-export function RevenueChartSkeleton() {
+export function RevenueChartSkeleton(): JSX.Element {
 	return (
 		<div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>
 			<div className="bg-bg-accent mb-4 h-8 w-36 rounded-md" />
@@ -43,7 +45,7 @@ export function RevenueChartSkeleton() {
 	);
 }
 
-export function InvoiceSkeleton() {
+export function InvoiceSkeleton(): JSX.Element {
 	return (
 		<div className="border-bg-accent flex flex-row items-center justify-between border-b py-4">
 			<div className="flex items-center">
@@ -58,7 +60,7 @@ export function InvoiceSkeleton() {
 	);
 }
 
-export function LatestInvoicesSkeleton() {
+export function LatestInvoicesSkeleton(): JSX.Element {
 	return (
 		<div
 			className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
@@ -81,7 +83,7 @@ export function LatestInvoicesSkeleton() {
 	);
 }
 
-export function DashboardSkeleton() {
+export function DashboardSkeleton(): JSX.Element {
 	return (
 		<div>
 			<div
@@ -101,7 +103,7 @@ export function DashboardSkeleton() {
 	);
 }
 
-export function TableRowSkeleton() {
+export function TableRowSkeleton(): JSX.Element {
 	return (
 		<tr className="w-full border-b border-bg-primary last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
 			{/* Customer Name and Image */}
@@ -138,7 +140,7 @@ export function TableRowSkeleton() {
 	);
 }
 
-export function InvoicesMobileSkeleton() {
+export function InvoicesMobileSkeleton(): JSX.Element {
 	return (
 		<div className="bg-bg-accent mb-2 w-full rounded-md p-4">
 			<div className="border-bg-primary flex items-center justify-between border-b pb-8">
@@ -162,7 +164,7 @@ export function InvoicesMobileSkeleton() {
 	);
 }
 
-export function InvoicesTableSkeleton() {
+export function InvoicesTableSkeleton(): JSX.Element {
 	return (
 		<div className="mt-6 flow-root">
 			<div className="inline-block min-w-full align-middle">
@@ -216,6 +218,6 @@ export function InvoicesTableSkeleton() {
 	);
 }
 
-export function InvoicesSearchSkeleton() {
+export function InvoicesSearchSkeleton(): JSX.Element {
 	return <div>Invoices Search Skeleton</div>;
 }

@@ -36,8 +36,8 @@ export async function createInvoice(
 	}
 
 	const { customerId, amount, status } = validated.data;
-	const amountInCents = amount * 100;
-	const date = new Date().toISOString().split("T")[0];
+	const amountInCents: number = amount * 100;
+	const date: string = new Date().toISOString().split("T")[0];
 	try {
 		await db.insert(invoices).values({
 			customerId,

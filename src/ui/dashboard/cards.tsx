@@ -5,6 +5,7 @@ import {
 	InboxIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import type { JSX } from "react";
 
 const iconMap = {
 	collected: BanknotesIcon,
@@ -13,7 +14,7 @@ const iconMap = {
 	invoices: InboxIcon,
 };
 
-export async function CardWrapper() {
+export async function CardWrapper(): Promise<JSX.Element> {
 	const { invoiceCount, pendingInvoices, paidInvoices, customerCount } =
 		await fetchCardData();
 	return (
@@ -34,7 +35,7 @@ export function Card({
 	title: string;
 	value: number | string;
 	type: "invoices" | "customers" | "pending" | "collected";
-}) {
+}): JSX.Element {
 	const Icon = iconMap[type];
 
 	return (

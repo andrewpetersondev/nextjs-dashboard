@@ -6,9 +6,9 @@ import {
 	LatestInvoicesSkeleton,
 	RevenueChartSkeleton,
 } from "@/src/ui/skeletons";
-import { Suspense } from "react";
+import { type JSX, Suspense } from "react";
 
-export default function UserDashboard() {
+export default function UserDashboard(): JSX.Element {
 	return (
 		<main>
 			<h1 className="mb-4 text-xl md:text-2xl">User Dashboard</h1>

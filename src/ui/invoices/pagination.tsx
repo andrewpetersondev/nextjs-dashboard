@@ -4,15 +4,25 @@ import { generatePagination } from "@/src/lib/utils.client";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import {
+	type ReadonlyURLSearchParams,
+	usePathname,
+	useSearchParams,
+} from "next/navigation";
+import type { JSX } from "react";
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
-	const pathname = usePathname();
-	const searchParams = useSearchParams();
-	const currentPage = Number(searchParams.get("page")) || 1;
-	const allPages = generatePagination(currentPage, totalPages);
+export default function Pagination({
+	totalPages,
+}: { totalPages: number }): JSX.Element {
+	const pathname: string = usePathname();
+	const searchParams: ReadonlyURLSearchParams = useSearchParams();
+	const currentPage: number = Number(searchParams.get("page")) || 1;
+	const allPages: (string | number)[] = generatePagination(
+		currentPage,
+		totalPages,
+	);
 
-	const createPageURL = (pageNumber: number | string) => {
+	const createPageURL = (pageNumber: number | string): string => {
 		const params = new URLSearchParams(searchParams);
 		params.set("page", pageNumber.toString());
 		return `${pathname}?${params.toString()}`;
@@ -28,7 +38,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 				/>
 
 				<div className="flex -space-x-px">
-					{allPages.map((page, index) => {
+					{allPages.map((page: string | number, index: number): JSX.Element => {
 						let position: "first" | "last" | "single" | "middle" | undefined;
 
 						if (index === 0) position = "first";
@@ -68,14 +78,18 @@ function PaginationNumber({
 	href: string;
 	position?: "first" | "last" | "middle" | "single";
 	isActive: boolean;
-}) {
-	const className = clsx("flex h-10 w-10 items-center justify-center border", {
-		"rounded-l-md": position === "first" || position === "single",
-		"rounded-r-md": position === "last" || position === "single",
-		"z-10 border-bg-active border-2 border-bg-focus text-text-active": isActive,
-		"hover:bg-bg-hover": !isActive && position !== "middle",
-		"text-text-secondary": position === "middle",
-	});
+}): JSX.Element {
+	const className: string = clsx(
+		"flex h-10 w-10 items-center justify-center border",
+		{
+			"rounded-l-md": position === "first" || position === "single",
+			"rounded-r-md": position === "last" || position === "single",
+			"z-10 border-bg-active border-2 border-bg-focus text-text-active":
+				isActive,
+			"hover:bg-bg-hover": !isActive && position !== "middle",
+			"text-text-secondary": position === "middle",
+		},
+	);
 
 	return isActive || position === "middle" ? (
 		<div className={className}>{page}</div>
@@ -94,8 +108,8 @@ function PaginationArrow({
 	href: string;
 	direction: "left" | "right";
 	isDisabled?: boolean;
-}) {
-	const className = clsx(
+}): JSX.Element {
+	const className: string = clsx(
 		"flex h-10 w-10 items-center justify-center rounded-md border",
 		{
 			"pointer-events-none text-text-disabled": isDisabled,
@@ -105,7 +119,7 @@ function PaginationArrow({
 		},
 	);
 
-	const icon =
+	const icon: JSX.Element =
 		direction === "left" ? (
 			<ArrowLeftIcon className="w-4" />
 		) : (

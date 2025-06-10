@@ -1,11 +1,16 @@
 import clsx from "clsx";
 import type React from "react";
+import type { JSX } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	children: React.ReactNode;
 }
 
-export function Button({ children, className, ...rest }: ButtonProps) {
+export function Button({
+	children,
+	className,
+	...rest
+}: ButtonProps): JSX.Element {
 	return (
 		<button
 			{...rest}

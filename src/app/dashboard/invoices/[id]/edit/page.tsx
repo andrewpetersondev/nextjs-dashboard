@@ -5,6 +5,7 @@ import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditInvoiceForm from "@/src/ui/invoices/edit-form";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Edit Invoice",
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: {
+	params: Promise<{ id: string }>;
+}): Promise<JSX.Element> {
 	const params: { id: string } = await props.params;
 	const id: string = params.id;
 	const [invoice, customers] = await Promise.all([

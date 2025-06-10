@@ -6,7 +6,7 @@ const SALT_ROUNDS = 10;
 
 export const hashPassword = async (password: string): Promise<string> => {
 	try {
-		const salt = await bcryptjs.genSalt(SALT_ROUNDS);
+		const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);
 		return await bcryptjs.hash(password, salt);
 	} catch (error) {
 		console.error("Error while hashing password:", error);

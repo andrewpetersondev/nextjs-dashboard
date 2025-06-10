@@ -5,7 +5,7 @@ import type { JSX } from "react";
 export default function DemoAdminUser({ text }: { text: string }): JSX.Element {
 	return (
 		<form
-			action={async () => {
+			action={async (): Promise<void> => {
 				await demoUser("admin");
 			}}
 		>

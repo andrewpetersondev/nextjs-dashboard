@@ -1,10 +1,13 @@
 import clsx from "clsx";
-import { forwardRef } from "react";
+import { type ForwardedRef, type JSX, forwardRef } from "react";
 
 export const ContainerOuter = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div">
->(function OuterContainer({ className, children, ...props }, ref) {
+>(function OuterContainer(
+	{ className, children, ...props },
+	ref: ForwardedRef<HTMLDivElement>,
+): JSX.Element {
 	return (
 		<div ref={ref} className={clsx("sm:px-8", className)} {...props}>
 			<div className="mx-auto w-full max-w-7xl lg:px-8">{children}</div>
@@ -15,7 +18,10 @@ export const ContainerOuter = forwardRef<
 export const ContainerInner = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div">
->(function InnerContainer({ className, children, ...props }, ref) {
+>(function InnerContainer(
+	{ className, children, ...props },
+	ref: ForwardedRef<HTMLDivElement>,
+): JSX.Element {
 	return (
 		<div
 			ref={ref}
@@ -30,7 +36,10 @@ export const ContainerInner = forwardRef<
 export const Container = forwardRef<
 	React.ElementRef<typeof ContainerOuter>,
 	React.ComponentPropsWithoutRef<typeof ContainerOuter>
->(function Container({ children, ...props }, ref) {
+>(function Container(
+	{ children, ...props },
+	ref: ForwardedRef<HTMLDivElement>,
+): JSX.Element {
 	return (
 		<ContainerOuter ref={ref} {...props}>
 			<ContainerInner>{children}</ContainerInner>

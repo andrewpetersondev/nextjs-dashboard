@@ -11,7 +11,7 @@ import {
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useActionState } from "react";
+import { type JSX, useActionState } from "react";
 
 export default function EditInvoiceForm({
 	invoice,
@@ -19,7 +19,7 @@ export default function EditInvoiceForm({
 }: {
 	invoice: Invoice;
 	customers: CustomerField[];
-}) {
+}): JSX.Element {
 	const initialState: InvoiceFormState = { message: "", errors: {} };
 	const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
 	const [state, formAction, isPending] = useActionState(
@@ -43,11 +43,13 @@ export default function EditInvoiceForm({
 							<option value="" disabled>
 								Select a customer
 							</option>
-							{customers.map((customer) => (
-								<option key={customer.id} value={customer.id}>
-									{customer.name}
-								</option>
-							))}
+							{customers.map(
+								(customer: CustomerField): JSX.Element => (
+									<option key={customer.id} value={customer.id}>
+										{customer.name}
+									</option>
+								),
+							)}
 						</select>
 						<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
 					</div>
@@ -73,11 +75,13 @@ export default function EditInvoiceForm({
 						</div>
 					</div>
 					<div id="customer-error" aria-live="polite" aria-atomic="true">
-						{state.errors?.amount?.map((error: string) => (
-							<p className="text-text-error mt-2 text-sm" key={error}>
-								{error}
-							</p>
-						))}
+						{state.errors?.amount?.map(
+							(error: string): JSX.Element => (
+								<p className="text-text-error mt-2 text-sm" key={error}>
+									{error}
+								</p>
+							),
+						)}
 					</div>
 				</div>
 

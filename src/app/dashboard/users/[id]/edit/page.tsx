@@ -18,8 +18,6 @@ export default async function Page(props: {
 }): Promise<JSX.Element> {
 	const params: { id: string } = await props.params;
 	const id: string = params.id;
-	// note: should user be able to be undefined?
-	// there should always be a valid user, since this a protected by middleware
 	const user: UserDTO = await fetchUserById(id);
 	if (!user.role.includes("admin")) {
 		// throw new Error("You are not allowed to edit this user.");

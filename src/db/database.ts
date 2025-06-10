@@ -1,7 +1,11 @@
 import "server-only";
 
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import {
+	type NodePgClient,
+	type NodePgDatabase,
+	drizzle,
+} from "drizzle-orm/node-postgres";
 
 console.log("database.ts ...");
 
@@ -14,4 +18,6 @@ if (process.env.POSTGRES_URL) {
 	process.exit(1);
 }
 
-export const db = drizzle({ connection: url, casing: "snake_case" });
+export const db: NodePgDatabase<Record<string, never>> & {
+	$client: NodePgClient;
+} = drizzle({ connection: url, casing: "snake_case" });

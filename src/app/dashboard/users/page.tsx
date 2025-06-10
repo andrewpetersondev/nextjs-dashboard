@@ -5,7 +5,7 @@ import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
 import { CreateUser } from "@/src/ui/users/buttons";
 import UsersTable from "@/src/ui/users/users-table";
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { type JSX, Suspense } from "react";
 
 export const metadata: Metadata = {
 	title: "Users",
@@ -18,7 +18,7 @@ export default async function Page(dynamicURL: {
 		query?: string;
 		page?: string;
 	}>;
-}) {
+}): Promise<JSX.Element> {
 	const searchParams:
 		| {
 				query?: string;

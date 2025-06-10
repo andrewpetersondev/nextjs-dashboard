@@ -1,7 +1,7 @@
 import LoginForm from "@/src/ui/auth/login-form";
-import { Suspense } from "react";
+import { type JSX, Suspense } from "react";
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
 	return (
 		<main className="h-full">
 			<Suspense fallback={<div>Loading ...</div>}>

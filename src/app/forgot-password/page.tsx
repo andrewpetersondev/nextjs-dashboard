@@ -1,6 +1,7 @@
 import Heading from "@/src/ui/auth/heading";
+import type { JSX } from "react";
 
-export default function ForgotPasswordPage() {
+export default function ForgotPasswordPage(): JSX.Element {
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
 			{/* Logo and heading */}

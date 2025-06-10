@@ -1,9 +1,10 @@
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import Image from "next/image";
+import type { JSX } from "react";
 
 export default async function DesktopTable({
 	customers,
-}: { customers: FormattedCustomersTableRow[] }) {
+}: { customers: FormattedCustomersTableRow[] }): Promise<JSX.Element> {
 	return (
 		<table className="text-text-primary hidden min-w-full rounded-md md:table">
 			{/* Table header with column names */}
@@ -29,46 +30,48 @@ export default async function DesktopTable({
 
 			{/* Table body with customer details */}
 			<tbody className="bg-bg-primary divide-bg-accent text-text-primary divide-y">
-				{customers.map((customer) => (
-					<tr
-						key={customer.id}
-						className="group cursor-pointer hover:bg-bg-active"
-					>
-						{/* Customer name and profile picture */}
-						<td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-							<div className="flex items-center gap-3">
-								<Image
-									src={customer.imageUrl}
-									className="rounded-full"
-									alt={`${customer.name}'s profile picture`}
-									width={28}
-									height={28}
-								/>
-								<p>{customer.name}</p>
-							</div>
-						</td>
+				{customers.map(
+					(customer: FormattedCustomersTableRow): JSX.Element => (
+						<tr
+							key={customer.id}
+							className="group cursor-pointer hover:bg-bg-active"
+						>
+							{/* Customer name and profile picture */}
+							<td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+								<div className="flex items-center gap-3">
+									<Image
+										src={customer.imageUrl}
+										className="rounded-full"
+										alt={`${customer.name}'s profile picture`}
+										width={28}
+										height={28}
+									/>
+									<p>{customer.name}</p>
+								</div>
+							</td>
 
-						{/* Customer email */}
-						<td className="px-4 py-5 text-sm whitespace-nowrap">
-							{customer.email}
-						</td>
+							{/* Customer email */}
+							<td className="px-4 py-5 text-sm whitespace-nowrap">
+								{customer.email}
+							</td>
 
-						{/* Total invoices */}
-						<td className="px-4 py-5 text-sm whitespace-nowrap">
-							{customer.totalInvoices}
-						</td>
+							{/* Total invoices */}
+							<td className="px-4 py-5 text-sm whitespace-nowrap">
+								{customer.totalInvoices}
+							</td>
 
-						{/* Total pending amount */}
-						<td className="px-4 py-5 text-sm whitespace-nowrap">
-							{customer.totalPending}
-						</td>
+							{/* Total pending amount */}
+							<td className="px-4 py-5 text-sm whitespace-nowrap">
+								{customer.totalPending}
+							</td>
 
-						{/* Total paid amount */}
-						<td className="px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
-							{customer.totalPaid}
-						</td>
-					</tr>
-				))}
+							{/* Total paid amount */}
+							<td className="px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
+								{customer.totalPaid}
+							</td>
+						</tr>
+					),
+				)}
 			</tbody>
 		</table>
 	);

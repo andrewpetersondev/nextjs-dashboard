@@ -1,12 +1,13 @@
 import type { Status } from "@/src/lib/definitions/invoices";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import type { JSX } from "react";
 
 export default function InvoiceStatus({
 	status,
 }: {
 	status: Status;
-}) {
+}): JSX.Element {
 	return (
 		<span
 			className={clsx(

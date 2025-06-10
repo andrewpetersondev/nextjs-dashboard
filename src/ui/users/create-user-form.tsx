@@ -9,7 +9,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useActionState } from "react";
+import { type JSX, useActionState } from "react";
 
 type CreateUserFormState = Readonly<{
 	errors?: {
@@ -22,7 +22,7 @@ type CreateUserFormState = Readonly<{
 }>;
 
 // TODO: return success or failure message
-export default function CreateUserForm() {
+export default function CreateUserForm(): JSX.Element {
 	const [state, action, pending] = useActionState<
 		CreateUserFormState,
 		FormData

@@ -1,4 +1,10 @@
-import { type InputHTMLAttributes, type ReactNode, forwardRef } from "react";
+import {
+	type ForwardedRef,
+	type InputHTMLAttributes,
+	type JSX,
+	type ReactNode,
+	forwardRef,
+} from "react";
 import { FieldError } from "./field-error";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,9 +21,17 @@ export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
  */
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 	function InputField(
-		{ id, label, icon, error, dataCy, describedById, ...props },
-		ref,
-	) {
+		{
+			id,
+			label,
+			icon,
+			error,
+			dataCy,
+			describedById,
+			...props
+		}: InputFieldProps,
+		ref: ForwardedRef<HTMLInputElement>,
+	): JSX.Element {
 		return (
 			<div>
 				<label htmlFor={id} className="block text-sm/6 font-medium">

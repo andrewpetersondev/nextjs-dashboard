@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { type JSX, memo } from "react";
 
 export interface FieldErrorProps {
 	id?: string;
@@ -12,16 +12,18 @@ export const FieldError = memo(function FieldError({
 	error,
 	dataCy,
 	label,
-}: FieldErrorProps) {
+}: FieldErrorProps): JSX.Element | null {
 	// This component is now used for all field errors (email, username, password)
 	if (!error?.length) return null;
 	return (
 		<div id={id} data-cy={dataCy} className="text-text-error">
 			{label && <p>{label}</p>}
 			<ul>
-				{error.map((err) => (
-					<li key={err}>- {err}</li>
-				))}
+				{error.map(
+					(err: string): JSX.Element => (
+						<li key={err}>- {err}</li>
+					),
+				)}
 			</ul>
 		</div>
 	);

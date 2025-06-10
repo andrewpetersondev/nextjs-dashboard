@@ -1,9 +1,11 @@
 import { fetchRevenue } from "@/src/lib/data";
+import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils";
 import { CalendarIcon } from "@heroicons/react/16/solid";
+import type { JSX } from "react";
 
-export default async function RevenueChart() {
-	const revenue = await fetchRevenue();
+export default async function RevenueChart(): Promise<JSX.Element> {
+	const revenue: Revenue[] = await fetchRevenue();
 	const chartHeight = 350;
 
 	const { yAxisLabels, topLabel } = generateYAxis(revenue);
@@ -22,24 +24,31 @@ export default async function RevenueChart() {
 						className="text-text-primary mb-6 hidden flex-col justify-between text-sm sm:flex"
 						style={{ height: `${chartHeight}px` }}
 					>
-						{yAxisLabels.map((label) => (
-							<p key={label}>{label}</p>
-						))}
+						{yAxisLabels.map(
+							(label: string): JSX.Element => (
+								<p key={label}>{label}</p>
+							),
+						)}
 					</div>
 
-					{revenue.map((month) => (
-						<div key={month.month} className="flex flex-col items-center gap-2">
+					{revenue.map(
+						(month: Revenue): JSX.Element => (
 							<div
-								className="bg-bg-accent w-full rounded-md"
-								style={{
-									height: `${(chartHeight / topLabel) * month.revenue}px`,
-								}}
-							/>
-							<p className="text-text-primary -rotate-90 text-sm sm:rotate-0">
-								{month.month}
-							</p>
-						</div>
-					))}
+								key={month.month}
+								className="flex flex-col items-center gap-2"
+							>
+								<div
+									className="bg-bg-accent w-full rounded-md"
+									style={{
+										height: `${(chartHeight / topLabel) * month.revenue}px`,
+									}}
+								/>
+								<p className="text-text-primary -rotate-90 text-sm sm:rotate-0">
+									{month.month}
+								</p>
+							</div>
+						),
+					)}
 				</div>
 				<div className="text-text-primary flex items-center pt-6 pb-2">
 					<CalendarIcon className="h-5 w-5" />

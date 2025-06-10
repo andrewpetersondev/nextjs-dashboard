@@ -1,4 +1,6 @@
 import Image from "next/image";
+import type React from "react";
+import type { JSX } from "react";
 
 type HeadingProps = {
 	text: string;
@@ -12,7 +14,7 @@ export default function Heading({
 	logoSrc = "https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600",
 	logoAlt = "Your Company",
 	children,
-}: HeadingProps) {
+}: HeadingProps): JSX.Element {
 	return (
 		<div className="sm:mx-auto sm:w-full sm:max-w-md">
 			<Image

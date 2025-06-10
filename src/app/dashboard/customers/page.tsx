@@ -2,6 +2,7 @@ import { fetchFilteredCustomers } from "@/src/lib/data";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import CustomersTable from "@/src/ui/customers/table";
 import type { Metadata } from "next";
+import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Customers",
@@ -13,7 +14,7 @@ export default async function Page(props: {
 		query?: string;
 		page?: string;
 	}>;
-}) {
+}): Promise<JSX.Element> {
 	const searchParams:
 		| {
 				query?: string;

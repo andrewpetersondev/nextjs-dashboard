@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { JSX } from "react";
 
 type AuthSwitchLinkProps = {
 	prompt: string;
@@ -10,7 +11,7 @@ export default function AuthSwitchLink({
 	prompt,
 	href,
 	linkText,
-}: AuthSwitchLinkProps) {
+}: AuthSwitchLinkProps): JSX.Element {
 	return (
 		<p className="text-text-accent mt-10 text-center text-sm/6">
 			{prompt}{" "}

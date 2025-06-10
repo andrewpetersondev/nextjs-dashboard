@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { DecryptPayload } from "@/src/lib/definitions/session";
 import { decrypt } from "@/src/lib/session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -23,12 +24,12 @@ import { cache } from "react";
  * }
  */
 export const verifySessionOptimistic = cache(async () => {
-	const cookie = (await cookies()).get("session")?.value;
+	const cookie: string | undefined = (await cookies()).get("session")?.value;
 	if (!cookie) {
 		console.error("No session cookie found");
 		redirect("/login");
 	}
-	const session = await decrypt(cookie);
+	const session: DecryptPayload | undefined = await decrypt(cookie);
 	if (!session || !session.user || !session.user.userId) {
 		console.error("Invalid session or missing user information");
 		redirect("/login");

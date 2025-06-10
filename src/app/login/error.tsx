@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { type JSX, useEffect } from "react";
 
 export default function LoginError({
 	error,
@@ -8,8 +8,8 @@ export default function LoginError({
 }: {
 	error: Error & { digest?: string };
 	reset: () => void;
-}) {
-	useEffect(() => {
+}): JSX.Element {
+	useEffect((): void => {
 		console.error(error);
 	}, [error]);
 
@@ -19,7 +19,7 @@ export default function LoginError({
 			<button
 				type="button"
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
-				onClick={() => reset()}
+				onClick={(): void => reset()}
 			>
 				Try again
 			</button>

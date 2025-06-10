@@ -11,8 +11,8 @@ import { InputField } from "@/src/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { useActionState } from "react";
-import React from "react";
+import { type JSX, useActionState } from "react";
+import type React from "react";
 
 type LoginState = {
 	errors?: {
@@ -22,7 +22,7 @@ type LoginState = {
 	message?: string;
 };
 
-export default function LoginForm() {
+export default function LoginForm(): JSX.Element {
 	const [state, action, pending] = useActionState<LoginState, FormData>(login, {
 		errors: {},
 		message: "",

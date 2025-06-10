@@ -1,11 +1,14 @@
-export const formatCurrency = (amount: number) => {
+export const formatCurrency = (amount: number): string => {
 	return (amount / 100).toLocaleString("en-US", {
 		style: "currency",
 		currency: "USD",
 	});
 };
 
-export const formatDateToLocal = (dateStr: string, locale = "en-US") => {
+export const formatDateToLocal = (
+	dateStr: string,
+	locale = "en-US",
+): string => {
 	const date = new Date(dateStr);
 	const options: Intl.DateTimeFormatOptions = {
 		day: "numeric",
@@ -23,10 +26,12 @@ export const generateYAxis = (
 	}[],
 ) => {
 	const yAxisLabels: string[] = [];
-	const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-	const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+	const highestRecord: number = Math.max(
+		...revenue.map((month) => month.revenue),
+	);
+	const topLabel: number = Math.ceil(highestRecord / 1000) * 1000;
 
-	for (let i = topLabel; i >= 0; i -= 100000) {
+	for (let i: number = topLabel; i >= 0; i -= 100000) {
 		yAxisLabels.push(`$${i / 1000}K`);
 	}
 

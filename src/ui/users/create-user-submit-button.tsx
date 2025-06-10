@@ -1,5 +1,5 @@
 import { Button } from "@/src/ui/button";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 
 type AuthSubmitButtonProps = {
 	children: ReactNode;
@@ -14,7 +14,7 @@ export function CreateUserSubmitButton({
 	pending,
 	className = "",
 	...props
-}: AuthSubmitButtonProps) {
+}: AuthSubmitButtonProps): JSX.Element {
 	return (
 		<Button
 			type="submit"
