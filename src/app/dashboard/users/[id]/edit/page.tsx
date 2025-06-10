@@ -3,7 +3,7 @@ import type { UserDTO } from "@/src/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
 import type { Metadata } from "next";
-import { forbidden } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { JSX } from "react";
 
 export const metadata: Metadata = {
@@ -18,10 +18,9 @@ export default async function Page(props: {
 }): Promise<JSX.Element> {
 	const params: { id: string } = await props.params;
 	const id: string = params.id;
-	const user: UserDTO = await fetchUserById(id);
-	if (!user.role.includes("admin")) {
-		// throw new Error("You are not allowed to edit this user.");
-		forbidden();
+	const user: UserDTO | null = await fetchUserById(id);
+	if (!user) {
+		notFound();
 	}
 	return (
 		<main>

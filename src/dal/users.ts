@@ -9,14 +9,14 @@ import { asc, count, eq, ilike, or } from "drizzle-orm";
 /**
  * Fetch a user by ID and return a safe UserDTO.
  */
-export async function fetchUserById(id: string): Promise<UserDTO> {
+export async function fetchUserById(id: string): Promise<UserDTO | null> {
 	try {
 		const data: UserEntity[] = await db
 			.select()
 			.from(users)
 			.where(eq(users.id, id));
-		const user = data[0] as UserEntity;
-		return toUserDTO(user);
+		const user = data[0] as UserEntity | undefined;
+		return user ? toUserDTO(user) : null;
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch user by id.");
