@@ -12,8 +12,6 @@ export interface UserDTO {
 	username: string;
 	email: string;
 	role: UserRole;
-	password: string;
-	// sensitiveData is intentionally omitted
 }
 
 // PROBLEM: convert code so database calls use mapper which returns dto

@@ -16,7 +16,5 @@ export function toUserDTO(user: UserEntity): UserDTO {
 		username: user.username,
 		email: user.email,
 		role: user.role,
-		password: user.password,
-		// sensitiveData is intentionally omitted
 	};
 }

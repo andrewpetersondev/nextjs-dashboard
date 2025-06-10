@@ -295,10 +295,16 @@ export async function editUser(
 	const { username, email, password, role } = validated.data;
 
 	try {
-		const updateData: Record<string, unknown> = { username, email, role };
-
+		const updateData: Record<string, unknown> = {};
+		if (username !== undefined) updateData.username = username;
+		if (email !== undefined) updateData.email = email;
+		if (role !== undefined) updateData.role = role;
 		if (password && password.trim() !== "") {
 			updateData.password = await hashPassword(password);
+		}
+
+		if (Object.keys(updateData).length === 0) {
+			return { message: "No fields to update." };
 		}
 
 		await db.update(users).set(updateData).where(eq(users.id, id));

@@ -19,28 +19,59 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 	return (
 		<div>
 			<h1>edit user form </h1>
-			<div className="flex gap-8 p-10">
-				<p>Username: {user.username}</p>
-				<p>Email: {user.email}</p>
-				<p>Role: {user.role}</p>
-				<p>Password: {user.password}</p>
-				<p>Id: {user.id}</p>
-			</div>
+
+			<section>
+				<p>Admins can edit any profile.</p>
+			</section>
 
 			<form className="bg-gray-400" action={action}>
+				<input type="hidden" name="userId" value={user.id} />
+
 				<label>
 					Username:
 					<input type="text" name="username" defaultValue={user.username} />
 				</label>
 
+				<div id="update-user-error" aria-live="polite" aria-atomic="true">
+					{state.errors?.username?.map((error: string) => (
+						<p className="text-text-error mt-2 text-sm" key={error}>
+							{error}
+						</p>
+					))}
+				</div>
+
+				<br />
+
 				<label>
 					Email:
 					<input type="email" name="email" defaultValue={user.email} />
 				</label>
+
+				<div id="update-user-error" aria-live="polite" aria-atomic="true">
+					{state.errors?.email?.map((error: string) => (
+						<p className="text-text-error mt-2 text-sm" key={error}>
+							{error}
+						</p>
+					))}
+				</div>
+
+				<br />
+
 				<label>
 					Password:
 					<input type="password" name="password" />
 				</label>
+
+				<div id="update-user-error" aria-live="polite" aria-atomic="true">
+					{state.errors?.password?.map((error: string) => (
+						<p className="text-text-error mt-2 text-sm" key={error}>
+							{error}
+						</p>
+					))}
+				</div>
+
+				<br />
+
 				<label>
 					Role:
 					<select name="role" defaultValue={user.role}>
@@ -48,32 +79,25 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 						<option value="user">User</option>
 					</select>
 				</label>
-				<button type="submit" disabled={isPending}>
+
+				<div id="update-user-error" aria-live="polite" aria-atomic="true">
+					{state.errors?.role?.map((error: string) => (
+						<p className="text-text-error mt-2 text-sm" key={error}>
+							{error}
+						</p>
+					))}
+				</div>
+
+				<br />
+
+				<button
+					type="submit"
+					disabled={isPending}
+					className="bg-blue-500 text-white p-2 rounded"
+				>
 					Save Changes
 				</button>
 			</form>
-			<div id="update-user-error" aria-live="polite" aria-atomic="true">
-				{state.errors?.username?.map((error: string) => (
-					<p className="text-text-error mt-2 text-sm" key={error}>
-						{error}
-					</p>
-				))}
-				{state.errors?.email?.map((error: string) => (
-					<p className="text-text-error mt-2 text-sm" key={error}>
-						{error}
-					</p>
-				))}
-				{state.errors?.password?.map((error: string) => (
-					<p className="text-text-error mt-2 text-sm" key={error}>
-						{error}
-					</p>
-				))}
-				{state.errors?.role?.map((error: string) => (
-					<p className="text-text-error mt-2 text-sm" key={error}>
-						{error}
-					</p>
-				))}
-			</div>
 		</div>
 	);
 }

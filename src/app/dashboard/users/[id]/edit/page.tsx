@@ -34,9 +34,6 @@ export default async function Page(props: {
 					},
 				]}
 			/>
-			<section>
-				<p>Admins can edit any profile.</p>
-			</section>
 			<EditUserForm user={user} />
 		</main>
 	);
