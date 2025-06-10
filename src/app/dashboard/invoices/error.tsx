@@ -9,7 +9,7 @@ export default function InvoicesError({
 	error: Error & { digest?: string };
 	reset: () => void;
 }) {
-	useEffect(() => {
+	useEffect((): void => {
 		console.error(error);
 	}, [error]);
 

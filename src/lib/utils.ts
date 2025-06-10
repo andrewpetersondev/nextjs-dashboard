@@ -1,3 +1,5 @@
+import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue";
+
 export const formatCurrency = (amount: number): string => {
 	return (amount / 100).toLocaleString("en-US", {
 		style: "currency",
@@ -9,25 +11,23 @@ export const formatDateToLocal = (
 	dateStr: string,
 	locale = "en-US",
 ): string => {
-	const date = new Date(dateStr);
+	const date: Date = new Date(dateStr);
 	const options: Intl.DateTimeFormatOptions = {
 		day: "numeric",
 		month: "short",
 		year: "numeric",
 	};
-	const formatter = new Intl.DateTimeFormat(locale, options);
+	const formatter: Intl.DateTimeFormat = new Intl.DateTimeFormat(
+		locale,
+		options,
+	);
 	return formatter.format(date);
 };
 
-export const generateYAxis = (
-	revenue: {
-		month: string;
-		revenue: number;
-	}[],
-) => {
+export const generateYAxis = (revenue: Revenue[]): YAxisResult => {
 	const yAxisLabels: string[] = [];
 	const highestRecord: number = Math.max(
-		...revenue.map((month) => month.revenue),
+		...revenue.map((month: Revenue) => month.revenue),
 	);
 	const topLabel: number = Math.ceil(highestRecord / 1000) * 1000;
 

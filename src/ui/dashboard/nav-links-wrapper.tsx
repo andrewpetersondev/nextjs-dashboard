@@ -1,14 +1,9 @@
-import { verifySessionOptimistic } from "@/src/lib/dal";
-import type { UserSessionRole } from "@/src/lib/definitions/session";
+import { verifySessionOptimistic } from "@/src/dal/session-dal";
 import NavLinks from "@/src/ui/dashboard/nav-links";
 import type { JSX } from "react";
 
 export default async function NavLinksWrapper(): Promise<JSX.Element> {
-	const session: {
-		isAuthorized: boolean;
-		userId: string;
-		role: UserSessionRole;
-	} = await verifySessionOptimistic();
-	const role: UserSessionRole = session?.role;
+	const session = await verifySessionOptimistic();
+	const role = session?.role;
 	return <NavLinks role={role} />;
 }

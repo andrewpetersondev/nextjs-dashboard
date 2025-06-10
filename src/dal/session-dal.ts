@@ -23,20 +23,22 @@ import { cache } from "react";
  *   // Proceed with authorized logic
  * }
  */
-export const verifySessionOptimistic = cache(async () => {
-	const cookie: string | undefined = (await cookies()).get("session")?.value;
-	if (!cookie) {
-		console.error("No session cookie found");
-		redirect("/login");
-	}
-	const session: DecryptPayload | undefined = await decrypt(cookie);
-	if (!session || !session.user || !session.user.userId) {
-		console.error("Invalid session or missing user information");
-		redirect("/login");
-	}
-	return {
-		isAuthorized: true,
-		userId: session.user.userId,
-		role: session.user.role,
-	};
-});
+export const verifySessionOptimistic = cache(
+	async (): Promise<{ isAuthorized: true; userId: string; role: string }> => {
+		const cookie: string | undefined = (await cookies()).get("session")?.value;
+		if (!cookie) {
+			console.error("No session cookie found");
+			redirect("/login");
+		}
+		const session: DecryptPayload | undefined = await decrypt(cookie);
+		if (!session || !session.user || !session.user.userId) {
+			console.error("Invalid session or missing user information");
+			redirect("/login");
+		}
+		return {
+			isAuthorized: true,
+			userId: session.user.userId,
+			role: session.user.role,
+		};
+	},
+);

@@ -21,6 +21,7 @@ export default async function Page(dynamicURL: {
 		page?: string;
 	}>;
 }): Promise<JSX.Element> {
+	// todo: create type
 	const searchParams:
 		| {
 				query?: string;

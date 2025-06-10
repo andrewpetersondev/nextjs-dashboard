@@ -1,6 +1,8 @@
 import type { UserRole } from "@/src/lib/definitions/users";
 
 /**
+ ** User Data Transfer Object (DTO) for frontend.
+ ** Only exposes safe fields.
  ** Strips sensitive data from DB calls
  ** Server <---> DTO <---> Client
  ** This example strips the user property of **SensitiveData**
@@ -11,6 +13,7 @@ export interface UserDTO {
 	email: string;
 	role: UserRole;
 	password: string;
+	// sensitiveData is intentionally omitted
 }
 
 // PROBLEM: convert code so database calls use mapper which returns dto

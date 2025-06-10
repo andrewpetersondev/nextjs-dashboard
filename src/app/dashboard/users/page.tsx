@@ -1,4 +1,4 @@
-import { fetchUsersPages } from "@/src/lib/query/users";
+import { fetchUsersPages } from "@/src/dal/users";
 import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
@@ -19,6 +19,7 @@ export default async function Page(dynamicURL: {
 		page?: string;
 	}>;
 }): Promise<JSX.Element> {
+	// todo: create type
 	const searchParams:
 		| {
 				query?: string;

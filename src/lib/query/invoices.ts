@@ -48,12 +48,14 @@ export async function fetchLatestInvoices(): Promise<
 			.orderBy(desc(invoices.date))
 			.limit(5);
 
-		return data.map((invoice) => ({
-			...invoice,
-			id: brandInvoiceId(invoice.id),
-			status: brandStatus(invoice.status),
-			amount: formatCurrency(invoice.amount),
-		}));
+		return data.map(
+			(invoice: LatestInvoiceDbRow): ModifiedLatestInvoicesData => ({
+				...invoice,
+				id: brandInvoiceId(invoice.id),
+				status: brandStatus(invoice.status),
+				amount: formatCurrency(invoice.amount),
+			}),
+		);
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch the latest invoices.");
@@ -67,7 +69,7 @@ export async function fetchFilteredInvoices(
 	query: string,
 	currentPage: number,
 ): Promise<FetchFilteredInvoicesData[]> {
-	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+	const offset: number = (currentPage - 1) * ITEMS_PER_PAGE;
 	try {
 		const data: FilteredInvoiceDbRow[] = await db
 			.select({
@@ -95,11 +97,13 @@ export async function fetchFilteredInvoices(
 			.offset(offset);
 
 		// --- Fix: Brand id and status ---
-		return data.map((invoice) => ({
-			...invoice,
-			id: brandInvoiceId(invoice.id),
-			status: brandStatus(invoice.status),
-		}));
+		return data.map(
+			(invoice: FilteredInvoiceDbRow): FetchFilteredInvoicesData => ({
+				...invoice,
+				id: brandInvoiceId(invoice.id),
+				status: brandStatus(invoice.status),
+			}),
+		);
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch invoices.");

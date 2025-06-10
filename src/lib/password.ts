@@ -2,13 +2,13 @@ import "server-only";
 
 import bcryptjs from "bcryptjs";
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS: number = 10;
 
 export const hashPassword = async (password: string): Promise<string> => {
 	try {
 		const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);
 		return await bcryptjs.hash(password, salt);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Error while hashing password:", error);
 		throw error;
 	}

@@ -5,7 +5,10 @@ export const generatePagination = (
 	totalPages: number,
 ): (string | number)[] => {
 	if (totalPages <= 7) {
-		return Array.from({ length: totalPages }, (_, i) => i + 1);
+		return Array.from(
+			{ length: totalPages },
+			(_: unknown, i: number): number => i + 1,
+		);
 	}
 
 	if (currentPage <= 3) {

@@ -7,7 +7,7 @@ import { toUserDTO } from "@/src/mappers/user.mapper";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**
- * Fetch a user by ID.
+ * Fetch a user by ID and return a safe UserDTO.
  */
 export async function fetchUserById(id: string): Promise<UserDTO> {
 	try {

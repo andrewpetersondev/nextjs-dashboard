@@ -1,5 +1,5 @@
+import { fetchFilteredUsers } from "@/src/dal/users";
 import type { UserEntity } from "@/src/db/entities/user";
-import { fetchFilteredUsers } from "@/src/lib/query/users";
 import { UpdateUser } from "@/src/ui/users/buttons";
 import type { JSX } from "react";
 

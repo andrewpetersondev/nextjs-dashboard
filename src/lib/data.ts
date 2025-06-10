@@ -31,7 +31,8 @@ export async function fetchRevenue(): Promise<Revenue[]> {
 		const data: Revenue[] = await db.select().from(revenues);
 
 		return data.sort(
-			(a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
+			(a: Revenue, b: Revenue): number =>
+				monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
 		);
 	} catch (error) {
 		console.error("Database Error:", error);
@@ -108,11 +109,13 @@ export async function fetchFilteredCustomers(
 			.orderBy(asc(customers.name));
 
 		// Map to FormattedCustomersTable type
-		return searchCustomers.map((item) => ({
-			...item,
-			totalPending: formatCurrency(item.totalPending),
-			totalPaid: formatCurrency(item.totalPaid),
-		}));
+		return searchCustomers.map(
+			(item: CustomersTableRow): FormattedCustomersTableRow => ({
+				...item,
+				totalPending: formatCurrency(item.totalPending),
+				totalPaid: formatCurrency(item.totalPaid),
+			}),
+		);
 	} catch (error) {
 		console.error("Fetch Filtered Customers Error:", error);
 		throw new Error("Failed to fetch the customer table.");
