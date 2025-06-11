@@ -15,7 +15,7 @@ export async function fetchUserById(id: string): Promise<UserDTO | null> {
 			.select()
 			.from(users)
 			.where(eq(users.id, id));
-		const user = data[0] as UserEntity | undefined;
+		const user: UserEntity = data[0];
 		return user ? toUserDTO(user) : null;
 	} catch (error: unknown) {
 		console.error("Database Error:", error);

@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 import type { FormState } from "@/src/lib/definitions/form";
+import type { UserRole } from "@/src/lib/definitions/roles";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -18,7 +19,6 @@ import {
 	LoginFormSchema,
 	type SignupFormFields,
 	SignupFormSchema,
-	type UserRole,
 } from "@/src/lib/definitions/users";
 import { revalidatePath } from "next/cache";
 

@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { UserRole } from "@/src/lib/definitions/roles";
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
-	type UserSessionRole,
 } from "@/src/lib/definitions/session";
 import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
@@ -36,7 +36,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 				errors: validatedFields.error.flatten().fieldErrors,
 				payload,
 			});
-			// Throw custom error with details (do not leak sensitive data)
+			// Throw a custom error with details (do not leak sensitive data)
 			throw new ValidationError(
 				"Invalid session payload: Missing or invalid required fields",
 				validatedFields.error.flatten().fieldErrors,
@@ -45,7 +45,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 		const validatedPayload: {
 			user: {
 				userId: string;
-				role: "user" | "admin";
+				role: UserRole;
 				expiresAt: number;
 			};
 		} = validatedFields.data;
@@ -88,7 +88,7 @@ export async function decrypt(
 
 export async function createSession(
 	userId: string,
-	role: UserSessionRole = "user",
+	role: UserRole = "user",
 ): Promise<void> {
 	try {
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();

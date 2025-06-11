@@ -1,75 +1,45 @@
+import { type UserRole, roleSchema } from "@/src/lib/definitions/roles";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
-// --- Types ---
-
-/**
- * Payload for encrypting a session.
- */
+// --- Session payload types ---
 export type EncryptPayload = {
 	user: {
 		userId: string;
-		role: UserSessionRole;
+		role: UserRole;
 		expiresAt: number;
 	};
 };
 
-/**
- * Allowed user roles for session.
- */
-export type UserSessionRole = "admin" | "user" | "guest";
-
-/**
- * Payload for decrypting a session, includes JWT claims.
- */
 export type DecryptPayload = EncryptPayload & {
 	iat: number;
 	exp: number;
 };
 
-// --- Validation Schemas ---
+// --- Zod Field Schemas ---
+export const userIdSchema = zod.string().uuid();
+export const expiresAtSchema = zod.number();
+export const iatSchema = zod.number();
+export const expSchema = zod.number();
 
-/**
- * Zod schema for encrypt payload validation.
- */
+// --- Validation Schemas ---
 export const EncryptPayloadSchema = zod.object({
 	user: zod.object({
-		userId: zod.string().uuid(),
-		role: zod.enum(["admin", "user"]),
-		expiresAt: zod.number(),
+		userId: userIdSchema,
+		role: roleSchema,
+		expiresAt: expiresAtSchema,
 	}),
+});
+
+export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
+	iat: iatSchema,
+	exp: expSchema,
 });
 
 /**
- * Zod schema for decrypt payload validation (extends encrypt payload).
+ * The shape of the result returned when verifying a user session.
  */
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-	iat: zod.number(),
-	exp: zod.number(),
-});
-
-/*
-import { z } from "zod";
-
-export const EncryptPayloadSchema = z.object({
-	user: z.object({
-		userId: z.string().uuid(),
-		role: z.enum(["admin", "user"]),
-		expiresAt: z.number(),
-	}),
-});
-
-export type EncryptPayload = {
-	user: {
-		userId: string;
-		role: string;
-		expiresAt: number;
-	};
-};
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-	iat: z.number(),
-	exp: z.number(),
-});
-
-export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
-*/
+export interface SessionVerificationResult {
+	isAuthorized: true;
+	userId: string;
+	role: UserRole;
+}

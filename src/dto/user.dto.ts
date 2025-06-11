@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/users";
+import type { UserRole } from "@/src/lib/definitions/roles";
 
 /**
  ** User Data Transfer Object (DTO) for frontend.
@@ -22,4 +22,3 @@ export interface UserDTO {
 // POSSIBLE SOLUTIONS:
 // 1. temporarily configure userDTO to return undefined
 // 2. do not allow fetchUserById to return Undefined
-// *

@@ -1,5 +1,6 @@
 // --- User Entity ---
-import type { UserRole } from "@/src/lib/definitions/users";
+
+import type { UserRole } from "@/src/lib/definitions/roles";
 
 export interface UserEntity {
 	id: string;

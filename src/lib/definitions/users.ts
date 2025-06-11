@@ -1,9 +1,10 @@
 import type { FormState } from "@/src/lib/definitions/form";
+import {
+	USER_ROLES,
+	type UserRole,
+	roleSchema,
+} from "@/src/lib/definitions/roles";
 import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
-
-// --- User Roles ---
-export const USER_ROLES = ["admin", "user", "guest"] as const;
-export type UserRole = (typeof USER_ROLES)[number];
 
 // --- Action Result Type ---
 export type ActionResult = {
@@ -53,14 +54,6 @@ export const emailSchema = zod
 	.string()
 	.email({ message: "Please enter a valid email address." })
 	.trim();
-
-/**
- * Role: enum of allowed roles (required).
- */
-export const roleSchema = zod.enum(USER_ROLES, {
-	// required_error: "Role is required.", // todo: will this property break my code?
-	invalid_type_error: "Invalid user role.",
-});
 
 /**
  * Password: 5-32 chars, at least one letter, number, and special character.

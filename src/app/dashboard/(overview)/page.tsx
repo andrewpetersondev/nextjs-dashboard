@@ -4,11 +4,11 @@ import MiddlewareCard from "@/src/ui/dashboard/middleware-card";
 import UserDashboard from "@/src/ui/dashboard/user-dashboard";
 import type { JSX } from "react";
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached. otherwise, next build will fail
+export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 
 export default async function Page(): Promise<JSX.Element> {
 	const session = await verifySessionOptimistic();
-	const userRole = session?.role;
+	const userRole: string = session?.role;
 	if (userRole === "admin") {
 		return (
 			<div>
