@@ -1,3 +1,4 @@
+import { FieldError } from "@/src/ui/auth/field-error";
 import {
 	type ForwardedRef,
 	type InputHTMLAttributes,
@@ -5,19 +6,27 @@ import {
 	type ReactNode,
 	forwardRef,
 } from "react";
-import { FieldError } from "./field-error";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+	/** Unique id for the input and label */
 	id: string;
+	/** Label text for the input */
 	label: string;
+	/** Optional icon rendered inside the input */
 	icon?: ReactNode;
+	/** Error messages to display */
 	error?: string[];
+	/** Data attribute for testing */
 	dataCy?: string;
+	/** ID for aria-describedby */
 	describedById?: string;
 }
 
 /**
- * Reusable input field with label and error display.
+ * Reusable input field with label, icon, and error display.
+ * @param props - InputFieldProps
+ * @param ref - Forwarded ref to the input element
+ * @returns JSX.Element
  */
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 	function InputField(

@@ -1,7 +1,7 @@
 # TODO
 
 - [ ] when the database is freshly created and seeded, users WILL NOT be able to use DEMO buttons, because drizzle seed is corrupting the intended data.  
-- [ ] restricted pages are not working properly after recent changes on 6/9. any user can access restricted pages.
+- [x] restricted pages are not working properly after recent changes on 6/9. any user can access restricted pages.
 - [ ] Rewrite all functions for stateless authentication by creating cookies on the server.
 - [ ] .safeParseAsync for zod
 - [ ] types/interfaces/schemas for user and session appear to be a mess

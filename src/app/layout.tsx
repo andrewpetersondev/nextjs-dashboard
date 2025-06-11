@@ -1,5 +1,5 @@
 import "@/src/app/globals.css";
-import { inter } from "@/src/ui/style/fonts";
+import { notoSans } from "@/src/ui/style/fonts";
 import type { Metadata } from "next";
 import type React from "react";
 import type { JSX } from "react";
@@ -20,7 +20,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="h-full scheme-light-dark">
 			<body
-				className={`h-full antialiased scheme-light-dark ${inter.className}`}
+				className={`h-full antialiased scheme-light-dark ${notoSans.className}`}
 			>
 				{children}
 			</body>

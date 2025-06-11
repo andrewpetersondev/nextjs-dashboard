@@ -3,16 +3,13 @@
 /* Global custom variables */
 :root {
 	--font-eyegrab: "tektur", sans-serif;
-	--font-readme: "Inter", sans-serif;
-	--font-family: var(--font-readme);
-	/* if i use color-scheme, then i can not test with the theme toggle that i made.
-   i have to change the firefox setting*/
-	/* i can also use the toggle in devtools */
-	/* added utility class to <html> and <body> instead*/
 	color-scheme: light dark;
 }
 
 @theme {
+	/* === FONTS (experiment) === */
+	--font-experiment: "Merienda", sans-serif;
+
 	/* === BASE COLORS === */
 	--color-text-primary: light-dark(var(--color-gray-800), var(--color-gray-100));
 	--color-bg-primary: light-dark(var(--color-gray-100), var(--color-gray-950));

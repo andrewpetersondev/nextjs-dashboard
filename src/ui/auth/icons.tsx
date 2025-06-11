@@ -1,6 +1,10 @@
-import { memo } from "react";
+import { type FC, memo } from "react";
 
-export const GoogleIcon = memo(() => (
+/**
+ * Google SVG icon for authentication buttons.
+ * @returns {JSX.Element} The Google icon SVG.
+ */
+export const GoogleIcon: FC = memo(() => (
 	<svg viewBox="0 0 24 24" aria-hidden="true" className="size-5">
 		<path
 			d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
@@ -22,7 +26,7 @@ export const GoogleIcon = memo(() => (
 ));
 GoogleIcon.displayName = "GoogleIcon";
 
-export const GitHubIcon = memo(() => (
+export const GitHubIcon: FC = memo(() => (
 	<svg
 		fill="currentColor"
 		viewBox="0 0 20 20"

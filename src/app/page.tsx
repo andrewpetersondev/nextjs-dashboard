@@ -10,11 +10,11 @@ export default function Page(): JSX.Element {
 			<AcmeLogo />
 			<div className="mt-4 flex grow flex-col gap-4 md:flex-row">
 				<div className="bg-bg-secondary flex flex-col justify-center gap-6 rounded-lg px-6 py-10 md:w-2/5 md:px-20">
-					<p className="text-xl font-bold md:text-3xl md:leading-normal">
+					<p className="text-xl font-medium md:text-3xl md:leading-normal">
 						<strong>Welcome to Acme.</strong> This is the example for the{" "}
 						<a
 							href="https://nextjs.org/learn/"
-							className="text-text-active hover:text-text-hover underline"
+							className="text-text-active hover:text-text-hover underline font-extrabold  font-experiment"
 							data-testid="nextjs-course-link"
 						>
 							Next.js Learn Course
