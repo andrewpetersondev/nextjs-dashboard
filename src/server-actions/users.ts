@@ -277,42 +277,67 @@ export async function editUser(
 	_prevState: FormState<EditUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<EditUserFormFields>> {
-	const validated = EditUserFormSchema.safeParse({
-		userId: formData.get("userId"),
-		username: formData.get("username"),
-		email: formData.get("email"),
-		password: formData.get("password"),
-		role: formData.get("role"),
-	});
+	const payload = {
+		...Object.fromEntries(formData.entries()),
+	};
+
+	if (payload.password === "") {
+		// biome-ignore lint/performance/noDelete: <explanation>
+		delete payload.password;
+	}
+
+	const validated = EditUserFormSchema.safeParse(payload);
 
 	if (!validated.success) {
 		return {
 			errors: validated.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to Update User.",
+			message: "Validation failed. Please check your input.",
 		};
 	}
 
-	const { username, email, password, role } = validated.data;
+	const [existingUser] = await db
+		.select()
+		.from(users)
+		.where(eq(users.id, id))
+		.limit(1);
 
-	try {
-		const updateData: Record<string, unknown> = {};
-		if (username !== undefined) updateData.username = username;
-		if (email !== undefined) updateData.email = email;
-		if (role !== undefined) updateData.role = role;
-		if (password && password.trim() !== "") {
-			updateData.password = await hashPassword(password);
-		}
-
-		if (Object.keys(updateData).length === 0) {
-			return { message: "No fields to update." };
-		}
-
-		await db.update(users).set(updateData).where(eq(users.id, id));
-	} catch (error) {
-		console.error("[editUser] Database Error:", { error, userId: id });
-		return { message: "Database Error. Failed to Update User." };
+	if (!existingUser) {
+		return { message: "User not found." };
 	}
 
-	revalidatePath("/dashboard/users");
-	redirect("/dashboard/users");
+	const patch: Record<string, unknown> = {};
+
+	// Only update if different (avoids unnecessary DB writes)
+	if (
+		validated.data.username &&
+		validated.data.username !== existingUser.username
+	) {
+		patch.username = validated.data.username;
+	}
+
+	if (validated.data.email && validated.data.email !== existingUser.email) {
+		patch.email = validated.data.email;
+	}
+
+	if (validated.data.role && validated.data.role !== existingUser.role) {
+		patch.role = validated.data.role;
+	}
+
+	if (validated.data.password && validated.data.password.length > 0) {
+		patch.password = await hashPassword(validated.data.password);
+	}
+
+	// No changes → nothing to do
+	if (Object.keys(patch).length === 0) {
+		return { message: "No changes to update." };
+	}
+
+	try {
+		await db.update(users).set(patch).where(eq(users.id, id));
+		revalidatePath("/dashboard/users");
+		return { message: "Profile updated!" };
+	} catch (error) {
+		console.error("Edit user failed:", error);
+		return { message: "Failed to update user. Please try again." };
+	}
 }

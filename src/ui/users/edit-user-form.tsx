@@ -33,8 +33,9 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 			</section>
 
 			<form action={action}>
-				{/* hidden userId */}
-				<input type="hidden" name="userId" value={user.id} />
+				{/* hidden id for user */}
+				<input type="hidden" name="id" value={user.id} />
+
 				{/* username */}
 				<div className="mb-4">
 					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
@@ -42,7 +43,7 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 							htmlFor="username"
 							className="mb-2 block text-sm font-medium"
 						>
-							Username:
+							Username: {user.username}
 						</label>
 						<div className="relative mt-2 rounded-md">
 							<div className="relative">
@@ -66,7 +67,6 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 							aria-live="polite"
 							aria-atomic="true"
 						>
-							{/*todo : this div has inlay hints while the other error blocks don't. find out why*/}
 							{state.errors?.username?.map(
 								(error: string): JSX.Element => (
 									<p className="text-text-error mt-2 text-sm" key={error}>
@@ -82,7 +82,7 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 				<div className="mb-4">
 					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
 						<label htmlFor="email" className="mb-2 block text-sm font-medium">
-							Email:
+							Email: {user.email}
 						</label>
 						<div className="relative mt-2 rounded-md">
 							<div className="relative">

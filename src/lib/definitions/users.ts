@@ -125,9 +125,9 @@ export const LoginFormSchema: ZodType<LoginFormFields> = zod.object({
  * Used for profile and user admin edit forms.
  * All fields are optional for PATCH semantics.
  */
-export const EditUserFormSchema: ZodType<EditUserFormFields> =
-	BaseUserFormSchema.partial().extend({
-		role: zod
-			.enum(USER_ROLES, { invalid_type_error: "Please select a role" })
-			.optional(),
-	});
+export const EditUserFormSchema: ZodType<EditUserFormFields> = zod.object({
+	username: usernameSchema.optional(),
+	email: emailSchema.optional(),
+	password: passwordSchema.optional(),
+	role: roleSchema.optional(),
+});
