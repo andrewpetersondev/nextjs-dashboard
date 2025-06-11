@@ -14,7 +14,7 @@ export default function Page(): JSX.Element {
 						<strong>Welcome to Acme.</strong> This is the example for the{" "}
 						<a
 							href="https://nextjs.org/learn/"
-							className="text-text-active hover:text-text-hover underline font-extrabold  font-experiment"
+							className="text-text-active hover:text-text-hover underline font-extrabold font-experiment"
 							data-testid="nextjs-course-link"
 						>
 							Next.js Learn Course
@@ -26,7 +26,8 @@ export default function Page(): JSX.Element {
 						className="bg-bg-active text-text-active hover:bg-bg-hover focus-visible:outline-bg-focus flex items-center gap-5 self-start rounded-md px-6 py-3 text-sm font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 md:text-base"
 						data-testid="login-button"
 					>
-						<span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
+						<span className="font-experiment">Log in</span>{" "}
+						<ArrowRightIcon className="w-5 md:w-6" />
 					</Link>
 				</div>
 				<div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">

@@ -1,4 +1,4 @@
-import { merienda } from "@/src/ui/style/fonts";
+import { tektur } from "@/src/ui/style/fonts";
 import clsx from "clsx";
 import React from "react";
 
@@ -23,7 +23,7 @@ function createHeading<T extends keyof typeof headingStyles>(tag: T) {
 				tag,
 				{
 					ref,
-					className: clsx(merienda.className, headingStyles[tag], className),
+					className: clsx(tektur.className, headingStyles[tag], className),
 					...props,
 				},
 				children,

@@ -1,5 +1,6 @@
 import { verifySessionOptimistic } from "@/src/dal/session-dal";
 import type { UserRole } from "@/src/lib/definitions/roles";
+import { H6 } from "@/src/ui/headings";
 import type { JSX } from "react";
 
 const allowedRoles: UserRole[] = ["admin", "user", "guest"];
@@ -15,10 +16,15 @@ export default async function MiddlewareCard(): Promise<JSX.Element> {
 	const authy: boolean = Boolean(session.isAuthorized);
 
 	return (
-		<div>
-			<p>User Id: {userId}</p>
-			<p>Role: {role}</p>
-			<p>{authy ? "Authorized" : "Not Authorized"}</p>
-		</div>
+		<ul>
+			<li className="font-experiment">User Id: {userId} in experiment font</li>
+			<li>
+				<p>Role: {role} in eyegrab font</p>
+			</li>
+			<li>
+				<H6>{authy ? "Authorized" : "Not Authorized"} in tektur font</H6>
+			</li>
+			<li>in notosans font</li>
+		</ul>
 	);
 }

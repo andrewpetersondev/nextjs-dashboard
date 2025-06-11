@@ -2,13 +2,13 @@
 
 /* Global custom variables */
 :root {
-	--font-eyegrab: "tektur", sans-serif;
+	--font-eyegrab: "merienda", sans-serif;
 	color-scheme: light dark;
 }
 
 @theme {
 	/* === FONTS (experiment) === */
-	--font-experiment: "Merienda", sans-serif;
+	--font-experiment: "Doto", sans-serif;
 
 	/* === BASE COLORS === */
 	--color-text-primary: light-dark(var(--color-gray-800), var(--color-gray-100));
@@ -47,12 +47,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+p {
 	font-family: var(--font-eyegrab), sans-serif;
 	color: var(--color-text-primary);
 }
