@@ -1,4 +1,5 @@
 import { fetchCardData } from "@/src/lib/data";
+import { H3 } from "@/src/ui/headings";
 import {
 	BanknotesIcon,
 	ClockIcon,
@@ -42,7 +43,7 @@ export function Card({
 		<div className="bg-bg-secondary text-text-secondary rounded-xl p-2 shadow-xs">
 			<div className="flex p-4">
 				<Icon className="text-text-primary h-5 w-5" />
-				<h3 className="ml-2 font-bold">{title}</h3>
+				<H3 className="ml-2">{title}</H3>
 			</div>
 			<p className="truncate rounded-xl px-4 py-8 text-center text-2xl">
 				{value}

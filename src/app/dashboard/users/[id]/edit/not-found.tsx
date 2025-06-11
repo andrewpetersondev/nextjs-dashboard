@@ -1,3 +1,4 @@
+import { H2 } from "@/src/ui/headings";
 import { FaceFrownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
@@ -6,7 +7,7 @@ export default function NotFound(): JSX.Element {
 	return (
 		<main className="flex h-full flex-col items-center justify-center gap-2">
 			<FaceFrownIcon className="w-10 text-text-disabled" />
-			<h2 className="text-xl font-semibold">404 Not Found</h2>
+			<H2>404 Not Found</H2>
 			<p>Could not find the requested user profile.</p>
 			<Link
 				href="/dashboard/users"

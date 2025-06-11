@@ -1,6 +1,7 @@
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
 import RevenueChart from "@/src/ui/dashboard/revenue-chart";
+import { H1 } from "@/src/ui/headings";
 import {
 	CardsSkeleton,
 	LatestInvoicesSkeleton,
@@ -11,7 +12,7 @@ import { type JSX, Suspense } from "react";
 export default function AdminDashboard(): JSX.Element {
 	return (
 		<main>
-			<h1 className="mb-4 text-xl md:text-2xl">Admin Dashboard</h1>
+			<H1 className="mb-4">Admin Dashboard</H1>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper />

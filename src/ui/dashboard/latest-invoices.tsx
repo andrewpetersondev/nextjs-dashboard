@@ -1,5 +1,6 @@
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
 import { fetchLatestInvoices } from "@/src/lib/query/invoices";
+import { H2, H3 } from "@/src/ui/headings";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
@@ -11,7 +12,7 @@ export default async function LatestInvoices(): Promise<JSX.Element> {
 
 	return (
 		<div className="flex w-full flex-col md:col-span-4">
-			<h2 className="mb-4 text-xl md:text-2xl">Latest Invoices</h2>
+			<H2 className="mb-4">Latest Invoices</H2>
 			<div className="bg-bg-secondary flex grow flex-col justify-between rounded-xl p-4">
 				<div className="bg-bg-primary px-6">
 					{latestInvoices.map(
@@ -53,7 +54,7 @@ export default async function LatestInvoices(): Promise<JSX.Element> {
 				</div>
 				<div className="text-text-primary flex items-center pt-6 pb-2">
 					<ArrowPathIcon className="h-5 w-5" />
-					<h3 className="ml-2">Updated just now</h3>
+					<H3 className="ml-2">Updated just now</H3>
 				</div>
 			</div>
 		</div>

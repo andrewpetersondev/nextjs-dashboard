@@ -1,6 +1,7 @@
 import { fetchRevenue } from "@/src/lib/data";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils";
+import { H2, H3 } from "@/src/ui/headings";
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 
@@ -16,7 +17,7 @@ export default async function RevenueChart(): Promise<JSX.Element> {
 
 	return (
 		<div className="w-full md:col-span-4">
-			<h2 className="mb-4 text-xl md:text-2xl">Recent Revenue</h2>
+			<H2 className="mb-4">Recent Revenue</H2>
 
 			<div className="bg-bg-secondary rounded-xl p-4">
 				<div className="bg-bg-primary mt-0 grid grid-cols-12 items-end gap-2 rounded-md p-4 sm:grid-cols-13 md:gap-4">
@@ -52,7 +53,7 @@ export default async function RevenueChart(): Promise<JSX.Element> {
 				</div>
 				<div className="text-text-primary flex items-center pt-6 pb-2">
 					<CalendarIcon className="h-5 w-5" />
-					<h3 className="ml-2">Last 12 months</h3>
+					<H3 className="ml-2">Last 12 months</H3>
 				</div>
 			</div>
 		</div>

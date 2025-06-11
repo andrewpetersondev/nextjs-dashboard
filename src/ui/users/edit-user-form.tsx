@@ -4,6 +4,7 @@ import type { FormState } from "@/src/lib/definitions/form";
 import type { EditUserFormFields } from "@/src/lib/definitions/users";
 import { editUser } from "@/src/server-actions/users";
 import { Button } from "@/src/ui/button";
+import { H1 } from "@/src/ui/headings";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState } from "react";
@@ -26,7 +27,7 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 
 	return (
 		<div>
-			<h1>edit user form </h1>
+			<H1>edit user form </H1>
 
 			<section>
 				<p>Admins can edit any profile.</p>
