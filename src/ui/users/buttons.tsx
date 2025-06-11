@@ -1,4 +1,5 @@
-import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { deleteUser } from "@/src/server-actions/users";
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
 
@@ -26,14 +27,14 @@ export function UpdateUser({ id }: { id: string }): JSX.Element {
 	);
 }
 
-// export function DeleteUser({ id }: { id: string }) {
-//   const deleteUserWithId = deleteUser.bind(null, id);
-//   return (
-//     <form action={deleteUserWithId}>
-//       <button type="submit" className="hover:bg-bg-hover rounded-md border p-2">
-//         <span className="sr-only">Delete</span>
-//         <TrashIcon className="w-5" />
-//       </button>
-//     </form>
-//   );
-// }
+export function DeleteUser({ id }: { id: string }): JSX.Element {
+	const deleteUserWithId = deleteUser.bind(null, id);
+	return (
+		<form action={deleteUserWithId}>
+			<button type="submit" className="hover:bg-bg-hover rounded-md border p-2">
+				<span className="sr-only">Delete</span>
+				<TrashIcon className="w-5" />
+			</button>
+		</form>
+	);
+}

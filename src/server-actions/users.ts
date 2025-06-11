@@ -139,7 +139,8 @@ export async function deleteUser(userId: string): Promise<void> {
 		console.error("Failed to delete user:", error);
 		throw new Error("An unexpected error occurred. Please try again.");
 	}
-	redirect("/");
+	revalidatePath("/dashboard/users");
+	redirect("/dashboard/users");
 }
 
 // --- Demo User ---

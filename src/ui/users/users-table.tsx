@@ -1,6 +1,6 @@
 import { fetchFilteredUsers } from "@/src/dal/users";
 import type { UserDTO } from "@/src/dto/user.dto";
-import { UpdateUser } from "@/src/ui/users/buttons";
+import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 import type { JSX } from "react";
 
 export default async function UsersTable({
@@ -30,7 +30,7 @@ export default async function UsersTable({
 						<div className="flex w-full items-center justify-between pt-4">
 							<div className="flex justify-end gap-2">
 								<UpdateUser id={user.id} />
-								{/* <DeleteUser id={user.id} /> */}
+								<DeleteUser id={user.id} />
 							</div>
 						</div>
 					</div>
