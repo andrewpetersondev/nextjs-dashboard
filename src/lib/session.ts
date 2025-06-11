@@ -11,27 +11,33 @@ import { ValidationError } from "@/src/lib/errors/validation-error";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const getEncodedKey = async () => {
-	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	const secret: string = process.env.SESSION_SECRET!;
-	if (!secret) {
-		throw new Error("SESSION_SECRET is not defined");
-	}
-	return new TextEncoder().encode(secret);
-};
+// --- Key Retrieval ---
+
+const getEncodedKey: () => Promise<Uint8Array> =
+	async (): Promise<Uint8Array> => {
+		const secret: string | undefined = process.env.SESSION_SECRET;
+
+		if (!secret) {
+			throw new Error("SESSION_SECRET is not defined");
+		}
+
+		return new TextEncoder().encode(secret);
+	};
 
 let encodedKey: Uint8Array;
 
-const initializeEncodedKey = async () => {
+// Note: This initializes a module-level key each time a session function runs (could be improved).
+const initializeEncodedKey: () => Promise<void> = async (): Promise<void> => {
 	encodedKey = await getEncodedKey();
 };
+
+// --- JWT (Encrypt & Decrypt) ---
 
 export async function encrypt(payload: EncryptPayload): Promise<string> {
 	await initializeEncodedKey();
 	try {
 		const validatedFields = EncryptPayloadSchema.safeParse(payload);
 		if (!validatedFields.success) {
-			// Log structured error for observability
 			console.error("Session payload validation failed", {
 				errors: validatedFields.error.flatten().fieldErrors,
 				payload,
@@ -42,19 +48,13 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 				validatedFields.error.flatten().fieldErrors,
 			);
 		}
-		const validatedPayload: {
-			user: {
-				userId: string;
-				role: UserRole;
-				expiresAt: number;
-			};
-		} = validatedFields.data;
+		const validatedPayload: EncryptPayload = validatedFields.data;
 		return await new SignJWT(validatedPayload)
 			.setProtectedHeader({ alg: "HS256" })
 			.setIssuedAt()
 			.setExpirationTime("30 d")
 			.sign(encodedKey);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("Error during JWT creation:", error);
 		throw new Error("DecryptPayload encryption failed");
 	}
@@ -79,8 +79,8 @@ export async function decrypt(
 			);
 			return undefined;
 		}
-		return validatedFields.data;
-	} catch (error) {
+		return validatedFields.data as DecryptPayload;
+	} catch (error: unknown) {
 		console.error("Failed to verify session", error);
 		return undefined;
 	}
@@ -91,8 +91,10 @@ export async function createSession(
 	role: UserRole = "user",
 ): Promise<void> {
 	try {
-		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).getTime();
-		const session = await encrypt({
+		const expiresAt: number = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).getTime();
+		const session: string = await encrypt({
 			user: { userId, role, expiresAt },
 		});
 		const cookieStore = await cookies();
@@ -103,7 +105,7 @@ export async function createSession(
 			sameSite: "lax",
 			path: "/",
 		});
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error("createSession error: ", error);
 	}
 }
@@ -148,7 +150,7 @@ export async function updateSession(): Promise<null | void> {
 	}
 }
 
-export async function deleteSession() {
+export async function deleteSession(): Promise<void> {
 	const cookieStore = await cookies();
 	cookieStore.delete("session");
 }

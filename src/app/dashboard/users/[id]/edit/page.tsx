@@ -13,13 +13,19 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-// promises are allowed in props params because Partial Pre-Rendering is enabled
-export default async function Page(props: {
-	params: Promise<{ id: string }>;
-}): Promise<JSX.Element> {
-	const params: { id: string } = await props.params;
+export interface EditUserPageParams {
+	id: string;
+}
 
-	const id: string = params.id;
+export interface EditUserPageProps {
+	params: Promise<EditUserPageParams>;
+}
+
+// promises are allowed in props params because Partial Pre-Rendering is enabled
+export default async function Page(
+	props: EditUserPageProps,
+): Promise<JSX.Element> {
+	const { id } = await props.params;
 
 	const user: UserDTO | null = await fetchUserById(id);
 

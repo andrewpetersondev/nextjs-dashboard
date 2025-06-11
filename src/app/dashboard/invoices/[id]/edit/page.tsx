@@ -1,6 +1,5 @@
 import { fetchCustomers } from "@/src/lib/data";
-import { brandInvoiceId } from "@/src/lib/query/invoices";
-import { fetchInvoiceById } from "@/src/lib/query/invoices";
+import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/query/invoices";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditInvoiceForm from "@/src/ui/invoices/edit-form";
 import type { Metadata } from "next";
@@ -11,20 +10,30 @@ export const metadata: Metadata = {
 	title: "Edit Invoice",
 };
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+export const dynamic = "force-dynamic";
 
-export default async function Page(props: {
-	params: Promise<{ id: string }>;
-}): Promise<JSX.Element> {
-	const params: { id: string } = await props.params;
-	const id: string = params.id;
+export interface EditInvoicePageParams {
+	id: string;
+}
+
+export interface EditInvoicePageProps {
+	params: Promise<EditInvoicePageParams>;
+}
+
+export default async function Page(
+	props: EditInvoicePageProps,
+): Promise<JSX.Element> {
+	const { id } = await props.params;
+
 	const [invoice, customers] = await Promise.all([
 		fetchInvoiceById(brandInvoiceId(id)),
 		fetchCustomers(),
 	]);
+
 	if (!invoice) {
 		notFound();
 	}
+
 	return (
 		<main>
 			<Breadcrumbs

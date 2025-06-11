@@ -15,19 +15,20 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export default async function Page(dynamicURL: {
-	searchParams?: Promise<{
-		query?: string;
-		page?: string;
-	}>;
-}): Promise<JSX.Element> {
-	// todo: create type
-	const searchParams:
-		| {
-				query?: string;
-				page?: string;
-		  }
-		| undefined = await dynamicURL.searchParams;
+export interface InvoicesSearchParams {
+	query?: string;
+	page?: string;
+}
+
+export interface InvoicesPageProps {
+	searchParams?: Promise<InvoicesSearchParams>;
+}
+
+export default async function Page(
+	dynamicURL: InvoicesPageProps,
+): Promise<JSX.Element> {
+	const searchParams: InvoicesSearchParams | undefined =
+		await dynamicURL.searchParams;
 	const query: string = searchParams?.query || "";
 	const currentPage: number = Number(searchParams?.page) || 1;
 	const totalPages: number = await fetchInvoicesPages(query);

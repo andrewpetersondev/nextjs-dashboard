@@ -3,12 +3,12 @@
 ## Code Response Guidelines
 
 - Always clearly indicate code changes with inline comments or highlights.
-- When suggesting code in WebStorm IDE, use blue color for code suggestions in the chat panel.
 - Provide concise, relevant, and production-ready code.
 - Use best practices for readability, maintainability, and performance.
 - Prefer TypeScript with strict typing.
 - Use import aliases for cleaner imports.
 - Follow the conventions and structure of the existing codebase.
+- Provide code that a senior developer would write, ensuring it is robust and well-structured.
 
 ## Next.js Application Stack
 

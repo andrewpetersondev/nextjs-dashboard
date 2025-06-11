@@ -8,19 +8,23 @@ export const metadata: Metadata = {
 	title: "Customers",
 };
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
-export default async function Page(props: {
-	searchParams?: Promise<{
-		query?: string;
-		page?: string;
-	}>;
-}): Promise<JSX.Element> {
-	const searchParams:
-		| {
-				query?: string;
-				page?: string;
-		  }
-		| undefined = await props.searchParams;
+export const dynamic = "force-dynamic";
+
+export interface CustomersSearchParams {
+	query?: string;
+	page?: string;
+}
+
+export interface CustomersPageProps {
+	searchParams?: Promise<CustomersSearchParams>;
+}
+
+export default async function Page(
+	props: CustomersPageProps,
+): Promise<JSX.Element> {
+	const searchParams: CustomersSearchParams | undefined =
+		await props.searchParams;
+
 	const query: string = searchParams?.query || "";
 
 	const customers: FormattedCustomersTableRow[] =
