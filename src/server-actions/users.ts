@@ -42,7 +42,7 @@ function normalizeFieldErrors(
 function actionResult({
 	message,
 	success = true,
-	errors,
+	errors = undefined,
 }: {
 	message: string;
 	success?: boolean;
@@ -117,6 +117,7 @@ export async function signup(
 		return actionResult({
 			message: error ?? "Failed to create an account. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 
@@ -159,6 +160,7 @@ export async function login(
 			return actionResult({
 				message: "Invalid email or password.",
 				success: false,
+				errors: undefined,
 			});
 		}
 
@@ -167,6 +169,7 @@ export async function login(
 			return actionResult({
 				message: "Invalid email or password.",
 				success: false,
+				errors: undefined,
 			});
 		}
 
@@ -177,6 +180,7 @@ export async function login(
 		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 }
@@ -219,6 +223,7 @@ export async function demoUser(
 		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 
@@ -237,6 +242,7 @@ export async function demoUser(
 		return actionResult({
 			message: error ?? "Failed to create demo user. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 
@@ -251,12 +257,14 @@ export async function demoUser(
 		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 
 	return actionResult({
 		message: "Demo user created and logged in.",
 		success: true,
+		errors: undefined,
 	});
 }
 
@@ -293,10 +301,15 @@ export async function createUser(
 			message:
 				error ?? "Failed to create an account on Users Page. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 
-	return actionResult({ message: "User created successfully.", success: true });
+	return actionResult({
+		message: "User created successfully.",
+		success: true,
+		errors: undefined,
+	});
 }
 
 // --- Edit User ---
@@ -331,7 +344,11 @@ export async function editUser(
 		.limit(1);
 
 	if (!existingUser) {
-		return actionResult({ message: "User not found.", success: false });
+		return actionResult({
+			message: "User not found.",
+			success: false,
+			errors: undefined,
+		});
 	}
 
 	const patch: Record<string, unknown> = {};
@@ -356,18 +373,27 @@ export async function editUser(
 	}
 
 	if (Object.keys(patch).length === 0) {
-		return actionResult({ message: "No changes to update.", success: true });
+		return actionResult({
+			message: "No changes to update.",
+			success: true,
+			errors: undefined,
+		});
 	}
 
 	try {
 		await db.update(users).set(patch).where(eq(users.id, id));
 		revalidatePath("/dashboard/users");
-		return actionResult({ message: "Profile updated!", success: true });
+		return actionResult({
+			message: "Profile updated!",
+			success: true,
+			errors: undefined,
+		});
 	} catch (error) {
 		console.error("Edit user failed:", error);
 		return actionResult({
 			message: "Failed to update user. Please try again.",
 			success: false,
+			errors: undefined,
 		});
 	}
 }
