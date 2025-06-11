@@ -10,6 +10,7 @@ import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 export type ActionResult = {
 	message?: string;
 	success: boolean;
+	errors?: Record<string, string[]>;
 };
 
 // --- User Form Fields ---

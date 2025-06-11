@@ -5,10 +5,14 @@ import { demoUserCounters, users } from "@/src/db/schema";
 import { comparePassword, hashPassword } from "@/src/lib/password";
 import { createSession, deleteSession } from "@/src/lib/session";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { FormState } from "@/src/lib/definitions/form";
-import type { UserRole } from "@/src/lib/definitions/roles";
+import type {
+	// USER_ROLES,
+	UserRole,
+} from "@/src/lib/definitions/roles";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -20,7 +24,62 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 } from "@/src/lib/definitions/users";
-import { revalidatePath } from "next/cache";
+
+// --- Helper: Normalize Zod fieldErrors to Record<string, string[]> ---
+function normalizeFieldErrors(
+	fieldErrors: Record<string, string[] | undefined>,
+): Record<string, string[]> {
+	const result: Record<string, string[]> = {};
+	for (const key in fieldErrors) {
+		if (Object.prototype.hasOwnProperty.call(fieldErrors, key)) {
+			result[key] = fieldErrors[key] ?? [];
+		}
+	}
+	return result;
+}
+
+// --- Helper: Standardized Action Result ---
+function actionResult({
+	message,
+	success = true,
+	errors,
+}: {
+	message: string;
+	success?: boolean;
+	errors?: Record<string, string[]>;
+}): ActionResult {
+	return { message, success, errors };
+}
+
+// --- Helper: Create User ---
+async function createUserRecord({
+	username,
+	email,
+	password,
+	role = "user",
+}: {
+	username: string;
+	email: string;
+	password: string;
+	role?: UserRole;
+}): Promise<{ userId: string | null; error?: string }> {
+	try {
+		const hashedPassword = await hashPassword(password);
+		const [user] = await db
+			.insert(users)
+			.values({ username, email, password: hashedPassword, role })
+			.returning({ insertedId: users.id });
+		return { userId: user?.insertedId ?? null };
+	} catch (error) {
+		console.error("createUserRecord error:", error);
+		return { userId: null, error: "Failed to create user record." };
+	}
+}
+
+// --- Helper: Ensures the role is always a valid UserRole ---
+// function normalizeRole(role: unknown, fallback: UserRole = "user"): UserRole {
+// 	return USER_ROLES.includes(role as UserRole) ? (role as UserRole) : fallback;
+// }
 
 // --- Signup ---
 export async function signup(
@@ -34,10 +93,11 @@ export async function signup(
 	});
 
 	if (!validated.success) {
-		return {
-			errors: validated.error.flatten().fieldErrors,
+		return actionResult({
 			message: "Validation failed. Please check your input.",
-		};
+			success: false,
+			errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+		});
 	}
 
 	const { username, email, password } = validated.data as {
@@ -46,31 +106,21 @@ export async function signup(
 		password: string;
 	};
 
-	try {
-		const hashedPassword: string = await hashPassword(password);
+	const { userId, error } = await createUserRecord({
+		username,
+		email,
+		password,
+		role: "user",
+	});
 
-		const [user] = await db
-			.insert(users)
-			.values({
-				username,
-				email,
-				password: hashedPassword,
-			})
-			.returning({ insertedId: users.id });
-
-		const userId: string = user?.insertedId;
-
-		if (!userId) {
-			console.error("Failed to create an account");
-			return { message: "Failed to create an account. Please try again." };
-		}
-
-		await createSession(userId, "user");
-	} catch (error) {
-		console.error("Failed to create a user:", error);
-		return { message: "An unexpected error occurred. Please try again." };
+	if (!userId) {
+		return actionResult({
+			message: error ?? "Failed to create an account. Please try again.",
+			success: false,
+		});
 	}
 
+	await createSession(userId, "user");
 	redirect("/dashboard");
 }
 
@@ -85,10 +135,11 @@ export async function login(
 	});
 
 	if (!validated.success) {
-		return {
-			errors: validated.error.flatten().fieldErrors,
+		return actionResult({
 			message: "Validation failed. Please check your input.",
-		};
+			success: false,
+			errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+		});
 	}
 
 	const { email, password } = validated.data;
@@ -105,24 +156,29 @@ export async function login(
 			.where(eq(users.email, email));
 
 		if (!user) {
-			return { message: "Invalid email or password." };
+			return actionResult({
+				message: "Invalid email or password.",
+				success: false,
+			});
 		}
 
-		const validPassword: boolean = await comparePassword(
-			password,
-			user.password,
-		);
-
+		const validPassword = await comparePassword(password, user.password);
 		if (!validPassword) {
-			return { message: "Invalid email or password." };
+			return actionResult({
+				message: "Invalid email or password.",
+				success: false,
+			});
 		}
 
-		await createSession(user.userId, user.role);
+		await createSession(user.userId, user.role as UserRole);
+		redirect("/dashboard");
 	} catch (error) {
 		console.error("Failed to log in user:", error);
-		return { message: "An unexpected error occurred. Please try again." };
+		return actionResult({
+			message: "An unexpected error occurred. Please try again.",
+			success: false,
+		});
 	}
-	redirect("/dashboard");
 }
 
 // --- Logout ---
@@ -144,11 +200,9 @@ export async function deleteUser(userId: string): Promise<void> {
 }
 
 // --- Demo User ---
-export async function demoUser(role: UserRole = "user"): Promise<ActionResult> {
-	if (!["user", "guest", "admin"].includes(role)) {
-		return { message: "Invalid demo user role.", success: false };
-	}
-
+export async function demoUser(
+	role: UserRole = "guest",
+): Promise<ActionResult> {
 	let counterId: number;
 	try {
 		const [counter] = await db
@@ -162,66 +216,48 @@ export async function demoUser(role: UserRole = "user"): Promise<ActionResult> {
 			error,
 			role,
 		});
-		return {
+		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-		};
+		});
 	}
 
 	const DEMO_PASSWORD = "Password123!";
 	const uniqueEmail = `demo+${role}${counterId}@demo.com`;
-	const uniqueUsername = `Demo ${role.charAt(0).toUpperCase() + role.slice(1)} ${counterId}`;
+	const uniqueUsername = `Demo_${role.toUpperCase()}_${counterId}`;
 
-	let demoUserId: string;
+	const { userId, error } = await createUserRecord({
+		username: uniqueUsername,
+		email: uniqueEmail,
+		password: DEMO_PASSWORD,
+		role,
+	});
 
-	try {
-		const hashedPassword = await hashPassword(DEMO_PASSWORD);
-
-		const [user] = await db
-			.insert(users)
-			.values({
-				username: uniqueUsername,
-				email: uniqueEmail,
-				password: hashedPassword,
-				role,
-			})
-			.returning({ id: users.id });
-
-		demoUserId = user.id;
-
-		if (!demoUserId) {
-			return {
-				message: "Failed to create demo user. Please try again.",
-				success: false,
-			};
-		}
-	} catch (error) {
-		console.error("[demoUser] Failed to create demo user:", {
-			error,
-			role,
-			email: uniqueEmail,
-		});
-		return {
-			message: "An unexpected error occurred. Please try again.",
+	if (!userId) {
+		return actionResult({
+			message: error ?? "Failed to create demo user. Please try again.",
 			success: false,
-		};
+		});
 	}
 
 	try {
-		await createSession(demoUserId, role);
+		await createSession(userId, role);
 	} catch (error) {
 		console.error("[demoUser] Failed to create session for demo user:", {
 			error,
-			demoUserId,
+			userId,
 			role,
 		});
-		return {
+		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-		};
+		});
 	}
 
-	redirect("/dashboard");
+	return actionResult({
+		message: "Demo user created and logged in.",
+		success: true,
+	});
 }
 
 // --- Create User (Admin) ---
@@ -237,39 +273,30 @@ export async function createUser(
 	});
 
 	if (!validated.success) {
-		return { errors: validated.error.flatten().fieldErrors };
+		return actionResult({
+			message: "Validation failed. Please check your input.",
+			success: false,
+			errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+		});
 	}
 
 	const { username, email, password, role } = validated.data;
+	const { userId, error } = await createUserRecord({
+		username,
+		email,
+		password,
+		role,
+	});
 
-	try {
-		const hashedPassword = await hashPassword(password);
-
-		const [user] = await db
-			.insert(users)
-			.values({
-				username,
-				email,
-				password: hashedPassword,
-				role,
-			})
-			.returning({ insertedId: users.id });
-
-		const userId: string | undefined = user?.insertedId;
-
-		if (!userId) {
-			console.error("Failed to create an account");
-			return {
-				message: "Failed to create an account on Users Page. Please try again.",
-			};
-		}
-
-		return { message: "User created successfully." };
-	} catch (error) {
-		console.error("Failed to create user: ", error);
-
-		return { message: "An unexpected error occurred. Please try again." };
+	if (!userId) {
+		return actionResult({
+			message:
+				error ?? "Failed to create an account on Users Page. Please try again.",
+			success: false,
+		});
 	}
+
+	return actionResult({ message: "User created successfully.", success: true });
 }
 
 // --- Edit User ---
@@ -290,10 +317,11 @@ export async function editUser(
 	const validated = EditUserFormSchema.safeParse(payload);
 
 	if (!validated.success) {
-		return {
-			errors: validated.error.flatten().fieldErrors,
+		return actionResult({
 			message: "Validation failed. Please check your input.",
-		};
+			success: false,
+			errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+		});
 	}
 
 	const [existingUser] = await db
@@ -303,12 +331,11 @@ export async function editUser(
 		.limit(1);
 
 	if (!existingUser) {
-		return { message: "User not found." };
+		return actionResult({ message: "User not found.", success: false });
 	}
 
 	const patch: Record<string, unknown> = {};
 
-	// Only update if different (avoids unnecessary DB writes)
 	if (
 		validated.data.username &&
 		validated.data.username !== existingUser.username
@@ -328,17 +355,19 @@ export async function editUser(
 		patch.password = await hashPassword(validated.data.password);
 	}
 
-	// No changes → nothing to do
 	if (Object.keys(patch).length === 0) {
-		return { message: "No changes to update." };
+		return actionResult({ message: "No changes to update.", success: true });
 	}
 
 	try {
 		await db.update(users).set(patch).where(eq(users.id, id));
 		revalidatePath("/dashboard/users");
-		return { message: "Profile updated!" };
+		return actionResult({ message: "Profile updated!", success: true });
 	} catch (error) {
 		console.error("Edit user failed:", error);
-		return { message: "Failed to update user. Please try again." };
+		return actionResult({
+			message: "Failed to update user. Please try again.",
+			success: false,
+		});
 	}
 }
