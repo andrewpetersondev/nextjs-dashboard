@@ -1,5 +1,5 @@
 import { fetchFilteredUsers } from "@/src/dal/users";
-import type { UserEntity } from "@/src/db/entities/user";
+import type { UserDTO } from "@/src/dto/user.dto";
 import { UpdateUser } from "@/src/ui/users/buttons";
 import type { JSX } from "react";
 
@@ -7,12 +7,12 @@ export default async function UsersTable({
 	query,
 	currentPage,
 }: { query: string; currentPage: number }): Promise<JSX.Element> {
-	const users: UserEntity[] = await fetchFilteredUsers(query, currentPage);
+	const users: UserDTO[] = await fetchFilteredUsers(query, currentPage);
 
 	return (
 		<div>
 			{users?.map(
-				(user: UserEntity): JSX.Element => (
+				(user: UserDTO): JSX.Element => (
 					<div
 						key={user.id}
 						className="bg-bg-primary mb-2 w-full rounded-md p-4"

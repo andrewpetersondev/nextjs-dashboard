@@ -33,26 +33,73 @@ export type SignupFormState = FormState<SignupFormFields>;
 export type LoginFormState = FormState<LoginFormFields>;
 export type EditUserFormState = FormState<EditUserFormFields>;
 
-// --- Zod Schemas ---
-export const BaseUserFormSchema = zod.object({
-	username: zod
-		.string()
-		.min(2, { message: "Username must be at least two characters long." })
-		.trim(),
-	email: zod.string().email({ message: "Please enter a valid email." }).trim(),
-	password: zod
-		.string()
-		.min(5, { message: "Be at least five characters long" })
-		.regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
-		.regex(/[0-9]/, { message: "Contain at least one number." })
-		.trim(),
+/* ============================================================================
+ * Field Schemas (zod)
+ * ========================================================================== */
+
+/**
+ * Username: 3-32 chars, trimmed, required.
+ */
+export const usernameSchema = zod
+	.string()
+	.min(3, { message: "Username must be at least three characters long." })
+	.max(32, { message: "Username cannot exceed 32 characters." })
+	.trim();
+
+/**
+ * Email: valid RFC 5322 address, trimmed, required.
+ */
+export const emailSchema = zod
+	.string()
+	.email({ message: "Please enter a valid email address." })
+	.trim();
+
+/**
+ * Role: enum of allowed roles (required).
+ */
+export const roleSchema = zod.enum(USER_ROLES, {
+	// required_error: "Role is required.", // todo: will this property break my code?
+	invalid_type_error: "Invalid user role.",
 });
 
+/**
+ * Password: 5-32 chars, at least one letter, number, and special character.
+ */
+export const passwordSchema = zod
+	.string()
+	.min(5, { message: "Password must be at least 5 characters long." })
+	.max(32, { message: "Password cannot exceed 32 characters." })
+	.regex(/[a-zA-Z]/, { message: "Password must contain a letter." })
+	.regex(/[0-9]/, { message: "Password must contain a number." })
+	.regex(/[^a-zA-Z0-9]/, {
+		message: "Password must contain a special character.",
+	})
+	.trim();
+
+/* ============================================================================
+ * Composite Form Schemas
+ * ========================================================================== */
+
+/**
+ * Shared base object for forms accepting username/email/password.
+ */
+export const BaseUserFormSchema = zod.object({
+	username: usernameSchema,
+	email: emailSchema,
+	password: passwordSchema,
+});
+
+/**
+ * Used for admin panel create user form.
+ */
 export const CreateUserFormSchema: ZodType<CreateUserFormFields> =
 	BaseUserFormSchema.extend({
 		role: zod.enum(USER_ROLES, { invalid_type_error: "Please select a role" }),
 	});
 
+/**
+ * Used for end-user sign-up registration.
+ */
 export const SignupFormSchema: ZodType<SignupFormFields> =
 	BaseUserFormSchema.extend({
 		password: zod
@@ -66,11 +113,18 @@ export const SignupFormSchema: ZodType<SignupFormFields> =
 			.trim(),
 	});
 
+/**
+ * Used for login forms (credentials only).
+ */
 export const LoginFormSchema: ZodType<LoginFormFields> = zod.object({
 	email: BaseUserFormSchema.shape.email,
 	password: zod.string().min(8, { message: "Password is required." }).trim(),
 });
 
+/**
+ * Used for profile and user admin edit forms.
+ * All fields are optional for PATCH semantics.
+ */
 export const EditUserFormSchema: ZodType<EditUserFormFields> =
 	BaseUserFormSchema.partial().extend({
 		role: zod

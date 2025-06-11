@@ -14,11 +14,11 @@ export interface UserDTO {
 	role: UserRole;
 }
 
-// PROBLEM: convert code so database calls use mapper which returns dto
+// PROBLEM: convert code so database calls use mapper, which returns DTO
 // DB CALL --> MAPPER --> DTO
 // SOLVED
 
-// 	PROBLEM : fetchUserById in query/users.ts can return undefined
+// 	PROBLEM: fetchUserById in query/users.ts can return undefined
 // POSSIBLE SOLUTIONS:
 // 1. temporarily configure userDTO to return undefined
 // 2. do not allow fetchUserById to return Undefined

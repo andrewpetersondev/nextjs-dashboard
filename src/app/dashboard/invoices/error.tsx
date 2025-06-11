@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { type JSX, useEffect } from "react";
 
 export default function InvoicesError({
 	error,
@@ -8,7 +8,7 @@ export default function InvoicesError({
 }: {
 	error: Error & { digest?: string };
 	reset: () => void;
-}) {
+}): JSX.Element {
 	useEffect((): void => {
 		console.error(error);
 	}, [error]);

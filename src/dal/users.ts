@@ -25,14 +25,15 @@ export async function fetchUserById(id: string): Promise<UserDTO | null> {
 
 /**
  * Fetch all users.
+ * Ignore for now, not being used...
  */
-export async function fetchUsers(): Promise<UserEntity[]> {
+export async function fetchUsers(): Promise<UserDTO[]> {
 	try {
 		const data: UserEntity[] = await db
 			.select()
 			.from(users)
 			.orderBy(asc(users.username));
-		return data as UserEntity[];
+		return data.map(toUserDTO);
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch users.");
@@ -70,9 +71,11 @@ export async function fetchUsersPages(query: string): Promise<number> {
 export async function fetchFilteredUsers(
 	query: string,
 	currentPage: number,
-): Promise<UserEntity[]> {
+): Promise<UserDTO[]> {
 	const ITEMS_PER_PAGE_USERS: number = 2;
+
 	const offset: number = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
+
 	try {
 		const data: UserEntity[] = await db
 			.select()
@@ -86,7 +89,8 @@ export async function fetchFilteredUsers(
 			.orderBy(asc(users.username))
 			.limit(ITEMS_PER_PAGE_USERS)
 			.offset(offset);
-		return data as UserEntity[];
+
+		return data.map(toUserDTO);
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch filtered users.");

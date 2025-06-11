@@ -61,13 +61,13 @@ export async function signup(
 		const userId: string = user?.insertedId;
 
 		if (!userId) {
-			console.error("Failed to create account");
-			return { message: "Failed to create account. Please try again." };
+			console.error("Failed to create an account");
+			return { message: "Failed to create an account. Please try again." };
 		}
 
 		await createSession(userId, "user");
 	} catch (error) {
-		console.error("Failed to create user:", error);
+		console.error("Failed to create a user:", error);
 		return { message: "An unexpected error occurred. Please try again." };
 	}
 
