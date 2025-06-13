@@ -71,3 +71,19 @@ export const getFormField = <T extends string = string>(
 // Utility to validate role
 export const getValidUserRole = (role: unknown): UserRole =>
 	USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";
+
+/**
+ * Utility to create random strings for demo user passwords or other purposes.
+ * Needs to generate at least one capital letter, one number, and one special character.
+ * @param length - The desired length of the random string.
+ * @returns A random string of the specified length.
+ */
+export const createRandomPassword = (length = 10): string => {
+	const characters =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+	let result = "";
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+	return result;
+};

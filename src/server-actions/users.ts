@@ -5,9 +5,16 @@
  ** // KEEP:  Server actions should only handle business logic and call DAL functions.
  */
 
-import { createUserInDB, deleteUser, findUserForLogin } from "@/src/dal/users";
+import {
+	createDemoUser,
+	createUserInDB,
+	deleteUser,
+	demoUserCounter,
+	findUserForLogin,
+} from "@/src/dal/users";
 import { db } from "@/src/db/database";
-import { demoUserCounters, users } from "@/src/db/schema";
+import { users } from "@/src/db/schema";
+import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import {
@@ -181,58 +188,47 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 	await deleteUserSA(userId);
 }
 
+// TODO: AFTER REFACTORING, I HAVE TO DOUBLE CLICK THE DEMO USER BUTTON BEFORE I AM REDIRECTED TO DASHBOARD PAGE.
 /**
  * Creates a demo user and logs them in.
+ * The role can be specified, defaulting to "guest".
  */
 export async function demoUser(
 	role: UserRole = "guest",
 ): Promise<ActionResult> {
-	let counterId: number;
 	try {
-		const [counter] = await db
-			.insert(demoUserCounters)
-			.values({ role, count: 1 })
-			.returning({ id: demoUserCounters.id });
-		counterId = counter.id;
+		const counter: number = await demoUserCounter(role);
+		if (!counter) {
+			return actionResult({
+				message: "Failed to read demo user counter. Please try again.",
+				success: false,
+				errors: undefined,
+			});
+		}
+		const demoUser: UserDTO | null = await createDemoUser(counter, role);
+		if (!demoUser) {
+			return actionResult({
+				message: "Failed to create demo user. Please try again.",
+				success: false,
+				errors: undefined,
+			});
+		}
+		await createSession(demoUser.id, role);
+		redirect("/dashboard");
+		// Unreachable: redirect throws in Next.js App Router
+		// return actionResult({
+		// 	message: "Demo user created and logged in.",
+		// 	success: true,
+		// 	errors: undefined,
+		// });
 	} catch (error) {
-		logError("demoUser:counter", error, { role });
+		logError("demoUser:session", error, { demoUser, role });
 		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
 			errors: undefined,
 		});
 	}
-	const DEMO_PASSWORD = "Password123!";
-	const uniqueEmail = `demo+${role}${counterId}@demo.com`;
-	const uniqueUsername = `Demo_${role.toUpperCase()}_${counterId}`;
-	const user = await createUserInDB({
-		username: uniqueUsername,
-		email: uniqueEmail,
-		password: DEMO_PASSWORD,
-		role,
-	});
-	if (!user) {
-		return actionResult({
-			message: "Failed to create demo user. Please try again.",
-			success: false,
-			errors: undefined,
-		});
-	}
-	try {
-		await createSession(user.id, role);
-	} catch (error) {
-		logError("demoUser:session", error, { user, role });
-		return actionResult({
-			message: "An unexpected error occurred. Please try again.",
-			success: false,
-			errors: undefined,
-		});
-	}
-	return actionResult({
-		message: "Demo user created and logged in.",
-		success: true,
-		errors: undefined,
-	});
 }
 
 /**

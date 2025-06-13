@@ -6,11 +6,11 @@ import "server-only";
 
 import { db } from "@/src/db/database";
 import type { UserEntity } from "@/src/db/entities/user";
-import { users } from "@/src/db/schema";
+import { demoUserCounters, users } from "@/src/db/schema";
 import type { UserDTO } from "@/src/dto/user.dto";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import { comparePassword, hashPassword } from "@/src/lib/password";
-import { logError } from "@/src/lib/utils.server";
+import { createRandomPassword, logError } from "@/src/lib/utils.server";
 import { toUserDTO } from "@/src/mappers/user.mapper";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
@@ -183,5 +183,49 @@ export async function deleteUser(userId: string): Promise<UserDTO | null> {
 	} catch (error) {
 		logError("deleteUser", error, { userId });
 		throw new Error("An unexpected error occurred. Please try again.");
+	}
+}
+
+/**
+ * Reads the demo-user counter for naming purposes.
+ */
+export async function demoUserCounter(role: UserRole): Promise<number> {
+	try {
+		const [counter] = await db
+			.insert(demoUserCounters)
+			.values({ role, count: 1 })
+			.returning();
+		// console.log(counter); // returns { id: 53, role: 'admin', count: 1 }
+		return counter.id;
+	} catch (error) {
+		logError("demoUserCounter", error, {});
+		throw new Error("Failed to read demo user counter.");
+	}
+}
+
+/**
+ * Creates a demo user with a unique username and email based on the provided ID.
+ */
+export async function createDemoUser(
+	id: number,
+	role: UserRole,
+): Promise<UserDTO | null> {
+	try {
+		const DEMO_PASSWORD = createRandomPassword();
+		const uniqueEmail = `demo+${role}${id}@demo.com`;
+		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
+		const user: UserDTO | null = await createUserInDB({
+			username: uniqueUsername,
+			email: uniqueEmail,
+			password: DEMO_PASSWORD,
+			role,
+		});
+		if (!user) {
+			return null;
+		}
+		return user ? user : null;
+	} catch (error) {
+		logError("createDemoUser", error, {});
+		return null;
 	}
 }
