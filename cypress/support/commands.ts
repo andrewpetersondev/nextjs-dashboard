@@ -1,18 +1,28 @@
 /// <reference types="../cypress.d.ts" />
 /// <reference types="cypress" />
 
-Cypress.Commands.add("signup", (user) => {
-	cy.log("Signing up user", user.email);
-	cy.visit("/signup");
-	cy.get('[data-cy="signup-username-input"]').type(user.username);
-	cy.get('[data-cy="signup-email-input"]').type(user.email);
-	cy.get('[data-cy="signup-password-input"]').type(user.password);
-	cy.get('[data-cy="signup-submit-button"]').click();
-});
+import type { UserEntity } from "@/src/db/entities/user";
 
+// Sign up a user via UI
+Cypress.Commands.add(
+	"signup",
+	(user: Pick<UserEntity, "username" | "email" | "password">) => {
+		cy.log("Signing up user", user.email);
+		cy.visit("/signup");
+		cy.get('[data-cy="signup-username-input"]').type(user.username);
+		cy.get('[data-cy="signup-email-input"]').type(user.email);
+		cy.get('[data-cy="signup-password-input"]').type(user.password);
+		cy.get('[data-cy="signup-submit-button"]').click();
+	},
+);
+
+// Log in a user via UI
 Cypress.Commands.add(
 	"login",
-	(user: Cypress.User, options?: { assertSuccess?: boolean }) => {
+	(
+		user: Pick<UserEntity, "username" | "email" | "password">,
+		options?: { assertSuccess?: boolean },
+	) => {
 		cy.log("Logging in", { email: user.email });
 		cy.visit("/login");
 		cy.get('[data-cy="login-email-input"]').type(user.email);
@@ -25,16 +35,35 @@ Cypress.Commands.add(
 	},
 );
 
-Cypress.Commands.add("createUser", (user) => {
+// Create a user in the DB
+Cypress.Commands.add("createUser", (user: UserEntity) => {
 	cy.log("Creating test user", user.email);
-	cy.task("db:insert", user).then((result) => {
-		cy.log("db:insert result", result);
-	});
+	cy.task("db:insert", user).then((result) =>
+		cy.log("db:insert result", result),
+	);
 });
 
-Cypress.Commands.add("deleteUser", (email) => {
+// Find a user in the DB
+Cypress.Commands.add("findUser", (email: string) => {
+	cy.log("Finding test user", email);
+	cy.task("db:find", email).then((result) => cy.log("Found user", result));
+});
+
+// Update a user in the DB
+Cypress.Commands.add(
+	"updateUser",
+	(email: string, updates: Partial<UserEntity>) => {
+		cy.log("Updating test user", email, updates);
+		cy.task("db:update", { email, updates }).then((result) =>
+			cy.log("db:update result", result),
+		);
+	},
+);
+
+// Delete a user from the DB
+Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("Deleting test user", email);
-	cy.task("db:delete", email).then((result) => {
-		cy.log("db:delete result", result);
-	});
+	cy.task("db:delete", email).then((result) =>
+		cy.log("db:delete result", result),
+	);
 });

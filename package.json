@@ -9,6 +9,7 @@
 		"cyp:clean": "rm -rf cypress/**/*.js cypress/**/*.js.map",
 		"cyp:component": "cypress open --component",
 		"cyp:component:headless": "rm -f cypress.config.js && cypress run --component",
+		"cyp:e2e:headless": "cypress run --e2e",
 		"cyp:open": "cypress open",
 		"cyp:open:testDB": "pnpm cypress open",
 		"cyp:pretest": "pnpm cyp:clean",

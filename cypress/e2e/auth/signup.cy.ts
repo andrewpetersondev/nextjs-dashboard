@@ -1,6 +1,8 @@
 /// <reference types="../../cypress.d.ts" />
 /// <reference types="cypress" />
 
+// 1 of 1 tests pass
+
 describe("Signup Tests", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {

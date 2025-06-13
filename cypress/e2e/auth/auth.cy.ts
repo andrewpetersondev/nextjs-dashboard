@@ -1,6 +1,8 @@
 /// <reference types="../../cypress.d.ts" />
 /// <reference types="cypress" />
 
+// 4 of 4 tests passed
+
 describe("Auth Commands via UI", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {
@@ -14,16 +16,16 @@ describe("Auth Commands via UI", () => {
 		});
 	});
 
-	it("should signup a new user", () => {
+	it("should signup a new user with custom command", () => {
 		cy.fixture("user").then((user) => {
-			cy.deleteUser(user.email);
+			// cy.deleteUser(user.email);
 			cy.signup(user);
 		});
 	});
 
-	it("should login with created user", () => {
+	it("should login with created user with custom command", () => {
 		cy.fixture("user").then((user) => {
-			cy.deleteUser(user.email);
+			// cy.deleteUser(user.email);
 			cy.login(user);
 		});
 	});
@@ -45,6 +47,20 @@ describe("Auth Commands via Tasks", () => {
 	it("should create a test user via db:insert", () => {
 		cy.fixture("user").then((user) => {
 			cy.createUser(user);
+		});
+	});
+
+	it("should retrieve a test user via db:find", () => {
+		cy.fixture("user").then((user) => {
+			cy.createUser(user).then(() => {
+				// <-- Wait for user creation
+				cy.findUser(user.email).then((foundUser) => {
+					expect(foundUser).to.not.be.null;
+					if (foundUser) {
+						expect(foundUser.email).to.eq(user.email);
+					}
+				});
+			});
 		});
 	});
 

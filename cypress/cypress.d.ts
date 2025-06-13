@@ -1,22 +1,14 @@
 /// <reference types="cypress" />
 
+import type { UserEntity } from "@/src/db/entities/user";
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
 
 declare global {
 	namespace Cypress {
-		type User = {
-			username: string;
-			email: string;
-			password: string;
-		};
-
 		interface Chainable {
 			/**
-			 * Custom command to mount a React component in Cypress
-			 * @param component The React component to mount
-			 * @param options Additional mounting options
-			 * @example cy.mount(<MyComponent />)
+			 * Mount a React component.
 			 */
 			mount(
 				component: ReactNode,
@@ -24,59 +16,42 @@ declare global {
 			): Chainable<MountReturn>;
 
 			/**
-			 * Custom command to log in a user via the application's login form (UI only, no API).
-			 * Fills out and submits the login form as a user would.
-			 * @param user The user object containing username, email, and password
-			 * @param options Optional parameters to control assertions after login
-			 * @example cy.login('user@example.com', 'password123')
+			 * Log in a user via UI.
 			 */
 			login(
-				user: { username: string; email: string; password: string },
+				user: Pick<UserEntity, "email" | "password" | "username">,
 				options?: { assertSuccess?: boolean },
 			): Chainable<void>;
 
 			/**
-			 * Custom command to sign up a user via the application's signup flow (UI only, no API).
-			 * Fills out and submits the signup form as a user would.
-			 * @param user The user object containing username, email, and password
-			 * @example cy.signup({ username: 'testuser', email: 'testuser@example.com', password: 'Password123!' })
+			 * Sign up a user via UI.
 			 */
-			signup(user: {
-				username: string;
-				email: string;
-				password: string;
-			}): Chainable<void>;
+			signup(
+				user: Pick<UserEntity, "email" | "password" | "username">,
+			): Chainable<void>;
 
 			/**
-			 * Custom command to create a test user directly in the database (bypasses UI/API).
-			 * Use this for setting up test data quickly.
-			 * @param user The user object containing username, email, and password
-			 * @example cy.createUser({ username: 'testuser', email: 'testuser@example.com', password: 'Password123!' })
+			 * Create a user in the DB.
 			 */
-			createUser(user: User): Chainable<void>;
+			createUser(user: UserEntity): Chainable<string>;
 
 			/**
-			 * Custom command to delete a test user directly from the database (bypasses UI/API).
-			 * @param email The user's email
-			 * @example cy.deleteUser('user@example.com')
+			 * Find a user in the DB.
 			 */
-			deleteUser(email: string): Chainable<void>;
+			findUser(email: string): Chainable<UserEntity | null>;
 
 			/**
-			 * Custom task to log to console
-			 * @example cy.task('logToConsole', 'Hello, world!')
+			 * Update a user in the DB.
 			 */
-			task(name: "logToConsole", message: string);
+			updateUser(
+				email: string,
+				updates: Partial<UserEntity>,
+			): Chainable<string>;
 
 			/**
-			 *  Cypress task for directly inserting into the database within tests
+			 * Delete a user from the DB.
 			 */
-			task(name: "db:insert", user: User): Chainable<string>;
-
-			/**
-			 *  Cypress task for directly removing from the database within tests
-			 */
-			task(name: "db:delete", email: string): Chainable<string>;
+			deleteUser(email: string): Chainable<string>;
 		}
 	}
 }

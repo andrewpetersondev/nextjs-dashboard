@@ -59,21 +59,21 @@ interface User {
 const userSeed: User[] = [
 	{
 		username: "user",
-		email: "user@mail.com",
-		password: await hashPassword("Password123!"),
+		email: "user@user.com",
+		password: await hashPassword("UserPassword123!"),
 		role: "user",
 	},
 	{
 		username: "admin",
-		email: "admin@mail.com",
+		email: "admin@admin.com",
 		password: await hashPassword("AdminPassword123!"),
 		role: "admin",
 	},
 	{
-		username: "test",
-		email: "test@mail.com",
-		password: await hashPassword("Password123!"),
-		role: "user",
+		username: "guest",
+		email: "guest@guest.com",
+		password: await hashPassword("GuestPassword123!"),
+		role: "guest",
 	},
 ];
 

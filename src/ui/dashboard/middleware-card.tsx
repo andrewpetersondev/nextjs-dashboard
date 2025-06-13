@@ -17,7 +17,7 @@ export default async function MiddlewareCard(): Promise<JSX.Element> {
 	const authy: boolean = Boolean(session.isAuthorized);
 
 	return (
-		<ul>
+		<ul data-cy="middleware-card">
 			<li className="font-experiment">User Id: {userId} in experiment font</li>
 			<li>
 				<p>Role: {role} in eyegrab font</p>

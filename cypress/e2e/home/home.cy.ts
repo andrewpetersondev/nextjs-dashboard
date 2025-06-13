@@ -1,3 +1,5 @@
+// 8 of 8 tests pass
+
 interface ScreenDimensions {
 	width: number;
 	height: number;

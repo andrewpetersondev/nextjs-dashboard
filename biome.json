@@ -16,8 +16,7 @@
 			"next-env.d.ts",
 			"./.run/**/*",
 			"./.vscode/**/*",
-			"./.idea/**/*",
-			"./cypress/**/*"
+			"./.idea/**/*"
 		]
 	},
 	"formatter": {
