@@ -22,3 +22,9 @@ hcp vault-secrets run -- pnpm drizzle-kit up --config=drizzle-test.config.ts
 
 - `hcp vault-secrets run -- pnpm drizzle-kit up --config=drizzle-test.config.ts`
 - `hcp vault-secrets run -- pnpm drizzle-kit generate --config=drizzle-test.config.ts`
+
+
+### Viewing Secrets
+
+- `hcp vault-secrets secrets open SESSION_SECRET`
+- `hcp vault-secrets secrets open POSTGRES_URL_TESTDB`

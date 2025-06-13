@@ -6,14 +6,19 @@ import {
 } from "@/src/lib/definitions/roles";
 import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 
-// --- Action Result Type ---
+/**
+ * Standardized result for server actions.
+ */
 export type ActionResult = {
-	message?: string;
-	success: boolean;
-	errors?: Record<string, string[]>;
+	readonly message?: string;
+	readonly success: boolean;
+	readonly errors?: Record<string, string[]>;
 };
 
-// --- User Form Fields ---
+/**
+ * Base fields for user forms.
+ * Allows additional dynamic fields for extensibility.
+ */
 export interface BaseUserFormFields {
 	username: string;
 	email: string;
@@ -21,12 +26,26 @@ export interface BaseUserFormFields {
 	[key: string]: unknown; // Allow additional fields for flexibility
 }
 
+/**
+ * Fields for creating a user (admin).
+ */
 export interface CreateUserFormFields extends BaseUserFormFields {
 	role: UserRole;
 }
 
+/**
+ * Fields for signup form (no role).
+ */
 export type SignupFormFields = Omit<CreateUserFormFields, "role">;
+
+/**
+ * Fields for login form.
+ */
 export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
+
+/**
+ * Fields for editing a user (all optional for PATCH semantics).
+ */
 export type EditUserFormFields = Partial<CreateUserFormFields>;
 
 // --- Form State Aliases (for clarity, but all use FormState<T>) ---

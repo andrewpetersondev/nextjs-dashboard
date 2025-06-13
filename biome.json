@@ -17,9 +17,8 @@
 			"./.run/**/*",
 			"./.vscode/**/*",
 			"./.idea/**/*",
-			"./cypress/**/*",
-			"./cypress.config.ts"
-		]
+			"./cypress/**/*"
+			]
 	},
 	"formatter": {
 		"enabled": true,
@@ -31,10 +30,7 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
-			"nursery": {
-				"useExplicitType": "error"
-			}
+			"recommended": true
 		}
 	},
 	"javascript": {
