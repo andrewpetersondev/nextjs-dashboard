@@ -16,7 +16,9 @@
 			"next-env.d.ts",
 			"./.run/**/*",
 			"./.vscode/**/*",
-			"./.idea/**/*"
+			"./.idea/**/*",
+			"./cypress/**/*",
+			"./cypress.config.ts"
 		]
 	},
 	"formatter": {
@@ -29,7 +31,10 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"nursery": {
+				"useExplicitType": "error"
+			}
 		}
 	},
 	"javascript": {

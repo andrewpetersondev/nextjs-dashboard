@@ -9,14 +9,19 @@ import {
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { JSX } from "react";
+import type { ComponentType, JSX, SVGProps } from "react";
 
 type NavLinksProps = {
 	role?: string;
 };
 
-// todo: strictly define types for links
-const baseLinks = [
+type NavLink = {
+	name: string;
+	href: string;
+	icon: ComponentType<SVGProps<SVGSVGElement>>;
+};
+
+const baseLinks: NavLink[] = [
 	{ name: "Home", href: "/dashboard", icon: HomeIcon },
 	{
 		name: "Invoices",
@@ -26,9 +31,9 @@ const baseLinks = [
 	{ name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
 ];
 
-export default function NavLinks({ role }: NavLinksProps) {
+export default function NavLinks({ role }: NavLinksProps): JSX.Element {
 	const pathname: string = usePathname();
-	const links = [...baseLinks];
+	const links: NavLink[] = [...baseLinks];
 
 	// Only add Users link for admin
 	if (role === "admin") {
@@ -41,8 +46,8 @@ export default function NavLinks({ role }: NavLinksProps) {
 
 	return (
 		<>
-			{links.map((link): JSX.Element => {
-				const LinkIcon = link.icon;
+			{links.map((link: NavLink): JSX.Element => {
+				const LinkIcon: ComponentType<SVGProps<SVGSVGElement>> = link.icon;
 				return (
 					<Link
 						key={link.name}

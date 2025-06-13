@@ -1,5 +1,7 @@
 import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue";
 
+// Note: Utility functions should use const (arrow functions) for better performance and readability.
+
 export const formatCurrency = (amount: number): string => {
 	return (amount / 100).toLocaleString("en-US", {
 		style: "currency",

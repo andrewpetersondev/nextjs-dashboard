@@ -1,12 +1,13 @@
 import { verifySessionOptimistic } from "@/src/dal/session-dal";
-import type { UserRole } from "@/src/lib/definitions/roles";
+import { USER_ROLES, type UserRole } from "@/src/lib/definitions/roles";
+import type { SessionVerificationResult } from "@/src/lib/definitions/session";
 import { H6 } from "@/src/ui/headings";
 import type { JSX } from "react";
 
-const allowedRoles: UserRole[] = ["admin", "user", "guest"];
+const allowedRoles: readonly UserRole[] = USER_ROLES;
 
 export default async function MiddlewareCard(): Promise<JSX.Element> {
-	const session = await verifySessionOptimistic();
+	const session: SessionVerificationResult = await verifySessionOptimistic();
 
 	const role: UserRole = allowedRoles.includes(session.role as UserRole)
 		? (session.role as UserRole)

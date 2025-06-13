@@ -2,17 +2,8 @@
 
 import { db } from "@/src/db/database";
 import { demoUserCounters, users } from "@/src/db/schema";
-import { comparePassword, hashPassword } from "@/src/lib/password";
-import { createSession, deleteSession } from "@/src/lib/session";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import type { FormState } from "@/src/lib/definitions/form";
-import type {
-	// USER_ROLES,
-	UserRole,
-} from "@/src/lib/definitions/roles";
+import type { UserRole } from "@/src/lib/definitions/roles";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -24,32 +15,14 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 } from "@/src/lib/definitions/users";
-
-// --- Helper: Normalize Zod fieldErrors to Record<string, string[]> ---
-function normalizeFieldErrors(
-	fieldErrors: Record<string, string[] | undefined>,
-): Record<string, string[]> {
-	const result: Record<string, string[]> = {};
-	for (const key in fieldErrors) {
-		if (Object.prototype.hasOwnProperty.call(fieldErrors, key)) {
-			result[key] = fieldErrors[key] ?? [];
-		}
-	}
-	return result;
-}
-
-// --- Helper: Standardized Action Result ---
-function actionResult({
-	message,
-	success = true,
-	errors = undefined,
-}: {
-	message: string;
-	success?: boolean;
-	errors?: Record<string, string[]>;
-}): ActionResult {
-	return { message, success, errors };
-}
+import type { SafeParseReturnType } from "@/src/lib/definitions/zod-alias";
+import { comparePassword, hashPassword } from "@/src/lib/password";
+import { createSession, deleteSession } from "@/src/lib/session";
+import { actionResult, normalizeFieldErrors } from "@/src/lib/utils.server";
+import { logError } from "@/src/lib/utils.server";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 // --- Helper: Create User ---
 async function createUserRecord({
@@ -64,7 +37,7 @@ async function createUserRecord({
 	role?: UserRole;
 }): Promise<{ userId: string | null; error?: string }> {
 	try {
-		const hashedPassword = await hashPassword(password);
+		const hashedPassword: string = await hashPassword(password);
 		const [user] = await db
 			.insert(users)
 			.values({ username, email, password: hashedPassword, role })
@@ -86,43 +59,54 @@ export async function signup(
 	_prevState: FormState<SignupFormFields>,
 	formData: FormData,
 ): Promise<FormState<SignupFormFields>> {
-	const validated = SignupFormSchema.safeParse({
-		username: formData.get("username"),
-		email: formData.get("email"),
-		password: formData.get("password"),
-	});
+	try {
+		const validated: SafeParseReturnType<SignupFormFields, SignupFormFields> =
+			SignupFormSchema.safeParse({
+				username: formData.get("username"),
+				email: formData.get("email"),
+				password: formData.get("password"),
+			});
 
-	if (!validated.success) {
-		return actionResult({
-			message: "Validation failed. Please check your input.",
-			success: false,
-			errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+		if (!validated.success) {
+			return actionResult({
+				message: "Validation failed. Please check your input.",
+				success: false,
+				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+			});
+		}
+
+		const { username, email, password } = validated.data as {
+			username: string;
+			email: string;
+			password: string;
+		};
+
+		const { userId, error } = await createUserRecord({
+			username,
+			email,
+			password,
+			role: "user",
 		});
-	}
 
-	const { username, email, password } = validated.data as {
-		username: string;
-		email: string;
-		password: string;
-	};
+		if (!userId) {
+			return actionResult({
+				message: error ?? "Failed to create an account. Please try again.",
+				success: false,
+				errors: undefined,
+			});
+		}
 
-	const { userId, error } = await createUserRecord({
-		username,
-		email,
-		password,
-		role: "user",
-	});
-
-	if (!userId) {
+		await createSession(userId, "user");
+		redirect("/dashboard");
+	} catch (error) {
+		// todo: implement proper error handling in other functions
+		logError("signup", error, { email: formData.get("email") as string });
 		return actionResult({
-			message: error ?? "Failed to create an account. Please try again.",
+			message: "An unexpected error occurred. Please try again.",
 			success: false,
 			errors: undefined,
 		});
 	}
-
-	await createSession(userId, "user");
-	redirect("/dashboard");
 }
 
 // --- Login ---
@@ -130,10 +114,11 @@ export async function login(
 	_prevState: FormState<LoginFormFields>,
 	formData: FormData,
 ): Promise<FormState<LoginFormFields>> {
-	const validated = LoginFormSchema.safeParse({
-		email: formData.get("email"),
-		password: formData.get("password"),
-	});
+	const validated: SafeParseReturnType<LoginFormFields, LoginFormFields> =
+		LoginFormSchema.safeParse({
+			email: formData.get("email"),
+			password: formData.get("password"),
+		});
 
 	if (!validated.success) {
 		return actionResult({
@@ -164,7 +149,10 @@ export async function login(
 			});
 		}
 
-		const validPassword = await comparePassword(password, user.password);
+		const validPassword: boolean = await comparePassword(
+			password,
+			user.password,
+		);
 		if (!validPassword) {
 			return actionResult({
 				message: "Invalid email or password.",
@@ -273,7 +261,10 @@ export async function createUser(
 	_prevState: FormState<CreateUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<CreateUserFormFields>> {
-	const validated = CreateUserFormSchema.safeParse({
+	const validated: SafeParseReturnType<
+		CreateUserFormFields,
+		CreateUserFormFields
+	> = CreateUserFormSchema.safeParse({
 		username: formData.get("username"),
 		email: formData.get("email"),
 		password: formData.get("password"),
@@ -327,7 +318,10 @@ export async function editUser(
 		delete payload.password;
 	}
 
-	const validated = EditUserFormSchema.safeParse(payload);
+	const validated: SafeParseReturnType<
+		Partial<CreateUserFormFields>,
+		Partial<CreateUserFormFields>
+	> = EditUserFormSchema.safeParse(payload);
 
 	if (!validated.success) {
 		return actionResult({

@@ -1,5 +1,7 @@
 "use client";
 
+// Note: Utility functions should use const (arrow functions) for better performance and readability.
+
 export const generatePagination = (
 	currentPage: number,
 	totalPages: number,
