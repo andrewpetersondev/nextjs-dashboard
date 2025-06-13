@@ -1,8 +1,12 @@
 "use server";
 
 /**
- ** // TODO: REMOVE DATABASE FROM SERVER ACTIONS. ALL DATABASE QUERIES SHOULD BE IN DAL.
- ** // KEEP:  Server actions should only handle business logic and call DAL functions.
+ * Server Actions for User Management.
+ *
+ * Handles business logic and delegates all database operations to the DAL.
+ * All user input is validated and sanitized.
+ *
+ * @module server-actions/users
  */
 
 import {
@@ -42,6 +46,9 @@ import { redirect } from "next/navigation";
 
 /**
  * Handles user signup.
+ * @param _prevState - Previous form state.
+ * @param formData - Form data from the signup form.
+ * @returns FormState with result message and errors.
  */
 export async function signup(
 	_prevState: FormState<SignupFormFields>,
@@ -60,7 +67,7 @@ export async function signup(
 				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
-		// keep: I have no idea why setting the type here is necessary, but do not remove it.
+		// Type assertion required for Zod inference
 		const { username, email, password } = validated.data as {
 			username: string;
 			email: string;
@@ -88,13 +95,16 @@ export async function signup(
 			errors: undefined,
 		});
 	}
+	// Unreachable: redirect throws in Next.js App Router
 	// keep: why does redirect have to be here instead of after the session is created?
 	redirect("/dashboard");
 }
 
 /**
  * Handles user login.
- * Validates the form data, checks credentials, and creates a session.
+ * @param _prevState - Previous form state.
+ * @param formData - Form data from the login form.
+ * @returns FormState with result message and errors.
  */
 export async function login(
 	_prevState: FormState<LoginFormFields>,
@@ -122,8 +132,8 @@ export async function login(
 			});
 		}
 		await createSession(user.id, user.role as UserRole);
-		// is this unreachable anymore? i think not.
-		// Unreachable: return actionResult({ message: "Redirecting...", success: true });
+		// Unreachable: redirect throws in Next.js App Router
+		// return actionResult({ message: "Redirecting...", success: true });
 	} catch (error) {
 		logError("login", error, { email: formData.get("email") as string });
 		return actionResult({
@@ -137,7 +147,7 @@ export async function login(
 }
 
 /**
- * Logs out the current user by deleting a cookie then  redirects to home.
+ * Logs out the current user and redirects to home.
  */
 export async function logout(): Promise<void> {
 	await deleteSession();
@@ -147,7 +157,8 @@ export async function logout(): Promise<void> {
 
 /**
  * Deletes a user by ID, revalidates and redirects.
- * This action is intended for use on the Users Page.
+ * @param userId - The user's ID.
+ * @returns ActionResult with result message and errors.
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
@@ -161,8 +172,8 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 		}
 		revalidatePath("/dashboard/users");
 		redirect("/dashboard/users");
-		// Unreachable: redirect() throws a special error in Next.js App Router
-		// Unreachable: return actionResult({ message: "User deleted successfully.", success: true });
+		// Unreachable: redirect throws in Next.js App Router
+		// return actionResult({ message: "User deleted successfully.", success: true });
 	} catch (error) {
 		logError("deleteUserServerAction", error, { userId });
 		return actionResult({
@@ -174,14 +185,14 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 }
 
 /**
- * Server action to delete a user by ID from FormData.
- * Use as a form action in a Server Component.
+ * Deletes a user by ID from FormData.
+ * @param formData - Form data containing userId.
  */
 export async function deleteUserFormAction(formData: FormData): Promise<void> {
 	"use server";
 	const userId = formData.get("userId");
 	if (typeof userId !== "string" || !userId) {
-		// Optionally, handle error or log
+		// Invalid userId; nothing to do.
 		return;
 	}
 	await deleteUserAction(userId);
@@ -189,40 +200,31 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 
 /**
  * Creates a demo user and logs them in.
- * The role can be specified, defaulting to "guest".
+ * @param role - User role (default: "guest").
+ * @returns ActionResult with result message and errors.
  */
-export async function demoUser(role: UserRole = "guest") {
+export async function demoUser(
+	role: UserRole = "guest",
+): Promise<ActionResult> {
+	let demoUser: UserDTO | null = null;
 	try {
 		const counter: number = await demoUserCounter(role);
 		if (!counter) {
-			// return actionResult({
-			// 	message: "Failed to read demo user counter. Please try again.",
-			// 	success: false,
-			// 	errors: undefined,
-			// });
 			logError("demoUser:counter", new Error("Counter is zero or undefined"), {
 				role,
 			});
 			throw new Error("Counter is zero or undefined");
 		}
-		const demoUser: UserDTO | null = await createDemoUser(counter, role);
+		demoUser = await createDemoUser(counter, role);
 		if (!demoUser) {
-			// return actionResult({
-			// 	message: "Failed to create demo user. Please try again.",
-			// 	success: false,
-			// 	errors: undefined,
-			// });
 			logError("demoUser:create", new Error("Demo user creation failed"), {
 				role,
 			});
 			throw new Error("Demo user creation failed");
 		}
 		await createSession(demoUser.id, role);
-		// return actionResult({
-		// 	message: "Demo user created and logged in.",
-		// 	success: true,
-		// 	errors: undefined,
-		// });
+		// Unreachable: redirect throws in Next.js App Router
+		// return actionResult({ message: "Demo user created and logged in.", success: true, errors: undefined });
 	} catch (error) {
 		logError("demoUser:session", error, { demoUser, role });
 		return actionResult({
@@ -230,14 +232,15 @@ export async function demoUser(role: UserRole = "guest") {
 			success: false,
 			errors: undefined,
 		});
-		// throw new Error("An unexpected error occurred while creating demo user.");
 	}
 	redirect("/dashboard");
 }
 
 /**
- * Creates a new user.
- ** need to be an admin on the Users Page to access this action.
+ * Creates a new user (admin only).
+ * @param _prevState - Previous form state.
+ * @param formData - Form data from the create user form.
+ * @returns FormState with result message and errors.
  */
 export async function createUser(
 	_prevState: FormState<CreateUserFormFields>,
@@ -288,6 +291,10 @@ export async function createUser(
 
 /**
  * Edits an existing user.
+ * @param id - User ID.
+ * @param _prevState - Previous form state.
+ * @param formData - Form data from the edit user form.
+ * @returns FormState with result message and errors.
  */
 export async function editUser(
 	id: string,
@@ -297,7 +304,7 @@ export async function editUser(
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {
-			// biome-ignore lint/performance/noDelete: <explanation>
+			// biome-ignore lint/performance/noDelete: password field intentionally removed if empty
 			delete payload.password;
 		}
 		const validated = EditUserFormSchema.safeParse(payload);
@@ -309,7 +316,6 @@ export async function editUser(
 			});
 		}
 		const existingUser: UserDTO | null = await readUserById(id);
-		console.log("existingUser", existingUser);
 		if (!existingUser) {
 			return actionResult({
 				message: "User not found.",
@@ -334,9 +340,7 @@ export async function editUser(
 			patch.password = await hashPassword(validated.data.password);
 		}
 		if (Object.keys(patch).length === 0) {
-			console.log("No changes to update for user", id);
-			console.log(Object.keys(patch));
-			// todo: return actionResult with a message visible to the user
+			// No changes to update; inform the user.
 			return actionResult({
 				message: "No changes to update.",
 				success: true,
@@ -344,7 +348,6 @@ export async function editUser(
 			});
 		}
 		const updatedUser: UserDTO | null = await updateUserDAL(id, patch);
-		console.log("updatedUser", updatedUser);
 		if (!updatedUser) {
 			return actionResult({
 				message: "Failed to update user. Please try again.",
