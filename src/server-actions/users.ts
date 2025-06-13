@@ -81,9 +81,6 @@ export async function signup(
 			});
 		}
 		await createSession(user.id, "user");
-		redirect("/dashboard");
-		// Unreachable: redirect throws in Next.js App Router
-		// Unreachable: return actionResult({ message: "Redirecting...", success: true });
 	} catch (error) {
 		logError("signup", error, { email: formData.get("email") as string });
 		return actionResult({
@@ -92,6 +89,8 @@ export async function signup(
 			errors: undefined,
 		});
 	}
+	// keep: why does redirect have to be here instead of after the session is created?
+	redirect("/dashboard");
 }
 
 /**
@@ -124,8 +123,7 @@ export async function login(
 			});
 		}
 		await createSession(user.id, user.role as UserRole);
-		redirect("/dashboard");
-		// Unreachable: redirect throws in Next.js App Router
+		// is this unreachable anymore? i think not.
 		// Unreachable: return actionResult({ message: "Redirecting...", success: true });
 	} catch (error) {
 		logError("login", error, { email: formData.get("email") as string });
@@ -135,6 +133,8 @@ export async function login(
 			errors: undefined,
 		});
 	}
+	// keep: why does redirect have to be here instead of after the session is created?
+	redirect("/dashboard");
 }
 
 /**
@@ -193,29 +193,33 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
  * Creates a demo user and logs them in.
  * The role can be specified, defaulting to "guest".
  */
-export async function demoUser(
-	role: UserRole = "guest",
-): Promise<ActionResult> {
+export async function demoUser(role: UserRole = "guest") {
 	try {
 		const counter: number = await demoUserCounter(role);
 		if (!counter) {
-			return actionResult({
-				message: "Failed to read demo user counter. Please try again.",
-				success: false,
-				errors: undefined,
+			// return actionResult({
+			// 	message: "Failed to read demo user counter. Please try again.",
+			// 	success: false,
+			// 	errors: undefined,
+			// });
+			logError("demoUser:counter", new Error("Counter is zero or undefined"), {
+				role,
 			});
+			throw new Error("Counter is zero or undefined");
 		}
 		const demoUser: UserDTO | null = await createDemoUser(counter, role);
 		if (!demoUser) {
-			return actionResult({
-				message: "Failed to create demo user. Please try again.",
-				success: false,
-				errors: undefined,
+			// return actionResult({
+			// 	message: "Failed to create demo user. Please try again.",
+			// 	success: false,
+			// 	errors: undefined,
+			// });
+			logError("demoUser:create", new Error("Demo user creation failed"), {
+				role,
 			});
+			throw new Error("Demo user creation failed");
 		}
 		await createSession(demoUser.id, role);
-		redirect("/dashboard");
-		// Unreachable: redirect throws in Next.js App Router
 		// return actionResult({
 		// 	message: "Demo user created and logged in.",
 		// 	success: true,
@@ -228,7 +232,9 @@ export async function demoUser(
 			success: false,
 			errors: undefined,
 		});
+		// throw new Error("An unexpected error occurred while creating demo user.");
 	}
+	redirect("/dashboard");
 }
 
 /**
