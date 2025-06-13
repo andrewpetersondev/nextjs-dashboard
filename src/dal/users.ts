@@ -229,3 +229,55 @@ export async function createDemoUser(
 		return null;
 	}
 }
+
+/**
+ * This function retrieves a user from the database based on their ID.
+ * @param id - The user's ID.
+ * @return A UserDTO | null.
+ */
+export async function readUserById(id: string): Promise<UserDTO | null> {
+	try {
+		const data: UserEntity[] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, id))
+			.limit(1);
+		const user: UserEntity = data[0];
+		// console.log("readUserById", user);
+		// console.log("toUserDTO", toUserDTO(user));
+		return user ? toUserDTO(user) : null;
+	} catch (error: unknown) {
+		logError("readUserById", error, { id });
+		throw new Error("Failed to read user by ID.");
+	}
+}
+
+/**
+ * Updates a user in the database with the provided patch.
+ * @param id - The user's ID.
+ * @param patch - An object containing the fields to update.
+ * @return A UserDTO | null.
+ * Record<string, unknown> is ALWAYS shaped like an object
+ * @example Record<string, unknown> = { username: "john", age: 30, isActive: true }
+ */
+export async function updateUserDAL(
+	id: string,
+	patch: Record<string, unknown>,
+): Promise<UserDTO | null> {
+	if (Object.keys(patch).length === 0) {
+		return null;
+	}
+	try {
+		const update: UserEntity[] = await db
+			.update(users)
+			.set(patch)
+			.where(eq(users.id, id))
+			.returning();
+		const user: UserEntity = update[0];
+		console.log("updateUserDAL", user);
+		return user ? toUserDTO(user) : null;
+	} catch (error: unknown) {
+		logError("updateUserDAL", error, { id, patch });
+		return null;
+	}
+}

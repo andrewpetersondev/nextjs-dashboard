@@ -11,9 +11,9 @@ import {
 	deleteUser,
 	demoUserCounter,
 	findUserForLogin,
+	readUserById,
+	updateUserDAL,
 } from "@/src/dal/users";
-import { db } from "@/src/db/database";
-import { users } from "@/src/db/schema";
 import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { UserRole } from "@/src/lib/definitions/roles";
@@ -37,7 +37,6 @@ import {
 	logError,
 	normalizeFieldErrors,
 } from "@/src/lib/utils.server";
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -150,7 +149,7 @@ export async function logout(): Promise<void> {
  * Deletes a user by ID, revalidates and redirects.
  * This action is intended for use on the Users Page.
  */
-export async function deleteUserSA(userId: string): Promise<ActionResult> {
+export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
 		const deletedUser = await deleteUser(userId);
 		if (!deletedUser) {
@@ -185,10 +184,9 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 		// Optionally, handle error or log
 		return;
 	}
-	await deleteUserSA(userId);
+	await deleteUserAction(userId);
 }
 
-// TODO: AFTER REFACTORING, I HAVE TO DOUBLE CLICK THE DEMO USER BUTTON BEFORE I AM REDIRECTED TO DASHBOARD PAGE.
 /**
  * Creates a demo user and logs them in.
  * The role can be specified, defaulting to "guest".
@@ -297,9 +295,7 @@ export async function editUser(
 	formData: FormData,
 ): Promise<FormState<EditUserFormFields>> {
 	try {
-		const payload = {
-			...Object.fromEntries(formData.entries()),
-		};
+		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {
 			// biome-ignore lint/performance/noDelete: <explanation>
 			delete payload.password;
@@ -312,11 +308,8 @@ export async function editUser(
 				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
-		const [existingUser] = await db
-			.select()
-			.from(users)
-			.where(eq(users.id, id))
-			.limit(1);
+		const existingUser: UserDTO | null = await readUserById(id);
+		console.log("existingUser", existingUser);
 		if (!existingUser) {
 			return actionResult({
 				message: "User not found.",
@@ -341,13 +334,24 @@ export async function editUser(
 			patch.password = await hashPassword(validated.data.password);
 		}
 		if (Object.keys(patch).length === 0) {
+			console.log("No changes to update for user", id);
+			console.log(Object.keys(patch));
+			// todo: return actionResult with a message visible to the user
 			return actionResult({
 				message: "No changes to update.",
 				success: true,
 				errors: undefined,
 			});
 		}
-		await db.update(users).set(patch).where(eq(users.id, id));
+		const updatedUser: UserDTO | null = await updateUserDAL(id, patch);
+		console.log("updatedUser", updatedUser);
+		if (!updatedUser) {
+			return actionResult({
+				message: "Failed to update user. Please try again.",
+				success: false,
+				errors: undefined,
+			});
+		}
 		revalidatePath("/dashboard/users");
 		return actionResult({
 			message: "Profile updated!",

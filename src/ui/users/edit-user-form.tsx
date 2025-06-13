@@ -33,6 +33,17 @@ export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 				<p>Admins can edit any profile.</p>
 			</section>
 
+			<section>
+				{state.errors && (
+					<p className="text-text-error mt-4 text-sm">
+						{Object.values(state.errors).flat().join(" ")}
+					</p>
+				)}
+				{state.message && (
+					<p className="text-text-success mt-4 text-sm">{state.message}</p>
+				)}
+			</section>
+
 			<form action={action}>
 				{/* hidden id for user */}
 				<input type="hidden" name="id" value={user.id} />
