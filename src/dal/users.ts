@@ -1,13 +1,83 @@
 import "server-only";
+
+/**
+ ** //  KEEP: User Data Access Layer (DAL) is responsible for interacting with the database to perform CRUD operations on User entities.
+ */
+
 import { db } from "@/src/db/database";
 import type { UserEntity } from "@/src/db/entities/user";
 import { users } from "@/src/db/schema";
 import type { UserDTO } from "@/src/dto/user.dto";
+import type { UserRole } from "@/src/lib/definitions/roles";
+import { comparePassword, hashPassword } from "@/src/lib/password";
+import { logError } from "@/src/lib/utils.server";
 import { toUserDTO } from "@/src/mappers/user.mapper";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**
- * Fetch a user by ID and return a safe UserDTO.
+ * Inserts a new user record into the database.
+ * @returns UserDTO | null
+ */
+export async function createUserInDB({
+	username,
+	email,
+	password,
+	role = "user",
+}: {
+	username: string;
+	email: string;
+	password: string;
+	role?: UserRole;
+}): Promise<UserDTO | null> {
+	try {
+		const hashedPassword = await hashPassword(password);
+		const [user] = await db
+			.insert(users)
+			.values({ username, email, password: hashedPassword, role })
+			.returning();
+		return user ? toUserDTO(user) : null;
+	} catch (error) {
+		logError("createUserInDB", error, { email });
+		throw new Error("Failed to create user in database.");
+	}
+}
+
+/**
+ * Fetch a user by login credentials (email and password).
+ * @param email - The user's email address.
+ * @param password - The user's password.
+ * @return A UserDTO | null.
+ */
+export async function findUserForLogin(
+	email: string,
+	password: string,
+): Promise<UserDTO | null> {
+	if (!email || !password) {
+		return null;
+	}
+	try {
+		const [user]: UserEntity[] = await db
+			.select()
+			.from(users)
+			.where(eq(users.email, email));
+		if (!user) {
+			return null;
+		}
+		const validPassword = await comparePassword(password, user.password);
+		if (!validPassword) {
+			return null;
+		}
+		return user ? toUserDTO(user) : null;
+	} catch (error: unknown) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to read user by email.");
+	}
+}
+
+/**
+ * Fetch a user by ID
+ * @param id - The user's ID.
+ * @return A UserDTO | null.
  */
 export async function fetchUserById(id: string): Promise<UserDTO | null> {
 	try {
@@ -94,5 +164,24 @@ export async function fetchFilteredUsers(
 	} catch (error: unknown) {
 		console.error("Database Error:", error);
 		throw new Error("Failed to fetch filtered users.");
+	}
+}
+
+/**
+ * Deletes a user by ID, revalidates and redirects.
+ */
+export async function deleteUser(userId: string): Promise<UserDTO | null> {
+	try {
+		const [deletedUser]: UserEntity[] = await db
+			.delete(users)
+			.where(eq(users.id, userId))
+			.returning();
+		if (!deletedUser) {
+			return null;
+		}
+		return deletedUser ? toUserDTO(deletedUser) : null;
+	} catch (error) {
+		logError("deleteUser", error, { userId });
+		throw new Error("An unexpected error occurred. Please try again.");
 	}
 }

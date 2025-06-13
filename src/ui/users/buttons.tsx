@@ -1,4 +1,4 @@
-import { deleteUser } from "@/src/server-actions/users";
+import { deleteUserFormAction } from "@/src/server-actions/users";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
@@ -28,9 +28,10 @@ export function UpdateUser({ id }: { id: string }): JSX.Element {
 }
 
 export function DeleteUser({ id }: { id: string }): JSX.Element {
-	const deleteUserWithId = deleteUser.bind(null, id);
 	return (
-		<form action={deleteUserWithId}>
+		<form action={deleteUserFormAction}>
+			{/* Hidden input for userId */}
+			<input type="hidden" name="userId" value={id} />
 			<button type="submit" className="hover:bg-bg-hover rounded-md border p-2">
 				<span className="sr-only">Delete</span>
 				<TrashIcon className="w-5" />
