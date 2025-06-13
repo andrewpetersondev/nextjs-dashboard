@@ -1,7 +1,34 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
-export const users = [
+// Keep types in this file because this file needs to be isolated from any "server" code for drizzle-kit to work properly. Also, the types in this file are defined elsewhere.
+
+type User = {
+	username: string;
+	email: string;
+	password: string;
+};
+
+type Customer = {
+	id: string;
+	name: string;
+	email: string;
+	image_url: string;
+};
+
+type Invoice = {
+	customer_id: string;
+	amount: number;
+	status: "pending" | "paid";
+	date: string; // ISO date string
+};
+
+type Revenue = {
+	month: string;
+	revenue: number;
+};
+
+export const users: User[] = [
 	{
 		username: "User",
 		email: "user@nextmail.com",
@@ -9,7 +36,7 @@ export const users = [
 	},
 ];
 
-export const customers = [
+export const customers: Customer[] = [
 	{
 		id: "d6e15727-9fe1-4961-8c5b-ea44a9bd81aa",
 		name: "Evil Rabbit",
@@ -48,7 +75,7 @@ export const customers = [
 	},
 ];
 
-export const invoices = [
+export const invoices: Invoice[] = [
 	{
 		customer_id: customers[0].id,
 		amount: 15795,
@@ -129,7 +156,7 @@ export const invoices = [
 	},
 ];
 
-export const revenue = [
+export const revenue: Revenue[] = [
 	{ month: "Jan", revenue: 2000 },
 	{ month: "Feb", revenue: 1800 },
 	{ month: "Mar", revenue: 2200 },

@@ -7,7 +7,7 @@ import { hashPassword } from "../../lib/password";
 import * as schema from "../schema";
 import { testDB } from "../test-database";
 
-const customerFullNames = [
+const customerFullNames: string[] = [
 	"Evil Rabbits",
 	"Delba de Oliveira",
 	"Lee Robinson",
@@ -16,7 +16,7 @@ const customerFullNames = [
 	"Balazs Orban",
 ];
 
-const customerEmails = [
+const customerEmails: string[] = [
 	"evil@rabbit.com",
 	"delba@oliveira.com",
 	"lee@robinson.com",
@@ -25,7 +25,7 @@ const customerEmails = [
 	"balazs@orban.com",
 ];
 
-const customerImageUrls = [
+const customerImageUrls: string[] = [
 	"/customers/evil-rabbit.png",
 	"/customers/delba-de-oliveira.png",
 	"/customers/lee-robinson.png",
@@ -34,7 +34,7 @@ const customerImageUrls = [
 	"/customers/balazs-orban.png",
 ];
 
-const months = [
+const months: string[] = [
 	"Jan",
 	"Feb",
 	"Mar",
@@ -69,9 +69,15 @@ const userSeed: User[] = [
 		password: await hashPassword("AdminPassword123!"),
 		role: "admin",
 	},
+	{
+		username: "test",
+		email: "test@mail.com",
+		password: await hashPassword("Password123!"),
+		role: "user",
+	},
 ];
 
-async function main() {
+async function main(): Promise<void> {
 	// Check if the database is empty
 	const { rows: userCount } = (await testDB.execute(
 		"SELECT COUNT(*) FROM users",
@@ -112,7 +118,7 @@ async function main() {
 					isUnique: true,
 				}),
 				role: f.valuesFromArray({
-					values: userSeed.map((u) => u.role),
+					values: userSeed.map((u: User) => u.role),
 					isUnique: true,
 				}),
 			},

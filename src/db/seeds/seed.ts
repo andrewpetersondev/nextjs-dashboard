@@ -11,7 +11,7 @@ import {
 } from "@/src/db/seeds/placeholder-data";
 import bcryptjs from "bcryptjs";
 
-async function seedUsers() {
+async function seedUsers(): Promise<void> {
 	console.log("seeding users...");
 	try {
 		const saltRounds = 10;
@@ -94,13 +94,13 @@ async function seedUsers() {
 // }
 
 // Run all seeds
-async function runSeeds() {
+async function runSeeds(): Promise<void> {
 	await seedUsers();
 	// await seedCustomers();
 	// await seedInvoices();
 	// await seedRevenue();
 }
 
-runSeeds().then(() =>
+runSeeds().then((): void =>
 	console.log("Seed function ran. Check to see if the data was inserted."),
 );

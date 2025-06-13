@@ -4,7 +4,13 @@ import { db } from "@/src/db/database";
 import { users } from "@/src/db/schema";
 import bcryptjs from "bcryptjs";
 
-const mockUsers = [
+type User = {
+	username: string;
+	email: string;
+	password: string;
+};
+
+const mockUsers: User[] = [
 	{
 		username: "username1",
 		email: "username1@mail.com",
@@ -22,10 +28,10 @@ const mockUsers = [
 	},
 ];
 
-async function seedUsers() {
+async function seedUsers(): Promise<void> {
 	const saltRounds = 10;
-	const hashedUsers = await Promise.all(
-		mockUsers.map(async (user) => ({
+	const hashedUsers: User[] = await Promise.all(
+		mockUsers.map(async (user: User) => ({
 			...user,
 			password: await bcryptjs.hash(user.password, saltRounds),
 		})),

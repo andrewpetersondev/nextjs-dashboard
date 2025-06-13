@@ -2,10 +2,10 @@ import { db } from "@/src/db/database";
 import * as schema from "@/src/db/schema";
 import { reset } from "drizzle-seed";
 
-async function main() {
+async function main(): Promise<void> {
 	await reset(db, schema);
 }
 
-main().then(() =>
+main().then((): void =>
 	console.log("drizzle reset complete, tables remain, but values are gone"),
 );
