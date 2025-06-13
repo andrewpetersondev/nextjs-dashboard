@@ -33,6 +33,7 @@
 		"drizzle-seed-testDB": "tsx src/db/seeds/best-seed-testdb.ts --config=drizzle-test.config.ts",
 		"drizzle-update-drizzle-kit": "pnpm drizzle-kit up --config=drizzle-dev.config.ts",
 		"drizzle-update-drizzle-kit-testDB": "pnpm drizzle-kit up --config=drizzle-test.config.ts",
+		"hashicorp-debug": "hcp vault-secrets run -- pnpm dev",
 		"lint": "next lint",
 		"reformat:project": "pnpm prettier --write .",
 		"start": "node .next/standalone/server.js",
