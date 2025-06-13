@@ -16,6 +16,12 @@ import { toUserDTO } from "@/src/mappers/user.mapper";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**
+ * Number of users to display per page for pagination.
+ * Update this value to change pagination globally.
+ */
+const ITEMS_PER_PAGE_USERS = 10;
+
+/**
  * Inserts a new user record into the database.
  * @param params - User creation parameters.
  * @returns The created user as UserDTO, or null if creation failed.
@@ -118,7 +124,6 @@ export async function fetchUsers(): Promise<UserDTO[]> {
  * @returns Number of pages.
  */
 export async function fetchUsersPages(query: string): Promise<number> {
-	const ITEMS_PER_PAGE_USERS = 2;
 	try {
 		const [{ count: total } = { count: 0 }] = await db
 			.select({ count: count(users.id) })
@@ -146,7 +151,6 @@ export async function fetchFilteredUsers(
 	query: string,
 	currentPage: number,
 ): Promise<UserDTO[]> {
-	const ITEMS_PER_PAGE_USERS = 2;
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
 	try {
 		const data: UserEntity[] = await db
