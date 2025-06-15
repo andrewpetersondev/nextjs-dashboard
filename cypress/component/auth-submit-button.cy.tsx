@@ -20,11 +20,8 @@ describe("AuthSubmitButton", () => {
 			clicked = true;
 		};
 		cy.mount(<AuthSubmitButton onClick={onClick}>Submit</AuthSubmitButton>);
-		cy.get("button")
-			.click()
-			.then(() => {
-				expect(clicked).to.be.true;
-			});
+		cy.get("button").click();
+		expect(clicked).to.be.true;
 	});
 
 	it("has the correct class names", () => {
