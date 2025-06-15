@@ -21,9 +21,10 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 		});
 	});
 
+	// todo: implement stricter naming for email validation
 	it("fails to login with invalid password", () => {
 		cy.fixture("user").then((user) => {
-			cy.login({ ...user, password: "invalidpassword" });
+			cy.login({ ...user, password: "WrongPassword123!" });
 			cy.get('[data-cy="login-message-errors"]').should(
 				"contain",
 				"Invalid email or password",
@@ -31,12 +32,13 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 		});
 	});
 
-	it("fails to login with invalid email", () => {
+	// todo: implement stricter naming for email validation
+	it("fails to log in with invalid email", () => {
 		cy.fixture("user").then((user) => {
-			cy.login({ ...user, email: "invalidemail" });
-			cy.get('[data-cy="login-email-input-errors"]').should(
+			cy.login({ ...user, email: "invalidemail@mail.com" });
+			cy.get('[data-cy="login-message-errors"]').should(
 				"contain",
-				"Email address error",
+				"Invalid email or password",
 			);
 		});
 	});

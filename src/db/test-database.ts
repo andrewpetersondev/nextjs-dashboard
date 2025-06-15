@@ -13,6 +13,7 @@ let url: string;
 
 if (process.env.POSTGRES_URL_TESTDB) {
 	url = process.env.POSTGRES_URL_TESTDB;
+	console.log("Using POSTGRES_URL_TESTDB:", url);
 } else {
 	console.error("POSTGRES_URL_TESTDB is not set.");
 	process.exit(1);
