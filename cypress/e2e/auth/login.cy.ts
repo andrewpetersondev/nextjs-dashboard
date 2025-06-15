@@ -1,8 +1,6 @@
 /// <reference types="../../cypress.d.ts" />
 /// <reference types="cypress" />
 
-// 3 of 4 tests pass
-
 describe("UI Login Tests @ /auth/login.cy.ts", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {

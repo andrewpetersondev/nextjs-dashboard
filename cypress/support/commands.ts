@@ -1,7 +1,7 @@
 /// <reference types="../cypress.d.ts" />
 /// <reference types="cypress" />
 
-import type { UserEntity } from "@/src/db/entities/user";
+import type { UserEntity } from "../../src/db/entities/user";
 
 // Sign up a user via UI
 Cypress.Commands.add(
@@ -38,15 +38,15 @@ Cypress.Commands.add(
 // Create a user in the DB
 Cypress.Commands.add("createUser", (user: UserEntity) => {
 	cy.log("Creating test user", user.email);
-	cy.task("db:insert", user).then((result) =>
-		cy.log("db:insert result", result),
+	cy.task("db:createUser", user).then((result) =>
+		cy.log("db:createUser result", result),
 	);
 });
 
 // Find a user in the DB
 Cypress.Commands.add("findUser", (email: string) => {
 	cy.log("Finding test user", email);
-	cy.task("db:find", email).then((result) => cy.log("Found user", result));
+	cy.task("db:findUser", email).then((result) => cy.log("Found user", result));
 });
 
 // Update a user in the DB
@@ -54,8 +54,8 @@ Cypress.Commands.add(
 	"updateUser",
 	(email: string, updates: Partial<UserEntity>) => {
 		cy.log("Updating test user", email, updates);
-		cy.task("db:update", { email, updates }).then((result) =>
-			cy.log("db:update result", result),
+		cy.task("db:updateUser", { email, updates }).then((result) =>
+			cy.log("db:updateUser result", result),
 		);
 	},
 );
@@ -63,7 +63,7 @@ Cypress.Commands.add(
 // Delete a user from the DB
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("Deleting test user", email);
-	cy.task("db:delete", email).then((result) =>
-		cy.log("db:delete result", result),
+	cy.task("db:deleteUser", email).then((result) =>
+		cy.log("db:deleteUser result", result),
 	);
 });

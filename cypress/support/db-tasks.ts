@@ -1,3 +1,6 @@
+/// <reference types="../cypress.d.ts" />
+/// <reference types="cypress" />
+
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/db/entities/user";
 import { users } from "../../src/db/schema";
@@ -12,19 +15,19 @@ export const dbTasks = {
 		console.log("log: ", message);
 		return null;
 	},
-	"db:insert": async (user: UserEntity) => {
+	"db:createUser": async (user: UserEntity) => {
 		try {
 			const [insertedUser] = await testDB
 				.insert(users)
 				.values(user)
 				.returning();
-			return insertedUser ? "User created" : "User creation failed";
+			return insertedUser ?? null;
 		} catch (error) {
-			console.error("db:insert error", error);
-			return "User creation failed";
+			console.error("db:createUser error", error);
+			return null;
 		}
 	},
-	"db:find": async (email: string) => {
+	"db:findUser": async (email: string) => {
 		try {
 			const [user] = await testDB
 				.select()
@@ -32,11 +35,11 @@ export const dbTasks = {
 				.where(eq(users.email, email));
 			return user ?? null;
 		} catch (error) {
-			console.error("db:find error", error);
+			console.error("db:findUser error", error);
 			return null;
 		}
 	},
-	"db:update": async ({
+	"db:updateUser": async ({
 		email,
 		updates,
 	}: {
@@ -56,11 +59,11 @@ export const dbTasks = {
 				.returning();
 			return updatedUser ? "User updated" : "User update failed";
 		} catch (error) {
-			console.error("db:update error", error);
+			console.error("db:updateUser error", error);
 			return "User update failed";
 		}
 	},
-	"db:delete": async (email: string) => {
+	"db:deleteUser": async (email: string) => {
 		try {
 			const [found] = await testDB
 				.select({ id: users.id })
@@ -70,7 +73,7 @@ export const dbTasks = {
 			await testDB.delete(users).where(eq(users.id, found.id));
 			return "User deleted";
 		} catch (error) {
-			console.error("db:delete error", error);
+			console.error("db:deleteUser error", error);
 			return "User deletion failed";
 		}
 	},

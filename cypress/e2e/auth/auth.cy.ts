@@ -1,8 +1,6 @@
 /// <reference types="../../cypress.d.ts" />
 /// <reference types="cypress" />
 
-// 4 of 4 tests passed
-
 describe("Auth Commands via UI", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {
@@ -44,13 +42,13 @@ describe("Auth Commands via Tasks", () => {
 		});
 	});
 
-	it("should create a test user via db:insert", () => {
+	it("should create a test user via db:createUser", () => {
 		cy.fixture("user").then((user) => {
 			cy.createUser(user);
 		});
 	});
 
-	it("should retrieve a test user via db:find", () => {
+	it("should retrieve a test user via db:findUser", () => {
 		cy.fixture("user").then((user) => {
 			cy.createUser(user).then(() => {
 				// <-- Wait for user creation
@@ -64,7 +62,7 @@ describe("Auth Commands via Tasks", () => {
 		});
 	});
 
-	it("should delete a test user via db:delete", () => {
+	it("should delete a test user via db:deleteUser", () => {
 		cy.fixture("user").then((user) => {
 			cy.deleteUser(user.email);
 		});

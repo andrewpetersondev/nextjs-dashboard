@@ -1,4 +1,5 @@
-// 8 of 8 tests pass
+/// <reference types="../../cypress.d.ts" />
+/// <reference types="cypress" />
 
 interface ScreenDimensions {
 	width: number;

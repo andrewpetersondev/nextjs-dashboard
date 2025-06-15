@@ -12,12 +12,6 @@
 		},
 		"types": ["node", "react", "react-dom"]
 	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"next-env.d.ts",
-		".next/types/**/*.ts",
-		"cypress.config.ts"
-	],
-	"exclude": ["node_modules", "cypress", "storage"]
+	"include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+	"exclude": ["node_modules", "cypress.config.ts", "cypress", "storage"]
 }

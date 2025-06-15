@@ -1,3 +1,6 @@
+/// <reference types="../cypress.d.ts" />
+/// <reference types="cypress" />
+
 import { AuthSubmitButton } from "../../src/ui/auth/auth-submit-button";
 
 describe("AuthSubmitButton", () => {
