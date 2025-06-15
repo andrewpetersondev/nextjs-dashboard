@@ -1,5 +1,3 @@
-// use local seed file @/src/app/lib/placeholder-data
-import "dotenv/config";
 import { db } from "@/src/db/database";
 import { users } from "@/src/db/schema";
 import bcryptjs from "bcryptjs";

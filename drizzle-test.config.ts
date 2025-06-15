@@ -1,5 +1,4 @@
 import "./envConfig";
-import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
 // WRONG inside Docker:
@@ -9,10 +8,10 @@ import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle-test.config.ts ...");
 
-let url: string;
+let testUrl: string;
 
 if (process.env.POSTGRES_URL_TESTDB) {
-	url = process.env.POSTGRES_URL_TESTDB;
+	testUrl = process.env.POSTGRES_URL_TESTDB;
 } else {
 	console.error("POSTGRES_URL_TESTDB not found in hcp vault");
 	process.exit(1);
@@ -24,6 +23,6 @@ export default defineConfig({
 	casing: "snake_case",
 	dialect: "postgresql",
 	dbCredentials: {
-		url: url,
+		url: testUrl,
 	},
 });

@@ -1,7 +1,6 @@
 // ANY FILE THAT IS USED FOR CLI TOOLING CANNOT HAVE IMPORT "SERVER-ONLY"
 // DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
 
-import "dotenv/config";
 import { seed } from "drizzle-seed";
 import { hashPassword } from "../../lib/password";
 import { db } from "../database";

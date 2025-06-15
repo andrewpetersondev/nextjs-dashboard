@@ -1,6 +1,5 @@
 import "server-only";
 
-import "dotenv/config";
 import {
 	type NodePgClient,
 	type NodePgDatabase,
