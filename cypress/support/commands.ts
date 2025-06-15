@@ -38,9 +38,12 @@ Cypress.Commands.add(
 // Create a user in the DB
 Cypress.Commands.add("createUser", (user: UserEntity) => {
 	cy.log("Creating test user", user.email);
-	cy.task("db:createUser", user).then((result) =>
-		cy.log("db:createUser result", result),
-	);
+	// Always delete the user first to avoid unique constraint errors
+	cy.task("db:deleteUser", user.email).then(() => {
+		cy.task("db:createUser", user).then((result) => {
+			cy.log("db:createUser result", result);
+		});
+	});
 });
 
 // Find a user in the DB
@@ -62,8 +65,9 @@ Cypress.Commands.add(
 
 // Delete a user from the DB
 Cypress.Commands.add("deleteUser", (email: string) => {
-	cy.log("Deleting test user", email);
+	cy.log("deleteUser", email);
 	cy.task("db:deleteUser", email).then((result) =>
+		// log does not appear in cypress ui or terminal
 		cy.log("db:deleteUser result", result),
 	);
 });

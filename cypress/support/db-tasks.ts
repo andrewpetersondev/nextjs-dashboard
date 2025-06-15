@@ -78,6 +78,7 @@ export const dbTasks = {
 				.select()
 				.from(users)
 				.where(eq(users.email, email));
+			console.log("db:deleteUser found user", found);
 			if (!found)
 				return { success: false, data: null, error: "User not found" };
 			// Delete the user (delete() does not return the user)
@@ -85,7 +86,7 @@ export const dbTasks = {
 			// Return the previously found user as confirmation
 			return { success: true, data: found };
 		} catch (error) {
-			console.error("db:deleteUser error", error);
+			console.error("db:deleteUser error", error); // does not appear in terminal or cypress  so it must not run because it is successful
 			return { success: false, data: null, error: (error as Error).message };
 		}
 	},

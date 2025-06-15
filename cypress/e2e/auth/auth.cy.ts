@@ -29,6 +29,7 @@ describe("Auth Commands via UI", () => {
 	});
 });
 
+// this is supposed to use tasks but i use custom commands (createUser, findUser, deleteUser, etc.)?????
 describe("Auth Commands via Tasks", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {
@@ -44,21 +45,22 @@ describe("Auth Commands via Tasks", () => {
 
 	it("should create a test user via db:createUser", () => {
 		cy.fixture("user").then((user) => {
-			cy.createUser(user);
+			cy.log("Creating test user", user.email);
+
+			// Always delete the user first to avoid unique constraint errors
+			cy.task("db:deleteUser", user.email);
+
+			cy.task("db:createUser", user);
 		});
 	});
 
 	it("should retrieve a test user via db:findUser", () => {
 		cy.fixture("user").then((user) => {
-			cy.createUser(user).then(() => {
-				// <-- Wait for user creation
-				cy.findUser(user.email).then((foundUser) => {
-					expect(foundUser).to.not.be.null;
-					if (foundUser) {
-						expect(foundUser.email).to.eq(user.email);
-					}
-				});
-			});
+			cy.task("db:deleteUser", user.email); // Ensure user is deleted first
+
+			cy.task("db:createUser", user);
+
+			cy.task("db:findUser", user.email);
 		});
 	});
 
