@@ -7,9 +7,7 @@ const protectedRoutes: string[] = ["/dashboard"];
 const publicRoutes: string[] = ["/login", "/signup", "/"];
 const adminRoutes: string[] = ["/dashboard/users"];
 
-export default async function middleware(
-	req: NextRequest,
-): Promise<NextResponse<unknown>> {
+export default async function middleware(req: NextRequest) {
 	const path: string = req.nextUrl.pathname;
 	const isProtectedRoute: boolean = protectedRoutes.includes(path);
 	const isPublicRoute: boolean = publicRoutes.includes(path);
