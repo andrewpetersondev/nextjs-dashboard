@@ -21,7 +21,7 @@ describe("Auth Commands via UI", () => {
 		});
 	});
 
-	it("should login with created user with custom command", () => {
+	it("should log in with created user with custom command", () => {
 		cy.fixture("user").then((user) => {
 			// cy.deleteUser(user.email);
 			cy.login(user);
