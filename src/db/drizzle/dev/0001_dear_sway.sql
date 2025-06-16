@@ -1,1 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "sensitive_data" varchar(50) DEFAULT 'cantTouchThis' NOT NULL;

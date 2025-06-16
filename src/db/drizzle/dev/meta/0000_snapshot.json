@@ -1,5 +1,5 @@
 {
-  "id": "6cf280e4-fa57-40bb-90af-f06573ca4183",
+  "id": "39c3e01d-a756-4c5c-8726-3d084ca3845b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -263,6 +263,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "sensitive_data": {
+          "name": "sensitive_data",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'cantTouchThis'"
         }
       },
       "indexes": {},

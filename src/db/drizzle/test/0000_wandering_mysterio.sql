@@ -41,6 +41,7 @@ CREATE TABLE "users" (
 	"email" varchar(50) NOT NULL,
 	"role" "role" DEFAULT 'user' NOT NULL,
 	"password" varchar(255) NOT NULL,
+	"sensitive_data" varchar(50) DEFAULT 'cantTouchThis' NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
