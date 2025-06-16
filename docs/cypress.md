@@ -25,14 +25,14 @@ configuration is never exposed.
 
 Start the development server with secrets injected:
 
-```sh
+````sh
 pnpm dev:hcp
 # or
 hcp vault-secrets run -- pnpm dev
 
 ---
 
-## Running Cypress Tests 
+## Running Cypress Tests
 
 1. Open Cypress UI (Component/E2E):
 
@@ -40,11 +40,11 @@ hcp vault-secrets run -- pnpm dev
    pnpm cyp:open
 # or
 hcp vault-secrets run -- pnpm cypress open
-   ```
+````
 
 - Runs all E2E tests in headless mode with secrets injected.
 
---- 
+---
 
 3. Run E2E Tests for a Specific Folder
    To target a specific folder (e.g., cypress/e2e/auth/):
@@ -56,7 +56,7 @@ pnpm cyp:e2e:headless:auth
 hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/**/*.cy.ts'
 ```
 
---- 
+---
 
 ```shell
 pnpm cyp:component
@@ -92,7 +92,7 @@ pnpm cyp:component:headless
 - Ensure high code coverage and meaningful test cases.
 - Sanitize and validate all user input in tests.
 
---- 
+---
 
 ## Example npm Scripts (package.json)
 
@@ -108,3 +108,56 @@ pnpm cyp:component:headless
   }
 }
 ```
+
+## Testing Organization Summary
+
+---
+
+### E2E Tests
+
+1. Directory Structure
+
+- organized by feature/domain, separating helpers and utilities.
+
+2. File Roles
+
+- support/commands.ts: Custom Cypress commands (UI flows, not DB).
+- support/db-tasks.ts: Cypress tasks for DB setup/teardown.
+- fixtures/: Static test data.
+- utils/: Test helpers (e.g., random data generators).
+
+3. Test File Conventions
+
+- One test file per user-facing feature or flow.
+- Use describe blocks for logical grouping.
+- Use beforeEach/afterEach for setup/cleanup via tasks.
+  Use custom commands for UI flows only.
+
+4. Best Practices
+
+- Keep DB tasks out of UI flow tests except for setup/teardown.
+- Mock external APIs in tests.
+- Use strict typing and import aliases.
+- Document custom commands and tasks.
+- Group tests by user journey, not by CRUD operation.
+- Keep tests deterministic: clean up state before/after.
+- Run tests in isolation: avoid cross-test dependencies.
+
+5. Test Types
+
+- UI Flows: Use custom commands (e.g., cy.signup, cy.login).
+- Setup/Teardown: Use cy.task("db:...") for DB state.
+
+---
+
+### Component Tests
+
+---
+
+## Notes
+
+- use .submit instead of onClick for Cypress tests to better simulate user behavior.
+- cypress has built in cookies
+  - Cypress.Cookies.debug(true)
+  - cy.clearCookies()
+  - cy.getCookie('auth_key') // Get cookie with name 'auth_key'
