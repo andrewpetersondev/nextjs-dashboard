@@ -1,22 +1,10 @@
 {
 	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
-		"allowJs": false,
-		"noEmit": true,
-		"baseUrl": "./",
-		"paths": {
-			"@/component/*": ["./component/*"],
-			"@/e2e/*": ["./e2e/*"],
-			"@/support/*": ["./support/*"]
-		},
+		"target": "es5",
+		"lib": ["es5", "dom"],
+		"sourceMap": true,
 		"types": ["cypress", "node"]
 	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.cy.ts",
-		"**/*.cy.tsx",
-		"cypress.d.ts",
-		"../cypress.config.ts"
-	]
+	"include": ["**/*.ts", "**/*.tsx", "cypress.d.ts"]
 }
