@@ -48,6 +48,8 @@ const months: string[] = [
 	"Dec",
 ];
 
+const roles = ["guest", "admin", "user"] as const;
+
 interface User {
 	username: string;
 	email: string;
@@ -78,23 +80,33 @@ const userSeed: User[] = [
 
 async function main(): Promise<void> {
 	// Check if the database is empty
+
 	const { rows: userCount } = (await testDB.execute(
 		"SELECT COUNT(*) FROM users",
 	)) as { rows: { count: number }[] };
+
 	const { rows: customerCount } = (await testDB.execute(
 		"SELECT COUNT(*) FROM customers",
 	)) as { rows: { count: number }[] };
+
 	const { rows: invoiceCount } = (await testDB.execute(
 		"SELECT COUNT(*) FROM invoices",
 	)) as { rows: { count: number }[] };
+
 	const { rows: revenueCount } = (await testDB.execute(
 		"SELECT COUNT(*) FROM revenues",
 	)) as { rows: { count: number }[] };
+
+	const { rows: demoUserCount } = (await testDB.execute(
+		"SELECT COUNT(*) FROM demo_user_counters",
+	)) as { rows: { count: number }[] };
+
 	if (
 		userCount[0].count > 0 ||
 		customerCount[0].count > 0 ||
 		invoiceCount[0].count > 0 ||
-		revenueCount[0].count > 0
+		revenueCount[0].count > 0 ||
+		demoUserCount[0].count > 0
 	) {
 		console.error("Database is not empty. Exiting...");
 		return;
@@ -162,6 +174,13 @@ async function main(): Promise<void> {
 			columns: {
 				month: f.valuesFromArray({ values: months, isUnique: true }),
 				revenue: f.int({ minValue: 100, maxValue: 10000 }),
+			},
+		},
+		demoUserCounters: {
+			count: 3,
+			columns: {
+				role: f.valuesFromArray({ values: [...roles], isUnique: true }),
+				count: f.intPrimaryKey({ minValue: 1, maxValue: 100 }),
 			},
 		},
 	}));

@@ -6,7 +6,7 @@ import { hashPassword } from "../../lib/password";
 import { db } from "../database";
 import * as schema from "../schema";
 
-const customerFullNames = [
+const customerFullNames: string[] = [
 	"Evil Rabbits",
 	"Delba de Oliveira",
 	"Lee Robinson",
@@ -15,7 +15,7 @@ const customerFullNames = [
 	"Balazs Orban",
 ];
 
-const customerEmails = [
+const customerEmails: string[] = [
 	"evil@rabbit.com",
 	"delba@oliveira.com",
 	"lee@robinson.com",
@@ -24,7 +24,7 @@ const customerEmails = [
 	"balazs@orban.com",
 ];
 
-const customerImageUrls = [
+const customerImageUrls: string[] = [
 	"/customers/evil-rabbit.png",
 	"/customers/delba-de-oliveira.png",
 	"/customers/lee-robinson.png",
@@ -33,7 +33,7 @@ const customerImageUrls = [
 	"/customers/balazs-orban.png",
 ];
 
-const months = [
+const months: string[] = [
 	"Jan",
 	"Feb",
 	"Mar",
@@ -48,39 +48,65 @@ const months = [
 	"Dec",
 ];
 
+const roles = ["guest", "admin", "user"] as const;
+
 interface User {
 	username: string;
 	email: string;
 	password: string;
+	role: "admin" | "user" | "guest";
 }
 
-const users: User[] = [
+const userSeed: User[] = [
 	{
 		username: "user",
-		email: "user@mail.com",
-		password: await hashPassword("Password123!"),
+		email: "user@user.com",
+		password: await hashPassword("UserPassword123!"),
+		role: "user",
+	},
+	{
+		username: "admin",
+		email: "admin@admin.com",
+		password: await hashPassword("AdminPassword123!"),
+		role: "admin",
+	},
+	{
+		username: "guest",
+		email: "guest@guest.com",
+		password: await hashPassword("GuestPassword123!"),
+		role: "guest",
 	},
 ];
 
-async function main() {
+async function main(): Promise<void> {
 	// Check if the database is empty
+
 	const { rows: userCount } = (await db.execute(
 		"SELECT COUNT(*) FROM users",
 	)) as { rows: { count: number }[] };
+
 	const { rows: customerCount } = (await db.execute(
 		"SELECT COUNT(*) FROM customers",
 	)) as { rows: { count: number }[] };
+
 	const { rows: invoiceCount } = (await db.execute(
 		"SELECT COUNT(*) FROM invoices",
 	)) as { rows: { count: number }[] };
+
 	const { rows: revenueCount } = (await db.execute(
 		"SELECT COUNT(*) FROM revenues",
 	)) as { rows: { count: number }[] };
+
+	const { rows: demoUserCount } = (await db.execute(
+		"SELECT COUNT(*) FROM demo_user_counters",
+	)) as { rows: { count: number }[] };
+
 	if (
 		userCount[0].count > 0 ||
 		customerCount[0].count > 0 ||
 		invoiceCount[0].count > 0 ||
-		revenueCount[0].count > 0
+		revenueCount[0].count > 0 ||
+		demoUserCount[0].count > 0
 	) {
 		console.error("Database is not empty. Exiting...");
 		return;
@@ -88,11 +114,24 @@ async function main() {
 
 	await seed(db, schema).refine((f) => ({
 		users: {
-			count: 1,
+			count: 2,
 			columns: {
-				username: f.default({ defaultValue: users[0].username }),
-				email: f.default({ defaultValue: users[0].email }),
-				password: f.default({ defaultValue: users[0].password }),
+				username: f.valuesFromArray({
+					values: userSeed.map((u) => u.username),
+					isUnique: true,
+				}),
+				email: f.valuesFromArray({
+					values: userSeed.map((u) => u.email),
+					isUnique: true,
+				}),
+				password: f.valuesFromArray({
+					values: userSeed.map((u) => u.password),
+					isUnique: true,
+				}),
+				role: f.valuesFromArray({
+					values: userSeed.map((u: User) => u.role),
+					isUnique: true,
+				}),
 			},
 		},
 		customers: {
@@ -135,6 +174,13 @@ async function main() {
 			columns: {
 				month: f.valuesFromArray({ values: months, isUnique: true }),
 				revenue: f.int({ minValue: 100, maxValue: 10000 }),
+			},
+		},
+		demoUserCounters: {
+			count: 3,
+			columns: {
+				role: f.valuesFromArray({ values: [...roles], isUnique: true }),
+				count: f.intPrimaryKey({ minValue: 1, maxValue: 100 }),
 			},
 		},
 	}));
