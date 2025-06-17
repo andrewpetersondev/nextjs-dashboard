@@ -1,4 +1,4 @@
-import { db } from "@/src/db/database";
+import { db } from "@/src/db/dev-database";
 import * as schema from "@/src/db/schema";
 import { reset } from "drizzle-seed";
 

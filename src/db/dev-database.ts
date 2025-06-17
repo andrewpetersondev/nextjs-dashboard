@@ -6,7 +6,7 @@ import {
 	drizzle,
 } from "drizzle-orm/node-postgres";
 
-console.log("database.ts ...");
+console.log("dev-database.ts ...");
 
 let url: string;
 

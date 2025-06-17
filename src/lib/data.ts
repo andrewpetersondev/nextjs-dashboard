@@ -1,6 +1,6 @@
 import "server-only";
 
-import { db } from "@/src/db/database";
+import { db } from "@/src/db/dev-database";
 import { customers, invoices, revenues } from "@/src/db/schema";
 import type {
 	CustomerField,

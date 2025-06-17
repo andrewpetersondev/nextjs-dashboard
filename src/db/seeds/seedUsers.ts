@@ -1,4 +1,4 @@
-import { db } from "@/src/db/database";
+import { db } from "@/src/db/dev-database";
 import { users } from "@/src/db/schema";
 import bcryptjs from "bcryptjs";
 

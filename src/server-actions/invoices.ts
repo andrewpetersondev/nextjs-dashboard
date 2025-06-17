@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/src/db/database";
+import { db } from "@/src/db/dev-database";
 import { invoices } from "@/src/db/schema";
 import {
 	type CreateInvoiceResult,

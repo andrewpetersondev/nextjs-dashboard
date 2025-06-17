@@ -3,7 +3,7 @@
 
 import { seed } from "drizzle-seed";
 import { hashPassword } from "../../lib/password";
-import { db } from "../database";
+import { db } from "../dev-database";
 import * as schema from "../schema";
 
 const customerFullNames: string[] = [

@@ -1,4 +1,4 @@
-import { db } from "@/src/db/database";
+import { db } from "@/src/db/dev-database";
 import {
 	users,
 	// customers, invoices, revenue
