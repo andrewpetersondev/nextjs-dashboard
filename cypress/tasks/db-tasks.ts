@@ -1,10 +1,22 @@
 /// <reference types="../cypress.d.ts" />
-/// <reference types="cypress" />
+/// <reference types="../cypress" />
 
 import { eq } from "drizzle-orm";
+import { createUserInDB } from "../../src/dal/users";
+import { getDB } from "../../src/db/connection";
 import type { UserEntity } from "../../src/db/entities/user";
 import { users } from "../../src/db/schema";
-import { testDB } from "../../src/db/test-database";
+import type { UserRole } from "../../src/lib/definitions/roles";
+import type {
+	DecryptPayload,
+	EncryptPayload,
+} from "../../src/lib/definitions/session";
+import {
+	createSession,
+	decrypt,
+	deleteSession,
+	encrypt,
+} from "../../src/lib/session";
 
 export type DbTaskResult<T> = {
 	success: boolean;
@@ -25,10 +37,13 @@ export const dbTasks = {
 		user: UserEntity,
 	): Promise<DbTaskResult<UserEntity>> => {
 		try {
-			const [insertedUser] = await testDB
-				.insert(users)
-				.values(user)
-				.returning();
+			const testDB = getDB("test");
+			const insertedUser = await createUserInDB(testDB, {
+				username: user.username,
+				email: user.email,
+				password: user.password,
+				role: user.role,
+			});
 			return { success: !!insertedUser, data: insertedUser ?? null };
 		} catch (error) {
 			console.error("db:createUser error", error);
@@ -37,6 +52,7 @@ export const dbTasks = {
 	},
 	"db:findUser": async (email: string): Promise<DbTaskResult<UserEntity>> => {
 		try {
+			const testDB = getDB("test");
 			const [user] = await testDB
 				.select()
 				.from(users)
@@ -55,6 +71,7 @@ export const dbTasks = {
 		updates: Partial<UserEntity>;
 	}): Promise<DbTaskResult<UserEntity>> => {
 		try {
+			const testDB = getDB("test");
 			const [found] = await testDB
 				.select()
 				.from(users)
@@ -74,6 +91,7 @@ export const dbTasks = {
 	},
 	"db:deleteUser": async (email: string): Promise<DbTaskResult<UserEntity>> => {
 		try {
+			const testDB = getDB("test");
 			const [found] = await testDB
 				.select()
 				.from(users)
@@ -88,6 +106,44 @@ export const dbTasks = {
 		} catch (error) {
 			console.error("db:deleteUser error", error); // does not appear in terminal or cypress  so it must not run because it is successful
 			return { success: false, data: null, error: (error as Error).message };
+		}
+	},
+	"session:create": async (
+		userId: string,
+		role: UserRole = "user",
+	): Promise<void> => {
+		try {
+			await createSession(userId, role);
+		} catch (error) {
+			console.error("session:create error", error);
+		}
+	},
+	"session:encrypt:": async (payload: EncryptPayload): Promise<string> => {
+		try {
+			const encrypted = await encrypt(payload);
+			return encrypted;
+		} catch (error) {
+			console.error("session:encrypt error", error);
+			throw new Error("Failed to encrypt session payload.");
+		}
+	},
+	"session:decrypt": async (
+		session: string,
+	): Promise<DecryptPayload | undefined> => {
+		try {
+			const decrypted = await decrypt(session);
+			return decrypted;
+		} catch (error) {
+			console.error("session:decrypt error", error);
+			throw new Error("Failed to decrypt session payload.");
+		}
+	},
+	"session:delete": async (): Promise<void> => {
+		try {
+			await deleteSession();
+		} catch (error) {
+			console.error("session:delete error", error);
+			throw new Error("Failed to delete session cookie.");
 		}
 	},
 };

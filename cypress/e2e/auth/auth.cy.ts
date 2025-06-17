@@ -1,8 +1,8 @@
 /// <reference types="../../cypress.d.ts" />
 /// <reference types="cypress" />
 
-import type { DbTaskResult } from "@/support/db-tasks";
 import type { UserEntity } from "../../../src/db/entities/user";
+import type { DbTaskResult } from "../../tasks/db-tasks";
 
 describe("Auth Commands via UI", () => {
 	beforeEach(() => {

@@ -1,5 +1,5 @@
 import { defineConfig } from "cypress";
-import { dbTasks } from "./cypress/support/db-tasks";
+import { dbTasks } from "./cypress/tasks/db-tasks";
 
 export default defineConfig({
 	screenshotsFolder: "cypress/screenshots",
