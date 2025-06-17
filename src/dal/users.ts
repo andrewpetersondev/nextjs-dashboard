@@ -5,7 +5,7 @@ import "server-only";
  * Uses Drizzle ORM for database access.
  */
 
-import { db } from "@/src/db/database";
+import type { DB } from "@/src/db/connection";
 import type { UserEntity } from "@/src/db/entities/user";
 import { demoUserCounters, users } from "@/src/db/schema";
 import type { UserDTO } from "@/src/dto/user.dto";
@@ -25,18 +25,22 @@ const ITEMS_PER_PAGE_USERS = 10;
  * Inserts a new user record into the database.
  * @param params - User creation parameters.
  * @returns The created user as UserDTO, or null if creation failed.
+ * @param db
  */
-export async function createUserInDB({
-	username,
-	email,
-	password,
-	role = "user",
-}: {
-	username: string;
-	email: string;
-	password: string;
-	role?: UserRole;
-}): Promise<UserDTO | null> {
+export async function createUserInDB(
+	db: DB,
+	{
+		username,
+		email,
+		password,
+		role = "user",
+	}: {
+		username: string;
+		email: string;
+		password: string;
+		role?: UserRole;
+	},
+): Promise<UserDTO | null> {
 	try {
 		const hashedPassword = await hashPassword(password);
 		const [user] = await db
@@ -52,11 +56,13 @@ export async function createUserInDB({
 
 /**
  * Fetch a user by login credentials (email and password).
+ * @param db - The database instance.
  * @param email - The user's email address.
  * @param password - The user's password.
  * @returns The user as UserDTO, or null if not found or password invalid.
  */
 export async function findUserForLogin(
+	db: DB,
 	email: string,
 	password: string,
 ): Promise<UserDTO | null> {
@@ -84,10 +90,14 @@ export async function findUserForLogin(
 
 /**
  * Fetch a user by ID.
+ * @param db - The database instance.
  * @param id - The user's ID.
  * @returns The user as UserDTO, or null if not found.
  */
-export async function fetchUserById(id: string): Promise<UserDTO | null> {
+export async function fetchUserById(
+	db: DB,
+	id: string,
+): Promise<UserDTO | null> {
 	try {
 		const [user]: UserEntity[] = await db
 			.select()
@@ -105,25 +115,26 @@ export async function fetchUserById(id: string): Promise<UserDTO | null> {
  * @returns Array of UserDTO.
  * @remarks Not currently used.
  */
-export async function fetchUsers(): Promise<UserDTO[]> {
-	try {
-		const data: UserEntity[] = await db
-			.select()
-			.from(users)
-			.orderBy(asc(users.username));
-		return data.map(toUserDTO);
-	} catch (error) {
-		logError("fetchUsers", error, {});
-		throw new Error("Failed to fetch users.");
-	}
-}
+// export async function fetchUsers(): Promise<UserDTO[]> {
+// 	try {
+// 		const data: UserEntity[] = await db
+// 			.select()
+// 			.from(users)
+// 			.orderBy(asc(users.username));
+// 		return data.map(toUserDTO);
+// 	} catch (error) {
+// 		logError("fetchUsers", error, {});
+// 		throw new Error("Failed to fetch users.");
+// 	}
+// }
 
 /**
  * Fetch total user pages for pagination.
+ * @param db - The database instance.
  * @param query - Search query for username or email.
  * @returns Number of pages.
  */
-export async function fetchUsersPages(query: string): Promise<number> {
+export async function fetchUsersPages(db: DB, query: string): Promise<number> {
 	try {
 		const [{ count: total } = { count: 0 }] = await db
 			.select({ count: count(users.id) })
@@ -143,11 +154,13 @@ export async function fetchUsersPages(query: string): Promise<number> {
 
 /**
  * Fetch filtered users for a page.
+ *  @param db - The database instance.
  * @param query - Search query for username or email.
  * @param currentPage - Current page number.
  * @returns Array of UserDTO for the page.
  */
 export async function fetchFilteredUsers(
+	db: DB,
 	query: string,
 	currentPage: number,
 ): Promise<UserDTO[]> {
@@ -175,10 +188,14 @@ export async function fetchFilteredUsers(
 
 /**
  * Deletes a user by ID.
+ * @param db - The database instance.
  * @param userId - The user's ID.
  * @returns The deleted user as UserDTO, or null if not found.
  */
-export async function deleteUser(userId: string): Promise<UserDTO | null> {
+export async function deleteUser(
+	db: DB,
+	userId: string,
+): Promise<UserDTO | null> {
 	try {
 		const [deletedUser]: UserEntity[] = await db
 			.delete(users)
@@ -193,10 +210,11 @@ export async function deleteUser(userId: string): Promise<UserDTO | null> {
 
 /**
  * Reads the demo-user counter for naming purposes.
+ * @param db - The database instance.
  * @param role - User role.
  * @returns The counter ID.
  */
-export async function demoUserCounter(role: UserRole): Promise<number> {
+export async function demoUserCounter(db: DB, role: UserRole): Promise<number> {
 	try {
 		const [counter] = await db
 			.insert(demoUserCounters)
@@ -211,11 +229,13 @@ export async function demoUserCounter(role: UserRole): Promise<number> {
 
 /**
  * Creates a demo user with a unique username and email.
+ * @param db - The database instance.
  * @param id - Unique identifier for the demo user.
  * @param role - User role.
  * @returns The created demo user as UserDTO, or null if creation failed.
  */
 export async function createDemoUser(
+	db: DB,
 	id: number,
 	role: UserRole,
 ): Promise<UserDTO | null> {
@@ -223,7 +243,7 @@ export async function createDemoUser(
 		const DEMO_PASSWORD = createRandomPassword();
 		const uniqueEmail = `demo+${role}${id}@demo.com`;
 		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
-		return await createUserInDB({
+		return await createUserInDB(db, {
 			username: uniqueUsername,
 			email: uniqueEmail,
 			password: DEMO_PASSWORD,
@@ -237,10 +257,14 @@ export async function createDemoUser(
 
 /**
  * Retrieves a user from the database by ID.
+ * @param db - The database instance.
  * @param id - The user's ID.
  * @returns The user as UserDTO, or null if not found.
  */
-export async function readUserById(id: string): Promise<UserDTO | null> {
+export async function readUserById(
+	db: DB,
+	id: string,
+): Promise<UserDTO | null> {
 	try {
 		const [user]: UserEntity[] = await db
 			.select()
@@ -256,12 +280,14 @@ export async function readUserById(id: string): Promise<UserDTO | null> {
 
 /**
  * Updates a user in the database with the provided patch.
+ * @param db - The database instance.
  * @param id - The user's ID.
  * @param patch - An object containing the fields to update.
  * @returns The updated user as UserDTO, or null if no changes or update failed.
  * @example patch = { username: "john", age: 30, isActive: true }
  */
 export async function updateUserDAL(
+	db: DB,
 	id: string,
 	patch: Record<string, unknown>,
 ): Promise<UserDTO | null> {

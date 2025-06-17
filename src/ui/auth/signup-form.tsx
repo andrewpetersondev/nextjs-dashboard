@@ -45,7 +45,12 @@ export const SignupForm: FC = () => {
 			{/* Form container */}
 			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-					<form action={action} className="space-y-6" autoComplete="off">
+					<form
+						action={action}
+						data-cy="signup-form"
+						className="space-y-6"
+						autoComplete="off"
+					>
 						<InputField
 							id="username"
 							name="username"

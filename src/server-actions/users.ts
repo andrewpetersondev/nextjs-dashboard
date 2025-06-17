@@ -18,6 +18,7 @@ import {
 	readUserById,
 	updateUserDAL,
 } from "@/src/dal/users";
+import { getDB } from "@/src/db/connection";
 import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { UserRole } from "@/src/lib/definitions/roles";
@@ -73,7 +74,8 @@ export async function signup(
 			email: string;
 			password: string;
 		};
-		const user = await createUserInDB({
+		const db = getDB("dev");
+		const user = await createUserInDB(db, {
 			username,
 			email,
 			password,
@@ -123,7 +125,8 @@ export async function login(
 			});
 		}
 		const { email, password } = validated.data;
-		const user = await findUserForLogin(email, password);
+		const db = getDB("dev");
+		const user = await findUserForLogin(db, email, password);
 		if (!user) {
 			return actionResult({
 				message: "Invalid email or password.",
@@ -162,7 +165,8 @@ export async function logout(): Promise<void> {
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
-		const deletedUser = await deleteUser(userId);
+		const db = getDB("dev");
+		const deletedUser = await deleteUser(db, userId);
 		if (!deletedUser) {
 			return actionResult({
 				message: "User not found or could not be deleted.",
@@ -207,15 +211,17 @@ export async function demoUser(
 	role: UserRole = "guest",
 ): Promise<ActionResult> {
 	let demoUser: UserDTO | null = null;
+	const db = getDB("dev");
+
 	try {
-		const counter: number = await demoUserCounter(role);
+		const counter: number = await demoUserCounter(db, role);
 		if (!counter) {
 			logError("demoUser:counter", new Error("Counter is zero or undefined"), {
 				role,
 			});
 			throw new Error("Counter is zero or undefined");
 		}
-		demoUser = await createDemoUser(counter, role);
+		demoUser = await createDemoUser(db, counter, role);
 		if (!demoUser) {
 			logError("demoUser:create", new Error("Demo user creation failed"), {
 				role,
@@ -246,6 +252,8 @@ export async function createUser(
 	_prevState: FormState<CreateUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<CreateUserFormFields>> {
+	const db = getDB("dev");
+
 	try {
 		const validated = CreateUserFormSchema.safeParse({
 			username: getFormField(formData, "username"),
@@ -261,7 +269,7 @@ export async function createUser(
 			});
 		}
 		const { username, email, password, role } = validated.data;
-		const user = await createUserInDB({
+		const user = await createUserInDB(db, {
 			username,
 			email,
 			password,
@@ -301,6 +309,7 @@ export async function editUser(
 	_prevState: FormState<EditUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<EditUserFormFields>> {
+	const db = getDB("dev");
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {
@@ -315,7 +324,7 @@ export async function editUser(
 				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
-		const existingUser: UserDTO | null = await readUserById(id);
+		const existingUser: UserDTO | null = await readUserById(db, id);
 		if (!existingUser) {
 			return actionResult({
 				message: "User not found.",
@@ -347,7 +356,7 @@ export async function editUser(
 				errors: undefined,
 			});
 		}
-		const updatedUser: UserDTO | null = await updateUserDAL(id, patch);
+		const updatedUser: UserDTO | null = await updateUserDAL(db, id, patch);
 		if (!updatedUser) {
 			return actionResult({
 				message: "Failed to update user. Please try again.",

@@ -22,6 +22,7 @@
 - Drizzle ORM v0.4+
 - Import aliases enabled
 
+<!--
 ## Docker Setup
 
 - Docker Compose v2.33+
@@ -32,12 +33,12 @@
   - Adminer (adminer)
   - Cypress (cypress)
 - Use secrets for sensitive configuration
+-->
 
 ## Environments
 
 - Development
 - Production
-- Testing
 
 ## Additional Instructions
 

@@ -1,4 +1,5 @@
 import { fetchUserById } from "@/src/dal/users";
+import { getDB } from "@/src/db/connection";
 import type { UserDTO } from "@/src/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
@@ -25,9 +26,10 @@ export interface EditUserPageProps {
 export default async function Page(
 	props: EditUserPageProps,
 ): Promise<JSX.Element> {
+	const db = getDB("dev");
 	const { id } = await props.params;
 
-	const user: UserDTO | null = await fetchUserById(id);
+	const user: UserDTO | null = await fetchUserById(db, id);
 
 	if (!user) {
 		notFound();

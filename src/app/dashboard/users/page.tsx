@@ -1,4 +1,5 @@
 import { fetchUsersPages } from "@/src/dal/users";
+import { getDB } from "@/src/db/connection";
 import { H1 } from "@/src/ui/headings";
 import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";
@@ -26,11 +27,12 @@ export interface UsersPageProps {
 export default async function Page(
 	dynamicURL: UsersPageProps,
 ): Promise<JSX.Element> {
+	const db = getDB("dev");
 	const searchParams: UsersSearchParams | undefined =
 		await dynamicURL.searchParams;
 	const query: string = searchParams?.query || "";
 	const currentPage: number = Number(searchParams?.page) || 1;
-	const totalPages: number = await fetchUsersPages(query);
+	const totalPages: number = await fetchUsersPages(db, query);
 
 	return (
 		<div className="w-full">

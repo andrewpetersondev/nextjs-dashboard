@@ -1,4 +1,5 @@
 import { fetchFilteredUsers } from "@/src/dal/users";
+import { getDB } from "@/src/db/connection";
 import type { UserDTO } from "@/src/dto/user.dto";
 import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 import type { JSX } from "react";
@@ -7,7 +8,8 @@ export default async function UsersTable({
 	query,
 	currentPage,
 }: { query: string; currentPage: number }): Promise<JSX.Element> {
-	const users: UserDTO[] = await fetchFilteredUsers(query, currentPage);
+	const db = getDB("dev");
+	const users: UserDTO[] = await fetchFilteredUsers(db, query, currentPage);
 
 	return (
 		<div>
