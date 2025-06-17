@@ -4,14 +4,18 @@
 describe("Signup Tests", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {
-			// Use DB task for fast, reliable cleanup
-			cy.task("db:deleteUser", user.email);
+			cy.deleteUser(user.email).then((deleteResult) => {
+				cy.task(
+					"logToConsole",
+					`Deleting test user before each test: ${deleteResult}`,
+				);
+			});
 		});
 	});
 
 	afterEach(() => {
 		cy.fixture("user").then((user) => {
-			cy.task("db:deleteUser", user.email);
+			cy.deleteUser(user.email);
 		});
 	});
 

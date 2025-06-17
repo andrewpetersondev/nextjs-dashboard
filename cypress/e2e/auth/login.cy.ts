@@ -4,15 +4,14 @@
 describe("UI Login Tests @ /auth/login.cy.ts", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {
-			// Use DB task for setup/teardown
-			cy.task("db:deleteUser", user.email);
-			cy.task("db:createUser", user);
+			cy.deleteUser(user.email);
+			cy.createUser(user);
 		});
 	});
 
 	afterEach(() => {
 		cy.fixture("user").then((user) => {
-			cy.task("db:deleteUser", user.email);
+			cy.deleteUser(user.email);
 		});
 	});
 
@@ -22,6 +21,7 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 		});
 	});
 
+	// todo: implement stricter naming for email validation
 	it("fails to login with invalid password", () => {
 		cy.fixture("user").then((user) => {
 			cy.login({ ...user, password: "WrongPassword123!" });
@@ -32,6 +32,7 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 		});
 	});
 
+	// todo: implement stricter naming for email validation
 	it("fails to log in with invalid email", () => {
 		cy.fixture("user").then((user) => {
 			cy.login({ ...user, email: "invalidemail@mail.com" });
