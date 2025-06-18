@@ -20,7 +20,7 @@ WORKDIR /app
 # Stage 1: Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY --chown=node:node ../package.json pnpm-lock.yaml ./
 COPY --chown=node:node entrypoint-production.sh /app/entrypoint-production.sh
 RUN chmod +x /app/entrypoint-production.sh
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -31,7 +31,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/entrypoint-production.sh ./entrypoint-production.sh
-COPY --chown=node:node . .
+COPY --chown=node:node .. .
 RUN chmod +x /app/entrypoint-production.sh
 RUN pnpm build
 

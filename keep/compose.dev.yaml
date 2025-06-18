@@ -2,8 +2,8 @@ services:
   web:
     container_name: web
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: ..
+      dockerfile: ../Dockerfile.dev
     working_dir: /project
     ports:
       - "3000:3000"
@@ -33,8 +33,8 @@ services:
   web-e2e:
     container_name: web-e2e
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: ..
+      dockerfile: ../Dockerfile.dev
     working_dir: /project
     ports:
       - "3001:3000" # Avoid port clash with dev web
@@ -66,8 +66,8 @@ services:
   web-component:
     container_name: web-component
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: ..
+      dockerfile: ../Dockerfile.dev
     working_dir: /project
     ports:
       - "3001:3000" # Avoid port clash with dev web

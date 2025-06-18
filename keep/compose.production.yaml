@@ -2,8 +2,8 @@ services:
   web:
     container_name: web
     build:
-      context: .
-      dockerfile: Dockerfile.prod
+      context: ..
+      dockerfile: ../Dockerfile.prod
     working_dir: /app
     ports:
       - '3000:3000'

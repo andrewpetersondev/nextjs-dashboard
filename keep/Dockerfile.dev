@@ -28,7 +28,7 @@ RUN pnpm config set store-dir "$PNPM_STORE_DIR"
 WORKDIR /project
 
 # Copy package management files
-COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY --chown=node:node ../package.json pnpm-lock.yaml ./
 
 # Copy entrypoint script
 COPY --chown=node:node entrypoint-development.sh /project/entrypoint-development.sh
@@ -40,7 +40,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
-COPY --chown=node:node . .
+COPY --chown=node:node .. .
 
 # Switch to non-root user for security
 USER node

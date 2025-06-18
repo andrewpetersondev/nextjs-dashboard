@@ -32,15 +32,15 @@
 		"drizzle:test:migrate": "hcp vault-secrets run -- pnpm drizzle-kit migrate --config=drizzle-test.config.ts",
 		"hcp:view:secrets:list": "hcp vault-secrets secrets list --app dashboard-app",
 		"hcp:view:secrets:open": "hcp vault-secrets secrets open [your-secret-name]",
-		"docker:build": "docker compose -f compose.dev.yaml build",
-		"docker:clean": "docker compose -f compose.dev.yaml down -v",
+		"docker:build": "docker compose -f keep/compose.dev.yaml build",
+		"docker:clean": "docker compose -f keep/compose.dev.yaml down -v",
 		"docker:dev": "pnpm docker:up && pnpm docker:logs",
-		"docker:down": "docker compose -f compose.dev.yaml down",
-		"docker:logs": "docker compose -f compose.dev.yaml logs -f",
+		"docker:down": "docker compose -f keep/compose.dev.yaml down",
+		"docker:logs": "docker compose -f keep/compose.dev.yaml logs -f",
 		"docker:restart": "pnpm docker:down && pnpm docker:up",
 		"docker:root": "docker exec -u root -it web /bin/bash",
-		"docker:test": "./docker-test.sh",
-		"docker:up": "docker compose -f compose.dev.yaml up --build"
+		"docker:test": "keep/docker-test.sh",
+		"docker:up": "docker compose -f keep/compose.dev.yaml up --build"
 	},
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
