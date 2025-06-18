@@ -62,6 +62,14 @@ declare global {
 				user: Pick<UserEntity, "email" | "password" | "username">,
 				options?: { assertSuccess?: boolean },
 			): Chainable<void>;
+
+			/**
+			 * @deprecated
+			 * Sets a valid session cookie for the given user.
+			 * @param userId - The user's unique identifier.
+			 * @param role - The user's role.
+			 */
+			// setSessionCookie(userId: string, role?: UserRole): Chainable<void>;
 		}
 	}
 }

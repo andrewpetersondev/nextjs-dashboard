@@ -1,4 +1,4 @@
-import type { UserEntity } from "../../src/lib/db/entities/user";
+import type { UserEntity } from "@/src/lib/db/entities/user";
 
 // Sign up a user via UI
 Cypress.Commands.add(
@@ -87,3 +87,27 @@ Cypress.Commands.add(
 		}
 	},
 );
+
+/**
+ * @deprecated
+ ** Sets a valid session cookie for the given user.
+ **  mimics functions encrypt and createSession
+ * @param userId - The user's unique identifier.
+ * @param role - The user's role.
+ */
+// Cypress.Commands.add(
+// 	"setSessionCookie",
+// 	(userId: string, role: UserRole = "user") => {
+// 		const expiresAt = Date.now() + SESSION_DURATION_MS;
+// 		const payload: EncryptPayload = { user: { expiresAt, role, userId } };
+// 		encrypt(payload).then((token) => {
+// 			cy.setCookie(SESSION_COOKIE_NAME, token, {
+// 				expiry: expiresAt,
+// 				httpOnly: false, // Cypress cannot set httpOnly cookies, but this is fine for E2E
+// 				path: "/",
+// 				sameSite: "lax",
+// 				secure: Cypress.env("NODE_ENV") === "production",
+// 			});
+// 		});
+// 	},
+// );

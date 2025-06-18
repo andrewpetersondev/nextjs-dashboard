@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { decrypt } from "@/src/lib/auth/session";
+import { decrypt } from "@/src/lib/auth/session-jwt";
 import type { DecryptPayload } from "@/src/lib/definitions/session";
 
 const protectedRoutes: string[] = ["/dashboard"];

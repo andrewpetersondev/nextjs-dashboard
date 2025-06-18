@@ -3,7 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { decrypt } from "@/src/lib/auth/session";
+import { decrypt } from "@/src/lib/auth/session-jwt";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,

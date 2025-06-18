@@ -67,3 +67,17 @@ describe("Auth Commands via Tasks", () => {
 		});
 	});
 });
+
+/**
+ * @deprecated
+ * Sets a valid session cookie for the given user.
+ */
+// describe("Authenticated dashboard access", () => {
+// 	it("shows dashboard for authenticated user", () => {
+// 		// const userId: string = uuidv4(); // import {uuid as uuidv4} from "uuid"
+// 		const userId = "test-user-id";
+// 		cy.setSessionCookie(userId, "user");
+// 		cy.visit("/dashboard");
+// 		cy.contains("Dashboard").should("be.visible");
+// 	});
+// });

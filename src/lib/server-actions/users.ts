@@ -12,7 +12,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hashPassword } from "@/src/lib/auth/password";
-import { createSession, deleteSession } from "@/src/lib/auth/session";
+import { createSession, deleteSession } from "@/src/lib/auth/session-jwt";
 import {
 	createDemoUser,
 	createUserInDB,
@@ -313,7 +313,6 @@ export async function editUser(
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {
-			// biome-ignore lint/performance/noDelete: password field intentionally removed if empty
 			delete payload.password;
 		}
 		const validated = EditUserFormSchema.safeParse(payload);
