@@ -1,7 +1,8 @@
 "use client";
 
+import type { InvoiceEntity } from "@/src/db/entities/invoice";
 import type { CustomerField } from "@/src/lib/definitions/customers";
-import type { Invoice, InvoiceFormState } from "@/src/lib/definitions/invoices";
+import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
@@ -17,7 +18,7 @@ export default function EditInvoiceForm({
 	invoice,
 	customers,
 }: {
-	invoice: Invoice;
+	invoice: InvoiceEntity;
 	customers: CustomerField[];
 }): JSX.Element {
 	const initialState: InvoiceFormState = { message: "", errors: {} };

@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import type { JSX } from "react";
 
 export const metadata: Metadata = {
-	title: "Create Invoice",
+	title: "Create InvoiceEntity",
 };
 
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
@@ -25,7 +25,7 @@ export default async function Page(): Promise<JSX.Element> {
 						href: "/dashboard/invoices",
 					},
 					{
-						label: "Create Invoice",
+						label: "Create InvoiceEntity",
 						href: "/dashboard/invoices/create",
 						active: true,
 					},

@@ -1,12 +1,12 @@
 import type { FormState } from "@/src/lib/definitions/form";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
-/** Branded type for Invoice ID */
+/** Branded type for InvoiceEntity ID */
 export type InvoiceId = string & { readonly __brand: unique symbol };
 /** Branded type for Customer ID */
 export type CustomerId = string & { readonly __brand: unique symbol };
 
-/** Invoice status enum for stricter typing */
+/** InvoiceEntity status enum for stricter typing */
 export enum StatusEnum {
 	Pending = "pending",
 	Paid = "paid",
@@ -14,16 +14,7 @@ export enum StatusEnum {
 export const INVOICE_STATUSES = [StatusEnum.Pending, StatusEnum.Paid] as const;
 export type Status = (typeof INVOICE_STATUSES)[number];
 
-/** Invoice entity type. */
-export interface Invoice {
-	readonly id: InvoiceId;
-	readonly customerId: CustomerId;
-	readonly amount: number;
-	readonly date: string; // ISO 8601
-	readonly status: Status;
-}
-
-/** Invoice form fields. */
+/** InvoiceEntity form fields. */
 export type InvoiceFormFields = {
 	id: InvoiceId | "";
 	customerId: CustomerId | "";
@@ -59,7 +50,7 @@ export interface FilteredInvoiceDbRow extends DbRowBase {
 	imageUrl: string;
 }
 
-// Invoice by ID DB row (extends base)
+// InvoiceEntity by ID DB row (extends base)
 export interface InvoiceByIdDbRow extends DbRowBase {
 	customerId: string;
 	date: string;

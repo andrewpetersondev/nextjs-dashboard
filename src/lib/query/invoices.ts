@@ -4,12 +4,12 @@ import "server-only";
 
 import type { DB } from "@/src/db/connection";
 import { db } from "@/src/db/dev-database";
+import type { InvoiceEntity } from "@/src/db/entities/invoice";
 import { customers, invoices } from "@/src/db/schema";
 import type {
 	CustomerId,
 	FetchFilteredInvoicesData,
 	FilteredInvoiceDbRow,
-	Invoice,
 	InvoiceByIdDbRow,
 	InvoiceId,
 	LatestInvoiceDbRow,
@@ -148,7 +148,7 @@ export async function fetchInvoicesPages(
 export async function fetchInvoiceById(
 	db: DB,
 	id: InvoiceId,
-): Promise<Invoice | undefined> {
+): Promise<InvoiceEntity | undefined> {
 	try {
 		const data: InvoiceByIdDbRow[] = await db
 			.select({

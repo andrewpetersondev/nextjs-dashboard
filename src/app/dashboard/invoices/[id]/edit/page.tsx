@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import type { JSX } from "react";
 
 export const metadata: Metadata = {
-	title: "Edit Invoice",
+	title: "Edit InvoiceEntity",
 };
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ export default async function Page(
 				breadcrumbs={[
 					{ label: "Invoices", href: "/dashboard/invoices" },
 					{
-						label: "Edit Invoice",
+						label: "Edit InvoiceEntity",
 						href: `/dashboard/invoices/${id}/edit`,
 						active: true,
 					},
