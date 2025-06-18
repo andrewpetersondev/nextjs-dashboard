@@ -125,7 +125,7 @@ export function TableRowSkeleton(): JSX.Element {
 			<td className="px-3 py-3 whitespace-nowrap">
 				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
 			</td>
-			{/* InvoiceStatus */}
+			{/* InvoiceStatusComponent */}
 			<td className="px-3 py-3 whitespace-nowrap">
 				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
 			</td>

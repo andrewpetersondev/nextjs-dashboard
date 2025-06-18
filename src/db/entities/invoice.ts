@@ -12,7 +12,7 @@ import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
  *   - `customerId`: References the customer associated with the invoice (`CustomerId`).
  *   - `amount`: The total amount for the invoice (`number`).
  *   - `date`: The invoice date in ISO 8601 format (`string`).
- *   - `status`: The current status of the invoice (`InvoiceStatus`).
+ *   - `status`: The current status of the invoice (`InvoiceStatusComponent`).
  *
  * - **Usage:**
  *   Used in database access layers, API responses, and business logic to ensure that invoice data adheres to the expected schema.

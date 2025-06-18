@@ -3,7 +3,7 @@ import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { JSX } from "react";
 
-export default function InvoiceStatus({
+export default function InvoiceStatusComponent({
 	status,
 }: {
 	status: InvoiceStatus;

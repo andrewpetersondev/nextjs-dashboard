@@ -1,7 +1,7 @@
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import InvoiceStatus from "@/src/ui/invoices/status";
+import InvoiceStatusComponent from "@/src/ui/invoices/status";
 import Image from "next/image";
 import type { JSX } from "react";
 
@@ -30,7 +30,7 @@ export default function MobileTable({
 								</div>
 								<p className="text-text-primary text-sm">{invoice.email}</p>
 							</div>
-							<InvoiceStatus status={invoice.status || "unknown"} />
+							<InvoiceStatusComponent status={invoice.status || "unknown"} />
 						</div>
 						<div className="flex w-full items-center justify-between pt-4">
 							<div>

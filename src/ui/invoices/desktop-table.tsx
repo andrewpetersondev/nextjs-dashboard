@@ -1,7 +1,7 @@
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import InvoiceStatus from "@/src/ui/invoices/status";
+import InvoiceStatusComponent from "@/src/ui/invoices/status";
 import Image from "next/image";
 import type { JSX } from "react";
 
@@ -59,7 +59,7 @@ export default function DesktopTable({
 								{formatDateToLocal(invoice.date)}
 							</td>
 							<td className="px-3 py-3 whitespace-nowrap">
-								<InvoiceStatus status={invoice.status} />
+								<InvoiceStatusComponent status={invoice.status} />
 							</td>
 							<td className="py-3 pr-3 pl-6 whitespace-nowrap">
 								<div className="flex justify-end gap-3">

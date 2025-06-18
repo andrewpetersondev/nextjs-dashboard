@@ -1,6 +1,6 @@
 import { getDB } from "@/src/db/connection";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal";
-import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/query/invoices";
+import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/dal/invoices.dal";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditInvoiceForm from "@/src/ui/invoices/edit-form";
 import type { Metadata } from "next";

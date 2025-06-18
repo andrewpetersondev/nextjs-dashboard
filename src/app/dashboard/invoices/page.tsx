@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchInvoicesPages } from "@/src/lib/query/invoices";
+import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
 import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import Pagination from "@/src/ui/invoices/pagination";

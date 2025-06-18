@@ -1,6 +1,6 @@
 import { getDB } from "@/src/db/connection";
+import { fetchFilteredInvoices } from "@/src/lib/dal/invoices.dal";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
-import { fetchFilteredInvoices } from "@/src/lib/query/invoices";
 import DesktopTable from "@/src/ui/invoices/desktop-table";
 import MobileTable from "@/src/ui/invoices/mobile-table";
 import type { JSX } from "react";

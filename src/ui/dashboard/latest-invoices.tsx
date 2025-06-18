@@ -1,6 +1,6 @@
 import { getDB } from "@/src/db/connection";
+import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
-import { fetchLatestInvoices } from "@/src/lib/query/invoices";
 import { H2, H3 } from "@/src/ui/headings";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
