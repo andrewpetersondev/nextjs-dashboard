@@ -11,7 +11,7 @@ export default defineConfig({
 		screenshotOnRunFailure: true,
 		specPattern: "cypress/component/**/*.{cy,spec}.tsx",
 		supportFile: "cypress/support/component.ts",
-		video: true,
+		// video: true,
 	},
 	e2e: {
 		baseUrl: "http://localhost:3000",
@@ -22,7 +22,7 @@ export default defineConfig({
 		},
 		specPattern: "cypress/e2e/**/*.{cy,spec}.ts",
 		supportFile: "cypress/support/e2e.ts",
-		video: true,
+		// video: true,
 	},
 	screenshotsFolder: "cypress/screenshots",
 	videosFolder: "cypress/videos",
