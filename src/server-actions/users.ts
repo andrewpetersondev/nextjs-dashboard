@@ -179,7 +179,7 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 		// Unreachable: redirect throws in Next.js App Router
 		// return actionResult({ message: "User deleted successfully.", success: true });
 	} catch (error) {
-		logError("deleteUserServerAction", error, { userId });
+		logError("deleteUserAction", error, { userId });
 		return actionResult({
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
