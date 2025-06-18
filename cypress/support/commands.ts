@@ -79,6 +79,7 @@ Cypress.Commands.add(
 		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
 		cy.get('[data-cy="login-submit-button"]').click(); // <-- Use unique selector
 
+		// junk comment
 		// Optionally assert login success
 		if (options?.assertSuccess) {
 			cy.url().should("include", "/dashboard");
