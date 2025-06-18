@@ -1,10 +1,10 @@
 import "server-only";
 
+import { decrypt } from "@/src/lib/auth/session";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,
 } from "@/src/lib/definitions/session";
-import { decrypt } from "@/src/lib/session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";

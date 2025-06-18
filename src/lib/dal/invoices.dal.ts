@@ -17,7 +17,7 @@ import {
 	toInvoiceDTO,
 	toInvoiceEntity,
 } from "@/src/lib/mappers/invoice.mapper";
-import { logError } from "@/src/lib/utils.server";
+import { logError } from "@/src/lib/utils/utils.server";
 import { eq } from "drizzle-orm";
 
 /**

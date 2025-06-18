@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchUserById } from "@/src/lib/dal/users";
+import { fetchUserById } from "@/src/lib/dal/users.dal";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";

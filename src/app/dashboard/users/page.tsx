@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchUsersPages } from "@/src/lib/dal/users";
+import { fetchUsersPages } from "@/src/lib/dal/users.dal";
 import { H1 } from "@/src/ui/headings";
 import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";

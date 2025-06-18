@@ -2,7 +2,7 @@
 // DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
 
 import { seed } from "drizzle-seed";
-import { hashPassword } from "../../lib/password";
+import { hashPassword } from "../../lib/auth/password";
 import * as schema from "../schema";
 import { testDB } from "../test-database";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { generatePagination } from "@/src/lib/utils.client";
+import { generatePagination } from "@/src/lib/utils/utils.client";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";

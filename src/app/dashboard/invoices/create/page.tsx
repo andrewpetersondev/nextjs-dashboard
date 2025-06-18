@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchCustomers } from "@/src/lib/data";
+import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import CreateInvoiceForm from "@/src/ui/invoices/create-invoice-form";

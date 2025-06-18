@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchCardData } from "@/src/lib/data";
+import { fetchCardData } from "@/src/lib/dal/data.dal";
 import { H3 } from "@/src/ui/headings";
 import {
 	BanknotesIcon,

@@ -18,7 +18,7 @@ export interface UserDTO {
 // DB CALL --> MAPPER --> DTO
 // SOLVED
 
-// 	PROBLEM: fetchUserById in query/users.ts can return undefined
+// 	PROBLEM: fetchUserById in query/users.dal.ts can return undefined
 // POSSIBLE SOLUTIONS:
 // 1. temporarily configure userDTO to return undefined
 // 2. do not allow fetchUserById to return Undefined

@@ -1,7 +1,7 @@
 import { getDB } from "@/src/db/connection";
-import { fetchRevenue } from "@/src/lib/data";
+import { fetchRevenue } from "@/src/lib/dal/revenue.dal";
 import type { Revenue } from "@/src/lib/definitions/revenue";
-import { generateYAxis } from "@/src/lib/utils";
+import { generateYAxis } from "@/src/lib/utils/utils";
 import { H2, H3 } from "@/src/ui/headings";
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";

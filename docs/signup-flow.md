@@ -12,7 +12,7 @@ When a user submits the signup form, the following flow is triggered:
    );
    ```
 
-   When the form is submitted, the `signup` function in `src/server-actions/users.ts` is called with the form data.
+   When the form is submitted, the `signup` function in `src/server-actions/users.dal.ts` is called with the form data.
 
 2. **Validation**  
    The `signup` server action validates the input using Zod schemas:

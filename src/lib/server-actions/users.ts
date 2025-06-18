@@ -10,6 +10,8 @@
  */
 
 import { getDB } from "@/src/db/connection";
+import { hashPassword } from "@/src/lib/auth/password";
+import { createSession, deleteSession } from "@/src/lib/auth/session";
 import {
 	createDemoUser,
 	createUserInDB,
@@ -18,7 +20,7 @@ import {
 	findUserForLogin,
 	readUserById,
 	updateUserDAL,
-} from "@/src/lib/dal/users";
+} from "@/src/lib/dal/users.dal";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import {
@@ -33,15 +35,13 @@ import {
 	SignupFormSchema,
 } from "@/src/lib/definitions/users";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
-import { hashPassword } from "@/src/lib/password";
-import { createSession, deleteSession } from "@/src/lib/session";
 import {
 	actionResult,
 	getFormField,
 	getValidUserRole,
 	logError,
 	normalizeFieldErrors,
-} from "@/src/lib/utils.server";
+} from "@/src/lib/utils/utils.server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

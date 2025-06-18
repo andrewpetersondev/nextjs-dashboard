@@ -8,11 +8,11 @@ import "server-only";
 import type { DB } from "@/src/db/connection";
 import type { UserEntity } from "@/src/db/entities/user";
 import { demoUserCounters, users } from "@/src/db/schema";
+import { comparePassword, hashPassword } from "@/src/lib/auth/password";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { toUserDTO } from "@/src/lib/mappers/user.mapper";
-import { comparePassword, hashPassword } from "@/src/lib/password";
-import { createRandomPassword, logError } from "@/src/lib/utils.server";
+import { createRandomPassword, logError } from "@/src/lib/utils/utils.server";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**

@@ -15,7 +15,7 @@ import type {
 	ModifiedLatestInvoicesData,
 	Status,
 } from "@/src/lib/definitions/invoices";
-import { formatCurrency } from "@/src/lib/utils";
+import { formatCurrency } from "@/src/lib/utils/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 
 // --- Branded type helpers ---

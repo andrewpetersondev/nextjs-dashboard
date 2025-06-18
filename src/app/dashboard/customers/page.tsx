@@ -1,5 +1,5 @@
 import { getDB } from "@/src/db/connection";
-import { fetchFilteredCustomers } from "@/src/lib/data";
+import { fetchFilteredCustomers } from "@/src/lib/dal/customers.dal";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import CustomersTable from "@/src/ui/customers/table";
 import type { Metadata } from "next";

@@ -1,5 +1,5 @@
+import { decrypt } from "@/src/lib/auth/session";
 import type { DecryptPayload } from "@/src/lib/definitions/session";
-import { decrypt } from "@/src/lib/session";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 

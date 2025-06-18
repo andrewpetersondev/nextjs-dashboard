@@ -5,7 +5,7 @@ import {
 	createInvoiceInDB,
 	deleteInvoiceInDB,
 	updateInvoiceInDB,
-} from "@/src/lib/dal/invoices";
+} from "@/src/lib/dal/invoices.dal";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,

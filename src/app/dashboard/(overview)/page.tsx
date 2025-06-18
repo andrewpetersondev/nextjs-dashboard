@@ -1,7 +1,7 @@
 import { verifySessionOptimistic } from "@/src/lib/dal/session-dal";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import type { SessionVerificationResult } from "@/src/lib/definitions/session";
-import { getValidUserRole } from "@/src/lib/utils.server";
+import { getValidUserRole } from "@/src/lib/utils/utils.server";
 import AdminDashboard from "@/src/ui/dashboard/admin-dashboard";
 import MiddlewareCard from "@/src/ui/dashboard/middleware-card";
 import UserDashboard from "@/src/ui/dashboard/user-dashboard";
