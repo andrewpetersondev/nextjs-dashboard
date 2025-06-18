@@ -1,6 +1,6 @@
 "use server";
 
-import { createInvoiceInDB } from "@/src/dal/invoices";
+import { createInvoiceInDB, updateInvoiceInDB } from "@/src/dal/invoices";
 import { getDB } from "@/src/db/connection";
 import { db } from "@/src/db/dev-database";
 import { invoices } from "@/src/db/schema";
@@ -83,15 +83,23 @@ export async function createInvoice(
 }
 
 /**
- * Update an existing invoice.
+ * Updates an existing invoice in the database.
+ * - Validates and brands input.
+ * - Delegates DB logic to DAL.
  * - Returns consistent result shape for UI.
- * - Only uses _prevState for React API compatibility.
+ *
+ * @param id - The invoice ID to update.
+ * @param _prevState - Previous form state (for React API compatibility).
+ * @param formData - FormData containing invoice fields.
+ * @returns A promise resolving to an InvoiceFormState.
  */
 export async function updateInvoice(
 	id: string,
 	_prevState: InvoiceFormState,
 	formData: FormData,
 ): Promise<InvoiceFormState> {
+	const db = getDB();
+
 	const validated = UpdateInvoiceSchema.safeParse({
 		customerId: formData.get("customerId"),
 		amount: formData.get("amount"),
@@ -105,19 +113,28 @@ export async function updateInvoice(
 		};
 	}
 
-	const { customerId, amount, status } = validated.data;
+	// Brand customerId for type safety
+	const customerId = validated.data.customerId as unknown as CustomerId;
+	const amount = validated.data.amount;
+	const status = validated.data.status;
 	const amountInCents = amount * 100;
+
 	try {
-		await db
-			.update(invoices)
-			.set({
-				customerId,
-				amount: amountInCents,
-				status,
-			})
-			.where(eq(invoices.id, id));
-	} catch (e) {
-		console.error(e);
+		const updatedInvoice = await updateInvoiceInDB(db, id, {
+			customerId,
+			amount: amountInCents,
+			status,
+		});
+
+		if (!updatedInvoice) {
+			return {
+				message: "Failed to update invoice.",
+				// success: false, // unify response shape
+				errors: {},
+			};
+		}
+	} catch (error) {
+		console.error(error);
 		return { message: "Database Error: Failed to Update InvoiceEntity." };
 	}
 
