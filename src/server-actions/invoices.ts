@@ -18,12 +18,12 @@ import { toInvoiceId } from "@/src/mappers/invoice.mapper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+// todo: unify the return types of these actions
+
 /**
- * Creates a new invoice in the database.
- * - Validates and brands input.
- * - Handles errors and returns a consistent result shape for UI.
- *
- * @param _prevState - Previous form state (for React API compatibility).
+ * Server action to create a new invoice.
+ * Validates input, delegates to DAL, and handles navigation.
+ * @param _prevState - Previous form state (for React compatibility).
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to a CreateInvoiceResult.
  */
@@ -86,13 +86,10 @@ export async function createInvoice(
 }
 
 /**
- * Updates an existing invoice in the database.
- * - Validates and brands input.
- * - Delegates DB logic to DAL.
- * - Returns consistent result shape for UI.
- *
- * @param id - The invoice ID to update.
- * @param _prevState - Previous form state (for React API compatibility).
+ * Server action to update an existing invoice.
+ * Validates input, delegates to DAL, and handles navigation.
+ * @param id - The invoice ID as a string.
+ * @param _prevState - Previous form state (for React compatibility).
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to an InvoiceFormState.
  */
@@ -159,8 +156,9 @@ export async function deleteInvoiceAction(
 
 /**
  * Form server action for deleting an invoice.
- * Accepts FormData, extracts and brands the ID.
+ * Accepts FormData, extracts and brands the ID, and handles navigation.
  * @param formData - The form data containing the invoice ID.
+ * @returns A promise that resolves when the action completes.
  */
 export async function deleteInvoiceFormAction(
 	formData: FormData,

@@ -19,9 +19,10 @@ import { eq } from "drizzle-orm";
 
 /**
  * Inserts a new invoice record into the database.
- * @param db - The database instance.
- * @param invoice - The invoice data to insert.
- * @return The created invoice as InvoiceDTO, or null if creation failed.
+ * @param db - The Drizzle ORM database instance.
+ * @param invoice - The invoice data to insert (customerId, amount, status, date).
+ * @returns The created invoice as InvoiceDTO, or null if creation failed.
+ * @throws Error if the database operation fails.
  */
 export async function createInvoiceInDB(
 	db: DB,
@@ -48,11 +49,11 @@ export async function createInvoiceInDB(
 
 /**
  * Updates an existing invoice record in the database.
- * @param db - The database instance.
+ * @param db - The Drizzle ORM database instance.
  * @param id - The invoice ID to update.
- * @param invoice - The invoice data to update.
+ * @param invoice - The invoice data to update (customerId, amount, status).
  * @returns The updated invoice as InvoiceDTO, or null if not found.
- * @throws Error if update fails.
+ * @throws Error if the database operation fails.
  */
 export async function updateInvoiceInDB(
 	db: DB,
@@ -80,9 +81,10 @@ export async function updateInvoiceInDB(
 
 /**
  * Deletes an invoice by ID.
- * @param db - The database instance.
- * @param id - The invoice ID.
+ * @param db - The Drizzle ORM database instance.
+ * @param id - The branded InvoiceId to delete.
  * @returns The deleted invoice as InvoiceDTO, or null if not found.
+ * @throws Error if the database operation fails.
  */
 export async function deleteInvoiceInDB(
 	db: DB,

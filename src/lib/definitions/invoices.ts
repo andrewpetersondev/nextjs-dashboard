@@ -1,17 +1,23 @@
 import type { FormState } from "@/src/lib/definitions/form";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
-/** Branded type for InvoiceEntity ID */
+/** Branded type for InvoiceEntity ID (prevents accidental misuse of plain strings). */
 export type InvoiceId = string & { readonly __brand: unique symbol };
-/** Branded type for Customer ID */
+
+/** Branded type for Customer ID (ensures type safety for customer references). */
 export type CustomerId = string & { readonly __brand: unique symbol };
 
-/** InvoiceEntity status enum for stricter typing */
+/**
+ * Enum for valid invoice statuses.
+ * - Pending: Invoice is awaiting payment.
+ * - Paid: Invoice has been paid.
+ */
 export enum StatusEnum {
 	Pending = "pending",
 	Paid = "paid",
 }
 export const INVOICE_STATUSES = [StatusEnum.Pending, StatusEnum.Paid] as const;
+
 export type Status = (typeof INVOICE_STATUSES)[number];
 
 /** InvoiceEntity form fields. */
@@ -23,7 +29,9 @@ export type InvoiceFormFields = {
 	date?: string;
 };
 
-/** State for the invoice form. */
+/**
+ * State for the invoice form, including field values and validation errors.
+ */
 export type InvoiceFormState = FormState<InvoiceFormFields>;
 
 // --- Table Row Types (RAW) ---
