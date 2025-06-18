@@ -1,9 +1,8 @@
 {
-	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
 		"allowJs": false,
-		"noEmit": true,
 		"baseUrl": "./",
+		"noEmit": true,
 		"paths": {
 			"@/component/*": ["./component/*"],
 			"@/e2e/*": ["./e2e/*"],
@@ -11,6 +10,7 @@
 		},
 		"types": ["cypress", "node"]
 	},
+	"extends": "../tsconfig.base.json",
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",

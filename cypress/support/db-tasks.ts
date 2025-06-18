@@ -17,10 +17,6 @@ export type DbTaskResult<T> = {
  * Keeps cypress.config.ts clean and maintainable.
  */
 export const dbTasks = {
-	logToConsole: (message: string): DbTaskResult<null> => {
-		console.log("log: ", message);
-		return { success: true, data: null };
-	},
 	"db:createUser": async (
 		user: UserEntity,
 	): Promise<DbTaskResult<UserEntity>> => {
@@ -29,10 +25,28 @@ export const dbTasks = {
 				.insert(users)
 				.values(user)
 				.returning();
-			return { success: !!insertedUser, data: insertedUser ?? null };
+			return { data: insertedUser ?? null, success: !!insertedUser };
 		} catch (error) {
 			console.error("db:createUser error", error);
-			return { success: false, data: null, error: (error as Error).message };
+			return { data: null, error: (error as Error).message, success: false };
+		}
+	},
+	"db:deleteUser": async (email: string): Promise<DbTaskResult<UserEntity>> => {
+		try {
+			const [found] = await testDB
+				.select()
+				.from(users)
+				.where(eq(users.email, email));
+			console.log("db:deleteUser found user", found);
+			if (!found)
+				return { data: null, error: "User not found", success: false };
+			// Delete the user (delete() does not return the user)
+			await testDB.delete(users).where(eq(users.id, found.id));
+			// Return the previously found user as confirmation
+			return { data: found, success: true };
+		} catch (error) {
+			console.error("db:deleteUser error", error); // does not appear in terminal or cypress  so it must not run because it is successful
+			return { data: null, error: (error as Error).message, success: false };
 		}
 	},
 	"db:findUser": async (email: string): Promise<DbTaskResult<UserEntity>> => {
@@ -41,10 +55,10 @@ export const dbTasks = {
 				.select()
 				.from(users)
 				.where(eq(users.email, email));
-			return { success: !!user, data: user ?? null };
+			return { data: user ?? null, success: !!user };
 		} catch (error) {
 			console.error("db:findUser error", error);
-			return { success: false, data: null, error: (error as Error).message };
+			return { data: null, error: (error as Error).message, success: false };
 		}
 	},
 	"db:updateUser": async ({
@@ -60,34 +74,20 @@ export const dbTasks = {
 				.from(users)
 				.where(eq(users.email, email));
 			if (!found)
-				return { success: false, data: null, error: "User not found" };
+				return { data: null, error: "User not found", success: false };
 			const [updatedUser] = await testDB
 				.update(users)
 				.set(updates)
 				.where(eq(users.id, found.id))
 				.returning();
-			return { success: !!updatedUser, data: updatedUser ?? null };
+			return { data: updatedUser ?? null, success: !!updatedUser };
 		} catch (error) {
 			console.error("db:updateUser error", error);
-			return { success: false, data: null, error: (error as Error).message };
+			return { data: null, error: (error as Error).message, success: false };
 		}
 	},
-	"db:deleteUser": async (email: string): Promise<DbTaskResult<UserEntity>> => {
-		try {
-			const [found] = await testDB
-				.select()
-				.from(users)
-				.where(eq(users.email, email));
-			console.log("db:deleteUser found user", found);
-			if (!found)
-				return { success: false, data: null, error: "User not found" };
-			// Delete the user (delete() does not return the user)
-			await testDB.delete(users).where(eq(users.id, found.id));
-			// Return the previously found user as confirmation
-			return { success: true, data: found };
-		} catch (error) {
-			console.error("db:deleteUser error", error); // does not appear in terminal or cypress  so it must not run because it is successful
-			return { success: false, data: null, error: (error as Error).message };
-		}
+	logToConsole: (message: string): DbTaskResult<null> => {
+		console.log("log: ", message);
+		return { data: null, success: true };
 	},
 };

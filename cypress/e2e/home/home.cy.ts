@@ -13,10 +13,10 @@ interface ScreenSizes {
 // type DeviceType = "mobile" | "tablet" | "desktop";
 
 const screenSizes: ScreenSizes = {
-	mobile: { width: 360, height: 640 },
-	tabletPortrait: { width: 768, height: 1024 },
-	tabletLandscape: { width: 1024, height: 768 },
-	desktop: { width: 1280, height: 800 },
+	desktop: { height: 800, width: 1280 },
+	mobile: { height: 640, width: 360 },
+	tabletLandscape: { height: 768, width: 1024 },
+	tabletPortrait: { height: 1024, width: 768 },
 } as const;
 
 // const getDeviceType = (width: number): DeviceType => {

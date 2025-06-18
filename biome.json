@@ -34,7 +34,6 @@
 			"!.run",
 			"!.idea",
 			"!/.vscode",
-			"!cypress",
 			"!src/db/drizzle/**/*",
 			"!src/lib/db/drizzle/**/*",
 			"!secrets",
