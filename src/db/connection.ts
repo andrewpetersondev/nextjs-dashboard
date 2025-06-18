@@ -1,5 +1,6 @@
 import "server-only";
 
+import * as schema from "@/src/db/schema";
 import {
 	type NodePgClient,
 	type NodePgDatabase,
@@ -10,7 +11,7 @@ import {
 export type DBType = "dev" | "test";
 
 // Add this type for convenience
-export type DB = NodePgDatabase & {
+export type DB = NodePgDatabase<typeof schema> & {
 	$client: NodePgClient;
 };
 
@@ -38,5 +39,5 @@ function getDatabaseUrl(type: DBType): string {
  */
 export function getDB(type: DBType = "dev"): DB {
 	const url = getDatabaseUrl(type);
-	return drizzle({ connection: url, casing: "snake_case" });
+	return drizzle({ connection: url, casing: "snake_case", schema }) as DB;
 }
