@@ -1,4 +1,4 @@
-import { deleteInvoice } from "@/src/server-actions/invoices";
+import { deleteInvoiceFormAction } from "@/src/server-actions/invoices";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
@@ -28,9 +28,10 @@ export function UpdateInvoice({ id }: { id: string }): JSX.Element {
 }
 
 export function DeleteInvoice({ id }: { id: string }): JSX.Element {
-	const deleteInvoiceWithId: () => Promise<void> = deleteInvoice.bind(null, id);
+	// const deleteInvoiceWithId: () => Promise<void> = deleteInvoice.bind(null, id);
 	return (
-		<form action={deleteInvoiceWithId}>
+		<form action={deleteInvoiceFormAction}>
+			<input type="hidden" name="id" value={id} />
 			<button type="submit" className="hover:bg-bg-hover rounded-md border p-2">
 				<span className="sr-only">Delete</span>
 				<TrashIcon className="w-5" />

@@ -1,17 +1,21 @@
 "use server";
 
-import { createInvoiceInDB, updateInvoiceInDB } from "@/src/dal/invoices";
+import {
+	createInvoiceInDB,
+	deleteInvoiceInDB,
+	updateInvoiceInDB,
+} from "@/src/dal/invoices";
 import { getDB } from "@/src/db/connection";
-import { db } from "@/src/db/dev-database";
-import { invoices } from "@/src/db/schema";
+import type { InvoiceDTO } from "@/src/dto/invoice.dto";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,
 	type CustomerId,
 	type InvoiceFormState,
+	type InvoiceId,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices";
-import { eq } from "drizzle-orm";
+import { toInvoiceId } from "@/src/mappers/invoice.mapper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -143,14 +147,31 @@ export async function updateInvoice(
 }
 
 /**
- * Delete an invoice by ID.
- * - No return value, but logs errors.
+ * Programmatic server action to delete an invoice by string ID.
+ * @param id - The invoice ID as a string.
+ * @returns The deleted InvoiceDTO or null.
  */
-export async function deleteInvoice(id: string): Promise<void> {
-	try {
-		await db.delete(invoices).where(eq(invoices.id, id));
-	} catch (e) {
-		console.error(e);
+export async function deleteInvoiceAction(
+	id: string,
+): Promise<InvoiceDTO | null> {
+	const db = getDB();
+	return await deleteInvoiceInDB(db, toInvoiceId(id));
+}
+
+/**
+ * Form server action for deleting an invoice.
+ * Accepts FormData, extracts and brands the ID.
+ * @param formData - The form data containing the invoice ID.
+ */
+export async function deleteInvoiceFormAction(
+	formData: FormData,
+): Promise<void> {
+	"use server";
+	const id = formData.get("id");
+	if (typeof id !== "string") {
+		throw new Error("Invalid invoice ID");
 	}
+	await deleteInvoiceAction(id);
 	revalidatePath("/dashboard/invoices");
+	redirect("/dashboard/invoices");
 }

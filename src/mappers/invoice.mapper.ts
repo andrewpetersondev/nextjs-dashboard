@@ -7,12 +7,12 @@ import { INVOICE_STATUSES } from "@/src/lib/definitions/invoices";
 /**
  * Helper to brand a string as InvoiceId.
  */
-const toInvoiceId = (id: string): InvoiceId => id as InvoiceId;
+export const toInvoiceId = (id: string): InvoiceId => id as InvoiceId;
 
 /**
  * Helper to brand a string as CustomerId.
  */
-const toCustomerId = (id: string): CustomerId => id as CustomerId;
+export const toCustomerId = (id: string): CustomerId => id as CustomerId;
 
 /**
  * Maps a raw database row to an InvoiceEntity.

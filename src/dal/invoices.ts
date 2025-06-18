@@ -8,7 +8,11 @@ import "server-only";
 import type { DB } from "@/src/db/connection";
 import { invoices } from "@/src/db/schema";
 import type { InvoiceDTO } from "@/src/dto/invoice.dto";
-import type { CustomerId, Status } from "@/src/lib/definitions/invoices";
+import type {
+	CustomerId,
+	InvoiceId,
+	Status,
+} from "@/src/lib/definitions/invoices";
 import { logError } from "@/src/lib/utils.server";
 import { toInvoiceDTO, toInvoiceEntity } from "@/src/mappers/invoice.mapper";
 import { eq } from "drizzle-orm";
@@ -71,5 +75,29 @@ export async function updateInvoiceInDB(
 	} catch (error) {
 		logError("updateInvoiceInDB", error, { id, customerId });
 		throw new Error("Database error while updating invoice.");
+	}
+}
+
+/**
+ * Deletes an invoice by ID.
+ * @param db - The database instance.
+ * @param id - The invoice ID.
+ * @returns The deleted invoice as InvoiceDTO, or null if not found.
+ */
+export async function deleteInvoiceInDB(
+	db: DB,
+	id: InvoiceId,
+): Promise<InvoiceDTO | null> {
+	try {
+		const [deletedInvoice] = await db
+			.delete(invoices)
+			.where(eq(invoices.id, id))
+			.returning();
+		return deletedInvoice
+			? toInvoiceDTO(toInvoiceEntity(deletedInvoice))
+			: null;
+	} catch (error) {
+		logError("deleteInvoiceInDB", error, { id });
+		throw new Error("An unexpected error occurred. Please try again.");
 	}
 }
