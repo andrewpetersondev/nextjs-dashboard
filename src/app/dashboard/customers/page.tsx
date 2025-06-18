@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchFilteredCustomers } from "@/src/lib/data";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import CustomersTable from "@/src/ui/customers/table";
@@ -22,13 +23,16 @@ export interface CustomersPageProps {
 export default async function Page(
 	props: CustomersPageProps,
 ): Promise<JSX.Element> {
+	const db = getDB();
 	const searchParams: CustomersSearchParams | undefined =
 		await props.searchParams;
 
 	const query: string = searchParams?.query || "";
 
-	const customers: FormattedCustomersTableRow[] =
-		await fetchFilteredCustomers(query);
+	const customers: FormattedCustomersTableRow[] = await fetchFilteredCustomers(
+		db,
+		query,
+	);
 
 	return (
 		<main>

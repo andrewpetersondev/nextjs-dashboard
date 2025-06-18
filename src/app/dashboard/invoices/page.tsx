@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchInvoicesPages } from "@/src/lib/query/invoices";
 import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
@@ -28,11 +29,12 @@ export interface InvoicesPageProps {
 export default async function Page(
 	dynamicURL: InvoicesPageProps,
 ): Promise<JSX.Element> {
+	const db = getDB();
 	const searchParams: InvoicesSearchParams | undefined =
 		await dynamicURL.searchParams;
 	const query: string = searchParams?.query || "";
 	const currentPage: number = Number(searchParams?.page) || 1;
-	const totalPages: number = await fetchInvoicesPages(query);
+	const totalPages: number = await fetchInvoicesPages(db, query);
 
 	return (
 		<div className="w-full">

@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchCardData } from "@/src/lib/data";
 import { H3 } from "@/src/ui/headings";
 import {
@@ -16,8 +17,9 @@ const iconMap = {
 };
 
 export async function CardWrapper(): Promise<JSX.Element> {
+	const db = getDB();
 	const { invoiceCount, pendingInvoices, paidInvoices, customerCount } =
-		await fetchCardData();
+		await fetchCardData(db);
 	return (
 		<>
 			<Card title="Collected" value={paidInvoices} type="collected" />

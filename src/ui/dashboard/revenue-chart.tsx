@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchRevenue } from "@/src/lib/data";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils";
@@ -6,7 +7,8 @@ import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 
 export default async function RevenueChart(): Promise<JSX.Element> {
-	const revenue: Revenue[] = await fetchRevenue();
+	const db = getDB();
+	const revenue: Revenue[] = await fetchRevenue(db);
 	const chartHeight = 350;
 
 	const { yAxisLabels, topLabel } = generateYAxis(revenue);

@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchCustomers } from "@/src/lib/data";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 
 export default async function Page(): Promise<JSX.Element> {
-	const customers: CustomerField[] = await fetchCustomers();
+	const db = getDB();
+	const customers: CustomerField[] = await fetchCustomers(db);
 
 	return (
 		<main>

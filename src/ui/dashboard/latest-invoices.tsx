@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
 import { fetchLatestInvoices } from "@/src/lib/query/invoices";
 import { H2, H3 } from "@/src/ui/headings";
@@ -7,9 +8,10 @@ import Image from "next/image";
 import type { JSX } from "react";
 
 export default async function LatestInvoices(): Promise<JSX.Element> {
-	const latestInvoices: ModifiedLatestInvoicesData[] =
-		await fetchLatestInvoices();
+	const db = getDB();
 
+	const latestInvoices: ModifiedLatestInvoicesData[] =
+		await fetchLatestInvoices(db);
 	return (
 		<div className="flex w-full flex-col md:col-span-4">
 			<H2 className="mb-4">Latest Invoices</H2>

@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { fetchFilteredInvoices } from "@/src/lib/query/invoices";
 import DesktopTable from "@/src/ui/invoices/desktop-table";
@@ -11,7 +12,9 @@ export default async function InvoicesTable({
 	query: string;
 	currentPage: number;
 }): Promise<JSX.Element> {
+	const db = getDB();
 	const invoices: FetchFilteredInvoicesData[] = await fetchFilteredInvoices(
+		db,
 		query,
 		currentPage,
 	);

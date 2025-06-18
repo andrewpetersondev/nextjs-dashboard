@@ -1,3 +1,4 @@
+import { getDB } from "@/src/db/connection";
 import { fetchCustomers } from "@/src/lib/data";
 import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/query/invoices";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
@@ -23,11 +24,12 @@ export interface EditInvoicePageProps {
 export default async function Page(
 	props: EditInvoicePageProps,
 ): Promise<JSX.Element> {
+	const db = getDB();
 	const { id } = await props.params;
 
 	const [invoice, customers] = await Promise.all([
-		fetchInvoiceById(brandInvoiceId(id)),
-		fetchCustomers(),
+		fetchInvoiceById(db, brandInvoiceId(id)),
+		fetchCustomers(db),
 	]);
 
 	if (!invoice) {

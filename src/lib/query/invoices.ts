@@ -1,5 +1,8 @@
 import "server-only";
 
+// todo: all code that touches the database directly should be moved to DAL
+
+import type { DB } from "@/src/db/connection";
 import { db } from "@/src/db/dev-database";
 import { customers, invoices } from "@/src/db/schema";
 import type {
@@ -30,9 +33,9 @@ export function brandStatus(status: string): Status {
 }
 
 // --- Fetch latest invoices ---
-export async function fetchLatestInvoices(): Promise<
-	ModifiedLatestInvoicesData[]
-> {
+export async function fetchLatestInvoices(
+	db: DB,
+): Promise<ModifiedLatestInvoicesData[]> {
 	try {
 		const data: LatestInvoiceDbRow[] = await db
 			.select({
@@ -66,6 +69,7 @@ const ITEMS_PER_PAGE = 6;
 
 // --- Fetch filtered invoices ---
 export async function fetchFilteredInvoices(
+	db: DB,
 	query: string,
 	currentPage: number,
 ): Promise<FetchFilteredInvoicesData[]> {
@@ -111,7 +115,10 @@ export async function fetchFilteredInvoices(
 }
 
 // --- Fetch invoice pages count ---
-export async function fetchInvoicesPages(query: string): Promise<number> {
+export async function fetchInvoicesPages(
+	db: DB,
+	query: string,
+): Promise<number> {
 	try {
 		const data: { count: number }[] = await db
 			.select({
@@ -139,6 +146,7 @@ export async function fetchInvoicesPages(query: string): Promise<number> {
 
 // --- Fetch invoice by ID ---
 export async function fetchInvoiceById(
+	db: DB,
 	id: InvoiceId,
 ): Promise<Invoice | undefined> {
 	try {

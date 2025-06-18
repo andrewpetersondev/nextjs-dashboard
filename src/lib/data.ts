@@ -1,6 +1,8 @@
 import "server-only";
 
-import { db } from "@/src/db/dev-database";
+// todo: all code that touches the database directly should be moved to DAL
+
+import type { DB } from "@/src/db/connection";
 import { customers, invoices, revenues } from "@/src/db/schema";
 import type {
 	CustomerField,
@@ -11,7 +13,7 @@ import type { Revenue } from "@/src/lib/definitions/revenue";
 import { formatCurrency } from "@/src/lib/utils";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 
-export async function fetchRevenue(): Promise<Revenue[]> {
+export async function fetchRevenue(db: DB): Promise<Revenue[]> {
 	const monthOrder: string[] = [
 		"Jan",
 		"Feb",
@@ -40,7 +42,7 @@ export async function fetchRevenue(): Promise<Revenue[]> {
 	}
 }
 
-export async function fetchCardData(): Promise<{
+export async function fetchCardData(db: DB): Promise<{
 	invoiceCount: number;
 	customerCount: number;
 	paidInvoices: number;
@@ -69,7 +71,7 @@ export async function fetchCardData(): Promise<{
 	}
 }
 
-export async function fetchCustomers(): Promise<CustomerField[]> {
+export async function fetchCustomers(db: DB): Promise<CustomerField[]> {
 	try {
 		return await db
 			.select({
@@ -84,6 +86,7 @@ export async function fetchCustomers(): Promise<CustomerField[]> {
 	}
 }
 export async function fetchFilteredCustomers(
+	db: DB,
 	query: string,
 ): Promise<FormattedCustomersTableRow[]> {
 	try {
