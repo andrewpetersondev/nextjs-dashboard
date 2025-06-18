@@ -1,6 +1,3 @@
-/// <reference types="../../cypress.d.ts" />
-/// <reference types="cypress" />
-
 describe("Auth Commands via UI", () => {
 	beforeEach(() => {
 		cy.fixture("user").then((user) => {

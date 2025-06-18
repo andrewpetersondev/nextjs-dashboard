@@ -1,6 +1,3 @@
-/// <reference types="../cypress.d.ts" />
-/// <reference types="cypress" />
-
 import "./commands";
 import "./cypress-global.css";
 

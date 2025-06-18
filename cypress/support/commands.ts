@@ -1,6 +1,3 @@
-/// <reference types="../cypress.d.ts" />
-/// <reference types="cypress" />
-
 import type { UserEntity } from "../../src/lib/db/entities/user";
 
 // Sign up a user via UI

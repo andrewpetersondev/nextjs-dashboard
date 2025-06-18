@@ -1,6 +1,3 @@
-/// <reference types="../cypress.d.ts" />
-/// <reference types="cypress" />
-
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
