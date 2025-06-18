@@ -12,7 +12,6 @@ import {
 	CreateInvoiceSchema,
 	type CustomerId,
 	type InvoiceFormState,
-	type InvoiceId,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices";
 import { toInvoiceId } from "@/src/mappers/invoice.mapper";

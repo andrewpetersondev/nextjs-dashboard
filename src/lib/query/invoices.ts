@@ -3,7 +3,6 @@ import "server-only";
 // todo: all code that touches the database directly should be moved to DAL
 
 import type { DB } from "@/src/db/connection";
-import { db } from "@/src/db/dev-database";
 import type { InvoiceEntity } from "@/src/db/entities/invoice";
 import { customers, invoices } from "@/src/db/schema";
 import type {
