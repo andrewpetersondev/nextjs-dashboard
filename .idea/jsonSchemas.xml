@@ -8,6 +8,7 @@
             <SchemaInfo>
               <option name="name" value="TSConfig" />
               <option name="relativePathToSchema" value="http://json.schemastore.org/tsconfig" />
+              <option name="schemaVersion" value="JSON Schema 202,012" />
               <option name="applicationDefined" value="true" />
               <option name="patterns">
                 <list>
@@ -19,6 +20,23 @@
                   </Item>
                   <Item>
                     <option name="path" value="tsconfig.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="schema">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="schema" />
+              <option name="relativePathToSchema" value="https://biomejs.dev/schemas/2.0.0/schema.json" />
+              <option name="schemaVersion" value="JSON Schema 202,012" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="biome.json" />
                   </Item>
                 </list>
               </option>
