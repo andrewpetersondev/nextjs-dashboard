@@ -27,10 +27,20 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
+			"!**/node_modules",
+			"!**/.next",
+			"!**/pnpm-lock.yaml",
+			"!**/next-env.d.ts",
+			"!.run",
+			"!.idea",
+			"!/.vscode",
 			"!cypress",
 			"!src/db/drizzle/**/*",
-			"!/.vscode",
-			"!src/lib/db/drizzle/**/*"
+			"!src/lib/db/drizzle/**/*",
+			"!secrets",
+			"!keep",
+			"!storage",
+			"!.env"
 		]
 	},
 	"formatter": {
@@ -63,6 +73,12 @@
 		}
 	},
 	"linter": {
+		"domains": {
+			"next": "recommended",
+			"project": "recommended",
+			"react": "recommended",
+			"test": "recommended"
+		},
 		"enabled": true,
 		"rules": {
 			"recommended": true
