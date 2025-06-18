@@ -1,8 +1,5 @@
-import type {
-	CustomerId,
-	InvoiceId,
-	Status,
-} from "@/src/lib/definitions/invoices";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums";
+import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
 
 /**
  * This file defines the `InvoiceEntity` TypeScript interface, which represents the structure of an invoice record as stored in the database. It ensures type safety and consistency when working with invoice data throughout the application.
@@ -15,7 +12,7 @@ import type {
  *   - `customerId`: References the customer associated with the invoice (`CustomerId`).
  *   - `amount`: The total amount for the invoice (`number`).
  *   - `date`: The invoice date in ISO 8601 format (`string`).
- *   - `status`: The current status of the invoice (`Status`).
+ *   - `status`: The current status of the invoice (`InvoiceStatus`).
  *
  * - **Usage:**
  *   Used in database access layers, API responses, and business logic to ensure that invoice data adheres to the expected schema.
@@ -32,5 +29,5 @@ export interface InvoiceEntity {
 	readonly customerId: CustomerId;
 	readonly amount: number;
 	readonly date: string; // ISO 8601
-	readonly status: Status;
+	readonly status: InvoiceStatus;
 }

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { USER_ROLES, type UserRole } from "@/src/lib/definitions/roles";
+import { USER_ROLES, type UserRole } from "@/src/lib/definitions/enums";
 import type { ActionResult } from "@/src/lib/definitions/users";
 
 // Note: Utility functions in this file are server-only.

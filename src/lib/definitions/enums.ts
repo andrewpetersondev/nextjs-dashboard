@@ -11,3 +11,12 @@ export const roleSchema = zod.enum(USER_ROLES, {
 	// required_error: "Role is required.", // todo: will this property break my code?
 	invalid_type_error: "Invalid user role.",
 });
+
+// Invoice statuses as a constant tuple for type safety.
+export const INVOICE_STATUSES = ["pending", "paid"] as const;
+
+/**
+ * Type for invoice statuses.
+ * Uses a tuple to ensure only valid statuses are used.
+ */
+export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];

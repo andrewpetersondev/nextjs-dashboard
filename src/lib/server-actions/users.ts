@@ -21,8 +21,8 @@ import {
 	readUserById,
 	updateUserDAL,
 } from "@/src/lib/dal/users.dal";
+import type { UserRole } from "@/src/lib/definitions/enums";
 import type { FormState } from "@/src/lib/definitions/form";
-import type { UserRole } from "@/src/lib/definitions/roles";
 import {
 	type ActionResult,
 	type CreateUserFormFields,

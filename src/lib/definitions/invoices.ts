@@ -1,56 +1,62 @@
+import {
+	INVOICE_STATUSES,
+	type InvoiceStatus,
+} from "@/src/lib/definitions/enums";
 import type { FormState } from "@/src/lib/definitions/form";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
-/** Branded type for InvoiceEntity ID (prevents accidental misuse of plain strings). */
+/* ============================================================================
+ * Branded Types
+ * ========================================================================== */
+
+/** Unique branded type for Invoice IDs. */
 export type InvoiceId = string & { readonly __brand: unique symbol };
 
-/** Branded type for Customer ID (ensures type safety for customer references). */
+/** Unique branded type for Customer IDs. */
 export type CustomerId = string & { readonly __brand: unique symbol };
 
+/* ============================================================================
+ * Form Field Types
+ * ========================================================================== */
+
 /**
- * Enum for valid invoice statuses.
- * - Pending: Invoice is awaiting payment.
- * - Paid: Invoice has been paid.
+ * Fields for invoice form state.
+ * Allows additional dynamic fields for extensibility.
  */
-export enum StatusEnum {
-	Pending = "pending",
-	Paid = "paid",
-}
-export const INVOICE_STATUSES = [StatusEnum.Pending, StatusEnum.Paid] as const;
-
-export type Status = (typeof INVOICE_STATUSES)[number];
-
-/** InvoiceEntity form fields. */
-export type InvoiceFormFields = {
+export interface InvoiceFormFields {
 	id: InvoiceId | "";
 	customerId: CustomerId | "";
 	amount: number | "";
-	status: Status;
+	status: InvoiceStatus;
 	date?: string;
-};
-
-/**
- * State for the invoice form, including field values and validation errors.
- */
-export type InvoiceFormState = FormState<InvoiceFormFields>;
-
-// --- Table Row Types (RAW) ---
-
-// Base interface for raw DB rows
-export interface DbRowBase<Id = string, Status = string> {
-	id: Id;
-	amount: number;
-	status: Status;
+	[key: string]: unknown; // <-- Fix: allow index signature for FormState compatibility
 }
 
-// Latest invoices DB row (extends base)
+/* ============================================================================
+ * Form State Aliases
+ * ========================================================================== */
+
+export type InvoiceFormState = FormState<InvoiceFormFields>;
+
+/* ============================================================================
+ * Database Row Types
+ * ========================================================================== */
+
+export interface DbRowBase<
+	Id extends string = string,
+	StatusType extends string = string,
+> {
+	id: Id;
+	amount: number;
+	status: StatusType;
+}
+
 export interface LatestInvoiceDbRow extends DbRowBase {
 	name: string;
 	imageUrl: string;
 	email: string;
 }
 
-// Filtered invoices DB row (extends base)
 export interface FilteredInvoiceDbRow extends DbRowBase {
 	date: string;
 	name: string;
@@ -58,48 +64,24 @@ export interface FilteredInvoiceDbRow extends DbRowBase {
 	imageUrl: string;
 }
 
-// InvoiceEntity by ID DB row (extends base)
 export interface InvoiceByIdDbRow extends DbRowBase {
 	customerId: string;
 	date: string;
 }
 
-// --- Table Row Types (UI) ---
+/* ============================================================================
+ * UI Table Row Types
+ * ========================================================================== */
 
-/** Row type for invoices table. */
-export interface InvoicesTableRow {
-	readonly id: InvoiceId;
-	readonly customerId: CustomerId;
-	readonly name: string;
-	readonly email: string;
-	readonly imageUrl: string;
-	readonly date: string;
-	readonly amount: number;
-	readonly status: Status;
-}
-
-/** Filtered invoice data for API responses. */
-export interface FilteredInvoiceData {
-	readonly id: InvoiceId;
-	readonly amount: number;
-	readonly date: string;
-	readonly name: string;
-	readonly email: string;
-	readonly imageUrl: string;
-	readonly status: Status;
-}
-
-/** Data shape for fetching latest invoices. */
 export interface FetchLatestInvoicesData {
 	readonly id: InvoiceId;
 	readonly amount: number;
 	readonly email: string;
 	readonly imageUrl: string;
 	readonly name: string;
-	readonly status: Status;
+	readonly status: InvoiceStatus;
 }
 
-/** Modified latest invoices data with string amount. */
 export type ModifiedLatestInvoicesData = Omit<
 	FetchLatestInvoicesData,
 	"amount"
@@ -107,21 +89,6 @@ export type ModifiedLatestInvoicesData = Omit<
 	amount: string;
 };
 
-/** Latest invoice summary. */
-export interface LatestInvoice {
-	readonly id: InvoiceId;
-	readonly name: string;
-	readonly imageUrl: string;
-	readonly email: string;
-	readonly amount: string;
-}
-
-/** Raw latest invoice with numeric amount. */
-export type LatestInvoiceRaw = Omit<LatestInvoice, "amount"> & {
-	amount: number;
-};
-
-/** Data shape for filtered invoices fetch. */
 export interface FetchFilteredInvoicesData {
 	readonly id: InvoiceId;
 	readonly amount: number;
@@ -129,27 +96,30 @@ export interface FetchFilteredInvoicesData {
 	readonly name: string;
 	readonly email: string;
 	readonly imageUrl: string;
-	readonly status: Status;
+	readonly status: InvoiceStatus;
 }
 
-/**
- * Result type for createInvoice server action.
- * Always includes errors/message for form state compatibility.
- */
+/* ============================================================================
+ * Action Result Types
+ * ========================================================================== */
+
 export type CreateInvoiceResult = {
-	errors?: Partial<Record<keyof InvoiceFormFields, string[]>>;
-	message: string;
-	success: boolean;
+	readonly errors?: Record<string, string[]>;
+	readonly message?: string;
+	readonly success: boolean;
 };
 
-// --- Validation Schemas ---
+/* ============================================================================
+ * Validation Schemas (zod)
+ * ========================================================================== */
 
-/** Zod schema for invoice form validation. */
+/**
+ * Zod schema for invoice form validation.
+ * Branding is applied in mappers/DAL, not in the schema.
+ */
 export const InvoiceFormSchema = zod.object({
-	id: zod.string().brand<InvoiceId>(),
-	customerId: zod
-		.string({ invalid_type_error: "Invalid customer id" })
-		.brand<CustomerId>(),
+	id: zod.string(), // Accepts string, branding applied elsewhere
+	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
 	amount: zod.coerce
 		.number()
 		.gt(0, { message: "Amount must be greater than $0." }),
@@ -159,17 +129,18 @@ export const InvoiceFormSchema = zod.object({
 	date: zod.string().optional(),
 });
 
-/** Zod schema for creating an invoice (omit id and date). */
+/**
+ * Zod schema for creating an invoice (omit id and date).
+ */
 export const CreateInvoiceSchema = InvoiceFormSchema.omit({
 	id: true,
 	date: true,
 });
 
-/** Zod schema for updating an invoice (omit id and date). */
+/**
+ * Zod schema for updating an invoice (omit id and date).
+ */
 export const UpdateInvoiceSchema = InvoiceFormSchema.omit({
 	id: true,
 	date: true,
 });
-
-/** Type inferred from InvoiceFormSchema */
-export type InvoiceFormSchemaType = zod.infer<typeof InvoiceFormSchema>;

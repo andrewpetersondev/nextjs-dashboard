@@ -7,11 +7,8 @@ import "server-only";
 
 import type { DB } from "@/src/db/connection";
 import { invoices } from "@/src/db/schema";
-import type {
-	CustomerId,
-	InvoiceId,
-	Status,
-} from "@/src/lib/definitions/invoices";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums";
+import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 import {
 	toInvoiceDTO,
@@ -34,7 +31,12 @@ export async function createInvoiceInDB(
 		amount,
 		status,
 		date,
-	}: { customerId: CustomerId; amount: number; status: Status; date: string },
+	}: {
+		customerId: CustomerId;
+		amount: number;
+		status: InvoiceStatus;
+		date: string;
+	},
 ): Promise<InvoiceDTO | null> {
 	try {
 		const [createdInvoice] = await db
@@ -65,7 +67,7 @@ export async function updateInvoiceInDB(
 		customerId,
 		amount,
 		status,
-	}: { customerId: CustomerId; amount: number; status: Status },
+	}: { customerId: CustomerId; amount: number; status: InvoiceStatus },
 ): Promise<InvoiceDTO | null> {
 	try {
 		const [updatedInvoice] = await db

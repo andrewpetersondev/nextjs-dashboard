@@ -1,4 +1,4 @@
-import type { Status } from "@/src/lib/definitions/invoices";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { JSX } from "react";
@@ -6,7 +6,7 @@ import type { JSX } from "react";
 export default function InvoiceStatus({
 	status,
 }: {
-	status: Status;
+	status: InvoiceStatus;
 }): JSX.Element {
 	return (
 		<span

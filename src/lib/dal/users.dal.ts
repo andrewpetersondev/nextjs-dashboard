@@ -9,7 +9,7 @@ import type { DB } from "@/src/db/connection";
 import type { UserEntity } from "@/src/db/entities/user";
 import { demoUserCounters, users } from "@/src/db/schema";
 import { comparePassword, hashPassword } from "@/src/lib/auth/password";
-import type { UserRole } from "@/src/lib/definitions/roles";
+import type { UserRole } from "@/src/lib/definitions/enums";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { toUserDTO } from "@/src/lib/mappers/user.mapper";
 import { createRandomPassword, logError } from "@/src/lib/utils/utils.server";

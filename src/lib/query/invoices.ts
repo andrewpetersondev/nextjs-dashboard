@@ -5,6 +5,7 @@ import "server-only";
 import type { DB } from "@/src/db/connection";
 import type { InvoiceEntity } from "@/src/db/entities/invoice";
 import { customers, invoices } from "@/src/db/schema";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums";
 import type {
 	CustomerId,
 	FetchFilteredInvoicesData,
@@ -13,7 +14,6 @@ import type {
 	InvoiceId,
 	LatestInvoiceDbRow,
 	ModifiedLatestInvoicesData,
-	Status,
 } from "@/src/lib/definitions/invoices";
 import { formatCurrency } from "@/src/lib/utils/utils";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
@@ -27,8 +27,8 @@ export function brandCustomerId(id: string): CustomerId {
 	return id as CustomerId;
 }
 
-export function brandStatus(status: string): Status {
-	return status as Status;
+export function brandStatus(status: string): InvoiceStatus {
+	return status as InvoiceStatus;
 }
 
 // --- Fetch latest invoices ---

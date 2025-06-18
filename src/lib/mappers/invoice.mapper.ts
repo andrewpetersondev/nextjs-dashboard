@@ -1,7 +1,10 @@
 import type { InvoiceEntity } from "@/src/db/entities/invoice";
-import type { InvoiceByIdDbRow, Status } from "@/src/lib/definitions/invoices";
+import {
+	INVOICE_STATUSES,
+	type InvoiceStatus,
+} from "@/src/lib/definitions/enums";
+import type { InvoiceByIdDbRow } from "@/src/lib/definitions/invoices";
 import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
-import { INVOICE_STATUSES } from "@/src/lib/definitions/invoices";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 
 /**
@@ -23,7 +26,7 @@ export const toCustomerId = (id: string): CustomerId => id as CustomerId;
  * @throws Error if status is invalid.
  */
 export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
-	if (!INVOICE_STATUSES.includes(row.status as Status)) {
+	if (!INVOICE_STATUSES.includes(row.status as InvoiceStatus)) {
 		throw new Error(`Invalid status value: ${row.status}`);
 	}
 
@@ -32,7 +35,7 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
 		customerId: toCustomerId(row.customerId),
 		amount: row.amount,
 		date: row.date,
-		status: row.status as Status, // Cast after validation
+		status: row.status as InvoiceStatus, // Cast after validation
 	};
 }
 

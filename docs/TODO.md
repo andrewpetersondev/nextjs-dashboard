@@ -46,14 +46,14 @@
 
 ### **Summary Table**
 
-| Area               | Status | Recommendation                                  |
-| ------------------ | ------ | ----------------------------------------------- |
-| Testing            | ⚠️     | Add unit/E2E/component tests, mock DB in tests  |
-| Validation         | ⚠️     | Validate all API input/output                   |
-| Error Handling     | ⚠️     | Add global error boundaries, structured logging |
-| Documentation      | ⚠️     | Document all public APIs/components             |
-| Secrets Management | ⚠️     | Use Docker secrets for production               |
-| CI/CD              | ⚠️     | Add GitHub Actions for CI/CD                    |
+| Area               | InvoiceStatus | Recommendation                                  |
+| ------------------ | ------------- | ----------------------------------------------- |
+| Testing            | ⚠️            | Add unit/E2E/component tests, mock DB in tests  |
+| Validation         | ⚠️            | Validate all API input/output                   |
+| Error Handling     | ⚠️            | Add global error boundaries, structured logging |
+| Documentation      | ⚠️            | Document all public APIs/components             |
+| Secrets Management | ⚠️            | Use Docker secrets for production               |
+| CI/CD              | ⚠️            | Add GitHub Actions for CI/CD                    |
 
 ---
 

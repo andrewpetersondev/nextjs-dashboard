@@ -1,9 +1,9 @@
-import type { FormState } from "@/src/lib/definitions/form";
 import {
 	USER_ROLES,
 	type UserRole,
 	roleSchema,
-} from "@/src/lib/definitions/roles";
+} from "@/src/lib/definitions/enums";
+import type { FormState } from "@/src/lib/definitions/form";
 import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
 
 /**

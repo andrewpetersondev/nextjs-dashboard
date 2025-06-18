@@ -1,4 +1,4 @@
-import { type UserRole, roleSchema } from "@/src/lib/definitions/roles";
+import { type UserRole, roleSchema } from "@/src/lib/definitions/enums";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
 // --- Session payload types ---
