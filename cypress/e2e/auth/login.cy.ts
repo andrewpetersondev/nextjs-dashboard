@@ -19,7 +19,7 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 	});
 
 	// todo: implement stricter naming for email validation
-	it("fails to login with invalid password", () => {
+	it("fails to log in with invalid password", () => {
 		cy.fixture("user").then((user) => {
 			cy.login({ ...user, password: "WrongPassword123!" });
 			cy.get('[data-cy="login-message-errors"]').should(
@@ -40,7 +40,7 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 		});
 	});
 
-	it("fails to login with non-existent email", () => {
+	it("fails to log in with non-existent email", () => {
 		cy.fixture("user").then((user) => {
 			cy.login({ ...user, email: "nonexistent@mail.com" });
 			cy.get('[data-cy="login-message-errors"]').should(
@@ -48,5 +48,26 @@ describe("UI Login Tests @ /auth/login.cy.ts", () => {
 				"Invalid email or password",
 			);
 		});
+	});
+});
+
+describe("Login (loginNew command)", () => {
+	beforeEach(() => {
+		cy.fixture("user").then((user) => {
+			cy.deleteUser(user.email);
+			cy.createUser(user);
+		});
+	});
+
+	it("logs in with valid credentials", () => {
+		cy.visit("/login");
+		cy.loginNew(
+			{
+				email: "fixtureuser@example.com",
+				password: "Password123!",
+				username: "fixtureuser",
+			},
+			{ assertSuccess: true },
+		);
 	});
 });

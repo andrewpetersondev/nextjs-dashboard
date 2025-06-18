@@ -68,3 +68,21 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 		cy.log("db:deleteUser result", result),
 	);
 });
+
+Cypress.Commands.add(
+	"loginNew",
+	(
+		user: Pick<UserEntity, "email" | "password" | "username">,
+		options?: { assertSuccess?: boolean },
+	) => {
+		cy.get('input[name="email"]').type(user.email);
+		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
+		cy.get('[data-cy="login-submit-button"]').click(); // <-- Use unique selector
+
+		// Optionally assert login success
+		if (options?.assertSuccess) {
+			cy.url().should("include", "/dashboard");
+			cy.contains(`Dashboard`);
+		}
+	},
+);

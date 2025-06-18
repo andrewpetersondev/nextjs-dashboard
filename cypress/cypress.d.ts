@@ -52,6 +52,16 @@ declare global {
 			 * Delete a user from the DB.
 			 */
 			deleteUser(email: string): Chainable<string>;
+
+			/**
+			 * Log in a user via UI (new implementation).
+			 * @param user - User credentials
+			 * @param options - Optional assertion
+			 */
+			loginNew(
+				user: Pick<UserEntity, "email" | "password" | "username">,
+				options?: { assertSuccess?: boolean },
+			): Chainable<void>;
 		}
 	}
 }
