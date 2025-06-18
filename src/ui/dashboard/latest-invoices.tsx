@@ -2,8 +2,8 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal";
+import { getDB } from "@/src/lib/db/connection";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
 import { H2, H3 } from "@/src/ui/headings";
 

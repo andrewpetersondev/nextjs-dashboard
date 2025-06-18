@@ -11,7 +11,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getDB } from "@/src/db/connection";
 import { hashPassword } from "@/src/lib/auth/password";
 import { createSession, deleteSession } from "@/src/lib/auth/session";
 import {
@@ -23,6 +22,7 @@ import {
 	readUserById,
 	updateUserDAL,
 } from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
 import type { UserRole } from "@/src/lib/definitions/enums";
 import type { FormState } from "@/src/lib/definitions/form";
 import {

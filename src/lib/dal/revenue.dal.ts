@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { DB } from "@/src/db/connection";
-import { revenues } from "@/src/db/schema";
+import type { DB } from "@/src/lib/db/connection";
+import { revenues } from "@/src/lib/db/schema";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 
 export async function fetchRevenue(db: DB): Promise<Revenue[]> {

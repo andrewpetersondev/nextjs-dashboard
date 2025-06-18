@@ -23,6 +23,6 @@ export default defineConfig({
 		url: testUrl,
 	},
 	dialect: "postgresql",
-	out: "./src/db/drizzle/test/",
-	schema: "./src/db/schema.ts",
+	out: "./src/lib/db/drizzle/test/",
+	schema: "./src/lib/db/schema.ts",
 });

@@ -5,9 +5,9 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
  * InvoiceEntity Data Access Layer (DAL) for CRUD operations on InvoiceEntity entities.
  * Uses Drizzle ORM for database access.
  */
-import type { DB } from "@/src/db/connection";
-import type { InvoiceEntity } from "@/src/db/entities/invoice";
-import { customers, invoices } from "@/src/db/schema";
+import type { DB } from "@/src/lib/db/connection";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
+import { customers, invoices } from "@/src/lib/db/schema";
 import type { InvoiceStatus } from "@/src/lib/definitions/enums";
 import type {
 	CustomerId,

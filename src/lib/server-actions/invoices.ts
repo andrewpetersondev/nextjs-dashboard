@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getDB } from "@/src/db/connection";
 import {
 	createInvoiceInDB,
 	deleteInvoiceInDB,
 	updateInvoiceInDB,
 } from "@/src/lib/dal/invoices.dal";
+import { getDB } from "@/src/lib/db/connection";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,

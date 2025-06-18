@@ -2,9 +2,9 @@
 /// <reference types="cypress" />
 
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "../../src/db/entities/user";
-import { users } from "../../src/db/schema";
-import { testDB } from "../../src/db/test-database";
+import type { UserEntity } from "../../src/lib/db/entities/user";
+import { users } from "../../src/lib/db/schema";
+import { testDB } from "../../src/lib/db/test-database";
 
 export type DbTaskResult<T> = {
 	success: boolean;

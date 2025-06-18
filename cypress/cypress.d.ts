@@ -2,7 +2,7 @@
 
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import type { UserEntity } from "../src/db/entities/user";
+import type { UserEntity } from "../src/lib/db/entities/user";
 
 declare global {
 	namespace Cypress {

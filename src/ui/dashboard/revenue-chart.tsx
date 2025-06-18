@@ -1,7 +1,7 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchRevenue } from "@/src/lib/dal/revenue.dal";
+import { getDB } from "@/src/lib/db/connection";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils/utils";
 import { H2, H3 } from "@/src/ui/headings";

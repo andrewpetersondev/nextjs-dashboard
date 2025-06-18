@@ -1,4 +1,4 @@
-import type { InvoiceEntity } from "@/src/db/entities/invoice";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
 import {
 	INVOICE_STATUSES,
 	type InvoiceStatus,

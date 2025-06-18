@@ -1,9 +1,9 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { DB } from "@/src/db/connection";
-import { getDB } from "@/src/db/connection";
-import { sessions } from "@/src/db/schema";
+import type { DB } from "@/src/lib/db/connection";
+import { getDB } from "@/src/lib/db/connection";
+import { sessions } from "@/src/lib/db/schema";
 import type {
 	DbSessionRow,
 	SessionRecord,

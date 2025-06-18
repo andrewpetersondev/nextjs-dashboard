@@ -6,10 +6,10 @@ import "server-only";
  */
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import type { DB } from "@/src/db/connection";
-import type { UserEntity } from "@/src/db/entities/user";
-import { demoUserCounters, users } from "@/src/db/schema";
 import { comparePassword, hashPassword } from "@/src/lib/auth/password";
+import type { DB } from "@/src/lib/db/connection";
+import type { UserEntity } from "@/src/lib/db/entities/user";
+import { demoUserCounters, users } from "@/src/lib/db/schema";
 import type { UserRole } from "@/src/lib/definitions/enums";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { toUserDTO } from "@/src/lib/mappers/user.mapper";

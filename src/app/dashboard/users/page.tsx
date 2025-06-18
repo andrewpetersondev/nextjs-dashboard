@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchUsersPages } from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
 import { H1 } from "@/src/ui/headings";
 import Pagination from "@/src/ui/invoices/pagination";
 import Search from "@/src/ui/search";

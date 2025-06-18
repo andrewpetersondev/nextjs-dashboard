@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchUserById } from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";

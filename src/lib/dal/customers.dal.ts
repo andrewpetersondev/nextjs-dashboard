@@ -1,8 +1,8 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import type { DB } from "@/src/db/connection";
-import { customers, invoices } from "@/src/db/schema";
+import type { DB } from "@/src/lib/db/connection";
+import { customers, invoices } from "@/src/lib/db/schema";
 import type {
 	CustomerField,
 	CustomersTableRow,

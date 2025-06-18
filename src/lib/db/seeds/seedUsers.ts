@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
-import { db } from "@/src/db/dev-database";
-import { users } from "@/src/db/schema";
+import { db } from "@/src/lib/db/dev-database";
+import { users } from "@/src/lib/db/schema";
 
 type User = {
 	username: string;

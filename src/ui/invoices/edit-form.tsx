@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState } from "react";
-import type { InvoiceEntity } from "@/src/db/entities/invoice";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/lib/server-actions/invoices";

@@ -5,8 +5,8 @@ import {
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchCardData } from "@/src/lib/dal/data.dal";
+import { getDB } from "@/src/lib/db/connection";
 import { H3 } from "@/src/ui/headings";
 
 const iconMap = {

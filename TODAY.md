@@ -2,10 +2,10 @@
 
 ## Invoices Refactor
 
-- [ ] dal
-- [ ] dto
-- [ ] mapper
-- [ ] dto
+- [x] dal
+- [x] dto
+- [x] mapper
+- [x] dto
 - [ ] definitions
 - [ ] visual inspection
 

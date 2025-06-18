@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { getDB } from "@/src/db/connection";
 import { fetchFilteredUsers } from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 

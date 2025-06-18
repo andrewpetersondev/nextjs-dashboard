@@ -2,8 +2,8 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 // todo: all code that touches the database directly should be moved to DAL
-import type { DB } from "@/src/db/connection";
-import { customers, invoices } from "@/src/db/schema";
+import type { DB } from "@/src/lib/db/connection";
+import { customers, invoices } from "@/src/lib/db/schema";
 
 export async function fetchCardData(db: DB): Promise<{
 	invoiceCount: number;

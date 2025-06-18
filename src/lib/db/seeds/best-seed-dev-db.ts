@@ -2,9 +2,9 @@
 // DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
 
 import { seed } from "drizzle-seed";
-import { hashPassword } from "../../lib/auth/password";
+import { hashPassword } from "../../auth/password";
+import { db } from "../dev-database";
 import * as schema from "../schema";
-import { testDB } from "../test-database";
 
 const customerFullNames: string[] = [
 	"Evil Rabbits",
@@ -81,23 +81,23 @@ const userSeed: User[] = [
 async function main(): Promise<void> {
 	// Check if the database is empty
 
-	const { rows: userCount } = (await testDB.execute(
+	const { rows: userCount } = (await db.execute(
 		"SELECT COUNT(*) FROM users",
 	)) as { rows: { count: number }[] };
 
-	const { rows: customerCount } = (await testDB.execute(
+	const { rows: customerCount } = (await db.execute(
 		"SELECT COUNT(*) FROM customers",
 	)) as { rows: { count: number }[] };
 
-	const { rows: invoiceCount } = (await testDB.execute(
+	const { rows: invoiceCount } = (await db.execute(
 		"SELECT COUNT(*) FROM invoices",
 	)) as { rows: { count: number }[] };
 
-	const { rows: revenueCount } = (await testDB.execute(
+	const { rows: revenueCount } = (await db.execute(
 		"SELECT COUNT(*) FROM revenues",
 	)) as { rows: { count: number }[] };
 
-	const { rows: demoUserCount } = (await testDB.execute(
+	const { rows: demoUserCount } = (await db.execute(
 		"SELECT COUNT(*) FROM demo_user_counters",
 	)) as { rows: { count: number }[] };
 
@@ -112,7 +112,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await seed(testDB, schema).refine((f) => ({
+	await seed(db, schema).refine((f) => ({
 		customers: {
 			columns: {
 				email: f.valuesFromArray({ isUnique: true, values: customerEmails }),

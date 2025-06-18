@@ -1,4 +1,4 @@
-import type { UserEntity } from "@/src/db/entities/user";
+import type { UserEntity } from "@/src/lib/db/entities/user";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 
 /**
