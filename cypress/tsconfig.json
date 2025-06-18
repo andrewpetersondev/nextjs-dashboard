@@ -1,12 +1,13 @@
 {
 	"compilerOptions": {
 		"allowJs": false,
-		"baseUrl": "./",
+		"baseUrl": "../",
 		"noEmit": true,
 		"paths": {
-			"@/component/*": ["./component/*"],
-			"@/e2e/*": ["./e2e/*"],
-			"@/support/*": ["./support/*"]
+			"@/component/*": ["cypress/component/*"],
+			"@/e2e/*": ["cypress/e2e/*"],
+			"@/src/*": ["src/*"],
+			"@/support/*": ["cypress/support/*"]
 		},
 		"types": ["cypress", "node"]
 	},
