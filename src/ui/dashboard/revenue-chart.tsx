@@ -1,10 +1,10 @@
+import { CalendarIcon } from "@heroicons/react/16/solid";
+import type { JSX } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchRevenue } from "@/src/lib/dal/revenue.dal";
 import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils/utils";
 import { H2, H3 } from "@/src/ui/headings";
-import { CalendarIcon } from "@heroicons/react/16/solid";
-import type { JSX } from "react";
 
 export default async function RevenueChart(): Promise<JSX.Element> {
 	const db = getDB();
@@ -37,8 +37,8 @@ export default async function RevenueChart(): Promise<JSX.Element> {
 					{revenue.map(
 						(month: Revenue): JSX.Element => (
 							<div
-								key={month.month}
 								className="flex flex-col items-center gap-2"
+								key={month.month}
 							>
 								<div
 									className="bg-bg-accent w-full rounded-md"

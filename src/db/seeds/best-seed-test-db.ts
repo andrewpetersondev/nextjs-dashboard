@@ -59,22 +59,22 @@ interface User {
 
 const userSeed: User[] = [
 	{
-		username: "user",
 		email: "user@user.com",
 		password: await hashPassword("UserPassword123!"),
 		role: "user",
+		username: "user",
 	},
 	{
-		username: "admin",
 		email: "admin@admin.com",
 		password: await hashPassword("AdminPassword123!"),
 		role: "admin",
+		username: "admin",
 	},
 	{
-		username: "guest",
 		email: "guest@guest.com",
 		password: await hashPassword("GuestPassword123!"),
 		role: "guest",
+		username: "guest",
 	},
 ];
 
@@ -113,75 +113,75 @@ async function main(): Promise<void> {
 	}
 
 	await seed(testDB, schema).refine((f) => ({
-		users: {
-			count: 2,
-			columns: {
-				username: f.valuesFromArray({
-					values: userSeed.map((u) => u.username),
-					isUnique: true,
-				}),
-				email: f.valuesFromArray({
-					values: userSeed.map((u) => u.email),
-					isUnique: true,
-				}),
-				password: f.valuesFromArray({
-					values: userSeed.map((u) => u.password),
-					isUnique: true,
-				}),
-				role: f.valuesFromArray({
-					values: userSeed.map((u: User) => u.role),
-					isUnique: true,
-				}),
-			},
-		},
 		customers: {
-			count: 6,
 			columns: {
-				name: f.valuesFromArray({ values: customerFullNames, isUnique: true }),
-				email: f.valuesFromArray({ values: customerEmails, isUnique: true }),
+				email: f.valuesFromArray({ isUnique: true, values: customerEmails }),
 				imageUrl: f.valuesFromArray({
-					values: customerImageUrls,
 					isUnique: true,
+					values: customerImageUrls,
 				}),
+				name: f.valuesFromArray({ isUnique: true, values: customerFullNames }),
 			},
+			count: 6,
 			with: {
 				invoices: [
-					{ weight: 0.6, count: [1, 2, 3] },
-					{ weight: 0.3, count: [4, 5] },
-					{ weight: 0.1, count: [6, 7, 8] },
+					{ count: [1, 2, 3], weight: 0.6 },
+					{ count: [4, 5], weight: 0.3 },
+					{ count: [6, 7, 8], weight: 0.1 },
 				],
 			},
 		},
+		demoUserCounters: {
+			columns: {
+				count: f.intPrimaryKey({ maxValue: 100, minValue: 1 }),
+				role: f.valuesFromArray({ isUnique: true, values: [...roles] }),
+			},
+			count: 3,
+		},
 		invoices: {
-			count: 15,
 			columns: {
 				amount: f.weightedRandom([
 					{
-						weight: 1 / 15, // For the first record
-						value: f.default({ defaultValue: 1000 }),
+						value: f.default({ defaultValue: 1000 }), // For the first record
+						weight: 1 / 15,
 					},
 					{
-						weight: 14 / 15, // For remaining records
-						value: f.int({ minValue: 100, maxValue: 10000 }),
+						value: f.int({ maxValue: 10000, minValue: 100 }), // For remaining records
+						weight: 14 / 15,
 					},
 				]),
-				date: f.date({ minDate: "2024-01-01", maxDate: "2025-01-01" }),
+				date: f.date({ maxDate: "2025-01-01", minDate: "2024-01-01" }),
 				status: f.valuesFromArray({ values: ["pending", "paid"] }),
 			},
+			count: 15,
 		},
 		revenues: {
+			columns: {
+				month: f.valuesFromArray({ isUnique: true, values: months }),
+				revenue: f.int({ maxValue: 10000, minValue: 100 }),
+			},
 			count: 12,
-			columns: {
-				month: f.valuesFromArray({ values: months, isUnique: true }),
-				revenue: f.int({ minValue: 100, maxValue: 10000 }),
-			},
 		},
-		demoUserCounters: {
-			count: 3,
+		users: {
 			columns: {
-				role: f.valuesFromArray({ values: [...roles], isUnique: true }),
-				count: f.intPrimaryKey({ minValue: 1, maxValue: 100 }),
+				email: f.valuesFromArray({
+					isUnique: true,
+					values: userSeed.map((u) => u.email),
+				}),
+				password: f.valuesFromArray({
+					isUnique: true,
+					values: userSeed.map((u) => u.password),
+				}),
+				role: f.valuesFromArray({
+					isUnique: true,
+					values: userSeed.map((u: User) => u.role),
+				}),
+				username: f.valuesFromArray({
+					isUnique: true,
+					values: userSeed.map((u) => u.username),
+				}),
 			},
+			count: 2,
 		},
 	}));
 }

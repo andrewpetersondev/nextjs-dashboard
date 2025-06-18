@@ -1,11 +1,11 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import type { JSX } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchUserById } from "@/src/lib/dal/users.dal";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Edit User",
@@ -39,11 +39,11 @@ export default async function Page(
 		<main>
 			<Breadcrumbs
 				breadcrumbs={[
-					{ label: "Users", href: "/dashboard/users" },
+					{ href: "/dashboard/users", label: "Users" },
 					{
-						label: "Edit User",
-						href: `/dashboard/users/${id}/edit`,
 						active: true,
+						href: `/dashboard/users/${id}/edit`,
+						label: "Edit User",
 					},
 				]}
 			/>

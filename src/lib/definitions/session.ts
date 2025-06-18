@@ -1,4 +1,4 @@
-import { type UserRole, roleSchema } from "@/src/lib/definitions/enums";
+import { roleSchema, type UserRole } from "@/src/lib/definitions/enums";
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 
 /**
@@ -29,15 +29,15 @@ export const expSchema = zod.number();
 // --- Validation Schemas ---
 export const EncryptPayloadSchema = zod.object({
 	user: zod.object({
-		userId: userIdSchema,
-		role: roleSchema,
 		expiresAt: expiresAtSchema,
+		role: roleSchema,
+		userId: userIdSchema,
 	}),
 });
 
 export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-	iat: iatSchema,
 	exp: expSchema,
+	iat: iatSchema,
 });
 
 /**

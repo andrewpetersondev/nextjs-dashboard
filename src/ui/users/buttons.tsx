@@ -1,13 +1,13 @@
-import { deleteUserFormAction } from "@/src/lib/server-actions/users";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
+import { deleteUserFormAction } from "@/src/lib/server-actions/users";
 
 export function CreateUser(): JSX.Element {
 	return (
 		<Link
-			href="/dashboard/users/create"
 			className="bg-bg-secondary text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+			href="/dashboard/users/create"
 		>
 			<span className="hidden md:block">Create User</span>{" "}
 			<PlusIcon className="h-5 md:ml-4" />
@@ -18,8 +18,8 @@ export function CreateUser(): JSX.Element {
 export function UpdateUser({ id }: { id: string }): JSX.Element {
 	return (
 		<Link
-			href={`/dashboard/users/${id}/edit`}
 			className="hover:bg-bg-hover rounded-md border p-2"
+			href={`/dashboard/users/${id}/edit`}
 		>
 			<span className="sr-only">Update</span>
 			<PencilIcon className="w-5" />
@@ -31,8 +31,8 @@ export function DeleteUser({ id }: { id: string }): JSX.Element {
 	return (
 		<form action={deleteUserFormAction}>
 			{/* Hidden input for userId */}
-			<input type="hidden" name="userId" value={id} />
-			<button type="submit" className="hover:bg-bg-hover rounded-md border p-2">
+			<input name="userId" type="hidden" value={id} />
+			<button className="hover:bg-bg-hover rounded-md border p-2" type="submit">
 				<span className="sr-only">Delete</span>
 				<TrashIcon className="w-5" />
 			</button>

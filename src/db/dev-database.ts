@@ -1,9 +1,9 @@
 import "server-only";
 
 import {
+	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
-	drizzle,
 } from "drizzle-orm/node-postgres";
 
 console.log("dev-database.ts ...");
@@ -19,4 +19,4 @@ if (process.env.POSTGRES_URL) {
 
 export const db: NodePgDatabase & {
 	$client: NodePgClient;
-} = drizzle({ connection: url, casing: "snake_case" });
+} = drizzle({ casing: "snake_case", connection: url });

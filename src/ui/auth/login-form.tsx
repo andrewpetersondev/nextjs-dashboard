@@ -1,5 +1,8 @@
 "use client";
 
+import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import type React from "react";
+import { type JSX, useActionState } from "react";
 import { login } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
@@ -10,9 +13,6 @@ import Heading from "@/src/ui/auth/heading";
 import { InputField } from "@/src/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
-import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { type JSX, useActionState } from "react";
-import type React from "react";
 
 type LoginState = {
 	errors?: {
@@ -36,35 +36,35 @@ export default function LoginForm(): JSX.Element {
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 					<form action={action} className="space-y-6">
 						<InputField
-							id="email"
-							name="email"
-							type="email"
-							label="Email address"
 							autoComplete="email"
-							required={true}
+							autoFocus={true}
+							dataCy="login-email-input"
+							describedById="login-email-errors"
+							error={state?.errors?.email}
 							icon={
 								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
-							error={state?.errors?.email}
-							dataCy="login-email-input"
-							describedById="login-email-errors"
+							id="email"
+							label="Email address"
+							name="email"
 							placeholder="steve@jobs.com"
-							autoFocus={true}
+							required={true}
+							type="email"
 						/>
 						<InputField
-							id="password"
-							name="password"
-							type="password"
-							label="Password"
 							autoComplete="current-password"
-							required={true}
+							dataCy="login-password-input"
+							describedById="login-password-errors"
+							error={state?.errors?.password}
 							icon={
 								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
-							error={state?.errors?.password}
-							dataCy="login-password-input"
+							id="password"
+							label="Password"
+							name="password"
 							placeholder="Enter your password"
-							describedById="login-password-errors"
+							required={true}
+							type="password"
 						/>
 
 						<div className="flex items-center justify-between">
@@ -73,19 +73,19 @@ export default function LoginForm(): JSX.Element {
 						</div>
 
 						<div>
-							<AuthSubmitButton pending={pending} data-cy="login-submit-button">
+							<AuthSubmitButton data-cy="login-submit-button" pending={pending}>
 								Log In
 							</AuthSubmitButton>
 						</div>
 					</form>
 					{/* does this error div ever get used? */}
 					<div
-						className="flex h-8 items-end space-x-1"
-						aria-live="polite"
 						aria-atomic="true"
+						aria-live="polite"
+						className="flex h-8 items-end space-x-1"
 					>
 						{state?.message && (
-							<p data-cy="login-message-errors" className="text-text-error">
+							<p className="text-text-error" data-cy="login-message-errors">
 								{state.message}
 							</p>
 						)}
@@ -110,24 +110,24 @@ export default function LoginForm(): JSX.Element {
 						<DemoAdminUser text="Login as Demo Admin" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
-								provider="Google"
+								data-cy="login-google"
 								href="/api/auth/google"
 								mode="login"
-								data-cy="login-google"
+								provider="Google"
 							/>
 							<SocialLoginButton
-								provider="GitHub"
+								data-cy="login-github"
 								href="/api/auth/github"
 								mode="login"
-								data-cy="login-github"
+								provider="GitHub"
 							/>
 						</div>
 					</div>
 				</div>
 				<AuthSwitchLink
-					prompt="Not a member?"
 					href="/signup"
 					linkText="Sign up here"
+					prompt="Not a member?"
 				/>
 			</div>
 		</div>

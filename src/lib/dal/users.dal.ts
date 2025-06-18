@@ -5,6 +5,7 @@ import "server-only";
  * Uses Drizzle ORM for database access.
  */
 
+import { asc, count, eq, ilike, or } from "drizzle-orm";
 import type { DB } from "@/src/db/connection";
 import type { UserEntity } from "@/src/db/entities/user";
 import { demoUserCounters, users } from "@/src/db/schema";
@@ -13,7 +14,6 @@ import type { UserRole } from "@/src/lib/definitions/enums";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { toUserDTO } from "@/src/lib/mappers/user.mapper";
 import { createRandomPassword, logError } from "@/src/lib/utils/utils.server";
-import { asc, count, eq, ilike, or } from "drizzle-orm";
 
 /**
  * Number of users to display per page for pagination.
@@ -45,7 +45,7 @@ export async function createUserInDB(
 		const hashedPassword = await hashPassword(password);
 		const [user] = await db
 			.insert(users)
-			.values({ username, email, password: hashedPassword, role })
+			.values({ email, password: hashedPassword, role, username })
 			.returning();
 		return user ? toUserDTO(user) : null;
 	} catch (error) {
@@ -181,7 +181,7 @@ export async function fetchFilteredUsers(
 
 		return data.map(toUserDTO);
 	} catch (error) {
-		logError("fetchFilteredUsers", error, { query, currentPage });
+		logError("fetchFilteredUsers", error, { currentPage, query });
 		throw new Error("Failed to fetch filtered users.");
 	}
 }
@@ -218,7 +218,7 @@ export async function demoUserCounter(db: DB, role: UserRole): Promise<number> {
 	try {
 		const [counter] = await db
 			.insert(demoUserCounters)
-			.values({ role, count: 1 })
+			.values({ count: 1, role })
 			.returning();
 		return counter.id;
 	} catch (error) {
@@ -244,10 +244,10 @@ export async function createDemoUser(
 		const uniqueEmail = `demo+${role}${id}@demo.com`;
 		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
 		return await createUserInDB(db, {
-			username: uniqueUsername,
 			email: uniqueEmail,
 			password: DEMO_PASSWORD,
 			role,
+			username: uniqueUsername,
 		});
 	} catch (error) {
 		logError("createDemoUser", error, { id, role });

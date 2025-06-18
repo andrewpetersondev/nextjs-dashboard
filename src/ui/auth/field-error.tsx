@@ -1,4 +1,4 @@
-import { type JSX, type NamedExoticComponent, memo } from "react";
+import { type JSX, memo, type NamedExoticComponent } from "react";
 
 export interface FieldErrorProps {
 	id?: string;
@@ -17,7 +17,7 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 		// This component is now used for all field errors (email, username, password)
 		if (!error?.length) return null;
 		return (
-			<div id={id} data-cy={dataCy} className="text-text-error">
+			<div className="text-text-error" data-cy={dataCy} id={id}>
 				{label && <p>{label}</p>}
 				<ul>
 					{error.map(

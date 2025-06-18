@@ -1,17 +1,17 @@
 "use client";
 
-import { signup } from "@/src/lib/server-actions/users";
-import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
-import DemoUser from "@/src/ui/auth/demo-user";
-import { InputField } from "@/src/ui/auth/input-field";
 import {
 	AtSymbolIcon,
 	LockClosedIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
-import React, { useActionState } from "react";
 import type { FC } from "react";
+import React, { useActionState } from "react";
+import { signup } from "@/src/lib/server-actions/users";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
+import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
+import DemoUser from "@/src/ui/auth/demo-user";
+import { InputField } from "@/src/ui/auth/input-field";
 import AuthSwitchLink from "./auth-switch-link";
 import { ForgotPasswordLink } from "./forgot-password-link";
 import Heading from "./heading";
@@ -47,51 +47,51 @@ export const SignupForm: FC = () => {
 				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 					<form
 						action={action}
-						data-cy="signup-form"
-						className="space-y-6"
 						autoComplete="off"
+						className="space-y-6"
+						data-cy="signup-form"
 					>
 						<InputField
-							id="username"
-							name="username"
-							type="text"
-							label="Username"
 							autoComplete="username"
-							required={true}
+							dataCy="signup-username-input"
+							error={state?.errors?.username}
 							icon={
 								<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
-							error={state?.errors?.username}
-							dataCy="signup-username-input"
+							id="username"
+							label="Username"
+							name="username"
+							required={true}
+							type="text"
 						/>
 						<InputField
-							id="email"
-							name="email"
-							type="email"
-							label="Email address"
 							autoComplete="email"
-							required={true}
+							dataCy="signup-email-input"
+							error={state?.errors?.email}
 							icon={
 								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
-							error={state?.errors?.email}
-							dataCy="signup-email-input"
+							id="email"
+							label="Email address"
+							name="email"
 							placeholder="steve@jobs.com"
+							required={true}
+							type="email"
 						/>
 						<InputField
-							id="password"
-							name="password"
-							type="password"
-							label="Password"
 							autoComplete="new-password"
-							required={true}
+							dataCy="signup-password-input"
+							describedById="signup-password-errors"
+							error={state?.errors?.password}
 							icon={
 								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
 							}
-							error={state?.errors?.password}
-							dataCy="signup-password-input"
+							id="password"
+							label="Password"
+							name="password"
 							placeholder="Enter your password"
-							describedById="signup-password-errors"
+							required={true}
+							type="password"
 						/>
 
 						<div className="flex items-center justify-between">
@@ -101,8 +101,8 @@ export const SignupForm: FC = () => {
 
 						<div>
 							<AuthSubmitButton
-								pending={pending}
 								data-cy="signup-submit-button"
+								pending={pending}
 							>
 								Sign Up
 							</AuthSubmitButton>
@@ -110,12 +110,12 @@ export const SignupForm: FC = () => {
 					</form>
 					{/* does this error div ever get used? */}
 					<div
-						className="flex h-8 items-end space-x-1"
-						aria-live="polite"
 						aria-atomic="true"
+						aria-live="polite"
+						className="flex h-8 items-end space-x-1"
 					>
 						{state?.message && (
-							<p data-cy="signup-message-errors" className="text-text-error">
+							<p className="text-text-error" data-cy="signup-message-errors">
 								{state.message}
 							</p>
 						)}
@@ -140,24 +140,24 @@ export const SignupForm: FC = () => {
 						<DemoAdminUser text="Sign up as Demo Admin" />
 						<div className="mt-6 grid grid-cols-2 gap-4">
 							<SocialLoginButton
-								provider="Google"
+								data-cy="signup-google"
 								href="/api/auth/google"
 								mode="signup"
-								data-cy="signup-google"
+								provider="Google"
 							/>
 							<SocialLoginButton
-								provider="GitHub"
+								data-cy="signup-github"
 								href="/api/auth/github"
 								mode="signup"
-								data-cy="signup-github"
+								provider="GitHub"
 							/>
 						</div>
 					</div>
 				</div>
 				<AuthSwitchLink
-					prompt="Already a member?"
 					href="/login"
 					linkText="Sign in here"
+					prompt="Already a member?"
 				/>
 			</div>
 		</div>

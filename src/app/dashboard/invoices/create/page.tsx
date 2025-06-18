@@ -1,10 +1,10 @@
+import type { Metadata } from "next";
+import type { JSX } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import CreateInvoiceForm from "@/src/ui/invoices/create-invoice-form";
-import type { Metadata } from "next";
-import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Create InvoiceEntity",
@@ -21,13 +21,13 @@ export default async function Page(): Promise<JSX.Element> {
 			<Breadcrumbs
 				breadcrumbs={[
 					{
-						label: "Invoices",
 						href: "/dashboard/invoices",
+						label: "Invoices",
 					},
 					{
-						label: "Create InvoiceEntity",
-						href: "/dashboard/invoices/create",
 						active: true,
+						href: "/dashboard/invoices/create",
+						label: "Create InvoiceEntity",
 					},
 				]}
 			/>

@@ -1,6 +1,5 @@
 "use client";
 
-import { generatePagination } from "@/src/lib/utils/utils.client";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
@@ -10,10 +9,13 @@ import {
 	useSearchParams,
 } from "next/navigation";
 import type { JSX } from "react";
+import { generatePagination } from "@/src/lib/utils/utils.client";
 
 export default function Pagination({
 	totalPages,
-}: { totalPages: number }): JSX.Element {
+}: {
+	totalPages: number;
+}): JSX.Element {
 	const pathname: string = usePathname();
 	const searchParams: ReadonlyURLSearchParams = useSearchParams();
 	const currentPage: number = Number(searchParams.get("page")) || 1;
@@ -48,11 +50,11 @@ export default function Pagination({
 
 						return (
 							<PaginationNumber
-								key={page}
 								href={createPageURL(page)}
+								isActive={currentPage === page}
+								key={page}
 								page={page}
 								position={position}
-								isActive={currentPage === page}
 							/>
 						);
 					})}
@@ -82,19 +84,19 @@ function PaginationNumber({
 	const className: string = clsx(
 		"flex h-10 w-10 items-center justify-center border",
 		{
+			"hover:bg-bg-hover": !isActive && position !== "middle",
 			"rounded-l-md": position === "first" || position === "single",
 			"rounded-r-md": position === "last" || position === "single",
+			"text-text-secondary": position === "middle",
 			"z-10 border-bg-active border-2 border-bg-focus text-text-active":
 				isActive,
-			"hover:bg-bg-hover": !isActive && position !== "middle",
-			"text-text-secondary": position === "middle",
 		},
 	);
 
 	return isActive || position === "middle" ? (
 		<div className={className}>{page}</div>
 	) : (
-		<Link href={href} className={className}>
+		<Link className={className} href={href}>
 			{page}
 		</Link>
 	);
@@ -112,10 +114,10 @@ function PaginationArrow({
 	const className: string = clsx(
 		"flex h-10 w-10 items-center justify-center rounded-md border",
 		{
-			"pointer-events-none text-text-disabled": isDisabled,
 			"hover:bg-bg-disabled": !isDisabled,
-			"mr-2 md:mr-4": direction === "left",
 			"ml-2 md:ml-4": direction === "right",
+			"mr-2 md:mr-4": direction === "left",
+			"pointer-events-none text-text-disabled": isDisabled,
 		},
 	);
 

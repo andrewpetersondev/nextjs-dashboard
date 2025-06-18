@@ -1,11 +1,11 @@
 import "server-only";
 
-import * as schema from "@/src/db/schema";
 import {
+	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
-	drizzle,
 } from "drizzle-orm/node-postgres";
+import * as schema from "@/src/db/schema";
 
 // Supported database types
 export type DBType = "dev" | "test";
@@ -39,5 +39,5 @@ function getDatabaseUrl(type: DBType): string {
  */
 export function getDB(type: DBType = "dev"): DB {
 	const url = getDatabaseUrl(type);
-	return drizzle({ connection: url, casing: "snake_case", schema }) as DB;
+	return drizzle({ casing: "snake_case", connection: url, schema }) as DB;
 }

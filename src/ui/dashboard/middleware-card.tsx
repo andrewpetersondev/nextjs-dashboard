@@ -1,8 +1,8 @@
+import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/src/lib/dal/session-dal";
 import { USER_ROLES, type UserRole } from "@/src/lib/definitions/enums";
 import type { SessionVerificationResult } from "@/src/lib/definitions/session";
 import { H6 } from "@/src/ui/headings";
-import type { JSX } from "react";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;
 

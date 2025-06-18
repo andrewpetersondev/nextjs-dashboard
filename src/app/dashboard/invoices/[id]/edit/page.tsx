@@ -1,11 +1,11 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import type { JSX } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/dal/invoices.dal";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditInvoiceForm from "@/src/ui/invoices/edit-form";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import type { JSX } from "react";
 
 export const metadata: Metadata = {
 	title: "Edit InvoiceEntity",
@@ -40,15 +40,15 @@ export default async function Page(
 		<main>
 			<Breadcrumbs
 				breadcrumbs={[
-					{ label: "Invoices", href: "/dashboard/invoices" },
+					{ href: "/dashboard/invoices", label: "Invoices" },
 					{
-						label: "Edit InvoiceEntity",
-						href: `/dashboard/invoices/${id}/edit`,
 						active: true,
+						href: `/dashboard/invoices/${id}/edit`,
+						label: "Edit InvoiceEntity",
 					},
 				]}
 			/>
-			<EditInvoiceForm invoice={invoice} customers={customers} />
+			<EditInvoiceForm customers={customers} invoice={invoice} />
 		</main>
 	);
 }

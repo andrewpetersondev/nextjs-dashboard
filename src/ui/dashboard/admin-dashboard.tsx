@@ -1,3 +1,4 @@
+import { type JSX, Suspense } from "react";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
 import RevenueChart from "@/src/ui/dashboard/revenue-chart";
@@ -7,7 +8,6 @@ import {
 	LatestInvoicesSkeleton,
 	RevenueChartSkeleton,
 } from "@/src/ui/skeletons";
-import { type JSX, Suspense } from "react";
 
 export default function AdminDashboard(): JSX.Element {
 	return (

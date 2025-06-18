@@ -1,7 +1,7 @@
-import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
-import CreateUserForm from "@/src/ui/users/create-user-form";
 import type { Metadata } from "next";
 import type { JSX } from "react";
+import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
+import CreateUserForm from "@/src/ui/users/create-user-form";
 
 export const metadata: Metadata = {
 	title: "Create User",
@@ -16,13 +16,13 @@ export default async function Page(): Promise<JSX.Element> {
 			<Breadcrumbs
 				breadcrumbs={[
 					{
-						label: "Users",
 						href: "/dashboard/users",
+						label: "Users",
 					},
 					{
-						label: "Create User",
-						href: "/dashboard/users/create",
 						active: true,
+						href: "/dashboard/users/create",
+						label: "Create User",
 					},
 				]}
 			/>

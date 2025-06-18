@@ -1,17 +1,19 @@
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 import Image from "next/image";
 import type { JSX } from "react";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 
 export default async function MobileTable({
 	customers,
-}: { customers: FormattedCustomersTableRow[] }): Promise<JSX.Element> {
+}: {
+	customers: FormattedCustomersTableRow[];
+}): Promise<JSX.Element> {
 	return (
 		<div className="md:hidden">
 			{customers?.map(
 				(customer: FormattedCustomersTableRow): JSX.Element => (
 					<div
-						key={customer.id}
 						className="bg-bg-primary mb-2 w-full rounded-md p-4"
+						key={customer.id}
 					>
 						{/* Customer info: name, profile picture, and email */}
 						<div className="flex items-center justify-between border-b pb-4">
@@ -19,11 +21,11 @@ export default async function MobileTable({
 								<div className="mb-2 flex items-center">
 									<div className="flex items-center gap-3">
 										<Image
-											src={customer.imageUrl}
-											className="rounded-full"
 											alt={`${customer.name}'s profile picture`}
-											width={28}
+											className="rounded-full"
 											height={28}
+											src={customer.imageUrl}
+											width={28}
 										/>
 										<p>{customer.name}</p>
 									</div>

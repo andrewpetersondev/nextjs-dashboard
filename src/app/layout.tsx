@@ -1,16 +1,16 @@
 import "@/src/app/globals.css";
-import { notoSans } from "@/src/ui/style/fonts";
 import type { Metadata } from "next";
 import type React from "react";
 import type { JSX } from "react";
+import { notoSans } from "@/src/ui/style/fonts";
 
 export const metadata: Metadata = {
-	title: {
-		template: "%s | Acme Dashboard",
-		default: "Acme Dashboard",
-	},
 	description: "The official Next.js Learn Dashboard built with App Router.",
 	metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
+	title: {
+		default: "Acme Dashboard",
+		template: "%s | Acme Dashboard",
+	},
 };
 export default function RootLayout({
 	children,
@@ -18,7 +18,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }): JSX.Element {
 	return (
-		<html lang="en" className="h-full scheme-light-dark">
+		<html className="h-full scheme-light-dark" lang="en">
 			<body
 				className={`h-full antialiased scheme-light-dark ${notoSans.className}`}
 			>

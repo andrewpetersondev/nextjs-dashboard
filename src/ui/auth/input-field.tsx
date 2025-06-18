@@ -1,11 +1,11 @@
-import { FieldError } from "@/src/ui/auth/field-error";
 import {
 	type ForwardedRef,
+	forwardRef,
 	type InputHTMLAttributes,
 	type JSX,
 	type ReactNode,
-	forwardRef,
 } from "react";
+import { FieldError } from "@/src/ui/auth/field-error";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 	/** Unique id for the input and label */
@@ -43,28 +43,28 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 	): JSX.Element {
 		return (
 			<div>
-				<label htmlFor={id} className="block text-sm/6 font-medium">
+				<label className="block text-sm/6 font-medium" htmlFor={id}>
 					{label}
 				</label>
 				<div className="mt-2 flex items-center">
 					<input
-						id={id}
-						name={id}
-						aria-invalid={!!error?.length}
 						aria-describedby={
 							error?.length ? (describedById ?? `${id}-errors`) : undefined
 						}
+						aria-invalid={!!error?.length}
 						className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
 						data-cy={dataCy}
+						id={id}
+						name={id}
 						ref={ref}
 						{...props}
 					/>
 					{icon}
 				</div>
 				<FieldError
-					id={describedById ?? `${id}-errors`}
-					error={error}
 					dataCy={dataCy ? `${dataCy}-errors` : undefined}
+					error={error}
+					id={describedById ?? `${id}-errors`}
 					label={error?.length ? `${label} error:` : undefined}
 				/>
 			</div>

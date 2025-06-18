@@ -180,24 +180,24 @@ export function InvoicesTableSkeleton(): JSX.Element {
 					<table className="text-text-primary hidden min-w-full md:table">
 						<thead className="rounded-lg text-left text-sm font-normal">
 							<tr>
-								<th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+								<th className="px-4 py-5 font-medium sm:pl-6" scope="col">
 									Customer
 								</th>
-								<th scope="col" className="px-3 py-5 font-medium">
+								<th className="px-3 py-5 font-medium" scope="col">
 									Email
 								</th>
-								<th scope="col" className="px-3 py-5 font-medium">
+								<th className="px-3 py-5 font-medium" scope="col">
 									Amount
 								</th>
-								<th scope="col" className="px-3 py-5 font-medium">
+								<th className="px-3 py-5 font-medium" scope="col">
 									Date
 								</th>
-								<th scope="col" className="px-3 py-5 font-medium">
+								<th className="px-3 py-5 font-medium" scope="col">
 									Status
 								</th>
 								<th
-									scope="col"
 									className="relative pt-2 pr-6 pb-4 pl-3 sm:pr-6"
+									scope="col"
 								>
 									<span className="sr-only">Edit</span>
 								</th>

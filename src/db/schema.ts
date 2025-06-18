@@ -15,20 +15,20 @@ import {
 export const roleEnum = pgEnum("role", ["guest", "admin", "user"]);
 
 export const users = pgTable("users", {
-	id: uuid("id").defaultRandom().primaryKey(),
-	username: varchar("username", { length: 50 }).notNull(),
 	email: varchar("email", { length: 50 }).notNull().unique(),
-	role: roleEnum("role").default("user").notNull(),
+	id: uuid("id").defaultRandom().primaryKey(),
 	password: varchar("password", { length: 255 }).notNull(),
+	role: roleEnum("role").default("user").notNull(),
 	sensitiveData: varchar("sensitive_data", { length: 50 })
 		.notNull()
 		.default("cantTouchThis"),
+	username: varchar("username", { length: 50 }).notNull(),
 });
 
 export const demoUserCounters = pgTable("demo_user_counters", {
+	count: integer("count").notNull().default(0),
 	id: serial("id").primaryKey(),
 	role: text("role").notNull(),
-	count: integer("count").notNull().default(0),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -36,10 +36,10 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const customers = pgTable("customers", {
-	id: uuid("id").defaultRandom().primaryKey(),
-	name: varchar("name", { length: 50 }).notNull(),
 	email: varchar("email", { length: 50 }).notNull().unique(),
+	id: uuid("id").defaultRandom().primaryKey(),
 	imageUrl: varchar("image_url", { length: 255 }).notNull(),
+	name: varchar("name", { length: 50 }).notNull(),
 });
 
 export const customersRelations = relations(customers, ({ many }) => ({
@@ -49,13 +49,13 @@ export const customersRelations = relations(customers, ({ many }) => ({
 export const statusEnum = pgEnum("status", ["pending", "paid"]);
 
 export const invoices = pgTable("invoices", {
-	id: uuid("id").defaultRandom().primaryKey(),
+	amount: integer("amount").notNull(),
 	customerId: uuid("customer_id")
 		.notNull()
 		.references((): AnyPgColumn => customers.id),
-	amount: integer("amount").notNull(),
-	status: statusEnum("status").default("pending").notNull(),
 	date: date("date").notNull(),
+	id: uuid("id").defaultRandom().primaryKey(),
+	status: statusEnum("status").default("pending").notNull(),
 });
 
 export const invoicesRelations = relations(invoices, ({ one }) => ({
@@ -72,9 +72,9 @@ export const revenues = pgTable("revenues", {
 });
 
 export const sessions = pgTable("sessions", {
+	expiresAt: timestamp("expires_at").notNull(),
 	id: uuid("id").defaultRandom().primaryKey(),
 	token: text("token"),
-	expiresAt: timestamp("expires_at").notNull(),
 	userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
 });
 

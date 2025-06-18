@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchUsersPages } from "@/src/lib/dal/users.dal";
 import { H1 } from "@/src/ui/headings";
@@ -6,8 +8,6 @@ import Search from "@/src/ui/search";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
 import { CreateUser } from "@/src/ui/users/buttons";
 import UsersTable from "@/src/ui/users/users-table";
-import type { Metadata } from "next";
-import { type JSX, Suspense } from "react";
 
 export const metadata: Metadata = {
 	title: "Users",
@@ -46,10 +46,10 @@ export default async function Page(
 				<CreateUser />
 			</div>
 			<Suspense
-				key={query + currentPage}
 				fallback={<div>Loading users...</div>}
+				key={query + currentPage}
 			>
-				<UsersTable query={query} currentPage={currentPage} />
+				<UsersTable currentPage={currentPage} query={query} />
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />

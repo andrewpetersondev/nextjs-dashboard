@@ -1,5 +1,6 @@
 import "server-only";
 
+import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import type { DB } from "@/src/db/connection";
 import { customers, invoices } from "@/src/db/schema";
 import type {
@@ -8,7 +9,6 @@ import type {
 	FormattedCustomersTableRow,
 } from "@/src/lib/definitions/customers";
 import { formatCurrency } from "@/src/lib/utils/utils";
-import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 
 export async function fetchCustomers(db: DB): Promise<CustomerField[]> {
 	try {
@@ -32,24 +32,24 @@ export async function fetchFilteredCustomers(
 	try {
 		const searchCustomers: CustomersTableRow[] = await db
 			.select({
-				id: customers.id,
-				name: customers.name,
 				email: customers.email,
+				id: customers.id,
 				imageUrl: customers.imageUrl,
+				name: customers.name,
 				totalInvoices: count(invoices.id),
-				totalPending: sql<number>`sum
-                    (${invoices.amount})
-                    FILTER (WHERE
-                    ${invoices.status}
-                    =
-                    'pending'
-                    )`,
 				totalPaid: sql<number>`sum
                     (${invoices.amount})
                     FILTER (WHERE
                     ${invoices.status}
                     =
                     'paid'
+                    )`,
+				totalPending: sql<number>`sum
+                    (${invoices.amount})
+                    FILTER (WHERE
+                    ${invoices.status}
+                    =
+                    'pending'
                     )`,
 			})
 			.from(customers)
@@ -67,8 +67,8 @@ export async function fetchFilteredCustomers(
 		return searchCustomers.map(
 			(item: CustomersTableRow): FormattedCustomersTableRow => ({
 				...item,
-				totalPending: formatCurrency(item.totalPending),
 				totalPaid: formatCurrency(item.totalPaid),
+				totalPending: formatCurrency(item.totalPending),
 			}),
 		);
 	} catch (error) {

@@ -1,6 +1,6 @@
-import { ContainerInner, ContainerOuter } from "@/src/ui/container";
 import clsx from "clsx";
-import { type JSX, forwardRef } from "react";
+import { forwardRef, type JSX } from "react";
+import { ContainerInner, ContainerOuter } from "@/src/ui/container";
 
 export const Background = forwardRef<
 	React.ElementRef<"div">,
@@ -17,8 +17,8 @@ export const Background = forwardRef<
 				: "";
 	return (
 		<ContainerOuter
-			ref={ref}
 			className={clsx(patternClass, className)}
+			ref={ref}
 			{...props}
 		>
 			<ContainerInner>{children}</ContainerInner>

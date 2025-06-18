@@ -1,6 +1,6 @@
-import { GitHubIcon, GoogleIcon } from "@/src/ui/auth/icons";
 import type React from "react";
 import { memo } from "react";
+import { GitHubIcon, GoogleIcon } from "@/src/ui/auth/icons";
 
 /**
  * Supported social login providers.
@@ -22,8 +22,8 @@ export interface SocialLoginButtonProps {
 }
 
 const providerIcons: Record<Provider, React.ReactNode> = {
-	Google: <GoogleIcon />,
 	GitHub: <GitHubIcon />,
+	Google: <GoogleIcon />,
 };
 
 const buttonClasses =
@@ -42,10 +42,10 @@ export const SocialLoginButton: React.NamedExoticComponent<SocialLoginButtonProp
 	}) {
 		return (
 			<a
-				href={href}
+				aria-label={`${mode === "signup" ? "Sign up" : "Sign in"} with ${provider}`}
 				className={buttonClasses}
 				data-cy={dataCy}
-				aria-label={`${mode === "signup" ? "Sign up" : "Sign in"} with ${provider}`}
+				href={href}
 				rel="noopener noreferrer"
 			>
 				{providerIcons[provider]}

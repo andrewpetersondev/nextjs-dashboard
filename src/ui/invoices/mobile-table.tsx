@@ -1,30 +1,32 @@
+import Image from "next/image";
+import type { JSX } from "react";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
 import InvoiceStatusComponent from "@/src/ui/invoices/status";
-import Image from "next/image";
-import type { JSX } from "react";
 
 export default function MobileTable({
 	invoices,
-}: { invoices: FetchFilteredInvoicesData[] }): JSX.Element {
+}: {
+	invoices: FetchFilteredInvoicesData[];
+}): JSX.Element {
 	return (
 		<div className="md:hidden">
 			{invoices?.map(
 				(invoice: FetchFilteredInvoicesData): JSX.Element => (
 					<div
-						key={invoice.id}
 						className="bg-bg-primary mb-2 w-full rounded-md p-4"
+						key={invoice.id}
 					>
 						<div className="flex items-center justify-between border-b pb-4">
 							<div>
 								<div className="mb-2 flex items-center">
 									<Image
-										src={invoice.imageUrl}
-										className="mr-2 rounded-full"
-										width={28}
-										height={28}
 										alt={`${invoice.name}'s profile picture`}
+										className="mr-2 rounded-full"
+										height={28}
+										src={invoice.imageUrl}
+										width={28}
 									/>
 									<p>{invoice.name}</p>
 								</div>

@@ -1,7 +1,7 @@
-import { H2 } from "@/src/ui/headings";
 import { FaceFrownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
+import { H2 } from "@/src/ui/headings";
 
 export default function NotFound(): JSX.Element {
 	return (
@@ -10,8 +10,8 @@ export default function NotFound(): JSX.Element {
 			<H2 className="text-xl font-semibold">404 Not Found</H2>
 			<p>Could not find the requested invoice.</p>
 			<Link
-				href="/dashboard/invoices"
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
+				href="/dashboard/invoices"
 			>
 				Go Back
 			</Link>

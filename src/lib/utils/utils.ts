@@ -4,8 +4,8 @@ import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue";
 
 export const formatCurrency = (amount: number): string => {
 	return (amount / 100).toLocaleString("en-US", {
-		style: "currency",
 		currency: "USD",
+		style: "currency",
 	});
 };
 
@@ -37,5 +37,5 @@ export const generateYAxis = (revenue: Revenue[]): YAxisResult => {
 		yAxisLabels.push(`$${i / 1000}K`);
 	}
 
-	return { yAxisLabels, topLabel };
+	return { topLabel, yAxisLabels };
 };

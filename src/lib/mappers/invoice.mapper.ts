@@ -3,8 +3,11 @@ import {
 	INVOICE_STATUSES,
 	type InvoiceStatus,
 } from "@/src/lib/definitions/enums";
-import type { InvoiceByIdDbRow } from "@/src/lib/definitions/invoices";
-import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
+import type {
+	CustomerId,
+	InvoiceByIdDbRow,
+	InvoiceId,
+} from "@/src/lib/definitions/invoices";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 
 /**
@@ -31,10 +34,10 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
 	}
 
 	return {
-		id: toInvoiceId(row.id),
-		customerId: toCustomerId(row.customerId),
 		amount: row.amount,
+		customerId: toCustomerId(row.customerId),
 		date: row.date,
+		id: toInvoiceId(row.id),
 		status: row.status as InvoiceStatus, // Cast after validation
 	};
 }
@@ -48,10 +51,10 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
  */
 export function toInvoiceDTO(invoice: InvoiceEntity): InvoiceDTO {
 	return {
-		id: invoice.id,
-		customerId: invoice.customerId,
 		amount: invoice.amount,
-		status: invoice.status,
+		customerId: invoice.customerId,
 		date: invoice.date,
+		id: invoice.id,
+		status: invoice.status,
 	};
 }

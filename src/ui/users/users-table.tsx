@@ -1,13 +1,16 @@
+import type { JSX } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchFilteredUsers } from "@/src/lib/dal/users.dal";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
-import type { JSX } from "react";
 
 export default async function UsersTable({
 	query,
 	currentPage,
-}: { query: string; currentPage: number }): Promise<JSX.Element> {
+}: {
+	query: string;
+	currentPage: number;
+}): Promise<JSX.Element> {
 	const db = getDB("dev");
 	const users: UserDTO[] = await fetchFilteredUsers(db, query, currentPage);
 
@@ -16,8 +19,8 @@ export default async function UsersTable({
 			{users?.map(
 				(user: UserDTO): JSX.Element => (
 					<div
-						key={user.id}
 						className="bg-bg-primary mb-2 w-full rounded-md p-4"
+						key={user.id}
 					>
 						<div className="flex items-center justify-between border-b pb-4">
 							<div>

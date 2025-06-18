@@ -1,13 +1,13 @@
 import "server-only";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { cache } from "react";
 import { decrypt } from "@/src/lib/auth/session";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,
 } from "@/src/lib/definitions/session";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { cache } from "react";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
@@ -31,8 +31,8 @@ export const verifySessionOptimistic = cache(
 		}
 		return {
 			isAuthorized: true,
-			userId: session.user.userId,
 			role: session.user.role,
+			userId: session.user.userId,
 		};
 	},
 );

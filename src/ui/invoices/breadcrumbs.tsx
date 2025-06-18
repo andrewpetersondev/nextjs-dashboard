@@ -19,11 +19,11 @@ export default function Breadcrumbs({
 				{breadcrumbs.map(
 					(breadcrumb: Breadcrumb, index: number): JSX.Element => (
 						<li
-							key={breadcrumb.href}
 							aria-current={breadcrumb.active}
 							className={clsx(
 								breadcrumb.active ? "text-text-active" : "text-text-primary",
 							)}
+							key={breadcrumb.href}
 						>
 							<Link href={breadcrumb.href}>{breadcrumb.label}</Link>
 							{/*todo, do i want a null return value to be possible?*/}

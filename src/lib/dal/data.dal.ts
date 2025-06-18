@@ -1,9 +1,9 @@
 import "server-only";
 
+import { eq } from "drizzle-orm";
 // todo: all code that touches the database directly should be moved to DAL
 import type { DB } from "@/src/db/connection";
 import { customers, invoices } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
 
 export async function fetchCardData(db: DB): Promise<{
 	invoiceCount: number;
@@ -23,8 +23,8 @@ export async function fetchCardData(db: DB): Promise<{
 			eq(invoices.status, "pending"),
 		);
 		return {
-			invoiceCount,
 			customerCount,
+			invoiceCount,
 			paidInvoices,
 			pendingInvoices,
 		};

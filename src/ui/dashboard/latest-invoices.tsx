@@ -1,11 +1,11 @@
-import { getDB } from "@/src/db/connection";
-import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal";
-import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
-import { H2, H3 } from "@/src/ui/headings";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
+import { getDB } from "@/src/db/connection";
+import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal";
+import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
+import { H2, H3 } from "@/src/ui/headings";
 
 export default async function LatestInvoices(): Promise<JSX.Element> {
 	const db = getDB();
@@ -21,21 +21,21 @@ export default async function LatestInvoices(): Promise<JSX.Element> {
 						(invoice: ModifiedLatestInvoicesData, i: number): JSX.Element => {
 							return (
 								<div
-									key={invoice.id}
 									className={clsx(
 										"flex flex-row items-center justify-between py-4",
 										{
 											"border-text-secondary border-t": i !== 0,
 										},
 									)}
+									key={invoice.id}
 								>
 									<div className="flex items-center">
 										<Image
-											src={invoice.imageUrl}
 											alt={`${invoice.name}'s profile picture`}
 											className="mr-4 rounded-full"
-											width={32}
 											height={32}
+											src={invoice.imageUrl}
+											width={32}
 										/>
 										<div className="min-w-0">
 											<p className="text-text-secondary truncate text-sm font-semibold md:text-base">

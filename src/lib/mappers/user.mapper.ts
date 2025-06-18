@@ -12,9 +12,9 @@ import type { UserDTO } from "@/src/lib/dto/user.dto";
  */
 export function toUserDTO(user: UserEntity): UserDTO {
 	return {
-		id: user.id,
-		username: user.username,
 		email: user.email,
+		id: user.id,
 		role: user.role,
+		username: user.username,
 	};
 }

@@ -1,17 +1,17 @@
 {
-	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/src/*": ["src/*"]
+		},
 		"plugins": [
 			{
 				"name": "next"
 			}
 		],
-		"baseUrl": ".",
-		"paths": {
-			"@/src/*": ["src/*"]
-		},
 		"types": ["node", "react", "react-dom"]
 	},
-	"include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
-	"exclude": ["node_modules", "cypress.config.ts", "cypress", "storage"]
+	"exclude": ["node_modules", "cypress.config.ts", "cypress", "storage"],
+	"extends": "./tsconfig.base.json",
+	"include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"]
 }

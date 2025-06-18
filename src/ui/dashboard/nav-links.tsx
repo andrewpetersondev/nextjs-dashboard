@@ -22,13 +22,13 @@ type NavLink = {
 };
 
 const baseLinks: NavLink[] = [
-	{ name: "Home", href: "/dashboard", icon: HomeIcon },
+	{ href: "/dashboard", icon: HomeIcon, name: "Home" },
 	{
-		name: "Invoices",
 		href: "/dashboard/invoices",
 		icon: DocumentDuplicateIcon,
+		name: "Invoices",
 	},
-	{ name: "Customers", href: "/dashboard/customers", icon: UserGroupIcon },
+	{ href: "/dashboard/customers", icon: UserGroupIcon, name: "Customers" },
 ];
 
 export default function NavLinks({ role }: NavLinksProps): JSX.Element {
@@ -38,9 +38,9 @@ export default function NavLinks({ role }: NavLinksProps): JSX.Element {
 	// Only add Users link for admin
 	if (role === "admin") {
 		links.push({
-			name: "Users",
 			href: "/dashboard/users",
 			icon: LockClosedIcon,
+			name: "Users",
 		});
 	}
 
@@ -50,14 +50,14 @@ export default function NavLinks({ role }: NavLinksProps): JSX.Element {
 				const LinkIcon: ComponentType<SVGProps<SVGSVGElement>> = link.icon;
 				return (
 					<Link
-						key={link.name}
-						href={link.href}
 						className={clsx(
 							"hover:bg-bg-hover hover:text-text-hover flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 md:flex-none md:justify-start md:p-2 md:px-3",
 							pathname === link.href
 								? "border-bg-active text-text-active border-2"
 								: "bg-bg-secondary text-text-secondary",
 						)}
+						href={link.href}
+						key={link.name}
 					>
 						<LinkIcon className="w-6" />
 						<p className="hidden md:block">{link.name}</p>

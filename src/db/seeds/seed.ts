@@ -1,3 +1,4 @@
+import bcryptjs from "bcryptjs";
 import { db } from "@/src/db/dev-database";
 import {
 	users,
@@ -9,7 +10,6 @@ import {
 	// invoices as invoicesPlaceholderData,
 	// revenue as revenuesPlaceHolderData,
 } from "@/src/db/seeds/placeholder-data";
-import bcryptjs from "bcryptjs";
 
 async function seedUsers(): Promise<void> {
 	console.log("seeding users...");

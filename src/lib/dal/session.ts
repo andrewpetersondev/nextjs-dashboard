@@ -1,12 +1,14 @@
 import "server-only";
 
-import { getDB } from "@/src/db/connection";
-import type { DB } from "@/src/db/connection";
-import { sessions } from "@/src/db/schema";
-import type { SessionRecord } from "@/src/lib/definitions/session";
-import type { DbSessionRow } from "@/src/lib/definitions/session";
-import { logger } from "@/src/lib/utils/logger";
 import { eq } from "drizzle-orm";
+import type { DB } from "@/src/db/connection";
+import { getDB } from "@/src/db/connection";
+import { sessions } from "@/src/db/schema";
+import type {
+	DbSessionRow,
+	SessionRecord,
+} from "@/src/lib/definitions/session";
+import { logger } from "@/src/lib/utils/logger";
 
 /**
  * Maps a DbSessionRow to a SessionRecord for use in the app layer.
@@ -14,9 +16,9 @@ import { eq } from "drizzle-orm";
  */
 function mapDbSessionToSessionRecord(row: DbSessionRow): SessionRecord {
 	return {
-		id: row.id,
-		token: row.token ?? "", // Defensive: never return null, but you may want to handle this differently
 		expiresAt: row.expiresAt.toISOString(),
+		id: row.id, // Defensive: never return null, but you may want to handle this differently
+		token: row.token ?? "",
 		userId: row.userId ?? "",
 	};
 }
@@ -36,15 +38,15 @@ export async function insertSession(session: SessionRecord): Promise<void> {
 
 		logger.info(
 			{
+				context: "insertSession",
 				sessionId: session.id,
 				userId: session.userId,
-				context: "insertSession",
 			},
 			"Session inserted into database",
 		);
 	} catch (error) {
 		logger.error(
-			{ err: error, session, context: "insertSession" },
+			{ context: "insertSession", err: error, session },
 			"Failed to insert session",
 		);
 		throw error;
@@ -61,12 +63,12 @@ export async function deleteSessionById(sessionId: string): Promise<void> {
 		const db: DB = getDB();
 		await db.delete(sessions).where(eq(sessions.id, sessionId));
 		logger.info(
-			{ sessionId, context: "deleteSessionById" },
+			{ context: "deleteSessionById", sessionId },
 			"Session deleted from database",
 		);
 	} catch (error) {
 		logger.error(
-			{ err: error, sessionId, context: "deleteSessionById" },
+			{ context: "deleteSessionById", err: error, sessionId },
 			"Failed to delete session",
 		);
 		throw error;
@@ -90,7 +92,7 @@ export async function findSessionById(
 		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
 	} catch (error) {
 		logger.error(
-			{ err: error, sessionId, context: "findSessionById" },
+			{ context: "findSessionById", err: error, sessionId },
 			"Failed to find session by ID",
 		);
 		throw error;
@@ -115,7 +117,7 @@ export async function findSessionByToken(
 		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
 	} catch (error) {
 		logger.error(
-			{ err: error, token, context: "findSessionByToken" },
+			{ context: "findSessionByToken", err: error, token },
 			"Failed to find session by token",
 		);
 		throw error;

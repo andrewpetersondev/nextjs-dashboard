@@ -6,21 +6,21 @@ import { Doto, Merienda, Noto_Sans, Tektur } from "next/font/google";
 // merienda is used for font-eyegrab
 
 export const notoSans = Noto_Sans({
-	subsets: ["latin"],
 	display: "swap",
+	subsets: ["latin"],
 });
 
 export const tektur = Tektur({
-	subsets: ["latin"],
 	display: "swap",
+	subsets: ["latin"],
 });
 
 export const merienda = Merienda({
-	subsets: ["latin"],
 	display: "swap",
+	subsets: ["latin"],
 });
 
 export const doto = Doto({
-	subsets: ["latin"],
 	display: "swap",
+	subsets: ["latin"],
 });

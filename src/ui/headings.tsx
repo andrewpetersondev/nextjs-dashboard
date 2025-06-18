@@ -1,6 +1,6 @@
-import { tektur } from "@/src/ui/style/fonts";
 import clsx from "clsx";
 import React from "react";
+import { tektur } from "@/src/ui/style/fonts";
 
 type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
 	className?: string;
@@ -22,8 +22,8 @@ function createHeading<T extends keyof typeof headingStyles>(tag: T) {
 			React.createElement(
 				tag,
 				{
-					ref,
 					className: clsx(tektur.className, headingStyles[tag], className),
+					ref,
 					...props,
 				},
 				children,

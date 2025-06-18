@@ -9,6 +9,8 @@
  * @module server-actions/users
  */
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getDB } from "@/src/db/connection";
 import { hashPassword } from "@/src/lib/auth/password";
 import { createSession, deleteSession } from "@/src/lib/auth/session";
@@ -42,8 +44,6 @@ import {
 	logError,
 	normalizeFieldErrors,
 } from "@/src/lib/utils/utils.server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 /**
  * Handles user signup.
@@ -57,15 +57,15 @@ export async function signup(
 ): Promise<FormState<SignupFormFields>> {
 	try {
 		const validated = SignupFormSchema.safeParse({
-			username: getFormField(formData, "username"),
 			email: getFormField(formData, "email"),
 			password: getFormField(formData, "password"),
+			username: getFormField(formData, "username"),
 		});
 		if (!validated.success) {
 			return actionResult({
+				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 				message: "Validation failed. Please check your input.",
 				success: false,
-				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
 		// Type assertion required for Zod inference
@@ -76,25 +76,25 @@ export async function signup(
 		};
 		const db = getDB("dev");
 		const user = await createUserInDB(db, {
-			username,
 			email,
 			password,
 			role: "user",
+			username,
 		});
 		if (!user) {
 			return actionResult({
+				errors: undefined,
 				message: "Failed to create an account. Please try again.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		await createSession(user.id, "user");
 	} catch (error) {
 		logError("signup", error, { email: formData.get("email") as string });
 		return actionResult({
+			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 	// Unreachable: redirect throws in Next.js App Router
@@ -119,9 +119,9 @@ export async function login(
 		});
 		if (!validated.success) {
 			return actionResult({
+				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 				message: "Validation failed. Please check your input.",
 				success: false,
-				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
 		const { email, password } = validated.data;
@@ -129,9 +129,9 @@ export async function login(
 		const user = await findUserForLogin(db, email, password);
 		if (!user) {
 			return actionResult({
+				errors: undefined,
 				message: "Invalid email or password.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		await createSession(user.id, user.role as UserRole);
@@ -140,9 +140,9 @@ export async function login(
 	} catch (error) {
 		logError("login", error, { email: formData.get("email") as string });
 		return actionResult({
+			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 	// keep: why does redirect have to be here instead of after the session is created?
@@ -169,9 +169,9 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 		const deletedUser = await deleteUser(db, userId);
 		if (!deletedUser) {
 			return actionResult({
+				errors: undefined,
 				message: "User not found or could not be deleted.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		revalidatePath("/dashboard/users");
@@ -181,9 +181,9 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	} catch (error) {
 		logError("deleteUserAction", error, { userId });
 		return actionResult({
+			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 }
@@ -234,9 +234,9 @@ export async function demoUser(
 	} catch (error) {
 		logError("demoUser:session", error, { demoUser, role });
 		return actionResult({
+			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 	redirect("/dashboard");
@@ -256,43 +256,43 @@ export async function createUser(
 
 	try {
 		const validated = CreateUserFormSchema.safeParse({
-			username: getFormField(formData, "username"),
 			email: getFormField(formData, "email"),
 			password: getFormField(formData, "password"),
 			role: getValidUserRole(formData.get("role")),
+			username: getFormField(formData, "username"),
 		});
 		if (!validated.success) {
 			return actionResult({
+				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 				message: "Validation failed. Please check your input.",
 				success: false,
-				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
 		const { username, email, password, role } = validated.data;
 		const user = await createUserInDB(db, {
-			username,
 			email,
 			password,
 			role,
+			username,
 		});
 		if (!user) {
 			return actionResult({
+				errors: undefined,
 				message: "Failed to create an account on Users Page. Please try again.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		return actionResult({
+			errors: undefined,
 			message: "User created successfully.",
 			success: true,
-			errors: undefined,
 		});
 	} catch (error) {
 		logError("createUser", error, { email: formData.get("email") as string });
 		return actionResult({
+			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 }
@@ -319,17 +319,17 @@ export async function editUser(
 		const validated = EditUserFormSchema.safeParse(payload);
 		if (!validated.success) {
 			return actionResult({
+				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 				message: "Validation failed. Please check your input.",
 				success: false,
-				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
 			});
 		}
 		const existingUser: UserDTO | null = await readUserById(db, id);
 		if (!existingUser) {
 			return actionResult({
+				errors: undefined,
 				message: "User not found.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		const patch: Record<string, unknown> = {};
@@ -351,31 +351,31 @@ export async function editUser(
 		if (Object.keys(patch).length === 0) {
 			// No changes to update; inform the user.
 			return actionResult({
+				errors: undefined,
 				message: "No changes to update.",
 				success: true,
-				errors: undefined,
 			});
 		}
 		const updatedUser: UserDTO | null = await updateUserDAL(db, id, patch);
 		if (!updatedUser) {
 			return actionResult({
+				errors: undefined,
 				message: "Failed to update user. Please try again.",
 				success: false,
-				errors: undefined,
 			});
 		}
 		revalidatePath("/dashboard/users");
 		return actionResult({
+			errors: undefined,
 			message: "Profile updated!",
 			success: true,
-			errors: undefined,
 		});
 	} catch (error) {
 		logError("editUser", error, { id });
 		return actionResult({
+			errors: undefined,
 			message: "Failed to update user. Please try again.",
 			success: false,
-			errors: undefined,
 		});
 	}
 }

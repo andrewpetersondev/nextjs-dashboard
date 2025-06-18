@@ -1,6 +1,3 @@
-import { getDB } from "@/src/db/connection";
-import { fetchCardData } from "@/src/lib/dal/data.dal";
-import { H3 } from "@/src/ui/headings";
 import {
 	BanknotesIcon,
 	ClockIcon,
@@ -8,12 +5,15 @@ import {
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
+import { getDB } from "@/src/db/connection";
+import { fetchCardData } from "@/src/lib/dal/data.dal";
+import { H3 } from "@/src/ui/headings";
 
 const iconMap = {
 	collected: BanknotesIcon,
 	customers: UserGroupIcon,
-	pending: ClockIcon,
 	invoices: InboxIcon,
+	pending: ClockIcon,
 };
 
 export async function CardWrapper(): Promise<JSX.Element> {
@@ -22,10 +22,10 @@ export async function CardWrapper(): Promise<JSX.Element> {
 		await fetchCardData(db);
 	return (
 		<>
-			<Card title="Collected" value={paidInvoices} type="collected" />
-			<Card title="Pending" value={pendingInvoices} type="pending" />
-			<Card title="Total Invoices" value={invoiceCount} type="invoices" />
-			<Card title="Total Customers" value={customerCount} type="customers" />
+			<Card title="Collected" type="collected" value={paidInvoices} />
+			<Card title="Pending" type="pending" value={pendingInvoices} />
+			<Card title="Total Invoices" type="invoices" value={invoiceCount} />
+			<Card title="Total Customers" type="customers" value={customerCount} />
 		</>
 	);
 }

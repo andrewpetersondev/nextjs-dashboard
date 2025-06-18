@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getDB } from "@/src/db/connection";
 import {
 	createInvoiceInDB,
@@ -15,8 +17,6 @@ import {
 } from "@/src/lib/definitions/invoices";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 // todo: unify the return types of these actions
 
@@ -34,8 +34,8 @@ export async function createInvoice(
 	try {
 		const db = getDB();
 		const validated = CreateInvoiceSchema.safeParse({
-			customerId: formData.get("customerId"),
 			amount: formData.get("amount"),
+			customerId: formData.get("customerId"),
 			status: formData.get("status"),
 		});
 
@@ -59,18 +59,18 @@ export async function createInvoice(
 		const date: string = new Date().toISOString().split("T")[0];
 
 		const invoice = await createInvoiceInDB(db, {
-			customerId,
 			amount: amountInCents,
-			status,
+			customerId,
 			date,
+			status,
 		});
 
 		// todo: implement { ActionResult}
 		if (!invoice) {
 			return {
+				errors: {},
 				message: "Failed to create invoice.",
 				success: false,
-				errors: {},
 			};
 		}
 	} catch (error) {
@@ -101,8 +101,8 @@ export async function updateInvoice(
 	const db = getDB();
 
 	const validated = UpdateInvoiceSchema.safeParse({
-		customerId: formData.get("customerId"),
 		amount: formData.get("amount"),
+		customerId: formData.get("customerId"),
 		status: formData.get("status"),
 	});
 
@@ -121,16 +121,16 @@ export async function updateInvoice(
 
 	try {
 		const updatedInvoice = await updateInvoiceInDB(db, id, {
-			customerId,
 			amount: amountInCents,
+			customerId,
 			status,
 		});
 
 		if (!updatedInvoice) {
 			return {
-				message: "Failed to update invoice.",
 				// success: false, // unify response shape
 				errors: {},
+				message: "Failed to update invoice.",
 			};
 		}
 	} catch (error) {

@@ -1,6 +1,6 @@
+import bcryptjs from "bcryptjs";
 import { db } from "@/src/db/dev-database";
 import { users } from "@/src/db/schema";
-import bcryptjs from "bcryptjs";
 
 type User = {
 	username: string;
@@ -10,19 +10,19 @@ type User = {
 
 const mockUsers: User[] = [
 	{
-		username: "username1",
 		email: "username1@mail.com",
 		password: "password",
+		username: "username1",
 	},
 	{
-		username: "username2",
 		email: "username2@mail.com",
 		password: "password",
+		username: "username2",
 	},
 	{
-		username: "username3",
 		email: "username3@mail.com",
 		password: "password",
+		username: "username3",
 	},
 ];
 

@@ -1,7 +1,7 @@
 import {
+	roleSchema,
 	USER_ROLES,
 	type UserRole,
-	roleSchema,
 } from "@/src/lib/definitions/enums";
 import type { FormState } from "@/src/lib/definitions/form";
 import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
@@ -97,9 +97,9 @@ export const passwordSchema = zod
  * Shared base object for forms accepting username/email/password.
  */
 export const BaseUserFormSchema = zod.object({
-	username: usernameSchema,
 	email: emailSchema,
 	password: passwordSchema,
+	username: usernameSchema,
 });
 
 /**
@@ -139,8 +139,8 @@ export const LoginFormSchema: ZodType<LoginFormFields> = zod.object({
  * All fields are optional for PATCH semantics.
  */
 export const EditUserFormSchema: ZodType<EditUserFormFields> = zod.object({
-	username: usernameSchema.optional(),
 	email: emailSchema.optional(),
 	password: passwordSchema.optional(),
 	role: roleSchema.optional(),
+	username: usernameSchema.optional(),
 });

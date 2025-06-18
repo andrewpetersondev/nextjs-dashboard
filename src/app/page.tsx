@@ -1,8 +1,8 @@
-import AcmeLogo from "@/src/ui/acme-logo";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import type { JSX } from "react";
+import AcmeLogo from "@/src/ui/acme-logo";
 
 export default function Page(): JSX.Element {
 	return (
@@ -13,18 +13,18 @@ export default function Page(): JSX.Element {
 					<p className="text-xl font-medium md:text-3xl md:leading-normal">
 						<strong>Welcome to Acme.</strong> This is the example for the{" "}
 						<a
-							href="https://nextjs.org/learn/"
 							className="text-text-active hover:text-text-hover underline font-extrabold font-experiment"
 							data-testid="nextjs-course-link"
+							href="https://nextjs.org/learn/"
 						>
 							Next.js Learn Course
 						</a>
 						, brought to you by Vercel.
 					</p>
 					<Link
-						href="/login"
 						className="bg-bg-active text-text-active hover:bg-bg-hover focus-visible:outline-bg-focus flex items-center gap-5 self-start rounded-md px-6 py-3 text-sm font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 md:text-base"
 						data-testid="login-button"
+						href="/login"
 					>
 						<span className="font-experiment">Log in</span>{" "}
 						<ArrowRightIcon className="w-5 md:w-6" />
@@ -32,20 +32,20 @@ export default function Page(): JSX.Element {
 				</div>
 				<div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
 					<Image
-						src="/hero-desktop.png"
-						width={1000}
-						height={760}
 						alt="Screenshots of the dashboard project showing desktop version"
 						className="hidden md:block"
+						height={760}
 						priority={true}
+						src="/hero-desktop.png"
+						width={1000}
 					/>
 					<Image
-						src="/hero-mobile.png"
-						width={560}
-						height={620}
 						alt="Screenshot of the dashboard project showing mobile version"
 						className="block md:hidden"
+						height={620}
 						priority={true}
+						src="/hero-mobile.png"
+						width={560}
 					/>
 				</div>
 			</div>

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 /**
  * InvoiceEntity Data Access Layer (DAL) for CRUD operations on InvoiceEntity entities.
  * Uses Drizzle ORM for database access.
@@ -24,7 +25,6 @@ import {
 } from "@/src/lib/mappers/invoice.mapper";
 import { formatCurrency } from "@/src/lib/utils/utils";
 import { logError } from "@/src/lib/utils/utils.server";
-import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 
 // --- Constants ---
 const ITEMS_PER_PAGE = 6;
@@ -68,7 +68,7 @@ export async function createInvoiceInDB(
 	try {
 		const [createdInvoice] = await db
 			.insert(invoices)
-			.values({ customerId, amount, status, date })
+			.values({ amount, customerId, date, status })
 			.returning();
 		return createdInvoice
 			? toInvoiceDTO(toInvoiceEntity(createdInvoice))
@@ -99,14 +99,14 @@ export async function updateInvoiceInDB(
 	try {
 		const [updatedInvoice] = await db
 			.update(invoices)
-			.set({ customerId, amount, status })
+			.set({ amount, customerId, status })
 			.where(eq(invoices.id, id))
 			.returning();
 		return updatedInvoice
 			? toInvoiceDTO(toInvoiceEntity(updatedInvoice))
 			: null;
 	} catch (error) {
-		logError("updateInvoiceInDB", error, { id, customerId });
+		logError("updateInvoiceInDB", error, { customerId, id });
 		throw new Error("Database error while updating invoice.");
 	}
 }
@@ -149,10 +149,10 @@ export async function fetchLatestInvoices(
 		const data: LatestInvoiceDbRow[] = await db
 			.select({
 				amount: invoices.amount,
-				name: customers.name,
-				imageUrl: customers.imageUrl,
 				email: customers.email,
 				id: invoices.id,
+				imageUrl: customers.imageUrl,
+				name: customers.name,
 				status: invoices.status,
 			})
 			.from(invoices)
@@ -163,9 +163,9 @@ export async function fetchLatestInvoices(
 		return data.map(
 			(invoice: LatestInvoiceDbRow): ModifiedLatestInvoicesData => ({
 				...invoice,
+				amount: formatCurrency(invoice.amount),
 				id: brandInvoiceId(invoice.id),
 				status: brandStatus(invoice.status),
-				amount: formatCurrency(invoice.amount),
 			}),
 		);
 	} catch (error: unknown) {
@@ -191,12 +191,12 @@ export async function fetchFilteredInvoices(
 	try {
 		const data: FilteredInvoiceDbRow[] = await db
 			.select({
-				id: invoices.id,
 				amount: invoices.amount,
 				date: invoices.date,
-				name: customers.name,
 				email: customers.email,
+				id: invoices.id,
 				imageUrl: customers.imageUrl,
+				name: customers.name,
 				status: invoices.status,
 			})
 			.from(invoices)
@@ -277,22 +277,22 @@ export async function fetchInvoiceById(
 	try {
 		const data: InvoiceByIdDbRow[] = await db
 			.select({
-				id: invoices.id,
 				amount: invoices.amount,
-				status: invoices.status,
 				customerId: invoices.customerId,
 				date: invoices.date,
+				id: invoices.id,
+				status: invoices.status,
 			})
 			.from(invoices)
 			.where(eq(invoices.id, id));
 
 		return data.length > 0
 			? {
-					id: brandInvoiceId(data[0].id),
 					amount: data[0].amount / 100,
-					status: brandStatus(data[0].status),
 					customerId: brandCustomerId(data[0].customerId),
 					date: data[0].date,
+					id: brandInvoiceId(data[0].id),
+					status: brandStatus(data[0].status),
 				}
 			: undefined;
 	} catch (error: unknown) {

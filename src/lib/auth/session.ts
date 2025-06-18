@@ -29,9 +29,9 @@ function flattenEncryptPayload(
 	payload: EncryptPayload,
 ): Record<string, unknown> {
 	return {
-		userId: payload.user.userId,
-		role: payload.user.role,
 		expiresAt: payload.user.expiresAt,
+		role: payload.user.role,
+		userId: payload.user.userId,
 	};
 }
 
@@ -43,9 +43,9 @@ function unflattenEncryptPayload(
 ): EncryptPayload {
 	return {
 		user: {
-			userId: payload.userId as string,
-			role: payload.role as UserRole,
 			expiresAt: payload.expiresAt as number,
+			role: payload.role as UserRole,
+			userId: payload.userId as string,
 		},
 	};
 }
@@ -89,7 +89,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 
 	if (!validatedFields.success) {
 		logger.error(
-			{ err: validatedFields.error.flatten().fieldErrors, context: "encrypt" },
+			{ context: "encrypt", err: validatedFields.error.flatten().fieldErrors },
 			"Session encryption failed",
 		);
 		throw new ValidationError(
@@ -109,16 +109,16 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 
 		logger.info(
 			{
-				userId: jwtPayload.userId,
-				role: jwtPayload.role,
 				context: "encrypt",
+				role: jwtPayload.role,
+				userId: jwtPayload.userId,
 			},
 			"Session JWT created",
 		);
 		return token;
 	} catch (error: unknown) {
 		logger.error(
-			{ err: error, context: "encrypt" },
+			{ context: "encrypt", err: error },
 			"Session encryption failed",
 		);
 		throw new Error("EncryptPayload encryption failed");
@@ -152,8 +152,8 @@ export async function decrypt(
 
 		const withClaims = {
 			...reconstructed,
-			iat: (payload.iat as number) ?? 0,
 			exp: (payload.exp as number) ?? 0,
+			iat: (payload.iat as number) ?? 0,
 		};
 
 		const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
@@ -161,8 +161,8 @@ export async function decrypt(
 		if (!validatedFields.success) {
 			logger.error(
 				{
-					err: validatedFields.error.flatten().fieldErrors,
 					context: "decrypt",
+					err: validatedFields.error.flatten().fieldErrors,
 				},
 				"Session decryption failed",
 			);
@@ -170,13 +170,13 @@ export async function decrypt(
 		}
 
 		logger.debug(
-			{ userId: validatedFields.data.user.userId, context: "decrypt" },
+			{ context: "decrypt", userId: validatedFields.data.user.userId },
 			"Session decrypted successfully",
 		);
 		return validatedFields.data as DecryptPayload;
 	} catch (error: unknown) {
 		logger.error(
-			{ err: error, context: "decrypt" },
+			{ context: "decrypt", err: error },
 			"Session decryption failed",
 		);
 		return undefined;
@@ -196,21 +196,21 @@ export async function createSession(
 	const expiresAt: number = Date.now() + SESSION_DURATION_MS;
 
 	const session: string = await encrypt({
-		user: { userId, role, expiresAt },
+		user: { expiresAt, role, userId },
 	});
 
 	const cookieStore = await cookies();
 
 	cookieStore.set(SESSION_COOKIE_NAME, session, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
 		expires: new Date(expiresAt),
-		sameSite: "lax",
+		httpOnly: true,
 		path: "/",
+		sameSite: "lax",
+		secure: process.env.NODE_ENV === "production",
 	});
 
 	logger.info(
-		{ userId, role, expiresAt, context: "createSession" },
+		{ context: "createSession", expiresAt, role, userId },
 		`Session created for user ${userId} with role ${role}`,
 	);
 }
@@ -250,7 +250,7 @@ export async function updateSession(): Promise<null | void> {
 
 	if (now > expiration) {
 		logger.info(
-			{ userId: payload.user.userId, context: "updateSession" },
+			{ context: "updateSession", userId: payload.user.userId },
 			"Session expired, not updating",
 		);
 		return null;
@@ -261,24 +261,24 @@ export async function updateSession(): Promise<null | void> {
 
 	const minimalPayload: EncryptPayload = {
 		user: {
-			userId: user.userId,
-			role: user.role,
 			expiresAt: newExpiration,
+			role: user.role,
+			userId: user.userId,
 		},
 	};
 
 	const updatedToken = await encrypt(minimalPayload);
 
 	cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
 		expires: new Date(newExpiration),
-		sameSite: "lax",
+		httpOnly: true,
 		path: "/",
+		sameSite: "lax",
+		secure: process.env.NODE_ENV === "production",
 	});
 
 	logger.info(
-		{ userId: user.userId, newExpiration, context: "updateSession" },
+		{ context: "updateSession", newExpiration, userId: user.userId },
 		"Session updated with new expiration",
 	);
 }
@@ -340,7 +340,7 @@ export async function createDbSession(
 	const userIdSchema = zod.string().uuid();
 	if (!userIdSchema.safeParse(userId).success) {
 		logger.error(
-			{ userId, context: "createDbSession" },
+			{ context: "createDbSession", userId },
 			"Invalid userId for session creation",
 		);
 		throw new Error("Invalid userId");
@@ -354,23 +354,23 @@ export async function createDbSession(
 	const { insertSession } = await import("@/src/lib/dal/session");
 
 	await insertSession({
+		expiresAt,
 		id: generateUUID(),
 		token,
-		expiresAt,
 		userId,
 	});
 
 	const cookieStore = await cookies();
 	cookieStore.set(SESSION_COOKIE_NAME, token, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
 		expires: new Date(expiresAt),
-		sameSite: "lax",
+		httpOnly: true,
 		path: "/",
+		sameSite: "lax",
+		secure: process.env.NODE_ENV === "production",
 	});
 
 	logger.info(
-		{ userId, role, expiresAt, context: "createDbSession" },
+		{ context: "createDbSession", expiresAt, role, userId },
 		`DB session created for user ${userId} with role ${role}`,
 	);
 }

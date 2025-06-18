@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import { getDB } from "@/src/db/connection";
 import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
 import { H1 } from "@/src/ui/headings";
@@ -5,10 +7,10 @@ import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import Pagination from "@/src/ui/invoices/pagination";
 import Table from "@/src/ui/invoices/table";
 import Search from "@/src/ui/search";
-import { InvoicesTableSkeleton } from "@/src/ui/skeletons";
-import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
-import type { Metadata } from "next";
-import { type JSX, Suspense } from "react";
+import {
+	InvoicesSearchSkeleton,
+	InvoicesTableSkeleton,
+} from "@/src/ui/skeletons";
 
 export const metadata: Metadata = {
 	title: "Invoices",
@@ -47,8 +49,8 @@ export default async function Page(
 				</Suspense>
 				<CreateInvoice />
 			</div>
-			<Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-				<Table query={query} currentPage={currentPage} />
+			<Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
+				<Table currentPage={currentPage} query={query} />
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />

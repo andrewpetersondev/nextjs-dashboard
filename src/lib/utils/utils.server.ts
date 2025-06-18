@@ -12,7 +12,7 @@ export const normalizeFieldErrors = (
 ): Record<string, string[]> => {
 	const result: Record<string, string[]> = {};
 	for (const key in fieldErrors) {
-		if (Object.prototype.hasOwnProperty.call(fieldErrors, key)) {
+		if (Object.hasOwn(fieldErrors, key)) {
 			result[key] = fieldErrors[key] ?? [];
 		}
 	}
@@ -29,9 +29,9 @@ export const actionResult = ({
 	success?: boolean;
 	errors?: Record<string, string[]>;
 }): ActionResult => ({
+	errors,
 	message,
 	success,
-	errors,
 });
 
 export type LogMeta = {

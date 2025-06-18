@@ -118,29 +118,29 @@ export type CreateInvoiceResult = {
  * Branding is applied in mappers/DAL, not in the schema.
  */
 export const InvoiceFormSchema = zod.object({
-	id: zod.string(), // Accepts string, branding applied elsewhere
-	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
 	amount: zod.coerce
 		.number()
-		.gt(0, { message: "Amount must be greater than $0." }),
+		.gt(0, { message: "Amount must be greater than $0." }), // Accepts string, branding applied elsewhere
+	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
+	date: zod.string().optional(),
+	id: zod.string(),
 	status: zod.enum(INVOICE_STATUSES, {
 		invalid_type_error: "Please select a status",
 	}),
-	date: zod.string().optional(),
 });
 
 /**
  * Zod schema for creating an invoice (omit id and date).
  */
 export const CreateInvoiceSchema = InvoiceFormSchema.omit({
-	id: true,
 	date: true,
+	id: true,
 });
 
 /**
  * Zod schema for updating an invoice (omit id and date).
  */
 export const UpdateInvoiceSchema = InvoiceFormSchema.omit({
-	id: true,
 	date: true,
+	id: true,
 });

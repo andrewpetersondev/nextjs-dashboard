@@ -66,13 +66,13 @@ export type CustomerFormState = FormState<CustomerFormFields>;
  * Zod schema for customer form validation.
  */
 export const CustomerFormSchema = zod.object({
-	name: zod
-		.string()
-		.min(2, { message: "Name must be at least two characters long." })
-		.trim(),
 	email: zod.string().email({ message: "Please enter a valid email." }).trim(),
 	imageUrl: zod
 		.string()
 		.url({ message: "Please enter a valid image URL." })
+		.trim(),
+	name: zod
+		.string()
+		.min(2, { message: "Name must be at least two characters long." })
 		.trim(),
 });
