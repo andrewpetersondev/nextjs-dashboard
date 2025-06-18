@@ -1,12 +1,11 @@
 "use server";
 
+import { getDB } from "@/src/db/connection";
 import {
 	createInvoiceInDB,
 	deleteInvoiceInDB,
 	updateInvoiceInDB,
-} from "@/src/dal/invoices";
-import { getDB } from "@/src/db/connection";
-import type { InvoiceDTO } from "@/src/dto/invoice.dto";
+} from "@/src/lib/dal/invoices";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,
@@ -14,7 +13,8 @@ import {
 	type InvoiceFormState,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices";
-import { toInvoiceId } from "@/src/mappers/invoice.mapper";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
+import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

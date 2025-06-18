@@ -1,4 +1,4 @@
-import { deleteUserFormAction } from "@/src/server-actions/users";
+import { deleteUserFormAction } from "@/src/lib/server-actions/users";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";

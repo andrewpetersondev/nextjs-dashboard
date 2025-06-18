@@ -2,7 +2,7 @@
 
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices";
-import { createInvoice } from "@/src/server-actions/invoices";
+import { createInvoice } from "@/src/lib/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
 	CheckIcon,

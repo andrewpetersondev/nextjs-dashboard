@@ -1,6 +1,6 @@
-import { fetchUserById } from "@/src/dal/users";
 import { getDB } from "@/src/db/connection";
-import type { UserDTO } from "@/src/dto/user.dto";
+import { fetchUserById } from "@/src/lib/dal/users";
+import type { UserDTO } from "@/src/lib/dto/user.dto";
 import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
 import EditUserForm from "@/src/ui/users/edit-user-form";
 import type { Metadata } from "next";

@@ -1,6 +1,6 @@
 "use client";
 
-import { login } from "@/src/server-actions/users";
+import { login } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
 import DemoAdminUser from "@/src/ui/auth/demo-admin-user";

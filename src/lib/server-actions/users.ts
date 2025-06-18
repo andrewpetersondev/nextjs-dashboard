@@ -9,6 +9,7 @@
  * @module server-actions/users
  */
 
+import { getDB } from "@/src/db/connection";
 import {
 	createDemoUser,
 	createUserInDB,
@@ -17,9 +18,7 @@ import {
 	findUserForLogin,
 	readUserById,
 	updateUserDAL,
-} from "@/src/dal/users";
-import { getDB } from "@/src/db/connection";
-import type { UserDTO } from "@/src/dto/user.dto";
+} from "@/src/lib/dal/users";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import {
@@ -33,6 +32,7 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 } from "@/src/lib/definitions/users";
+import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { hashPassword } from "@/src/lib/password";
 import { createSession, deleteSession } from "@/src/lib/session";
 import {

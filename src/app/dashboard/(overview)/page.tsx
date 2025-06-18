@@ -1,4 +1,4 @@
-import { verifySessionOptimistic } from "@/src/dal/session-dal";
+import { verifySessionOptimistic } from "@/src/lib/dal/session-dal";
 import type { UserRole } from "@/src/lib/definitions/roles";
 import type { SessionVerificationResult } from "@/src/lib/definitions/session";
 import { getValidUserRole } from "@/src/lib/utils.server";

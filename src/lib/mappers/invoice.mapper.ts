@@ -1,8 +1,8 @@
 import type { InvoiceEntity } from "@/src/db/entities/invoice";
-import type { InvoiceDTO } from "@/src/dto/invoice.dto";
 import type { InvoiceByIdDbRow, Status } from "@/src/lib/definitions/invoices";
 import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
 import { INVOICE_STATUSES } from "@/src/lib/definitions/invoices";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 
 /**
  * Helper to brand a string as InvoiceId.

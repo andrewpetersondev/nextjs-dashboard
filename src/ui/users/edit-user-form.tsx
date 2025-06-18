@@ -1,8 +1,8 @@
 "use client";
-import type { UserDTO } from "@/src/dto/user.dto";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { EditUserFormFields } from "@/src/lib/definitions/users";
-import { editUser } from "@/src/server-actions/users";
+import type { UserDTO } from "@/src/lib/dto/user.dto";
+import { editUser } from "@/src/lib/server-actions/users";
 import { Button } from "@/src/ui/button";
 import { H1 } from "@/src/ui/headings";
 import { UserCircleIcon } from "@heroicons/react/24/outline";

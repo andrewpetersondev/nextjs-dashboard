@@ -1,5 +1,5 @@
 import type { UserEntity } from "@/src/db/entities/user";
-import type { UserDTO } from "@/src/dto/user.dto";
+import type { UserDTO } from "@/src/lib/dto/user.dto";
 
 /**
  * Converts a UserEntity to a UserDTO.

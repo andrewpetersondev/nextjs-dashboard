@@ -1,4 +1,4 @@
-import { deleteInvoiceFormAction } from "@/src/server-actions/invoices";
+import { deleteInvoiceFormAction } from "@/src/lib/server-actions/invoices";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";

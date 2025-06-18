@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from "@/src/server-actions/users";
+import { signup } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
 import DemoUser from "@/src/ui/auth/demo-user";

@@ -1,6 +1,6 @@
 "use client";
 
-import { createUser } from "@/src/server-actions/users";
+import { createUser } from "@/src/lib/server-actions/users";
 import { InputField } from "@/src/ui/auth/input-field";
 import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button";
 import {

@@ -7,14 +7,17 @@ import "server-only";
 
 import type { DB } from "@/src/db/connection";
 import { invoices } from "@/src/db/schema";
-import type { InvoiceDTO } from "@/src/dto/invoice.dto";
 import type {
 	CustomerId,
 	InvoiceId,
 	Status,
 } from "@/src/lib/definitions/invoices";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
+import {
+	toInvoiceDTO,
+	toInvoiceEntity,
+} from "@/src/lib/mappers/invoice.mapper";
 import { logError } from "@/src/lib/utils.server";
-import { toInvoiceDTO, toInvoiceEntity } from "@/src/mappers/invoice.mapper";
 import { eq } from "drizzle-orm";
 
 /**

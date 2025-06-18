@@ -3,7 +3,7 @@
 import type { InvoiceEntity } from "@/src/db/entities/invoice";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
-import { updateInvoice } from "@/src/server-actions/invoices";
+import { updateInvoice } from "@/src/lib/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 import {
 	CheckIcon,
