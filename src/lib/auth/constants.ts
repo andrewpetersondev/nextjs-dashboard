@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * One day in milliseconds.
  */

@@ -1,3 +1,5 @@
+import "server-only";
+
 import { getDB } from "@/src/db/connection";
 import type { DB } from "@/src/db/connection";
 import { sessions } from "@/src/db/schema";

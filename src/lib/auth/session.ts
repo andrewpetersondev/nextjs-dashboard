@@ -1,12 +1,14 @@
 import "server-only";
 
+import { jwtVerify, SignJWT } from "jose";
+import { cookies } from "next/headers";
 import {
 	JWT_EXPIRATION,
 	ONE_DAY_MS,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
 } from "@/src/lib/auth/constants";
-import { insertSession } from "@/src/lib/dal/session";
+import { getCookieValue } from "@/src/lib/auth/utils";
 import type { UserRole } from "@/src/lib/definitions/enums";
 import {
 	type DecryptPayload,
@@ -17,8 +19,8 @@ import {
 import { z as zod } from "@/src/lib/definitions/zod-alias";
 import { ValidationError } from "@/src/lib/errors/validation-error";
 import { logger } from "@/src/lib/utils/logger";
-import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+
+// --- Internal Utility Types & Constants ---
 
 /**
  * Flattens EncryptPayload for JWT compatibility.
@@ -26,7 +28,6 @@ import { cookies } from "next/headers";
 function flattenEncryptPayload(
 	payload: EncryptPayload,
 ): Record<string, unknown> {
-	// Use a prefix to avoid key collisions in JWT
 	return {
 		userId: payload.user.userId,
 		role: payload.user.role,
@@ -49,10 +50,8 @@ function unflattenEncryptPayload(
 	};
 }
 
-// Note: `encodedKey` is cached at the module level. In serverless environments (e.g., Vercel), this cache may not persist between invocations.
-// For high-throughput or multi-instance deployments, consider a more robust key management strategy (e.g., KMS or a secrets manager).
+// --- Key Management ---
 
-// --- Key Retrieval (Optimized & Type-Safe) ---
 let encodedKey: Uint8Array | undefined;
 
 /**
@@ -64,14 +63,14 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
 	if (encodedKey) return encodedKey;
 	const secret = process.env.SESSION_SECRET;
 	if (!secret) {
-		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined"); // Log missing secret
+		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
 		throw new Error("SESSION_SECRET is not defined");
 	}
 	encodedKey = new TextEncoder().encode(secret);
 	logger.debug(
 		{ context: "getEncodedKey" },
 		"Session secret key encoded and cached",
-	); // Log key caching (debug only)
+	);
 	return encodedKey;
 };
 
@@ -99,9 +98,6 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 		);
 	}
 
-	// const validatedPayload: EncryptPayload = validatedFields.data;
-
-	// --- Fix: Flatten payload for JWT ---
 	const jwtPayload = flattenEncryptPayload(validatedFields.data);
 
 	try {
@@ -118,7 +114,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 				context: "encrypt",
 			},
 			"Session JWT created",
-		); // Log successful encryption (info)
+		);
 		return token;
 	} catch (error: unknown) {
 		logger.error(
@@ -141,7 +137,7 @@ export async function decrypt(
 		logger.warn(
 			{ context: "decrypt" },
 			"No session token provided for decryption",
-		); // Warn on missing session
+		);
 		return undefined;
 	}
 
@@ -152,10 +148,8 @@ export async function decrypt(
 			algorithms: ["HS256"],
 		});
 
-		// --- Fix: Unflatten payload for validation ---
 		const reconstructed = unflattenEncryptPayload(payload);
 
-		// Add JWT claims if needed
 		const withClaims = {
 			...reconstructed,
 			iat: (payload.iat as number) ?? 0,
@@ -178,7 +172,7 @@ export async function decrypt(
 		logger.debug(
 			{ userId: validatedFields.data.user.userId, context: "decrypt" },
 			"Session decrypted successfully",
-		); // Use debug to avoid log noise in production
+		);
 		return validatedFields.data as DecryptPayload;
 	} catch (error: unknown) {
 		logger.error(
@@ -199,50 +193,44 @@ export async function createSession(
 	userId: string,
 	role: UserRole = "user",
 ): Promise<void> {
-	try {
-		const expiresAt: number = Date.now() + SESSION_DURATION_MS;
+	const expiresAt: number = Date.now() + SESSION_DURATION_MS;
 
-		const session: string = await encrypt({
-			user: { userId, role, expiresAt },
-		});
+	const session: string = await encrypt({
+		user: { userId, role, expiresAt },
+	});
 
-		const cookieStore = await cookies();
+	const cookieStore = await cookies();
 
-		cookieStore.set(SESSION_COOKIE_NAME, session, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			expires: new Date(expiresAt),
-			sameSite: "lax",
-			path: "/",
-		});
+	cookieStore.set(SESSION_COOKIE_NAME, session, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		expires: new Date(expiresAt),
+		sameSite: "lax",
+		path: "/",
+	});
 
-		logger.info(
-			{ userId, role, expiresAt, context: "createSession" },
-			`Session created for user ${userId} with role ${role}`,
-		); // Log session creation
-	} catch (error: unknown) {
-		logger.error(
-			{ err: error, context: "createSession" },
-			"Failed to create session",
-		);
-		throw error;
-	}
+	logger.info(
+		{ userId, role, expiresAt, context: "createSession" },
+		`Session created for user ${userId} with role ${role}`,
+	);
 }
 
 /**
  * Updates the session cookie's expiration if valid.
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
-
-// biome-ignore lint/suspicious/noConfusingVoidType: <explanation>
 export async function updateSession(): Promise<null | void> {
-	const session = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
+	const cookieStore = await cookies();
+
+	const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
+
+	const session = getCookieValue(rawCookie?.value);
 
 	if (!session) {
 		logger.warn(
 			{ context: "updateSession" },
 			"No session cookie found to update",
-		); // Warn on missing session
+		);
 		return null;
 	}
 
@@ -252,7 +240,7 @@ export async function updateSession(): Promise<null | void> {
 		logger.warn(
 			{ context: "updateSession" },
 			"Session payload invalid or missing user",
-		); // Warn on invalid payload
+		);
 		return null;
 	}
 
@@ -264,45 +252,35 @@ export async function updateSession(): Promise<null | void> {
 		logger.info(
 			{ userId: payload.user.userId, context: "updateSession" },
 			"Session expired, not updating",
-		); // Info on expired session
+		);
 		return null;
 	}
 
 	const { user } = payload;
+	const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
 
-	try {
-		const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
+	const minimalPayload: EncryptPayload = {
+		user: {
+			userId: user.userId,
+			role: user.role,
+			expiresAt: newExpiration,
+		},
+	};
 
-		const minimalPayload = {
-			user: {
-				userId: user.userId,
-				role: user.role,
-				expiresAt: newExpiration,
-			},
-		};
+	const updatedToken = await encrypt(minimalPayload);
 
-		const updatedToken = await encrypt(minimalPayload);
+	cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		expires: new Date(newExpiration),
+		sameSite: "lax",
+		path: "/",
+	});
 
-		const cookieStore = await cookies();
-
-		cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			expires: new Date(newExpiration),
-			sameSite: "lax",
-			path: "/",
-		});
-
-		logger.info(
-			{ userId: user.userId, newExpiration, context: "updateSession" },
-			"Session updated with new expiration",
-		); // Log session update
-	} catch (error) {
-		logger.error(
-			{ err: error, context: "updateSession" },
-			"Failed to update session",
-		);
-	}
+	logger.info(
+		{ userId: user.userId, newExpiration, context: "updateSession" },
+		"Session updated with new expiration",
+	);
 }
 
 /**
@@ -312,15 +290,10 @@ export async function updateSession(): Promise<null | void> {
 export async function deleteSession(): Promise<void> {
 	const cookieStore = await cookies();
 	cookieStore.delete(SESSION_COOKIE_NAME);
-	logger.info({ context: "deleteSession" }, "Session cookie deleted"); // Log session deletion
+	logger.info({ context: "deleteSession" }, "Session cookie deleted");
 }
 
-// how to include db sessions
-// To create and manage database sessions, you'll need to follow these steps:
-// Create a table in your database to store session and data (or check if your Auth Library handles this).
-// Implement functionality to insert, update, and delete sessions
-// Encrypt the session ID before storing it in the user's browser, and ensure the database and cookie stay in
-// sync (this is optional, but recommended for optimistic auth checks in Middleware).
+// --- DB Session Logic (Node.js only, never import in Edge runtime) ---
 
 /**
  * Generates a cryptographically secure random session token using the Web Crypto API.
@@ -328,11 +301,9 @@ export async function deleteSession(): Promise<void> {
  * @returns {string} The session token (base64url encoded).
  */
 const generateSessionToken = (): string => {
-	const array = new Uint8Array(48); // 48 bytes = 384 bits of entropy
+	const array = new Uint8Array(48);
 	crypto.getRandomValues(array);
 
-	// Convert to base64url (RFC 4648 §5)
-	// Avoids Buffer (Node.js only) and btoa (not binary-safe)
 	const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join(
 		"",
 	);
@@ -349,7 +320,6 @@ const generateSessionToken = (): string => {
  * @returns {string} The UUID string.
  */
 const generateUUID = (): string => {
-	// crypto.randomUUID is available in all modern runtimes
 	return crypto.randomUUID();
 };
 
@@ -358,12 +328,15 @@ const generateUUID = (): string => {
  * @param userId - The user's unique identifier.
  * @param role - The user's role.
  * @returns {Promise<void>}
+ * @remarks
+ *   - This function is Node.js-only and must never be imported in Edge runtime (middleware).
+ *   - All user input is validated.
  */
 export async function createDbSession(
 	userId: string,
 	role: UserRole = "user",
 ): Promise<void> {
-	// Validate input
+	// Defensive: validate userId
 	const userIdSchema = zod.string().uuid();
 	if (!userIdSchema.safeParse(userId).success) {
 		logger.error(
@@ -376,15 +349,17 @@ export async function createDbSession(
 	const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
 	const token = generateSessionToken();
 
-	// Insert session into DB
+	// --- Anti-pattern resistance: never import DB code in Edge runtime ---
+	// Only import here, not at module scope, to avoid accidental Edge import
+	const { insertSession } = await import("@/src/lib/dal/session");
+
 	await insertSession({
-		id: generateUUID(), // Use UUID for session id
+		id: generateUUID(),
 		token,
 		expiresAt,
 		userId,
 	});
 
-	// Set session cookie (token only, not user data)
 	const cookieStore = await cookies();
 	cookieStore.set(SESSION_COOKIE_NAME, token, {
 		httpOnly: true,
