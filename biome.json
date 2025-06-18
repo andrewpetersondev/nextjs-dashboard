@@ -25,14 +25,25 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!cypress", "!src/db/drizzle/**/*", "!src/lib/db/drizzle/**/*"]
+		"includes": [
+			"**",
+			"!cypress",
+			"!src/db/drizzle/**/*",
+			"!/.vscode",
+			"!src/lib/db/drizzle/**/*"
+		]
 	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
 	},
 	"javascript": {
+		"assist": {
+			"enabled": true
+		},
 		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
 			"quoteStyle": "double"
 		}
 	},
@@ -41,13 +52,14 @@
 			"enabled": true
 		},
 		"formatter": {
-			"enabled": true
+			"enabled": true,
+			"indentStyle": "tab"
 		},
 		"linter": {
 			"enabled": true
 		},
 		"parser": {
-			"allowComments": true
+			"allowComments": false
 		}
 	},
 	"linter": {
