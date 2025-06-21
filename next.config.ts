@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
 		ppr: "incremental",
 	},
 	output: "standalone",
+	reactStrictMode: true,
 };
 
 export default nextConfig;
