@@ -2,10 +2,6 @@
 
 ## Invoices Refactor
 
-- [x] dal
-- [x] dto
-- [x] mapper
-- [x] dto
 - [ ] definitions
 - [ ] visual inspection
 
@@ -19,5 +15,8 @@
 
 ## Other Tasks
 
-- [x] bring back eslint
 - [ ] Creating a user needs to respond with some ui feedback and redirect to user page where that user is displayed
+
+## Cypress Tasks and getDB() implementation
+
+- [ ] e2e tests for session management
