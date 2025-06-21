@@ -5,8 +5,7 @@ import {
 	LockClosedIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
-import type { FC } from "react";
-import React, { useActionState } from "react";
+import { type FC, useActionState } from "react";
 import { signup } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import DemoAdminUser from "@/src/ui/auth/demo-admin-user";

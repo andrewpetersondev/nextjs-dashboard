@@ -1,7 +1,6 @@
 "use client";
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import type React from "react";
 import { type JSX, useActionState } from "react";
 import { login } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
