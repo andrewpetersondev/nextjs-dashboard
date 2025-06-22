@@ -18,22 +18,16 @@ describe("loginSession command", () => {
 	let createdUser: UserEntity | null = null; // Store created user for use in tests
 
 	before(() => {
-		// Delete and create user, then store the result for userId
 		cy.deleteUser(TEST_USER_CREDENTIALS.email)
 			.then(() => cy.createUser(TEST_USER_DB))
 			.then((result) => {
-				// result should be the created user entity
 				createdUser = result as UserEntity;
 			});
 	});
 
 	it("should access dashboard with a mock session cookie", () => {
-		// Ensure user is created and has an id
-		expect(createdUser, "User should be created").to.not.be.null;
 		expect(createdUser?.id, "User should have an id").to.exist;
-
-		// Use the real userId from the DB
-		cy.setMockSessionCookie(createdUser?.id, "user");
+		cy.setMockSessionCookie(createdUser!.id, "user");
 		cy.visit("/dashboard");
 		cy.contains("Dashboard").should("be.visible");
 	});

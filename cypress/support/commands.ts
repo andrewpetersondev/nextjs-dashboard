@@ -186,13 +186,9 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 
 /**
  * Sets a valid mock session cookie for the given user.
- * Only for use in Cypress E2E tests.
- * Uses a static secret and generates a JWT for the session.
  * @param userId - The user's unique identifier.
  * @param role - The user's role (default: "user").
  * @returns Chainable<void>
- * @example
- *   cy.setMockSessionCookie("user-123", "admin");
  */
 Cypress.Commands.add(
 	"setMockSessionCookie",
@@ -200,18 +196,16 @@ Cypress.Commands.add(
 		cy.then(async () => {
 			const token = await generateMockSessionJWT(userId, role);
 
-			Cypress.log({
-				consoleProps: () => ({ role, token, userId }),
-				message: [`userId: ${userId}`, `role: ${role}`, `token: ${token}`],
-				name: "setMockSessionCookie",
-			});
-
+			// Set the cookie with correct options
 			cy.setCookie(SESSION_COOKIE_NAME, token, {
-				httpOnly: false,
+				httpOnly: false, // Cypress cannot set httpOnly cookies
 				path: "/",
 				sameSite: "lax",
 				secure: false,
 			});
+
+			// Assert the cookie is set
+			cy.getCookie(SESSION_COOKIE_NAME).should("exist");
 		});
 	},
 );

@@ -36,6 +36,7 @@ export const dbTasks = {
 				.insert(users)
 				.values(user)
 				.returning();
+			console.log("db:createUser inserted user", insertedUser);
 			return { data: insertedUser ?? null, success: !!insertedUser };
 		} catch (error) {
 			// Log error for debugging in CI
@@ -80,6 +81,7 @@ export const dbTasks = {
 				.select()
 				.from(users)
 				.where(eq(users.email, email));
+			console.log("db:findUser found user", user);
 			return { data: user ?? null, success: !!user };
 		} catch (error) {
 			console.error("db:findUser error", error);
@@ -106,6 +108,7 @@ export const dbTasks = {
 				.select()
 				.from(users)
 				.where(eq(users.email, email));
+			console.log("db:updateUser found user", found);
 			if (!found)
 				return { data: null, error: "User not found", success: false };
 			const [updatedUser] = await testDB
@@ -113,6 +116,7 @@ export const dbTasks = {
 				.set(updates)
 				.where(eq(users.id, found.id))
 				.returning();
+			console.log("db:updateUser updated user", updatedUser);
 			return { data: updatedUser ?? null, success: !!updatedUser };
 		} catch (error) {
 			console.error("db:updateUser error", error);

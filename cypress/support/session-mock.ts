@@ -6,7 +6,7 @@ import type { UserRole } from "../../src/lib/definitions/enums";
 
 /**
  * Generates a mock session JWT for Cypress E2E tests.
- * Uses a static secret for test environment only.
+ * Payload matches production: { expiresAt, role, userId }
  * @param userId - The user's unique identifier.
  * @param role - The user's role.
  * @returns A signed JWT string.
@@ -15,24 +15,22 @@ export async function generateMockSessionJWT(
 	userId: string,
 	role: UserRole = "user",
 ): Promise<string> {
-	// Use a static secret for test environment only
+	// Use the test session secret from Cypress env
 	const secret = Cypress.env("SESSION_SECRET");
-
-	if (!secret) {
+	if (!secret)
 		throw new Error("SESSION_SECRET is not defined in Cypress environment");
-	}
-
 	const key = new TextEncoder().encode(secret);
 
 	const expiresAt = Date.now() + SESSION_DURATION_MS;
 
-	// Match production JWT payload structure
+	// Flat payload to match production
 	const jwtPayload = {
 		expiresAt,
 		role,
 		userId,
 	};
 
+	// Use .setExpirationTime in seconds (UNIX timestamp)
 	return await new SignJWT(jwtPayload)
 		.setProtectedHeader({ alg: "HS256" })
 		.setIssuedAt()
