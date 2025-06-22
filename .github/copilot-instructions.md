@@ -2,16 +2,15 @@
 
 ## Code Response Guidelines
 
+- Take the role of my boss who is an experienced next.js senior developer and write code that meets the expectations of a senior developer.
 - Always clearly indicate code changes with inline comments.
-- Provide concise, relevant, and production-ready code that a senior developer would write.
 - Use best practices for readability, maintainability, and performance.
 - Use TypeScript with strict typing.
-- Use import aliases for cleaner imports.
-- Take the role of my boss who is an experienced next.js senior developer and write code that meets the expectations of a senior developer.
-- Provide resistance to common pitfalls and anti-patterns and tell me why you are doing it.
-- Follow the conventions and structure of the existing codebase.
+- Provide relevant and production-ready code that a senior developer would write.
+- Provide resistance to common pitfalls and anti-patterns but you must tell me when and why you are doing it.
+- Use TypeScript generics to create flexible and reusable code.
 - Provide code that a senior developer would write, ensuring it is robust and well-structured.
-- Avoid using deprecated APIs and patterns.
+- Avoid using deprecated APIs and patterns. Always use the latest features and best practices. Always check the latest documentation for updates. Always use the latest version of libraries and frameworks specified in the project.
 - Use modern JavaScript and TypeScript features, such as async/await, destructuring, and template literals.
 - Use functional programming principles where appropriate.
 - Use TypeScript interfaces and types to define data structures.
@@ -19,25 +18,40 @@
 - Avoid using magic numbers or strings; use constants instead.
 - Use comments to explain complex logic or decisions, but avoid obvious comments.
 - Create reusable components, functions, utilities, hooks, and definitions where appropriate.
-- Use TypeScript generics to create flexible and reusable code.
-- Create documentation for all public APIs, components, and utilities.
+- Create documentation for all APIs, components, and utilities.
+- Use import aliases for cleaner imports.
+- Use ES Modules (ESM) syntax for imports and exports.
+- Provide cypress code that accommodates Next.js, Typescript, ESM, and the latest version of Next.js.
 
 ## Next.js Application Stack
 
 - Next.js v15+ (App Router)
-- TypeScript v5+
-- React v19+, React DOM v19+
-- Tailwind CSS v4+
-- Node.js v24+
-- Turbopack for builds
-- PostgreSQL v17+
-- Drizzle ORM v0.4+
-- Import aliases enabled
-
-## Environments
-
-- Development
-- Production
+  - Canary Release
+  - src/app directory structure
+  - App Router features
+  - TypeScript support
+  - ES Modules (ESM) support
+  - Biome, Eslint and Prettier for code quality
+  - Turbopack for builds
+  - Tailwind CSS for styling
+  - Drizzle ORM for database access
+  - PostgreSQL for the database
+  - Server components and client components, with preferred usage of server components
+  - TypeScript for all components and utilities
+  - Import aliases for cleaner imports
+  - Cypress for end-to-end and component testing
+  - Hashicorp Vault for secrets management
+  - pnpm for package management
+  - Definitions for commonly used types and interfaces
+  - TypeScript v5+
+  - React v19+, React DOM v19+
+  - Tailwind CSS v4+
+  - Node.js v24+
+  - Turbopack for builds
+  - PostgreSQL v17+
+  - Drizzle ORM v0.4+
+  - Import aliases enabled
+  - Cypress v14.5+ for testing
 
 ## Additional Instructions
 
@@ -71,9 +85,17 @@
 
 ## Linting & Formatting
 
-- Use ESLint and Biome.js with recommended and Next.js rules.
-- Use Prettier for code formatting.
 - Enforce linting and formatting in CI.
+
+### Linting
+
+- Use Biome.js for linting with recommended rules.
+- Use eslint for Next.js specific rules.
+
+### Formatting
+
+- Use prettier for Markdown files.
+- use Biome.js for formatting with recommended rules for all other files.
 
 ## Documentation
 
@@ -101,12 +123,3 @@
 
 - Implement global error boundaries in React.
 - Use structured logging for server and client errors.
-
-## Git Commit Guidelines
-
-- Use conventional commits for clear and consistent commit messages.
-- Use descriptive commit messages that explain the "why" behind changes.
-- Use prefixes like `feat:`, `fix:`, `chore:`, `docs:`, etc., to categorize commits.
-- Keep commit messages concise but informative.
-- Avoid committing large changes in a single commit; break them down into smaller, logical commits.
--

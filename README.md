@@ -199,6 +199,71 @@ See [docs/startup.md](docs/startup.md) for detailed startup instructions for eac
 
 ---
 
+## Directory Structure
+
+- `public/` - Static assets
+- `docs/` - Documentation files, notes, and guides
+- `keep/` - Temporary files and notes (ignore)
+- `src/`
+  - `app/` - Next.js application code
+    - `dashboard/` - Dashboard application code
+      - `(overview)/` - Overview page code
+      - `customers/` - Customers page code
+      - `invoices/` - Invoices page code
+      - `users/` - Users page code
+      - `layout.tsx` - Layout component for the dashboard
+    - `forgot-password/` - Forgot password application code
+      - `page.tsx` - Forgot password page
+    - `login/` - Login application code
+      - `page.tsx` - Login page
+      - `error.tsx` - Error handling for login
+    - `signup/` - Signup application code
+      - `page.tsx` - Signup page
+      - `error.tsx` - Error handling for signup
+    - `favicon.ico` - Favicon and icons
+    - `globals.css` - Global CSS styles
+    - `layout.tsx` - Root layout component
+    - `page.tsx` - Root page component
+    <!--  - `components/` - Reusable components
+    - `hooks/` - Custom React hooks
+    - `utils/` - Utility functions and helpers -->
+  - `lib/` - Libraries and shared code
+    - `auth/` - Authentication utilities
+    - `constants/` - Application constants
+    - `dal/` - Data Access Layer utilities
+    - `db/` - Database utilities and Drizzle ORM integration
+    - `definitions/` - TypeScript definitions and interfaces
+    - `dto/` - Data Transfer Objects for API responses
+    - `errors/` - Error handling utilities
+    - `mappers/` - Data mappers for transforming data
+    - `server-actions/` - Server actions for handling API requests
+    - `utils/` - General utility functions
+  - `ui/` - UI components and shared styles
+    - `components/` - Reusable UI components
+    - `style/` - Shared styles and themes
+- `cypress`
+  - `fixtures/` - Test data and fixtures
+  - `integration/` - Cypress integration tests
+  - `plugins/` - Cypress plugins
+  - `support/` - Custom commands and utilities for Cypress tests
+  - `tsconfig.json` - TypeScript configuration for Cypress
+  - `cypress.d.ts` - TypeScript definitions for Cypress
+- `.gitignore` - Git ignore file
+- `biome.json` - Biome configuration file
+- `cypress.config.ts` - Cypress configuration file
+- `drizzle-dev.config.ts` - Drizzle ORM configuration file for Development Database
+- `drizzle-test.config.ts` - Drizzle ORM test configuration file for Test Database
+- `envConfig.ts` - Environment configuration file
+- `eslint.config.mjs` - ESLint configuration file
+- `next.config.ts` - Next.js configuration file
+- `package.json` - Project dependencies and scripts
+- `tsconfig.base.json` - Base TypeScript configuration file
+- `tsconfig.json` - TypeScript configuration file
+- `postcss.config.mjs` - PostCSS configuration file for Tailwind CSS
+- `README.md` - Project documentation and usage guide
+
+---
+
 ## Security & Best Practices
 
 - **Secrets:** Use HashiCorp Vault or env vars; never commit secrets
