@@ -219,6 +219,8 @@ export async function createSession(
  * Updates the session cookie's expiration if valid.
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
+
+// biome-ignore lint/suspicious/noConfusingVoidType: <function is not used, but set up with null | void so dont change it for now>
 export async function updateSession(): Promise<null | void> {
 	const cookieStore = await cookies();
 
