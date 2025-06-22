@@ -1,30 +1,10 @@
 /// <reference types="cypress" />
 
+import type { CreateUserInput, UserCredentials } from "@/support/types";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
-
-/**
- * Credentials required for user login.
- * @property email - User's email address.
- * @property password - User's password.
- * @property username - User's username.
- */
-export interface UserCredentials {
-	email: string;
-	password: string;
-	username: string;
-}
-
-/**
- * Input type for creating a user in tests.
- * Omits id and sensitiveData from UserEntity.
- * Role is optional and compatible with UserEntity.
- */
-export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
-	role?: UserEntity["role"];
-};
 
 /**
  * Signs up a user via the UI.

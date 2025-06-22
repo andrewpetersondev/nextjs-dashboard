@@ -1,18 +1,6 @@
+import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "@/support/types";
 import { SESSION_COOKIE_NAME } from "../../../src/lib/auth/constants";
 import type { UserEntity } from "../../../src/lib/db/entities/user";
-import type { CreateUserInput, UserCredentials } from "../../support/commands";
-
-// Test user credentials
-const TEST_USER_CREDENTIALS: UserCredentials = {
-	email: "test-login-session@example.com",
-	password: "TestPassword123!",
-	username: "testloginsession",
-};
-
-const TEST_USER_DB: CreateUserInput = {
-	...TEST_USER_CREDENTIALS,
-	role: "user",
-};
 
 describe("loginSession command", () => {
 	let createdUser: UserEntity | null = null; // Store created user for use in tests

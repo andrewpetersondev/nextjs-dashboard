@@ -1,21 +1,8 @@
 import { eq } from "drizzle-orm";
+import type { CreateUserInput, DbTaskResult } from "@/support/types";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
-import type { CreateUserInput } from "./commands";
-
-/**
- * Generic result type for database tasks executed via Cypress.
- * @template T - The type of the data returned by the task.
- * @property success - Indicates if the operation was successful.
- * @property data - The result data, or null if unsuccessful.
- * @property error - Optional error message if the operation failed.
- */
-export type DbTaskResult<T> = {
-	success: boolean;
-	data: T | null;
-	error?: string;
-};
 
 /**
  * Cypress database task handlers for E2E tests.
