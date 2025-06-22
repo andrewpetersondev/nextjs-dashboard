@@ -10,19 +10,28 @@ export interface BaseUserFields {
 }
 
 /**
- * Credentials required for user login.
- * @extends BaseUserFields
+ * Credentials required for user login and some other operations.
  */
 export type UserCredentials = BaseUserFields;
 
 /**
+ * Credentials required for login flows (email + password only).
+ * Use this type for login forms and authentication APIs.
+ */
+export type LoginCredentials = Pick<BaseUserFields, "email" | "password">;
+
+/**
  * Input type for creating a user in tests.
- * Omits id and sensitiveData from UserEntity.
- * Role is optional and compatible with UserEntity.
  */
 export type CreateUserInput = BaseUserFields & {
 	role?: UserEntity["role"];
 };
+
+/**
+ * Input type for user signup via UI.
+ * Allows for future extension (e.g., termsAccepted, captcha, etc.).
+ */
+export interface SignupUserInput extends BaseUserFields {}
 
 /**
  * Generic result type for database tasks executed via Cypress.

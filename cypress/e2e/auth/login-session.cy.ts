@@ -20,6 +20,7 @@ describe("loginSession command", () => {
 		cy.contains("Dashboard").should("be.visible");
 	});
 
+	// FAILS: AssertionError: Timed out retrying after 4000ms: expected 'http://localhost:3000/login' to include '/dashboard'
 	it("should log in and cache the session for the user", () => {
 		cy.loginSession(TEST_USER_CREDENTIALS);
 
@@ -32,6 +33,7 @@ describe("loginSession command", () => {
 		});
 	});
 
+	// FAILS: AssertionError: Timed out retrying after 4000ms: expected 'http://localhost:3000/login' to include '/dashboard'
 	it("should restore the cached session on subsequent tests", () => {
 		cy.loginSession(TEST_USER_CREDENTIALS);
 

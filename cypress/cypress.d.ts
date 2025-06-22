@@ -17,12 +17,10 @@ declare global {
 			): Chainable<MountReturn>;
 
 			/**
-			 * Logs in a user via the UI using the provided credentials.
-			 * @param user - User credentials (email, password, username).
-			 * @param options - Optional settings (e.g., assertSuccess to verify dashboard redirect).
+			 * Logs in a user via the UI.
 			 */
 			login(
-				user: Pick<UserEntity, "email" | "password" | "username">,
+				user: LoginCredentials,
 				options?: { assertSuccess?: boolean },
 			): Chainable<void>;
 
@@ -43,11 +41,8 @@ declare global {
 
 			/**
 			 * Signs up a user via the UI.
-			 * @param user - User credentials (email, password, username).
 			 */
-			signup(
-				user: Pick<UserEntity, "email" | "password" | "username">,
-			): Chainable<void>;
+			signup(user: SignupUserInput): Chainable<void>;
 
 			/**
 			 * Creates a user in the test database.
@@ -81,13 +76,9 @@ declare global {
 
 			/**
 			 * Logs in a user via the login form using Cypress.
-			 * Designed for Next.js App Router (v15+) with strict typing and best practices.
-			 * Hides password from Cypress logs for security.
-			 * @param user - User credentials (email, password, username).
-			 * @param options - Optional settings (e.g., assertSuccess to verify dashboard redirect).
 			 */
 			loginNew(
-				user: Pick<UserEntity, "email" | "password" | "username">,
+				user: LoginCredentials,
 				options?: { assertSuccess?: boolean },
 			): Chainable<void>;
 

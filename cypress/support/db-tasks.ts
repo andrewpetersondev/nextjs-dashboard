@@ -11,6 +11,7 @@ const ERROR_DB = "DB_ERROR";
 
 /**
  * Creates a user in the test database.
+ * Used for backend setup, not for UI signup simulation.
  */
 export async function createUserTask(
 	user: CreateUserInput,

@@ -4,7 +4,13 @@ import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
-import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
+import type {
+	CreateUserInput,
+	DbTaskResult,
+	LoginCredentials,
+	SignupUserInput,
+	UserCredentials,
+} from "./types";
 
 // =========================
 // UI COMMANDS
@@ -12,35 +18,32 @@ import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
 
 /**
  * Signs up a user via the UI.
- * Navigates to the signup page, fills out the form, and submits.
+ * Accepts a strictly typed SignupUserInput.
  */
-Cypress.Commands.add(
-	"signup",
-	(user: Pick<UserEntity, "username" | "email" | "password">) => {
-		cy.log("Signing up user", user.email);
-		cy.visit("/signup");
-		cy.get('[data-cy="signup-username-input"]').type(user.username);
-		cy.get('[data-cy="signup-email-input"]').type(user.email);
-		cy.get('[data-cy="signup-password-input"]').type(user.password);
-		cy.get('[data-cy="signup-submit-button"]').click();
-	},
-);
+Cypress.Commands.add("signup", (user: SignupUserInput) => {
+	cy.log("Signing up user", user.email);
+	cy.visit("/signup");
+	cy.get('[data-cy="signup-username-input"]').type(user.username);
+	cy.get('[data-cy="signup-email-input"]').type(user.email);
+	cy.get('[data-cy="signup-password-input"]').type(user.password, {
+		log: false,
+	});
+	cy.get('[data-cy="signup-submit-button"]').click();
+});
 
 /**
  * Logs in a user via the UI.
- * Navigates to the login page, fills out the form, and submits.
- * Optionally asserts successful login by checking dashboard redirect.
+ * Accepts LoginCredentials and optional assertion.
  */
 Cypress.Commands.add(
 	"login",
-	(
-		user: Pick<UserEntity, "username" | "email" | "password">,
-		options?: { assertSuccess?: boolean },
-	) => {
+	(user: LoginCredentials, options?: { assertSuccess?: boolean }) => {
 		cy.log("Logging in", { email: user.email });
 		cy.visit("/login");
 		cy.get('[data-cy="login-email-input"]').type(user.email);
-		cy.get('[data-cy="login-password-input"]').type(user.password);
+		cy.get('[data-cy="login-password-input"]').type(user.password, {
+			log: false,
+		});
 		cy.get('[data-cy="login-submit-button"]').click();
 		if (options?.assertSuccess) {
 			cy.url().should("include", "/dashboard");
@@ -51,18 +54,13 @@ Cypress.Commands.add(
 
 /**
  * Logs in a user via the login form using Cypress.
- * Designed for Next.js App Router (v15+) with strict typing and best practices.
- * Hides password from Cypress logs for security.
- * Optionally asserts login success by checking dashboard redirect.
+ * Accepts LoginCredentials and optional assertion.
  */
 Cypress.Commands.add(
 	"loginNew",
-	(
-		user: Pick<UserEntity, "email" | "password" | "username">,
-		options?: { assertSuccess?: boolean },
-	) => {
+	(user: LoginCredentials, options?: { assertSuccess?: boolean }) => {
 		cy.get('input[name="email"]').type(user.email);
-		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
+		cy.get('input[name="password"]').type(user.password, { log: false });
 		cy.get('[data-cy="login-submit-button"]').click();
 
 		if (options?.assertSuccess) {
