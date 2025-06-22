@@ -53,8 +53,12 @@ async function seedUsers(): Promise<void> {
 //   }
 // })();
 
+// Fix: Handle floating promise with .catch for error logging
 try {
-	seedUsers();
+	seedUsers().catch((error) => {
+		console.error("Error during seeding:", error);
+		throw new Error("Seeding failed. Please check the logs for more details.");
+	});
 } catch (e) {
 	console.error(e);
 	throw new Error("some sort of error");

@@ -6,6 +6,11 @@ async function main(): Promise<void> {
 	await reset(testDB, schema);
 }
 
-main().then((): void =>
-	console.log("drizzle reset complete, tables remain, but values are gone"),
-);
+// Fix: Handle floating promise with .catch for error logging
+main()
+	.then((): void => {
+		console.log("drizzle reset complete, tables remain, but values are gone");
+	})
+	.catch((error) => {
+		console.error("Error resetting test DB:", error);
+	});

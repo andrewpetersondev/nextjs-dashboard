@@ -101,6 +101,11 @@ async function runSeeds(): Promise<void> {
 	// await seedRevenue();
 }
 
-runSeeds().then((): void =>
-	console.log("Seed function ran. Check to see if the data was inserted."),
-);
+// Fix: Handle floating promise with .catch for error logging
+runSeeds()
+	.then((): void => {
+		console.log("Seed function ran. Check to see if the data was inserted.");
+	})
+	.catch((error) => {
+		console.error("Error running seeds:", error);
+	});
