@@ -74,7 +74,7 @@ export async function signup(
 			email: string;
 			password: string;
 		};
-		const db = getDB("dev");
+		const db = getDB();
 		const user = await createUserInDB(db, {
 			email,
 			password,
@@ -125,7 +125,7 @@ export async function login(
 			});
 		}
 		const { email, password } = validated.data;
-		const db = getDB("dev");
+		const db = getDB();
 		const user = await findUserForLogin(db, email, password);
 		if (!user) {
 			return actionResult({
@@ -165,7 +165,7 @@ export async function logout(): Promise<void> {
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
-		const db = getDB("dev");
+		const db = getDB();
 		const deletedUser = await deleteUser(db, userId);
 		if (!deletedUser) {
 			return actionResult({
@@ -211,7 +211,7 @@ export async function demoUser(
 	role: UserRole = "guest",
 ): Promise<ActionResult> {
 	let demoUser: UserDTO | null = null;
-	const db = getDB("dev");
+	const db = getDB();
 
 	try {
 		const counter: number = await demoUserCounter(db, role);
@@ -252,7 +252,7 @@ export async function createUser(
 	_prevState: FormState<CreateUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<CreateUserFormFields>> {
-	const db = getDB("dev");
+	const db = getDB();
 
 	try {
 		const validated = CreateUserFormSchema.safeParse({
@@ -309,7 +309,7 @@ export async function editUser(
 	_prevState: FormState<EditUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<EditUserFormFields>> {
-	const db = getDB("dev");
+	const db = getDB();
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {

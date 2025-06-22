@@ -26,7 +26,7 @@ export interface EditUserPageProps {
 export default async function Page(
 	props: EditUserPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB("dev");
+	const db = getDB();
 	const { id } = await props.params;
 
 	const user: UserDTO | null = await fetchUserById(db, id);

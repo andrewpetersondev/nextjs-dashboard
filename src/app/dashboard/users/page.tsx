@@ -27,7 +27,7 @@ export interface UsersPageProps {
 export default async function Page(
 	dynamicURL: UsersPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB("dev");
+	const db = getDB();
 	const searchParams: UsersSearchParams | undefined =
 		await dynamicURL.searchParams;
 	const query: string = searchParams?.query || "";

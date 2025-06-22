@@ -37,7 +37,7 @@ function getDatabaseUrl(type: DBType): string {
  * Returns a Drizzle database instance for the specified environment.
  * @param type - "dev" (default) or "test"
  */
-export function getDB(type: DBType = "dev"): DB {
+export function getDB(type: DBType = "test"): DB {
 	const url = getDatabaseUrl(type);
 	return drizzle({ casing: "snake_case", connection: url, schema }) as DB;
 }

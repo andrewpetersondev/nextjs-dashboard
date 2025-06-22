@@ -11,7 +11,7 @@ export default async function UsersTable({
 	query: string;
 	currentPage: number;
 }): Promise<JSX.Element> {
-	const db = getDB("dev");
+	const db = getDB();
 	const users: UserDTO[] = await fetchFilteredUsers(db, query, currentPage);
 
 	return (
