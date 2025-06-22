@@ -6,6 +6,10 @@ import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
 import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
 
+// =========================
+// UI COMMANDS
+// =========================
+
 /**
  * Signs up a user via the UI.
  * Navigates to the signup page, fills out the form, and submits.
@@ -26,7 +30,6 @@ Cypress.Commands.add(
  * Logs in a user via the UI.
  * Navigates to the login page, fills out the form, and submits.
  * Optionally asserts successful login by checking dashboard redirect.
-
  */
 Cypress.Commands.add(
 	"login",
@@ -45,6 +48,33 @@ Cypress.Commands.add(
 		}
 	},
 );
+
+/**
+ * Logs in a user via the login form using Cypress.
+ * Designed for Next.js App Router (v15+) with strict typing and best practices.
+ * Hides password from Cypress logs for security.
+ * Optionally asserts login success by checking dashboard redirect.
+ */
+Cypress.Commands.add(
+	"loginNew",
+	(
+		user: Pick<UserEntity, "email" | "password" | "username">,
+		options?: { assertSuccess?: boolean },
+	) => {
+		cy.get('input[name="email"]').type(user.email);
+		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
+		cy.get('[data-cy="login-submit-button"]').click();
+
+		if (options?.assertSuccess) {
+			cy.url().should("include", "/dashboard");
+			cy.contains(`Dashboard`);
+		}
+	},
+);
+
+// =========================
+// SERVER/DB/SESSION COMMANDS
+// =========================
 
 /**
  * Creates a user in the test database.
@@ -71,7 +101,6 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 
 /**
  * Finds a user in the test database by email.
-
  */
 Cypress.Commands.add("findUser", (email: string) => {
 	cy.log("Finding test user", email);
@@ -167,51 +196,3 @@ Cypress.Commands.add(
 		});
 	},
 );
-
-/**
- * Logs in a user via the login form using Cypress.
- * Designed for Next.js App Router (v15+) with strict typing and best practices.
- * Hides password from Cypress logs for security.
- * Optionally asserts login success by checking dashboard redirect.
- */
-Cypress.Commands.add(
-	"loginNew",
-	(
-		user: Pick<UserEntity, "email" | "password" | "username">,
-		options?: { assertSuccess?: boolean },
-	) => {
-		cy.get('input[name="email"]').type(user.email);
-		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
-		cy.get('[data-cy="login-submit-button"]').click();
-
-		if (options?.assertSuccess) {
-			cy.url().should("include", "/dashboard");
-			cy.contains(`Dashboard`);
-		}
-	},
-);
-
-// Ignore, leave for now
-// /**
-//  * @deprecated Use setMockSessionCookie instead.
-//  * Sets a valid session cookie for the given user.
-//  * Mimics functions encrypt and createSession.
-//  * @param userId - The user's unique identifier.
-//  * @param role - The user's role.
-//  */
-// Cypress.Commands.add(
-// 	"setSessionCookie",
-// 	(userId: string, role: UserRole = "user") => {
-// 		const expiresAt = Date.now() + SESSION_DURATION_MS;
-// 		const payload: EncryptPayload = { user: { expiresAt, role, userId } };
-// 		encrypt(payload).then((token) => {
-// 			cy.setCookie(SESSION_COOKIE_NAME, token, {
-// 				expiry: expiresAt,
-//         httpOnly: false,
-// 				path: "/",
-// 				sameSite: "lax",
-// 				secure: Cypress.env("NODE_ENV") === "production",
-// 			});
-// 		});
-// 	},
-// );
