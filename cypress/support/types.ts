@@ -16,6 +16,7 @@ export interface BaseUserFields {
 export type UserCredentials = BaseUserFields;
 
 /**
+ * @deprecated
  * Input type for creating a user in tests.
  * Omits id and sensitiveData from UserEntity.
  * Role is optional and compatible with UserEntity.
