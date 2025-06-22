@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
-import type { CreateUserInput, DbTaskResult } from "./types";
+import type { CreateUserInputV2, DbTaskResult } from "./types";
 
 /**
  * Cypress database task handlers for E2E tests.
@@ -16,7 +16,7 @@ export const dbTasks = {
 	 * On failure, returns a custom error result.
 	 */
 	"db:createUser": async (
-		user: CreateUserInput,
+		user: CreateUserInputV2,
 	): Promise<DbTaskResult<UserEntity>> => {
 		try {
 			const [insertedUser] = await testDB

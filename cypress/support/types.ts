@@ -1,16 +1,19 @@
 import type { UserEntity } from "../../src/lib/db/entities/user";
 
 /**
- * Credentials required for user login.
- * @property email - User's email address.
- * @property password - User's password.
- * @property username - User's username.
+ * Base fields required for user authentication and creation.
  */
-export interface UserCredentials {
+export interface BaseUserFields {
 	email: string;
 	password: string;
 	username: string;
 }
+
+/**
+ * Credentials required for user login.
+ * @extends BaseUserFields
+ */
+export type UserCredentials = BaseUserFields;
 
 /**
  * Input type for creating a user in tests.
@@ -18,6 +21,15 @@ export interface UserCredentials {
  * Role is optional and compatible with UserEntity.
  */
 export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
+	role?: UserEntity["role"];
+};
+
+/**
+ * Input type for creating a user in tests.
+ * Omits id and sensitiveData from UserEntity.
+ * Role is optional and compatible with UserEntity.
+ */
+export type CreateUserInputV2 = BaseUserFields & {
 	role?: UserEntity["role"];
 };
 
@@ -42,7 +54,7 @@ export const TEST_USER_CREDENTIALS: UserCredentials = {
 	username: "sessionTest",
 };
 
-export const TEST_USER_DB: CreateUserInput = {
+export const TEST_USER_DB: CreateUserInputV2 = {
 	...TEST_USER_CREDENTIALS,
 	role: "user",
 };

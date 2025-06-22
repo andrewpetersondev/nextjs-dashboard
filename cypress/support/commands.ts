@@ -4,15 +4,11 @@ import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
-import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
+import type { CreateUserInputV2, DbTaskResult, UserCredentials } from "./types";
 
 /**
  * Signs up a user via the UI.
  * Navigates to the signup page, fills out the form, and submits.
- * @param user - User credentials (username, email, password).
- * @returns Chainable<void>
- * @example
- *   cy.signup({ username, email, password });
  */
 Cypress.Commands.add(
 	"signup",
@@ -30,11 +26,7 @@ Cypress.Commands.add(
  * Logs in a user via the UI.
  * Navigates to the login page, fills out the form, and submits.
  * Optionally asserts successful login by checking dashboard redirect.
- * @param user - User credentials (username, email, password).
- * @param options - Optional settings (e.g., assertSuccess).
- * @returns Chainable<void>
- * @example
- *   cy.login({ email, password, username }, { assertSuccess: true });
+
  */
 Cypress.Commands.add(
 	"login",
@@ -59,7 +51,7 @@ Cypress.Commands.add(
  * On success, returns the created user.
  * On failure, throws an error with details.
  */
-Cypress.Commands.add("createUser", (user: CreateUserInput) => {
+Cypress.Commands.add("createUser", (user: CreateUserInputV2) => {
 	cy.log("Creating test user", user.email);
 	return cy.task("db:createUser", user).then((result) => {
 		// Type guard for result
@@ -79,10 +71,7 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 
 /**
  * Finds a user in the test database by email.
- * @param email - The user's email address.
- * @returns Chainable<UserEntity | null> Resolves to the found user or null if not found.
- * @example
- *   cy.findUser("test@example.com");
+
  */
 Cypress.Commands.add("findUser", (email: string) => {
 	cy.log("Finding test user", email);
@@ -94,11 +83,6 @@ Cypress.Commands.add("findUser", (email: string) => {
 
 /**
  * Updates a user in the test database.
- * @param email - The user's email address.
- * @param updates - Partial user data to update.
- * @returns Chainable<string | null> Resolves to the updated user's email or null if not found.
- * @example
- *   cy.updateUser("test@example.com", { username: "newName" });
  */
 Cypress.Commands.add(
 	"updateUser",
@@ -113,10 +97,6 @@ Cypress.Commands.add(
 
 /**
  * Deletes a user from the test database by email.
- * @param email - The user's email address.
- * @returns Chainable<string | null> Resolves to the deleted user's email or null if not found.
- * @example
- *   cy.deleteUser("test@example.com");
  */
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("deleteUser", email);
@@ -129,10 +109,6 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 /**
  * Caches and restores a user's login session using cy.session.
  * Ensures fast, reliable authentication for E2E tests.
- * @param user - User credentials for login.
- * @returns Chainable<void>
- * @example
- *   cy.loginSession({ email, password, username });
  */
 Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 	cy.session(
@@ -171,9 +147,6 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 
 /**
  * Sets a valid mock session cookie for the given user.
- * @param userId - The user's unique identifier.
- * @param role - The user's role (default: "user").
- * @returns Chainable<void>
  */
 Cypress.Commands.add(
 	"setMockSessionCookie",
@@ -200,11 +173,6 @@ Cypress.Commands.add(
  * Designed for Next.js App Router (v15+) with strict typing and best practices.
  * Hides password from Cypress logs for security.
  * Optionally asserts login success by checking dashboard redirect.
- * @param user - User credentials (email, password, username).
- * @param options - Optional settings (e.g., assertSuccess).
- * @returns Chainable<void>
- * @example
- *   cy.loginNew({ email, password, username }, { assertSuccess: true });
  */
 Cypress.Commands.add(
 	"loginNew",
@@ -223,13 +191,14 @@ Cypress.Commands.add(
 	},
 );
 
-/**
- * @deprecated Use setMockSessionCookie instead.
- * Sets a valid session cookie for the given user.
- * Mimics functions encrypt and createSession.
- * @param userId - The user's unique identifier.
- * @param role - The user's role.
- */
+// Ignore, leave for now
+// /**
+//  * @deprecated Use setMockSessionCookie instead.
+//  * Sets a valid session cookie for the given user.
+//  * Mimics functions encrypt and createSession.
+//  * @param userId - The user's unique identifier.
+//  * @param role - The user's role.
+//  */
 // Cypress.Commands.add(
 // 	"setSessionCookie",
 // 	(userId: string, role: UserRole = "user") => {
