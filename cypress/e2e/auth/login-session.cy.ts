@@ -33,7 +33,7 @@ describe("loginSession command", () => {
 		expect(createdUser?.id, "User should have an id").to.exist;
 
 		// Use the real userId from the DB
-		cy.setMockSessionCookie(createdUser.id, "user");
+		cy.setMockSessionCookie(createdUser?.id, "user");
 		cy.visit("/dashboard");
 		cy.contains("Dashboard").should("be.visible");
 	});
