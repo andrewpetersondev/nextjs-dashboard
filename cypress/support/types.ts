@@ -16,21 +16,11 @@ export interface BaseUserFields {
 export type UserCredentials = BaseUserFields;
 
 /**
- * @deprecated
  * Input type for creating a user in tests.
  * Omits id and sensitiveData from UserEntity.
  * Role is optional and compatible with UserEntity.
  */
-export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
-	role?: UserEntity["role"];
-};
-
-/**
- * Input type for creating a user in tests.
- * Omits id and sensitiveData from UserEntity.
- * Role is optional and compatible with UserEntity.
- */
-export type CreateUserInputV2 = BaseUserFields & {
+export type CreateUserInput = BaseUserFields & {
 	role?: UserEntity["role"];
 };
 
@@ -55,7 +45,7 @@ export const TEST_USER_CREDENTIALS: UserCredentials = {
 	username: "sessionTest",
 };
 
-export const TEST_USER_DB: CreateUserInputV2 = {
+export const TEST_USER_DB: CreateUserInput = {
 	...TEST_USER_CREDENTIALS,
 	role: "user",
 };

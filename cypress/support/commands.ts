@@ -4,7 +4,7 @@ import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
-import type { CreateUserInputV2, DbTaskResult, UserCredentials } from "./types";
+import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
 
 /**
  * Signs up a user via the UI.
@@ -51,7 +51,7 @@ Cypress.Commands.add(
  * On success, returns the created user.
  * On failure, throws an error with details.
  */
-Cypress.Commands.add("createUser", (user: CreateUserInputV2) => {
+Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
 	return cy.task("db:createUser", user).then((result) => {
 		// Type guard for result

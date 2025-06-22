@@ -3,7 +3,7 @@
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
 import type { UserEntity } from "../src/lib/db/entities/user";
-import type { CreateUserInputV2, UserCredentials } from "./support/types";
+import type { CreateUserInput, UserCredentials } from "./support/types";
 
 declare global {
 	namespace Cypress {
@@ -55,7 +55,7 @@ declare global {
 			 * On failure, throws an error with details.
 			 * @param user - User data for creation.
 			 */
-			createUser(user: CreateUserInputV2): Chainable<UserEntity>;
+			createUser(user: CreateUserInput): Chainable<UserEntity>;
 
 			/**
 			 * Finds a user in the test database by email.
