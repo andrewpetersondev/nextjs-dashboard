@@ -7,6 +7,9 @@ import { generateMockSessionJWT } from "./session-mock";
 
 /**
  * Credentials required for user login.
+ * @property email - User's email address.
+ * @property password - User's password.
+ * @property username - User's username.
  */
 export interface UserCredentials {
 	email: string;
@@ -16,14 +19,21 @@ export interface UserCredentials {
 
 /**
  * Input type for creating a user in tests.
- * - Omits id and sensitiveData.
- * - Makes role optional and compatible with UserEntity.
+ * Omits id and sensitiveData from UserEntity.
+ * Role is optional and compatible with UserEntity.
  */
 export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
 	role?: UserEntity["role"];
 };
 
-// Sign up a user via UI
+/**
+ * Signs up a user via the UI.
+ * Navigates to the signup page, fills out the form, and submits.
+ * @param user - User credentials (username, email, password).
+ * @returns Chainable<void>
+ * @example
+ *   cy.signup({ username, email, password });
+ */
 Cypress.Commands.add(
 	"signup",
 	(user: Pick<UserEntity, "username" | "email" | "password">) => {
@@ -36,7 +46,16 @@ Cypress.Commands.add(
 	},
 );
 
-// Log in a user via UI
+/**
+ * Logs in a user via the UI.
+ * Navigates to the login page, fills out the form, and submits.
+ * Optionally asserts successful login by checking dashboard redirect.
+ * @param user - User credentials (username, email, password).
+ * @param options - Optional settings (e.g., assertSuccess).
+ * @returns Chainable<void>
+ * @example
+ *   cy.login({ email, password, username }, { assertSuccess: true });
+ */
 Cypress.Commands.add(
 	"login",
 	(
@@ -55,47 +74,80 @@ Cypress.Commands.add(
 	},
 );
 
-// Create a user in the DB
+/**
+ * Creates a user in the test database.
+ * Always deletes the user first to avoid unique constraint errors.
+ * @param user - User data for creation.
+ * @returns Chainable<UserEntity | null> Resolves to the created user object or null if not created.
+ * @example
+ *   cy.createUser({ email, password, username, ... });
+ */
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
-	// Always delete the user first to avoid unique constraint errors
-	cy.task("db:deleteUser", user.email).then(() => {
+	return cy.task("db:deleteUser", user.email).then(() =>
 		cy.task("db:createUser", user).then((result) => {
 			cy.log("db:createUser result", result);
-		});
+			return cy.wrap(result?.data ?? null);
+		}),
+	);
+});
+
+/**
+ * Finds a user in the test database by email.
+ * @param email - The user's email address.
+ * @returns Chainable<UserEntity | null> Resolves to the found user or null if not found.
+ * @example
+ *   cy.findUser("test@example.com");
+ */
+Cypress.Commands.add("findUser", (email: string) => {
+	cy.log("Finding test user", email);
+	return cy.task("db:findUser", email).then((result) => {
+		cy.log("Found user", result);
+		return cy.wrap(result?.data ?? null);
 	});
 });
 
-// Find a user in the DB
-Cypress.Commands.add("findUser", (email: string) => {
-	cy.log("Finding test user", email);
-	cy.task("db:findUser", email).then((result) => cy.log("Found user", result));
-});
-
-// Update a user in the DB
+/**
+ * Updates a user in the test database.
+ * @param email - The user's email address.
+ * @param updates - Partial user data to update.
+ * @returns Chainable<string | null> Resolves to the updated user's email or null if not found.
+ * @example
+ *   cy.updateUser("test@example.com", { username: "newName" });
+ */
 Cypress.Commands.add(
 	"updateUser",
 	(email: string, updates: Partial<UserEntity>) => {
 		cy.log("Updating test user", email, updates);
-		cy.task("db:updateUser", { email, updates }).then((result) =>
-			cy.log("db:updateUser result", result),
-		);
+		return cy.task("db:updateUser", { email, updates }).then((result) => {
+			cy.log("db:updateUser result", result);
+			return cy.wrap(result?.data?.email ?? null);
+		});
 	},
 );
 
-// Delete a user from the DB
+/**
+ * Deletes a user from the test database by email.
+ * @param email - The user's email address.
+ * @returns Chainable<string | null> Resolves to the deleted user's email or null if not found.
+ * @example
+ *   cy.deleteUser("test@example.com");
+ */
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("deleteUser", email);
-	cy.task("db:deleteUser", email).then((result) =>
-		// log does not appear in cypress ui or terminal
-		cy.log("db:deleteUser result", result),
-	);
+	return cy.task("db:deleteUser", email).then((result) => {
+		cy.log("db:deleteUser result", result);
+		return cy.wrap(result?.data?.email ?? null);
+	});
 });
 
 /**
  * Caches and restores a user's login session using cy.session.
  * Ensures fast, reliable authentication for E2E tests.
- * @param user - User credentials for login
+ * @param user - User credentials for login.
+ * @returns Chainable<void>
+ * @example
+ *   cy.loginSession({ email, password, username });
  */
 Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 	cy.session(
@@ -134,18 +186,20 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 
 /**
  * Sets a valid mock session cookie for the given user.
- * Use only in Cypress E2E tests.
+ * Only for use in Cypress E2E tests.
+ * Uses a static secret and generates a JWT for the session.
  * @param userId - The user's unique identifier.
- * @param role - The user's role.
+ * @param role - The user's role (default: "user").
+ * @returns Chainable<void>
+ * @example
+ *   cy.setMockSessionCookie("user-123", "admin");
  */
 Cypress.Commands.add(
 	"setMockSessionCookie",
 	(userId: string, role: UserRole = "user") => {
-		// Use cy.then to handle the async promise and avoid floating promises
 		cy.then(async () => {
 			const token = await generateMockSessionJWT(userId, role);
 
-			// Log the session token for debugging and visibility
 			Cypress.log({
 				consoleProps: () => ({ role, token, userId }),
 				message: [`userId: ${userId}`, `role: ${role}`, `token: ${token}`],
@@ -154,7 +208,7 @@ Cypress.Commands.add(
 
 			cy.setCookie(SESSION_COOKIE_NAME, token, {
 				httpOnly: false,
-				path: "/", // Cypress cannot set httpOnly cookies
+				path: "/",
 				sameSite: "lax",
 				secure: false,
 			});
@@ -162,6 +216,17 @@ Cypress.Commands.add(
 	},
 );
 
+/**
+ * Logs in a user via the login form using Cypress.
+ * Designed for Next.js App Router (v15+) with strict typing and best practices.
+ * Hides password from Cypress logs for security.
+ * Optionally asserts login success by checking dashboard redirect.
+ * @param user - User credentials (email, password, username).
+ * @param options - Optional settings (e.g., assertSuccess).
+ * @returns Chainable<void>
+ * @example
+ *   cy.loginNew({ email, password, username }, { assertSuccess: true });
+ */
 Cypress.Commands.add(
 	"loginNew",
 	(
@@ -170,10 +235,8 @@ Cypress.Commands.add(
 	) => {
 		cy.get('input[name="email"]').type(user.email);
 		cy.get('input[name="password"]').type(user.password, { log: false }); // Hide password in logs
-		cy.get('[data-cy="login-submit-button"]').click(); // <-- Use unique selector
+		cy.get('[data-cy="login-submit-button"]').click();
 
-		// junk comment
-		// Optionally assert login success
 		if (options?.assertSuccess) {
 			cy.url().should("include", "/dashboard");
 			cy.contains(`Dashboard`);
@@ -182,9 +245,9 @@ Cypress.Commands.add(
 );
 
 /**
- * @deprecated
- ** Sets a valid session cookie for the given user.
- **  mimics functions encrypt and createSession
+ * @deprecated Use setMockSessionCookie instead.
+ * Sets a valid session cookie for the given user.
+ * Mimics functions encrypt and createSession.
  * @param userId - The user's unique identifier.
  * @param role - The user's role.
  */
@@ -196,7 +259,7 @@ Cypress.Commands.add(
 // 		encrypt(payload).then((token) => {
 // 			cy.setCookie(SESSION_COOKIE_NAME, token, {
 // 				expiry: expiresAt,
-// 				httpOnly: false, // Cypress cannot set httpOnly cookies, but this is fine for E2E
+//         httpOnly: false,
 // 				path: "/",
 // 				sameSite: "lax",
 // 				secure: Cypress.env("NODE_ENV") === "production",

@@ -1,5 +1,5 @@
 import { SESSION_COOKIE_NAME } from "../../../src/lib/auth/constants";
-import type { UserEntity } from "../../..//src/lib/db/entities/user";
+import type { UserEntity } from "../../../src/lib/db/entities/user";
 import type { CreateUserInput, UserCredentials } from "../../support/commands";
 
 // Test user credentials
@@ -33,7 +33,7 @@ describe("loginSession command", () => {
 		expect(createdUser?.id, "User should have an id").to.exist;
 
 		// Use the real userId from the DB
-		cy.setMockSessionCookie(createdUser!.id, "user");
+		cy.setMockSessionCookie(createdUser.id, "user");
 		cy.visit("/dashboard");
 		cy.contains("Dashboard").should("be.visible");
 	});

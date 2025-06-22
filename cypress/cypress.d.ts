@@ -9,7 +9,12 @@ declare global {
 	namespace Cypress {
 		interface Chainable {
 			/**
-			 * Mount a React component.
+			 * Mounts a React component for component testing.
+			 * @param component - The React node to mount.
+			 * @param options - Optional mount configuration.
+			 * @returns Chainable containing the mount result.
+			 * @example
+			 *   cy.mount(<MyComponent />);
 			 */
 			mount(
 				component: ReactNode,
@@ -17,7 +22,12 @@ declare global {
 			): Chainable<MountReturn>;
 
 			/**
-			 * Log in a user via UI.
+			 * Logs in a user via the UI using the provided credentials.
+			 * @param user - User credentials (email, password, username).
+			 * @param options - Optional settings (e.g., assertSuccess to verify dashboard redirect).
+			 * @returns Chainable<void>
+			 * @example
+			 *   cy.login({ email, password, username }, { assertSuccess: true });
 			 */
 			login(
 				user: Pick<UserEntity, "email" | "password" | "username">,
@@ -25,53 +35,86 @@ declare global {
 			): Chainable<void>;
 
 			/**
-			 * Logs in a user and caches the session for fast, reliable authentication.
-			 * @param user - User credentials
+			 * Logs in a user and caches the session for fast, reliable authentication across tests.
+			 * Uses Cypress session caching and validates session state.
+			 * @param user - User credentials (email, password, username).
+			 * @returns Chainable<void>
+			 * @example
+			 *   cy.loginSession({ email, password, username });
 			 */
 			loginSession(user: UserCredentials): Chainable<void>;
 
 			/**
 			 * Sets a valid mock session cookie for the given user.
-			 * Use only in Cypress E2E tests.
+			 * Only for use in Cypress E2E tests.
 			 * @param userId - The user's unique identifier.
 			 * @param role - The user's role (default: "user").
+			 * @returns Chainable<void>
+			 * @example
+			 *   cy.setMockSessionCookie("user-123", "admin");
 			 */
 			setMockSessionCookie(userId: string, role?: UserRole): Chainable<void>;
 
 			/**
-			 * Sign up a user via UI.
+			 * Signs up a user via the UI.
+			 * @param user - User credentials (email, password, username).
+			 * @returns Chainable<void>
+			 * @example
+			 *   cy.signup({ email, password, username });
 			 */
 			signup(
 				user: Pick<UserEntity, "email" | "password" | "username">,
 			): Chainable<void>;
 
 			/**
-			 * Create a user in the DB.
+			 * Creates a user in the test database.
+			 * @param user - User data for creation.
+			 * @returns Chainable<UserEntity | null> Resolves to the created user object or null if not created.
+			 * @example
+			 *   cy.createUser({ email, password, username, ... });
 			 */
-			createUser(user: CreateUserInput): Chainable<string>;
+			createUser(user: CreateUserInput): Chainable<UserEntity | null>;
 
 			/**
-			 * Find a user in the DB.
+			 * Finds a user in the test database by email.
+			 * @param email - The user's email address.
+			 * @returns Chainable<UserEntity | null> Resolves to the found user or null if not found.
+			 * @example
+			 *   cy.findUser("test@example.com");
 			 */
 			findUser(email: string): Chainable<UserEntity | null>;
 
 			/**
-			 * Update a user in the DB.
+			 * Updates a user in the test database.
+			 * @param email - The user's email address.
+			 * @param updates - Partial user data to update.
+			 * @returns Chainable<string | null> Resolves to the updated user's email or null if not found.
+			 * @example
+			 *   cy.updateUser("test@example.com", { username: "newName" });
 			 */
 			updateUser(
 				email: string,
 				updates: Partial<UserEntity>,
-			): Chainable<string>;
+			): Chainable<string | null>;
 
 			/**
-			 * Delete a user from the DB.
+			 * Deletes a user from the test database by email.
+			 * @param email - The user's email address.
+			 * @returns Chainable<string | null> Resolves to the deleted user's email or null if not found.
+			 * @example
+			 *   cy.deleteUser("test@example.com");
 			 */
-			deleteUser(email: string): Chainable<string>;
+			deleteUser(email: string): Chainable<string | null>;
 
 			/**
-			 * Log in a user via UI (new implementation).
-			 * @param user - User credentials
-			 * @param options - Optional assertion
+			 * Logs in a user via the login form using Cypress.
+			 * Designed for Next.js App Router (v15+) with strict typing and best practices.
+			 * Hides password from Cypress logs for security.
+			 * @param user - User credentials (email, password, username).
+			 * @param options - Optional settings (e.g., assertSuccess to verify dashboard redirect).
+			 * @returns Chainable<void>
+			 * @example
+			 *   cy.loginNew({ email, password, username }, { assertSuccess: true });
 			 */
 			loginNew(
 				user: Pick<UserEntity, "email" | "password" | "username">,
@@ -79,7 +122,7 @@ declare global {
 			): Chainable<void>;
 
 			/**
-			 * @deprecated
+			 * @deprecated Use setMockSessionCookie instead.
 			 * Sets a valid session cookie for the given user.
 			 * @param userId - The user's unique identifier.
 			 * @param role - The user's role.
