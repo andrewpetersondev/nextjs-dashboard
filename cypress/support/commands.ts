@@ -1,4 +1,27 @@
-import type { UserEntity } from "@/src/lib/db/entities/user";
+/// <reference types="cypress" />
+
+import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
+import type { UserEntity } from "../../src/lib/db/entities/user";
+import type { UserRole } from "../../src/lib/definitions/enums";
+import { generateMockSessionJWT } from "./session-mock";
+
+/**
+ * Credentials required for user login.
+ */
+export interface UserCredentials {
+	email: string;
+	password: string;
+	username: string;
+}
+
+/**
+ * Input type for creating a user in tests.
+ * - Omits id and sensitiveData.
+ * - Makes role optional and compatible with UserEntity.
+ */
+export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
+	role?: UserEntity["role"];
+};
 
 // Sign up a user via UI
 Cypress.Commands.add(
@@ -33,7 +56,7 @@ Cypress.Commands.add(
 );
 
 // Create a user in the DB
-Cypress.Commands.add("createUser", (user: UserEntity) => {
+Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
 	// Always delete the user first to avoid unique constraint errors
 	cy.task("db:deleteUser", user.email).then(() => {
@@ -68,6 +91,76 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 		cy.log("db:deleteUser result", result),
 	);
 });
+
+/**
+ * Caches and restores a user's login session using cy.session.
+ * Ensures fast, reliable authentication for E2E tests.
+ * @param user - User credentials for login
+ */
+Cypress.Commands.add("loginSession", (user: UserCredentials) => {
+	cy.session(
+		user.email, // Use email as unique session key
+		() => {
+			cy.visit("/login");
+			cy.get('[data-cy="login-email-input"]').type(user.email);
+			cy.get('[data-cy="login-password-input"]').type(user.password, {
+				log: true,
+			});
+			cy.get('[data-cy="login-submit-button"]').click();
+
+			// Wait for login to complete and session to be set
+			cy.url().should("include", "/dashboard");
+
+			// Validate session is set in localStorage
+			cy.window().then((win) => {
+				const session = win.localStorage.getItem(SESSION_COOKIE_NAME);
+				expect(session, `Session key ${SESSION_COOKIE_NAME} should exist`).to
+					.exist;
+			});
+		},
+		{
+			cacheAcrossSpecs: true,
+			validate: () => {
+				// Ensure session is still valid before restoring
+				cy.window().then((win) => {
+					const session = win.localStorage.getItem(SESSION_COOKIE_NAME);
+					expect(session, `Session key ${SESSION_COOKIE_NAME} should exist`).to
+						.exist;
+				});
+			}, // Share session across spec files
+		},
+	);
+});
+
+/**
+ * Sets a valid mock session cookie for the given user.
+ * Use only in Cypress E2E tests.
+ * @param userId - The user's unique identifier.
+ * @param role - The user's role.
+ */
+Cypress.Commands.add(
+	"setMockSessionCookie",
+	(userId: string, role: UserRole = "user") => {
+		// Use cy.then to handle the async promise and avoid floating promises
+		cy.then(async () => {
+			const token = await generateMockSessionJWT(userId, role);
+
+			// Log the session token for debugging and visibility
+			Cypress.log({
+				consoleProps: () => ({ role, token, userId }),
+				message: [`userId: ${userId}`, `role: ${role}`, `token: ${token}`],
+				name: "setMockSessionCookie",
+			});
+
+			cy.setCookie(SESSION_COOKIE_NAME, token, {
+				httpOnly: false,
+				path: "/", // Cypress cannot set httpOnly cookies
+				sameSite: "lax",
+				secure: false,
+			});
+		});
+	},
+);
 
 Cypress.Commands.add(
 	"loginNew",

@@ -15,6 +15,9 @@ export default defineConfig({
 	},
 	e2e: {
 		baseUrl: "http://localhost:3000",
+		env: {
+			SESSION_SECRET: process.env.SESSION_SECRET,
+		},
 		screenshotOnRunFailure: true,
 		setupNodeEvents(on, config) {
 			on("task", dbTasks);

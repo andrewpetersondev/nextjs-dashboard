@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
+import type { CreateUserInput } from "./commands";
 
 export type DbTaskResult<T> = {
 	success: boolean;
@@ -15,7 +16,7 @@ export type DbTaskResult<T> = {
  */
 export const dbTasks = {
 	"db:createUser": async (
-		user: UserEntity,
+		user: CreateUserInput,
 	): Promise<DbTaskResult<UserEntity>> => {
 		try {
 			const [insertedUser] = await testDB

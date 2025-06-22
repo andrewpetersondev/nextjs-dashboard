@@ -2,7 +2,8 @@
 
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import type { UserEntity } from "@/src/lib/db/entities/user";
+import type { UserEntity } from "../src/lib/db/entities/user";
+import type { CreateUserInput, UserCredentials } from "./support/commands";
 
 declare global {
 	namespace Cypress {
@@ -24,6 +25,20 @@ declare global {
 			): Chainable<void>;
 
 			/**
+			 * Logs in a user and caches the session for fast, reliable authentication.
+			 * @param user - User credentials
+			 */
+			loginSession(user: UserCredentials): Chainable<void>;
+
+			/**
+			 * Sets a valid mock session cookie for the given user.
+			 * Use only in Cypress E2E tests.
+			 * @param userId - The user's unique identifier.
+			 * @param role - The user's role (default: "user").
+			 */
+			setMockSessionCookie(userId: string, role?: UserRole): Chainable<void>;
+
+			/**
 			 * Sign up a user via UI.
 			 */
 			signup(
@@ -33,7 +48,7 @@ declare global {
 			/**
 			 * Create a user in the DB.
 			 */
-			createUser(user: UserEntity): Chainable<string>;
+			createUser(user: CreateUserInput): Chainable<string>;
 
 			/**
 			 * Find a user in the DB.
