@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import type { CreateUserInput, DbTaskResult } from "@/support/types";
-import type { UserEntity } from "../../src/lib/db/entities/user";
+import type { UserEntity } from "@/src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
+import type { CreateUserInput, DbTaskResult } from "./types";
 
 /**
  * Cypress database task handlers for E2E tests.
@@ -12,8 +12,8 @@ import { testDB } from "../../src/lib/db/test-database";
 export const dbTasks = {
 	/**
 	 * Creates a user in the test database.
-	 * @param user - The user data to insert.
-	 * @returns The created user entity, or an error if creation fails.
+	 * Always returns a result object with a valid user on success.
+	 * On failure, returns a custom error result.
 	 */
 	"db:createUser": async (
 		user: CreateUserInput,
@@ -23,12 +23,25 @@ export const dbTasks = {
 				.insert(users)
 				.values(user)
 				.returning();
-			console.log("db:createUser inserted user", insertedUser);
-			return { data: insertedUser ?? null, success: !!insertedUser };
+			if (!insertedUser) {
+				// Defensive: should not happen, but handle gracefully
+				return {
+					data: null,
+					error: "USER_CREATION_FAILED",
+					errorMessage: "User could not be created.",
+					success: false,
+				};
+			}
+			return { data: insertedUser, success: true };
 		} catch (error) {
 			// Log error for debugging in CI
 			console.error("db:createUser error", error);
-			return { data: null, error: (error as Error).message, success: false };
+			return {
+				data: null,
+				error: "DB_ERROR",
+				errorMessage: (error as Error).message,
+				success: false,
+			};
 		}
 	},
 

@@ -1,6 +1,6 @@
-import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "@/support/types";
 import { SESSION_COOKIE_NAME } from "../../../src/lib/auth/constants";
 import type { UserEntity } from "../../../src/lib/db/entities/user";
+import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "../../support/types";
 
 describe("loginSession command", () => {
 	let createdUser: UserEntity | null = null; // Store created user for use in tests

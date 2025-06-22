@@ -1,4 +1,4 @@
-import type { UserEntity } from "@/src/lib/db/entities/user";
+import type { UserEntity } from "../../src/lib/db/entities/user";
 
 /**
  * Credentials required for user login.
@@ -31,14 +31,15 @@ export type CreateUserInput = Omit<UserEntity, "id" | "sensitiveData"> & {
 export type DbTaskResult<T> = {
 	success: boolean;
 	data: T | null;
+	errorMessage?: string;
 	error?: string;
 };
 
 // Test user credentials
 export const TEST_USER_CREDENTIALS: UserCredentials = {
-	email: "test-login-session@example.com",
+	email: "sessionTest@example.com",
 	password: "TestPassword123!",
-	username: "testloginsession",
+	username: "sessionTest",
 };
 
 export const TEST_USER_DB: CreateUserInput = {

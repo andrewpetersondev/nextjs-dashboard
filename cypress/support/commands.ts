@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
-import type { CreateUserInput, UserCredentials } from "@/support/types";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
 import { generateMockSessionJWT } from "./session-mock";
+import type { CreateUserInput, DbTaskResult, UserCredentials } from "./types";
 
 /**
  * Signs up a user via the UI.
@@ -56,20 +56,25 @@ Cypress.Commands.add(
 
 /**
  * Creates a user in the test database.
- * Always deletes the user first to avoid unique constraint errors.
- * @param user - User data for creation.
- * @returns Chainable<UserEntity | null> Resolves to the created user object or null if not created.
- * @example
- *   cy.createUser({ email, password, username, ... });
+ * On success, returns the created user.
+ * On failure, throws an error with details.
  */
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
-	return cy.task("db:deleteUser", user.email).then(() =>
-		cy.task("db:createUser", user).then((result) => {
-			cy.log("db:createUser result", result);
-			return cy.wrap(result?.data ?? null);
-		}),
-	);
+	return cy.task("db:createUser", user).then((result) => {
+		// Type guard for result
+		if (!result || typeof result !== "object" || !("success" in result)) {
+			throw new Error("[createUser] Invalid result from db:createUser task");
+		}
+		// Defensive: ensure result matches expected shape
+		const dbResult = result as DbTaskResult<UserEntity>;
+		if (!dbResult.success || !dbResult.data) {
+			throw new Error(
+				`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+			);
+		}
+		return dbResult.data; // Cypress will wrap this in a Chainable
+	});
 });
 
 /**
