@@ -1,8 +1,4 @@
-/**
- * Logs in a user using the UI.
- * @param user - User credentials
- */
-export const loginViaUI = (user: { email: string; password: string }) => {
+export const _loginViaUI = (user: { email: string; password: string }) => {
 	cy.visit("/login");
 	cy.get('[data-cy="login-email-input"]').type(user.email);
 	cy.get('[data-cy="login-password-input"]').type(user.password, {

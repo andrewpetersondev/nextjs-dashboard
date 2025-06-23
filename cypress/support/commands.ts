@@ -4,6 +4,15 @@
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import type { UserRole } from "../../src/lib/definitions/enums";
+import {
+	LOGIN_EMAIL_INPUT,
+	LOGIN_PASSWORD_INPUT,
+	LOGIN_SUBMIT_BUTTON,
+	SIGNUP_EMAIL_INPUT,
+	SIGNUP_PASSWORD_INPUT,
+	SIGNUP_SUBMIT_BUTTON,
+	SIGNUP_USERNAME_INPUT,
+} from "./constants";
 import { generateMockSessionJWT } from "./session-mock";
 import type {
 	CreateUserInput,
@@ -12,14 +21,6 @@ import type {
 	SignupUserInput,
 	UserCredentials,
 } from "./types";
-
-const SIGNUP_USERNAME_INPUT = '[data-cy="signup-username-input"]';
-const SIGNUP_EMAIL_INPUT = '[data-cy="signup-email-input"]';
-const SIGNUP_PASSWORD_INPUT = '[data-cy="signup-password-input"]';
-const SIGNUP_SUBMIT_BUTTON = '[data-cy="signup-submit-button"]';
-const LOGIN_EMAIL_INPUT = '[data-cy="login-email-input"]';
-const LOGIN_PASSWORD_INPUT = '[data-cy="login-password-input"]';
-const LOGIN_SUBMIT_BUTTON = '[data-cy="login-submit-button"]';
 
 Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.log("Signing up user", user.email);

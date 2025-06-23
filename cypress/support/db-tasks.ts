@@ -6,13 +6,14 @@ import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
+import {
+	ERROR_DB,
+	ERROR_USER_CREATION_FAILED,
+	ERROR_USER_DELETION_FAILED,
+	ERROR_USER_NOT_FOUND,
+	ERROR_USER_UPDATE_FAILED,
+} from "./constants";
 import type { CreateUserInput, DbTaskResult } from "./types";
-
-const ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";
-const ERROR_USER_CREATION_FAILED = "USER_CREATION_FAILED";
-const ERROR_DB = "DB_ERROR";
-const ERROR_USER_UPDATE_FAILED = "USER_UPDATE_FAILED";
-const ERROR_USER_DELETION_FAILED = "USER_DELETION_FAILED";
 
 export async function createUserTask(
 	user: CreateUserInput,

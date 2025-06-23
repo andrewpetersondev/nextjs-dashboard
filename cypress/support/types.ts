@@ -1,5 +1,8 @@
+// cypress/support/types.ts
+
 import type { UserEntity } from "../../src/lib/db/entities/user";
 
+// --- User Types ---
 export interface BaseUserFields {
 	email: string;
 	password: string;
@@ -7,7 +10,6 @@ export interface BaseUserFields {
 }
 
 export type UserCredentials = BaseUserFields;
-
 export type LoginCredentials = Pick<BaseUserFields, "email" | "password">;
 
 export type CreateUserInput = BaseUserFields & {
@@ -16,6 +18,7 @@ export type CreateUserInput = BaseUserFields & {
 
 export interface SignupUserInput extends BaseUserFields {}
 
+// --- DB Task Result Type ---
 export type DbTaskResult<T> = {
 	success: boolean;
 	data: T | null;
@@ -23,6 +26,7 @@ export type DbTaskResult<T> = {
 	error?: string;
 };
 
+// --- Test User Constants ---
 export const TEST_USER_CREDENTIALS: UserCredentials = {
 	email: "sessionTest@example.com",
 	password: "TestPassword123!",
