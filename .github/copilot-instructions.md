@@ -11,15 +11,13 @@
 - Use TypeScript generics to create flexible and reusable code.
 - Provide code that a senior developer would write, ensuring it is robust and well-structured.
 - Avoid using deprecated APIs and patterns. Always use the latest features and best practices. Always check the latest documentation for updates. Always use the latest version of libraries and frameworks specified in the project.
-- Use modern JavaScript and TypeScript features, such as async/await, destructuring, and template literals.
+- Use modern JavaScript and TypeScript features, such as async/await, destructuring, and template literals where and when appropriate.
 - Use functional programming principles where appropriate.
-- Use TypeScript interfaces and types to define data structures.
+- Use TypeScript interfaces and types to define data structures and props.
 - Use descriptive variable and function names.
 - Avoid using magic numbers or strings; use constants instead.
-- Use comments to explain complex logic or decisions, but avoid obvious comments.
 - Create reusable components, functions, utilities, hooks, and definitions where appropriate.
 - Create documentation for all APIs, components, and utilities.
-- Use import aliases for cleaner imports.
 - Use ES Modules (ESM) syntax for imports and exports.
 - Provide cypress code that accommodates Next.js, Typescript, ESM, and the latest version of Next.js.
 
@@ -38,7 +36,6 @@
   - PostgreSQL for the database
   - Server components and client components, with preferred usage of server components
   - TypeScript for all components and utilities
-  - Import aliases for cleaner imports
   - Cypress for end-to-end and component testing
   - Hashicorp Vault for secrets management
   - pnpm for package management
@@ -50,7 +47,6 @@
   - Turbopack for builds
   - PostgreSQL v17+
   - Drizzle ORM v0.4+
-  - Import aliases enabled
   - Cypress v14.5+ for testing
 
 ## Additional Instructions
