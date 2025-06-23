@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+/// <reference path="../cypress.d.ts" />
 
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
@@ -187,41 +188,51 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 });
 
 /**
- * Idempotently deletes a user from the test database by email.
- * Does not throw if the user does not exist.
- * Returns null if user was not found, or the deleted user entity if deleted.
+ * Returns: Chainable<UserEntity | null>
+ * Does not throw if the user does not exist (idempotent).
+ * Throws for all other errors (robust error handling).
+ * Always returns a Cypress chain for composability.
  * This is safe for use in beforeEach/afterEach hooks.
  */
-Cypress.Commands.add("ensureUserDeleted", (email: string) => {
-	cy.log("ensureUserDeleted", email);
-	// Always return the Cypress chain for proper command queueing
-	return cy
-		.task<DbTaskResult<UserEntity>>("db:deleteUser", email)
-		.then((result) => {
-			// Type guard for result shape
-			if (!result || typeof result !== "object" || !("success" in result)) {
-				throw new Error(
-					"[ensureUserDeleted] Invalid result from db:deleteUser task",
-				);
-			}
-			// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
-			if (
-				result.error === "USER_NOT_FOUND" ||
-				(result.success === false && result.error === "USER_NOT_FOUND")
-			) {
-				cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
-				return cy.wrap(null); // <-- Wrap in cy.wrap for Cypress chain
-			}
-			// Throw for all other errors
-			if (!result.success && result.error) {
-				throw new Error(
-					`[ensureUserDeleted] ${result.error}: ${result.errorMessage ?? ""}`,
-				);
-			}
-			cy.log("[ensureUserDeleted] dbResult = ", result);
-			return cy.wrap(result.data ?? null); // <-- Wrap in cy.wrap for Cypress chain
-		});
-});
+Cypress.Commands.add(
+	"ensureUserDeleted",
+	(email: string): Cypress.Chainable<UserEntity | null> => {
+		cy.log("ensureUserDeleted", email);
+
+		// Always return the Cypress chain for proper command queueing
+		return cy
+			.task<DbTaskResult<UserEntity>>("db:deleteUser", email)
+			.then((result) => {
+				// Defensive: Validate result shape
+				if (!result || typeof result !== "object" || !("success" in result)) {
+					// question: why throw error here, when return null is more appropriate?
+					// explanation: throwing error is ok inside cy.then()
+					throw new Error(
+						"[ensureUserDeleted] Invalid result from db:deleteUser task",
+					);
+				}
+
+				// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
+				if (
+					result.error === "USER_NOT_FOUND" ||
+					(result.success === false && result.error === "USER_NOT_FOUND")
+				) {
+					cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
+					return cy.wrap(null); // Return null for not found, wrapped for chaining
+				}
+
+				// Throw for all other errors
+				if (!result.success && result.error) {
+					throw new Error(
+						`[ensureUserDeleted] ${result.error}: ${result.errorMessage ?? ""}`,
+					);
+				}
+
+				cy.log("[ensureUserDeleted] dbResult = ", result);
+				return cy.wrap(result.data ?? null); // Return deleted user or null, wrapped for chaining
+			});
+	},
+);
 
 /**
  * Caches and restores a user's login session using cy.session.

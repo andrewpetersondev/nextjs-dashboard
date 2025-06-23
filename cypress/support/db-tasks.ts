@@ -1,3 +1,6 @@
+/// <reference types="cypress" />
+/// <reference path="../cypress.d.ts" />
+
 import { eq } from "drizzle-orm";
 import { SignJWT } from "jose";
 import { JWT_EXPIRATION } from "../../src/lib/auth/constants";
