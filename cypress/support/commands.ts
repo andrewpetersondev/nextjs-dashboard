@@ -87,6 +87,12 @@ Cypress.Commands.add(
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
 	return cy.task("db:createUser", user).then((result) => {
+		// todo: implement the commented out error handling in relavent commands
+		// if (!result.success || !result.data) {
+		// 	throw new Error(
+		// 		`[createUser] ${result.error ?? "Unknown error"}: ${result.errorMessage ?? ""}`
+		// 	);
+		// }
 		// Type guard for result
 		if (!result || typeof result !== "object" || !("success" in result)) {
 			throw new Error("[createUser] Invalid result from db:createUser task");
@@ -187,31 +193,34 @@ Cypress.Commands.add("deleteUser", (email: string) => {
  * This is safe for use in beforeEach/afterEach hooks.
  */
 Cypress.Commands.add("ensureUserDeleted", (email: string) => {
+	cy.log("ensureUserDeleted", email);
 	// Always return the Cypress chain for proper command queueing
-	return cy.task("db:deleteUser", email).then((result) => {
-		// Type guard for result shape
-		if (!result || typeof result !== "object" || !("success" in result)) {
-			throw new Error(
-				"[ensureUserDeleted] Invalid result from db:deleteUser task",
-			);
-		}
-		// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
-		if (
-			result.error === "USER_NOT_FOUND" ||
-			(result.success === false && result.error === "USER_NOT_FOUND")
-		) {
-			cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
-			return cy.wrap(null); // <-- Wrap in cy.wrap for Cypress chain
-		}
-		// Throw for all other errors
-		if (!result.success && result.error) {
-			throw new Error(
-				`[ensureUserDeleted] ${result.error}: ${result.errorMessage ?? ""}`,
-			);
-		}
-		cy.log("[ensureUserDeleted] dbResult = ", result);
-		return cy.wrap(result.data ?? null); // <-- Wrap in cy.wrap for Cypress chain
-	});
+	return cy
+		.task<DbTaskResult<UserEntity>>("db:deleteUser", email)
+		.then((result) => {
+			// Type guard for result shape
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error(
+					"[ensureUserDeleted] Invalid result from db:deleteUser task",
+				);
+			}
+			// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
+			if (
+				result.error === "USER_NOT_FOUND" ||
+				(result.success === false && result.error === "USER_NOT_FOUND")
+			) {
+				cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
+				return cy.wrap(null); // <-- Wrap in cy.wrap for Cypress chain
+			}
+			// Throw for all other errors
+			if (!result.success && result.error) {
+				throw new Error(
+					`[ensureUserDeleted] ${result.error}: ${result.errorMessage ?? ""}`,
+				);
+			}
+			cy.log("[ensureUserDeleted] dbResult = ", result);
+			return cy.wrap(result.data ?? null); // <-- Wrap in cy.wrap for Cypress chain
+		});
 });
 
 /**

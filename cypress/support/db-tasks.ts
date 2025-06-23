@@ -224,5 +224,6 @@ export const dbTasks = {
 	"db:deleteUser": deleteUserTask,
 	"db:findUser": findUserTask,
 	"db:updateUser": updateUserTask,
+	generateMockSessionJWT,
 	logToConsole: logToConsoleTask,
 };
