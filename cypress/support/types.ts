@@ -1,45 +1,21 @@
 import type { UserEntity } from "../../src/lib/db/entities/user";
 
-/**
- * Base fields required for user authentication and creation.
- */
 export interface BaseUserFields {
 	email: string;
 	password: string;
 	username: string;
 }
 
-/**
- * Credentials required for user login and some other operations.
- */
 export type UserCredentials = BaseUserFields;
 
-/**
- * Credentials required for login flows (email + password only).
- * Use this type for login forms and authentication APIs.
- */
 export type LoginCredentials = Pick<BaseUserFields, "email" | "password">;
 
-/**
- * Input type for creating a user in tests.
- */
 export type CreateUserInput = BaseUserFields & {
 	role?: UserEntity["role"];
 };
 
-/**
- * Input type for user signup via UI.
- * Allows for future extension (e.g., termsAccepted, captcha, etc.).
- */
 export interface SignupUserInput extends BaseUserFields {}
 
-/**
- * Generic result type for database tasks executed via Cypress.
- * @template T - The type of the data returned by the task.
- * @property success - Indicates if the operation was successful.
- * @property data - The result data, or null if unsuccessful.
- * @property error - Optional error message if the operation failed.
- */
 export type DbTaskResult<T> = {
 	success: boolean;
 	data: T | null;
@@ -47,7 +23,6 @@ export type DbTaskResult<T> = {
 	error?: string;
 };
 
-// Test user credentials
 export const TEST_USER_CREDENTIALS: UserCredentials = {
 	email: "sessionTest@example.com",
 	password: "TestPassword123!",

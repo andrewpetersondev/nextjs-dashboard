@@ -1,42 +1,30 @@
-// cypress/e2e/auth/login-session.cy.ts
-
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
 import { SESSION_COOKIE_NAME } from "../../../src/lib/auth/constants";
 import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "../../support/types";
 
-// Use constants for selectors and routes
 const DASHBOARD_ROUTE = "/dashboard";
 const DASHBOARD_TEXT = "Dashboard";
 
-// Define a complete test user for DB operations (omit role to use default)
 const TEST_USER = {
 	email: TEST_USER_CREDENTIALS.email,
 	password: TEST_USER_CREDENTIALS.password,
-	username: TEST_USER_CREDENTIALS.username, // Ensure this exists in your types
+	username: TEST_USER_CREDENTIALS.username,
 	// role: "user", // Optional, omitted to use DB default
-};
-
-const LOGIN_CREDENTIALS = {
-	email: TEST_USER.email,
-	password: TEST_USER.password,
 };
 
 describe("loginSession command", () => {
 	before(() => {
-		// Ensure a clean user before all tests (not before each)
 		cy.ensureUserDeleted(TEST_USER.email).then(() => {
 			cy.createUser({ ...TEST_USER });
 		});
 	});
 
 	after(() => {
-		// Clean up after all tests
 		cy.ensureUserDeleted(TEST_USER.email);
 	});
 
-	// Optionally clear cookies/localStorage before each test for isolation
 	beforeEach(() => {
 		cy.clearCookies();
 		cy.clearLocalStorage();

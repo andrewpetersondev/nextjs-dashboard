@@ -1,3 +1,5 @@
+import type { DbTaskResult } from "../types";
+
 export function createDbError<T>(
 	error: string,
 	errorMessage: string,

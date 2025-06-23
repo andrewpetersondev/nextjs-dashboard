@@ -5,7 +5,6 @@ import type { UserEntity } from "../../../src/lib/db/entities/user";
 
 describe("Auth Commands via UI", () => {
 	beforeEach(() => {
-		// Always return the Cypress chain for proper command queueing
 		return cy.fixture("user").then((user) => {
 			return cy.ensureUserDeleted(user.email);
 		});
@@ -26,7 +25,6 @@ describe("Auth Commands via UI", () => {
 
 describe("Auth Commands via Tasks", () => {
 	beforeEach(() => {
-		// Always return the Cypress chain
 		return cy.fixture("user").then((user) => {
 			return cy.ensureUserDeleted(user.email);
 		});
@@ -35,7 +33,6 @@ describe("Auth Commands via Tasks", () => {
 	it("should create a test user via db:createUser", () => {
 		return cy.fixture("user").then((user) => {
 			return cy.task("db:createUser", user).then((result) => {
-				// Type guard and assertion
 				expect(result).to.have.property("success", true);
 				expect(result).to.have.property("data");
 				const createdUser = result.data as UserEntity;

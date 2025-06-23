@@ -3,20 +3,16 @@
 
 import { TEST_USER_CREDENTIALS } from "../../support/types";
 
-// Define a complete test user for DB operations (omit role to use default)
 const TEST_USER = {
 	email: TEST_USER_CREDENTIALS.email,
 	password: TEST_USER_CREDENTIALS.password,
-	username: TEST_USER_CREDENTIALS.username, // Ensure this exists in your types
-	// role: "user", // Optional, omitted to use DB default
+	username: TEST_USER_CREDENTIALS.username,
 };
 
 const LOGIN_CREDENTIALS = {
 	email: TEST_USER.email,
 	password: TEST_USER.password,
 };
-
-// todo: remove async/await in cypress hooks. use cypress promise chaining instead
 
 // describe("UI Login Tests @ /auth/login.cy.ts", () => {
 // 	beforeEach(() => {
@@ -106,11 +102,8 @@ const LOGIN_CREDENTIALS = {
 
 describe("Login E2E", () => {
 	beforeEach(() => {
-		// Always return the Cypress chain for proper async handling
-		// Chainable<undefined>.ensureUserDeleted(email: string): Cypress.Chainable<UserEntity | null>
-		// Chainable<undefined>.createUser(user: CreateUserInput): Cypress.Chainable<UserEntity>
 		return cy.ensureUserDeleted(TEST_USER.email).then(() => {
-			return cy.createUser({ ...TEST_USER }); // username is required, role is optional
+			return cy.createUser({ ...TEST_USER });
 		});
 	});
 
@@ -123,11 +116,4 @@ describe("Login E2E", () => {
 		cy.location("pathname", { timeout: 10000 }).should("include", "/dashboard");
 		cy.get("h1").contains("Dashboard", { timeout: 10000 }).should("be.visible");
 	});
-
-	// it("should log in using loginNew command", () => {
-	// 	cy.visit("/login");
-	// 	cy.loginNew(LOGIN_CREDENTIALS, { assertSuccess: true });
-	// 	cy.location("pathname", { timeout: 10000 }).should("include", "/dashboard");
-	// 	cy.get("h1").contains("Dashboard", { timeout: 10000 }).should("be.visible");
-	// });
 });
