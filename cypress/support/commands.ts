@@ -130,7 +130,7 @@ Cypress.Commands.add("findUser", (email: string) => {
 			);
 		}
 		cy.log("[findUser] dbResult =  ", dbResult);
-		return dbResult.data; // Cypress will wrap this in a Chainable
+		return cy.wrap(dbResult.data); // Cypress will wrap this in a Chainable
 	});
 });
 
@@ -255,45 +255,36 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 			// Wait for login to complete and session to be set
 			cy.url().should("include", "/dashboard");
 
-			// Validate session is set in localStorage
-			cy.window().then((win) => {
-				const session = win.localStorage.getItem(SESSION_COOKIE_NAME);
-				expect(session, `Session key ${SESSION_COOKIE_NAME} should exist`).to
-					.exist;
-			});
+			cy.getCookie(SESSION_COOKIE_NAME).should("exist");
 		},
 		{
 			cacheAcrossSpecs: true,
 			validate: () => {
-				// Ensure session is still valid before restoring
-				cy.window().then((win) => {
-					const session = win.localStorage.getItem(SESSION_COOKIE_NAME);
-					expect(session, `Session key ${SESSION_COOKIE_NAME} should exist`).to
-						.exist;
-				});
-			}, // Share session across spec files
+				cy.getCookie(SESSION_COOKIE_NAME).should("exist");
+			},
 		},
 	);
 });
 
 /**
  * Sets a valid mock session cookie for the given user.
+ * Uses Cypress's command queue and promise chaining for async logic.
  */
 Cypress.Commands.add(
 	"setMockSessionCookie",
 	(userId: string, role: UserRole = "user") => {
-		// todo: avoid mixing async/await with Cypress commands. use cypress promise chaining or wrap async logic in  a cypress task
+		// Always use cy.then to handle async logic in Cypress custom commands
 		cy.then(() => {
-			const token = generateMockSessionJWT(userId, role);
-
-			// Set the cookie with correct options
+			// Return the promise so Cypress waits for it
+			return generateMockSessionJWT(userId, role);
+		}).then((token) => {
+			// Set the cookie with the resolved token
 			cy.setCookie(SESSION_COOKIE_NAME, token, {
 				httpOnly: false, // Cypress cannot set httpOnly cookies
 				path: "/",
 				sameSite: "lax",
 				secure: false,
 			});
-
 			// Assert the cookie is set
 			cy.getCookie(SESSION_COOKIE_NAME).should("exist");
 		});
