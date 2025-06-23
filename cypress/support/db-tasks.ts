@@ -1,9 +1,10 @@
 import { eq } from "drizzle-orm";
 import { SignJWT } from "jose";
 import { JWT_EXPIRATION } from "../../src/lib/auth/constants";
-import type { UserEntity, UserRole } from "../../src/lib/db/entities/user";
+import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
+import type { UserRole } from "../../src/lib/definitions/enums";
 import type { CreateUserInput, DbTaskResult } from "./types";
 
 // Constants for session management
