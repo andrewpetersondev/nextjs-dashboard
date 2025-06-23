@@ -23,10 +23,7 @@ declare global {
 			/**
 			 * Logs in a user via the UI.
 			 */
-			login(
-				user: LoginCredentials,
-				options?: { assertSuccess?: boolean },
-			): Chainable<void>;
+			login(user: LoginCredentials): Chainable<void>;
 
 			/**
 			 * Logs in a user and caches the session for fast, reliable authentication across tests.
@@ -60,7 +57,7 @@ declare global {
 			 * Finds a user in the test database by email.
 			 * @param email - The user's email address.
 			 */
-			findUser(email: string): Chainable<UserEntity | null>;
+			findUser(email: string): Chainable<UserEntity>;
 
 			/**
 			 * Updates a user in the test database.
@@ -70,13 +67,13 @@ declare global {
 			updateUser(
 				email: string,
 				updates: Partial<UserEntity>,
-			): Chainable<string | null>;
+			): Chainable<UserEntity>;
 
 			/**
 			 * Deletes a user from the test database by email.
 			 * @param email - The user's email address.
 			 */
-			deleteUser(email: string): Chainable<string | null>;
+			deleteUser(email: string): Chainable<UserEntity>;
 
 			/**
 			 * Logs in a user via the login form using Cypress.
@@ -86,13 +83,7 @@ declare global {
 				options?: { assertSuccess?: boolean },
 			): Chainable<void>;
 
-			// /**
-			//  * @deprecated Use setMockSessionCookie instead.
-			//  * Sets a valid session cookie for the given user.
-			//  * @param userId - The user's unique identifier.
-			//  * @param role - The user's role.
-			//  */
-			// setSessionCookie(userId: string, role?: UserRole): Chainable<void>;
+			ensureUserDeleted(email: string): Chainable<UserEntity | null>;
 		}
 	}
 }

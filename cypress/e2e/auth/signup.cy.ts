@@ -2,11 +2,11 @@ import { TEST_USER_CREDENTIALS } from "../../support/types";
 
 describe("Signup E2E", () => {
 	beforeEach(() => {
-		cy.deleteUser(TEST_USER_CREDENTIALS.email);
+		return cy.ensureUserDeleted(TEST_USER_CREDENTIALS.email);
 	});
 
 	afterEach(() => {
-		cy.deleteUser(TEST_USER_CREDENTIALS.email);
+		return cy.ensureUserDeleted(TEST_USER_CREDENTIALS.email);
 	});
 
 	it("should sign up a new user via the UI", () => {

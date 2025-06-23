@@ -1,13 +1,20 @@
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "@/src/lib/db/entities/user";
+import { SignJWT } from "jose";
+import { JWT_EXPIRATION } from "../../src/lib/auth/constants";
+import type { UserEntity, UserRole } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
 import type { CreateUserInput, DbTaskResult } from "./types";
+
+// Constants for session management
+const _SESSION_COOKIE_NAME = "session";
 
 // Error code constants for maintainability
 const ERROR_USER_NOT_FOUND = "USER_NOT_FOUND";
 const ERROR_USER_CREATION_FAILED = "USER_CREATION_FAILED";
 const ERROR_DB = "DB_ERROR";
+const ERROR_USER_UPDATE_FAILED = "USER_UPDATE_FAILED";
+const ERROR_USER_DELETION_FAILED = "USER_DELETION_FAILED";
 
 /**
  * Creates a user in the test database.
@@ -17,6 +24,7 @@ export async function createUserTask(
 	user: CreateUserInput,
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
+		console.log("[createUserTask]...");
 		const [insertedUser] = await testDB.insert(users).values(user).returning();
 		if (!insertedUser) {
 			return {
@@ -26,9 +34,10 @@ export async function createUserTask(
 				success: false,
 			};
 		}
+		console.log("[createUserTask] insertedUser = ", insertedUser);
 		return { data: insertedUser, success: true };
 	} catch (error) {
-		console.error("db:createUser error", error);
+		console.error("[createUserTask] error = ", error);
 		return {
 			data: null,
 			error: ERROR_DB,
@@ -45,18 +54,42 @@ export async function deleteUserTask(
 	email: string,
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
+		console.log("[deleteUserTask]...");
 		const [found] = await testDB
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
 		if (!found) {
-			return { data: null, error: ERROR_USER_NOT_FOUND, success: false };
+			return {
+				data: null,
+				error: ERROR_USER_NOT_FOUND,
+				errorMessage: "User could not be found.",
+				success: false,
+			};
 		}
-		await testDB.delete(users).where(eq(users.id, found.id));
-		return { data: found, success: true };
+		console.log("[deleteUserTask] [found] = ", found);
+		const [deletedUser] = await testDB
+			.delete(users)
+			.where(eq(users.id, found.id))
+			.returning();
+		if (!deletedUser) {
+			return {
+				data: null,
+				error: ERROR_USER_DELETION_FAILED,
+				errorMessage: "User could not be deleted.",
+				success: false,
+			};
+		}
+		console.log("[deleteUserTask] [deletedUser] = ", deletedUser);
+		return { data: deletedUser, success: true };
 	} catch (error) {
-		console.error("db:deleteUser error", error);
-		return { data: null, error: (error as Error).message, success: false };
+		console.error("[deleteUserTask] error = ", error);
+		return {
+			data: null,
+			error: ERROR_DB,
+			errorMessage: (error as Error).message,
+			success: false,
+		};
 	}
 }
 
@@ -67,14 +100,29 @@ export async function findUserTask(
 	email: string,
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
+		console.log("[findUserTask]...");
 		const [user] = await testDB
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
-		return { data: user ?? null, success: !!user };
+		if (!user) {
+			return {
+				data: null,
+				error: ERROR_USER_NOT_FOUND,
+				errorMessage: "User could not be found.",
+				success: false,
+			};
+		}
+		console.log("[findUserTask] user = ", user);
+		return { data: user, success: true };
 	} catch (error) {
 		console.error("db:findUser error", error);
-		return { data: null, error: (error as Error).message, success: false };
+		return {
+			data: null,
+			error: ERROR_DB,
+			errorMessage: (error as Error).message,
+			success: false,
+		};
 	}
 }
 
@@ -89,22 +137,43 @@ export async function updateUserTask({
 	updates: Partial<UserEntity>;
 }): Promise<DbTaskResult<UserEntity>> {
 	try {
+		console.log("[updateUserTask]...");
 		const [found] = await testDB
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
 		if (!found) {
-			return { data: null, error: ERROR_USER_NOT_FOUND, success: false };
+			return {
+				data: null,
+				error: ERROR_USER_NOT_FOUND,
+				errorMessage: "User could not be found.",
+				success: false,
+			};
 		}
+		console.log("[updateUserTask] found = ", found);
 		const [updatedUser] = await testDB
 			.update(users)
 			.set(updates)
 			.where(eq(users.id, found.id))
 			.returning();
-		return { data: updatedUser ?? null, success: !!updatedUser };
+		if (!updatedUser) {
+			return {
+				data: null,
+				error: ERROR_USER_UPDATE_FAILED,
+				errorMessage: "User could not be updated.",
+				success: false,
+			};
+		}
+		console.log("[updateUserTask] updatedUser = ", updatedUser);
+		return { data: updatedUser, success: true };
 	} catch (error) {
 		console.error("db:updateUser error", error);
-		return { data: null, error: (error as Error).message, success: false };
+		return {
+			data: null,
+			error: ERROR_DB,
+			errorMessage: (error as Error).message,
+			success: false,
+		};
 	}
 }
 
@@ -116,6 +185,38 @@ export function logToConsoleTask(message: string): DbTaskResult<null> {
 	return { data: null, success: true };
 }
 
+// Mock function to generate a session JWT for testing purposes
+// takes in a userId and role, returns a JWT string
+// this fn will eventually be replaced with a real JWT generation logic
+// this fn will be used to get async/await out of custom command
+
+/**
+ * Generates a mock session JWT and serializes it as a cookie string.
+ * @param userId - The user ID for the session.
+ * @param role - The user role for the session.
+ * @returns The serialized session cookie string.
+ */
+export async function generateMockSessionJWT({
+	userId,
+	role,
+}: {
+	userId: string;
+	role: UserRole;
+}): Promise<string> {
+	// TODO: Replace "mock-jwt" with real JWT generation logic as needed
+	const jwtPayload = {
+		user: {
+			id: userId,
+			role,
+		},
+	};
+	const token = await new SignJWT(jwtPayload)
+		.setProtectedHeader({ alg: "HS256" })
+		.setIssuedAt()
+		.setExpirationTime(JWT_EXPIRATION)
+		.sign("somekey1234567890"); // Replace with your actual secret key
+	return token;
+}
 // Compose all tasks into a single export for Cypress task registration
 export const dbTasks = {
 	"db:createUser": createUserTask,

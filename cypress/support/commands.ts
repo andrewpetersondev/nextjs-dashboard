@@ -12,6 +12,22 @@ import type {
 	UserCredentials,
 } from "./types";
 
+// --- Constants for selectors (avoid magic strings) ---
+const SIGNUP_USERNAME_INPUT = '[data-cy="signup-username-input"]';
+const SIGNUP_EMAIL_INPUT = '[data-cy="signup-email-input"]';
+const SIGNUP_PASSWORD_INPUT = '[data-cy="signup-password-input"]';
+const SIGNUP_SUBMIT_BUTTON = '[data-cy="signup-submit-button"]';
+const LOGIN_EMAIL_INPUT = '[data-cy="login-email-input"]';
+const LOGIN_PASSWORD_INPUT = '[data-cy="login-password-input"]';
+const LOGIN_SUBMIT_BUTTON = '[data-cy="login-submit-button"]';
+// const DASHBOARD_HEADING = "h1";
+
+// --- Strictly typed options interface ---
+// interface LoginOptions {
+// 	assertSuccess?: boolean;
+// 	timeout?: number;
+// }
+
 // =========================
 // UI COMMANDS
 // =========================
@@ -23,34 +39,23 @@ import type {
 Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.log("Signing up user", user.email);
 	cy.visit("/signup");
-	cy.get('[data-cy="signup-username-input"]').type(user.username);
-	cy.get('[data-cy="signup-email-input"]').type(user.email);
-	cy.get('[data-cy="signup-password-input"]').type(user.password, {
-		log: false,
-	});
-	cy.get('[data-cy="signup-submit-button"]').click();
+	cy.get(SIGNUP_USERNAME_INPUT).type(user.username);
+	cy.get(SIGNUP_EMAIL_INPUT).type(user.email);
+	cy.get(SIGNUP_PASSWORD_INPUT).type(user.password);
+	cy.get(SIGNUP_SUBMIT_BUTTON).click();
 });
 
 /**
  * Logs in a user via the UI.
- * Accepts LoginCredentials and optional assertion.
+ * Accepts strictly typed LoginCredentials.
  */
-Cypress.Commands.add(
-	"login",
-	(user: LoginCredentials, options?: { assertSuccess?: boolean }) => {
-		cy.log("Logging in", { email: user.email });
-		cy.visit("/login");
-		cy.get('[data-cy="login-email-input"]').type(user.email);
-		cy.get('[data-cy="login-password-input"]').type(user.password, {
-			log: false,
-		});
-		cy.get('[data-cy="login-submit-button"]').click();
-		if (options?.assertSuccess) {
-			cy.url().should("include", "/dashboard");
-			cy.log("Login successful, redirected to dashboard");
-		}
-	},
-);
+Cypress.Commands.add("login", (user: LoginCredentials) => {
+	cy.log("Logging in user", user.email);
+	cy.visit("/login");
+	cy.get(LOGIN_EMAIL_INPUT).type(user.email);
+	cy.get(LOGIN_PASSWORD_INPUT).type(user.password);
+	cy.get(LOGIN_SUBMIT_BUTTON).click();
+});
 
 /**
  * Logs in a user via the login form using Cypress.
@@ -93,6 +98,7 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 				`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 			);
 		}
+		cy.log("[createUser] dbResult = ", dbResult);
 		return dbResult.data; // Cypress will wrap this in a Chainable
 	});
 });
@@ -103,8 +109,19 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 Cypress.Commands.add("findUser", (email: string) => {
 	cy.log("Finding test user", email);
 	return cy.task("db:findUser", email).then((result) => {
-		cy.log("Found user", result);
-		return cy.wrap(result?.data ?? null);
+		// Type guard for result
+		if (!result || typeof result !== "object" || !("success" in result)) {
+			throw new Error("[findUser] Invalid result from db:findUser task");
+		}
+		// Defensive: ensure result matches expected shape
+		const dbResult = result as DbTaskResult<UserEntity>;
+		if (!dbResult.success || !dbResult.data) {
+			throw new Error(
+				`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+			);
+		}
+		cy.log("[findUser] dbResult =  ", dbResult);
+		return dbResult.data; // Cypress will wrap this in a Chainable
 	});
 });
 
@@ -114,10 +131,25 @@ Cypress.Commands.add("findUser", (email: string) => {
 Cypress.Commands.add(
 	"updateUser",
 	(email: string, updates: Partial<UserEntity>) => {
-		cy.log("Updating test user", email, updates);
+		cy.log("updateUser", email, updates);
+
 		return cy.task("db:updateUser", { email, updates }).then((result) => {
+			// Type guard for result
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error("[updateUser] Invalid result from db:updateUser task");
+			}
+
+			// Defensive: ensure result matches expected shape
+			const dbResult = result as DbTaskResult<UserEntity>;
+
+			if (!dbResult.success || !dbResult.data) {
+				throw new Error(
+					`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+				);
+			}
+
 			cy.log("db:updateUser result", result);
-			return cy.wrap(result?.data?.email ?? null);
+			return dbResult.data; // Cypress will wrap this in a Chainable
 		});
 	},
 );
@@ -127,9 +159,58 @@ Cypress.Commands.add(
  */
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("deleteUser", email);
+
 	return cy.task("db:deleteUser", email).then((result) => {
+		// Type guard for result
+		if (!result || typeof result !== "object" || !("success" in result)) {
+			throw new Error("[deleteUser] Invalid result from db:deleteUser task");
+		}
+
+		// Defensive: ensure result matches expected shape
+		const dbResult = result as DbTaskResult<UserEntity>;
+
+		if (!dbResult.success || !dbResult.data) {
+			throw new Error(
+				`[deleteUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+			);
+		}
+
 		cy.log("db:deleteUser result", result);
-		return cy.wrap(result?.data?.email ?? null);
+		return dbResult.data; // Cypress will wrap this in a Chainable
+	});
+});
+
+/**
+ * Idempotently deletes a user from the test database by email.
+ * Does not throw if the user does not exist.
+ * Returns null if user was not found, or the deleted user entity if deleted.
+ * This is safe for use in beforeEach/afterEach hooks.
+ */
+Cypress.Commands.add("ensureUserDeleted", (email: string) => {
+	// Always return the Cypress chain for proper command queueing
+	return cy.task("db:deleteUser", email).then((result) => {
+		// Type guard for result shape
+		if (!result || typeof result !== "object" || !("success" in result)) {
+			throw new Error(
+				"[ensureUserDeleted] Invalid result from db:deleteUser task",
+			);
+		}
+		// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
+		if (
+			result.error === "USER_NOT_FOUND" ||
+			(result.success === false && result.error === "USER_NOT_FOUND")
+		) {
+			cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
+			return cy.wrap(null); // <-- Wrap in cy.wrap for Cypress chain
+		}
+		// Throw for all other errors
+		if (!result.success && result.error) {
+			throw new Error(
+				`[ensureUserDeleted] ${result.error}: ${result.errorMessage ?? ""}`,
+			);
+		}
+		cy.log("[ensureUserDeleted] dbResult = ", result);
+		return cy.wrap(result.data ?? null); // <-- Wrap in cy.wrap for Cypress chain
 	});
 });
 
@@ -178,8 +259,9 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 Cypress.Commands.add(
 	"setMockSessionCookie",
 	(userId: string, role: UserRole = "user") => {
-		cy.then(async () => {
-			const token = await generateMockSessionJWT(userId, role);
+		// todo: avoid mixing async/await with Cypress commands. use cypress promise chaining or wrap async logic in  a cypress task
+		cy.then(() => {
+			const token = generateMockSessionJWT(userId, role);
 
 			// Set the cookie with correct options
 			cy.setCookie(SESSION_COOKIE_NAME, token, {
