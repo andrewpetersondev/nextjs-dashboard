@@ -80,6 +80,8 @@ Cypress.Commands.add(
 // SERVER/DB/SESSION COMMANDS
 // =========================
 
+// important: always use cy.wrap() to return values from Cypress commands that need to be chained.
+
 /**
  * Creates a user in the test database.
  * On success, returns the created user.
@@ -106,7 +108,7 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 			);
 		}
 		cy.log("[createUser] dbResult = ", dbResult);
-		return dbResult.data; // Cypress will wrap this in a Chainable
+		return cy.wrap(dbResult.data); // HAD TO USE CY.WRAP() OR ELSE beforeEach/afterEach HOOKS WOULD FAIL. This probably broke other tests.
 	});
 });
 
@@ -188,6 +190,7 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 });
 
 /**
+ * @todo: the idea/logic resembles a "Cypress query" so maybe refactor?
  * Returns: Chainable<UserEntity | null>
  * Does not throw if the user does not exist (idempotent).
  * Throws for all other errors (robust error handling).
@@ -215,7 +218,7 @@ Cypress.Commands.add(
 				// Treat "USER_NOT_FOUND" as a successful, idempotent outcome
 				if (
 					result.error === "USER_NOT_FOUND" ||
-					(result.success === false && result.error === "USER_NOT_FOUND")
+					(!result.success && result.error === "USER_NOT_FOUND")
 				) {
 					cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
 					return cy.wrap(null); // Return null for not found, wrapped for chaining

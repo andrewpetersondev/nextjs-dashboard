@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../cypress.d.ts" />
 
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { SignJWT } from "jose";
 import { JWT_EXPIRATION } from "../../src/lib/auth/constants";
@@ -29,7 +30,11 @@ export async function createUserTask(
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
 		console.log("[createUserTask]...");
-		const [insertedUser] = await testDB.insert(users).values(user).returning();
+		const hashedPassword = await bcrypt.hash(user.password, 10); // Use the same salt rounds
+		const [insertedUser] = await testDB
+			.insert(users)
+			.values({ ...user, password: hashedPassword })
+			.returning();
 		if (!insertedUser) {
 			return {
 				data: null,

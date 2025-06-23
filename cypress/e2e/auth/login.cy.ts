@@ -3,10 +3,17 @@
 
 import { TEST_USER_CREDENTIALS } from "../../support/types";
 
-// Use only the required fields for login commands
-const LOGIN_CREDENTIALS = {
+// Define a complete test user for DB operations (omit role to use default)
+const TEST_USER = {
 	email: TEST_USER_CREDENTIALS.email,
 	password: TEST_USER_CREDENTIALS.password,
+	username: TEST_USER_CREDENTIALS.username, // Ensure this exists in your types
+	// role: "user", // Optional, omitted to use DB default
+};
+
+const LOGIN_CREDENTIALS = {
+	email: TEST_USER.email,
+	password: TEST_USER.password,
 };
 
 // todo: remove async/await in cypress hooks. use cypress promise chaining instead
@@ -100,13 +107,15 @@ const LOGIN_CREDENTIALS = {
 describe("Login E2E", () => {
 	beforeEach(() => {
 		// Always return the Cypress chain for proper async handling
-		return cy.ensureUserDeleted(TEST_USER_CREDENTIALS.email).then(() => {
-			return cy.createUser({ ...TEST_USER_CREDENTIALS, role: "user" });
+		// Chainable<undefined>.ensureUserDeleted(email: string): Cypress.Chainable<UserEntity | null>
+		// Chainable<undefined>.createUser(user: CreateUserInput): Cypress.Chainable<UserEntity>
+		return cy.ensureUserDeleted(TEST_USER.email).then(() => {
+			return cy.createUser({ ...TEST_USER }); // username is required, role is optional
 		});
 	});
 
 	afterEach(() => {
-		return cy.ensureUserDeleted(TEST_USER_CREDENTIALS.email);
+		return cy.ensureUserDeleted(TEST_USER.email);
 	});
 
 	it("should log in via the UI", () => {
