@@ -1,3 +1,6 @@
+/// <reference types="cypress" />
+/// <reference path="../../cypress.d.ts" />
+
 import { TEST_USER_CREDENTIALS } from "../../support/types";
 
 // Use only the required fields for login commands

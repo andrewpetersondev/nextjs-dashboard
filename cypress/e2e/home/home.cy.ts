@@ -1,3 +1,6 @@
+/// <reference types="cypress" />
+/// <reference path="../../cypress.d.ts" />
+
 interface ScreenDimensions {
 	width: number;
 	height: number;
