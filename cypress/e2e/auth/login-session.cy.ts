@@ -15,6 +15,7 @@ describe("loginSession command", () => {
 
 	it("should access dashboard with a mock session cookie", () => {
 		expect(createdUser?.id, "User should have an id").to.exist;
+		// biome-ignore lint/style/noNonNullAssertion: createdUser should be defined here
 		cy.setMockSessionCookie(createdUser!.id, "user");
 		cy.visit("/dashboard");
 		cy.contains("Dashboard").should("be.visible");
