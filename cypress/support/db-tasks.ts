@@ -181,7 +181,7 @@ export async function updateUserTask({
 /**
  * Logs a message to the console for debugging in Cypress tasks.
  */
-export function logToConsoleTask(message: string): DbTaskResult<null> {
+export function _logToConsoleTask(message: string): DbTaskResult<null> {
 	console.log("log: ", message);
 	return { data: null, success: true };
 }
@@ -197,7 +197,7 @@ export function logToConsoleTask(message: string): DbTaskResult<null> {
  * @param role - The user role for the session.
  * @returns The serialized session cookie string.
  */
-export async function generateMockSessionJWT({
+export async function _generateMockSessionJWT({
 	userId,
 	role,
 }: {
@@ -218,12 +218,10 @@ export async function generateMockSessionJWT({
 		.sign("somekey1234567890"); // Replace with your actual secret key
 	return token;
 }
-// Compose all tasks into a single export for Cypress task registration
+
 export const dbTasks = {
 	"db:createUser": createUserTask,
 	"db:deleteUser": deleteUserTask,
 	"db:findUser": findUserTask,
 	"db:updateUser": updateUserTask,
-	generateMockSessionJWT,
-	logToConsole: logToConsoleTask,
 };

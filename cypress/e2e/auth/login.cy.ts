@@ -96,6 +96,7 @@ const LOGIN_CREDENTIALS = {
 
 describe("Login E2E", () => {
 	beforeEach(() => {
+		// Always return the Cypress chain for proper async handling
 		return cy.ensureUserDeleted(TEST_USER_CREDENTIALS.email).then(() => {
 			return cy.createUser({ ...TEST_USER_CREDENTIALS, role: "user" });
 		});
