@@ -17,7 +17,7 @@
 		"**/*.tsx",
 		"**/*.cy.ts",
 		"**/*.cy.tsx",
-		"cypress.d.ts",
+		"../cypress.d.ts",
 		"../cypress.config.ts"
 	]
 }

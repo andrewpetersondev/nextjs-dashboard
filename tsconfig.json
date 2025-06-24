@@ -13,5 +13,11 @@
 	},
 	"exclude": ["node_modules", "cypress.config.ts", "cypress", "storage"],
 	"extends": "./tsconfig.base.json",
-	"include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"]
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"./cypress.d.ts",
+		"next-env.d.ts",
+		".next/types/**/*.ts"
+	]
 }

@@ -1,4 +1,5 @@
-// cypress/e2e/__fixtures__/users.ts
+/// <reference types="cypress" />
+/// <reference path="../../../cypress.d.ts" />
 
 import type { CreateUserInput } from "../../support/types";
 

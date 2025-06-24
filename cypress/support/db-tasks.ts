@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { SignJWT } from "jose";
 import { SESSION_DURATION_MS } from "../../src/lib/auth/constants";

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
 import type { UserEntity } from "../../src/lib/db/entities/user";
