@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
+import type { DbTaskResult } from "@/support/types";
 import type { UserEntity } from "../../../src/lib/db/entities/user";
 
 describe("Auth Commands via UI", () => {
@@ -32,39 +33,49 @@ describe("Auth Commands via Tasks", () => {
 
 	it("should create a test user via db:createUser", () => {
 		return cy.fixture("user").then((user) => {
-			return cy.task("db:createUser", user).then((result) => {
-				expect(result).to.have.property("success", true);
-				expect(result).to.have.property("data");
-				const createdUser = result.data as UserEntity;
-				expect(createdUser.email).to.equal(user.email);
-			});
+			return cy
+				.task<DbTaskResult<UserEntity>>("db:createUser", user)
+				.then((result) => {
+					expect(result).to.have.property("success", true);
+					expect(result).to.have.property("data");
+					const createdUser = result.data as UserEntity;
+					expect(createdUser.email).to.equal(user.email);
+				});
 		});
 	});
 
 	it("should retrieve a test user via db:findUser", () => {
 		return cy.fixture("user").then((user) => {
-			return cy.task("db:createUser", user).then(() => {
-				return cy.task("db:findUser", user.email).then((result) => {
-					expect(result).to.have.property("success", true);
-					expect(result).to.have.property("data");
-					const foundUser = result.data as UserEntity;
-					expect(foundUser.email).to.equal(user.email);
+			return cy
+				.task<DbTaskResult<UserEntity>>("db:createUser", user)
+				.then(() => {
+					return cy
+						.task<DbTaskResult<UserEntity>>("db:findUser", user.email)
+						.then((result) => {
+							expect(result).to.have.property("success", true);
+							expect(result).to.have.property("data");
+							const foundUser = result.data as UserEntity;
+							expect(foundUser.email).to.equal(user.email);
+						});
 				});
-			});
 		});
 	});
 
 	it("should delete a test user via db:deleteUser", () => {
 		return cy.fixture("user").then((user) => {
 			return cy.ensureUserDeleted(user.email).then(() => {
-				return cy.task("db:createUser", user).then(() => {
-					return cy.task("db:deleteUser", user.email).then((result) => {
-						expect(result).to.have.property("success", true);
-						expect(result).to.have.property("data");
-						const deletedUser = result.data as UserEntity;
-						expect(deletedUser.email).to.equal(user.email);
+				return cy
+					.task<DbTaskResult<UserEntity>>("db:createUser", user)
+					.then(() => {
+						return cy
+							.task<DbTaskResult<UserEntity>>("db:deleteUser", user.email)
+							.then((result) => {
+								expect(result).to.have.property("success", true);
+								expect(result).to.have.property("data");
+								const deletedUser = result.data as UserEntity;
+								expect(deletedUser.email).to.equal(user.email);
+							});
 					});
-				});
 			});
 		});
 	});
