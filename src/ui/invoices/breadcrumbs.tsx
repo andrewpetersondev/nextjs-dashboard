@@ -26,7 +26,6 @@ export default function Breadcrumbs({
 							key={breadcrumb.href}
 						>
 							<Link href={breadcrumb.href}>{breadcrumb.label}</Link>
-							{/*todo, do i want a null return value to be possible?*/}
 							{index < breadcrumbs.length - 1 ? (
 								<span className="mx-3 inline-block">/</span>
 							) : null}
