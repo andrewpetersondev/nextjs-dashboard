@@ -1,4 +1,7 @@
-import AuthSwitchLink from "../../../src/ui/auth/auth-switch-link";
+/// <reference types="cypress" />
+/// <reference path="../../../cypress.d.ts" />
+
+import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
 
 describe("<AuthSwitchLink />", () => {
 	it("renders prompt and link", () => {

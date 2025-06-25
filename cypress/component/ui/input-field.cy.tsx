@@ -1,7 +1,7 @@
-import {
-	InputField,
-	type InputFieldProps,
-} from "../../../src/ui/auth/input-field";
+/// <reference types="cypress" />
+/// <reference path="../../../cypress.d.ts" />
+
+import { InputField, type InputFieldProps } from "@/src/ui/auth/input-field";
 
 describe("<InputField />", () => {
 	const baseProps: InputFieldProps = {

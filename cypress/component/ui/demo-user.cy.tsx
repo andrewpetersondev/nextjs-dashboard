@@ -1,4 +1,7 @@
-import DemoUser from "../../../src/ui/auth/demo-user";
+/// <reference types="cypress" />
+/// <reference path="../../../cypress.d.ts" />
+
+import DemoUser from "@/src/ui/auth/demo-user";
 
 describe("<DemoUser />", () => {
 	it("renders demo user button", () => {

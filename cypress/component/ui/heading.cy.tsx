@@ -1,4 +1,7 @@
-import Heading from "../../../src/ui/auth/heading";
+/// <reference types="cypress" />
+/// <reference path="../../../cypress.d.ts" />
+
+import Heading from "@/src/ui/auth/heading";
 
 describe("<Heading />", () => {
 	it("renders logo and text", () => {
