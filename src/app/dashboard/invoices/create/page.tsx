@@ -27,7 +27,7 @@ export default async function Page(): Promise<JSX.Element> {
 					{
 						active: true,
 						href: "/dashboard/invoices/create",
-						label: "Create InvoiceEntity",
+						label: "Create Invoice",
 					},
 				]}
 			/>

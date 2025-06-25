@@ -44,7 +44,7 @@ export default async function Page(
 					{
 						active: true,
 						href: `/dashboard/invoices/${id}/edit`,
-						label: "Edit InvoiceEntity",
+						label: "Edit Invoice",
 					},
 				]}
 			/>
