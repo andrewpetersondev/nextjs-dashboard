@@ -41,7 +41,8 @@
 			"!storage",
 			"!.env",
 			"!cypress/**/*.js",
-			"!cypress/**/*.jsx"
+			"!cypress/**/*.jsx",
+			"!cypress.config.js"
 		]
 	},
 	"formatter": {
