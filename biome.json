@@ -39,7 +39,9 @@
 			"!secrets",
 			"!keep",
 			"!storage",
-			"!.env"
+			"!.env",
+			"!cypress/**/*.js",
+			"!cypress/**/*.jsx"
 		]
 	},
 	"formatter": {
