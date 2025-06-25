@@ -4,7 +4,6 @@ import {
 	CheckIcon,
 	ClockIcon,
 	CurrencyDollarIcon,
-	UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState } from "react";
@@ -13,6 +12,8 @@ import type { CustomerField } from "@/src/lib/definitions/customers";
 import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/lib/server-actions/invoices";
 import { Button } from "@/src/ui/button";
+import { Label } from "@/src/ui/components/label";
+import CustomerSelect from "@/src/ui/invoices/customer-select";
 
 export default function EditInvoiceForm({
 	invoice,
@@ -30,36 +31,20 @@ export default function EditInvoiceForm({
 	return (
 		<form action={formAction}>
 			<div className="bg-bg-secondary rounded-md p-4 md:p-6">
+				{/* Customer */}
 				<div className="mb-4">
-					<label className="mb-2 block text-sm font-medium" htmlFor="customer">
-						Choose customer
-					</label>
-					<div className="relative">
-						<select
-							className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
-							defaultValue={invoice.customerId}
-							id="customer"
-							name="customerId"
-						>
-							<option disabled value="">
-								Select a customer
-							</option>
-							{customers.map(
-								(customer: CustomerField): JSX.Element => (
-									<option key={customer.id} value={customer.id}>
-										{customer.name}
-									</option>
-								),
-							)}
-						</select>
-						<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
-					</div>
+					<Label htmlFor="customer" text="Choose customer" />
+					<CustomerSelect
+						customers={customers}
+						dataCy="customer-select"
+						defaultValue={invoice.customerId}
+						disabled={isPending}
+					/>
 				</div>
 
+				{/* Amount */}
 				<div className="mb-4">
-					<label className="mb-2 block text-sm font-medium" htmlFor="amount">
-						Choose an amount
-					</label>
+					<Label htmlFor="amount" text="Choose an amount" />
 					<div className="relative mt-2 rounded-md">
 						<div className="relative">
 							<input
@@ -86,6 +71,7 @@ export default function EditInvoiceForm({
 					</div>
 				</div>
 
+				{/* Invoice Status */}
 				<fieldset>
 					<legend className="mb-2 block text-sm font-medium">
 						Set the invoice status
@@ -128,6 +114,8 @@ export default function EditInvoiceForm({
 					</div>
 				</fieldset>
 			</div>
+
+			{/* Buttons */}
 			<div className="mt-6 flex justify-end gap-4">
 				<Link
 					className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
