@@ -67,7 +67,7 @@
 		"create-auth-secret": "pnpm dlx auth secret",
 		"cyp:clean": "rm -rf cypress.config.js cypress/**/*.js cypress/**/*.js.map",
 		"cyp:component": "pnpm cyp:clean &&  hcp vault-secrets run -- cypress open --component",
-		"cyp:component:headless": "pnpm cyp:clean && cypress run --component",
+		"cyp:component:headless": "pnpm cyp:clean && hcp vault-secrets run -- cypress run --component --headless",
 		"cyp:e2e:headless": "pnpm cyp:clean && hcp vault-secrets run -- pnpm cypress run --e2e",
 		"cyp:e2e:headless:auth": "pnpm cyp:clean &&  hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/**/*.cy.ts'",
 		"cyp:e2e:headless:auth:login:sesssion": "pnpm cyp:clean &&  hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/login-session.cy.ts'",
