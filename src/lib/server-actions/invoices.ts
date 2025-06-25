@@ -17,6 +17,7 @@ import {
 } from "@/src/lib/definitions/invoices";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
 import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper";
+import { actionResult } from "@/src/lib/utils/utils.server";
 
 // todo: unify the return types of these actions
 
@@ -40,22 +41,18 @@ export async function createInvoice(
 		});
 
 		if (!validated.success) {
-			return {
+			return actionResult({
 				errors: validated.error.flatten().fieldErrors,
 				message: "Missing Fields. Failed to Create InvoiceEntity.",
 				success: false,
-			};
+			});
 		}
 
 		// Correctly brand customerId for type safety
 		const customerId = validated.data.customerId as unknown as CustomerId;
-
 		const amount = validated.data.amount;
-
 		const status = validated.data.status;
-
 		const amountInCents: number = amount * 100;
-
 		const date: string = new Date().toISOString().split("T")[0];
 
 		const invoice = await createInvoiceInDB(db, {
@@ -65,24 +62,30 @@ export async function createInvoice(
 			status,
 		});
 
-		// todo: implement { ActionResult}
 		if (!invoice) {
-			return {
-				errors: {},
+			return actionResult({
+				errors: undefined,
 				message: "Failed to create invoice.",
 				success: false,
-			};
+			});
 		}
+
+		return actionResult({
+			errors: undefined,
+			message: "Invoice created successfully.",
+			success: true,
+		});
 	} catch (error) {
 		console.error(error);
-		return {
+		return actionResult({
 			errors: {},
 			message: "Database Error. Failed to Create InvoiceEntity.",
 			success: false,
-		};
+		});
 	}
-	revalidatePath("/dashboard/invoices");
-	redirect("/dashboard/invoices");
+	// FIXME: returning actionResult on success made this unreachable.
+	// revalidatePath("/dashboard/invoices");
+	// redirect("/dashboard/invoices");
 }
 
 /**
