@@ -63,6 +63,7 @@
 		"biome:check": "pnpm biome check --write",
 		"biome:format": "pnpm biome format --write",
 		"build": "next build --turbopack",
+		"clean": "pnpm cyp:clean && rm -rf .next",
 		"commit:check": "pnpm cyp:clean && pnpm biome:check",
 		"create-auth-secret": "pnpm dlx auth secret",
 		"cyp:clean": "rm -rf cypress.config.js cypress/**/*.js cypress/**/*.js.map",
