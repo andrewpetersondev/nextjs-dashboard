@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
+import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "@/support/types";
 import { SESSION_COOKIE_NAME } from "../../../src/lib/auth/constants";
-import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "../../support/types";
 
 const DASHBOARD_ROUTE = "/dashboard";
 const DASHBOARD_TEXT = "Dashboard";
