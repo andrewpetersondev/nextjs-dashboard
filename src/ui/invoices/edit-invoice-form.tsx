@@ -11,7 +11,9 @@ import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
 import type { CustomerField } from "@/src/lib/definitions/customers";
 import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
 import { updateInvoice } from "@/src/lib/server-actions/invoices";
+import { FieldError } from "@/src/ui/auth/field-error";
 import { Button } from "@/src/ui/button";
+import { DollarInput } from "@/src/ui/components/input";
 import { Label } from "@/src/ui/components/label";
 import CustomerSelect from "@/src/ui/invoices/customer-select";
 
@@ -47,27 +49,32 @@ export default function EditInvoiceForm({
 					<Label htmlFor="amount" text="Choose an amount" />
 					<div className="relative mt-2 rounded-md">
 						<div className="relative">
-							<input
-								aria-describedby="customer-error"
-								className="peer border-bg-accent placeholder:text-text-primary block w-full rounded-md border py-2 pl-10 text-sm outline-2"
+							<DollarInput
+								ariaDescribedBy="customer-error"
+								className=""
+								dataCy="amount-input"
 								defaultValue={invoice.amount}
 								id="amount"
 								name="amount"
 								placeholder="Enter USD amount"
-								step="0.01"
+								step="10.00"
 								type="number"
 							/>
 							<CurrencyDollarIcon className="text-text-primary peer-focus:text-text-focus pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
 						</div>
 					</div>
-					<div aria-atomic="true" aria-live="polite" id="customer-error">
-						{state.errors?.amount?.map(
-							(error: string): JSX.Element => (
-								<p className="text-text-error mt-2 text-sm" key={error}>
-									{error}
-								</p>
-							),
-						)}
+					<div
+						aria-atomic="true"
+						aria-live="polite"
+						className="text=text-error mt-2 text-sm"
+						id="customer-error"
+					>
+						<FieldError
+							dataCy="amount-error"
+							error={state.errors?.amount}
+							id="amount-error"
+							label="Amount error"
+						/>
 					</div>
 				</div>
 
