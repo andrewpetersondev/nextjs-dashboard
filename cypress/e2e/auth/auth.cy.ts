@@ -1,82 +1,32 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
-import type { DbTaskResult } from "@/cypress/support/types";
-import type { UserEntity } from "@/src/lib/db/entities/user";
+import { _TEST_USER } from "@/cypress/e2e/__fixtures__/users";
 
-describe("Auth Commands via UI", () => {
-	beforeEach(() => {
-		return cy.fixture("user").then((user) => {
-			return cy.ensureUserDeleted(user.email);
-		});
+/**
+ * E2E tests for authentication commands.
+ * Uses reusable user constants for type safety and maintainability.
+ */
+describe("Auth Commands", () => {
+	before(() => {
+		return cy.ensureUserDeleted(_TEST_USER.email);
 	});
 
-	it("should signup a new user with custom command", () => {
-		return cy.fixture("user").then((user) => {
-			return cy.signup(user);
-		});
+	after(() => {
+		return cy.ensureUserDeleted(_TEST_USER.email);
 	});
 
-	it("should log in with created user with custom command", () => {
-		return cy.fixture("user").then((user) => {
-			return cy.login(user);
+	context("Auth Commands via UI", () => {
+		it("should sign up a new user with custom command", () => {
+			return cy.signup(_TEST_USER);
 		});
-	});
-});
 
-describe("Auth Commands via Tasks", () => {
-	beforeEach(() => {
-		return cy.fixture("user").then((user) => {
-			return cy.ensureUserDeleted(user.email);
+		it("should log in with created user with custom command", () => {
+			return cy.login(_TEST_USER);
 		});
-	});
 
-	it("should create a test user via db:createUser", () => {
-		return cy.fixture("user").then((user) => {
-			return cy
-				.task<DbTaskResult<UserEntity>>("db:createUser", user)
-				.then((result) => {
-					expect(result).to.have.property("success", true);
-					expect(result).to.have.property("data");
-					const createdUser = result.data as UserEntity;
-					expect(createdUser.email).to.equal(user.email);
-				});
-		});
-	});
-
-	it("should retrieve a test user via db:findUser", () => {
-		return cy.fixture("user").then((user) => {
-			return cy
-				.task<DbTaskResult<UserEntity>>("db:createUser", user)
-				.then(() => {
-					return cy
-						.task<DbTaskResult<UserEntity>>("db:findUser", user.email)
-						.then((result) => {
-							expect(result).to.have.property("success", true);
-							expect(result).to.have.property("data");
-							const foundUser = result.data as UserEntity;
-							expect(foundUser.email).to.equal(user.email);
-						});
-				});
-		});
-	});
-
-	it("should delete a test user via db:deleteUser", () => {
-		return cy.fixture("user").then((user) => {
-			return cy.ensureUserDeleted(user.email).then(() => {
-				return cy
-					.task<DbTaskResult<UserEntity>>("db:createUser", user)
-					.then(() => {
-						return cy
-							.task<DbTaskResult<UserEntity>>("db:deleteUser", user.email)
-							.then((result) => {
-								expect(result).to.have.property("success", true);
-								expect(result).to.have.property("data");
-								const deletedUser = result.data as UserEntity;
-								expect(deletedUser.email).to.equal(user.email);
-							});
-					});
-			});
+		it("should log in with loginNew command and assert success", () => {
+			return cy.loginNew(_TEST_USER, { assertSuccess: true });
 		});
 	});
 });

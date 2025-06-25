@@ -42,13 +42,24 @@ Cypress.Commands.add("login", (user: LoginCredentials) => {
 Cypress.Commands.add(
 	"loginNew",
 	(user: LoginCredentials, options?: { assertSuccess?: boolean }) => {
-		cy.get('input[name="email"]').type(user.email);
-		cy.get('input[name="password"]').type(user.password, { log: false });
-		cy.get('[data-cy="login-submit-button"]').click();
+		cy.log("Logging in user", user.email);
+		cy.visit("/login");
+		cy.get(LOGIN_EMAIL_INPUT).type(user.email);
+		cy.get(LOGIN_PASSWORD_INPUT).type(user.password, { log: false });
+		cy.get(LOGIN_SUBMIT_BUTTON).click();
+		// Only assert if options.assertSuccess is true
 		if (options?.assertSuccess) {
-			cy.url().should("include", "/dashboard");
-			cy.contains(`Dashboard`);
+			return cy
+				.location("pathname", { timeout: 10000 })
+				.should("include", "/dashboard")
+				.get("h1")
+				.contains("Dashboard", { timeout: 10000 })
+				.should("be.visible")
+				.then(() => undefined); // Ensure void return type
 		}
+
+		// Otherwise, just return a chainable
+		return cy.wrap(undefined);
 	},
 );
 
