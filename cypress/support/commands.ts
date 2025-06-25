@@ -140,7 +140,7 @@ Cypress.Commands.add(
 					(!result.success && result.error === "USER_NOT_FOUND")
 				) {
 					cy.log(`[ensureUserDeleted] User not found: ${email}, continuing`);
-					return cy.wrap(null);
+					return cy.wrap<UserEntity | null>(null);
 				}
 				if (!result.success && result.error) {
 					throw new Error(
@@ -148,7 +148,7 @@ Cypress.Commands.add(
 					);
 				}
 				cy.log("[ensureUserDeleted] dbResult = ", result);
-				return cy.wrap(result.data ?? null);
+				return cy.wrap<UserEntity | null>(result.data ?? null);
 			});
 	},
 );
