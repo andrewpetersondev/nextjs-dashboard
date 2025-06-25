@@ -1,16 +1,20 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-// todo: all code that touches the database directly should be moved to DAL
 import type { DB } from "@/src/lib/db/connection";
 import { customers, invoices } from "@/src/lib/db/schema";
 
-export async function fetchCardData(db: DB): Promise<{
+/**
+ * Data structure for dashboard cards.
+ */
+export interface CardData {
 	invoiceCount: number;
 	customerCount: number;
 	paidInvoices: number;
 	pendingInvoices: number;
-}> {
+}
+
+export async function fetchCardData(db: DB): Promise<CardData> {
 	try {
 		const invoiceCount: number = await db.$count(invoices);
 		const customerCount: number = await db.$count(customers);
