@@ -4,6 +4,7 @@
 		"checkJs": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
+		"incremental": false,
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"lib": ["DOM", "ES2022"],
@@ -11,6 +12,7 @@
 		"moduleResolution": "node",
 		"noEmit": true,
 		"noImplicitAny": true,
+		"plugins": [],
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
@@ -20,5 +22,6 @@
 		"target": "ES2022",
 		"types": ["cypress", "node"]
 	},
+	"extends": "../tsconfig.json",
 	"include": ["../cypress.d.ts", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }
