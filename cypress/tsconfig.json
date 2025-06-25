@@ -1,15 +1,14 @@
 {
 	"compilerOptions": {
-		"allowJs": false,
-		"baseUrl": "../",
+		"allowJs": true,
+		"checkJs": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"incremental": true,
 		"isolatedModules": true,
 		"jsx": "preserve",
-		"lib": ["dom", "dom.iterable", "esnext"],
-		"module": "esnext",
-		"moduleResolution": "bundler",
+		"lib": ["DOM", "ES2022"],
+		"module": "ESNext",
+		"moduleResolution": "node",
 		"noEmit": true,
 		"noImplicitAny": true,
 		"resolveJsonModule": true,
@@ -18,15 +17,8 @@
 		"strictBindCallApply": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"target": "esnext",
+		"target": "ES2022",
 		"types": ["cypress", "node"]
 	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.cy.ts",
-		"**/*.cy.tsx",
-		"../cypress.d.ts",
-		"../cypress.config.ts"
-	]
+	"include": ["../cypress.d.ts", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }
