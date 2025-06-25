@@ -9,7 +9,7 @@
 		"drizzle-orm": "^0.44.2",
 		"drizzle-zod": "^0.8.2",
 		"jose": "^6.0.11",
-		"next": "15.4.0-canary.90",
+		"next": "15.4.0-canary.95",
 		"pg": "^8.16.2",
 		"pino": "^9.7.0",
 		"react": "^19.1.0",
@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.5",
-		"@cypress/code-coverage": "^3.14.4",
+		"@cypress/code-coverage": "^3.14.5",
 		"@eslint/eslintrc": "^3.3.1",
 		"@headlessui/react": "^2.2.4",
 		"@next/eslint-plugin-next": "^15.3.4",
@@ -28,7 +28,7 @@
 		"@testing-library/cypress": "^10.0.3",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.3.0",
-		"@types/node": "^24.0.3",
+		"@types/node": "^24.0.4",
 		"@types/pg": "^8.15.4",
 		"@types/react": "^19.1.8",
 		"@types/react-dom": "^19.1.6",
@@ -57,7 +57,7 @@
 		"pnpm": ">=10.12.1"
 	},
 	"name": "nextjs-dashboard",
-	"packageManager": "pnpm@10.12.2+sha512.a32540185b964ee30bb4e979e405adc6af59226b438ee4cc19f9e8773667a66d302f5bfee60a39d3cac69e35e4b96e708a71dd002b7e9359c4112a1722ac323f",
+	"packageManager": "pnpm@10.12.3+sha512.467df2c586056165580ad6dfb54ceaad94c5a30f80893ebdec5a44c5aa73c205ae4a5bb9d5ed6bb84ea7c249ece786642bbb49d06a307df218d03da41c317417",
 	"private": true,
 	"scripts": {
 		"biome:check": "pnpm biome check --write",
