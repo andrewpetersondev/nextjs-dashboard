@@ -1,4 +1,4 @@
-import type { DbTaskResult } from "../types";
+import type { DbTaskResult } from "@/cypress/support/types";
 
 export function createDbError<T>(
 	error: string,
