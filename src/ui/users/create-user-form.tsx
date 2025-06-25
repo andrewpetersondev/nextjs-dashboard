@@ -6,7 +6,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { type JSX, useActionState } from "react";
+import { type JSX, useActionState, useEffect, useState } from "react";
 import { createUser } from "@/src/lib/server-actions/users";
 import { InputField } from "@/src/ui/auth/input-field";
 import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button";
@@ -27,6 +27,17 @@ export default function CreateUserForm(): JSX.Element {
 		CreateUserFormState,
 		FormData
 	>(createUser, { errors: {}, message: "", success: undefined });
+
+	const [showAlert, setShowAlert] = useState(false);
+
+	useEffect(() => {
+		if (state.message) {
+			setShowAlert(true);
+			const timer = setTimeout(() => setShowAlert(false), 4000); // 4 seconds
+			return () => clearTimeout(timer);
+		}
+		setShowAlert(false);
+	}, [state.message]);
 
 	return (
 		<div>
@@ -113,26 +124,34 @@ export default function CreateUserForm(): JSX.Element {
 				</div>
 			</form>
 			<div>
-				{state.success === true && state.message && (
-					<div
-						aria-live="polite"
-						className="mt-6 rounded-md border border-green-300 bg-green-50 px-4 py-3 text-green-800"
-						data-cy="create-user-success-message"
-						role="alert"
-					>
-						{state.message}
-					</div>
-				)}
-				{state.success === false && state.message && (
-					<div
-						aria-live="assertive"
-						className="mt-6 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-red-800"
-						data-cy="create-user-error-message"
-						role="alert"
-					>
-						{state.message}
-					</div>
-				)}
+				<div className="relative min-h-[56px]">
+					{state.message && (
+						<div
+							// Animate in/out with Tailwind transitions
+							aria-live={state.success ? "polite" : "assertive"}
+							className={`pointer-events-auto absolute left-0 right-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500
+              ${
+								showAlert
+									? "opacity-100 translate-y-0"
+									: "opacity-0 -translate-y-4 pointer-events-none"
+							}
+              ${
+								state.success === true
+									? "border-green-300 bg-green-50 text-green-800"
+									: "border-red-300 bg-red-50 text-red-800"
+							}
+            `}
+							data-cy={
+								state.success
+									? "create-user-success-message"
+									: "create-user-error-message"
+							}
+							role={state.success ? "status" : "alert"}
+						>
+							{state.message}
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
