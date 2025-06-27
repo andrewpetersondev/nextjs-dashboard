@@ -50,6 +50,7 @@ export default function NavLinks({ role }: NavLinksProps): JSX.Element {
 				const LinkIcon: ComponentType<SVGProps<SVGSVGElement>> = link.icon;
 				return (
 					<Link
+						aria-current={pathname === link.href ? "page" : undefined}
 						className={clsx(
 							"hover:bg-bg-hover hover:text-text-hover flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 md:flex-none md:justify-start md:p-2 md:px-3",
 							pathname === link.href
@@ -59,8 +60,8 @@ export default function NavLinks({ role }: NavLinksProps): JSX.Element {
 						href={link.href}
 						key={link.name}
 					>
-						<LinkIcon className="w-6" />
-						<p className="hidden md:block">{link.name}</p>
+						<LinkIcon aria-hidden="true" className="w-6" />
+						<span className="sr-only md:not-sr-only">{link.name}</span>
 					</Link>
 				);
 			})}

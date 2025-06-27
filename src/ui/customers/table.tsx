@@ -5,14 +5,18 @@ import MobileTable from "@/src/ui/customers/mobile-table";
 import { H1 } from "@/src/ui/headings";
 import Search from "@/src/ui/search";
 
+export interface CustomersTableProps {
+	customers: FormattedCustomersTableRow[];
+}
+
 export default async function CustomersTable({
 	customers,
-}: {
-	customers: FormattedCustomersTableRow[];
-}): Promise<JSX.Element> {
+}: CustomersTableProps): Promise<JSX.Element> {
 	return (
-		<div className="w-full">
-			<H1 className="mb-8">Customers</H1>
+		<section aria-labelledby="customers-heading" className="w-full">
+			<H1 className="mb-8" id="customers-heading">
+				Customers
+			</H1>
 			<Search placeholder="Search customers..." />
 			<div className="mt-6 flow-root">
 				<div className="overflow-x-auto">
@@ -24,6 +28,6 @@ export default async function CustomersTable({
 					</div>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }

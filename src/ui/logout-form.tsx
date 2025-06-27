@@ -11,11 +11,12 @@ export async function LogoutForm(): Promise<JSX.Element> {
 			}}
 		>
 			<button
+				aria-label="Sign Out"
 				className="bg-bg-secondary hover:bg-bg-hover hover:text-text-hover flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3"
 				type="submit"
 			>
-				<PowerIcon className="w-6" />
-				<div className="hidden md:block">Sign Out</div>
+				<PowerIcon aria-hidden="true" className="w-6" />
+				<span className="sr-only md:not-sr-only md:block">Sign Out</span>
 			</button>
 		</form>
 	);
