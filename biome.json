@@ -86,8 +86,7 @@
 			"performance": "on",
 			"recommended": true,
 			"security": "on",
-			"style": "on",
-			"suspicious": "on"
+			"style": "on"
 		}
 	},
 	"vcs": {

@@ -63,6 +63,7 @@
 	"scripts": {
 		"biome:check": "pnpm biome check",
 		"biome:check:write": "pnpm biome check --write",
+		"biome:check:write:biome": "pnpm biome check --write ./biome.json",
 		"biome:format": "pnpm biome format --write",
 		"biome:rage": "pnpm biome rage",
 		"biome:version": "pnpm biome version",
