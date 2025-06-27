@@ -24,15 +24,6 @@ import type { UserRole } from "@/src/lib/definitions/enums";
 
 // --- UI Commands ---
 
-Cypress.Commands.add("signup", (user: SignupUserInput) => {
-	cy.log("Signing up user", user.email);
-	cy.visit("/signup");
-	cy.get(SIGNUP_USERNAME_INPUT).type(user.username);
-	cy.get(SIGNUP_EMAIL_INPUT).type(user.email);
-	cy.get(SIGNUP_PASSWORD_INPUT).type(user.password);
-	cy.get(SIGNUP_SUBMIT_BUTTON).click();
-});
-
 Cypress.Commands.add("login", (user: LoginCredentials) => {
 	cy.log("Logging in user", user.email);
 	cy.visit("/login");
@@ -75,6 +66,15 @@ Cypress.Commands.add(
 	},
 );
 
+Cypress.Commands.add("signup", (user: SignupUserInput) => {
+	cy.log("Signing up user", user.email);
+	cy.visit("/signup");
+	cy.get(SIGNUP_USERNAME_INPUT).type(user.username);
+	cy.get(SIGNUP_EMAIL_INPUT).type(user.email);
+	cy.get(SIGNUP_PASSWORD_INPUT).type(user.password);
+	cy.get(SIGNUP_SUBMIT_BUTTON).click();
+});
+
 // --- DB Commands ---
 
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
@@ -93,43 +93,6 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 		return cy.wrap(dbResult.data);
 	});
 });
-
-Cypress.Commands.add("findUser", (email: string) => {
-	cy.log("Finding test user", email);
-	return cy.task("db:findUser", email).then((result) => {
-		if (!result || typeof result !== "object" || !("success" in result)) {
-			throw new Error("[findUser] Invalid result from db:findUser task");
-		}
-		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!dbResult.success || !dbResult.data) {
-			throw new Error(
-				`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-			);
-		}
-		cy.log("[findUser] dbResult =  ", dbResult);
-		return cy.wrap(dbResult.data);
-	});
-});
-
-Cypress.Commands.add(
-	"updateUser",
-	(email: string, updates: Partial<UserEntity>) => {
-		cy.log("updateUser", email, updates);
-		return cy.task("db:updateUser", { email, updates }).then((result) => {
-			if (!result || typeof result !== "object" || !("success" in result)) {
-				throw new Error("[updateUser] Invalid result from db:updateUser task");
-			}
-			const dbResult = result as DbTaskResult<UserEntity>;
-			if (!dbResult.success || !dbResult.data) {
-				throw new Error(
-					`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-				);
-			}
-			cy.log("db:updateUser result", result);
-			return dbResult.data;
-		});
-	},
-);
 
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("deleteUser", email);
@@ -178,6 +141,23 @@ Cypress.Commands.add(
 	},
 );
 
+Cypress.Commands.add("findUser", (email: string) => {
+	cy.log("Finding test user", email);
+	return cy.task("db:findUser", email).then((result) => {
+		if (!result || typeof result !== "object" || !("success" in result)) {
+			throw new Error("[findUser] Invalid result from db:findUser task");
+		}
+		const dbResult = result as DbTaskResult<UserEntity>;
+		if (!dbResult.success || !dbResult.data) {
+			throw new Error(
+				`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+			);
+		}
+		cy.log("[findUser] dbResult =  ", dbResult);
+		return cy.wrap(dbResult.data);
+	});
+});
+
 Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 	cy.session(
 		user.email,
@@ -213,6 +193,26 @@ Cypress.Commands.add(
 				secure: false,
 			});
 			cy.getCookie(SESSION_COOKIE_NAME).should("exist");
+		});
+	},
+);
+
+Cypress.Commands.add(
+	"updateUser",
+	(email: string, updates: Partial<UserEntity>) => {
+		cy.log("updateUser", email, updates);
+		return cy.task("db:updateUser", { email, updates }).then((result) => {
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error("[updateUser] Invalid result from db:updateUser task");
+			}
+			const dbResult = result as DbTaskResult<UserEntity>;
+			if (!dbResult.success || !dbResult.data) {
+				throw new Error(
+					`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+				);
+			}
+			cy.log("db:updateUser result", result);
+			return dbResult.data;
 		});
 	},
 );
