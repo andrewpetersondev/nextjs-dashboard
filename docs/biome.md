@@ -23,3 +23,9 @@ pnpm biome check
 ```
 
 ## For Simplicity, Use script from package.json
+
+## VCS
+
+#### --changed
+
+Changed files only work with the CLI version, not with the one from node_modules.
