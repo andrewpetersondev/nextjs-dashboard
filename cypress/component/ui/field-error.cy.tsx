@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
-import { FieldError } from "@/src/ui/auth/field-error";
+import { FieldError } from "../../../src/ui/auth/field-error";
 
 describe("<FieldError />", () => {
 	// test fails

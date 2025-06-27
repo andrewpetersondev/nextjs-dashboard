@@ -2,8 +2,8 @@
 /// <reference path="../../cypress.d.ts" />
 
 import { SignJWT } from "jose";
-import { SESSION_DURATION_MS } from "@/src/lib/auth/constants";
-import type { UserRole } from "@/src/lib/definitions/enums";
+import { SESSION_DURATION_MS } from "../../src/lib/auth/constants";
+import type { UserRole } from "../../src/lib/definitions/enums";
 
 export async function generateMockSessionJWT(
 	userId: string,

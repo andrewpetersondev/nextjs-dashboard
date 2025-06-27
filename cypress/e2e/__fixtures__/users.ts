@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
-import type { CreateUserInput } from "@/cypress/support/types";
+import type { CreateUserInput } from "../../support/types";
 
 export const _TEST_USER: CreateUserInput = {
 	email: "testuser@example.com",

@@ -1,6 +1,9 @@
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
+import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
+import type { UserEntity } from "../../src/lib/db/entities/user";
+import type { UserRole } from "../../src/lib/definitions/enums";
 import {
 	LOGIN_EMAIL_INPUT,
 	LOGIN_PASSWORD_INPUT,
@@ -9,18 +12,15 @@ import {
 	SIGNUP_PASSWORD_INPUT,
 	SIGNUP_SUBMIT_BUTTON,
 	SIGNUP_USERNAME_INPUT,
-} from "@/cypress/support/constants";
-import { generateMockSessionJWT } from "@/cypress/support/session-mock";
+} from "./constants";
+import { generateMockSessionJWT } from "./session-mock";
 import type {
 	CreateUserInput,
 	DbTaskResult,
 	LoginCredentials,
 	SignupUserInput,
 	UserCredentials,
-} from "@/cypress/support/types";
-import { SESSION_COOKIE_NAME } from "@/src/lib/auth/constants";
-import type { UserEntity } from "@/src/lib/db/entities/user";
-import type { UserRole } from "@/src/lib/definitions/enums";
+} from "./types";
 
 // --- UI Commands ---
 

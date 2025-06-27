@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../../cypress.d.ts" />
 
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
+import { SocialLoginButton } from "../../../src/ui/auth/social-login-button";
 
 describe("<SocialLoginButton />", () => {
 	it("renders Google button", () => {

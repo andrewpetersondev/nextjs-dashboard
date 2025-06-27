@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 /// <reference path="../../../../cypress.d.ts" />
 
-import { _TEST_USER } from "@/cypress/e2e/__fixtures__/users";
-import type { DbTaskResult } from "@/cypress/support/types";
-import type { UserEntity } from "@/src/lib/db/entities/user";
+import type { UserEntity } from "../../../../src/lib/db/entities/user";
+import type { DbTaskResult } from "../../../support/types";
+import { _TEST_USER } from "../../__fixtures__/users";
 
 describe("Auth Commands", () => {
 	context("Auth Commands via Tasks", () => {
