@@ -6,11 +6,11 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
-import { signup } from "@/src/lib/server-actions/users";
-import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
-import { DemoUser } from "@/src/ui/auth/demo-user";
-import { InputField } from "@/src/ui/auth/input-field";
+import { signup } from "@/src/lib/server-actions/users.ts";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button.tsx";
+import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user.tsx";
+import { DemoUser } from "@/src/ui/auth/demo-user.tsx";
+import { InputField } from "@/src/ui/auth/input-field.tsx";
 import { AuthSwitchLink } from "./auth-switch-link.tsx";
 import { ForgotPasswordLink } from "./forgot-password-link.tsx";
 import { Heading } from "./heading.tsx";

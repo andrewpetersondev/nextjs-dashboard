@@ -7,9 +7,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUser } from "@/src/lib/server-actions/users";
-import { InputField } from "@/src/ui/auth/input-field";
-import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button";
+import { createUser } from "@/src/lib/server-actions/users.ts";
+import { InputField } from "@/src/ui/auth/input-field.tsx";
+import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button.tsx";
 
 type CreateUserFormState = Readonly<{
 	errors?: {

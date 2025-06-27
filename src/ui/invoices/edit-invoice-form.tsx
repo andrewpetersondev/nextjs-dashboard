@@ -7,15 +7,15 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState } from "react";
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
-import type { CustomerField } from "@/src/lib/definitions/customers";
-import type { InvoiceFormState } from "@/src/lib/definitions/invoices";
-import { updateInvoice } from "@/src/lib/server-actions/invoices";
-import { FieldError } from "@/src/ui/auth/field-error";
-import { Button } from "@/src/ui/button";
-import { DollarInput } from "@/src/ui/components/input";
-import { Label } from "@/src/ui/components/label";
-import { CustomerSelect } from "@/src/ui/invoices/customer-select";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
+import type { CustomerField } from "@/src/lib/definitions/customers.ts";
+import type { InvoiceFormState } from "@/src/lib/definitions/invoices.ts";
+import { updateInvoice } from "@/src/lib/server-actions/invoices.ts";
+import { FieldError } from "@/src/ui/auth/field-error.tsx";
+import { Button } from "@/src/ui/button.tsx";
+import { DollarInput } from "@/src/ui/components/input.tsx";
+import { Label } from "@/src/ui/components/label.tsx";
+import { CustomerSelect } from "@/src/ui/invoices/customer-select.tsx";
 
 export function EditInvoiceForm({
 	invoice,

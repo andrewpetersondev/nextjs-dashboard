@@ -3,11 +3,11 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { decrypt } from "@/src/lib/auth/session-jwt";
+import { decrypt } from "@/src/lib/auth/session-jwt.ts";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,
-} from "@/src/lib/definitions/session";
+} from "@/src/lib/definitions/session.ts";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
@@ -25,7 +25,7 @@ export const verifySessionOptimistic = cache(
 			redirect("/login");
 		}
 		const session: DecryptPayload | undefined = await decrypt(cookie);
-		if (!(session && session.user && session.user.userId)) {
+		if (!session?.user?.userId) {
 			console.error("Invalid session or missing user information");
 			redirect("/login");
 		}

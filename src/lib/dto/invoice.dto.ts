@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/src/lib/definitions/enums";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
 
 export interface InvoiceDTO {
 	id: string;

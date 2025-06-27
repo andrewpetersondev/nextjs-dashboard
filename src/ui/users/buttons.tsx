@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteUserFormAction } from "@/src/lib/server-actions/users";
+import { deleteUserFormAction } from "@/src/lib/server-actions/users.ts";
 
 export function CreateUser(): JSX.Element {
 	return (

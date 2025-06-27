@@ -1,5 +1,5 @@
-import type { InvoiceStatus } from "@/src/lib/definitions/enums";
-import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
+import type { CustomerId, InvoiceId } from "@/src/lib/definitions/invoices.ts";
 
 /**
  * This file defines the `InvoiceEntity` TypeScript interface, which represents the structure of an invoice record as stored in the database. It ensures type safety and consistency when working with invoice data throughout the application.

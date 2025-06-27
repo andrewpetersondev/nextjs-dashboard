@@ -1,15 +1,15 @@
 import bcryptjs from "bcryptjs";
-import { db } from "@/src/lib/db/dev-database";
+import { db } from "@/src/lib/db/dev-database.ts";
 import {
 	users,
 	// customers, invoices, revenue
-} from "@/src/lib/db/schema";
+} from "@/src/lib/db/schema.ts";
 import {
 	users as usersPlaceholderData,
 	// customers as customersPlaceholderData,
 	// invoices as invoicesPlaceholderData,
 	// revenue as revenuesPlaceHolderData,
-} from "@/src/lib/db/seeds/placeholder-data";
+} from "@/src/lib/db/seeds/placeholder-data.ts";
 
 async function seedUsers(): Promise<void> {
 	console.log("seeding users...");

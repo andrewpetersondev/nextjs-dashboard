@@ -1,17 +1,17 @@
 "use server";
 
 import { type JSX, Suspense } from "react";
-import { type CardData, fetchCardData } from "@/src/lib/dal/data.dal";
-import { getDB } from "@/src/lib/db/connection";
-import { CardWrapper } from "@/src/ui/dashboard/cards";
-import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
-import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
-import { H1 } from "@/src/ui/headings";
+import { type CardData, fetchCardData } from "@/src/lib/dal/data.dal.ts";
+import { getDB } from "@/src/lib/db/connection.ts";
+import { CardWrapper } from "@/src/ui/dashboard/cards.tsx";
+import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices.tsx";
+import { RevenueChart } from "@/src/ui/dashboard/revenue-chart.tsx";
+import { H1 } from "@/src/ui/headings.tsx";
 import {
 	CardsSkeleton,
 	LatestInvoicesSkeleton,
 	RevenueChartSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/src/ui/skeletons.tsx";
 
 export async function UserDashboard(): Promise<JSX.Element> {
 	const db = getDB();

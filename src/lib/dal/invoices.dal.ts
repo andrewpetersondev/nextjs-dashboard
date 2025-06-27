@@ -5,10 +5,10 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
  * InvoiceEntity Data Access Layer (DAL) for CRUD operations on InvoiceEntity entities.
  * Uses Drizzle ORM for database access.
  */
-import type { DB } from "@/src/lib/db/connection";
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
-import { customers, invoices } from "@/src/lib/db/schema";
-import type { InvoiceStatus } from "@/src/lib/definitions/enums";
+import type { DB } from "@/src/lib/db/connection.ts";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
+import { customers, invoices } from "@/src/lib/db/schema.ts";
+import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
 import type {
 	CustomerId,
 	FetchFilteredInvoicesData,
@@ -17,14 +17,14 @@ import type {
 	InvoiceId,
 	LatestInvoiceDbRow,
 	ModifiedLatestInvoicesData,
-} from "@/src/lib/definitions/invoices";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
+} from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 import {
 	toInvoiceDTO,
 	toInvoiceEntity,
-} from "@/src/lib/mappers/invoice.mapper";
-import { formatCurrency } from "@/src/lib/utils/utils";
-import { logError } from "@/src/lib/utils/utils.server";
+} from "@/src/lib/mappers/invoice.mapper.ts";
+import { logError } from "@/src/lib/utils/utils.server.ts";
+import { formatCurrency } from "@/src/lib/utils/utils.ts";
 
 // --- Constants ---
 const ITEMS_PER_PAGE = 6;

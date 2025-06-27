@@ -1,8 +1,8 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { DB } from "@/src/lib/db/connection";
-import { customers, invoices } from "@/src/lib/db/schema";
+import type { DB } from "@/src/lib/db/connection.ts";
+import { customers, invoices } from "@/src/lib/db/schema.ts";
 
 /**
  * Data structure for dashboard cards.

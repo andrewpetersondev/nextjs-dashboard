@@ -1,9 +1,9 @@
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
-import { DesktopTable } from "@/src/ui/customers/desktop-table";
-import { MobileTable } from "@/src/ui/customers/mobile-table";
-import { H1 } from "@/src/ui/headings";
-import { Search } from "@/src/ui/search";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.ts";
+import { DesktopTable } from "@/src/ui/customers/desktop-table.tsx";
+import { MobileTable } from "@/src/ui/customers/mobile-table.tsx";
+import { H1 } from "@/src/ui/headings.tsx";
+import { Search } from "@/src/ui/search.tsx";
 
 export interface CustomersTableProps {
 	customers: FormattedCustomersTableRow[];

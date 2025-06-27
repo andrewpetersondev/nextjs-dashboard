@@ -8,10 +8,10 @@ import { cookies } from "next/headers";
 import {
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants";
-import type { UserRole } from "@/src/lib/definitions/enums";
-import { z as zod } from "@/src/lib/definitions/zod-alias";
-import { logger } from "@/src/lib/utils/logger";
+} from "@/src/lib/auth/constants.ts";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
+import { z as zod } from "@/src/lib/definitions/zod-alias.ts";
+import { logger } from "@/src/lib/utils/logger.ts";
 
 // --- DB session logic here ---
 // export createDbSession, generateSessionToken, generateUUID

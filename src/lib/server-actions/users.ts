@@ -22,7 +22,7 @@ import {
 	readUserById,
 	updateUserDAL,
 } from "@/src/lib/dal/users.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { getDB } from "@/src/lib/db/connection.ts";
 import type { UserRole } from "@/src/lib/definitions/enums";
 import type { FormState } from "@/src/lib/definitions/form";
 import {

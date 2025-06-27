@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { getDB } from "@/src/lib/db/connection.ts";
 import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import { Pagination } from "@/src/ui/invoices/pagination";

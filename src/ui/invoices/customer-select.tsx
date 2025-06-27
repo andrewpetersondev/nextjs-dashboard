@@ -1,5 +1,5 @@
 import type React from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import {
 	SelectMenu,
 	type SelectMenuProps,

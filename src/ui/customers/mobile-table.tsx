@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.ts";
 
 export async function MobileTable({
 	customers,

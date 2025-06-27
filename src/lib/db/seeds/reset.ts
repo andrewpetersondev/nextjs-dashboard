@@ -1,6 +1,6 @@
 import { reset } from "drizzle-seed";
-import { db } from "@/src/lib/db/dev-database";
-import * as schema from "@/src/lib/db/schema";
+import { db } from "@/src/lib/db/dev-database.ts";
+import * as schema from "@/src/lib/db/schema.ts";
 
 async function main(): Promise<void> {
 	await reset(db, schema);

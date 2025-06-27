@@ -7,7 +7,7 @@ import {
 	deleteInvoiceInDB,
 	updateInvoiceInDB,
 } from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { getDB } from "@/src/lib/db/connection.ts";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,

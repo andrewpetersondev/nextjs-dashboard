@@ -1,4 +1,4 @@
-import { z as zod } from "@/src/lib/definitions/zod-alias";
+import { z as zod } from "@/src/lib/definitions/zod-alias.ts";
 
 // --- User Roles ---
 export const USER_ROLES = ["admin", "user", "guest"] as const;

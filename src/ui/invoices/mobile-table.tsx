@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
-import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
-import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import { InvoiceStatusComponent } from "@/src/ui/invoices/status";
+import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.ts";
+import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils.ts";
+import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons.tsx";
+import { InvoiceStatusComponent } from "@/src/ui/invoices/status.tsx";
 
 export function MobileTable({
 	invoices,

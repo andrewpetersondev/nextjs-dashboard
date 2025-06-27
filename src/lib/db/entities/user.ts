@@ -1,6 +1,6 @@
 // --- User Entity ---
 
-import type { UserRole } from "@/src/lib/definitions/enums";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
 
 export interface UserEntity {
 	id: string;

@@ -9,17 +9,17 @@ import {
 	ONE_DAY_MS,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants";
-import { getCookieValue } from "@/src/lib/auth/utils";
-import type { UserRole } from "@/src/lib/definitions/enums";
+} from "@/src/lib/auth/constants.ts";
+import { getCookieValue } from "@/src/lib/auth/utils.ts";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
-} from "@/src/lib/definitions/session";
-import { ValidationError } from "@/src/lib/errors/validation-error";
-import { logger } from "@/src/lib/utils/logger";
+} from "@/src/lib/definitions/session.ts";
+import { ValidationError } from "@/src/lib/errors/validation-error.ts";
+import { logger } from "@/src/lib/utils/logger.ts";
 
 // --- JWT session logic here ---
 // export encrypt, decrypt, createSession, updateSession, deleteSession
@@ -62,7 +62,9 @@ let encodedKey: Uint8Array | undefined;
  * @throws If SESSION_SECRET is not defined.
  */
 const getEncodedKey = async (): Promise<Uint8Array> => {
-	if (encodedKey) return encodedKey;
+	if (encodedKey) {
+		return encodedKey;
+	}
 	const secret = process.env.SESSION_SECRET;
 	if (!secret) {
 		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
@@ -238,7 +240,7 @@ export async function updateSession(): Promise<null | void> {
 
 	const payload = await decrypt(session);
 
-	if (!(payload && payload.user)) {
+	if (!payload?.user) {
 		logger.warn(
 			{ context: "updateSession" },
 			"Session payload invalid or missing user",
