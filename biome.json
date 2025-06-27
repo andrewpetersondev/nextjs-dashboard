@@ -1,18 +1,5 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
-	"assist": {
-		"actions": {
-			"recommended": true,
-			"source": {
-				"organizeImports": "on",
-				"recommended": true,
-				"useSortedAttributes": "on",
-				"useSortedKeys": "on",
-				"useSortedProperties": "on"
-			}
-		},
-		"enabled": true
-	},
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
