@@ -3,6 +3,7 @@ import type { JSX } from "react";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { CreateUserForm } from "@/src/ui/users/create-user-form.tsx";
 
+// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
 export const metadata: Metadata = {
 	title: "Create User",
 };

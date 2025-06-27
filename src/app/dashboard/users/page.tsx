@@ -9,6 +9,7 @@ import { InvoicesSearchSkeleton } from "@/src/ui/skeletons.tsx";
 import { CreateUser } from "@/src/ui/users/buttons.tsx";
 import { UsersTable } from "@/src/ui/users/users-table.tsx";
 
+// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
 export const metadata: Metadata = {
 	title: "Users",
 };

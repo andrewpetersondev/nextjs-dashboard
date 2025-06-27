@@ -12,6 +12,7 @@ import {
 	InvoicesTableSkeleton,
 } from "@/src/ui/skeletons.tsx";
 
+// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
 export const metadata: Metadata = {
 	title: "Invoices",
 };

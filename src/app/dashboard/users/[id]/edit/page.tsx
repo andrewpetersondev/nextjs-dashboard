@@ -7,6 +7,7 @@ import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditUserForm } from "@/src/ui/users/edit-user-form.tsx";
 
+// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
 export const metadata: Metadata = {
 	title: "Edit User",
 };
