@@ -1,11 +1,11 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/src/lib/dal/session-dal";
-import type { UserRole } from "@/src/lib/definitions/enums";
-import type { SessionVerificationResult } from "@/src/lib/definitions/session";
-import { getValidUserRole } from "@/src/lib/utils/utils.server";
-import { AdminDashboard } from "@/src/ui/dashboard/admin-dashboard";
-import { MiddlewareCard } from "@/src/ui/dashboard/middleware-card";
-import { UserDashboard } from "@/src/ui/dashboard/user-dashboard";
+import { verifySessionOptimistic } from "@/src/lib/dal/session-dal.ts";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
+import type { SessionVerificationResult } from "@/src/lib/definitions/session.ts";
+import { getValidUserRole } from "@/src/lib/utils/utils.server.ts";
+import { AdminDashboard } from "@/src/ui/dashboard/admin-dashboard.tsx";
+import { MiddlewareCard } from "@/src/ui/dashboard/middleware-card.tsx";
+import { UserDashboard } from "@/src/ui/dashboard/user-dashboard.tsx";
 
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 

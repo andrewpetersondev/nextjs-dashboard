@@ -1,5 +1,5 @@
 import { type JSX, Suspense } from "react";
-import { LoginForm } from "@/src/ui/auth/login-form";
+import { LoginForm } from "@/src/ui/auth/login-form.tsx";
 
 export default function LoginPage(): JSX.Element {
 	return (

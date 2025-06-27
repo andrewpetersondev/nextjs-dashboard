@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
+import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import { H1 } from "@/src/ui/headings";
-import { CreateInvoice } from "@/src/ui/invoices/buttons";
-import { Pagination } from "@/src/ui/invoices/pagination";
-import { InvoicesTable } from "@/src/ui/invoices/table";
-import { Search } from "@/src/ui/search";
+import { H1 } from "@/src/ui/headings.tsx";
+import { CreateInvoice } from "@/src/ui/invoices/buttons.tsx";
+import { Pagination } from "@/src/ui/invoices/pagination.tsx";
+import { InvoicesTable } from "@/src/ui/invoices/table.tsx";
+import { Search } from "@/src/ui/search.tsx";
 import {
 	InvoicesSearchSkeleton,
 	InvoicesTableSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/src/ui/skeletons.tsx";
 
 export const metadata: Metadata = {
 	title: "Invoices",

@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { SignupForm } from "@/src/ui/auth/signup-form";
+import { SignupForm } from "@/src/ui/auth/signup-form.tsx";
 
 export default function SignupPage(): JSX.Element {
 	return (

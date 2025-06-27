@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { fetchCustomers } from "@/src/lib/dal/customers.dal";
-import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/dal/invoices.dal";
+import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
+import {
+	brandInvoiceId,
+	fetchInvoiceById,
+} from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
-import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form";
+import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
+import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
 
 export const metadata: Metadata = {
 	title: "Edit InvoiceEntity",

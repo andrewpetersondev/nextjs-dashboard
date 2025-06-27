@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { fetchUsersPages } from "@/src/lib/dal/users.dal";
+import { fetchUsersPages } from "@/src/lib/dal/users.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import { H1 } from "@/src/ui/headings";
-import { Pagination } from "@/src/ui/invoices/pagination";
-import { Search } from "@/src/ui/search";
-import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
-import { CreateUser } from "@/src/ui/users/buttons";
-import { UsersTable } from "@/src/ui/users/users-table";
+import { H1 } from "@/src/ui/headings.tsx";
+import { Pagination } from "@/src/ui/invoices/pagination.tsx";
+import { Search } from "@/src/ui/search.tsx";
+import { InvoicesSearchSkeleton } from "@/src/ui/skeletons.tsx";
+import { CreateUser } from "@/src/ui/users/buttons.tsx";
+import { UsersTable } from "@/src/ui/users/users-table.tsx";
 
 export const metadata: Metadata = {
 	title: "Users",

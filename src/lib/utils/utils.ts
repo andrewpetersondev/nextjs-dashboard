@@ -1,4 +1,4 @@
-import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue";
+import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue.ts";
 
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
 

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/enums";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
 
 /**
  ** User Data Transfer Object (DTO) for frontend.

@@ -2,13 +2,13 @@ import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import {
 	INVOICE_STATUSES,
 	type InvoiceStatus,
-} from "@/src/lib/definitions/enums";
+} from "@/src/lib/definitions/enums.ts";
 import type {
 	CustomerId,
 	InvoiceByIdDbRow,
 	InvoiceId,
-} from "@/src/lib/definitions/invoices";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
+} from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 
 /**
  * Helper to brand a string as InvoiceId.

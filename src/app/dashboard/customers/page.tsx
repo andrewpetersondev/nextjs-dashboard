@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { fetchFilteredCustomers } from "@/src/lib/dal/customers.dal";
+import { fetchFilteredCustomers } from "@/src/lib/dal/customers.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
-import { CustomersTable } from "@/src/ui/customers/table";
+import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.ts";
+import { CustomersTable } from "@/src/ui/customers/table.tsx";
 
 export const metadata: Metadata = {
 	title: "Customers",

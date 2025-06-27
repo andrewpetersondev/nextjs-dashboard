@@ -11,8 +11,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { hashPassword } from "@/src/lib/auth/password";
-import { createSession, deleteSession } from "@/src/lib/auth/session-jwt";
+import { hashPassword } from "@/src/lib/auth/password.ts";
+import { createSession, deleteSession } from "@/src/lib/auth/session-jwt.ts";
 import {
 	createDemoUser,
 	createUserInDB,
@@ -21,10 +21,10 @@ import {
 	findUserForLogin,
 	readUserById,
 	updateUserDAL,
-} from "@/src/lib/dal/users.dal";
+} from "@/src/lib/dal/users.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { UserRole } from "@/src/lib/definitions/enums";
-import type { FormState } from "@/src/lib/definitions/form";
+import type { UserRole } from "@/src/lib/definitions/enums.ts";
+import type { FormState } from "@/src/lib/definitions/form.ts";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -35,15 +35,15 @@ import {
 	LoginFormSchema,
 	type SignupFormFields,
 	SignupFormSchema,
-} from "@/src/lib/definitions/users";
-import type { UserDTO } from "@/src/lib/dto/user.dto";
+} from "@/src/lib/definitions/users.ts";
+import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import {
 	actionResult,
 	getFormField,
 	getValidUserRole,
 	logError,
 	normalizeFieldErrors,
-} from "@/src/lib/utils/utils.server";
+} from "@/src/lib/utils/utils.server.ts";
 
 /**
  * Handles user signup.
@@ -313,7 +313,7 @@ export async function editUser(
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
 		if (payload.password === "") {
-			delete payload.password;
+			payload.password = undefined;
 		}
 		const validated = EditUserFormSchema.safeParse(payload);
 		if (!validated.success) {

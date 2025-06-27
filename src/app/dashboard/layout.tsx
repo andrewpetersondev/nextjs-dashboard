@@ -1,6 +1,6 @@
 import type React from "react";
 import type { JSX } from "react";
-import { SideNav } from "@/src/ui/dashboard/sidenav";
+import { SideNav } from "@/src/ui/dashboard/sidenav.tsx";
 
 // todo: revert to false? investigate
 export const experimental_ppr = true;

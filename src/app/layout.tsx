@@ -2,7 +2,7 @@ import "@/src/app/globals.css";
 import type { Metadata } from "next";
 import type React from "react";
 import type { JSX } from "react";
-import { notoSans } from "@/src/ui/style/fonts";
+import { notoSans } from "@/src/ui/style/fonts.ts";
 
 export const metadata: Metadata = {
 	description: "The official Next.js Learn Dashboard built with App Router.",

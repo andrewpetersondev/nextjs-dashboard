@@ -2,9 +2,9 @@ import {
 	roleSchema,
 	USER_ROLES,
 	type UserRole,
-} from "@/src/lib/definitions/enums";
-import type { FormState } from "@/src/lib/definitions/form";
-import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias";
+} from "@/src/lib/definitions/enums.ts";
+import type { FormState } from "@/src/lib/definitions/form.ts";
+import { type ZodType, z as zod } from "@/src/lib/definitions/zod-alias.ts";
 
 /**
  * Standardized result for server actions.

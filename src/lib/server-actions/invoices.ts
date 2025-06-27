@@ -6,7 +6,7 @@ import {
 	createInvoiceInDB,
 	deleteInvoiceInDB,
 	updateInvoiceInDB,
-} from "@/src/lib/dal/invoices.dal";
+} from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import {
 	type CreateInvoiceResult,
@@ -14,10 +14,10 @@ import {
 	type CustomerId,
 	type InvoiceFormState,
 	UpdateInvoiceSchema,
-} from "@/src/lib/definitions/invoices";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto";
-import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper";
-import { actionResult } from "@/src/lib/utils/utils.server";
+} from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper.ts";
+import { actionResult } from "@/src/lib/utils/utils.server.ts";
 
 // todo: unify the return types of these actions
 
