@@ -7,7 +7,7 @@ type AuthSwitchLinkProps = {
 	linkText: string;
 };
 
-export default function AuthSwitchLink({
+export function AuthSwitchLink({
 	prompt,
 	href,
 	linkText,

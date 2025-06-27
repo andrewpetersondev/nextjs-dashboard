@@ -9,7 +9,7 @@ export interface CustomersTableProps {
 	customers: FormattedCustomersTableRow[];
 }
 
-export default async function CustomersTable({
+export async function CustomersTable({
 	customers,
 }: CustomersTableProps): Promise<JSX.Element> {
 	return (

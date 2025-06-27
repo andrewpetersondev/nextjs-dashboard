@@ -5,7 +5,7 @@ import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
 import InvoiceStatusComponent from "@/src/ui/invoices/status";
 
-export default function DesktopTable({
+export function DesktopTable({
 	invoices,
 }: {
 	invoices: FetchFilteredInvoicesData[];

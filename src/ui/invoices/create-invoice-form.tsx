@@ -13,7 +13,7 @@ import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices";
 import { createInvoice } from "@/src/lib/server-actions/invoices";
 import { Button } from "@/src/ui/button";
 
-export default function CreateInvoiceForm({
+export function CreateInvoiceForm({
 	customers,
 }: {
 	customers: CustomerField[];
@@ -72,7 +72,7 @@ export default function CreateInvoiceForm({
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="customer-error">
 							{/* Render customerId errors */}
-							{state.errors?.customerId?.length
+							{state.errors?.customerId?.length > 0
 								? state.errors.customerId.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -101,7 +101,7 @@ export default function CreateInvoiceForm({
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="amount-error">
 							{/* Render amount errors */}
-							{state.errors?.amount?.length
+							{state.errors?.amount?.length > 0
 								? state.errors.amount.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -151,7 +151,7 @@ export default function CreateInvoiceForm({
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="status-error">
 							{/* Render status errors */}
-							{state.errors?.status?.length
+							{state.errors?.status?.length > 0
 								? state.errors.status.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}

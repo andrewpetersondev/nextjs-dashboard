@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import { fetchFilteredCustomers } from "@/src/lib/dal/customers.dal";
 import { getDB } from "@/src/lib/db/connection";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
-import CustomersTable from "@/src/ui/customers/table";
+import { CustomersTable } from "@/src/ui/customers/table";
 
 export const metadata: Metadata = {
 	title: "Customers",

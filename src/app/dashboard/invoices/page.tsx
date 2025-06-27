@@ -5,7 +5,7 @@ import { getDB } from "@/src/lib/db/connection";
 import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import Pagination from "@/src/ui/invoices/pagination";
-import Table from "@/src/ui/invoices/table";
+import { InvoicesTable } from "@/src/ui/invoices/table";
 import { Search } from "@/src/ui/search";
 import {
 	InvoicesSearchSkeleton,
@@ -50,7 +50,7 @@ export default async function Page(
 				<CreateInvoice />
 			</div>
 			<Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
-				<Table currentPage={currentPage} query={query} />
+				<InvoicesTable currentPage={currentPage} query={query} />
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />

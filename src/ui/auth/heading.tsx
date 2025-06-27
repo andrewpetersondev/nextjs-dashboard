@@ -9,7 +9,7 @@ type HeadingProps = {
 	children?: React.ReactNode;
 };
 
-export default function Heading({
+export function Heading({
 	text,
 	logoSrc = "https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600",
 	logoAlt = "Your Company",

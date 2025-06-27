@@ -2,10 +2,10 @@ import type { JSX } from "react";
 import { fetchFilteredInvoices } from "@/src/lib/dal/invoices.dal";
 import { getDB } from "@/src/lib/db/connection";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
-import DesktopTable from "@/src/ui/invoices/desktop-table";
+import { DesktopTable } from "@/src/ui/invoices/desktop-table";
 import MobileTable from "@/src/ui/invoices/mobile-table";
 
-export default async function InvoicesTable({
+export async function InvoicesTable({
 	query,
 	currentPage,
 }: {
