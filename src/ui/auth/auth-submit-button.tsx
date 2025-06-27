@@ -1,17 +1,29 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 import { Button } from "@/src/ui/button";
 
-type AuthSubmitButtonProps = {
+export interface AuthSubmitButtonProps
+	extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
-	"data-cy"?: string;
+	dataCy?: string;
 	pending?: boolean;
 	className?: string;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+}
 
+/**
+ * Accessible, reusable submit button for authentication forms.
+ * Handles pending state and disables the button when pending.
+ *
+ * @param children - The content of the button, typically text or an icon.
+ * @param dataCy - Optional Cypress test id for end-to-end testing.
+ * @param pending - Indicates if the button is in a pending state, disabling it if true.
+ * @param className - Additional CSS classes for styling the button.
+ * @param props - {@link AuthSubmitButtonProps}
+ * @returns The rendered submit button as a JSX element.
+ */
 export function AuthSubmitButton({
 	children,
-	"data-cy": dataCy,
-	pending,
+	dataCy,
+	pending = false,
 	className = "",
 	...props
 }: AuthSubmitButtonProps): JSX.Element {
@@ -20,6 +32,7 @@ export function AuthSubmitButton({
 			aria-disabled={pending}
 			className={`bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${className}`}
 			data-cy={dataCy}
+			disabled={pending || props.disabled}
 			type="submit"
 			{...props}
 		>

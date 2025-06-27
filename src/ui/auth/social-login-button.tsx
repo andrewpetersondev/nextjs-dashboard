@@ -18,7 +18,7 @@ export interface SocialLoginButtonProps {
 	/** Mode for ARIA label */
 	mode?: "signup" | "login";
 	/** Cypress test id */
-	"data-cy"?: string;
+	dataCy?: string;
 }
 
 const providerIcons: Record<Provider, React.ReactNode> = {
@@ -34,12 +34,7 @@ const buttonClasses =
  * @param props SocialLoginButtonProps
  */
 export const SocialLoginButton: React.NamedExoticComponent<SocialLoginButtonProps> =
-	memo(function SocialLoginButton({
-		provider,
-		href,
-		mode = "login",
-		"data-cy": dataCy,
-	}) {
+	memo(function SocialLoginButton({ provider, href, mode = "login", dataCy }) {
 		return (
 			<a
 				aria-label={`${mode === "signup" ? "Sign up" : "Sign in"} with ${provider}`}
