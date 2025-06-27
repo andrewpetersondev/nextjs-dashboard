@@ -2,7 +2,7 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { H1 } from "@/src/ui/headings";
 
-export default function AcmeLogo(): JSX.Element {
+export function AcmeLogo(): JSX.Element {
 	return (
 		<div
 			className="bg-bg-secondary text-text-primary flex h-20 shrink-0 items-end rounded-lg p-4"

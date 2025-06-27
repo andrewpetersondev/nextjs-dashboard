@@ -22,7 +22,7 @@ type CreateUserFormState = Readonly<{
 	success?: boolean;
 }>;
 
-export default function CreateUserForm(): JSX.Element {
+export function CreateUserForm(): JSX.Element {
 	const [state, action, pending] = useActionState<
 		CreateUserFormState,
 		FormData

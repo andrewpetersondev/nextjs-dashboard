@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers";
 
-export default async function DesktopTable({
+export async function DesktopTable({
 	customers,
 }: {
 	customers: FormattedCustomersTableRow[];

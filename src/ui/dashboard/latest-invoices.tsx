@@ -7,7 +7,7 @@ import { getDB } from "@/src/lib/db/connection";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices";
 import { H2, H3 } from "@/src/ui/headings";
 
-export default async function LatestInvoices(): Promise<JSX.Element> {
+export async function LatestInvoices(): Promise<JSX.Element> {
 	const db = getDB();
 
 	const latestInvoices: ModifiedLatestInvoicesData[] =

@@ -6,7 +6,7 @@ import { H6 } from "@/src/ui/headings";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;
 
-export default async function MiddlewareCard(): Promise<JSX.Element> {
+export async function MiddlewareCard(): Promise<JSX.Element> {
 	const session: SessionVerificationResult = await verifySessionOptimistic();
 
 	const role: UserRole = allowedRoles.includes(session.role as UserRole)

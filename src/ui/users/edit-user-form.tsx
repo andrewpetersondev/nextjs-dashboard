@@ -9,7 +9,7 @@ import { editUser } from "@/src/lib/server-actions/users";
 import { Button } from "@/src/ui/button";
 import { H1 } from "@/src/ui/headings";
 
-export default function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
+export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 	const initialState: FormState<EditUserFormFields> = {
 		errors: {},
 		message: "",

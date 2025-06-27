@@ -5,8 +5,8 @@ import { type JSX, useActionState } from "react";
 import { login } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import AuthSwitchLink from "@/src/ui/auth/auth-switch-link";
-import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
-import DemoUser from "@/src/ui/auth/demo-user";
+import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
+import { DemoUser } from "@/src/ui/auth/demo-user";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import Heading from "@/src/ui/auth/heading";
 import { InputField } from "@/src/ui/auth/input-field";
@@ -21,7 +21,7 @@ type LoginState = {
 	message?: string;
 };
 
-export default function LoginForm(): JSX.Element {
+export function LoginForm(): JSX.Element {
 	const [state, action, pending] = useActionState<LoginState, FormData>(login, {
 		errors: {},
 		message: "",

@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { demoUser } from "@/src/lib/server-actions/users";
 import { Button } from "@/src/ui/button";
 
-export default function DemoAdminUser({ text }: { text: string }): JSX.Element {
+export function DemoAdminUser({ text }: { text: string }): JSX.Element {
 	return (
 		<form
 			action={async (): Promise<void> => {

@@ -31,7 +31,7 @@ const baseLinks: NavLink[] = [
 	{ href: "/dashboard/customers", icon: UserGroupIcon, name: "Customers" },
 ];
 
-export default function NavLinks({ role }: NavLinksProps): JSX.Element {
+export function NavLinks({ role }: NavLinksProps): JSX.Element {
 	const pathname: string = usePathname();
 	const links: NavLink[] = [...baseLinks];
 

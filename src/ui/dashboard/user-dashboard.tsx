@@ -4,8 +4,8 @@ import { type JSX, Suspense } from "react";
 import { type CardData, fetchCardData } from "@/src/lib/dal/data.dal";
 import { getDB } from "@/src/lib/db/connection";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
-import LatestInvoices from "@/src/ui/dashboard/latest-invoices";
-import RevenueChart from "@/src/ui/dashboard/revenue-chart";
+import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
+import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
 import { H1 } from "@/src/ui/headings";
 import {
 	CardsSkeleton,
@@ -13,7 +13,7 @@ import {
 	RevenueChartSkeleton,
 } from "@/src/ui/skeletons";
 
-export default async function UserDashboard(): Promise<JSX.Element> {
+export async function UserDashboard(): Promise<JSX.Element> {
 	const db = getDB();
 	const cardData: CardData = await fetchCardData(db);
 

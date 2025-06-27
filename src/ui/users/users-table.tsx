@@ -4,7 +4,7 @@ import { getDB } from "@/src/lib/db/connection";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
 import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 
-export default async function UsersTable({
+export async function UsersTable({
 	query,
 	currentPage,
 }: {

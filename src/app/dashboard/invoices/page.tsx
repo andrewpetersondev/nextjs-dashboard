@@ -6,7 +6,7 @@ import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import Pagination from "@/src/ui/invoices/pagination";
 import Table from "@/src/ui/invoices/table";
-import Search from "@/src/ui/search";
+import { Search } from "@/src/ui/search";
 import {
 	InvoicesSearchSkeleton,
 	InvoicesTableSkeleton,

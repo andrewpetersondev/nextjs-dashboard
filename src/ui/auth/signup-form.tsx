@@ -8,8 +8,8 @@ import {
 import { type FC, useActionState } from "react";
 import { signup } from "@/src/lib/server-actions/users";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import DemoAdminUser from "@/src/ui/auth/demo-admin-user";
-import DemoUser from "@/src/ui/auth/demo-user";
+import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
+import { DemoUser } from "@/src/ui/auth/demo-user";
 import { InputField } from "@/src/ui/auth/input-field";
 import AuthSwitchLink from "./auth-switch-link.tsx";
 import { ForgotPasswordLink } from "./forgot-password-link.tsx";

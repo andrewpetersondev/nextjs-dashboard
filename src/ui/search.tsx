@@ -10,11 +10,7 @@ import {
 import type { ChangeEvent, JSX } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function Search({
-	placeholder,
-}: {
-	placeholder: string;
-}): JSX.Element {
+export function Search({ placeholder }: { placeholder: string }): JSX.Element {
 	const searchParams: ReadonlyURLSearchParams = useSearchParams();
 	const pathname: string = usePathname();
 	const { replace } = useRouter();

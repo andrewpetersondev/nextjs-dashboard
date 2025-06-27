@@ -6,7 +6,7 @@ import type { Revenue } from "@/src/lib/definitions/revenue";
 import { generateYAxis } from "@/src/lib/utils/utils";
 import { H2, H3 } from "@/src/ui/headings";
 
-export default async function RevenueChart(): Promise<JSX.Element> {
+export async function RevenueChart(): Promise<JSX.Element> {
 	const db = getDB();
 	const revenue: Revenue[] = await fetchRevenue(db);
 	const chartHeight = 350;

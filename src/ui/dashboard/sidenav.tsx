@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { JSX } from "react";
-import AcmeLogo from "@/src/ui/acme-logo";
-import NavLinksWrapper from "@/src/ui/dashboard/nav-links-wrapper";
+import { AcmeLogo } from "@/src/ui/acme-logo";
+import { NavLinksWrapper } from "@/src/ui/dashboard/nav-links-wrapper";
 import { LogoutForm } from "@/src/ui/logout-form";
 
-export default function SideNav(): JSX.Element {
+export function SideNav(): JSX.Element {
 	return (
 		<div className="flex h-full flex-col px-3 py-4 md:px-2">
 			<Link

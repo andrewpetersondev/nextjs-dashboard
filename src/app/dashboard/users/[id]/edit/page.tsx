@@ -4,8 +4,8 @@ import type { JSX } from "react";
 import { fetchUserById } from "@/src/lib/dal/users.dal";
 import { getDB } from "@/src/lib/db/connection";
 import type { UserDTO } from "@/src/lib/dto/user.dto";
-import Breadcrumbs from "@/src/ui/invoices/breadcrumbs";
-import EditUserForm from "@/src/ui/users/edit-user-form";
+import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
+import { EditUserForm } from "@/src/ui/users/edit-user-form";
 
 export const metadata: Metadata = {
 	title: "Edit User",
