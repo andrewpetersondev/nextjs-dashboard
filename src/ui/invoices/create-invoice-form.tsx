@@ -57,7 +57,7 @@ export default function CreateInvoiceForm({
 								id="customer"
 								name="customerId"
 							>
-								<option disabled value="">
+								<option disabled={true} value="">
 									Select a customer
 								</option>
 								{customers.map(

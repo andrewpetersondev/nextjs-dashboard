@@ -25,11 +25,11 @@ export interface UsersPageProps {
 }
 
 export default async function Page(
-	dynamicURL: UsersPageProps,
+	dynamicUrl: UsersPageProps,
 ): Promise<JSX.Element> {
 	const db = getDB();
 	const searchParams: UsersSearchParams | undefined =
-		await dynamicURL.searchParams;
+		await dynamicUrl.searchParams;
 	const query: string = searchParams?.query || "";
 	const currentPage: number = Number(searchParams?.page) || 1;
 	const totalPages: number = await fetchUsersPages(db, query);

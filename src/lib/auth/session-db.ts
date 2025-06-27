@@ -42,7 +42,7 @@ const generateSessionToken = (): string => {
  * Generates a UUID using the Web Crypto API.
  * @returns {string} The UUID string.
  */
-const generateUUID = (): string => {
+const generateUuid = (): string => {
 	return crypto.randomUUID();
 };
 
@@ -78,7 +78,7 @@ export async function createDbSession(
 
 	await insertSession({
 		expiresAt,
-		id: generateUUID(),
+		id: generateUuid(),
 		token,
 		userId,
 	});

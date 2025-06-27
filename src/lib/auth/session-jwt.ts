@@ -238,7 +238,7 @@ export async function updateSession(): Promise<null | void> {
 
 	const payload = await decrypt(session);
 
-	if (!payload || !payload.user) {
+	if (!(payload && payload.user)) {
 		logger.warn(
 			{ context: "updateSession" },
 			"Session payload invalid or missing user",

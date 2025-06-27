@@ -25,7 +25,7 @@ export const verifySessionOptimistic = cache(
 			redirect("/login");
 		}
 		const session: DecryptPayload | undefined = await decrypt(cookie);
-		if (!session || !session.user || !session.user.userId) {
+		if (!(session && session.user && session.user.userId)) {
 			console.error("Invalid session or missing user information");
 			redirect("/login");
 		}

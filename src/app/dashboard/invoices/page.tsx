@@ -29,11 +29,11 @@ export interface InvoicesPageProps {
 }
 
 export default async function Page(
-	dynamicURL: InvoicesPageProps,
+	dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {
 	const db = getDB();
 	const searchParams: InvoicesSearchParams | undefined =
-		await dynamicURL.searchParams;
+		await dynamicUrl.searchParams;
 	const query: string = searchParams?.query || "";
 	const currentPage: number = Number(searchParams?.page) || 1;
 	const totalPages: number = await fetchInvoicesPages(db, query);

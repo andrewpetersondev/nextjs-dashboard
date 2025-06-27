@@ -2,9 +2,9 @@
 // DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
 
 import { seed } from "drizzle-seed";
-import { hashPassword } from "../../auth/password";
-import { db } from "../dev-database";
-import * as schema from "../schema";
+import { hashPassword } from "../../auth/password.ts";
+import { db } from "../dev-database.ts";
+import * as schema from "../schema.ts";
 
 const customerFullNames: string[] = [
 	"Evil Rabbits",

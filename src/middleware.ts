@@ -24,10 +24,11 @@ export default async function middleware(req: NextRequest) {
 		return NextResponse.redirect(new URL("/login", req.nextUrl));
 	}
 
-	if (isAdminRoute) {
-		if (!session?.user?.userId || session.user.role !== "admin") {
-			return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-		}
+	if (
+		isAdminRoute &&
+		(!session?.user?.userId || session.user.role !== "admin")
+	) {
+		return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
 	}
 
 	// If the route is public and the user is authenticated, redirect to the dashboard

@@ -24,7 +24,7 @@ export default function Pagination({
 		totalPages,
 	);
 
-	const createPageURL = (pageNumber: number | string): string => {
+	const createPageUrl = (pageNumber: number | string): string => {
 		const params = new URLSearchParams(searchParams);
 		params.set("page", pageNumber.toString());
 		return `${pathname}?${params.toString()}`;
@@ -35,7 +35,7 @@ export default function Pagination({
 			<div className="inline-flex">
 				<PaginationArrow
 					direction="left"
-					href={createPageURL(currentPage - 1)}
+					href={createPageUrl(currentPage - 1)}
 					isDisabled={currentPage <= 1}
 				/>
 
@@ -50,7 +50,7 @@ export default function Pagination({
 
 						return (
 							<PaginationNumber
-								href={createPageURL(page)}
+								href={createPageUrl(page)}
 								isActive={currentPage === page}
 								key={page}
 								page={page}
@@ -62,7 +62,7 @@ export default function Pagination({
 
 				<PaginationArrow
 					direction="right"
-					href={createPageURL(currentPage + 1)}
+					href={createPageUrl(currentPage + 1)}
 					isDisabled={currentPage >= totalPages}
 				/>
 			</div>

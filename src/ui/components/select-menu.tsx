@@ -57,7 +57,7 @@ export const SelectMenu = React.memo(
 				name={name}
 				onChange={onChange}
 			>
-				<option disabled value="">
+				<option disabled={true} value="">
 					{placeholder}
 				</option>
 				{options.map((option) => (

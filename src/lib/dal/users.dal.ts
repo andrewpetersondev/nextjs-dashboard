@@ -66,7 +66,7 @@ export async function findUserForLogin(
 	email: string,
 	password: string,
 ): Promise<UserDTO | null> {
-	if (!email || !password) {
+	if (!(email && password)) {
 		return null;
 	}
 	try {
@@ -240,12 +240,12 @@ export async function createDemoUser(
 	role: UserRole,
 ): Promise<UserDTO | null> {
 	try {
-		const DEMO_PASSWORD = createRandomPassword();
+		const DemoPassword = createRandomPassword();
 		const uniqueEmail = `demo+${role}${id}@demo.com`;
 		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
 		return await createUserInDB(db, {
 			email: uniqueEmail,
-			password: DEMO_PASSWORD,
+			password: DemoPassword,
 			role,
 			username: uniqueUsername,
 		});
