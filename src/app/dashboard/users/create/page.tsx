@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 // biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(): Promise<JSX.Element> {
 	return (
 		<main>

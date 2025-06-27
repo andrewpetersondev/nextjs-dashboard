@@ -22,6 +22,7 @@ export interface CustomersPageProps {
 	searchParams?: Promise<CustomersSearchParams>;
 }
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: CustomersPageProps,
 ): Promise<JSX.Element> {

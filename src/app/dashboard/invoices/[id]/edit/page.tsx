@@ -26,6 +26,7 @@ export interface EditInvoicePageProps {
 	params: Promise<EditInvoicePageParams>;
 }
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: EditInvoicePageProps,
 ): Promise<JSX.Element> {

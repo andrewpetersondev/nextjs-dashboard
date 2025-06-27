@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 		template: "%s | Acme Dashboard",
 	},
 };
+
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function RootLayout({
 	children,
 }: {

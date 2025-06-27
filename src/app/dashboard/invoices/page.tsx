@@ -30,6 +30,7 @@ export interface InvoicesPageProps {
 	searchParams?: Promise<InvoicesSearchParams>;
 }
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {

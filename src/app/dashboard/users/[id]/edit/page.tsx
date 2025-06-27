@@ -25,6 +25,7 @@ export interface EditUserPageProps {
 }
 
 // promises are allowed in props params because Partial Pre-Rendering is enabled
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: EditUserPageProps,
 ): Promise<JSX.Element> {

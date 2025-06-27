@@ -3,6 +3,7 @@
 import { type JSX, useEffect } from "react";
 import { H2 } from "@/src/ui/headings.tsx";
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function InvoicesError({
 	error,
 	reset,

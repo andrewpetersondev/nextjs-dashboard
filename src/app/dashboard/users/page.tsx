@@ -26,6 +26,7 @@ export interface UsersPageProps {
 	searchParams?: Promise<UsersSearchParams>;
 }
 
+// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	dynamicUrl: UsersPageProps,
 ): Promise<JSX.Element> {
