@@ -30,6 +30,10 @@ coverage/
 .next/
 .out/
 build/
+dist/
+.turbo/
+logs/
+.cache/
 
 # ================================
 # Environment Files
@@ -62,6 +66,7 @@ yarn-error.log*
 password.txt
 postgres-certs/
 secrets/
+
 
 # ================================
 # Other/Miscellaneous Files

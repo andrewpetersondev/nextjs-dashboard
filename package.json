@@ -19,7 +19,7 @@
 		"zod": "^3.25.67"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.5",
+		"@biomejs/biome": "2.0.6",
 		"@cypress/code-coverage": "^3.14.5",
 		"@eslint/eslintrc": "^3.3.1",
 		"@headlessui/react": "^2.2.4",
@@ -37,7 +37,7 @@
 		"cypress": "^14.5.0",
 		"cypress-axe": "^1.6.0",
 		"depcheck": "^1.4.7",
-		"drizzle-kit": "^0.31.3",
+		"drizzle-kit": "^0.31.4",
 		"drizzle-seed": "^0.3.1",
 		"eslint": "^9.29.0",
 		"eslint-config-next": "^15.3.4",

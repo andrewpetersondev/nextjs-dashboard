@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
 	"assist": {
 		"actions": {
 			"recommended": true,
@@ -13,38 +13,19 @@
 		},
 		"enabled": true
 	},
-	"css": {
-		"assist": {
-			"enabled": true
-		},
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		}
-	},
 	"files": {
-		"ignoreUnknown": false,
+		"ignoreUnknown": true,
 		"includes": [
 			"**",
-			"!**/node_modules",
-			"!**/dist/**",
-			"!**/*.generated.js",
-			"!**/.next",
-			"!**/pnpm-lock.yaml",
-			"!**/next-env.d.ts",
+			"!**/vault/**",
+			"!pnpm-lock.yaml",
+			"!public/**",
 			"!.run",
-			"!.idea",
-			"!/.vscode",
-			"!src/lib/db/drizzle/**/*",
-			"!secrets",
+			"!.idea/**",
+			"!.vscode",
 			"!keep",
 			"!storage",
-			"!.env",
-			"!cypress/**/*.js",
-			"!cypress/**/*.jsx",
-			"!cypress.config.js"
+			"!src/lib/db/drizzle/**"
 		]
 	},
 	"formatter": {
@@ -52,9 +33,6 @@
 		"indentStyle": "tab"
 	},
 	"javascript": {
-		"assist": {
-			"enabled": true
-		},
 		"formatter": {
 			"enabled": true,
 			"indentStyle": "tab",
@@ -65,18 +43,12 @@
 		}
 	},
 	"json": {
-		"assist": {
-			"enabled": true
-		},
 		"formatter": {
 			"enabled": true,
 			"indentStyle": "tab"
 		},
 		"linter": {
 			"enabled": true
-		},
-		"parser": {
-			"allowComments": false
 		}
 	},
 	"linter": {
@@ -88,14 +60,7 @@
 		},
 		"enabled": true,
 		"rules": {
-			"a11y": "on",
-			"complexity": "on",
-			"correctness": "on",
-			"nursery": "off",
-			"performance": "on",
-			"recommended": true,
-			"security": "on",
-			"style": "on"
+			"recommended": true
 		}
 	},
 	"vcs": {

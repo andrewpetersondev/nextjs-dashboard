@@ -13,13 +13,13 @@
               <option name="patterns">
                 <list>
                   <Item>
+                    <option name="path" value="cypress/tsconfig.json" />
+                  </Item>
+                  <Item>
                     <option name="path" value="tsconfig.base.json" />
                   </Item>
                   <Item>
                     <option name="path" value="tsconfig.json" />
-                  </Item>
-                  <Item>
-                    <option name="path" value="cypress/tsconfig.json" />
                   </Item>
                 </list>
               </option>
@@ -31,7 +31,7 @@
             <SchemaInfo>
               <option name="generatedName" value="New Schema" />
               <option name="name" value="schema" />
-              <option name="relativePathToSchema" value="https://biomejs.dev/schemas/2.0.0/schema.json" />
+              <option name="relativePathToSchema" value="https://biomejs.dev/schemas/2.0.6/schema.json" />
               <option name="schemaVersion" value="JSON Schema 202,012" />
               <option name="patterns">
                 <list>
