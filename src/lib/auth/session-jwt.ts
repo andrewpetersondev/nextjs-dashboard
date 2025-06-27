@@ -65,6 +65,7 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
 	if (encodedKey) {
 		return encodedKey;
 	}
+	// biome-ignore lint/style/noProcessEnv: it works
 	const secret = process.env.SESSION_SECRET;
 	if (!secret) {
 		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
@@ -208,6 +209,7 @@ export async function createSession(
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
+		// biome-ignore lint/style/noProcessEnv: it works
 		secure: process.env.NODE_ENV === "production",
 	});
 
@@ -278,6 +280,7 @@ export async function updateSession(): Promise<null | void> {
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
+		// biome-ignore lint/style/noProcessEnv: it works
 		secure: process.env.NODE_ENV === "production",
 	});
 

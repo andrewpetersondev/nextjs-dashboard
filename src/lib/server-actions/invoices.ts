@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-	createInvoiceInDB,
-	deleteInvoiceInDB,
-	updateInvoiceInDB,
+	createInvoiceInDb,
+	deleteInvoiceInDb,
+	updateInvoiceInDb,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import {
@@ -55,7 +55,7 @@ export async function createInvoice(
 		const amountInCents: number = amount * 100;
 		const date: string = new Date().toISOString().split("T")[0];
 
-		const invoice = await createInvoiceInDB(db, {
+		const invoice = await createInvoiceInDb(db, {
 			amount: amountInCents,
 			customerId,
 			date,
@@ -123,7 +123,7 @@ export async function updateInvoice(
 	const amountInCents = amount * 100;
 
 	try {
-		const updatedInvoice = await updateInvoiceInDB(db, id, {
+		const updatedInvoice = await updateInvoiceInDb(db, id, {
 			amount: amountInCents,
 			customerId,
 			status,
@@ -154,7 +154,7 @@ export async function deleteInvoiceAction(
 	id: string,
 ): Promise<InvoiceDTO | null> {
 	const db = getDB();
-	return await deleteInvoiceInDB(db, toInvoiceId(id));
+	return await deleteInvoiceInDb(db, toInvoiceId(id));
 }
 
 /**

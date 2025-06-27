@@ -51,7 +51,7 @@ export function brandStatus(status: string): InvoiceStatus {
  * @returns The created invoice as InvoiceDTO, or null if creation failed.
  * @throws Error if the database operation fails.
  */
-export async function createInvoiceInDB(
+export async function createInvoiceInDb(
 	db: dB,
 	{
 		customerId,
@@ -74,7 +74,7 @@ export async function createInvoiceInDB(
 			? toInvoiceDTO(toInvoiceEntity(createdInvoice))
 			: null;
 	} catch (error) {
-		logError("createInvoiceInDB", error, { customerId });
+		logError("createInvoiceInDb", error, { customerId });
 		throw new Error("Database error while creating invoice.");
 	}
 }
@@ -87,7 +87,7 @@ export async function createInvoiceInDB(
  * @returns The updated invoice as InvoiceDTO, or null if not found.
  * @throws Error if the database operation fails.
  */
-export async function updateInvoiceInDB(
+export async function updateInvoiceInDb(
 	db: dB,
 	id: string,
 	{
@@ -106,7 +106,7 @@ export async function updateInvoiceInDB(
 			? toInvoiceDTO(toInvoiceEntity(updatedInvoice))
 			: null;
 	} catch (error) {
-		logError("updateInvoiceInDB", error, { customerId, id });
+		logError("updateInvoiceInDb", error, { customerId, id });
 		throw new Error("Database error while updating invoice.");
 	}
 }
@@ -118,7 +118,7 @@ export async function updateInvoiceInDB(
  * @returns The deleted invoice as InvoiceDTO, or null if not found.
  * @throws Error if the database operation fails.
  */
-export async function deleteInvoiceInDB(
+export async function deleteInvoiceInDb(
 	db: dB,
 	id: InvoiceId,
 ): Promise<InvoiceDTO | null> {
@@ -131,7 +131,7 @@ export async function deleteInvoiceInDB(
 			? toInvoiceDTO(toInvoiceEntity(deletedInvoice))
 			: null;
 	} catch (error) {
-		logError("deleteInvoiceInDB", error, { id });
+		logError("deleteInvoiceInDb", error, { id });
 		throw new Error("An unexpected error occurred. Please try again.");
 	}
 }
