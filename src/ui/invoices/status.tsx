@@ -3,7 +3,7 @@ import clsx from "clsx";
 import type { JSX } from "react";
 import type { InvoiceStatus } from "@/src/lib/definitions/enums";
 
-export default function InvoiceStatusComponent({
+export function InvoiceStatusComponent({
 	status,
 }: {
 	status: InvoiceStatus;

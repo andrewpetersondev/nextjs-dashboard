@@ -3,7 +3,7 @@ import { type JSX, Suspense } from "react";
 import { fetchUsersPages } from "@/src/lib/dal/users.dal";
 import { getDB } from "@/src/lib/db/connection";
 import { H1 } from "@/src/ui/headings";
-import Pagination from "@/src/ui/invoices/pagination";
+import { Pagination } from "@/src/ui/invoices/pagination";
 import { Search } from "@/src/ui/search";
 import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
 import { CreateUser } from "@/src/ui/users/buttons";

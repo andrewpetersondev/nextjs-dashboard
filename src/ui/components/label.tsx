@@ -25,5 +25,3 @@ export const Label: React.FC<LabelProps> = ({
 		{text}
 	</label>
 );
-
-export default Label;

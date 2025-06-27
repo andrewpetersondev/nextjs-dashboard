@@ -11,7 +11,7 @@ import {
 import type { JSX } from "react";
 import { generatePagination } from "@/src/lib/utils/utils.client";
 
-export default function Pagination({
+export function Pagination({
 	totalPages,
 }: {
 	totalPages: number;
@@ -31,42 +31,48 @@ export default function Pagination({
 	};
 
 	return (
-		<>
-			<div className="inline-flex">
-				<PaginationArrow
-					direction="left"
-					href={createPageUrl(currentPage - 1)}
-					isDisabled={currentPage <= 1}
-				/>
+		<div className="inline-flex">
+			<PaginationArrow
+				direction="left"
+				href={createPageUrl(currentPage - 1)}
+				isDisabled={currentPage <= 1}
+			/>
 
-				<div className="flex -space-x-px">
-					{allPages.map((page: string | number, index: number): JSX.Element => {
-						let position: "first" | "last" | "single" | "middle" | undefined;
+			<div className="flex -space-x-px">
+				{allPages.map((page: string | number, index: number): JSX.Element => {
+					let position: "first" | "last" | "single" | "middle" | undefined;
 
-						if (index === 0) position = "first";
-						if (index === allPages.length - 1) position = "last";
-						if (allPages.length === 1) position = "single";
-						if (page === "...") position = "middle";
+					if (index === 0) {
+						position = "first";
+					}
+					if (index === allPages.length - 1) {
+						position = "last";
+					}
+					if (allPages.length === 1) {
+						position = "single";
+					}
+					if (page === "...") {
+						position = "middle";
+					}
 
-						return (
-							<PaginationNumber
-								href={createPageUrl(page)}
-								isActive={currentPage === page}
-								key={page}
-								page={page}
-								position={position}
-							/>
-						);
-					})}
-				</div>
-
-				<PaginationArrow
-					direction="right"
-					href={createPageUrl(currentPage + 1)}
-					isDisabled={currentPage >= totalPages}
-				/>
+					return (
+						<PaginationNumber
+							href={createPageUrl(page)}
+							isActive={currentPage === page}
+							key={page}
+							page={page}
+							position={position}
+						/>
+					);
+				})}
 			</div>
-		</>
+
+			<PaginationArrow
+				direction="right"
+				href={createPageUrl(currentPage + 1)}
+				isDisabled={currentPage >= totalPages}
+			/>
+		</div>
 	);
 }
 

@@ -72,5 +72,3 @@ export const SelectMenu = React.memo(
 );
 
 SelectMenu.displayName = "SelectMenu";
-
-export default SelectMenu;

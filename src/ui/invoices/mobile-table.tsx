@@ -3,9 +3,9 @@ import type { JSX } from "react";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices";
 import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import InvoiceStatusComponent from "@/src/ui/invoices/status";
+import { InvoiceStatusComponent } from "@/src/ui/invoices/status";
 
-export default function MobileTable({
+export function MobileTable({
 	invoices,
 }: {
 	invoices: FetchFilteredInvoicesData[];

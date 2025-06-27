@@ -28,5 +28,3 @@ export const CustomerSelect: React.FC<CustomerSelectProps> = ({
 		{...props}
 	/>
 );
-
-export default CustomerSelect;

@@ -15,9 +15,9 @@ import { FieldError } from "@/src/ui/auth/field-error";
 import { Button } from "@/src/ui/button";
 import { DollarInput } from "@/src/ui/components/input";
 import { Label } from "@/src/ui/components/label";
-import CustomerSelect from "@/src/ui/invoices/customer-select";
+import { CustomerSelect } from "@/src/ui/invoices/customer-select";
 
-export default function EditInvoiceForm({
+export function EditInvoiceForm({
 	invoice,
 	customers,
 }: {

@@ -5,7 +5,7 @@ import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import { brandInvoiceId, fetchInvoiceById } from "@/src/lib/dal/invoices.dal";
 import { getDB } from "@/src/lib/db/connection";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
-import EditInvoiceForm from "@/src/ui/invoices/edit-invoice-form";
+import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form";
 
 export const metadata: Metadata = {
 	title: "Edit InvoiceEntity",
