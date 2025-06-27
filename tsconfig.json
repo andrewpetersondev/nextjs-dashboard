@@ -34,7 +34,7 @@
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",
-		"./cypress.d.ts",
+		"./cypress/cypress.d.ts",
 		"next-env.d.ts",
 		".next/types/**/*.ts"
 	]

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { _TEST_USER } from "../__fixtures__/users";
 

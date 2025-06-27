@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { FieldError } from "../../../src/ui/auth/field-error";
 

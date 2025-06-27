@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import DemoAdminUser from "../../../src/ui/auth/demo-admin-user";
 

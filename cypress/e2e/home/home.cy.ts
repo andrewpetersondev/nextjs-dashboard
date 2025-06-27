@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 interface ScreenDimensions {
 	width: number;

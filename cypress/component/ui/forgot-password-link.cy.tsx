@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { ForgotPasswordLink } from "../../../src/ui/auth/forgot-password-link";
 

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../cypress.d.ts" />
 
 import { RememberMeCheckbox } from "../../../src/ui/auth/remember-me-checkbox";
 

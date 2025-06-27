@@ -23,5 +23,5 @@
 		"types": ["cypress", "node"]
 	},
 	"extends": "../tsconfig.json",
-	"include": ["../cypress.d.ts", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+	"include": ["./cypress.d.ts", "**/*.ts", "**/*.tsx"]
 }
