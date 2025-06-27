@@ -97,11 +97,13 @@
 - Maintain up-to-date README and usage guides.
 - Use JSDoc/TSDoc for TypeScript documentation.
 
-<!-- ## Accessibility
+## Accessibility
 
-- Follow WCAG 2.1 AA accessibility standards.
+- Follow accessibility best practices.
 - Use semantic HTML and ARIA attributes where appropriate.
 - Test accessibility with automated tools and manual checks.
+
+<!--
 
 ## Internationalization (i18n)
 

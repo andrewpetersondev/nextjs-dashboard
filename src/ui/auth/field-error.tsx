@@ -17,7 +17,7 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 		// This component is now used for all field errors (email, username, password)
 		if (!error?.length) return null;
 		return (
-			<div className="text-text-error" data-cy={dataCy} id={id}>
+			<div className="text-text-error" data-cy={dataCy} id={id} role="alert">
 				{label && <p>{label}</p>}
 				<ul>
 					{error.map(
