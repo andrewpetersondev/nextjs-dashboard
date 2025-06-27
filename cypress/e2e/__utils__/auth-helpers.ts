@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
+/** unused function  */
 export const _loginViaUI = (user: { email: string; password: string }) => {
 	cy.visit("/login");
 	cy.get('[data-cy="login-email-input"]').type(user.email);

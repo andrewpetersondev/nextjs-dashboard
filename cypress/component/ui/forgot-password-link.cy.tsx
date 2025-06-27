@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
-import { ForgotPasswordLink } from "../../../src/ui/auth/forgot-password-link";
+import { ForgotPasswordLink } from "../../../src/ui/auth/forgot-password-link.tsx";
 
 describe("<ForgotPasswordLink />", () => {
 	it("renders link to forgot password", () => {

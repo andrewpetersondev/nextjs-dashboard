@@ -1,4 +1,4 @@
-import type { DbTaskResult } from "../types";
+import type { DbTaskResult } from "../types.ts";
 
 export function createDbError<T>(
 	error: string,

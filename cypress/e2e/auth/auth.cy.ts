@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
-import { _TEST_USER } from "../__fixtures__/users";
+import { _TEST_USER } from "../__fixtures__/users.ts";
 
 /**
  * E2E tests for authentication commands.

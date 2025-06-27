@@ -2,14 +2,14 @@
 
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import type { UserEntity } from "../src/lib/db/entities/user";
-import type { UserRole } from "../src/lib/definitions/enums";
+import type { UserEntity } from "../src/lib/db/entities/user.ts";
+import type { UserRole } from "../src/lib/definitions/enums.ts";
 import type {
 	CreateUserInput,
 	LoginCredentials,
 	SignupUserInput,
 	UserCredentials,
-} from "./support/types";
+} from "./support/types.ts";
 
 declare global {
 	namespace Cypress {

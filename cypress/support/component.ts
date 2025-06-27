@@ -1,4 +1,4 @@
-import "./commands";
+import "./commands.ts";
 import "./cypress-global.css";
 
 import { mount } from "cypress/react";

@@ -3,9 +3,9 @@
 
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "../../src/lib/db/entities/user";
-import { users } from "../../src/lib/db/schema";
-import { testDB } from "../../src/lib/db/test-database";
+import type { UserEntity } from "../../src/lib/db/entities/user.ts";
+import { users } from "../../src/lib/db/schema.ts";
+import { testDB } from "../../src/lib/db/test-database.ts";
 import type {} from "../cypress.d.ts";
 import {
 	ERROR_DB,
@@ -13,8 +13,8 @@ import {
 	ERROR_USER_DELETION_FAILED,
 	ERROR_USER_NOT_FOUND,
 	ERROR_USER_UPDATE_FAILED,
-} from "./constants";
-import type { CreateUserInput, DbTaskResult } from "./types";
+} from "./constants.ts";
+import type { CreateUserInput, DbTaskResult } from "./types.ts";
 
 export async function createUserTask(
 	user: CreateUserInput,

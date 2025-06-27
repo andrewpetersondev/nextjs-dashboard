@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../cypress.d.ts" />
 
-import { AuthSubmitButton } from "../../src/ui/auth/auth-submit-button";
+import { AuthSubmitButton } from "../../src/ui/auth/auth-submit-button.tsx";
 
 describe("AuthSubmitButton", () => {
 	it("renders correctly", () => {
@@ -10,7 +10,7 @@ describe("AuthSubmitButton", () => {
 	});
 
 	it("is disabled when pending", () => {
-		cy.mount(<AuthSubmitButton pending>Submit</AuthSubmitButton>);
+		cy.mount(<AuthSubmitButton pending={true}>Submit</AuthSubmitButton>);
 		cy.get("button").should("have.attr", "aria-disabled", "true");
 	});
 

@@ -1,7 +1,7 @@
 /// <reference types="../cypress" />
 /// <reference path="../cypress.d.ts" />
 
-import type { UserEntity } from "../../src/lib/db/entities/user";
+import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 
 // --- User Types ---
 export interface BaseUserFields {

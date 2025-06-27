@@ -3,9 +3,9 @@
 
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants";
-import type { UserEntity } from "../../src/lib/db/entities/user";
-import type { UserRole } from "../../src/lib/definitions/enums";
+import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
+import type { UserEntity } from "../../src/lib/db/entities/user.ts";
+import type { UserRole } from "../../src/lib/definitions/enums.ts";
 import {
 	LOGIN_EMAIL_INPUT,
 	LOGIN_PASSWORD_INPUT,
@@ -14,15 +14,15 @@ import {
 	SIGNUP_PASSWORD_INPUT,
 	SIGNUP_SUBMIT_BUTTON,
 	SIGNUP_USERNAME_INPUT,
-} from "./constants";
-import { generateMockSessionJWT } from "./session-mock";
+} from "./constants.ts";
+import { generateMockSessionJWT } from "./session-mock.ts";
 import type {
 	CreateUserInput,
 	DbTaskResult,
 	LoginCredentials,
 	SignupUserInput,
 	UserCredentials,
-} from "./types";
+} from "./types.ts";
 
 // --- UI Commands ---
 
@@ -92,7 +92,7 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 			throw new Error("[createUser] Invalid result from db:createUser task");
 		}
 		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!dbResult.success || !dbResult.data) {
+		if (!(dbResult.success && dbResult.data)) {
 			throw new Error(
 				`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 			);
@@ -109,7 +109,7 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 			throw new Error("[deleteUser] Invalid result from db:deleteUser task");
 		}
 		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!dbResult.success || !dbResult.data) {
+		if (!(dbResult.success && dbResult.data)) {
 			throw new Error(
 				`[deleteUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 			);
@@ -156,7 +156,7 @@ Cypress.Commands.add("findUser", (email: string) => {
 			throw new Error("[findUser] Invalid result from db:findUser task");
 		}
 		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!dbResult.success || !dbResult.data) {
+		if (!(dbResult.success && dbResult.data)) {
 			throw new Error(
 				`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 			);
@@ -214,7 +214,7 @@ Cypress.Commands.add(
 				throw new Error("[updateUser] Invalid result from db:updateUser task");
 			}
 			const dbResult = result as DbTaskResult<UserEntity>;
-			if (!dbResult.success || !dbResult.data) {
+			if (!(dbResult.success && dbResult.data)) {
 				throw new Error(
 					`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 				);

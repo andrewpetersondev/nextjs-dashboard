@@ -65,6 +65,7 @@
 		"biome:check:write": "pnpm biome check --write",
 		"biome:check:write:biome": "pnpm biome check --write ./biome.json",
 		"biome:format": "pnpm biome format --write",
+		"biome:format:cypress": "pnpm biome format --write ./cypress ",
 		"biome:rage": "pnpm biome rage",
 		"biome:version": "pnpm biome version",
 		"build": "next build --turbopack",

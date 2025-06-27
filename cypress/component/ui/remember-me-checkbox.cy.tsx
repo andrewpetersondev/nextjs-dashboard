@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference path="../../cypress.d.ts" />
 
-import { RememberMeCheckbox } from "../../../src/ui/auth/remember-me-checkbox";
+import { RememberMeCheckbox } from "../../../src/ui/auth/remember-me-checkbox.tsx";
 
 describe("<RememberMeCheckbox />", () => {
 	it("renders checkbox and label", () => {
