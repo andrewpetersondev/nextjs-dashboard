@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user";
 import { users } from "../../src/lib/db/schema";
 import { testDB } from "../../src/lib/db/test-database";
+import type {} from "../cypress.d.ts";
 import {
 	ERROR_DB,
 	ERROR_USER_CREATION_FAILED,

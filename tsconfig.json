@@ -30,12 +30,6 @@
 		"target": "esnext",
 		"types": ["node", "react", "react-dom"]
 	},
-	"exclude": ["node_modules", "cypress.config.ts", "cypress", "storage"],
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"./cypress/cypress.d.ts",
-		"next-env.d.ts",
-		".next/types/**/*.ts"
-	]
+	"exclude": ["node_modules", "**/*.cy.*", "storage"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }

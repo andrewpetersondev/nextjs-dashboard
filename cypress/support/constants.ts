@@ -1,5 +1,3 @@
-// cypress/support/constants.ts
-
 // --- Selector Constants ---
 export const SIGNUP_USERNAME_INPUT = '[data-cy="signup-username-input"]';
 export const SIGNUP_EMAIL_INPUT = '[data-cy="signup-email-input"]';
