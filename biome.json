@@ -2,6 +2,7 @@
 	"$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
 	"assist": {
 		"actions": {
+			"recommended": true,
 			"source": {
 				"organizeImports": "on",
 				"recommended": true,
@@ -28,13 +29,14 @@
 		"includes": [
 			"**",
 			"!**/node_modules",
+			"!**/dist/**",
+			"!**/*.generated.js",
 			"!**/.next",
 			"!**/pnpm-lock.yaml",
 			"!**/next-env.d.ts",
 			"!.run",
 			"!.idea",
 			"!/.vscode",
-			"!src/db/drizzle/**/*",
 			"!src/lib/db/drizzle/**/*",
 			"!secrets",
 			"!keep",
@@ -57,6 +59,9 @@
 			"enabled": true,
 			"indentStyle": "tab",
 			"quoteStyle": "double"
+		},
+		"linter": {
+			"enabled": true
 		}
 	},
 	"json": {
@@ -83,12 +88,20 @@
 		},
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"a11y": "on",
+			"complexity": "on",
+			"correctness": "on",
+			"nursery": "off",
+			"performance": "on",
+			"recommended": true,
+			"security": "on",
+			"style": "on"
 		}
 	},
 	"vcs": {
 		"clientKind": "git",
-		"enabled": false,
+		"defaultBranch": "main",
+		"enabled": true,
 		"useIgnoreFile": true
 	}
 }
