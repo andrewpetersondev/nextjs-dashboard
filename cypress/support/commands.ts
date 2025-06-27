@@ -22,6 +22,8 @@ import { SESSION_COOKIE_NAME } from "@/src/lib/auth/constants";
 import type { UserEntity } from "@/src/lib/db/entities/user";
 import type { UserRole } from "@/src/lib/definitions/enums";
 
+// --- UI Commands ---
+
 Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.log("Signing up user", user.email);
 	cy.visit("/signup");
@@ -39,29 +41,41 @@ Cypress.Commands.add("login", (user: LoginCredentials) => {
 	cy.get(LOGIN_SUBMIT_BUTTON).click();
 });
 
+/**
+ * Logs in a user via the UI and optionally asserts successful login.
+ * @param user - The login credentials.
+ * @param options - Optional settings (e.g., assertSuccess).
+ * @returns Cypress.Chainable<void>
+ */
 Cypress.Commands.add(
 	"loginNew",
-	(user: LoginCredentials, options?: { assertSuccess?: boolean }) => {
+	(
+		user: LoginCredentials,
+		options?: { assertSuccess?: boolean },
+	): Cypress.Chainable<void> => {
 		cy.log("Logging in user", user.email);
 		cy.visit("/login");
 		cy.get(LOGIN_EMAIL_INPUT).type(user.email);
 		cy.get(LOGIN_PASSWORD_INPUT).type(user.password, { log: false });
 		cy.get(LOGIN_SUBMIT_BUTTON).click();
-		// Only assert if options.assertSuccess is true
-		if (options?.assertSuccess) {
-			return cy
-				.location("pathname", { timeout: 10000 })
-				.should("include", "/dashboard")
-				.get("h1")
-				.contains("Dashboard", { timeout: 10000 })
-				.should("be.visible")
-				.then(() => undefined); // Ensure void return type
-		}
 
-		// Otherwise, just return a chainable
-		return cy.wrap(undefined);
+		// Always return a chainable with void type
+		return cy.then<void>(() => {
+			if (options?.assertSuccess) {
+				cy.location("pathname", { timeout: 10000 }).should(
+					"include",
+					"/dashboard",
+				);
+				cy.get("h1", { timeout: 10000 })
+					.contains("Dashboard")
+					.should("be.visible");
+			}
+			return cy.wrap(undefined);
+		});
 	},
 );
+
+// --- DB Commands ---
 
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);

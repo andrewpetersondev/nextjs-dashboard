@@ -25,7 +25,7 @@ export default defineConfig({
 		},
 		specPattern: "cypress/e2e/**/*.{cy,spec}.ts",
 		supportFile: "cypress/support/e2e.ts",
-		// video: true,
+		video: true,
 	},
 	screenshotsFolder: "cypress/screenshots",
 	videosFolder: "cypress/videos",

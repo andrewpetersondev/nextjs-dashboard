@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
+/// <reference path="../../../../cypress.d.ts" />
 
 import { _TEST_USER } from "@/cypress/e2e/__fixtures__/users";
 
@@ -7,7 +7,7 @@ import { _TEST_USER } from "@/cypress/e2e/__fixtures__/users";
  * E2E tests for authentication commands.
  * Uses reusable user constants for type safety and maintainability.
  */
-describe("Auth Commands", () => {
+describe("auth/login/assert", () => {
 	before(() => {
 		return cy.ensureUserDeleted(_TEST_USER.email);
 	});
@@ -16,18 +16,11 @@ describe("Auth Commands", () => {
 		return cy.ensureUserDeleted(_TEST_USER.email);
 	});
 
-	context("Auth Commands via UI", () => {
-		it("should sign up a new user with custom command", () => {
-			return cy.signup(_TEST_USER);
-		});
-
+	context("Login with assertion", () => {
 		it("should log in with created user with custom command", () => {
-			return cy.login(_TEST_USER);
-		});
-
-		// this will fail because of cookie issues
-		it("should log in with loginNew command and assert success", () => {
-			return cy.loginNew(_TEST_USER, { assertSuccess: true });
+			return cy.createUser(_TEST_USER).then(() => {
+				return cy.loginNew(_TEST_USER, { assertSuccess: true });
+			});
 		});
 	});
 });
