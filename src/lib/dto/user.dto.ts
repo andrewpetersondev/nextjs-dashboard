@@ -3,7 +3,7 @@ import type { UserRole } from "@/src/lib/definitions/enums.ts";
 /**
  ** User Data Transfer Object (DTO) for frontend.
  ** Only exposes safe fields.
- ** Strips sensitive data from DB calls
+ ** Strips sensitive data from dB calls
  ** Server <---> DTO <---> Client
  ** This example strips the user property of **SensitiveData**
  */
@@ -15,7 +15,7 @@ export interface UserDTO {
 }
 
 // PROBLEM: convert code so database calls use mapper, which returns DTO
-// DB CALL --> MAPPER --> DTO
+// dB CALL --> MAPPER --> DTO
 // SOLVED
 
 // 	PROBLEM: fetchUserById in query/users.dal.ts can return undefined

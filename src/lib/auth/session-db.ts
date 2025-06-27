@@ -13,10 +13,10 @@ import type { UserRole } from "@/src/lib/definitions/enums.ts";
 import { z as zod } from "@/src/lib/definitions/zod-alias.ts";
 import { logger } from "@/src/lib/utils/logger.ts";
 
-// --- DB session logic here ---
+// --- dB session logic here ---
 // export createDbSession, generateSessionToken, generateUUID
 
-// --- DB Session Logic (Node.js only, never import in Edge runtime) ---
+// --- dB Session Logic (Node.js only, never import in Edge runtime) ---
 
 /**
  * Generates a cryptographically secure random session token using the Web Crypto API.
@@ -72,7 +72,7 @@ export async function createDbSession(
 	const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
 	const token = generateSessionToken();
 
-	// --- Anti-pattern resistance: never import DB code in Edge runtime ---
+	// --- Anti-pattern resistance: never import dB code in Edge runtime ---
 	// Only import here, not at module scope, to avoid accidental Edge import
 	const { insertSession } = await import("@/src/lib/dal/session");
 
@@ -89,6 +89,7 @@ export async function createDbSession(
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
+		// biome-ignore lint/style/noProcessEnv: i need it
 		secure: process.env.NODE_ENV === "production",
 	});
 

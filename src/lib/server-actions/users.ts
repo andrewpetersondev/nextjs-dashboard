@@ -15,12 +15,12 @@ import { hashPassword } from "@/src/lib/auth/password.ts";
 import { createSession, deleteSession } from "@/src/lib/auth/session-jwt.ts";
 import {
 	createDemoUser,
-	createUserInDB,
+	createUserInDb,
 	deleteUser,
 	demoUserCounter,
 	findUserForLogin,
 	readUserById,
-	updateUserDAL,
+	updateUserDal,
 } from "@/src/lib/dal/users.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import type { UserRole } from "@/src/lib/definitions/enums.ts";
@@ -75,7 +75,7 @@ export async function signup(
 			password: string;
 		};
 		const db = getDB();
-		const user = await createUserInDB(db, {
+		const user = await createUserInDb(db, {
 			email,
 			password,
 			role: "user",
@@ -269,7 +269,7 @@ export async function createUser(
 			});
 		}
 		const { username, email, password, role } = validated.data;
-		const user = await createUserInDB(db, {
+		const user = await createUserInDb(db, {
 			email,
 			password,
 			role,
@@ -355,7 +355,7 @@ export async function editUser(
 				success: true,
 			});
 		}
-		const updatedUser: UserDTO | null = await updateUserDAL(db, id, patch);
+		const updatedUser: UserDTO | null = await updateUserDal(db, id, patch);
 		if (!updatedUser) {
 			return actionResult({
 				errors: undefined,

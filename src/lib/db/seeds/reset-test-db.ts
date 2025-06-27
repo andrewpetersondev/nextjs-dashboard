@@ -12,5 +12,5 @@ main()
 		console.log("drizzle reset complete, tables remain, but values are gone");
 	})
 	.catch((error) => {
-		console.error("Error resetting test DB:", error);
+		console.error("Error resetting test dB:", error);
 	});

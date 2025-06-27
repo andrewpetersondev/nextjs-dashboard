@@ -35,10 +35,10 @@ When a user submits the signup form, the following flow is triggered:
    If validation fails, error messages are returned and displayed in the form.
 
 3. **User Creation**  
-   If validation passes, the server action calls `createUserInDB` to insert the new user into the database:
+   If validation passes, the server action calls `createUserInDb` to insert the new user into the database:
 
    ```typescript
-   const user = await createUserInDB({
+   const user = await createUserInDb({
      username,
      email,
      password,

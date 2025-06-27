@@ -7,7 +7,7 @@ import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { comparePassword, hashPassword } from "@/src/lib/auth/password.ts";
-import type { DB } from "@/src/lib/db/connection.ts";
+import type { dB } from "@/src/lib/db/connection.ts";
 import type { UserEntity } from "@/src/lib/db/entities/user.ts";
 import { demoUserCounters, users } from "@/src/lib/db/schema.ts";
 import type { UserRole } from "@/src/lib/definitions/enums.ts";
@@ -30,8 +30,8 @@ const ITEMS_PER_PAGE_USERS = 10;
  * @returns The created user as UserDTO, or null if creation failed.
  * @param db
  */
-export async function createUserInDB(
-	db: DB,
+export async function createUserInDb(
+	db: dB,
 	{
 		username,
 		email,
@@ -52,7 +52,7 @@ export async function createUserInDB(
 			.returning();
 		return user ? toUserDTO(user) : null;
 	} catch (error) {
-		logError("createUserInDB", error, { email });
+		logError("createUserInDb", error, { email });
 		throw new Error("Failed to create user in database.");
 	}
 }
@@ -65,7 +65,7 @@ export async function createUserInDB(
  * @returns The user as UserDTO, or null if not found or password invalid.
  */
 export async function findUserForLogin(
-	db: DB,
+	db: dB,
 	email: string,
 	password: string,
 ): Promise<UserDTO | null> {
@@ -98,7 +98,7 @@ export async function findUserForLogin(
  * @returns The user as UserDTO, or null if not found.
  */
 export async function fetchUserById(
-	db: DB,
+	db: dB,
 	id: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -137,7 +137,7 @@ export async function fetchUserById(
  * @param query - Search query for username or email.
  * @returns Number of pages.
  */
-export async function fetchUsersPages(db: DB, query: string): Promise<number> {
+export async function fetchUsersPages(db: dB, query: string): Promise<number> {
 	try {
 		const [{ count: total } = { count: 0 }] = await db
 			.select({ count: count(users.id) })
@@ -163,7 +163,7 @@ export async function fetchUsersPages(db: DB, query: string): Promise<number> {
  * @returns Array of UserDTO for the page.
  */
 export async function fetchFilteredUsers(
-	db: DB,
+	db: dB,
 	query: string,
 	currentPage: number,
 ): Promise<UserDTO[]> {
@@ -196,7 +196,7 @@ export async function fetchFilteredUsers(
  * @returns The deleted user as UserDTO, or null if not found.
  */
 export async function deleteUser(
-	db: DB,
+	db: dB,
 	userId: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -217,7 +217,7 @@ export async function deleteUser(
  * @param role - User role.
  * @returns The counter ID.
  */
-export async function demoUserCounter(db: DB, role: UserRole): Promise<number> {
+export async function demoUserCounter(db: dB, role: UserRole): Promise<number> {
 	try {
 		const [counter] = await db
 			.insert(demoUserCounters)
@@ -238,7 +238,7 @@ export async function demoUserCounter(db: DB, role: UserRole): Promise<number> {
  * @returns The created demo user as UserDTO, or null if creation failed.
  */
 export async function createDemoUser(
-	db: DB,
+	db: dB,
 	id: number,
 	role: UserRole,
 ): Promise<UserDTO | null> {
@@ -246,7 +246,7 @@ export async function createDemoUser(
 		const DemoPassword = createRandomPassword();
 		const uniqueEmail = `demo+${role}${id}@demo.com`;
 		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
-		return await createUserInDB(db, {
+		return await createUserInDb(db, {
 			email: uniqueEmail,
 			password: DemoPassword,
 			role,
@@ -265,7 +265,7 @@ export async function createDemoUser(
  * @returns The user as UserDTO, or null if not found.
  */
 export async function readUserById(
-	db: DB,
+	db: dB,
 	id: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -289,8 +289,8 @@ export async function readUserById(
  * @returns The updated user as UserDTO, or null if no changes or update failed.
  * @example patch = { username: "john", age: 30, isActive: true }
  */
-export async function updateUserDAL(
-	db: DB,
+export async function updateUserDal(
+	db: dB,
 	id: string,
 	patch: Record<string, unknown>,
 ): Promise<UserDTO | null> {
@@ -304,10 +304,10 @@ export async function updateUserDAL(
 			.set(patch)
 			.where(eq(users.id, id))
 			.returning();
-		// console.log("updateUserDAL", user);
+		// console.log("updateUserDal", user);
 		return user ? toUserDTO(user) : null;
 	} catch (error) {
-		logError("updateUserDAL", error, { id, patch });
+		logError("updateUserDal", error, { id, patch });
 		return null;
 	}
 }

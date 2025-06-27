@@ -29,7 +29,7 @@ services:
       timeout: 10s
       retries: 5
 
-  # --- E2E web service (uses test DB, but NODE_ENV=development for Next.js) ---
+  # --- E2E web service (uses test dB, but NODE_ENV=development for Next.js) ---
   web-e2e:
     container_name: web-e2e
     build:

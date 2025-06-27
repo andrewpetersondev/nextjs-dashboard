@@ -1,7 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import type { DB } from "@/src/lib/db/connection.ts";
+import type { dB } from "@/src/lib/db/connection.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
 import type {
 	CustomerField,
@@ -10,7 +10,7 @@ import type {
 } from "@/src/lib/definitions/customers.ts";
 import { formatCurrency } from "@/src/lib/utils/utils.ts";
 
-export async function fetchCustomers(db: DB): Promise<CustomerField[]> {
+export async function fetchCustomers(db: dB): Promise<CustomerField[]> {
 	try {
 		return await db
 			.select({
@@ -26,7 +26,7 @@ export async function fetchCustomers(db: DB): Promise<CustomerField[]> {
 }
 
 export async function fetchFilteredCustomers(
-	db: DB,
+	db: dB,
 	query: string,
 ): Promise<FormattedCustomersTableRow[]> {
 	try {

@@ -153,7 +153,7 @@ See [docs/cli.md](docs/cli.md) for more details.
 ## Accessing Services
 
 - **Next.js App:** [http://localhost:3000](http://localhost:3000) (runs locally, not in Docker)
-- **Adminer (DB UI):** [http://localhost:8080](http://localhost:8080)
+- **Adminer (dB UI):** [http://localhost:8080](http://localhost:8080)
 - **PostgreSQL:** `localhost:5432`
 
 ---
@@ -168,8 +168,8 @@ See [docs/startup.md](docs/startup.md) for detailed startup instructions for eac
 
 - **E2E & Component:** Cypress (run in Docker)
 - **Unit Testing:** Vitest (planned)
-- **Test DB:** Isolated PostgreSQL instance for tests
-- **Coverage:** High coverage required; external dependencies and DB are mocked in tests
+- **Test dB:** Isolated PostgreSQL instance for tests
+- **Coverage:** High coverage required; external dependencies and dB are mocked in tests
 
 ---
 
@@ -193,7 +193,7 @@ See [docs/startup.md](docs/startup.md) for detailed startup instructions for eac
 
 ## Next Steps
 
-- Automate DB schema and seed initialization on container creation
+- Automate dB schema and seed initialization on container creation
 - Add Vitest for unit testing
 - Create a production Dockerfile with multi-stage builds
 

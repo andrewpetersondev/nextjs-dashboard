@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { DB } from "@/src/lib/db/connection.ts";
+import type { dB } from "@/src/lib/db/connection.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
 
 /**
@@ -14,7 +14,7 @@ export interface CardData {
 	pendingInvoices: number;
 }
 
-export async function fetchCardData(db: DB): Promise<CardData> {
+export async function fetchCardData(db: dB): Promise<CardData> {
 	try {
 		const invoiceCount: number = await db.$count(invoices);
 		const customerCount: number = await db.$count(customers);

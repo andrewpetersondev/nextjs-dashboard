@@ -5,7 +5,7 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
  * InvoiceEntity Data Access Layer (DAL) for CRUD operations on InvoiceEntity entities.
  * Uses Drizzle ORM for database access.
  */
-import type { DB } from "@/src/lib/db/connection.ts";
+import type { dB } from "@/src/lib/db/connection.ts";
 import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
 import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
@@ -52,7 +52,7 @@ export function brandStatus(status: string): InvoiceStatus {
  * @throws Error if the database operation fails.
  */
 export async function createInvoiceInDB(
-	db: DB,
+	db: dB,
 	{
 		customerId,
 		amount,
@@ -88,7 +88,7 @@ export async function createInvoiceInDB(
  * @throws Error if the database operation fails.
  */
 export async function updateInvoiceInDB(
-	db: DB,
+	db: dB,
 	id: string,
 	{
 		customerId,
@@ -119,7 +119,7 @@ export async function updateInvoiceInDB(
  * @throws Error if the database operation fails.
  */
 export async function deleteInvoiceInDB(
-	db: DB,
+	db: dB,
 	id: InvoiceId,
 ): Promise<InvoiceDTO | null> {
 	try {
@@ -143,7 +143,7 @@ export async function deleteInvoiceInDB(
  * @throws Error if the database operation fails.
  */
 export async function fetchLatestInvoices(
-	db: DB,
+	db: dB,
 ): Promise<ModifiedLatestInvoicesData[]> {
 	try {
 		const data: LatestInvoiceDbRow[] = await db
@@ -183,7 +183,7 @@ export async function fetchLatestInvoices(
  * @throws Error if the database operation fails.
  */
 export async function fetchFilteredInvoices(
-	db: DB,
+	db: dB,
 	query: string,
 	currentPage: number,
 ): Promise<FetchFilteredInvoicesData[]> {
@@ -235,7 +235,7 @@ export async function fetchFilteredInvoices(
  * @throws Error if the database operation fails.
  */
 export async function fetchInvoicesPages(
-	db: DB,
+	db: dB,
 	query: string,
 ): Promise<number> {
 	try {
@@ -271,7 +271,7 @@ export async function fetchInvoicesPages(
  * @throws Error if the database operation fails.
  */
 export async function fetchInvoiceById(
-	db: DB,
+	db: dB,
 	id: InvoiceId,
 ): Promise<InvoiceEntity | undefined> {
 	try {

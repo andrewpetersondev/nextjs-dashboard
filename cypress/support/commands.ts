@@ -83,7 +83,7 @@ Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.get(SIGNUP_SUBMIT_BUTTON).click();
 });
 
-// --- DB Commands ---
+// --- dB Commands ---
 
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
