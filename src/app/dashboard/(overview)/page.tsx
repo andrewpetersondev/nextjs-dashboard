@@ -7,6 +7,7 @@ import { AdminDashboard } from "@/src/ui/dashboard/admin-dashboard.tsx";
 import { MiddlewareCard } from "@/src/ui/dashboard/middleware-card.tsx";
 import { UserDashboard } from "@/src/ui/dashboard/user-dashboard.tsx";
 
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 
 export default async function Page(): Promise<JSX.Element> {

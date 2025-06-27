@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 	title: "Create InvoiceEntity",
 };
 
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
 
 export default async function Page(): Promise<JSX.Element> {

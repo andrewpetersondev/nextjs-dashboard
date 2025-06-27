@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 // force this page to be dynamic, so it doesn't get cached
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface EditUserPageParams {

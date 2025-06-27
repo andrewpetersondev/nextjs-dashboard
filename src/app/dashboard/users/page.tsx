@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 	title: "Users",
 };
 
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface UsersSearchParams {

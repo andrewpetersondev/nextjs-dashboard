@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 	title: "Edit InvoiceEntity",
 };
 
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface EditInvoicePageParams {

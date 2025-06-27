@@ -3,6 +3,7 @@ import type { JSX } from "react";
 import { SideNav } from "@/src/ui/dashboard/sidenav.tsx";
 
 // todo: revert to false? investigate
+// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const experimental_ppr = true;
 
 export default function Layout({
