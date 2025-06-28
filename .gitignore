@@ -74,6 +74,7 @@ secrets/
 Notes/
 storage/
 *.pem
+keep/
 
 # ================================
 # Cypress generated JS files
