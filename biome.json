@@ -75,8 +75,7 @@
 		"domains": {
 			"next": "recommended",
 			"project": "recommended",
-			"react": "recommended",
-			"test": "recommended"
+			"react": "recommended"
 		},
 		"enabled": true,
 		"rules": {
