@@ -12,6 +12,7 @@ import type {
 } from "./support/types.ts";
 
 declare global {
+	// biome-ignore lint/style/noNamespace: I think this is fine
 	namespace Cypress {
 		interface Chainable {
 			createUser(user: CreateUserInput): Chainable<UserEntity>;
@@ -31,10 +32,12 @@ declare global {
 
 			loginSession(user: UserCredentials): Chainable<void>;
 
-			mount(
+			mountV1(
 				component: ReactNode,
 				options?: Partial<MountOptions>,
 			): Chainable<MountReturn>;
+
+			mountV2: typeof mount;
 
 			setMockSessionCookie(userId: string, role?: UserRole): Chainable<void>;
 

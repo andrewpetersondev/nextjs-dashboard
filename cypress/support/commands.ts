@@ -1,8 +1,5 @@
 /// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
 
-import type { MountOptions, MountReturn } from "cypress/react";
-import type { ReactNode } from "react";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import type { UserRole } from "../../src/lib/definitions/enums.ts";
@@ -26,6 +23,10 @@ import type {
 
 // --- UI Commands ---
 
+/**
+ * Logs in a user via the UI.
+ * @param user - Login credentials.
+ */
 Cypress.Commands.add("login", (user: LoginCredentials) => {
 	cy.log("Logging in user", user.email);
 	cy.visit("/login");
@@ -36,14 +37,8 @@ Cypress.Commands.add("login", (user: LoginCredentials) => {
 
 /**
  * Logs in a user via the UI and optionally asserts successful login.
- * @param user - The login credentials.
+ * @param user - Login credentials.
  * @param options - Optional settings (e.g., assertSuccess).
- * @returns Cypress.Chainable<void>
- *
- * Note: Cypress's cy.then returns Chainable<undefined> when the callback returns nothing,
- * but Chainable<void> is semantically correct for commands with side effects.
- * If you encounter a TS2322 error, update the return type to Chainable<undefined>
- * and document the reason.
  */
 Cypress.Commands.add(
 	"loginNew",
@@ -57,8 +52,6 @@ Cypress.Commands.add(
 		cy.get(LOGIN_PASSWORD_INPUT).type(user.password, { log: false });
 		cy.get(LOGIN_SUBMIT_BUTTON).click();
 
-		// Do not return anything from the callback to ensure void return type
-		// @ts-expect-error: code outside if block does not return anything
 		return cy.then<void>(() => {
 			if (options?.assertSuccess) {
 				cy.location("pathname", { timeout: 10000 }).should(
@@ -74,6 +67,10 @@ Cypress.Commands.add(
 	},
 );
 
+/**
+ * Signs up a new user via the UI.
+ * @param user - Signup credentials.
+ */
 Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.log("Signing up user", user.email);
 	cy.visit("/signup");
@@ -85,40 +82,56 @@ Cypress.Commands.add("signup", (user: SignupUserInput) => {
 
 // --- dB Commands ---
 
+/**
+ * Creates a user in the database using a Cypress task.
+ * @param user - User creation input.
+ */
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 	cy.log("Creating test user", user.email);
-	return cy.task("db:createUser", user).then((result) => {
-		if (!result || typeof result !== "object" || !("success" in result)) {
-			throw new Error("[createUser] Invalid result from db:createUser task");
-		}
-		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!(dbResult.success && dbResult.data)) {
-			throw new Error(
-				`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-			);
-		}
-		cy.log("[createUser] dbResult = ", dbResult);
-		return cy.wrap(dbResult.data);
-	});
+	return cy
+		.task<DbTaskResult<UserEntity>>("db:createUser", user)
+		.then((result) => {
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error("[createUser] Invalid result from db:createUser task");
+			}
+			const dbResult = result as DbTaskResult<UserEntity>;
+			if (!(dbResult.success && dbResult.data)) {
+				throw new Error(
+					`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+				);
+			}
+			cy.log("[createUser] dbResult = ", dbResult);
+			return cy.wrap(dbResult.data);
+		});
 });
 
+/**
+ * Deletes a user from the database using a Cypress task.
+ * @param email - User email.
+ */
 Cypress.Commands.add("deleteUser", (email: string) => {
 	cy.log("deleteUser", email);
-	return cy.task("db:deleteUser", email).then((result) => {
-		if (!result || typeof result !== "object" || !("success" in result)) {
-			throw new Error("[deleteUser] Invalid result from db:deleteUser task");
-		}
-		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!(dbResult.success && dbResult.data)) {
-			throw new Error(
-				`[deleteUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-			);
-		}
-		cy.log("db:deleteUser result", result);
-		return dbResult.data;
-	});
+	return cy
+		.task<DbTaskResult<UserEntity>>("db:deleteUser", email)
+		.then((result) => {
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error("[deleteUser] Invalid result from db:deleteUser task");
+			}
+			const dbResult = result as DbTaskResult<UserEntity>;
+			if (!(dbResult.success && dbResult.data)) {
+				throw new Error(
+					`[deleteUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+				);
+			}
+			cy.log("db:deleteUser result", result);
+			return dbResult.data;
+		});
 });
 
+/**
+ * Ensures a user is deleted from the database.
+ * @param email - User email.
+ */
 Cypress.Commands.add(
 	"ensureUserDeleted",
 	(email: string): Cypress.Chainable<UserEntity | null> => {
@@ -149,23 +162,33 @@ Cypress.Commands.add(
 	},
 );
 
+/**
+ * Finds a user in the database.
+ * @param email - User email.
+ */
 Cypress.Commands.add("findUser", (email: string) => {
 	cy.log("Finding test user", email);
-	return cy.task("db:findUser", email).then((result) => {
-		if (!result || typeof result !== "object" || !("success" in result)) {
-			throw new Error("[findUser] Invalid result from db:findUser task");
-		}
-		const dbResult = result as DbTaskResult<UserEntity>;
-		if (!(dbResult.success && dbResult.data)) {
-			throw new Error(
-				`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-			);
-		}
-		cy.log("[findUser] dbResult =  ", dbResult);
-		return cy.wrap(dbResult.data);
-	});
+	return cy
+		.task<DbTaskResult<UserEntity>>("db:findUser", email)
+		.then((result) => {
+			if (!result || typeof result !== "object" || !("success" in result)) {
+				throw new Error("[findUser] Invalid result from db:findUser task");
+			}
+			const dbResult = result as DbTaskResult<UserEntity>;
+			if (!(dbResult.success && dbResult.data)) {
+				throw new Error(
+					`[findUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+				);
+			}
+			cy.log("[findUser] dbResult =  ", dbResult);
+			return cy.wrap(dbResult.data);
+		});
 });
 
+/**
+ * Logs in a user and persists the session using Cypress' cy.session.
+ * @param user - User credentials.
+ */
 Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 	cy.session(
 		user.email,
@@ -188,6 +211,11 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 	);
 });
 
+/**
+ * Sets a mock session cookie for a user.
+ * @param userId - User ID.
+ * @param role - User role (default: "user").
+ */
 Cypress.Commands.add(
 	"setMockSessionCookie",
 	(userId: string, role: UserRole = "user") => {
@@ -205,59 +233,33 @@ Cypress.Commands.add(
 	},
 );
 
+/**
+ * Updates a user in the database.
+ * @param email - User email.
+ * @param updates - Partial user updates.
+ */
 Cypress.Commands.add(
 	"updateUser",
 	(email: string, updates: Partial<UserEntity>) => {
 		cy.log("updateUser", email, updates);
-		return cy.task("db:updateUser", { email, updates }).then((result) => {
-			if (!result || typeof result !== "object" || !("success" in result)) {
-				throw new Error("[updateUser] Invalid result from db:updateUser task");
-			}
-			const dbResult = result as DbTaskResult<UserEntity>;
-			if (!(dbResult.success && dbResult.data)) {
-				throw new Error(
-					`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
-				);
-			}
-			cy.log("db:updateUser result", result);
-			return dbResult.data;
-		});
+		return cy
+			.task<DbTaskResult<UserEntity>>("db:updateUser", { email, updates })
+			.then((result) => {
+				if (!result || typeof result !== "object" || !("success" in result)) {
+					throw new Error(
+						"[updateUser] Invalid result from db:updateUser task",
+					);
+				}
+				const dbResult = result as DbTaskResult<UserEntity>;
+				if (!(dbResult.success && dbResult.data)) {
+					throw new Error(
+						`[updateUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
+					);
+				}
+				cy.log("db:updateUser result", result);
+				return dbResult.data;
+			});
 	},
 );
 
-declare global {
-	namespace Cypress {
-		interface Chainable {
-			createUser(user: CreateUserInput): Chainable<UserEntity>;
-
-			deleteUser(email: string): Chainable<UserEntity>;
-
-			ensureUserDeleted(email: string): Chainable<UserEntity | null>;
-
-			findUser(email: string): Chainable<UserEntity>;
-
-			login(user: LoginCredentials): Chainable<void>;
-
-			loginNew(
-				user: LoginCredentials,
-				options?: { assertSuccess?: boolean },
-			): Chainable<void>;
-
-			loginSession(user: UserCredentials): Chainable<void>;
-
-			mount(
-				component: ReactNode,
-				options?: Partial<MountOptions>,
-			): Chainable<MountReturn>;
-
-			setMockSessionCookie(userId: string, role?: UserRole): Chainable<void>;
-
-			signup(user: SignupUserInput): Chainable<void>;
-
-			updateUser(
-				email: string,
-				updates: Partial<UserEntity>,
-			): Chainable<UserEntity>;
-		}
-	}
-}
+// All commands are strictly typed in commands.d.ts

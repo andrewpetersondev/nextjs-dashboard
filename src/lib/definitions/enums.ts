@@ -9,6 +9,7 @@ export type UserRole = (typeof USER_ROLES)[number];
  */
 export const roleSchema = zod.enum(USER_ROLES, {
 	// required_error: "Role is required.", // todo: will this property break my code?
+	// biome-ignore lint/style/useNamingConvention: "Using zod enum for role validation."
 	invalid_type_error: "Invalid user role.",
 });
 
