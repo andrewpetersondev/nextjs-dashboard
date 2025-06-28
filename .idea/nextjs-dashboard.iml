@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.idea/inspectionProfiles" />
       <excludeFolder url="file://$MODULE_DIR$/cypress/screenshots" />
       <excludeFolder url="file://$MODULE_DIR$/cypress/videos" />
+      <excludeFolder url="file://$MODULE_DIR$/keep" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
