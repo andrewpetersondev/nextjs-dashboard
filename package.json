@@ -64,6 +64,7 @@
 		"biome:check": "pnpm biome check",
 		"biome:check:write": "pnpm biome check --write",
 		"biome:check:write:src": "pnpm biome check --write ./src",
+		"biome:clean": "pnpm biome clean",
 		"biome:format": "pnpm biome format --write",
 		"biome:format:cypress": "pnpm biome format --write ./cypress ",
 		"biome:rage": "pnpm biome rage",
