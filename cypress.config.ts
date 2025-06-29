@@ -7,6 +7,7 @@ export default defineConfig({
 			bundler: "webpack",
 			framework: "next",
 		},
+		supportFile: "./cypress/support/index.ts",
 	},
 	e2e: {
 		baseUrl: "http://localhost:3000",
