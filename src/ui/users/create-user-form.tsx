@@ -48,16 +48,6 @@ export function CreateUserForm(): JSX.Element {
 				<p>Admins can create users.</p>
 			</section>
 
-			<section>
-				{state.errors && (
-					<p className="text-text-error mt-4 text-sm">
-						{Object.values(state.errors).flat().join(" ")}
-					</p>
-				)}
-				{state.message && (
-					<p className="text-text-success mt-4 text-sm">{state.message}</p>
-				)}
-			</section>
 			<form action={action} autoComplete="off">
 				<div className="mb-4">
 					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
