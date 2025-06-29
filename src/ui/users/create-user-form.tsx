@@ -24,10 +24,12 @@ type CreateUserFormState = Readonly<{
 }>;
 
 export function CreateUserForm(): JSX.Element {
+	const initialState = { errors: {}, message: "", success: undefined };
+
 	const [state, action, pending] = useActionState<
 		CreateUserFormState,
 		FormData
-	>(createUser, { errors: {}, message: "", success: undefined });
+	>(createUser, initialState);
 
 	const [showAlert, setShowAlert] = useState(false);
 
