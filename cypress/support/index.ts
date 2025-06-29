@@ -1,5 +1,6 @@
-/// <reference types="cypress" />
-
+/** biome-ignore-all lint/correctness/noUndeclaredVariables: biome does not have great support for cypress yet */
+import type { MountOptions, MountReturn } from "cypress/react";
+import type { ReactNode } from "react";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import type { UserRole } from "../../src/lib/definitions/enums.ts";
@@ -20,6 +21,35 @@ import type {
 	SignupUserInput,
 	UserCredentials,
 } from "./types.ts";
+import "./cypress-global.css";
+import { mount } from "cypress/react";
+
+// --- Component Tests ---
+
+// Register the mount command for component testing
+Cypress.Commands.add(
+	"mount",
+	(component: ReactNode, options?: Partial<MountOptions>) => {
+		return mount(component, options);
+	},
+);
+
+// Register additional custom mount commands if needed
+Cypress.Commands.add(
+	"mountV1",
+	(component: ReactNode, options?: Partial<MountOptions>) => {
+		return mount(component, options);
+	},
+);
+
+Cypress.Commands.add(
+	"mountV2",
+	(component: ReactNode, options?: Partial<MountOptions>) => {
+		return mount(component, options);
+	},
+);
+
+// --- E2E Tests ---
 
 // --- UI Commands ---
 
@@ -87,7 +117,7 @@ Cypress.Commands.add("signup", (user: SignupUserInput) => {
  * @param user - User creation input.
  */
 Cypress.Commands.add("createUser", (user: CreateUserInput) => {
-	cy.log("Creating test user", user.email);
+	cy.log("Creating a test user", user.email);
 	return cy
 		.task<DbTaskResult<UserEntity>>("db:createUser", user)
 		.then((result) => {
@@ -263,3 +293,84 @@ Cypress.Commands.add(
 );
 
 // All commands are strictly typed in commands.d.ts
+
+/**
+ * TypeScript augmentation for custom Cypress commands.
+ */
+declare global {
+	// biome-ignore lint/style/noNamespace: Cypress type augmentation
+	namespace Cypress {
+		interface Chainable {
+			/**
+			 * Logs in a user via the UI.
+			 */
+			login(user: LoginCredentials): Chainable<void>;
+
+			/**
+			 * Logs in a user via the UI and optionally asserts successful login.
+			 */
+			loginNew(
+				user: LoginCredentials,
+				options?: { assertSuccess?: boolean },
+			): Chainable<void>;
+
+			/**
+			 * Signs up a new user via the UI.
+			 */
+			signup(user: SignupUserInput): Chainable<void>;
+
+			/**
+			 * Creates a user in the database.
+			 */
+			createUser(user: CreateUserInput): Chainable<UserEntity>;
+
+			/**
+			 * Deletes a user from the database.
+			 */
+			deleteUser(email: string): Chainable<UserEntity>;
+
+			/**
+			 * Ensures a user is deleted from the database.
+			 */
+			ensureUserDeleted(email: string): Chainable<UserEntity | null>;
+
+			/**
+			 * Finds a user in the database.
+			 */
+			findUser(email: string): Chainable<UserEntity>;
+
+			/**
+			 * Logs in a user and persists the session.
+			 */
+			loginSession(user: UserCredentials): Chainable<void>;
+
+			mount(
+				component: ReactNode,
+				options?: Partial<MountOptions>,
+			): Chainable<MountReturn>;
+
+			mountV1(
+				component: ReactNode,
+				options?: Partial<MountOptions>,
+			): Chainable<MountReturn>;
+
+			mountV2(
+				component: ReactNode,
+				options?: Partial<MountOptions>,
+			): Chainable<MountReturn>;
+
+			/**
+			 * Sets a mock session cookie for a user.
+			 */
+			setMockSessionCookie(userId: string, role?: UserRole): Chainable<void>;
+
+			/**
+			 * Updates a user in the database.
+			 */
+			updateUser(
+				email: string,
+				updates: Partial<UserEntity>,
+			): Chainable<UserEntity>;
+		}
+	}
+}

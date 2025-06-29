@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
-
 import "../support/component.ts";
 
 import { AuthSubmitButton } from "../../src/ui/auth/auth-submit-button.tsx";

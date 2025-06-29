@@ -1,12 +1,8 @@
-/// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
-
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import { users } from "../../src/lib/db/schema.ts";
 import { testDB } from "../../src/lib/db/test-database.ts";
-import type {} from "../cypress.d.ts";
 import {
 	ERROR_DB,
 	ERROR_USER_CREATION_FAILED,

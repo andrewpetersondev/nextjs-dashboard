@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
-
 import { TEST_USER_CREDENTIALS } from "../../../support/types.ts";
 
 const TEST_USER = {

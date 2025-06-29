@@ -7,26 +7,20 @@ export default defineConfig({
 			bundler: "webpack",
 			framework: "next",
 		},
-		indexHtmlFile: "cypress/support/component-index.html",
-		screenshotOnRunFailure: true,
-		specPattern: "cypress/component/**/*.{cy,spec}.tsx",
-		supportFile: "cypress/support/component.ts",
-		// video: true,
 	},
 	e2e: {
 		baseUrl: "http://localhost:3000",
-		env: {
-			SESSION_SECRET: process.env.SESSION_SECRET,
-		},
-		screenshotOnRunFailure: true,
 		setupNodeEvents(on, config) {
 			on("task", dbTasks);
 			return config;
 		},
-		specPattern: "cypress/e2e/**/*.{cy,spec}.ts",
-		supportFile: "cypress/support/e2e.ts",
-		video: true,
 	},
-	screenshotsFolder: "cypress/screenshots",
-	videosFolder: "cypress/videos",
+	env: {
+		SESSION_SECRET: process.env.SESSION_SECRET,
+	},
+	fileServerFolder: ".",
+	screenshotOnRunFailure: true,
+	trashAssetsBeforeRuns: true,
+	video: false,
+	watchForFileChanges: false,
 });

@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../../cypress.d.ts" />
-
 import { Heading } from "../../../src/ui/auth/heading.tsx";
 
 describe("<Heading />", () => {

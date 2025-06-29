@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../cypress.d.ts" />
-
 import { SignJWT } from "jose";
 import { SESSION_DURATION_MS } from "../../src/lib/auth/constants.ts";
 import type { UserRole } from "../../src/lib/definitions/enums.ts";
@@ -10,8 +7,9 @@ export async function generateMockSessionJWT(
 	role: UserRole = "user",
 ): Promise<string> {
 	const secret = Cypress.env("SESSION_SECRET");
-	if (!secret)
+	if (!secret) {
 		throw new Error("SESSION_SECRET is not defined in Cypress environment");
+	}
 	const key = new TextEncoder().encode(secret);
 	const expiresAt = Date.now() + SESSION_DURATION_MS;
 	const jwtPayload = {

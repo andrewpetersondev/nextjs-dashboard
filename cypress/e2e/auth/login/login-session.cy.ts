@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../../../cypress.d.ts" />
-
 import { SESSION_COOKIE_NAME } from "../../../../src/lib/auth/constants.ts";
 import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "../../../support/types.ts";
 

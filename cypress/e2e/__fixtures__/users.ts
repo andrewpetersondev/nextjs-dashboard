@@ -1,6 +1,3 @@
-/// <reference types="cypress" />
-/// <reference path="../../cypress.d.ts" />
-
 import type { CreateUserInput } from "../../support/types.ts";
 
 export const _TEST_USER: CreateUserInput = {
