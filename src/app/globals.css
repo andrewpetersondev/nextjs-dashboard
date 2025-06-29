@@ -49,5 +49,5 @@
 
 p {
 	font-family: var(--font-eyegrab), sans-serif;
-	color: var(--color-text-primary);
+	/*color: var(--color-text-primary);*/
 }
