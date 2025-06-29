@@ -39,3 +39,19 @@ export const generateYAxis = (revenue: Revenue[]): YAxisResult => {
 
 	return { topLabel, yAxisLabels };
 };
+
+// Delete properties whose values match ANY of the given conditions
+export const stripProperties = (
+	obj: { [s: string]: unknown } | ArrayLike<unknown>,
+) => {
+	return Object.fromEntries(
+		Object.entries(obj).filter(
+			([_, v]) =>
+				v !== undefined && // Ignore undefined
+				v !== null && // Ignore null
+				v !== "" && // Ignore empty string
+				v !== false, // Ignore boolean false
+			// You can add or remove conditions as needed!
+		),
+	);
+};

@@ -44,6 +44,7 @@ import {
 	logError,
 	normalizeFieldErrors,
 } from "@/src/lib/utils/utils.server.ts";
+import { stripProperties } from "@/src/lib/utils/utils.ts";
 
 /**
  * Handles user signup.
@@ -312,10 +313,20 @@ export async function editUser(
 	const db = getDB();
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
-		if (payload.password === "") {
-			payload.password = undefined;
-		}
-		const validated = EditUserFormSchema.safeParse(payload);
+		/**
+		 *  Recent biome lint removed this code
+		 *  Problem: undefined cannot be input into .safeParse().
+		 *    if (payload.password === "") {
+		 *            delete payload.password;
+		 *        }
+		 */
+		// if (payload.password === "") {
+		// 	payload.password = undefined;
+		// }
+
+		const clean = stripProperties(payload);
+
+		const validated = EditUserFormSchema.safeParse(clean);
 		if (!validated.success) {
 			return actionResult({
 				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),

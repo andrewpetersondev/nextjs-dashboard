@@ -51,7 +51,11 @@ export function CreateInvoiceForm({
 						</label>
 						<div className="relative">
 							<select
-								aria-describedby="customer-error"
+								aria-describedby={
+									(state.errors?.customerId?.length ?? 0) > 0
+										? "customer-error"
+										: undefined
+								}
 								className="peer border-s-bg-secondary placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
 								defaultValue=""
 								id="customer"
@@ -71,8 +75,9 @@ export function CreateInvoiceForm({
 							<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="customer-error">
-							{/* Render customerId errors */}
-							{state.errors?.customerId?.length > 0
+							{/* Render customerId errors, guarding against undefined */}
+							{Array.isArray(state.errors?.customerId) &&
+							state.errors.customerId.length > 0
 								? state.errors.customerId.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -89,6 +94,11 @@ export function CreateInvoiceForm({
 						<div className="relative mt-2 rounded-md">
 							<div className="relative">
 								<input
+									aria-describedby={
+										(state.errors?.amount?.length ?? 0) > 0
+											? "amount-error"
+											: undefined
+									}
 									className="peer border-bg-secondary placeholder:text-text-secondary block w-full rounded-md border py-2 pl-10 text-sm outline-2"
 									id="amount"
 									name="amount"
@@ -100,8 +110,8 @@ export function CreateInvoiceForm({
 							</div>
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="amount-error">
-							{/* Render amount errors */}
-							{state.errors?.amount?.length > 0
+							{Array.isArray(state.errors?.customerId) &&
+							state.errors.customerId.length > 0
 								? state.errors.amount.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -119,6 +129,11 @@ export function CreateInvoiceForm({
 							<div className="flex gap-4">
 								<div className="flex items-center">
 									<input
+										aria-describedby={
+											(state.errors?.status?.length ?? 0) > 0
+												? "status-error"
+												: undefined
+										}
 										className="border-bg-secondary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
 										id="pending"
 										name="status"
@@ -134,6 +149,11 @@ export function CreateInvoiceForm({
 								</div>
 								<div className="flex items-center">
 									<input
+										aria-describedby={
+											(state.errors?.status?.length ?? 0) > 0
+												? "status-error"
+												: undefined
+										}
 										className="border-bg-secondary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
 										id="paid"
 										name="status"
@@ -151,7 +171,9 @@ export function CreateInvoiceForm({
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="status-error">
 							{/* Render status errors */}
-							{state.errors?.status?.length > 0
+							{/* Render customerId errors, guarding against undefined */}
+							{Array.isArray(state.errors?.customerId) &&
+							state.errors.customerId.length > 0
 								? state.errors.status.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -185,7 +207,7 @@ export function CreateInvoiceForm({
 									: "opacity-0 -translate-y-4 pointer-events-none"
 							}
               ${
-								state.success === true
+								state.success
 									? "border-green-300 bg-green-50 text-green-800"
 									: "border-red-300 bg-red-50 text-red-800"
 							}

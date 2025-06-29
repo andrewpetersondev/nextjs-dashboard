@@ -15,6 +15,10 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 		label,
 	}: FieldErrorProps): JSX.Element | null {
 		// This component is now used for all field errors (email, username, password)
+		/**
+		 * before biome lint
+		 * if (!error?.length) return null;
+		 */
 		if (error?.length === 0) {
 			return null;
 		}
@@ -22,7 +26,7 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 			<div className="text-text-error" data-cy={dataCy} id={id} role="alert">
 				{label && <p>{label}</p>}
 				<ul>
-					{error.map(
+					{error?.map(
 						(err: string): JSX.Element => (
 							<li key={err}>- {err}</li>
 						),
