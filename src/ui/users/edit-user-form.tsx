@@ -1,7 +1,7 @@
 "use client";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { type JSX, useActionState } from "react";
+import { type JSX, useActionState, useEffect, useState } from "react";
 import type { FormState } from "@/src/lib/definitions/form.ts";
 import type { EditUserFormFields } from "@/src/lib/definitions/users.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
@@ -9,10 +9,22 @@ import { editUser } from "@/src/lib/server-actions/users.ts";
 import { Button } from "@/src/ui/button.tsx";
 import { H1 } from "@/src/ui/headings.tsx";
 
+type EditUserFormState = Readonly<{
+	errors?: {
+		username?: string[];
+		email?: string[];
+		role?: string[];
+		password?: string[];
+	};
+	message?: string;
+	success?: boolean;
+}>;
+
 export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
-	const initialState: FormState<EditUserFormFields> = {
+	const initialState = {
 		errors: {},
 		message: "",
+		success: undefined,
 	};
 
 	const updateUserWithId: (
@@ -20,10 +32,21 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 		formData: FormData,
 	) => Promise<FormState<EditUserFormFields>> = editUser.bind(null, user.id);
 
-	const [state, action, isPending] = useActionState(
-		updateUserWithId,
-		initialState,
-	);
+	const [state, action, isPending] = useActionState<
+		EditUserFormState,
+		FormData
+	>(updateUserWithId, initialState);
+
+	const [showAlert, setShowAlert] = useState(false);
+
+	useEffect(() => {
+		if (state.message) {
+			setShowAlert(true);
+			const timer = setTimeout(() => setShowAlert(false), 4000); // 4 seconds
+			return () => clearTimeout(timer);
+		}
+		setShowAlert(false);
+	}, [state.message]);
 
 	return (
 		<div>
@@ -209,6 +232,36 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 					</Button>
 				</div>
 			</form>
+			<div>
+				<div className="relative min-h-[56px]">
+					{state.message && (
+						<div
+							// Animate in/out with Tailwind transitions
+							aria-live={state.success ? "polite" : "assertive"}
+							className={`pointer-events-auto absolute left-0 right-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500
+              ${
+								showAlert
+									? "opacity-100 translate-y-0"
+									: "opacity-0 -translate-y-4 pointer-events-none"
+							}
+              ${
+								state.success === true
+									? "border-green-300 bg-green-50 text-green-800"
+									: "border-red-300 bg-red-50 text-red-800"
+							}
+            `}
+							data-cy={
+								state.success
+									? "create-user-success-message"
+									: "create-user-error-message"
+							}
+							role={state.success ? "status" : "alert"}
+						>
+							{state.message}
+						</div>
+					)}
+				</div>
+			</div>
 		</div>
 	);
 }
