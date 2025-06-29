@@ -82,7 +82,7 @@ Cypress.Commands.add(
 		cy.get(LOGIN_PASSWORD_INPUT).type(user.password, { log: false });
 		cy.get(LOGIN_SUBMIT_BUTTON).click();
 
-		return cy.then<void>(() => {
+		return cy.then(() => {
 			if (options?.assertSuccess) {
 				cy.location("pathname", { timeout: 10000 }).should(
 					"include",
@@ -92,8 +92,7 @@ Cypress.Commands.add(
 					.contains("Dashboard")
 					.should("be.visible");
 			}
-			// No return statement here
-		});
+		}) as Cypress.Chainable<void>;
 	},
 );
 
