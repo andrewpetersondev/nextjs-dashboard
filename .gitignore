@@ -72,9 +72,11 @@ secrets/
 # Other/Miscellaneous Files
 # ================================
 Notes/
-storage/
 *.pem
 keep/
+.vscode/
+containers/
+other/
 
 # ================================
 # Cypress generated JS files

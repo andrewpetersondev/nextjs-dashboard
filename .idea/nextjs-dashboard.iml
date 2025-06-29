@@ -7,13 +7,19 @@
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
-      <excludeFolder url="file://$MODULE_DIR$/secrets" />
-      <excludeFolder url="file://$MODULE_DIR$/storage" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/inspectionProfiles" />
-      <excludeFolder url="file://$MODULE_DIR$/docs" />
       <excludeFolder url="file://$MODULE_DIR$/public" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/keep" />
       <excludeFolder url="file://$MODULE_DIR$/cypress/screenshots" />
       <excludeFolder url="file://$MODULE_DIR$/cypress/videos" />
+      <excludeFolder url="file://$MODULE_DIR$/.github" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/.run" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/Notes" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/containers" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/other" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/secrets" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
