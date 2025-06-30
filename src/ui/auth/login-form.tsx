@@ -12,6 +12,7 @@ import { Heading } from "@/src/ui/auth/heading.tsx";
 import { InputField } from "@/src/ui/auth/input-field.tsx";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox.tsx";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button.tsx";
+import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper.tsx";
 
 type LoginState = {
 	errors?: {
@@ -66,10 +67,12 @@ export function LoginForm(): JSX.Element {
 							type="password"
 						/>
 
-						<div className="flex items-center justify-between">
-							<RememberMeCheckbox />
-							<ForgotPasswordLink />
-						</div>
+						<FormInputWrapper>
+							<div className="flex items-center justify-between">
+								<RememberMeCheckbox />
+								<ForgotPasswordLink />
+							</div>
+						</FormInputWrapper>
 
 						<div>
 							<AuthSubmitButton data-cy="login-submit-button" pending={pending}>

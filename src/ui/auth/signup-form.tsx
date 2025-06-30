@@ -11,6 +11,7 @@ import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button.tsx";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user.tsx";
 import { DemoUser } from "@/src/ui/auth/demo-user.tsx";
 import { InputField } from "@/src/ui/auth/input-field.tsx";
+import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper.tsx";
 import { AuthSwitchLink } from "./auth-switch-link.tsx";
 import { ForgotPasswordLink } from "./forgot-password-link.tsx";
 import { Heading } from "./heading.tsx";
@@ -93,10 +94,12 @@ export const SignupForm: FC = () => {
 							type="password"
 						/>
 
-						<div className="flex items-center justify-between">
-							<RememberMeCheckbox />
-							<ForgotPasswordLink />
-						</div>
+						<FormInputWrapper>
+							<div className="flex items-center justify-between">
+								<RememberMeCheckbox />
+								<ForgotPasswordLink />
+							</div>
+						</FormInputWrapper>
 
 						<div>
 							<AuthSubmitButton
