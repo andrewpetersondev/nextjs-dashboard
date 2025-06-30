@@ -75,7 +75,7 @@
 			"indentStyle": "tab",
 			"quoteStyle": "double"
 		},
-		"globals": ["cy"],
+		"globals": ["cy", "Cypress", "context"],
 		"linter": {
 			"enabled": true
 		}
