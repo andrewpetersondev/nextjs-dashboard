@@ -9,8 +9,8 @@ import { type JSX, useActionState, useEffect, useState } from "react";
 import { createUser } from "@/src/lib/server-actions/users.ts";
 import { InputField } from "@/src/ui/auth/input-field.tsx";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
+import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
 import { H1 } from "@/src/ui/headings.tsx";
-import { CreateUserSubmitButton } from "@/src/ui/users/create-user-submit-button.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
 
 type CreateUserFormState = Readonly<{
@@ -117,12 +117,12 @@ export function CreateUserForm(): JSX.Element {
 					</div>
 				</div>
 				<FormActionRow cancelHref="/dashboard/users">
-					<CreateUserSubmitButton
+					<FormSubmitButton
 						data-cy="create-user-submit-button"
 						pending={pending}
 					>
 						Create User
-					</CreateUserSubmitButton>
+					</FormSubmitButton>
 				</FormActionRow>
 			</form>
 			<ServerMessage showAlert={showAlert} state={state} />

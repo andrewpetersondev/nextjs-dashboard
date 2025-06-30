@@ -6,9 +6,9 @@ import type { EditUserFormFields } from "@/src/lib/definitions/users.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { editUser } from "@/src/lib/server-actions/users.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
+import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
 import { H1 } from "@/src/ui/headings.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
-import { UpdateUserSubmitButton } from "@/src/ui/users/update-user-submit-button.tsx";
 
 type EditUserFormState = Readonly<{
 	errors?: {
@@ -218,12 +218,12 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 					</div>
 				</div>
 				<FormActionRow cancelHref="/dashboard/users">
-					<UpdateUserSubmitButton
+					<FormSubmitButton
 						data-cy="edit-user-submit-button"
 						pending={isPending}
 					>
 						Update User
-					</UpdateUserSubmitButton>
+					</FormSubmitButton>
 				</FormActionRow>
 			</form>
 			<ServerMessage showAlert={showAlert} state={state} />

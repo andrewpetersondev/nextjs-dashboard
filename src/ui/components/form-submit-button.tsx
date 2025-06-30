@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 import { Button } from "@/src/ui/button.tsx";
 
-export interface UpdateUserSubmitButtonProps
+export interface FormSubmitButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
 	dataCy?: string;
@@ -10,23 +10,23 @@ export interface UpdateUserSubmitButtonProps
 }
 
 /**
- * Accessible, reusable submit button for user creation forms.
+ * Accessible, reusable submit button for forms.
  * Handles pending state and disables the button when pending.
  *
  * @param children - Button content
  * @param dataCy - Cypress test id
  * @param pending - Whether the button is in a pending state
  * @param className - Additional class names for styling
- * @param props - UpdateUserSubmitButtonProps
+ * @param props - FormSubmitButtonProps
  * @returns JSX.Element
  */
-export function UpdateUserSubmitButton({
+export function FormSubmitButton({
 	children,
 	dataCy,
 	pending = false,
 	className = "",
 	...props
-}: UpdateUserSubmitButtonProps): JSX.Element {
+}: FormSubmitButtonProps): JSX.Element {
 	return (
 		<Button
 			aria-disabled={pending}
