@@ -11,12 +11,15 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,
-	type CustomerId,
 	type InvoiceFormState,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
-import { toInvoiceId } from "@/src/lib/mappers/invoice.mapper.ts";
+import {
+	toCustomerIdBrand,
+	toInvoiceIdBrand,
+	toInvoiceStatusBrand,
+} from "@/src/lib/mappers/invoice.mapper.ts";
 import { actionResult } from "@/src/lib/utils/utils.server.ts";
 
 // todo: unify the return types of these actions
@@ -49,9 +52,9 @@ export async function createInvoice(
 		}
 
 		// Correctly brand customerId for type safety
-		const customerId = validated.data.customerId as unknown as CustomerId;
+		const customerId = toCustomerIdBrand(validated.data.customerId);
 		const amount = validated.data.amount;
-		const status = validated.data.status;
+		const status = toInvoiceStatusBrand(validated.data.status);
 		const amountInCents: number = amount * 100;
 		const date: string = new Date().toISOString().split("T")[0];
 
@@ -110,39 +113,53 @@ export async function updateInvoice(
 	});
 
 	if (!validated.success) {
-		return {
+		return actionResult({
 			errors: validated.error.flatten().fieldErrors,
 			message: "Missing Fields. Failed to Update InvoiceEntity.",
-		};
+			success: false,
+		});
 	}
 
 	// Brand customerId for type safety
-	const customerId = validated.data.customerId as unknown as CustomerId;
-	const amount = validated.data.amount;
-	const status = validated.data.status;
-	const amountInCents = amount * 100;
+	// TODO: Find pattern in other files, then replace with branding function. (ex. toCustomerIdBrand()).
+	// old: const customerId = validated.data.customerId as unknown as CustomerId;
+	const customerId = toCustomerIdBrand(validated.data.customerId);
+	const amount: number = validated.data.amount;
+	const status = toInvoiceStatusBrand(validated.data.status);
+	const amountInCents: number = amount * 100;
 
 	try {
-		const updatedInvoice = await updateInvoiceInDb(db, id, {
+		const updatedInvoice: InvoiceDTO | null = await updateInvoiceInDb(db, id, {
 			amount: amountInCents,
 			customerId,
 			status,
 		});
 
 		if (!updatedInvoice) {
-			return {
-				// success: false, // unify response shape
-				errors: {},
+			return actionResult({
+				errors: undefined,
 				message: "Failed to update invoice.",
-			};
+				success: false,
+			});
 		}
+
+		return actionResult({
+			errors: undefined,
+			message: "Updated invoice successfully.",
+			success: true,
+		});
 	} catch (error) {
 		console.error(error);
-		return { message: "Database Error: Failed to Update InvoiceEntity." };
+		return actionResult({
+			errors: {},
+			message: "Database Error: Failed to Update InvoiceEntity.",
+			success: false,
+		});
 	}
 
-	revalidatePath("/dashboard/invoices");
-	redirect("/dashboard/invoices");
+	// FIXME: returning actionResult on success made this unreachable.
+	// revalidatePath("/dashboard/invoices");
+	// redirect("/dashboard/invoices");
 }
 
 /**
@@ -154,7 +171,7 @@ export async function deleteInvoiceAction(
 	id: string,
 ): Promise<InvoiceDTO | null> {
 	const db = getDB();
-	return await deleteInvoiceInDb(db, toInvoiceId(id));
+	return await deleteInvoiceInDb(db, toInvoiceIdBrand(id));
 }
 
 /**
