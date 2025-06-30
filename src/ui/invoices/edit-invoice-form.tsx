@@ -57,7 +57,7 @@ export function EditInvoiceForm({
 								id="amount"
 								name="amount"
 								placeholder="Enter USD amount"
-								step="10.00"
+								step=".01"
 								type="number"
 							/>
 							<CurrencyDollarIcon className="text-text-primary peer-focus:text-text-focus pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
