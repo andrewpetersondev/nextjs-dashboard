@@ -52,6 +52,7 @@
 			"indentStyle": "tab",
 			"quoteStyle": "double"
 		},
+      "globals": ["cy"],
 		"linter": {
 			"enabled": true
 		}
