@@ -13,6 +13,8 @@ import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices.ts";
 import { createInvoice } from "@/src/lib/server-actions/invoices.ts";
 import { Button } from "@/src/ui/button.tsx";
 
+// TODO: Overly complex function with errors.
+
 export function CreateInvoiceForm({
 	customers,
 }: {

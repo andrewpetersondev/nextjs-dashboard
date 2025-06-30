@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { forwardRef, type JSX } from "react";
 import { ContainerInner, ContainerOuter } from "@/src/ui/container.tsx";
 
-export const Background = forwardRef<
+export const _Background = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div"> & { pattern?: "grid" | "dot" }
 >(function Background(
