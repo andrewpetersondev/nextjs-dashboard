@@ -121,10 +121,12 @@ export const InvoiceFormSchema = zod.object({
 	amount: zod.coerce
 		.number()
 		.gt(0, { message: "Amount must be greater than $0." }), // Accepts string, branding applied elsewhere
+	// biome-ignore lint/style/useNamingConvention: ignore
 	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
 	date: zod.string().optional(),
 	id: zod.string(),
 	status: zod.enum(INVOICE_STATUSES, {
+		// biome-ignore lint/style/useNamingConvention: ignore
 		invalid_type_error: "Please select a status",
 	}),
 });

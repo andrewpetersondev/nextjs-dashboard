@@ -26,6 +26,7 @@ export const formatDateToLocal = (
 	return formatter.format(date);
 };
 
+// biome-ignore lint/style/useNamingConvention: <ignore>
 export const generateYAxis = (revenue: Revenue[]): YAxisResult => {
 	const yAxisLabels: string[] = [];
 	const highestRecord: number = Math.max(

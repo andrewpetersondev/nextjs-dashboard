@@ -34,12 +34,12 @@ export interface CreateUserFormFields extends BaseUserFormFields {
 }
 
 /**
- * Fields for signup form (no role).
+ * Fields for a signup form (no role).
  */
 export type SignupFormFields = Omit<CreateUserFormFields, "role">;
 
 /**
- * Fields for login form.
+ * Fields for a login form.
  */
 export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
 
@@ -103,10 +103,11 @@ export const BaseUserFormSchema = zod.object({
 });
 
 /**
- * Used for admin panel create user form.
+ * Used for an admin panel create-user form.
  */
 export const CreateUserFormSchema: ZodType<CreateUserFormFields> =
 	BaseUserFormSchema.extend({
+		// biome-ignore lint/style/useNamingConvention: ignore
 		role: zod.enum(USER_ROLES, { invalid_type_error: "Please select a role" }),
 	});
 
