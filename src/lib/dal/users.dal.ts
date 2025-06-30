@@ -10,6 +10,7 @@ import { comparePassword, hashPassword } from "@/src/lib/auth/password.ts";
 import type { Db } from "@/src/lib/db/connection.ts";
 import type { UserEntity } from "@/src/lib/db/entities/user.ts";
 import { demoUserCounters, users } from "@/src/lib/db/schema.ts";
+import { ITEMS_PER_PAGE_USERS } from "@/src/lib/definitions/constants.ts";
 import type { UserRole } from "@/src/lib/definitions/enums.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { toUserDTO } from "@/src/lib/mappers/user.mapper.ts";
@@ -17,12 +18,6 @@ import {
 	createRandomPassword,
 	logError,
 } from "@/src/lib/utils/utils.server.ts";
-
-/**
- * Number of users to display per page for pagination.
- * Update this value to change pagination globally.
- */
-const ITEMS_PER_PAGE_USERS = 10;
 
 /**
  * Inserts a new user record into the database.
