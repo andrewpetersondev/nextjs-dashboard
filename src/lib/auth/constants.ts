@@ -1,6 +1,6 @@
 // import "server-only";
 
-// update: when this file is server-only, e2e tests will not run because the nodejs and nextjs environments are different. how to fix this? set the value in .env file instead? use a shared, environment-agnostic configuration file?
+// update: when this file is server-only, e2e tests will not run because the Node.js and Next.js environments are different. how to fix this? set the value in the .env file instead? use a shared, environment-agnostic configuration file?
 /**
  * One day in milliseconds.
  */

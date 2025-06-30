@@ -55,7 +55,7 @@ const generateUuid = (): string => {
  *   - This function is Node.js-only and must never be imported in Edge runtime (middleware).
  *   - All user input is validated.
  */
-export async function createDbSession(
+async function _createDbSession(
 	userId: string,
 	role: UserRole = "user",
 ): Promise<void> {

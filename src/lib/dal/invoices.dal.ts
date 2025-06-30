@@ -75,7 +75,7 @@ export async function createInvoiceInDb(
 			: null;
 	} catch (error) {
 		logError("createInvoiceInDb", error, { customerId });
-		throw new Error("Database error while creating invoice.");
+		throw new Error("Database error while creating an invoice.");
 	}
 }
 
@@ -177,7 +177,7 @@ export async function fetchLatestInvoices(
 /**
  * Fetches filtered invoices with pagination.
  * @param db - The Drizzle ORM database instance.
- * @param query - Search query.
+ * @param query - Search a query.
  * @param currentPage - Current page number.
  * @returns Array of FetchFilteredInvoicesData.
  * @throws Error if the database operation fails.
@@ -230,7 +230,7 @@ export async function fetchFilteredInvoices(
 /**
  * Fetches the total number of invoice pages for pagination.
  * @param db - The Drizzle ORM database instance.
- * @param query - Search query.
+ * @param query - Search a query.
  * @returns Number of pages.
  * @throws Error if the database operation fails.
  */

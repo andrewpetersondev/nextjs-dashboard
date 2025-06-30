@@ -39,7 +39,7 @@ function getDatabaseUrl(type: DbType): string {
  * @param type - "dev" (default) or "test"
  */
 
-// biome-ignore lint/style/useNamingConvention: i like this name
+// biome-ignore lint/style/useNamingConvention: I like this name
 export function getDB(type: DbType = "test"): Db {
 	const url = getDatabaseUrl(type);
 	return drizzle({ casing: "snake_case", connection: url, schema }) as Db;

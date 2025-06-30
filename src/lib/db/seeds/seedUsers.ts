@@ -49,7 +49,7 @@ async function seedUsers(): Promise<void> {
 //     await seedUsers();
 //   } catch (error) {
 //     console.error("Error during seeding:", error);
-//     throw new Error("Seeding failed. Please check the logs for more details.");
+//     throw new Error ("Seeding failed. Please check the logs for more details.");
 //   }
 // })();
 

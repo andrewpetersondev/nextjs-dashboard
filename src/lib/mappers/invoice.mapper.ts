@@ -49,6 +49,8 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
  * @param invoice - The InvoiceEntity instance to convert.
  * @returns An InvoiceDTO instance with plain types.
  */
+
+// biome-ignore lint/style/useNamingConvention: ignore
 export function toInvoiceDTO(invoice: InvoiceEntity): InvoiceDTO {
 	return {
 		amount: invoice.amount,

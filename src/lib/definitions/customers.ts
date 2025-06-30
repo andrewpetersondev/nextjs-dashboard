@@ -32,7 +32,7 @@ export type CustomersTableRow = {
 };
 
 /**
- * Represents a formatted row for the customers table in the UI.
+ * Represents a formatted row for the customer's table in the UI.
  */
 export type FormattedCustomersTableRow = {
 	id: string;

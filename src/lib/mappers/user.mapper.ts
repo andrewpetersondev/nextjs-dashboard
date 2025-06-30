@@ -10,6 +10,8 @@ import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
  * @param user - The UserEntity instance to convert.
  * @returns A UserDTO instance with safe fields.
  */
+
+// biome-ignore lint/style/useNamingConvention: ignore
 export function toUserDTO(user: UserEntity): UserDTO {
 	return {
 		email: user.email,

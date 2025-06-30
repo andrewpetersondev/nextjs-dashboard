@@ -47,7 +47,7 @@ export async function insertSession(session: SessionRecord): Promise<void> {
 	} catch (error) {
 		logger.error(
 			{ context: "insertSession", err: error, session },
-			"Failed to insert session",
+			"Failed to insert a session",
 		);
 		throw error;
 	}
@@ -58,7 +58,7 @@ export async function insertSession(session: SessionRecord): Promise<void> {
  * @param sessionId - The session's UUID.
  * @throws If the delete fails.
  */
-export async function deleteSessionById(sessionId: string): Promise<void> {
+async function _deleteSessionById(sessionId: string): Promise<void> {
 	try {
 		const db: Db = getDB();
 		await db.delete(sessions).where(eq(sessions.id, sessionId));
@@ -80,7 +80,7 @@ export async function deleteSessionById(sessionId: string): Promise<void> {
  * @param sessionId - The session's UUID.
  * @returns The session record, or undefined if not found.
  */
-export async function findSessionById(
+async function _findSessionById(
 	sessionId: string,
 ): Promise<SessionRecord | undefined> {
 	try {
@@ -104,7 +104,7 @@ export async function findSessionById(
  * @param token - The session token.
  * @returns The session record, or undefined if not found.
  */
-export async function findSessionByToken(
+async function _findSessionByToken(
 	token: string,
 ): Promise<SessionRecord | undefined> {
 	try {

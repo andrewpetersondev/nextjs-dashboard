@@ -7,6 +7,8 @@ import type { UserRole } from "@/src/lib/definitions/enums.ts";
  ** Server <---> DTO <---> Client
  ** This example strips the user property of **SensitiveData**
  */
+
+// biome-ignore lint/style/useNamingConvention: ignore
 export interface UserDTO {
 	id: string;
 	username: string;

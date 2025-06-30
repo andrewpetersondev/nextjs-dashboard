@@ -20,7 +20,7 @@ if (process.env.POSTGRES_URL_TESTDB) {
 	process.exit(1);
 }
 
-// biome-ignore lint/style/useNamingConvention: i like this name
+// biome-ignore lint/style/useNamingConvention: I like this name
 export const testDB: NodePgDatabase & {
 	$client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });

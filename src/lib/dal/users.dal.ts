@@ -53,7 +53,7 @@ export async function createUserInDb(
 		return user ? toUserDTO(user) : null;
 	} catch (error) {
 		logError("createUserInDb", error, { email });
-		throw new Error("Failed to create user in database.");
+		throw new Error("Failed to create a user in a database.");
 	}
 }
 
@@ -62,7 +62,7 @@ export async function createUserInDb(
  * @param db - The database instance.
  * @param email - The user's email address.
  * @param password - The user's password.
- * @returns The user as UserDTO, or null if not found or password invalid.
+ * @returns The user as UserDTO, or null if not found or password is invalid.
  */
 export async function findUserForLogin(
 	db: Db,
@@ -134,7 +134,7 @@ export async function fetchUserById(
 /**
  * Fetch total user pages for pagination.
  * @param db - The database instance.
- * @param query - Search query for username or email.
+ * @param query - Search a query for username or email.
  * @returns Number of pages.
  */
 export async function fetchUsersPages(db: Db, query: string): Promise<number> {
@@ -158,7 +158,7 @@ export async function fetchUsersPages(db: Db, query: string): Promise<number> {
 /**
  * Fetch filtered users for a page.
  *  @param db - The database instance.
- * @param query - Search query for username or email.
+ * @param query - Search a query for username or email.
  * @param currentPage - Current page number.
  * @returns Array of UserDTO for the page.
  */
@@ -215,7 +215,7 @@ export async function deleteUser(
  * Reads the demo-user counter for naming purposes.
  * @param db - The database instance.
  * @param role - User role.
- * @returns The counter ID.
+ * @returns The counter-ID.
  */
 export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
 	try {
@@ -226,7 +226,7 @@ export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
 		return counter.id;
 	} catch (error) {
 		logError("demoUserCounter", error, { role });
-		throw new Error("Failed to read demo user counter.");
+		throw new Error("Failed to read the demo user counter.");
 	}
 }
 
