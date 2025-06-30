@@ -5,7 +5,7 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.ts";
 import { CustomersTable } from "@/src/ui/customers/table.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
+// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Customers",
 };

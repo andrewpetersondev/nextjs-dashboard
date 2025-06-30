@@ -1,11 +1,10 @@
-/** biome-ignore-all lint/style/useNamingConvention: <explanation> */
 import type React from "react";
 import type { JSX } from "react";
 import { SideNav } from "@/src/ui/dashboard/sidenav.tsx";
 
 // todo: revert to false? investigate
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
-// biome-ignore lint/style/useNamingConvention: Next.js requires this format
+// biome-ignore lint/style/useNamingConvention: this convention follows documentation
+// biome-ignore lint/style/useComponentExportOnlyModules: this convention follows documentation
 export const experimental_ppr = true;
 
 // biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports

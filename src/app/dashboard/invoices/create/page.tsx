@@ -6,7 +6,7 @@ import type { CustomerField } from "@/src/lib/definitions/customers";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
 import { CreateInvoiceForm } from "@/src/ui/invoices/create-invoice-form";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
+// biome-ignore lint/style/useComponentExportOnlyModules:  ignore this rule
 export const metadata: Metadata = {
 	title: "Create InvoiceEntity",
 };

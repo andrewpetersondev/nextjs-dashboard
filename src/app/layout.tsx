@@ -4,9 +4,9 @@ import type React from "react";
 import type { JSX } from "react";
 import { notoSans } from "@/src/ui/style/fonts.ts";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
+// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
-	description: "The official Next.js Learn Dashboard built with App Router.",
+	description: "The official Next.js Learn Dashboard is built with App Router.",
 	metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
 	title: {
 		default: "Acme Dashboard",

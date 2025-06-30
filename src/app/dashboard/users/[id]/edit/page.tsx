@@ -8,7 +8,7 @@ import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditUserForm } from "@/src/ui/users/edit-user-form.tsx";
 import { EditUserFormV2 } from "@/src/ui/users/edit-user-form-v2.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
+// biome-ignore lint/style/useComponentExportOnlyModules:  ignore this rule
 export const metadata: Metadata = {
 	title: "Edit User",
 };

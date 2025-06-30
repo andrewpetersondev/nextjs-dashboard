@@ -10,7 +10,7 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
+// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Edit InvoiceEntity",
 };
