@@ -7,7 +7,6 @@ import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { editUser } from "@/src/lib/server-actions/users.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
-import { H1 } from "@/src/ui/headings.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
 
 type EditUserFormState = Readonly<{
@@ -51,12 +50,6 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 
 	return (
 		<div>
-			<H1>edit user form </H1>
-
-			<section>
-				<p>Admins can edit any profile.</p>
-			</section>
-
 			<form action={action}>
 				{/* hidden id for user */}
 				<input name="id" type="hidden" value={user.id} />
