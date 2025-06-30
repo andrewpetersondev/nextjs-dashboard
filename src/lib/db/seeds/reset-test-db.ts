@@ -1,4 +1,5 @@
 import { reset } from "drizzle-seed";
+// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
 import { testDB } from "@/src/lib/db/test-database.ts";
 

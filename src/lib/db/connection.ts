@@ -5,6 +5,7 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
 
 // Supported database types

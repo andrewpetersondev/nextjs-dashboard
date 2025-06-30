@@ -4,6 +4,7 @@
 import { seed } from "drizzle-seed";
 import { hashPassword } from "../../auth/password.ts";
 import { db } from "../dev-database.ts";
+// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "../schema.ts";
 
 const customerFullNames: string[] = [

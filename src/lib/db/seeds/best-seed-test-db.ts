@@ -3,6 +3,7 @@
 
 import { seed } from "drizzle-seed";
 import { hashPassword } from "../../auth/password.ts";
+// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "../schema.ts";
 import { testDB } from "../test-database.ts";
 
