@@ -8,7 +8,7 @@ import { CreateInvoiceForm } from "@/src/ui/invoices/create-invoice-form";
 
 // biome-ignore lint/style/useComponentExportOnlyModules:  ignore this rule
 export const metadata: Metadata = {
-	title: "Create InvoiceEntity",
+	title: "Create Invoice",
 };
 
 // biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format

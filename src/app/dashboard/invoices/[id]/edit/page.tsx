@@ -11,7 +11,7 @@ import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
-	title: "Edit InvoiceEntity",
+	title: "Edit Invoice",
 };
 
 // biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
