@@ -109,7 +109,7 @@ Cypress.Commands.add("signup", (user: SignupUserInput) => {
 	cy.get(SIGNUP_SUBMIT_BUTTON).click();
 });
 
-// --- dB Commands ---
+// --- Db Commands ---
 
 /**
  * Creates a user in the database using a Cypress task.

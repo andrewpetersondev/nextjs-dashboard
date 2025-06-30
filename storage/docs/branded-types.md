@@ -6,7 +6,7 @@
 
 ### Where to Use Branded Types
 
-**1. Entity Layer (Domain/dB Entities)**
+**1. Entity Layer (Domain/Db Entities)**
 
 - **Use branded types here.**
 - Example: `InvoiceEntity` uses `InvoiceId`, `CustomerId`.
@@ -20,8 +20,8 @@
 **3. Mapper Layer**
 
 - **Brand raw data here.**
-- When mapping from dB rows (plain strings) to entities, cast to branded types.
-- **Why:** dB returns plain strings, but your entities require branded types.
+- When mapping from Db rows (plain strings) to entities, cast to branded types.
+- **Why:** Db returns plain strings, but your entities require branded types.
 
 **4. DTO Layer (API/Frontend)**
 
@@ -42,7 +42,7 @@
 | Layer      | Use Branded Types? | Why?                                |
 | ---------- | ------------------ | ----------------------------------- |
 | Entity     | Yes                | Domain safety, prevent mix-ups      |
-| DAL        | Yes                | Type safety for dB operations       |
+| DAL        | Yes                | Type safety for Db operations       |
 | Mapper     | Yes (when mapping) | Convert raw to branded for entities |
 | DTO        | No                 | Simpler, serializable for API       |
 | Validation | Yes (after)        | Brand after validation for safety   |
@@ -52,7 +52,7 @@
 ### Example
 
 ```typescript
-// Mapper: dB row (plain string) -> Entity (branded)
+// Mapper: Db row (plain string) -> Entity (branded)
 const toCustomerId = (id: string): CustomerId => id as CustomerId;
 
 export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {

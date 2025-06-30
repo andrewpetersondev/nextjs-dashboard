@@ -2,7 +2,7 @@
 
 ## login and signup via ui
 
-1. dB connection
+1. Db connection
    1. one problem is that the ui is set up to use "dev" database while cypress uses "test" database.
    2. my code sets "dev" as default database and i have not configured getDB() for cypress yet.
    3. this means that e2e tests using ui will be expecting different db contents

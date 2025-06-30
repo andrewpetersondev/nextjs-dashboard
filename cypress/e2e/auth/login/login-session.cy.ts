@@ -8,7 +8,7 @@ const TEST_USER = {
 	email: TEST_USER_CREDENTIALS.email,
 	password: TEST_USER_CREDENTIALS.password,
 	username: TEST_USER_CREDENTIALS.username,
-	// role: "user", // Optional, omitted to use dB default
+	// role: "user", // Optional, omitted to use Db default
 };
 
 describe("loginSession command", () => {

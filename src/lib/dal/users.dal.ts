@@ -7,7 +7,7 @@ import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { comparePassword, hashPassword } from "@/src/lib/auth/password.ts";
-import type { dB } from "@/src/lib/db/connection.ts";
+import type { Db } from "@/src/lib/db/connection.ts";
 import type { UserEntity } from "@/src/lib/db/entities/user.ts";
 import { demoUserCounters, users } from "@/src/lib/db/schema.ts";
 import type { UserRole } from "@/src/lib/definitions/enums.ts";
@@ -31,7 +31,7 @@ const ITEMS_PER_PAGE_USERS = 10;
  * @param db
  */
 export async function createUserInDb(
-	db: dB,
+	db: Db,
 	{
 		username,
 		email,
@@ -65,7 +65,7 @@ export async function createUserInDb(
  * @returns The user as UserDTO, or null if not found or password invalid.
  */
 export async function findUserForLogin(
-	db: dB,
+	db: Db,
 	email: string,
 	password: string,
 ): Promise<UserDTO | null> {
@@ -98,7 +98,7 @@ export async function findUserForLogin(
  * @returns The user as UserDTO, or null if not found.
  */
 export async function fetchUserById(
-	db: dB,
+	db: Db,
 	id: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -137,7 +137,7 @@ export async function fetchUserById(
  * @param query - Search query for username or email.
  * @returns Number of pages.
  */
-export async function fetchUsersPages(db: dB, query: string): Promise<number> {
+export async function fetchUsersPages(db: Db, query: string): Promise<number> {
 	try {
 		const [{ count: total } = { count: 0 }] = await db
 			.select({ count: count(users.id) })
@@ -163,7 +163,7 @@ export async function fetchUsersPages(db: dB, query: string): Promise<number> {
  * @returns Array of UserDTO for the page.
  */
 export async function fetchFilteredUsers(
-	db: dB,
+	db: Db,
 	query: string,
 	currentPage: number,
 ): Promise<UserDTO[]> {
@@ -196,7 +196,7 @@ export async function fetchFilteredUsers(
  * @returns The deleted user as UserDTO, or null if not found.
  */
 export async function deleteUser(
-	db: dB,
+	db: Db,
 	userId: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -217,7 +217,7 @@ export async function deleteUser(
  * @param role - User role.
  * @returns The counter ID.
  */
-export async function demoUserCounter(db: dB, role: UserRole): Promise<number> {
+export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
 	try {
 		const [counter] = await db
 			.insert(demoUserCounters)
@@ -238,7 +238,7 @@ export async function demoUserCounter(db: dB, role: UserRole): Promise<number> {
  * @returns The created demo user as UserDTO, or null if creation failed.
  */
 export async function createDemoUser(
-	db: dB,
+	db: Db,
 	id: number,
 	role: UserRole,
 ): Promise<UserDTO | null> {
@@ -265,7 +265,7 @@ export async function createDemoUser(
  * @returns The user as UserDTO, or null if not found.
  */
 export async function readUserById(
-	db: dB,
+	db: Db,
 	id: string,
 ): Promise<UserDTO | null> {
 	try {
@@ -290,7 +290,7 @@ export async function readUserById(
  * @example patch = { username: "john", age: 30, isActive: true }
  */
 export async function updateUserDal(
-	db: dB,
+	db: Db,
 	id: string,
 	patch: Record<string, unknown>,
 ): Promise<UserDTO | null> {

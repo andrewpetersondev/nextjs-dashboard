@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { dB } from "@/src/lib/db/connection.ts";
+import type { Db } from "@/src/lib/db/connection.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import { sessions } from "@/src/lib/db/schema.ts";
 import type {
@@ -30,7 +30,7 @@ function mapDbSessionToSessionRecord(row: DbSessionRow): SessionRecord {
  */
 export async function insertSession(session: SessionRecord): Promise<void> {
 	try {
-		const db: dB = getDB();
+		const db: Db = getDB();
 
 		await db
 			.insert(sessions)
@@ -60,7 +60,7 @@ export async function insertSession(session: SessionRecord): Promise<void> {
  */
 export async function deleteSessionById(sessionId: string): Promise<void> {
 	try {
-		const db: dB = getDB();
+		const db: Db = getDB();
 		await db.delete(sessions).where(eq(sessions.id, sessionId));
 		logger.info(
 			{ context: "deleteSessionById", sessionId },
@@ -84,11 +84,11 @@ export async function findSessionById(
 	sessionId: string,
 ): Promise<SessionRecord | undefined> {
 	try {
-		const db: dB = getDB();
+		const db: Db = getDB();
 		const row = await db.query.sessions.findFirst({
 			where: eq(sessions.id, sessionId),
 		});
-		// --- Map dB row to SessionRecord for type safety ---
+		// --- Map Db row to SessionRecord for type safety ---
 		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
 	} catch (error) {
 		logger.error(
@@ -108,12 +108,12 @@ export async function findSessionByToken(
 	token: string,
 ): Promise<SessionRecord | undefined> {
 	try {
-		const db: dB = getDB();
+		const db: Db = getDB();
 
 		const row = await db.query.sessions.findFirst({
 			where: eq(sessions.token, token),
 		});
-		// --- Map dB row to SessionRecord for type safety ---
+		// --- Map Db row to SessionRecord for type safety ---
 		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
 	} catch (error) {
 		logger.error(

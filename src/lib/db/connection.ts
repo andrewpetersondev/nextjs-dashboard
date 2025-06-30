@@ -11,7 +11,7 @@ import * as schema from "@/src/lib/db/schema.ts";
 export type DbType = "dev" | "test";
 
 // Add this type for convenience
-export type dB = NodePgDatabase<typeof schema> & {
+export type Db = NodePgDatabase<typeof schema> & {
 	$client: NodePgClient;
 };
 
@@ -40,7 +40,7 @@ function getDatabaseUrl(type: DbType): string {
  */
 
 // biome-ignore lint/style/useNamingConvention: i like this name
-export function getDB(type: DbType = "test"): dB {
+export function getDB(type: DbType = "test"): Db {
 	const url = getDatabaseUrl(type);
-	return drizzle({ casing: "snake_case", connection: url, schema }) as dB;
+	return drizzle({ casing: "snake_case", connection: url, schema }) as Db;
 }
