@@ -10,10 +10,10 @@ import type { UserRole } from "@/src/lib/definitions/enums.ts";
 
 // biome-ignore lint/style/useNamingConvention: ignore
 export interface UserDTO {
-	id: string;
-	username: string;
-	email: string;
-	role: UserRole;
+	readonly id: string;
+	readonly username: string;
+	readonly email: string;
+	readonly role: UserRole;
 }
 
 // PROBLEM: convert code so database calls use mapper, which returns DTO
