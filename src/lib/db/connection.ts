@@ -5,6 +5,7 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/src/config/env.ts";
 // biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
 
@@ -16,21 +17,25 @@ export type Db = NodePgDatabase<typeof schema> & {
 	$client: NodePgClient;
 };
 
-// Map DbType to environment variable names
-const DB_ENV_VARS: Record<DbType, string> = {
+/**
+ * @deprecated
+ * Map DbType to environment variable names
+ */
+const _DB_ENV_VARS: Record<DbType, string> = {
 	dev: "POSTGRES_URL",
 	test: "POSTGRES_URL_TESTDB",
 };
 
+const DB_URLS: Record<DbType, string> = {
+	dev: POSTGRES_URL,
+	test: POSTGRES_URL_TESTDB,
+};
+
 // Get the database URL from environment variables
 function getDatabaseUrl(type: DbType): string {
-	const envVar = DB_ENV_VARS[type];
-	// biome-ignore lint/style/noProcessEnv: i need it
-	const url = process.env[envVar];
+	const url = DB_URLS[type];
 	if (!url) {
-		throw new Error(
-			`Database URL for "${type}" is not set. Expected env: ${envVar}`,
-		);
+		throw new Error(`Database URL for "${type}" is not set.`);
 	}
 	return url;
 }

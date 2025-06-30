@@ -1,9 +1,8 @@
-// src/lib/auth/session-jwt.ts
-
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { SESSION_SECRET } from "@/src/config/env.ts";
 import {
 	JWT_EXPIRATION,
 	ONE_DAY_MS,
@@ -65,8 +64,7 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
 	if (encodedKey) {
 		return encodedKey;
 	}
-	// biome-ignore lint/style/noProcessEnv: it works
-	const secret = process.env.SESSION_SECRET;
+	const secret = SESSION_SECRET;
 	if (!secret) {
 		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
 		throw new Error("SESSION_SECRET is not defined");
