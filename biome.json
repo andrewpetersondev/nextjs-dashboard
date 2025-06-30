@@ -11,7 +11,29 @@
 				"useSortedProperties": "on"
 			}
 		},
-		"enabled": true
+		"enabled": true,
+		"includes": [
+			"**",
+			"!**/vault/**",
+			"!pnpm-lock.yaml",
+			"!public/**",
+			"!.run",
+			"!.idea/**",
+			"!.vscode",
+			"!keep",
+			"!storage",
+			"!src/lib/db/drizzle/**",
+			"!next-env.d.ts",
+			"src/**/*",
+			"cypress/**/*.{ts,tsx}",
+			"cypress.config.ts",
+			"drizzle-dev.config.ts",
+			"drizzle-test.config.ts",
+			"envConfig.ts",
+			"package.json",
+			"postcss.config.mjs",
+			"tsconfig.json"
+		]
 	},
 	"css": {
 		"assist": {
@@ -41,7 +63,8 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		"indentWidth": 1
 	},
 	"javascript": {
 		"assist": {
@@ -52,7 +75,7 @@
 			"indentStyle": "tab",
 			"quoteStyle": "double"
 		},
-      "globals": ["cy"],
+		"globals": ["cy"],
 		"linter": {
 			"enabled": true
 		}
@@ -77,7 +100,7 @@
 			"next": "recommended",
 			"project": "recommended",
 			"react": "recommended",
-            "test": "recommended"
+			"test": "recommended"
 		},
 		"enabled": true,
 		"rules": {
