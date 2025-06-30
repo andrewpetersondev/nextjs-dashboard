@@ -1,5 +1,6 @@
 import "./envConfig.ts";
 import { defineConfig } from "drizzle-kit";
+import { POSTGRES_URL_TESTDB } from "./src/config/env.ts";
 
 // WRONG inside Docker:
 // postgres://user:password@testDB:5433/database
@@ -8,19 +9,10 @@ import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle-test.config.ts ...");
 
-let testUrl: string;
-
-if (process.env.POSTGRES_URL_TESTDB) {
-	testUrl = process.env.POSTGRES_URL_TESTDB;
-} else {
-	console.error("POSTGRES_URL_TESTDB not found in hcp vault");
-	process.exit(1);
-}
-
 export default defineConfig({
 	casing: "snake_case",
 	dbCredentials: {
-		url: testUrl,
+		url: POSTGRES_URL_TESTDB,
 	},
 	dialect: "postgresql",
 	out: "./src/lib/db/drizzle/test/",

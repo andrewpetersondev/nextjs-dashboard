@@ -1,10 +1,10 @@
 import { reset } from "drizzle-seed";
 // biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
-import { testDB } from "@/src/lib/db/test-database.ts";
+import { nodeEnvTestDb } from "@/src/lib/db/test-database.ts";
 
 async function main(): Promise<void> {
-	await reset(testDB, schema);
+	await reset(nodeEnvTestDb, schema);
 }
 
 // Fix: Handle floating promise with .catch for error logging

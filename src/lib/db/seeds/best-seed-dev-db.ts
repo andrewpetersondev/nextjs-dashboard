@@ -1,11 +1,23 @@
 // ANY FILE THAT IS USED FOR CLI TOOLING CANNOT HAVE IMPORT "SERVER-ONLY"
 // DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
 
+import bcryptjs from "bcryptjs";
 import { seed } from "drizzle-seed";
-import { hashPassword } from "../../auth/password.ts";
-import { db } from "../dev-database.ts";
+import { nodeEnvDb } from "../dev-database.ts";
 // biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "../schema.ts";
+
+const SALT_ROUNDS: number = 10;
+
+const hashPassword = async (password: string): Promise<string> => {
+	try {
+		const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);
+		return await bcryptjs.hash(password, salt);
+	} catch (error: unknown) {
+		console.error("Error while hashing password:", error);
+		throw error;
+	}
+};
 
 const customerFullNames: string[] = [
 	"Evil Rabbits",
@@ -82,23 +94,23 @@ const userSeed: User[] = [
 async function main(): Promise<void> {
 	// Check if the database is empty
 
-	const { rows: userCount } = (await db.execute(
+	const { rows: userCount } = (await nodeEnvDb.execute(
 		"SELECT COUNT(*) FROM users",
 	)) as { rows: { count: number }[] };
 
-	const { rows: customerCount } = (await db.execute(
+	const { rows: customerCount } = (await nodeEnvDb.execute(
 		"SELECT COUNT(*) FROM customers",
 	)) as { rows: { count: number }[] };
 
-	const { rows: invoiceCount } = (await db.execute(
+	const { rows: invoiceCount } = (await nodeEnvDb.execute(
 		"SELECT COUNT(*) FROM invoices",
 	)) as { rows: { count: number }[] };
 
-	const { rows: revenueCount } = (await db.execute(
+	const { rows: revenueCount } = (await nodeEnvDb.execute(
 		"SELECT COUNT(*) FROM revenues",
 	)) as { rows: { count: number }[] };
 
-	const { rows: demoUserCount } = (await db.execute(
+	const { rows: demoUserCount } = (await nodeEnvDb.execute(
 		"SELECT COUNT(*) FROM demo_user_counters",
 	)) as { rows: { count: number }[] };
 
@@ -113,7 +125,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	await seed(db, schema).refine((f) => ({
+	await seed(nodeEnvDb, schema).refine((f) => ({
 		customers: {
 			columns: {
 				email: f.valuesFromArray({ isUnique: true, values: customerEmails }),

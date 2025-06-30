@@ -1,21 +1,13 @@
 import "./envConfig.ts";
 import { defineConfig } from "drizzle-kit";
+import { POSTGRES_URL } from "./src/config/env.ts";
 
 console.log("drizzle-dev.config.ts ...");
-
-let url: string;
-
-if (process.env.POSTGRES_URL) {
-	url = process.env.POSTGRES_URL;
-} else {
-	console.error("POSTGRES_URL not found in hcp vault");
-	process.exit(1);
-}
 
 export default defineConfig({
 	casing: "snake_case",
 	dbCredentials: {
-		url: url,
+		url: POSTGRES_URL,
 	},
 	dialect: "postgresql",
 	out: "./src/lib/db/drizzle/dev/",

@@ -1,4 +1,4 @@
-import "server-only";
+// import "server-only";
 
 import {
 	drizzle,
@@ -19,6 +19,6 @@ if (process.env.POSTGRES_URL) {
 	process.exit(1);
 }
 
-export const db: NodePgDatabase & {
+export const nodeEnvDb: NodePgDatabase & {
 	$client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });

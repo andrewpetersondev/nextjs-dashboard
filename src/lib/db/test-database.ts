@@ -10,9 +10,9 @@ console.log("test-database.ts ...");
 
 let url: string;
 
-// biome-ignore lint/style/noProcessEnv: i need it
+// biome-ignore lint/style/noProcessEnv: I need it.
 if (process.env.POSTGRES_URL_TESTDB) {
-	// biome-ignore lint/style/noProcessEnv: i need it
+	// biome-ignore lint/style/noProcessEnv: I need it.
 	url = process.env.POSTGRES_URL_TESTDB;
 	console.log("Using POSTGRES_URL_TESTDB:", url);
 } else {
@@ -20,7 +20,6 @@ if (process.env.POSTGRES_URL_TESTDB) {
 	process.exit(1);
 }
 
-// biome-ignore lint/style/useNamingConvention: I like this name
-export const testDB: NodePgDatabase & {
+export const nodeEnvTestDb: NodePgDatabase & {
 	$client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });
