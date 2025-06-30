@@ -124,20 +124,6 @@ export function CreateUserForm(): JSX.Element {
 						Create User
 					</CreateUserSubmitButton>
 				</FormActionRow>
-				{/*<div className="mt-6 flex justify-end gap-4">*/}
-				{/*	<Link*/}
-				{/*		className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"*/}
-				{/*		href="/dashboard/users"*/}
-				{/*	>*/}
-				{/*		Cancel*/}
-				{/*	</Link>*/}
-				{/*	<CreateUserSubmitButton*/}
-				{/*		data-cy="create-user-submit-button"*/}
-				{/*		pending={pending}*/}
-				{/*	>*/}
-				{/*		Create User*/}
-				{/*	</CreateUserSubmitButton>*/}
-				{/*</div>*/}
 			</form>
 			<ServerMessage showAlert={showAlert} state={state} />
 		</div>
