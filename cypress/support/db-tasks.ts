@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import { users } from "../../src/lib/db/schema.ts";
-import { testDB } from "../../src/lib/db/test-database.ts";
+import { nodeEnvTestDb } from "../../src/lib/db/test-database.ts";
 import {
 	ERROR_DB,
 	ERROR_USER_CREATION_FAILED,
@@ -18,7 +18,7 @@ export async function createUserTask(
 	try {
 		console.log("[createUserTask]...");
 		const hashedPassword = await bcrypt.hash(user.password, 10);
-		const [insertedUser] = await testDB
+		const [insertedUser] = await nodeEnvTestDb
 			.insert(users)
 			.values({ ...user, password: hashedPassword })
 			.returning();
@@ -48,7 +48,7 @@ export async function deleteUserTask(
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
 		console.log("[deleteUserTask]...");
-		const [found] = await testDB
+		const [found] = await nodeEnvTestDb
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
@@ -61,7 +61,7 @@ export async function deleteUserTask(
 			};
 		}
 		console.log("[deleteUserTask] [found] = ", found);
-		const [deletedUser] = await testDB
+		const [deletedUser] = await nodeEnvTestDb
 			.delete(users)
 			.where(eq(users.id, found.id))
 			.returning();
@@ -91,7 +91,7 @@ export async function findUserTask(
 ): Promise<DbTaskResult<UserEntity>> {
 	try {
 		console.log("[findUserTask]...");
-		const [user] = await testDB
+		const [user] = await nodeEnvTestDb
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
@@ -125,7 +125,7 @@ export async function updateUserTask({
 }): Promise<DbTaskResult<UserEntity>> {
 	try {
 		console.log("[updateUserTask]...");
-		const [found] = await testDB
+		const [found] = await nodeEnvTestDb
 			.select()
 			.from(users)
 			.where(eq(users.email, email));
@@ -138,7 +138,7 @@ export async function updateUserTask({
 			};
 		}
 		console.log("[updateUserTask] found = ", found);
-		const [updatedUser] = await testDB
+		const [updatedUser] = await nodeEnvTestDb
 			.update(users)
 			.set(updates)
 			.where(eq(users.id, found.id))

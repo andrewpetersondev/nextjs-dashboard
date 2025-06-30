@@ -1,5 +1,5 @@
+import { z as zod } from "zod";
 import { roleSchema, type UserRole } from "@/src/lib/definitions/enums.ts";
-import { z as zod } from "@/src/lib/definitions/zod-alias.ts";
 
 /**
  * Payload for encrypting a session (JWT or similar).

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { z as zod } from "@/src/lib/definitions/zod-alias.ts";
+import { z as zod } from "zod";
 
 const envSchema = zod.object({
 	// biome-ignore lint/style/useNamingConvention: <ignore>
