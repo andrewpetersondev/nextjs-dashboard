@@ -2,7 +2,7 @@ import "server-only";
 
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 /**
- * InvoiceEntity Data Access Layer (DAL) for CRUD operations on InvoiceEntity entities.
+ * Data Access Layer (DAL) for CRUD operations on Invoice entities (aka. database rows).
  * Uses Drizzle ORM for database access.
  */
 import type { Db } from "@/src/lib/db/connection.ts";
