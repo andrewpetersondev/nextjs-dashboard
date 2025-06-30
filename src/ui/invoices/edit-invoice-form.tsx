@@ -5,14 +5,14 @@ import {
 	ClockIcon,
 	CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { type JSX, useActionState } from "react";
 import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import type { InvoiceFormState } from "@/src/lib/definitions/invoices.ts";
 import { updateInvoice } from "@/src/lib/server-actions/invoices.ts";
 import { FieldError } from "@/src/ui/auth/field-error.tsx";
-import { Button } from "@/src/ui/button.tsx";
+import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
+import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
 import { DollarInput } from "@/src/ui/components/input.tsx";
 import { Label } from "@/src/ui/components/label.tsx";
 import { CustomerSelect } from "@/src/ui/invoices/customer-select.tsx";
@@ -63,6 +63,7 @@ export function EditInvoiceForm({
 							<CurrencyDollarIcon className="text-text-primary peer-focus:text-text-focus pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
 						</div>
 					</div>
+					{/* TODO: The form loads with Amount Error showing on page load */}
 					<div
 						aria-atomic="true"
 						aria-live="polite"
@@ -122,22 +123,11 @@ export function EditInvoiceForm({
 				</fieldset>
 			</div>
 
-			{/* Buttons */}
-			<div className="mt-6 flex justify-end gap-4">
-				<Link
-					className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-					href="/dashboard/invoices"
-				>
-					Cancel
-				</Link>
-				<Button
-					className="bg-bg-active hover:bg-bg-hover text-text-primary rounded-lg px-4 font-medium transition-colors"
-					disabled={isPending}
-					type="submit"
-				>
+			<FormActionRow cancelHref="/dashboard/invoices">
+				<FormSubmitButton data-cy="edit-invoice-submit-button" pending={isPending}>
 					Edit Invoice
-				</Button>
-			</div>
+				</FormSubmitButton>
+			</FormActionRow>
 		</form>
 	);
 }

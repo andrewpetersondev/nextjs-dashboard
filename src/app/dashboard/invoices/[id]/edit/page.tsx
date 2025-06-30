@@ -7,6 +7,7 @@ import {
 	fetchInvoiceById,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
+import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
 
@@ -54,6 +55,12 @@ export default async function Page(
 					},
 				]}
 			/>
+			<H1>edit invoice</H1>
+
+			<section>
+				<p>Edit some stuff.</p>
+			</section>
+
 			<EditInvoiceForm customers={customers} invoice={invoice} />
 		</main>
 	);
