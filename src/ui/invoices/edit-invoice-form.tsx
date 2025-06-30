@@ -22,7 +22,7 @@ type EditInvoiceFormState = Readonly<{
 	success?: boolean;
 }>;
 
-// TODO: Form does not update when submitted like the Edit User Form does.
+// TODO: Form does not update when submitted like the Edit User Form does. Correction, Edit User Form does not update.
 export function EditInvoiceForm({
 	invoice,
 	customers,
