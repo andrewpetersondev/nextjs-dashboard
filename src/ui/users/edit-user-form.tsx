@@ -1,12 +1,10 @@
 "use client";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { FormState } from "@/src/lib/definitions/form.ts";
 import type { EditUserFormFields } from "@/src/lib/definitions/users.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { editUser } from "@/src/lib/server-actions/users.ts";
-import { Button } from "@/src/ui/button.tsx";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { H1 } from "@/src/ui/headings.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
@@ -227,21 +225,6 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 						Update User
 					</UpdateUserSubmitButton>
 				</FormActionRow>
-				<div className="mt-6 flex justify-end gap-4">
-					<Link
-						className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
-						href="/dashboard/users"
-					>
-						Cancel
-					</Link>
-					<Button
-						className="bg-bg-active hover:bg-bg-hover text-text-primary rounded-lg px-4 font-medium transition-colors"
-						disabled={isPending}
-						type="submit"
-					>
-						Edit User
-					</Button>
-				</div>
 			</form>
 			<ServerMessage showAlert={showAlert} state={state} />
 		</div>
