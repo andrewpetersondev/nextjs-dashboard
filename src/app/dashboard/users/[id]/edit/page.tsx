@@ -6,7 +6,6 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
-import { EditUserForm } from "@/src/ui/users/edit-user-form.tsx";
 import { EditUserFormV2 } from "@/src/ui/users/edit-user-form-v2.tsx";
 
 // biome-ignore lint/style/useComponentExportOnlyModules:  ignore this rule
@@ -59,7 +58,7 @@ export default async function Page(
 				<p>Admins can edit any profile.</p>
 			</section>
 
-			<EditUserForm user={user} />
+			{/*<EditUserForm user={user} />*/}
 			<EditUserFormV2 user={user} />
 		</main>
 	);
