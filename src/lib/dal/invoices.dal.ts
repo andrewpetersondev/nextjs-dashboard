@@ -70,9 +70,7 @@ export async function createInvoiceInDb(
 			.insert(invoices)
 			.values({ amount, customerId, date, status })
 			.returning();
-		return createdInvoice
-			? toInvoiceDTO(toInvoiceEntity(createdInvoice))
-			: null;
+		return createdInvoice ? toInvoiceDTO(toInvoiceEntity(createdInvoice)) : null;
 	} catch (error) {
 		logError("createInvoiceInDb", error, { customerId });
 		throw new Error("Database error while creating an invoice.");
@@ -102,9 +100,7 @@ export async function updateInvoiceInDb(
 			.set({ amount, customerId, status })
 			.where(eq(invoices.id, id))
 			.returning();
-		return updatedInvoice
-			? toInvoiceDTO(toInvoiceEntity(updatedInvoice))
-			: null;
+		return updatedInvoice ? toInvoiceDTO(toInvoiceEntity(updatedInvoice)) : null;
 	} catch (error) {
 		logError("updateInvoiceInDb", error, { customerId, id });
 		throw new Error("Database error while updating invoice.");
@@ -127,9 +123,7 @@ export async function deleteInvoiceInDb(
 			.delete(invoices)
 			.where(eq(invoices.id, id))
 			.returning();
-		return deletedInvoice
-			? toInvoiceDTO(toInvoiceEntity(deletedInvoice))
-			: null;
+		return deletedInvoice ? toInvoiceDTO(toInvoiceEntity(deletedInvoice)) : null;
 	} catch (error) {
 		logError("deleteInvoiceInDb", error, { id });
 		throw new Error("An unexpected error occurred. Please try again.");

@@ -195,10 +195,7 @@ export function InvoicesTableSkeleton(): JSX.Element {
 								<th className="px-3 py-5 font-medium" scope="col">
 									Status
 								</th>
-								<th
-									className="relative pt-2 pr-6 pb-4 pl-3 sm:pr-6"
-									scope="col"
-								>
+								<th className="relative pt-2 pr-6 pb-4 pl-3 sm:pr-6" scope="col">
 									<span className="sr-only">Edit</span>
 								</th>
 							</tr>

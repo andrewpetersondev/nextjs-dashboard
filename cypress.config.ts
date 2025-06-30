@@ -17,6 +17,8 @@ export default defineConfig({
 		},
 	},
 	env: {
+		// biome-ignore lint/style/noProcessEnv: <ignore>
+		// biome-ignore lint/style/useNamingConvention: <ignore>
 		SESSION_SECRET: process.env.SESSION_SECRET,
 	},
 	fileServerFolder: ".",

@@ -18,10 +18,7 @@ export async function UsersTable({
 		<div>
 			{users?.map(
 				(user: UserDTO): JSX.Element => (
-					<div
-						className="bg-bg-primary mb-2 w-full rounded-md p-4"
-						key={user.id}
-					>
+					<div className="bg-bg-primary mb-2 w-full rounded-md p-4" key={user.id}>
 						<div className="flex items-center justify-between border-b pb-4">
 							<div>
 								<div className="mb-2 flex items-center">

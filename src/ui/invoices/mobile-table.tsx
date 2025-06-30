@@ -14,10 +14,7 @@ export function MobileTable({
 		<div className="md:hidden">
 			{invoices?.map(
 				(invoice: FetchFilteredInvoicesData): JSX.Element => (
-					<div
-						className="bg-bg-primary mb-2 w-full rounded-md p-4"
-						key={invoice.id}
-					>
+					<div className="bg-bg-primary mb-2 w-full rounded-md p-4" key={invoice.id}>
 						<div className="flex items-center justify-between border-b pb-4">
 							<div>
 								<div className="mb-2 flex items-center">
@@ -36,9 +33,7 @@ export function MobileTable({
 						</div>
 						<div className="flex w-full items-center justify-between pt-4">
 							<div>
-								<p className="text-xl font-medium">
-									{formatCurrency(invoice.amount)}
-								</p>
+								<p className="text-xl font-medium">{formatCurrency(invoice.amount)}</p>
 								<p>{formatDateToLocal(invoice.date)}</p>
 							</div>
 							<div className="flex justify-end gap-2">

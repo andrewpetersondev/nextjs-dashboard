@@ -32,11 +32,13 @@ describe("Layout and Page Components", () => {
 				});
 
 				it("should render with the correct base structure", () => {
-					cy.get("html")
+					cy
+						.get("html")
 						.should("have.class", "scheme-light-dark")
 						.and("have.class", "h-full");
 
-					cy.get("body")
+					cy
+						.get("body")
 						.should("have.class", "h-full")
 						.and("have.class", "antialiased")
 						.and("have.class", "scheme-light-dark");
@@ -44,11 +46,13 @@ describe("Layout and Page Components", () => {
 
 				it("should have correct meta-information", () => {
 					cy.title().should("eq", "Acme Dashboard");
-					cy.get('meta[name="description"]').should(
-						"have.attr",
-						"content",
-						"The official Next.js Learn Dashboard built with App Router.",
-					);
+					cy
+						.get('meta[name="description"]')
+						.should(
+							"have.attr",
+							"content",
+							"The official Next.js Learn Dashboard built with App Router.",
+						);
 				});
 			});
 		}

@@ -21,10 +21,10 @@ export function CreateUserFormV2(): JSX.Element {
 		message: "",
 		success: undefined,
 	};
-	const [state, action, pending] = useActionState<
-		CreateUserFormState,
-		FormData
-	>(createUser, initialState);
+	const [state, action, pending] = useActionState<CreateUserFormState, FormData>(
+		createUser,
+		initialState,
+	);
 
 	return (
 		<UserForm

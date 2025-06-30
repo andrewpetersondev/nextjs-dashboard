@@ -21,12 +21,9 @@ export async function LatestInvoices(): Promise<JSX.Element> {
 						(invoice: ModifiedLatestInvoicesData, i: number): JSX.Element => {
 							return (
 								<div
-									className={clsx(
-										"flex flex-row items-center justify-between py-4",
-										{
-											"border-text-secondary border-t": i !== 0,
-										},
-									)}
+									className={clsx("flex flex-row items-center justify-between py-4", {
+										"border-text-secondary border-t": i !== 0,
+									})}
 									key={invoice.id}
 								>
 									<div className="flex items-center">

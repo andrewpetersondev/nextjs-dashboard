@@ -143,10 +143,7 @@ export async function fetchUsersPages(db: Db, query: string): Promise<number> {
 			.select({ count: count(users.id) })
 			.from(users)
 			.where(
-				or(
-					ilike(users.username, `%${query}%`),
-					ilike(users.email, `%${query}%`),
-				),
+				or(ilike(users.username, `%${query}%`), ilike(users.email, `%${query}%`)),
 			);
 		return Math.ceil(total / ITEMS_PER_PAGE_USERS);
 	} catch (error) {
@@ -173,10 +170,7 @@ export async function fetchFilteredUsers(
 			.select()
 			.from(users)
 			.where(
-				or(
-					ilike(users.username, `%${query}%`),
-					ilike(users.email, `%${query}%`),
-				),
+				or(ilike(users.username, `%${query}%`), ilike(users.email, `%${query}%`)),
 			)
 			.orderBy(asc(users.username))
 			.limit(ITEMS_PER_PAGE_USERS)

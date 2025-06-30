@@ -25,10 +25,7 @@ export function CreateInvoiceForm({
 		message: "",
 		success: false,
 	};
-	const [state, action, isPending] = useActionState(
-		createInvoice,
-		initialState,
-	);
+	const [state, action, isPending] = useActionState(createInvoice, initialState);
 	const [showAlert, setShowAlert] = useState(false);
 
 	useEffect(() => {
@@ -45,10 +42,7 @@ export function CreateInvoiceForm({
 			<form action={action}>
 				<div className="bg-bg-accent rounded-md p-4 md:p-6">
 					<div className="mb-4">
-						<label
-							className="mb-2 block text-sm font-medium"
-							htmlFor="customer"
-						>
+						<label className="mb-2 block text-sm font-medium" htmlFor="customer">
 							Choose customer
 						</label>
 						<div className="relative">
@@ -97,9 +91,7 @@ export function CreateInvoiceForm({
 							<div className="relative">
 								<input
 									aria-describedby={
-										(state.errors?.amount?.length ?? 0) > 0
-											? "amount-error"
-											: undefined
+										(state.errors?.amount?.length ?? 0) > 0 ? "amount-error" : undefined
 									}
 									className="peer border-bg-secondary placeholder:text-text-secondary block w-full rounded-md border py-2 pl-10 text-sm outline-2"
 									id="amount"
@@ -132,9 +124,7 @@ export function CreateInvoiceForm({
 								<div className="flex items-center">
 									<input
 										aria-describedby={
-											(state.errors?.status?.length ?? 0) > 0
-												? "status-error"
-												: undefined
+											(state.errors?.status?.length ?? 0) > 0 ? "status-error" : undefined
 										}
 										className="border-bg-secondary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
 										id="pending"
@@ -152,9 +142,7 @@ export function CreateInvoiceForm({
 								<div className="flex items-center">
 									<input
 										aria-describedby={
-											(state.errors?.status?.length ?? 0) > 0
-												? "status-error"
-												: undefined
+											(state.errors?.status?.length ?? 0) > 0 ? "status-error" : undefined
 										}
 										className="border-bg-secondary bg-bg-accent text-text-primary h-4 w-4 cursor-pointer focus:ring-2"
 										id="paid"
@@ -204,15 +192,15 @@ export function CreateInvoiceForm({
 						aria-live={state.success ? "polite" : "assertive"}
 						className={`pointer-events-auto absolute left-0 right-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500
               ${
-								showAlert
-									? "opacity-100 translate-y-0"
-									: "opacity-0 -translate-y-4 pointer-events-none"
-							}
+															showAlert
+																? "opacity-100 translate-y-0"
+																: "opacity-0 -translate-y-4 pointer-events-none"
+														}
               ${
-								state.success
-									? "border-green-300 bg-green-50 text-green-800"
-									: "border-red-300 bg-red-50 text-red-800"
-							}
+															state.success
+																? "border-green-300 bg-green-50 text-green-800"
+																: "border-red-300 bg-red-50 text-red-800"
+														}
             `}
 						data-cy={
 							state.success

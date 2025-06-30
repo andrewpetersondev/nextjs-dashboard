@@ -118,10 +118,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 		);
 		return token;
 	} catch (error: unknown) {
-		logger.error(
-			{ context: "encrypt", err: error },
-			"Session encryption failed",
-		);
+		logger.error({ context: "encrypt", err: error }, "Session encryption failed");
 		throw new Error("EncryptPayload encryption failed");
 	}
 }
@@ -176,10 +173,7 @@ export async function decrypt(
 		);
 		return validatedFields.data as DecryptPayload;
 	} catch (error: unknown) {
-		logger.error(
-			{ context: "decrypt", err: error },
-			"Session decryption failed",
-		);
+		logger.error({ context: "decrypt", err: error }, "Session decryption failed");
 		return undefined;
 	}
 }

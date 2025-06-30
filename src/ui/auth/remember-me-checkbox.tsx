@@ -26,10 +26,7 @@ export function RememberMeCheckbox(): JSX.Element {
 					</svg>
 				</div>
 			</div>
-			<label
-				className="text-text-primary block text-sm/6"
-				htmlFor="remember-me"
-			>
+			<label className="text-text-primary block text-sm/6" htmlFor="remember-me">
 				Remember me
 			</label>
 		</div>

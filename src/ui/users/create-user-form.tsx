@@ -27,10 +27,10 @@ type CreateUserFormState = Readonly<{
 export function CreateUserForm(): JSX.Element {
 	const initialState = { errors: {}, message: "", success: undefined };
 
-	const [state, action, pending] = useActionState<
-		CreateUserFormState,
-		FormData
-	>(createUser, initialState);
+	const [state, action, pending] = useActionState<CreateUserFormState, FormData>(
+		createUser,
+		initialState,
+	);
 
 	const [showAlert, setShowAlert] = useState(false);
 
@@ -117,10 +117,7 @@ export function CreateUserForm(): JSX.Element {
 					</div>
 				</div>
 				<FormActionRow cancelHref="/dashboard/users">
-					<FormSubmitButton
-						data-cy="create-user-submit-button"
-						pending={pending}
-					>
+					<FormSubmitButton data-cy="create-user-submit-button" pending={pending}>
 						Create User
 					</FormSubmitButton>
 				</FormActionRow>

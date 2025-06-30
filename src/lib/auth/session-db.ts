@@ -27,9 +27,7 @@ const generateSessionToken = (): string => {
 	const array = new Uint8Array(48);
 	crypto.getRandomValues(array);
 
-	const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join(
-		"",
-	);
+	const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join("");
 	const base64Encoded = btoa(base64)
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")

@@ -10,13 +10,10 @@ export function InvoiceStatusComponent({
 }): JSX.Element {
 	return (
 		<span
-			className={clsx(
-				"inline-flex items-center rounded-full px-2 py-1 text-xs",
-				{
-					"bg-bg-accent text-text-primary": status === "pending",
-					"bg-bg-secondary text-text-secondary": status === "paid",
-				},
-			)}
+			className={clsx("inline-flex items-center rounded-full px-2 py-1 text-xs", {
+				"bg-bg-accent text-text-primary": status === "pending",
+				"bg-bg-secondary text-text-secondary": status === "paid",
+			})}
 		>
 			{status === "pending" && (
 				<>

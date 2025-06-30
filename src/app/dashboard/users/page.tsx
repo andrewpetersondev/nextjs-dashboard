@@ -48,10 +48,7 @@ export default async function Page(
 				</Suspense>
 				<CreateUser />
 			</div>
-			<Suspense
-				fallback={<div>Loading users...</div>}
-				key={query + currentPage}
-			>
+			<Suspense fallback={<div>Loading users...</div>} key={query + currentPage}>
 				<UsersTable currentPage={currentPage} query={query} />
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">

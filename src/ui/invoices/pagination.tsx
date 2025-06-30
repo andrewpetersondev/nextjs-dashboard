@@ -94,8 +94,7 @@ function PaginationNumber({
 			"rounded-l-md": position === "first" || position === "single",
 			"rounded-r-md": position === "last" || position === "single",
 			"text-text-secondary": position === "middle",
-			"z-10 border-bg-active border-2 border-bg-focus text-text-active":
-				isActive,
+			"z-10 border-bg-active border-2 border-bg-focus text-text-active": isActive,
 		},
 	);
 
