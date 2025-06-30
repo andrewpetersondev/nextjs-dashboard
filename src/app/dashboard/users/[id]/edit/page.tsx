@@ -6,6 +6,7 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditUserForm } from "@/src/ui/users/edit-user-form.tsx";
+import { EditUserFormV2 } from "@/src/ui/users/edit-user-form-v2.tsx";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: just ignore this rule
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default async function Page(
 				]}
 			/>
 			<EditUserForm user={user} />
+			<EditUserFormV2 user={user} />
 		</main>
 	);
 }
