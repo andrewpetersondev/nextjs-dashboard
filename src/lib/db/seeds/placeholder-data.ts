@@ -3,13 +3,13 @@
 
 // Keep types in this file because this file needs to be isolated from any "server" code for drizzle-kit to work properly. Also, the types in this file are defined elsewhere.
 
-type User = {
+type UserMock = {
 	username: string;
 	email: string;
 	password: string;
 };
 
-type Customer = {
+type CustomerMock = {
 	id: string;
 	name: string;
 	email: string;
@@ -17,7 +17,7 @@ type Customer = {
 	image_url: string;
 };
 
-type Invoice = {
+type InvoiceMock = {
 	// biome-ignore lint/style/useNamingConvention: it works
 	customer_id: string;
 	amount: number;
@@ -25,12 +25,12 @@ type Invoice = {
 	date: string; // ISO date string
 };
 
-type Revenue = {
+type RevenueMock = {
 	month: string;
 	revenue: number;
 };
 
-export const users: User[] = [
+export const users: UserMock[] = [
 	{
 		email: "user@nextmail.com",
 		password: "123456",
@@ -38,7 +38,7 @@ export const users: User[] = [
 	},
 ];
 
-export const customers: Customer[] = [
+export const customers: CustomerMock[] = [
 	{
 		email: "evil@rabbit.com",
 		id: "d6e15727-9fe1-4961-8c5b-ea44a9bd81aa",
@@ -83,7 +83,7 @@ export const customers: Customer[] = [
 	},
 ];
 
-export const invoices: Invoice[] = [
+export const invoices: InvoiceMock[] = [
 	{
 		amount: 15795,
 		// biome-ignore lint/style/useNamingConvention: it works
@@ -177,7 +177,7 @@ export const invoices: Invoice[] = [
 	},
 ];
 
-export const revenue: Revenue[] = [
+export const revenue: RevenueMock[] = [
 	{ month: "Jan", revenue: 2000 },
 	{ month: "Feb", revenue: 1800 },
 	{ month: "Mar", revenue: 2200 },
