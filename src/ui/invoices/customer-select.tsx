@@ -3,7 +3,7 @@ import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import {
 	SelectMenu,
 	type SelectMenuProps,
-} from "../components/select-menu.tsx";
+} from "@/src/ui/components/select-menu.tsx";
 
 /**
  * Props for CustomerSelect component.
