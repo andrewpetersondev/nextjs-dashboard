@@ -1,8 +1,4 @@
 import { z as zod } from "zod";
-import {
-	INVOICE_STATUSES,
-	type InvoiceStatus,
-} from "@/src/lib/definitions/enums.ts";
 import type { FormState } from "@/src/lib/definitions/form.ts";
 
 /* ============================================================================
@@ -18,6 +14,15 @@ export type CustomerId = string & { readonly __brand: unique symbol };
 /* ============================================================================
  * Form Field Types
  * ========================================================================== */
+
+/** Invoice statuses as a constant tuple for type safety. */
+export const INVOICE_STATUSES = ["pending", "paid"] as const;
+
+/**
+ * Type for invoice statuses.
+ * Uses a tuple to ensure only valid statuses are used.
+ */
+export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
 /**
  * Fields for invoice form state.

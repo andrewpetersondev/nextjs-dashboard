@@ -1,12 +1,10 @@
 import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import {
+	type CustomerId,
 	INVOICE_STATUSES,
+	type InvoiceByIdDbRow,
+	type InvoiceId,
 	type InvoiceStatus,
-} from "@/src/lib/definitions/enums.ts";
-import type {
-	CustomerId,
-	InvoiceByIdDbRow,
-	InvoiceId,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 
@@ -60,9 +58,9 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
 export function toInvoiceDTO(invoice: InvoiceEntity): InvoiceDTO {
 	return {
 		amount: invoice.amount,
-		customerId: invoice.customerId,
+		customerId: invoice.customerId as string, // strips brand
 		date: invoice.date,
-		id: invoice.id,
+		id: invoice.id as string, // strips brand
 		status: invoice.status,
 	};
 }

@@ -12,12 +12,3 @@ export const roleSchema = zod.enum(USER_ROLES, {
 	// biome-ignore lint/style/useNamingConvention: "Using zod enum for role validation."
 	invalid_type_error: "Invalid user role.",
 });
-
-// Invoice statuses as a constant tuple for type safety.
-export const INVOICE_STATUSES = ["pending", "paid"] as const;
-
-/**
- * Type for invoice statuses.
- * Uses a tuple to ensure only valid statuses are used.
- */
-export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];

@@ -1,10 +1,10 @@
-import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
+import type { InvoiceStatus } from "@/src/lib/definitions/invoices.ts";
 
 // biome-ignore lint/style/useNamingConvention: ignore
 export interface InvoiceDTO {
-	id: string;
-	customerId: string;
-	amount: number; // Amount in cents
-	status: InvoiceStatus;
-	date: string; // ISO date string
+	readonly id: string;
+	readonly customerId: string;
+	readonly amount: number; // Amount in cents
+	readonly status: InvoiceStatus;
+	readonly date: string; // ISO date string
 }
