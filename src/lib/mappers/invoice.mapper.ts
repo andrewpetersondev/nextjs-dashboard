@@ -13,12 +13,18 @@ import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 /**
  * Helper to brand a string as InvoiceId.
  */
-export const toInvoiceId = (id: string): InvoiceId => id as InvoiceId;
+export const toInvoiceIdBrand = (id: string): InvoiceId => id as InvoiceId;
 
 /**
  * Helper to brand a string as CustomerId.
  */
-export const toCustomerId = (id: string): CustomerId => id as CustomerId;
+export const toCustomerIdBrand = (id: string): CustomerId => id as CustomerId;
+
+/**
+ * Helper to brand a string as InvoiceStatus.
+ */
+export const toInvoiceStatusBrand = (status: string): InvoiceStatus =>
+	status as InvoiceStatus;
 
 /**
  * Maps a raw database row to an InvoiceEntity.
@@ -35,9 +41,9 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
 
 	return {
 		amount: row.amount,
-		customerId: toCustomerId(row.customerId),
+		customerId: toCustomerIdBrand(row.customerId),
 		date: row.date,
-		id: toInvoiceId(row.id),
+		id: toInvoiceIdBrand(row.id),
 		status: row.status as InvoiceStatus, // Cast after validation
 	};
 }

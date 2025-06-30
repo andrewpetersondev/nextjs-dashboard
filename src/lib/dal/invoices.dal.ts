@@ -8,6 +8,7 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "@/src/lib/db/connection.ts";
 import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
+import { ITEMS_PER_PAGE } from "@/src/lib/definitions/constants.ts";
 import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
 import type {
 	CustomerId,
@@ -20,29 +21,14 @@ import type {
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 import {
+	toCustomerIdBrand,
 	toInvoiceDTO,
 	toInvoiceEntity,
+	toInvoiceIdBrand,
+	toInvoiceStatusBrand,
 } from "@/src/lib/mappers/invoice.mapper.ts";
 import { logError } from "@/src/lib/utils/utils.server.ts";
 import { formatCurrency } from "@/src/lib/utils/utils.ts";
-
-// --- Constants ---
-const ITEMS_PER_PAGE = 6;
-
-// --- Branded type helpers ---
-export function brandInvoiceId(id: string): InvoiceId {
-	return id as InvoiceId;
-}
-
-export function brandCustomerId(id: string): CustomerId {
-	return id as CustomerId;
-}
-
-export function brandStatus(status: string): InvoiceStatus {
-	return status as InvoiceStatus;
-}
-
-// --- DAL Functions ---
 
 /**
  * Inserts a new invoice record into the database.
@@ -158,8 +144,8 @@ export async function fetchLatestInvoices(
 			(invoice: LatestInvoiceDbRow): ModifiedLatestInvoicesData => ({
 				...invoice,
 				amount: formatCurrency(invoice.amount),
-				id: brandInvoiceId(invoice.id),
-				status: brandStatus(invoice.status),
+				id: toInvoiceIdBrand(invoice.id),
+				status: toInvoiceStatusBrand(invoice.status),
 			}),
 		);
 	} catch (error: unknown) {
@@ -211,8 +197,8 @@ export async function fetchFilteredInvoices(
 		return data.map(
 			(invoice: FilteredInvoiceDbRow): FetchFilteredInvoicesData => ({
 				...invoice,
-				id: brandInvoiceId(invoice.id),
-				status: brandStatus(invoice.status),
+				id: toInvoiceIdBrand(invoice.id),
+				status: toInvoiceStatusBrand(invoice.status),
 			}),
 		);
 	} catch (error: unknown) {
@@ -283,10 +269,10 @@ export async function fetchInvoiceById(
 		return data.length > 0
 			? {
 					amount: data[0].amount / 100,
-					customerId: brandCustomerId(data[0].customerId),
+					customerId: toCustomerIdBrand(data[0].customerId),
 					date: data[0].date,
-					id: brandInvoiceId(data[0].id),
-					status: brandStatus(data[0].status),
+					id: toInvoiceIdBrand(data[0].id),
+					status: toInvoiceStatusBrand(data[0].status),
 				}
 			: undefined;
 	} catch (error: unknown) {

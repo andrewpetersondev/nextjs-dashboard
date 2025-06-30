@@ -53,12 +53,12 @@
 
 ```typescript
 // Mapper: Db row (plain string) -> Entity (branded)
-const toCustomerId = (id: string): CustomerId => id as CustomerId;
+const toCustomerIdBrand = (id: string): CustomerId => id as CustomerId;
 
 export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
   return {
-    id: toInvoiceId(row.id),
-    customerId: toCustomerId(row.customerId),
+    id: toInvoiceIdBrand(row.id),
+    customerId: toCustomerIdBrand(row.customerId),
     // ...
   };
 }
