@@ -32,7 +32,7 @@ import {
  * @returns The created user as UserDto, or null if creation failed.
  * @param db
  */
-export async function createUserInDb(
+export async function createUserDal(
 	db: Db,
 	{
 		username,
@@ -56,7 +56,7 @@ export async function createUserInDb(
 		const user = userRow ? dbRowToUserEntity(userRow) : null;
 		return user ? toUserDto(user) : null;
 	} catch (error) {
-		logError("createUserInDb", error, { email });
+		logError("createUserDal", error, { email });
 		throw new Error("Failed to create a user in the database.");
 	}
 }
@@ -223,7 +223,7 @@ export async function fetchFilteredUsers(
  * @param userId - UserId (branded)
  * @returns UserDto if deleted, otherwise null
  */
-export async function deleteUser(
+export async function deleteUserDal(
 	db: Db,
 	userId: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
@@ -244,7 +244,7 @@ export async function deleteUser(
 		// Map to DTO for safe return to client
 		return toUserDto(deletedEntity);
 	} catch (error) {
-		logError("deleteUser", error, { userId });
+		logError("deleteUserDal", error, { userId });
 		throw new Error("An unexpected error occurred. Please try again.");
 	}
 }
@@ -303,7 +303,7 @@ export async function createDemoUser(
 		const uniqueUsername = `Demo_${role.toUpperCase()}_${id}`;
 
 		// Create the user in the database using the DAL
-		return await createUserInDb(db, {
+		return await createUserDal(db, {
 			email: uniqueEmail,
 			password: demoPassword,
 			role,
@@ -322,7 +322,7 @@ export async function createDemoUser(
  * @param id - The user's branded UserId.
  * @returns The user as UserDto, or null if not found.
  */
-export async function readUserById(
+export async function readUserDal(
 	db: Db,
 	id: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
@@ -344,7 +344,7 @@ export async function readUserById(
 		// Map to DTO for safe return to client
 		return toUserDto(userEntity);
 	} catch (error) {
-		logError("readUserById", error, { id });
+		logError("readUserDal", error, { id });
 		throw new Error("Failed to read user by ID.");
 	}
 }

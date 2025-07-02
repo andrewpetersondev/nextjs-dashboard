@@ -11,7 +11,7 @@ describe("Auth Commands", () => {
 		return cy.ensureUserDeleted(_TEST_USER.email);
 	});
 
-	it("should delete a test user via db:deleteUser", () => {
+	it("should delete a test user via db:deleteUserDal", () => {
 		return cy.ensureUserDeleted(_TEST_USER.email).then(() => {
 			return cy
 				.task<DbTaskResult<UserEntity>>("db:createUser", _TEST_USER)

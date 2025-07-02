@@ -136,12 +136,14 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
  * @param email - User email.
  */
 Cypress.Commands.add("deleteUser", (email: string) => {
-	cy.log("deleteUser", email);
+	cy.log("deleteUserDal", email);
 	return cy
 		.task<DbTaskResult<UserEntity>>("db:deleteUser", email)
 		.then((result) => {
 			if (!result || typeof result !== "object" || !("success" in result)) {
-				throw new Error("[deleteUser] Invalid result from db:deleteUser task");
+				throw new Error(
+					"[deleteUserDal] Invalid result from db:deleteUserDal task",
+				);
 			}
 			const dbResult = result as DbTaskResult<UserEntity>;
 			if (!(dbResult.success && dbResult.data)) {
@@ -149,7 +151,7 @@ Cypress.Commands.add("deleteUser", (email: string) => {
 					`[deleteUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 				);
 			}
-			cy.log("db:deleteUser result", result);
+			cy.log("db:deleteUserDal result", result);
 			return dbResult.data;
 		});
 });
@@ -167,7 +169,7 @@ Cypress.Commands.add(
 			.then((result) => {
 				if (!result || typeof result !== "object" || !("success" in result)) {
 					throw new Error(
-						"[ensureUserDeleted] Invalid result from db:deleteUser task",
+						"[ensureUserDeleted] Invalid result from db:deleteUserDal task",
 					);
 				}
 				if (

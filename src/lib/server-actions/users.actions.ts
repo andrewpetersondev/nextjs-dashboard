@@ -15,12 +15,12 @@ import { hashPassword } from "@/src/lib/auth/password.ts";
 import { createSession, deleteSession } from "@/src/lib/auth/session-jwt.ts";
 import {
 	createDemoUser,
-	createUserInDb,
-	deleteUser,
+	createUserDal,
+	deleteUserDal,
 	demoUserCounter,
 	fetchUserById,
 	findUserForLogin,
-	readUserById,
+	readUserDal,
 	updateUserDal,
 } from "@/src/lib/dal/users.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
@@ -81,7 +81,7 @@ export async function signup(
 			password: string;
 		};
 		const db = getDB();
-		const user = await createUserInDb(db, {
+		const user = await createUserDal(db, {
 			email,
 			password,
 			role: toUserRoleBrand("user"), // Use branded role
@@ -172,7 +172,7 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
 		const db = getDB();
 		// --- Brand the userId to UserId for type safety ---
-		const deletedUser = await deleteUser(db, toUserIdBrand(userId));
+		const deletedUser = await deleteUserDal(db, toUserIdBrand(userId));
 		if (!deletedUser) {
 			return actionResult({
 				errors: undefined,
@@ -274,7 +274,7 @@ export async function createUserAction(
 			});
 		}
 		const { username, email, password, role } = validated.data;
-		const user = await createUserInDb(db, {
+		const user = await createUserDal(db, {
 			email,
 			password,
 			role: toUserRoleBrand(role),
@@ -351,10 +351,7 @@ export async function updateUserAction(
 			});
 		}
 
-		const existingUser: UserDto | null = await readUserById(
-			db,
-			toUserIdBrand(id),
-		);
+		const existingUser: UserDto | null = await readUserDal(db, toUserIdBrand(id));
 
 		if (!existingUser) {
 			return actionResult({

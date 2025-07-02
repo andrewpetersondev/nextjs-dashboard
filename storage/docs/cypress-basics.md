@@ -22,10 +22,10 @@
   Cypress.Commands.add(
     "ensureUserDeleted",
     (email: string): Cypress.Chainable<UserEntity | null> => {
-      return cy.task("db:deleteUser", email).then((result) => {
+      return cy.task("db:deleteUserDal", email).then((result) => {
         if (!result || typeof result !== "object" || !("success" in result)) {
           throw new Error(
-            "[ensureUserDeleted] Invalid result from db:deleteUser task",
+            "[ensureUserDeleted] Invalid result from db:deleteUserDal task",
           );
         }
         if (
