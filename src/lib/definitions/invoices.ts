@@ -1,5 +1,6 @@
 import { z as zod } from "zod";
 import type { FormState } from "@/src/lib/definitions/form.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 
 /* ============================================================================
  * Branded Types
@@ -42,6 +43,11 @@ export interface InvoiceFormFields {
  * ========================================================================== */
 
 export type InvoiceFormState = FormState<InvoiceFormFields>;
+
+export type UpdateInvoiceFormState = FormState<InvoiceFormFields> & {
+	invoice: InvoiceDTO;
+	success?: boolean;
+};
 
 /* ============================================================================
  * Database Row Types

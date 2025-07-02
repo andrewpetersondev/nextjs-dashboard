@@ -6,22 +6,18 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
  * Uses Drizzle ORM for database access.
  */
 import type { Db } from "@/src/lib/db/connection.ts";
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
 import { ITEMS_PER_PAGE } from "@/src/lib/definitions/constants.ts";
-import type { InvoiceStatus } from "@/src/lib/definitions/enums.ts";
 import type {
 	CustomerId,
 	FetchFilteredInvoicesData,
 	FilteredInvoiceDbRow,
-	InvoiceByIdDbRow,
 	InvoiceId,
-	LatestInvoiceDbRow,
+	InvoiceStatus,
 	ModifiedLatestInvoicesData,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 import {
-	toCustomerIdBrand,
 	toInvoiceDTO,
 	toInvoiceEntity,
 	toInvoiceIdBrand,
@@ -34,8 +30,7 @@ import { formatCurrency } from "@/src/lib/utils/utils.ts";
  * Inserts a new invoice record into the database.
  * @param db - The Drizzle ORM database instance.
  * @param invoice - The invoice data to insert.
- * @returns The created invoice as InvoiceDTO, or null if creation failed.
- * @throws Error if the database operation fails.
+ * @returns An object indicating success, the created invoice DTO if successful, and any error message.
  */
 export async function createInvoiceInDb(
 	db: Db,
@@ -50,16 +45,35 @@ export async function createInvoiceInDb(
 		status: InvoiceStatus;
 		date: string;
 	},
-): Promise<InvoiceDTO | null> {
+): Promise<
+	| { success: true; invoice: InvoiceDTO }
+	| { success: false; invoice: null; error: string }
+> {
 	try {
+		// Ensure parameters are branded before calling this function.
 		const [createdInvoice] = await db
 			.insert(invoices)
 			.values({ amount, customerId, date, status })
 			.returning();
-		return createdInvoice ? toInvoiceDTO(toInvoiceEntity(createdInvoice)) : null;
+
+		if (!createdInvoice) {
+			return {
+				error: "Failed to create invoice.",
+				invoice: null,
+				success: false,
+			};
+		}
+		return {
+			invoice: toInvoiceDTO(toInvoiceEntity(createdInvoice)),
+			success: true,
+		};
 	} catch (error) {
 		logError("createInvoiceInDb", error, { customerId });
-		throw new Error("Database error while creating an invoice.");
+		return {
+			error: "Database error while creating an invoice.",
+			invoice: null,
+			success: false,
+		};
 	}
 }
 
@@ -67,28 +81,26 @@ export async function createInvoiceInDb(
  * Updates an existing invoice record in the database.
  * @param db - The Drizzle ORM database instance.
  * @param id - The invoice ID to update.
- * @param invoice - The invoice data to update.
+ * @param invoice - The invoice data to update (customerId, amount, status).
  * @returns The updated invoice as InvoiceDTO, or null if not found.
  * @throws Error if the database operation fails.
  */
 export async function updateInvoiceInDb(
 	db: Db,
 	id: string,
-	{
-		customerId,
-		amount,
-		status,
-	}: { customerId: CustomerId; amount: number; status: InvoiceStatus },
+	invoice: { customerId: CustomerId; amount: number; status: InvoiceStatus },
 ): Promise<InvoiceDTO | null> {
 	try {
-		const [updatedInvoice] = await db
+		const { customerId, amount, status } = invoice;
+
+		const [updated] = await db
 			.update(invoices)
 			.set({ amount, customerId, status })
 			.where(eq(invoices.id, id))
 			.returning();
-		return updatedInvoice ? toInvoiceDTO(toInvoiceEntity(updatedInvoice)) : null;
+		return updated ? toInvoiceDTO(toInvoiceEntity(updated)) : null;
 	} catch (error) {
-		logError("updateInvoiceInDb", error, { customerId, id });
+		logError("updateInvoiceInDb", error, { id, ...invoice });
 		throw new Error("Database error while updating invoice.");
 	}
 }
@@ -126,7 +138,7 @@ export async function fetchLatestInvoices(
 	db: Db,
 ): Promise<ModifiedLatestInvoicesData[]> {
 	try {
-		const data: LatestInvoiceDbRow[] = await db
+		const latestInvoices = await db
 			.select({
 				amount: invoices.amount,
 				email: customers.email,
@@ -140,15 +152,13 @@ export async function fetchLatestInvoices(
 			.orderBy(desc(invoices.date))
 			.limit(5);
 
-		return data.map(
-			(invoice: LatestInvoiceDbRow): ModifiedLatestInvoicesData => ({
-				...invoice,
-				amount: formatCurrency(invoice.amount),
-				id: toInvoiceIdBrand(invoice.id),
-				status: toInvoiceStatusBrand(invoice.status),
-			}),
-		);
-	} catch (error: unknown) {
+		return latestInvoices.map((invoice) => ({
+			...invoice,
+			amount: formatCurrency(invoice.amount),
+			id: toInvoiceIdBrand(invoice.id),
+			status: toInvoiceStatusBrand(invoice.status),
+		}));
+	} catch (error) {
 		logError("fetchLatestInvoices", error);
 		throw new Error("Failed to fetch the latest invoices.");
 	}

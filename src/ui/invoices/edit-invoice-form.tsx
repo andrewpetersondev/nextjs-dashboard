@@ -73,7 +73,7 @@ export function EditInvoiceForm({
 					{/* Amount */}
 					<InvoiceAmountInput
 						dataCy="amount-input"
-						defaultValue={invoice.amount}
+						defaultValue={invoice.amount / 100} // show dollars
 						disabled={isPending}
 						error={state.errors?.amount}
 						id="amount"

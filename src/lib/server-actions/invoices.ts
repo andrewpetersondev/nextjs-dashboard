@@ -12,7 +12,7 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,
-	type InvoiceFormState,
+	type UpdateInvoiceFormState,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
@@ -120,34 +120,37 @@ export async function readInvoice(id: string) {
  */
 export async function updateInvoice(
 	id: string,
-	_prevState: InvoiceFormState,
+	_prevState: UpdateInvoiceFormState,
 	formData: FormData,
-): Promise<InvoiceFormState> {
-	const db = getDB();
-
-	const validated = UpdateInvoiceSchema.safeParse({
-		amount: formData.get("amount"),
-		customerId: formData.get("customerId"),
-		status: formData.get("status"),
-	});
-
-	if (!validated.success) {
-		return actionResult({
-			errors: validated.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to Update InvoiceEntity.",
-			success: false,
-		});
-	}
-
-	// Brand customerId for type safety
-	// TODO: Find pattern in other files, then replace with branding function. (ex. toCustomerIdBrand()).
-	// old: const customerId = validated.data.customerId as unknown as CustomerId;
-	const customerId = toCustomerIdBrand(validated.data.customerId);
-	const amount: number = validated.data.amount;
-	const status = toInvoiceStatusBrand(validated.data.status);
-	const amountInCents: number = amount * 100;
-
+): Promise<UpdateInvoiceFormState> {
 	try {
+		const db = getDB();
+
+		const validated = UpdateInvoiceSchema.safeParse({
+			amount: formData.get("amount"),
+			customerId: formData.get("customerId"),
+			status: formData.get("status"),
+		});
+
+		const oldInvoice: InvoiceDTO = _prevState.invoice;
+
+		if (!validated.success) {
+			return {
+				errors: validated.error.flatten().fieldErrors,
+				invoice: oldInvoice,
+				message: "Missing Fields. Failed to Update InvoiceEntity.",
+				success: false,
+			};
+		}
+
+		// Brand customerId for type safety
+		// TODO: Find pattern in other files, then replace with branding function. (ex. toCustomerIdBrand()).
+		// old: const customerId = validated.data.customerId as unknown as CustomerId;
+		const customerId = toCustomerIdBrand(validated.data.customerId);
+		const amount = validated.data.amount;
+		const amountInCents: number = amount * 100;
+		const status = toInvoiceStatusBrand(validated.data.status);
+
 		const updatedInvoice: InvoiceDTO | null = await updateInvoiceInDb(db, id, {
 			amount: amountInCents,
 			customerId,
@@ -155,25 +158,28 @@ export async function updateInvoice(
 		});
 
 		if (!updatedInvoice) {
-			return actionResult({
+			return {
 				errors: undefined,
+				invoice: oldInvoice,
 				message: "Failed to update invoice.",
 				success: false,
-			});
+			};
 		}
 
-		return actionResult({
+		return {
 			errors: undefined,
+			invoice: updatedInvoice,
 			message: "Updated invoice successfully.",
 			success: true,
-		});
+		};
 	} catch (error) {
 		console.error(error);
-		return actionResult({
+		return {
 			errors: {},
+			invoice: _prevState.invoice,
 			message: "Database Error: Failed to Update InvoiceEntity.",
 			success: false,
-		});
+		};
 	}
 
 	// FIXME: returning actionResult on success made this unreachable.
