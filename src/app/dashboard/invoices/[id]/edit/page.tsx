@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 import { readInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
@@ -33,7 +33,7 @@ export default async function Page(
 	const db = getDB();
 	const { id } = await props.params;
 
-	const [customers, invoice]: [CustomerField[], InvoiceDTO | null] =
+	const [customers, invoice]: [CustomerField[], InvoiceDto | null] =
 		await Promise.all([fetchCustomers(db), readInvoiceAction(id)]);
 
 	if (!invoice) {

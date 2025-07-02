@@ -2,8 +2,8 @@
 
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
@@ -17,7 +17,7 @@ export function EditInvoiceForm({
 	invoice,
 	customers,
 }: {
-	invoice: InvoiceDTO;
+	invoice: InvoiceDto;
 	customers: CustomerField[];
 }): JSX.Element {
 	// Initial state matches InvoiceEditState

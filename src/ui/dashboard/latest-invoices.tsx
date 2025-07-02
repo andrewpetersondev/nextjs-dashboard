@@ -4,7 +4,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices.ts";
+import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices.types.ts";
 import { H2, H3 } from "@/src/ui/headings.tsx";
 
 export async function LatestInvoices(): Promise<JSX.Element> {

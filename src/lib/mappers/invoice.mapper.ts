@@ -5,8 +5,8 @@ import {
 	type InvoiceByIdDbRow,
 	type InvoiceId,
 	type InvoiceStatus,
-} from "@/src/lib/definitions/invoices.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+} from "@/src/lib/definitions/invoices.types.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 
 /**
  * Helper to brand a string as InvoiceId.
@@ -47,15 +47,14 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
 }
 
 /**
- * Converts an InvoiceEntity to an InvoiceDTO for API responses.
+ * Converts an InvoiceEntity to an InvoiceDto for API responses.
  * Strips branding from IDs and preserves all other fields.
  *
  * @param invoice - The InvoiceEntity instance to convert.
- * @returns An InvoiceDTO instance with plain types.
+ * @returns An InvoiceDto instance with plain types.
  */
 
-// biome-ignore lint/style/useNamingConvention: ignore
-export function toInvoiceDTO(invoice: InvoiceEntity): InvoiceDTO {
+export function toInvoiceDto(invoice: InvoiceEntity): InvoiceDto {
 	return {
 		amount: invoice.amount,
 		customerId: invoice.customerId as string, // strips brand

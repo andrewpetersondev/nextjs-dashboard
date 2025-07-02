@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types.ts";
 import { createInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { Button } from "@/src/ui/button.tsx";
 

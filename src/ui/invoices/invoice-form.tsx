@@ -1,6 +1,6 @@
 "use client";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceFormFields } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceFormFields } from "@/src/lib/definitions/invoices.types.ts";
 
 /**
  * InvoiceForm expects these props:

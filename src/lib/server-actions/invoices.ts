@@ -9,13 +9,13 @@ import {
 	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types.ts";
 import {
 	CreateInvoiceSchema,
 	type InvoiceCreateState,
 	UpdateInvoiceSchema,
-} from "@/src/lib/definitions/invoices.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+} from "@/src/lib/definitions/invoices.types.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 import {
 	toCustomerIdBrand,
 	toInvoiceIdBrand,
@@ -121,11 +121,11 @@ export async function createInvoiceAction(
 /**
  * Server action to fetch a single invoice by its ID.
  * @param id - The invoice ID (string).
- * @returns An InvoiceDTO, or null.
+ * @returns An InvoiceDto, or null.
  */
 export async function readInvoiceAction(
 	id: string,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	try {
 		const db = getDB();
 		const brandedId = toInvoiceIdBrand(id);
@@ -231,11 +231,11 @@ export async function updateInvoiceAction(
 /**
  * Programmatic server action to delete an invoice by string ID.
  * @param id - The invoice ID as a string.
- * @returns The deleted InvoiceDTO or null.
+ * @returns The deleted InvoiceDto or null.
  */
 export async function deleteInvoiceAction(
 	id: string,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	const db = getDB();
 	return await deleteInvoiceDal(db, toInvoiceIdBrand(id));
 }

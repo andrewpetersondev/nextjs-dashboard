@@ -3,7 +3,7 @@ import "server-only";
 import type {
 	CreateInvoiceResult,
 	InvoiceErrorMap,
-} from "@/src/lib/definitions/invoices.ts";
+} from "@/src/lib/definitions/invoices.types.ts";
 import {
 	type ActionResult,
 	USER_ROLES,

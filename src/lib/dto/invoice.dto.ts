@@ -1,7 +1,6 @@
-import type { InvoiceStatus } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types.ts";
 
-// biome-ignore lint/style/useNamingConvention: ignore
-export interface InvoiceDTO {
+export interface InvoiceDto {
 	readonly id: string;
 	readonly customerId: string;
 	readonly amount: number; // Amount in cents

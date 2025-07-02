@@ -1,6 +1,6 @@
 import { z as zod } from "zod";
 import type { FormState } from "@/src/lib/definitions/form.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 
 // ids and statuses: domain types
 /**
@@ -61,7 +61,7 @@ export type InvoiceEditState = Readonly<{
 	/**
 	 * The latest invoice data (always present for UI rendering).
 	 */
-	invoice: InvoiceDTO;
+	invoice: InvoiceDto;
 	/**
 	 * Field-level validation errors, if any.
 	 */
@@ -78,7 +78,7 @@ export type InvoiceEditState = Readonly<{
 
 export type UpdateInvoiceFormState = Readonly<
 	FormState<InvoiceFormFields> & {
-		invoice: InvoiceDTO;
+		invoice: InvoiceDto;
 		success?: boolean;
 	}
 >;
@@ -88,7 +88,7 @@ export type UpdateInvoiceFormState = Readonly<
  * Used as the state for useActionState in the edit invoice form.
  */
 export type EditInvoiceFormState = Readonly<{
-	invoice: InvoiceDTO;
+	invoice: InvoiceDto;
 	errors?: InvoiceErrorMap;
 	message?: string;
 	success?: boolean;
@@ -116,7 +116,7 @@ export type CreateInvoiceResult = InvoiceActionResult<
 >;
 
 export type UpdateInvoiceResult = InvoiceActionResult<
-	InvoiceDTO,
+	InvoiceDto,
 	InvoiceErrorMap
 >;
 

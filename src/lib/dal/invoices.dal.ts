@@ -14,10 +14,10 @@ import type {
 	FilteredInvoiceDbRow,
 	InvoiceId,
 	ModifiedLatestInvoicesData,
-} from "@/src/lib/definitions/invoices.ts";
-import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+} from "@/src/lib/definitions/invoices.types.ts";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
 import {
-	toInvoiceDTO,
+	toInvoiceDto,
 	toInvoiceEntity,
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
@@ -34,7 +34,7 @@ import { formatCurrency } from "@/src/lib/utils/utils.ts";
 export async function createInvoiceDal(
 	db: Db,
 	invoice: Pick<InvoiceEntity, "amount" | "customerId" | "date" | "status">,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	const { amount, customerId, date, status } = invoice;
 	try {
 		// Ensure parameters are branded before calling this function.
@@ -47,7 +47,7 @@ export async function createInvoiceDal(
 			return null;
 		}
 
-		return createdInvoice ? toInvoiceDTO(toInvoiceEntity(createdInvoice)) : null;
+		return createdInvoice ? toInvoiceDto(toInvoiceEntity(createdInvoice)) : null;
 	} catch (error) {
 		logError("createInvoiceDal", error, { customerId });
 		throw new Error("Failed to create an invoice in a database.");
@@ -58,13 +58,13 @@ export async function createInvoiceDal(
  * Fetches an invoice by its ID.
  * @param db - The Drizzle ORM database instance.
  * @param id - The branded InvoiceId.
- * @returns InvoiceDTO or null if not found.
+ * @returns InvoiceDto or null if not found.
  * @throws Error if the database operation fails.
  */
 export async function readInvoiceDal(
 	db: Db,
 	id: InvoiceId,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	try {
 		const data = await db
 			.select({
@@ -77,7 +77,7 @@ export async function readInvoiceDal(
 			.from(invoices)
 			.where(eq(invoices.id, id));
 
-		return data.length > 0 ? toInvoiceDTO(toInvoiceEntity(data[0])) : null;
+		return data.length > 0 ? toInvoiceDto(toInvoiceEntity(data[0])) : null;
 	} catch (error: unknown) {
 		logError("readInvoiceDal", error, { id });
 		throw new Error("Failed to fetch invoice by id.");
@@ -89,14 +89,14 @@ export async function readInvoiceDal(
  * @param db - The Drizzle ORM database instance.
  * @param id - The invoice ID to update.
  * @param invoice - The invoice data to update (customerId, amount, status).
- * @returns The updated invoice as InvoiceDTO, or null if not found.
+ * @returns The updated invoice as InvoiceDto, or null if not found.
  * @throws Error if the database operation fails.
  */
 export async function updateInvoiceDal(
 	db: Db,
 	id: InvoiceId,
 	invoice: Pick<InvoiceEntity, "amount" | "customerId" | "status">,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	try {
 		const { amount, customerId, status } = invoice;
 
@@ -105,7 +105,7 @@ export async function updateInvoiceDal(
 			.set({ amount, customerId, status })
 			.where(eq(invoices.id, id))
 			.returning();
-		return updated ? toInvoiceDTO(toInvoiceEntity(updated)) : null;
+		return updated ? toInvoiceDto(toInvoiceEntity(updated)) : null;
 	} catch (error) {
 		logError("updateInvoiceDal", error, { id, ...invoice });
 		throw new Error("Database error while updating invoice.");
@@ -116,19 +116,19 @@ export async function updateInvoiceDal(
  * Deletes an invoice by ID.
  * @param db - The Drizzle ORM database instance.
  * @param id - The branded InvoiceId to delete.
- * @returns The deleted invoice as InvoiceDTO, or null if not found.
+ * @returns The deleted invoice as InvoiceDto, or null if not found.
  * @throws Error if the database operation fails.
  */
 export async function deleteInvoiceDal(
 	db: Db,
 	id: InvoiceId,
-): Promise<InvoiceDTO | null> {
+): Promise<InvoiceDto | null> {
 	try {
 		const [deletedInvoice] = await db
 			.delete(invoices)
 			.where(eq(invoices.id, id))
 			.returning();
-		return deletedInvoice ? toInvoiceDTO(toInvoiceEntity(deletedInvoice)) : null;
+		return deletedInvoice ? toInvoiceDto(toInvoiceEntity(deletedInvoice)) : null;
 	} catch (error) {
 		logError("deleteInvoiceDal", error, { id });
 		throw new Error("An unexpected error occurred. Please try again.");
