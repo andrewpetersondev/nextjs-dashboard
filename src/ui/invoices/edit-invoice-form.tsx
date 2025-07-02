@@ -2,7 +2,7 @@
 
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { EditInvoiceFormState } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
@@ -13,22 +13,6 @@ import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input.tsx";
 import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
 
-/**
- * Maps UpdateInvoiceResult to EditInvoiceFormState for useActionState.
- * Ensures the state shape always includes the latest invoice.
- */
-function toEditInvoiceFormState(
-	prevState: EditInvoiceFormState,
-	result: Awaited<ReturnType<typeof updateInvoiceAction>>,
-): EditInvoiceFormState {
-	return {
-		errors: result.errors,
-		invoice: result.data ?? prevState.invoice, // Always provide invoice
-		message: result.message,
-		success: result.success,
-	};
-}
-
 export function EditInvoiceForm({
 	invoice,
 	customers,
@@ -36,8 +20,8 @@ export function EditInvoiceForm({
 	invoice: InvoiceDTO;
 	customers: CustomerField[];
 }): JSX.Element {
-	// Initial state matches EditInvoiceFormState
-	const initialState: EditInvoiceFormState = {
+	// Initial state matches InvoiceEditState
+	const initialState: InvoiceEditState = {
 		errors: {},
 		invoice,
 		message: "",
@@ -49,13 +33,11 @@ export function EditInvoiceForm({
 
 	// useActionState expects a reducer: (prevState, payload) => newState
 	const [state, formAction, isPending] = useActionState<
-		EditInvoiceFormState,
+		InvoiceEditState,
 		FormData
 	>(async (prevState, formData) => {
 		// Call the server action
-		const result = await updateInvoiceWithId(prevState, formData);
-		// Map the result to the expected state shape
-		return toEditInvoiceFormState(prevState, result);
+		return await updateInvoiceWithId(prevState, formData);
 	}, initialState);
 
 	const [showAlert, setShowAlert] = useState(false);

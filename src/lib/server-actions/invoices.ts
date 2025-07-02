@@ -9,11 +9,10 @@ import {
 	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { UpdateInvoiceResult } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.ts";
 import {
 	type CreateInvoiceResult,
 	CreateInvoiceSchema,
-	type UpdateInvoiceFormState,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
@@ -145,15 +144,15 @@ export async function readInvoiceAction(
 /**
  * Server action to update an existing invoice.
  * @param id - The invoice ID as a string.
- * @param _prevState - Previous form state.
+ * @param prevState - Previous form state.
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to an UpdateInvoiceResult.
  */
 export async function updateInvoiceAction(
 	id: string,
-	_prevState: UpdateInvoiceFormState,
+	prevState: InvoiceEditState,
 	formData: FormData,
-): Promise<UpdateInvoiceResult> {
+): Promise<InvoiceEditState> {
 	try {
 		const db = getDB();
 
@@ -172,7 +171,8 @@ export async function updateInvoiceAction(
 						? undefined
 						: ["Customer ID is required."],
 					status: formData.get("status") ? undefined : ["Status is required."],
-				},
+				}, // Always provide invoice for UI
+				invoice: prevState.invoice,
 				message: "Missing required fields.",
 				success: false,
 			};
@@ -187,6 +187,7 @@ export async function updateInvoiceAction(
 		if (!validated.success) {
 			return {
 				errors: validated.error.flatten().fieldErrors,
+				invoice: prevState.invoice,
 				message: "Invalid input. Failed to update invoice.",
 				success: false,
 			};
@@ -207,14 +208,15 @@ export async function updateInvoiceAction(
 		if (!updatedInvoice) {
 			return {
 				errors: undefined,
+				invoice: prevState.invoice,
 				message: "Failed to update invoice.",
 				success: false,
 			};
 		}
 
 		return {
-			data: updatedInvoice,
 			errors: undefined,
+			invoice: updatedInvoice,
 			message: "Updated invoice successfully.",
 			success: true,
 		};
@@ -222,6 +224,7 @@ export async function updateInvoiceAction(
 		console.error("[updateInvoiceAction]", error, { id });
 		return {
 			errors: {},
+			invoice: prevState.invoice,
 			message: "Database Error: Failed to update invoice.",
 			success: false,
 		};

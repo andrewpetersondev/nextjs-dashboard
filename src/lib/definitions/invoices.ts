@@ -44,6 +44,29 @@ export interface InvoiceFormFields {
 
 export type InvoiceFormState = Readonly<FormState<InvoiceFormFields>>;
 
+/**
+ * Unified state/result type for editing an invoice.
+ * Used by both server actions and UI state.
+ */
+export type InvoiceEditState = Readonly<{
+	/**
+	 * The latest invoice data (always present for UI rendering).
+	 */
+	invoice: InvoiceDTO;
+	/**
+	 * Field-level validation errors, if any.
+	 */
+	errors?: InvoiceErrorMap;
+	/**
+	 * User-facing message (success or error).
+	 */
+	message?: string;
+	/**
+	 * Indicates if the operation was successful.
+	 */
+	success?: boolean;
+}>;
+
 export type UpdateInvoiceFormState = Readonly<
 	FormState<InvoiceFormFields> & {
 		invoice: InvoiceDTO;
