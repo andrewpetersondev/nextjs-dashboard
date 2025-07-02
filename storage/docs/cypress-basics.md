@@ -56,7 +56,7 @@
 - Example usage:
   ```typescript
   cy.ensureUserDeleted("user@example.com")
-    .then(() => cy.createUser({ ... }))
+    .then(() => cy.createUserAction({ ... }))
     .then((user) => cy.login({ email: user.email, password: "..." }));
   ```
 

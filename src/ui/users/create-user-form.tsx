@@ -6,7 +6,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUser } from "@/src/lib/server-actions/users.ts";
+import { createUserAction } from "@/src/lib/server-actions/users.actions.ts";
 import { InputField } from "@/src/ui/auth/input-field.tsx";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
@@ -28,7 +28,7 @@ export function CreateUserForm(): JSX.Element {
 	const initialState = { errors: {}, message: "", success: undefined };
 
 	const [state, action, pending] = useActionState<CreateUserFormState, FormData>(
-		createUser,
+		createUserAction,
 		initialState,
 	);
 

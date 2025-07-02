@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteUserFormAction } from "@/src/lib/server-actions/users.ts";
+import { deleteUserFormAction } from "@/src/lib/server-actions/users.actions.ts";
 
 /**
  * Renders a button that links to the user creation page.

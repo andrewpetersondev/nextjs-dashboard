@@ -1,4 +1,4 @@
-import type { UserId, UserRole } from "@/src/lib/definitions/users.ts";
+import type { UserId, UserRole } from "@/src/lib/definitions/users.types.ts";
 
 /**
  * Represents a user entity in the database, defining the structure and properties of a user record.
@@ -32,10 +32,10 @@ export interface UserEntity {
 }
 
 // maybe implement in the future
-// type UserDTO = Pick<UserEntity, "id" | "username" | "email" | "role">;
+// type UserDto = Pick<UserEntity, "id" | "username" | "email" | "role">;
 
 // maybe implement in the future
-// export function toUserDTO(user: UserEntity): UserDTO {
+// export function toUserDto(user: UserEntity): UserDto {
 //     return Object.freeze({
 //         id: user.id,
 //         username: user.username,

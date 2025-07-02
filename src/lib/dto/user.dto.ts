@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/users.ts";
+import type { UserRole } from "@/src/lib/definitions/users.types.ts";
 
 /**
  ** User Data Transfer Object (DTO) for frontend.
@@ -8,8 +8,7 @@ import type { UserRole } from "@/src/lib/definitions/users.ts";
  ** This example strips the user property of **SensitiveData**
  */
 
-// biome-ignore lint/style/useNamingConvention: ignore
-export interface UserDTO {
+export interface UserDto {
 	readonly id: string;
 	readonly username: string;
 	readonly email: string;

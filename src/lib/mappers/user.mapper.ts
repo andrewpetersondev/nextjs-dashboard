@@ -1,6 +1,6 @@
 import type { UserEntity } from "@/src/lib/db/entities/user.ts";
-import type { UserId, UserRole } from "@/src/lib/definitions/users.ts";
-import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
+import type { UserId, UserRole } from "@/src/lib/definitions/users.types.ts";
+import type { UserDto } from "@/src/lib/dto/user.dto.ts";
 
 /**
  * Constants for default values.
@@ -22,15 +22,15 @@ export const toUserIdBrand = (id: string): UserId => id as UserId;
 export const toUserRoleBrand = (role: string): UserRole => role as UserRole;
 
 /**
- * Maps a UserDTO (from API or client) to a UserEntity (DB model).
+ * Maps a UserDto (from API or client) to a UserEntity (DB model).
  * Fills in required fields with safe defaults if missing.
- * @param dto - The UserDTO object.
+ * @param dto - The UserDto object.
  * @returns The corresponding UserEntity.
  */
-export function toUserEntity(dto: UserDTO): UserEntity {
+export function toUserEntity(dto: UserDto): UserEntity {
 	// Defensive: never allow undefined for required fields
 	if (!(dto.id && dto.username && dto.email && dto.role)) {
-		throw new Error("Invalid UserDTO: missing required fields");
+		throw new Error("Invalid UserDto: missing required fields");
 	}
 	return {
 		email: dto.email,
@@ -43,12 +43,12 @@ export function toUserEntity(dto: UserDTO): UserEntity {
 }
 
 /**
- * Maps a UserEntity (DB model) to a UserDTO (safe for API/client).
+ * Maps a UserEntity (DB model) to a UserDto (safe for API/client).
  * Excludes sensitive fields.
  * @param entity - The UserEntity object.
- * @returns The corresponding UserDTO.
+ * @returns The corresponding UserDto.
  */
-export function toUserDTO(entity: UserEntity): UserDTO {
+export function toUserDto(entity: UserEntity): UserDto {
 	return {
 		email: entity.email,
 		id: entity.id,

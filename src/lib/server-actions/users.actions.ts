@@ -36,8 +36,8 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 	type UserRole,
-} from "@/src/lib/definitions/users.ts";
-import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
+} from "@/src/lib/definitions/users.types.ts";
+import type { UserDto } from "@/src/lib/dto/user.dto.ts";
 import {
 	toUserIdBrand,
 	toUserRoleBrand,
@@ -215,7 +215,7 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 export async function demoUser(
 	role: UserRole = toUserRoleBrand("guest"),
 ): Promise<ActionResult> {
-	let demoUser: UserDTO | null = null;
+	let demoUser: UserDto | null = null;
 	const db = getDB();
 
 	try {
@@ -253,7 +253,7 @@ export async function demoUser(
  * @param formData - Form data from the create user form.
  * @returns FormState with result message and errors.
  */
-export async function createUser(
+export async function createUserAction(
 	_prevState: FormState<CreateUserFormFields>,
 	formData: FormData,
 ): Promise<FormState<CreateUserFormFields>> {
@@ -293,7 +293,9 @@ export async function createUser(
 			success: true,
 		});
 	} catch (error) {
-		logError("createUser", error, { email: formData.get("email") as string });
+		logError("createUserAction", error, {
+			email: formData.get("email") as string,
+		});
 		return actionResult({
 			errors: undefined,
 			message: "An unexpected error occurred. Please try again.",
@@ -308,9 +310,9 @@ export async function createUser(
  * Fetches a user by plain string id for UI consumption.
  * Handles branding and error handling at the server boundary.
  * @param id - User id as string (from route params)
- * @returns UserDTO or null
+ * @returns UserDto or null
  */
-export async function readUserAction(id: string): Promise<UserDTO | null> {
+export async function readUserAction(id: string): Promise<UserDto | null> {
 	const db = getDB();
 	try {
 		// Brand the id before passing to DAL
@@ -328,7 +330,7 @@ export async function readUserAction(id: string): Promise<UserDTO | null> {
  * @param formData - Form data from the edit user form.
  * @returns FormState with result message and errors.
  */
-export async function editUser(
+export async function updateUserAction(
 	id: string,
 	_prevState: FormState<EditUserFormFields>,
 	formData: FormData,
@@ -349,7 +351,7 @@ export async function editUser(
 			});
 		}
 
-		const existingUser: UserDTO | null = await readUserById(
+		const existingUser: UserDto | null = await readUserById(
 			db,
 			toUserIdBrand(id),
 		);
@@ -388,7 +390,7 @@ export async function editUser(
 			});
 		}
 		// Use branded id for update
-		const updatedUser: UserDTO | null = await updateUserDal(
+		const updatedUser: UserDto | null = await updateUserDal(
 			db,
 			toUserIdBrand(id),
 			patch,
@@ -407,7 +409,7 @@ export async function editUser(
 			success: true,
 		});
 	} catch (error) {
-		logError("editUser", error, { id });
+		logError("updateUserAction", error, { id });
 		return actionResult({
 			errors: undefined,
 			message: "Failed to update user. Please try again.",

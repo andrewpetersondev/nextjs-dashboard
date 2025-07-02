@@ -49,8 +49,8 @@ You want to expose only safe fields to the frontend:
 
 ```ts
 
-// src/dto/user.dto.ts
-export interface UserDTO {
+// src/dto/userDto.ts
+export interface UserDto {
   id: string;
   name: string;
   email: string;
@@ -61,9 +61,9 @@ Mapping function:
 ```typescript
 // src/mappers/user.mapper.ts
 import { UserEntity } from '@/db/entities/user';
-import { UserDTO } from '@/dto/user.dto';
+import { UserDto } from '@/dto/user.dto';
 
-export function toUserDTO(user: UserEntity): UserDTO {
+export function toUserDto(user: UserEntity): UserDto {
   return {
     id: user.id,
     name: user.name,

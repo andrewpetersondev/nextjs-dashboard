@@ -1,6 +1,6 @@
 import { PowerIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { logout } from "@/src/lib/server-actions/users.ts";
+import { logout } from "@/src/lib/server-actions/users.actions.ts";
 
 export async function LogoutForm(): Promise<JSX.Element> {
 	return (

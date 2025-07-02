@@ -16,7 +16,7 @@ import {
 	type EncryptPayload,
 	EncryptPayloadSchema,
 } from "@/src/lib/definitions/session.ts";
-import type { UserRole } from "@/src/lib/definitions/users.ts";
+import type { UserRole } from "@/src/lib/definitions/users.types.ts";
 import { ValidationError } from "@/src/lib/errors/validation-error.ts";
 import { logger } from "@/src/lib/utils/logger.ts";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import { createUser } from "@/src/lib/server-actions/users.ts";
+import { createUserAction } from "@/src/lib/server-actions/users.actions.ts";
 import { UserForm } from "@/src/ui/users/user-form.tsx";
 
 type CreateUserFormState = Readonly<{
@@ -22,7 +22,7 @@ export function CreateUserFormV2(): JSX.Element {
 		success: undefined,
 	};
 	const [state, action, pending] = useActionState<CreateUserFormState, FormData>(
-		createUser,
+		createUserAction,
 		initialState,
 	);
 

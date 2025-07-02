@@ -2,7 +2,7 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState } from "react";
-import { login } from "@/src/lib/server-actions/users.ts";
+import { login } from "@/src/lib/server-actions/users.actions.ts";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button.tsx";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link.tsx";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user.tsx";

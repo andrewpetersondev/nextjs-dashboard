@@ -22,7 +22,7 @@ import type {
 } from "./types.ts";
 import "./cypress-global.css";
 import { mount } from "cypress/react";
-import type { UserRole } from "../../src/lib/definitions/users.ts";
+import type { UserRole } from "@/src/lib/definitions/users.types.ts";
 
 // --- Component Tests ---
 
@@ -116,7 +116,9 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 		.task<DbTaskResult<UserEntity>>("db:createUser", user)
 		.then((result) => {
 			if (!result || typeof result !== "object" || !("success" in result)) {
-				throw new Error("[createUser] Invalid result from db:createUser task");
+				throw new Error(
+					"[createUserAction] Invalid result from db:createUserAction task",
+				);
 			}
 			const dbResult = result as DbTaskResult<UserEntity>;
 			if (!(dbResult.success && dbResult.data)) {
@@ -124,7 +126,7 @@ Cypress.Commands.add("createUser", (user: CreateUserInput) => {
 					`[createUser] ${dbResult.error ?? "Unknown error"}: ${dbResult.errorMessage ?? ""}`,
 				);
 			}
-			cy.log("[createUser] dbResult = ", dbResult);
+			cy.log("[createUserAction] dbResult = ", dbResult);
 			return cy.wrap(dbResult.data);
 		});
 });

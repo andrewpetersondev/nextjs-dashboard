@@ -2,9 +2,9 @@
 
 import { type JSX, useActionState } from "react";
 import type { FormState } from "@/src/lib/definitions/form.ts";
-import type { EditUserFormFields } from "@/src/lib/definitions/users.ts";
-import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
-import { editUser } from "@/src/lib/server-actions/users.ts";
+import type { EditUserFormFields } from "@/src/lib/definitions/users.types.ts";
+import type { UserDto } from "@/src/lib/dto/user.dto.ts";
+import { updateUserAction } from "@/src/lib/server-actions/users.actions.ts";
 import { UserForm } from "@/src/ui/users/user-form.tsx";
 
 type EditUserFormState = Readonly<{
@@ -18,7 +18,7 @@ type EditUserFormState = Readonly<{
 	success?: boolean;
 }>;
 
-function UserInfoPanel({ user }: { user: UserDTO }) {
+function UserInfoPanel({ user }: { user: UserDto }) {
 	return (
 		<div className="mb-6 rounded-lg border p-4 bg-muted">
 			<div className="mb-1 font-semibold text-primary">Current Information</div>
@@ -40,12 +40,15 @@ function UserInfoPanel({ user }: { user: UserDTO }) {
 	);
 }
 
-export function EditUserFormV2({ user }: { user: UserDTO }): JSX.Element {
+export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
 	const initialState = { errors: {}, message: "", success: undefined };
 	const updateUserWithId: (
 		prevState: FormState<EditUserFormFields>,
 		formData: FormData,
-	) => Promise<FormState<EditUserFormFields>> = editUser.bind(null, user.id);
+	) => Promise<FormState<EditUserFormFields>> = updateUserAction.bind(
+		null,
+		user.id,
+	);
 
 	const [state, action, pending] = useActionState<EditUserFormState, FormData>(
 		updateUserWithId,

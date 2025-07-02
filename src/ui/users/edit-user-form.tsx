@@ -2,9 +2,9 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { FormState } from "@/src/lib/definitions/form.ts";
-import type { EditUserFormFields } from "@/src/lib/definitions/users.ts";
-import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
-import { editUser } from "@/src/lib/server-actions/users.ts";
+import type { EditUserFormFields } from "@/src/lib/definitions/users.types.ts";
+import type { UserDto } from "@/src/lib/dto/user.dto.ts";
+import { updateUserAction } from "@/src/lib/server-actions/users.actions.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
@@ -20,7 +20,7 @@ type EditUserFormState = Readonly<{
 	success?: boolean;
 }>;
 
-export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
+export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 	const initialState = {
 		errors: {},
 		message: "",
@@ -30,7 +30,10 @@ export function EditUserForm({ user }: { user: UserDTO }): JSX.Element {
 	const updateUserWithId: (
 		prevState: FormState<EditUserFormFields>,
 		formData: FormData,
-	) => Promise<FormState<EditUserFormFields>> = editUser.bind(null, user.id);
+	) => Promise<FormState<EditUserFormFields>> = updateUserAction.bind(
+		null,
+		user.id,
+	);
 
 	const [state, action, isPending] = useActionState<EditUserFormState, FormData>(
 		updateUserWithId,
