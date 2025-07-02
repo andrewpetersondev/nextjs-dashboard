@@ -7,22 +7,18 @@ import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
  * Branded type for Invoice IDs.
  */
 export type InvoiceId = string & { readonly __brand: unique symbol };
-
 /**
  * Branded type for Customer IDs.
  */
 export type CustomerId = string & { readonly __brand: unique symbol };
-
 /**
  * Invoice statuses as a constant tuple for type safety.
  */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;
-
 /**
  * Type for invoice statuses.
  */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
-
 /**
  * Error map for invoice actions.
  */
@@ -54,6 +50,17 @@ export type UpdateInvoiceFormState = Readonly<
 		success?: boolean;
 	}
 >;
+
+/**
+ * State shape for EditInvoiceForm.
+ * Used as the state for useActionState in the edit invoice form.
+ */
+export type EditInvoiceFormState = Readonly<{
+	invoice: InvoiceDTO;
+	errors?: InvoiceErrorMap;
+	message?: string;
+	success?: boolean;
+}>;
 
 // --- Result/State types for create/edit actions
 
@@ -142,13 +149,7 @@ export interface FetchFilteredInvoicesData {
 	readonly status: InvoiceStatus;
 }
 
-/* ============================================================================
- * Action Result Types
- * ========================================================================== */
-
-/* ============================================================================
- * Validation Schemas (zod)
- * ========================================================================== */
+/* --- Validation Schemas (zod) --- */
 
 /**
  * Zod schema for invoice form validation.
