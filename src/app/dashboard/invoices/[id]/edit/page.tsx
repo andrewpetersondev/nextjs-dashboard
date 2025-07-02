@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
-import { fetchInvoiceById } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import { toInvoiceIdBrand } from "@/src/lib/mappers/invoice.mapper.ts";
+import type { CustomerField } from "@/src/lib/definitions/customers.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
+import { readInvoice } from "@/src/lib/server-actions/invoices.ts";
 import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
@@ -32,10 +33,8 @@ export default async function Page(
 	const db = getDB();
 	const { id } = await props.params;
 
-	const [invoice, customers] = await Promise.all([
-		fetchInvoiceById(db, toInvoiceIdBrand(id)),
-		fetchCustomers(db),
-	]);
+	const [customers, invoice]: [CustomerField[], InvoiceDTO | null] =
+		await Promise.all([fetchCustomers(db), readInvoice(id)]);
 
 	if (!invoice) {
 		notFound();

@@ -247,15 +247,15 @@ export async function fetchInvoicesPages(
  * Fetches an invoice by its ID.
  * @param db - The Drizzle ORM database instance.
  * @param id - The branded InvoiceId.
- * @returns InvoiceEntity or undefined if not found.
+ * @returns InvoiceDTO or null if not found.
  * @throws Error if the database operation fails.
  */
 export async function fetchInvoiceById(
 	db: Db,
 	id: InvoiceId,
-): Promise<InvoiceEntity | undefined> {
+): Promise<InvoiceDTO | null> {
 	try {
-		const data: InvoiceByIdDbRow[] = await db
+		const data = await db
 			.select({
 				amount: invoices.amount,
 				customerId: invoices.customerId,
@@ -266,15 +266,7 @@ export async function fetchInvoiceById(
 			.from(invoices)
 			.where(eq(invoices.id, id));
 
-		return data.length > 0
-			? {
-					amount: data[0].amount / 100,
-					customerId: toCustomerIdBrand(data[0].customerId),
-					date: data[0].date,
-					id: toInvoiceIdBrand(data[0].id),
-					status: toInvoiceStatusBrand(data[0].status),
-				}
-			: undefined;
+		return data.length > 0 ? toInvoiceDTO(toInvoiceEntity(data[0])) : null;
 	} catch (error: unknown) {
 		logError("fetchInvoiceById", error, { id });
 		throw new Error("Failed to fetch invoice by id.");

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
 	createInvoiceInDb,
 	deleteInvoiceInDb,
+	fetchInvoiceById,
 	updateInvoiceInDb,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
@@ -89,6 +90,24 @@ export async function createInvoice(
 	// FIXME: returning actionResult on success made this unreachable.
 	// revalidatePath("/dashboard/invoices");
 	// redirect("/dashboard/invoices");
+}
+
+/**
+ * Server action to fetch a single invoice by its ID.
+ * @param id - The invoice ID (string).
+ * @returns An InvoiceDTO, or null.
+ */
+export async function readInvoice(id: string) {
+	try {
+		const db = getDB();
+		const brandedId = toInvoiceIdBrand(id);
+		const invoice = await fetchInvoiceById(db, brandedId);
+
+		return invoice ? invoice : null;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
+	}
 }
 
 /**
