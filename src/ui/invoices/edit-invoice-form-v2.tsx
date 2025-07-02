@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import type { InvoiceFormFields } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
-import { updateInvoice } from "@/src/lib/server-actions/invoices.ts";
+import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { InvoiceForm } from "@/src/ui/invoices/invoice-form.tsx";
 
 type EditInvoiceFormState = Readonly<{
@@ -28,8 +28,8 @@ export function EditInvoiceFormV2({
 		message: "",
 		success: undefined,
 	};
-	// Bind updateInvoice to the invoice.id so only formData is left as runtime input
-	const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+	// Bind updateInvoiceAction to the invoice.id so only formData is left as runtime input
+	const updateInvoiceWithId = updateInvoiceAction.bind(null, invoice.id);
 
 	const [state, action, pending] = useActionState<
 		EditInvoiceFormState,

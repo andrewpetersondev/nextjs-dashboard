@@ -5,7 +5,7 @@ import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
-import { readInvoice } from "@/src/lib/server-actions/invoices.ts";
+import { readInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
@@ -34,7 +34,7 @@ export default async function Page(
 	const { id } = await props.params;
 
 	const [customers, invoice]: [CustomerField[], InvoiceDTO | null] =
-		await Promise.all([fetchCustomers(db), readInvoice(id)]);
+		await Promise.all([fetchCustomers(db), readInvoiceAction(id)]);
 
 	if (!invoice) {
 		notFound();

@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
 	createInvoiceDal,
-	deleteInvoiceInDb,
-	fetchInvoiceById,
-	updateInvoiceInDb,
+	deleteInvoiceDal,
+	readInvoiceDal,
+	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
 import {
@@ -32,7 +32,7 @@ import { actionResult } from "@/src/lib/utils/utils.server.ts";
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to a CreateInvoiceResult.
  */
-export async function createInvoiceServerAction(
+export async function createInvoiceAction(
 	_prevState: CreateInvoiceResult,
 	formData: FormData,
 ): Promise<CreateInvoiceResult> {
@@ -98,11 +98,11 @@ export async function createInvoiceServerAction(
  * @param id - The invoice ID (string).
  * @returns An InvoiceDTO, or null.
  */
-export async function readInvoice(id: string) {
+export async function readInvoiceAction(id: string) {
 	try {
 		const db = getDB();
 		const brandedId = toInvoiceIdBrand(id);
-		const invoice = await fetchInvoiceById(db, brandedId);
+		const invoice = await readInvoiceDal(db, brandedId);
 
 		return invoice ? invoice : null;
 	} catch (error) {
@@ -119,7 +119,7 @@ export async function readInvoice(id: string) {
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to an InvoiceFormState.
  */
-export async function updateInvoice(
+export async function updateInvoiceAction(
 	id: string,
 	_prevState: UpdateInvoiceFormState,
 	formData: FormData,
@@ -152,7 +152,7 @@ export async function updateInvoice(
 		const amountInCents: number = amount * 100;
 		const status = toInvoiceStatusBrand(validated.data.status);
 
-		const updatedInvoice: InvoiceDTO | null = await updateInvoiceInDb(db, id, {
+		const updatedInvoice: InvoiceDTO | null = await updateInvoiceDal(db, id, {
 			amount: amountInCents,
 			customerId,
 			status,
@@ -197,7 +197,7 @@ export async function deleteInvoiceAction(
 	id: string,
 ): Promise<InvoiceDTO | null> {
 	const db = getDB();
-	return await deleteInvoiceInDb(db, toInvoiceIdBrand(id));
+	return await deleteInvoiceDal(db, toInvoiceIdBrand(id));
 }
 
 /**

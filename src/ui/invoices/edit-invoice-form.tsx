@@ -3,7 +3,7 @@
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
-import { updateInvoice } from "@/src/lib/server-actions/invoices.ts";
+import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
 import { Label } from "@/src/ui/components/label.tsx";
@@ -38,7 +38,7 @@ export function EditInvoiceForm({
 		success: undefined,
 	};
 
-	const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+	const updateInvoiceWithId = updateInvoiceAction.bind(null, invoice.id);
 
 	const [state, formAction, isPending] = useActionState<
 		EditInvoiceFormState,

@@ -71,7 +71,7 @@ export async function createInvoiceDal(
  * @returns InvoiceDTO or null if not found.
  * @throws Error if the database operation fails.
  */
-export async function fetchInvoiceById(
+export async function readInvoiceDal(
 	db: Db,
 	id: InvoiceId,
 ): Promise<InvoiceDTO | null> {
@@ -89,7 +89,7 @@ export async function fetchInvoiceById(
 
 		return data.length > 0 ? toInvoiceDTO(toInvoiceEntity(data[0])) : null;
 	} catch (error: unknown) {
-		logError("fetchInvoiceById", error, { id });
+		logError("readInvoiceDal", error, { id });
 		throw new Error("Failed to fetch invoice by id.");
 	}
 }
@@ -102,7 +102,7 @@ export async function fetchInvoiceById(
  * @returns The updated invoice as InvoiceDTO, or null if not found.
  * @throws Error if the database operation fails.
  */
-export async function updateInvoiceInDb(
+export async function updateInvoiceDal(
 	db: Db,
 	id: string,
 	invoice: { customerId: CustomerId; amount: number; status: InvoiceStatus },
@@ -117,7 +117,7 @@ export async function updateInvoiceInDb(
 			.returning();
 		return updated ? toInvoiceDTO(toInvoiceEntity(updated)) : null;
 	} catch (error) {
-		logError("updateInvoiceInDb", error, { id, ...invoice });
+		logError("updateInvoiceDal", error, { id, ...invoice });
 		throw new Error("Database error while updating invoice.");
 	}
 }
@@ -129,7 +129,7 @@ export async function updateInvoiceInDb(
  * @returns The deleted invoice as InvoiceDTO, or null if not found.
  * @throws Error if the database operation fails.
  */
-export async function deleteInvoiceInDb(
+export async function deleteInvoiceDal(
 	db: Db,
 	id: InvoiceId,
 ): Promise<InvoiceDTO | null> {
@@ -140,7 +140,7 @@ export async function deleteInvoiceInDb(
 			.returning();
 		return deletedInvoice ? toInvoiceDTO(toInvoiceEntity(deletedInvoice)) : null;
 	} catch (error) {
-		logError("deleteInvoiceInDb", error, { id });
+		logError("deleteInvoiceDal", error, { id });
 		throw new Error("An unexpected error occurred. Please try again.");
 	}
 }
