@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { fetchUserById } from "@/src/lib/dal/users.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
+import { readUserAction } from "@/src/lib/server-actions/users.ts";
 import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditUserFormV2 } from "@/src/ui/users/edit-user-form-v2.tsx";
@@ -30,10 +29,9 @@ export interface EditUserPageProps {
 export default async function Page(
 	props: EditUserPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB();
 	const { id } = await props.params;
 
-	const user: UserDTO | null = await fetchUserById(db, id);
+	const user: UserDTO | null = await readUserAction(id);
 
 	if (!user) {
 		notFound();

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/enums.ts";
+import type { UserId, UserRole } from "@/src/lib/definitions/users.ts";
 
 /**
  * Represents a user entity in the database, defining the structure and properties of a user record.
@@ -23,7 +23,7 @@ import type { UserRole } from "@/src/lib/definitions/enums.ts";
  *   - Sensitive data should be handled with appropriate security measures
  */
 export interface UserEntity {
-	readonly id: string;
+	readonly id: UserId; // Ensure UserId is a UUID string type
 	readonly username: string;
 	readonly email: string;
 	readonly role: UserRole;

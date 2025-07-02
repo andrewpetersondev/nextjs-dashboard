@@ -10,13 +10,13 @@ import {
 	SESSION_DURATION_MS,
 } from "@/src/lib/auth/constants.ts";
 import { getCookieValue } from "@/src/lib/auth/utils.ts";
-import type { UserRole } from "@/src/lib/definitions/enums.ts";
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
 } from "@/src/lib/definitions/session.ts";
+import type { UserRole } from "@/src/lib/definitions/users.ts";
 import { ValidationError } from "@/src/lib/errors/validation-error.ts";
 import { logger } from "@/src/lib/utils/logger.ts";
 

@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import { users } from "../../src/lib/db/schema.ts";
 import { nodeEnvTestDb } from "../../src/lib/db/test-database.ts";
+import { dbRowToUserEntity } from "../../src/lib/mappers/user.mapper.ts";
 import {
 	ERROR_DB,
 	ERROR_USER_CREATION_FAILED,
@@ -12,6 +13,10 @@ import {
 } from "./constants.ts";
 import type { CreateUserInput, DbTaskResult } from "./types.ts";
 
+/**
+ * Creates a user in the test database.
+ * Always maps raw DB row to UserEntity for strict typing.
+ */
 export async function createUserTask(
 	user: CreateUserInput,
 ): Promise<DbTaskResult<UserEntity>> {
@@ -30,8 +35,10 @@ export async function createUserTask(
 				success: false,
 			};
 		}
-		console.log("[createUserTask] insertedUser = ", insertedUser);
-		return { data: insertedUser, success: true };
+		// --- Map raw DB row to UserEntity ---
+		const userEntity = dbRowToUserEntity(insertedUser);
+		console.log("[createUserTask] insertedUser = ", userEntity);
+		return { data: userEntity, success: true };
 	} catch (error) {
 		console.error("[createUserTask] error = ", error);
 		return {
@@ -43,6 +50,10 @@ export async function createUserTask(
 	}
 }
 
+/**
+ * Deletes a user by email in the test database.
+ * Always maps raw DB row to UserEntity for strict typing.
+ */
 export async function deleteUserTask(
 	email: string,
 ): Promise<DbTaskResult<UserEntity>> {
@@ -73,8 +84,10 @@ export async function deleteUserTask(
 				success: false,
 			};
 		}
-		console.log("[deleteUserTask] [deletedUser] = ", deletedUser);
-		return { data: deletedUser, success: true };
+		// --- Map raw DB row to UserEntity ---
+		const userEntity = dbRowToUserEntity(deletedUser);
+		console.log("[deleteUserTask] [deletedUser] = ", userEntity);
+		return { data: userEntity, success: true };
 	} catch (error) {
 		console.error("[deleteUserTask] error = ", error);
 		return {
@@ -86,6 +99,10 @@ export async function deleteUserTask(
 	}
 }
 
+/**
+ * Finds a user by email in the test database.
+ * Always maps raw DB row to UserEntity for strict typing.
+ */
 export async function findUserTask(
 	email: string,
 ): Promise<DbTaskResult<UserEntity>> {
@@ -103,8 +120,10 @@ export async function findUserTask(
 				success: false,
 			};
 		}
-		console.log("[findUserTask] user = ", user);
-		return { data: user, success: true };
+		// --- Map raw DB row to UserEntity ---
+		const userEntity = dbRowToUserEntity(user);
+		console.log("[findUserTask] user = ", userEntity);
+		return { data: userEntity, success: true };
 	} catch (error) {
 		console.error("db:findUser error", error);
 		return {
@@ -116,6 +135,10 @@ export async function findUserTask(
 	}
 }
 
+/**
+ * Updates a user by email in the test database.
+ * Always maps raw DB row to UserEntity for strict typing.
+ */
 export async function updateUserTask({
 	email,
 	updates,
@@ -151,8 +174,10 @@ export async function updateUserTask({
 				success: false,
 			};
 		}
-		console.log("[updateUserTask] updatedUser = ", updatedUser);
-		return { data: updatedUser, success: true };
+		// --- Map raw DB row to UserEntity ---
+		const userEntity = dbRowToUserEntity(updatedUser);
+		console.log("[updateUserTask] updatedUser = ", userEntity);
+		return { data: userEntity, success: true };
 	} catch (error) {
 		console.error("db:updateUser error", error);
 		return {
@@ -164,6 +189,7 @@ export async function updateUserTask({
 	}
 }
 
+// Export all db tasks for Cypress
 export const dbTasks = {
 	"db:createUser": createUserTask,
 	"db:deleteUser": deleteUserTask,

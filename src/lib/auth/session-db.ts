@@ -10,7 +10,7 @@ import {
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
 } from "@/src/lib/auth/constants.ts";
-import type { UserRole } from "@/src/lib/definitions/enums.ts";
+import type { UserRole } from "@/src/lib/definitions/users.ts";
 import { logger } from "@/src/lib/utils/logger.ts";
 
 // --- Db session logic here ---

@@ -1,11 +1,14 @@
 import "server-only";
 
-import { USER_ROLES, type UserRole } from "@/src/lib/definitions/enums.ts";
 import type {
 	CreateInvoiceResult,
 	InvoiceErrorMap,
 } from "@/src/lib/definitions/invoices.ts";
-import type { ActionResult } from "@/src/lib/definitions/users.ts";
+import {
+	type ActionResult,
+	USER_ROLES,
+	type UserRole,
+} from "@/src/lib/definitions/users.ts";
 
 // Note: Utility functions in this file are server-only.
 // Note: Utility functions should use const (arrow functions) for better performance and readability.

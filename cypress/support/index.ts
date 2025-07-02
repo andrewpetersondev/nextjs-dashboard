@@ -3,7 +3,6 @@ import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
-import type { UserRole } from "../../src/lib/definitions/enums.ts";
 import {
 	LOGIN_EMAIL_INPUT,
 	LOGIN_PASSWORD_INPUT,
@@ -23,6 +22,7 @@ import type {
 } from "./types.ts";
 import "./cypress-global.css";
 import { mount } from "cypress/react";
+import type { UserRole } from "../../src/lib/definitions/users.ts";
 
 // --- Component Tests ---
 

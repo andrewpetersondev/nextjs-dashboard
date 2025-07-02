@@ -18,12 +18,12 @@ import {
 	createUserInDb,
 	deleteUser,
 	demoUserCounter,
+	fetchUserById,
 	findUserForLogin,
 	readUserById,
 	updateUserDal,
 } from "@/src/lib/dal/users.dal.ts";
 import { getDB } from "@/src/lib/db/connection.ts";
-import type { UserRole } from "@/src/lib/definitions/enums.ts";
 import type { FormState } from "@/src/lib/definitions/form.ts";
 import {
 	type ActionResult,
@@ -35,8 +35,13 @@ import {
 	LoginFormSchema,
 	type SignupFormFields,
 	SignupFormSchema,
+	type UserRole,
 } from "@/src/lib/definitions/users.ts";
 import type { UserDTO } from "@/src/lib/dto/user.dto.ts";
+import {
+	toUserIdBrand,
+	toUserRoleBrand,
+} from "@/src/lib/mappers/user.mapper.ts";
 import {
 	actionResult,
 	getFormField,
@@ -79,7 +84,7 @@ export async function signup(
 		const user = await createUserInDb(db, {
 			email,
 			password,
-			role: "user",
+			role: toUserRoleBrand("user"), // Use branded role
 			username,
 		});
 		if (!user) {
@@ -89,7 +94,7 @@ export async function signup(
 				success: false,
 			});
 		}
-		await createSession(user.id, "user");
+		await createSession(toUserIdBrand(user.id), toUserRoleBrand("user")); // Use branded id and role
 	} catch (error) {
 		logError("signup", error, { email: formData.get("email") as string });
 		return actionResult({
@@ -135,9 +140,7 @@ export async function login(
 				success: false,
 			});
 		}
-		await createSession(user.id, user.role as UserRole);
-		// Unreachable: redirect throws in Next.js App Router
-		// return actionResult({ message: "Redirecting...", success: true });
+		await createSession(toUserIdBrand(user.id), toUserRoleBrand(user.role));
 	} catch (error) {
 		logError("login", error, { email: formData.get("email") as string });
 		return actionResult({
@@ -161,13 +164,15 @@ export async function logout(): Promise<void> {
 
 /**
  * Deletes a user by ID, revalidates and redirects.
- * @param userId - The user's ID.
+ * Always brands the userId for strict typing.
+ * @param userId - The user's ID (string).
  * @returns ActionResult with result message and errors.
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
 	try {
 		const db = getDB();
-		const deletedUser = await deleteUser(db, userId);
+		// --- Brand the userId to UserId for type safety ---
+		const deletedUser = await deleteUser(db, toUserIdBrand(userId));
 		if (!deletedUser) {
 			return actionResult({
 				errors: undefined,
@@ -178,7 +183,6 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 		revalidatePath("/dashboard/users");
 		redirect("/dashboard/users");
 		// Unreachable: redirect throws in Next.js App Router
-		// return actionResult({ message: "User deleted successfully.", success: true });
 	} catch (error) {
 		logError("deleteUserAction", error, { userId });
 		return actionResult({
@@ -209,27 +213,27 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
  * @returns ActionResult with result message and errors.
  */
 export async function demoUser(
-	role: UserRole = "guest",
+	role: UserRole = toUserRoleBrand("guest"),
 ): Promise<ActionResult> {
 	let demoUser: UserDTO | null = null;
 	const db = getDB();
 
 	try {
-		const counter: number = await demoUserCounter(db, role);
+		const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
 		if (!counter) {
 			logError("demoUser:counter", new Error("Counter is zero or undefined"), {
 				role,
 			});
 			throw new Error("Counter is zero or undefined");
 		}
-		demoUser = await createDemoUser(db, counter, role);
+		demoUser = await createDemoUser(db, counter, toUserRoleBrand(role));
 		if (!demoUser) {
 			logError("demoUser:create", new Error("Demo user creation failed"), {
 				role,
 			});
 			throw new Error("Demo user creation failed");
 		}
-		await createSession(demoUser.id, role);
+		await createSession(toUserIdBrand(demoUser.id), toUserRoleBrand(role));
 		// Unreachable: redirect throws in Next.js App Router
 		// return actionResult({ message: "Demo user created and logged in.", success: true, errors: undefined });
 	} catch (error) {
@@ -273,7 +277,7 @@ export async function createUser(
 		const user = await createUserInDb(db, {
 			email,
 			password,
-			role,
+			role: toUserRoleBrand(role),
 			username,
 		});
 		if (!user) {
@@ -298,6 +302,25 @@ export async function createUser(
 	}
 }
 
+// src/lib/server-actions/users.ts
+
+/**
+ * Fetches a user by plain string id for UI consumption.
+ * Handles branding and error handling at the server boundary.
+ * @param id - User id as string (from route params)
+ * @returns UserDTO or null
+ */
+export async function readUserAction(id: string): Promise<UserDTO | null> {
+	const db = getDB();
+	try {
+		// Brand the id before passing to DAL
+		return await fetchUserById(db, toUserIdBrand(id));
+	} catch (error) {
+		logError("getUserByIdAction", error, { id });
+		return null;
+	}
+}
+
 /**
  * Edits an existing user.
  * @param id - User ID.
@@ -313,20 +336,11 @@ export async function editUser(
 	const db = getDB();
 	try {
 		const payload = { ...Object.fromEntries(formData.entries()) };
-		/**
-		 *  Recent biome lint removed this code
-		 *  Problem: undefined cannot be input into .safeParse().
-		 *    if (payload.password === "") {
-		 *            delete payload.password;
-		 *        }
-		 */
-		// if (payload.password === "") {
-		// 	payload.password = undefined;
-		// }
 
 		const clean = stripProperties(payload);
 
 		const validated = EditUserFormSchema.safeParse(clean);
+
 		if (!validated.success) {
 			return actionResult({
 				errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
@@ -334,7 +348,12 @@ export async function editUser(
 				success: false,
 			});
 		}
-		const existingUser: UserDTO | null = await readUserById(db, id);
+
+		const existingUser: UserDTO | null = await readUserById(
+			db,
+			toUserIdBrand(id),
+		);
+
 		if (!existingUser) {
 			return actionResult({
 				errors: undefined,
@@ -342,7 +361,9 @@ export async function editUser(
 				success: false,
 			});
 		}
+
 		const patch: Record<string, unknown> = {};
+
 		if (
 			validated.data.username &&
 			validated.data.username !== existingUser.username
@@ -353,7 +374,7 @@ export async function editUser(
 			patch.email = validated.data.email;
 		}
 		if (validated.data.role && validated.data.role !== existingUser.role) {
-			patch.role = validated.data.role;
+			patch.role = toUserRoleBrand(validated.data.role);
 		}
 		if (validated.data.password && validated.data.password.length > 0) {
 			patch.password = await hashPassword(validated.data.password);
@@ -366,7 +387,12 @@ export async function editUser(
 				success: true,
 			});
 		}
-		const updatedUser: UserDTO | null = await updateUserDal(db, id, patch);
+		// Use branded id for update
+		const updatedUser: UserDTO | null = await updateUserDal(
+			db,
+			toUserIdBrand(id),
+			patch,
+		);
 		if (!updatedUser) {
 			return actionResult({
 				errors: undefined,
