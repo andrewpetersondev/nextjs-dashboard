@@ -3,14 +3,32 @@ import type { FormState } from "@/src/lib/definitions/form.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 
 // ids and statuses: domain types
-/** Unique branded type for Invoice IDs. */
+/**
+ * Branded type for Invoice IDs.
+ */
 export type InvoiceId = string & { readonly __brand: unique symbol };
-/** Unique branded type for Customer IDs. */
+
+/**
+ * Branded type for Customer IDs.
+ */
 export type CustomerId = string & { readonly __brand: unique symbol };
-/** Invoice statuses as a constant tuple for type safety. */
+
+/**
+ * Invoice statuses as a constant tuple for type safety.
+ */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;
-/** Type for invoice statuses. */
+
+/**
+ * Type for invoice statuses.
+ */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+
+/**
+ * Error map for invoice actions.
+ */
+export type InvoiceErrorMap = Partial<
+	Record<keyof InvoiceFormFields, string[]>
+>;
 
 // --- UI and Server Actions: Form Types
 
@@ -39,16 +57,29 @@ export type UpdateInvoiceFormState = Readonly<
 
 // --- Result/State types for create/edit actions
 
-export type CreateInvoiceResult = Readonly<{
-	errors?: {
-		customerId?: string[];
-		amount?: string[];
-		status?: string[];
-		[k: string]: string[] | undefined;
-	};
-	message?: string;
-	success?: boolean;
-}>;
+/**
+ * Generic action result type for server actions.
+ * @template T - The data payload type.
+ */
+export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
+	readonly data?: T;
+	readonly errors?: E;
+	readonly message: string;
+	readonly success: boolean;
+};
+
+/**
+ * Result type for create invoice action.
+ */
+export type CreateInvoiceResult = InvoiceActionResult<
+	undefined,
+	InvoiceErrorMap
+>;
+
+export type UpdateInvoiceResult = InvoiceActionResult<
+	InvoiceDTO,
+	InvoiceErrorMap
+>;
 
 /* ============================================================================
  * Database Row Types

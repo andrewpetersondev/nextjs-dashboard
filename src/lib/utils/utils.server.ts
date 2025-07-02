@@ -1,6 +1,10 @@
 import "server-only";
 
 import { USER_ROLES, type UserRole } from "@/src/lib/definitions/enums.ts";
+import type {
+	CreateInvoiceResult,
+	InvoiceErrorMap,
+} from "@/src/lib/definitions/invoices.ts";
 import type { ActionResult } from "@/src/lib/definitions/users.ts";
 
 // Note: Utility functions in this file are server-only.
@@ -20,15 +24,35 @@ export const normalizeFieldErrors = (
 };
 
 // --- Helper: Standardized Action Result ---
-export const actionResult = ({
+export const actionResult = <T = undefined>({
+	data = undefined,
+	errors = undefined,
 	message,
 	success = true,
-	errors = undefined,
 }: {
+	data?: T;
+	errors?: Record<string, string[]>;
 	message: string;
 	success?: boolean;
-	errors?: Record<string, string[]>;
-}): ActionResult => ({
+}): ActionResult & { data?: T } => ({
+	data,
+	errors,
+	message,
+	success,
+});
+
+/**
+ * Strongly typed action result for invoice actions.
+ */
+export const invoiceActionResult = ({
+	errors,
+	message,
+	success = true,
+}: {
+	errors?: InvoiceErrorMap;
+	message: string;
+	success?: boolean;
+}): CreateInvoiceResult => ({
 	errors,
 	message,
 	success,
