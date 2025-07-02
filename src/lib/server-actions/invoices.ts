@@ -60,12 +60,9 @@ export async function createInvoiceAction(
 		const amountInCents: number = amount * 100;
 		const date: string = new Date().toISOString().split("T")[0];
 
-		const invoice = await createInvoiceDal(db, {
-			amount: amountInCents,
-			customerId,
-			date,
-			status,
-		});
+		const insert = { amount: amountInCents, customerId, date, status };
+
+		const invoice = await createInvoiceDal(db, insert);
 
 		if (!invoice) {
 			return actionResult({
@@ -145,18 +142,21 @@ export async function updateInvoiceAction(
 		}
 
 		// Brand customerId for type safety
-		// TODO: Find pattern in other files, then replace with branding function. (ex. toCustomerIdBrand()).
-		// old: const customerId = validated.data.customerId as unknown as CustomerId;
+		const brandId = toInvoiceIdBrand(id);
 		const customerId = toCustomerIdBrand(validated.data.customerId);
 		const amount = validated.data.amount;
 		const amountInCents: number = amount * 100;
 		const status = toInvoiceStatusBrand(validated.data.status);
 
-		const updatedInvoice: InvoiceDTO | null = await updateInvoiceDal(db, id, {
-			amount: amountInCents,
-			customerId,
-			status,
-		});
+		const updatedInvoice: InvoiceDTO | null = await updateInvoiceDal(
+			db,
+			brandId,
+			{
+				amount: amountInCents,
+				customerId,
+				status,
+			},
+		);
 
 		if (!updatedInvoice) {
 			return {

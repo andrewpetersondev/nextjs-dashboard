@@ -107,8 +107,7 @@ export function CreateInvoiceForm({
 							</div>
 						</div>
 						<div aria-atomic="true" aria-live="polite" id="amount-error">
-							{Array.isArray(state.errors?.customerId) &&
-							state.errors.customerId.length > 0
+							{Array.isArray(state.errors?.amount) && state.errors.amount.length > 0
 								? state.errors.amount.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}
@@ -165,8 +164,7 @@ export function CreateInvoiceForm({
 						<div aria-atomic="true" aria-live="polite" id="status-error">
 							{/* Render status errors */}
 							{/* Render customerId errors, guarding against undefined */}
-							{Array.isArray(state.errors?.customerId) &&
-							state.errors.customerId.length > 0
+							{Array.isArray(state.errors?.status) && state.errors.status.length > 0
 								? state.errors.status.map((error) => (
 										<p className="text-text-error mt-2 text-sm" key={error}>
 											{error}

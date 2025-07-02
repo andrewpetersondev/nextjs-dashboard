@@ -2,52 +2,53 @@ import { z as zod } from "zod";
 import type { FormState } from "@/src/lib/definitions/form.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 
-/* ============================================================================
- * Branded Types
- * ========================================================================== */
-
+// ids and statuses: domain types
 /** Unique branded type for Invoice IDs. */
 export type InvoiceId = string & { readonly __brand: unique symbol };
-
 /** Unique branded type for Customer IDs. */
 export type CustomerId = string & { readonly __brand: unique symbol };
-
-/* ============================================================================
- * Form Field Types
- * ========================================================================== */
-
 /** Invoice statuses as a constant tuple for type safety. */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;
-
-/**
- * Type for invoice statuses.
- * Uses a tuple to ensure only valid statuses are used.
- */
+/** Type for invoice statuses. */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+
+// --- UI and Server Actions: Form Types
 
 /**
  * Fields for invoice form state.
  * Allows additional dynamic fields for extensibility.
  */
+/** Fields allowed in invoice form (for new/edit). */
 export interface InvoiceFormFields {
 	id: InvoiceId | "";
 	customerId: CustomerId | "";
 	amount: number | "";
 	status: InvoiceStatus;
 	date?: string;
-	[key: string]: unknown; // <-- Fix: allow index signature for FormState compatibility
+	[key: string]: unknown;
 }
 
-/* ============================================================================
- * Form State Aliases
- * ========================================================================== */
+export type InvoiceFormState = Readonly<FormState<InvoiceFormFields>>;
 
-export type InvoiceFormState = FormState<InvoiceFormFields>;
+export type UpdateInvoiceFormState = Readonly<
+	FormState<InvoiceFormFields> & {
+		invoice: InvoiceDTO;
+		success?: boolean;
+	}
+>;
 
-export type UpdateInvoiceFormState = FormState<InvoiceFormFields> & {
-	invoice: InvoiceDTO;
+// --- Result/State types for create/edit actions
+
+export type CreateInvoiceResult = Readonly<{
+	errors?: {
+		customerId?: string[];
+		amount?: string[];
+		status?: string[];
+		[k: string]: string[] | undefined;
+	};
+	message?: string;
 	success?: boolean;
-};
+}>;
 
 /* ============================================================================
  * Database Row Types
@@ -113,12 +114,6 @@ export interface FetchFilteredInvoicesData {
 /* ============================================================================
  * Action Result Types
  * ========================================================================== */
-
-export type CreateInvoiceResult = {
-	readonly errors?: Record<string, string[]>;
-	readonly message?: string;
-	readonly success: boolean;
-};
 
 /* ============================================================================
  * Validation Schemas (zod)

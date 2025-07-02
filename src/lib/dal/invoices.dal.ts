@@ -6,14 +6,13 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
  * Uses Drizzle ORM for database access.
  */
 import type { Db } from "@/src/lib/db/connection.ts";
+import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import { customers, invoices } from "@/src/lib/db/schema.ts";
 import { ITEMS_PER_PAGE } from "@/src/lib/definitions/constants.ts";
 import type {
-	CustomerId,
 	FetchFilteredInvoicesData,
 	FilteredInvoiceDbRow,
 	InvoiceId,
-	InvoiceStatus,
 	ModifiedLatestInvoicesData,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
@@ -34,18 +33,9 @@ import { formatCurrency } from "@/src/lib/utils/utils.ts";
  */
 export async function createInvoiceDal(
 	db: Db,
-	{
-		customerId,
-		amount,
-		status,
-		date,
-	}: {
-		customerId: CustomerId;
-		amount: number;
-		status: InvoiceStatus;
-		date: string;
-	},
+	invoice: Pick<InvoiceEntity, "amount" | "customerId" | "date" | "status">,
 ): Promise<InvoiceDTO | null> {
+	const { amount, customerId, date, status } = invoice;
 	try {
 		// Ensure parameters are branded before calling this function.
 		const [createdInvoice] = await db
@@ -104,11 +94,11 @@ export async function readInvoiceDal(
  */
 export async function updateInvoiceDal(
 	db: Db,
-	id: string,
-	invoice: { customerId: CustomerId; amount: number; status: InvoiceStatus },
+	id: InvoiceId,
+	invoice: Pick<InvoiceEntity, "amount" | "customerId" | "status">,
 ): Promise<InvoiceDTO | null> {
 	try {
-		const { customerId, amount, status } = invoice;
+		const { amount, customerId, status } = invoice;
 
 		const [updated] = await db
 			.update(invoices)
