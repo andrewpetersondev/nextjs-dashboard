@@ -1,8 +1,8 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice.ts";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
+import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
 import { updateInvoice } from "@/src/lib/server-actions/invoices.ts";
 import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
@@ -13,6 +13,7 @@ import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-
 import { ServerMessage } from "@/src/ui/users/server-message.tsx";
 
 type EditInvoiceFormState = Readonly<{
+	invoice: InvoiceDTO;
 	errors?: {
 		amount?: string[];
 		customerId?: string[];
@@ -27,11 +28,12 @@ export function EditInvoiceForm({
 	invoice,
 	customers,
 }: {
-	invoice: InvoiceEntity;
+	invoice: InvoiceDTO;
 	customers: CustomerField[];
 }): JSX.Element {
 	const initialState: EditInvoiceFormState = {
 		errors: {},
+		invoice,
 		message: "",
 		success: undefined,
 	};
