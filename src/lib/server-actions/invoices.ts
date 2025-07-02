@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-	createInvoiceInDb,
+	createInvoiceDal,
 	deleteInvoiceInDb,
 	fetchInvoiceById,
 	updateInvoiceInDb,
@@ -32,12 +32,13 @@ import { actionResult } from "@/src/lib/utils/utils.server.ts";
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to a CreateInvoiceResult.
  */
-export async function createInvoice(
+export async function createInvoiceServerAction(
 	_prevState: CreateInvoiceResult,
 	formData: FormData,
 ): Promise<CreateInvoiceResult> {
 	try {
 		const db = getDB();
+
 		const validated = CreateInvoiceSchema.safeParse({
 			amount: formData.get("amount"),
 			customerId: formData.get("customerId"),
@@ -59,7 +60,7 @@ export async function createInvoice(
 		const amountInCents: number = amount * 100;
 		const date: string = new Date().toISOString().split("T")[0];
 
-		const invoice = await createInvoiceInDb(db, {
+		const invoice = await createInvoiceDal(db, {
 			amount: amountInCents,
 			customerId,
 			date,

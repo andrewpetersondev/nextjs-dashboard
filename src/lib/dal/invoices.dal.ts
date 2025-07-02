@@ -30,9 +30,9 @@ import { formatCurrency } from "@/src/lib/utils/utils.ts";
  * Inserts a new invoice record into the database.
  * @param db - The Drizzle ORM database instance.
  * @param invoice - The invoice data to insert.
- * @returns An object indicating success, the created invoice DTO if successful, and any error message.
+ * @returns The created invoice DTO if successful, or null.
  */
-export async function createInvoiceInDb(
+export async function createInvoiceDal(
 	db: Db,
 	{
 		customerId,
@@ -45,10 +45,7 @@ export async function createInvoiceInDb(
 		status: InvoiceStatus;
 		date: string;
 	},
-): Promise<
-	| { success: true; invoice: InvoiceDTO }
-	| { success: false; invoice: null; error: string }
-> {
+): Promise<InvoiceDTO | null> {
 	try {
 		// Ensure parameters are branded before calling this function.
 		const [createdInvoice] = await db
@@ -57,23 +54,43 @@ export async function createInvoiceInDb(
 			.returning();
 
 		if (!createdInvoice) {
-			return {
-				error: "Failed to create invoice.",
-				invoice: null,
-				success: false,
-			};
+			return null;
 		}
-		return {
-			invoice: toInvoiceDTO(toInvoiceEntity(createdInvoice)),
-			success: true,
-		};
+
+		return createdInvoice ? toInvoiceDTO(toInvoiceEntity(createdInvoice)) : null;
 	} catch (error) {
-		logError("createInvoiceInDb", error, { customerId });
-		return {
-			error: "Database error while creating an invoice.",
-			invoice: null,
-			success: false,
-		};
+		logError("createInvoiceDal", error, { customerId });
+		throw new Error("Failed to create an invoice in a database.");
+	}
+}
+
+/**
+ * Fetches an invoice by its ID.
+ * @param db - The Drizzle ORM database instance.
+ * @param id - The branded InvoiceId.
+ * @returns InvoiceDTO or null if not found.
+ * @throws Error if the database operation fails.
+ */
+export async function fetchInvoiceById(
+	db: Db,
+	id: InvoiceId,
+): Promise<InvoiceDTO | null> {
+	try {
+		const data = await db
+			.select({
+				amount: invoices.amount,
+				customerId: invoices.customerId,
+				date: invoices.date,
+				id: invoices.id,
+				status: invoices.status,
+			})
+			.from(invoices)
+			.where(eq(invoices.id, id));
+
+		return data.length > 0 ? toInvoiceDTO(toInvoiceEntity(data[0])) : null;
+	} catch (error: unknown) {
+		logError("fetchInvoiceById", error, { id });
+		throw new Error("Failed to fetch invoice by id.");
 	}
 }
 
@@ -250,35 +267,5 @@ export async function fetchInvoicesPages(
 	} catch (error: unknown) {
 		logError("fetchInvoicesPages", error);
 		throw new Error("Failed to fetch the total number of invoices.");
-	}
-}
-
-/**
- * Fetches an invoice by its ID.
- * @param db - The Drizzle ORM database instance.
- * @param id - The branded InvoiceId.
- * @returns InvoiceDTO or null if not found.
- * @throws Error if the database operation fails.
- */
-export async function fetchInvoiceById(
-	db: Db,
-	id: InvoiceId,
-): Promise<InvoiceDTO | null> {
-	try {
-		const data = await db
-			.select({
-				amount: invoices.amount,
-				customerId: invoices.customerId,
-				date: invoices.date,
-				id: invoices.id,
-				status: invoices.status,
-			})
-			.from(invoices)
-			.where(eq(invoices.id, id));
-
-		return data.length > 0 ? toInvoiceDTO(toInvoiceEntity(data[0])) : null;
-	} catch (error: unknown) {
-		logError("fetchInvoiceById", error, { id });
-		throw new Error("Failed to fetch invoice by id.");
 	}
 }

@@ -10,7 +10,7 @@ import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
 import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices.ts";
-import { createInvoice } from "@/src/lib/server-actions/invoices.ts";
+import { createInvoiceServerAction } from "@/src/lib/server-actions/invoices.ts";
 import { Button } from "@/src/ui/button.tsx";
 
 // TODO: Overly complex function with errors.
@@ -25,7 +25,10 @@ export function CreateInvoiceForm({
 		message: "",
 		success: false,
 	};
-	const [state, action, isPending] = useActionState(createInvoice, initialState);
+	const [state, action, isPending] = useActionState(
+		createInvoiceServerAction,
+		initialState,
+	);
 	const [showAlert, setShowAlert] = useState(false);
 
 	useEffect(() => {
