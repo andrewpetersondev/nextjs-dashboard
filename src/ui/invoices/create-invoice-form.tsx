@@ -9,18 +9,16 @@ import {
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { CreateInvoiceResult } from "@/src/lib/definitions/invoices.ts";
+import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.ts";
 import { createInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
 import { Button } from "@/src/ui/button.tsx";
-
-// TODO: Overly complex function with errors.
 
 export function CreateInvoiceForm({
 	customers,
 }: {
 	customers: CustomerField[];
 }): JSX.Element {
-	const initialState: CreateInvoiceResult = {
+	const initialState: InvoiceCreateState = {
 		errors: {},
 		message: "",
 		success: false,

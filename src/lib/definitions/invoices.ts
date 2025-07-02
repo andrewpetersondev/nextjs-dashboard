@@ -45,6 +45,15 @@ export interface InvoiceFormFields {
 export type InvoiceFormState = Readonly<FormState<InvoiceFormFields>>;
 
 /**
+ * Unified state/result type for creating an invoice.
+ * Used by both server actions and UI state.
+ */
+export type InvoiceCreateState = Readonly<{
+	errors?: InvoiceErrorMap;
+	message?: string;
+	success?: boolean;
+}>;
+/**
  * Unified state/result type for editing an invoice.
  * Used by both server actions and UI state.
  */

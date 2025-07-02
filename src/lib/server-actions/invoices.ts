@@ -11,8 +11,8 @@ import {
 import { getDB } from "@/src/lib/db/connection.ts";
 import type { InvoiceEditState } from "@/src/lib/definitions/invoices.ts";
 import {
-	type CreateInvoiceResult,
 	CreateInvoiceSchema,
+	type InvoiceCreateState,
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices.ts";
 import type { InvoiceDTO } from "@/src/lib/dto/invoice.dto.ts";
@@ -21,21 +21,18 @@ import {
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
 } from "@/src/lib/mappers/invoice.mapper.ts";
-import {
-	getFormField,
-	invoiceActionResult,
-} from "@/src/lib/utils/utils.server.ts";
+import { getFormField } from "@/src/lib/utils/utils.server.ts";
 
 /**
  * Server action to create a new invoice.
- * @param _prevState - Previous form state.
+ * @param prevState - Previous form state.
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to a CreateInvoiceResult.
  */
 export async function createInvoiceAction(
-	_prevState: CreateInvoiceResult,
+	prevState: InvoiceCreateState,
 	formData: FormData,
-): Promise<CreateInvoiceResult> {
+): Promise<InvoiceCreateState> {
 	try {
 		const db = getDB();
 
@@ -49,7 +46,7 @@ export async function createInvoiceAction(
 			rawStatus = getFormField(formData, "status");
 		} catch (err) {
 			console.error(err);
-			return invoiceActionResult({
+			return {
 				errors: {
 					amount: formData.get("amount") ? undefined : ["Amount is required."],
 					customerId: formData.get("customerId")
@@ -59,7 +56,7 @@ export async function createInvoiceAction(
 				},
 				message: "Missing required fields.",
 				success: false,
-			});
+			};
 		}
 
 		// --- Zod validation ---
@@ -70,11 +67,11 @@ export async function createInvoiceAction(
 		});
 
 		if (!validated.success) {
-			return invoiceActionResult({
+			return {
 				errors: validated.error.flatten().fieldErrors,
 				message: "Invalid input. Failed to create invoice.",
 				success: false,
-			});
+			};
 		}
 
 		// --- Type-safe transformation ---
@@ -95,26 +92,26 @@ export async function createInvoiceAction(
 		const invoice = await createInvoiceDal(db, insert);
 
 		if (!invoice) {
-			return invoiceActionResult({
+			return {
 				errors: undefined,
 				message: "Failed to create invoice.",
 				success: false,
-			});
+			};
 		}
 
-		return invoiceActionResult({
+		return {
 			errors: undefined,
 			message: "Invoice created successfully.",
 			success: true,
-		});
+		};
 	} catch (error) {
 		// Use structured logging in production
 		console.error(error);
-		return invoiceActionResult({
+		return {
 			errors: {},
 			message: "Database Error. Failed to create invoice.",
 			success: false,
-		});
+		};
 	}
 	// FIXME: returning actionResult on success made this unreachable.
 	// revalidatePath("/dashboard/invoices");
