@@ -11,29 +11,7 @@
 				"useSortedProperties": "on"
 			}
 		},
-		"enabled": true,
-		"includes": [
-			"**",
-			"!**/vault/**",
-			"!pnpm-lock.yaml",
-			"!public/**",
-			"!.run",
-			"!.idea/**",
-			"!.vscode",
-			"!keep",
-			"!storage",
-			"!src/lib/db/drizzle/**",
-			"!next-env.d.ts",
-			"src/**/*",
-			"cypress/**/*.{ts,tsx}",
-			"cypress.config.ts",
-			"drizzle-dev.config.ts",
-			"drizzle-test.config.ts",
-			"envConfig.ts",
-			"package.json",
-			"postcss.config.mjs",
-			"tsconfig.json"
-		]
+		"enabled": true
 	},
 	"css": {
 		"assist": {
@@ -49,31 +27,28 @@
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
-			"**",
-			"!**/vault/**",
-			"!pnpm-lock.yaml",
-			"!public/**",
-			"!.run",
-			"!.idea/**",
-			"!.vscode",
-			"!keep",
-			"!storage",
-			"!src/lib/db/drizzle/**"
+			"src/**/*",
+			"cypress/**/*.{ts,tsx,css,json}",
+			"cypress.config.ts",
+			"drizzle-dev.config.ts",
+			"drizzle-test.config.ts",
+			"envConfig.ts",
+			"next.config.ts",
+			"package.json",
+			"postcss.config.mjs",
+			"tsconfig.json",
+			"!src/lib/db/drizzle/**/*"
 		]
 	},
 	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"indentWidth": 1
+		"enabled": true
 	},
 	"javascript": {
 		"assist": {
 			"enabled": true
 		},
 		"formatter": {
-			"enabled": true,
-			"indentStyle": "tab",
-			"quoteStyle": "double"
+			"enabled": true
 		},
 		"globals": ["cy", "Cypress", "context"],
 		"linter": {
@@ -85,8 +60,7 @@
 			"enabled": true
 		},
 		"formatter": {
-			"enabled": true,
-			"indentStyle": "tab"
+			"enabled": true
 		},
 		"linter": {
 			"enabled": true
