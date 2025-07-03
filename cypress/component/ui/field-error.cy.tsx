@@ -9,8 +9,7 @@ describe("<FieldError />", () => {
 
 	it("renders error messages", () => {
 		cy.mount(<FieldError dataCy="err" error={["Error 1", "Error 2"]} />);
-		cy
-			.get("[data-cy=err]")
+		cy.get("[data-cy=err]")
 			.should("contain.text", "Error 1")
 			.and("contain.text", "Error 2");
 	});

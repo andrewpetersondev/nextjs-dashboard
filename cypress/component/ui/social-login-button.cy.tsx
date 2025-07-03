@@ -11,12 +11,16 @@ describe("<SocialLoginButton />", () => {
 			/>,
 		);
 		cy.get("[data-cy=google-btn]").should("contain.text", "Google");
-		cy
-			.get("[data-cy=google-btn]")
-			.should("have.attr", "href", "/api/auth/google");
-		cy
-			.get("[data-cy=google-btn]")
-			.should("have.attr", "aria-label", "Sign up with Google");
+		cy.get("[data-cy=google-btn]").should(
+			"have.attr",
+			"href",
+			"/api/auth/google",
+		);
+		cy.get("[data-cy=google-btn]").should(
+			"have.attr",
+			"aria-label",
+			"Sign up with Google",
+		);
 	});
 
 	it("renders GitHub button", () => {
@@ -29,8 +33,10 @@ describe("<SocialLoginButton />", () => {
 			/>,
 		);
 		cy.get("[data-cy=github-btn]").should("contain.text", "GitHub");
-		cy
-			.get("[data-cy=github-btn]")
-			.should("have.attr", "aria-label", "Sign in with GitHub");
+		cy.get("[data-cy=github-btn]").should(
+			"have.attr",
+			"aria-label",
+			"Sign in with GitHub",
+		);
 	});
 });

@@ -84,8 +84,13 @@ Cypress.Commands.add(
 
 		return cy.then(() => {
 			if (options?.assertSuccess) {
-				cy.location("pathname", { timeout: 10000 }).should("include", "/dashboard");
-				cy.get("h1", { timeout: 10000 }).contains("Dashboard").should("be.visible");
+				cy.location("pathname", { timeout: 10000 }).should(
+					"include",
+					"/dashboard",
+				);
+				cy.get("h1", { timeout: 10000 })
+					.contains("Dashboard")
+					.should("be.visible");
 			}
 		}) as Cypress.Chainable<void>;
 	},
@@ -247,19 +252,17 @@ Cypress.Commands.add("loginSession", (user: UserCredentials) => {
 Cypress.Commands.add(
 	"setMockSessionCookie",
 	(userId: string, role: UserRole = "user") => {
-		cy
-			.then(() => {
-				return generateMockSessionJwt(userId, role);
-			})
-			.then((token) => {
-				cy.setCookie(SESSION_COOKIE_NAME, token, {
-					httpOnly: false,
-					path: "/",
-					sameSite: "lax",
-					secure: false,
-				});
-				cy.getCookie(SESSION_COOKIE_NAME).should("exist");
+		cy.then(() => {
+			return generateMockSessionJwt(userId, role);
+		}).then((token) => {
+			cy.setCookie(SESSION_COOKIE_NAME, token, {
+				httpOnly: false,
+				path: "/",
+				sameSite: "lax",
+				secure: false,
 			});
+			cy.getCookie(SESSION_COOKIE_NAME).should("exist");
+		});
 	},
 );
 
@@ -276,7 +279,9 @@ Cypress.Commands.add(
 			.task<DbTaskResult<UserEntity>>("db:updateUser", { email, updates })
 			.then((result) => {
 				if (!result || typeof result !== "object" || !("success" in result)) {
-					throw new Error("[updateUser] Invalid result from db:updateUser task");
+					throw new Error(
+						"[updateUser] Invalid result from db:updateUser task",
+					);
 				}
 				const dbResult = result as DbTaskResult<UserEntity>;
 				if (!(dbResult.success && dbResult.data)) {

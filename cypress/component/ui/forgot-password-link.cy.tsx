@@ -3,8 +3,9 @@ import { ForgotPasswordLink } from "../../../src/ui/auth/forgot-password-link.ts
 describe("<ForgotPasswordLink />", () => {
 	it("renders link to forgot password", () => {
 		cy.mount(<ForgotPasswordLink />);
-		cy
-			.get("a[href='/forgot-password']")
-			.should("contain.text", "Forgot password?");
+		cy.get("a[href='/forgot-password']").should(
+			"contain.text",
+			"Forgot password?",
+		);
 	});
 });
