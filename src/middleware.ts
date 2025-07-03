@@ -7,6 +7,7 @@ const protectedRoutes: string[] = ["/dashboard"];
 const publicRoutes: string[] = ["/login", "/signup", "/"];
 const adminRoutes: string[] = ["/dashboard/users"];
 
+// biome-ignore lint/style/noDefaultExport: <it is a Next.js middleware file>
 export default async function middleware(req: NextRequest) {
 	const path: string = req.nextUrl.pathname;
 	const isProtectedRoute: boolean = protectedRoutes.includes(path);

@@ -25,12 +25,12 @@ import { getFormField } from "@/src/lib/utils/utils.server.ts";
 
 /**
  * Server action to create a new invoice.
- * @param prevState - Previous form state.
+ * @param _prevState - Previous form state.
  * @param formData - FormData containing invoice fields.
  * @returns A promise resolving to a CreateInvoiceResult.
  */
 export async function createInvoiceAction(
-	prevState: InvoiceCreateState,
+	_prevState: InvoiceCreateState,
 	formData: FormData,
 ): Promise<InvoiceCreateState> {
 	try {
