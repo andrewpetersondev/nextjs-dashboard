@@ -34,7 +34,9 @@ export function UserFields({
 }: FieldsProps): JSX.Element {
 	return (
 		<>
-			{isEdit && values.id && <input name="id" type="hidden" value={values.id} />}
+			{isEdit && values.id && (
+				<input name="id" type="hidden" value={values.id} />
+			)}
 			<InputField
 				autoComplete="username"
 				dataCy="user-username-input"

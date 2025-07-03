@@ -34,7 +34,10 @@ export async function DesktopTable({
 			<tbody className="bg-bg-primary divide-bg-accent text-text-primary divide-y">
 				{customers.map(
 					(customer: FormattedCustomersTableRow): JSX.Element => (
-						<tr className="group cursor-pointer hover:bg-bg-active" key={customer.id}>
+						<tr
+							className="group cursor-pointer hover:bg-bg-active"
+							key={customer.id}
+						>
 							{/* Customer name and profile picture */}
 							<td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
 								<div className="flex items-center gap-3">
@@ -50,7 +53,9 @@ export async function DesktopTable({
 							</td>
 
 							{/* Customer email */}
-							<td className="px-4 py-5 text-sm whitespace-nowrap">{customer.email}</td>
+							<td className="px-4 py-5 text-sm whitespace-nowrap">
+								{customer.email}
+							</td>
 
 							{/* Total invoices */}
 							<td className="px-4 py-5 text-sm whitespace-nowrap">

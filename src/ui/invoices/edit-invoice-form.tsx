@@ -88,7 +88,10 @@ export function EditInvoiceForm({
 				</div>
 
 				<FormActionRow cancelHref="/dashboard/invoices">
-					<FormSubmitButton data-cy="edit-invoice-submit-button" pending={isPending}>
+					<FormSubmitButton
+						data-cy="edit-invoice-submit-button"
+						pending={isPending}
+					>
 						Edit Invoice
 					</FormSubmitButton>
 				</FormActionRow>

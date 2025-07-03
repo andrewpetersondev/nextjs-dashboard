@@ -35,10 +35,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 		user.id,
 	);
 
-	const [state, action, isPending] = useActionState<EditUserFormState, FormData>(
-		updateUserWithId,
-		initialState,
-	);
+	const [state, action, isPending] = useActionState<
+		EditUserFormState,
+		FormData
+	>(updateUserWithId, initialState);
 
 	const [showAlert, setShowAlert] = useState(false);
 
@@ -60,7 +60,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 				{/* username */}
 				<div className="mb-4">
 					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
-						<label className="mb-2 block text-sm font-medium" htmlFor="username">
+						<label
+							className="mb-2 block text-sm font-medium"
+							htmlFor="username"
+						>
 							Username: {user.username}
 						</label>
 						<div className="relative mt-2 rounded-md">
@@ -119,7 +122,11 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 								/>
 							</div>
 						</div>
-						<div aria-atomic="true" aria-live="polite" id="update-user-email-error">
+						<div
+							aria-atomic="true"
+							aria-live="polite"
+							id="update-user-email-error"
+						>
 							{state.errors?.email?.map(
 								(error: string): JSX.Element => (
 									<p className="text-text-error mt-2 text-sm" key={error}>
@@ -134,7 +141,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 				{/* password */}
 				<div className="mb-4">
 					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
-						<label className="mb-2 block text-sm font-medium" htmlFor="password">
+						<label
+							className="mb-2 block text-sm font-medium"
+							htmlFor="password"
+						>
 							Password:
 						</label>
 						<div className="relative mt-2 rounded-md">
@@ -189,7 +199,11 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 							className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2"
 						/>
 					</div>
-					<div aria-atomic="true" aria-live="polite" id="update-user-role-error">
+					<div
+						aria-atomic="true"
+						aria-live="polite"
+						id="update-user-role-error"
+					>
 						{state.errors?.role?.map(
 							(error: string): JSX.Element => (
 								<p className="text-text-error mt-2 text-sm" key={error}>
@@ -200,7 +214,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 					</div>
 				</div>
 				<FormActionRow cancelHref="/dashboard/users">
-					<FormSubmitButton data-cy="edit-user-submit-button" pending={isPending}>
+					<FormSubmitButton
+						data-cy="edit-user-submit-button"
+						pending={isPending}
+					>
 						Update User
 					</FormSubmitButton>
 				</FormActionRow>

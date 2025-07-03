@@ -31,7 +31,15 @@ export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
  */
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 	function InputField(
-		{ id, label, icon, error, dataCy, describedById, ...props }: InputFieldProps,
+		{
+			id,
+			label,
+			icon,
+			error,
+			dataCy,
+			describedById,
+			...props
+		}: InputFieldProps,
 		ref: ForwardedRef<HTMLInputElement>,
 	): JSX.Element {
 		return (
@@ -43,7 +51,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 					<div className="mt-2 flex items-center">
 						<input
 							aria-describedby={
-								(error?.length ?? 0) > 0 ? (describedById ?? `${id}-errors`) : undefined
+								(error?.length ?? 0) > 0
+									? (describedById ?? `${id}-errors`)
+									: undefined
 							}
 							aria-invalid={(error?.length ?? 0) > 0}
 							className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"

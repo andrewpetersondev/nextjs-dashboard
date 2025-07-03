@@ -36,7 +36,10 @@ export async function RevenueChart(): Promise<JSX.Element> {
 
 					{revenue.map(
 						(month: Revenue): JSX.Element => (
-							<div className="flex flex-col items-center gap-2" key={month.month}>
+							<div
+								className="flex flex-col items-center gap-2"
+								key={month.month}
+							>
 								<div
 									className="bg-bg-accent w-full rounded-md"
 									style={{

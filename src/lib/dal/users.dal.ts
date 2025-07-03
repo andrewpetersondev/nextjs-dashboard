@@ -80,7 +80,10 @@ export async function findUserForLogin(
 
 	try {
 		// Always fetch raw row, then map to UserEntity for type safety
-		const [userRow] = await db.select().from(users).where(eq(users.email, email));
+		const [userRow] = await db
+			.select()
+			.from(users)
+			.where(eq(users.email, email));
 
 		if (!userRow) {
 			return null;
@@ -166,7 +169,10 @@ export async function fetchUsersPages(db: Db, query: string): Promise<number> {
 			.select({ count: count(users.id) })
 			.from(users)
 			.where(
-				or(ilike(users.username, `%${query}%`), ilike(users.email, `%${query}%`)),
+				or(
+					ilike(users.username, `%${query}%`),
+					ilike(users.email, `%${query}%`),
+				),
 			);
 
 		// Defensive: Ensure total is a valid number
@@ -203,7 +209,10 @@ export async function fetchFilteredUsers(
 			.select()
 			.from(users)
 			.where(
-				or(ilike(users.username, `%${query}%`), ilike(users.email, `%${query}%`)),
+				or(
+					ilike(users.username, `%${query}%`),
+					ilike(users.email, `%${query}%`),
+				),
 			)
 			.orderBy(asc(users.username))
 			.limit(ITEMS_PER_PAGE_USERS)

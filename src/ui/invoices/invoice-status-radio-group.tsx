@@ -47,7 +47,9 @@ export function InvoiceStatusRadioGroup({
 					{options.map((opt) => (
 						<div className="flex items-center" key={opt.value}>
 							<input
-								aria-describedby={errors.length > 0 ? `${name}-error` : undefined}
+								aria-describedby={
+									errors.length > 0 ? `${name}-error` : undefined
+								}
 								aria-invalid={errors.length > 0}
 								className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
 								defaultChecked={value === opt.value}

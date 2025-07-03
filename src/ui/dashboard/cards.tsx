@@ -36,7 +36,11 @@ export async function CardWrapper({
 			<Card title="Collected" type="collected" value={data.paidInvoices} />
 			<Card title="Pending" type="pending" value={data.pendingInvoices} />
 			<Card title="Total Invoices" type="invoices" value={data.invoiceCount} />
-			<Card title="Total Customers" type="customers" value={data.customerCount} />
+			<Card
+				title="Total Customers"
+				type="customers"
+				value={data.customerCount}
+			/>
 		</>
 	);
 }
@@ -58,7 +62,9 @@ export function Card({
 				<Icon className="text-text-primary h-5 w-5" />
 				<H3 className="ml-2">{title}</H3>
 			</div>
-			<p className="truncate rounded-xl px-4 py-8 text-center text-2xl">{value}</p>
+			<p className="truncate rounded-xl px-4 py-8 text-center text-2xl">
+				{value}
+			</p>
 		</div>
 	);
 }

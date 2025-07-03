@@ -47,7 +47,9 @@ export async function createInvoiceDal(
 			return null;
 		}
 
-		return createdInvoice ? toInvoiceDto(toInvoiceEntity(createdInvoice)) : null;
+		return createdInvoice
+			? toInvoiceDto(toInvoiceEntity(createdInvoice))
+			: null;
 	} catch (error) {
 		logError("createInvoiceDal", error, { customerId });
 		throw new Error("Failed to create an invoice in a database.");
@@ -128,7 +130,9 @@ export async function deleteInvoiceDal(
 			.delete(invoices)
 			.where(eq(invoices.id, id))
 			.returning();
-		return deletedInvoice ? toInvoiceDto(toInvoiceEntity(deletedInvoice)) : null;
+		return deletedInvoice
+			? toInvoiceDto(toInvoiceEntity(deletedInvoice))
+			: null;
 	} catch (error) {
 		logError("deleteInvoiceDal", error, { id });
 		throw new Error("An unexpected error occurred. Please try again.");

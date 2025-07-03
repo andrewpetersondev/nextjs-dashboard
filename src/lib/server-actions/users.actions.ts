@@ -351,7 +351,10 @@ export async function updateUserAction(
 			});
 		}
 
-		const existingUser: UserDto | null = await readUserDal(db, toUserIdBrand(id));
+		const existingUser: UserDto | null = await readUserDal(
+			db,
+			toUserIdBrand(id),
+		);
 
 		if (!existingUser) {
 			return actionResult({
