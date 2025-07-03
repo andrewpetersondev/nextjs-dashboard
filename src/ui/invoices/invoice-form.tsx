@@ -1,9 +1,12 @@
 "use client";
 import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceFormFields } from "@/src/lib/definitions/invoices.types.ts";
+import type {
+	InvoiceCreateState,
+	InvoiceFormFields,
+} from "@/src/lib/definitions/invoices.types.ts";
 
 /**
- * InvoiceForm expects these props:
+ * _InvoiceForm expects these props:
  * - action: submit callback for the form
  * - state: server state with errors/message/success
  * - initialValues: initial invoice values (used for edit)
@@ -11,13 +14,13 @@ import type { InvoiceFormFields } from "@/src/lib/definitions/invoices.types.ts"
  * - pending: a submission loading flag
  * ...plus presentational props
  */
-export function InvoiceForm({
+export function _InvoiceForm({
 	action,
 	cancelHref,
 	description,
 	customers,
 	initialValues,
-	isEdit,
+	// isEdit,
 	pending,
 	state,
 	submitLabel,
@@ -30,7 +33,7 @@ export function InvoiceForm({
 	initialValues: Partial<InvoiceFormFields>;
 	isEdit: boolean;
 	pending: boolean;
-	state: any;
+	state: InvoiceCreateState;
 	submitLabel: string;
 	title: string;
 }) {
