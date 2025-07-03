@@ -12,7 +12,7 @@ import {
 	SIGNUP_SUBMIT_BUTTON,
 	SIGNUP_USERNAME_INPUT,
 } from "./constants.ts";
-import { generateMockSessionJWT } from "./session-mock.ts";
+import { generateMockSessionJwt } from "./session-mock.ts";
 import type {
 	CreateUserInput,
 	DbTaskResult,
@@ -249,7 +249,7 @@ Cypress.Commands.add(
 	(userId: string, role: UserRole = "user") => {
 		cy
 			.then(() => {
-				return generateMockSessionJWT(userId, role);
+				return generateMockSessionJwt(userId, role);
 			})
 			.then((token) => {
 				cy.setCookie(SESSION_COOKIE_NAME, token, {
