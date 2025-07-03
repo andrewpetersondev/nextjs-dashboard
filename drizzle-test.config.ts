@@ -9,7 +9,17 @@ import { POSTGRES_URL_TESTDB } from "./src/config/env.ts";
 
 console.log("drizzle-test.config.ts ...");
 
-export default defineConfig({
+// export default defineConfig({
+// 	casing: "snake_case",
+// 	dbCredentials: {
+// 		url: POSTGRES_URL_TESTDB,
+// 	},
+// 	dialect: "postgresql",
+// 	out: "./src/lib/db/drizzle/test/",
+// 	schema: "./src/lib/db/schema.ts",
+// });
+
+export const drizzleTestConfig = defineConfig({
 	casing: "snake_case",
 	dbCredentials: {
 		url: POSTGRES_URL_TESTDB,
