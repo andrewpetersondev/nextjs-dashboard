@@ -7,6 +7,9 @@ import "server-only";
 import { cookies } from "next/headers";
 import { z as zod } from "zod";
 import {
+	BASE64_PADDING_REGEX,
+	BASE64_PLUS_REGEX,
+	BASE64_SLASH_REGEX,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
 } from "@/src/lib/auth/constants.ts";
@@ -28,12 +31,10 @@ const generateSessionToken = (): string => {
 	crypto.getRandomValues(array);
 
 	const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join("");
-	const base64Encoded = btoa(base64)
-		.replace(/\+/g, "-")
-		.replace(/\//g, "_")
-		.replace(/=+$/, "");
-
-	return base64Encoded;
+	return btoa(base64)
+		.replace(BASE64_PLUS_REGEX, "-")
+		.replace(BASE64_SLASH_REGEX, "_")
+		.replace(BASE64_PADDING_REGEX, "");
 };
 
 /**
