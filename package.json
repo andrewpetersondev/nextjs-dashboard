@@ -16,7 +16,7 @@
 		"react-dom": "^19.1.0",
 		"server-only": "^0.0.1",
 		"use-debounce": "^10.0.5",
-		"zod": "^3.25.69"
+		"zod": "^3.25.71"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
