@@ -52,6 +52,7 @@ describe("Auth Commands", () => {
 					// Assert: check for error
 					expect(result.success).to.be.false;
 					expect(result.error).to.exist;
+					// biome-ignore lint/performance/useTopLevelRegex: <ignore for now>
 					expect(result.errorMessage).to.match(/could not be found/i);
 				});
 		});

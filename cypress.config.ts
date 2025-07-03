@@ -1,7 +1,8 @@
 import { defineConfig } from "cypress";
 import { dbTasks } from "./cypress/support/db-tasks.ts";
 
-export default defineConfig({
+// export default defineConfig({
+export const cypressConfig = defineConfig({
 	component: {
 		devServer: {
 			bundler: "webpack",
