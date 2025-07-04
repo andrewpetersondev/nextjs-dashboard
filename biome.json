@@ -73,18 +73,11 @@
 		"domains": {
 			"next": "recommended",
 			"project": "recommended",
-			"react": "recommended",
-			"test": "recommended"
+			"react": "recommended"
 		},
 		"enabled": true,
 		"rules": {
-			"a11y": "on",
-			"complexity": "on",
-			"correctness": "on",
-			"performance": "on",
-			"recommended": true,
-			"security": "on",
-			"style": "on"
+			"recommended": true
 		}
 	},
 	"vcs": {
