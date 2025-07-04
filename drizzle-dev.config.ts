@@ -1,6 +1,6 @@
-import "./envConfig";
+import "./envConfig.ts";
 import { defineConfig } from "drizzle-kit";
-import { POSTGRES_URL } from "./src/config/env";
+import { POSTGRES_URL } from "./src/config/env.ts";
 
 console.log("drizzle-dev.config.ts ...");
 

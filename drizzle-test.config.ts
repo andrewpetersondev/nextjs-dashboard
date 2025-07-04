@@ -1,6 +1,6 @@
-import "./envConfig";
+import "./envConfig.ts";
 import { defineConfig } from "drizzle-kit";
-import { POSTGRES_URL_TESTDB } from "./src/config/env";
+import { POSTGRES_URL_TESTDB } from "./src/config/env.ts";
 
 // WRONG inside Docker:
 // postgres://user:password@testDB:5433/database
