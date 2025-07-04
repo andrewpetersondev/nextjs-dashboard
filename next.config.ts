@@ -12,5 +12,4 @@ const nextConfig: NextConfig = {
 	},
 };
 
-// biome-ignore lint/style/noDefaultExport: <it is a Next.js config file>
 export default nextConfig;

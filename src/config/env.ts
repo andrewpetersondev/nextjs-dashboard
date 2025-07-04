@@ -3,15 +3,11 @@ import "server-only";
 import { z as zod } from "zod";
 
 const envSchema = zod.object({
-	// biome-ignore lint/style/useNamingConvention: <ignore>
 	POSTGRES_URL: zod.string().url(),
-	// biome-ignore lint/style/useNamingConvention: <ignore>
 	POSTGRES_URL_TESTDB: zod.string().url(),
-	// biome-ignore lint/style/useNamingConvention: <ignore>
 	SESSION_SECRET: zod.string(),
 });
 
-// biome-ignore lint/style/noProcessEnv: <ignore>
 const env = envSchema.safeParse(process.env);
 
 if (!env.success) {
