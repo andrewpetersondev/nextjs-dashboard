@@ -1,15 +1,8 @@
 # Tasks For Today
 
-## IMPLEMENT BRANDED TYPES FOR USERS
+## Builds are failing
 
-1. DB ENTITIES
-   1. id: UserId 
-   2. role: UserRole
-2. TYPES
-   1. create db row
-      1. UserRepository
-3. MAPPER
-   1.asdf 
-4. SERVER ACTION
-   1. add brands so proper types end up in dal calls
-5. DAL 
+- investigate edit/page.tsx for invoices because incorrect invoice type is passing through
+- also, the customers need a dto, entity, action, etc because of type issues
+- use next build to get better build errors. it uses webpack and is more verbose
+- 
