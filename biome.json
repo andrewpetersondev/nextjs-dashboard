@@ -27,7 +27,7 @@
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
-			"src/**/*",
+			"src/**/*.{ts,tsx,css,json,md}",
 			"cypress/**/*.{ts,tsx,css,json}",
 			"cypress.config.ts",
 			"drizzle-dev.config.ts",
