@@ -70,6 +70,7 @@
 		"biome:rage": "pnpm biome rage",
 		"biome:version": "pnpm biome version",
 		"build": "next build --turbopack",
+		"build:hcp:debug": "hcp vault-secrets run -- next build --turbopack --debug",
 		"clean": "pnpm cyp:clean && rm -rf .next",
 		"commit:check": "pnpm cyp:clean && pnpm biome:check",
 		"create-auth-secret": "pnpm dlx auth secret",
