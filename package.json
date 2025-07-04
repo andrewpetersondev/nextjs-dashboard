@@ -1,7 +1,7 @@
 {
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
-		"@next/env": "^15.3.4",
+		"@next/env": "^15.3.5",
 		"@tailwindcss/forms": "^0.5.10",
 		"autoprefixer": "^10.4.21",
 		"bcryptjs": "^3.0.2",
@@ -16,14 +16,14 @@
 		"react-dom": "^19.1.0",
 		"server-only": "^0.0.1",
 		"use-debounce": "^10.0.5",
-		"zod": "^3.25.71"
+		"zod": "^3.25.74"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
 		"@cypress/code-coverage": "^3.14.5",
 		"@eslint/eslintrc": "^3.3.1",
 		"@headlessui/react": "^2.2.4",
-		"@next/eslint-plugin-next": "^15.3.4",
+		"@next/eslint-plugin-next": "^15.3.5",
 		"@tailwindcss/postcss": "^4.1.11",
 		"@testing-library/cypress": "^10.0.3",
 		"@testing-library/dom": "^10.4.0",
@@ -40,7 +40,7 @@
 		"drizzle-kit": "^0.31.4",
 		"drizzle-seed": "^0.3.1",
 		"eslint": "^9.30.1",
-		"eslint-config-next": "^15.3.4",
+		"eslint-config-next": "^15.3.5",
 		"eslint-plugin-cypress": "^5.1.0",
 		"eslint-plugin-react": "^7.37.5",
 		"eslint-plugin-react-hooks": "^5.2.0",
