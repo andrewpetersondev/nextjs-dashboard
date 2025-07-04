@@ -5,12 +5,10 @@ import { getDB } from "@/src/lib/db/connection.ts";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.ts";
 import { CustomersTable } from "@/src/ui/customers/table.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Customers",
 };
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface CustomersSearchParams {
@@ -22,7 +20,6 @@ export interface CustomersPageProps {
 	searchParams?: Promise<CustomersSearchParams>;
 }
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: CustomersPageProps,
 ): Promise<JSX.Element> {

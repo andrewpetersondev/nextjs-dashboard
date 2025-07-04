@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { JSX } from "react";
 import { AcmeLogo } from "@/src/ui/acme-logo.tsx";
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function Page(): JSX.Element {
 	return (
 		<main className="flex min-h-screen flex-col p-6">

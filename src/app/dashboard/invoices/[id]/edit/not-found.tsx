@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { JSX } from "react";
 import { H2 } from "@/src/ui/headings.tsx";
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function NotFound(): JSX.Element {
 	return (
 		<main className="flex h-full flex-col items-center justify-center gap-2">

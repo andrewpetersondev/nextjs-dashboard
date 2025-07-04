@@ -12,13 +12,11 @@ import {
 	InvoicesTableSkeleton,
 } from "@/src/ui/skeletons.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Invoices",
 };
 
 // force this page to be dynamic, so it doesn't get cached
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface InvoicesSearchParams {
@@ -30,7 +28,6 @@ export interface InvoicesPageProps {
 	searchParams?: Promise<InvoicesSearchParams>;
 }
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {

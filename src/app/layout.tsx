@@ -4,7 +4,6 @@ import type React from "react";
 import type { JSX } from "react";
 import { notoSans } from "@/src/ui/style/fonts.ts";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	description: "The official Next.js Learn Dashboard is built with App Router.",
 	metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
 	},
 };
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function RootLayout({
 	children,
 }: {

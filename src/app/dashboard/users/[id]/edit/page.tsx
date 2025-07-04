@@ -7,13 +7,11 @@ import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditUserFormV2 } from "@/src/ui/users/edit-user-form-v2.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules:  ignore this rule
 export const metadata: Metadata = {
 	title: "Edit User",
 };
 
 // force this page to be dynamic, so it doesn't get cached
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface EditUserPageParams {
@@ -25,7 +23,6 @@ export interface EditUserPageProps {
 }
 
 // promises are allowed in props params because Partial Pre-Rendering is enabled
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: EditUserPageProps,
 ): Promise<JSX.Element> {

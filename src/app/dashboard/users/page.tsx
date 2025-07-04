@@ -9,12 +9,10 @@ import { InvoicesSearchSkeleton } from "@/src/ui/skeletons.tsx";
 import { CreateUser } from "@/src/ui/users/buttons.tsx";
 import { UsersTable } from "@/src/ui/users/users-table.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Users",
 };
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface UsersSearchParams {
@@ -26,7 +24,6 @@ export interface UsersPageProps {
 	searchParams?: Promise<UsersSearchParams>;
 }
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	dynamicUrl: UsersPageProps,
 ): Promise<JSX.Element> {

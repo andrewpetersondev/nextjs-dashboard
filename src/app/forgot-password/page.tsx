@@ -1,7 +1,6 @@
 import type { JSX } from "react";
 import { Heading } from "@/src/ui/auth/heading.tsx";
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default function ForgotPasswordPage(): JSX.Element {
 	return (
 		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">

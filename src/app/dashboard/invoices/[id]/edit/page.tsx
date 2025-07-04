@@ -10,12 +10,10 @@ import { H1 } from "@/src/ui/headings.tsx";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: ignore this rule
 export const metadata: Metadata = {
 	title: "Edit Invoice",
 };
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js requires this format
 export const dynamic = "force-dynamic";
 
 export interface EditInvoicePageParams {
@@ -26,7 +24,6 @@ export interface EditInvoicePageProps {
 	params: Promise<EditInvoicePageParams>;
 }
 
-// biome-ignore lint/style/noDefaultExport: page and layout probably need to be default exports
 export default async function Page(
 	props: EditInvoicePageProps,
 ): Promise<JSX.Element> {
