@@ -29,10 +29,8 @@ import {
 	type UserRole,
 } from "@/src/lib/definitions/users.types";
 import type { UserDto } from "@/src/lib/dto/user.dto";
-import {
-	toUserIdBrand,
-	toUserRoleBrand,
-} from "@/src/lib/mappers/user.mapper";
+import { toUserIdBrand, toUserRoleBrand } from "@/src/lib/mappers/user.mapper";
+import { stripProperties } from "@/src/lib/utils/utils";
 import {
 	actionResult,
 	getFormField,
@@ -40,7 +38,6 @@ import {
 	logError,
 	normalizeFieldErrors,
 } from "@/src/lib/utils/utils.server";
-import { stripProperties } from "@/src/lib/utils/utils";
 
 /**
  * Server Actions for User Management.
@@ -50,7 +47,6 @@ import { stripProperties } from "@/src/lib/utils/utils";
  *
  * @module server-actions/users
  */
-
 
 /**
  * Handles user signup.
