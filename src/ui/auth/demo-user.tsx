@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { demoUser } from "@/src/lib/server-actions/users.actions.ts";
-import { Button } from "@/src/ui/button.tsx";
+import { demoUser } from "@/src/lib/server-actions/users.actions";
+import { Button } from "@/src/ui/button";
 
 export function DemoUser({ text }: { text: string }): JSX.Element {
 	return (

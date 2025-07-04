@@ -1,11 +1,11 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import type { FormState } from "@/src/lib/definitions/form.ts";
-import type { EditUserFormFields } from "@/src/lib/definitions/users.types.ts";
-import type { UserDto } from "@/src/lib/dto/user.dto.ts";
-import { updateUserAction } from "@/src/lib/server-actions/users.actions.ts";
-import { UserForm } from "@/src/ui/users/user-form.tsx";
+import type { FormState } from "@/src/lib/definitions/form";
+import type { EditUserFormFields } from "@/src/lib/definitions/users.types";
+import type { UserDto } from "@/src/lib/dto/user.dto";
+import { updateUserAction } from "@/src/lib/server-actions/users.actions";
+import { UserForm } from "@/src/ui/users/user-form";
 
 type EditUserFormState = Readonly<{
 	errors?: {

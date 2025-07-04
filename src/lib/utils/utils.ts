@@ -1,4 +1,4 @@
-import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue.ts";
+import type { Revenue, YAxisResult } from "@/src/lib/definitions/revenue";
 
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
 
@@ -46,6 +46,7 @@ export const stripProperties = (
 ) => {
 	return Object.fromEntries(
 		Object.entries(obj).filter(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			([_, v]) =>
 				v !== undefined && // Ignore undefined
 				v !== null && // Ignore null

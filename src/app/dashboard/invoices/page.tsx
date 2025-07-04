@@ -1,20 +1,20 @@
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import { H1 } from "@/src/ui/headings.tsx";
-import { CreateInvoice } from "@/src/ui/invoices/buttons.tsx";
-import { Pagination } from "@/src/ui/invoices/pagination.tsx";
-import { InvoicesTable } from "@/src/ui/invoices/table.tsx";
-import { Search } from "@/src/ui/search.tsx";
+import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
+import { getDB } from "@/src/lib/db/connection";
+import { H1 } from "@/src/ui/headings";
+import { CreateInvoice } from "@/src/ui/invoices/buttons";
+import { Pagination } from "@/src/ui/invoices/pagination";
+import { InvoicesTable } from "@/src/ui/invoices/table";
+import { Search } from "@/src/ui/search";
 import {
 	InvoicesSearchSkeleton,
 	InvoicesTableSkeleton,
-} from "@/src/ui/skeletons.tsx";
+} from "@/src/ui/skeletons";
 
-export const metadata: Metadata = {
-	title: "Invoices",
-};
+// export const metadata: Metadata = {
+// 	title: "Invoices",
+// };
 
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";

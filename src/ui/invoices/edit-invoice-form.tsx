@@ -1,17 +1,17 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types.ts";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
-import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
-import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
-import { Label } from "@/src/ui/components/label.tsx";
-import { CustomerSelect } from "@/src/ui/invoices/customer-select.tsx";
-import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input.tsx";
-import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group.tsx";
-import { ServerMessage } from "@/src/ui/users/server-message.tsx";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import { updateInvoiceAction } from "@/src/lib/server-actions/invoices";
+import { FormActionRow } from "@/src/ui/components/form-action-row";
+import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
+import { Label } from "@/src/ui/components/label";
+import { CustomerSelect } from "@/src/ui/invoices/customer-select";
+import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input";
+import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group";
+import { ServerMessage } from "@/src/ui/users/server-message";
 
 export function EditInvoiceForm({
 	invoice,

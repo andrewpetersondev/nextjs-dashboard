@@ -1,9 +1,9 @@
 import type { JSX } from "react";
-import { fetchFilteredInvoices } from "@/src/lib/dal/invoices.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types.ts";
-import { DesktopTable } from "@/src/ui/invoices/desktop-table.tsx";
-import { MobileTable } from "@/src/ui/invoices/mobile-table.tsx";
+import { fetchFilteredInvoices } from "@/src/lib/dal/invoices.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types";
+import { DesktopTable } from "@/src/ui/invoices/desktop-table";
+import { MobileTable } from "@/src/ui/invoices/mobile-table";
 
 export async function InvoicesTable({
 	query,

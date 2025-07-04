@@ -1,7 +1,7 @@
 import type React from "react";
-import { FieldError } from "@/src/ui/auth/field-error.tsx";
-import { Label } from "@/src/ui/components/label.tsx";
-import { SelectMenu } from "@/src/ui/components/select-menu.tsx";
+import { FieldError } from "@/src/ui/auth/field-error";
+import { Label } from "@/src/ui/components/label";
+import { SelectMenu } from "@/src/ui/components/select-menu";
 
 type SelectFieldProps<T extends { id: string | number; name: string }> = {
 	label: string;

@@ -7,21 +7,21 @@ import {
 	deleteInvoiceDal,
 	readInvoiceDal,
 	updateInvoiceDal,
-} from "@/src/lib/dal/invoices.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types.ts";
+} from "@/src/lib/dal/invoices.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
 import {
 	CreateInvoiceSchema,
 	type InvoiceCreateState,
 	UpdateInvoiceSchema,
-} from "@/src/lib/definitions/invoices.types.ts";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
+} from "@/src/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 import {
 	toCustomerIdBrand,
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
-} from "@/src/lib/mappers/invoice.mapper.ts";
-import { getFormField } from "@/src/lib/utils/utils.server.ts";
+} from "@/src/lib/mappers/invoice.mapper";
+import { getFormField } from "@/src/lib/utils/utils.server";
 
 /**
  * Server action to create a new invoice.

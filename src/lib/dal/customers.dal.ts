@@ -1,14 +1,14 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection.ts";
-import { customers, invoices } from "@/src/lib/db/schema.ts";
+import type { Db } from "@/src/lib/db/connection";
+import { customers, invoices } from "@/src/lib/db/schema";
 import type {
 	CustomerField,
 	CustomersTableRow,
 	FormattedCustomersTableRow,
-} from "@/src/lib/definitions/customers.ts";
-import { formatCurrency } from "@/src/lib/utils/utils.ts";
+} from "@/src/lib/definitions/customers";
+import { formatCurrency } from "@/src/lib/utils/utils";
 
 export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
 	try {

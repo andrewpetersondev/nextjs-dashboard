@@ -1,14 +1,14 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import { sessions } from "@/src/lib/db/schema.ts";
+import type { Db } from "@/src/lib/db/connection";
+import { getDB } from "@/src/lib/db/connection";
+import { sessions } from "@/src/lib/db/schema";
 import type {
 	DbSessionRow,
 	SessionRecord,
-} from "@/src/lib/definitions/session.ts";
-import { logger } from "@/src/lib/utils/logger.ts";
+} from "@/src/lib/definitions/session";
+import { logger } from "@/src/lib/utils/logger";
 
 /**
  * Maps a DbSessionRow to a SessionRecord for use in the app layer.
@@ -58,6 +58,7 @@ export async function insertSession(session: SessionRecord): Promise<void> {
  * @param sessionId - The session's UUID.
  * @throws If the delete fails.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _deleteSessionById(sessionId: string): Promise<void> {
 	try {
 		const db: Db = getDB();
@@ -80,6 +81,7 @@ async function _deleteSessionById(sessionId: string): Promise<void> {
  * @param sessionId - The session's UUID.
  * @returns The session record, or undefined if not found.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _findSessionById(
 	sessionId: string,
 ): Promise<SessionRecord | undefined> {
@@ -104,6 +106,7 @@ async function _findSessionById(
  * @param token - The session token.
  * @returns The session record, or undefined if not found.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _findSessionByToken(
 	token: string,
 ): Promise<SessionRecord | undefined> {

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { JSX } from "react";
-import { AcmeLogo } from "@/src/ui/acme-logo.tsx";
-import { NavLinksWrapper } from "@/src/ui/dashboard/nav-links-wrapper.tsx";
-import { LogoutForm } from "@/src/ui/logout-form.tsx";
+import { AcmeLogo } from "@/src/ui/acme-logo";
+import { NavLinksWrapper } from "@/src/ui/dashboard/nav-links-wrapper";
+import { LogoutForm } from "@/src/ui/logout-form";
 
 export function SideNav(): JSX.Element {
 	return (

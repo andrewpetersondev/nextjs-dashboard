@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/users.types.ts";
+import type { UserRole } from "@/src/lib/definitions/users.types";
 
 /**
  ** User Data Transfer Object (DTO) for frontend.

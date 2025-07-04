@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { forwardRef, type JSX } from "react";
-import { ContainerInner, ContainerOuter } from "@/src/ui/container.tsx";
+import { ContainerInner, ContainerOuter } from "@/src/ui/container";
 
 export const _Background = forwardRef<
 	React.ElementRef<"div">,

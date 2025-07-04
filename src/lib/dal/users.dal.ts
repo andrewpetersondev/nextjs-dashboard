@@ -1,30 +1,30 @@
-import "server-only";
 
 /**
  * User Data Access Layer (DAL) for CRUD operations on User entities.
  * Uses Drizzle ORM for database access.
  */
+import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import { comparePassword, hashPassword } from "@/src/lib/auth/password.ts";
-import type { Db } from "@/src/lib/db/connection.ts";
-import { demoUserCounters, users } from "@/src/lib/db/schema.ts";
-import { ITEMS_PER_PAGE_USERS } from "@/src/lib/definitions/constants.ts";
+import { comparePassword, hashPassword } from "@/src/lib/auth/password";
+import type { Db } from "@/src/lib/db/connection";
+import { demoUserCounters, users } from "@/src/lib/db/schema";
+import { ITEMS_PER_PAGE_USERS } from "@/src/lib/definitions/constants";
 import type {
 	UserId,
 	UserRole,
 	UserUpdatePatch,
-} from "@/src/lib/definitions/users.types.ts";
-import type { UserDto } from "@/src/lib/dto/user.dto.ts";
+} from "@/src/lib/definitions/users.types";
+import type { UserDto } from "@/src/lib/dto/user.dto";
 import {
 	dbRowToUserEntity,
 	toUserDto,
 	toUserRoleBrand,
-} from "@/src/lib/mappers/user.mapper.ts";
+} from "@/src/lib/mappers/user.mapper";
 import {
 	createRandomPassword,
 	logError,
-} from "@/src/lib/utils/utils.server.ts";
+} from "@/src/lib/utils/utils.server";
 
 /**
  * Inserts a new user record into the database.

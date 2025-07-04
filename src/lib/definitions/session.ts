@@ -2,7 +2,7 @@ import { z as zod } from "zod";
 import {
 	roleSchema,
 	type UserRole,
-} from "@/src/lib/definitions/users.types.ts";
+} from "@/src/lib/definitions/users.types";
 
 /**
  * Payload for encrypting a session (JWT or similar).

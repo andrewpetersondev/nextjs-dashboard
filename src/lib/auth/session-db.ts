@@ -12,9 +12,9 @@ import {
 	BASE64_SLASH_REGEX,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants.ts";
-import type { UserRole } from "@/src/lib/definitions/users.types.ts";
-import { logger } from "@/src/lib/utils/logger.ts";
+} from "@/src/lib/auth/constants";
+import type { UserRole } from "@/src/lib/definitions/users.types";
+import { logger } from "@/src/lib/utils/logger";
 
 // --- Db session logic here ---
 // export createDbSession, generateSessionToken, generateUUID
@@ -56,6 +56,7 @@ const generateUuid = (): string => {
  *   - This function is Node.js-only and must never be imported in Edge runtime (middleware).
  *   - All user input is validated.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _createDbSession(
 	userId: string,
 	role: UserRole = "user",

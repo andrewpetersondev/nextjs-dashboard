@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteInvoiceFormAction } from "@/src/lib/server-actions/invoices.ts";
+import { deleteInvoiceFormAction } from "@/src/lib/server-actions/invoices";
 
 export function CreateInvoice(): JSX.Element {
 	return (

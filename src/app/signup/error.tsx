@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useEffect } from "react";
-import { H2 } from "@/src/ui/headings.tsx";
+import { H2 } from "@/src/ui/headings";
 
 export default function SignupError({
 	error,

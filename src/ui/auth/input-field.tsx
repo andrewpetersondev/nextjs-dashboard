@@ -5,8 +5,8 @@ import {
 	type JSX,
 	type ReactNode,
 } from "react";
-import { FieldError } from "@/src/ui/auth/field-error.tsx";
-import { InputFieldCard } from "@/src/ui/components/input-field-card.tsx";
+import { FieldError } from "@/src/ui/auth/field-error";
+import { InputFieldCard } from "@/src/ui/components/input-field-card";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 	/** Unique id for the input and label */

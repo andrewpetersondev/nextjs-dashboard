@@ -1,5 +1,5 @@
 import { z as zod } from "zod";
-import type { FormState } from "@/src/lib/definitions/form.ts";
+import type { FormState } from "@/src/lib/definitions/form";
 
 // --- Entity Types ---
 

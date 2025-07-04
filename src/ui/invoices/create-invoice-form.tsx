@@ -8,11 +8,11 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types.ts";
-import { createInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
-import { Button } from "@/src/ui/button.tsx";
-import { InvoiceServerMessage } from "@/src/ui/invoices/invoice-server-message.tsx";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
+import { createInvoiceAction } from "@/src/lib/server-actions/invoices";
+import { Button } from "@/src/ui/button";
+import { InvoiceServerMessage } from "@/src/ui/invoices/invoice-server-message";
 
 export function CreateInvoiceForm({
 	customers,

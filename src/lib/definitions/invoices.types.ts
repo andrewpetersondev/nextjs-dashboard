@@ -1,6 +1,6 @@
 import { z as zod } from "zod";
-import type { FormState } from "@/src/lib/definitions/form.ts";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
+import type { FormState } from "@/src/lib/definitions/form";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 
 // ids and statuses: domain types
 /**

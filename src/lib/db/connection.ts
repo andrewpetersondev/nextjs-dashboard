@@ -5,8 +5,8 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/src/config/env.ts";
-import * as schema from "@/src/lib/db/schema.ts";
+import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/src/config/env";
+import * as schema from "@/src/lib/db/schema";
 
 // Supported database types
 export type DbType = "dev" | "test";
@@ -20,6 +20,7 @@ export type Db = NodePgDatabase<typeof schema> & {
  * @deprecated
  * Map DbType to environment variable names
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _DB_ENV_VARS: Record<DbType, string> = {
 	dev: "POSTGRES_URL",
 	test: "POSTGRES_URL_TESTDB",
@@ -43,7 +44,6 @@ function getDatabaseUrl(type: DbType): string {
  * Returns a Drizzle database instance for the specified environment.
  * @param type - "dev" (default) or "test"
  */
-
 export function getDB(type: DbType = "test"): Db {
 	const url = getDatabaseUrl(type);
 	return drizzle({ casing: "snake_case", connection: url, schema }) as Db;

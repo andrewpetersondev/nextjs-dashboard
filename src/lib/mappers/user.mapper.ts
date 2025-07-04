@@ -1,6 +1,6 @@
-import type { UserEntity } from "@/src/lib/db/entities/user.ts";
-import type { UserId, UserRole } from "@/src/lib/definitions/users.types.ts";
-import type { UserDto } from "@/src/lib/dto/user.dto.ts";
+import type { UserEntity } from "@/src/lib/db/entities/user";
+import type { UserId, UserRole } from "@/src/lib/definitions/users.types";
+import type { UserDto } from "@/src/lib/dto/user.dto";
 
 /**
  * Constants for default values.

@@ -1,8 +1,8 @@
 import type { JSX } from "react";
-import { fetchFilteredUsers } from "@/src/lib/dal/users.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { UserDto } from "@/src/lib/dto/user.dto.ts";
-import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons.tsx";
+import { fetchFilteredUsers } from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { UserDto } from "@/src/lib/dto/user.dto";
+import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 
 export async function UsersTable({
 	query,

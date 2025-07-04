@@ -6,12 +6,12 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUserAction } from "@/src/lib/server-actions/users.actions.ts";
-import { InputField } from "@/src/ui/auth/input-field.tsx";
-import { FormActionRow } from "@/src/ui/components/form-action-row.tsx";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button.tsx";
-import { H1 } from "@/src/ui/headings.tsx";
-import { ServerMessage } from "@/src/ui/users/server-message.tsx";
+import { createUserAction } from "@/src/lib/server-actions/users.actions";
+import { InputField } from "@/src/ui/auth/input-field";
+import { FormActionRow } from "@/src/ui/components/form-action-row";
+import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
+import { H1 } from "@/src/ui/headings";
+import { ServerMessage } from "@/src/ui/users/server-message";
 
 type CreateUserFormState = Readonly<{
 	errors?: {

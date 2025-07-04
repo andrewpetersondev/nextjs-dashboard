@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types.ts";
+import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
 
 /**
  * Props for InvoiceServerMessage component.
@@ -21,11 +21,8 @@ export function InvoiceServerMessage({
 	showAlert,
 }: InvoiceServerMessageProps): JSX.Element {
 	// Constants for styling to avoid magic strings
-	// biome-ignore lint/style/useNamingConvention: <it is a constant>
 	const SUCCESS_STYLES = "border-green-300 bg-green-50 text-green-800";
-	// biome-ignore lint/style/useNamingConvention: <it is a constant>
 	const ERROR_STYLES = "border-red-300 bg-red-50 text-red-800";
-	// biome-ignore lint/style/useNamingConvention: <it is a constant>
 	const BASE_STYLES =
 		"pointer-events-auto absolute left-0 right-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500";
 

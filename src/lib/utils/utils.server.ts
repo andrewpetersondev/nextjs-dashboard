@@ -3,12 +3,12 @@ import "server-only";
 import type {
 	CreateInvoiceResult,
 	InvoiceErrorMap,
-} from "@/src/lib/definitions/invoices.types.ts";
+} from "@/src/lib/definitions/invoices.types";
 import {
 	type ActionResult,
 	USER_ROLES,
 	type UserRole,
-} from "@/src/lib/definitions/users.types.ts";
+} from "@/src/lib/definitions/users.types";
 
 // Note: Utility functions in this file are server-only.
 // Note: Utility functions should use const (arrow functions) for better performance and readability.

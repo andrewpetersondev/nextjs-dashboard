@@ -2,7 +2,7 @@ import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import type { JSX } from "react";
-import { AcmeLogo } from "@/src/ui/acme-logo.tsx";
+import { AcmeLogo } from "@/src/ui/acme-logo";
 
 export default function Page(): JSX.Element {
 	return (

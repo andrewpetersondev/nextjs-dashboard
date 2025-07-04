@@ -5,8 +5,8 @@ import {
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import type { CardData } from "@/src/lib/dal/data.dal.ts";
-import { H3 } from "@/src/ui/headings.tsx";
+import type { CardData } from "@/src/lib/dal/data.dal";
+import { H3 } from "@/src/ui/headings";
 
 /**
  * Card types for dashboard.

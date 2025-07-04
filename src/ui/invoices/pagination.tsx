@@ -9,7 +9,7 @@ import {
 	useSearchParams,
 } from "next/navigation";
 import type { JSX } from "react";
-import { generatePagination } from "@/src/lib/utils/utils.client.ts";
+import { generatePagination } from "@/src/lib/utils/utils.client";
 
 export function Pagination({
 	totalPages,

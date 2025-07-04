@@ -2,23 +2,23 @@ import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { SESSION_SECRET } from "@/src/config/env.ts";
+import { SESSION_SECRET } from "@/src/config/env";
 import {
 	JWT_EXPIRATION,
 	ONE_DAY_MS,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants.ts";
-import { getCookieValue } from "@/src/lib/auth/utils.ts";
+} from "@/src/lib/auth/constants";
+import { getCookieValue } from "@/src/lib/auth/utils";
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
-} from "@/src/lib/definitions/session.ts";
-import type { UserRole } from "@/src/lib/definitions/users.types.ts";
-import { ValidationError } from "@/src/lib/errors/validation-error.ts";
-import { logger } from "@/src/lib/utils/logger.ts";
+} from "@/src/lib/definitions/session";
+import type { UserRole } from "@/src/lib/definitions/users.types";
+import { ValidationError } from "@/src/lib/errors/validation-error";
+import { logger } from "@/src/lib/utils/logger";
 
 // --- JWT session logic here ---
 // export encrypt, decrypt, createSession, updateSession, deleteSession
@@ -220,7 +220,7 @@ export async function createSession(
  * Updates the session cookie's expiration if valid.
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _updateSession(): Promise<null | void> {
 	const cookieStore = await cookies();
 

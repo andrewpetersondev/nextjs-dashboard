@@ -1,6 +1,6 @@
 import { type ZodType, z as zod } from "zod";
-import type { UserEntity } from "@/src/lib/db/entities/user.ts";
-import type { FormState } from "@/src/lib/definitions/form.ts";
+import type { UserEntity } from "@/src/lib/db/entities/user";
+import type { FormState } from "@/src/lib/definitions/form";
 
 // ---ids and roles: domain types---
 /**

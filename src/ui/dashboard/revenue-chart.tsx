@@ -1,10 +1,10 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
-import { fetchRevenue } from "@/src/lib/dal/revenue.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { Revenue } from "@/src/lib/definitions/revenue.ts";
-import { generateYAxis } from "@/src/lib/utils/utils.ts";
-import { H2, H3 } from "@/src/ui/headings.tsx";
+import { fetchRevenue } from "@/src/lib/dal/revenue.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { Revenue } from "@/src/lib/definitions/revenue";
+import { generateYAxis } from "@/src/lib/utils/utils";
+import { H2, H3 } from "@/src/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
 	const db = getDB();

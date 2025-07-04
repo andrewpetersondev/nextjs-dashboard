@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
-import { Button } from "@/src/ui/button.tsx";
+import { Button } from "@/src/ui/button";
 
 export interface FormSubmitButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement> {

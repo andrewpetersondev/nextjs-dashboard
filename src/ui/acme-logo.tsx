@@ -1,6 +1,6 @@
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { H1 } from "@/src/ui/headings.tsx";
+import { H1 } from "@/src/ui/headings";
 
 export function AcmeLogo(): JSX.Element {
 	return (

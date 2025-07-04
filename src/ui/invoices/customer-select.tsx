@@ -1,9 +1,9 @@
 import type React from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers.ts";
+import type { CustomerField } from "@/src/lib/definitions/customers";
 import {
 	SelectMenu,
 	type SelectMenuProps,
-} from "@/src/ui/components/select-menu.tsx";
+} from "@/src/ui/components/select-menu";
 
 /**
  * Props for CustomerSelect component.

@@ -2,17 +2,17 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState } from "react";
-import { login } from "@/src/lib/server-actions/users.actions.ts";
-import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button.tsx";
-import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link.tsx";
-import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user.tsx";
-import { DemoUser } from "@/src/ui/auth/demo-user.tsx";
-import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link.tsx";
-import { Heading } from "@/src/ui/auth/heading.tsx";
-import { InputField } from "@/src/ui/auth/input-field.tsx";
-import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox.tsx";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button.tsx";
-import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper.tsx";
+import { login } from "@/src/lib/server-actions/users.actions";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
+import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
+import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
+import { DemoUser } from "@/src/ui/auth/demo-user";
+import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
+import { Heading } from "@/src/ui/auth/heading";
+import { InputField } from "@/src/ui/auth/input-field";
+import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
+import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
+import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
 
 type LoginState = {
 	errors?: {

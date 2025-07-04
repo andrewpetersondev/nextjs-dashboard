@@ -4,7 +4,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { InputField } from "@/src/ui/auth/input-field.tsx";
+import { InputField } from "@/src/ui/auth/input-field";
 
 type ErrorType = {
 	username?: string[];

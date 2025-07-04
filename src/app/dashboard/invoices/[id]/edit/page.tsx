@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { CustomerField } from "@/src/lib/definitions/customers.ts";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto.ts";
-import { readInvoiceAction } from "@/src/lib/server-actions/invoices.ts";
-import { H1 } from "@/src/ui/headings.tsx";
-import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs.tsx";
-import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form.tsx";
+import { fetchCustomers } from "@/src/lib/dal/customers.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import { readInvoiceAction } from "@/src/lib/server-actions/invoices";
+import { H1 } from "@/src/ui/headings";
+import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
+import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form";
 
 export const metadata: Metadata = {
 	title: "Edit Invoice",

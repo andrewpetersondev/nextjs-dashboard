@@ -1,18 +1,9 @@
 "use server";
 
-/**
- * Server Actions for User Management.
- *
- * Handles business logic and delegates all database operations to the DAL.
- * All user input is validated and sanitized.
- *
- * @module server-actions/users
- */
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { hashPassword } from "@/src/lib/auth/password.ts";
-import { createSession, deleteSession } from "@/src/lib/auth/session-jwt.ts";
+import { hashPassword } from "@/src/lib/auth/password";
+import { createSession, deleteSession } from "@/src/lib/auth/session-jwt";
 import {
 	createDemoUser,
 	createUserDal,
@@ -22,9 +13,9 @@ import {
 	findUserForLogin,
 	readUserDal,
 	updateUserDal,
-} from "@/src/lib/dal/users.dal.ts";
-import { getDB } from "@/src/lib/db/connection.ts";
-import type { FormState } from "@/src/lib/definitions/form.ts";
+} from "@/src/lib/dal/users.dal";
+import { getDB } from "@/src/lib/db/connection";
+import type { FormState } from "@/src/lib/definitions/form";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -36,20 +27,30 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 	type UserRole,
-} from "@/src/lib/definitions/users.types.ts";
-import type { UserDto } from "@/src/lib/dto/user.dto.ts";
+} from "@/src/lib/definitions/users.types";
+import type { UserDto } from "@/src/lib/dto/user.dto";
 import {
 	toUserIdBrand,
 	toUserRoleBrand,
-} from "@/src/lib/mappers/user.mapper.ts";
+} from "@/src/lib/mappers/user.mapper";
 import {
 	actionResult,
 	getFormField,
 	getValidUserRole,
 	logError,
 	normalizeFieldErrors,
-} from "@/src/lib/utils/utils.server.ts";
-import { stripProperties } from "@/src/lib/utils/utils.ts";
+} from "@/src/lib/utils/utils.server";
+import { stripProperties } from "@/src/lib/utils/utils";
+
+/**
+ * Server Actions for User Management.
+ *
+ * Handles business logic and delegates all database operations to the DAL.
+ * All user input is validated and sanitized.
+ *
+ * @module server-actions/users
+ */
+
 
 /**
  * Handles user signup.
