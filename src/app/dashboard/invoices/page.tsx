@@ -1,4 +1,4 @@
-// import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
 import { getDB } from "@/src/lib/db/connection";
@@ -12,9 +12,9 @@ import {
 	InvoicesTableSkeleton,
 } from "@/src/ui/skeletons";
 
-// export const metadata: Metadata = {
-// 	title: "Invoices",
-// };
+export const metadata: Metadata = {
+	title: "Invoices",
+};
 
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
