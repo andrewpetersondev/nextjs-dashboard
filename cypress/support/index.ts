@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noUndeclaredVariables: biome does not have great support for cypress yet */
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
 import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
@@ -301,7 +300,6 @@ Cypress.Commands.add(
  * TypeScript augmentation for custom Cypress commands.
  */
 declare global {
-	// biome-ignore lint/style/noNamespace: Cypress type augmentation
 	namespace Cypress {
 		interface Chainable {
 			/**

@@ -1,7 +1,6 @@
 import { defineConfig } from "cypress";
 import { dbTasks } from "./cypress/support/db-tasks.ts";
 
-// biome-ignore lint/style/noDefaultExport: <default export is required by Cypress>
 export default defineConfig({
 	component: {
 		devServer: {
@@ -18,8 +17,6 @@ export default defineConfig({
 		},
 	},
 	env: {
-		// biome-ignore lint/style/noProcessEnv: <ignore>
-		// biome-ignore lint/style/useNamingConvention: <ignore>
 		SESSION_SECRET: process.env.SESSION_SECRET,
 	},
 	fileServerFolder: ".",
