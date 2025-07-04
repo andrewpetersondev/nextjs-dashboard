@@ -207,7 +207,6 @@ export async function createSession(
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
-		// biome-ignore lint/style/noProcessEnv: it works
 		secure: process.env.NODE_ENV === "production",
 	});
 
@@ -222,7 +221,6 @@ export async function createSession(
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
 
-// biome-ignore lint/suspicious/noConfusingVoidType: <function is not used, but set up with null | void so don't change it for now>
 async function _updateSession(): Promise<null | void> {
 	const cookieStore = await cookies();
 
@@ -278,7 +276,6 @@ async function _updateSession(): Promise<null | void> {
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
-		// biome-ignore lint/style/noProcessEnv: it works
 		secure: process.env.NODE_ENV === "production",
 	});
 

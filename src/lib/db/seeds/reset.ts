@@ -1,6 +1,5 @@
 import { reset } from "drizzle-seed";
 import { nodeEnvDb } from "@/src/lib/db/dev-database.ts";
-// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
 
 async function main(): Promise<void> {

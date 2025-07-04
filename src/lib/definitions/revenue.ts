@@ -3,7 +3,6 @@ export type Revenue = {
 	revenue: number;
 };
 
-// biome-ignore lint/style/useNamingConvention: ignore
 export interface YAxisResult {
 	yAxisLabels: string[];
 	topLabel: number;

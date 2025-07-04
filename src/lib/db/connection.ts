@@ -6,7 +6,6 @@ import {
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/src/config/env.ts";
-// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "@/src/lib/db/schema.ts";
 
 // Supported database types
@@ -45,7 +44,6 @@ function getDatabaseUrl(type: DbType): string {
  * @param type - "dev" (default) or "test"
  */
 
-// biome-ignore lint/style/useNamingConvention: I like this name
 export function getDB(type: DbType = "test"): Db {
 	const url = getDatabaseUrl(type);
 	return drizzle({ casing: "snake_case", connection: url, schema }) as Db;

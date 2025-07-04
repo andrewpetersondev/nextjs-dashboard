@@ -149,9 +149,7 @@ export const BaseUserFormSchema = zod.object({
  * Role: enum of allowed roles (required).
  */
 export const roleSchema = zod.enum(USER_ROLES, {
-	// biome-ignore lint/style/useNamingConvention: <-- this is a zod schema, not a form field -->
 	invalid_type_error: "Invalid user role.",
-	// biome-ignore lint/style/useNamingConvention: <-- this is a zod schema, not a form field -->
 	required_error: "Role is required.",
 });
 /**
@@ -159,7 +157,6 @@ export const roleSchema = zod.enum(USER_ROLES, {
  */
 export const CreateUserFormSchema: ZodType<CreateUserFormFields> =
 	BaseUserFormSchema.extend({
-		// biome-ignore lint/style/useNamingConvention: ignore
 		role: zod.enum(USER_ROLES, { invalid_type_error: "Please select a role" }),
 	});
 /**

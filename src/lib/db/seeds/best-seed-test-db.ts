@@ -3,7 +3,6 @@
 
 import bcryptjs from "bcryptjs";
 import { seed } from "drizzle-seed";
-// biome-ignore lint/performance/noNamespaceImport: ignore
 import * as schema from "../schema.ts";
 import { nodeEnvTestDb } from "../test-database.ts";
 

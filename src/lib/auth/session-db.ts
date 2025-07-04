@@ -90,7 +90,6 @@ async function _createDbSession(
 		httpOnly: true,
 		path: "/",
 		sameSite: "lax",
-		// biome-ignore lint/style/noProcessEnv: i need it
 		secure: process.env.NODE_ENV === "production",
 	});
 

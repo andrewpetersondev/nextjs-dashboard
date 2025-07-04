@@ -10,9 +10,7 @@ console.log("dev-database.ts ...");
 
 let url: string;
 
-// biome-ignore lint/style/noProcessEnv: I need it.
 if (process.env.POSTGRES_URL) {
-	// biome-ignore lint/style/noProcessEnv: I need it.
 	url = process.env.POSTGRES_URL;
 } else {
 	console.error("POSTGRES_URL is not set.");

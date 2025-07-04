@@ -22,9 +22,7 @@ export interface SocialLoginButtonProps {
 }
 
 const providerIcons: Record<Provider, React.ReactNode> = {
-	// biome-ignore lint/style/useNamingConvention: it is the proper way
 	GitHub: <GitHubIcon />,
-	// biome-ignore lint/style/useNamingConvention: it is the proper way
 	Google: <GoogleIcon />,
 };
 

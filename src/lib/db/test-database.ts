@@ -10,9 +10,7 @@ console.log("test-database.ts ...");
 
 let url: string;
 
-// biome-ignore lint/style/noProcessEnv: I need it.
 if (process.env.POSTGRES_URL_TESTDB) {
-	// biome-ignore lint/style/noProcessEnv: I need it.
 	url = process.env.POSTGRES_URL_TESTDB;
 	console.log("Using POSTGRES_URL_TESTDB:", url);
 } else {

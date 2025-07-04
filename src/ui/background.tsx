@@ -12,8 +12,7 @@ export const _Background = forwardRef<
 	const patternClass =
 		pattern === "grid"
 			? "bg-grid-pattern"
-			: // biome-ignore lint/style/noNestedTernary: <unused anyway>
-				pattern === "dot"
+			: pattern === "dot"
 				? "bg-dot-pattern"
 				: "";
 	return (
