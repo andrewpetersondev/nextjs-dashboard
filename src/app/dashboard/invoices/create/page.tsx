@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 	title: "Create Invoice",
 };
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+export const dynamic = "force-dynamic";
 
 export default async function Page(): Promise<JSX.Element> {
 	const db = getDB();

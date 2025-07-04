@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 	title: "Customers",
 };
 
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 export const dynamic = "force-dynamic";
 
 export interface CustomersSearchParams {

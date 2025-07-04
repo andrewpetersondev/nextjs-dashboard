@@ -7,7 +7,8 @@ import { AdminDashboard } from "@/src/ui/dashboard/admin-dashboard";
 import { MiddlewareCard } from "@/src/ui/dashboard/middleware-card";
 import { UserDashboard } from "@/src/ui/dashboard/user-dashboard";
 
-export const dynamic = "force-dynamic"; // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+export const dynamic = "force-dynamic";
 
 export default async function Page(): Promise<JSX.Element> {
 	const session: SessionVerificationResult = await verifySessionOptimistic();
