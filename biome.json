@@ -27,6 +27,7 @@
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
+			"!src/lib/db/drizzle/**/*",
 			"src/**/*.{ts,tsx,css,json,md}",
 			"cypress/**/*.{ts,tsx,css,json}",
 			"cypress.config.ts",
@@ -36,8 +37,7 @@
 			"next.config.ts",
 			"package.json",
 			"postcss.config.mjs",
-			"tsconfig.json",
-			"!src/lib/db/drizzle/**/*"
+			"tsconfig.json"
 		]
 	},
 	"formatter": {
