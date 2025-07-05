@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { fetchUsersPages } from "@/src/lib/dal/users.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { readUsersPagesAction } from "@/src/lib/server-actions/users.actions";
 import { H1 } from "@/src/ui/headings";
 import { Pagination } from "@/src/ui/invoices/pagination";
 import { Search } from "@/src/ui/search";
@@ -28,12 +27,14 @@ export interface UsersPageProps {
 export default async function Page(
 	dynamicUrl: UsersPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB();
 	const searchParams: UsersSearchParams | undefined =
 		await dynamicUrl.searchParams;
+
 	const query: string = searchParams?.query || "";
+
 	const currentPage: number = Number(searchParams?.page) || 1;
-	const totalPages: number = await fetchUsersPages(db, query);
+
+	const totalPages: number = await readUsersPagesAction(query);
 
 	return (
 		<div className="w-full">

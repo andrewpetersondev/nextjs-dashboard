@@ -10,6 +10,7 @@ import {
 	deleteUserDal,
 	demoUserCounter,
 	fetchUserById,
+	fetchUsersPages,
 	findUserForLogin,
 	readUserDal,
 	updateUserDal,
@@ -413,4 +414,16 @@ export async function updateUserAction(
 			success: false,
 		});
 	}
+}
+
+/**
+ * Server action to fetch the total number of user pages.
+ * @param query - Search query string
+ * @returns Total number of pages
+ */
+export async function readUsersPagesAction(
+	query: string = "",
+): Promise<number> {
+	const db = getDB();
+	return fetchUsersPages(db, query);
 }
