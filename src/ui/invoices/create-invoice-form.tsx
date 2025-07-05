@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
 import { createInvoiceAction } from "@/src/lib/server-actions/invoices";
 import { Button } from "@/src/ui/button";

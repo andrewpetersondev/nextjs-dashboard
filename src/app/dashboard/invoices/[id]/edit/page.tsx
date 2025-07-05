@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import { getDB } from "@/src/lib/db/connection";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 import { readInvoiceAction } from "@/src/lib/server-actions/invoices";
 import { H1 } from "@/src/ui/headings";

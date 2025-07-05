@@ -1,5 +1,5 @@
 "use client";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type {
 	InvoiceCreateState,
 	InvoiceFormFields,

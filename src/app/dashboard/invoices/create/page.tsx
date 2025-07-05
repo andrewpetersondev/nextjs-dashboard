@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { JSX } from "react";
 import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import { getDB } from "@/src/lib/db/connection";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
 import { CreateInvoiceForm } from "@/src/ui/invoices/create-invoice-form";
 

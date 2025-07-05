@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 import { updateInvoiceAction } from "@/src/lib/server-actions/invoices";
