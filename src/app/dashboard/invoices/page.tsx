@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { fetchInvoicesPages } from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { readInvoicesPagesAction } from "@/src/lib/server-actions/invoices.actions.ts";
 import { H1 } from "@/src/ui/headings";
 import { CreateInvoice } from "@/src/ui/invoices/buttons";
 import { Pagination } from "@/src/ui/invoices/pagination";
@@ -31,12 +30,14 @@ export interface InvoicesPageProps {
 export default async function Page(
 	dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB();
 	const searchParams: InvoicesSearchParams | undefined =
 		await dynamicUrl.searchParams;
+
 	const query: string = searchParams?.query || "";
+
 	const currentPage: number = Number(searchParams?.page) || 1;
-	const totalPages: number = await fetchInvoicesPages(db, query);
+
+	const totalPages: number = await readInvoicesPagesAction(query);
 
 	return (
 		<div className="w-full">

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
 	createInvoiceDal,
 	deleteInvoiceDal,
+	fetchInvoicesPages,
 	readInvoiceDal,
 	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal";
@@ -257,4 +258,16 @@ export async function deleteInvoiceFormAction(
 	await deleteInvoiceAction(id);
 	revalidatePath("/dashboard/invoices");
 	redirect("/dashboard/invoices");
+}
+
+/**
+ * Server action to fetch the total number of invoice pages.
+ * @param query - Search query string
+ * @returns Total number of pages
+ */
+export async function readInvoicesPagesAction(
+	query: string = "",
+): Promise<number> {
+	const db = getDB();
+	return fetchInvoicesPages(db, query);
 }
