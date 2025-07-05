@@ -1,22 +1,17 @@
 import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
 import {
-	type CustomerId,
 	INVOICE_STATUSES,
 	type InvoiceByIdDbRow,
 	type InvoiceId,
 	type InvoiceStatus,
 } from "@/src/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import { toCustomerIdBrand } from "@/src/lib/mappers/customer.mapper";
 
 /**
  * Helper to brand a string as InvoiceId.
  */
 export const toInvoiceIdBrand = (id: string): InvoiceId => id as InvoiceId;
-
-/**
- * Helper to brand a string as CustomerId.
- */
-export const toCustomerIdBrand = (id: string): CustomerId => id as CustomerId;
 
 /**
  * Helper to brand a string as InvoiceStatus.

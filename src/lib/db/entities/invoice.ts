@@ -1,5 +1,5 @@
+import type { CustomerId } from "@/src/lib/definitions/customers.types";
 import type {
-	CustomerId,
 	InvoiceId,
 	InvoiceStatus,
 } from "@/src/lib/definitions/invoices.types";

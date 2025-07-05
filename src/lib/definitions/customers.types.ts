@@ -4,14 +4,30 @@ import type { FormState } from "@/src/lib/definitions/form";
 // --- Entity Types ---
 
 /**
- * Represents a customer entity.
+ * Branded type for Customer IDs.
+ */
+export type CustomerId = string & { readonly __brand: unique symbol };
+
+/**
+ * Represents a customer entity with a branded CustomerId.
  */
 export type Customer = {
-	id: string;
-	name: string;
-	email: string;
-	imageUrl: string;
+	readonly id: CustomerId;
+	readonly name: string;
+	readonly email: string;
+	readonly imageUrl: string;
 };
+
+/**
+ * Represents a customer row fetched from the DB.
+ * Always use branded CustomerId internally.
+ */
+export interface CustomerByIdDbRow {
+	readonly id: CustomerId; // <-- changed from string to CustomerId
+	readonly name: string;
+	readonly email: string;
+	readonly imageUrl: string;
+}
 
 /**
  * Represents a customer field for select options.
@@ -22,7 +38,7 @@ export type CustomerField = Pick<Customer, "id" | "name">;
  * Represents a row in the customers table (raw).
  */
 export type CustomersTableRow = {
-	id: string;
+	id: CustomerId; // <-- changed from string to CustomerId
 	name: string;
 	email: string;
 	imageUrl: string;
@@ -35,7 +51,7 @@ export type CustomersTableRow = {
  * Represents a formatted row for the customer's table in the UI.
  */
 export type FormattedCustomersTableRow = {
-	id: string;
+	id: CustomerId; // <-- changed from string to CustomerId
 	name: string;
 	email: string;
 	imageUrl: string;

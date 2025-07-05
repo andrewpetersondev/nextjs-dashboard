@@ -1,12 +1,12 @@
-import { fetchCustomers } from "@/src/lib/dal/customers.dal.ts";
+import { fetchCustomers } from "@/src/lib/dal/customers.dal";
 import { getDB } from "@/src/lib/db/connection";
-import type { CustomerField } from "@/src/lib/definitions/customers.ts";
+import type { CustomerField } from "@/src/lib/definitions/customers.types";
 
 /**
  * Server action to read customers.
+ * @returns Array of customer fields
  */
 export async function readCustomersAction(): Promise<CustomerField[]> {
 	const db = getDB();
-	const customers = await fetchCustomers(db);
-	return customers;
+	return fetchCustomers(db);
 }

@@ -16,8 +16,8 @@ import {
 	UpdateInvoiceSchema,
 } from "@/src/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import { toCustomerIdBrand } from "@/src/lib/mappers/customer.mapper";
 import {
-	toCustomerIdBrand,
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
 } from "@/src/lib/mappers/invoice.mapper";

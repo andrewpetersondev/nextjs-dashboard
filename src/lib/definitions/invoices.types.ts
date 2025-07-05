@@ -1,4 +1,5 @@
 import { z as zod } from "zod";
+import type { CustomerId } from "@/src/lib/definitions/customers.types";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 
@@ -7,10 +8,6 @@ import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
  * Branded type for Invoice IDs.
  */
 export type InvoiceId = string & { readonly __brand: unique symbol };
-/**
- * Branded type for Customer IDs.
- */
-export type CustomerId = string & { readonly __brand: unique symbol };
 /**
  * Invoice statuses as a constant tuple for type safety.
  */
