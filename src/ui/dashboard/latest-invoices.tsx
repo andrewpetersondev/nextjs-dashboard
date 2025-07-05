@@ -2,16 +2,18 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import { fetchLatestInvoices } from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices.types";
+import { readLatestInvoicesAction } from "@/src/lib/server-actions/invoices.actions";
 import { H2, H3 } from "@/src/ui/headings";
 
+/**
+ * LatestInvoices component.
+ * Fetches the latest invoices using a server action and renders the list.
+ */
 export async function LatestInvoices(): Promise<JSX.Element> {
-	const db = getDB();
-
+	// Fetch data via server action for decoupling and testability
 	const latestInvoices: ModifiedLatestInvoicesData[] =
-		await fetchLatestInvoices(db);
+		await readLatestInvoicesAction();
 	return (
 		<div className="flex w-full flex-col md:col-span-4">
 			<H2 className="mb-4">Latest Invoices</H2>

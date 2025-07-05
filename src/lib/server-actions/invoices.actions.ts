@@ -7,6 +7,7 @@ import {
 	deleteInvoiceDal,
 	fetchFilteredInvoices,
 	fetchInvoicesPages,
+	fetchLatestInvoices,
 	readInvoiceDal,
 	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal";
@@ -14,6 +15,7 @@ import { getDB } from "@/src/lib/db/connection";
 import type {
 	FetchFilteredInvoicesData,
 	InvoiceEditState,
+	ModifiedLatestInvoicesData,
 } from "@/src/lib/definitions/invoices.types";
 import {
 	CreateInvoiceSchema,
@@ -288,4 +290,15 @@ export async function readFilteredInvoicesAction(
 ): Promise<FetchFilteredInvoicesData[]> {
 	const db = getDB();
 	return fetchFilteredInvoices(db, query, currentPage);
+}
+
+/**
+ * Server action to fetch the latest invoices for the dashboard.
+ * @returns Array of ModifiedLatestInvoicesData
+ */
+export async function readLatestInvoicesAction(): Promise<
+	ModifiedLatestInvoicesData[]
+> {
+	const db = getDB();
+	return fetchLatestInvoices(db);
 }
