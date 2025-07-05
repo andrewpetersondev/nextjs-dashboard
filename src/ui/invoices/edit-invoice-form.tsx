@@ -4,7 +4,7 @@ import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { updateInvoiceAction } from "@/src/lib/server-actions/invoices";
+import { updateInvoiceAction } from "@/src/lib/server-actions/invoices.actions";
 import { FormActionRow } from "@/src/ui/components/form-action-row";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
 import { Label } from "@/src/ui/components/label";
