@@ -1,8 +1,7 @@
 "use server";
 
 import { type JSX, Suspense } from "react";
-import { type CardData, fetchCardData } from "@/src/lib/dal/data.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { readCardDataAction } from "@/src/lib/server-actions/data.actions";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
@@ -14,8 +13,7 @@ import {
 } from "@/src/ui/skeletons";
 
 export async function UserDashboard(): Promise<JSX.Element> {
-	const db = getDB();
-	const cardData: CardData = await fetchCardData(db);
+	const cardData = await readCardDataAction();
 
 	return (
 		<main>

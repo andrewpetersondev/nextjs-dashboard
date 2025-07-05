@@ -3,16 +3,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { Db } from "@/src/lib/db/connection";
 import { customers, invoices } from "@/src/lib/db/schema";
-
-/**
- * Data structure for dashboard cards.
- */
-export interface CardData {
-	invoiceCount: number;
-	customerCount: number;
-	paidInvoices: number;
-	pendingInvoices: number;
-}
+import type { CardData } from "@/src/lib/definitions/data.types";
 
 export async function fetchCardData(db: Db): Promise<CardData> {
 	try {

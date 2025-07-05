@@ -1,8 +1,7 @@
 "use server";
 
 import { type JSX, Suspense } from "react";
-import { type CardData, fetchCardData } from "@/src/lib/dal/data.dal";
-import { getDB } from "@/src/lib/db/connection";
+import { readCardDataAction } from "@/src/lib/server-actions/data.actions";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
@@ -15,12 +14,10 @@ import {
 
 /**
  * Admin dashboard page (server component).
- * Fetches card data and passes it to CardWrapper as props.
+ * Fetches card data via server action and passes it to CardWrapper as props.
  */
 export async function AdminDashboard(): Promise<JSX.Element> {
-	const db = getDB();
-	const cardData: CardData = await fetchCardData(db);
-
+	const cardData = await readCardDataAction();
 	return (
 		<main>
 			<H1 className="mb-4">Admin Dashboard</H1>
