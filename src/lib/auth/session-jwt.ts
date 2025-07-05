@@ -15,7 +15,7 @@ import {
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
-} from "@/src/lib/definitions/session";
+} from "@/src/lib/definitions/session.types";
 import type { UserRole } from "@/src/lib/definitions/users.types";
 import { ValidationError } from "@/src/lib/errors/validation-error";
 import { logger } from "@/src/lib/utils/logger";

@@ -7,7 +7,7 @@ import { sessions } from "@/src/lib/db/schema";
 import type {
 	DbSessionRow,
 	SessionRecord,
-} from "@/src/lib/definitions/session";
+} from "@/src/lib/definitions/session.types";
 import { logger } from "@/src/lib/utils/logger";
 
 /**

@@ -7,7 +7,7 @@ import { decrypt } from "@/src/lib/auth/session-jwt";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,
-} from "@/src/lib/definitions/session";
+} from "@/src/lib/definitions/session.types";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
