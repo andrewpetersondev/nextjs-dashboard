@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { fetchCustomers } from "@/src/lib/dal/customers.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { CustomerField } from "@/src/lib/definitions/customers.types";
+import { readCustomersAction } from "@/src/lib/server-actions/customers.actions";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
 import { CreateInvoiceForm } from "@/src/ui/invoices/create-invoice-form";
 
@@ -14,8 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page(): Promise<JSX.Element> {
-	const db = getDB();
-	const customers: CustomerField[] = await fetchCustomers(db);
+	const customers: CustomerField[] = await readCustomersAction();
 
 	return (
 		<main>

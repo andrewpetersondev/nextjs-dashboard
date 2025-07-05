@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { fetchCustomers } from "@/src/lib/dal/customers.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import { readCustomersAction } from "@/src/lib/server-actions/customers.actions";
 import { readInvoiceAction } from "@/src/lib/server-actions/invoices";
 import { H1 } from "@/src/ui/headings";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
@@ -28,11 +27,10 @@ export interface EditInvoicePageProps {
 export default async function Page(
 	props: EditInvoicePageProps,
 ): Promise<JSX.Element> {
-	const db = getDB();
 	const { id } = await props.params;
 
 	const [customers, invoice]: [CustomerField[], InvoiceDto | null] =
-		await Promise.all([fetchCustomers(db), readInvoiceAction(id)]);
+		await Promise.all([readCustomersAction(), readInvoiceAction(id)]);
 
 	if (!invoice) {
 		notFound();

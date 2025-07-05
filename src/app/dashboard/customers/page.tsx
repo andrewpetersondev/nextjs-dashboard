@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { fetchFilteredCustomers } from "@/src/lib/dal/customers.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.types";
+import { readFilteredCustomersAction } from "@/src/lib/server-actions/customers.actions";
 import { CustomersTable } from "@/src/ui/customers/table";
 
 export const metadata: Metadata = {
@@ -24,16 +23,13 @@ export interface CustomersPageProps {
 export default async function Page(
 	props: CustomersPageProps,
 ): Promise<JSX.Element> {
-	const db = getDB();
 	const searchParams: CustomersSearchParams | undefined =
 		await props.searchParams;
 
 	const query: string = searchParams?.query || "";
 
-	const customers: FormattedCustomersTableRow[] = await fetchFilteredCustomers(
-		db,
-		query,
-	);
+	const customers: FormattedCustomersTableRow[] =
+		await readFilteredCustomersAction(query);
 
 	return (
 		<main>
