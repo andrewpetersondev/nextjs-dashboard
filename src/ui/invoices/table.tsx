@@ -1,10 +1,13 @@
 import type { JSX } from "react";
-import { fetchFilteredInvoices } from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types";
+import { readFilteredInvoicesAction } from "@/src/lib/server-actions/invoices.actions.ts";
 import { DesktopTable } from "@/src/ui/invoices/desktop-table";
 import { MobileTable } from "@/src/ui/invoices/mobile-table";
 
+/**
+ * InvoicesTable component.
+ * Fetches filtered invoices using a server action and renders tables.
+ */
 export async function InvoicesTable({
 	query,
 	currentPage,
@@ -12,12 +15,8 @@ export async function InvoicesTable({
 	query: string;
 	currentPage: number;
 }): Promise<JSX.Element> {
-	const db = getDB();
-	const invoices: FetchFilteredInvoicesData[] = await fetchFilteredInvoices(
-		db,
-		query,
-		currentPage,
-	);
+	const invoices: FetchFilteredInvoicesData[] =
+		await readFilteredInvoicesAction(query, currentPage);
 
 	return (
 		<div className="mt-6 flow-root">

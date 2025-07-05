@@ -5,12 +5,16 @@ import { redirect } from "next/navigation";
 import {
 	createInvoiceDal,
 	deleteInvoiceDal,
+	fetchFilteredInvoices,
 	fetchInvoicesPages,
 	readInvoiceDal,
 	updateInvoiceDal,
 } from "@/src/lib/dal/invoices.dal";
 import { getDB } from "@/src/lib/db/connection";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
+import type {
+	FetchFilteredInvoicesData,
+	InvoiceEditState,
+} from "@/src/lib/definitions/invoices.types";
 import {
 	CreateInvoiceSchema,
 	type InvoiceCreateState,
@@ -270,4 +274,18 @@ export async function readInvoicesPagesAction(
 ): Promise<number> {
 	const db = getDB();
 	return fetchInvoicesPages(db, query);
+}
+
+/**
+ * Server action to fetch filtered invoices for the invoices table.
+ * @param query - Search query string
+ * @param currentPage - Current page number
+ * @returns Array of FetchFilteredInvoicesData
+ */
+export async function readFilteredInvoicesAction(
+	query: string = "",
+	currentPage: number = 1,
+): Promise<FetchFilteredInvoicesData[]> {
+	const db = getDB();
+	return fetchFilteredInvoices(db, query, currentPage);
 }
