@@ -1,9 +1,12 @@
 import type { JSX } from "react";
-import { fetchFilteredUsers } from "@/src/lib/dal/users.dal";
-import { getDB } from "@/src/lib/db/connection";
 import type { UserDto } from "@/src/lib/dto/user.dto";
+import { readFilteredUsersAction } from "@/src/lib/server-actions/users.actions"; // Use server action
 import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
 
+/**
+ * UsersTable component.
+ * Fetches filtered users using a server action and renders the user list.
+ */
 export async function UsersTable({
 	query,
 	currentPage,
@@ -11,8 +14,7 @@ export async function UsersTable({
 	query: string;
 	currentPage: number;
 }): Promise<JSX.Element> {
-	const db = getDB();
-	const users: UserDto[] = await fetchFilteredUsers(db, query, currentPage);
+	const users: UserDto[] = await readFilteredUsersAction(query, currentPage);
 
 	return (
 		<div>

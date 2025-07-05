@@ -9,6 +9,7 @@ import {
 	createUserDal,
 	deleteUserDal,
 	demoUserCounter,
+	fetchFilteredUsers,
 	fetchUserById,
 	fetchUsersPages,
 	findUserForLogin,
@@ -426,4 +427,18 @@ export async function readUsersPagesAction(
 ): Promise<number> {
 	const db = getDB();
 	return fetchUsersPages(db, query);
+}
+
+/**
+ * Server action to fetch filtered users for the users table.
+ * @param query - Search query string
+ * @param currentPage - Current page number
+ * @returns Array of UserDto
+ */
+export async function readFilteredUsersAction(
+	query: string = "",
+	currentPage: number = 1,
+): Promise<UserDto[]> {
+	const db = getDB();
+	return fetchFilteredUsers(db, query, currentPage);
 }
