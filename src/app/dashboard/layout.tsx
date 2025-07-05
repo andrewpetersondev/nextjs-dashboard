@@ -2,7 +2,6 @@ import type React from "react";
 import type { JSX } from "react";
 import { SideNav } from "@/src/ui/dashboard/sidenav";
 
-// todo: revert to false? investigate
 export const experimental_ppr = true;
 
 export default function Layout({
