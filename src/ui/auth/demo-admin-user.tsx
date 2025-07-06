@@ -2,6 +2,13 @@ import type { JSX } from "react";
 import { demoUser } from "@/src/lib/server-actions/users.actions";
 import { Button } from "@/src/ui/button";
 
+/**
+ * DemoAdminUser component for logging in as a demo admin user.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.text - Button text.
+ * @returns {JSX.Element} Rendered DemoAdminUser component.
+ */
 export function DemoAdminUser({ text }: { text: string }): JSX.Element {
 	return (
 		<form

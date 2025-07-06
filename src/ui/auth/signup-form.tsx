@@ -28,9 +28,12 @@ type SignupFormState = Readonly<{
 }>;
 
 /**
- * Signup form component.
+ * SignupForm component for user registration.
+ *
  * @remarks
  * Production-ready, accessible, and testable signup form for Next.js App Router.
+ *
+ * @returns {JSX.Element} Rendered SignupForm component.
  */
 export const SignupForm: FC = () => {
 	const [state, action, pending] = useActionState<SignupFormState, FormData>(

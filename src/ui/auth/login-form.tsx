@@ -22,6 +22,11 @@ type LoginState = {
 	message?: string;
 };
 
+/**
+ * LoginForm component for user authentication.
+ *
+ * @returns {JSX.Element} Rendered LoginForm component.
+ */
 export function LoginForm(): JSX.Element {
 	const [state, action, pending] = useActionState<LoginState, FormData>(login, {
 		errors: {},

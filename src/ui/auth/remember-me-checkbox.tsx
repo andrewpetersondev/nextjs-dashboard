@@ -1,5 +1,10 @@
 import type { JSX } from "react";
 
+/**
+ * RememberMeCheckbox component for persisting user session.
+ *
+ * @returns {JSX.Element} Rendered RememberMeCheckbox component.
+ */
 export function RememberMeCheckbox(): JSX.Element {
 	return (
 		<div className="flex gap-3">

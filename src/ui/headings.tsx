@@ -16,6 +16,9 @@ const headingStyles = {
 	h6: "text-sm font-medium tracking-tight",
 } as const;
 
+/**
+ * Factory for heading components.
+ */
 function createHeading<T extends keyof typeof headingStyles>(tag: T) {
 	const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 		({ className, children, ...props }, ref) =>

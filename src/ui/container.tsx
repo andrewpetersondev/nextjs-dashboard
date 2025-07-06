@@ -1,6 +1,9 @@
 import clsx from "clsx";
 import { type ForwardedRef, forwardRef, type JSX } from "react";
 
+/**
+ * Outer container for page layout.
+ */
 export const ContainerOuter = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div">
@@ -15,6 +18,9 @@ export const ContainerOuter = forwardRef<
 	);
 });
 
+/**
+ * Inner container for content alignment.
+ */
 export const ContainerInner = forwardRef<
 	React.ElementRef<"div">,
 	React.ComponentPropsWithoutRef<"div">

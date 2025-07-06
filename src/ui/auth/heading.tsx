@@ -2,6 +2,9 @@ import Image from "next/image";
 import type React from "react";
 import type { JSX } from "react";
 
+/**
+ * Props for Heading component.
+ */
 type HeadingProps = {
 	text: string;
 	logoSrc?: string;
@@ -9,6 +12,12 @@ type HeadingProps = {
 	children?: React.ReactNode;
 };
 
+/**
+ * Heading component for authentication pages.
+ *
+ * @param {HeadingProps} props - Component props.
+ * @returns {JSX.Element} Rendered Heading component.
+ */
 export function Heading({
 	text,
 	logoSrc = "https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600",

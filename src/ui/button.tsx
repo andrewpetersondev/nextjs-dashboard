@@ -2,7 +2,11 @@ import clsx from "clsx";
 import type React from "react";
 import type { JSX } from "react";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+/**
+ * Button component for user interactions.
+ */
+export interface ButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	children: React.ReactNode;
 }
 

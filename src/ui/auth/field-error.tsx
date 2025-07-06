@@ -1,5 +1,8 @@
 import { type JSX, memo, type NamedExoticComponent } from "react";
 
+/**
+ * Props for FieldError component.
+ */
 export interface FieldErrorProps {
 	id?: string;
 	error?: string[];
@@ -7,6 +10,12 @@ export interface FieldErrorProps {
 	label?: string;
 }
 
+/**
+ * FieldError component for displaying field-level validation errors.
+ *
+ * @param {FieldErrorProps} props - Component props.
+ * @returns {JSX.Element | null} Rendered error messages or null if no errors.
+ */
 export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 	function FieldError({
 		id,
