@@ -8,15 +8,15 @@ import {
 import { type FC, useActionState } from "react";
 import { signup } from "@/src/lib/server-actions/users.actions";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
+import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
 import { DemoUser } from "@/src/ui/auth/demo-user";
+import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
+import { Heading } from "@/src/ui/auth/heading";
 import { InputField } from "@/src/ui/auth/input-field";
+import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
+import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
-import { AuthSwitchLink } from "./auth-switch-link";
-import { ForgotPasswordLink } from "./forgot-password-link";
-import { Heading } from "./heading";
-import { RememberMeCheckbox } from "./remember-me-checkbox";
-import { SocialLoginButton } from "./social-login-button";
 
 type SignupFormState = Readonly<{
 	errors?: {
@@ -33,7 +33,7 @@ type SignupFormState = Readonly<{
  * @remarks
  * Production-ready, accessible, and testable signup form for Next.js App Router.
  *
- * @returns {JSX.Element} Rendered SignupForm component.
+ * @returns Rendered SignupForm component.
  */
 export const SignupForm: FC = () => {
 	const [state, action, pending] = useActionState<SignupFormState, FormData>(

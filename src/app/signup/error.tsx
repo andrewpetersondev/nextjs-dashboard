@@ -3,6 +3,13 @@
 import { type JSX, useEffect } from "react";
 import { H2 } from "@/src/ui/headings";
 
+/**
+ * Error boundary for the signup page.
+ *
+ * @param error - The error object thrown by the route.
+ * @param reset - Function to reset the error boundary.
+ * @returns {JSX.Element} The rendered error UI.
+ */
 export default function SignupError({
 	error,
 	reset,
