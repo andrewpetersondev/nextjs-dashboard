@@ -1,15 +1,16 @@
+"use client";
+
 import type { FC } from "react";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
 import { DemoUser } from "@/src/ui/auth/demo-user";
-import { SignupFormDivider } from "@/src/ui/auth/signup-form-divider";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 
 /**
- * Social and demo user signup section.
+ * Social signup section for the signup form.
+ * Includes demo user buttons and social signup providers.
  */
 export const SignupFormSocialSection: FC = () => (
-	<div>
-		<SignupFormDivider />
+	<>
 		<DemoUser text="Sign up as Demo User" />
 		<DemoAdminUser text="Sign up as Demo Admin" />
 		<div className="mt-6 grid grid-cols-2 gap-4">
@@ -26,5 +27,5 @@ export const SignupFormSocialSection: FC = () => (
 				provider="GitHub"
 			/>
 		</div>
-	</div>
+	</>
 );

@@ -1,7 +1,7 @@
 "use client";
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { type JSX, useActionState } from "react";
+import { type FC, useActionState } from "react";
 import { login } from "@/src/lib/actions/users.actions";
 import { AuthServerMessage } from "@/src/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
@@ -10,24 +10,27 @@ import { InputField } from "@/src/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
 
-type LoginState = {
+type LoginFormState = Readonly<{
 	errors?: {
 		email?: string[];
 		password?: string[];
 	};
 	message?: string;
-};
+}>;
 
 /**
  * LoginForm component for user authentication.
  *
- * @returns {JSX.Element} Rendered LoginForm component.
+ * @returns Rendered LoginForm component.
  */
-export function LoginForm(): JSX.Element {
-	const [state, action, pending] = useActionState<LoginState, FormData>(login, {
-		errors: {},
-		message: "",
-	});
+export const LoginForm: FC = () => {
+	const [state, action, pending] = useActionState<LoginFormState, FormData>(
+		login,
+		{
+			errors: {},
+			message: "",
+		},
+	);
 
 	return (
 		<>
@@ -71,13 +74,12 @@ export function LoginForm(): JSX.Element {
 					</div>
 				</FormInputWrapper>
 
-				<div>
-					<AuthSubmitButton data-cy="login-submit-button" pending={pending}>
-						Log In
-					</AuthSubmitButton>
-				</div>
+				<AuthSubmitButton data-cy="login-submit-button" pending={pending}>
+					Log In
+				</AuthSubmitButton>
 			</form>
+
 			{state.message && <AuthServerMessage message={state.message} />}
 		</>
 	);
-}
+};

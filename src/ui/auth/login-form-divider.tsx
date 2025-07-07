@@ -7,7 +7,7 @@ export const LoginFormDivider: FC = () => (
 		</div>
 		<div className="relative flex justify-center text-sm/6 font-medium">
 			<span className="bg-bg-primary text-text-secondary px-6">
-				Or continue with
+				Or log in with
 			</span>
 		</div>
 	</div>

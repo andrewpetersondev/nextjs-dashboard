@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
 import { LoginForm } from "@/src/ui/auth/login-form";
-import { LoginFormDivider } from "@/src/ui/auth/login-form-divider.tsx";
+import { LoginFormDivider } from "@/src/ui/auth/login-form-divider";
 import { LoginFormSocialSection } from "@/src/ui/auth/login-form-social-section";
 
 /**
@@ -17,7 +17,7 @@ export const ClientLoginSection: FC = () => (
 			<LoginFormDivider />
 			<LoginFormSocialSection />
 		</div>
-		{/* Switch link below the card, matching signup page */}
+		{/* Switch the link below the card, matching the signup page */}
 		<AuthSwitchLink
 			href="/signup"
 			linkText="Sign up here"

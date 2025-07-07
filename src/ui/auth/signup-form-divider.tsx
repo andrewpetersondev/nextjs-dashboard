@@ -4,7 +4,7 @@ import type { FC } from "react";
  * Divider for separating form sections.
  */
 export const SignupFormDivider: FC = () => (
-	<div className="relative mt-10">
+	<div className="relative my-5">
 		<div aria-hidden="true" className="absolute inset-0 flex items-center">
 			<div className="border-bg-accent w-full border-t" />
 		</div>
