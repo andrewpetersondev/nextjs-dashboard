@@ -11,6 +11,7 @@ import {
 export interface CustomerSelectProps
 	extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
 	customers: CustomerField[];
+	error?: string[];
 }
 
 /**
@@ -18,9 +19,11 @@ export interface CustomerSelectProps
  */
 export const CustomerSelect: React.FC<CustomerSelectProps> = ({
 	customers,
+	error,
 	...props
 }) => (
 	<SelectMenu
+		error={error}
 		id="customer"
 		name="customerId"
 		options={customers}
