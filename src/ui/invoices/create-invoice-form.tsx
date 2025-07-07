@@ -14,11 +14,11 @@ import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
 import { Button } from "@/src/ui/button";
 import { InvoiceServerMessage } from "@/src/ui/invoices/invoice-server-message";
 
-export function CreateInvoiceForm({
+export const CreateInvoiceForm = ({
 	customers,
 }: {
 	customers: CustomerField[];
-}): JSX.Element {
+}): JSX.Element => {
 	const initialState: InvoiceCreateState = {
 		errors: {},
 		message: "",
@@ -40,7 +40,7 @@ export function CreateInvoiceForm({
 	}, [state.message]);
 
 	return (
-		<div>
+		<section>
 			<form action={action}>
 				<div className="bg-bg-accent rounded-md p-4 md:p-6">
 					<div className="mb-4">
@@ -197,6 +197,6 @@ export function CreateInvoiceForm({
 				</div>
 			</form>
 			<InvoiceServerMessage showAlert={showAlert} state={state} />
-		</div>
+		</section>
 	);
-}
+};

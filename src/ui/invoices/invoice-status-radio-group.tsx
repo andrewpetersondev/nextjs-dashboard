@@ -7,13 +7,13 @@ interface InvoiceStatusRadioGroupProps
 	error?: string | string[];
 }
 
-export function InvoiceStatusRadioGroup({
+export const InvoiceStatusRadioGroup = ({
 	value,
 	name = "status",
 	disabled,
 	error,
 	...props
-}: InvoiceStatusRadioGroupProps): JSX.Element {
+}: InvoiceStatusRadioGroupProps): JSX.Element => {
 	// Ensure errors is string[] for consistent mapping
 	const errors: string[] = [];
 	if (error) {
@@ -84,4 +84,4 @@ export function InvoiceStatusRadioGroup({
 			)}
 		</fieldset>
 	);
-}
+};

@@ -14,7 +14,7 @@ import type {
  * - pending: a submission loading flag
  * ...plus presentational props
  */
-export function _InvoiceForm({
+export const _InvoiceForm = ({
 	action,
 	cancelHref,
 	description,
@@ -36,7 +36,7 @@ export function _InvoiceForm({
 	state: InvoiceCreateState;
 	submitLabel: string;
 	title: string;
-}) {
+}) => {
 	return (
 		<form action={action} className="space-y-6">
 			<h2 className="text-xl font-bold">{title}</h2>
@@ -126,4 +126,4 @@ export function _InvoiceForm({
 			</div>
 		</form>
 	);
-}
+};

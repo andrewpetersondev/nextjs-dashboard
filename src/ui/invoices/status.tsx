@@ -3,11 +3,11 @@ import clsx from "clsx";
 import type { JSX } from "react";
 import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types";
 
-export function InvoiceStatusComponent({
+export const InvoiceStatusComponent = ({
 	status,
 }: {
 	status: InvoiceStatus;
-}): JSX.Element {
+}): JSX.Element => {
 	return (
 		<span
 			className={clsx(
@@ -32,4 +32,4 @@ export function InvoiceStatusComponent({
 			)}
 		</span>
 	);
-}
+};

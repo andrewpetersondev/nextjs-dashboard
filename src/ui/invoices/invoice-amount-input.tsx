@@ -8,13 +8,13 @@ interface InvoiceAmountInputProps
 	label?: string;
 }
 
-export function InvoiceAmountInput({
+export const InvoiceAmountInput = ({
 	id = "amount",
 	dataCy,
 	label = "Choose an amount",
 	error,
 	...props
-}: InvoiceAmountInputProps): JSX.Element {
+}: InvoiceAmountInputProps): JSX.Element => {
 	// Ensure errors is string[] for consistent mapping
 	const errors: string[] = [];
 	if (error) {
@@ -59,4 +59,4 @@ export function InvoiceAmountInput({
 			)}
 		</div>
 	);
-}
+};

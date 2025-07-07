@@ -16,10 +16,10 @@ export interface InvoiceServerMessageProps {
  * @param props - InvoiceServerMessageProps
  * @returns JSX.Element
  */
-export function InvoiceServerMessage({
+export const InvoiceServerMessage = ({
 	state,
 	showAlert,
-}: InvoiceServerMessageProps): JSX.Element {
+}: InvoiceServerMessageProps): JSX.Element => {
 	// Constants for styling to avoid magic strings
 	const SUCCESS_STYLES = "border-green-300 bg-green-50 text-green-800";
 	const ERROR_STYLES = "border-red-300 bg-red-50 text-red-800";
@@ -50,4 +50,4 @@ export function InvoiceServerMessage({
 			</div>
 		</div>
 	);
-}
+};

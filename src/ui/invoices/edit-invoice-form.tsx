@@ -13,13 +13,13 @@ import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input";
 import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group";
 import { ServerMessage } from "@/src/ui/users/server-message";
 
-export function EditInvoiceForm({
+export const EditInvoiceForm = ({
 	invoice,
 	customers,
 }: {
 	invoice: InvoiceDto;
 	customers: CustomerField[];
-}): JSX.Element {
+}): JSX.Element => {
 	// Initial state matches InvoiceEditState
 	const initialState: InvoiceEditState = {
 		errors: {},
@@ -99,4 +99,4 @@ export function EditInvoiceForm({
 			<ServerMessage showAlert={showAlert} state={state} />
 		</div>
 	);
-}
+};

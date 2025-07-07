@@ -8,13 +8,13 @@ import { MobileTable } from "@/src/ui/invoices/mobile-table";
  * InvoicesTable component.
  * Fetches filtered invoices using a server action and renders tables.
  */
-export async function InvoicesTable({
+export const InvoicesTable = async ({
 	query,
 	currentPage,
 }: {
 	query: string;
 	currentPage: number;
-}): Promise<JSX.Element> {
+}): Promise<JSX.Element> => {
 	const invoices: FetchFilteredInvoicesData[] =
 		await readFilteredInvoicesAction(query, currentPage);
 
@@ -28,4 +28,4 @@ export async function InvoicesTable({
 			</div>
 		</div>
 	);
-}
+};

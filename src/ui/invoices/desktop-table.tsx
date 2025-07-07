@@ -5,11 +5,11 @@ import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
 import { InvoiceStatusComponent } from "@/src/ui/invoices/status";
 
-export function DesktopTable({
+export const DesktopTable = ({
 	invoices,
 }: {
 	invoices: FetchFilteredInvoicesData[];
-}): JSX.Element {
+}): JSX.Element => {
 	return (
 		<table className="text-text-primary hidden min-w-full md:table">
 			<thead className="rounded-lg text-left text-sm font-normal">
@@ -75,4 +75,4 @@ export function DesktopTable({
 			</tbody>
 		</table>
 	);
-}
+};
