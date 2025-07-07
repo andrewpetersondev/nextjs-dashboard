@@ -28,6 +28,8 @@ export interface SelectMenuProps<
 	dataCy?: string;
 	/** Whether the select is disabled. */
 	disabled?: boolean;
+	/** Error messages to display, if any. */
+	error?: string[];
 }
 
 /**
@@ -45,9 +47,13 @@ export const SelectMenu = React.memo(
 		className = "",
 		dataCy,
 		disabled = false,
+		error,
 	}: SelectMenuProps<T>) => (
 		<div className="relative">
 			<select
+				aria-describedby={
+					error && error.length > 0 ? `${name}-error` : undefined
+				}
 				aria-label={placeholder}
 				className={`peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 ${className}`}
 				data-cy={dataCy}
@@ -67,6 +73,17 @@ export const SelectMenu = React.memo(
 				))}
 			</select>
 			<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
+
+			{/* SHOW ERROR MESSAGE */}
+			{error && error.length > 0 && (
+				<div aria-atomic="true" aria-live="polite" id={`${name}-error`}>
+					{error.map((err) => (
+						<p className="text-text-error mt-2 text-sm" key={err}>
+							{err}
+						</p>
+					))}
+				</div>
+			)}
 		</div>
 	),
 );
