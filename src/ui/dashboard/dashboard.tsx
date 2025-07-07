@@ -1,7 +1,6 @@
-"use server";
-
 import { type JSX, Suspense } from "react";
 import { readCardDataAction } from "@/src/lib/actions/data.actions";
+import type { CardData } from "@/src/lib/definitions/data.types";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
@@ -12,13 +11,32 @@ import {
 	RevenueChartSkeleton,
 } from "@/src/ui/skeletons";
 
-export async function UserDashboard(): Promise<JSX.Element> {
-	const cardData = await readCardDataAction();
+/**
+ * Props for the Dashboard component.
+ */
+export interface DashboardProps {
+	/**
+	 * The dashboard title to display.
+	 */
+	title: string;
+}
 
+/**
+ * Consolidated Dashboard component for both admin and user dashboards.
+ * Fetches card data and renders dashboard widgets with Suspense for streaming.
+ * @param props - DashboardProps
+ * @returns The dashboard JSX element.
+ */
+export const Dashboard = async ({
+	title,
+}: DashboardProps): Promise<JSX.Element> => {
+	// Fetch card data with strict typing.
+	const cardData: CardData = await readCardDataAction();
 	return (
-		<main>
-			<H1 className="mb-4">User Dashboard</H1>
+		<section>
+			<H1 className="mb-4">{title}</H1>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+				{/* Suspense enables streaming for async server components */}
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper data={cardData} />
 				</Suspense>
@@ -31,6 +49,6 @@ export async function UserDashboard(): Promise<JSX.Element> {
 					<LatestInvoices />
 				</Suspense>
 			</div>
-		</main>
+		</section>
 	);
-}
+};
