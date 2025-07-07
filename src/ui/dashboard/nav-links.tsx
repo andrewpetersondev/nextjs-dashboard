@@ -10,9 +10,21 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
+import type { UserRole } from "@/src/lib/definitions/users.types";
+
+/** Navigation link paths */
+const NAV_LINKS = {
+	CUSTOMERS: "/dashboard/customers",
+	HOME: "/dashboard",
+	INVOICES: "/dashboard/invoices",
+	USERS: "/dashboard/users",
+} as const;
+
+const ADMIN_ROLE = "admin" as UserRole;
 
 type NavLinksProps = {
-	role?: string;
+	/** User role for conditional links*/
+	role?: UserRole;
 };
 
 type NavLink = {
@@ -21,24 +33,25 @@ type NavLink = {
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-const baseLinks: NavLink[] = [
-	{ href: "/dashboard", icon: HomeIcon, name: "Home" },
-	{
-		href: "/dashboard/invoices",
-		icon: DocumentDuplicateIcon,
-		name: "Invoices",
-	},
-	{ href: "/dashboard/customers", icon: UserGroupIcon, name: "Customers" },
-];
-
+/**
+ * Navigation links for the dashboard sidebar.
+ * @param props - NavLinksProps
+ * @returns JSX element with navigation links.
+ */
 export function NavLinks({ role }: NavLinksProps): JSX.Element {
 	const pathname: string = usePathname();
-	const links: NavLink[] = [...baseLinks];
 
-	// Only add Users link for admin
-	if (role === "admin") {
+	// Define base links
+	const links: NavLink[] = [
+		{ href: NAV_LINKS.HOME, icon: HomeIcon, name: "Home" },
+		{ href: NAV_LINKS.INVOICES, icon: DocumentDuplicateIcon, name: "Invoices" },
+		{ href: NAV_LINKS.CUSTOMERS, icon: UserGroupIcon, name: "Customers" },
+	];
+
+	// Only add a Users link for admin
+	if (role === ADMIN_ROLE) {
 		links.push({
-			href: "/dashboard/users",
+			href: NAV_LINKS.USERS,
 			icon: LockClosedIcon,
 			name: "Users",
 		});
@@ -61,6 +74,7 @@ export function NavLinks({ role }: NavLinksProps): JSX.Element {
 						key={link.name}
 					>
 						<LinkIcon aria-hidden="true" className="w-6" />
+
 						<span className="sr-only md:not-sr-only">{link.name}</span>
 					</Link>
 				);
