@@ -3,39 +3,63 @@ import Link from "next/link";
 import type { JSX } from "react";
 import { deleteInvoiceFormAction } from "@/src/lib/actions/invoices.actions";
 
-export function CreateInvoice(): JSX.Element {
-	return (
-		<Link
-			className="bg-bg-secondary text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-			href="/dashboard/invoices/create"
-		>
-			<span className="hidden md:block">Create Invoice</span>{" "}
-			<PlusIcon className="h-5 md:ml-4" />
-		</Link>
-	);
+/**
+ * Props for invoice action buttons.
+ * @public
+ */
+export interface InvoiceActionProps {
+	id: string;
 }
 
-export function UpdateInvoice({ id }: { id: string }): JSX.Element {
-	return (
-		<Link
+const CREATE_INVOICE_ROUTE = "/dashboard/invoices/create";
+
+/**
+ * Renders a Link to create a new invoice.
+ */
+export const CreateInvoice = (): JSX.Element => (
+	<Link
+		aria-label="Create Invoice"
+		className="bg-bg-secondary text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+		href={CREATE_INVOICE_ROUTE}
+	>
+		<span className="hidden md:block">Create Invoice</span>
+		<PlusIcon className="h-5 md:ml-4" />
+	</Link>
+);
+
+/**
+ * Renders a Link to update an invoice.
+ * @param props - Component props
+ */
+export const UpdateInvoice = ({
+	id,
+}: Readonly<InvoiceActionProps>): JSX.Element => (
+	<Link
+		aria-label="Update Invoice"
+		className="hover:bg-bg-hover rounded-md border p-2"
+		href={`/dashboard/invoices/${encodeURIComponent(id)}/edit`}
+	>
+		<span className="sr-only">Update</span>
+		<PencilIcon className="w-5" />
+	</Link>
+);
+
+/**
+ * Renders a form button to delete an invoice.
+ * @param props - Component props
+ */
+export const DeleteInvoice = ({
+	id,
+}: Readonly<InvoiceActionProps>): JSX.Element => (
+	<form action={deleteInvoiceFormAction}>
+		<input name="id" type="hidden" value={id} />
+		<button
+			aria-label="Delete Invoice"
 			className="hover:bg-bg-hover rounded-md border p-2"
-			href={`/dashboard/invoices/${id}/edit`}
+			type="submit"
 		>
-			<span className="sr-only">Update</span>
-			<PencilIcon className="w-5" />
-		</Link>
-	);
-}
-
-export function DeleteInvoice({ id }: { id: string }): JSX.Element {
-	// const deleteInvoiceWithId: () => Promise<void> = deleteInvoice.bind(null, id);
-	return (
-		<form action={deleteInvoiceFormAction}>
-			<input name="id" type="hidden" value={id} />
-			<button className="hover:bg-bg-hover rounded-md border p-2" type="submit">
-				<span className="sr-only">Delete</span>
-				<TrashIcon className="w-5" />
-			</button>
-		</form>
-	);
-}
+			<span className="sr-only">Delete</span>
+			<TrashIcon className="w-5" />
+		</button>
+	</form>
+);
