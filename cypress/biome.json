@@ -13,32 +13,9 @@
 		},
 		"enabled": true
 	},
-	"css": {
-		"assist": {
-			"enabled": true
-		},
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		}
-	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": [
-			"!cypress",
-			"!src/lib/db/drizzle/**/*",
-			"src/**/*.{ts,tsx,css,json,md}",
-			"cypress.config.ts",
-			"drizzle-dev.config.ts",
-			"drizzle-test.config.ts",
-			"envConfig.ts",
-			"next.config.ts",
-			"package.json",
-			"postcss.config.mjs",
-			"tsconfig.json"
-		]
+		"includes": ["**/*.{ts,tsx,css,json}"]
 	},
 	"formatter": {
 		"enabled": true
@@ -50,6 +27,7 @@
 		"formatter": {
 			"enabled": true
 		},
+		"globals": ["cy", "Cypress", "context"],
 		"linter": {
 			"enabled": true
 		}
@@ -65,25 +43,16 @@
 			"enabled": true
 		},
 		"parser": {
-			"allowComments": false
+			"allowComments": true
 		}
 	},
 	"linter": {
 		"domains": {
-			"next": "recommended",
-			"project": "recommended",
-			"react": "recommended"
+			"test": "recommended"
 		},
 		"enabled": true,
 		"rules": {
 			"recommended": true
 		}
-	},
-	"vcs": {
-		"clientKind": "git",
-		"defaultBranch": "main",
-		"enabled": true,
-		"root": ".",
-		"useIgnoreFile": true
 	}
 }
