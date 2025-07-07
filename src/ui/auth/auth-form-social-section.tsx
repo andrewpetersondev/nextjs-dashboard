@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
-import { DemoUser } from "@/src/ui/auth/demo-user";
+import type { UserRole } from "@/src/lib/definitions/users.types";
+import { DemoForm } from "@/src/ui/auth/demo-form";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 
 /**
@@ -29,8 +29,17 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
 }) => (
 	<>
 		{/* Demo user and admin buttons */}
-		<DemoUser text={demoUserText} />
-		<DemoAdminUser text={demoAdminText} />
+		<DemoForm
+			label="demo-user"
+			text={demoUserText}
+			userRole={"user" as UserRole}
+		/>
+		<DemoForm
+			label="demo-admin-user"
+			text={demoAdminText}
+			userRole={"admin" as UserRole}
+		/>
+
 		{/* Social login buttons */}
 		<div className="mt-6 grid grid-cols-2 gap-4">
 			<SocialLoginButton

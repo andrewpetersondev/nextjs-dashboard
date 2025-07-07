@@ -22,6 +22,8 @@ import type {
 import "./cypress-global.css";
 import { mount } from "cypress/react";
 import type { UserRole } from "@/src/lib/definitions/users.types.ts";
+import "cypress-axe"; // used in demo-form-advanced.cy.tsx
+import "@testing-library/cypress/add-commands"; // Enables findByRole, findByText, etc.
 
 // --- Component Tests ---
 
@@ -334,6 +336,15 @@ declare global {
 			 * Ensures a user is deleted from the database.
 			 */
 			ensureUserDeleted(email: string): Chainable<UserEntity | null>;
+
+			/**
+			 * Find an element by its ARIA role.
+			 * @see https://testing-library.com/docs/cypress-testing-library/intro/
+			 */
+			findByRole<E extends Node = HTMLElement>(
+				role: string,
+				options?: import("@testing-library/cypress").FindByRoleOptions,
+			): Chainable<E>;
 
 			/**
 			 * Finds a user in the database.
