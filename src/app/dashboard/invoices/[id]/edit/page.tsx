@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
+import { readCustomersAction } from "@/src/lib/actions/customers.actions";
+import { readInvoiceAction } from "@/src/lib/actions/invoices.actions";
 import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { readCustomersAction } from "@/src/lib/server-actions/customers.actions";
-import { readInvoiceAction } from "@/src/lib/server-actions/invoices.actions";
 import { H1 } from "@/src/ui/headings";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
 import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form";

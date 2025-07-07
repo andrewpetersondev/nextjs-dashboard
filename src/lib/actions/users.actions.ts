@@ -303,7 +303,7 @@ export async function createUserAction(
 	}
 }
 
-// src/lib/server-actions/users.ts
+// src/lib/actions/users.ts
 
 /**
  * Fetches a user by plain string id for UI consumption.

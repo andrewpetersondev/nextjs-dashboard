@@ -1,10 +1,10 @@
 "use client";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
+import { updateUserAction } from "@/src/lib/actions/users.actions";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { EditUserFormFields } from "@/src/lib/definitions/users.types";
 import type { UserDto } from "@/src/lib/dto/user.dto";
-import { updateUserAction } from "@/src/lib/server-actions/users.actions";
 import { FormActionRow } from "@/src/ui/components/form-action-row";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
 import { ServerMessage } from "@/src/ui/users/server-message";

@@ -5,7 +5,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
-import { signup } from "@/src/lib/server-actions/users.actions";
+import { signup } from "@/src/lib/actions/users.actions";
 import { AuthServerMessage } from "@/src/ui/auth/auth-server-message.tsx";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";

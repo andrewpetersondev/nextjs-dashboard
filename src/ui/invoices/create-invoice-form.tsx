@@ -8,9 +8,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type JSX, useActionState, useEffect, useState } from "react";
+import { createInvoiceAction } from "@/src/lib/actions/invoices.actions";
 import type { CustomerField } from "@/src/lib/definitions/customers.types";
 import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
-import { createInvoiceAction } from "@/src/lib/server-actions/invoices.actions";
 import { Button } from "@/src/ui/button";
 import { InvoiceServerMessage } from "@/src/ui/invoices/invoice-server-message";
 

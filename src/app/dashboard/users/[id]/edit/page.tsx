@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
+import { readUserAction } from "@/src/lib/actions/users.actions";
 import type { UserDto } from "@/src/lib/dto/user.dto";
-import { readUserAction } from "@/src/lib/server-actions/users.actions";
 import { H1 } from "@/src/ui/headings";
 import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
 import { EditUserForm } from "@/src/ui/users/edit-user-form";

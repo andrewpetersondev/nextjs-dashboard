@@ -2,8 +2,8 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
+import { readLatestInvoicesAction } from "@/src/lib/actions/invoices.actions";
 import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices.types";
-import { readLatestInvoicesAction } from "@/src/lib/server-actions/invoices.actions";
 import { H2, H3 } from "@/src/ui/headings";
 
 /**

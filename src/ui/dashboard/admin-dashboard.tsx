@@ -1,7 +1,7 @@
 "use server";
 
 import { type JSX, Suspense } from "react";
-import { readCardDataAction } from "@/src/lib/server-actions/data.actions";
+import { readCardDataAction } from "@/src/lib/actions/data.actions";
 import { CardWrapper } from "@/src/ui/dashboard/cards";
 import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";

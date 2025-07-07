@@ -6,7 +6,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUserAction } from "@/src/lib/server-actions/users.actions";
+import { createUserAction } from "@/src/lib/actions/users.actions";
 import { InputField } from "@/src/ui/auth/input-field";
 import { FormActionRow } from "@/src/ui/components/form-action-row";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button";

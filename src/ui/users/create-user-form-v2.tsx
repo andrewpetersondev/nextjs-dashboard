@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import { createUserAction } from "@/src/lib/server-actions/users.actions";
+import { createUserAction } from "@/src/lib/actions/users.actions";
 import { UserForm } from "@/src/ui/users/user-form";
 
 type CreateUserFormState = Readonly<{

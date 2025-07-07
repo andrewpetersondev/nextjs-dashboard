@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { demoUser } from "@/src/lib/server-actions/users.actions";
+import { demoUser } from "@/src/lib/actions/users.actions";
 import { Button } from "@/src/ui/button";
 
 /**
