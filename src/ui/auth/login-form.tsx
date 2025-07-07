@@ -30,56 +30,54 @@ export function LoginForm(): JSX.Element {
 	});
 
 	return (
-		<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-			<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-				<form action={action} className="space-y-6">
-					<InputField
-						autoComplete="email"
-						autoFocus={true}
-						dataCy="login-email-input"
-						describedById="login-email-errors"
-						error={state?.errors?.email}
-						icon={
-							<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
-						}
-						id="email"
-						label="Email address"
-						name="email"
-						placeholder="steve@jobs.com"
-						required={true}
-						type="email"
-					/>
-					<InputField
-						autoComplete="current-password"
-						dataCy="login-password-input"
-						describedById="login-password-errors"
-						error={state?.errors?.password}
-						icon={
-							<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
-						}
-						id="password"
-						label="Password"
-						name="password"
-						placeholder="Enter your password"
-						required={true}
-						type="password"
-					/>
+		<>
+			<form action={action} className="space-y-6">
+				<InputField
+					autoComplete="email"
+					autoFocus={true}
+					dataCy="login-email-input"
+					describedById="login-email-errors"
+					error={state?.errors?.email}
+					icon={
+						<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+					}
+					id="email"
+					label="Email address"
+					name="email"
+					placeholder="steve@jobs.com"
+					required={true}
+					type="email"
+				/>
+				<InputField
+					autoComplete="current-password"
+					dataCy="login-password-input"
+					describedById="login-password-errors"
+					error={state?.errors?.password}
+					icon={
+						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+					}
+					id="password"
+					label="Password"
+					name="password"
+					placeholder="Enter your password"
+					required={true}
+					type="password"
+				/>
 
-					<FormInputWrapper>
-						<div className="flex items-center justify-between">
-							<RememberMeCheckbox />
-							<ForgotPasswordLink />
-						</div>
-					</FormInputWrapper>
-
-					<div>
-						<AuthSubmitButton data-cy="login-submit-button" pending={pending}>
-							Log In
-						</AuthSubmitButton>
+				<FormInputWrapper>
+					<div className="flex items-center justify-between">
+						<RememberMeCheckbox />
+						<ForgotPasswordLink />
 					</div>
-				</form>
-				<AuthServerMessage message={state.message} />
-			</div>
-		</div>
+				</FormInputWrapper>
+
+				<div>
+					<AuthSubmitButton data-cy="login-submit-button" pending={pending}>
+						Log In
+					</AuthSubmitButton>
+				</div>
+			</form>
+			<AuthServerMessage message={state.message} />
+		</>
 	);
 }
