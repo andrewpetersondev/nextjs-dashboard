@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
 import { DemoUser } from "@/src/ui/auth/demo-user";
+import { SignupFormDivider } from "@/src/ui/auth/signup-form-divider";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 
 /**
@@ -27,6 +28,3 @@ export const SignupFormSocialSection: FC = () => (
 		</div>
 	</div>
 );
-
-// Import the divider at the top of this file
-import { SignupFormDivider } from "./signup-form-divider";
