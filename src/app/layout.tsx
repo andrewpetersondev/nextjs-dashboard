@@ -1,9 +1,14 @@
 import "@/src/app/globals.css";
 import type { Metadata } from "next";
-import type React from "react";
-import type { JSX } from "react";
+import type { FC, ReactNode } from "react";
 import { notoSans } from "@/src/ui/style/fonts";
 
+/**
+ * Root layout component.
+ * Wraps the entire application.
+ * @param props - Layout props
+ * @returns The root layout
+ */
 export const metadata: Metadata = {
 	description: "The official Next.js Learn Dashboard is built with App Router.",
 	metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
@@ -13,11 +18,11 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}): JSX.Element {
+interface RootLayoutProps {
+	children: ReactNode;
+}
+
+const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 	return (
 		<html className="h-full scheme-light-dark" lang="en">
 			<body
@@ -27,4 +32,6 @@ export default function RootLayout({
 			</body>
 		</html>
 	);
-}
+};
+
+export default RootLayout;

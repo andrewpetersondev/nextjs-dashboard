@@ -40,7 +40,7 @@ export default async function Page(
 	const totalPages: number = await readInvoicesPagesAction(query);
 
 	return (
-		<div className="w-full">
+		<main className="w-full">
 			<div className="flex w-full items-center justify-between">
 				<H1>Invoices</H1>
 			</div>
@@ -56,6 +56,6 @@ export default async function Page(
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />
 			</div>
-		</div>
+		</main>
 	);
 }

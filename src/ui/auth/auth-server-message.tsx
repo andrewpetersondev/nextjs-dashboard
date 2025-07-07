@@ -7,7 +7,7 @@ export interface SignupFormErrorMessageProps {
 /**
  * Displays signup form error messages.
  */
-export const SignupFormErrorMessage: FC<SignupFormErrorMessageProps> = ({
+export const AuthServerMessage: FC<SignupFormErrorMessageProps> = ({
 	message,
 }) => (
 	<div

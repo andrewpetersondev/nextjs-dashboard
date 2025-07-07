@@ -17,17 +17,17 @@ export default async function Page(): Promise<JSX.Element> {
 
 	if (role === "admin") {
 		return (
-			<div>
+			<main>
 				<MiddlewareCard />
 				<AdminDashboard />
-			</div>
+			</main>
 		);
 	}
 
 	return (
-		<div>
+		<main>
 			<MiddlewareCard />
 			<UserDashboard />
-		</div>
+		</main>
 	);
 }

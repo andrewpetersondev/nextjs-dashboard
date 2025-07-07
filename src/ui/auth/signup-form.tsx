@@ -1,5 +1,4 @@
 "use client";
-
 import {
 	AtSymbolIcon,
 	LockClosedIcon,
@@ -7,12 +6,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
 import { signup } from "@/src/lib/server-actions/users.actions";
+import { AuthServerMessage } from "@/src/ui/auth/auth-server-message.tsx";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
 import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
 import { DemoUser } from "@/src/ui/auth/demo-user";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
-import { Heading } from "@/src/ui/auth/heading";
 import { InputField } from "@/src/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
@@ -42,129 +41,111 @@ export const SignupForm: FC = () => {
 	);
 
 	return (
-		<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-			<Heading text="Sign up for an account" />
+		<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+			<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+				<form
+					action={action}
+					autoComplete="off"
+					className="space-y-6"
+					data-cy="signup-form"
+				>
+					<InputField
+						autoComplete="username"
+						dataCy="signup-username-input"
+						error={state?.errors?.username}
+						icon={
+							<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						}
+						id="username"
+						label="Username"
+						name="username"
+						required={true}
+						type="text"
+					/>
+					<InputField
+						autoComplete="email"
+						dataCy="signup-email-input"
+						error={state?.errors?.email}
+						icon={
+							<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						}
+						id="email"
+						label="Email address"
+						name="email"
+						placeholder="steve@jobs.com"
+						required={true}
+						type="email"
+					/>
+					<InputField
+						autoComplete="new-password"
+						dataCy="signup-password-input"
+						describedById="signup-password-errors"
+						error={state?.errors?.password}
+						icon={
+							<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						}
+						id="password"
+						label="Password"
+						name="password"
+						placeholder="Enter your password"
+						required={true}
+						type="password"
+					/>
 
-			{/* Form container */}
-			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-				<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-					<form
-						action={action}
-						autoComplete="off"
-						className="space-y-6"
-						data-cy="signup-form"
-					>
-						<InputField
-							autoComplete="username"
-							dataCy="signup-username-input"
-							error={state?.errors?.username}
-							icon={
-								<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
-							}
-							id="username"
-							label="Username"
-							name="username"
-							required={true}
-							type="text"
-						/>
-						<InputField
-							autoComplete="email"
-							dataCy="signup-email-input"
-							error={state?.errors?.email}
-							icon={
-								<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
-							}
-							id="email"
-							label="Email address"
-							name="email"
-							placeholder="steve@jobs.com"
-							required={true}
-							type="email"
-						/>
-						<InputField
-							autoComplete="new-password"
-							dataCy="signup-password-input"
-							describedById="signup-password-errors"
-							error={state?.errors?.password}
-							icon={
-								<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
-							}
-							id="password"
-							label="Password"
-							name="password"
-							placeholder="Enter your password"
-							required={true}
-							type="password"
-						/>
-
-						<FormInputWrapper>
-							<div className="flex items-center justify-between">
-								<RememberMeCheckbox />
-								<ForgotPasswordLink />
-							</div>
-						</FormInputWrapper>
-
-						<div>
-							<AuthSubmitButton
-								data-cy="signup-submit-button"
-								pending={pending}
-							>
-								Sign Up
-							</AuthSubmitButton>
+					<FormInputWrapper>
+						<div className="flex items-center justify-between">
+							<RememberMeCheckbox />
+							<ForgotPasswordLink />
 						</div>
-					</form>
-					{/* does this error div ever get used? */}
-					<div
-						aria-atomic="true"
-						aria-live="polite"
-						className="flex h-8 items-end space-x-1"
-					>
-						{state?.message && (
-							<p className="text-text-error" data-cy="signup-message-errors">
-								{state.message}
-							</p>
-						)}
-					</div>
-					{/* does this error div ever get used? */}
+					</FormInputWrapper>
 
 					<div>
-						<div className="relative mt-10">
-							<div
-								aria-hidden="true"
-								className="absolute inset-0 flex items-center"
-							>
-								<div className="border-bg-accent w-full border-t" />
-							</div>
-							<div className="relative flex justify-center text-sm/6 font-medium">
-								<span className="bg-bg-primary text-text-secondary px-6">
-									Or sign up with
-								</span>
-							</div>
+						<AuthSubmitButton data-cy="signup-submit-button" pending={pending}>
+							Sign Up
+						</AuthSubmitButton>
+					</div>
+				</form>
+
+				{/* server message */}
+				<AuthServerMessage message={state.message} />
+
+				<div>
+					<div className="relative mt-10">
+						<div
+							aria-hidden="true"
+							className="absolute inset-0 flex items-center"
+						>
+							<div className="border-bg-accent w-full border-t" />
 						</div>
-						<DemoUser text="Sign up as Demo User" />
-						<DemoAdminUser text="Sign up as Demo Admin" />
-						<div className="mt-6 grid grid-cols-2 gap-4">
-							<SocialLoginButton
-								data-cy="signup-google"
-								href="/api/auth/google"
-								mode="signup"
-								provider="Google"
-							/>
-							<SocialLoginButton
-								data-cy="signup-github"
-								href="/api/auth/github"
-								mode="signup"
-								provider="GitHub"
-							/>
+						<div className="relative flex justify-center text-sm/6 font-medium">
+							<span className="bg-bg-primary text-text-secondary px-6">
+								Or sign up with
+							</span>
 						</div>
 					</div>
+					<DemoUser text="Sign up as Demo User" />
+					<DemoAdminUser text="Sign up as Demo Admin" />
+					<div className="mt-6 grid grid-cols-2 gap-4">
+						<SocialLoginButton
+							data-cy="signup-google"
+							href="/api/auth/google"
+							mode="signup"
+							provider="Google"
+						/>
+						<SocialLoginButton
+							data-cy="signup-github"
+							href="/api/auth/github"
+							mode="signup"
+							provider="GitHub"
+						/>
+					</div>
 				</div>
-				<AuthSwitchLink
-					href="/login"
-					linkText="Sign in here"
-					prompt="Already a member?"
-				/>
 			</div>
+			<AuthSwitchLink
+				href="/login"
+				linkText="Sign in here"
+				prompt="Already a member?"
+			/>
 		</div>
 	);
 };
