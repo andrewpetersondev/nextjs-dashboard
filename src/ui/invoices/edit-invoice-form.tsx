@@ -29,6 +29,7 @@ export const EditInvoiceForm = ({
 	};
 
 	// Bind the invoice ID to the action
+	// I think I used bind while this component was a traditional function, not an arrow function. Is this still needed?
 	const updateInvoiceWithId = updateInvoiceAction.bind(null, invoice.id);
 
 	// useActionState expects a reducer: (prevState, payload) => newState
