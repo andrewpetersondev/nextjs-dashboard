@@ -5,10 +5,8 @@ import { type JSX, useActionState } from "react";
 import { login } from "@/src/lib/server-actions/users.actions";
 import { AuthServerMessage } from "@/src/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { InputField } from "@/src/ui/auth/input-field";
-import { LoginFormSocialSection } from "@/src/ui/auth/login-form-social-section";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
 
@@ -80,15 +78,8 @@ export function LoginForm(): JSX.Element {
 						</AuthSubmitButton>
 					</div>
 				</form>
-
 				<AuthServerMessage message={state.message} />
-				<LoginFormSocialSection />
 			</div>
-			<AuthSwitchLink
-				href="/signup"
-				linkText="Sign up here"
-				prompt="Not a member?"
-			/>
 		</div>
 	);
 }

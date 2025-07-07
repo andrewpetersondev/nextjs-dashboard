@@ -1,8 +1,14 @@
-import type { FC } from "react";
-import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user.tsx";
-import { DemoUser } from "@/src/ui/auth/demo-user.tsx";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button.tsx";
+"use client";
 
+import type { FC } from "react";
+import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
+import { DemoUser } from "@/src/ui/auth/demo-user";
+import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
+
+/**
+ * Social login section for the login form.
+ * Includes demo user buttons and social login providers.
+ */
 export const LoginFormSocialSection: FC = () => (
 	<div>
 		<div className="relative mt-10">
