@@ -3,15 +3,14 @@
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState } from "react";
 import { login } from "@/src/lib/server-actions/users.actions";
+import { AuthServerMessage } from "@/src/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
-import { DemoAdminUser } from "@/src/ui/auth/demo-admin-user";
-import { DemoUser } from "@/src/ui/auth/demo-user";
 import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
 import { Heading } from "@/src/ui/auth/heading";
 import { InputField } from "@/src/ui/auth/input-field";
+import { LoginFormSocialSection } from "@/src/ui/auth/login-form-social-section";
 import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
 import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
 
 type LoginState = {
@@ -85,51 +84,9 @@ export function LoginForm(): JSX.Element {
 							</AuthSubmitButton>
 						</div>
 					</form>
-					{/* does this error div ever get used? */}
-					<div
-						aria-atomic="true"
-						aria-live="polite"
-						className="flex h-8 items-end space-x-1"
-					>
-						{state?.message && (
-							<p className="text-text-error" data-cy="login-message-errors">
-								{state.message}
-							</p>
-						)}
-					</div>
-					{/* does this error div ever get used? */}
 
-					<div>
-						<div className="relative mt-10">
-							<div
-								aria-hidden="true"
-								className="absolute inset-0 flex items-center"
-							>
-								<div className="border-bg-accent w-full border-t" />
-							</div>
-							<div className="relative flex justify-center text-sm/6 font-medium">
-								<span className="bg-bg-primary text-text-secondary px-6">
-									Or continue with
-								</span>
-							</div>
-						</div>
-						<DemoUser text="Login as Demo User" />
-						<DemoAdminUser text="Login as Demo Admin" />
-						<div className="mt-6 grid grid-cols-2 gap-4">
-							<SocialLoginButton
-								data-cy="login-google"
-								href="/api/auth/google"
-								mode="login"
-								provider="Google"
-							/>
-							<SocialLoginButton
-								data-cy="login-github"
-								href="/api/auth/github"
-								mode="login"
-								provider="GitHub"
-							/>
-						</div>
-					</div>
+					<AuthServerMessage message={state.message} />
+					<LoginFormSocialSection />
 				</div>
 				<AuthSwitchLink
 					href="/signup"
