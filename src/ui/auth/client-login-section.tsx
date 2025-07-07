@@ -2,9 +2,9 @@
 
 import type { FC } from "react";
 import { AuthFormDivider } from "@/src/ui/auth/auth-form-divider";
+import { AuthFormSocialSection } from "@/src/ui/auth/auth-form-social-section";
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
 import { LoginForm } from "@/src/ui/auth/login-form";
-import { LoginFormSocialSection } from "@/src/ui/auth/login-form-social-section";
 
 /**
  * Client-only section for the login page.
@@ -15,7 +15,11 @@ export const ClientLoginSection: FC = () => (
 		<div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
 			<LoginForm />
 			<AuthFormDivider label="or continue with" />
-			<LoginFormSocialSection />
+			<AuthFormSocialSection
+				demoAdminText="Login as Demo Admin"
+				demoUserText="Login as Demo User"
+				mode="login"
+			/>
 		</div>
 		{/* Switch the link below the card, matching the signup page */}
 		<AuthSwitchLink
