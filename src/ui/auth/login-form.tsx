@@ -77,7 +77,7 @@ export function LoginForm(): JSX.Element {
 					</AuthSubmitButton>
 				</div>
 			</form>
-			<AuthServerMessage message={state.message} />
+			{state.message && <AuthServerMessage message={state.message} />}
 		</>
 	);
 }

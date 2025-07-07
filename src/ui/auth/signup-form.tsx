@@ -143,7 +143,7 @@ export const SignupForm: FC = () => {
 			</div>
 			<AuthSwitchLink
 				href="/login"
-				linkText="Sign in here"
+				linkText="Log in here"
 				prompt="Already a member?"
 			/>
 		</div>

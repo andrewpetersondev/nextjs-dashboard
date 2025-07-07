@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
 export const LoginFormDivider: FC = () => (
-	<div className="relative mt-10">
+	<div className="relative my-5">
 		<div aria-hidden="true" className="absolute inset-0 flex items-center">
 			<div className="border-bg-accent w-full border-t" />
 		</div>

@@ -25,7 +25,7 @@ export function AuthSwitchLink({
 		<p className="text-text-accent mt-10 text-center text-sm/6">
 			{prompt}{" "}
 			<Link
-				className="text-text-secondary hover:text-text-hover font-semibold"
+				className="text-text-secondary hover:text-text-hover font-semibold underline decoration-text-accent underline-offset-8"
 				href={href}
 			>
 				{linkText}
