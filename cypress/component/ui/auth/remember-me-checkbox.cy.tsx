@@ -1,4 +1,4 @@
-import { RememberMeCheckbox } from "../../../src/ui/auth/remember-me-checkbox.tsx";
+import { RememberMeCheckbox } from "../../../../src/ui/auth/remember-me-checkbox.tsx";
 
 describe("<RememberMeCheckbox />", () => {
 	it("renders checkbox and label", () => {

@@ -1,4 +1,4 @@
-import { FieldError } from "../../../src/ui/auth/field-error.tsx";
+import { FieldError } from "../../../../src/ui/auth/field-error.tsx";
 
 describe("<FieldError />", () => {
 	// test fails

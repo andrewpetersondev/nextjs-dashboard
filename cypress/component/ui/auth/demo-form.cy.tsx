@@ -3,7 +3,7 @@ import React from "react";
 import {
 	DemoForm,
 	type DemoFormProps,
-} from "../../../src/ui/auth/demo-form.tsx";
+} from "../../../../src/ui/auth/demo-form.tsx";
 
 // import '@testing-library/cypress/add-commands'; // Uncomment if you want to use findByRole
 

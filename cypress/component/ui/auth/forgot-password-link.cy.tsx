@@ -1,4 +1,4 @@
-import { ForgotPasswordLink } from "../../../src/ui/auth/forgot-password-link.tsx";
+import { ForgotPasswordLink } from "../../../../src/ui/auth/forgot-password-link.tsx";
 
 describe("<ForgotPasswordLink />", () => {
 	it("renders link to forgot password", () => {

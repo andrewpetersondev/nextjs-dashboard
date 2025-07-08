@@ -1,10 +1,12 @@
-import { AuthSwitchLink } from "../../../src/ui/auth/auth-switch-link.tsx";
+import { AuthSwitchLink } from "../../../../src/ui/auth/auth-switch-link.tsx";
+
+const loginRoute = "../../../../src/app/login"
 
 describe("<AuthSwitchLink />", () => {
 	it("renders prompt and link", () => {
 		cy.mount(
 			<AuthSwitchLink
-				href="/login"
+				href={loginRoute}
 				linkText="Sign in here"
 				prompt="Already a member?"
 			/>,
