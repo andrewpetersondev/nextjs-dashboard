@@ -14,6 +14,9 @@
                   <Item>
                     <option name="path" value="cypress/biome.cypress.json" />
                   </Item>
+                  <Item>
+                    <option name="path" value="biome.json" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
