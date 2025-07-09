@@ -1,8 +1,6 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
-// TODO: Make this a controlled component in the future. (value instead of defaultValue)
-
 /**
  * Props for the SelectMenu component.
  * @template T - The type of the option object.
@@ -12,7 +10,9 @@ export interface SelectMenuProps<
 > {
 	/** Options to display in the select menu. */
 	options: T[];
-	/** The selected value. */
+	/** The selected value (controlled). */
+	value?: string | number;
+	/** The initial value (uncontrolled). */
 	defaultValue?: string | number;
 	/** The select element's id. */
 	id: string;
@@ -34,11 +34,13 @@ export interface SelectMenuProps<
 
 /**
  * Accessible, reusable select menu component.
+ * Supports both controlled and uncontrolled usage.
  * @template T - The type of the option object.
  */
 export const SelectMenu = React.memo(
 	<T extends { id: string | number; name: string }>({
 		options,
+		value,
 		defaultValue,
 		id,
 		name,
@@ -57,11 +59,14 @@ export const SelectMenu = React.memo(
 				aria-label={placeholder}
 				className={`peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 ${className}`}
 				data-cy={dataCy}
-				defaultValue={defaultValue}
 				disabled={disabled}
+				// --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
+				defaultValue={value === undefined ? defaultValue : undefined}
 				id={id}
 				name={name}
 				onChange={onChange}
+				// --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
+				value={value !== undefined ? value : undefined}
 			>
 				<option disabled={true} value="">
 					{placeholder}

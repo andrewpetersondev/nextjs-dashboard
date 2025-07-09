@@ -7,22 +7,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
 import { createUserAction } from "@/src/lib/actions/users.actions";
+import type { CreateUserFormState } from "@/src/lib/definitions/users.types";
 import { InputField } from "@/src/ui/auth/input-field";
 import { FormActionRow } from "@/src/ui/components/form-action-row";
 import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
 import { H1 } from "@/src/ui/headings";
+import { SelectRole } from "@/src/ui/users/select-role";
 import { ServerMessage } from "@/src/ui/users/server-message";
-
-type CreateUserFormState = Readonly<{
-	errors?: {
-		username?: string[];
-		email?: string[];
-		role?: string[];
-		password?: string[];
-	};
-	message?: string;
-	success?: boolean;
-}>;
 
 export function CreateUserForm(): JSX.Element {
 	const initialState = { errors: {}, message: "", success: undefined };
@@ -33,6 +24,9 @@ export function CreateUserForm(): JSX.Element {
 	>(createUserAction, initialState);
 
 	const [showAlert, setShowAlert] = useState(false);
+
+	// Track the selected role in the local state
+	const [selectedRole, setSelectedRole] = useState<string | undefined>();
 
 	useEffect(() => {
 		if (state.message) {
@@ -45,13 +39,14 @@ export function CreateUserForm(): JSX.Element {
 
 	return (
 		<div>
-			<H1>create user form </H1>
+			<H1>Create User Form</H1>
 
 			<section>
 				<p>Admins can create users.</p>
 			</section>
 
 			<form action={action} autoComplete="off">
+				{/* Username Field */}
 				<InputField
 					autoComplete="username"
 					dataCy="signup-username-input"
@@ -65,6 +60,8 @@ export function CreateUserForm(): JSX.Element {
 					required={true}
 					type="text"
 				/>
+
+				{/* Email Field */}
 				<InputField
 					autoComplete="email"
 					dataCy="signup-email-input"
@@ -79,6 +76,8 @@ export function CreateUserForm(): JSX.Element {
 					required={true}
 					type="email"
 				/>
+
+				{/* Password Field */}
 				<InputField
 					autoComplete="new-password"
 					dataCy="signup-password-input"
@@ -95,27 +94,24 @@ export function CreateUserForm(): JSX.Element {
 					type="password"
 				/>
 
-				{/* User Role */}
+				{/* Role Selection */}
 				<div className="mb-4">
 					<label className="mb-2 block text-sm font-medium" htmlFor="role">
 						Role
 					</label>
-					<select
-						className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring focus:ring-primary"
-						id="role"
-						name="role"
-					>
-						<option value="admin">Admin</option>
-						<option value="user">User</option>
-					</select>
-					<div aria-atomic="true" aria-live="polite" id="create-user-error">
-						{state.errors?.role?.map((error: string) => (
-							<p className="text-text-error mt-2 text-sm" key={error}>
-								{error}
-							</p>
-						))}
-					</div>
+					<SelectRole
+						error={state?.errors?.role} // Pass validation errors
+						// update the selected role state
+						onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+							// Defensive: ensure the value is a string and not empty
+							const value = event.target.value as string;
+							setSelectedRole(value || undefined);
+						}}
+						value={selectedRole} // Controlled value
+					/>
 				</div>
+
+				{/* Form Action Row */}
 				<FormActionRow cancelHref="/dashboard/users">
 					<FormSubmitButton
 						data-cy="create-user-submit-button"
@@ -125,6 +121,8 @@ export function CreateUserForm(): JSX.Element {
 					</FormSubmitButton>
 				</FormActionRow>
 			</form>
+
+			{/* Server Message */}
 			<ServerMessage showAlert={showAlert} state={state} />
 		</div>
 	);

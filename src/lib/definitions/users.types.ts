@@ -75,6 +75,17 @@ export type UserFormState<T> = {
 	success?: boolean;
 	data?: T;
 };
+
+export type CreateUserFormState = Readonly<{
+	errors?: {
+		username?: string[];
+		email?: string[];
+		role?: string[];
+		password?: string[];
+	};
+	message?: string;
+	success?: boolean;
+}>;
 /**
  * Patch type for updates to a user.
  */
@@ -82,10 +93,10 @@ export type UserUpdatePatch = Partial<
 	Pick<UserEntity, "username" | "email" | "role" | "password">
 >;
 // --- Form State Aliases (for clarity, but all use FormState<T>) ---
-export type SignupFormState = FormState<SignupFormFields>;
-export type LoginFormState = FormState<LoginFormFields>;
-export type CreateUserFormState = FormState<CreateUserFormFields>;
-export type EditUserFormState = FormState<EditUserFormFields>;
+type SignupFormState_dep = FormState<SignupFormFields>;
+type LoginFormState_dep = FormState<LoginFormFields>;
+type CreateUserFormState_dep = FormState<CreateUserFormFields>;
+type EditUserFormState_dep = FormState<EditUserFormFields>;
 
 /* ============================================================================
  * Database Row Types
