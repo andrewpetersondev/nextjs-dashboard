@@ -1,10 +1,10 @@
-import { SocialLoginButton } from "../../../../src/ui/auth/social-login-button.tsx";
+import { SocialLoginButton } from "@/src/ui/auth/social-login-button.tsx";
 
 describe("<SocialLoginButton />", () => {
 	it("renders Google button", () => {
 		cy.mount(
 			<SocialLoginButton
-				data-cy="google-btn"
+				dataCy="google-btn"
 				href="/api/auth/google"
 				mode="signup"
 				provider="Google"
@@ -26,7 +26,7 @@ describe("<SocialLoginButton />", () => {
 	it("renders GitHub button", () => {
 		cy.mount(
 			<SocialLoginButton
-				data-cy="github-btn"
+				dataCy="github-btn"
 				href="/api/auth/github"
 				mode="login"
 				provider="GitHub"

@@ -3,9 +3,11 @@ import React from "react";
 import {
 	DemoForm,
 	type DemoFormProps,
-} from "../../../../src/ui/auth/demo-form.tsx";
+} from "@/src/ui/auth/demo-form.tsx";
 import "@testing-library/cypress/add-commands"; // Enables findByRole, findByText, etc.
 // cypress-axe should be imported in cypress/support/component.ts
+
+// error because importing server only file
 
 describe("<DemoForm /> Advanced", () => {
 	const defaultProps: DemoFormProps = {

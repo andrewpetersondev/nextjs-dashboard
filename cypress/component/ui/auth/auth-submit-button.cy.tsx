@@ -1,6 +1,6 @@
-import "../support/component.ts";
+import "@/cypress/support/index.ts";
 
-import { AuthSubmitButton } from "../../../../src/ui/auth/auth-submit-button.tsx";
+import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button.tsx";
 
 describe("AuthSubmitButton", () => {
 	it("renders correctly", () => {

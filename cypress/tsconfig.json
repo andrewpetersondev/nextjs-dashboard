@@ -1,13 +1,11 @@
 {
 	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": false,
 		"lib": ["esnext", "dom"],
 		"moduleResolution": "node",
 		"sourceMap": true,
 		"types": ["cypress", "node"]
 	},
-	"exclude": [],
+	"exclude": ["node_modules", "cypress/videos", "cypress/screenshots"],
 	"extends": "../tsconfig.json",
 	"include": ["**/*.ts", "**/*.tsx", "../cypress.config.ts"]
 }

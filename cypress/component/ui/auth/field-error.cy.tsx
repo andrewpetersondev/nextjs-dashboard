@@ -1,10 +1,10 @@
-import { FieldError } from "../../../../src/ui/auth/field-error.tsx";
+import { FieldError } from "@/src/ui/auth/field-error.tsx";
 
 describe("<FieldError />", () => {
 	// test fails
 	it("renders nothing if no error", () => {
-		cy.mount(<FieldError />);
-		cy.get("div").should("not.exist");
+		cy.mount(<FieldError dataCy="test-error" />);
+		cy.get('[data-cy="test-error"]').should("not.exist");
 	});
 
 	it("renders error messages", () => {

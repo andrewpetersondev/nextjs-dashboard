@@ -29,6 +29,8 @@
 		"includes": [
 			"!cypress",
 			"!src/lib/db/drizzle/**/*",
+			"!pnpm-lock.yaml",
+			"!pnpm-workspace.yaml",
 			"src/**/*.{ts,tsx,css,json,md}",
 			"biome.json",
 			"cypress.config.ts",
