@@ -14,6 +14,9 @@
                   <Item>
                     <option name="path" value="biome.json" />
                   </Item>
+                  <Item>
+                    <option name="path" value="cypress/biome.json" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
@@ -29,6 +32,9 @@
                 <list>
                   <Item>
                     <option name="path" value="tsconfig.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="cypress/tsconfig.json" />
                   </Item>
                 </list>
               </option>
