@@ -1,9 +1,11 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
+import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types";
+import { ErrorMessage } from "@/src/ui/components/error-message";
 
 interface InvoiceStatusRadioGroupProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
-	value: "pending" | "paid";
+	value: InvoiceStatus;
 	error?: string | string[];
 }
 
@@ -70,18 +72,12 @@ export const InvoiceStatusRadioGroup = ({
 					))}
 				</div>
 			</div>
-			{errors.length > 0 && (
-				<div
-					aria-atomic="true"
-					aria-live="polite"
-					className="mt-2 text-sm text-text-error"
-					id={`${name}-error`}
-				>
-					{errors.map((errorMsg) => (
-						<div key={errorMsg}>{errorMsg}</div>
-					))}
-				</div>
-			)}
+			<ErrorMessage
+				dataCy="invoice-status-error"
+				error={error}
+				id="invoice-status-error"
+				label="Invoice status error"
+			/>
 		</fieldset>
 	);
 };

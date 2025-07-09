@@ -1,5 +1,6 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
+import { ErrorMessage } from "@/src/ui/components/error-message";
 
 interface InvoiceAmountInputProps
 	extends InputHTMLAttributes<HTMLInputElement> {
@@ -45,18 +46,12 @@ export const InvoiceAmountInput = ({
 				/>
 				<CurrencyDollarIcon className="pointer-events-none absolute left-2 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-primary peer-focus:text-text-focus" />
 			</div>
-			{errors.length > 0 && (
-				<div
-					aria-atomic="true"
-					aria-live="polite"
-					className="mt-2 text-sm text-text-error"
-					id={`${id}-error`}
-				>
-					{errors.map((errorMsg) => (
-						<div key={errorMsg}>{errorMsg}</div>
-					))}
-				</div>
-			)}
+			<ErrorMessage
+				dataCy="invoice-amount-error"
+				error={errors}
+				id="invoice-amount-error"
+				label="Invoice amount error"
+			/>
 		</div>
 	);
 };

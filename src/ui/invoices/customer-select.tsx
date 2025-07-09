@@ -34,7 +34,7 @@ export const CustomerSelect: React.FC<CustomerSelectProps> = ({
 		/>
 		<ErrorMessage
 			dataCy="customer-select-error"
-			error={error}
+			error={error} // todo: should this be errors like in InvoiceAmountInput? That would be more consistent and versatile.
 			id="customer-select-error"
 			label="Customer selection error"
 		/>
