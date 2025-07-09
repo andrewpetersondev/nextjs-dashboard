@@ -59,9 +59,9 @@ export const SelectMenu = React.memo(
 				aria-label={placeholder}
 				className={`peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 ${className}`}
 				data-cy={dataCy}
-				disabled={disabled}
-				// --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
 				defaultValue={value === undefined ? defaultValue : undefined}
+				// --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
+				disabled={disabled}
 				id={id}
 				name={name}
 				onChange={onChange}
