@@ -74,7 +74,6 @@
 		"cyp:component:headless": "hcp vault-secrets run -- cypress run --component --headless",
 		"cyp:e2e:headless": "hcp vault-secrets run -- pnpm cypress run --e2e",
 		"cyp:e2e:headless:auth": "hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/**/*.cy.ts'",
-		"cyp:e2e:headless:auth:auth": "hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/auth.cy.ts'",
 		"cyp:open": "hcp vault-secrets run -- pnpm cypress open",
 		"cyp:test:e2e": "pnpm drizzle:test:generate && pnpm drizzle:test:migrate  && pnpm cyp:e2e:headless",
 		"debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",

@@ -1,27 +1,49 @@
-import { defineConfig } from "cypress";
+// cypress.config.ts
+import { type CypressConfig, defineConfig } from "cypress";
 import { dbTasks } from "./cypress/support/db-tasks.ts";
 
-export default defineConfig({
+// Constants for magic values
+const DEFAULT_BASE_URL = "http://localhost:3000";
+
+// Cypress configuration for Next.js v15+ (App Router), TypeScript, and ESM
+const config: CypressConfig = defineConfig({
+	// Component testing configuration
 	component: {
 		devServer: {
-			bundler: "webpack",
+			bundler: "webpack", // Turbopack not yet supported by Cypress
 			framework: "next",
 		},
-		supportFile: "./cypress/support/index.ts",
+		specPattern: "cypress/component/**/*.cy.{ts,tsx}", // Supports .cy.ts and .cy.tsx
+		supportFile: "cypress/support/index.ts",
+		// Optionally exclude snapshot/image files if used
+		// excludeSpecPattern: ["**/__snapshots__/*", "**/__image_snapshots__/*"],
 	},
+
+	// End-to-end testing configuration
 	e2e: {
-		baseUrl: "http://localhost:3000",
+		baseUrl: process.env.CYPRESS_BASE_URL ?? DEFAULT_BASE_URL, // Use env var for flexibility
 		setupNodeEvents(on, config) {
+			// Register custom DB tasks for test setup/teardown
 			on("task", dbTasks);
 			return config;
 		},
+		specPattern: "cypress/e2e/**/*.cy.{ts,tsx}", // Supports .cy.ts and .cy.tsx
+		supportFile: "cypress/support/index.ts",
+		// Optionally exclude snapshot/image files if used
+		// excludeSpecPattern: ["**/__snapshots__/*", "**/__image_snapshots__/*"],
 	},
+
+	// Environment variables (secrets managed via Hashicorp Vault)
 	env: {
-		SESSION_SECRET: process.env.SESSION_SECRET,
+		SESSION_SECRET: process.env.SESSION_SECRET, // Never commit secrets
 	},
-	fileServerFolder: ".",
-	screenshotOnRunFailure: true,
-	trashAssetsBeforeRuns: true,
-	video: false,
-	watchForFileChanges: false,
+
+	// General Cypress settings
+	fileServerFolder: ".", // Serve files from the project root
+	screenshotOnRunFailure: true, // Enable screenshots on failure for debugging
+	trashAssetsBeforeRuns: true, // Clean up assets before each run
+	video: false, // Disable video recording for CI performance
+	watchForFileChanges: false, // Disable file watching for CI stability
 });
+
+export default config;
