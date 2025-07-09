@@ -73,17 +73,6 @@ export const SelectMenu = React.memo(
 				))}
 			</select>
 			<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
-
-			{/* SHOW ERROR MESSAGE */}
-			{error && error.length > 0 && (
-				<div aria-atomic="true" aria-live="polite" id={`${name}-error`}>
-					{error.map((err) => (
-						<p className="text-text-error mt-2 text-sm" key={err}>
-							{err}
-						</p>
-					))}
-				</div>
-			)}
 		</div>
 	),
 );
