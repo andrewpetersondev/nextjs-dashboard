@@ -2,7 +2,8 @@ import { type ZodType, z as zod } from "zod";
 import type { UserEntity } from "@/src/lib/db/entities/user";
 import type { FormState } from "@/src/lib/definitions/form";
 
-// ---ids and roles: domain types---
+// --- Domain Types ---
+
 /**
  * Branded type for User IDs.
  */
@@ -17,7 +18,6 @@ export const USER_ROLES = ["admin", "user", "guest"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 /**
  * Error map for user actions.
- * @remarks Confirm if CreateUserFormFields is the correct type for user errors.
  */
 export type UserErrorMap = Partial<
 	Record<keyof CreateUserFormFields, string[]>
@@ -34,22 +34,23 @@ export type ActionResult = {
 };
 /**
  * Base fields for user forms.
- * Allows additional dynamic fields for extensibility.
+ * Use type alias for compatibility with generics.
  */
-export interface BaseUserFormFields {
+export type BaseUserFormFields = {
 	username: string;
 	email: string;
 	password: string;
-	[key: string]: unknown; // Allow additional fields for flexibility
-}
+};
+
 /**
  * Fields for creating a user (admin).
  */
-export interface CreateUserFormFields extends BaseUserFormFields {
+export type CreateUserFormFields = BaseUserFormFields & {
 	role: UserRole;
-}
+};
+
 /**
- *Error type for all user forms
+ * Error type for all user forms.
  */
 export type UserFormErrors = Partial<
 	Record<keyof CreateUserFormFields, string[]>
@@ -66,41 +67,27 @@ export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
  * Fields for editing a user (all optional for PATCH semantics).
  */
 export type EditUserFormFields = Partial<CreateUserFormFields>;
-/**
- * Generic form state
- */
-export type UserFormState<T> = {
-	errors?: UserFormErrors;
-	message?: string;
-	success?: boolean;
-	data?: T;
-};
 
-export type CreateUserFormState = Readonly<{
-	errors?: {
-		username?: string[];
-		email?: string[];
-		role?: string[];
-		password?: string[];
-	};
-	message?: string;
-	success?: boolean;
-}>;
 /**
  * Patch type for updates to a user.
  */
 export type UserUpdatePatch = Partial<
 	Pick<UserEntity, "username" | "email" | "role" | "password">
 >;
-// --- Form State Aliases (for clarity, but all use FormState<T>) ---
-type SignupFormState_dep = FormState<SignupFormFields>;
-type LoginFormState_dep = FormState<LoginFormFields>;
-type CreateUserFormState_dep = FormState<CreateUserFormFields>;
-type EditUserFormState_dep = FormState<EditUserFormFields>;
 
-/* ============================================================================
- * Database Row Types
- * ========================================================================== */
+// --- Generic Form State Aliases (Preferred) ---
+
+/**
+ * Use generic FormState<T> for all form state types.
+ * This ensures maintainability and DRY code.
+ */
+export type SignupFormState = FormState<SignupFormFields>;
+export type LoginFormState = FormState<LoginFormFields>;
+export type CreateUserFormState = FormState<CreateUserFormFields>;
+export type EditUserFormState = FormState<EditUserFormFields>;
+
+// --- Database Row Types ---
+
 export interface UserRowBase<
 	Id extends string = string,
 	RoleType extends string = string,
@@ -113,9 +100,8 @@ export interface UserRowBase<
 	sensitiveData?: string; // Optional sensitive data field
 }
 
-/* ============================================================================
- * Field Schemas (zod)
- * ========================================================================== */
+// --- Field Schemas (zod) ---
+
 /**
  * Username: 3-32 chars, trimmed, required.
  */
@@ -145,9 +131,8 @@ export const passwordSchema = zod
 	})
 	.trim();
 
-/* ============================================================================
- * Composite Form Schemas
- * ========================================================================== */
+// --- Composite Form Schemas ---
+
 /**
  * Shared base object for forms accepting username/email/password.
  */

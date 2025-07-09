@@ -3,7 +3,8 @@ import type { CustomerId } from "@/src/lib/definitions/customers.types";
 import type { FormState } from "@/src/lib/definitions/form";
 import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
 
-// ids and statuses: domain types
+// --- Domain Types ---
+
 /**
  * Branded type for Invoice IDs.
  */
@@ -23,23 +24,25 @@ export type InvoiceErrorMap = Partial<
 	Record<keyof InvoiceFormFields, string[]>
 >;
 
-// --- UI and Server Actions: Form Types
+// --- Form Types ---
 
 /**
- * Fields for invoice form state.
- * Allows additional dynamic fields for extensibility.
+ * Fields allowed in invoice form (for new/edit).
+ * Use type alias for compatibility with generics.
  */
-/** Fields allowed in invoice form (for new/edit). */
-export interface InvoiceFormFields {
+export type InvoiceFormFields = {
 	id: InvoiceId | "";
 	customerId: CustomerId | "";
 	amount: number | "";
 	status: InvoiceStatus;
 	date?: string;
-	[key: string]: unknown;
-}
+	// Add additional fields here as needed, but avoid index signatures for strict typing.
+};
 
-export type InvoiceFormState = Readonly<FormState<InvoiceFormFields>>;
+/**
+ * State for the invoice form.
+ */
+export type InvoiceFormState = FormState<InvoiceFormFields>;
 
 /**
  * Unified state/result type for creating an invoice.
@@ -55,30 +58,11 @@ export type InvoiceCreateState = Readonly<{
  * Used by both server actions and UI state.
  */
 export type InvoiceEditState = Readonly<{
-	/**
-	 * The latest invoice data (always present for UI rendering).
-	 */
 	invoice: InvoiceDto;
-	/**
-	 * Field-level validation errors, if any.
-	 */
 	errors?: InvoiceErrorMap;
-	/**
-	 * User-facing message (success or error).
-	 */
 	message?: string;
-	/**
-	 * Indicates if the operation was successful.
-	 */
 	success?: boolean;
 }>;
-
-export type UpdateInvoiceFormState = Readonly<
-	FormState<InvoiceFormFields> & {
-		invoice: InvoiceDto;
-		success?: boolean;
-	}
->;
 
 /**
  * State shape for EditInvoiceForm.
@@ -91,11 +75,22 @@ export type EditInvoiceFormState = Readonly<{
 	success?: boolean;
 }>;
 
-// --- Result/State types for create/edit actions
+/**
+ * State for updating an invoice form, including the latest invoice data.
+ */
+export type UpdateInvoiceFormState = Readonly<
+	FormState<InvoiceFormFields> & {
+		invoice: InvoiceDto;
+		success?: boolean;
+	}
+>;
+
+// --- Result/State types for create/edit actions ---
 
 /**
  * Generic action result type for server actions.
  * @template T - The data payload type.
+ * @template E - The error map type.
  */
 export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
 	readonly data?: T;
@@ -112,14 +107,15 @@ export type CreateInvoiceResult = InvoiceActionResult<
 	InvoiceErrorMap
 >;
 
+/**
+ * Result type for update invoice action.
+ */
 export type UpdateInvoiceResult = InvoiceActionResult<
 	InvoiceDto,
 	InvoiceErrorMap
 >;
 
-/* ============================================================================
- * Database Row Types
- * ========================================================================== */
+// --- Database Row Types ---
 
 export interface DbRowBase<
 	Id extends string = string,
@@ -148,9 +144,7 @@ export interface InvoiceByIdDbRow extends DbRowBase {
 	date: string;
 }
 
-/* ============================================================================
- * UI Table Row Types
- * ========================================================================== */
+// --- UI Table Row Types ---
 
 export interface FetchLatestInvoicesData {
 	readonly id: InvoiceId;
@@ -178,7 +172,7 @@ export interface FetchFilteredInvoicesData {
 	readonly status: InvoiceStatus;
 }
 
-/* --- Validation Schemas (zod) --- */
+// --- Validation Schemas (zod) ---
 
 /**
  * Zod schema for invoice form validation.
@@ -187,7 +181,7 @@ export interface FetchFilteredInvoicesData {
 export const InvoiceFormSchema = zod.object({
 	amount: zod.coerce
 		.number()
-		.gt(0, { message: "Amount must be greater than $0." }), // Accepts string, branding applied elsewhere
+		.gt(0, { message: "Amount must be greater than $0." }),
 	customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
 	date: zod.string().optional(),
 	id: zod.string(),
