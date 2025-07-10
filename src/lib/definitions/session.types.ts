@@ -5,19 +5,19 @@ import { roleSchema, type UserRole } from "@/lib/definitions/users.types";
  * Payload for encrypting a session (JWT or similar).
  */
 export interface EncryptPayload {
-	user: {
-		userId: string;
-		role: UserRole;
-		expiresAt: number; // Unix timestamp (ms)
-	};
+  user: {
+    userId: string;
+    role: UserRole;
+    expiresAt: number; // Unix timestamp (ms)
+  };
 }
 
 /**
  * Payload after decrypting a session (includes JWT claims).
  */
 export interface DecryptPayload extends EncryptPayload {
-	iat: number; // Issued at (Unix timestamp)
-	exp: number; // Expiration (Unix timestamp)
+  iat: number; // Issued at (Unix timestamp)
+  exp: number; // Expiration (Unix timestamp)
 }
 
 // --- Zod Field Schemas ---
@@ -28,25 +28,25 @@ export const expSchema = zod.number();
 
 // --- Validation Schemas ---
 export const EncryptPayloadSchema = zod.object({
-	user: zod.object({
-		expiresAt: expiresAtSchema,
-		role: roleSchema,
-		userId: userIdSchema,
-	}),
+  user: zod.object({
+    expiresAt: expiresAtSchema,
+    role: roleSchema,
+    userId: userIdSchema,
+  }),
 });
 
 export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-	exp: expSchema,
-	iat: iatSchema,
+  exp: expSchema,
+  iat: iatSchema,
 });
 
 /**
  * Result returned when verifying a user session.
  */
 export interface SessionVerificationResult {
-	isAuthorized: true;
-	userId: string;
-	role: UserRole;
+  isAuthorized: true;
+  userId: string;
+  role: UserRole;
 }
 
 /**
@@ -54,14 +54,14 @@ export interface SessionVerificationResult {
  * This type is aligned with the Drizzle ORM schema.
  */
 export interface SessionRecord {
-	/** Unique session identifier (UUID) */
-	id: string;
-	/** Opaque session token (random, unique) */
-	token: string;
-	/** Session expiration timestamp (ISO 8601 string) */
-	expiresAt: string;
-	/** Associated user ID (UUID) */
-	userId: string;
+  /** Unique session identifier (UUID) */
+  id: string;
+  /** Opaque session token (random, unique) */
+  token: string;
+  /** Session expiration timestamp (ISO 8601 string) */
+  expiresAt: string;
+  /** Associated user ID (UUID) */
+  userId: string;
 }
 
 /**
@@ -69,8 +69,8 @@ export interface SessionRecord {
  * This matches the Db schema exactly.
  */
 export interface DbSessionRow {
-	id: string;
-	token: string | null;
-	expiresAt: Date;
-	userId: string | null;
+  id: string;
+  token: string | null;
+  expiresAt: Date;
+  userId: string | null;
 }

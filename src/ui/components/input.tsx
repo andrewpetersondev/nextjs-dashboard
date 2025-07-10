@@ -1,11 +1,11 @@
 import type React from "react";
 
 export interface InputProps
-	extends React.InputHTMLAttributes<HTMLInputElement> {
-	/** Label for accessibility error description */
-	ariaDescribedBy?: string;
-	/** Data attribute for Cypress testing */
-	dataCy?: string;
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Label for accessibility error description */
+  ariaDescribedBy?: string;
+  /** Data attribute for Cypress testing */
+  dataCy?: string;
 }
 
 /**
@@ -14,15 +14,15 @@ export interface InputProps
  * @returns JSX.Element
  */
 export const DollarInput: React.FC<InputProps> = ({
-	ariaDescribedBy,
-	className = "",
-	dataCy,
-	...rest
+  ariaDescribedBy,
+  className = "",
+  dataCy,
+  ...rest
 }) => (
-	<input
-		aria-describedby={ariaDescribedBy}
-		className={`peer block w-full rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-primary ${className}`}
-		data-cy={dataCy}
-		{...rest}
-	/>
+  <input
+    aria-describedby={ariaDescribedBy}
+    className={`peer block w-full rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-primary ${className}`}
+    data-cy={dataCy}
+    {...rest}
+  />
 );

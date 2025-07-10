@@ -5,35 +5,35 @@ import type { FormattedCustomersTableRow } from "@/lib/definitions/customers.typ
 import { CustomersTable } from "@/ui/customers/table";
 
 export const metadata: Metadata = {
-	title: "Customers",
+  title: "Customers",
 };
 
 // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 export const dynamic = "force-dynamic";
 
 export interface CustomersSearchParams {
-	query?: string;
-	page?: string;
+  query?: string;
+  page?: string;
 }
 
 export interface CustomersPageProps {
-	searchParams?: Promise<CustomersSearchParams>;
+  searchParams?: Promise<CustomersSearchParams>;
 }
 
 export default async function Page(
-	props: CustomersPageProps,
+  props: CustomersPageProps,
 ): Promise<JSX.Element> {
-	const searchParams: CustomersSearchParams | undefined =
-		await props.searchParams;
+  const searchParams: CustomersSearchParams | undefined =
+    await props.searchParams;
 
-	const query: string = searchParams?.query || "";
+  const query: string = searchParams?.query || "";
 
-	const customers: FormattedCustomersTableRow[] =
-		await readFilteredCustomersAction(query);
+  const customers: FormattedCustomersTableRow[] =
+    await readFilteredCustomersAction(query);
 
-	return (
-		<main>
-			<CustomersTable customers={customers} />
-		</main>
-	);
+  return (
+    <main>
+      <CustomersTable customers={customers} />
+    </main>
+  );
 }

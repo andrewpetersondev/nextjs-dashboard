@@ -1,9 +1,9 @@
 import type { InvoiceEntity } from "@/lib/db/entities/invoice";
 import {
-	INVOICE_STATUSES,
-	type InvoiceByIdDbRow,
-	type InvoiceId,
-	type InvoiceStatus,
+  INVOICE_STATUSES,
+  type InvoiceByIdDbRow,
+  type InvoiceId,
+  type InvoiceStatus,
 } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
@@ -17,7 +17,7 @@ export const toInvoiceIdBrand = (id: string): InvoiceId => id as InvoiceId;
  * Helper to brand a string as InvoiceStatus.
  */
 export const toInvoiceStatusBrand = (status: string): InvoiceStatus =>
-	status as InvoiceStatus;
+  status as InvoiceStatus;
 
 /**
  * Maps a raw database row to an InvoiceEntity.
@@ -28,17 +28,17 @@ export const toInvoiceStatusBrand = (status: string): InvoiceStatus =>
  * @throws Error if status is invalid.
  */
 export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
-	if (!INVOICE_STATUSES.includes(row.status as InvoiceStatus)) {
-		throw new Error(`Invalid status value: ${row.status}`);
-	}
+  if (!INVOICE_STATUSES.includes(row.status as InvoiceStatus)) {
+    throw new Error(`Invalid status value: ${row.status}`);
+  }
 
-	return {
-		amount: row.amount,
-		customerId: toCustomerIdBrand(row.customerId),
-		date: row.date,
-		id: toInvoiceIdBrand(row.id),
-		status: row.status as InvoiceStatus, // Cast after validation
-	};
+  return {
+    amount: row.amount,
+    customerId: toCustomerIdBrand(row.customerId),
+    date: row.date,
+    id: toInvoiceIdBrand(row.id),
+    status: row.status as InvoiceStatus, // Cast after validation
+  };
 }
 
 /**
@@ -50,11 +50,11 @@ export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
  */
 
 export function toInvoiceDto(invoice: InvoiceEntity): InvoiceDto {
-	return {
-		amount: invoice.amount,
-		customerId: invoice.customerId as string, // strips brand
-		date: invoice.date,
-		id: invoice.id as string, // strips brand
-		status: invoice.status,
-	};
+  return {
+    amount: invoice.amount,
+    customerId: invoice.customerId as string, // strips brand
+    date: invoice.date,
+    id: invoice.id as string, // strips brand
+    status: invoice.status,
+  };
 }

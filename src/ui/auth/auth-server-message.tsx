@@ -1,24 +1,24 @@
 import type { FC } from "react";
 
 export interface SignupFormErrorMessageProps {
-	message?: string;
+  message?: string;
 }
 
 /**
  * Displays signup form error messages.
  */
 export const AuthServerMessage: FC<SignupFormErrorMessageProps> = ({
-	message,
+  message,
 }) => (
-	<div
-		aria-atomic="true"
-		aria-live="polite"
-		className="flex h-8 items-end space-x-1"
-	>
-		{message && (
-			<p className="text-text-error" data-cy="signup-message-errors">
-				{message}
-			</p>
-		)}
-	</div>
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    className="flex h-8 items-end space-x-1"
+  >
+    {message && (
+      <p className="text-text-error" data-cy="signup-message-errors">
+        {message}
+      </p>
+    )}
+  </div>
 );

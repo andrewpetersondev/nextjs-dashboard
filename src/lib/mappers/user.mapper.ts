@@ -28,18 +28,18 @@ export const toUserRoleBrand = (role: string): UserRole => role as UserRole;
  * @returns The corresponding UserEntity.
  */
 export function toUserEntity(dto: UserDto): UserEntity {
-	// Defensive: never allow undefined for required fields
-	if (!(dto.id && dto.username && dto.email && dto.role)) {
-		throw new Error("Invalid UserDto: missing required fields");
-	}
-	return {
-		email: dto.email,
-		id: toUserIdBrand(dto.id),
-		password: "",
-		role: toUserRoleBrand(dto.role),
-		sensitiveData: DEFAULT_SENSITIVE_DATA, // Never map password from DTO; must be set explicitly
-		username: dto.username, // Use constant for default
-	};
+  // Defensive: never allow undefined for required fields
+  if (!(dto.id && dto.username && dto.email && dto.role)) {
+    throw new Error("Invalid UserDto: missing required fields");
+  }
+  return {
+    email: dto.email,
+    id: toUserIdBrand(dto.id),
+    password: "",
+    role: toUserRoleBrand(dto.role),
+    sensitiveData: DEFAULT_SENSITIVE_DATA, // Never map password from DTO; must be set explicitly
+    username: dto.username, // Use constant for default
+  };
 }
 
 /**
@@ -49,13 +49,13 @@ export function toUserEntity(dto: UserDto): UserEntity {
  * @returns The corresponding UserDto.
  */
 export function toUserDto(entity: UserEntity): UserDto {
-	return {
-		email: entity.email,
-		id: entity.id,
-		role: entity.role,
-		username: entity.username,
-		// Never expose password or sensitiveData
-	};
+  return {
+    email: entity.email,
+    id: entity.id,
+    role: entity.role,
+    username: entity.username,
+    // Never expose password or sensitiveData
+  };
 }
 
 /**
@@ -65,23 +65,23 @@ export function toUserDto(entity: UserEntity): UserDto {
  * @returns The corresponding UserEntity.
  */
 export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
-	// Defensive: validate and brand fields
-	if (
-		typeof row.id !== "string" ||
-		typeof row.username !== "string" ||
-		typeof row.email !== "string" ||
-		typeof row.role !== "string" ||
-		typeof row.password !== "string" ||
-		typeof row.sensitiveData !== "string"
-	) {
-		throw new Error("Invalid DB row: missing or invalid user fields");
-	}
-	return {
-		email: row.email,
-		id: toUserIdBrand(row.id),
-		password: row.password,
-		role: toUserRoleBrand(row.role),
-		sensitiveData: row.sensitiveData,
-		username: row.username,
-	};
+  // Defensive: validate and brand fields
+  if (
+    typeof row.id !== "string" ||
+    typeof row.username !== "string" ||
+    typeof row.email !== "string" ||
+    typeof row.role !== "string" ||
+    typeof row.password !== "string" ||
+    typeof row.sensitiveData !== "string"
+  ) {
+    throw new Error("Invalid DB row: missing or invalid user fields");
+  }
+  return {
+    email: row.email,
+    id: toUserIdBrand(row.id),
+    password: row.password,
+    role: toUserRoleBrand(row.role),
+    sensitiveData: row.sensitiveData,
+    username: row.username,
+  };
 }

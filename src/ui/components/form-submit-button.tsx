@@ -2,11 +2,11 @@ import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 import { Button } from "@/ui/button";
 
 export interface FormSubmitButtonProps
-	extends ButtonHTMLAttributes<HTMLButtonElement> {
-	children: ReactNode;
-	dataCy?: string;
-	pending?: boolean;
-	className?: string;
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+  dataCy?: string;
+  pending?: boolean;
+  className?: string;
 }
 
 /**
@@ -21,22 +21,22 @@ export interface FormSubmitButtonProps
  * @returns JSX.Element
  */
 export function FormSubmitButton({
-	children,
-	dataCy,
-	pending = false,
-	className = "",
-	...props
+  children,
+  dataCy,
+  pending = false,
+  className = "",
+  ...props
 }: FormSubmitButtonProps): JSX.Element {
-	return (
-		<Button
-			aria-disabled={pending}
-			className={`flex justify-center rounded-md bg-bg-active px-3 py-1.5 font-semibold text-sm/6 text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 ${className}`}
-			data-cy={dataCy}
-			disabled={pending || props.disabled}
-			type="submit"
-			{...props}
-		>
-			{children}
-		</Button>
-	);
+  return (
+    <Button
+      aria-disabled={pending}
+      className={`flex justify-center rounded-md bg-bg-active px-3 py-1.5 font-semibold text-sm/6 text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 ${className}`}
+      data-cy={dataCy}
+      disabled={pending || props.disabled}
+      type="submit"
+      {...props}
+    >
+      {children}
+    </Button>
+  );
 }

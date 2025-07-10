@@ -7,14 +7,14 @@ import type { JSX } from "react";
  * @returns {JSX.Element} Rendered ForgotPasswordLink component.
  */
 export function ForgotPasswordLink(): JSX.Element {
-	return (
-		<div className="text-sm/6">
-			<Link
-				className="font-semibold text-text-secondary hover:text-text-hover"
-				href="/forgot-password"
-			>
-				Forgot password?
-			</Link>
-		</div>
-	);
+  return (
+    <div className="text-sm/6">
+      <Link
+        className="font-semibold text-text-secondary hover:text-text-hover"
+        href="/forgot-password"
+      >
+        Forgot password?
+      </Link>
+    </div>
+  );
 }

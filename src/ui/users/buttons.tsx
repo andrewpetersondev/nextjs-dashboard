@@ -10,15 +10,15 @@ import { deleteUserFormAction } from "@/lib/actions/users.actions";
  * @returns {JSX.Element} A Link component styled as a button.
  */
 export function CreateUser(): JSX.Element {
-	return (
-		<Link
-			className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
-			href="/dashboard/users/create"
-		>
-			<span className="hidden md:block">Create User</span>{" "}
-			<PlusIcon className="h-5 md:ml-4" />
-		</Link>
-	);
+  return (
+    <Link
+      className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+      href="/dashboard/users/create"
+    >
+      <span className="hidden md:block">Create User</span>{" "}
+      <PlusIcon className="h-5 md:ml-4" />
+    </Link>
+  );
 }
 
 /**
@@ -28,15 +28,15 @@ export function CreateUser(): JSX.Element {
  * @returns {JSX.Element} A Link component styled as a button with an edit icon
  */
 export function UpdateUser({ id }: { id: string }): JSX.Element {
-	return (
-		<Link
-			className="rounded-md border p-2 hover:bg-bg-hover"
-			href={`/dashboard/users/${id}/edit`}
-		>
-			<span className="sr-only">Update</span>
-			<PencilIcon className="w-5" />
-		</Link>
-	);
+  return (
+    <Link
+      className="rounded-md border p-2 hover:bg-bg-hover"
+      href={`/dashboard/users/${id}/edit`}
+    >
+      <span className="sr-only">Update</span>
+      <PencilIcon className="w-5" />
+    </Link>
+  );
 }
 
 /**
@@ -46,14 +46,14 @@ export function UpdateUser({ id }: { id: string }): JSX.Element {
  * @returns {JSX.Element} A form with a submit button styled with a delete icon
  */
 export function DeleteUser({ id }: { id: string }): JSX.Element {
-	return (
-		<form action={deleteUserFormAction}>
-			{/* Hidden input for userId */}
-			<input name="userId" type="hidden" value={id} />
-			<button className="rounded-md border p-2 hover:bg-bg-hover" type="submit">
-				<span className="sr-only">Delete</span>
-				<TrashIcon className="w-5" />
-			</button>
-		</form>
-	);
+  return (
+    <form action={deleteUserFormAction}>
+      {/* Hidden input for userId */}
+      <input name="userId" type="hidden" value={id} />
+      <button className="rounded-md border p-2 hover:bg-bg-hover" type="submit">
+        <span className="sr-only">Delete</span>
+        <TrashIcon className="w-5" />
+      </button>
+    </form>
+  );
 }

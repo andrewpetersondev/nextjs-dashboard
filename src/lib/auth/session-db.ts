@@ -7,11 +7,11 @@ import "server-only";
 import { cookies } from "next/headers";
 import { z as zod } from "zod";
 import {
-	BASE64_PADDING_REGEX,
-	BASE64_PLUS_REGEX,
-	BASE64_SLASH_REGEX,
-	SESSION_COOKIE_NAME,
-	SESSION_DURATION_MS,
+  BASE64_PADDING_REGEX,
+  BASE64_PLUS_REGEX,
+  BASE64_SLASH_REGEX,
+  SESSION_COOKIE_NAME,
+  SESSION_DURATION_MS,
 } from "@/lib/auth/constants";
 import type { UserRole } from "@/lib/definitions/users.types";
 import { logger } from "@/lib/utils/logger";
@@ -27,16 +27,16 @@ import { logger } from "@/lib/utils/logger";
  * @returns {string} The session token (base64url encoded).
  */
 const generateSessionToken = (): string => {
-	const array = new Uint8Array(48);
-	crypto.getRandomValues(array);
+  const array = new Uint8Array(48);
+  crypto.getRandomValues(array);
 
-	const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join(
-		"",
-	);
-	return btoa(base64)
-		.replace(BASE64_PLUS_REGEX, "-")
-		.replace(BASE64_SLASH_REGEX, "_")
-		.replace(BASE64_PADDING_REGEX, "");
+  const base64 = Array.from(array, (byte) => String.fromCharCode(byte)).join(
+    "",
+  );
+  return btoa(base64)
+    .replace(BASE64_PLUS_REGEX, "-")
+    .replace(BASE64_SLASH_REGEX, "_")
+    .replace(BASE64_PADDING_REGEX, "");
 };
 
 /**
@@ -44,7 +44,7 @@ const generateSessionToken = (): string => {
  * @returns {string} The UUID string.
  */
 const generateUuid = (): string => {
-	return crypto.randomUUID();
+  return crypto.randomUUID();
 };
 
 /**
@@ -58,44 +58,44 @@ const generateUuid = (): string => {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _createDbSession(
-	userId: string,
-	role: UserRole = "user",
+  userId: string,
+  role: UserRole = "user",
 ): Promise<void> {
-	// Defensive: validate userId
-	const userIdSchema = zod.string().uuid();
-	if (!userIdSchema.safeParse(userId).success) {
-		logger.error(
-			{ context: "createDbSession", userId },
-			"Invalid userId for session creation",
-		);
-		throw new Error("Invalid userId");
-	}
+  // Defensive: validate userId
+  const userIdSchema = zod.string().uuid();
+  if (!userIdSchema.safeParse(userId).success) {
+    logger.error(
+      { context: "createDbSession", userId },
+      "Invalid userId for session creation",
+    );
+    throw new Error("Invalid userId");
+  }
 
-	const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
-	const token = generateSessionToken();
+  const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
+  const token = generateSessionToken();
 
-	// --- Anti-pattern resistance: never import Db code in Edge runtime ---
-	// Only import here, not at module scope, to avoid accidental Edge import
-	const { insertSession } = await import("@/lib/dal/session");
+  // --- Anti-pattern resistance: never import Db code in Edge runtime ---
+  // Only import here, not at module scope, to avoid accidental Edge import
+  const { insertSession } = await import("@/lib/dal/session");
 
-	await insertSession({
-		expiresAt,
-		id: generateUuid(),
-		token,
-		userId,
-	});
+  await insertSession({
+    expiresAt,
+    id: generateUuid(),
+    token,
+    userId,
+  });
 
-	const cookieStore = await cookies();
-	cookieStore.set(SESSION_COOKIE_NAME, token, {
-		expires: new Date(expiresAt),
-		httpOnly: true,
-		path: "/",
-		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
-	});
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE_NAME, token, {
+    expires: new Date(expiresAt),
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 
-	logger.info(
-		{ context: "createDbSession", expiresAt, role, userId },
-		`DB session created for user ${userId} with role ${role}`,
-	);
+  logger.info(
+    { context: "createDbSession", expiresAt, role, userId },
+    `DB session created for user ${userId} with role ${role}`,
+  );
 }

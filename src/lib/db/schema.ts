@@ -1,48 +1,48 @@
 import { relations } from "drizzle-orm";
 import {
-	type AnyPgColumn,
-	date,
-	integer,
-	pgEnum,
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	uuid,
-	varchar,
+  type AnyPgColumn,
+  date,
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 /**
  * Table and column name constants for maintainability.
  */
 export const TABLES = {
-	CUSTOMERS: "customers",
-	DEMO_USER_COUNTERS: "demo_user_counters",
-	INVOICES: "invoices",
-	REVENUES: "revenues",
-	SESSIONS: "sessions",
-	USERS: "users",
+  CUSTOMERS: "customers",
+  DEMO_USER_COUNTERS: "demo_user_counters",
+  INVOICES: "invoices",
+  REVENUES: "revenues",
+  SESSIONS: "sessions",
+  USERS: "users",
 } as const;
 
 export const COLUMNS = {
-	AMOUNT: "amount",
-	COUNT: "count",
-	CUSTOMER_ID: "customer_id",
-	DATE: "date",
-	EMAIL: "email",
-	EXPIRES_AT: "expires_at",
-	ID: "id",
-	IMAGE_URL: "image_url",
-	MONTH: "month",
-	NAME: "name",
-	PASSWORD: "password",
-	REVENUE: "revenue",
-	ROLE: "role",
-	SENSITIVE_DATA: "sensitive_data",
-	STATUS: "status",
-	TOKEN: "token",
-	USER_ID: "user_id",
-	USERNAME: "username",
+  AMOUNT: "amount",
+  COUNT: "count",
+  CUSTOMER_ID: "customer_id",
+  DATE: "date",
+  EMAIL: "email",
+  EXPIRES_AT: "expires_at",
+  ID: "id",
+  IMAGE_URL: "image_url",
+  MONTH: "month",
+  NAME: "name",
+  PASSWORD: "password",
+  REVENUE: "revenue",
+  ROLE: "role",
+  SENSITIVE_DATA: "sensitive_data",
+  STATUS: "status",
+  TOKEN: "token",
+  USER_ID: "user_id",
+  USERNAME: "username",
 } as const;
 
 /**
@@ -60,14 +60,14 @@ export const statusEnum = pgEnum("status", ["pending", "paid"]);
  * @see {User}
  */
 export const users = pgTable(TABLES.USERS, {
-	email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-	id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-	password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
-	role: roleEnum(COLUMNS.ROLE).default("user").notNull(),
-	sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
-		.notNull()
-		.default("cantTouchThis"),
-	username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull(),
+  email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
+  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
+  role: roleEnum(COLUMNS.ROLE).default("user").notNull(),
+  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
+    .notNull()
+    .default("cantTouchThis"),
+  username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull(),
 });
 
 /**
@@ -75,9 +75,9 @@ export const users = pgTable(TABLES.USERS, {
  * @see {DemoUserCounter}
  */
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
-	count: integer(COLUMNS.COUNT).notNull().default(0),
-	id: serial(COLUMNS.ID).primaryKey(),
-	role: roleEnum(COLUMNS.ROLE).notNull().default("guest"),
+  count: integer(COLUMNS.COUNT).notNull().default(0),
+  id: serial(COLUMNS.ID).primaryKey(),
+  role: roleEnum(COLUMNS.ROLE).notNull().default("guest"),
 });
 
 /**
@@ -85,10 +85,10 @@ export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
  * @see {Customer}
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
-	email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-	id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-	imageUrl: varchar(COLUMNS.IMAGE_URL, { length: 255 }).notNull(),
-	name: varchar(COLUMNS.NAME, { length: 50 }).notNull(),
+  email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
+  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  imageUrl: varchar(COLUMNS.IMAGE_URL, { length: 255 }).notNull(),
+  name: varchar(COLUMNS.NAME, { length: 50 }).notNull(),
 });
 
 /**
@@ -96,13 +96,13 @@ export const customers = pgTable(TABLES.CUSTOMERS, {
  * @see {Invoice}
  */
 export const invoices = pgTable(TABLES.INVOICES, {
-	amount: integer(COLUMNS.AMOUNT).notNull(),
-	customerId: uuid(COLUMNS.CUSTOMER_ID)
-		.notNull()
-		.references((): AnyPgColumn => customers.id),
-	date: date(COLUMNS.DATE).notNull(),
-	id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-	status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
+  amount: integer(COLUMNS.AMOUNT).notNull(),
+  customerId: uuid(COLUMNS.CUSTOMER_ID)
+    .notNull()
+    .references((): AnyPgColumn => customers.id),
+  date: date(COLUMNS.DATE).notNull(),
+  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
 });
 
 /**
@@ -110,8 +110,8 @@ export const invoices = pgTable(TABLES.INVOICES, {
  * @see {Revenue}
  */
 export const revenues = pgTable(TABLES.REVENUES, {
-	month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
-	revenue: integer(COLUMNS.REVENUE).notNull(),
+  month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
+  revenue: integer(COLUMNS.REVENUE).notNull(),
 });
 
 /**
@@ -119,27 +119,27 @@ export const revenues = pgTable(TABLES.REVENUES, {
  * @see {Session}
  */
 export const sessions = pgTable(TABLES.SESSIONS, {
-	expiresAt: timestamp(COLUMNS.EXPIRES_AT).notNull(),
-	id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-	token: text(COLUMNS.TOKEN).notNull(), // Enforce notNull for authentication
-	userId: uuid(COLUMNS.USER_ID)
-		.notNull()
-		.references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp(COLUMNS.EXPIRES_AT).notNull(),
+  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  token: text(COLUMNS.TOKEN).notNull(), // Enforce notNull for authentication
+  userId: uuid(COLUMNS.USER_ID)
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 /**
  * User relations.
  */
 export const usersRelations = relations(users, ({ many }) => ({
-	sessions: many(sessions),
+  sessions: many(sessions),
 }));
 
 /**
  * Demo user counters relations.
  */
 export const demoUserCountersRelations = relations(
-	demoUserCounters,
-	() => ({}),
+  demoUserCounters,
+  () => ({}),
 );
 
 /**
@@ -148,7 +148,7 @@ export const demoUserCountersRelations = relations(
  * Customers have many invoices.
  */
 export const customersRelations = relations(customers, ({ many }) => ({
-	invoices: many(invoices),
+  invoices: many(invoices),
 }));
 
 /**
@@ -157,10 +157,10 @@ export const customersRelations = relations(customers, ({ many }) => ({
  * Invoices belong to one customer.
  */
 export const invoicesRelations = relations(invoices, ({ one }) => ({
-	customer: one(customers, {
-		fields: [invoices.customerId],
-		references: [customers.id],
-	}),
+  customer: one(customers, {
+    fields: [invoices.customerId],
+    references: [customers.id],
+  }),
 }));
 
 /**
@@ -174,10 +174,10 @@ export const revenuesRelations = relations(revenues, () => ({}));
  * Sessions belong to one user.
  */
 export const sessionsRelations = relations(sessions, ({ one }) => ({
-	user: one(users, {
-		fields: [sessions.userId],
-		references: [users.id],
-	}),
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
 }));
 
 /**

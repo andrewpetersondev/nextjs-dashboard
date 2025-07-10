@@ -9,6 +9,6 @@ import type { CardData } from "@/lib/definitions/data.types";
  * @returns CardData object for dashboard cards.
  */
 export async function readCardDataAction(): Promise<CardData> {
-	const db = getDB();
-	return fetchCardData(db);
+  const db = getDB();
+  return fetchCardData(db);
 }

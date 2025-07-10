@@ -1,7 +1,7 @@
 import type { CustomerId } from "@/lib/definitions/customers.types";
 import type {
-	InvoiceId,
-	InvoiceStatus,
+  InvoiceId,
+  InvoiceStatus,
 } from "@/lib/definitions/invoices.types";
 
 /**
@@ -28,9 +28,9 @@ import type {
  *   `src/db/entities/invoice.ts`
  */
 export interface InvoiceEntity {
-	readonly id: InvoiceId;
-	readonly customerId: CustomerId;
-	readonly amount: number;
-	readonly date: string; // ISO 8601
-	readonly status: InvoiceStatus;
+  readonly id: InvoiceId;
+  readonly customerId: CustomerId;
+  readonly amount: number;
+  readonly date: string; // ISO 8601
+  readonly status: InvoiceStatus;
 }

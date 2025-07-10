@@ -9,50 +9,50 @@ import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton, InvoicesTableSkeleton } from "@/ui/skeletons";
 
 export const metadata: Metadata = {
-	title: "Invoices",
+  title: "Invoices",
 };
 
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
 export interface InvoicesSearchParams {
-	query?: string;
-	page?: string;
+  query?: string;
+  page?: string;
 }
 
 export interface InvoicesPageProps {
-	searchParams?: Promise<InvoicesSearchParams>;
+  searchParams?: Promise<InvoicesSearchParams>;
 }
 
 export default async function Page(
-	dynamicUrl: InvoicesPageProps,
+  dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {
-	const searchParams: InvoicesSearchParams | undefined =
-		await dynamicUrl.searchParams;
+  const searchParams: InvoicesSearchParams | undefined =
+    await dynamicUrl.searchParams;
 
-	const query: string = searchParams?.query || "";
+  const query: string = searchParams?.query || "";
 
-	const currentPage: number = Number(searchParams?.page) || 1;
+  const currentPage: number = Number(searchParams?.page) || 1;
 
-	const totalPages: number = await readInvoicesPagesAction(query);
+  const totalPages: number = await readInvoicesPagesAction(query);
 
-	return (
-		<main className="w-full">
-			<div className="flex w-full items-center justify-between">
-				<H1>Invoices</H1>
-			</div>
-			<div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-				<Suspense fallback={<InvoicesSearchSkeleton />}>
-					<Search placeholder="Search invoices..." />
-				</Suspense>
-				<CreateInvoice />
-			</div>
-			<Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
-				<InvoicesTable currentPage={currentPage} query={query} />
-			</Suspense>
-			<div className="mt-5 flex w-full justify-center">
-				<Pagination totalPages={totalPages} />
-			</div>
-		</main>
-	);
+  return (
+    <main className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <H1>Invoices</H1>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Suspense fallback={<InvoicesSearchSkeleton />}>
+          <Search placeholder="Search invoices..." />
+        </Suspense>
+        <CreateInvoice />
+      </div>
+      <Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
+        <InvoicesTable currentPage={currentPage} query={query} />
+      </Suspense>
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
+    </main>
+  );
 }

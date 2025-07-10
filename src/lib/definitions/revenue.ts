@@ -1,9 +1,9 @@
 export type Revenue = {
-	month: string;
-	revenue: number;
+  month: string;
+  revenue: number;
 };
 
 export interface YAxisResult {
-	yAxisLabels: string[];
-	topLabel: number;
+  yAxisLabels: string[];
+  topLabel: number;
 }

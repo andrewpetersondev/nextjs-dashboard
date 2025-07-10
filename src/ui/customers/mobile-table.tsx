@@ -8,15 +8,15 @@ import { CustomerMobileCard } from "./customer-mobile-card";
  * @returns JSX.Element
  */
 export async function MobileTable({
-	customers,
+  customers,
 }: {
-	customers: FormattedCustomersTableRow[];
+  customers: FormattedCustomersTableRow[];
 }): Promise<JSX.Element> {
-	return (
-		<div className="md:hidden" data-testid="mobile-table">
-			{customers.map((customer) => (
-				<CustomerMobileCard customer={customer} key={customer.id} />
-			))}
-		</div>
-	);
+  return (
+    <div className="md:hidden" data-testid="mobile-table">
+      {customers.map((customer) => (
+        <CustomerMobileCard customer={customer} key={customer.id} />
+      ))}
+    </div>
+  );
 }

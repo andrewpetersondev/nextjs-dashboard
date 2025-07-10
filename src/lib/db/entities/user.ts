@@ -23,12 +23,12 @@ import type { UserId, UserRole } from "@/lib/definitions/users.types";
  *   - Sensitive data should be handled with appropriate security measures
  */
 export interface UserEntity {
-	readonly id: UserId; // Ensure UserId is a UUID string type
-	readonly username: string;
-	readonly email: string;
-	readonly role: UserRole;
-	readonly password: string;
-	readonly sensitiveData: string;
+  readonly id: UserId; // Ensure UserId is a UUID string type
+  readonly username: string;
+  readonly email: string;
+  readonly role: UserRole;
+  readonly password: string;
+  readonly sensitiveData: string;
 }
 
 // maybe implement in the future

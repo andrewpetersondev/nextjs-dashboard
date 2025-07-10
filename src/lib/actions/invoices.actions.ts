@@ -3,30 +3,30 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-	createInvoiceDal,
-	deleteInvoiceDal,
-	fetchFilteredInvoices,
-	fetchInvoicesPages,
-	fetchLatestInvoices,
-	readInvoiceDal,
-	updateInvoiceDal,
+  createInvoiceDal,
+  deleteInvoiceDal,
+  fetchFilteredInvoices,
+  fetchInvoicesPages,
+  fetchLatestInvoices,
+  readInvoiceDal,
+  updateInvoiceDal,
 } from "@/lib/dal/invoices.dal";
 import { getDB } from "@/lib/db/connection";
 import type {
-	FetchFilteredInvoicesData,
-	InvoiceEditState,
-	ModifiedLatestInvoicesData,
+  FetchFilteredInvoicesData,
+  InvoiceEditState,
+  ModifiedLatestInvoicesData,
 } from "@/lib/definitions/invoices.types";
 import {
-	CreateInvoiceSchema,
-	type InvoiceCreateState,
-	UpdateInvoiceSchema,
+  CreateInvoiceSchema,
+  type InvoiceCreateState,
+  UpdateInvoiceSchema,
 } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 import {
-	toInvoiceIdBrand,
-	toInvoiceStatusBrand,
+  toInvoiceIdBrand,
+  toInvoiceStatusBrand,
 } from "@/lib/mappers/invoice.mapper";
 import { getFormField } from "@/lib/utils/utils.server";
 
@@ -37,92 +37,92 @@ import { getFormField } from "@/lib/utils/utils.server";
  * @returns A promise resolving to a CreateInvoiceResult.
  */
 export async function createInvoiceAction(
-	_prevState: InvoiceCreateState,
-	formData: FormData,
+  _prevState: InvoiceCreateState,
+  formData: FormData,
 ): Promise<InvoiceCreateState> {
-	try {
-		const db = getDB();
+  try {
+    const db = getDB();
 
-		// --- Strongly-typed field extraction ---
-		let rawAmount: string;
-		let rawCustomerId: string;
-		let rawStatus: string;
-		try {
-			rawAmount = getFormField(formData, "amount");
-			rawCustomerId = getFormField(formData, "customerId");
-			rawStatus = getFormField(formData, "status");
-		} catch (err) {
-			console.error(err);
-			return {
-				errors: {
-					amount: formData.get("amount") ? undefined : ["Amount is required."],
-					customerId: formData.get("customerId")
-						? undefined
-						: ["Customer ID is required."],
-					status: formData.get("status") ? undefined : ["Status is required."],
-				},
-				message: "Missing required fields.",
-				success: false,
-			};
-		}
+    // --- Strongly-typed field extraction ---
+    let rawAmount: string;
+    let rawCustomerId: string;
+    let rawStatus: string;
+    try {
+      rawAmount = getFormField(formData, "amount");
+      rawCustomerId = getFormField(formData, "customerId");
+      rawStatus = getFormField(formData, "status");
+    } catch (err) {
+      console.error(err);
+      return {
+        errors: {
+          amount: formData.get("amount") ? undefined : ["Amount is required."],
+          customerId: formData.get("customerId")
+            ? undefined
+            : ["Customer ID is required."],
+          status: formData.get("status") ? undefined : ["Status is required."],
+        },
+        message: "Missing required fields.",
+        success: false,
+      };
+    }
 
-		// --- Zod validation ---
-		const validated = CreateInvoiceSchema.safeParse({
-			amount: rawAmount,
-			customerId: rawCustomerId,
-			status: rawStatus,
-		});
+    // --- Zod validation ---
+    const validated = CreateInvoiceSchema.safeParse({
+      amount: rawAmount,
+      customerId: rawCustomerId,
+      status: rawStatus,
+    });
 
-		if (!validated.success) {
-			return {
-				errors: validated.error.flatten().fieldErrors,
-				message: "Invalid input. Failed to create invoice.",
-				success: false,
-			};
-		}
+    if (!validated.success) {
+      return {
+        errors: validated.error.flatten().fieldErrors,
+        message: "Invalid input. Failed to create invoice.",
+        success: false,
+      };
+    }
 
-		// --- Type-safe transformation ---
-		const { amount, customerId, status } = validated.data;
-		const brandedCustomerId = toCustomerIdBrand(customerId);
-		const brandedStatus = toInvoiceStatusBrand(status);
-		const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-		const date = new Date().toISOString().split("T")[0];
+    // --- Type-safe transformation ---
+    const { amount, customerId, status } = validated.data;
+    const brandedCustomerId = toCustomerIdBrand(customerId);
+    const brandedStatus = toInvoiceStatusBrand(status);
+    const amountInCents = Math.round(amount * 100); // Avoid floating point issues
+    const date = new Date().toISOString().split("T")[0];
 
-		// --- DAL call ---
-		const insert = {
-			amount: amountInCents,
-			customerId: brandedCustomerId,
-			date,
-			status: brandedStatus,
-		};
+    // --- DAL call ---
+    const insert = {
+      amount: amountInCents,
+      customerId: brandedCustomerId,
+      date,
+      status: brandedStatus,
+    };
 
-		const invoice = await createInvoiceDal(db, insert);
+    const invoice = await createInvoiceDal(db, insert);
 
-		if (!invoice) {
-			return {
-				errors: undefined,
-				message: "Failed to create invoice.",
-				success: false,
-			};
-		}
+    if (!invoice) {
+      return {
+        errors: undefined,
+        message: "Failed to create invoice.",
+        success: false,
+      };
+    }
 
-		return {
-			errors: undefined,
-			message: "Invoice created successfully.",
-			success: true,
-		};
-	} catch (error) {
-		// Use structured logging in production
-		console.error(error);
-		return {
-			errors: {},
-			message: "Database Error. Failed to create invoice.",
-			success: false,
-		};
-	}
-	// FIXME: returning actionResult on success made this unreachable.
-	// revalidatePath("/dashboard/invoices");
-	// redirect("/dashboard/invoices");
+    return {
+      errors: undefined,
+      message: "Invoice created successfully.",
+      success: true,
+    };
+  } catch (error) {
+    // Use structured logging in production
+    console.error(error);
+    return {
+      errors: {},
+      message: "Database Error. Failed to create invoice.",
+      success: false,
+    };
+  }
+  // FIXME: returning actionResult on success made this unreachable.
+  // revalidatePath("/dashboard/invoices");
+  // redirect("/dashboard/invoices");
 }
 
 /**
@@ -131,18 +131,18 @@ export async function createInvoiceAction(
  * @returns An InvoiceDto, or null.
  */
 export async function readInvoiceAction(
-	id: string,
+  id: string,
 ): Promise<InvoiceDto | null> {
-	try {
-		const db = getDB();
-		const brandedId = toInvoiceIdBrand(id);
-		const invoice = await readInvoiceDal(db, brandedId);
+  try {
+    const db = getDB();
+    const brandedId = toInvoiceIdBrand(id);
+    const invoice = await readInvoiceDal(db, brandedId);
 
-		return invoice ? invoice : null;
-	} catch (error) {
-		console.error(error);
-		throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
-	}
+    return invoice ? invoice : null;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
+  }
 }
 
 /**
@@ -153,86 +153,86 @@ export async function readInvoiceAction(
  * @returns A promise resolving to an UpdateInvoiceResult.
  */
 export async function updateInvoiceAction(
-	id: string,
-	prevState: InvoiceEditState,
-	formData: FormData,
+  id: string,
+  prevState: InvoiceEditState,
+  formData: FormData,
 ): Promise<InvoiceEditState> {
-	try {
-		const db = getDB();
+  try {
+    const db = getDB();
 
-		let rawAmount: string;
-		let rawCustomerId: string;
-		let rawStatus: string;
-		try {
-			rawAmount = getFormField(formData, "amount");
-			rawCustomerId = getFormField(formData, "customerId");
-			rawStatus = getFormField(formData, "status");
-		} catch {
-			return {
-				errors: {
-					amount: formData.get("amount") ? undefined : ["Amount is required."],
-					customerId: formData.get("customerId")
-						? undefined
-						: ["Customer ID is required."],
-					status: formData.get("status") ? undefined : ["Status is required."],
-				}, // Always provide invoice for UI
-				invoice: prevState.invoice,
-				message: "Missing required fields.",
-				success: false,
-			};
-		}
+    let rawAmount: string;
+    let rawCustomerId: string;
+    let rawStatus: string;
+    try {
+      rawAmount = getFormField(formData, "amount");
+      rawCustomerId = getFormField(formData, "customerId");
+      rawStatus = getFormField(formData, "status");
+    } catch {
+      return {
+        errors: {
+          amount: formData.get("amount") ? undefined : ["Amount is required."],
+          customerId: formData.get("customerId")
+            ? undefined
+            : ["Customer ID is required."],
+          status: formData.get("status") ? undefined : ["Status is required."],
+        }, // Always provide invoice for UI
+        invoice: prevState.invoice,
+        message: "Missing required fields.",
+        success: false,
+      };
+    }
 
-		const validated = UpdateInvoiceSchema.safeParse({
-			amount: rawAmount,
-			customerId: rawCustomerId,
-			status: rawStatus,
-		});
+    const validated = UpdateInvoiceSchema.safeParse({
+      amount: rawAmount,
+      customerId: rawCustomerId,
+      status: rawStatus,
+    });
 
-		if (!validated.success) {
-			return {
-				errors: validated.error.flatten().fieldErrors,
-				invoice: prevState.invoice,
-				message: "Invalid input. Failed to update invoice.",
-				success: false,
-			};
-		}
+    if (!validated.success) {
+      return {
+        errors: validated.error.flatten().fieldErrors,
+        invoice: prevState.invoice,
+        message: "Invalid input. Failed to update invoice.",
+        success: false,
+      };
+    }
 
-		const { amount, customerId, status } = validated.data;
-		const brandedId = toInvoiceIdBrand(id);
-		const brandedCustomerId = toCustomerIdBrand(customerId);
-		const brandedStatus = toInvoiceStatusBrand(status);
-		const amountInCents = Math.round(amount * 100);
+    const { amount, customerId, status } = validated.data;
+    const brandedId = toInvoiceIdBrand(id);
+    const brandedCustomerId = toCustomerIdBrand(customerId);
+    const brandedStatus = toInvoiceStatusBrand(status);
+    const amountInCents = Math.round(amount * 100);
 
-		const updatedInvoice = await updateInvoiceDal(db, brandedId, {
-			amount: amountInCents,
-			customerId: brandedCustomerId,
-			status: brandedStatus,
-		});
+    const updatedInvoice = await updateInvoiceDal(db, brandedId, {
+      amount: amountInCents,
+      customerId: brandedCustomerId,
+      status: brandedStatus,
+    });
 
-		if (!updatedInvoice) {
-			return {
-				errors: undefined,
-				invoice: prevState.invoice,
-				message: "Failed to update invoice.",
-				success: false,
-			};
-		}
+    if (!updatedInvoice) {
+      return {
+        errors: undefined,
+        invoice: prevState.invoice,
+        message: "Failed to update invoice.",
+        success: false,
+      };
+    }
 
-		return {
-			errors: undefined,
-			invoice: updatedInvoice,
-			message: "Updated invoice successfully.",
-			success: true,
-		};
-	} catch (error) {
-		console.error("[updateInvoiceAction]", error, { id });
-		return {
-			errors: {},
-			invoice: prevState.invoice,
-			message: "Database Error: Failed to update invoice.",
-			success: false,
-		};
-	}
+    return {
+      errors: undefined,
+      invoice: updatedInvoice,
+      message: "Updated invoice successfully.",
+      success: true,
+    };
+  } catch (error) {
+    console.error("[updateInvoiceAction]", error, { id });
+    return {
+      errors: {},
+      invoice: prevState.invoice,
+      message: "Database Error: Failed to update invoice.",
+      success: false,
+    };
+  }
 }
 
 /**
@@ -241,10 +241,10 @@ export async function updateInvoiceAction(
  * @returns The deleted InvoiceDto or null.
  */
 export async function deleteInvoiceAction(
-	id: string,
+  id: string,
 ): Promise<InvoiceDto | null> {
-	const db = getDB();
-	return await deleteInvoiceDal(db, toInvoiceIdBrand(id));
+  const db = getDB();
+  return await deleteInvoiceDal(db, toInvoiceIdBrand(id));
 }
 
 /**
@@ -254,16 +254,16 @@ export async function deleteInvoiceAction(
  * @returns A promise that resolves when the action completes.
  */
 export async function deleteInvoiceFormAction(
-	formData: FormData,
+  formData: FormData,
 ): Promise<void> {
-	"use server";
-	const id = formData.get("id");
-	if (typeof id !== "string") {
-		throw new Error("Invalid invoice ID");
-	}
-	await deleteInvoiceAction(id);
-	revalidatePath("/dashboard/invoices");
-	redirect("/dashboard/invoices");
+  "use server";
+  const id = formData.get("id");
+  if (typeof id !== "string") {
+    throw new Error("Invalid invoice ID");
+  }
+  await deleteInvoiceAction(id);
+  revalidatePath("/dashboard/invoices");
+  redirect("/dashboard/invoices");
 }
 
 /**
@@ -272,10 +272,10 @@ export async function deleteInvoiceFormAction(
  * @returns Total number of pages
  */
 export async function readInvoicesPagesAction(
-	query: string = "",
+  query: string = "",
 ): Promise<number> {
-	const db = getDB();
-	return fetchInvoicesPages(db, query);
+  const db = getDB();
+  return fetchInvoicesPages(db, query);
 }
 
 /**
@@ -285,11 +285,11 @@ export async function readInvoicesPagesAction(
  * @returns Array of FetchFilteredInvoicesData
  */
 export async function readFilteredInvoicesAction(
-	query: string = "",
-	currentPage: number = 1,
+  query: string = "",
+  currentPage: number = 1,
 ): Promise<FetchFilteredInvoicesData[]> {
-	const db = getDB();
-	return fetchFilteredInvoices(db, query, currentPage);
+  const db = getDB();
+  return fetchFilteredInvoices(db, query, currentPage);
 }
 
 /**
@@ -297,8 +297,8 @@ export async function readFilteredInvoicesAction(
  * @returns Array of ModifiedLatestInvoicesData
  */
 export async function readLatestInvoicesAction(): Promise<
-	ModifiedLatestInvoicesData[]
+  ModifiedLatestInvoicesData[]
 > {
-	const db = getDB();
-	return fetchLatestInvoices(db);
+  const db = getDB();
+  return fetchLatestInvoices(db);
 }

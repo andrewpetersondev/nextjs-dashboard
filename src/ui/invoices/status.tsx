@@ -4,32 +4,32 @@ import type { JSX } from "react";
 import type { InvoiceStatus } from "@/lib/definitions/invoices.types";
 
 export const InvoiceStatusComponent = ({
-	status,
+  status,
 }: {
-	status: InvoiceStatus;
+  status: InvoiceStatus;
 }): JSX.Element => {
-	return (
-		<span
-			className={clsx(
-				"inline-flex items-center rounded-full px-2 py-1 text-xs",
-				{
-					"bg-bg-accent text-text-primary": status === "pending",
-					"bg-bg-secondary text-text-secondary": status === "paid",
-				},
-			)}
-		>
-			{status === "pending" && (
-				<>
-					Pending
-					<ClockIcon className="ml-1 w-4 text-text-accent" />
-				</>
-			)}
-			{status === "paid" && (
-				<>
-					Paid
-					<CheckIcon className="ml-1 w-4 text-text-primary" />
-				</>
-			)}
-		</span>
-	);
+  return (
+    <span
+      className={clsx(
+        "inline-flex items-center rounded-full px-2 py-1 text-xs",
+        {
+          "bg-bg-accent text-text-primary": status === "pending",
+          "bg-bg-secondary text-text-secondary": status === "paid",
+        },
+      )}
+    >
+      {status === "pending" && (
+        <>
+          Pending
+          <ClockIcon className="ml-1 w-4 text-text-accent" />
+        </>
+      )}
+      {status === "paid" && (
+        <>
+          Paid
+          <CheckIcon className="ml-1 w-4 text-text-primary" />
+        </>
+      )}
+    </span>
+  );
 };

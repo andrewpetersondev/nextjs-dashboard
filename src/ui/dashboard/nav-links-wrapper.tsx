@@ -6,7 +6,7 @@ import { getValidUserRole } from "@/lib/utils/utils.server";
 import { NavLinks } from "@/ui/dashboard/nav-links";
 
 export async function NavLinksWrapper(): Promise<JSX.Element> {
-	const session: SessionVerificationResult = await verifySessionOptimistic();
-	const role: UserRole = getValidUserRole(session?.role);
-	return <NavLinks role={role} />;
+  const session: SessionVerificationResult = await verifySessionOptimistic();
+  const role: UserRole = getValidUserRole(session?.role);
+  return <NavLinks role={role} />;
 }

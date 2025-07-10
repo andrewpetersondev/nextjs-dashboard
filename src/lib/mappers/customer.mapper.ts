@@ -1,7 +1,7 @@
 import type { CustomerEntity } from "@/lib/db/entities/customer";
 import type {
-	CustomerByIdDbRow,
-	CustomerId,
+  CustomerByIdDbRow,
+  CustomerId,
 } from "@/lib/definitions/customers.types";
 import type { CustomerDto } from "@/lib/dto/customer.dto";
 
@@ -18,12 +18,12 @@ export const toCustomerIdBrand = (id: string): CustomerId => id as CustomerId;
  * @returns CustomerEntity
  */
 export function toCustomerEntity(row: CustomerByIdDbRow): CustomerEntity {
-	return {
-		email: row.email,
-		id: toCustomerIdBrand(row.id),
-		imageUrl: row.imageUrl,
-		name: row.name,
-	};
+  return {
+    email: row.email,
+    id: toCustomerIdBrand(row.id),
+    imageUrl: row.imageUrl,
+    name: row.name,
+  };
 }
 
 /**
@@ -32,10 +32,10 @@ export function toCustomerEntity(row: CustomerByIdDbRow): CustomerEntity {
  * @returns CustomerDto
  */
 export function toCustomerDto(customer: CustomerEntity): CustomerDto {
-	return {
-		email: customer.email,
-		id: customer.id as string, // strips brand for DTO
-		imageUrl: customer.imageUrl,
-		name: customer.name,
-	};
+  return {
+    email: customer.email,
+    id: customer.id as string, // strips brand for DTO
+    imageUrl: customer.imageUrl,
+    name: customer.name,
+  };
 }

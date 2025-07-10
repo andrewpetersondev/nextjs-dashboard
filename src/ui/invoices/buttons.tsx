@@ -8,7 +8,7 @@ import { deleteInvoiceFormAction } from "@/lib/actions/invoices.actions";
  * @public
  */
 export interface InvoiceActionProps {
-	id: string;
+  id: string;
 }
 
 const CREATE_INVOICE_ROUTE = "/dashboard/invoices/create";
@@ -17,14 +17,14 @@ const CREATE_INVOICE_ROUTE = "/dashboard/invoices/create";
  * Renders a Link to create a new invoice.
  */
 export const CreateInvoice = (): JSX.Element => (
-	<Link
-		aria-label="Create Invoice"
-		className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
-		href={CREATE_INVOICE_ROUTE}
-	>
-		<span className="hidden md:block">Create Invoice</span>
-		<PlusIcon className="h-5 md:ml-4" />
-	</Link>
+  <Link
+    aria-label="Create Invoice"
+    className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+    href={CREATE_INVOICE_ROUTE}
+  >
+    <span className="hidden md:block">Create Invoice</span>
+    <PlusIcon className="h-5 md:ml-4" />
+  </Link>
 );
 
 /**
@@ -32,16 +32,16 @@ export const CreateInvoice = (): JSX.Element => (
  * @param props - Component props
  */
 export const UpdateInvoice = ({
-	id,
+  id,
 }: Readonly<InvoiceActionProps>): JSX.Element => (
-	<Link
-		aria-label="Update Invoice"
-		className="rounded-md border p-2 hover:bg-bg-hover"
-		href={`/dashboard/invoices/${encodeURIComponent(id)}/edit`}
-	>
-		<span className="sr-only">Update</span>
-		<PencilIcon className="w-5" />
-	</Link>
+  <Link
+    aria-label="Update Invoice"
+    className="rounded-md border p-2 hover:bg-bg-hover"
+    href={`/dashboard/invoices/${encodeURIComponent(id)}/edit`}
+  >
+    <span className="sr-only">Update</span>
+    <PencilIcon className="w-5" />
+  </Link>
 );
 
 /**
@@ -49,17 +49,17 @@ export const UpdateInvoice = ({
  * @param props - Component props
  */
 export const DeleteInvoice = ({
-	id,
+  id,
 }: Readonly<InvoiceActionProps>): JSX.Element => (
-	<form action={deleteInvoiceFormAction}>
-		<input name="id" type="hidden" value={id} />
-		<button
-			aria-label="Delete Invoice"
-			className="rounded-md border p-2 hover:bg-bg-hover"
-			type="submit"
-		>
-			<span className="sr-only">Delete</span>
-			<TrashIcon className="w-5" />
-		</button>
-	</form>
+  <form action={deleteInvoiceFormAction}>
+    <input name="id" type="hidden" value={id} />
+    <button
+      aria-label="Delete Invoice"
+      className="rounded-md border p-2 hover:bg-bg-hover"
+      type="submit"
+    >
+      <span className="sr-only">Delete</span>
+      <TrashIcon className="w-5" />
+    </button>
+  </form>
 );

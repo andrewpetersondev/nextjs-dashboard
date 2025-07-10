@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { JSX } from "react";
 
 type AuthSwitchLinkProps = {
-	prompt: string;
-	href: string;
-	linkText: string;
+  prompt: string;
+  href: string;
+  linkText: string;
 };
 
 /**
@@ -17,19 +17,19 @@ type AuthSwitchLinkProps = {
  * @returns {JSX.Element} Rendered AuthSwitchLink component.
  */
 export function AuthSwitchLink({
-	prompt,
-	href,
-	linkText,
+  prompt,
+  href,
+  linkText,
 }: AuthSwitchLinkProps): JSX.Element {
-	return (
-		<p className="mt-10 text-center text-sm/6 text-text-accent">
-			{prompt}{" "}
-			<Link
-				className="font-semibold text-text-secondary underline decoration-text-accent underline-offset-8 hover:text-text-hover"
-				href={href}
-			>
-				{linkText}
-			</Link>
-		</p>
-	);
+  return (
+    <p className="mt-10 text-center text-sm/6 text-text-accent">
+      {prompt}{" "}
+      <Link
+        className="font-semibold text-text-secondary underline decoration-text-accent underline-offset-8 hover:text-text-hover"
+        href={href}
+      >
+        {linkText}
+      </Link>
+    </p>
+  );
 }

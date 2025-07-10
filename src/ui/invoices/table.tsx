@@ -9,23 +9,23 @@ import { MobileTable } from "@/ui/invoices/mobile-table";
  * Fetches filtered invoices using a server action and renders tables.
  */
 export const InvoicesTable = async ({
-	query,
-	currentPage,
+  query,
+  currentPage,
 }: {
-	query: string;
-	currentPage: number;
+  query: string;
+  currentPage: number;
 }): Promise<JSX.Element> => {
-	const invoices: FetchFilteredInvoicesData[] =
-		await readFilteredInvoicesAction(query, currentPage);
+  const invoices: FetchFilteredInvoicesData[] =
+    await readFilteredInvoicesAction(query, currentPage);
 
-	return (
-		<div className="mt-6 flow-root">
-			<div className="inline-block min-w-full align-middle">
-				<div className="rounded-lg bg-bg-accent p-2 md:pt-0">
-					<MobileTable invoices={invoices} />
-					<DesktopTable invoices={invoices} />
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-bg-accent p-2 md:pt-0">
+          <MobileTable invoices={invoices} />
+          <DesktopTable invoices={invoices} />
+        </div>
+      </div>
+    </div>
+  );
 };

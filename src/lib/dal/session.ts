@@ -5,8 +5,8 @@ import type { Db } from "@/lib/db/connection";
 import { getDB } from "@/lib/db/connection";
 import { sessions } from "@/lib/db/schema";
 import type {
-	DbSessionRow,
-	SessionRecord,
+  DbSessionRow,
+  SessionRecord,
 } from "@/lib/definitions/session.types";
 import { logger } from "@/lib/utils/logger";
 
@@ -15,12 +15,12 @@ import { logger } from "@/lib/utils/logger";
  * Converts Date to ISO string and nullables to string.
  */
 function mapDbSessionToSessionRecord(row: DbSessionRow): SessionRecord {
-	return {
-		expiresAt: row.expiresAt.toISOString(),
-		id: row.id, // Defensive: never return null, but you may want to handle this differently
-		token: row.token ?? "",
-		userId: row.userId ?? "",
-	};
+  return {
+    expiresAt: row.expiresAt.toISOString(),
+    id: row.id, // Defensive: never return null, but you may want to handle this differently
+    token: row.token ?? "",
+    userId: row.userId ?? "",
+  };
 }
 
 /**
@@ -29,28 +29,28 @@ function mapDbSessionToSessionRecord(row: DbSessionRow): SessionRecord {
  * @throws If the insert fails.
  */
 export async function insertSession(session: SessionRecord): Promise<void> {
-	try {
-		const db: Db = getDB();
+  try {
+    const db: Db = getDB();
 
-		await db
-			.insert(sessions)
-			.values({ ...session, expiresAt: new Date(session.expiresAt) });
+    await db
+      .insert(sessions)
+      .values({ ...session, expiresAt: new Date(session.expiresAt) });
 
-		logger.info(
-			{
-				context: "insertSession",
-				sessionId: session.id,
-				userId: session.userId,
-			},
-			"Session inserted into database",
-		);
-	} catch (error) {
-		logger.error(
-			{ context: "insertSession", err: error, session },
-			"Failed to insert a session",
-		);
-		throw error;
-	}
+    logger.info(
+      {
+        context: "insertSession",
+        sessionId: session.id,
+        userId: session.userId,
+      },
+      "Session inserted into database",
+    );
+  } catch (error) {
+    logger.error(
+      { context: "insertSession", err: error, session },
+      "Failed to insert a session",
+    );
+    throw error;
+  }
 }
 
 /**
@@ -60,20 +60,20 @@ export async function insertSession(session: SessionRecord): Promise<void> {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _deleteSessionById(sessionId: string): Promise<void> {
-	try {
-		const db: Db = getDB();
-		await db.delete(sessions).where(eq(sessions.id, sessionId));
-		logger.info(
-			{ context: "deleteSessionById", sessionId },
-			"Session deleted from database",
-		);
-	} catch (error) {
-		logger.error(
-			{ context: "deleteSessionById", err: error, sessionId },
-			"Failed to delete session",
-		);
-		throw error;
-	}
+  try {
+    const db: Db = getDB();
+    await db.delete(sessions).where(eq(sessions.id, sessionId));
+    logger.info(
+      { context: "deleteSessionById", sessionId },
+      "Session deleted from database",
+    );
+  } catch (error) {
+    logger.error(
+      { context: "deleteSessionById", err: error, sessionId },
+      "Failed to delete session",
+    );
+    throw error;
+  }
 }
 
 /**
@@ -83,22 +83,22 @@ async function _deleteSessionById(sessionId: string): Promise<void> {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _findSessionById(
-	sessionId: string,
+  sessionId: string,
 ): Promise<SessionRecord | undefined> {
-	try {
-		const db: Db = getDB();
-		const row = await db.query.sessions.findFirst({
-			where: eq(sessions.id, sessionId),
-		});
-		// --- Map Db row to SessionRecord for type safety ---
-		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
-	} catch (error) {
-		logger.error(
-			{ context: "findSessionById", err: error, sessionId },
-			"Failed to find session by ID",
-		);
-		throw error;
-	}
+  try {
+    const db: Db = getDB();
+    const row = await db.query.sessions.findFirst({
+      where: eq(sessions.id, sessionId),
+    });
+    // --- Map Db row to SessionRecord for type safety ---
+    return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
+  } catch (error) {
+    logger.error(
+      { context: "findSessionById", err: error, sessionId },
+      "Failed to find session by ID",
+    );
+    throw error;
+  }
 }
 
 /**
@@ -108,21 +108,21 @@ async function _findSessionById(
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _findSessionByToken(
-	token: string,
+  token: string,
 ): Promise<SessionRecord | undefined> {
-	try {
-		const db: Db = getDB();
+  try {
+    const db: Db = getDB();
 
-		const row = await db.query.sessions.findFirst({
-			where: eq(sessions.token, token),
-		});
-		// --- Map Db row to SessionRecord for type safety ---
-		return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
-	} catch (error) {
-		logger.error(
-			{ context: "findSessionByToken", err: error, token },
-			"Failed to find session by token",
-		);
-		throw error;
-	}
+    const row = await db.query.sessions.findFirst({
+      where: eq(sessions.token, token),
+    });
+    // --- Map Db row to SessionRecord for type safety ---
+    return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
+  } catch (error) {
+    logger.error(
+      { context: "findSessionByToken", err: error, token },
+      "Failed to find session by token",
+    );
+    throw error;
+  }
 }

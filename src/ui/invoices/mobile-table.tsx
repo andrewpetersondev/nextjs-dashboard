@@ -16,52 +16,52 @@ import { InvoiceStatusComponent } from "@/ui/invoices/status";
  */
 
 export const MobileTable = ({
-	invoices,
+  invoices,
 }: {
-	invoices: FetchFilteredInvoicesData[];
+  invoices: FetchFilteredInvoicesData[];
 }): JSX.Element => {
-	return (
-		<div className="md:hidden">
-			{/* Map through invoices and create mobile-friendly cards */}
-			{invoices?.map(
-				(invoice: FetchFilteredInvoicesData): JSX.Element => (
-					<div
-						className="mb-2 w-full rounded-md bg-bg-primary p-4"
-						key={invoice.id}
-					>
-						{/* Customer information and status section */}
-						<div className="flex items-center justify-between border-b pb-4">
-							<div>
-								<div className="mb-2 flex items-center">
-									<Image
-										alt={`${invoice.name}'s profile picture`}
-										className="mr-2 rounded-full"
-										height={28}
-										src={invoice.imageUrl}
-										width={28}
-									/>
-									<p>{invoice.name}</p>
-								</div>
-								<p className="text-sm text-text-primary">{invoice.email}</p>
-							</div>
-							<InvoiceStatusComponent status={invoice.status || "unknown"} />
-						</div>
-						{/* Amount, date and actions section */}
-						<div className="flex w-full items-center justify-between pt-4">
-							<div>
-								<p className="font-medium text-xl">
-									{formatCurrency(invoice.amount)}
-								</p>
-								<p>{formatDateToLocal(invoice.date)}</p>
-							</div>
-							<div className="flex justify-end gap-2">
-								<UpdateInvoice id={invoice.id} />
-								<DeleteInvoice id={invoice.id} />
-							</div>
-						</div>
-					</div>
-				),
-			)}
-		</div>
-	);
+  return (
+    <div className="md:hidden">
+      {/* Map through invoices and create mobile-friendly cards */}
+      {invoices?.map(
+        (invoice: FetchFilteredInvoicesData): JSX.Element => (
+          <div
+            className="mb-2 w-full rounded-md bg-bg-primary p-4"
+            key={invoice.id}
+          >
+            {/* Customer information and status section */}
+            <div className="flex items-center justify-between border-b pb-4">
+              <div>
+                <div className="mb-2 flex items-center">
+                  <Image
+                    alt={`${invoice.name}'s profile picture`}
+                    className="mr-2 rounded-full"
+                    height={28}
+                    src={invoice.imageUrl}
+                    width={28}
+                  />
+                  <p>{invoice.name}</p>
+                </div>
+                <p className="text-sm text-text-primary">{invoice.email}</p>
+              </div>
+              <InvoiceStatusComponent status={invoice.status || "unknown"} />
+            </div>
+            {/* Amount, date and actions section */}
+            <div className="flex w-full items-center justify-between pt-4">
+              <div>
+                <p className="font-medium text-xl">
+                  {formatCurrency(invoice.amount)}
+                </p>
+                <p>{formatDateToLocal(invoice.date)}</p>
+              </div>
+              <div className="flex justify-end gap-2">
+                <UpdateInvoice id={invoice.id} />
+                <DeleteInvoice id={invoice.id} />
+              </div>
+            </div>
+          </div>
+        ),
+      )}
+    </div>
+  );
 };

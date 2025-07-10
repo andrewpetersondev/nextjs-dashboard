@@ -4,17 +4,17 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { SESSION_SECRET } from "@/config/env";
 import {
-	JWT_EXPIRATION,
-	ONE_DAY_MS,
-	SESSION_COOKIE_NAME,
-	SESSION_DURATION_MS,
+  JWT_EXPIRATION,
+  ONE_DAY_MS,
+  SESSION_COOKIE_NAME,
+  SESSION_DURATION_MS,
 } from "@/lib/auth/constants";
 import { getCookieValue } from "@/lib/auth/utils";
 import {
-	type DecryptPayload,
-	DecryptPayloadSchema,
-	type EncryptPayload,
-	EncryptPayloadSchema,
+  type DecryptPayload,
+  DecryptPayloadSchema,
+  type EncryptPayload,
+  EncryptPayloadSchema,
 } from "@/lib/definitions/session.types";
 import type { UserRole } from "@/lib/definitions/users.types";
 import { ValidationError } from "@/lib/errors/validation-error";
@@ -29,28 +29,28 @@ import { logger } from "@/lib/utils/logger";
  * Flattens EncryptPayload for JWT compatibility.
  */
 function flattenEncryptPayload(
-	payload: EncryptPayload,
+  payload: EncryptPayload,
 ): Record<string, unknown> {
-	return {
-		expiresAt: payload.user.expiresAt,
-		role: payload.user.role,
-		userId: payload.user.userId,
-	};
+  return {
+    expiresAt: payload.user.expiresAt,
+    role: payload.user.role,
+    userId: payload.user.userId,
+  };
 }
 
 /**
  * Reconstructs EncryptPayload from JWT payload.
  */
 function unflattenEncryptPayload(
-	payload: Record<string, unknown>,
+  payload: Record<string, unknown>,
 ): EncryptPayload {
-	return {
-		user: {
-			expiresAt: payload.expiresAt as number,
-			role: payload.role as UserRole,
-			userId: payload.userId as string,
-		},
-	};
+  return {
+    user: {
+      expiresAt: payload.expiresAt as number,
+      role: payload.role as UserRole,
+      userId: payload.userId as string,
+    },
+  };
 }
 
 let encodedKey: Uint8Array | undefined;
@@ -61,20 +61,20 @@ let encodedKey: Uint8Array | undefined;
  * @throws If SESSION_SECRET is not defined.
  */
 const getEncodedKey = async (): Promise<Uint8Array> => {
-	if (encodedKey) {
-		return encodedKey;
-	}
-	const secret = SESSION_SECRET;
-	if (!secret) {
-		logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
-		throw new Error("SESSION_SECRET is not defined");
-	}
-	encodedKey = new TextEncoder().encode(secret);
-	logger.debug(
-		{ context: "getEncodedKey" },
-		"Session secret key encoded and cached",
-	);
-	return encodedKey;
+  if (encodedKey) {
+    return encodedKey;
+  }
+  const secret = SESSION_SECRET;
+  if (!secret) {
+    logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
+    throw new Error("SESSION_SECRET is not defined");
+  }
+  encodedKey = new TextEncoder().encode(secret);
+  logger.debug(
+    { context: "getEncodedKey" },
+    "Session secret key encoded and cached",
+  );
+  return encodedKey;
 };
 
 /**
@@ -84,46 +84,46 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
  * @throws {ValidationError} If the payload is invalid.
  */
 export async function encrypt(payload: EncryptPayload): Promise<string> {
-	const key = await getEncodedKey();
+  const key = await getEncodedKey();
 
-	const validatedFields = EncryptPayloadSchema.safeParse(payload);
+  const validatedFields = EncryptPayloadSchema.safeParse(payload);
 
-	if (!validatedFields.success) {
-		logger.error(
-			{ context: "encrypt", err: validatedFields.error.flatten().fieldErrors },
-			"Session encryption failed",
-		);
-		throw new ValidationError(
-			"Invalid session payload: Missing or invalid required fields",
-			validatedFields.error.flatten().fieldErrors,
-		);
-	}
+  if (!validatedFields.success) {
+    logger.error(
+      { context: "encrypt", err: validatedFields.error.flatten().fieldErrors },
+      "Session encryption failed",
+    );
+    throw new ValidationError(
+      "Invalid session payload: Missing or invalid required fields",
+      validatedFields.error.flatten().fieldErrors,
+    );
+  }
 
-	const jwtPayload = flattenEncryptPayload(validatedFields.data);
+  const jwtPayload = flattenEncryptPayload(validatedFields.data);
 
-	try {
-		const token = await new SignJWT(jwtPayload)
-			.setProtectedHeader({ alg: "HS256" })
-			.setIssuedAt()
-			.setExpirationTime(JWT_EXPIRATION)
-			.sign(key);
+  try {
+    const token = await new SignJWT(jwtPayload)
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime(JWT_EXPIRATION)
+      .sign(key);
 
-		logger.info(
-			{
-				context: "encrypt",
-				role: jwtPayload.role,
-				userId: jwtPayload.userId,
-			},
-			"Session JWT created",
-		);
-		return token;
-	} catch (error: unknown) {
-		logger.error(
-			{ context: "encrypt", err: error },
-			"Session encryption failed",
-		);
-		throw new Error("EncryptPayload encryption failed");
-	}
+    logger.info(
+      {
+        context: "encrypt",
+        role: jwtPayload.role,
+        userId: jwtPayload.userId,
+      },
+      "Session JWT created",
+    );
+    return token;
+  } catch (error: unknown) {
+    logger.error(
+      { context: "encrypt", err: error },
+      "Session encryption failed",
+    );
+    throw new Error("EncryptPayload encryption failed");
+  }
 }
 
 /**
@@ -132,56 +132,56 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
  * @returns {Promise<DecryptPayload | undefined>} The decrypted payload, or undefined if invalid.
  */
 export async function decrypt(
-	session?: string,
+  session?: string,
 ): Promise<DecryptPayload | undefined> {
-	if (!session) {
-		logger.warn(
-			{ context: "decrypt" },
-			"No session token provided for decryption",
-		);
-		return undefined;
-	}
+  if (!session) {
+    logger.warn(
+      { context: "decrypt" },
+      "No session token provided for decryption",
+    );
+    return undefined;
+  }
 
-	const key = await getEncodedKey();
+  const key = await getEncodedKey();
 
-	try {
-		const { payload } = await jwtVerify(session, key, {
-			algorithms: ["HS256"],
-		});
+  try {
+    const { payload } = await jwtVerify(session, key, {
+      algorithms: ["HS256"],
+    });
 
-		const reconstructed = unflattenEncryptPayload(payload);
+    const reconstructed = unflattenEncryptPayload(payload);
 
-		const withClaims = {
-			...reconstructed,
-			exp: (payload.exp as number) ?? 0,
-			iat: (payload.iat as number) ?? 0,
-		};
+    const withClaims = {
+      ...reconstructed,
+      exp: (payload.exp as number) ?? 0,
+      iat: (payload.iat as number) ?? 0,
+    };
 
-		const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
+    const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
 
-		if (!validatedFields.success) {
-			logger.error(
-				{
-					context: "decrypt",
-					err: validatedFields.error.flatten().fieldErrors,
-				},
-				"Session decryption failed",
-			);
-			return undefined;
-		}
+    if (!validatedFields.success) {
+      logger.error(
+        {
+          context: "decrypt",
+          err: validatedFields.error.flatten().fieldErrors,
+        },
+        "Session decryption failed",
+      );
+      return undefined;
+    }
 
-		logger.debug(
-			{ context: "decrypt", userId: validatedFields.data.user.userId },
-			"Session decrypted successfully",
-		);
-		return validatedFields.data as DecryptPayload;
-	} catch (error: unknown) {
-		logger.error(
-			{ context: "decrypt", err: error },
-			"Session decryption failed",
-		);
-		return undefined;
-	}
+    logger.debug(
+      { context: "decrypt", userId: validatedFields.data.user.userId },
+      "Session decrypted successfully",
+    );
+    return validatedFields.data as DecryptPayload;
+  } catch (error: unknown) {
+    logger.error(
+      { context: "decrypt", err: error },
+      "Session decryption failed",
+    );
+    return undefined;
+  }
 }
 
 /**
@@ -191,29 +191,29 @@ export async function decrypt(
  * @returns {Promise<void>}
  */
 export async function createSession(
-	userId: string,
-	role: UserRole = "user",
+  userId: string,
+  role: UserRole = "user",
 ): Promise<void> {
-	const expiresAt: number = Date.now() + SESSION_DURATION_MS;
+  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
 
-	const session: string = await encrypt({
-		user: { expiresAt, role, userId },
-	});
+  const session: string = await encrypt({
+    user: { expiresAt, role, userId },
+  });
 
-	const cookieStore = await cookies();
+  const cookieStore = await cookies();
 
-	cookieStore.set(SESSION_COOKIE_NAME, session, {
-		expires: new Date(expiresAt),
-		httpOnly: true,
-		path: "/",
-		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
-	});
+  cookieStore.set(SESSION_COOKIE_NAME, session, {
+    expires: new Date(expiresAt),
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 
-	logger.info(
-		{ context: "createSession", expiresAt, role, userId },
-		`Session created for user ${userId} with role ${role}`,
-	);
+  logger.info(
+    { context: "createSession", expiresAt, role, userId },
+    `Session created for user ${userId} with role ${role}`,
+  );
 }
 
 /**
@@ -222,67 +222,67 @@ export async function createSession(
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _updateSession(): Promise<null | void> {
-	const cookieStore = await cookies();
+  const cookieStore = await cookies();
 
-	const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
+  const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
 
-	const session = getCookieValue(rawCookie?.value);
+  const session = getCookieValue(rawCookie?.value);
 
-	if (!session) {
-		logger.warn(
-			{ context: "updateSession" },
-			"No session cookie found to update",
-		);
-		return null;
-	}
+  if (!session) {
+    logger.warn(
+      { context: "updateSession" },
+      "No session cookie found to update",
+    );
+    return null;
+  }
 
-	const payload = await decrypt(session);
+  const payload = await decrypt(session);
 
-	if (!payload?.user) {
-		logger.warn(
-			{ context: "updateSession" },
-			"Session payload invalid or missing user",
-		);
-		return null;
-	}
+  if (!payload?.user) {
+    logger.warn(
+      { context: "updateSession" },
+      "Session payload invalid or missing user",
+    );
+    return null;
+  }
 
-	const now = Date.now();
+  const now = Date.now();
 
-	const expiration = new Date(payload.user.expiresAt).getTime();
+  const expiration = new Date(payload.user.expiresAt).getTime();
 
-	if (now > expiration) {
-		logger.info(
-			{ context: "updateSession", userId: payload.user.userId },
-			"Session expired, not updating",
-		);
-		return null;
-	}
+  if (now > expiration) {
+    logger.info(
+      { context: "updateSession", userId: payload.user.userId },
+      "Session expired, not updating",
+    );
+    return null;
+  }
 
-	const { user } = payload;
-	const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
+  const { user } = payload;
+  const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
 
-	const minimalPayload: EncryptPayload = {
-		user: {
-			expiresAt: newExpiration,
-			role: user.role,
-			userId: user.userId,
-		},
-	};
+  const minimalPayload: EncryptPayload = {
+    user: {
+      expiresAt: newExpiration,
+      role: user.role,
+      userId: user.userId,
+    },
+  };
 
-	const updatedToken = await encrypt(minimalPayload);
+  const updatedToken = await encrypt(minimalPayload);
 
-	cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-		expires: new Date(newExpiration),
-		httpOnly: true,
-		path: "/",
-		sameSite: "lax",
-		secure: process.env.NODE_ENV === "production",
-	});
+  cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
+    expires: new Date(newExpiration),
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 
-	logger.info(
-		{ context: "updateSession", newExpiration, userId: user.userId },
-		"Session updated with new expiration",
-	);
+  logger.info(
+    { context: "updateSession", newExpiration, userId: user.userId },
+    "Session updated with new expiration",
+  );
 }
 
 /**
@@ -290,7 +290,7 @@ async function _updateSession(): Promise<null | void> {
  * @returns {Promise<void>}
  */
 export async function deleteSession(): Promise<void> {
-	const cookieStore = await cookies();
-	cookieStore.delete(SESSION_COOKIE_NAME);
-	logger.info({ context: "deleteSession" }, "Session cookie deleted");
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE_NAME);
+  logger.info({ context: "deleteSession" }, "Session cookie deleted");
 }

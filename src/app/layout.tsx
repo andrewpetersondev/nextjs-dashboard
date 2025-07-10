@@ -10,28 +10,28 @@ import { notoSans } from "@/ui/style/fonts";
  * @returns The root layout
  */
 export const metadata: Metadata = {
-	description: "The official Next.js Learn Dashboard is built with App Router.",
-	metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
-	title: {
-		default: "Acme Dashboard",
-		template: "%s | Acme Dashboard",
-	},
+  description: "The official Next.js Learn Dashboard is built with App Router.",
+  metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
+  title: {
+    default: "Acme Dashboard",
+    template: "%s | Acme Dashboard",
+  },
 };
 
 interface RootLayoutProps {
-	children: ReactNode;
+  children: ReactNode;
 }
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => {
-	return (
-		<html className="scheme-light-dark h-full" lang="en">
-			<body
-				className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
-			>
-				{children}
-			</body>
-		</html>
-	);
+  return (
+    <html className="scheme-light-dark h-full" lang="en">
+      <body
+        className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
+      >
+        {children}
+      </body>
+    </html>
+  );
 };
 
 export default RootLayout;

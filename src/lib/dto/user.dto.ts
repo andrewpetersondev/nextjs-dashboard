@@ -9,10 +9,10 @@ import type { UserRole } from "@/lib/definitions/users.types";
  */
 
 export interface UserDto {
-	readonly id: string;
-	readonly username: string;
-	readonly email: string;
-	readonly role: UserRole;
+  readonly id: string;
+  readonly username: string;
+  readonly email: string;
+  readonly role: UserRole;
 }
 
 // PROBLEM: convert code so database calls use mapper, which returns DTO

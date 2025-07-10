@@ -1,123 +1,124 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
-	"assist": {
-		"actions": {
-			"recommended": true,
-			"source": {
-				"organizeImports": "on",
-				"recommended": true,
-				"useSortedAttributes": "on",
-				"useSortedProperties": "on"
-			}
-		},
-		"enabled": true
-	},
-	"css": {
-		"assist": {
-			"enabled": true
-		},
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		}
-	},
-	"files": {
-		"ignoreUnknown": true,
-		"includes": [
-			"!node_modules/**",
-			"!.next/**",
-			"!out/**",
-			"!storage/**",
-			"!src/lib/db/drizzle/**",
-			"!pnpm-lock.yaml",
-			"!pnpm-workspace.yaml",
-			"!cypress.config.ts",
-			"!cypress/**",
-			"!cypress/videos/**",
-			"!cypress/screenshots/**",
-			"!cypress/downloads/**",
-			"!cypress/fixtures/**",
-			"!cypress/support/commands.ts",
-			"!cypress/support/component.ts",
-			"!.turbo/**",
-			"!dist/**",
-			"!build/**",
-			"!coverage/**",
-			"!.nyc_output/**",
-			"*!.log",
-			"!.env*",
-			"*.{ts,tsx,mts,js,jsx,mjs,json}",
-			"src/**/*.{ts,tsx,mts,js,jsx,mjs,css,json}"
-		]
-	},
-	"formatter": {
-		"enabled": true
-	},
-	"javascript": {
-		"assist": {
-			"enabled": true
-		},
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		}
-	},
-	"json": {
-		"assist": {
-			"enabled": true
-		},
-		"formatter": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		},
-		"parser": {
-			"allowComments": true
-		}
-	},
-	"linter": {
-		"domains": {
-			"next": "recommended",
-			"project": "recommended",
-			"react": "recommended"
-		},
-		"enabled": true,
-		"rules": {
-			"complexity": {
-				"noExcessiveCognitiveComplexity": "warn",
-				"noVoid": "off"
-			},
-			"correctness": {
-				"noUndeclaredVariables": "error",
-				"noUnusedVariables": "error",
-				"useExhaustiveDependencies": "warn"
-			},
-			"nursery": { "useSortedClasses": "error" },
-			"recommended": true,
-			"style": {
-				"noNonNullAssertion": "warn",
-				"useConst": "error",
-				"useImportType": "error",
-				"useTemplate": "warn"
-			},
-			"suspicious": {
-				"noArrayIndexKey": "warn",
-				"noDebugger": "error",
-				"noExplicitAny": "warn"
-			}
-		}
-	},
-	"root": true,
-	"vcs": {
-		"clientKind": "git",
-		"defaultBranch": "main",
-		"enabled": true,
-		"root": ".",
-		"useIgnoreFile": true
-	}
+  "$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
+  "assist": {
+    "actions": {
+      "recommended": true,
+      "source": {
+        "organizeImports": "on",
+        "recommended": true,
+        "useSortedAttributes": "on",
+        "useSortedProperties": "on"
+      }
+    },
+    "enabled": true
+  },
+  "css": {
+    "assist": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "!node_modules/**",
+      "!.next/**",
+      "!out/**",
+      "!storage/**",
+      "!src/lib/db/drizzle/**",
+      "!pnpm-lock.yaml",
+      "!pnpm-workspace.yaml",
+      "!cypress.config.ts",
+      "!cypress/**",
+      "!cypress/videos/**",
+      "!cypress/screenshots/**",
+      "!cypress/downloads/**",
+      "!cypress/fixtures/**",
+      "!cypress/support/commands.ts",
+      "!cypress/support/component.ts",
+      "!.turbo/**",
+      "!dist/**",
+      "!build/**",
+      "!coverage/**",
+      "!.nyc_output/**",
+      "*!.log",
+      "!.env*",
+      "*.{ts,tsx,mts,js,jsx,mjs,json}",
+      "src/**/*.{ts,tsx,mts,js,jsx,mjs,css,json}"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "assist": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "json": {
+    "assist": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    },
+    "parser": {
+      "allowComments": true
+    }
+  },
+  "linter": {
+    "domains": {
+      "next": "recommended",
+      "project": "recommended",
+      "react": "recommended"
+    },
+    "enabled": true,
+    "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn",
+        "noVoid": "off"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "error",
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "warn"
+      },
+      "nursery": { "useSortedClasses": "error" },
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useConst": "error",
+        "useImportType": "error",
+        "useTemplate": "warn"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "warn",
+        "noDebugger": "error",
+        "noExplicitAny": "warn"
+      }
+    }
+  },
+  "root": true,
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "root": ".",
+    "useIgnoreFile": true
+  }
 }

@@ -10,51 +10,51 @@ import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
 import { EditInvoiceForm } from "@/ui/invoices/edit-invoice-form";
 
 export const metadata: Metadata = {
-	title: "Edit Invoice",
+  title: "Edit Invoice",
 };
 
 // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 export const dynamic = "force-dynamic";
 
 export interface EditInvoicePageParams {
-	id: string;
+  id: string;
 }
 
 export interface EditInvoicePageProps {
-	params: Promise<EditInvoicePageParams>;
+  params: Promise<EditInvoicePageParams>;
 }
 
 export default async function Page(
-	props: EditInvoicePageProps,
+  props: EditInvoicePageProps,
 ): Promise<JSX.Element> {
-	const { id } = await props.params;
+  const { id } = await props.params;
 
-	const [customers, invoice]: [CustomerField[], InvoiceDto | null] =
-		await Promise.all([readCustomersAction(), readInvoiceAction(id)]);
+  const [customers, invoice]: [CustomerField[], InvoiceDto | null] =
+    await Promise.all([readCustomersAction(), readInvoiceAction(id)]);
 
-	if (!invoice) {
-		notFound();
-	}
+  if (!invoice) {
+    notFound();
+  }
 
-	return (
-		<main>
-			<Breadcrumbs
-				breadcrumbs={[
-					{ href: "/dashboard/invoices", label: "Invoices" },
-					{
-						active: true,
-						href: `/dashboard/invoices/${id}/edit`,
-						label: "Edit Invoice",
-					},
-				]}
-			/>
-			<H1>edit invoice</H1>
+  return (
+    <main>
+      <Breadcrumbs
+        breadcrumbs={[
+          { href: "/dashboard/invoices", label: "Invoices" },
+          {
+            active: true,
+            href: `/dashboard/invoices/${id}/edit`,
+            label: "Edit Invoice",
+          },
+        ]}
+      />
+      <H1>edit invoice</H1>
 
-			<section>
-				<p>Edit some stuff.</p>
-			</section>
+      <section>
+        <p>Edit some stuff.</p>
+      </section>
 
-			<EditInvoiceForm customers={customers} invoice={invoice} />
-		</main>
-	);
+      <EditInvoiceForm customers={customers} invoice={invoice} />
+    </main>
+  );
 }

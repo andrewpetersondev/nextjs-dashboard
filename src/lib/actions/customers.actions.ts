@@ -1,11 +1,11 @@
 import {
-	fetchCustomers,
-	fetchFilteredCustomers,
+  fetchCustomers,
+  fetchFilteredCustomers,
 } from "@/lib/dal/customers.dal";
 import { getDB } from "@/lib/db/connection";
 import type {
-	CustomerField,
-	FormattedCustomersTableRow,
+  CustomerField,
+  FormattedCustomersTableRow,
 } from "@/lib/definitions/customers.types";
 
 /**
@@ -13,8 +13,8 @@ import type {
  * @returns Array of customer fields
  */
 export async function readCustomersAction(): Promise<CustomerField[]> {
-	const db = getDB();
-	return fetchCustomers(db);
+  const db = getDB();
+  return fetchCustomers(db);
 }
 
 /**
@@ -23,8 +23,8 @@ export async function readCustomersAction(): Promise<CustomerField[]> {
  * @returns Array of FormattedCustomersTableRow
  */
 export async function readFilteredCustomersAction(
-	query: string = "",
+  query: string = "",
 ): Promise<FormattedCustomersTableRow[]> {
-	const db = getDB();
-	return fetchFilteredCustomers(db, query);
+  const db = getDB();
+  return fetchFilteredCustomers(db, query);
 }
