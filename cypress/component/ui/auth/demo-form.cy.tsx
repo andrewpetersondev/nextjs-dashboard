@@ -6,41 +6,41 @@ import { DemoForm, type DemoFormProps } from "@/ui/auth/demo-form.tsx";
 // error because importing server only file
 
 describe("<DemoForm />", () => {
-	const defaultProps: DemoFormProps = {
-		label: "demo-user",
-		text: "Login as Demo User",
-		userRole: "user",
-	};
+  const defaultProps: DemoFormProps = {
+    label: "demo-user",
+    text: "Login as Demo User",
+    userRole: "user",
+  };
 
-	it("renders the button with the correct text and label", () => {
-		mount(<DemoForm {...defaultProps} />);
-		cy.get('form[aria-label="demo-user"]').should("exist"); // Use cy.get as a basic alternative
-		cy.get('[data-cy="demo-user-button-demo-user"]').should(
-			"contain.text",
-			"Login as Demo User",
-		);
-	});
+  it("renders the button with the correct text and label", () => {
+    mount(<DemoForm {...defaultProps} />);
+    cy.get('form[aria-label="demo-user"]').should("exist"); // Use cy.get as a basic alternative
+    cy.get('[data-cy="demo-user-button-demo-user"]').should(
+      "contain.text",
+      "Login as Demo User",
+    );
+  });
 
-	// Skipping the demoUser call assertion due to ESM import limitations in Cypress
+  // Skipping the demoUser call assertion due to ESM import limitations in Cypress
 
-	it("is accessible", () => {
-		mount(<DemoForm {...defaultProps} />);
-		// cy.checkA11y(); // Uncomment if cypress-axe is configured
-	});
+  it("is accessible", () => {
+    mount(<DemoForm {...defaultProps} />);
+    // cy.checkA11y(); // Uncomment if cypress-axe is configured
+  });
 
-	it("renders with an admin role", () => {
-		mount(
-			<DemoForm
-				{...defaultProps}
-				label="demo-admin-user"
-				text="Login as Demo Admin"
-				userRole="admin"
-			/>,
-		);
-		cy.get('form[aria-label="demo-admin-user"]').should("exist");
-		cy.get('[data-cy="demo-user-button-demo-admin-user"]').should(
-			"contain.text",
-			"Login as Demo Admin",
-		);
-	});
+  it("renders with an admin role", () => {
+    mount(
+      <DemoForm
+        {...defaultProps}
+        label="demo-admin-user"
+        text="Login as Demo Admin"
+        userRole="admin"
+      />,
+    );
+    cy.get('form[aria-label="demo-admin-user"]').should("exist");
+    cy.get('[data-cy="demo-user-button-demo-admin-user"]').should(
+      "contain.text",
+      "Login as Demo Admin",
+    );
+  });
 });
