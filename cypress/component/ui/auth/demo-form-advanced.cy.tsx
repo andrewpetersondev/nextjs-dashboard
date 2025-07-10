@@ -1,5 +1,4 @@
 import { mount } from "cypress/react";
-import React from "react";
 import { DemoForm, type DemoFormProps } from "@/ui/auth/demo-form.tsx";
 import "@testing-library/cypress/add-commands"; // Enables findByRole, findByText, etc.
 // cypress-axe should be imported in cypress/support/component.ts
