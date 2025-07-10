@@ -7,7 +7,6 @@
 				"organizeImports": "on",
 				"recommended": true,
 				"useSortedAttributes": "on",
-				"useSortedKeys": "on",
 				"useSortedProperties": "on"
 			}
 		},
@@ -27,20 +26,30 @@
 	"files": {
 		"ignoreUnknown": true,
 		"includes": [
-			"!cypress",
-			"!src/lib/db/drizzle/**/*",
+			"!node_modules/**",
+			"!.next/**",
+			"!out/**",
+			"!storage/**",
+			"!src/lib/db/drizzle/**",
 			"!pnpm-lock.yaml",
 			"!pnpm-workspace.yaml",
-			"src/**/*.{ts,tsx,css,json,md}",
-			"biome.json",
-			"cypress.config.ts",
-			"drizzle-dev.config.ts",
-			"drizzle-test.config.ts",
-			"envConfig.ts",
-			"next.config.ts",
-			"package.json",
-			"postcss.config.mjs",
-			"tsconfig.json"
+			"!cypress.config.ts",
+			"!cypress/videos/**",
+			"!cypress/screenshots/**",
+			"!cypress/downloads/**",
+			"!cypress/fixtures/**",
+			"!cypress/support/commands.ts",
+			"!cypress/support/component.ts",
+			"!.turbo/**",
+			"!dist/**",
+			"!build/**",
+			"!coverage/**",
+			"!.nyc_output/**",
+			"*!.log",
+			"!.env*",
+			"*.{ts,tsx,mts,js,jsx,mjs,json}",
+			"src/**/*.{ts,tsx,js,jsx,css,json}",
+			"cypress/**/*.{ts,tsx,js,jsx}"
 		]
 	},
 	"formatter": {
@@ -68,7 +77,7 @@
 			"enabled": true
 		},
 		"parser": {
-			"allowComments": false
+			"allowComments": true
 		}
 	},
 	"linter": {
@@ -79,9 +88,31 @@
 		},
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "warn",
+				"noVoid": "off"
+			},
+			"correctness": {
+				"noUndeclaredVariables": "error",
+				"noUnusedVariables": "error",
+				"useExhaustiveDependencies": "warn"
+			},
+			"nursery": { "useSortedClasses": "error" },
+			"recommended": true,
+			"style": {
+				"noNonNullAssertion": "warn",
+				"useConst": "error",
+				"useImportType": "error",
+				"useTemplate": "warn"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "warn",
+				"noDebugger": "error",
+				"noExplicitAny": "warn"
+			}
 		}
 	},
+	"root": true,
 	"vcs": {
 		"clientKind": "git",
 		"defaultBranch": "main",

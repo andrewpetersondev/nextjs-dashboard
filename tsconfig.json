@@ -1,36 +1,66 @@
+// biome-ignore-all assist/source/useSortedKeys: <this is organized>
 {
 	"compilerOptions": {
-		"allowImportingTsExtensions": true,
-		"allowJs": false,
-		"baseUrl": ".",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"incremental": true,
-		"isolatedModules": true,
-		"jsx": "preserve",
+		/* Language and Environment */
+		"target": "ES2017",
 		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"noEmit": true,
+		"esModuleInterop": true,
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"noEmit": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+
+		/* Type Checking */
+		"forceConsistentCasingInFileNames": true,
 		"noImplicitAny": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		/* Path Mapping */
+		"baseUrl": ".",
 		"paths": {
-			"@/cypress/*": ["cypress/*"],
-			"@/src/*": ["src/*"]
+			"@/*": ["./src/*"],
+			"@/app/*": ["./src/app/*"],
+			"@/components/*": ["./src/components/*"],
+			"@/config/*": ["./src/config/*"],
+			"@/lib/*": ["./src/lib/*"],
+			"@/ui/*": ["./src/ui/*"],
+			"@/utils/*": ["./src/utils/*"],
+			"@/hooks/*": ["./src/hooks/*"],
+			"@/types/*": ["./src/types/*"]
 		},
+
+		/* Next.js specific */
 		"plugins": [
 			{
 				"name": "next"
 			}
 		],
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"strictBindCallApply": true,
-		"strictFunctionTypes": true,
-		"strictNullChecks": true,
-		"target": "esnext",
+
+		/* Types */
 		"types": ["node", "react", "react-dom"]
 	},
-	"exclude": ["node_modules", "storage"],
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		".next/types/**/*.ts",
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		".next",
+		"out",
+		"storage",
+		"cypress",
+		"cypress.config.ts"
+	]
 }

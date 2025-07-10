@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
 	"assist": {
 		"actions": {
 			"recommended": true,
@@ -7,18 +7,22 @@
 				"organizeImports": "on",
 				"recommended": true,
 				"useSortedAttributes": "on",
-				"useSortedKeys": "on",
 				"useSortedProperties": "on"
 			}
 		},
 		"enabled": true
 	},
+	"extends": "//",
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**/*.{ts,tsx,css,json}"]
-	},
-	"formatter": {
-		"enabled": true
+		"includes": [
+			"!videos/**",
+			"!screenshots/**",
+			"!downloads/**",
+			"../cypress.config.ts",
+			"*.{ts,tsx,mts,js,jsx,mjs,json}",
+			"**/*.{ts,tsx,js,jsx,json,css}"
+		]
 	},
 	"javascript": {
 		"assist": {
@@ -27,7 +31,18 @@
 		"formatter": {
 			"enabled": true
 		},
-		"globals": ["cy", "Cypress", "context"],
+		"globals": [
+			"cy",
+			"Cypress",
+			"context",
+			"describe",
+			"it",
+			"before",
+			"beforeEach",
+			"after",
+			"afterEach",
+			"expect"
+		],
 		"linter": {
 			"enabled": true
 		}
@@ -47,13 +62,19 @@
 		}
 	},
 	"linter": {
-		"domains": {
-			"project": "recommended",
-			"test": "recommended"
-		},
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"correctness": {
+				"noUnusedVariables": "warn"
+			},
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off"
+			}
 		}
-	}
+	},
+	"root": false
 }

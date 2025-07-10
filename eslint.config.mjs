@@ -11,10 +11,10 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-	...compat.extends("next", "next/core-web-vitals", "next/typescript"),
+	...compat.extends("next", "next/core-web-vitals", "next/typescript", "prettier"),
 	// Cypress rules applied only to Cypress test files
 	{
-		files: ["cypress/**/*.{js,ts,jsx,tsx}", "**/*.cy.{js,ts,jsx,tsx}"],
+		files: ["cypress/**/*.{ts,tsx}", "**/*.cy.{ts,tsx}"],
 		languageOptions: pluginCypress.configs.recommended.languageOptions,
 		plugins: pluginCypress.configs.recommended.plugins,
 		rules: pluginCypress.configs.recommended.rules,

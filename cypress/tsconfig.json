@@ -1,11 +1,39 @@
 {
-	"compilerOptions": {
-		"lib": ["esnext", "dom"],
-		"moduleResolution": "node",
-		"sourceMap": true,
-		"types": ["cypress", "node"]
-	},
-	"exclude": ["node_modules", "cypress/videos", "cypress/screenshots"],
 	"extends": "../tsconfig.json",
-	"include": ["**/*.ts", "**/*.tsx", "../cypress.config.ts"]
+	"compilerOptions": {
+		"target": "es5",
+		"lib": ["es5", "dom", "esnext"],
+		"types": ["cypress", "node"],
+		"isolatedModules": false,
+		"sourceMap": true,
+
+		/* Cypress-specific path mapping */
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["../src/*"],
+			"@/app/*": ["../src/app/*"],
+			"@/components/*": ["../src/components/*"],
+			"@/config/*": ["../src/config/*"],
+			"@/lib/*": ["../src/lib/*"],
+			"@/ui/*": ["../src/ui/*"],
+			"@/utils/*": ["../src/utils/*"],
+			"@/hooks/*": ["../src/hooks/*"],
+			"@/types/*": ["../src/types/*"],
+			"@/cypress/*": ["./*"]
+		}
+	},
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"../cypress.config.ts",
+		"../src/**/*.ts",
+		"../src/**/*.tsx"
+	],
+	"exclude": [
+		"../node_modules",
+		"../.next",
+		"videos",
+		"screenshots",
+		"downloads"
+	]
 }
