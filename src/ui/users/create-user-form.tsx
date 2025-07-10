@@ -52,7 +52,7 @@ export function CreateUserForm(): JSX.Element {
 					dataCy="signup-username-input"
 					error={state?.errors?.username}
 					icon={
-						<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="username"
 					label="Username"
@@ -67,7 +67,7 @@ export function CreateUserForm(): JSX.Element {
 					dataCy="signup-email-input"
 					error={state?.errors?.email}
 					icon={
-						<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="email"
 					label="Email address"

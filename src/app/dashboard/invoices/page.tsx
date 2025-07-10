@@ -6,10 +6,7 @@ import { CreateInvoice } from "@/ui/invoices/buttons";
 import { Pagination } from "@/ui/invoices/pagination";
 import { InvoicesTable } from "@/ui/invoices/table";
 import { Search } from "@/ui/search";
-import {
-	InvoicesSearchSkeleton,
-	InvoicesTableSkeleton,
-} from "@/ui/skeletons";
+import { InvoicesSearchSkeleton, InvoicesTableSkeleton } from "@/ui/skeletons";
 
 export const metadata: Metadata = {
 	title: "Invoices",

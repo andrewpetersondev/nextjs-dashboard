@@ -42,7 +42,7 @@ export const LoginForm: FC = () => {
 					describedById="login-email-errors"
 					error={state?.errors?.email}
 					icon={
-						<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="email"
 					label="Email address"
@@ -57,7 +57,7 @@ export const LoginForm: FC = () => {
 					describedById="login-password-errors"
 					error={state?.errors?.password}
 					icon={
-						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="password"
 					label="Password"
