@@ -4,25 +4,25 @@ import "server-only";
  * Uses Drizzle ORM for database access.
  */
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection";
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
-import { customers, invoices } from "@/src/lib/db/schema";
-import { ITEMS_PER_PAGE } from "@/src/lib/definitions/constants";
+import type { Db } from "@/lib/db/connection";
+import type { InvoiceEntity } from "@/lib/db/entities/invoice";
+import { customers, invoices } from "@/lib/db/schema";
+import { ITEMS_PER_PAGE } from "@/lib/definitions/constants";
 import type {
 	FetchFilteredInvoicesData,
 	FilteredInvoiceDbRow,
 	InvoiceId,
 	ModifiedLatestInvoicesData,
-} from "@/src/lib/definitions/invoices.types";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+} from "@/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import {
 	toInvoiceDto,
 	toInvoiceEntity,
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
-} from "@/src/lib/mappers/invoice.mapper";
-import { formatCurrency } from "@/src/lib/utils/utils";
-import { logError } from "@/src/lib/utils/utils.server";
+} from "@/lib/mappers/invoice.mapper";
+import { formatCurrency } from "@/lib/utils/utils";
+import { logError } from "@/lib/utils/utils.server";
 
 /**
  * Inserts a new invoice record into the database.

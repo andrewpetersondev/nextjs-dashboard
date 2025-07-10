@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import { tektur } from "@/src/ui/style/fonts";
+import { tektur } from "@/ui/style/fonts";
 
 type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
 	className?: string;

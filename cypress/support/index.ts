@@ -21,7 +21,7 @@ import type {
 } from "./types.ts";
 import "./cypress-global.css";
 import { mount } from "cypress/react";
-import type { UserRole } from "@/src/lib/definitions/users.types.ts";
+import type { UserRole } from "@/lib/definitions/users.types.ts";
 import "cypress-axe"; // used in demo-form-advanced.cy.tsx
 import "@testing-library/cypress/add-commands"; // Enables findByRole, findByText, etc.
 

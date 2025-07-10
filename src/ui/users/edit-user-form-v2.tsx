@@ -1,11 +1,11 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import { updateUserAction } from "@/src/lib/actions/users.actions";
-import type { FormState } from "@/src/lib/definitions/form";
-import type { EditUserFormFields } from "@/src/lib/definitions/users.types";
-import type { UserDto } from "@/src/lib/dto/user.dto";
-import { UserForm } from "@/src/ui/users/user-form";
+import { updateUserAction } from "@/lib/actions/users.actions";
+import type { FormState } from "@/lib/definitions/form";
+import type { EditUserFormFields } from "@/lib/definitions/users.types";
+import type { UserDto } from "@/lib/dto/user.dto";
+import { UserForm } from "@/ui/users/user-form";
 
 type EditUserFormState = Readonly<{
 	errors?: {
@@ -20,7 +20,7 @@ type EditUserFormState = Readonly<{
 
 function UserInfoPanel({ user }: { user: UserDto }) {
 	return (
-		<div className="mb-6 rounded-lg border p-4 bg-muted">
+		<div className="mb-6 rounded-lg border bg-muted p-4">
 			<div className="mb-1 font-semibold text-primary">Current Information</div>
 			<ul className="ml-2 text-sm">
 				<li>

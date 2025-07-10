@@ -6,13 +6,13 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
-import { signup } from "@/src/lib/actions/users.actions";
-import { AuthServerMessage } from "@/src/ui/auth/auth-server-message";
-import { AuthSubmitButton } from "@/src/ui/auth/auth-submit-button";
-import { ForgotPasswordLink } from "@/src/ui/auth/forgot-password-link";
-import { InputField } from "@/src/ui/auth/input-field";
-import { RememberMeCheckbox } from "@/src/ui/auth/remember-me-checkbox";
-import { FormInputWrapper } from "@/src/ui/wrappers/form-input-wrapper";
+import { signup } from "@/lib/actions/users.actions";
+import { AuthServerMessage } from "@/ui/auth/auth-server-message";
+import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
+import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
+import { InputField } from "@/ui/auth/input-field";
+import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
+import { FormInputWrapper } from "@/ui/wrappers/form-input-wrapper";
 
 type SignupFormState = Readonly<{
 	errors?: {
@@ -50,7 +50,7 @@ export const SignupForm: FC = () => {
 					dataCy="signup-username-input"
 					error={state?.errors?.username}
 					icon={
-						<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="username"
 					label="Username"
@@ -63,7 +63,7 @@ export const SignupForm: FC = () => {
 					dataCy="signup-email-input"
 					error={state?.errors?.email}
 					icon={
-						<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="email"
 					label="Email address"
@@ -78,7 +78,7 @@ export const SignupForm: FC = () => {
 					describedById="signup-password-errors"
 					error={state?.errors?.password}
 					icon={
-						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="password"
 					label="Password"

@@ -1,7 +1,7 @@
 import {
 	InputField,
 	type InputFieldProps,
-} from "@/src/ui/auth/input-field.tsx";
+} from "@/ui/auth/input-field.tsx";
 
 describe("<InputField />", () => {
 	const baseProps: InputFieldProps = {

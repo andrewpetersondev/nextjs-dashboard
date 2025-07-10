@@ -1,4 +1,4 @@
-import type { UserRole } from "@/src/lib/definitions/users.types";
+import type { UserRole } from "@/lib/definitions/users.types";
 
 /**
  ** User Data Transfer Object (DTO) for frontend.

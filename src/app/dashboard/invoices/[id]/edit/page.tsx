@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { readCustomersAction } from "@/src/lib/actions/customers.actions";
-import { readInvoiceAction } from "@/src/lib/actions/invoices.actions";
-import type { CustomerField } from "@/src/lib/definitions/customers.types";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { H1 } from "@/src/ui/headings";
-import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
-import { EditInvoiceForm } from "@/src/ui/invoices/edit-invoice-form";
+import { readCustomersAction } from "@/lib/actions/customers.actions";
+import { readInvoiceAction } from "@/lib/actions/invoices.actions";
+import type { CustomerField } from "@/lib/definitions/customers.types";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
+import { H1 } from "@/ui/headings";
+import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
+import { EditInvoiceForm } from "@/ui/invoices/edit-invoice-form";
 
 export const metadata: Metadata = {
 	title: "Edit Invoice",

@@ -1,10 +1,10 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/src/lib/dal/session-dal";
-import type { SessionVerificationResult } from "@/src/lib/definitions/session.types";
-import type { UserRole } from "@/src/lib/definitions/users.types";
-import { getValidUserRole } from "@/src/lib/utils/utils.server";
-import { Dashboard } from "@/src/ui/dashboard/dashboard";
-import { MiddlewareCard } from "@/src/ui/dashboard/middleware-card";
+import { verifySessionOptimistic } from "@/lib/dal/session-dal";
+import type { SessionVerificationResult } from "@/lib/definitions/session.types";
+import type { UserRole } from "@/lib/definitions/users.types";
+import { getValidUserRole } from "@/lib/utils/utils.server";
+import { Dashboard } from "@/ui/dashboard/dashboard";
+import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 
 // Constants for dashboard titles
 const ADMIN_DASHBOARD_TITLE = "Admin Dashboard";

@@ -2,9 +2,9 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import { readLatestInvoicesAction } from "@/src/lib/actions/invoices.actions";
-import type { ModifiedLatestInvoicesData } from "@/src/lib/definitions/invoices.types";
-import { H2, H3 } from "@/src/ui/headings";
+import { readLatestInvoicesAction } from "@/lib/actions/invoices.actions";
+import type { ModifiedLatestInvoicesData } from "@/lib/definitions/invoices.types";
+import { H2, H3 } from "@/ui/headings";
 
 /**
  * LatestInvoices component.
@@ -17,7 +17,7 @@ export async function LatestInvoices(): Promise<JSX.Element> {
 	return (
 		<div className="flex w-full flex-col md:col-span-4">
 			<H2 className="mb-4">Latest Invoices</H2>
-			<div className="bg-bg-secondary flex grow flex-col justify-between rounded-xl p-4">
+			<div className="flex grow flex-col justify-between rounded-xl bg-bg-secondary p-4">
 				<div className="bg-bg-primary px-6">
 					{latestInvoices.map(
 						(invoice: ModifiedLatestInvoicesData, i: number): JSX.Element => {
@@ -40,15 +40,15 @@ export async function LatestInvoices(): Promise<JSX.Element> {
 											width={32}
 										/>
 										<div className="min-w-0">
-											<p className="text-text-secondary truncate text-sm font-semibold md:text-base">
+											<p className="truncate font-semibold text-sm text-text-secondary md:text-base">
 												{invoice.name}
 											</p>
-											<p className="text-text-secondary hidden text-sm sm:block">
+											<p className="hidden text-sm text-text-secondary sm:block">
 												{invoice.email}
 											</p>
 										</div>
 									</div>
-									<p className="text-text-secondary truncate text-sm font-medium md:text-base">
+									<p className="truncate font-medium text-sm text-text-secondary md:text-base">
 										{invoice.amount}
 									</p>
 								</div>
@@ -56,7 +56,7 @@ export async function LatestInvoices(): Promise<JSX.Element> {
 						},
 					)}
 				</div>
-				<div className="text-text-primary flex items-center pt-6 pb-2">
+				<div className="flex items-center pt-6 pb-2 text-text-primary">
 					<ArrowPathIcon className="h-5 w-5" />
 					<H3 className="ml-2">Updated just now</H3>
 				</div>

@@ -1,15 +1,15 @@
 import { type JSX, Suspense } from "react";
-import { readCardDataAction } from "@/src/lib/actions/data.actions";
-import type { CardData } from "@/src/lib/definitions/data.types";
-import { CardWrapper } from "@/src/ui/dashboard/cards";
-import { LatestInvoices } from "@/src/ui/dashboard/latest-invoices";
-import { RevenueChart } from "@/src/ui/dashboard/revenue-chart";
-import { H1 } from "@/src/ui/headings";
+import { readCardDataAction } from "@/lib/actions/data.actions";
+import type { CardData } from "@/lib/definitions/data.types";
+import { CardWrapper } from "@/ui/dashboard/cards";
+import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
+import { RevenueChart } from "@/ui/dashboard/revenue-chart";
+import { H1 } from "@/ui/headings";
 import {
 	CardsSkeleton,
 	LatestInvoicesSkeleton,
 	RevenueChartSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/ui/skeletons";
 
 /**
  * Props for the Dashboard component.

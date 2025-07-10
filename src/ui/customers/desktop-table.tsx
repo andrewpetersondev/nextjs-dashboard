@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.types";
+import type { FormattedCustomersTableRow } from "@/lib/definitions/customers.types";
 
 /**
  * Table column definitions for customer data.
@@ -27,7 +27,7 @@ interface CustomerTableRowProps {
 function CustomerTableRow({ customer }: CustomerTableRowProps): JSX.Element {
 	return (
 		<tr className="group cursor-pointer hover:bg-bg-active" key={customer.id}>
-			<td className="text-text-primary py-5 pr-3 pl-4 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+			<td className="whitespace-nowrap py-5 pr-3 pl-4 text-sm text-text-primary group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
 				<div className="flex items-center gap-3">
 					<Image
 						alt={`${customer.name}'s profile picture`}
@@ -40,14 +40,14 @@ function CustomerTableRow({ customer }: CustomerTableRowProps): JSX.Element {
 					<p>{customer.name}</p>
 				</div>
 			</td>
-			<td className="px-4 py-5 text-sm whitespace-nowrap">{customer.email}</td>
-			<td className="px-4 py-5 text-sm whitespace-nowrap">
+			<td className="whitespace-nowrap px-4 py-5 text-sm">{customer.email}</td>
+			<td className="whitespace-nowrap px-4 py-5 text-sm">
 				{customer.totalInvoices}
 			</td>
-			<td className="px-4 py-5 text-sm whitespace-nowrap">
+			<td className="whitespace-nowrap px-4 py-5 text-sm">
 				{customer.totalPending}
 			</td>
-			<td className="px-4 py-5 text-sm whitespace-nowrap group-first-of-type:rounded-md group-last-of-type:rounded-md">
+			<td className="whitespace-nowrap px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
 				{customer.totalPaid}
 			</td>
 		</tr>
@@ -65,8 +65,8 @@ export async function DesktopTable({
 	customers: FormattedCustomersTableRow[];
 }): Promise<JSX.Element> {
 	return (
-		<table className="text-text-primary hidden min-w-full rounded-md md:table">
-			<thead className="bg-bg-accent rounded-md text-left text-sm font-normal">
+		<table className="hidden min-w-full rounded-md text-text-primary md:table">
+			<thead className="rounded-md bg-bg-accent text-left font-normal text-sm">
 				<tr>
 					{TABLE_COLUMNS.map(({ key, label }) => (
 						<th
@@ -85,7 +85,7 @@ export async function DesktopTable({
 					))}
 				</tr>
 			</thead>
-			<tbody className="bg-bg-primary divide-bg-accent text-text-primary divide-y">
+			<tbody className="divide-y divide-bg-accent bg-bg-primary text-text-primary">
 				{customers.map((customer) => (
 					<CustomerTableRow customer={customer} key={customer.id} />
 				))}

@@ -9,7 +9,7 @@ import {
 	useSearchParams,
 } from "next/navigation";
 import type { JSX } from "react";
-import { generatePagination } from "@/src/lib/utils/utils.client";
+import { generatePagination } from "@/lib/utils/utils.client";
 
 export const Pagination = ({
 	totalPages,
@@ -38,7 +38,7 @@ export const Pagination = ({
 				isDisabled={currentPage <= 1}
 			/>
 
-			<div className="flex -space-x-px">
+			<div className="-space-x-px flex">
 				{allPages.map((page: string | number, index: number): JSX.Element => {
 					let position: "first" | "last" | "single" | "middle" | undefined;
 

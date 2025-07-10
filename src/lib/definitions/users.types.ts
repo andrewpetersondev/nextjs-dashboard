@@ -1,6 +1,6 @@
 import { type ZodType, z as zod } from "zod";
-import type { UserEntity } from "@/src/lib/db/entities/user";
-import type { FormState } from "@/src/lib/definitions/form";
+import type { UserEntity } from "@/lib/db/entities/user";
+import type { FormState } from "@/lib/definitions/form";
 
 // --- Domain Types ---
 

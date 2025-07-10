@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readUsersPagesAction } from "@/src/lib/actions/users.actions";
-import { H1 } from "@/src/ui/headings";
-import { Pagination } from "@/src/ui/invoices/pagination";
-import { Search } from "@/src/ui/search";
-import { InvoicesSearchSkeleton } from "@/src/ui/skeletons";
-import { CreateUser } from "@/src/ui/users/buttons";
-import { UsersTable } from "@/src/ui/users/users-table";
+import { readUsersPagesAction } from "@/lib/actions/users.actions";
+import { H1 } from "@/ui/headings";
+import { Pagination } from "@/ui/invoices/pagination";
+import { Search } from "@/ui/search";
+import { InvoicesSearchSkeleton } from "@/ui/skeletons";
+import { CreateUser } from "@/ui/users/buttons";
+import { UsersTable } from "@/ui/users/users-table";
 
 export const metadata: Metadata = {
 	title: "Users",

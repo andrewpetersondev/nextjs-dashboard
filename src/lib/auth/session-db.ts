@@ -12,9 +12,9 @@ import {
 	BASE64_SLASH_REGEX,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants";
-import type { UserRole } from "@/src/lib/definitions/users.types";
-import { logger } from "@/src/lib/utils/logger";
+} from "@/lib/auth/constants";
+import type { UserRole } from "@/lib/definitions/users.types";
+import { logger } from "@/lib/utils/logger";
 
 // --- Db session logic here ---
 // export createDbSession, generateSessionToken, generateUUID
@@ -76,7 +76,7 @@ async function _createDbSession(
 
 	// --- Anti-pattern resistance: never import Db code in Edge runtime ---
 	// Only import here, not at module scope, to avoid accidental Edge import
-	const { insertSession } = await import("@/src/lib/dal/session");
+	const { insertSession } = await import("@/lib/dal/session");
 
 	await insertSession({
 		expiresAt,

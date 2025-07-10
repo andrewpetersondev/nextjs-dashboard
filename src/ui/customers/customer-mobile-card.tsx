@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.types";
+import type { FormattedCustomersTableRow } from "@/lib/definitions/customers.types";
 
 /**
  * Label constants for customer card fields.
@@ -28,7 +28,7 @@ export function CustomerMobileCard({
 	return (
 		// Use role="region" and aria-label for accessibility on a non-interactive card
 		<div
-			className="bg-bg-primary mb-2 w-full rounded-md p-4"
+			className="mb-2 w-full rounded-md bg-bg-primary p-4"
 			data-testid={`customer-mobile-card-${customer.id}`} // For Cypress/component testing
 			key={customer.id}
 		>
@@ -48,7 +48,7 @@ export function CustomerMobileCard({
 							<p className="font-medium">{customer.name}</p>
 						</div>
 					</div>
-					<p className="text-text-primary text-sm">{customer.email}</p>
+					<p className="text-sm text-text-primary">{customer.email}</p>
 				</div>
 			</div>
 

@@ -1,8 +1,8 @@
-import type { CustomerId } from "@/src/lib/definitions/customers.types";
+import type { CustomerId } from "@/lib/definitions/customers.types";
 import type {
 	InvoiceId,
 	InvoiceStatus,
-} from "@/src/lib/definitions/invoices.types";
+} from "@/lib/definitions/invoices.types";
 
 /**
  * This file defines the `InvoiceEntity` TypeScript interface, which represents the structure of an invoice record as stored in the database. It ensures type safety and consistency when working with invoice data throughout the application.

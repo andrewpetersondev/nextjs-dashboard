@@ -20,10 +20,10 @@ export const AuthFormDivider: FC<AuthFormDividerProps> = ({
 }) => (
 	<div className={`relative my-5 ${className}`}>
 		<div aria-hidden="true" className="absolute inset-0 flex items-center">
-			<div className="border-bg-accent w-full border-t" />
+			<div className="w-full border-bg-accent border-t" />
 		</div>
-		<div className="relative flex justify-center text-sm/6 font-medium">
-			<span className="bg-bg-primary text-text-secondary px-6">{label}</span>
+		<div className="relative flex justify-center font-medium text-sm/6">
+			<span className="bg-bg-primary px-6 text-text-secondary">{label}</span>
 		</div>
 	</div>
 );

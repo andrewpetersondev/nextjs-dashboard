@@ -37,7 +37,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
 			<input
 				aria-label={placeholder}
 				autoComplete="off"
-				className="peer focus:ring-opacity-20 block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-sm text-[color:var(--color-text-primary)] outline-2 transition-colors duration-200 placeholder:text-[color:var(--color-text-disabled)] hover:border-[color:var(--color-text-hover)] focus:border-[color:var(--color-text-focus)] focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:outline-none"
+				className="peer block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-[color:var(--color-text-primary)] text-sm outline-2 transition-colors duration-200 placeholder:text-[color:var(--color-text-disabled)] hover:border-[color:var(--color-text-hover)] focus:border-[color:var(--color-text-focus)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:ring-opacity-20"
 				defaultValue={searchParams.get("query")?.toString()}
 				id="search"
 				onChange={(e: ChangeEvent<HTMLInputElement>): void => {
@@ -46,7 +46,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
 				placeholder={placeholder}
 				type="search"
 			/>
-			<MagnifyingGlassIcon className="peer-focus:text-text-focus absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-text-accent" />
+			<MagnifyingGlassIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-[18px] w-[18px] text-text-accent peer-focus:text-text-focus" />
 		</div>
 	);
 }

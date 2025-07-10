@@ -1,7 +1,7 @@
 import type { JSX } from "react";
-import { readFilteredUsersAction } from "@/src/lib/actions/users.actions"; // Use server action
-import type { UserDto } from "@/src/lib/dto/user.dto";
-import { DeleteUser, UpdateUser } from "@/src/ui/users/buttons";
+import { readFilteredUsersAction } from "@/lib/actions/users.actions"; // Use server action
+import type { UserDto } from "@/lib/dto/user.dto";
+import { DeleteUser, UpdateUser } from "@/ui/users/buttons";
 
 /**
  * UsersTable component.
@@ -21,7 +21,7 @@ export async function UsersTable({
 			{users?.map(
 				(user: UserDto): JSX.Element => (
 					<div
-						className="bg-bg-primary mb-2 w-full rounded-md p-4"
+						className="mb-2 w-full rounded-md bg-bg-primary p-4"
 						key={user.id}
 					>
 						<div className="flex items-center justify-between border-b pb-4">
@@ -29,7 +29,7 @@ export async function UsersTable({
 								<div className="mb-2 flex items-center">
 									<p>{user.username}</p>
 								</div>
-								<p className="text-text-primary text-sm">{user.email}</p>
+								<p className="text-sm text-text-primary">{user.email}</p>
 							</div>
 
 							{user.role}

@@ -1,4 +1,4 @@
-import type { CustomerId } from "@/src/lib/definitions/customers.types";
+import type { CustomerId } from "@/lib/definitions/customers.types";
 
 export interface CustomerEntity {
 	readonly id: CustomerId;

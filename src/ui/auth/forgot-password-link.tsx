@@ -10,7 +10,7 @@ export function ForgotPasswordLink(): JSX.Element {
 	return (
 		<div className="text-sm/6">
 			<Link
-				className="text-text-secondary hover:text-text-hover font-semibold"
+				className="font-semibold text-text-secondary hover:text-text-hover"
 				href="/forgot-password"
 			>
 				Forgot password?

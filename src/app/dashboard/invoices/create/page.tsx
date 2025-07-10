@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { readCustomersAction } from "@/src/lib/actions/customers.actions";
-import type { CustomerField } from "@/src/lib/definitions/customers.types";
-import { Breadcrumbs } from "@/src/ui/invoices/breadcrumbs";
-import { CreateInvoiceForm } from "@/src/ui/invoices/create-invoice-form";
+import { readCustomersAction } from "@/lib/actions/customers.actions";
+import type { CustomerField } from "@/lib/definitions/customers.types";
+import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
+import { CreateInvoiceForm } from "@/ui/invoices/create-invoice-form";
 
 export const metadata: Metadata = {
 	title: "Create Invoice",

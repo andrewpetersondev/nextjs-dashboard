@@ -1,14 +1,14 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection";
-import { getDB } from "@/src/lib/db/connection";
-import { sessions } from "@/src/lib/db/schema";
+import type { Db } from "@/lib/db/connection";
+import { getDB } from "@/lib/db/connection";
+import { sessions } from "@/lib/db/schema";
 import type {
 	DbSessionRow,
 	SessionRecord,
-} from "@/src/lib/definitions/session.types";
-import { logger } from "@/src/lib/utils/logger";
+} from "@/lib/definitions/session.types";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Maps a DbSessionRow to a SessionRecord for use in the app layer.

@@ -1,4 +1,4 @@
-import { Heading } from "@/src/ui/auth/heading.tsx";
+import { Heading } from "@/ui/auth/heading.tsx";
 
 describe("<Heading />", () => {
 	it("renders logo and text", () => {

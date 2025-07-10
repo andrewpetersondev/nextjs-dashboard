@@ -1,16 +1,16 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createInvoiceAction } from "@/src/lib/actions/invoices.actions";
-import type { CustomerField } from "@/src/lib/definitions/customers.types";
-import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
-import { FormActionRow } from "@/src/ui/components/form-action-row";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
-import { Label } from "@/src/ui/components/label";
-import { CustomerSelect } from "@/src/ui/invoices/customer-select";
-import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input";
-import { InvoiceServerMessage } from "@/src/ui/invoices/invoice-server-message";
-import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group";
+import { createInvoiceAction } from "@/lib/actions/invoices.actions";
+import type { CustomerField } from "@/lib/definitions/customers.types";
+import type { InvoiceCreateState } from "@/lib/definitions/invoices.types";
+import { FormActionRow } from "@/ui/components/form-action-row";
+import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { Label } from "@/ui/components/label";
+import { CustomerSelect } from "@/ui/invoices/customer-select";
+import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
+import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
+import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
 
 export const CreateInvoiceForm = ({
 	customers,
@@ -41,7 +41,7 @@ export const CreateInvoiceForm = ({
 	return (
 		<section>
 			<form action={action}>
-				<div className="bg-bg-secondary rounded-md p-4 md:p-6">
+				<div className="rounded-md bg-bg-secondary p-4 md:p-6">
 					<div className="mb-4">
 						<Label htmlFor="customer" text="Choose customer" />
 						<CustomerSelect

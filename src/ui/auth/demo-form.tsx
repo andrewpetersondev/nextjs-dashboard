@@ -1,7 +1,7 @@
 import type { FC } from "react";
-import { demoUser } from "@/src/lib/actions/users.actions";
-import type { UserRole } from "@/src/lib/definitions/users.types";
-import { Button } from "@/src/ui/button";
+import { demoUser } from "@/lib/actions/users.actions";
+import type { UserRole } from "@/lib/definitions/users.types";
+import { Button } from "@/ui/button";
 
 /**
  * DemoForm component for logging in as a demo user with a specific role.
@@ -26,7 +26,7 @@ export const DemoForm: FC<DemoFormProps> = ({ text, userRole, label }) => (
 		aria-label={label}
 	>
 		<Button
-			className="mt-2 bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2"
+			className="mt-2 flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 font-semibold text-sm text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus"
 			data-cy={`demo-user-button-${label}`}
 			type="submit"
 		>

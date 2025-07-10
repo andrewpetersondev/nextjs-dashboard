@@ -2,18 +2,18 @@ import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import type { JSX } from "react";
-import { AcmeLogo } from "@/src/ui/acme-logo";
+import { AcmeLogo } from "@/ui/acme-logo";
 
 export default function Page(): JSX.Element {
 	return (
 		<main className="flex min-h-screen flex-col p-6">
 			<AcmeLogo />
 			<div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-				<div className="bg-bg-secondary flex flex-col justify-center gap-6 rounded-lg px-6 py-10 md:w-2/5 md:px-20">
-					<p className="text-xl font-medium md:text-3xl md:leading-normal">
+				<div className="flex flex-col justify-center gap-6 rounded-lg bg-bg-secondary px-6 py-10 md:w-2/5 md:px-20">
+					<p className="font-medium text-xl md:text-3xl md:leading-normal">
 						<strong>Welcome to Acme.</strong> This is the example for the{" "}
 						<a
-							className="text-text-active hover:text-text-hover underline font-extrabold font-experiment"
+							className="font-experiment font-extrabold text-text-active underline hover:text-text-hover"
 							data-testid="nextjs-course-link"
 							href="https://nextjs.org/learn/"
 						>
@@ -22,7 +22,7 @@ export default function Page(): JSX.Element {
 						, brought to you by Vercel.
 					</p>
 					<Link
-						className="bg-bg-active text-text-active hover:bg-bg-hover focus-visible:outline-bg-focus flex items-center gap-5 self-start rounded-md px-6 py-3 text-sm font-semibold shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 md:text-base"
+						className="flex items-center gap-5 self-start rounded-md bg-bg-active px-6 py-3 font-semibold text-sm text-text-active shadow-sm transition-colors hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 md:text-base"
 						data-testid="login-button"
 						href="/login"
 					>

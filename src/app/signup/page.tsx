@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { ClientSignupSection } from "@/src/ui/auth/client-signup-section";
-import { Heading } from "@/src/ui/auth/heading";
+import { ClientSignupSection } from "@/ui/auth/client-signup-section";
+import { Heading } from "@/ui/auth/heading";
 
 /**
  * Signup page component.

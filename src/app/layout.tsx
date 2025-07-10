@@ -1,7 +1,7 @@
-import "@/src/app/globals.css";
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { FC, ReactNode } from "react";
-import { notoSans } from "@/src/ui/style/fonts";
+import { notoSans } from "@/ui/style/fonts";
 
 /**
  * Root layout component.
@@ -24,9 +24,9 @@ interface RootLayoutProps {
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 	return (
-		<html className="h-full scheme-light-dark" lang="en">
+		<html className="scheme-light-dark h-full" lang="en">
 			<body
-				className={`h-full antialiased scheme-light-dark ${notoSans.className}`}
+				className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
 			>
 				{children}
 			</body>

@@ -1,5 +1,5 @@
 import { z as zod } from "zod";
-import { roleSchema, type UserRole } from "@/src/lib/definitions/users.types";
+import { roleSchema, type UserRole } from "@/lib/definitions/users.types";
 
 /**
  * Payload for encrypting a session (JWT or similar).
@@ -50,7 +50,7 @@ export interface SessionVerificationResult {
 }
 
 /**
- * Represents a row from the sessions table in the database.
+ * Represents a row from the session table in the database.
  * This type is aligned with the Drizzle ORM schema.
  */
 export interface SessionRecord {
@@ -65,7 +65,7 @@ export interface SessionRecord {
 }
 
 /**
- * Represents a raw row from the sessions table as returned by Drizzle ORM.
+ * Represents a raw row from the session table as returned by Drizzle ORM.
  * This matches the Db schema exactly.
  */
 export interface DbSessionRow {

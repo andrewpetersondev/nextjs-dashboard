@@ -17,7 +17,7 @@ export function FormActionRow({
 	return (
 		<div className={`mt-6 flex justify-end gap-4 ${className}`}>
 			<Link
-				className="bg-bg-accent text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors"
+				className="flex h-10 items-center rounded-lg bg-bg-accent px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover"
 				href={cancelHref}
 			>
 				{cancelLabel}

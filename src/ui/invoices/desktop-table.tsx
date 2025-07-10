@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types";
-import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
-import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import { InvoiceStatusComponent } from "@/src/ui/invoices/status";
+import type { FetchFilteredInvoicesData } from "@/lib/definitions/invoices.types";
+import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
+import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
+import { InvoiceStatusComponent } from "@/ui/invoices/status";
 
 export const DesktopTable = ({
 	invoices,
@@ -11,8 +11,8 @@ export const DesktopTable = ({
 	invoices: FetchFilteredInvoicesData[];
 }): JSX.Element => {
 	return (
-		<table className="text-text-primary hidden min-w-full md:table">
-			<thead className="rounded-lg text-left text-sm font-normal">
+		<table className="hidden min-w-full text-text-primary md:table">
+			<thead className="rounded-lg text-left font-normal text-sm">
 				<tr>
 					<th className="px-4 py-5 font-medium sm:pl-6" scope="col">
 						Customer
@@ -41,7 +41,7 @@ export const DesktopTable = ({
 							className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
 							key={invoice.id}
 						>
-							<td className="py-3 pr-3 pl-6 whitespace-nowrap">
+							<td className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex items-center gap-3">
 									<Image
 										alt={`${invoice.name}'s profile picture`}
@@ -53,17 +53,17 @@ export const DesktopTable = ({
 									<p>{invoice.name}</p>
 								</div>
 							</td>
-							<td className="px-3 py-3 whitespace-nowrap">{invoice.email}</td>
-							<td className="px-3 py-3 whitespace-nowrap">
+							<td className="whitespace-nowrap px-3 py-3">{invoice.email}</td>
+							<td className="whitespace-nowrap px-3 py-3">
 								{formatCurrency(invoice.amount)}
 							</td>
-							<td className="px-3 py-3 whitespace-nowrap">
+							<td className="whitespace-nowrap px-3 py-3">
 								{formatDateToLocal(invoice.date)}
 							</td>
-							<td className="px-3 py-3 whitespace-nowrap">
+							<td className="whitespace-nowrap px-3 py-3">
 								<InvoiceStatusComponent status={invoice.status} />
 							</td>
-							<td className="py-3 pr-3 pl-6 whitespace-nowrap">
+							<td className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex justify-end gap-3">
 									<UpdateInvoice id={invoice.id} />
 									<DeleteInvoice id={invoice.id} />

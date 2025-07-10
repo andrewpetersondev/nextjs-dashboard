@@ -10,25 +10,25 @@ import {
 	fetchLatestInvoices,
 	readInvoiceDal,
 	updateInvoiceDal,
-} from "@/src/lib/dal/invoices.dal";
-import { getDB } from "@/src/lib/db/connection";
+} from "@/lib/dal/invoices.dal";
+import { getDB } from "@/lib/db/connection";
 import type {
 	FetchFilteredInvoicesData,
 	InvoiceEditState,
 	ModifiedLatestInvoicesData,
-} from "@/src/lib/definitions/invoices.types";
+} from "@/lib/definitions/invoices.types";
 import {
 	CreateInvoiceSchema,
 	type InvoiceCreateState,
 	UpdateInvoiceSchema,
-} from "@/src/lib/definitions/invoices.types";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { toCustomerIdBrand } from "@/src/lib/mappers/customer.mapper";
+} from "@/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
+import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 import {
 	toInvoiceIdBrand,
 	toInvoiceStatusBrand,
-} from "@/src/lib/mappers/invoice.mapper";
-import { getFormField } from "@/src/lib/utils/utils.server";
+} from "@/lib/mappers/invoice.mapper";
+import { getFormField } from "@/lib/utils/utils.server";
 
 /**
  * Server action to create a new invoice.

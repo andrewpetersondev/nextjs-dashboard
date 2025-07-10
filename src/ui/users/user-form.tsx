@@ -1,9 +1,9 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
-import { FormActionRow } from "@/src/ui/components/form-action-row";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
-import { H1 } from "@/src/ui/headings";
-import { ServerMessage } from "@/src/ui/users/server-message";
-import { UserFields } from "@/src/ui/users/user-fields";
+import { FormActionRow } from "@/ui/components/form-action-row";
+import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { H1 } from "@/ui/headings";
+import { ServerMessage } from "@/ui/users/server-message";
+import { UserFields } from "@/ui/users/user-fields";
 
 type ErrorType = {
 	username?: string[];

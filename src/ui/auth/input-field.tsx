@@ -5,8 +5,8 @@ import {
 	type JSX,
 	type ReactNode,
 } from "react";
-import { FieldError } from "@/src/ui/auth/field-error";
-import { InputFieldCard } from "@/src/ui/components/input-field-card";
+import { FieldError } from "@/ui/auth/field-error";
+import { InputFieldCard } from "@/ui/components/input-field-card";
 
 export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 	/** Unique id for the input and label */
@@ -45,7 +45,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 		return (
 			<InputFieldCard>
 				<div>
-					<label className="block text-sm/6 font-medium" htmlFor={id}>
+					<label className="block font-medium text-sm/6" htmlFor={id}>
 						{label}
 					</label>
 					<div className="mt-2 flex items-center">
@@ -56,7 +56,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 									: undefined
 							}
 							aria-invalid={(error?.length ?? 0) > 0}
-							className="bg-bg-accent text-text-primary ring-bg-accent placeholder:text-text-accent focus:ring-bg-focus block w-full rounded-md px-3 py-1.5 ring-1 ring-inset focus:ring-2 sm:text-sm/6"
+							className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
 							data-cy={dataCy}
 							id={id}
 							name={id}

@@ -2,23 +2,23 @@ import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { SESSION_SECRET } from "@/src/config/env";
+import { SESSION_SECRET } from "@/config/env";
 import {
 	JWT_EXPIRATION,
 	ONE_DAY_MS,
 	SESSION_COOKIE_NAME,
 	SESSION_DURATION_MS,
-} from "@/src/lib/auth/constants";
-import { getCookieValue } from "@/src/lib/auth/utils";
+} from "@/lib/auth/constants";
+import { getCookieValue } from "@/lib/auth/utils";
 import {
 	type DecryptPayload,
 	DecryptPayloadSchema,
 	type EncryptPayload,
 	EncryptPayloadSchema,
-} from "@/src/lib/definitions/session.types";
-import type { UserRole } from "@/src/lib/definitions/users.types";
-import { ValidationError } from "@/src/lib/errors/validation-error";
-import { logger } from "@/src/lib/utils/logger";
+} from "@/lib/definitions/session.types";
+import type { UserRole } from "@/lib/definitions/users.types";
+import { ValidationError } from "@/lib/errors/validation-error";
+import { logger } from "@/lib/utils/logger";
 
 // --- JWT session logic here ---
 // export encrypt, decrypt, createSession, updateSession, deleteSession

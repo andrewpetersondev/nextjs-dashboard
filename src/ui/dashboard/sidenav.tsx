@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { JSX } from "react";
-import { AcmeLogo } from "@/src/ui/acme-logo";
-import { NavLinksWrapper } from "@/src/ui/dashboard/nav-links-wrapper";
-import { LogoutForm } from "@/src/ui/logout-form";
+import { AcmeLogo } from "@/ui/acme-logo";
+import { NavLinksWrapper } from "@/ui/dashboard/nav-links-wrapper";
+import { LogoutForm } from "@/ui/logout-form";
 
 /**
  * SideNav component for dashboard layout.
@@ -18,17 +18,17 @@ export const SideNav = (): JSX.Element => {
 		>
 			<Link
 				aria-label="Go to homepage"
-				className="bg-bg-secondary mb-2 flex h-20 items-end justify-start rounded-md md:h-40"
+				className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary md:h-40"
 				href="/"
 				tabIndex={0}
 			>
 				<AcmeLogo />
 			</Link>
-			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-y-2 md:space-x-0">
+			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
 				<NavLinksWrapper />
 				<div
 					aria-hidden="true"
-					className="bg-bg-secondary hidden h-auto w-full grow rounded-md md:block"
+					className="hidden h-auto w-full grow rounded-md bg-bg-secondary md:block"
 				/>
 				<LogoutForm />
 			</div>

@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
-import { Button } from "@/src/ui/button";
+import { Button } from "@/ui/button";
 
 export interface FormSubmitButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -30,7 +30,7 @@ export function FormSubmitButton({
 	return (
 		<Button
 			aria-disabled={pending}
-			className={`bg-bg-active text-text-primary hover:bg-bg-hover focus-visible:outline-bg-focus flex justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${className}`}
+			className={`flex justify-center rounded-md bg-bg-active px-3 py-1.5 font-semibold text-sm/6 text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 ${className}`}
 			data-cy={dataCy}
 			disabled={pending || props.disabled}
 			type="submit"

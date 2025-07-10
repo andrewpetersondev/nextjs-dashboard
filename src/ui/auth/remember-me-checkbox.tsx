@@ -11,7 +11,7 @@ export function RememberMeCheckbox(): JSX.Element {
 			<div className="flex h-6 shrink-0 items-center">
 				<div className="group grid size-4 grid-cols-1">
 					<input
-						className="border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus col-start-1 row-start-1 h-4 w-4 rounded"
+						className="col-start-1 row-start-1 h-4 w-4 rounded border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus"
 						id="remember-me"
 						name="remember-me"
 						type="checkbox"
@@ -32,7 +32,7 @@ export function RememberMeCheckbox(): JSX.Element {
 				</div>
 			</div>
 			<label
-				className="text-text-primary block text-sm/6"
+				className="block text-sm/6 text-text-primary"
 				htmlFor="remember-me"
 			>
 				Remember me

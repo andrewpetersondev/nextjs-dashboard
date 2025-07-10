@@ -22,10 +22,10 @@ export function AuthSwitchLink({
 	linkText,
 }: AuthSwitchLinkProps): JSX.Element {
 	return (
-		<p className="text-text-accent mt-10 text-center text-sm/6">
+		<p className="mt-10 text-center text-sm/6 text-text-accent">
 			{prompt}{" "}
 			<Link
-				className="text-text-secondary hover:text-text-hover font-semibold underline decoration-text-accent underline-offset-8"
+				className="font-semibold text-text-secondary underline decoration-text-accent underline-offset-8 hover:text-text-hover"
 				href={href}
 			>
 				{linkText}

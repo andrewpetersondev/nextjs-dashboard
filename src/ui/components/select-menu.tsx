@@ -57,7 +57,7 @@ export const SelectMenu = React.memo(
 					error && error.length > 0 ? `${name}-error` : undefined
 				}
 				aria-label={placeholder}
-				className={`peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2 ${className}`}
+				className={`peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary ${className}`}
 				data-cy={dataCy}
 				defaultValue={value === undefined ? defaultValue : undefined}
 				// --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
@@ -77,7 +77,7 @@ export const SelectMenu = React.memo(
 					</option>
 				))}
 			</select>
-			<UserCircleIcon className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2" />
+			<UserCircleIcon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary" />
 		</div>
 	),
 );

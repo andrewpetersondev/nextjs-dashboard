@@ -3,11 +3,11 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { decrypt } from "@/src/lib/auth/session-jwt";
+import { decrypt } from "@/lib/auth/session-jwt";
 import type {
 	DecryptPayload,
 	SessionVerificationResult,
-} from "@/src/lib/definitions/session.types";
+} from "@/lib/definitions/session.types";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.

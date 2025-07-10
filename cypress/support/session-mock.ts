@@ -1,5 +1,5 @@
 import { SignJWT } from "jose";
-import type { UserRole } from "@/src/lib/definitions/users.types.ts";
+import type { UserRole } from "@/lib/definitions/users.types.ts";
 import { SESSION_DURATION_MS } from "../../src/lib/auth/constants.ts";
 
 export async function generateMockSessionJwt(

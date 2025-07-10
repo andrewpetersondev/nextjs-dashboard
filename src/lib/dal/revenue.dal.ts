@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { Db } from "@/src/lib/db/connection";
-import { revenues } from "@/src/lib/db/schema";
-import type { Revenue } from "@/src/lib/definitions/revenue";
+import type { Db } from "@/lib/db/connection";
+import { revenues } from "@/lib/db/schema";
+import type { Revenue } from "@/lib/definitions/revenue";
 
 export async function fetchRevenue(db: Db): Promise<Revenue[]> {
 	const monthOrder: string[] = [

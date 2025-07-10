@@ -1,13 +1,13 @@
 "use client";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { updateUserAction } from "@/src/lib/actions/users.actions";
-import type { FormState } from "@/src/lib/definitions/form";
-import type { EditUserFormFields } from "@/src/lib/definitions/users.types";
-import type { UserDto } from "@/src/lib/dto/user.dto";
-import { FormActionRow } from "@/src/ui/components/form-action-row";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
-import { ServerMessage } from "@/src/ui/users/server-message";
+import { updateUserAction } from "@/lib/actions/users.actions";
+import type { FormState } from "@/lib/definitions/form";
+import type { EditUserFormFields } from "@/lib/definitions/users.types";
+import type { UserDto } from "@/lib/dto/user.dto";
+import { FormActionRow } from "@/ui/components/form-action-row";
+import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { ServerMessage } from "@/ui/users/server-message";
 
 type EditUserFormState = Readonly<{
 	errors?: {
@@ -59,9 +59,9 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 
 				{/* username */}
 				<div className="mb-4">
-					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
+					<div className="rounded-md bg-bg-secondary p-4 md:p-6">
 						<label
-							className="mb-2 block text-sm font-medium"
+							className="mb-2 block font-medium text-sm"
 							htmlFor="username"
 						>
 							Username: {user.username}
@@ -70,7 +70,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 							<div className="relative">
 								<input
 									aria-describedby="update-user-username-error"
-									className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
+									className="peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary"
 									defaultValue={user.username}
 									id="username"
 									name="username"
@@ -79,7 +79,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 								/>
 								<UserCircleIcon
 									aria-hidden="true"
-									className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2"
+									className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary"
 								/>
 							</div>
 						</div>
@@ -90,7 +90,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 						>
 							{state.errors?.username?.map(
 								(error: string): JSX.Element => (
-									<p className="text-text-error mt-2 text-sm" key={error}>
+									<p className="mt-2 text-sm text-text-error" key={error}>
 										{error}
 									</p>
 								),
@@ -101,15 +101,15 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 
 				{/* email */}
 				<div className="mb-4">
-					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
-						<label className="mb-2 block text-sm font-medium" htmlFor="email">
+					<div className="rounded-md bg-bg-secondary p-4 md:p-6">
+						<label className="mb-2 block font-medium text-sm" htmlFor="email">
 							Email: {user.email}
 						</label>
 						<div className="relative mt-2 rounded-md">
 							<div className="relative">
 								<input
 									aria-describedby="update-user-email-error"
-									className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
+									className="peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary"
 									defaultValue={user.email}
 									id="email"
 									name="email"
@@ -118,7 +118,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 								/>
 								<UserCircleIcon
 									aria-hidden="true"
-									className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2"
+									className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary"
 								/>
 							</div>
 						</div>
@@ -129,7 +129,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 						>
 							{state.errors?.email?.map(
 								(error: string): JSX.Element => (
-									<p className="text-text-error mt-2 text-sm" key={error}>
+									<p className="mt-2 text-sm text-text-error" key={error}>
 										{error}
 									</p>
 								),
@@ -140,9 +140,9 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 
 				{/* password */}
 				<div className="mb-4">
-					<div className="bg-bg-secondary rounded-md p-4 md:p-6">
+					<div className="rounded-md bg-bg-secondary p-4 md:p-6">
 						<label
-							className="mb-2 block text-sm font-medium"
+							className="mb-2 block font-medium text-sm"
 							htmlFor="password"
 						>
 							Password:
@@ -151,7 +151,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 							<div className="relative">
 								<input
 									aria-describedby="update-user-password-error"
-									className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
+									className="peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary"
 									id="password"
 									name="password"
 									placeholder="Enter password..."
@@ -159,7 +159,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 								/>
 								<UserCircleIcon
 									aria-hidden="true"
-									className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2"
+									className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary"
 								/>
 							</div>
 						</div>
@@ -170,7 +170,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 						>
 							{state.errors?.password?.map(
 								(error: string): JSX.Element => (
-									<p className="text-text-error mt-2 text-sm" key={error}>
+									<p className="mt-2 text-sm text-text-error" key={error}>
 										{error}
 									</p>
 								),
@@ -181,12 +181,12 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 
 				{/* Role */}
 				<div className="mb-4">
-					<label className="mb-2 block text-sm font-medium" htmlFor="role">
+					<label className="mb-2 block font-medium text-sm" htmlFor="role">
 						Choose Role
 					</label>
 					<div className="relative">
 						<select
-							className="peer border-bg-accent placeholder:text-text-secondary block w-full cursor-pointer rounded-md border py-2 pl-10 text-sm outline-2"
+							className="peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary"
 							defaultValue={user.role}
 							id="role"
 							name="role"
@@ -196,7 +196,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 						</select>
 						<UserCircleIcon
 							aria-hidden="true"
-							className="text-text-primary pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2"
+							className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary"
 						/>
 					</div>
 					<div
@@ -206,7 +206,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 					>
 						{state.errors?.role?.map(
 							(error: string): JSX.Element => (
-								<p className="text-text-error mt-2 text-sm" key={error}>
+								<p className="mt-2 text-sm text-text-error" key={error}>
 									{error}
 								</p>
 							),

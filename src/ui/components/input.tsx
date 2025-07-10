@@ -21,7 +21,7 @@ export const DollarInput: React.FC<InputProps> = ({
 }) => (
 	<input
 		aria-describedby={ariaDescribedBy}
-		className={`peer border-bg-accent placeholder:text-text-primary block w-full rounded-md border py-2 pl-10 text-sm outline-2 ${className}`}
+		className={`peer block w-full rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-primary ${className}`}
 		data-cy={dataCy}
 		{...rest}
 	/>

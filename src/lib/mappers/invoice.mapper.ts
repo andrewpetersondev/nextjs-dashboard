@@ -1,12 +1,12 @@
-import type { InvoiceEntity } from "@/src/lib/db/entities/invoice";
+import type { InvoiceEntity } from "@/lib/db/entities/invoice";
 import {
 	INVOICE_STATUSES,
 	type InvoiceByIdDbRow,
 	type InvoiceId,
 	type InvoiceStatus,
-} from "@/src/lib/definitions/invoices.types";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { toCustomerIdBrand } from "@/src/lib/mappers/customer.mapper";
+} from "@/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
+import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 
 /**
  * Helper to brand a string as InvoiceId.

@@ -1,7 +1,7 @@
 import { z as zod } from "zod";
-import type { CustomerId } from "@/src/lib/definitions/customers.types";
-import type { FormState } from "@/src/lib/definitions/form";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
+import type { CustomerId } from "@/lib/definitions/customers.types";
+import type { FormState } from "@/lib/definitions/form";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 
 // --- Domain Types ---
 

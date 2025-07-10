@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { forwardRef, type JSX } from "react";
-import { ContainerInner, ContainerOuter } from "@/src/ui/container";
+import { ContainerInner, ContainerOuter } from "@/ui/container";
 
 type Pattern = "grid" | "dot";
 

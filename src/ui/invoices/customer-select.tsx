@@ -1,10 +1,10 @@
 import type React from "react";
-import type { CustomerField } from "@/src/lib/definitions/customers.types";
-import { ErrorMessage } from "@/src/ui/components/error-message";
+import type { CustomerField } from "@/lib/definitions/customers.types";
+import { ErrorMessage } from "@/ui/components/error-message";
 import {
 	SelectMenu,
 	type SelectMenuProps,
-} from "@/src/ui/components/select-menu";
+} from "@/ui/components/select-menu";
 
 /**
  * Props for the CustomerSelect component.

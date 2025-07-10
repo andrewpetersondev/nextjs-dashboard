@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types";
+import type { InvoiceStatus } from "@/lib/definitions/invoices.types";
 
 export interface InvoiceDto {
 	readonly id: string;

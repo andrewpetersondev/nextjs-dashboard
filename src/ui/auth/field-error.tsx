@@ -1,7 +1,7 @@
 import { type JSX, memo, type NamedExoticComponent } from "react";
 
 /**
- * Props for FieldError component.
+ * Props for the FieldError component.
  */
 export interface FieldErrorProps {
 	dataCy?: string;

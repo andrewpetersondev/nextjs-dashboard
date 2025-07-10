@@ -5,22 +5,22 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import { comparePassword, hashPassword } from "@/src/lib/auth/password";
-import type { Db } from "@/src/lib/db/connection";
-import { demoUserCounters, users } from "@/src/lib/db/schema";
-import { ITEMS_PER_PAGE_USERS } from "@/src/lib/definitions/constants";
+import { comparePassword, hashPassword } from "@/lib/auth/password";
+import type { Db } from "@/lib/db/connection";
+import { demoUserCounters, users } from "@/lib/db/schema";
+import { ITEMS_PER_PAGE_USERS } from "@/lib/definitions/constants";
 import type {
 	UserId,
 	UserRole,
 	UserUpdatePatch,
-} from "@/src/lib/definitions/users.types";
-import type { UserDto } from "@/src/lib/dto/user.dto";
+} from "@/lib/definitions/users.types";
+import type { UserDto } from "@/lib/dto/user.dto";
 import {
 	dbRowToUserEntity,
 	toUserDto,
 	toUserRoleBrand,
-} from "@/src/lib/mappers/user.mapper";
-import { createRandomPassword, logError } from "@/src/lib/utils/utils.server";
+} from "@/lib/mappers/user.mapper";
+import { createRandomPassword, logError } from "@/lib/utils/utils.server";
 
 /**
  * Inserts a new user record into the database.
@@ -263,7 +263,7 @@ export async function deleteUserDal(
  */
 export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
 	try {
-		// Insert a new counter row for the given role and return the new id
+		// Insert a new counter-row for the given role and return the new id
 		const [counterRow] = await db
 			.insert(demoUserCounters)
 			.values({ count: 1, role })

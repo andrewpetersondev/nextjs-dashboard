@@ -6,14 +6,14 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUserAction } from "@/src/lib/actions/users.actions";
-import type { CreateUserFormState } from "@/src/lib/definitions/users.types";
-import { InputField } from "@/src/ui/auth/input-field";
-import { FormActionRow } from "@/src/ui/components/form-action-row";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
-import { H1 } from "@/src/ui/headings";
-import { SelectRole } from "@/src/ui/users/select-role";
-import { ServerMessage } from "@/src/ui/users/server-message";
+import { createUserAction } from "@/lib/actions/users.actions";
+import type { CreateUserFormState } from "@/lib/definitions/users.types";
+import { InputField } from "@/ui/auth/input-field";
+import { FormActionRow } from "@/ui/components/form-action-row";
+import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { H1 } from "@/ui/headings";
+import { SelectRole } from "@/ui/users/select-role";
+import { ServerMessage } from "@/ui/users/server-message";
 
 export function CreateUserForm(): JSX.Element {
 	const initialState = { errors: {}, message: "", success: undefined };
@@ -84,7 +84,7 @@ export function CreateUserForm(): JSX.Element {
 					describedById="signup-password-errors"
 					error={state?.errors?.password}
 					icon={
-						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="password"
 					label="Password"
@@ -96,7 +96,7 @@ export function CreateUserForm(): JSX.Element {
 
 				{/* Role Selection */}
 				<div className="mb-4">
-					<label className="mb-2 block text-sm font-medium" htmlFor="role">
+					<label className="mb-2 block font-medium text-sm" htmlFor="role">
 						Role
 					</label>
 					<SelectRole

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types";
-import { formatCurrency, formatDateToLocal } from "@/src/lib/utils/utils";
-import { DeleteInvoice, UpdateInvoice } from "@/src/ui/invoices/buttons";
-import { InvoiceStatusComponent } from "@/src/ui/invoices/status";
+import type { FetchFilteredInvoicesData } from "@/lib/definitions/invoices.types";
+import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
+import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
+import { InvoiceStatusComponent } from "@/ui/invoices/status";
 
 /**
  * MobileTable component displays invoices in a mobile-friendly format.
@@ -26,7 +26,7 @@ export const MobileTable = ({
 			{invoices?.map(
 				(invoice: FetchFilteredInvoicesData): JSX.Element => (
 					<div
-						className="bg-bg-primary mb-2 w-full rounded-md p-4"
+						className="mb-2 w-full rounded-md bg-bg-primary p-4"
 						key={invoice.id}
 					>
 						{/* Customer information and status section */}
@@ -42,14 +42,14 @@ export const MobileTable = ({
 									/>
 									<p>{invoice.name}</p>
 								</div>
-								<p className="text-text-primary text-sm">{invoice.email}</p>
+								<p className="text-sm text-text-primary">{invoice.email}</p>
 							</div>
 							<InvoiceStatusComponent status={invoice.status || "unknown"} />
 						</div>
 						{/* Amount, date and actions section */}
 						<div className="flex w-full items-center justify-between pt-4">
 							<div>
-								<p className="text-xl font-medium">
+								<p className="font-medium text-xl">
 									{formatCurrency(invoice.amount)}
 								</p>
 								<p>{formatDateToLocal(invoice.date)}</p>

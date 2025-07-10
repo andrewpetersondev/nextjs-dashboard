@@ -1,9 +1,9 @@
-import type { CustomerEntity } from "@/src/lib/db/entities/customer";
+import type { CustomerEntity } from "@/lib/db/entities/customer";
 import type {
 	CustomerByIdDbRow,
 	CustomerId,
-} from "@/src/lib/definitions/customers.types";
-import type { CustomerDto } from "@/src/lib/dto/customer.dto";
+} from "@/lib/definitions/customers.types";
+import type { CustomerDto } from "@/lib/dto/customer.dto";
 
 /**
  * Brands a string as a CustomerId.

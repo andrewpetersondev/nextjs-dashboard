@@ -1,7 +1,7 @@
 import type { FC } from "react";
-import type { UserRole } from "@/src/lib/definitions/users.types";
-import { DemoForm } from "@/src/ui/auth/demo-form";
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button";
+import type { UserRole } from "@/lib/definitions/users.types";
+import { DemoForm } from "@/ui/auth/demo-form";
+import { SocialLoginButton } from "@/ui/auth/social-login-button";
 
 /**
  * Props for AuthFormSocialSection.

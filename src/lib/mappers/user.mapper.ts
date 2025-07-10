@@ -1,6 +1,6 @@
-import type { UserEntity } from "@/src/lib/db/entities/user";
-import type { UserId, UserRole } from "@/src/lib/definitions/users.types";
-import type { UserDto } from "@/src/lib/dto/user.dto";
+import type { UserEntity } from "@/lib/db/entities/user";
+import type { UserId, UserRole } from "@/lib/definitions/users.types";
+import type { UserDto } from "@/lib/dto/user.dto";
 
 /**
  * Constants for default values.

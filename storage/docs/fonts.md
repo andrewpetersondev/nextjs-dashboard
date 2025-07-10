@@ -43,7 +43,7 @@ export const doto = Doto({ subsets: ["latin"], display: "swap" });
 
 ```tsx
 // src/app/layout.tsx
-import { notoSans } from "@/src/ui/style/fonts";
+import { notoSans } from "@/ui/style/fonts";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 return (
@@ -64,7 +64,7 @@ return (
 
 ```tsx
 // src/ui/headings.tsx
-import { tektur } from "@/src/ui/style/fonts";
+import { tektur } from "@/ui/style/fonts";
 import clsx from "clsx";
 
 const headingStyles = { /* ... */ };

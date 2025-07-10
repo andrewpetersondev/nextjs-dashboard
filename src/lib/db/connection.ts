@@ -5,8 +5,8 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/src/config/env";
-import * as schema from "@/src/lib/db/schema";
+import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/config/env";
+import * as schema from "@/lib/db/schema";
 
 // Supported database types
 export type DbType = "dev" | "test";

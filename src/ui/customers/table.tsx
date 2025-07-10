@@ -1,9 +1,9 @@
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/src/lib/definitions/customers.types";
-import { DesktopTable } from "@/src/ui/customers/desktop-table";
-import { MobileTable } from "@/src/ui/customers/mobile-table";
-import { H1 } from "@/src/ui/headings";
-import { Search } from "@/src/ui/search";
+import type { FormattedCustomersTableRow } from "@/lib/definitions/customers.types";
+import { DesktopTable } from "@/ui/customers/desktop-table";
+import { MobileTable } from "@/ui/customers/mobile-table";
+import { H1 } from "@/ui/headings";
+import { Search } from "@/ui/search";
 
 export interface CustomersTableProps {
 	customers: FormattedCustomersTableRow[];
@@ -21,7 +21,7 @@ export async function CustomersTable({
 			<div className="mt-6 flow-root">
 				<div className="overflow-x-auto">
 					<div className="inline-block min-w-full align-middle">
-						<div className="bg-bg-accent overflow-hidden rounded-md p-2 md:pt-0">
+						<div className="overflow-hidden rounded-md bg-bg-accent p-2 md:pt-0">
 							<MobileTable customers={customers} />
 							<DesktopTable customers={customers} />
 						</div>

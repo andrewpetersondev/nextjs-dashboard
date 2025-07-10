@@ -34,7 +34,7 @@ export function Heading({
 				src={logoSrc}
 				width={40}
 			/>
-			<h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight">
+			<h2 className="mt-6 text-center font-bold text-2xl/9 tracking-tight">
 				{text}
 			</h2>
 			{children}

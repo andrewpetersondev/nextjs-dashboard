@@ -17,7 +17,7 @@ export const Label: React.FC<LabelProps> = ({
 	...rest
 }) => (
 	<label
-		className={`mb-2 block text-sm font-medium ${className}`}
+		className={`mb-2 block font-medium text-sm ${className}`}
 		data-cy={dataCy}
 		htmlFor={htmlFor}
 		{...rest}

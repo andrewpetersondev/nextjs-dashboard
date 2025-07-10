@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteInvoiceFormAction } from "@/src/lib/actions/invoices.actions";
+import { deleteInvoiceFormAction } from "@/lib/actions/invoices.actions";
 
 /**
  * Props for invoice action buttons.
@@ -19,7 +19,7 @@ const CREATE_INVOICE_ROUTE = "/dashboard/invoices/create";
 export const CreateInvoice = (): JSX.Element => (
 	<Link
 		aria-label="Create Invoice"
-		className="bg-bg-secondary text-text-primary hover:bg-bg-hover flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+		className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
 		href={CREATE_INVOICE_ROUTE}
 	>
 		<span className="hidden md:block">Create Invoice</span>
@@ -36,7 +36,7 @@ export const UpdateInvoice = ({
 }: Readonly<InvoiceActionProps>): JSX.Element => (
 	<Link
 		aria-label="Update Invoice"
-		className="hover:bg-bg-hover rounded-md border p-2"
+		className="rounded-md border p-2 hover:bg-bg-hover"
 		href={`/dashboard/invoices/${encodeURIComponent(id)}/edit`}
 	>
 		<span className="sr-only">Update</span>
@@ -55,7 +55,7 @@ export const DeleteInvoice = ({
 		<input name="id" type="hidden" value={id} />
 		<button
 			aria-label="Delete Invoice"
-			className="hover:bg-bg-hover rounded-md border p-2"
+			className="rounded-md border p-2 hover:bg-bg-hover"
 			type="submit"
 		>
 			<span className="sr-only">Delete</span>

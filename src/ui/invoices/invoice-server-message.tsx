@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { InvoiceCreateState } from "@/src/lib/definitions/invoices.types";
+import type { InvoiceCreateState } from "@/lib/definitions/invoices.types";
 
 /**
  * Props for InvoiceServerMessage component.
@@ -35,10 +35,7 @@ export const InvoiceServerMessage = ({
 		<div className="relative min-h-[56px]">
 			<div
 				aria-live={state.success ? "polite" : "assertive"}
-				className={`${BASE_STYLES}
-          ${showAlert ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"}
-          ${state.success ? SUCCESS_STYLES : ERROR_STYLES}
-        `}
+				className={`${BASE_STYLES} ${showAlert ? "translate-y-0 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"} ${state.success ? SUCCESS_STYLES : ERROR_STYLES} `}
 				data-cy={
 					state.success
 						? "create-invoice-success-message"

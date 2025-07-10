@@ -10,7 +10,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
-import type { UserRole } from "@/src/lib/definitions/users.types";
+import type { UserRole } from "@/lib/definitions/users.types";
 
 /** Navigation link paths */
 const NAV_LINKS = {
@@ -65,9 +65,9 @@ export function NavLinks({ role }: NavLinksProps): JSX.Element {
 					<Link
 						aria-current={pathname === link.href ? "page" : undefined}
 						className={clsx(
-							"hover:bg-bg-hover hover:text-text-hover flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 md:flex-none md:justify-start md:p-2 md:px-3",
+							"flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 hover:bg-bg-hover hover:text-text-hover md:flex-none md:justify-start md:p-2 md:px-3",
 							pathname === link.href
-								? "border-bg-active text-text-active border-2"
+								? "border-2 border-bg-active text-text-active"
 								: "bg-bg-secondary text-text-secondary",
 						)}
 						href={link.href}

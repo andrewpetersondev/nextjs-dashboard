@@ -1,10 +1,10 @@
 "use client";
 
 import type { FC } from "react";
-import { AuthFormDivider } from "@/src/ui/auth/auth-form-divider";
-import { AuthFormSocialSection } from "@/src/ui/auth/auth-form-social-section";
-import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link";
-import { LoginForm } from "@/src/ui/auth/login-form";
+import { AuthFormDivider } from "@/ui/auth/auth-form-divider";
+import { AuthFormSocialSection } from "@/ui/auth/auth-form-social-section";
+import { AuthSwitchLink } from "@/ui/auth/auth-switch-link";
+import { LoginForm } from "@/ui/auth/login-form";
 
 /**
  * Client-only section for the login page.

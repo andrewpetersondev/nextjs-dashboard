@@ -1,10 +1,10 @@
 import type React from "react";
-import { USER_ROLES, type UserRole } from "@/src/lib/definitions/users.types";
-import { ErrorMessage } from "@/src/ui/components/error-message";
+import { USER_ROLES, type UserRole } from "@/lib/definitions/users.types";
+import { ErrorMessage } from "@/ui/components/error-message";
 import {
 	SelectMenu,
 	type SelectMenuProps,
-} from "@/src/ui/components/select-menu";
+} from "@/ui/components/select-menu";
 
 /**
  * Role option type for select menu.

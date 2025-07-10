@@ -4,7 +4,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { InputField } from "@/src/ui/auth/input-field";
+import { InputField } from "@/ui/auth/input-field";
 
 type ErrorType = {
 	username?: string[];
@@ -43,7 +43,7 @@ export function UserFields({
 				defaultValue={values.username}
 				error={errors?.username}
 				icon={
-					<UserIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+					<UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 				}
 				id="username"
 				label="Username"
@@ -58,7 +58,7 @@ export function UserFields({
 				defaultValue={values.email}
 				error={errors?.email}
 				icon={
-					<AtSymbolIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+					<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 				}
 				id="email"
 				label="Email address"
@@ -75,7 +75,7 @@ export function UserFields({
 					describedById="user-password-errors"
 					error={errors?.password}
 					icon={
-						<LockClosedIcon className="text-text-accent pointer-events-none ml-2 h-[18px] w-[18px]" />
+						<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
 					}
 					id="password"
 					label="Password"
@@ -87,7 +87,7 @@ export function UserFields({
 			)}
 
 			<div className="mb-4">
-				<label className="mb-2 block text-sm font-medium" htmlFor="role">
+				<label className="mb-2 block font-medium text-sm" htmlFor="role">
 					Role
 				</label>
 				<select
@@ -101,7 +101,7 @@ export function UserFields({
 				</select>
 				<div aria-atomic="true" aria-live="polite" id="user-role-error">
 					{errors?.role?.map((error) => (
-						<p className="text-text-error mt-2 text-sm" key={error}>
+						<p className="mt-2 text-sm text-text-error" key={error}>
 							{error}
 						</p>
 					))}

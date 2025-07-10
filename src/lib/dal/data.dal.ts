@@ -1,9 +1,9 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection";
-import { customers, invoices } from "@/src/lib/db/schema";
-import type { CardData } from "@/src/lib/definitions/data.types";
+import type { Db } from "@/lib/db/connection";
+import { customers, invoices } from "@/lib/db/schema";
+import type { CardData } from "@/lib/definitions/data.types";
 
 export async function fetchCardData(db: Db): Promise<CardData> {
 	try {

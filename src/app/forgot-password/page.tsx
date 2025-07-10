@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Heading } from "@/src/ui/auth/heading";
+import { Heading } from "@/ui/auth/heading";
 
 export default function Page(): JSX.Element {
 	return (

@@ -1,12 +1,12 @@
 import {
 	fetchCustomers,
 	fetchFilteredCustomers,
-} from "@/src/lib/dal/customers.dal";
-import { getDB } from "@/src/lib/db/connection";
+} from "@/lib/dal/customers.dal";
+import { getDB } from "@/lib/db/connection";
 import type {
 	CustomerField,
 	FormattedCustomersTableRow,
-} from "@/src/lib/definitions/customers.types";
+} from "@/lib/definitions/customers.types";
 
 /**
  * Server action to read customers.

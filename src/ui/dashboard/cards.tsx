@@ -5,8 +5,8 @@ import {
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import type { CardData } from "@/src/lib/definitions/data.types";
-import { H3 } from "@/src/ui/headings";
+import type { CardData } from "@/lib/definitions/data.types";
+import { H3 } from "@/ui/headings";
 
 /**
  * Card types for dashboard.
@@ -57,9 +57,9 @@ export function Card({
 	const Icon = ICON_MAP[type];
 
 	return (
-		<div className="bg-bg-secondary text-text-secondary rounded-xl p-2 shadow-xs">
+		<div className="rounded-xl bg-bg-secondary p-2 text-text-secondary shadow-xs">
 			<div className="flex p-4">
-				<Icon className="text-text-primary h-5 w-5" />
+				<Icon className="h-5 w-5 text-text-primary" />
 				<H3 className="ml-2">{title}</H3>
 			</div>
 			<p className="truncate rounded-xl px-4 py-8 text-center text-2xl">

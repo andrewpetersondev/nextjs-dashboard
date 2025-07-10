@@ -19,12 +19,12 @@ export function Button({
 		<button
 			{...rest}
 			className={clsx(
-				"flex h-10 items-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline-none",
+				"flex h-10 items-center rounded-lg px-4 font-medium text-sm transition-colors focus-visible:outline-none",
 				"bg-bg-accent text-text-accent",
 				"hover:bg-bg-hover hover:text-text-hover",
 				"active:bg-bg-active active:text-text-active",
 				"focus-visible:outline focus-visible:outline-bg-focus focus-visible:outline-offset-2",
-				"disabled:bg-bg-disabled disabled:text-text-disabled disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:bg-bg-disabled aria-disabled:text-text-disabled aria-disabled:cursor-not-allowed aria-disabled:opacity-50",
+				"disabled:cursor-not-allowed disabled:bg-bg-disabled disabled:text-text-disabled disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:bg-bg-disabled aria-disabled:text-text-disabled aria-disabled:opacity-50",
 				className,
 			)}
 		>

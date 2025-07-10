@@ -1,8 +1,8 @@
 import type { JSX } from "react";
-import { readFilteredInvoicesAction } from "@/src/lib/actions/invoices.actions";
-import type { FetchFilteredInvoicesData } from "@/src/lib/definitions/invoices.types";
-import { DesktopTable } from "@/src/ui/invoices/desktop-table";
-import { MobileTable } from "@/src/ui/invoices/mobile-table";
+import { readFilteredInvoicesAction } from "@/lib/actions/invoices.actions";
+import type { FetchFilteredInvoicesData } from "@/lib/definitions/invoices.types";
+import { DesktopTable } from "@/ui/invoices/desktop-table";
+import { MobileTable } from "@/ui/invoices/mobile-table";
 
 /**
  * InvoicesTable component.
@@ -21,7 +21,7 @@ export const InvoicesTable = async ({
 	return (
 		<div className="mt-6 flow-root">
 			<div className="inline-block min-w-full align-middle">
-				<div className="bg-bg-accent rounded-lg p-2 md:pt-0">
+				<div className="rounded-lg bg-bg-accent p-2 md:pt-0">
 					<MobileTable invoices={invoices} />
 					<DesktopTable invoices={invoices} />
 				</div>

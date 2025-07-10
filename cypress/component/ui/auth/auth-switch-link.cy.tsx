@@ -1,4 +1,4 @@
-import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link.tsx";
+import { AuthSwitchLink } from "@/ui/auth/auth-switch-link.tsx";
 
 const loginRoute = "/login";
 

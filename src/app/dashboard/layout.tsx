@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from "react";
-import { SideNav } from "@/src/ui/dashboard/sidenav";
+import { SideNav } from "@/ui/dashboard/sidenav";
 
 /**
  * Dashboard layout component.

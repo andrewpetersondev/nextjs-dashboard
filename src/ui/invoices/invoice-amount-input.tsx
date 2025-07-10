@@ -1,6 +1,6 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import { ErrorMessage } from "@/src/ui/components/error-message";
+import { ErrorMessage } from "@/ui/components/error-message";
 
 interface InvoiceAmountInputProps
 	extends InputHTMLAttributes<HTMLInputElement> {
@@ -28,14 +28,14 @@ export const InvoiceAmountInput = ({
 
 	return (
 		<div className="mb-4">
-			<label className="block text-sm font-medium" htmlFor={id}>
+			<label className="block font-medium text-sm" htmlFor={id}>
 				{label}
 			</label>
 			<div className="relative mt-2 rounded-md">
 				<input
 					aria-describedby={errors.length > 0 ? `${id}-error` : undefined}
 					aria-invalid={errors.length > 0}
-					className="block w-full rounded-md border-0 px-8 py-2 text-text-primary placeholder:text-text-accent ring-1 ring-inset ring-bg-accent focus:ring-2 focus:ring-bg-focus sm:text-sm outline-2"
+					className="block w-full rounded-md border-0 px-8 py-2 text-text-primary outline-2 ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm"
 					data-cy={dataCy}
 					id={id}
 					name={id}
@@ -44,7 +44,7 @@ export const InvoiceAmountInput = ({
 					type="number"
 					{...props}
 				/>
-				<CurrencyDollarIcon className="pointer-events-none absolute left-2 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-text-primary peer-focus:text-text-focus" />
+				<CurrencyDollarIcon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2 h-[18px] w-[18px] text-text-primary peer-focus:text-text-focus" />
 			</div>
 			<ErrorMessage
 				dataCy="invoice-amount-error"

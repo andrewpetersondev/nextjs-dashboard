@@ -1,17 +1,17 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { updateInvoiceAction } from "@/src/lib/actions/invoices.actions";
-import type { CustomerField } from "@/src/lib/definitions/customers.types";
-import type { InvoiceEditState } from "@/src/lib/definitions/invoices.types";
-import type { InvoiceDto } from "@/src/lib/dto/invoice.dto";
-import { FormActionRow } from "@/src/ui/components/form-action-row";
-import { FormSubmitButton } from "@/src/ui/components/form-submit-button";
-import { Label } from "@/src/ui/components/label";
-import { CustomerSelect } from "@/src/ui/invoices/customer-select";
-import { InvoiceAmountInput } from "@/src/ui/invoices/invoice-amount-input";
-import { InvoiceStatusRadioGroup } from "@/src/ui/invoices/invoice-status-radio-group";
-import { ServerMessage } from "@/src/ui/users/server-message";
+import { updateInvoiceAction } from "@/lib/actions/invoices.actions";
+import type { CustomerField } from "@/lib/definitions/customers.types";
+import type { InvoiceEditState } from "@/lib/definitions/invoices.types";
+import type { InvoiceDto } from "@/lib/dto/invoice.dto";
+import { FormActionRow } from "@/ui/components/form-action-row";
+import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { Label } from "@/ui/components/label";
+import { CustomerSelect } from "@/ui/invoices/customer-select";
+import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
+import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
+import { ServerMessage } from "@/ui/users/server-message";
 
 export const EditInvoiceForm = ({
 	invoice,
@@ -55,7 +55,7 @@ export const EditInvoiceForm = ({
 	return (
 		<div>
 			<form action={formAction}>
-				<div className="bg-bg-secondary rounded-md p-4 md:p-6">
+				<div className="rounded-md bg-bg-secondary p-4 md:p-6">
 					{/* Customer */}
 					<div className="mb-4">
 						<Label htmlFor="customer" text="Choose customer" />

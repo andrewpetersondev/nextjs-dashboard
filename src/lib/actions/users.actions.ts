@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { hashPassword } from "@/src/lib/auth/password";
-import { createSession, deleteSession } from "@/src/lib/auth/session-jwt";
+import { hashPassword } from "@/lib/auth/password";
+import { createSession, deleteSession } from "@/lib/auth/session-jwt";
 import {
 	createDemoUser,
 	createUserDal,
@@ -15,9 +15,9 @@ import {
 	findUserForLogin,
 	readUserDal,
 	updateUserDal,
-} from "@/src/lib/dal/users.dal";
-import { getDB } from "@/src/lib/db/connection";
-import type { FormState } from "@/src/lib/definitions/form";
+} from "@/lib/dal/users.dal";
+import { getDB } from "@/lib/db/connection";
+import type { FormState } from "@/lib/definitions/form";
 import {
 	type ActionResult,
 	type CreateUserFormFields,
@@ -29,23 +29,23 @@ import {
 	type SignupFormFields,
 	SignupFormSchema,
 	type UserRole,
-} from "@/src/lib/definitions/users.types";
-import type { UserDto } from "@/src/lib/dto/user.dto";
-import { toUserIdBrand, toUserRoleBrand } from "@/src/lib/mappers/user.mapper";
-import { stripProperties } from "@/src/lib/utils/utils";
+} from "@/lib/definitions/users.types";
+import type { UserDto } from "@/lib/dto/user.dto";
+import { toUserIdBrand, toUserRoleBrand } from "@/lib/mappers/user.mapper";
+import { stripProperties } from "@/lib/utils/utils";
 import {
 	actionResult,
 	getFormField,
 	getValidUserRole,
 	logError,
 	normalizeFieldErrors,
-} from "@/src/lib/utils/utils.server";
+} from "@/lib/utils/utils.server";
 
 /**
  * Server Actions for User Management.
  *
  * Handles business logic and delegates all database operations to the DAL.
- * All user input is validated and sanitized.
+ * All user inputs are validated and sanitized.
  *
  * @module server-actions/users
  */

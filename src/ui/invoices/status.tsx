@@ -1,7 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { JSX } from "react";
-import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types";
+import type { InvoiceStatus } from "@/lib/definitions/invoices.types";
 
 export const InvoiceStatusComponent = ({
 	status,
@@ -21,13 +21,13 @@ export const InvoiceStatusComponent = ({
 			{status === "pending" && (
 				<>
 					Pending
-					<ClockIcon className="text-text-accent ml-1 w-4" />
+					<ClockIcon className="ml-1 w-4 text-text-accent" />
 				</>
 			)}
 			{status === "paid" && (
 				<>
 					Paid
-					<CheckIcon className="text-text-primary ml-1 w-4" />
+					<CheckIcon className="ml-1 w-4 text-text-primary" />
 				</>
 			)}
 		</span>

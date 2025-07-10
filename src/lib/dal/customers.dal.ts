@@ -1,15 +1,15 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import type { Db } from "@/src/lib/db/connection";
-import { customers, invoices } from "@/src/lib/db/schema";
+import type { Db } from "@/lib/db/connection";
+import { customers, invoices } from "@/lib/db/schema";
 import type {
 	CustomerField,
 	FormattedCustomersTableRow,
-} from "@/src/lib/definitions/customers.types";
-import { DatabaseError } from "@/src/lib/errors/database-error";
-import { toCustomerIdBrand } from "@/src/lib/mappers/customer.mapper";
-import { formatCurrency } from "@/src/lib/utils/utils";
+} from "@/lib/definitions/customers.types";
+import { DatabaseError } from "@/lib/errors/database-error";
+import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
+import { formatCurrency } from "@/lib/utils/utils";
 
 // Constants for error messages
 const ERROR_FETCH_ALL_CUSTOMERS = "Failed to fetch all customers.";

@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readInvoicesPagesAction } from "@/src/lib/actions/invoices.actions";
-import { H1 } from "@/src/ui/headings";
-import { CreateInvoice } from "@/src/ui/invoices/buttons";
-import { Pagination } from "@/src/ui/invoices/pagination";
-import { InvoicesTable } from "@/src/ui/invoices/table";
-import { Search } from "@/src/ui/search";
+import { readInvoicesPagesAction } from "@/lib/actions/invoices.actions";
+import { H1 } from "@/ui/headings";
+import { CreateInvoice } from "@/ui/invoices/buttons";
+import { Pagination } from "@/ui/invoices/pagination";
+import { InvoicesTable } from "@/ui/invoices/table";
+import { Search } from "@/ui/search";
 import {
 	InvoicesSearchSkeleton,
 	InvoicesTableSkeleton,
-} from "@/src/ui/skeletons";
+} from "@/ui/skeletons";
 
 export const metadata: Metadata = {
 	title: "Invoices",

@@ -1,7 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import type { InvoiceStatus } from "@/src/lib/definitions/invoices.types";
-import { ErrorMessage } from "@/src/ui/components/error-message";
+import type { InvoiceStatus } from "@/lib/definitions/invoices.types";
+import { ErrorMessage } from "@/ui/components/error-message";
 
 interface InvoiceStatusRadioGroupProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
@@ -41,10 +41,10 @@ export const InvoiceStatusRadioGroup = ({
 
 	return (
 		<fieldset className="mb-4">
-			<legend className="mb-2 block text-sm font-medium">
+			<legend className="mb-2 block font-medium text-sm">
 				Set the invoice status
 			</legend>
-			<div className="rounded-md border border-bg-accent px-[14px] py-3 outline-2 focus:ring-2 focus-within:ring-bg-focus">
+			<div className="rounded-md border border-bg-accent px-[14px] py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
 				<div className="flex gap-4">
 					{options.map((opt) => (
 						<div className="flex items-center" key={opt.value}>
@@ -63,7 +63,7 @@ export const InvoiceStatusRadioGroup = ({
 								{...props}
 							/>
 							<label
-								className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 text-xs font-medium text-text-primary"
+								className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 font-medium text-text-primary text-xs"
 								htmlFor={opt.value}
 							>
 								{opt.label} {opt.icon}

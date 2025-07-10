@@ -1,4 +1,4 @@
-import type { UserId, UserRole } from "@/src/lib/definitions/users.types";
+import type { UserId, UserRole } from "@/lib/definitions/users.types";
 
 /**
  * Represents a user entity in the database, defining the structure and properties of a user record.

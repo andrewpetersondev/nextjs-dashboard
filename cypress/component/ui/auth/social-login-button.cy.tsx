@@ -1,4 +1,4 @@
-import { SocialLoginButton } from "@/src/ui/auth/social-login-button.tsx";
+import { SocialLoginButton } from "@/ui/auth/social-login-button.tsx";
 
 describe("<SocialLoginButton />", () => {
 	it("renders Google button", () => {

@@ -6,14 +6,14 @@ const shimmer =
 export function CardSkeleton(): JSX.Element {
 	return (
 		<div
-			className={`${shimmer} bg-bg-accent relative overflow-hidden rounded-xl p-2 shadow-xs`}
+			className={`${shimmer} relative overflow-hidden rounded-xl bg-bg-accent p-2 shadow-xs`}
 		>
 			<div className="flex p-4">
-				<div className="bg-bg-primary h-5 w-5 rounded-md" />
-				<div className="bg-bg-primary ml-2 h-6 w-16 rounded-md text-sm font-medium" />
+				<div className="h-5 w-5 rounded-md bg-bg-primary" />
+				<div className="ml-2 h-6 w-16 rounded-md bg-bg-primary font-medium text-sm" />
 			</div>
-			<div className="bg-bg-primary flex items-center justify-center truncate rounded-xl px-4 py-8">
-				<div className="bg-bg-accent h-7 w-20 rounded-md" />
+			<div className="flex items-center justify-center truncate rounded-xl bg-bg-primary px-4 py-8">
+				<div className="h-7 w-20 rounded-md bg-bg-accent" />
 			</div>
 		</div>
 	);
@@ -33,12 +33,12 @@ export function CardsSkeleton(): JSX.Element {
 export function RevenueChartSkeleton(): JSX.Element {
 	return (
 		<div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>
-			<div className="bg-bg-accent mb-4 h-8 w-36 rounded-md" />
-			<div className="bg-bg-accent rounded-xl p-4">
-				<div className="bg-bg-primary mt-0 grid h-[410px] grid-cols-12 items-end gap-2 rounded-md p-4 sm:grid-cols-13 md:gap-4" />
+			<div className="mb-4 h-8 w-36 rounded-md bg-bg-accent" />
+			<div className="rounded-xl bg-bg-accent p-4">
+				<div className="mt-0 grid h-[410px] grid-cols-12 items-end gap-2 rounded-md bg-bg-primary p-4 sm:grid-cols-13 md:gap-4" />
 				<div className="flex items-center pt-6 pb-2">
-					<div className="bg-bg-primary h-5 w-5 rounded-full" />
-					<div className="bg-bg-primary ml-2 h-4 w-20 rounded-md" />
+					<div className="h-5 w-5 rounded-full bg-bg-primary" />
+					<div className="ml-2 h-4 w-20 rounded-md bg-bg-primary" />
 				</div>
 			</div>
 		</div>
@@ -47,15 +47,15 @@ export function RevenueChartSkeleton(): JSX.Element {
 
 export function InvoiceSkeleton(): JSX.Element {
 	return (
-		<div className="border-bg-accent flex flex-row items-center justify-between border-b py-4">
+		<div className="flex flex-row items-center justify-between border-bg-accent border-b py-4">
 			<div className="flex items-center">
-				<div className="bg-bg-accent mr-2 h-8 w-8 rounded-full" />
+				<div className="mr-2 h-8 w-8 rounded-full bg-bg-accent" />
 				<div className="min-w-0">
-					<div className="bg-bg-accent h-5 w-40 rounded-md" />
-					<div className="bg-bg-accent mt-2 h-4 w-12 rounded-md" />
+					<div className="h-5 w-40 rounded-md bg-bg-accent" />
+					<div className="mt-2 h-4 w-12 rounded-md bg-bg-accent" />
 				</div>
 			</div>
-			<div className="bg-bg-accent mt-2 h-4 w-12 rounded-md" />
+			<div className="mt-2 h-4 w-12 rounded-md bg-bg-accent" />
 		</div>
 	);
 }
@@ -65,8 +65,8 @@ export function LatestInvoicesSkeleton(): JSX.Element {
 		<div
 			className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
 		>
-			<div className="bg-bg-accent mb-4 h-8 w-36 rounded-md" />
-			<div className="bg-bg-accent flex grow flex-col justify-between rounded-xl p-4">
+			<div className="mb-4 h-8 w-36 rounded-md bg-bg-accent" />
+			<div className="flex grow flex-col justify-between rounded-xl bg-bg-accent p-4">
 				<div className="bg-bg-primary px-6">
 					<InvoiceSkeleton />
 					<InvoiceSkeleton />
@@ -75,8 +75,8 @@ export function LatestInvoicesSkeleton(): JSX.Element {
 					<InvoiceSkeleton />
 				</div>
 				<div className="flex items-center pt-6 pb-2">
-					<div className="bg-bg-accent h-5 w-5 rounded-full" />
-					<div className="bg-bg-accent ml-2 h-4 w-20 rounded-md" />
+					<div className="h-5 w-5 rounded-full bg-bg-accent" />
+					<div className="ml-2 h-4 w-20 rounded-md bg-bg-accent" />
 				</div>
 			</div>
 		</div>
@@ -87,7 +87,7 @@ export function DashboardSkeleton(): JSX.Element {
 	return (
 		<div>
 			<div
-				className={`${shimmer} bg-bg-accent relative mb-4 h-8 w-36 overflow-hidden rounded-md`}
+				className={`${shimmer} relative mb-4 h-8 w-36 overflow-hidden rounded-md bg-bg-accent`}
 			/>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 				<CardSkeleton />
@@ -105,35 +105,35 @@ export function DashboardSkeleton(): JSX.Element {
 
 export function TableRowSkeleton(): JSX.Element {
 	return (
-		<tr className="w-full border-b border-bg-primary last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+		<tr className="w-full border-bg-primary border-b last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
 			{/* Customer Name and Image */}
-			<td className="relative overflow-hidden py-3 pr-3 pl-6 whitespace-nowrap">
+			<td className="relative overflow-hidden whitespace-nowrap py-3 pr-3 pl-6">
 				<div className="flex items-center gap-3">
-					<div className="bg-bg-accent h-8 w-8 rounded-full" />
-					<div className="bg-bg-accent h-6 w-24 rounded-sm" />
+					<div className="h-8 w-8 rounded-full bg-bg-accent" />
+					<div className="h-6 w-24 rounded-sm bg-bg-accent" />
 				</div>
 			</td>
 			{/* Email */}
-			<td className="px-3 py-3 whitespace-nowrap">
-				<div className="bg-bg-accent h-6 w-32 rounded-sm" />
+			<td className="whitespace-nowrap px-3 py-3">
+				<div className="h-6 w-32 rounded-sm bg-bg-accent" />
 			</td>
 			{/* Amount */}
-			<td className="px-3 py-3 whitespace-nowrap">
-				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+			<td className="whitespace-nowrap px-3 py-3">
+				<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 			</td>
 			{/* Date */}
-			<td className="px-3 py-3 whitespace-nowrap">
-				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+			<td className="whitespace-nowrap px-3 py-3">
+				<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 			</td>
 			{/* InvoiceStatusComponent */}
-			<td className="px-3 py-3 whitespace-nowrap">
-				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+			<td className="whitespace-nowrap px-3 py-3">
+				<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 			</td>
 			{/* Actions */}
-			<td className="py-3 pr-3 pl-6 whitespace-nowrap">
+			<td className="whitespace-nowrap py-3 pr-3 pl-6">
 				<div className="flex justify-end gap-3">
-					<div className="bg-bg-accent h-[38px] w-[38px] rounded-sm" />
-					<div className="bg-bg-accent h-[38px] w-[38px] rounded-sm" />
+					<div className="h-[38px] w-[38px] rounded-sm bg-bg-accent" />
+					<div className="h-[38px] w-[38px] rounded-sm bg-bg-accent" />
 				</div>
 			</td>
 		</tr>
@@ -142,22 +142,22 @@ export function TableRowSkeleton(): JSX.Element {
 
 export function InvoicesMobileSkeleton(): JSX.Element {
 	return (
-		<div className="bg-bg-accent mb-2 w-full rounded-md p-4">
-			<div className="border-bg-primary flex items-center justify-between border-b pb-8">
+		<div className="mb-2 w-full rounded-md bg-bg-accent p-4">
+			<div className="flex items-center justify-between border-bg-primary border-b pb-8">
 				<div className="flex items-center">
-					<div className="bg-bg-accent mr-2 h-8 w-8 rounded-full" />
-					<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+					<div className="mr-2 h-8 w-8 rounded-full bg-bg-accent" />
+					<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 				</div>
-				<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+				<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 			</div>
 			<div className="flex w-full items-center justify-between pt-4">
 				<div>
-					<div className="bg-bg-accent h-6 w-16 rounded-sm" />
+					<div className="h-6 w-16 rounded-sm bg-bg-accent" />
 					<div className="mt-2 h-6 w-24 rounded-sm bg-bg-primary" />
 				</div>
 				<div className="flex justify-end gap-2">
-					<div className="bg-bg-accent h-10 w-10 rounded-sm" />
-					<div className="bg-bg-accent h-10 w-10 rounded-sm" />
+					<div className="h-10 w-10 rounded-sm bg-bg-accent" />
+					<div className="h-10 w-10 rounded-sm bg-bg-accent" />
 				</div>
 			</div>
 		</div>
@@ -168,7 +168,7 @@ export function InvoicesTableSkeleton(): JSX.Element {
 	return (
 		<div className="mt-6 flow-root">
 			<div className="inline-block min-w-full align-middle">
-				<div className="bg-bg-accent rounded-lg p-2 md:pt-0">
+				<div className="rounded-lg bg-bg-accent p-2 md:pt-0">
 					<div className="md:hidden">
 						<InvoicesMobileSkeleton />
 						<InvoicesMobileSkeleton />
@@ -177,8 +177,8 @@ export function InvoicesTableSkeleton(): JSX.Element {
 						<InvoicesMobileSkeleton />
 						<InvoicesMobileSkeleton />
 					</div>
-					<table className="text-text-primary hidden min-w-full md:table">
-						<thead className="rounded-lg text-left text-sm font-normal">
+					<table className="hidden min-w-full text-text-primary md:table">
+						<thead className="rounded-lg text-left font-normal text-sm">
 							<tr>
 								<th className="px-4 py-5 font-medium sm:pl-6" scope="col">
 									Customer
