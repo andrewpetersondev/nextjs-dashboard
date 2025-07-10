@@ -1,26 +1,27 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
+		"allowImportingTsExtensions": true, // probably necessary because Cypress has different rules than Next.js
 		"target": "es5",
 		"lib": ["es5", "dom", "esnext"],
 		"types": ["cypress", "node"],
 		"isolatedModules": false,
-		"sourceMap": true,
+		"sourceMap": true
 
 		/* Cypress-specific path mapping */
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["../src/*"],
-			"@/app/*": ["../src/app/*"],
-			"@/components/*": ["../src/components/*"],
-			"@/config/*": ["../src/config/*"],
-			"@/lib/*": ["../src/lib/*"],
-			"@/ui/*": ["../src/ui/*"],
-			"@/utils/*": ["../src/utils/*"],
-			"@/hooks/*": ["../src/hooks/*"],
-			"@/types/*": ["../src/types/*"],
-			"@/cypress/*": ["./*"]
-		}
+		//		"baseUrl": ".",
+		//		"paths": {
+		//			"@/*": ["../src/*"],
+		//			"@/app/*": ["../src/app/*"],
+		//			"@/components/*": ["../src/components/*"],
+		//			"@/config/*": ["../src/config/*"],
+		//			"@/lib/*": ["../src/lib/*"],
+		//			"@/ui/*": ["../src/ui/*"],
+		//			"@/utils/*": ["../src/utils/*"],
+		//			"@/hooks/*": ["../src/hooks/*"],
+		//			"@/types/*": ["../src/types/*"],
+		//			"@/cypress/*": ["./*"]
+		//		}
 	},
 	"include": [
 		"**/*.ts",
