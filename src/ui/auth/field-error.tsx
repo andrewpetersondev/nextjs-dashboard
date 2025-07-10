@@ -37,6 +37,7 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
 				{label && <p>{label}</p>}
 				<ul>
 					{error.map((err: string, i: number) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: <the key is unique enough>
 						<li key={err + i}>- {err}</li>
 					))}
 				</ul>
