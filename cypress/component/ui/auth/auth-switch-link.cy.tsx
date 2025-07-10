@@ -1,6 +1,6 @@
 import { AuthSwitchLink } from "@/src/ui/auth/auth-switch-link.tsx";
 
-const loginRoute = "/login"
+const loginRoute = "/login";
 
 describe("<AuthSwitchLink />", () => {
 	it("renders prompt and link", () => {

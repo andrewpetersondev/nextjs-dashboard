@@ -1,14 +1,10 @@
 import { mount } from "cypress/react";
 import React from "react";
-import {
-	DemoForm,
-	type DemoFormProps,
-} from "@/src/ui/auth/demo-form.tsx";
+import { DemoForm, type DemoFormProps } from "@/src/ui/auth/demo-form.tsx";
 
 // import '@testing-library/cypress/add-commands'; // Uncomment if you want to use findByRole
 
 // error because importing server only file
-
 
 describe("<DemoForm />", () => {
 	const defaultProps: DemoFormProps = {
