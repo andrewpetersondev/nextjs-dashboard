@@ -1,9 +1,5 @@
 import "server-only";
 
-import type {
-  CreateInvoiceResult,
-  InvoiceErrorMap,
-} from "@/lib/definitions/invoices.types";
 import {
   type ActionResult,
   USER_ROLES,
@@ -26,40 +22,58 @@ export const normalizeFieldErrors = (
   return result;
 };
 
-// --- Helper: Standardized Action Result ---
-export const actionResult = <T = undefined>({
-  data = undefined,
-  errors = undefined,
-  message,
-  success = true,
-}: {
-  data?: T;
-  errors?: Record<string, string[]>;
-  message: string;
-  success?: boolean;
-}): ActionResult & { data?: T } => ({
-  data,
-  errors,
-  message,
-  success,
-});
-
 /**
- * Strongly typed action result for invoice actions.
+ * Returns a standardized action result object for server actions.
+ *
+ * - Always includes the required `success` property (defaults to `true` if omitted).
+ * - Omits optional properties (`errors`, `data`) if they are `undefined`, ensuring compatibility with `exactOptionalPropertyTypes`.
+ * - Uses function overloads for precise typing: if `data` is provided, it is included in the result type.
+ *
+ * @template T - The type of the `data` property, if present.
+ * @param params - The parameters for the action result.
+ * @param params.message - A human-readable message describing the result.
+ * @param params.success - Whether the action succeeded (defaults to `true`).
+ * @param params.errors - Optional error map for field-level errors.
+ * @param params.data - Optional data payload to include in the result.
+ * @returns An `ActionResult` object, optionally including `data` if provided.
+ *
+ * @example
+ * // Success without data
+ * actionResult({ message: "User created." });
+ *
+ * // Failure with errors
+ * actionResult({ message: "Validation failed.", errors: { email: ["Invalid"] }, success: false });
+ *
+ * // Success with data
+ * actionResult({ message: "Fetched user.", data: user });
  */
-export const invoiceActionResult = ({
-  errors,
-  message,
-  success = true,
-}: {
-  errors?: InvoiceErrorMap;
+export function actionResult(params: {
   message: string;
   success?: boolean;
-}): CreateInvoiceResult => ({
-  errors,
-  message,
-  success,
-});
+  errors?: Record<string, string[]>;
+}): ActionResult;
+export function actionResult<T>(params: {
+  data: T;
+  message: string;
+  success?: boolean;
+  errors?: Record<string, string[]>;
+}): ActionResult & { data: T };
+export function actionResult<T = undefined>(params: {
+  data?: T;
+  message: string;
+  success?: boolean;
+  errors?: Record<string, string[]>;
+}): ActionResult | (ActionResult & { data: T }) {
+  const { data, errors, message, success = true } = params;
+  // Only include optional properties if they are defined
+  const result: ActionResult & Partial<{ data: T }> = {
+    message,
+    success,
+    ...(errors !== undefined ? { errors } : {}),
+    ...(data !== undefined ? { data } : {}),
+  };
+  return result;
+}
 
 export type LogMeta = {
   userId?: string;

@@ -8,14 +8,17 @@ import type { FormState } from "@/lib/definitions/form";
  * Branded type for User IDs.
  */
 export type UserId = string & { readonly __brand: unique symbol };
+
 /**
  * User roles as a constant tuple for type safety.
  */
 export const USER_ROLES = ["admin", "user", "guest"] as const;
+
 /**
  * Type for user roles.
  */
 export type UserRole = (typeof USER_ROLES)[number];
+
 /**
  * Error map for user actions.
  */
@@ -24,6 +27,7 @@ export type UserErrorMap = Partial<
 >;
 
 // --- UI and Server Actions: Form Types ---
+
 /**
  * Standardized result for server actions.
  */
@@ -32,6 +36,7 @@ export type ActionResult = {
   readonly success: boolean;
   readonly errors?: Record<string, string[]>;
 };
+
 /**
  * Base fields for user forms.
  * Use type alias for compatibility with generics.
@@ -55,14 +60,17 @@ export type CreateUserFormFields = BaseUserFormFields & {
 export type UserFormErrors = Partial<
   Record<keyof CreateUserFormFields, string[]>
 >;
+
 /**
  * Fields for a signup form (no role).
  */
 export type SignupFormFields = Omit<CreateUserFormFields, "role">;
+
 /**
  * Fields for a login form.
  */
 export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
+
 /**
  * Fields for editing a user (all optional for PATCH semantics).
  */
@@ -110,6 +118,7 @@ export const usernameSchema = zod
   .min(3, { message: "Username must be at least three characters long." })
   .max(32, { message: "Username cannot exceed 32 characters." })
   .trim();
+
 /**
  * Email: valid RFC 5322 address, trimmed, required.
  */
@@ -117,6 +126,7 @@ export const emailSchema = zod
   .string()
   .email({ message: "Please enter a valid email address." })
   .trim();
+
 /**
  * Password: 5-32 chars, at least one letter, number, and special character.
  */
@@ -141,6 +151,7 @@ export const BaseUserFormSchema = zod.object({
   password: passwordSchema,
   username: usernameSchema,
 });
+
 /**
  * Role: enum of allowed roles (required).
  */
@@ -148,6 +159,7 @@ export const roleSchema = zod.enum(USER_ROLES, {
   invalid_type_error: "Invalid user role.",
   required_error: "Role is required.",
 });
+
 /**
  * Used for an admin panel create-user form.
  */
@@ -155,6 +167,7 @@ export const CreateUserFormSchema: ZodType<CreateUserFormFields> =
   BaseUserFormSchema.extend({
     role: zod.enum(USER_ROLES, { invalid_type_error: "Please select a role" }),
   });
+
 /**
  * Used for end-user sign-up registration.
  */
@@ -170,6 +183,7 @@ export const SignupFormSchema: ZodType<SignupFormFields> =
       })
       .trim(),
   });
+
 /**
  * Used for login forms (credentials only).
  */
@@ -177,11 +191,12 @@ export const LoginFormSchema: ZodType<LoginFormFields> = zod.object({
   email: BaseUserFormSchema.shape.email,
   password: zod.string().min(8, { message: "Password is required." }).trim(),
 });
+
 /**
  * Used for profile and user admin edit forms.
  * All fields are optional for PATCH semantics.
  */
-export const EditUserFormSchema: ZodType<EditUserFormFields> = zod.object({
+export const EditUserFormSchema = zod.object({
   email: emailSchema.optional(),
   password: passwordSchema.optional(),
   role: roleSchema.optional(),

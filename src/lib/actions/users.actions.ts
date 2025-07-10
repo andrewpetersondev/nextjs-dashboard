@@ -83,12 +83,11 @@ export async function signup(
     const user = await createUserDal(db, {
       email,
       password,
-      role: toUserRoleBrand("user"), // Use branded role
+      role: toUserRoleBrand("user"),
       username,
     });
     if (!user) {
       return actionResult({
-        errors: undefined,
         message: "Failed to create an account. Please try again.",
         success: false,
       });
@@ -97,7 +96,6 @@ export async function signup(
   } catch (error) {
     logError("signup", error, { email: formData.get("email") as string });
     return actionResult({
-      errors: undefined,
       message: "An unexpected error occurred. Please try again.",
       success: false,
     });
@@ -134,7 +132,6 @@ export async function login(
     const user = await findUserForLogin(db, email, password);
     if (!user) {
       return actionResult({
-        errors: undefined,
         message: "Invalid email or password.",
         success: false,
       });
@@ -143,7 +140,6 @@ export async function login(
   } catch (error) {
     logError("login", error, { email: formData.get("email") as string });
     return actionResult({
-      errors: undefined,
       message: "An unexpected error occurred. Please try again.",
       success: false,
     });
@@ -174,7 +170,6 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
     const deletedUser = await deleteUserDal(db, toUserIdBrand(userId));
     if (!deletedUser) {
       return actionResult({
-        errors: undefined,
         message: "User not found or could not be deleted.",
         success: false,
       });
@@ -185,7 +180,6 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
   } catch (error) {
     logError("deleteUserAction", error, { userId });
     return actionResult({
-      errors: undefined,
       message: "An unexpected error occurred. Please try again.",
       success: false,
     });
@@ -238,7 +232,6 @@ export async function demoUser(
   } catch (error) {
     logError("demoUser:session", error, { demoUser, role });
     return actionResult({
-      errors: undefined,
       message: "An unexpected error occurred. Please try again.",
       success: false,
     });
@@ -281,13 +274,11 @@ export async function createUserAction(
     });
     if (!user) {
       return actionResult({
-        errors: undefined,
         message: "Failed to create an account on Users Page. Please try again.",
         success: false,
       });
     }
     return actionResult({
-      errors: undefined,
       message: "User created successfully.",
       success: true,
     });
@@ -296,7 +287,6 @@ export async function createUserAction(
       email: formData.get("email") as string,
     });
     return actionResult({
-      errors: undefined,
       message: "An unexpected error occurred. Please try again.",
       success: false,
     });
@@ -357,7 +347,6 @@ export async function updateUserAction(
 
     if (!existingUser) {
       return actionResult({
-        errors: undefined,
         message: "User not found.",
         success: false,
       });
@@ -383,12 +372,10 @@ export async function updateUserAction(
     if (Object.keys(patch).length === 0) {
       // No changes to update; inform the user.
       return actionResult({
-        errors: undefined,
         message: "No changes to update.",
         success: true,
       });
     }
-    // Use branded id for update
     const updatedUser: UserDto | null = await updateUserDal(
       db,
       toUserIdBrand(id),
@@ -396,21 +383,18 @@ export async function updateUserAction(
     );
     if (!updatedUser) {
       return actionResult({
-        errors: undefined,
         message: "Failed to update user. Please try again.",
         success: false,
       });
     }
     revalidatePath("/dashboard/users");
     return actionResult({
-      errors: undefined,
       message: "Profile updated!",
       success: true,
     });
   } catch (error) {
     logError("updateUserAction", error, { id });
     return actionResult({
-      errors: undefined,
       message: "Failed to update user. Please try again.",
       success: false,
     });
