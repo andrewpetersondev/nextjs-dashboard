@@ -34,6 +34,7 @@
 			"!pnpm-lock.yaml",
 			"!pnpm-workspace.yaml",
 			"!cypress.config.ts",
+			"!cypress/**",
 			"!cypress/videos/**",
 			"!cypress/screenshots/**",
 			"!cypress/downloads/**",
@@ -48,8 +49,7 @@
 			"*!.log",
 			"!.env*",
 			"*.{ts,tsx,mts,js,jsx,mjs,json}",
-			"src/**/*.{ts,tsx,js,jsx,css,json}",
-			"cypress/**/*.{ts,tsx,js,jsx}"
+			"src/**/*.{ts,tsx,mts,js,jsx,mjs,css,json}"
 		]
 	},
 	"formatter": {
