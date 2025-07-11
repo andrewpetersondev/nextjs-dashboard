@@ -7,6 +7,7 @@
         "organizeImports": "on",
         "recommended": true,
         "useSortedAttributes": "on",
+        "useSortedKeys": "on",
         "useSortedProperties": "on"
       }
     },
@@ -26,6 +27,9 @@
   "files": {
     "ignoreUnknown": true,
     "includes": [
+      "*.{ts,tsx,mts,mjs,json}",
+      "src/app/globals.css",
+      "src/**/*.{ts,tsx}",
       "!node_modules/**",
       "!.next/**",
       "!out/**",
@@ -35,21 +39,13 @@
       "!pnpm-workspace.yaml",
       "!cypress.config.ts",
       "!cypress/**",
-      "!cypress/videos/**",
-      "!cypress/screenshots/**",
-      "!cypress/downloads/**",
-      "!cypress/fixtures/**",
-      "!cypress/support/commands.ts",
-      "!cypress/support/component.ts",
       "!.turbo/**",
-      "!dist/**",
+      "!**/dist/**",
       "!build/**",
       "!coverage/**",
       "!.nyc_output/**",
       "*!.log",
-      "!.env*",
-      "*.{ts,tsx,mts,js,jsx,mjs,json}",
-      "src/**/*.{ts,tsx,mts,js,jsx,mjs,css,json}"
+      "!.env*"
     ]
   },
   "formatter": {
@@ -84,33 +80,12 @@
   "linter": {
     "domains": {
       "next": "recommended",
-      "project": "recommended",
       "react": "recommended"
     },
     "enabled": true,
     "rules": {
-      "complexity": {
-        "noExcessiveCognitiveComplexity": "warn",
-        "noVoid": "off"
-      },
-      "correctness": {
-        "noUndeclaredVariables": "error",
-        "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "warn"
-      },
-      "nursery": { "useSortedClasses": "error" },
-      "recommended": true,
-      "style": {
-        "noNonNullAssertion": "warn",
-        "useConst": "error",
-        "useImportType": "error",
-        "useTemplate": "warn"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "warn",
-        "noDebugger": "error",
-        "noExplicitAny": "warn"
-      }
+      "nursery": { "recommended": true, "useSortedClasses": "error" },
+      "recommended": true
     }
   },
   "root": true,
