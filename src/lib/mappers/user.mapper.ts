@@ -85,3 +85,25 @@ export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
     username: row.username,
   };
 }
+
+// export function _dbRowToUserEntityVersion2(
+//   row: Record<string, unknown>,
+// ): UserEntity {
+//   // Defensive: validate and brand fields
+//   if (
+//     typeof row.id !== "string" ||
+//     typeof row.username !== "string" ||
+//     typeof row.email !== "string" ||
+//     typeof row.role !== "string"
+//   ) {
+//     throw new Error("Invalid DB row: missing or invalid user fields");
+//   }
+//   return toUserEntity({
+//     email: row.email,
+//     id: toUserIdBrand(row.id),
+//     password: row.password,
+//     role: toUserRoleBrand(row.role),
+//     sensitiveData: row.sensitiveData,
+//     username: row.username,
+//   });
+// }

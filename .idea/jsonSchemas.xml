@@ -31,10 +31,10 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="tsconfig.json" />
+                    <option name="path" value="cypress/tsconfig.json" />
                   </Item>
                   <Item>
-                    <option name="path" value="cypress/tsconfig.json" />
+                    <option name="path" value="tsconfig.json" />
                   </Item>
                 </list>
               </option>
