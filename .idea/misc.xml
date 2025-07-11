@@ -20,4 +20,7 @@
   <component name="ProjectResources">
     <default-html-doctype>$APPLICATION_HOME_DIR$/lib/app.jar!/standardSchemas/xhtml1-transitional.xsd</default-html-doctype>
   </component>
+  <component name="ViteConfiguration">
+    <option name="mode" value="DISABLED" />
+  </component>
 </project>
