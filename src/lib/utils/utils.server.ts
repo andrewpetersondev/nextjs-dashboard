@@ -9,6 +9,27 @@ import {
 // Note: Utility functions in this file are server-only.
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
 
+/**
+ * Utility to build a typed error map for form fields.
+ * Only includes fields with actual errors.
+ * @param errors - Partial error map with possible undefined values.
+ * @returns Partial error map with only fields that have errors.
+ */
+export const buildErrorMap = <T extends string>(
+  errors: Partial<Record<T, string[] | undefined>>,
+): Partial<Record<T, string[]>> => {
+  const result: Partial<Record<T, string[]>> = {};
+  for (const [key, value] of Object.entries(errors) as [
+    T,
+    string[] | undefined,
+  ][]) {
+    if (Array.isArray(value) && value.length > 0) {
+      result[key] = value;
+    }
+  }
+  return result;
+};
+
 // --- Helper: Normalize Zod fieldErrors to Record<string, string[]> ---
 export const normalizeFieldErrors = (
   fieldErrors: Record<string, string[] | undefined>,
