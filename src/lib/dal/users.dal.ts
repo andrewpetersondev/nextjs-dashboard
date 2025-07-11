@@ -9,7 +9,7 @@ import { comparePassword, hashPassword } from "@/lib/auth/password";
 import type { Db } from "@/lib/db/connection";
 import { demoUserCounters, users } from "@/lib/db/schema";
 import { toUserRoleBrand, type UserId } from "@/lib/definitions/brands";
-import { ITEMS_PER_PAGE_USERS } from "@/lib/definitions/constants";
+import { ITEMS_PER_PAGE_USERS } from "@/lib/definitions/ui.constants";
 import type { UserRole, UserUpdatePatch } from "@/lib/definitions/users.types";
 import type { UserDto } from "@/lib/dto/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/lib/mappers/user.mapper";

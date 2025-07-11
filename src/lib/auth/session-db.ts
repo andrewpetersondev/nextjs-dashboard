@@ -12,7 +12,7 @@ import {
   BASE64_SLASH_REGEX,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-} from "@/lib/auth/constants";
+} from "@/lib/auth/auth.constants";
 import type { UserRole } from "@/lib/definitions/users.types";
 import { logger } from "@/lib/utils/logger";
 

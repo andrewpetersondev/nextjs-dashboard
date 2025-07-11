@@ -1,10 +1,10 @@
 import "server-only";
 
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import type { Db } from "@/lib/db/connection";
 import { customers, invoices } from "@/lib/db/schema";
 import type { InvoiceId } from "@/lib/definitions/brands";
-import { ITEMS_PER_PAGE } from "@/lib/definitions/constants";
 import type {
   FetchFilteredInvoicesData,
   InvoiceCreateInput,
@@ -12,19 +12,11 @@ import type {
   InvoiceUpdateInput,
   LatestInvoiceRow,
 } from "@/lib/definitions/invoices.types";
+import { ITEMS_PER_PAGE } from "@/lib/definitions/ui.constants";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import { toInvoiceDto, toInvoiceEntity } from "@/lib/mappers/invoice.mapper";
 import { formatCurrency } from "@/lib/utils/utils";
 import { logError } from "@/lib/utils/utils.server";
-
-// Error message constants
-const ERROR_CREATE_INVOICE = "Failed to create an invoice in the database.";
-const ERROR_READ_INVOICE = "Failed to fetch invoice by id.";
-const ERROR_UPDATE_INVOICE = "Database error while updating invoice.";
-const ERROR_DELETE_INVOICE = "An unexpected error occurred. Please try again.";
-const ERROR_FETCH_LATEST = "Failed to fetch the latest invoices.";
-const ERROR_FETCH_FILTERED = "Failed to fetch invoices.";
-const ERROR_FETCH_PAGES = "Failed to fetch the total number of invoices.";
 
 /**
  * Inserts a new invoice record into the database.
@@ -47,7 +39,7 @@ export async function createInvoiceDal(
     return toInvoiceDto(entity);
   } catch (error) {
     logError("createInvoiceDal", error, { customerId: invoice.customerId });
-    throw new Error(ERROR_CREATE_INVOICE);
+    throw new Error(INVOICE_ERROR_MESSAGES.CREATE_FAILED);
   }
 }
 
@@ -72,7 +64,7 @@ export async function readInvoiceDal(
     return dto;
   } catch (error) {
     logError("readInvoiceDal", error, { id });
-    throw new Error(ERROR_READ_INVOICE);
+    throw new Error(INVOICE_ERROR_MESSAGES.READ_FAILED);
   }
 }
 
@@ -94,7 +86,7 @@ export async function updateInvoiceDal(
     return updated ? toInvoiceDto(toInvoiceEntity(updated)) : null;
   } catch (error) {
     logError("updateInvoiceDal", error, { id, ...invoice });
-    throw new Error(ERROR_UPDATE_INVOICE);
+    throw new Error(INVOICE_ERROR_MESSAGES.UPDATE_FAILED);
   }
 }
 
@@ -116,7 +108,7 @@ export async function deleteInvoiceDal(
       : null;
   } catch (error) {
     logError("deleteInvoiceDal", error, { id });
-    throw new Error(ERROR_DELETE_INVOICE);
+    throw new Error(INVOICE_ERROR_MESSAGES.DELETE_FAILED);
   }
 }
 
@@ -150,7 +142,7 @@ export async function fetchLatestInvoices(
     }));
   } catch (error) {
     logError("fetchLatestInvoices", error);
-    throw new Error(ERROR_FETCH_LATEST);
+    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED);
   }
 }
 
@@ -196,7 +188,7 @@ export async function fetchFilteredInvoices(
     }));
   } catch (error) {
     logError("fetchFilteredInvoices", error);
-    throw new Error(ERROR_FETCH_FILTERED);
+    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED);
   }
 }
 
@@ -227,6 +219,6 @@ export async function fetchInvoicesPages(
     return Math.ceil(total / ITEMS_PER_PAGE);
   } catch (error) {
     logError("fetchInvoicesPages", error);
-    throw new Error(ERROR_FETCH_PAGES);
+    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
   }
 }

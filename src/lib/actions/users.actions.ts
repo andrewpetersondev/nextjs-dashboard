@@ -42,169 +42,7 @@ import {
   normalizeFieldErrors,
 } from "@/lib/utils/utils.server";
 
-/**
- * Handles user signup.
- */
-export async function signup(
-  _prevState: FormState<SignupFormFieldNames>,
-  formData: FormData,
-): Promise<FormState<SignupFormFieldNames>> {
-  try {
-    const validated = SignupFormSchema.safeParse({
-      email: getFormField(formData, "email"),
-      password: getFormField(formData, "password"),
-      username: getFormField(formData, "username"),
-    });
-    if (!validated.success) {
-      return actionResult({
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      });
-    }
-    const { username, email, password } = validated.data;
-    const db = getDB();
-    const user = await createUserDal(db, {
-      email,
-      password,
-      role: toUserRoleBrand("user"),
-      username,
-    });
-    if (!user) {
-      return actionResult({
-        message: USER_ERROR_MESSAGES.CREATE_FAILED,
-        success: false,
-      });
-    }
-    await createSession(toUserId(user.id), toUserRoleBrand("user"));
-  } catch (error) {
-    logError("signup", error, { email: formData.get("email") as string });
-    return actionResult({
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    });
-  }
-  redirect("/dashboard");
-}
-
-/**
- * Handles user login.
- */
-export async function login(
-  _prevState: FormState<LoginFormFieldNames>,
-  formData: FormData,
-): Promise<FormState<LoginFormFieldNames>> {
-  try {
-    const validated = LoginFormSchema.safeParse({
-      email: getFormField(formData, "email"),
-      password: getFormField(formData, "password"),
-    });
-    if (!validated.success) {
-      return actionResult({
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      });
-    }
-    const { email, password } = validated.data;
-    const db = getDB();
-    const user = await findUserForLogin(db, email, password);
-    if (!user) {
-      return actionResult({
-        message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-        success: false,
-      });
-    }
-    await createSession(toUserId(user.id), toUserRoleBrand(user.role));
-  } catch (error) {
-    logError("login", error, { email: formData.get("email") as string });
-    return actionResult({
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    });
-  }
-  // keep: why does redirect have to be here instead of after the session is created?
-  redirect("/dashboard");
-}
-
-/**
- * Logs out the current user and redirects to home.
- */
-export async function logout(): Promise<void> {
-  await deleteSession();
-  redirect("/");
-}
-
-/**
- * Deletes a user by ID, revalidates and redirects.
- */
-export async function deleteUserAction(userId: string): Promise<ActionResult> {
-  try {
-    const db = getDB();
-    const deletedUser = await deleteUserDal(db, toUserId(userId));
-    if (!deletedUser) {
-      return actionResult({
-        message: USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED,
-        success: false,
-      });
-    }
-    revalidatePath("/dashboard/users");
-    redirect("/dashboard/users");
-  } catch (error) {
-    logError("deleteUserAction", error, { userId });
-    return actionResult({
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    });
-  }
-}
-
-/**
- * Deletes a user by ID from FormData.
- */
-export async function deleteUserFormAction(formData: FormData): Promise<void> {
-  "use server";
-  const userId = formData.get("userId");
-  if (typeof userId !== "string" || !userId) {
-    // Invalid userId; nothing to do.
-    return;
-  }
-  await deleteUserAction(userId);
-}
-
-/**
- * Creates a demo user and logs them in.
- */
-export async function demoUser(
-  role: UserRole = toUserRoleBrand("guest"),
-): Promise<ActionResult> {
-  let demoUser: UserDto | null = null;
-  const db = getDB();
-  try {
-    const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
-    if (!counter) {
-      logError("demoUser:counter", new Error("Counter is zero or undefined"), {
-        role,
-      });
-      throw new Error("Counter is zero or undefined");
-    }
-    demoUser = await createDemoUser(db, counter, toUserRoleBrand(role));
-    if (!demoUser) {
-      logError("demoUser:create", new Error("Demo user creation failed"), {
-        role,
-      });
-      throw new Error("Demo user creation failed");
-    }
-    await createSession(toUserId(demoUser.id), toUserRoleBrand(role));
-  } catch (error) {
-    logError("demoUser:session", error, { demoUser, role });
-    return actionResult({
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    });
-  }
-  redirect("/dashboard");
-}
+// --- CRUD Actions for Users ---
 
 /**
  * Creates a new user (admin only).
@@ -345,6 +183,174 @@ export async function updateUserAction(
     });
   }
 }
+
+/**
+ * Deletes a user by ID, revalidates and redirects.
+ */
+export async function deleteUserAction(userId: string): Promise<ActionResult> {
+  try {
+    const db = getDB();
+    const deletedUser = await deleteUserDal(db, toUserId(userId));
+    if (!deletedUser) {
+      return actionResult({
+        message: USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED,
+        success: false,
+      });
+    }
+    revalidatePath("/dashboard/users");
+    redirect("/dashboard/users");
+  } catch (error) {
+    logError("deleteUserAction", error, { userId });
+    return actionResult({
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      success: false,
+    });
+  }
+}
+
+/**
+ * Deletes a user by ID from FormData.
+ */
+export async function deleteUserFormAction(formData: FormData): Promise<void> {
+  "use server";
+  const userId = formData.get("userId");
+  if (typeof userId !== "string" || !userId) {
+    // Invalid userId; nothing to do.
+    return;
+  }
+  await deleteUserAction(userId);
+}
+
+// --- Authentication Actions ---
+
+/**
+ * Handles user signup.
+ */
+export async function signup(
+  _prevState: FormState<SignupFormFieldNames>,
+  formData: FormData,
+): Promise<FormState<SignupFormFieldNames>> {
+  try {
+    const validated = SignupFormSchema.safeParse({
+      email: getFormField(formData, "email"),
+      password: getFormField(formData, "password"),
+      username: getFormField(formData, "username"),
+    });
+    if (!validated.success) {
+      return actionResult({
+        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+        success: false,
+      });
+    }
+    const { username, email, password } = validated.data;
+    const db = getDB();
+    const user = await createUserDal(db, {
+      email,
+      password,
+      role: toUserRoleBrand("user"),
+      username,
+    });
+    if (!user) {
+      return actionResult({
+        message: USER_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      });
+    }
+    await createSession(toUserId(user.id), toUserRoleBrand("user"));
+  } catch (error) {
+    logError("signup", error, { email: formData.get("email") as string });
+    return actionResult({
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      success: false,
+    });
+  }
+  redirect("/dashboard");
+}
+
+/**
+ * Handles user login.
+ */
+export async function login(
+  _prevState: FormState<LoginFormFieldNames>,
+  formData: FormData,
+): Promise<FormState<LoginFormFieldNames>> {
+  try {
+    const validated = LoginFormSchema.safeParse({
+      email: getFormField(formData, "email"),
+      password: getFormField(formData, "password"),
+    });
+    if (!validated.success) {
+      return actionResult({
+        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+        success: false,
+      });
+    }
+    const { email, password } = validated.data;
+    const db = getDB();
+    const user = await findUserForLogin(db, email, password);
+    if (!user) {
+      return actionResult({
+        message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
+        success: false,
+      });
+    }
+    await createSession(toUserId(user.id), toUserRoleBrand(user.role));
+  } catch (error) {
+    logError("login", error, { email: formData.get("email") as string });
+    return actionResult({
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      success: false,
+    });
+  }
+  // keep: why does redirect have to be here instead of after the session is created?
+  redirect("/dashboard");
+}
+
+/**
+ * Logs out the current user and redirects to home.
+ */
+export async function logout(): Promise<void> {
+  await deleteSession();
+  redirect("/");
+}
+
+/**
+ * Creates a demo user and logs them in.
+ */
+export async function demoUser(
+  role: UserRole = toUserRoleBrand("guest"),
+): Promise<ActionResult> {
+  let demoUser: UserDto | null = null;
+  const db = getDB();
+  try {
+    const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
+    if (!counter) {
+      logError("demoUser:counter", new Error("Counter is zero or undefined"), {
+        role,
+      });
+      throw new Error("Counter is zero or undefined");
+    }
+    demoUser = await createDemoUser(db, counter, toUserRoleBrand(role));
+    if (!demoUser) {
+      logError("demoUser:create", new Error("Demo user creation failed"), {
+        role,
+      });
+      throw new Error("Demo user creation failed");
+    }
+    await createSession(toUserId(demoUser.id), toUserRoleBrand(role));
+  } catch (error) {
+    logError("demoUser:session", error, { demoUser, role });
+    return actionResult({
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      success: false,
+    });
+  }
+  redirect("/dashboard");
+}
+
+// --- Read Actions for Users ---
 
 /**
  * Server action to fetch the total number of user pages.

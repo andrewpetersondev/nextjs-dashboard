@@ -22,7 +22,6 @@ import type {
   FetchFilteredInvoicesData,
   InvoiceCreateState,
   InvoiceEditState,
-  ModifiedLatestInvoicesData,
 } from "@/lib/definitions/invoices.types";
 import { CreateInvoiceSchema } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
@@ -42,6 +41,8 @@ function extractInvoiceFormFields(formData: FormData) {
   const rawStatus = getFormField(formData, "status");
   return { rawAmount, rawCustomerId, rawStatus };
 }
+
+// --- CRUD Actions for Invoices ---
 
 /**
  * Server action to create a new invoice.
@@ -257,6 +258,8 @@ export async function deleteInvoiceFormAction(
   redirect("/dashboard/invoices");
 }
 
+// --- Read Actions for Invoices ---
+
 /**
  * Server action to fetch the total number of invoice pages.
  * @param query - Search query string
@@ -287,9 +290,7 @@ export async function readFilteredInvoicesAction(
  * Server action to fetch the latest invoices for the dashboard.
  * @returns Array of ModifiedLatestInvoicesData
  */
-export async function readLatestInvoicesAction(): Promise<
-  ModifiedLatestInvoicesData[]
-> {
+export async function readLatestInvoicesAction() {
   const db = getDB();
   return fetchLatestInvoices(db);
 }

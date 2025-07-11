@@ -9,8 +9,12 @@ export const INVOICE_ERROR_MESSAGES = {
   DB_ERROR: "Database Error. Please try again.",
   DELETE_FAILED: "Failed to delete invoice.",
   FETCH_FAILED: "Database Error. Failed to Fetch InvoiceEntity.",
+  FETCH_FILTERED_FAILED: "Failed to fetch filtered invoices.",
+  FETCH_LATEST_FAILED: "Failed to fetch the latest invoices.",
+  FETCH_PAGES_FAILED: "Failed to fetch the total number of invoice pages.",
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
   MISSING_FIELDS: "Missing required fields.",
+  READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",
   UPDATE_FAILED: "Failed to update invoice.",
 };
@@ -30,4 +34,13 @@ export const USER_ERROR_MESSAGES = {
   UPDATE_FAILED: "Failed to update user. Please try again.",
   UPDATE_SUCCESS: "Profile updated!",
   VALIDATION_FAILED: "Validation failed. Please check your input.",
+};
+
+/**
+ * Centralized error messages for data.dal.ts operations.
+ */
+export const DATA_ERROR_MESSAGES = {
+  ERROR_FETCH_DASHBOARD_CARDS: "Failed to fetch dashboard cards.",
+  ERROR_FETCH_LATEST_INVOICES: "Failed to fetch latest invoices.",
+  ERROR_FETCH_REVENUE: "Failed to fetch revenue data.",
 };

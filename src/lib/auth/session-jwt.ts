@@ -8,7 +8,7 @@ import {
   ONE_DAY_MS,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-} from "@/lib/auth/constants";
+} from "@/lib/auth/auth.constants";
 import { getCookieValue } from "@/lib/auth/utils";
 import {
   type DecryptPayload,
@@ -221,6 +221,7 @@ export async function createSession(
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// biome-ignore lint/suspicious/noConfusingVoidType: <unused function>
 async function _updateSession(): Promise<null | void> {
   const cookieStore = await cookies();
 

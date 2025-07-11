@@ -16,16 +16,6 @@ export type Db = NodePgDatabase<typeof schema> & {
   $client: NodePgClient;
 };
 
-/**
- * @deprecated
- * Map DbType to environment variable names
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _DB_ENV_VARS: Record<DbType, string> = {
-  dev: "POSTGRES_URL",
-  test: "POSTGRES_URL_TESTDB",
-};
-
 const DB_URLS: Record<DbType, string> = {
   dev: POSTGRES_URL,
   test: POSTGRES_URL_TESTDB,

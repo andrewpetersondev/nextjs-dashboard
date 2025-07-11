@@ -1,22 +1,16 @@
 import "server-only";
 
 import { asc, count, eq, sql } from "drizzle-orm";
+import { DATA_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import type { Db } from "@/lib/db/connection";
 import { customers, invoices } from "@/lib/db/schema";
 import { toCustomerId } from "@/lib/definitions/brands";
 import type {
   DashboardCardData,
-  LatestInvoice,
-  LatestInvoiceDbRow,
   RevenueData,
 } from "@/lib/definitions/data.types";
 import { DatabaseError } from "@/lib/errors/database-error";
 import { formatCurrency } from "@/lib/utils/utils";
-
-// Error message constants
-const ERROR_FETCH_DASHBOARD_CARDS = "Failed to fetch dashboard card data.";
-const ERROR_FETCH_LATEST_INVOICES = "Failed to fetch latest invoices.";
-const ERROR_FETCH_REVENUE = "Failed to fetch revenue data.";
 
 /**
  * Fetches summary data for dashboard cards.
@@ -53,7 +47,10 @@ export async function fetchDashboardCardData(
   } catch (error) {
     // Structured logging for observability
     console.error("Database Error:", error);
-    throw new DatabaseError(ERROR_FETCH_DASHBOARD_CARDS, error);
+    throw new DatabaseError(
+      DATA_ERROR_MESSAGES.ERROR_FETCH_DASHBOARD_CARDS,
+      error,
+    );
   }
 }
 
@@ -63,12 +60,9 @@ export async function fetchDashboardCardData(
  * @param limit - Number of invoices to fetch
  * @returns Array of latest invoices
  */
-export async function fetchLatestInvoices(
-  db: Db,
-  limit = 5,
-): Promise<LatestInvoice[]> {
+export async function fetchLatestInvoices(db: Db, limit = 5) {
   try {
-    const rows: LatestInvoiceDbRow[] = await db
+    const rows = await db
       .select({
         amount: invoices.amount,
         customerId: invoices.customerId,
@@ -92,7 +86,10 @@ export async function fetchLatestInvoices(
     }));
   } catch (error) {
     console.error("Fetch Latest Invoices Error:", error);
-    throw new DatabaseError(ERROR_FETCH_LATEST_INVOICES, error);
+    throw new DatabaseError(
+      DATA_ERROR_MESSAGES.ERROR_FETCH_LATEST_INVOICES,
+      error,
+    );
   }
 }
 
@@ -121,6 +118,6 @@ export async function fetchRevenueData(db: Db): Promise<RevenueData[]> {
     }));
   } catch (error) {
     console.error("Fetch Revenue Data Error:", error);
-    throw new DatabaseError(ERROR_FETCH_REVENUE, error);
+    throw new DatabaseError(DATA_ERROR_MESSAGES.ERROR_FETCH_REVENUE, error);
   }
 }

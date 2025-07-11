@@ -1,6 +1,6 @@
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import { SESSION_COOKIE_NAME } from "../../src/lib/auth/constants.ts";
+import { SESSION_COOKIE_NAME } from "../../src/lib/auth/auth.ui.constants.ts";
 import type { UserEntity } from "../../src/lib/db/entities/user.ts";
 import {
   LOGIN_EMAIL_INPUT,

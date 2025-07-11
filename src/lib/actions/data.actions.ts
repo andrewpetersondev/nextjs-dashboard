@@ -1,8 +1,10 @@
-// TODO: THIS FILE SHOULD BE TEMPORARY AND REPLACED WITH A BETTER SOLUTION
+"use server";
 
 import { fetchDashboardCardData } from "@/lib/dal/data.dal";
 import { getDB } from "@/lib/db/connection";
 import type { DashboardCardData } from "@/lib/definitions/data.types";
+
+// TODO: THIS FILE SHOULD BE TEMPORARY AND REPLACED WITH A BETTER SOLUTION
 
 /**
  * Server action to fetch dashboard card data.
