@@ -2,13 +2,13 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
-import { login } from "@/lib/actions/users.actions";
+import { login } from "@/features/users/user.actions";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
 import { InputField } from "@/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
-import { FormInputWrapper } from "@/ui/wrappers/form-input-wrapper";
+import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
 type LoginFormState = Readonly<{
   errors?: {

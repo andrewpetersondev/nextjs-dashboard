@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { UserRole } from "@/lib/definitions/users.types";
+import type { UserRole } from "@/features/users/user.types";
 import { DemoForm } from "@/ui/auth/demo-form";
 import { SocialLoginButton } from "@/ui/auth/social-login-button";
 

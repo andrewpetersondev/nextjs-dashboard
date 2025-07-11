@@ -1,4 +1,4 @@
-import type { UserEntity } from "../../src/lib/db/entities/user.ts";
+import type { UserEntity } from "@/db/entities/user.entity.ts";
 
 // --- User Types ---
 export interface BaseUserFields {

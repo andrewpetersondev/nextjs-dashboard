@@ -1,6 +1,6 @@
 import { type JSX, Suspense } from "react";
-import { readCardDataAction } from "@/lib/actions/data.actions";
-import type { DashboardCardData } from "@/lib/definitions/data.types";
+import { readCardDataAction } from "@/features/data/data.actions";
+import type { DashboardCardData } from "@/features/data/data.types";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/ui/dashboard/revenue-chart";

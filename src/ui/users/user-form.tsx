@@ -1,6 +1,6 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
-import { FormActionRow } from "@/ui/components/form-action-row";
-import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { FormActionRow } from "@/components/form-action-row";
+import { FormSubmitButton } from "@/components/form-submit-button";
 import { H1 } from "@/ui/headings";
 import { ServerMessage } from "@/ui/users/server-message";
 import { UserFields } from "@/ui/users/user-fields";

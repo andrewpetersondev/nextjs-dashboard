@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "../../src/lib/db/entities/user.ts";
-import { users } from "../../src/lib/db/schema.ts";
-import { nodeEnvTestDb } from "../../src/lib/db/test-database.ts";
-import { dbRowToUserEntity } from "../../src/lib/mappers/user.mapper.ts";
+import type { UserEntity } from "@/db/entities/user.entity.ts";
+import { users } from "@/db/schema.ts";
+import { nodeEnvTestDb } from "@/db/test-database.ts";
+import { dbRowToUserEntity } from "@/features/users/user.mapper.ts";
 import {
   ERROR_DB,
   ERROR_USER_CREATION_FAILED,

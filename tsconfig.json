@@ -31,11 +31,12 @@
       "@/app/*": ["./src/app/*"],
       "@/components/*": ["./src/components/*"],
       "@/config/*": ["./src/config/*"],
+      "@/db/*": ["./src/db/*"],
+      "@/errors/*": ["./src/errors/*"],
+      "@/features/*": ["./src/features/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/ui/*": ["./src/ui/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/types/*": ["./src/types/*"]
+      "@/styles/*": ["./src/styles/*"],
+      "@/ui/*": ["./src/ui/*"]
     },
 
     /* Next.js specific */

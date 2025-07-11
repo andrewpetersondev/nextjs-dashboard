@@ -1,7 +1,7 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/lib/dal/session-dal";
-import type { SessionVerificationResult } from "@/lib/definitions/session.types";
-import type { UserRole } from "@/lib/definitions/users.types";
+import { verifySessionOptimistic } from "@/features/sessions/session.service";
+import type { SessionVerificationResult } from "@/features/sessions/session.types";
+import type { UserRole } from "@/features/users/user.types";
 import { getValidUserRole } from "@/lib/utils/utils.server";
 import { NavLinks } from "@/ui/dashboard/nav-links";
 

@@ -1,10 +1,11 @@
 import "server-only";
 
+import pino from "pino";
 import {
   type ActionResult,
   USER_ROLES,
   type UserRole,
-} from "@/lib/definitions/users.types";
+} from "@/features/users/user.types";
 
 // Note: Utility functions in this file are server-only.
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
@@ -149,3 +150,8 @@ export const createRandomPassword = (length = 10): string => {
   }
   return result;
 };
+
+export const logger = pino({
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  name: "auth",
+});

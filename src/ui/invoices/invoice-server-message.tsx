@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { InvoiceCreateState } from "@/lib/definitions/invoices.types";
+import type { InvoiceCreateState } from "@/features/invoices/invoice.types";
 
 /**
  * Props for InvoiceServerMessage component.

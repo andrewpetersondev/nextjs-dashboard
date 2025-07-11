@@ -1,7 +1,7 @@
 import type { MountOptions, MountReturn } from "cypress/react";
 import type { ReactNode } from "react";
-import { SESSION_COOKIE_NAME } from "../../src/lib/auth/auth.ui.constants.ts";
-import type { UserEntity } from "../../src/lib/db/entities/user.ts";
+import { SESSION_COOKIE_NAME } from "@/features/sessions/session.ui.constants.ts";
+import type { UserEntity } from "@/db/entities/user.entity.ts";
 import {
   LOGIN_EMAIL_INPUT,
   LOGIN_PASSWORD_INPUT,
@@ -21,7 +21,7 @@ import type {
 } from "./types.ts";
 import "./cypress-global.css";
 import { mount } from "cypress/react";
-import type { UserRole } from "@/lib/definitions/users.types.ts";
+import type { UserRole } from "@/features/users/user.types.ts";
 import "cypress-axe"; // used in demo-form-advanced.cy.tsx
 import "@testing-library/cypress/add-commands"; // Enables findByRole, findByText, etc.
 

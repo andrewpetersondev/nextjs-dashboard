@@ -1,8 +1,8 @@
 import type React from "react";
-import type { FormFieldError } from "@/lib/definitions/form";
-import { USER_ROLES, type UserRole } from "@/lib/definitions/users.types";
-import { ErrorMessage } from "@/ui/components/error-message";
-import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
+import { ErrorMessage } from "@/components/error-message";
+import { SelectMenu, type SelectMenuProps } from "@/components/select-menu";
+import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import type { FormFieldError } from "@/lib/definitions/form.types";
 
 /**
  * Role option type for select menu.

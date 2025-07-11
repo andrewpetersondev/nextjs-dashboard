@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/lib/definitions/customers.types";
+import type { FormattedCustomersTableRow } from "@/features/customers/customers.types";
 
 /**
  * Table column definitions for customer data.

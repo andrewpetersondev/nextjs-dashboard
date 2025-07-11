@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { FC, ReactNode } from "react";
-import { notoSans } from "@/ui/style/fonts";
+import { notoSans } from "@/ui/fonts";
 
 /**
  * Root layout component.

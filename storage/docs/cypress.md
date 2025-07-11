@@ -51,7 +51,7 @@ hcp vault-secrets run -- pnpm cypress open
 
 ```shell
 
-pnpm cyp:e2e:headless:auth
+pnpm cyp:e2e:headless:session
 # or
 hcp vault-secrets run -- pnpm cypress run --e2e --headless --spec 'cypress/e2e/auth/**/*.cy.ts'
 ```

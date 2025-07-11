@@ -1,8 +1,8 @@
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/lib/definitions/invoices.types";
-import { USER_ROLES, type UserRole } from "@/lib/definitions/users.types";
+} from "@/features/invoices/invoice.types";
+import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
 /**
  * Utility type for creating branded types.
