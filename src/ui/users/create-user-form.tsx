@@ -8,6 +8,7 @@ import {
 import { type JSX, useActionState, useEffect, useState } from "react";
 import { createUserAction } from "@/lib/actions/users.actions";
 import type { CreateUserFormState } from "@/lib/definitions/users.types";
+import { USER_ROLES, type UserRole } from "@/lib/definitions/users.types"; // <-- Ensure import
 import { InputField } from "@/ui/auth/input-field";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";
@@ -25,8 +26,10 @@ export function CreateUserForm(): JSX.Element {
 
   const [showAlert, setShowAlert] = useState(false);
 
-  // Track the selected role in the local state
-  const [selectedRole, setSelectedRole] = useState<string | undefined>();
+  // Track the selected role in the local state, strictly typed as UserRole
+  const [selectedRole, setSelectedRole] = useState<UserRole | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     if (state.message) {
@@ -35,6 +38,7 @@ export function CreateUserForm(): JSX.Element {
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
+    return undefined;
   }, [state.message]);
 
   return (
@@ -100,14 +104,13 @@ export function CreateUserForm(): JSX.Element {
             Role
           </label>
           <SelectRole
-            error={state?.errors?.role} // Pass validation errors
-            // update the selected role state
+            error={state?.errors?.role}
+            // Update the selected role state, ensuring type safety
             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-              // Defensive: ensure the value is a string and not empty
-              const value = event.target.value as string;
-              setSelectedRole(value || undefined);
+              const value = event.target.value as UserRole;
+              setSelectedRole(USER_ROLES.includes(value) ? value : undefined);
             }}
-            value={selectedRole} // Controlled value
+            value={selectedRole}
           />
         </div>
 

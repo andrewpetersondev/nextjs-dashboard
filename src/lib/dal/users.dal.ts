@@ -8,18 +8,11 @@ import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { comparePassword, hashPassword } from "@/lib/auth/password";
 import type { Db } from "@/lib/db/connection";
 import { demoUserCounters, users } from "@/lib/db/schema";
+import { toUserRoleBrand, type UserId } from "@/lib/definitions/brands";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/definitions/constants";
-import type {
-  UserId,
-  UserRole,
-  UserUpdatePatch,
-} from "@/lib/definitions/users.types";
+import type { UserRole, UserUpdatePatch } from "@/lib/definitions/users.types";
 import type { UserDto } from "@/lib/dto/user.dto";
-import {
-  dbRowToUserEntity,
-  toUserDto,
-  toUserRoleBrand,
-} from "@/lib/mappers/user.mapper";
+import { dbRowToUserEntity, toUserDto } from "@/lib/mappers/user.mapper";
 import { createRandomPassword, logError } from "@/lib/utils/utils.server";
 
 /**
@@ -138,7 +131,7 @@ export async function fetchUserById(
  * @param db - The database instance (Drizzle)
  * @returns Array of UserDto
  */
-export async function fetchUsers(db: Db): Promise<UserDto[]> {
+export async function _fetchUsers(db: Db): Promise<UserDto[]> {
   try {
     // Fetch raw DB rows, not UserEntity
     const userRows = await db.select().from(users).orderBy(asc(users.username));

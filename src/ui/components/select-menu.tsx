@@ -1,35 +1,25 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
+import type { FormFieldError } from "@/lib/definitions/form";
 
 /**
  * Props for the SelectMenu component.
  * @template T - The type of the option object.
  */
 export interface SelectMenuProps<
-  T extends { id: string | number; name: string },
+  T extends { id: string; name: string } = { id: string; name: string },
 > {
-  /** Options to display in the select menu. */
   options: T[];
-  /** The selected value (controlled). */
-  value?: string | number;
-  /** The initial value (uncontrolled). */
-  defaultValue?: string | number;
-  /** The select element's id. */
+  value?: string | undefined;
+  defaultValue?: string;
   id: string;
-  /** The select element's name. */
   name: string;
-  /** Placeholder text for the select menu. */
   placeholder?: string;
-  /** Called when the selection changes. */
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  /** Additional class names for styling. */
   className?: string;
-  /** Data attribute for Cypress testing. */
   dataCy?: string;
-  /** Whether the select is disabled. */
   disabled?: boolean;
-  /** Error messages to display, if any. */
-  error?: string[];
+  error?: FormFieldError;
 }
 
 /**
@@ -38,7 +28,7 @@ export interface SelectMenuProps<
  * @template T - The type of the option object.
  */
 export const SelectMenu = React.memo(
-  <T extends { id: string | number; name: string }>({
+  <T extends { id: string; name: string }>({
     options,
     value,
     defaultValue,
@@ -68,7 +58,7 @@ export const SelectMenu = React.memo(
         // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
         value={value !== undefined ? value : undefined}
       >
-        <option disabled={true} value="">
+        <option disabled value="">
           {placeholder}
         </option>
         {options.map((option) => (

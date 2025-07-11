@@ -3,26 +3,28 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db/connection";
 import { customers, invoices } from "@/lib/db/schema";
+import { toCustomerId } from "@/lib/definitions/brands";
 import type {
   CustomerField,
+  CustomerSelectDbRow,
+  CustomerTableDbRow,
   FormattedCustomersTableRow,
 } from "@/lib/definitions/customers.types";
 import { DatabaseError } from "@/lib/errors/database-error";
-import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 import { formatCurrency } from "@/lib/utils/utils";
 
-// Constants for error messages
+// Error message constants
 const ERROR_FETCH_ALL_CUSTOMERS = "Failed to fetch all customers.";
 const ERROR_FETCH_FILTERED_CUSTOMERS = "Failed to fetch the customer table.";
 
 /**
  * Fetches all customers for select options.
  * @param db - Drizzle database instance
- * @returns Array of customer fields
+ * @returns Array of customer fields with branded IDs
  */
 export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
   try {
-    const rows = await db
+    const rows: CustomerSelectDbRow[] = await db
       .select({
         id: customers.id,
         name: customers.name,
@@ -30,13 +32,13 @@ export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
       .from(customers)
       .orderBy(asc(customers.name));
 
-    // Map string IDs to branded CustomerId
     return rows.map((row) => ({
-      id: toCustomerIdBrand(row.id), // <-- enforce branding
+      id: toCustomerId(row.id),
       name: row.name,
     }));
   } catch (error) {
-    console.error("Database Error:", error); // TODO: Replace with structured logger
+    // Use structured logging in production
+    console.error("Database Error:", error);
     throw new DatabaseError(ERROR_FETCH_ALL_CUSTOMERS, error);
   }
 }
@@ -45,14 +47,14 @@ export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
  * Fetches customers filtered by query for the customer table.
  * @param db - Drizzle database instance
  * @param query - Search query string
- * @returns Array of formatted customer table rows
+ * @returns Array of formatted customer table rows with branded IDs
  */
 export async function fetchFilteredCustomers(
   db: Db,
   query: string,
 ): Promise<FormattedCustomersTableRow[]> {
   try {
-    const searchCustomers = await db
+    const rows: CustomerTableDbRow[] = await db
       .select({
         email: customers.email,
         id: customers.id,
@@ -73,14 +75,14 @@ export async function fetchFilteredCustomers(
       .groupBy(customers.id)
       .orderBy(asc(customers.name));
 
-    // Map string IDs to branded CustomerId
-    return searchCustomers.map((item) => ({
-      ...item,
-      id: toCustomerIdBrand(item.id), // <-- enforce branding
-      totalPaid: formatCurrency(item.totalPaid),
-      totalPending: formatCurrency(item.totalPending),
+    return rows.map((row) => ({
+      ...row,
+      id: toCustomerId(row.id),
+      totalPaid: formatCurrency(row.totalPaid),
+      totalPending: formatCurrency(row.totalPending),
     }));
   } catch (error) {
+    // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
     throw new DatabaseError(ERROR_FETCH_FILTERED_CUSTOMERS, error);
   }

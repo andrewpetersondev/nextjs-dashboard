@@ -1,21 +1,17 @@
 import { z as zod } from "zod";
-import type { CustomerId } from "@/lib/definitions/customers.types";
+import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 
-// --- Domain Types ---
-
 /**
- * Branded type for Invoice IDs.
- */
-export type InvoiceId = string & { readonly __brand: unique symbol };
-/**
- * Invoice statuses as a constant tuple for type safety.
+ * Allowed invoice statuses.
  */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;
+
 /**
- * Type for invoice statuses.
+ * Type for invoice status.
  */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+
 /**
  * Error map for invoice actions.
  */
@@ -23,16 +19,71 @@ export type InvoiceErrorMap = Partial<
   Record<"amount" | "customerId" | "status", string[]>
 >;
 
-// --- UI and Server Actions: Form Types ---
-
 /**
- * Fields for invoice creation (user input).
- * `date` is not included; it is set server-side.
+ * Fields for invoice creation form.
  */
 export type CreateInvoiceFormFields = {
   amount: number | "";
   status: InvoiceStatus;
   customerId: CustomerId | "";
+};
+
+/**
+ * Input type for creating an invoice.
+ */
+export type InvoiceCreateInput = {
+  amount: number;
+  customerId: CustomerId;
+  date: string;
+  status: InvoiceStatus;
+};
+
+/**
+ * Input type for updating an invoice.
+ */
+export type InvoiceUpdateInput = Partial<
+  Omit<InvoiceCreateInput, "customerId">
+> & {
+  customerId?: CustomerId;
+};
+
+/**
+ * Raw DB row for an invoice.
+ */
+export type InvoiceDbRow = {
+  id: InvoiceId;
+  amount: number;
+  customerId: CustomerId;
+  date: string;
+  status: InvoiceStatus;
+};
+
+/**
+ * Row for invoice table queries (with customer info).
+ */
+export type InvoiceTableRow = {
+  id: InvoiceId;
+  amount: number;
+  date: string;
+  status: InvoiceStatus;
+  customerId: CustomerId;
+  name: string;
+  email: string;
+  imageUrl: string | null;
+};
+
+/**
+ * Row for latest invoices (with formatted amount).
+ */
+export type LatestInvoiceRow = Omit<InvoiceTableRow, "amount"> & {
+  amount: string; // Formatted currency
+};
+
+/**
+ * Row for filtered invoices (with formatted amount).
+ */
+export type FetchFilteredInvoicesData = Omit<InvoiceTableRow, "amount"> & {
+  amount: string; // Formatted currency
 };
 
 /**
@@ -51,13 +102,6 @@ export type InvoiceFormFields = {
   date: string;
 };
 
-export type BrandedInvoiceInsert = {
-  customerId: CustomerId;
-  amount: number;
-  status: InvoiceStatus;
-  date: string;
-};
-
 export type InvoiceCreateState = Readonly<{
   errors?: InvoiceErrorMap;
   message?: string;
@@ -71,12 +115,8 @@ export type InvoiceEditState = Readonly<{
   success?: boolean;
 }>;
 
-// --- Result/State types for create/edit actions ---
-
 /**
  * Generic action result type for server actions.
- * @template T - The data payload type.
- * @template E - The error map type.
  */
 export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
   readonly data?: T;
@@ -85,75 +125,18 @@ export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
   readonly success: boolean;
 };
 
-/**
- * Result type for create invoice action.
- */
 export type CreateInvoiceResult = InvoiceActionResult<
   undefined,
   InvoiceErrorMap
 >;
-
-/**
- * Result type for update invoice action.
- */
 export type UpdateInvoiceResult = InvoiceActionResult<
   InvoiceDto,
   InvoiceErrorMap
 >;
 
-// --- Database Row Types ---
-
-export interface DbRowBase<
-  Id extends string = string,
-  StatusType extends string = string,
-> {
-  id: Id;
-  amount: number;
-  status: StatusType;
-}
-
-export interface FilteredInvoiceDbRow extends DbRowBase {
-  date: string;
-  name: string;
-  email: string;
-  imageUrl: string;
-}
-
-export interface InvoiceByIdDbRow extends DbRowBase {
-  customerId: string;
-  date: string;
-}
-
-// --- UI Table Row Types ---
-
-export interface FetchLatestInvoicesData {
-  readonly id: InvoiceId;
-  readonly amount: number;
-  readonly email: string;
-  readonly imageUrl: string;
-  readonly name: string;
-  readonly status: InvoiceStatus;
-}
-
-export type ModifiedLatestInvoicesData = Omit<
-  FetchLatestInvoicesData,
-  "amount"
-> & {
-  amount: string;
-};
-
-export interface FetchFilteredInvoicesData {
-  readonly id: InvoiceId;
-  readonly amount: number;
-  readonly date: string;
-  readonly name: string;
-  readonly email: string;
-  readonly imageUrl: string;
-  readonly status: InvoiceStatus;
-}
-
-// --- Validation Schemas (zod) ---
-
+/**
+ * Zod validation schema for invoice creation.
+ */
 const amountSchema = zod.coerce
   .number()
   .gt(0, { message: "Amount must be greater than $0." });

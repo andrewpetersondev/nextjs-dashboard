@@ -1,25 +1,11 @@
 import type { UserEntity } from "@/lib/db/entities/user";
-import type { UserId, UserRole } from "@/lib/definitions/users.types";
+import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
 import type { UserDto } from "@/lib/dto/user.dto";
 
 /**
  * Constants for default values.
  */
 const DEFAULT_SENSITIVE_DATA = "cantTouchThis";
-
-/**
- * Brands a string as a UserId.
- * @param id - The UUID string to brand.
- * @returns The branded UserId.
- */
-export const toUserIdBrand = (id: string): UserId => id as UserId;
-
-/**
- * Brands a string as a UserRole.
- * @param role - The role string to brand.
- * @returns The branded UserRole.
- */
-export const toUserRoleBrand = (role: string): UserRole => role as UserRole;
 
 /**
  * Maps a UserDto (from API or client) to a UserEntity (DB model).
@@ -34,7 +20,7 @@ export function toUserEntity(dto: UserDto): UserEntity {
   }
   return {
     email: dto.email,
-    id: toUserIdBrand(dto.id),
+    id: toUserId(dto.id),
     password: "",
     role: toUserRoleBrand(dto.role),
     sensitiveData: DEFAULT_SENSITIVE_DATA, // Never map password from DTO; must be set explicitly
@@ -78,7 +64,7 @@ export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
   }
   return {
     email: row.email,
-    id: toUserIdBrand(row.id),
+    id: toUserId(row.id),
     password: row.password,
     role: toUserRoleBrand(row.role),
     sensitiveData: row.sensitiveData,
@@ -100,7 +86,7 @@ export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
 //   }
 //   return toUserEntity({
 //     email: row.email,
-//     id: toUserIdBrand(row.id),
+//     id: toUserId(row.id),
 //     password: row.password,
 //     role: toUserRoleBrand(row.role),
 //     sensitiveData: row.sensitiveData,

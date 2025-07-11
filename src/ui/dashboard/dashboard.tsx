@@ -1,6 +1,6 @@
 import { type JSX, Suspense } from "react";
 import { readCardDataAction } from "@/lib/actions/data.actions";
-import type { CardData } from "@/lib/definitions/data.types";
+import type { DashboardCardData } from "@/lib/definitions/data.types";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/ui/dashboard/revenue-chart";
@@ -31,14 +31,14 @@ export const Dashboard = async ({
   title,
 }: DashboardProps): Promise<JSX.Element> => {
   // Fetch card data with strict typing.
-  const cardData: CardData = await readCardDataAction();
+  const dashboardCardData: DashboardCardData = await readCardDataAction();
   return (
     <section>
       <H1 className="mb-4">{title}</H1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Suspense enables streaming for async server components */}
         <Suspense fallback={<CardsSkeleton />}>
-          <CardWrapper data={cardData} />
+          <CardWrapper data={dashboardCardData} />
         </Suspense>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">

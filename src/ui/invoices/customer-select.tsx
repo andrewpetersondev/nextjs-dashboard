@@ -9,7 +9,7 @@ import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
 export interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
   customers: CustomerField[];
-  error?: string[];
+  error?: string[] | undefined;
 }
 
 /**

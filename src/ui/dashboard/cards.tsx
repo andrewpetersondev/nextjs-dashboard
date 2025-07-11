@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import type { CardData } from "@/lib/definitions/data.types";
+import type { DashboardCardData } from "@/lib/definitions/data.types";
 import { H3 } from "@/ui/headings";
 
 /**
@@ -25,7 +25,7 @@ const ICON_MAP: Record<CardType, React.ComponentType<{ className: string }>> = {
 
 export interface CardWrapperProps {
   /** Data for dashboard cards. */
-  data: CardData;
+  data: DashboardCardData;
 }
 
 export async function CardWrapper({
@@ -33,13 +33,14 @@ export async function CardWrapper({
 }: CardWrapperProps): Promise<JSX.Element> {
   return (
     <>
-      <Card title="Collected" type="collected" value={data.paidInvoices} />
-      <Card title="Pending" type="pending" value={data.pendingInvoices} />
+      <Card title="Collected" type="collected" value={data.totalPaid} />
+      <Card title="Pending" type="pending" value={data.totalPending} />
+      {/*  todo: property is missing from CardWrapperProps */}
       <Card title="Total Invoices" type="invoices" value={data.invoiceCount} />
       <Card
         title="Total Customers"
         type="customers"
-        value={data.customerCount}
+        value={data.totalCustomers}
       />
     </>
   );

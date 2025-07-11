@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
+import type { FormFieldError } from "@/lib/definitions/form";
 import { FieldError } from "@/ui/auth/field-error";
 import { InputFieldCard } from "@/ui/components/input-field-card";
 
@@ -15,7 +16,7 @@ export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   icon?: ReactNode;
-  error?: string[] | undefined;
+  error?: FormFieldError; // Use FormFieldError type for consistency
   dataCy?: string;
   describedById?: string;
   ref?: React.Ref<HTMLInputElement>;

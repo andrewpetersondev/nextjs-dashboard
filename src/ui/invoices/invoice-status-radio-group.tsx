@@ -3,12 +3,24 @@ import type { InputHTMLAttributes, JSX } from "react";
 import type { InvoiceStatus } from "@/lib/definitions/invoices.types";
 import { ErrorMessage } from "@/ui/components/error-message";
 
+/**
+ * Props for InvoiceStatusRadioGroup.
+ */
 interface InvoiceStatusRadioGroupProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
   value: InvoiceStatus;
-  error?: string | string[];
+  error?: string | string[] | undefined;
 }
 
+/**
+ * InvoiceStatusRadioGroup
+ * Renders a radio group for invoice status selection with error display.
+ *
+ * @param value - The current selected status value.
+ * @param name - The name of the radio group.
+ * @param disabled - Whether the inputs are disabled.
+ * @param error - Error(s) to display.
+ */
 export const InvoiceStatusRadioGroup = ({
   value,
   name = "status",
@@ -16,7 +28,7 @@ export const InvoiceStatusRadioGroup = ({
   error,
   ...props
 }: InvoiceStatusRadioGroupProps): JSX.Element => {
-  // Ensure errors is string[] for consistent mapping
+  // Normalize error to string[] for consistent handling
   const errors: string[] = [];
   if (error) {
     if (Array.isArray(error)) {
@@ -74,7 +86,7 @@ export const InvoiceStatusRadioGroup = ({
       </div>
       <ErrorMessage
         dataCy="invoice-status-error"
-        error={error}
+        error={errors.length > 0 ? errors : undefined}
         id="invoice-status-error"
         label="Invoice status error"
       />

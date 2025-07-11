@@ -11,6 +11,12 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import type {
+  Brand,
+  customerIdBrand,
+  invoiceIdBrand,
+  userIdBrand,
+} from "@/lib/definitions/brands";
 
 /**
  * Table and column name constants for maintainability.
@@ -61,7 +67,10 @@ export const statusEnum = pgEnum("status", ["pending", "paid"]);
  */
 export const users = pgTable(TABLES.USERS, {
   email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  id: uuid(COLUMNS.ID)
+    .defaultRandom()
+    .primaryKey()
+    .$type<Brand<string, typeof userIdBrand>>(),
   password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
   role: roleEnum(COLUMNS.ROLE).default("user").notNull(),
   sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
@@ -86,7 +95,10 @@ export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
   email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  id: uuid(COLUMNS.ID)
+    .defaultRandom()
+    .primaryKey()
+    .$type<Brand<string, typeof customerIdBrand>>(),
   imageUrl: varchar(COLUMNS.IMAGE_URL, { length: 255 }).notNull(),
   name: varchar(COLUMNS.NAME, { length: 50 }).notNull(),
 });
@@ -99,9 +111,13 @@ export const invoices = pgTable(TABLES.INVOICES, {
   amount: integer(COLUMNS.AMOUNT).notNull(),
   customerId: uuid(COLUMNS.CUSTOMER_ID)
     .notNull()
-    .references((): AnyPgColumn => customers.id),
+    .references((): AnyPgColumn => customers.id)
+    .$type<Brand<string, typeof customerIdBrand>>(), // <-- Use branded type
   date: date(COLUMNS.DATE).notNull(),
-  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  id: uuid(COLUMNS.ID)
+    .defaultRandom()
+    .primaryKey()
+    .$type<Brand<string, typeof invoiceIdBrand>>(),
   status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
 });
 

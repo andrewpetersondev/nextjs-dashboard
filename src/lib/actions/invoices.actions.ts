@@ -13,6 +13,11 @@ import {
   updateInvoiceDal,
 } from "@/lib/dal/invoices.dal";
 import { getDB } from "@/lib/db/connection";
+import {
+  toCustomerId,
+  toInvoiceId,
+  toInvoiceStatusBrand,
+} from "@/lib/definitions/brands";
 import type {
   FetchFilteredInvoicesData,
   InvoiceCreateState,
@@ -21,17 +26,22 @@ import type {
 } from "@/lib/definitions/invoices.types";
 import { CreateInvoiceSchema } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
-import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
-import {
-  stripBrandsForInsert,
-  toInvoiceIdBrand,
-  toInvoiceStatusBrand,
-} from "@/lib/mappers/invoice.mapper";
 import {
   buildErrorMap,
   getFormField,
   logError,
 } from "@/lib/utils/utils.server";
+
+/**
+ * Helper to extract required invoice fields from FormData.
+ * Throws if any field is missing.
+ */
+function extractInvoiceFormFields(formData: FormData) {
+  const rawAmount = getFormField(formData, "amount");
+  const rawCustomerId = getFormField(formData, "customerId");
+  const rawStatus = getFormField(formData, "status");
+  return { rawAmount, rawCustomerId, rawStatus };
+}
 
 /**
  * Server action to create a new invoice.
@@ -43,32 +53,9 @@ export async function createInvoiceAction(
   try {
     const db = getDB();
 
-    // --- Strongly-typed field extraction ---
-    let rawAmount: string;
-    let rawCustomerId: string;
-    let rawStatus: string;
-    try {
-      rawAmount = getFormField(formData, "amount");
-      rawCustomerId = getFormField(formData, "customerId");
-      rawStatus = getFormField(formData, "status");
-    } catch (error) {
-      logError("createInvoiceAction:missingFields", error);
-      return {
-        errors: buildErrorMap({
-          amount: formData.get("amount")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.AMOUNT_REQUIRED],
-          customerId: formData.get("customerId")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.CUSTOMER_ID_REQUIRED],
-          status: formData.get("status")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.STATUS_REQUIRED],
-        }),
-        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
-        success: false,
-      };
-    }
+    // Extract and validate fields using a helper
+    const { rawAmount, rawCustomerId, rawStatus } =
+      extractInvoiceFormFields(formData);
 
     // --- Zod validation ---
     const validated = CreateInvoiceSchema.safeParse({
@@ -80,14 +67,14 @@ export async function createInvoiceAction(
     if (!validated.success) {
       return {
         errors: validated.error.flatten().fieldErrors,
-        message: "Invalid input. Failed to create invoice.",
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
-      };
+      } as const;
     }
 
     // --- Type-safe transformation ---
     const { amount, customerId, status } = validated.data;
-    const brandedCustomerId = toCustomerIdBrand(customerId);
+    const brandedCustomerId = toCustomerId(customerId);
     const brandedStatus = toInvoiceStatusBrand(status);
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
     const now = new Date().toISOString().split("T")[0];
@@ -100,10 +87,7 @@ export async function createInvoiceAction(
       status: brandedStatus,
     };
 
-    // DAL expects plain objects, so strip brands before passing
-    const plain = stripBrandsForInsert(brands);
-
-    const invoice = await createInvoiceDal(db, plain);
+    const invoice = await createInvoiceDal(db, brands);
 
     if (!invoice) {
       return {
@@ -142,7 +126,7 @@ export async function readInvoiceAction(
 ): Promise<InvoiceDto | null> {
   try {
     const db = getDB();
-    const brandedId = toInvoiceIdBrand(id);
+    const brandedId = toInvoiceId(id);
     const invoice = await readInvoiceDal(db, brandedId);
     return invoice ? invoice : null;
   } catch (error) {
@@ -205,8 +189,8 @@ export async function updateInvoiceAction(
     }
 
     const { amount, customerId, status } = validated.data;
-    const brandedId = toInvoiceIdBrand(id);
-    const brandedCustomerId = toCustomerIdBrand(customerId);
+    const brandedId = toInvoiceId(id);
+    const brandedCustomerId = toCustomerId(customerId);
     const brandedStatus = toInvoiceStatusBrand(status);
     const amountInCents = Math.round(amount * 100);
 
@@ -251,7 +235,7 @@ export async function deleteInvoiceAction(
   id: string,
 ): Promise<InvoiceDto | null> {
   const db = getDB();
-  return await deleteInvoiceDal(db, toInvoiceIdBrand(id));
+  return await deleteInvoiceDal(db, toInvoiceId(id));
 }
 
 /**

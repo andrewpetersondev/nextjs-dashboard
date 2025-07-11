@@ -1,154 +1,105 @@
 import "server-only";
-/**
- * Data Access Layer (DAL) for CRUD operations on Invoice entities (aka. database rows).
- * Uses Drizzle ORM for database access.
- */
+
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db/connection";
-import type { InvoiceEntity } from "@/lib/db/entities/invoice";
 import { customers, invoices } from "@/lib/db/schema";
+import type { InvoiceId } from "@/lib/definitions/brands";
 import { ITEMS_PER_PAGE } from "@/lib/definitions/constants";
 import type {
   FetchFilteredInvoicesData,
-  FilteredInvoiceDbRow,
-  InvoiceId,
-  InvoiceStatus,
-  ModifiedLatestInvoicesData,
+  InvoiceCreateInput,
+  InvoiceTableRow,
+  InvoiceUpdateInput,
+  LatestInvoiceRow,
 } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
-import {
-  toInvoiceDto,
-  toInvoiceEntity,
-  toInvoiceIdBrand,
-  toInvoiceStatusBrand,
-} from "@/lib/mappers/invoice.mapper";
+import { toInvoiceDto, toInvoiceEntity } from "@/lib/mappers/invoice.mapper";
 import { formatCurrency } from "@/lib/utils/utils";
 import { logError } from "@/lib/utils/utils.server";
 
+// Error message constants
+const ERROR_CREATE_INVOICE = "Failed to create an invoice in the database.";
+const ERROR_READ_INVOICE = "Failed to fetch invoice by id.";
+const ERROR_UPDATE_INVOICE = "Database error while updating invoice.";
+const ERROR_DELETE_INVOICE = "An unexpected error occurred. Please try again.";
+const ERROR_FETCH_LATEST = "Failed to fetch the latest invoices.";
+const ERROR_FETCH_FILTERED = "Failed to fetch invoices.";
+const ERROR_FETCH_PAGES = "Failed to fetch the total number of invoices.";
+
 /**
  * Inserts a new invoice record into the database.
- * @param db - The Drizzle ORM database instance.
- * @param invoice - The invoice data to insert.
- * @returns The created invoice DTO if successful, or null.
  */
 export async function createInvoiceDal(
   db: Db,
-  invoice: {
-    amount: number;
-    customerId: string;
-    date: string;
-    status: InvoiceStatus;
-  },
+  invoice: InvoiceCreateInput,
 ): Promise<InvoiceDto | null> {
-  const { amount, customerId, date, status } = invoice;
   try {
     const [createdInvoice] = await db
       .insert(invoices)
-      .values({ amount, customerId, date, status })
+      .values(invoice)
       .returning();
 
-    if (!createdInvoice) {
-      return null;
-    }
+    if (!createdInvoice) return null;
 
     const entity = toInvoiceEntity(createdInvoice);
-
-    // Ensure the entity is valid
-    if (!entity) {
-      return null; // Invalid entity, return null
-    }
+    if (!entity) return null;
 
     return toInvoiceDto(entity);
   } catch (error) {
-    logError("createInvoiceDal", error, { customerId });
-    throw new Error("Failed to create an invoice in a database.");
+    logError("createInvoiceDal", error, { customerId: invoice.customerId });
+    throw new Error(ERROR_CREATE_INVOICE);
   }
 }
 
 /**
  * Fetches an invoice by its ID.
- * @param db - The Drizzle ORM database instance.
- * @param id - The branded InvoiceId.
- * @returns InvoiceDto or null if not found.
- * @throws Error if the database operation fails.
  */
 export async function readInvoiceDal(
   db: Db,
   id: InvoiceId,
 ): Promise<InvoiceDto | null> {
   try {
-    const [data] = await db
-      .select({
-        amount: invoices.amount,
-        customerId: invoices.customerId,
-        date: invoices.date,
-        id: invoices.id,
-        status: invoices.status,
-      })
-      .from(invoices)
-      .where(eq(invoices.id, id));
+    const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
-    if (!data) {
-      return null; // No invoice found with the given ID
-    }
+    if (!data) return null;
 
-    // Convert the raw database row to InvoiceEntity and then to InvoiceDto
-    const invoiceEntity = toInvoiceEntity(data);
+    const entity = toInvoiceEntity(data);
+    if (!entity) return null;
 
-    // Ensure the entity is valid
-    if (!invoiceEntity) {
-      return null; // Invalid entity, return null
-    }
+    const dto = toInvoiceDto(entity);
+    if (!dto) return null;
 
-    // Return the DTO representation of the invoice
-    const invoiceDto = toInvoiceDto(invoiceEntity);
-
-    // Ensure the DTO is valid
-    if (!invoiceDto) {
-      return null; // Invalid DTO, return null
-    }
-
-    return invoiceDto;
-  } catch (error: unknown) {
+    return dto;
+  } catch (error) {
     logError("readInvoiceDal", error, { id });
-    throw new Error("Failed to fetch invoice by id.");
+    throw new Error(ERROR_READ_INVOICE);
   }
 }
 
 /**
  * Updates an existing invoice record in the database.
- * @param db - The Drizzle ORM database instance.
- * @param id - The invoice ID to update.
- * @param invoice - The invoice data to update (customerId, amount, status).
- * @returns The updated invoice as InvoiceDto, or null if not found.
- * @throws Error if the database operation fails.
  */
 export async function updateInvoiceDal(
   db: Db,
   id: InvoiceId,
-  invoice: Pick<InvoiceEntity, "amount" | "customerId" | "status">,
+  invoice: InvoiceUpdateInput,
 ): Promise<InvoiceDto | null> {
   try {
-    const { amount, customerId, status } = invoice;
-
     const [updated] = await db
       .update(invoices)
-      .set({ amount, customerId, status })
+      .set(invoice)
       .where(eq(invoices.id, id))
       .returning();
+
     return updated ? toInvoiceDto(toInvoiceEntity(updated)) : null;
   } catch (error) {
     logError("updateInvoiceDal", error, { id, ...invoice });
-    throw new Error("Database error while updating invoice.");
+    throw new Error(ERROR_UPDATE_INVOICE);
   }
 }
 
 /**
  * Deletes an invoice by ID.
- * @param db - The Drizzle ORM database instance.
- * @param id - The branded InvoiceId to delete.
- * @returns The deleted invoice as InvoiceDto, or null if not found.
- * @throws Error if the database operation fails.
  */
 export async function deleteInvoiceDal(
   db: Db,
@@ -159,28 +110,29 @@ export async function deleteInvoiceDal(
       .delete(invoices)
       .where(eq(invoices.id, id))
       .returning();
+
     return deletedInvoice
       ? toInvoiceDto(toInvoiceEntity(deletedInvoice))
       : null;
   } catch (error) {
     logError("deleteInvoiceDal", error, { id });
-    throw new Error("An unexpected error occurred. Please try again.");
+    throw new Error(ERROR_DELETE_INVOICE);
   }
 }
 
 /**
  * Fetches the latest invoices, limited to 5.
- * @param db - The Drizzle ORM database instance.
- * @returns Array of ModifiedLatestInvoicesData.
- * @throws Error if the database operation fails.
  */
 export async function fetchLatestInvoices(
   db: Db,
-): Promise<ModifiedLatestInvoicesData[]> {
+  limit = 5,
+): Promise<LatestInvoiceRow[]> {
   try {
     const latestInvoices = await db
       .select({
         amount: invoices.amount,
+        customerId: invoices.customerId,
+        date: invoices.date,
         email: customers.email,
         id: invoices.id,
         imageUrl: customers.imageUrl,
@@ -190,38 +142,32 @@ export async function fetchLatestInvoices(
       .from(invoices)
       .innerJoin(customers, eq(invoices.customerId, customers.id))
       .orderBy(desc(invoices.date))
-      .limit(5);
+      .limit(limit);
 
     return latestInvoices.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
-      id: toInvoiceIdBrand(invoice.id),
-      status: toInvoiceStatusBrand(invoice.status),
     }));
   } catch (error) {
     logError("fetchLatestInvoices", error);
-    throw new Error("Failed to fetch the latest invoices.");
+    throw new Error(ERROR_FETCH_LATEST);
   }
 }
 
 /**
  * Fetches filtered invoices with pagination.
- * @param db - The Drizzle ORM database instance.
- * @param query - Search a query.
- * @param currentPage - Current page number.
- * @returns Array of FetchFilteredInvoicesData.
- * @throws Error if the database operation fails.
  */
 export async function fetchFilteredInvoices(
   db: Db,
   query: string,
   currentPage: number,
 ): Promise<FetchFilteredInvoicesData[]> {
-  const offset: number = (currentPage - 1) * ITEMS_PER_PAGE;
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
-    const data: FilteredInvoiceDbRow[] = await db
+    const data: InvoiceTableRow[] = await db
       .select({
         amount: invoices.amount,
+        customerId: invoices.customerId,
         date: invoices.date,
         email: customers.email,
         id: invoices.id,
@@ -244,32 +190,25 @@ export async function fetchFilteredInvoices(
       .limit(ITEMS_PER_PAGE)
       .offset(offset);
 
-    return data.map(
-      (invoice: FilteredInvoiceDbRow): FetchFilteredInvoicesData => ({
-        ...invoice,
-        id: toInvoiceIdBrand(invoice.id),
-        status: toInvoiceStatusBrand(invoice.status),
-      }),
-    );
-  } catch (error: unknown) {
+    return data.map((invoice) => ({
+      ...invoice,
+      amount: formatCurrency(invoice.amount),
+    }));
+  } catch (error) {
     logError("fetchFilteredInvoices", error);
-    throw new Error("Failed to fetch invoices.");
+    throw new Error(ERROR_FETCH_FILTERED);
   }
 }
 
 /**
  * Fetches the total number of invoice pages for pagination.
- * @param db - The Drizzle ORM database instance.
- * @param query - Search a query.
- * @returns Number of pages.
- * @throws Error if the database operation fails.
  */
 export async function fetchInvoicesPages(
   db: Db,
   query: string,
 ): Promise<number> {
   try {
-    const data: { count: number }[] = await db
+    const [{ count: total = 0 } = { count: 0 }] = await db
       .select({
         count: count(invoices.id),
       })
@@ -285,10 +224,9 @@ export async function fetchInvoicesPages(
         ),
       );
 
-    const result: number = data[0]?.count ?? 0;
-    return Math.ceil(result / ITEMS_PER_PAGE);
-  } catch (error: unknown) {
+    return Math.ceil(total / ITEMS_PER_PAGE);
+  } catch (error) {
     logError("fetchInvoicesPages", error);
-    throw new Error("Failed to fetch the total number of invoices.");
+    throw new Error(ERROR_FETCH_PAGES);
   }
 }

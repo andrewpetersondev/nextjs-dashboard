@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession, deleteSession } from "@/lib/auth/session-jwt";
+import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   createDemoUser,
   createUserDal,
@@ -17,21 +18,21 @@ import {
   updateUserDal,
 } from "@/lib/dal/users.dal";
 import { getDB } from "@/lib/db/connection";
+import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/definitions/form";
 import {
   type ActionResult,
-  type CreateUserFormFields,
+  type CreateUserFormFieldNames,
   CreateUserFormSchema,
-  type EditUserFormFields,
+  type EditUserFormFieldNames,
   EditUserFormSchema,
-  type LoginFormFields,
+  type LoginFormFieldNames,
   LoginFormSchema,
-  type SignupFormFields,
+  type SignupFormFieldNames,
   SignupFormSchema,
   type UserRole,
 } from "@/lib/definitions/users.types";
 import type { UserDto } from "@/lib/dto/user.dto";
-import { toUserIdBrand, toUserRoleBrand } from "@/lib/mappers/user.mapper";
 import { stripProperties } from "@/lib/utils/utils";
 import {
   actionResult,
@@ -42,24 +43,12 @@ import {
 } from "@/lib/utils/utils.server";
 
 /**
- * Server Actions for User Management.
- *
- * Handles business logic and delegates all database operations to the DAL.
- * All user inputs are validated and sanitized.
- *
- * @module server-actions/users
- */
-
-/**
  * Handles user signup.
- * @param _prevState - Previous form state.
- * @param formData - Form data from the signup form.
- * @returns FormState with result message and errors.
  */
 export async function signup(
-  _prevState: FormState<SignupFormFields>,
+  _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
-): Promise<FormState<SignupFormFields>> {
+): Promise<FormState<SignupFormFieldNames>> {
   try {
     const validated = SignupFormSchema.safeParse({
       email: getFormField(formData, "email"),
@@ -69,16 +58,11 @@ export async function signup(
     if (!validated.success) {
       return actionResult({
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: "Validation failed. Please check your input.",
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       });
     }
-    // Type assertion required for Zod inference
-    const { username, email, password } = validated.data as {
-      username: string;
-      email: string;
-      password: string;
-    };
+    const { username, email, password } = validated.data;
     const db = getDB();
     const user = await createUserDal(db, {
       email,
@@ -88,33 +72,28 @@ export async function signup(
     });
     if (!user) {
       return actionResult({
-        message: "Failed to create an account. Please try again.",
+        message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       });
     }
-    await createSession(toUserIdBrand(user.id), toUserRoleBrand("user")); // Use branded id and role
+    await createSession(toUserId(user.id), toUserRoleBrand("user"));
   } catch (error) {
     logError("signup", error, { email: formData.get("email") as string });
     return actionResult({
-      message: "An unexpected error occurred. Please try again.",
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
   }
-  // Unreachable: redirect throws in Next.js App Router
-  // keep: why does redirect have to be here instead of after the session is created?
   redirect("/dashboard");
 }
 
 /**
  * Handles user login.
- * @param _prevState - Previous form state.
- * @param formData - Form data from the login form.
- * @returns FormState with result message and errors.
  */
 export async function login(
-  _prevState: FormState<LoginFormFields>,
+  _prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
-): Promise<FormState<LoginFormFields>> {
+): Promise<FormState<LoginFormFieldNames>> {
   try {
     const validated = LoginFormSchema.safeParse({
       email: getFormField(formData, "email"),
@@ -123,7 +102,7 @@ export async function login(
     if (!validated.success) {
       return actionResult({
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: "Validation failed. Please check your input.",
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       });
     }
@@ -132,15 +111,15 @@ export async function login(
     const user = await findUserForLogin(db, email, password);
     if (!user) {
       return actionResult({
-        message: "Invalid email or password.",
+        message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
         success: false,
       });
     }
-    await createSession(toUserIdBrand(user.id), toUserRoleBrand(user.role));
+    await createSession(toUserId(user.id), toUserRoleBrand(user.role));
   } catch (error) {
     logError("login", error, { email: formData.get("email") as string });
     return actionResult({
-      message: "An unexpected error occurred. Please try again.",
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
   }
@@ -154,33 +133,27 @@ export async function login(
 export async function logout(): Promise<void> {
   await deleteSession();
   redirect("/");
-  // Unreachable: redirect throws in Next.js App Router
 }
 
 /**
  * Deletes a user by ID, revalidates and redirects.
- * Always brands the userId for strict typing.
- * @param userId - The user's ID (string).
- * @returns ActionResult with result message and errors.
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
   try {
     const db = getDB();
-    // --- Brand the userId to UserId for type safety ---
-    const deletedUser = await deleteUserDal(db, toUserIdBrand(userId));
+    const deletedUser = await deleteUserDal(db, toUserId(userId));
     if (!deletedUser) {
       return actionResult({
-        message: "User not found or could not be deleted.",
+        message: USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED,
         success: false,
       });
     }
     revalidatePath("/dashboard/users");
     redirect("/dashboard/users");
-    // Unreachable: redirect throws in Next.js App Router
   } catch (error) {
     logError("deleteUserAction", error, { userId });
     return actionResult({
-      message: "An unexpected error occurred. Please try again.",
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
   }
@@ -188,7 +161,6 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
 
 /**
  * Deletes a user by ID from FormData.
- * @param formData - Form data containing userId.
  */
 export async function deleteUserFormAction(formData: FormData): Promise<void> {
   "use server";
@@ -202,15 +174,12 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 
 /**
  * Creates a demo user and logs them in.
- * @param role - User role (default: "guest").
- * @returns ActionResult with result message and errors.
  */
 export async function demoUser(
   role: UserRole = toUserRoleBrand("guest"),
 ): Promise<ActionResult> {
   let demoUser: UserDto | null = null;
   const db = getDB();
-
   try {
     const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
     if (!counter) {
@@ -226,13 +195,11 @@ export async function demoUser(
       });
       throw new Error("Demo user creation failed");
     }
-    await createSession(toUserIdBrand(demoUser.id), toUserRoleBrand(role));
-    // Unreachable: redirect throws in Next.js App Router
-    // return actionResult({ message: "Demo user created and logged in.", success: true, errors: undefined });
+    await createSession(toUserId(demoUser.id), toUserRoleBrand(role));
   } catch (error) {
     logError("demoUser:session", error, { demoUser, role });
     return actionResult({
-      message: "An unexpected error occurred. Please try again.",
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
   }
@@ -241,16 +208,12 @@ export async function demoUser(
 
 /**
  * Creates a new user (admin only).
- * @param _prevState - Previous form state.
- * @param formData - Form data from the create user form.
- * @returns FormState with result message and errors.
  */
 export async function createUserAction(
-  _prevState: FormState<CreateUserFormFields>,
+  _prevState: FormState<CreateUserFormFieldNames>,
   formData: FormData,
-): Promise<FormState<CreateUserFormFields>> {
+): Promise<FormState<CreateUserFormFieldNames>> {
   const db = getDB();
-
   try {
     const validated = CreateUserFormSchema.safeParse({
       email: getFormField(formData, "email"),
@@ -261,7 +224,7 @@ export async function createUserAction(
     if (!validated.success) {
       return actionResult({
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: "Validation failed. Please check your input.",
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       });
     }
@@ -274,12 +237,12 @@ export async function createUserAction(
     });
     if (!user) {
       return actionResult({
-        message: "Failed to create an account on Users Page. Please try again.",
+        message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       });
     }
     return actionResult({
-      message: "User created successfully.",
+      message: USER_ERROR_MESSAGES.CREATE_SUCCESS,
       success: true,
     });
   } catch (error) {
@@ -287,25 +250,19 @@ export async function createUserAction(
       email: formData.get("email") as string,
     });
     return actionResult({
-      message: "An unexpected error occurred. Please try again.",
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
   }
 }
 
-// src/lib/actions/users.ts
-
 /**
  * Fetches a user by plain string id for UI consumption.
- * Handles branding and error handling at the server boundary.
- * @param id - User id as string (from route params)
- * @returns UserDto or null
  */
 export async function readUserAction(id: string): Promise<UserDto | null> {
   const db = getDB();
   try {
-    // Brand the id before passing to DAL
-    return await fetchUserById(db, toUserIdBrand(id));
+    return await fetchUserById(db, toUserId(id));
   } catch (error) {
     logError("getUserByIdAction", error, { id });
     return null;
@@ -314,46 +271,35 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
 
 /**
  * Edits an existing user.
- * @param id - User ID.
- * @param _prevState - Previous form state.
- * @param formData - Form data from the edit user form.
- * @returns FormState with result message and errors.
  */
 export async function updateUserAction(
   id: string,
-  _prevState: FormState<EditUserFormFields>,
+  _prevState: FormState<EditUserFormFieldNames>,
   formData: FormData,
-): Promise<FormState<EditUserFormFields>> {
+): Promise<FormState<EditUserFormFieldNames>> {
   const db = getDB();
   try {
     const payload = { ...Object.fromEntries(formData.entries()) };
-
     const clean = stripProperties(payload);
-
     const validated = EditUserFormSchema.safeParse(clean);
 
     if (!validated.success) {
       return actionResult({
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: "Validation failed. Please check your input.",
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       });
     }
 
-    const existingUser: UserDto | null = await readUserDal(
-      db,
-      toUserIdBrand(id),
-    );
-
+    const existingUser: UserDto | null = await readUserDal(db, toUserId(id));
     if (!existingUser) {
       return actionResult({
-        message: "User not found.",
+        message: USER_ERROR_MESSAGES.NOT_FOUND,
         success: false,
       });
     }
 
     const patch: Record<string, unknown> = {};
-
     if (
       validated.data.username &&
       validated.data.username !== existingUser.username
@@ -370,32 +316,31 @@ export async function updateUserAction(
       patch.password = await hashPassword(validated.data.password);
     }
     if (Object.keys(patch).length === 0) {
-      // No changes to update; inform the user.
       return actionResult({
-        message: "No changes to update.",
+        message: USER_ERROR_MESSAGES.NO_CHANGES,
         success: true,
       });
     }
     const updatedUser: UserDto | null = await updateUserDal(
       db,
-      toUserIdBrand(id),
+      toUserId(id),
       patch,
     );
     if (!updatedUser) {
       return actionResult({
-        message: "Failed to update user. Please try again.",
+        message: USER_ERROR_MESSAGES.UPDATE_FAILED,
         success: false,
       });
     }
     revalidatePath("/dashboard/users");
     return actionResult({
-      message: "Profile updated!",
+      message: USER_ERROR_MESSAGES.UPDATE_SUCCESS,
       success: true,
     });
   } catch (error) {
     logError("updateUserAction", error, { id });
     return actionResult({
-      message: "Failed to update user. Please try again.",
+      message: USER_ERROR_MESSAGES.UPDATE_FAILED,
       success: false,
     });
   }
@@ -403,8 +348,6 @@ export async function updateUserAction(
 
 /**
  * Server action to fetch the total number of user pages.
- * @param query - Search query string
- * @returns Total number of pages
  */
 export async function readUsersPagesAction(
   query: string = "",
@@ -415,9 +358,6 @@ export async function readUsersPagesAction(
 
 /**
  * Server action to fetch filtered users for the users table.
- * @param query - Search query string
- * @param currentPage - Current page number
- * @returns Array of UserDto
  */
 export async function readFilteredUsersAction(
   query: string = "",

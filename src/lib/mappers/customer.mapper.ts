@@ -1,26 +1,16 @@
 import type { CustomerEntity } from "@/lib/db/entities/customer";
-import type {
-  CustomerByIdDbRow,
-  CustomerId,
-} from "@/lib/definitions/customers.types";
+import { toCustomerId } from "@/lib/definitions/brands";
+import type { CustomerByIdDbRow } from "@/lib/definitions/customers.types";
 import type { CustomerDto } from "@/lib/dto/customer.dto";
 
 /**
- * Brands a string as a CustomerId.
- * @param id - Customer ID as string
- * @returns Branded CustomerId
- */
-export const toCustomerIdBrand = (id: string): CustomerId => id as CustomerId;
-
-/**
  * Maps a database row to a CustomerEntity.
- * @param row - CustomerByIdDbRow
- * @returns CustomerEntity
+ * Ensures ID is branded for type safety.
  */
 export function toCustomerEntity(row: CustomerByIdDbRow): CustomerEntity {
   return {
     email: row.email,
-    id: toCustomerIdBrand(row.id),
+    id: toCustomerId(row.id), // Brand the ID
     imageUrl: row.imageUrl,
     name: row.name,
   };
@@ -28,13 +18,12 @@ export function toCustomerEntity(row: CustomerByIdDbRow): CustomerEntity {
 
 /**
  * Maps a CustomerEntity to a CustomerDto.
- * @param customer - CustomerEntity
- * @returns CustomerDto
+ * Strips brand from ID for transport.
  */
 export function toCustomerDto(customer: CustomerEntity): CustomerDto {
   return {
     email: customer.email,
-    id: customer.id as string, // strips brand for DTO
+    id: customer.id as string, // Strip brand for DTO
     imageUrl: customer.imageUrl,
     name: customer.name,
   };
