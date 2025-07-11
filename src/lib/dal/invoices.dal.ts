@@ -12,6 +12,7 @@ import type {
   FetchFilteredInvoicesData,
   FilteredInvoiceDbRow,
   InvoiceId,
+  InvoiceStatus,
   ModifiedLatestInvoicesData,
 } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
@@ -32,7 +33,12 @@ import { logError } from "@/lib/utils/utils.server";
  */
 export async function createInvoiceDal(
   db: Db,
-  invoice: Pick<InvoiceEntity, "amount" | "customerId" | "date" | "status">,
+  invoice: {
+    amount: number;
+    customerId: string;
+    date: string;
+    status: InvoiceStatus;
+  },
 ): Promise<InvoiceDto | null> {
   const { amount, customerId, date, status } = invoice;
   try {
@@ -46,9 +52,9 @@ export async function createInvoiceDal(
       return null;
     }
 
-    return createdInvoice
-      ? toInvoiceDto(toInvoiceEntity(createdInvoice))
-      : null;
+    const entity = toInvoiceEntity(createdInvoice);
+
+    return toInvoiceDto(entity);
   } catch (error) {
     logError("createInvoiceDal", error, { customerId });
     throw new Error("Failed to create an invoice in a database.");

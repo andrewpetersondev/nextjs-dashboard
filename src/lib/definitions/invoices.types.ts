@@ -1,6 +1,5 @@
 import { z as zod } from "zod";
 import type { CustomerId } from "@/lib/definitions/customers.types";
-import type { FormState } from "@/lib/definitions/form";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 
 // --- Domain Types ---
@@ -21,69 +20,56 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
  * Error map for invoice actions.
  */
 export type InvoiceErrorMap = Partial<
-  Record<keyof InvoiceFormFields, string[]>
+  Record<"amount" | "customerId" | "status", string[]>
 >;
 
-// --- Form Types ---
+// --- UI and Server Actions: Form Types ---
 
 /**
- * Fields allowed in invoice form (for new/edit).
- * Use type alias for compatibility with generics.
+ * Fields for invoice creation (user input).
+ * `date` is not included; it is set server-side.
+ */
+export type CreateInvoiceFormFields = {
+  amount: number | "";
+  status: InvoiceStatus;
+  customerId: CustomerId | "";
+};
+
+/**
+ * Fields for invoice editing (all optional for PATCH semantics).
+ */
+export type EditInvoiceFormFields = Partial<CreateInvoiceFormFields>;
+
+/**
+ * State for the invoice form.
  */
 export type InvoiceFormFields = {
   id: InvoiceId | "";
   customerId: CustomerId | "";
   amount: number | "";
   status: InvoiceStatus;
-  date?: string;
-  // Add additional fields here as needed, but avoid index signatures for strict typing.
+  date: string;
 };
 
-/**
- * State for the invoice form.
- */
-export type InvoiceFormState = FormState<InvoiceFormFields>;
+export type BrandedInvoiceInsert = {
+  customerId: CustomerId;
+  amount: number;
+  status: InvoiceStatus;
+  date: string;
+};
 
-/**
- * Unified state/result type for creating an invoice.
- * Used by both server actions and UI state.
- */
 export type InvoiceCreateState = Readonly<{
   errors?: InvoiceErrorMap;
   message?: string;
   success?: boolean;
 }>;
-/**
- * Unified state/result type for editing an invoice.
- * Used by both server actions and UI state.
- */
+
 export type InvoiceEditState = Readonly<{
   invoice: InvoiceDto;
   errors?: InvoiceErrorMap;
   message?: string;
   success?: boolean;
 }>;
-
-/**
- * State shape for EditInvoiceForm.
- * Used as the state for useActionState in the edit invoice form.
- */
-export type EditInvoiceFormState = Readonly<{
-  invoice: InvoiceDto;
-  errors?: InvoiceErrorMap;
-  message?: string;
-  success?: boolean;
-}>;
-
-/**
- * State for updating an invoice form, including the latest invoice data.
- */
-export type UpdateInvoiceFormState = Readonly<
-  FormState<InvoiceFormFields> & {
-    invoice: InvoiceDto;
-    success?: boolean;
-  }
->;
 
 // --- Result/State types for create/edit actions ---
 
@@ -124,12 +110,6 @@ export interface DbRowBase<
   id: Id;
   amount: number;
   status: StatusType;
-}
-
-export interface LatestInvoiceDbRow extends DbRowBase {
-  name: string;
-  imageUrl: string;
-  email: string;
 }
 
 export interface FilteredInvoiceDbRow extends DbRowBase {
@@ -174,34 +154,20 @@ export interface FetchFilteredInvoicesData {
 
 // --- Validation Schemas (zod) ---
 
-/**
- * Zod schema for invoice form validation.
- * Branding is applied in mappers/DAL, not in the schema.
- */
-export const InvoiceFormSchema = zod.object({
-  amount: zod.coerce
-    .number()
-    .gt(0, { message: "Amount must be greater than $0." }),
-  customerId: zod.string({ invalid_type_error: "Invalid customer id" }),
-  date: zod.string().optional(),
-  id: zod.string(),
-  status: zod.enum(INVOICE_STATUSES, {
-    invalid_type_error: "Please select a status",
-  }),
+const amountSchema = zod.coerce
+  .number()
+  .gt(0, { message: "Amount must be greater than $0." });
+
+const customerIdSchema = zod.string({
+  invalid_type_error: "Invalid customer id",
 });
 
-/**
- * Zod schema for creating an invoice (omit id and date).
- */
-export const CreateInvoiceSchema = InvoiceFormSchema.omit({
-  date: true,
-  id: true,
+const statusSchema = zod.enum(INVOICE_STATUSES, {
+  invalid_type_error: "Invalid status",
 });
 
-/**
- * Zod schema for updating an invoice (omit id and date).
- */
-export const UpdateInvoiceSchema = InvoiceFormSchema.omit({
-  date: true,
-  id: true,
+export const CreateInvoiceSchema = zod.object({
+  amount: amountSchema,
+  customerId: customerIdSchema,
+  status: statusSchema,
 });

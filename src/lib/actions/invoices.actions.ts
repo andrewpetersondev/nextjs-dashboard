@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -14,27 +15,26 @@ import {
 import { getDB } from "@/lib/db/connection";
 import type {
   FetchFilteredInvoicesData,
+  InvoiceCreateState,
   InvoiceEditState,
   ModifiedLatestInvoicesData,
 } from "@/lib/definitions/invoices.types";
-import {
-  CreateInvoiceSchema,
-  type InvoiceCreateState,
-  UpdateInvoiceSchema,
-} from "@/lib/definitions/invoices.types";
+import { CreateInvoiceSchema } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 import {
+  // toInvoiceDto,
   toInvoiceIdBrand,
   toInvoiceStatusBrand,
 } from "@/lib/mappers/invoice.mapper";
-import { getFormField } from "@/lib/utils/utils.server";
+import {
+  buildErrorMap,
+  getFormField,
+  logError,
+} from "@/lib/utils/utils.server";
 
 /**
  * Server action to create a new invoice.
- * @param _prevState - Previous form state.
- * @param formData - FormData containing invoice fields.
- * @returns A promise resolving to a CreateInvoiceResult.
  */
 export async function createInvoiceAction(
   _prevState: InvoiceCreateState,
@@ -51,17 +51,21 @@ export async function createInvoiceAction(
       rawAmount = getFormField(formData, "amount");
       rawCustomerId = getFormField(formData, "customerId");
       rawStatus = getFormField(formData, "status");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      logError("createInvoiceAction:missingFields", error);
       return {
-        errors: {
-          amount: formData.get("amount") ? undefined : ["Amount is required."],
+        errors: buildErrorMap({
+          amount: formData.get("amount")
+            ? undefined
+            : [INVOICE_ERROR_MESSAGES.AMOUNT_REQUIRED],
           customerId: formData.get("customerId")
             ? undefined
-            : ["Customer ID is required."],
-          status: formData.get("status") ? undefined : ["Status is required."],
-        },
-        message: "Missing required fields.",
+            : [INVOICE_ERROR_MESSAGES.CUSTOMER_ID_REQUIRED],
+          status: formData.get("status")
+            ? undefined
+            : [INVOICE_ERROR_MESSAGES.STATUS_REQUIRED],
+        }),
+        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
         success: false,
       };
     }
@@ -100,14 +104,14 @@ export async function createInvoiceAction(
 
     if (!invoice) {
       return {
-        errors: undefined,
+        errors: {},
         message: "Failed to create invoice.",
         success: false,
       };
     }
 
     return {
-      errors: undefined,
+      errors: {},
       message: "Invoice created successfully.",
       success: true,
     };
@@ -116,11 +120,11 @@ export async function createInvoiceAction(
     console.error(error);
     return {
       errors: {},
-      message: "Database Error. Failed to create invoice.",
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
   }
-  // FIXME: returning actionResult on success made this unreachable.
+  // NOTE: returning actionResult on success made this unreachable.
   // revalidatePath("/dashboard/invoices");
   // redirect("/dashboard/invoices");
 }
@@ -137,20 +141,15 @@ export async function readInvoiceAction(
     const db = getDB();
     const brandedId = toInvoiceIdBrand(id);
     const invoice = await readInvoiceDal(db, brandedId);
-
     return invoice ? invoice : null;
   } catch (error) {
-    console.error(error);
+    logError("readInvoiceAction", error, { id });
     throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
   }
 }
 
 /**
  * Server action to update an existing invoice.
- * @param id - The invoice ID as a string.
- * @param prevState - Previous form state.
- * @param formData - FormData containing invoice fields.
- * @returns A promise resolving to an UpdateInvoiceResult.
  */
 export async function updateInvoiceAction(
   id: string,
@@ -167,22 +166,27 @@ export async function updateInvoiceAction(
       rawAmount = getFormField(formData, "amount");
       rawCustomerId = getFormField(formData, "customerId");
       rawStatus = getFormField(formData, "status");
-    } catch {
+    } catch (err) {
+      logError("updateInvoiceAction:missingFields", err, { id });
       return {
-        errors: {
-          amount: formData.get("amount") ? undefined : ["Amount is required."],
+        errors: buildErrorMap({
+          amount: formData.get("amount")
+            ? undefined
+            : [INVOICE_ERROR_MESSAGES.AMOUNT_REQUIRED],
           customerId: formData.get("customerId")
             ? undefined
-            : ["Customer ID is required."],
-          status: formData.get("status") ? undefined : ["Status is required."],
-        }, // Always provide invoice for UI
+            : [INVOICE_ERROR_MESSAGES.CUSTOMER_ID_REQUIRED],
+          status: formData.get("status")
+            ? undefined
+            : [INVOICE_ERROR_MESSAGES.STATUS_REQUIRED],
+        }),
         invoice: prevState.invoice,
-        message: "Missing required fields.",
+        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
         success: false,
       };
     }
 
-    const validated = UpdateInvoiceSchema.safeParse({
+    const validated = CreateInvoiceSchema.safeParse({
       amount: rawAmount,
       customerId: rawCustomerId,
       status: rawStatus,
@@ -190,9 +194,9 @@ export async function updateInvoiceAction(
 
     if (!validated.success) {
       return {
-        errors: validated.error.flatten().fieldErrors,
+        errors: buildErrorMap(validated.error.flatten().fieldErrors),
         invoice: prevState.invoice,
-        message: "Invalid input. Failed to update invoice.",
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };
     }
@@ -211,25 +215,25 @@ export async function updateInvoiceAction(
 
     if (!updatedInvoice) {
       return {
-        errors: undefined,
+        errors: {},
         invoice: prevState.invoice,
-        message: "Failed to update invoice.",
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
         success: false,
       };
     }
 
     return {
-      errors: undefined,
+      errors: {},
       invoice: updatedInvoice,
       message: "Updated invoice successfully.",
       success: true,
     };
   } catch (error) {
-    console.error("[updateInvoiceAction]", error, { id });
+    logError("updateInvoiceAction", error, { id });
     return {
       errors: {},
       invoice: prevState.invoice,
-      message: "Database Error: Failed to update invoice.",
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
   }
