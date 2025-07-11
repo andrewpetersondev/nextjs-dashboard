@@ -1,4 +1,5 @@
 import type { InvoiceEntity } from "@/lib/db/entities/invoice";
+import type { CustomerId } from "@/lib/definitions/customers.types";
 import type {
   InvoiceId,
   InvoiceStatus,
@@ -56,5 +57,20 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
     date: entity.date,
     id: entity.id as string,
     status: entity.status,
+  };
+}
+
+export function stripBrandsForInsert(payload: {
+  customerId: CustomerId;
+  amount: number;
+  date: string;
+  status: InvoiceStatus;
+}) {
+  const { customerId, amount, date, status } = payload;
+  return {
+    amount: amount,
+    customerId: customerId as string, // strip brand for DAL
+    date: date as string, // Ensure date is a string
+    status: status as InvoiceStatus, // Retain brand for type safety
   };
 }

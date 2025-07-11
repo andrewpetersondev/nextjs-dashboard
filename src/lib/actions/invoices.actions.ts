@@ -23,7 +23,7 @@ import { CreateInvoiceSchema } from "@/lib/definitions/invoices.types";
 import type { InvoiceDto } from "@/lib/dto/invoice.dto";
 import { toCustomerIdBrand } from "@/lib/mappers/customer.mapper";
 import {
-  // toInvoiceDto,
+  stripBrandsForInsert,
   toInvoiceIdBrand,
   toInvoiceStatusBrand,
 } from "@/lib/mappers/invoice.mapper";
@@ -90,17 +90,20 @@ export async function createInvoiceAction(
     const brandedCustomerId = toCustomerIdBrand(customerId);
     const brandedStatus = toInvoiceStatusBrand(status);
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-    const date = new Date().toISOString().split("T")[0];
+    const now = new Date().toISOString().split("T")[0];
 
     // --- DAL call ---
-    const insert = {
+    const brands = {
       amount: amountInCents,
       customerId: brandedCustomerId,
-      date,
+      date: now as string, // cast to string for DAL
       status: brandedStatus,
     };
 
-    const invoice = await createInvoiceDal(db, insert);
+    // DAL expects plain objects, so strip brands before passing
+    const plain = stripBrandsForInsert(brands);
+
+    const invoice = await createInvoiceDal(db, plain);
 
     if (!invoice) {
       return {

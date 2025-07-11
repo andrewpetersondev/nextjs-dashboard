@@ -42,7 +42,6 @@ export async function createInvoiceDal(
 ): Promise<InvoiceDto | null> {
   const { amount, customerId, date, status } = invoice;
   try {
-    // Ensure parameters are branded before calling this function.
     const [createdInvoice] = await db
       .insert(invoices)
       .values({ amount, customerId, date, status })
@@ -53,6 +52,11 @@ export async function createInvoiceDal(
     }
 
     const entity = toInvoiceEntity(createdInvoice);
+
+    // Ensure the entity is valid
+    if (!entity) {
+      return null; // Invalid entity, return null
+    }
 
     return toInvoiceDto(entity);
   } catch (error) {
@@ -73,7 +77,7 @@ export async function readInvoiceDal(
   id: InvoiceId,
 ): Promise<InvoiceDto | null> {
   try {
-    const data = await db
+    const [data] = await db
       .select({
         amount: invoices.amount,
         customerId: invoices.customerId,
@@ -84,7 +88,27 @@ export async function readInvoiceDal(
       .from(invoices)
       .where(eq(invoices.id, id));
 
-    return data.length > 0 ? toInvoiceDto(toInvoiceEntity(data[0])) : null;
+    if (!data) {
+      return null; // No invoice found with the given ID
+    }
+
+    // Convert the raw database row to InvoiceEntity and then to InvoiceDto
+    const invoiceEntity = toInvoiceEntity(data);
+
+    // Ensure the entity is valid
+    if (!invoiceEntity) {
+      return null; // Invalid entity, return null
+    }
+
+    // Return the DTO representation of the invoice
+    const invoiceDto = toInvoiceDto(invoiceEntity);
+
+    // Ensure the DTO is valid
+    if (!invoiceDto) {
+      return null; // Invalid DTO, return null
+    }
+
+    return invoiceDto;
   } catch (error: unknown) {
     logError("readInvoiceDal", error, { id });
     throw new Error("Failed to fetch invoice by id.");
