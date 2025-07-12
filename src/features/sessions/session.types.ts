@@ -1,4 +1,4 @@
-import { z as zod } from "zod";
+import * as z from "zod";
 import { roleSchema, type UserRole } from "@/features/users/user.types";
 
 /**
@@ -19,26 +19,6 @@ export interface DecryptPayload extends EncryptPayload {
   iat: number; // Issued at (Unix timestamp)
   exp: number; // Expiration (Unix timestamp)
 }
-
-// --- Zod Field Schemas ---
-export const userIdSchema = zod.string().uuid();
-export const expiresAtSchema = zod.number();
-export const iatSchema = zod.number();
-export const expSchema = zod.number();
-
-// --- Validation Schemas ---
-export const EncryptPayloadSchema = zod.object({
-  user: zod.object({
-    expiresAt: expiresAtSchema,
-    role: roleSchema,
-    userId: userIdSchema,
-  }),
-});
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-  exp: expSchema,
-  iat: iatSchema,
-});
 
 /**
  * Result returned when verifying a user session.
@@ -74,3 +54,25 @@ export interface DbSessionRow {
   expiresAt: Date;
   userId: string | null;
 }
+
+// --- Zod Schemas ---
+
+// --- Zod Field Schemas ---
+export const userIdSchema = z.uuid();
+export const expiresAtSchema = z.number();
+export const iatSchema = z.number();
+export const expSchema = z.number();
+
+// --- Zod Validation Schemas ---
+export const EncryptPayloadSchema = z.object({
+  user: z.object({
+    expiresAt: expiresAtSchema,
+    role: roleSchema,
+    userId: userIdSchema,
+  }),
+});
+
+export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
+  exp: expSchema,
+  iat: iatSchema,
+});

@@ -1,4 +1,4 @@
-import { z as zod } from "zod";
+import * as z from "zod";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
@@ -50,7 +50,7 @@ export type InvoiceUpdateInput = Partial<
 /**
  * Raw DB row for an invoice.
  */
-export type InvoiceDbRow = {
+export type _InvoiceDbRow = {
   id: InvoiceId;
   amount: number;
   customerId: CustomerId;
@@ -89,12 +89,12 @@ export type FetchFilteredInvoicesData = Omit<InvoiceTableRow, "amount"> & {
 /**
  * Fields for invoice editing (all optional for PATCH semantics).
  */
-export type EditInvoiceFormFields = Partial<CreateInvoiceFormFields>;
+export type _EditInvoiceFormFields = Partial<CreateInvoiceFormFields>;
 
 /**
  * State for the invoice form.
  */
-export type InvoiceFormFields = {
+export type _InvoiceFormFields = {
   id: InvoiceId | "";
   customerId: CustomerId | "";
   amount: number | "";
@@ -125,11 +125,11 @@ export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
   readonly success: boolean;
 };
 
-export type CreateInvoiceResult = InvoiceActionResult<
+export type _CreateInvoiceResult = InvoiceActionResult<
   undefined,
   InvoiceErrorMap
 >;
-export type UpdateInvoiceResult = InvoiceActionResult<
+export type _UpdateInvoiceResult = InvoiceActionResult<
   InvoiceDto,
   InvoiceErrorMap
 >;
@@ -137,19 +137,26 @@ export type UpdateInvoiceResult = InvoiceActionResult<
 /**
  * Zod validation schema for invoice creation.
  */
-const amountSchema = zod.coerce
+const amountSchema = z.coerce
   .number()
-  .gt(0, { message: "Amount must be greater than $0." });
+  .gt(0, { error: "Amount must be greater than $0." })
+  .lt(10000, { error: "Amount must be less than $10,000." });
 
-const customerIdSchema = zod.string({
-  invalid_type_error: "Invalid customer id",
+const customerIdSchema = z.string({
+  error: (issue) =>
+    issue.input === undefined
+      ? "Customer ID is required."
+      : "Customer ID must be a string.",
 });
 
-const statusSchema = zod.enum(INVOICE_STATUSES, {
-  invalid_type_error: "Invalid status",
+const statusSchema = z.enum(INVOICE_STATUSES, {
+  error: (issue) =>
+    issue.input === undefined
+      ? "Invoice status is required"
+      : "Invalid invoice status",
 });
 
-export const CreateInvoiceSchema = zod.object({
+export const CreateInvoiceSchema = z.object({
   amount: amountSchema,
   customerId: customerIdSchema,
   status: statusSchema,

@@ -1,4 +1,4 @@
-import { type ZodType, z as zod } from "zod";
+import * as z from "zod";
 import type { UserEntity } from "@/db/entities/user.entity";
 import type { FormState } from "@/lib/definitions/form.types";
 
@@ -64,17 +64,17 @@ export type EditUserFormFieldNames = keyof EditUserFormFields;
  * Use generic FormState<TFieldNames> for all form state types.
  * This ensures maintainability and DRY code.
  */
-export type SignupFormState = FormState<SignupFormFieldNames>;
-export type LoginFormState = FormState<LoginFormFieldNames>;
+export type _SignupFormState = FormState<SignupFormFieldNames>;
+export type _LoginFormState = FormState<LoginFormFieldNames>;
 export type CreateUserFormState = FormState<CreateUserFormFieldNames>;
-export type EditUserFormState = FormState<EditUserFormFieldNames>;
+export type _EditUserFormState = FormState<EditUserFormFieldNames>;
 
 // --- Error Types ---
 
-export type UserErrorMap = Partial<
+export type _UserErrorMap = Partial<
   Record<keyof CreateUserFormFields, string[]>
 >;
-export type UserFormErrors = Partial<
+export type _UserFormErrors = Partial<
   Record<keyof CreateUserFormFields, string[]>
 >;
 
@@ -86,65 +86,62 @@ export type ActionResult = {
   readonly errors?: Record<string, string[]>;
 };
 
-// --- Zod Schemas (unchanged, but ensure types match above) ---
+// --- Zod Schemas ---
 
-export const usernameSchema = zod
+// --- Field Validation Schemas ---
+export const usernameSchema = z
   .string()
-  .min(3, { message: "Username must be at least three characters long." })
-  .max(32, { message: "Username cannot exceed 32 characters." })
+  .min(3, { error: "Username must be at least three characters long." })
+  .max(20, { error: "Username cannot exceed 20 characters." })
   .trim();
 
-export const emailSchema = zod
-  .string()
-  .email({ message: "Please enter a valid email address." })
+export const emailSchema = z
+  .email({ error: "Please enter a valid email address." })
   .trim();
 
-export const passwordSchema = zod
+export const roleSchema = z.enum(USER_ROLES, {
+  error: (issue) =>
+    issue.input === undefined ? "Role is required." : "Invalid user role.",
+});
+
+export const passwordSchema = z
   .string()
-  .min(5, { message: "Password must be at least 5 characters long." })
-  .max(32, { message: "Password cannot exceed 32 characters." })
-  .regex(/[a-zA-Z]/, { message: "Password must contain a letter." })
-  .regex(/[0-9]/, { message: "Password must contain a number." })
+  .min(5, { error: "Password must be at least 5 characters long." })
+  .max(32, { error: "Password cannot exceed 32 characters." })
+  .regex(/[a-zA-Z]/, { error: "Password must contain a letter." })
+  .regex(/[0-9]/, { error: "Password must contain a number." })
   .regex(/[^a-zA-Z0-9]/, {
-    message: "Password must contain a special character.",
+    error: "Password must contain a special character.",
   })
   .trim();
 
-export const BaseUserFormSchema = zod.object({
+// --- Form Validation Schemas ---
+
+export const _BaseUserFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   username: usernameSchema,
 });
 
-export const roleSchema = zod.enum(USER_ROLES, {
-  invalid_type_error: "Invalid user role.",
-  required_error: "Role is required.",
+export const CreateUserFormSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  role: roleSchema,
+  username: usernameSchema,
 });
 
-export const CreateUserFormSchema: ZodType<CreateUserFormFields> =
-  BaseUserFormSchema.extend({
-    role: zod.enum(USER_ROLES, { invalid_type_error: "Please select a role" }),
-  });
-
-export const SignupFormSchema: ZodType<SignupFormFields> =
-  BaseUserFormSchema.extend({
-    password: zod
-      .string()
-      .min(8, { message: "Be at least eight characters long" })
-      .regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
-      .regex(/[0-9]/, { message: "Contain at least one number." })
-      .regex(/[^a-zA-Z0-9]/, {
-        message: "Contain at least one special character.",
-      })
-      .trim(),
-  });
-
-export const LoginFormSchema: ZodType<LoginFormFields> = zod.object({
-  email: BaseUserFormSchema.shape.email,
-  password: zod.string().min(8, { message: "Password is required." }).trim(),
+export const SignupFormSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  username: usernameSchema,
 });
 
-export const EditUserFormSchema = zod.object({
+export const LoginFormSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
+export const EditUserFormSchema = z.object({
   email: emailSchema.optional(),
   password: passwordSchema.optional(),
   role: roleSchema.optional(),

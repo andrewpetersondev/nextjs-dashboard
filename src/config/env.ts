@@ -1,11 +1,15 @@
 import "server-only";
 
-import { z as zod } from "zod";
+import * as z from "zod";
 
-const envSchema = zod.object({
-  POSTGRES_URL: zod.string().url(),
-  POSTGRES_URL_TESTDB: zod.string().url(),
-  SESSION_SECRET: zod.string(),
+/**
+ * Environment variable schema for the application.
+ * Validates that required variables are present and correctly formatted.
+ */
+const envSchema = z.object({
+  POSTGRES_URL: z.url(),
+  POSTGRES_URL_TESTDB: z.url(),
+  SESSION_SECRET: z.string(),
 });
 
 const env = envSchema.safeParse(process.env);

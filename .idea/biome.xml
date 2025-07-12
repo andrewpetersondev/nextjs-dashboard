@@ -9,14 +9,10 @@
         <option value=".css" />
         <option value=".js" />
         <option value=".mjs" />
-        <option value=".cjs" />
         <option value=".jsx" />
         <option value=".json" />
-        <option value=".jsonc" />
         <option value=".html" />
         <option value=".ts" />
-        <option value=".mts" />
-        <option value=".cts" />
         <option value=".tsx" />
       </list>
     </option>

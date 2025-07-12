@@ -4,7 +4,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { z as zod } from "zod";
+import * as z from "zod";
 import type { UserRole } from "@/features/users/user.types";
 import {
   BASE64_PADDING_REGEX,
@@ -61,7 +61,7 @@ async function _createDbSession(
   role: UserRole = "user",
 ): Promise<void> {
   // Defensive: validate userId
-  const userIdSchema = zod.string().uuid();
+  const userIdSchema = z.uuid();
   if (!userIdSchema.safeParse(userId).success) {
     logger.error(
       { context: "createDbSession", userId },
