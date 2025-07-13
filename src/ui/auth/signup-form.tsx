@@ -8,7 +8,7 @@ import {
 import { type FC, type JSX, useActionState } from "react";
 import { signup } from "@/features/users/user.actions";
 import type { SignupFormFieldNames } from "@/features/users/user.types";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";

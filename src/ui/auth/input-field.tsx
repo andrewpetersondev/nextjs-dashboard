@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { InputFieldCard } from "@/components/input-field-card";
-import type { FormFieldError } from "@/lib/definitions/form.types";
+import type { FormFieldError } from "@/lib/forms/form.types";
 import { FieldError } from "@/ui/auth/field-error";
 
 /**

@@ -7,7 +7,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { updateUserAction } from "@/features/users/user.actions";
 import type { UserDto } from "@/features/users/user.dto";
 import type { EditUserFormFields } from "@/features/users/user.types";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
 import { ServerMessage } from "@/ui/users/server-message";
 
 type EditUserFormState = Readonly<{

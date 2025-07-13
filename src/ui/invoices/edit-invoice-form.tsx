@@ -50,6 +50,7 @@ export const EditInvoiceForm = ({
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
+    return undefined;
   }, [state.message]);
 
   return (

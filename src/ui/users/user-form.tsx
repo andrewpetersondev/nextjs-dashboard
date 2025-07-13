@@ -59,6 +59,7 @@ export function UserForm({
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
+    return undefined;
   }, [state.message]);
 
   return (

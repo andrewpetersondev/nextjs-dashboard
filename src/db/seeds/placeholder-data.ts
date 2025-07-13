@@ -7,6 +7,7 @@
  * - Types are defined locally to avoid import issues with CLI tools.
  * - Do **not** use in production code.
  */
+/** biome-ignore-all lint/style/noNonNullAssertion: <the data exists> */
 
 type UserMock = {
   username: string;
@@ -83,79 +84,79 @@ export const customers: CustomerMock[] = [
 export const invoices: InvoiceMock[] = [
   {
     amount: 15795,
-    customer_id: customers[0].id,
+    customer_id: customers[0]!.id,
     date: "2022-12-06",
     status: "pending",
   },
   {
     amount: 20348,
-    customer_id: customers[1].id,
+    customer_id: customers[1]!.id,
     date: "2022-11-14",
     status: "pending",
   },
   {
     amount: 3040,
-    customer_id: customers[4].id,
+    customer_id: customers[4]!.id,
     date: "2022-10-29",
     status: "paid",
   },
   {
     amount: 44800,
-    customer_id: customers[3].id,
+    customer_id: customers[3]!.id,
     date: "2023-09-10",
     status: "paid",
   },
   {
     amount: 34577,
-    customer_id: customers[5].id,
+    customer_id: customers[5]!.id,
     date: "2023-08-05",
     status: "pending",
   },
   {
     amount: 54246,
-    customer_id: customers[2].id,
+    customer_id: customers[2]!.id,
     date: "2023-07-16",
     status: "pending",
   },
   {
     amount: 666,
-    customer_id: customers[0].id,
+    customer_id: customers[0]!.id,
     date: "2023-06-27",
     status: "pending",
   },
   {
     amount: 32545,
-    customer_id: customers[3].id,
+    customer_id: customers[3]!.id,
     date: "2023-06-09",
     status: "paid",
   },
   {
     amount: 1250,
-    customer_id: customers[4].id,
+    customer_id: customers[4]!.id,
     date: "2023-06-17",
     status: "paid",
   },
   {
     amount: 8546,
-    customer_id: customers[5].id,
+    customer_id: customers[5]!.id,
     date: "2023-06-07",
     status: "paid",
   },
   {
     amount: 500,
-    customer_id: customers[1].id,
+    customer_id: customers[1]!.id,
     date: "2023-08-19",
     status: "paid",
   },
   {
     amount: 8945,
-    customer_id: customers[5].id,
+    customer_id: customers[5]!.id,
     date: "2023-06-03",
     status: "paid",
   },
   {
     amount: 1000,
-    customer_id: customers[2].id,
+    customer_id: customers[2]!.id,
     date: "2022-06-05",
     status: "paid",
   },

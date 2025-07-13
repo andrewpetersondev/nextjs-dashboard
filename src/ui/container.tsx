@@ -4,7 +4,7 @@ import { type ForwardedRef, forwardRef, type JSX } from "react";
 /**
  * Outer container for page layout.
  */
-const ContainerOuter = forwardRef<
+export const ContainerOuter = forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div">
 >(function OuterContainer(
@@ -21,7 +21,7 @@ const ContainerOuter = forwardRef<
 /**
  * Inner container for content alignment.
  */
-const ContainerInner = forwardRef<
+export const ContainerInner = forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div">
 >(function InnerContainer(

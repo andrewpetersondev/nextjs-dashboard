@@ -14,6 +14,8 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
+// biome-ignore-all lint/style/noNonNullAssertion: <the data exists>
+
 import bcryptjs from "bcryptjs";
 import { seed } from "drizzle-seed";
 import { nodeEnvDb } from "../dev-database";
@@ -127,11 +129,11 @@ async function main(): Promise<void> {
   )) as { rows: { count: number }[] };
 
   if (
-    userCount[0].count > 0 ||
-    customerCount[0].count > 0 ||
-    invoiceCount[0].count > 0 ||
-    revenueCount[0].count > 0 ||
-    demoUserCount[0].count > 0
+    userCount[0]!.count > 0 ||
+    customerCount[0]!.count > 0 ||
+    invoiceCount[0]!.count > 0 ||
+    revenueCount[0]!.count > 0 ||
+    demoUserCount[0]!.count > 0
   ) {
     console.error("Database is not empty. Exiting...");
     return;

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { FormFieldError } from "@/lib/definitions/form.types";
+import type { FormFieldError } from "@/lib/forms/form.types";
 
 interface ErrorMessageProps {
   dataCy?: string;

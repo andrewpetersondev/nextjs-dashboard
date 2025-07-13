@@ -1,10 +1,11 @@
 "use client";
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import type { JSX } from "react";
 import { type FC, useActionState } from "react";
 import { login } from "@/features/users/user.actions";
 import type { LoginFormFieldNames } from "@/features/users/user.types";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";

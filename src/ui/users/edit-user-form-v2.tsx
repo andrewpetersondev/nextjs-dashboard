@@ -4,7 +4,7 @@ import { type JSX, useActionState } from "react";
 import { updateUserAction } from "@/features/users/user.actions";
 import type { UserDto } from "@/features/users/user.dto";
 import type { EditUserFormFields } from "@/features/users/user.types";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
 import { UserForm } from "@/ui/users/user-form";
 import { UserInfoPanel } from "@/ui/users/user-info-panel";
 

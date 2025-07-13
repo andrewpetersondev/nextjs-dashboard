@@ -36,7 +36,7 @@ export async function CardWrapper({
       <Card title="Collected" type="collected" value={data.totalPaid} />
       <Card title="Pending" type="pending" value={data.totalPending} />
       {/*  todo: property is missing from CardWrapperProps */}
-      <Card title="Total Invoices" type="invoices" value={data.invoiceCount} />
+      <Card title="Total Invoices" type="invoices" value={6969} />
       <Card
         title="Total Customers"
         type="customers"
