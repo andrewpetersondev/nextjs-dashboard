@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { decrypt } from "@/features/sessions/session.jwt";
+import { readSessionToken } from "@/features/sessions/session.jwt";
 import type { DecryptPayload } from "@/features/sessions/session.types";
 
 const protectedRoutes: string[] = ["/dashboard"];
@@ -17,7 +17,7 @@ export default async function middleware(req: NextRequest) {
   const cookie: string | undefined = (await cookies()).get("session")?.value;
 
   // Decrypt the session cookie to get the session data
-  const session: DecryptPayload | undefined = await decrypt(cookie);
+  const session: DecryptPayload | undefined = await readSessionToken(cookie);
 
   // If the route is protected and the user is not authenticated, redirect to the login page
   if (isProtectedRoute && !session?.user?.userId) {

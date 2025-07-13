@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDB } from "@/db/connection";
-import { createSession, deleteSession } from "@/features/sessions/session.jwt";
+import {
+  deleteSessionToken,
+  setSessionToken,
+} from "@/features/sessions/session.jwt";
 import { hashPassword } from "@/features/sessions/session.utils";
 import {
   createDemoUser,
@@ -257,7 +260,7 @@ export async function signup(
         success: false,
       });
     }
-    await createSession(toUserId(user.id), toUserRoleBrand("user"));
+    await setSessionToken(toUserId(user.id), toUserRoleBrand("user"));
   } catch (error) {
     logError("signup", error, { email: formData.get("email") as string });
     return actionResult({
@@ -296,7 +299,7 @@ export async function login(
         success: false,
       });
     }
-    await createSession(toUserId(user.id), toUserRoleBrand(user.role));
+    await setSessionToken(toUserId(user.id), toUserRoleBrand(user.role));
   } catch (error) {
     logError("login", error, { email: formData.get("email") as string });
     return actionResult({
@@ -312,7 +315,7 @@ export async function login(
  * Logs out the current user and redirects to home.
  */
 export async function logout(): Promise<void> {
-  await deleteSession();
+  await deleteSessionToken();
   redirect("/");
 }
 
@@ -339,7 +342,7 @@ export async function demoUser(
       });
       throw new Error("Demo user creation failed");
     }
-    await createSession(toUserId(demoUser.id), toUserRoleBrand(role));
+    await setSessionToken(toUserId(demoUser.id), toUserRoleBrand(role));
   } catch (error) {
     logError("demoUser:session", error, { demoUser, role });
     return actionResult({

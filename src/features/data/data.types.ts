@@ -3,7 +3,7 @@ import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 /**
  * Data structure for dashboard cards.
  */
-export interface CardData {
+export interface _CardData {
   customerCount: number;
   invoiceCount: number;
   paidInvoices: number;
@@ -22,7 +22,7 @@ export type DashboardCardData = {
 /**
  * Raw DB row for latest invoices.
  */
-export type LatestInvoiceDbRow = {
+export type _LatestInvoiceDbRow = {
   amount: number;
   customerId: CustomerId;
   customerName: string;
@@ -34,7 +34,7 @@ export type LatestInvoiceDbRow = {
 /**
  * Latest invoice for dashboard UI.
  */
-export type LatestInvoice = {
+export type _LatestInvoice = {
   amount: string; // Formatted currency
   customerId: CustomerId;
   customerName: string;

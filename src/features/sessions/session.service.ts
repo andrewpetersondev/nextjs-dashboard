@@ -3,7 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { decrypt } from "@/features/sessions/session.jwt";
+import { readSessionToken } from "@/features/sessions/session.jwt";
 import type {
   DecryptPayload,
   SessionVerificationResult,
@@ -12,7 +12,7 @@ import type {
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
  *
- * - Reads the session cookie and attempts to decrypt it.
+ * - Reads the session cookie and attempts to readSessionToken it.
  * - Validates the presence of user information in the session.
  * - Redirects to `/login` if the session is missing or invalid.
  * - Returns an object containing authorization status, user ID, and role.
@@ -24,7 +24,7 @@ export const verifySessionOptimistic = cache(
       console.error("No session cookie found");
       redirect("/login");
     }
-    const session: DecryptPayload | undefined = await decrypt(cookie);
+    const session: DecryptPayload | undefined = await readSessionToken(cookie);
     if (!session?.user?.userId) {
       console.error("Invalid session or missing user information");
       redirect("/login");

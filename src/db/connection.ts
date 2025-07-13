@@ -9,7 +9,7 @@ import { POSTGRES_URL, POSTGRES_URL_TESTDB } from "@/config/env";
 import * as schema from "@/db/schema";
 
 // Supported database types
-export type DbType = "dev" | "test";
+type DbType = "dev" | "test";
 
 // Add this type for convenience
 export type Db = NodePgDatabase<typeof schema> & {

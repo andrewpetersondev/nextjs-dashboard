@@ -52,7 +52,7 @@ When a user submits the signup form, the following flow is triggered:
    On successful user creation, a session is created for the new user:
 
    ```typescript
-   await createSession(user.id, "user");
+   await setSessionToken(user.id, "user");
    ```
 
    This sets a secure session cookie for authentication.

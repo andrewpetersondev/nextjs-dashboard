@@ -10,12 +10,9 @@ import type {
   CustomerTableDbRow,
   FormattedCustomersTableRow,
 } from "@/features/customers/customers.types";
+import { CUSTOMER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toCustomerId } from "@/lib/definitions/brands";
 import { formatCurrency } from "@/lib/utils/utils";
-
-// Error message constants
-const ERROR_FETCH_ALL_CUSTOMERS = "Failed to fetch all customers.";
-const ERROR_FETCH_FILTERED_CUSTOMERS = "Failed to fetch the customer table.";
 
 /**
  * Fetches all customers for select options.
@@ -39,7 +36,7 @@ export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
   } catch (error) {
     // Use structured logging in production
     console.error("Database Error:", error);
-    throw new DatabaseError(ERROR_FETCH_ALL_CUSTOMERS, error);
+    throw new DatabaseError(CUSTOMER_ERROR_MESSAGES.FETCH_ALL_FAILED, error);
   }
 }
 
@@ -84,6 +81,9 @@ export async function fetchFilteredCustomers(
   } catch (error) {
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
-    throw new DatabaseError(ERROR_FETCH_FILTERED_CUSTOMERS, error);
+    throw new DatabaseError(
+      CUSTOMER_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
+      error,
+    );
   }
 }

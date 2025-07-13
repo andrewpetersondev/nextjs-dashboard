@@ -5,6 +5,10 @@ import { cookies } from "next/headers";
 import { SESSION_SECRET } from "@/config/env";
 import { ValidationError } from "@/errors/validation-error";
 import {
+  flattenEncryptPayload,
+  unflattenEncryptPayload,
+} from "@/features/sessions/session.mapper";
+import {
   type DecryptPayload,
   DecryptPayloadSchema,
   type EncryptPayload,
@@ -21,37 +25,9 @@ import {
 import { logger } from "@/lib/utils/utils.server";
 
 // --- JWT session logic here ---
-// export encrypt, decrypt, createSession, updateSession, deleteSession
+// export createSessionToken, readSessionToken, setSessionToken, updateSessionToken, deleteSessionToken
 
 // --- Internal Utility Types & Constants ---
-
-/**
- * Flattens EncryptPayload for JWT compatibility.
- */
-function flattenEncryptPayload(
-  payload: EncryptPayload,
-): Record<string, unknown> {
-  return {
-    expiresAt: payload.user.expiresAt,
-    role: payload.user.role,
-    userId: payload.user.userId,
-  };
-}
-
-/**
- * Reconstructs EncryptPayload from JWT payload.
- */
-function unflattenEncryptPayload(
-  payload: Record<string, unknown>,
-): EncryptPayload {
-  return {
-    user: {
-      expiresAt: payload.expiresAt as number,
-      role: payload.role as UserRole,
-      userId: payload.userId as string,
-    },
-  };
-}
 
 let encodedKey: Uint8Array | undefined;
 
@@ -79,18 +55,23 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
 
 /**
  * Encrypts a session payload into a JWT.
- * @param payload - The session payload to encrypt.
+ * @param payload - The session payload to createSessionToken.
  * @returns {Promise<string>} The signed JWT.
  * @throws {ValidationError} If the payload is invalid.
  */
-export async function encrypt(payload: EncryptPayload): Promise<string> {
+export async function createSessionToken(
+  payload: EncryptPayload,
+): Promise<string> {
   const key = await getEncodedKey();
 
   const validatedFields = EncryptPayloadSchema.safeParse(payload);
 
   if (!validatedFields.success) {
     logger.error(
-      { context: "encrypt", err: validatedFields.error.flatten().fieldErrors },
+      {
+        context: "createSessionToken",
+        err: validatedFields.error.flatten().fieldErrors,
+      },
       "Session encryption failed",
     );
     throw new ValidationError(
@@ -110,7 +91,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 
     logger.info(
       {
-        context: "encrypt",
+        context: "createSessionToken",
         role: jwtPayload.role,
         userId: jwtPayload.userId,
       },
@@ -119,7 +100,7 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
     return token;
   } catch (error: unknown) {
     logger.error(
-      { context: "encrypt", err: error },
+      { context: "createSessionToken", err: error },
       "Session encryption failed",
     );
     throw new Error("EncryptPayload encryption failed");
@@ -128,10 +109,10 @@ export async function encrypt(payload: EncryptPayload): Promise<string> {
 
 /**
  * Decrypts and validates a session JWT.
- * @param session - The JWT string to decrypt.
+ * @param session - The JWT string to readSessionToken.
  * @returns {Promise<DecryptPayload | undefined>} The decrypted payload, or undefined if invalid.
  */
-export async function decrypt(
+export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
   if (!session) {
@@ -185,44 +166,12 @@ export async function decrypt(
 }
 
 /**
- * Creates a new session cookie for the user.
- * @param userId - The user's unique identifier.
- * @param role - The user's role.
- * @returns {Promise<void>}
- */
-export async function createSession(
-  userId: string,
-  role: UserRole = "user",
-): Promise<void> {
-  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
-
-  const session: string = await encrypt({
-    user: { expiresAt, role, userId },
-  });
-
-  const cookieStore = await cookies();
-
-  cookieStore.set(SESSION_COOKIE_NAME, session, {
-    expires: new Date(expiresAt),
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  logger.info(
-    { context: "createSession", expiresAt, role, userId },
-    `Session created for user ${userId} with role ${role}`,
-  );
-}
-
-/**
  * Updates the session cookie's expiration if valid.
  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // biome-ignore lint/suspicious/noConfusingVoidType: <unused function>
-async function _updateSession(): Promise<null | void> {
+async function _updateSessionToken(): Promise<null | void> {
   const cookieStore = await cookies();
 
   const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
@@ -237,7 +186,7 @@ async function _updateSession(): Promise<null | void> {
     return null;
   }
 
-  const payload = await decrypt(session);
+  const payload = await readSessionToken(session);
 
   if (!payload?.user) {
     logger.warn(
@@ -270,7 +219,7 @@ async function _updateSession(): Promise<null | void> {
     },
   };
 
-  const updatedToken = await encrypt(minimalPayload);
+  const updatedToken = await createSessionToken(minimalPayload);
 
   cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
     expires: new Date(newExpiration),
@@ -290,8 +239,40 @@ async function _updateSession(): Promise<null | void> {
  * Deletes the session cookie.
  * @returns {Promise<void>}
  */
-export async function deleteSession(): Promise<void> {
+export async function deleteSessionToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
   logger.info({ context: "deleteSession" }, "Session cookie deleted");
+}
+
+/**
+ * Creates a new session cookie for the user.
+ * @param userId - The user's unique identifier.
+ * @param role - The user's role.
+ * @returns {Promise<void>}
+ */
+export async function setSessionToken(
+  userId: string,
+  role: UserRole = "user",
+): Promise<void> {
+  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
+
+  const session: string = await createSessionToken({
+    user: { expiresAt, role, userId },
+  });
+
+  const cookieStore = await cookies();
+
+  cookieStore.set(SESSION_COOKIE_NAME, session, {
+    expires: new Date(expiresAt),
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  logger.info(
+    { context: "createSession", expiresAt, role, userId },
+    `Session created for user ${userId} with role ${role}`,
+  );
 }

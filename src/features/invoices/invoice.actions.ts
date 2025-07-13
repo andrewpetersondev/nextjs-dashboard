@@ -19,6 +19,7 @@ import type {
   InvoiceEditState,
 } from "@/features/invoices/invoice.types";
 import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
+import { extractInvoiceFormFields } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   toCustomerId,
@@ -30,17 +31,6 @@ import {
   getFormField,
   logError,
 } from "@/lib/utils/utils.server";
-
-/**
- * Helper to extract required invoice fields from FormData.
- * Throws if any field is missing.
- */
-function extractInvoiceFormFields(formData: FormData) {
-  const rawAmount = getFormField(formData, "amount");
-  const rawCustomerId = getFormField(formData, "customerId");
-  const rawStatus = getFormField(formData, "status");
-  return { rawAmount, rawCustomerId, rawStatus };
-}
 
 // --- CRUD Actions for Invoices ---
 
