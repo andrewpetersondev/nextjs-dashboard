@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 export const dynamic = "force-dynamic";
 
-export interface UsersSearchParams {
+interface UsersSearchParams {
   query?: string;
   page?: string;
 }
 
-export interface UsersPageProps {
+interface UsersPageProps {
   searchParams?: Promise<UsersSearchParams>;
 }
 

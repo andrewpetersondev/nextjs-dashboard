@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export interface InvoicesSearchParams {
+interface InvoicesSearchParams {
   query?: string;
   page?: string;
 }
 
-export interface InvoicesPageProps {
+interface InvoicesPageProps {
   searchParams?: Promise<InvoicesSearchParams>;
 }
 

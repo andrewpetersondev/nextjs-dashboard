@@ -15,11 +15,11 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export interface EditUserPageParams {
+interface EditUserPageParams {
   id: string;
 }
 
-export interface EditUserPageProps {
+interface EditUserPageProps {
   params: Promise<EditUserPageParams>;
 }
 

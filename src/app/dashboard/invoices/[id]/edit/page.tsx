@@ -16,11 +16,11 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
 export const dynamic = "force-dynamic";
 
-export interface EditInvoicePageParams {
+interface EditInvoicePageParams {
   id: string;
 }
 
-export interface EditInvoicePageProps {
+interface EditInvoicePageProps {
   params: Promise<EditInvoicePageParams>;
 }
 
