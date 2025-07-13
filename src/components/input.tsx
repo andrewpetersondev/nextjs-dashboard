@@ -1,7 +1,6 @@
 import type React from "react";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Label for accessibility error description */
   ariaDescribedBy?: string;
   /** Data attribute for Cypress testing */

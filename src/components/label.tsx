@@ -1,7 +1,6 @@
 import type React from "react";
 
-export interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   text: string;
   dataCy?: string;
 }

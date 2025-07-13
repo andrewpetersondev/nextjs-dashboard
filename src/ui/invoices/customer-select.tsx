@@ -6,7 +6,7 @@ import type { CustomerField } from "@/features/customers/customers.types";
 /**
  * Props for the CustomerSelect component.
  */
-export interface CustomerSelectProps
+interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
   customers: CustomerField[];
   error?: string[] | undefined;
