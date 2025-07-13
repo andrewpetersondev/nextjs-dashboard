@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
 import { Button } from "@/ui/button";
 
-export interface AuthSubmitButtonProps
+interface AuthSubmitButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   dataCy?: string;

@@ -5,9 +5,8 @@ import { deleteInvoiceFormAction } from "@/features/invoices/invoice.actions";
 
 /**
  * Props for invoice action buttons.
- * @public
  */
-export interface InvoiceActionProps {
+interface InvoiceActionProps {
   id: string;
 }
 

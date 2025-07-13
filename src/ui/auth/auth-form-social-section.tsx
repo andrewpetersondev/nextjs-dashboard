@@ -6,7 +6,7 @@ import { SocialLoginButton } from "@/ui/auth/social-login-button";
 /**
  * Props for AuthFormSocialSection.
  */
-export interface AuthFormSocialSectionProps {
+interface AuthFormSocialSectionProps {
   /** Text for the demo user button */
   demoUserText: string;
   /** Text for the demo admin button */

@@ -5,7 +5,7 @@ import { MobileTable } from "@/ui/customers/mobile-table";
 import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
 
-export interface CustomersTableProps {
+interface CustomersTableProps {
   customers: FormattedCustomersTableRow[];
 }
 

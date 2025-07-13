@@ -4,7 +4,7 @@ import type { InvoiceCreateState } from "@/features/invoices/invoice.types";
 /**
  * Props for InvoiceServerMessage component.
  */
-export interface InvoiceServerMessageProps {
+interface InvoiceServerMessageProps {
   state: InvoiceCreateState;
   showAlert: boolean;
 }

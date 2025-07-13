@@ -12,7 +12,7 @@ import { FieldError } from "@/ui/auth/field-error";
 /**
  * Props for the InputField component.
  */
-export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   icon?: ReactNode;

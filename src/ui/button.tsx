@@ -5,8 +5,7 @@ import type { JSX } from "react";
 /**
  * Button component for user interactions.
  */
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 

@@ -14,7 +14,7 @@ import {
 /**
  * Props for the Dashboard component.
  */
-export interface DashboardProps {
+interface DashboardProps {
   /**
    * The dashboard title to display.
    */

@@ -11,7 +11,7 @@ import { H3 } from "@/ui/headings";
 /**
  * Card types for dashboard.
  */
-export type CardType = "invoices" | "customers" | "pending" | "collected";
+type CardType = "invoices" | "customers" | "pending" | "collected";
 
 /**
  * Icon mapping for card types.
@@ -23,7 +23,7 @@ const ICON_MAP: Record<CardType, React.ComponentType<{ className: string }>> = {
   pending: ClockIcon,
 };
 
-export interface CardWrapperProps {
+interface CardWrapperProps {
   /** Data for dashboard cards. */
   data: DashboardCardData;
 }

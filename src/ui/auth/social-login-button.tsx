@@ -5,12 +5,12 @@ import { GitHubIcon, GoogleIcon } from "@/ui/auth/icons";
 /**
  * Supported social login providers.
  */
-export type Provider = "Google" | "GitHub";
+type Provider = "Google" | "GitHub";
 
 /**
  * Props for SocialLoginButton.
  */
-export interface SocialLoginButtonProps {
+interface SocialLoginButtonProps {
   /** Social provider name */
   provider: Provider;
   /** OAuth endpoint or login URL */

@@ -3,7 +3,7 @@ import { type JSX, memo } from "react";
 /**
  * Props for the FieldError component.
  */
-export interface FieldErrorProps {
+interface FieldErrorProps {
   dataCy?: string | undefined;
   error?: string[] | undefined;
   id?: string;

@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-export interface SignupFormErrorMessageProps {
+interface SignupFormErrorMessageProps {
   message?: string;
 }
 

@@ -14,7 +14,7 @@ const LABELS = {
 /**
  * Props for the CustomerMobileCard component.
  */
-export interface CustomerMobileCardProps {
+interface CustomerMobileCardProps {
   customer: FormattedCustomersTableRow;
 }
 

@@ -9,7 +9,7 @@ import { Button } from "@/ui/button";
  * @param props - Component props.
  * @returns Rendered DemoForm component.
  */
-export interface DemoFormProps {
+interface DemoFormProps {
   /** Button label for accessibility and testing */
   label: string;
   /** Button text */

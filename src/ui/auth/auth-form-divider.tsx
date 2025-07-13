@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from "react";
 
-export interface AuthFormDividerProps {
+interface AuthFormDividerProps {
   /** The label to display in the divider */
   label: ReactNode;
   /** Optional: Additional class names for the wrapper */
