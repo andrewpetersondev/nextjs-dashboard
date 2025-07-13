@@ -35,6 +35,7 @@ import {
   type LoginFormFields,
   type SignupFormFieldNames,
   type SignupFormFields,
+  type UserCreateState,
   type UserRole,
 } from "@/features/users/user.types";
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -236,7 +237,7 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
-): Promise<FormState<SignupFormFieldNames>> {
+): Promise<UserCreateState> {
   const validated = validateSignupForm(formData);
 
   if (!validated.success || typeof validated.data === "undefined") {
