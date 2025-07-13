@@ -15,7 +15,11 @@ import { getFormField } from "@/lib/utils/utils.server";
  * @example
  * const { rawAmount, rawCustomerId, rawStatus } = extractInvoiceFormFields(formData);
  */
-export function extractInvoiceFormFields(formData: FormData) {
+export function extractInvoiceFormFields(formData: FormData): {
+  rawAmount: string;
+  rawCustomerId: string;
+  rawStatus: string;
+} {
   const rawAmount = getFormField(formData, "amount");
   const rawCustomerId = getFormField(formData, "customerId");
   const rawStatus = getFormField(formData, "status");

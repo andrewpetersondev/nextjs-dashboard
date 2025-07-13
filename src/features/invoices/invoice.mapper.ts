@@ -6,6 +6,7 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Transforms a raw database row (from Drizzle ORM) into a strongly-typed `InvoiceEntity`.
@@ -32,6 +33,19 @@ export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
     typeof row.sensitiveData !== "string" ||
     typeof row.status !== "string"
   ) {
+    logger.error({
+      context: "toInvoiceEntity",
+      expectedFields: [
+        "amount (number)",
+        "customerId (string)",
+        "id (string)",
+        "date (string)",
+        "sensitiveData (string)",
+        "status (string)",
+      ],
+      message: "Invalid invoice row",
+      row,
+    });
     throw new Error("Invalid invoice row: missing required fields");
   }
   // Defensive: Apply branding even though the properties are already branded in the DB schema

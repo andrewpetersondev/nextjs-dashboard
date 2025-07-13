@@ -13,21 +13,41 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { validateAndTransformInvoiceForm } from "@/features/invoices/invoice.service";
 import type {
   FetchFilteredInvoicesData,
+  InvoiceCreateInput,
   InvoiceCreateState,
   InvoiceEditState,
+  InvoiceErrorMap,
 } from "@/features/invoices/invoice.types";
 import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
 import { extractInvoiceFormFields } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
   toCustomerId,
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import { logError } from "@/lib/utils/logger";
-import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
+import { logger } from "@/lib/utils/logger";
+import {
+  buildErrorMap,
+  getFormField,
+  normalizeFieldErrors,
+} from "@/lib/utils/utils.server";
+
+/**
+ * Custom error type for validation errors.
+ */
+class InvoiceValidationError extends Error {
+  fieldErrors: InvoiceErrorMap;
+  constructor(message: string, fieldErrors: InvoiceErrorMap) {
+    super(message);
+    this.name = "InvoiceValidationError";
+    this.fieldErrors = fieldErrors;
+  }
+}
 
 // --- CRUD Actions for Invoices ---
 
@@ -105,6 +125,82 @@ export async function createInvoiceAction(
 }
 
 /**
+ * Version two of a server action to create a new invoice.
+ * @param _prevState
+ * @param formData
+ */
+export async function createInvoiceActionV2(
+  _prevState: InvoiceCreateState,
+  formData: FormData,
+): Promise<InvoiceCreateState> {
+  try {
+    const db = getDB();
+    let invoiceInput: InvoiceCreateInput;
+    try {
+      invoiceInput = validateAndTransformInvoiceForm(formData);
+    } catch (error) {
+      // --- Strongly type and handle validation errors ---
+      if (error instanceof InvoiceValidationError) {
+        logger.error({
+          context: "createInvoiceAction:validationError",
+          error,
+          formData: Object.fromEntries(formData.entries()),
+          message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+        });
+        return {
+          errors: normalizeFieldErrors(error.fieldErrors),
+          message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+          success: false,
+        };
+      }
+      // --- Handle unexpected errors in validation ---
+      logger.error({
+        context: "createInvoiceAction:unexpectedValidationError",
+        error,
+        formData: Object.fromEntries(formData.entries()),
+        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+      });
+      return {
+        errors: { _form: [INVOICE_ERROR_MESSAGES.VALIDATION_FAILED] },
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        success: false,
+      };
+    }
+
+    const invoice = await createInvoiceDal(db, invoiceInput);
+    if (!invoice) {
+      logger.error({
+        context: "createInvoiceAction:createFailed",
+        formData: Object.fromEntries(formData.entries()),
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+      });
+      return {
+        errors: { _form: [INVOICE_ERROR_MESSAGES.CREATE_FAILED] },
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      };
+    }
+    return {
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "createInvoiceAction",
+      error,
+      formData: Object.fromEntries(formData.entries()),
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
+    return {
+      errors: { _form: [INVOICE_ERROR_MESSAGES.DB_ERROR] },
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
  * Server action to fetch a single invoice by its ID.
  * @param id - The invoice ID (string).
  * @returns An InvoiceDto, or null.
@@ -118,7 +214,12 @@ export async function readInvoiceAction(
     const invoice = await readInvoiceDal(db, brandedId);
     return invoice ? invoice : null;
   } catch (error) {
-    logError("readInvoiceAction", error, { id });
+    logger.error({
+      context: "readInvoiceAction",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
     throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
   }
 }
@@ -141,8 +242,13 @@ export async function updateInvoiceAction(
       rawAmount = getFormField(formData, "amount");
       rawCustomerId = getFormField(formData, "customerId");
       rawStatus = getFormField(formData, "status");
-    } catch (err) {
-      logError("updateInvoiceAction:missingFields", err, { id });
+    } catch (error) {
+      logger.error({
+        context: "updateInvoiceAction:missingFields",
+        error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
+      });
       return {
         errors: buildErrorMap({
           amount: formData.get("amount")
@@ -168,6 +274,14 @@ export async function updateInvoiceAction(
     });
 
     if (!validated.success) {
+      logger.error({
+        context: "updateInvoiceAction:validationError",
+        error: validated.error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        prevState,
+      });
+
       return {
         errors: buildErrorMap(validated.error.flatten().fieldErrors),
         invoice: prevState.invoice,
@@ -189,6 +303,13 @@ export async function updateInvoiceAction(
     });
 
     if (!updatedInvoice) {
+      logger.error({
+        context: "updateInvoiceAction:updateFailed",
+        id,
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+        prevState,
+      });
+
       return {
         errors: {},
         invoice: prevState.invoice,
@@ -200,11 +321,18 @@ export async function updateInvoiceAction(
     return {
       errors: {},
       invoice: updatedInvoice,
-      message: "Updated invoice successfully.",
+      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
       success: true,
     };
   } catch (error) {
-    logError("updateInvoiceAction", error, { id });
+    logger.error({
+      context: "updateInvoiceAction",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+
     return {
       errors: {},
       invoice: prevState.invoice,

@@ -18,7 +18,7 @@ import type {
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
 import type { InvoiceId } from "@/lib/definitions/brands";
-import { logError } from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 import { formatCurrency } from "@/lib/utils/utils";
 
 /**
@@ -33,15 +33,17 @@ export async function createInvoiceDal(
       .insert(invoices)
       .values(invoice)
       .returning();
-
     if (!createdInvoice) return null;
-
     const entity = toInvoiceEntity(createdInvoice);
     if (!entity) return null;
-
     return toInvoiceDto(entity);
   } catch (error) {
-    logError("createInvoiceDal", error, { customerId: invoice.customerId });
+    logger.error({
+      context: "createInvoiceDal",
+      error,
+      invoice,
+      message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.CREATE_FAILED);
   }
 }
@@ -66,7 +68,12 @@ export async function readInvoiceDal(
 
     return dto;
   } catch (error) {
-    logError("readInvoiceDal", error, { id });
+    logger.error({
+      context: "readInvoiceDal",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.READ_FAILED,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.READ_FAILED);
   }
 }
@@ -85,10 +92,15 @@ export async function updateInvoiceDal(
       .set(invoice)
       .where(eq(invoices.id, id))
       .returning();
-
     return updated ? toInvoiceDto(toInvoiceEntity(updated)) : null;
   } catch (error) {
-    logError("updateInvoiceDal", error, { id, ...invoice });
+    logger.error({
+      context: "updateInvoiceDal",
+      error,
+      id,
+      invoice,
+      message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.UPDATE_FAILED);
   }
 }
@@ -105,12 +117,16 @@ export async function deleteInvoiceDal(
       .delete(invoices)
       .where(eq(invoices.id, id))
       .returning();
-
     return deletedInvoice
       ? toInvoiceDto(toInvoiceEntity(deletedInvoice))
       : null;
   } catch (error) {
-    logError("deleteInvoiceDal", error, { id });
+    logger.error({
+      context: "deleteInvoiceDal",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DELETE_FAILED,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.DELETE_FAILED);
   }
 }
@@ -138,13 +154,17 @@ export async function fetchLatestInvoices(
       .innerJoin(customers, eq(invoices.customerId, customers.id))
       .orderBy(desc(invoices.date))
       .limit(limit);
-
     return latestInvoices.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
   } catch (error) {
-    logError("fetchLatestInvoices", error);
+    logger.error({
+      context: "fetchLatestInvoices",
+      error,
+      limit,
+      message: INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED);
   }
 }
@@ -190,7 +210,13 @@ export async function fetchFilteredInvoices(
       amount: formatCurrency(invoice.amount),
     }));
   } catch (error) {
-    logError("fetchFilteredInvoices", error);
+    logger.error({
+      context: "fetchFilteredInvoices",
+      currentPage,
+      error,
+      message: INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
+      query,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED);
   }
 }
@@ -218,10 +244,14 @@ export async function fetchInvoicesPages(
           ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
         ),
       );
-
     return Math.ceil(total / ITEMS_PER_PAGE);
   } catch (error) {
-    logError("fetchInvoicesPages", error);
+    logger.error({
+      context: "fetchInvoicesPages",
+      error,
+      message: INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED,
+      query,
+    });
     throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
   }
 }
