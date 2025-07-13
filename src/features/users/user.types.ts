@@ -1,5 +1,5 @@
 import * as z from "zod";
-import type { UserEntity } from "@/db/entities/user.entity";
+import type { UserEntity } from "@/db/models/user.entity";
 import type { FormState } from "@/lib/definitions/form.types";
 
 // --- Domain Types ---

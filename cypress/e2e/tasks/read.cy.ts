@@ -1,4 +1,4 @@
-import type { UserEntity } from "@/db/entities/user.entity.ts";
+import type { UserEntity } from "@/db/models/user.entity.ts";
 import type { DbTaskResult } from "../../support/types.ts";
 import { _TEST_USER } from "../__fixtures__/users.ts";
 

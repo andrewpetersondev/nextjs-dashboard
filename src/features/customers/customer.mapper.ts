@@ -1,4 +1,4 @@
-import type { CustomerEntity } from "@/db/entities/customer.entity";
+import type { CustomerEntity } from "@/db/models/customer.entity";
 import type { CustomerDto } from "@/features/customers/customer.dto";
 import type { CustomerByIdDbRow } from "@/features/customers/customers.types";
 import { toCustomerId } from "@/lib/definitions/brands";

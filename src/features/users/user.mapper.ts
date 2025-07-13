@@ -1,4 +1,4 @@
-import type { UserEntity } from "@/db/entities/user.entity";
+import type { UserEntity } from "@/db/models/user.entity";
 import type { UserDto } from "@/features/users/user.dto";
 import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
 

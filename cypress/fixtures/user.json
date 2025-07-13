@@ -1,7 +1,0 @@
-{
-  "email": "fixtureuser@example.com",
-  "password": "Password123!",
-  "role": "user",
-  "sensitiveData": "superSecretInfo",
-  "username": "fixtureuser"
-}

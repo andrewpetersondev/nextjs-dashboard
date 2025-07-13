@@ -1,4 +1,4 @@
-import type { InvoiceEntity } from "@/db/entities/invoice.entity";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   toCustomerId,
