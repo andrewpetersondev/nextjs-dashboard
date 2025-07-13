@@ -211,7 +211,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
  * These types represent the raw rows from the database. They cannot easily swap with existing types because of branding, id, and date types.
  */
 export type UserRawDrizzle = typeof users.$inferSelect;
-export type _NewUserRawDrizzle = typeof users.$inferInsert;
+export type NewUserRawDrizzle = typeof users.$inferInsert;
 export type _DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
 export type _NewDemoUserCounterRawDrizzle =
   typeof demoUserCounters.$inferInsert;

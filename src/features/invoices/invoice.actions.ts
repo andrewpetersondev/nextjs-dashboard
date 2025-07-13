@@ -13,16 +13,12 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { validateAndTransformInvoiceForm } from "@/features/invoices/invoice.service";
-import type {
-  FetchFilteredInvoicesData,
-  InvoiceCreateInput,
-  InvoiceCreateState,
-  InvoiceEditState,
-  InvoiceErrorMap,
+import {
+  CreateInvoiceSchema,
+  type FetchFilteredInvoicesData,
+  type InvoiceEditState,
+  type InvoiceFieldName,
 } from "@/features/invoices/invoice.types";
-import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
-import { extractInvoiceFormFields } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
@@ -30,58 +26,46 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
+import type { FormState } from "@/lib/forms/form.types";
+import { validateFormData } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
-import {
-  buildErrorMap,
-  getFormField,
-  normalizeFieldErrors,
-} from "@/lib/utils/utils.server";
-
-/**
- * Custom error type for validation errors.
- */
-class InvoiceValidationError extends Error {
-  fieldErrors: InvoiceErrorMap;
-  constructor(message: string, fieldErrors: InvoiceErrorMap) {
-    super(message);
-    this.name = "InvoiceValidationError";
-    this.fieldErrors = fieldErrors;
-  }
-}
+import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Invoices ---
+
+// Use this as the return type for your action
+type InvoiceFormState = FormState<
+  InvoiceFieldName,
+  z.output<typeof CreateInvoiceSchema>
+>;
 
 /**
  * Server action to create a new invoice.
  */
 export async function createInvoiceAction(
-  _prevState: InvoiceCreateState,
+  _prevState: InvoiceFormState,
   formData: FormData,
-): Promise<InvoiceCreateState> {
+): Promise<InvoiceFormState> {
   try {
     const db = getDB();
 
-    // Extract and validate fields using a helper
-    const { rawAmount, rawCustomerId, rawStatus } =
-      extractInvoiceFormFields(formData);
+    // --- Centralized validation using the generic utility ---
+    const validationResult = validateFormData<
+      InvoiceFieldName,
+      typeof CreateInvoiceSchema._output
+    >(formData, CreateInvoiceSchema);
 
-    // --- Zod validation ---
-    const validated = CreateInvoiceSchema.safeParse({
-      amount: rawAmount,
-      customerId: rawCustomerId,
-      status: rawStatus,
-    });
-
-    if (!validated.success) {
+    if (!validationResult.success) {
       return {
-        errors: validated.error.flatten().fieldErrors,
+        errors: validationResult.errors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
-      } as const;
+      };
     }
 
     // --- Type-safe transformation ---
-    const { amount, customerId, status } = validated.data;
+    // biome-ignore lint/style/noNonNullAssertion: <temporary>
+    const { amount, customerId, status } = validationResult.data!;
     const brandedCustomerId = toCustomerId(customerId);
     const brandedStatus = toInvoiceStatusBrand(status);
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
@@ -91,7 +75,7 @@ export async function createInvoiceAction(
     const brands = {
       amount: amountInCents,
       customerId: brandedCustomerId,
-      date: now as string, // cast to string for DAL
+      date: now,
       status: brandedStatus,
     };
 
@@ -122,82 +106,6 @@ export async function createInvoiceAction(
   // NOTE: returning actionResult on success made this unreachable.
   // revalidatePath("/dashboard/invoices");
   // redirect("/dashboard/invoices");
-}
-
-/**
- * Version two of a server action to create a new invoice.
- * @param _prevState
- * @param formData
- */
-export async function createInvoiceActionV2(
-  _prevState: InvoiceCreateState,
-  formData: FormData,
-): Promise<InvoiceCreateState> {
-  try {
-    const db = getDB();
-    let invoiceInput: InvoiceCreateInput;
-    try {
-      invoiceInput = validateAndTransformInvoiceForm(formData);
-    } catch (error) {
-      // --- Strongly type and handle validation errors ---
-      if (error instanceof InvoiceValidationError) {
-        logger.error({
-          context: "createInvoiceAction:validationError",
-          error,
-          formData: Object.fromEntries(formData.entries()),
-          message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
-        });
-        return {
-          errors: normalizeFieldErrors(error.fieldErrors),
-          message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
-          success: false,
-        };
-      }
-      // --- Handle unexpected errors in validation ---
-      logger.error({
-        context: "createInvoiceAction:unexpectedValidationError",
-        error,
-        formData: Object.fromEntries(formData.entries()),
-        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
-      });
-      return {
-        errors: { _form: [INVOICE_ERROR_MESSAGES.VALIDATION_FAILED] },
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
-        success: false,
-      };
-    }
-
-    const invoice = await createInvoiceDal(db, invoiceInput);
-    if (!invoice) {
-      logger.error({
-        context: "createInvoiceAction:createFailed",
-        formData: Object.fromEntries(formData.entries()),
-        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
-      });
-      return {
-        errors: { _form: [INVOICE_ERROR_MESSAGES.CREATE_FAILED] },
-        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
-        success: false,
-      };
-    }
-    return {
-      errors: {},
-      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
-      success: true,
-    };
-  } catch (error) {
-    logger.error({
-      context: "createInvoiceAction",
-      error,
-      formData: Object.fromEntries(formData.entries()),
-      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
-    });
-    return {
-      errors: { _form: [INVOICE_ERROR_MESSAGES.DB_ERROR] },
-      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
-      success: false,
-    };
-  }
 }
 
 /**
