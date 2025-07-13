@@ -2,12 +2,17 @@ import * as z from "zod";
 import type { UserEntity } from "@/db/models/user.entity";
 import type { FormState } from "@/lib/definitions/form.types";
 
-// --- Domain Types ---
+/**
+ * --- Domain Types ---
+ */
 
 export const USER_ROLES = ["admin", "user", "guest"] as const;
+
 export type UserRole = (typeof USER_ROLES)[number];
 
-// --- Form Field Types ---
+/**
+ * --- Form Field Types ---
+ */
 
 /**
  * Base fields for user forms.
@@ -54,6 +59,7 @@ export type UserUpdatePatch = Partial<
 >;
 
 // --- Field Name Unions ---
+
 export type SignupFormFieldNames = keyof SignupFormFields;
 export type LoginFormFieldNames = keyof LoginFormFields;
 export type CreateUserFormFieldNames = keyof CreateUserFormFields;
@@ -117,7 +123,7 @@ export const passwordSchema = z
 
 // --- Form Validation Schemas ---
 
-export const _BaseUserFormSchema = z.object({
+export const BaseUserFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   username: usernameSchema,

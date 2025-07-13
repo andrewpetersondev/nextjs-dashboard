@@ -5,8 +5,10 @@ import {
   LockClosedIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { type FC, useActionState } from "react";
+import { type FC, type JSX, useActionState } from "react";
 import { signup } from "@/features/users/user.actions";
+import type { SignupFormFieldNames } from "@/features/users/user.types";
+import type { FormState } from "@/lib/definitions/form.types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
@@ -14,14 +16,11 @@ import { InputField } from "@/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
-type SignupFormState = Readonly<{
-  errors?: {
-    username?: string[];
-    email?: string[];
-    password?: string[];
-  };
-  message?: string;
-}>;
+const initialState = {
+  errors: {},
+  message: "",
+  success: false,
+};
 
 /**
  * SignupForm component for user registration.
@@ -31,11 +30,11 @@ type SignupFormState = Readonly<{
  *
  * @returns Rendered SignupForm component.
  */
-export const SignupForm: FC = () => {
-  const [state, action, pending] = useActionState<SignupFormState, FormData>(
-    signup,
-    { errors: {}, message: "" },
-  );
+export const SignupForm: FC = (): JSX.Element => {
+  const [state, action, pending] = useActionState<
+    typeof signup,
+    FormState<SignupFormFieldNames>
+  >(signup, initialState);
 
   return (
     <>

@@ -3,6 +3,8 @@
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type FC, useActionState } from "react";
 import { login } from "@/features/users/user.actions";
+import type { LoginFormFieldNames } from "@/features/users/user.types";
+import type { FormState } from "@/lib/definitions/form.types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
@@ -10,45 +12,45 @@ import { InputField } from "@/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
-type LoginFormState = Readonly<{
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-  message?: string;
-}>;
+// Define the initial state with strict typing
+const initialState: FormState<LoginFormFieldNames> = {
+  errors: {},
+  message: "",
+  success: false,
+};
 
 /**
  * LoginForm component for user authentication.
  *
- * @returns Rendered LoginForm component.
+ * @returns {JSX.Element} Rendered LoginForm component.
  */
-export const LoginForm: FC = () => {
-  const [state, action, pending] = useActionState<LoginFormState, FormData>(
-    login,
-    {
-      errors: {},
-      message: "",
-    },
-  );
+export const LoginForm: FC = (): JSX.Element => {
+  // useActionState returns a tuple: [state, action, pending]
+  const [state, action, pending] = useActionState<
+    typeof login,
+    FormState<LoginFormFieldNames>
+  >(login, initialState);
 
   return (
     <>
-      <form action={action} className="space-y-6">
+      <form action={action} aria-label="Login form" className="space-y-6">
         <InputField
           autoComplete="email"
-          autoFocus={true}
+          autoFocus
           dataCy="login-email-input"
           describedById="login-email-errors"
           error={state?.errors?.email}
           icon={
-            <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+            <AtSymbolIcon
+              aria-hidden="true"
+              className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent"
+            />
           }
           id="email"
           label="Email address"
           name="email"
           placeholder="steve@jobs.com"
-          required={true}
+          required
           type="email"
         />
         <InputField
@@ -57,13 +59,16 @@ export const LoginForm: FC = () => {
           describedById="login-password-errors"
           error={state?.errors?.password}
           icon={
-            <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+            <LockClosedIcon
+              aria-hidden="true"
+              className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent"
+            />
           }
           id="password"
           label="Password"
           name="password"
           placeholder="Enter your password"
-          required={true}
+          required
           type="password"
         />
 
@@ -79,6 +84,7 @@ export const LoginForm: FC = () => {
         </AuthSubmitButton>
       </form>
 
+      {/* Show server message if present */}
       {state.message && <AuthServerMessage message={state.message} />}
     </>
   );

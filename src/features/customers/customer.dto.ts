@@ -1,6 +1,10 @@
 /**
  * Data Transfer Object (DTO) representing a customer entity.
  *
+ * - Uses only plain types (string, etc.) for safe serialization.
+ * - Intended for API/UI transport; never expose branded or internal types.
+ * - Do not include sensitive or internal-only fields.
+ *
  * @remarks
  * - Used for transferring customer data between layers (API, services, etc.).
  * - All properties are immutable and strictly typed.
