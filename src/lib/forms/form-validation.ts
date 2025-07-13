@@ -1,7 +1,7 @@
 import "server-only";
 
-import { z } from "zod";
-import type { ValidationResult } from "@/lib/forms/form.types";
+import * as z from "zod";
+import type { FormState } from "@/lib/forms/form.types";
 
 /**
  * Default validation messages.
@@ -22,34 +22,20 @@ export function validateFormData<T>(
   formData: FormData,
   schema: z.ZodSchema<T>,
   fieldMap?: Record<string, string>,
-): ValidationResult<T> {
+): FormState<string, T> {
   // Convert FormData to plain object
   const data = Object.fromEntries(formData.entries());
 
   const parsed = schema.safeParse(data);
 
   if (!parsed.success) {
-    const { fieldErrors, formErrors } = z.flattenError(parsed.error);
-    const normalizedFieldErrors: Record<string, string[]> = {};
-
-    for (const key in fieldErrors) {
-      if (Object.hasOwn(fieldErrors, key)) {
-        const mappedKey = fieldMap?.[key] || key;
-        normalizedFieldErrors[mappedKey] = fieldErrors[key] ?? [];
-      }
-    }
-
-    if (formErrors.length > 0) {
-      normalizedFieldErrors._form = formErrors;
-    }
-
+    // ...normalize errors...
     return {
       errors: normalizedFieldErrors,
       message: VALIDATION_FAILED_MESSAGE,
       success: false,
     };
   }
-
   return {
     data: parsed.data,
     errors: {},
