@@ -21,6 +21,7 @@ import {
   updateUserDal,
 } from "@/features/users/user.dal";
 import type { UserDto } from "@/features/users/user.dto";
+import { validateSignupForm } from "@/features/users/user.service";
 import {
   type ActionResult,
   type CreateUserFormFieldNames,
@@ -30,7 +31,6 @@ import {
   type LoginFormFieldNames,
   LoginFormSchema,
   type SignupFormFieldNames,
-  SignupFormSchema,
   type UserRole,
 } from "@/features/users/user.types";
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -233,21 +233,15 @@ export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
+  const validated = validateSignupForm(formData);
+
+  if (!validated.success || typeof validated.data === "undefined") {
+    return validated;
+  }
+
+  const { username, email, password } = validated.data;
+  const db = getDB();
   try {
-    const validated = SignupFormSchema.safeParse({
-      email: getFormField(formData, "email"),
-      password: getFormField(formData, "password"),
-      username: getFormField(formData, "username"),
-    });
-    if (!validated.success) {
-      return actionResult({
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      });
-    }
-    const { username, email, password } = validated.data;
-    const db = getDB();
     const user = await createUserDal(db, {
       email,
       password,
