@@ -1,6 +1,22 @@
+/**
+ * @file reset-test-db.ts
+ * @description
+ * Resets all tables in the test database using Drizzle Seed.
+ *
+ * - Intended for CLI tooling and Cypress only.
+ * - Do **not** import or use in application runtime code.
+ * - Do **not** import "server-only" code.
+ * - This file MAY need to include file extensions like .ts for compatibility with the CLI tools and Cypress.
+ * - This file MAY need to use RELATIVE IMPORTS for compatibility with the CLI tools and Cypress.
+ * - Uses the test database connection from `test-database.ts`.
+ * - All credentials are managed via environment variables and Hashicorp Vault.
+ *
+ * @see https://orm.drizzle.team/docs/seed
+ */
+
 import { reset } from "drizzle-seed";
-import * as schema from "@/db/schema.ts";
-import { nodeEnvTestDb } from "@/db/test-database.ts";
+import * as schema from "../schema";
+import { nodeEnvTestDb } from "../test-database";
 
 async function main(): Promise<void> {
   await reset(nodeEnvTestDb, schema);

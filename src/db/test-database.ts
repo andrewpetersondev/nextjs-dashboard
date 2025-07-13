@@ -1,4 +1,14 @@
-// import "server-only";
+/**
+ * @file test-database.ts
+ * @description
+ * This file is used **only** for Drizzle Kit test operations (e.g., generating test migrations, seeding the test database).
+ *
+ * - Do **not** import or use this file in application runtime code.
+ * - Uses environment variable `POSTGRES_URL_TESTDB` for the test database connection.
+ * - All credentials are managed via environment variables and Hashicorp Vault.
+ *
+ * @see https://orm.drizzle.team/docs/overview
+ */
 
 import {
   drizzle,

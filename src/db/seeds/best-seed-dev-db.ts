@@ -1,10 +1,23 @@
-// ANY FILE THAT IS USED FOR CLI TOOLING CANNOT HAVE IMPORT "SERVER-ONLY"
-// DRIZZLE CLI, NODE, AND TSX DO NOT SUPPORT "SERVER-ONLY" OR "USE-SERVER"
+/**
+ * @file best-seed-dev-db.ts
+ * @description
+ * Seeds the development database with initial data using Drizzle Seed.
+ *
+ * - Intended for CLI tooling and Cypress only.
+ * - Do **not** import or use in application runtime code.
+ * - Do **not** import "server-only" code.
+ * - This file MAY need to include file extensions like .ts for compatibility with the CLI tools and Cypress.
+ * - This file MAY need to use RELATIVE IMPORTS for compatibility with the CLI tools and Cypress.
+ * - Uses the dev database connection from `dev-database.ts`.
+ * - All credentials are managed via environment variables and Hashicorp Vault.
+ *
+ * @see https://orm.drizzle.team/docs/seed
+ */
 
 import bcryptjs from "bcryptjs";
 import { seed } from "drizzle-seed";
-import { nodeEnvDb } from "../dev-database.ts";
-import * as schema from "../schema.ts";
+import { nodeEnvDb } from "../dev-database";
+import * as schema from "../schema";
 
 const SALT_ROUNDS: number = 10;
 

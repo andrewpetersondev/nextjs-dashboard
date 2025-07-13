@@ -1,4 +1,14 @@
-// import "server-only";
+/**
+ * @file dev-database.ts
+ * @description
+ * This file is used **only** for Drizzle Kit development operations (e.g., generating migrations, seeding the dev database).
+ *
+ * - Do **not** import or use this file in application runtime code.
+ * - Uses environment variable `POSTGRES_URL` for the dev database connection.
+ * - All credentials are managed via environment variables and Hashicorp Vault.
+ *
+ * @see https://orm.drizzle.team/docs/overview
+ */
 
 import {
   drizzle,

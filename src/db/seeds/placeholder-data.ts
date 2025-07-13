@@ -1,7 +1,12 @@
-// This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
-// https://nextjs.org/learn/dashboard-app/fetching-data
-
-// Keep types in this file because this file needs to be isolated from any "server" code for drizzle-kit to work properly. Also, the types in this file are defined elsewhere.
+/**
+ * @file placeholder-data.ts
+ * @description
+ * Provides mock data types and values for seeding and testing the database.
+ *
+ * - Isolated from any server-only code for Drizzle Kit compatibility.
+ * - Types are defined locally to avoid import issues with CLI tools.
+ * - Do **not** use in production code.
+ */
 
 type UserMock = {
   username: string;

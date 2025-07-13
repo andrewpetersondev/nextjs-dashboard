@@ -15,6 +15,6 @@ export default defineConfig({
     url: process.env.POSTGRES_URL_TESTDB!,
   },
   dialect: "postgresql",
-  out: "./src/db/drizzle-migrations/test/",
-  schema: "./src/lib/db/schema.ts",
+  out: "./src/db/migrations/test/",
+  schema: "./src/db/schema.ts",
 });

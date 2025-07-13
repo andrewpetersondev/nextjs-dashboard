@@ -201,18 +201,19 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
  *
  * These types represent the raw rows from the database. They cannot easily swap with existing types because of branding, id, and date types.
  */
-export type UserRawDrizzle = typeof users.$inferSelect;
-export type NewUserRawDrizzle = typeof users.$inferInsert;
-export type DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
-export type NewDemoUserCounterRawDrizzle = typeof demoUserCounters.$inferInsert;
-export type CustomerRawDrizzle = typeof customers.$inferSelect;
-export type NewCustomerRawDrizzle = typeof customers.$inferInsert;
-export type InvoiceRawDrizzle = typeof invoices.$inferSelect;
-export type NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
-export type RevenueRawDrizzle = typeof revenues.$inferSelect;
-export type NewRevenueRawDrizzle = typeof revenues.$inferInsert;
-export type SessionRawDrizzle = typeof sessions.$inferSelect;
-export type NewSessionRawDrizzle = typeof sessions.$inferInsert;
+export type _UserRawDrizzle = typeof users.$inferSelect;
+export type _NewUserRawDrizzle = typeof users.$inferInsert;
+export type _DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
+export type _NewDemoUserCounterRawDrizzle =
+  typeof demoUserCounters.$inferInsert;
+export type _CustomerRawDrizzle = typeof customers.$inferSelect;
+export type _NewCustomerRawDrizzle = typeof customers.$inferInsert;
+export type _InvoiceRawDrizzle = typeof invoices.$inferSelect;
+export type _NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
+export type _RevenueRawDrizzle = typeof revenues.$inferSelect;
+export type _NewRevenueRawDrizzle = typeof revenues.$inferInsert;
+export type _SessionRawDrizzle = typeof sessions.$inferSelect;
+export type _NewSessionRawDrizzle = typeof sessions.$inferInsert;
 
 /**
  * ---------------------------------------------------------------------------
