@@ -1,49 +1,64 @@
 import * as z from "zod";
 import type { UserEntity } from "@/db/models/user.entity";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
+
+/** --- User Domain Types --- */
 
 /**
- * --- Domain Types ---
+ * List of allowed user roles.
+ * @readonly
  */
-
 export const USER_ROLES = ["admin", "user", "guest"] as const;
 
+/**
+ * Union type for user roles.
+ * @example
+ * const role: UserRole = "admin";
+ */
 export type UserRole = (typeof USER_ROLES)[number];
 
 /**
+ * Patch type for updating user entities.
+ * All fields are optional for PATCH semantics.
+ */
+export type UserUpdatePatch = Partial<
+  Pick<UserEntity, "username" | "email" | "role" | "password">
+>;
+
+/**
  * --- Form Field Types ---
+ * These are kept here for user-specific forms.
  */
 
 /**
- * Base fields for user forms.
- * All fields are required strings.
+ * Fields required for user login and signup forms.
  */
 export type BaseUserFormFields = {
-  username: string;
   email: string;
   password: string;
 };
 
 /**
- * Fields for creating a user (admin).
+ * Fields for login form.
  */
-export type CreateUserFormFields = BaseUserFormFields & {
+export type LoginFormFields = BaseUserFormFields;
+
+/**
+ * Fields for signup form (username required).
+ */
+export type SignupFormFields = BaseUserFormFields & {
+  username: string;
+};
+
+/**
+ * Fields for admin user creation.
+ */
+export type CreateUserFormFields = SignupFormFields & {
   role: UserRole;
 };
 
 /**
- * Fields for a signup form (no role).
- */
-export type SignupFormFields = Omit<CreateUserFormFields, "role">;
-
-/**
- * Fields for a login form.
- */
-export type LoginFormFields = Pick<BaseUserFormFields, "email" | "password">;
-
-/**
- * Fields for editing a user (all optional for PATCH semantics).
- * All fields are optional strings, except role which is optional UserRole.
+ * Fields for editing a user (all optional).
  */
 export type EditUserFormFields = Partial<{
   username: string;
@@ -52,31 +67,28 @@ export type EditUserFormFields = Partial<{
   role: UserRole;
 }>;
 
-// --- Patch Type for Updates ---
-
-export type UserUpdatePatch = Partial<
-  Pick<UserEntity, "username" | "email" | "role" | "password">
->;
-
-// --- Field Name Unions ---
-
+/**
+ * --- Form Field Name Unions ---
+ * Used for type-safe access to form fields and errors.
+ */
 export type SignupFormFieldNames = keyof SignupFormFields;
 export type LoginFormFieldNames = keyof LoginFormFields;
 export type CreateUserFormFieldNames = keyof CreateUserFormFields;
 export type EditUserFormFieldNames = keyof EditUserFormFields;
 
-// --- Form State Aliases (use generic FormState<TFieldNames>) ---
 /**
+ * --- Form State Aliases ---
  * Use generic FormState<TFieldNames> for all form state types.
- * This ensures maintainability and DRY code.
  */
-export type _SignupFormState = FormState<SignupFormFieldNames>;
-export type _LoginFormState = FormState<LoginFormFieldNames>;
+export type SignupFormState = FormState<SignupFormFieldNames>;
+export type _LoginFormState = FormState<LoginFormFieldNames>; // Internal use
 export type CreateUserFormState = FormState<CreateUserFormFieldNames>;
-export type _EditUserFormState = FormState<EditUserFormFieldNames>;
+export type _EditUserFormState = FormState<EditUserFormFieldNames>; // Internal use
 
-// --- Error Types ---
-
+/**
+ * --- Error Types ---
+ * Internal error map types for user forms.
+ */
 export type _UserErrorMap = Partial<
   Record<keyof CreateUserFormFields, string[]>
 >;
@@ -84,32 +96,49 @@ export type _UserFormErrors = Partial<
   Record<keyof CreateUserFormFields, string[]>
 >;
 
-// --- Action Result ---
-
-export type ActionResult = {
-  readonly message?: string;
+/**
+ * --- Action Result Type ---
+ * Standardized result for server actions.
+ */
+export type ActionResult<TData = unknown> = {
+  readonly message: string;
   readonly success: boolean;
-  readonly errors?: Record<string, string[]>;
+  readonly errors: Record<string, string[]>;
+  readonly data?: TData;
 };
 
-// --- Zod Schemas ---
+/**
+ * --- Zod Schemas for User Forms ---
+ * Used for validation and type inference.
+ */
 
-// --- Field Validation Schemas ---
+/**
+ * Username validation schema.
+ */
 export const usernameSchema = z
   .string()
   .min(3, { error: "Username must be at least three characters long." })
   .max(20, { error: "Username cannot exceed 20 characters." })
   .trim();
 
+/**
+ * Email validation schema.
+ */
 export const emailSchema = z
   .email({ error: "Please enter a valid email address." })
   .trim();
 
+/**
+ * User role validation schema.
+ */
 export const roleSchema = z.enum(USER_ROLES, {
   error: (issue) =>
     issue.input === undefined ? "Role is required." : "Invalid user role.",
 });
 
+/**
+ * Password validation schema.
+ */
 export const passwordSchema = z
   .string()
   .min(5, { error: "Password must be at least 5 characters long." })
@@ -121,14 +150,9 @@ export const passwordSchema = z
   })
   .trim();
 
-// --- Form Validation Schemas ---
-
-export const BaseUserFormSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-  username: usernameSchema,
-});
-
+/**
+ * Validation schema for creating a user (admin).
+ */
 export const CreateUserFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -136,17 +160,26 @@ export const CreateUserFormSchema = z.object({
   username: usernameSchema,
 });
 
+/**
+ * Validation schema for user signup.
+ */
 export const SignupFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   username: usernameSchema,
 });
 
+/**
+ * Validation schema for user login.
+ */
 export const LoginFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
 });
 
+/**
+ * Validation schema for editing a user.
+ */
 export const EditUserFormSchema = z.object({
   email: emailSchema.optional(),
   password: passwordSchema.optional(),

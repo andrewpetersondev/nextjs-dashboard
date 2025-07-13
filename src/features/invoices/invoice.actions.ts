@@ -26,11 +26,8 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import {
-  buildErrorMap,
-  getFormField,
-  logError,
-} from "@/lib/utils/utils.server";
+import { logError } from "@/lib/utils/logger";
+import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Invoices ---
 

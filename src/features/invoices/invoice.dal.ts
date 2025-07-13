@@ -18,8 +18,8 @@ import type {
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
 import type { InvoiceId } from "@/lib/definitions/brands";
+import { logError } from "@/lib/utils/logger";
 import { formatCurrency } from "@/lib/utils/utils";
-import { logError } from "@/lib/utils/utils.server";
 
 /**
  * Inserts a new invoice record into the database.

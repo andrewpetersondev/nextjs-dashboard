@@ -9,7 +9,8 @@ import type {
   DbSessionRow,
   SessionRecord,
 } from "@/features/sessions/session.types";
-import { logger } from "@/lib/utils/utils.server";
+
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Inserts a new session record into the database.

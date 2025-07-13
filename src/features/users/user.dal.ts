@@ -17,7 +17,8 @@ import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
 import { toUserRoleBrand, type UserId } from "@/lib/definitions/brands";
-import { createRandomPassword, logError } from "@/lib/utils/utils.server";
+import { logError } from "@/lib/utils/logger";
+import { createRandomPassword } from "@/lib/utils/password";
 
 /**
  * Inserts a new user record into the database.

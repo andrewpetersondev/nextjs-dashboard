@@ -2,6 +2,7 @@ import type { CustomerEntity } from "@/db/models/customer.entity";
 import type { CustomerRawDrizzle } from "@/db/schema";
 import type { CustomerDto } from "@/features/customers/customer.dto";
 import { toCustomerId } from "@/lib/definitions/brands";
+import { validateRequiredFields } from "@/lib/utils/validation";
 
 /**
  * Transforms a raw database row (from Drizzle ORM) into a strongly-typed `CustomerEntity`.
@@ -19,17 +20,18 @@ import { toCustomerId } from "@/lib/definitions/brands";
  *
  */
 export function toCustomerEntity(row: CustomerRawDrizzle): CustomerEntity {
-  // Defensive: Validate all required fields
-  if (
-    !row ||
-    typeof row.email !== "string" ||
-    typeof row.id !== "string" ||
-    typeof row.imageUrl !== "string" ||
-    typeof row.sensitiveData !== "string" ||
-    typeof row.name !== "string"
-  ) {
-    throw new Error("Invalid customer row: missing required fields");
-  }
+  // Use the reusable validation utility for required fields
+  validateRequiredFields<CustomerRawDrizzle>(
+    row,
+    {
+      email: "string",
+      id: "string",
+      imageUrl: "string",
+      name: "string",
+      sensitiveData: "string",
+    },
+    "customer row",
+  );
   // Defensive: Apply branding even though the properties are already branded in the DB schema
   return {
     email: row.email,

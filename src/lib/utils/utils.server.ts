@@ -7,7 +7,7 @@
  */
 
 import "server-only";
-import pino from "pino";
+
 import {
   type ActionResult,
   USER_ROLES,
@@ -70,53 +70,34 @@ export function actionResult(params: {
   success?: boolean;
   errors?: Record<string, string[]>;
 }): ActionResult;
+
 export function actionResult<T>(params: {
   data: T;
   message: string;
   success?: boolean;
   errors?: Record<string, string[]>;
 }): ActionResult & { data: T };
-export function actionResult<T = undefined>(params: {
-  data?: T;
-  message: string;
-  success?: boolean;
-  errors?: Record<string, string[]>;
-}): ActionResult | (ActionResult & { data: T }) {
-  const { data, errors, message, success = true } = params;
-  // Only include optional properties if they are defined
-  const result: ActionResult & Partial<{ data: T }> = {
-    message,
-    success,
-    ...(errors !== undefined ? { errors } : {}),
-    ...(data !== undefined ? { data } : {}),
-  };
-  return result;
-}
-
-export type LogMeta = {
-  userId?: string;
-  email?: string;
-  action?: string;
-  [key: string]: unknown;
-};
 
 /**
- * Centralized error logger for server actions.
+ * Returns a standardized action result object for server actions.
  *
- * - Logs errors with context and optional metadata.
- * - Extend to integrate with external logging services.
- *
- * @param context - Context string for the error (e.g., function name).
- * @param error - The error object or message.
- * @param meta - Optional metadata for structured logging.
+ * @template T - The type of the `data` property, if present.
+ * @param params - The parameters for the action result.
+ * @returns An `ActionResult` object.
  */
-export const logError = (
-  context: string,
-  error: unknown,
-  meta?: LogMeta,
-): void => {
-  console.error(`[${context}]`, { error, ...meta });
-};
+export function actionResult<T = undefined>(params: {
+  data?: T;
+  message?: string;
+  success?: boolean;
+  errors?: Record<string, string[]>;
+}): ActionResult<T> {
+  return {
+    errors: params.errors ?? {},
+    message: params.message ?? "",
+    success: params.success ?? true,
+    ...(params.data !== undefined ? { data: params.data } : {}),
+  };
+}
 
 /**
  * Safely extracts and strongly types a field from FormData.
@@ -149,59 +130,3 @@ export const getFormField = <T extends string = string>(
  */
 export const getValidUserRole = (role: unknown): UserRole =>
   USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";
-
-/**
- * Generates a random password string with at least one capital letter, one number, and one special character.
- *
- * @param length - Desired length of the password (default: 10).
- * @returns {string} - The generated password.
- */
-export const createRandomPassword = (length = 10): string => {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-};
-
-/**
- * Pino logger instance for structured logging.
- *
- * - Configured for different log levels in production and development.
- */
-export const logger = pino({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  name: "auth",
-});
-
-/**
- * Validates that an object has all required fields with expected types.
- * Throws an error if any field is missing or of the wrong type.
- *
- * @param obj - The object to validate.
- * @param schema - An object mapping field names to expected types (e.g., "string", "number").
- * @param context - Optional context for error messages.
- * @throws {Error} If a required field is missing or has the wrong type.
- */
-export function validateRequiredFields<T extends object>(
-  obj: unknown,
-  schema: Record<
-    keyof T,
-    "string" | "number" | "boolean" | "object" | "undefined" | "function"
-  >,
-  context = "object",
-): asserts obj is T {
-  if (typeof obj !== "object" || obj === null) {
-    throw new Error(`Invalid ${context}: not an object`);
-  }
-  for (const [key, type] of Object.entries(schema)) {
-    // @ts-expect-error: dynamic property access
-    if (typeof obj[key] !== type) {
-      throw new Error(
-        `Invalid ${context}: missing or invalid field "${key}" (expected ${type})`,
-      );
-    }
-  }
-}

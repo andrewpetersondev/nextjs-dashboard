@@ -21,7 +21,10 @@ import {
   updateUserDal,
 } from "@/features/users/user.dal";
 import type { UserDto } from "@/features/users/user.dto";
-import { validateSignupForm } from "@/features/users/user.service";
+import {
+  validateLoginForm,
+  validateSignupForm,
+} from "@/features/users/user.service";
 import {
   type ActionResult,
   type CreateUserFormFieldNames,
@@ -29,19 +32,20 @@ import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
   type LoginFormFieldNames,
-  LoginFormSchema,
+  type LoginFormFields,
   type SignupFormFieldNames,
+  type SignupFormFields,
   type UserRole,
 } from "@/features/users/user.types";
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
-import type { FormState } from "@/lib/definitions/form.types";
+import type { FormState } from "@/lib/forms/form.types";
+import { logError } from "@/lib/utils/logger";
 import { stripProperties } from "@/lib/utils/utils";
 import {
   actionResult,
   getFormField,
   getValidUserRole,
-  logError,
   normalizeFieldErrors,
 } from "@/lib/utils/utils.server";
 
@@ -239,8 +243,10 @@ export async function signup(
     return validated;
   }
 
-  const { username, email, password } = validated.data;
+  const { username, email, password } = validated.data as SignupFormFields;
+
   const db = getDB();
+
   try {
     const user = await createUserDal(db, {
       email,
@@ -248,6 +254,7 @@ export async function signup(
       role: toUserRoleBrand("user"),
       username,
     });
+
     if (!user) {
       return actionResult({
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
@@ -257,6 +264,7 @@ export async function signup(
     await setSessionToken(toUserId(user.id), toUserRoleBrand("user"));
   } catch (error) {
     logError("signup", error, { email: formData.get("email") as string });
+
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
@@ -272,30 +280,30 @@ export async function login(
   _prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<LoginFormFieldNames>> {
+  const validated = validateLoginForm(formData);
+
+  if (!validated.success || typeof validated.data === "undefined") {
+    return validated;
+  }
+
+  const { email, password } = validated.data as LoginFormFields;
+
+  const db = getDB();
+
   try {
-    const validated = LoginFormSchema.safeParse({
-      email: getFormField(formData, "email"),
-      password: getFormField(formData, "password"),
-    });
-    if (!validated.success) {
-      return actionResult({
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      });
-    }
-    const { email, password } = validated.data;
-    const db = getDB();
     const user = await findUserForLogin(db, email, password);
+
     if (!user) {
       return actionResult({
         message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
         success: false,
       });
     }
+
     await setSessionToken(toUserId(user.id), toUserRoleBrand(user.role));
   } catch (error) {
     logError("login", error, { email: formData.get("email") as string });
+
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
