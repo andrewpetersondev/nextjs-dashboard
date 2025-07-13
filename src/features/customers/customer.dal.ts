@@ -9,7 +9,7 @@ import type {
   CustomerSelectDbRow,
   CustomerTableDbRow,
   FormattedCustomersTableRow,
-} from "@/features/customers/customers.types";
+} from "@/features/customers/customer.types";
 import { CUSTOMER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toCustomerId } from "@/lib/definitions/brands";
 import { formatCurrency } from "@/lib/utils/utils";

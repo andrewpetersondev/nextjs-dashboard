@@ -206,7 +206,7 @@ async function main(): Promise<void> {
           values: userSeed.map((u) => u.username),
         }),
       },
-      count: 2,
+      count: 3,
     },
   }));
 }

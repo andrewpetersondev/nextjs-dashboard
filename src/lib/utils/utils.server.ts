@@ -1,5 +1,12 @@
-import "server-only";
+/**
+ *@file utils.server.ts
+ * @description
+ * - Utility functions in this file are server-only.
+ * - Utility functions should use const (arrow functions) for better performance and readability.
+ *
+ */
 
+import "server-only";
 import pino from "pino";
 import {
   type ActionResult,
@@ -7,12 +14,10 @@ import {
   type UserRole,
 } from "@/features/users/user.types";
 
-// Note: Utility functions in this file are server-only.
-// Note: Utility functions should use const (arrow functions) for better performance and readability.
-
 /**
- * Utility to build a typed error map for form fields.
- * Only includes fields with actual errors.
+ * Builds a typed error map for form fields, including only fields with actual errors.
+ *
+ * @template T - Field name type.
  * @param errors - Partial error map with possible undefined values.
  * @returns Partial error map with only fields that have errors.
  */
@@ -31,7 +36,12 @@ export const buildErrorMap = <T extends string>(
   return result;
 };
 
-// --- Helper: Normalize Zod fieldErrors to Record<string, string[]> ---
+/**
+ * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
+ *
+ * @param fieldErrors - Zod fieldErrors object.
+ * @returns Normalized error map.
+ */
 export const normalizeFieldErrors = (
   fieldErrors: Record<string, string[] | undefined>,
 ): Record<string, string[]> => {
@@ -48,26 +58,12 @@ export const normalizeFieldErrors = (
  * Returns a standardized action result object for server actions.
  *
  * - Always includes the required `success` property (defaults to `true` if omitted).
- * - Omits optional properties (`errors`, `data`) if they are `undefined`, ensuring compatibility with `exactOptionalPropertyTypes`.
- * - Uses function overloads for precise typing: if `data` is provided, it is included in the result type.
+ * - Omits optional properties (`errors`, `data`) if they are `undefined`.
+ * - Uses function overloads for precise typing.
  *
  * @template T - The type of the `data` property, if present.
  * @param params - The parameters for the action result.
- * @param params.message - A human-readable message describing the result.
- * @param params.success - Whether the action succeeded (defaults to `true`).
- * @param params.errors - Optional error map for field-level errors.
- * @param params.data - Optional data payload to include in the result.
  * @returns An `ActionResult` object, optionally including `data` if provided.
- *
- * @example
- * // Success without data
- * actionResult({ message: "User created." });
- *
- * // Failure with errors
- * actionResult({ message: "Validation failed.", errors: { email: ["Invalid"] }, success: false });
- *
- * // Success with data
- * actionResult({ message: "Fetched user.", data: user });
  */
 export function actionResult(params: {
   message: string;
@@ -106,7 +102,13 @@ export type LogMeta = {
 
 /**
  * Centralized error logger for server actions.
- * Extend this to integrate with external logging services.
+ *
+ * - Logs errors with context and optional metadata.
+ * - Extend to integrate with external logging services.
+ *
+ * @param context - Context string for the error (e.g., function name).
+ * @param error - The error object or message.
+ * @param meta - Optional metadata for structured logging.
  */
 export const logError = (
   context: string,
@@ -118,7 +120,15 @@ export const logError = (
 
 /**
  * Safely extracts and strongly types a field from FormData.
- * Throws if the field is missing or not a string.
+ *
+ * - Throws if the field is missing or not a string.
+ * - Use for robust form parsing.
+ *
+ * @template T - Expected return type (defaults to string).
+ * @param formData - The FormData object.
+ * @param key - The field key to extract.
+ * @returns The field value as type T.
+ * @throws {Error} - If the field is missing or not a string.
  */
 export const getFormField = <T extends string = string>(
   formData: FormData,
@@ -131,15 +141,20 @@ export const getFormField = <T extends string = string>(
   return value as T;
 };
 
-// Utility to validate role
+/**
+ * Validates and returns a user role, defaulting to "guest" if invalid.
+ *
+ * @param role - The role to validate.
+ * @returns {UserRole} - A valid user role.
+ */
 export const getValidUserRole = (role: unknown): UserRole =>
   USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";
 
 /**
- * Utility to create random strings for demo user passwords or other purposes.
- * Needs to generate at least one capital letter, one number, and one special character.
- * @param length - The desired length of the random string.
- * @returns A random string of the specified length.
+ * Generates a random password string with at least one capital letter, one number, and one special character.
+ *
+ * @param length - Desired length of the password (default: 10).
+ * @returns {string} - The generated password.
  */
 export const createRandomPassword = (length = 10): string => {
   const characters =
@@ -151,7 +166,42 @@ export const createRandomPassword = (length = 10): string => {
   return result;
 };
 
+/**
+ * Pino logger instance for structured logging.
+ *
+ * - Configured for different log levels in production and development.
+ */
 export const logger = pino({
   level: process.env.NODE_ENV === "production" ? "info" : "debug",
   name: "auth",
 });
+
+/**
+ * Validates that an object has all required fields with expected types.
+ * Throws an error if any field is missing or of the wrong type.
+ *
+ * @param obj - The object to validate.
+ * @param schema - An object mapping field names to expected types (e.g., "string", "number").
+ * @param context - Optional context for error messages.
+ * @throws {Error} If a required field is missing or has the wrong type.
+ */
+export function validateRequiredFields<T extends object>(
+  obj: unknown,
+  schema: Record<
+    keyof T,
+    "string" | "number" | "boolean" | "object" | "undefined" | "function"
+  >,
+  context = "object",
+): asserts obj is T {
+  if (typeof obj !== "object" || obj === null) {
+    throw new Error(`Invalid ${context}: not an object`);
+  }
+  for (const [key, type] of Object.entries(schema)) {
+    // @ts-expect-error: dynamic property access
+    if (typeof obj[key] !== type) {
+      throw new Error(
+        `Invalid ${context}: missing or invalid field "${key}" (expected ${type})`,
+      );
+    }
+  }
+}

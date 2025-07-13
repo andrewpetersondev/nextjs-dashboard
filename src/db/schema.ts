@@ -101,6 +101,9 @@ export const customers = pgTable(TABLES.CUSTOMERS, {
     .$type<Brand<string, typeof customerIdBrand>>(),
   imageUrl: varchar(COLUMNS.IMAGE_URL, { length: 255 }).notNull(),
   name: varchar(COLUMNS.NAME, { length: 50 }).notNull(),
+  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
+    .notNull()
+    .default("cantTouchThis"),
 });
 
 /**
@@ -118,6 +121,9 @@ export const invoices = pgTable(TABLES.INVOICES, {
     .defaultRandom()
     .primaryKey()
     .$type<Brand<string, typeof invoiceIdBrand>>(),
+  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
+    .notNull()
+    .default("cantTouchThis"),
   status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
 });
 
@@ -128,6 +134,9 @@ export const invoices = pgTable(TABLES.INVOICES, {
 export const revenues = pgTable(TABLES.REVENUES, {
   month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
   revenue: integer(COLUMNS.REVENUE).notNull(),
+  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
+    .notNull()
+    .default("cantTouchThis"),
 });
 
 /**
@@ -201,14 +210,14 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
  *
  * These types represent the raw rows from the database. They cannot easily swap with existing types because of branding, id, and date types.
  */
-export type _UserRawDrizzle = typeof users.$inferSelect;
+export type UserRawDrizzle = typeof users.$inferSelect;
 export type _NewUserRawDrizzle = typeof users.$inferInsert;
 export type _DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
 export type _NewDemoUserCounterRawDrizzle =
   typeof demoUserCounters.$inferInsert;
-export type _CustomerRawDrizzle = typeof customers.$inferSelect;
+export type CustomerRawDrizzle = typeof customers.$inferSelect;
 export type _NewCustomerRawDrizzle = typeof customers.$inferInsert;
-export type _InvoiceRawDrizzle = typeof invoices.$inferSelect;
+export type InvoiceRawDrizzle = typeof invoices.$inferSelect;
 export type _NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
 export type _RevenueRawDrizzle = typeof revenues.$inferSelect;
 export type _NewRevenueRawDrizzle = typeof revenues.$inferInsert;

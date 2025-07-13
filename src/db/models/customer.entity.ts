@@ -11,4 +11,5 @@ export interface CustomerEntity {
   readonly name: string;
   readonly email: string;
   readonly imageUrl: string;
+  readonly sensitiveData: string;
 }

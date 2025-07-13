@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/features/customers/customers.types";
+import type { FormattedCustomersTableRow } from "@/features/customers/customer.types";
 import { CustomerMobileCard } from "./customer-mobile-card";
 
 /**

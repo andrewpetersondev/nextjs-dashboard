@@ -7,6 +7,7 @@ import "server-only";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import type { Db } from "@/db/connection";
 import { demoUserCounters, users } from "@/db/schema";
+import { DatabaseError } from "@/errors/database-error";
 import {
   comparePassword,
   hashPassword,
@@ -49,7 +50,117 @@ export async function createUserDal(
     return user ? toUserDto(user) : null;
   } catch (error) {
     logError("createUserDal", error, { email });
-    throw new Error("Failed to create a user in the database.");
+    throw new DatabaseError("Failed to create a user in the database.", error);
+  }
+}
+
+/**
+ * Retrieves a user from the database by branded UserId.
+ * Maps the raw DB row to UserEntity, then to UserDto for safe return.
+ * @param db - The database instance.
+ * @param id - The user's branded UserId.
+ * @returns The user as UserDto, or null if not found.
+ */
+export async function readUserDal(
+  db: Db,
+  id: UserId, // Use branded UserId for strict typing
+): Promise<UserDto | null> {
+  try {
+    // Fetch raw DB row, not UserEntity
+    const [userRow] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!userRow) {
+      return null;
+    }
+
+    // Map raw DB row to UserEntity for type safety (brands id/role)
+    const userEntity = dbRowToUserEntity(userRow);
+
+    // Map to DTO for safe return to client
+    return toUserDto(userEntity);
+  } catch (error) {
+    logError("readUserDal", error, { id });
+    throw new DatabaseError("Failed to read user by ID.", error);
+  }
+}
+
+/**
+ * Updates a user in the database with the provided patch.
+ * Always maps the raw DB row to UserEntity, then to UserDto for safe return.
+ * @param db - The database instance.
+ * @param id - The user's branded UserId.
+ * @param patch - An object containing the fields to update.
+ * @returns The updated user as UserDto, or null if no changes or update failed.
+ */
+export async function updateUserDal(
+  db: Db,
+  id: UserId,
+  patch: UserUpdatePatch,
+): Promise<UserDto | null> {
+  // Defensive: No update if patch is empty
+  if (Object.keys(patch).length === 0) {
+    return null;
+  }
+  try {
+    // Always fetch raw DB row, then map to UserEntity for type safety
+    const [userRow] = await db
+      .update(users)
+      .set(patch)
+      .where(eq(users.id, id))
+      .returning();
+
+    if (!userRow) {
+      return null;
+    }
+
+    // Map raw DB row to UserEntity (brands id/role)
+    const userEntity = dbRowToUserEntity(userRow);
+
+    // Map to DTO for safe return to client
+    return toUserDto(userEntity);
+  } catch (error) {
+    logError("updateUserDal", error, { id, patch });
+    throw new DatabaseError("Failed to update user.", error);
+  }
+}
+
+/**
+ * Deletes a user by branded UserId.
+ * Maps the raw DB row to UserEntity, then to UserDto for safe return.
+ * @param db - Database instance (Drizzle)
+ * @param userId - UserId (branded)
+ * @returns UserDto if deleted, otherwise null
+ */
+export async function deleteUserDal(
+  db: Db,
+  userId: UserId, // Use branded UserId for strict typing
+): Promise<UserDto | null> {
+  try {
+    // Fetch raw DB row, not UserEntity
+    const [deletedRow] = await db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!deletedRow) {
+      return null;
+    }
+
+    // Map raw DB row to UserEntity for type safety
+    const deletedEntity = dbRowToUserEntity(deletedRow);
+
+    // Map to DTO for safe return to client
+    return toUserDto(deletedEntity);
+  } catch (error) {
+    logError("deleteUserDal", error, { userId });
+    throw new DatabaseError(
+      "An unexpected error occurred. Please try again.",
+      error,
+    );
   }
 }
 
@@ -94,7 +205,7 @@ export async function findUserForLogin(
     return toUserDto(userEntity);
   } catch (error) {
     logError("findUserForLogin", error, { email });
-    throw new Error("Failed to read user by email.");
+    throw new DatabaseError("Failed to read user by email.", error);
   }
 }
 
@@ -124,7 +235,7 @@ export async function fetchUserById(
     return toUserDto(userEntity);
   } catch (error) {
     logError("fetchUserById", error, { id });
-    throw new Error("Failed to fetch user by id.");
+    throw new DatabaseError("Failed to fetch user by id.", error);
   }
 }
 
@@ -143,7 +254,7 @@ export async function _fetchUsers(db: Db): Promise<UserDto[]> {
     return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
   } catch (error) {
     logError("fetchUsers", error, {});
-    throw new Error("Failed to fetch users.");
+    throw new DatabaseError("Failed to fetch users.", error);
   }
 }
 
@@ -176,7 +287,10 @@ export async function fetchUsersPages(db: Db, query: string): Promise<number> {
     return Math.ceil(totalUsers / ITEMS_PER_PAGE_USERS);
   } catch (error) {
     logError("fetchUsersPages", error, { query });
-    throw new Error("Failed to fetch the total number of users.");
+    throw new DatabaseError(
+      "Failed to fetch the total number of users.",
+      error,
+    );
   }
 }
 
@@ -214,39 +328,7 @@ export async function fetchFilteredUsers(
     return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
   } catch (error) {
     logError("fetchFilteredUsers", error, { currentPage, query });
-    throw new Error("Failed to fetch filtered users.");
-  }
-}
-/**
- * Deletes a user by branded UserId.
- * Maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - Database instance (Drizzle)
- * @param userId - UserId (branded)
- * @returns UserDto if deleted, otherwise null
- */
-export async function deleteUserDal(
-  db: Db,
-  userId: UserId, // Use branded UserId for strict typing
-): Promise<UserDto | null> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [deletedRow] = await db
-      .delete(users)
-      .where(eq(users.id, userId))
-      .returning();
-
-    if (!deletedRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity for type safety
-    const deletedEntity = dbRowToUserEntity(deletedRow);
-
-    // Map to DTO for safe return to client
-    return toUserDto(deletedEntity);
-  } catch (error) {
-    logError("deleteUserDal", error, { userId });
-    throw new Error("An unexpected error occurred. Please try again.");
+    throw new DatabaseError("Failed to fetch filtered users.", error);
   }
 }
 
@@ -278,7 +360,7 @@ export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
     return counterRow.id;
   } catch (error) {
     logError("demoUserCounter", error, { role });
-    throw new Error("Failed to read the demo user counter.");
+    throw new DatabaseError("Failed to read the demo user counter.", error);
   }
 }
 
@@ -313,80 +395,5 @@ export async function createDemoUser(
   } catch (error) {
     logError("createDemoUser", error, { id, role });
     return null; // Return null on failure for safe downstream handling
-  }
-}
-
-/**
- * Retrieves a user from the database by branded UserId.
- * Maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - The database instance.
- * @param id - The user's branded UserId.
- * @returns The user as UserDto, or null if not found.
- */
-export async function readUserDal(
-  db: Db,
-  id: UserId, // Use branded UserId for strict typing
-): Promise<UserDto | null> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [userRow] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
-
-    if (!userRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity for type safety (brands id/role)
-    const userEntity = dbRowToUserEntity(userRow);
-
-    // Map to DTO for safe return to client
-    return toUserDto(userEntity);
-  } catch (error) {
-    logError("readUserDal", error, { id });
-    throw new Error("Failed to read user by ID.");
-  }
-}
-// --- Inline comment: This change ensures all DB rows are mapped to branded types before use, preventing subtle bugs and type errors. ---
-
-/**
- * Updates a user in the database with the provided patch.
- * Always maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - The database instance.
- * @param id - The user's branded UserId.
- * @param patch - An object containing the fields to update.
- * @returns The updated user as UserDto, or null if no changes or update failed.
- */
-export async function updateUserDal(
-  db: Db,
-  id: UserId,
-  patch: UserUpdatePatch,
-): Promise<UserDto | null> {
-  // Defensive: No update if patch is empty
-  if (Object.keys(patch).length === 0) {
-    return null;
-  }
-  try {
-    // Always fetch raw DB row, then map to UserEntity for type safety
-    const [userRow] = await db
-      .update(users)
-      .set(patch)
-      .where(eq(users.id, id))
-      .returning();
-
-    if (!userRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity (brands id/role)
-    const userEntity = dbRowToUserEntity(userRow);
-
-    // Map to DTO for safe return to client
-    return toUserDto(userEntity);
-  } catch (error) {
-    logError("updateUserDal", error, { id, patch });
-    throw new Error("Failed to update user.");
   }
 }

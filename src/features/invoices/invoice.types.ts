@@ -4,6 +4,7 @@ import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Allowed invoice statuses.
+ * Use this constant for validation and UI options.
  */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;
 
@@ -13,55 +14,59 @@ export const INVOICE_STATUSES = ["pending", "paid"] as const;
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
 /**
+ * Field names for invoice forms and error maps.
+ */
+export const INVOICE_FIELD_NAMES = ["amount", "customerId", "status"] as const;
+export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
+
+/**
  * Error map for invoice actions.
  */
-export type InvoiceErrorMap = Partial<
-  Record<"amount" | "customerId" | "status", string[]>
->;
+export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
 
 /**
  * Fields for invoice creation form.
  */
-export type CreateInvoiceFormFields = {
+export type CreateInvoiceFormFields = Readonly<{
   amount: number | "";
   status: InvoiceStatus;
   customerId: CustomerId | "";
-};
+}>;
 
 /**
  * Input type for creating an invoice.
  */
-export type InvoiceCreateInput = {
+export type InvoiceCreateInput = Readonly<{
   amount: number;
   customerId: CustomerId;
   date: string;
   status: InvoiceStatus;
-};
+}>;
 
 /**
  * Input type for updating an invoice.
  */
-export type InvoiceUpdateInput = Partial<
-  Omit<InvoiceCreateInput, "customerId">
-> & {
-  customerId?: CustomerId;
-};
+export type InvoiceUpdateInput = Readonly<
+  Partial<Omit<InvoiceCreateInput, "customerId">> & {
+    customerId?: CustomerId;
+  }
+>;
 
 /**
  * Raw DB row for an invoice.
  */
-export type _InvoiceDbRow = {
+export type _InvoiceDbRow = Readonly<{
   id: InvoiceId;
   amount: number;
   customerId: CustomerId;
   date: string;
   status: InvoiceStatus;
-};
+}>;
 
 /**
  * Row for invoice table queries (with customer info).
  */
-export type InvoiceTableRow = {
+export type InvoiceTableRow = Readonly<{
   id: InvoiceId;
   amount: number;
   date: string;
@@ -70,21 +75,21 @@ export type InvoiceTableRow = {
   name: string;
   email: string;
   imageUrl: string | null;
-};
+}>;
 
 /**
  * Row for latest invoices (with formatted amount).
  */
-export type LatestInvoiceRow = Omit<InvoiceTableRow, "amount"> & {
-  amount: string; // Formatted currency
-};
+export type LatestInvoiceRow = Readonly<
+  Omit<InvoiceTableRow, "amount"> & { amount: string }
+>;
 
 /**
  * Row for filtered invoices (with formatted amount).
  */
-export type FetchFilteredInvoicesData = Omit<InvoiceTableRow, "amount"> & {
-  amount: string; // Formatted currency
-};
+export type FetchFilteredInvoicesData = Readonly<
+  Omit<InvoiceTableRow, "amount"> & { amount: string }
+>;
 
 /**
  * Fields for invoice editing (all optional for PATCH semantics).
@@ -94,13 +99,13 @@ export type _EditInvoiceFormFields = Partial<CreateInvoiceFormFields>;
 /**
  * State for the invoice form.
  */
-export type _InvoiceFormFields = {
+export type _InvoiceFormFields = Readonly<{
   id: InvoiceId | "";
   customerId: CustomerId | "";
   amount: number | "";
   status: InvoiceStatus;
   date: string;
-};
+}>;
 
 export type InvoiceCreateState = Readonly<{
   errors?: InvoiceErrorMap;
@@ -118,12 +123,15 @@ export type InvoiceEditState = Readonly<{
 /**
  * Generic action result type for server actions.
  */
-export type InvoiceActionResult<T = undefined, E = Record<string, string[]>> = {
-  readonly data?: T;
-  readonly errors?: E;
-  readonly message: string;
-  readonly success: boolean;
-};
+export type InvoiceActionResult<
+  T = undefined,
+  E = Record<string, string[]>,
+> = Readonly<{
+  data?: T;
+  errors?: E;
+  message: string;
+  success: boolean;
+}>;
 
 export type _CreateInvoiceResult = InvoiceActionResult<
   undefined,
@@ -136,6 +144,7 @@ export type _UpdateInvoiceResult = InvoiceActionResult<
 
 /**
  * Zod validation schema for invoice creation.
+ * Exported for reuse in validation and tests.
  */
 const amountSchema = z.coerce
   .number()
@@ -156,6 +165,9 @@ const statusSchema = z.enum(INVOICE_STATUSES, {
       : "Invalid invoice status",
 });
 
+/**
+ * Zod schema for validating invoice creation input.
+ */
 export const CreateInvoiceSchema = z.object({
   amount: amountSchema,
   customerId: customerIdSchema,

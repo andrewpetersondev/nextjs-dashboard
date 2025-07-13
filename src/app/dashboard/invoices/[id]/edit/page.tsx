@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { readCustomersAction } from "@/features/customers/customers.actions";
-import type { CustomerField } from "@/features/customers/customers.types";
+import { readCustomersAction } from "@/features/customers/customer.actions";
+import type { CustomerField } from "@/features/customers/customer.types";
 import { readInvoiceAction } from "@/features/invoices/invoice.actions";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { H1 } from "@/ui/headings";

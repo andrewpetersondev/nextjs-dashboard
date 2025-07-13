@@ -4,11 +4,11 @@ import { getDB } from "@/db/connection";
 import {
   fetchCustomers,
   fetchFilteredCustomers,
-} from "@/features/customers/customers.dal";
+} from "@/features/customers/customer.dal";
 import type {
   CustomerField,
   FormattedCustomersTableRow,
-} from "@/features/customers/customers.types";
+} from "@/features/customers/customer.types";
 
 /**
  * Server action to read customers.

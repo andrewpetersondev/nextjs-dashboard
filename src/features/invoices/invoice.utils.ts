@@ -3,8 +3,17 @@ import "server-only";
 import { getFormField } from "@/lib/utils/utils.server";
 
 /**
- * Helper to extract required invoice fields from FormData.
- * Throws if any field is missing.
+ * Extracts and returns required invoice fields from a FormData object.
+ *
+ * - Throws if any required field is missing or not a string.
+ * - Use this utility to safely parse form submissions for invoice creation or update.
+ *
+ * @param formData - The FormData object from a request.
+ * @returns {Object} - Object containing rawAmount, rawCustomerId, and rawStatus as strings.
+ * @throws {Error} - If any field is missing or invalid.
+ *
+ * @example
+ * const { rawAmount, rawCustomerId, rawStatus } = extractInvoiceFormFields(formData);
  */
 export function extractInvoiceFormFields(formData: FormData) {
   const rawAmount = getFormField(formData, "amount");

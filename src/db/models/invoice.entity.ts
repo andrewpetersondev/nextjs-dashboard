@@ -2,14 +2,18 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
- * This file defines the `InvoiceEntity` TypeScript interface, which represents the structure of an invoice record as stored in the database. It ensures type safety and consistency when working with invoice data throughout the application.
+ * Represents the canonical structure of an invoice record in the domain layer.
  *
- * - **Best Practices:**
- *   - Do not mutate properties, as all fields are marked `readonly`.
- *   - Import related types using project import aliases for maintainability.
+ * - All fields are readonly to enforce immutability.
+ * - Use this type for all business logic and domain operations.
+ * - Do not expose this type directly to the client/UI; use `InvoiceDto` instead.
  *
- * - **Location: **
- *   `src/db/entities/invoice.ts`
+ * @property id - Branded unique identifier for the invoice.
+ * @property customerId - Branded unique identifier for the customer.
+ * @property amount - Invoice amount in cents.
+ * @property date - ISO 8601 date string.
+ * @property status - Invoice status ("pending" | "paid").
+ * @property sensitiveData - Internal field, not for client exposure.
  */
 export interface InvoiceEntity {
   readonly id: InvoiceId;
@@ -17,4 +21,5 @@ export interface InvoiceEntity {
   readonly amount: number;
   readonly date: string; // ISO 8601
   readonly status: InvoiceStatus;
+  readonly sensitiveData: string;
 }
