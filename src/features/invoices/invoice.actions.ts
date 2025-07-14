@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type * as z from "zod";
 import { getDB } from "@/db/connection";
+import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -13,88 +15,115 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type {
-  FetchFilteredInvoicesData,
-  InvoiceCreateState,
-  InvoiceEditState,
+import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
+import {
+  CreateInvoiceSchema,
+  type FetchFilteredInvoicesData,
+  type InvoiceEditState,
+  type InvoiceFieldName,
 } from "@/features/invoices/invoice.types";
-import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
-import { extractInvoiceFormFields } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
   toCustomerId,
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import { logError } from "@/lib/utils/logger";
+import type { FormState } from "@/lib/forms/form.types";
+import { validateFormData } from "@/lib/forms/form-validation";
+import { logger } from "@/lib/utils/logger";
 import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Invoices ---
+
+// Use this as the return type for your action
+type InvoiceFormState = FormState<
+  InvoiceFieldName,
+  z.output<typeof CreateInvoiceSchema>
+>;
 
 /**
  * Server action to create a new invoice.
  */
 export async function createInvoiceAction(
-  _prevState: InvoiceCreateState,
+  _prevState: InvoiceFormState,
   formData: FormData,
-): Promise<InvoiceCreateState> {
+): Promise<InvoiceFormState> {
   try {
     const db = getDB();
 
-    // Extract and validate fields using a helper
-    const { rawAmount, rawCustomerId, rawStatus } =
-      extractInvoiceFormFields(formData);
+    const validation = validateFormData<
+      InvoiceFieldName,
+      typeof CreateInvoiceSchema._output
+    >(formData, CreateInvoiceSchema);
 
-    // --- Zod validation ---
-    const validated = CreateInvoiceSchema.safeParse({
-      amount: rawAmount,
-      customerId: rawCustomerId,
-      status: rawStatus,
-    });
+    if (!validation.success) {
+      logger.error({
+        context: "createInvoiceAction:validationError",
+        error: validation.errors,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      });
 
-    if (!validated.success) {
       return {
-        errors: validated.error.flatten().fieldErrors,
+        errors: validation.errors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
-      } as const;
+      };
     }
 
-    // --- Type-safe transformation ---
-    const { amount, customerId, status } = validated.data;
-    const brandedCustomerId = toCustomerId(customerId);
-    const brandedStatus = toInvoiceStatusBrand(status);
+    const { amount, customerId, status } = validation.data!; // Non-null assertion since we validated success
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-    const now = new Date().toISOString().split("T")[0];
+    const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
 
-    // --- DAL call ---
-    const brands = {
-      amount: amountInCents,
-      customerId: brandedCustomerId,
-      date: now as string, // cast to string for DAL
-      status: brandedStatus,
+    const fields = { amount: amountInCents, customerId, date: now, status };
+    const brands = brandInvoiceFields(fields);
+
+    // Explicitly construct DAL input, ensuring all required fields are present
+    const dalInput: InvoiceCreateInput = {
+      amount: brands.amount!, // Non-null assertion; safe due to validation above
+      customerId: brands.customerId!,
+      date: brands.date!,
+      status: brands.status!,
     };
 
-    const invoice = await createInvoiceDal(db, brands);
+    const invoice = await createInvoiceDal(db, dalInput);
 
     if (!invoice) {
+      logger.error({
+        brands,
+        context: "createInvoiceAction:createFailed",
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      });
+
+      // Provide a structured error response for the UI. Only include fields that are user-supplied.
       return {
-        errors: {},
-        message: "Failed to create invoice.",
+        errors: buildErrorMap({
+          amount: brands.amount ? undefined : ["Amount is required."],
+          customerId: brands.customerId ? undefined : ["Customer is required."],
+          date: brands.date ? undefined : ["Date is required."],
+          status: brands.status ? undefined : ["Status is required."],
+          // date and id are intentionally omitted, as it is not user-supplied
+        }),
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
     }
 
     return {
+      // data: invoice, // Return the created invoice DTO if needed in the UI
       errors: {},
       message: "Invoice created successfully.",
       success: true,
     };
   } catch (error) {
-    // Use structured logging in production
-    console.error(error);
+    logger.error({
+      context: "createInvoiceAction",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
     return {
-      errors: {},
+      errors: {}, // No field-level errors for unexpected exceptions
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
@@ -118,7 +147,12 @@ export async function readInvoiceAction(
     const invoice = await readInvoiceDal(db, brandedId);
     return invoice ? invoice : null;
   } catch (error) {
-    logError("readInvoiceAction", error, { id });
+    logger.error({
+      context: "readInvoiceAction",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
     throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
   }
 }
@@ -141,8 +175,13 @@ export async function updateInvoiceAction(
       rawAmount = getFormField(formData, "amount");
       rawCustomerId = getFormField(formData, "customerId");
       rawStatus = getFormField(formData, "status");
-    } catch (err) {
-      logError("updateInvoiceAction:missingFields", err, { id });
+    } catch (error) {
+      logger.error({
+        context: "updateInvoiceAction:missingFields",
+        error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
+      });
       return {
         errors: buildErrorMap({
           amount: formData.get("amount")
@@ -168,6 +207,14 @@ export async function updateInvoiceAction(
     });
 
     if (!validated.success) {
+      logger.error({
+        context: "updateInvoiceAction:validationError",
+        error: validated.error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        prevState,
+      });
+
       return {
         errors: buildErrorMap(validated.error.flatten().fieldErrors),
         invoice: prevState.invoice,
@@ -189,6 +236,13 @@ export async function updateInvoiceAction(
     });
 
     if (!updatedInvoice) {
+      logger.error({
+        context: "updateInvoiceAction:updateFailed",
+        id,
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+        prevState,
+      });
+
       return {
         errors: {},
         invoice: prevState.invoice,
@@ -200,11 +254,18 @@ export async function updateInvoiceAction(
     return {
       errors: {},
       invoice: updatedInvoice,
-      message: "Updated invoice successfully.",
+      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
       success: true,
     };
   } catch (error) {
-    logError("updateInvoiceAction", error, { id });
+    logger.error({
+      context: "updateInvoiceAction",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+
     return {
       errors: {},
       invoice: prevState.invoice,

@@ -17,6 +17,7 @@ export const INVOICE_ERROR_MESSAGES = {
   READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",
   UPDATE_FAILED: "Failed to update invoice.",
+  VALIDATION_FAILED: "Validation failed. Please check your input.",
 };
 
 /**

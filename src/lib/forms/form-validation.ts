@@ -1,7 +1,7 @@
 import "server-only";
 
-import { z } from "zod";
-import type { ValidationResult } from "@/lib/forms/form.types";
+import type * as z from "zod";
+import type { FormState } from "@/lib/forms/form.types";
 
 /**
  * Default validation messages.
@@ -12,44 +12,31 @@ const VALIDATION_SUCCESS_MESSAGE = "Validation succeeded.";
 /**
  * Validates FormData against a Zod schema and normalizes errors.
  *
- * @template T - The type of the schema's output.
+ * @template TFieldNames - The string literal union of valid form field names.
+ * @template TData - The type of the schema's output.
  * @param formData - The FormData to validate.
  * @param schema - The Zod schema to validate against.
- * @param fieldMap - Optional mapping from form field names to schema keys.
- * @returns ValidationResult<T>
+ * @returns FormState<TFieldNames, TData>
  */
-export function validateFormData<T>(
+export function validateFormData<
+  TFieldNames extends string = string,
+  TData = unknown,
+>(
   formData: FormData,
-  schema: z.ZodSchema<T>,
-  fieldMap?: Record<string, string>,
-): ValidationResult<T> {
-  // Convert FormData to plain object
-  const data = Object.fromEntries(formData.entries());
-
-  const parsed = schema.safeParse(data);
+  schema: z.ZodSchema<TData>,
+): FormState<TFieldNames, TData> {
+  const data = Object.fromEntries(formData.entries()); // what is the shape of data?
+  const parsed = schema.safeParse(data); // what is the shape of parsed?
 
   if (!parsed.success) {
-    const { fieldErrors, formErrors } = z.flattenError(parsed.error);
-    const normalizedFieldErrors: Record<string, string[]> = {};
-
-    for (const key in fieldErrors) {
-      if (Object.hasOwn(fieldErrors, key)) {
-        const mappedKey = fieldMap?.[key] || key;
-        normalizedFieldErrors[mappedKey] = fieldErrors[key] ?? [];
-      }
-    }
-
-    if (formErrors.length > 0) {
-      normalizedFieldErrors._form = formErrors;
-    }
-
+    // normalize Zod errors to FormState shape
+    const { fieldErrors } = parsed.error.flatten();
     return {
-      errors: normalizedFieldErrors,
+      errors: fieldErrors as Partial<Record<TFieldNames, string[]>>,
       message: VALIDATION_FAILED_MESSAGE,
       success: false,
     };
   }
-
   return {
     data: parsed.data,
     errors: {},
