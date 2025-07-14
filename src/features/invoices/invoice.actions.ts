@@ -15,6 +15,7 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import {
   CreateInvoiceSchema,
   type FetchFilteredInvoicesData,
@@ -51,37 +52,41 @@ export async function createInvoiceAction(
   try {
     const db = getDB();
 
-    // --- Centralized validation using the generic utility ---
-    const validationResult = validateFormData<
+    const validation = validateFormData<
       InvoiceFieldName,
       typeof CreateInvoiceSchema._output
     >(formData, CreateInvoiceSchema);
 
-    if (!validationResult.success) {
+    if (!validation.success) {
       logger.error({
         context: "createInvoiceAction:validationError",
-        error: validationResult.errors,
+        error: validation.errors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
       });
 
       return {
-        errors: validationResult.errors,
+        errors: validation.errors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };
     }
 
-    const { amount, customerId, status } = validationResult.data!; // Non-null assertion since we validated success
-
+    const { amount, customerId, status } = validation.data!; // Non-null assertion since we validated success
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-
     const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
 
     const fields = { amount: amountInCents, customerId, date: now, status };
-
     const brands = brandInvoiceFields(fields);
 
-    const invoice = await createInvoiceDal(db, brands);
+    // Explicitly construct DAL input, ensuring all required fields are present
+    const dalInput: InvoiceCreateInput = {
+      amount: brands.amount!, // Non-null assertion; safe due to validation above
+      customerId: brands.customerId!,
+      date: brands.date!,
+      status: brands.status!,
+    };
+
+    const invoice = await createInvoiceDal(db, dalInput);
 
     if (!invoice) {
       logger.error({
