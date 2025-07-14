@@ -96,14 +96,22 @@ export async function createInvoiceAction(
         success: false,
       });
 
+      // Provide a structured error response for the UI. Only include fields that are user-supplied.
       return {
-        errors: {},
-        message: "Failed to create invoice.",
+        errors: buildErrorMap({
+          amount: brands.amount ? undefined : ["Amount is required."],
+          customerId: brands.customerId ? undefined : ["Customer is required."],
+          date: brands.date ? undefined : ["Date is required."],
+          status: brands.status ? undefined : ["Status is required."],
+          // date and id are intentionally omitted, as it is not user-supplied
+        }),
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
     }
 
     return {
+      // data: invoice, // Return the created invoice DTO if needed in the UI
       errors: {},
       message: "Invoice created successfully.",
       success: true,
@@ -115,7 +123,7 @@ export async function createInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
     });
     return {
-      errors: {},
+      errors: {}, // No field-level errors for unexpected exceptions
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
