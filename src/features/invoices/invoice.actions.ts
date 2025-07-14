@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type * as z from "zod";
 import { getDB } from "@/db/connection";
 import {
   createInvoiceDal,
@@ -69,7 +70,7 @@ export async function createInvoiceAction(
     const brandedCustomerId = toCustomerId(customerId);
     const brandedStatus = toInvoiceStatusBrand(status);
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-    const now = new Date().toISOString().split("T")[0];
+    const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
 
     // --- DAL call ---
     const brands = {
