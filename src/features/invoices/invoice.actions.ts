@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type * as z from "zod";
 import { getDB } from "@/db/connection";
+import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -57,6 +58,12 @@ export async function createInvoiceAction(
     >(formData, CreateInvoiceSchema);
 
     if (!validationResult.success) {
+      logger.error({
+        context: "createInvoiceAction:validationError",
+        error: validationResult.errors,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      });
+
       return {
         errors: validationResult.errors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
@@ -64,25 +71,26 @@ export async function createInvoiceAction(
       };
     }
 
-    // --- Type-safe transformation ---
-    // biome-ignore lint/style/noNonNullAssertion: <temporary>
-    const { amount, customerId, status } = validationResult.data!;
-    const brandedCustomerId = toCustomerId(customerId);
-    const brandedStatus = toInvoiceStatusBrand(status);
+    const { amount, customerId, status } = validationResult.data!; // Non-null assertion since we validated success
+
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
+
     const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
 
-    // --- DAL call ---
-    const brands = {
-      amount: amountInCents,
-      customerId: brandedCustomerId,
-      date: now,
-      status: brandedStatus,
-    };
+    const fields = { amount: amountInCents, customerId, date: now, status };
+
+    const brands = brandInvoiceFields(fields);
 
     const invoice = await createInvoiceDal(db, brands);
 
     if (!invoice) {
+      logger.error({
+        brands,
+        context: "createInvoiceAction:createFailed",
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      });
+
       return {
         errors: {},
         message: "Failed to create invoice.",
@@ -96,8 +104,11 @@ export async function createInvoiceAction(
       success: true,
     };
   } catch (error) {
-    // Use structured logging in production
-    console.error(error);
+    logger.error({
+      context: "createInvoiceAction",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
     return {
       errors: {},
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
