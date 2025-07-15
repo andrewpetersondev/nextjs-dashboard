@@ -4,7 +4,7 @@ import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   INVOICE_STATUSES,
-  UiInvoiceInput,
+  type UiInvoiceInput,
 } from "@/features/invoices/invoice.types";
 import {
   toCustomerId,
