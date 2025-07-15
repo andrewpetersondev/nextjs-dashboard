@@ -1,6 +1,11 @@
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceRawDrizzle } from "@/db/schema";
+import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import {
+  INVOICE_STATUSES,
+  UiInvoiceInput,
+} from "@/features/invoices/invoice.types";
 import {
   toCustomerId,
   toInvoiceId,
@@ -26,12 +31,8 @@ export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
   // Defensive: Validate all required fields
   if (
     !row ||
-    typeof row.amount !== "number" ||
     typeof row.customerId !== "string" ||
-    typeof row.id !== "string" ||
-    typeof row.date !== "string" ||
-    typeof row.sensitiveData !== "string" ||
-    typeof row.status !== "string"
+    typeof row.id !== "string"
   ) {
     logger.error({
       context: "toInvoiceEntity",
@@ -82,12 +83,68 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
   };
 }
 
-// Maps an InvoiceDto (from client) to an InvoiceEntity.
-// export function fromInvoiceDto(dto: UserDto): InvoiceEntity {
-// ...validate, sanitize, brand
-// }
+/**
+ * Maps and transforms UI invoice form input to a branded DTO-ready object.
+ * - Converts amount to cents (integer).
+ * - Adds current date in YYYY-MM-DD format.
+ * - Brands all fields for DAL/DTO usage.
+ * - Validates input strictly.
+ *
+ * @param input - UI invoice form input.
+ * @returns Branded invoice fields for DAL/DTO.
+ * @throws Error if input is invalid or branding fails.
+ */
+export function mapUiInvoiceInputToBrandedDto(input: UiInvoiceInput) {
+  const { amount, customerId, status } = input;
 
-// Maps an InvoiceEntity to a DB model for persistence.
-// export function toInvoiceDbModel(entity: InvoiceEntity): InvoiceRawDrizzle {
-// ...prepare for Drizzle ORM
-// }
+  // Validate amount
+  if (Number.isNaN(amount) || amount < 0) {
+    logger.error({
+      amount,
+      context: "mapUiInvoiceInputToBrandedDto",
+      message: "Invalid amount: must be a non-negative number.",
+    });
+    throw new Error("Invalid amount: must be a non-negative number.");
+  }
+
+  // Validate customerId
+  if (!customerId.trim()) {
+    logger.error({
+      context: "mapUiInvoiceInputToBrandedDto",
+      customerId,
+      message: "Invalid customerId: must be a non-empty string.",
+    });
+    throw new Error("Invalid customerId: must be a non-empty string.");
+  }
+
+  // Validate status
+  if (!INVOICE_STATUSES.includes(status)) {
+    logger.error({
+      context: "mapUiInvoiceInputToBrandedDto",
+      message: `Invalid status: must be one of ${INVOICE_STATUSES.join(", ")}.`,
+      status,
+    });
+    throw new Error(
+      `Invalid status: must be one of ${INVOICE_STATUSES.join(", ")}.`,
+    );
+  }
+
+  const amountInCents = Math.round(amount * 100);
+  // biome-ignore lint/style/noNonNullAssertion: <remove undefined>
+  const date = new Date().toISOString().split("T")[0]!; // YYYY-MM-DD
+
+  const fields = { amount: amountInCents, customerId, date, status };
+
+  const mappedAndBranded = brandInvoiceFields(fields);
+
+  if (!mappedAndBranded) {
+    logger.error({
+      context: "mapUiInvoiceInputToBrandedDto",
+      fields,
+      message: "Failed to brand invoice fields",
+    });
+    throw new Error("Failed to brand invoice fields");
+  }
+
+  return mappedAndBranded;
+}

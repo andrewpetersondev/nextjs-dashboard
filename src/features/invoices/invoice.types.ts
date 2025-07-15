@@ -59,6 +59,13 @@ export type InvoiceEditState = Readonly<{
   success?: boolean;
 }>;
 
+// Strict input type for UI invoice form
+export interface UiInvoiceInput {
+  amount: number;
+  customerId: string;
+  status: InvoiceStatus;
+}
+
 /**
  * Form state for creating a new invoice.
  * This is used to manage the form state in the UI for create-invoice-form.tsx.

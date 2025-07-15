@@ -15,6 +15,7 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { mapUiInvoiceInputToBrandedDto } from "@/features/invoices/invoice.mapper";
 import {
   CreateInvoiceSchema,
   type InvoiceEditState,
@@ -78,6 +79,9 @@ export async function createInvoiceAction(
 
     const fields = { amount: amountInCents, customerId, date: now, status };
     const brands = brandInvoiceFields(fields);
+
+    const mappingShit = mapUiInvoiceInputToBrandedDto(fields);
+    console.log("Mapping Result:", mappingShit);
 
     // Use type-safe DAL input, omitting id and sensitiveData
     const dalInput: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData"> = {
