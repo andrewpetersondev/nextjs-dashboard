@@ -1,11 +1,12 @@
+import "server-only";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceRawDrizzle } from "@/db/schema";
-import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   INVOICE_STATUSES,
   type UiInvoiceInput,
 } from "@/features/invoices/invoice.types";
+import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   toCustomerId,
   toInvoiceId,
@@ -84,18 +85,19 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
 }
 
 /**
- * Maps and transforms UI invoice form input to a branded DTO-ready object.
+ * Maps and transforms UI invoice form input to a proper types for server logic.
  * - Converts amount to cents (integer).
  * - Adds current date in YYYY-MM-DD format.
- * - Brands all fields for DAL/DTO usage.
  * - Validates input strictly.
  *
- * @param input - UI invoice form input.
+ * @param uiInput - UI invoice form input.
  * @returns Branded invoice fields for DAL/DTO.
  * @throws Error if input is invalid or branding fails.
  */
-export function mapUiInvoiceInputToBrandedDto(input: UiInvoiceInput) {
-  const { amount, customerId, status } = input;
+export function transformUiInvoiceFields(
+  uiInput: UiInvoiceInput,
+): Omit<InvoiceDto, "id"> {
+  const { amount, customerId, status } = uiInput;
 
   // Validate amount
   if (Number.isNaN(amount) || amount < 0) {
@@ -129,22 +131,32 @@ export function mapUiInvoiceInputToBrandedDto(input: UiInvoiceInput) {
     );
   }
 
-  const amountInCents = Math.round(amount * 100);
-  // biome-ignore lint/style/noNonNullAssertion: <remove undefined>
-  const date = new Date().toISOString().split("T")[0]!; // YYYY-MM-DD
+  const amountInCents = Math.round(amount * 100); // Convert dollars to cents
+  const date = new Date().toISOString().split("T")[0] as string; // YYYY-MM-DD
 
   const fields = { amount: amountInCents, customerId, date, status };
 
-  const mappedAndBranded = brandInvoiceFields(fields);
-
-  if (!mappedAndBranded) {
+  // Defensive: Validate fields before returning
+  if (
+    !fields ||
+    typeof fields.amount !== "number" ||
+    typeof fields.customerId !== "string" ||
+    typeof fields.date !== "string" ||
+    typeof fields.status !== "string"
+  ) {
     logger.error({
       context: "mapUiInvoiceInputToBrandedDto",
+      expectedFields: [
+        "amount (number)",
+        "customerId (string)",
+        "date (string)",
+        "status (string)",
+      ],
       fields,
-      message: "Failed to brand invoice fields",
+      message: INVOICE_ERROR_MESSAGES.TRANSFORMATION_FAILED,
     });
-    throw new Error("Failed to brand invoice fields");
+    throw new Error(INVOICE_ERROR_MESSAGES.TRANSFORMATION_FAILED);
   }
 
-  return mappedAndBranded;
+  return fields;
 }

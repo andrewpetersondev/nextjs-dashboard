@@ -1,3 +1,4 @@
+import "server-only";
 import * as z from "zod";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";

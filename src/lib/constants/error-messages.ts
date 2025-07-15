@@ -17,6 +17,7 @@ export const INVOICE_ERROR_MESSAGES = {
   MISSING_FIELDS: "Missing required fields.",
   READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",
+  TRANSFORMATION_FAILED: "Failed to transform invoice data.",
   UPDATE_FAILED: "Failed to update invoice.",
   VALIDATION_FAILED: "Validation failed. Please check your input.",
 };

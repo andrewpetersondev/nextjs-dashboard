@@ -1,3 +1,4 @@
+import "server-only";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import {

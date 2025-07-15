@@ -1,5 +1,4 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDB } from "@/db/connection";
@@ -15,7 +14,7 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { mapUiInvoiceInputToBrandedDto } from "@/features/invoices/invoice.mapper";
+import { transformUiInvoiceFields } from "@/features/invoices/invoice.mapper";
 import {
   CreateInvoiceSchema,
   type InvoiceEditState,
@@ -80,8 +79,11 @@ export async function createInvoiceAction(
     const fields = { amount: amountInCents, customerId, date: now, status };
     const brands = brandInvoiceFields(fields);
 
-    const mappingShit = mapUiInvoiceInputToBrandedDto(fields);
-    console.log("Mapping Result:", mappingShit);
+    const transform = transformUiInvoiceFields(fields);
+    console.log("Transform Result:", transform);
+
+    const brandV2 = brandInvoiceFields(transform);
+    console.log("Brand Result:", brandV2);
 
     // Use type-safe DAL input, omitting id and sensitiveData
     const dalInput: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData"> = {
@@ -95,8 +97,19 @@ export async function createInvoiceAction(
       status: brands.status!,
     };
 
+    const dalInput2: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData"> = {
+      amount: brandV2.amount!,
+      customerId: brandV2.customerId!,
+      date: brandV2.date!,
+      status: brandV2.status!,
+    };
+
     // insert the data into the database
     const invoice = await createInvoiceDal(db, dalInput);
+
+    const invoice2 = await createInvoiceDal(db, dalInput2);
+
+    console.log("Invoice 2 Result:", invoice2);
 
     // Defensive: check if the invoice was created successfully
     if (!invoice) {

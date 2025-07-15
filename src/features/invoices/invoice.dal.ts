@@ -1,5 +1,4 @@
 import "server-only";
-
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
@@ -21,17 +20,17 @@ import { logger } from "@/lib/utils/logger";
 /**
  * Inserts a new invoice record into the database.
  * @param db - Drizzle database instance
- * @param invoice - Invoice data (all fields except id and sensitiveData)
+ * @param uiInvoiceEntity - Invoice data (all fields except id and sensitiveData)
  * @returns The created InvoiceDto or null
  */
 export async function createInvoiceDal(
   db: Db,
-  invoice: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">,
+  uiInvoiceEntity: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">,
 ): Promise<InvoiceDto | null> {
   try {
     const [createdInvoice] = await db
       .insert(invoices)
-      .values(invoice)
+      .values(uiInvoiceEntity)
       .returning();
 
     if (!createdInvoice) return null;
@@ -47,8 +46,8 @@ export async function createInvoiceDal(
     logger.error({
       context: "createInvoiceDal",
       error,
-      invoice,
       message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+      uiInvoiceEntity,
     });
     throw new Error(INVOICE_ERROR_MESSAGES.CREATE_FAILED);
   }
