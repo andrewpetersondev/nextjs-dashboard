@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type * as z from "zod";
 import { getDB } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
@@ -20,6 +19,7 @@ import {
   CreateInvoiceSchema,
   type InvoiceEditState,
   type InvoiceFieldName,
+  type InvoiceFormStateCreate,
   type InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -29,20 +29,9 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import type { FormState } from "@/lib/forms/form.types";
 import { validateFormData } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
 import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
-
-/**
- * Form state for creating a new invoice.
- * This is used to manage the form state in the UI for create-invoice-form.tsx.
- * It includes validation errors, success,  messages, and the created invoice DTO (optional).
- */
-export type InvoiceFormStateCreate = FormState<
-  InvoiceFieldName,
-  z.output<typeof CreateInvoiceSchema>
->;
 
 // --- CRUD Actions for Invoices ---
 
@@ -58,13 +47,16 @@ export async function createInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceFormStateCreate> {
   try {
+    // db connection
     const db = getDB();
 
+    // form validation
     const validation = validateFormData<
       InvoiceFieldName,
       typeof CreateInvoiceSchema._output
     >(formData, CreateInvoiceSchema);
 
+    // handle form validation errors
     if (!validation.success) {
       logger.error({
         context: "createInvoiceAction:validationError",
@@ -99,8 +91,10 @@ export async function createInvoiceAction(
       status: brands.status!,
     };
 
+    // insert the data into the database
     const invoice = await createInvoiceDal(db, dalInput);
 
+    // Defensive: check if the invoice was created successfully
     if (!invoice) {
       logger.error({
         brands,
@@ -123,6 +117,7 @@ export async function createInvoiceAction(
       };
     }
 
+    // Log success
     return {
       data: invoice, // Return the created invoice DTO if needed in the UI
       errors: {},
@@ -141,7 +136,12 @@ export async function createInvoiceAction(
       success: false,
     };
   }
-  // NOTE: returning actionResult on success made this unreachable.
+  // finally {
+  // cleanup if needed (close db connection, etc.)
+  // logger.info({})
+  // telemetry/tracing
+  // non-blocking side effects
+  // }
   // revalidatePath("/dashboard/invoices");
   // redirect("/dashboard/invoices");
 }
