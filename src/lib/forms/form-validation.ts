@@ -1,7 +1,8 @@
 import "server-only";
 
-import type * as z from "zod";
+import * as z from "zod";
 import type { FormState } from "@/lib/forms/form.types";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Default validation messages.
@@ -25,18 +26,30 @@ export function validateFormData<
   formData: FormData,
   schema: z.ZodSchema<TData>,
 ): FormState<TFieldNames, TData> {
-  const data = Object.fromEntries(formData.entries()); // what is the shape of data?
-  const parsed = schema.safeParse(data); // what is the shape of parsed?
+  const data = Object.fromEntries(formData.entries());
+  const parsed = schema.safeParse(data);
 
   if (!parsed.success) {
+    logger.error({
+      context: "validateFormData",
+      data,
+      error: parsed.error,
+      message: VALIDATION_FAILED_MESSAGE,
+    });
+
     // normalize Zod errors to FormState shape
-    const { fieldErrors } = parsed.error.flatten();
+    const { fieldErrors } = parsed.error.flatten(); // this works as expected
+    // const fieldErrors = z.treeifyError(parsed.error);
     return {
       errors: fieldErrors as Partial<Record<TFieldNames, string[]>>,
       message: VALIDATION_FAILED_MESSAGE,
       success: false,
     };
   }
+
+  if (parsed.data) {
+  }
+
   return {
     data: parsed.data,
     errors: {},

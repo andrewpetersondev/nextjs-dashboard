@@ -58,3 +58,11 @@ export const CUSTOMER_ERROR_MESSAGES = {
   READ_FAILED: "Failed to read customer.",
   UPDATE_FAILED: "Failed to update customer.",
 };
+
+export const FORM_ERROR_MESSAGES = {
+  INVALID_FORM_DATA: "Invalid form data. Please check your input.",
+  MISSING_REQUIRED_FIELDS: "Please fill out all required fields.",
+  SUBMIT_FAILED: "Form submission failed. Please try again.",
+  UNEXPECTED_ERROR: "An unexpected error occurred. Please try again later.",
+  VALIDATION_FAILED: "Form validation failed. Please check your input.",
+};
