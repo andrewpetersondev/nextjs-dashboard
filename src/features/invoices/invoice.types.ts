@@ -1,6 +1,7 @@
 import * as z from "zod";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { FormState } from "@/lib/forms/form.types";
 
 /**
  * Allowed invoice statuses.
@@ -21,8 +22,10 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 export const INVOICE_FIELD_NAMES = ["amount", "customerId", "status"] as const;
 
 /**
- * Type for invoice field names.
+ * Type for invoice field names. (Intended for UI forms and error handling)
  *
+ * - Intended for use in forms, error messages, and validation.
+ * - UI only
  * String literal Union type based on INVOICE_FIELD_NAMES.
  */
 export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
@@ -39,14 +42,14 @@ export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
  * This type is used in invoice list views and table components.
  */
 export type InvoiceTableRow = Readonly<{
-  id: InvoiceId;
   amount: number;
-  date: string;
-  status: InvoiceStatus;
   customerId: CustomerId;
-  name: string;
+  date: string;
   email: string;
+  id: InvoiceId;
   imageUrl: string;
+  name: string;
+  status: InvoiceStatus;
 }>;
 
 export type InvoiceEditState = Readonly<{
@@ -55,6 +58,16 @@ export type InvoiceEditState = Readonly<{
   message?: string;
   success?: boolean;
 }>;
+
+/**
+ * Form state for creating a new invoice.
+ * This is used to manage the form state in the UI for create-invoice-form.tsx.
+ * It includes validation errors, success,  messages, and the created invoice DTO (optional).
+ */
+export type InvoiceFormStateCreate = FormState<
+  InvoiceFieldName,
+  z.output<typeof CreateInvoiceSchema>
+>;
 
 /**
  * Zod validation schema for invoice creation.

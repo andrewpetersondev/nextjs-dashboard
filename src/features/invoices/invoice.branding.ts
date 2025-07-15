@@ -1,3 +1,4 @@
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import {
   toCustomerId,
@@ -6,28 +7,15 @@ import {
 } from "@/lib/definitions/brands";
 
 /**
- * Fields that require branding for DAL/database operations.
- */
-type InvoiceBrandableFields = {
-  amount: number;
-  customerId: string;
-  date: string;
-  id: string;
-  status: InvoiceStatus;
-};
-
-/**
  * Brands invoice fields for DAL/database operations.
  * Accepts a partial set of fields and only brands those present.
  */
-export function brandInvoiceFields(
-  fields: Partial<InvoiceBrandableFields>,
-): Partial<{
+export function brandInvoiceFields(fields: Partial<InvoiceDto>): Partial<{
   amount: number;
   customerId: ReturnType<typeof toCustomerId>;
-  status: ReturnType<typeof toInvoiceStatusBrand>;
-  id: ReturnType<typeof toInvoiceId>;
   date: string;
+  id: ReturnType<typeof toInvoiceId>;
+  status: ReturnType<typeof toInvoiceStatusBrand>;
 }> {
   return {
     ...(fields.amount !== undefined && { amount: fields.amount }),
@@ -50,18 +38,18 @@ export function _brandInvoiceFields_dep_v1<
   TFields extends {
     amount?: number;
     customerId?: string;
-    status?: string;
-    id?: string;
     date?: string;
+    id?: string;
+    status?: string;
   },
 >(
   fields: TFields,
 ): {
   amount?: number;
   customerId?: ReturnType<typeof toCustomerId>;
-  status?: ReturnType<typeof toInvoiceStatusBrand>;
-  id?: ReturnType<typeof toInvoiceId>;
   date?: string;
+  id?: ReturnType<typeof toInvoiceId>;
+  status?: ReturnType<typeof toInvoiceStatusBrand>;
 } {
   return {
     ...(fields.amount !== undefined && { amount: fields.amount }),
@@ -77,6 +65,17 @@ export function _brandInvoiceFields_dep_v1<
 }
 
 /**
+ * Fields that require branding for DAL/database operations.
+ */
+type InvoiceBrandableFields = {
+  amount: number;
+  customerId: string;
+  date: string;
+  id: string;
+  status: InvoiceStatus;
+};
+
+/**
  * Brands invoice fields for DAL/database operations.
  * Accepts a partial set of fields and only brands those present.
  */
@@ -85,9 +84,9 @@ export function _brandInvoiceFields_dep_v2(
 ): Partial<{
   amount: number;
   customerId: ReturnType<typeof toCustomerId>;
-  status: ReturnType<typeof toInvoiceStatusBrand>;
-  id: ReturnType<typeof toInvoiceId>;
   date: string;
+  id: ReturnType<typeof toInvoiceId>;
+  status: ReturnType<typeof toInvoiceStatusBrand>;
 }> {
   return {
     ...(fields.amount !== undefined && { amount: fields.amount }),

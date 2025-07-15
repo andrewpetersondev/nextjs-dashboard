@@ -30,9 +30,9 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
  *
  */
 export interface InvoiceDto {
-  readonly id: string;
-  readonly customerId: string;
   readonly amount: number; // Amount in cents
-  readonly status: InvoiceStatus;
+  readonly customerId: string;
   readonly date: string; // ISO date string
+  readonly id: string;
+  readonly status: InvoiceStatus;
 }

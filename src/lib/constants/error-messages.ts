@@ -13,6 +13,7 @@ export const INVOICE_ERROR_MESSAGES = {
   FETCH_LATEST_FAILED: "Failed to fetch the latest invoices.",
   FETCH_PAGES_FAILED: "Failed to fetch the total number of invoice pages.",
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
+  MAPPING_FAILED: "Failed to map invoice data.",
   MISSING_FIELDS: "Missing required fields.",
   READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",

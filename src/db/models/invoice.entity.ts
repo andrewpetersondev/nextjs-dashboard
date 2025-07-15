@@ -16,10 +16,10 @@ import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
  * @property sensitiveData - Internal field, not for client exposure.
  */
 export interface InvoiceEntity {
-  readonly id: InvoiceId;
-  readonly customerId: CustomerId;
   readonly amount: number;
+  readonly customerId: CustomerId;
   readonly date: string; // ISO 8601
-  readonly status: InvoiceStatus;
+  readonly id: InvoiceId;
   readonly sensitiveData: string;
+  readonly status: InvoiceStatus;
 }
