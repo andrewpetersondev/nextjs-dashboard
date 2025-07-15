@@ -22,10 +22,10 @@ export const EditInvoiceForm = ({
 }): JSX.Element => {
   // Initial state matches InvoiceEditState
   const initialState: InvoiceEditState = {
-    // errors: {},
+    // errors: {}, // Omit errors to satisfy exactOptionalPropertyTypes
     invoice,
-    // message: "",
-    // success: undefined,
+    // message: "", // Omit message to satisfy exactOptionalPropertyTypes
+    // success: undefined, // Omit success to satisfy exactOptionalPropertyTypes
   };
 
   // Bind the invoice ID to the action

@@ -33,20 +33,6 @@ export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
 export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
 
 /**
- * Specialized type for creating an invoice in the database with DAL function.
- *
- * - branded types for database operations
- * - DOES NOT include `id` field, as it is auto-generated
- * - NOT FOR USE ANYWHERE ELSE!
- */
-export type InvoiceCreateInput = Readonly<{
-  amount: number;
-  customerId: CustomerId;
-  date: string;
-  status: InvoiceStatus;
-}>;
-
-/**
  * Row for invoice table queries (with customer info).
  *
  * Combines invoice data with customer details for display in tables.

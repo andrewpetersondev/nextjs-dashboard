@@ -2,6 +2,7 @@ import "server-only";
 
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "@/db/connection";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
@@ -9,7 +10,6 @@ import {
   toInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type {
-  InvoiceCreateInput,
   InvoiceStatus,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -20,20 +20,29 @@ import { logger } from "@/lib/utils/logger";
 
 /**
  * Inserts a new invoice record into the database.
+ * @param db - Drizzle database instance
+ * @param invoice - Invoice data (all fields except id and sensitiveData)
+ * @returns The created InvoiceDto or null
  */
 export async function createInvoiceDal(
   db: Db,
-  invoice: InvoiceCreateInput,
+  invoice: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">,
 ): Promise<InvoiceDto | null> {
   try {
     const [createdInvoice] = await db
       .insert(invoices)
       .values(invoice)
       .returning();
+
     if (!createdInvoice) return null;
+
     const entity = toInvoiceEntity(createdInvoice);
     if (!entity) return null;
-    return toInvoiceDto(entity);
+
+    const dto = toInvoiceDto(entity);
+    if (!dto) return null;
+
+    return dto;
   } catch (error) {
     logger.error({
       context: "createInvoiceDal",

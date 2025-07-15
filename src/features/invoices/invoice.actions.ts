@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type * as z from "zod";
 import { getDB } from "@/db/connection";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import {
   createInvoiceDal,
@@ -17,7 +18,6 @@ import {
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   CreateInvoiceSchema,
-  type InvoiceCreateInput,
   type InvoiceEditState,
   type InvoiceFieldName,
   type InvoiceTableRow,
@@ -34,7 +34,11 @@ import { validateFormData } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
 import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
 
-// Use this as the return type for your action
+/**
+ * Form state for creating a new invoice.
+ * This is used to manage the form state in the UI for create-invoice-form.tsx.
+ * It includes validation errors, success,  messages, and the created invoice DTO (optional).
+ */
 export type InvoiceFormStateCreate = FormState<
   InvoiceFieldName,
   z.output<typeof CreateInvoiceSchema>
@@ -44,6 +48,10 @@ export type InvoiceFormStateCreate = FormState<
 
 /**
  * Server action to create a new invoice.
+ * Validates input, brands fields, and persists to the database.
+ * @param _prevState - Previous form state (unused)
+ * @param formData - FormData from the client
+ * @returns InvoiceFormStateCreate - Form state with errors or created invoice DTO
  */
 export async function createInvoiceAction(
   _prevState: InvoiceFormStateCreate,
@@ -71,18 +79,23 @@ export async function createInvoiceAction(
       };
     }
 
-    const { amount, customerId, status } = validation.data!; // Non-null assertion since we validated success
+    // biome-ignore lint/style/noNonNullAssertion: <success was validated>
+    const { amount, customerId, status } = validation.data!;
     const amountInCents = Math.round(amount * 100); // Avoid floating point issues
     const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
 
     const fields = { amount: amountInCents, customerId, date: now, status };
     const brands = brandInvoiceFields(fields);
 
-    // Explicitly construct DAL input, ensuring all required fields are present
-    const dalInput: InvoiceCreateInput = {
-      amount: brands.amount!, // Non-null assertion; safe due to validation above
+    // Use type-safe DAL input, omitting id and sensitiveData
+    const dalInput: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData"> = {
+      // biome-ignore lint/style/noNonNullAssertion: <success was validated>
+      amount: brands.amount!,
+      // biome-ignore lint/style/noNonNullAssertion: <success was validated>
       customerId: brands.customerId!,
+      // biome-ignore lint/style/noNonNullAssertion: <success was validated>
       date: brands.date!,
+      // biome-ignore lint/style/noNonNullAssertion: <success was validated>
       status: brands.status!,
     };
 
@@ -113,7 +126,7 @@ export async function createInvoiceAction(
     return {
       data: invoice, // Return the created invoice DTO if needed in the UI
       errors: {},
-      message: "Invoice created successfully.",
+      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
       success: true,
     };
   } catch (error) {
