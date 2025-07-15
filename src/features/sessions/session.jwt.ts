@@ -14,11 +14,11 @@ import {
   type EncryptPayload,
   EncryptPayloadSchema,
 } from "@/features/sessions/session.types";
-import { getCookieValue } from "@/features/sessions/session.utils";
+// import { getCookieValue } from "@/features/sessions/session.utils";
 import type { UserRole } from "@/features/users/user.types";
 import {
   JWT_EXPIRATION,
-  ONE_DAY_MS,
+  // ONE_DAY_MS,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
 } from "@/lib/constants/auth.constants";
@@ -166,75 +166,73 @@ export async function readSessionToken(
   }
 }
 
-/**
- * Updates the session cookie's expiration if valid.
- * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// biome-ignore lint/suspicious/noConfusingVoidType: <unused function>
-async function _updateSessionToken(): Promise<null | void> {
-  const cookieStore = await cookies();
-
-  const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
-
-  const session = getCookieValue(rawCookie?.value);
-
-  if (!session) {
-    logger.warn(
-      { context: "updateSession" },
-      "No session cookie found to update",
-    );
-    return null;
-  }
-
-  const payload = await readSessionToken(session);
-
-  if (!payload?.user) {
-    logger.warn(
-      { context: "updateSession" },
-      "Session payload invalid or missing user",
-    );
-    return null;
-  }
-
-  const now = Date.now();
-
-  const expiration = new Date(payload.user.expiresAt).getTime();
-
-  if (now > expiration) {
-    logger.info(
-      { context: "updateSession", userId: payload.user.userId },
-      "Session expired, not updating",
-    );
-    return null;
-  }
-
-  const { user } = payload;
-  const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
-
-  const minimalPayload: EncryptPayload = {
-    user: {
-      expiresAt: newExpiration,
-      role: user.role,
-      userId: user.userId,
-    },
-  };
-
-  const updatedToken = await createSessionToken(minimalPayload);
-
-  cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-    expires: new Date(newExpiration),
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  logger.info(
-    { context: "updateSession", newExpiration, userId: user.userId },
-    "Session updated with new expiration",
-  );
-}
+// /**
+//  * Updates the session cookie's expiration if valid.
+//  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
+//  */
+// async function _updateSessionToken(): Promise<null | void> {
+//   const cookieStore = await cookies();
+//
+//   const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
+//
+//   const session = getCookieValue(rawCookie?.value);
+//
+//   if (!session) {
+//     logger.warn(
+//       { context: "updateSession" },
+//       "No session cookie found to update",
+//     );
+//     return null;
+//   }
+//
+//   const payload = await readSessionToken(session);
+//
+//   if (!payload?.user) {
+//     logger.warn(
+//       { context: "updateSession" },
+//       "Session payload invalid or missing user",
+//     );
+//     return null;
+//   }
+//
+//   const now = Date.now();
+//
+//   const expiration = new Date(payload.user.expiresAt).getTime();
+//
+//   if (now > expiration) {
+//     logger.info(
+//       { context: "updateSession", userId: payload.user.userId },
+//       "Session expired, not updating",
+//     );
+//     return null;
+//   }
+//
+//   const { user } = payload;
+//   const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
+//
+//   const minimalPayload: EncryptPayload = {
+//     user: {
+//       expiresAt: newExpiration,
+//       role: user.role,
+//       userId: user.userId,
+//     },
+//   };
+//
+//   const updatedToken = await createSessionToken(minimalPayload);
+//
+//   cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
+//     expires: new Date(newExpiration),
+//     httpOnly: true,
+//     path: "/",
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+//
+//   logger.info(
+//     { context: "updateSession", newExpiration, userId: user.userId },
+//     "Session updated with new expiration",
+//   );
+// }
 
 /**
  * Deletes the session cookie.

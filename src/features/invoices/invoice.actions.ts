@@ -15,12 +15,12 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import {
   CreateInvoiceSchema,
-  type FetchFilteredInvoicesData,
+  type InvoiceCreateInput,
   type InvoiceEditState,
   type InvoiceFieldName,
+  type InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
@@ -34,21 +34,21 @@ import { validateFormData } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
 import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
 
-// --- CRUD Actions for Invoices ---
-
 // Use this as the return type for your action
-type InvoiceFormState = FormState<
+export type InvoiceFormStateCreate = FormState<
   InvoiceFieldName,
   z.output<typeof CreateInvoiceSchema>
 >;
+
+// --- CRUD Actions for Invoices ---
 
 /**
  * Server action to create a new invoice.
  */
 export async function createInvoiceAction(
-  _prevState: InvoiceFormState,
+  _prevState: InvoiceFormStateCreate,
   formData: FormData,
-): Promise<InvoiceFormState> {
+): Promise<InvoiceFormStateCreate> {
   try {
     const db = getDB();
 
@@ -111,7 +111,7 @@ export async function createInvoiceAction(
     }
 
     return {
-      // data: invoice, // Return the created invoice DTO if needed in the UI
+      data: invoice, // Return the created invoice DTO if needed in the UI
       errors: {},
       message: "Invoice created successfully.",
       success: true,
@@ -309,15 +309,43 @@ export async function deleteInvoiceFormAction(
 // --- Read Actions for Invoices ---
 
 /**
- * Server action to fetch the total number of invoice pages.
- * @param query - Search query string
- * @returns Total number of pages
+ * Server action to fetch the total number of invoice pages for pagination.
+ * @param query - Search query string (optional, defaults to empty string)
+ * @returns Promise<number> - Total number of pages (integer >= 1)
  */
 export async function readInvoicesPagesAction(
   query: string = "",
 ): Promise<number> {
-  const db = getDB();
-  return fetchInvoicesPages(db, query);
+  // Sanitize input to prevent SQL injection and ensure type safety
+  const sanitizedQuery = typeof query === "string" ? query.trim() : "";
+
+  try {
+    const db = getDB();
+
+    // Delegate to DAL, which already handles error logging and page calculation
+    const totalPages = await fetchInvoicesPages(db, sanitizedQuery);
+
+    // Defensive: Ensure a valid number is always returned
+    if (!Number.isInteger(totalPages) || totalPages < 1) {
+      logger.error({
+        context: "readInvoicesPagesAction",
+        message: "Invalid totalPages returned from DAL",
+        query: sanitizedQuery,
+      });
+      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
+    }
+
+    return totalPages;
+  } catch (error) {
+    logger.error({
+      context: "readInvoicesPagesAction",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      query,
+    });
+    // Rethrow or return a safe fallback (never expose internal errors to the client)
+    throw new Error(INVOICE_ERROR_MESSAGES.DB_ERROR);
+  }
 }
 
 /**
@@ -329,7 +357,7 @@ export async function readInvoicesPagesAction(
 export async function readFilteredInvoicesAction(
   query: string = "",
   currentPage: number = 1,
-): Promise<FetchFilteredInvoicesData[]> {
+): Promise<InvoiceTableRow[]> {
   const db = getDB();
   return fetchFilteredInvoices(db, query, currentPage);
 }

@@ -81,3 +81,13 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
     status: toInvoiceStatusBrand(entity.status),
   };
 }
+
+// Maps an InvoiceDto (from client) to an InvoiceEntity.
+// export function fromInvoiceDto(dto: UserDto): InvoiceEntity {
+// ...validate, sanitize, brand
+// }
+
+// Maps an InvoiceEntity to a DB model for persistence.
+// export function toInvoiceDbModel(entity: InvoiceEntity): InvoiceRawDrizzle {
+// ...prepare for Drizzle ORM
+// }

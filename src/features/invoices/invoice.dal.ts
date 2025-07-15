@@ -9,17 +9,14 @@ import {
   toInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type {
-  FetchFilteredInvoicesData,
   InvoiceCreateInput,
+  InvoiceStatus,
   InvoiceTableRow,
-  InvoiceUpdateInput,
-  LatestInvoiceRow,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import type { InvoiceId } from "@/lib/definitions/brands";
+import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
-import { formatCurrency } from "@/lib/utils/utils";
 
 /**
  * Inserts a new invoice record into the database.
@@ -84,7 +81,7 @@ export async function readInvoiceDal(
 export async function updateInvoiceDal(
   db: Db,
   id: InvoiceId,
-  invoice: InvoiceUpdateInput,
+  invoice: { amount: number; status: InvoiceStatus; customerId: CustomerId },
 ): Promise<InvoiceDto | null> {
   try {
     const [updated] = await db
@@ -137,7 +134,7 @@ export async function deleteInvoiceDal(
 export async function fetchLatestInvoices(
   db: Db,
   limit = 5,
-): Promise<LatestInvoiceRow[]> {
+): Promise<InvoiceTableRow[]> {
   try {
     const latestInvoices = await db
       .select({
@@ -154,18 +151,24 @@ export async function fetchLatestInvoices(
       .innerJoin(customers, eq(invoices.customerId, customers.id))
       .orderBy(desc(invoices.date))
       .limit(limit);
-    return latestInvoices.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
+
+    if (!latestInvoices || latestInvoices.length === 0) {
+      logger.warn({
+        context: "fetchLatestInvoices",
+        limit,
+        message: INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED,
+      });
+      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED);
+    }
+    return latestInvoices;
   } catch (error) {
     logger.error({
       context: "fetchLatestInvoices",
       error,
       limit,
-      message: INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
     });
-    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED);
+    throw new Error(INVOICE_ERROR_MESSAGES.DB_ERROR);
   }
 }
 
@@ -176,7 +179,7 @@ export async function fetchFilteredInvoices(
   db: Db,
   query: string,
   currentPage: number,
-): Promise<FetchFilteredInvoicesData[]> {
+): Promise<InvoiceTableRow[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   try {
     const data: InvoiceTableRow[] = await db
@@ -205,10 +208,21 @@ export async function fetchFilteredInvoices(
       .limit(ITEMS_PER_PAGE)
       .offset(offset);
 
-    return data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
+    if (!data || data.length === 0) {
+      logger.warn({
+        context: "fetchFilteredInvoices",
+        currentPage,
+        message: INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
+        query,
+      });
+    }
+
+    return data;
+
+    // return data.map((invoice) => ({
+    //   ...invoice,
+    //   amount: formatCurrency(invoice.amount),
+    // }));
   } catch (error) {
     logger.error({
       context: "fetchFilteredInvoices",
@@ -223,12 +237,16 @@ export async function fetchFilteredInvoices(
 
 /**
  * Fetches the total number of invoice pages for pagination.
+ * @param db - Drizzle database instance
+ * @param query - Search query string
+ * @returns Total number of pages (integer >= 1)
  */
 export async function fetchInvoicesPages(
   db: Db,
   query: string,
 ): Promise<number> {
   try {
+    // Count invoices matching the search query
     const [{ count: total = 0 } = { count: 0 }] = await db
       .select({
         count: count(invoices.id),
@@ -244,7 +262,19 @@ export async function fetchInvoicesPages(
           ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
         ),
       );
-    return Math.ceil(total / ITEMS_PER_PAGE);
+    // Always return at least 1 page for UX consistency
+    const pages = Math.ceil(total / ITEMS_PER_PAGE);
+
+    if (!pages || typeof pages !== "number" || Number.isNaN(pages)) {
+      logger.error({
+        context: "fetchInvoicesPages",
+        message: INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED,
+        query,
+      });
+      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
+    }
+
+    return pages;
   } catch (error) {
     logger.error({
       context: "fetchInvoicesPages",

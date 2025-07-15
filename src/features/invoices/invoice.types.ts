@@ -10,6 +10,8 @@ export const INVOICE_STATUSES = ["pending", "paid"] as const;
 
 /**
  * Type for invoice status.
+ *
+ * String literal Union type based on INVOICE_STATUSES.
  */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
@@ -17,6 +19,12 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
  * Field names for invoice forms and error maps.
  */
 export const INVOICE_FIELD_NAMES = ["amount", "customerId", "status"] as const;
+
+/**
+ * Type for invoice field names.
+ *
+ * String literal Union type based on INVOICE_FIELD_NAMES.
+ */
 export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
 
 /**
@@ -25,16 +33,11 @@ export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
 export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
 
 /**
- * Fields for invoice creation form.
- */
-export type CreateInvoiceFormFields = Readonly<{
-  amount: number | "";
-  status: InvoiceStatus;
-  customerId: CustomerId | "";
-}>;
-
-/**
- * Input type for creating an invoice.
+ * Specialized type for creating an invoice in the database with DAL function.
+ *
+ * - branded types for database operations
+ * - DOES NOT include `id` field, as it is auto-generated
+ * - NOT FOR USE ANYWHERE ELSE!
  */
 export type InvoiceCreateInput = Readonly<{
   amount: number;
@@ -44,27 +47,10 @@ export type InvoiceCreateInput = Readonly<{
 }>;
 
 /**
- * Input type for updating an invoice.
- */
-export type InvoiceUpdateInput = Readonly<
-  Partial<Omit<InvoiceCreateInput, "customerId">> & {
-    customerId?: CustomerId;
-  }
->;
-
-/**
- * Raw DB row for an invoice.
- */
-export type _InvoiceDbRow = Readonly<{
-  id: InvoiceId;
-  amount: number;
-  customerId: CustomerId;
-  date: string;
-  status: InvoiceStatus;
-}>;
-
-/**
  * Row for invoice table queries (with customer info).
+ *
+ * Combines invoice data with customer details for display in tables.
+ * This type is used in invoice list views and table components.
  */
 export type InvoiceTableRow = Readonly<{
   id: InvoiceId;
@@ -74,43 +60,7 @@ export type InvoiceTableRow = Readonly<{
   customerId: CustomerId;
   name: string;
   email: string;
-  imageUrl: string | null;
-}>;
-
-/**
- * Row for latest invoices (with formatted amount).
- */
-export type LatestInvoiceRow = Readonly<
-  Omit<InvoiceTableRow, "amount"> & { amount: string }
->;
-
-/**
- * Row for filtered invoices (with formatted amount).
- */
-export type FetchFilteredInvoicesData = Readonly<
-  Omit<InvoiceTableRow, "amount"> & { amount: string }
->;
-
-/**
- * Fields for invoice editing (all optional for PATCH semantics).
- */
-export type _EditInvoiceFormFields = Partial<CreateInvoiceFormFields>;
-
-/**
- * State for the invoice form.
- */
-export type _InvoiceFormFields = Readonly<{
-  id: InvoiceId | "";
-  customerId: CustomerId | "";
-  amount: number | "";
-  status: InvoiceStatus;
-  date: string;
-}>;
-
-export type InvoiceCreateState = Readonly<{
-  errors?: InvoiceErrorMap;
-  message?: string;
-  success?: boolean;
+  imageUrl: string;
 }>;
 
 export type InvoiceEditState = Readonly<{
@@ -119,28 +69,6 @@ export type InvoiceEditState = Readonly<{
   message?: string;
   success?: boolean;
 }>;
-
-/**
- * Generic action result type for server actions.
- */
-export type InvoiceActionResult<
-  T = undefined,
-  E = Record<string, string[]>,
-> = Readonly<{
-  data?: T;
-  errors?: E;
-  message: string;
-  success: boolean;
-}>;
-
-export type _CreateInvoiceResult = InvoiceActionResult<
-  undefined,
-  InvoiceErrorMap
->;
-export type _UpdateInvoiceResult = InvoiceActionResult<
-  InvoiceDto,
-  InvoiceErrorMap
->;
 
 /**
  * Zod validation schema for invoice creation.
