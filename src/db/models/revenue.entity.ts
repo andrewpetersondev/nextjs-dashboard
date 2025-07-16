@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * Represents a revenue entity in the database, defining the structure and properties of a revenue record.
  *  - **Best Practices:**

@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { readFilteredInvoicesAction } from "@/features/invoices/invoice.actions";
-import type { FetchFilteredInvoicesData } from "@/features/invoices/invoice.types";
+import type { InvoiceTableRow } from "@/features/invoices/invoice.types";
 import { DesktopTable } from "@/ui/invoices/desktop-table";
 import { MobileTable } from "@/ui/invoices/mobile-table";
 
@@ -15,8 +15,10 @@ export const InvoicesTable = async ({
   query: string;
   currentPage: number;
 }): Promise<JSX.Element> => {
-  const invoices: FetchFilteredInvoicesData[] =
-    await readFilteredInvoicesAction(query, currentPage);
+  const invoices: InvoiceTableRow[] = await readFilteredInvoicesAction(
+    query,
+    currentPage,
+  );
 
   return (
     <div className="mt-6 flow-root">

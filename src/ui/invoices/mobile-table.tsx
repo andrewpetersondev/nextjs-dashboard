@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FetchFilteredInvoicesData } from "@/features/invoices/invoice.types";
+import type { InvoiceTableRow } from "@/features/invoices/invoice.types";
 import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
 import { InvoiceStatusComponent } from "@/ui/invoices/status";
@@ -18,13 +18,13 @@ import { InvoiceStatusComponent } from "@/ui/invoices/status";
 export const MobileTable = ({
   invoices,
 }: {
-  invoices: FetchFilteredInvoicesData[];
+  invoices: InvoiceTableRow[];
 }): JSX.Element => {
   return (
     <div className="md:hidden">
       {/* Map through invoices and create mobile-friendly cards */}
       {invoices?.map(
-        (invoice: FetchFilteredInvoicesData): JSX.Element => (
+        (invoice): JSX.Element => (
           <div
             className="mb-2 w-full rounded-md bg-bg-primary p-4"
             key={invoice.id}

@@ -77,15 +77,15 @@ export const Pagination = ({
 };
 
 const PaginationNumber = ({
-  page,
   href,
   isActive,
+  page,
   position,
 }: {
-  page: number | string;
   href: string;
-  position?: "first" | "last" | "middle" | "single";
   isActive: boolean;
+  page: number | string;
+  position?: "first" | "last" | "middle" | "single" | undefined;
 }): JSX.Element => {
   const className: string = clsx(
     "flex h-10 w-10 items-center justify-center border",

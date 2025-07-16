@@ -1,27 +1,57 @@
 import "server-only";
 
-import { getFormField } from "@/lib/utils/utils.server";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
+import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
+import { transformUiInvoiceFields } from "@/features/invoices/invoice.mapper";
+import {
+  CreateInvoiceSchema,
+  INVOICE_FIELD_NAMES,
+  type InvoiceFieldName,
+  type InvoiceStatus,
+} from "@/features/invoices/invoice.types";
+import type { CustomerId } from "@/lib/definitions/brands";
+import type { FormErrors } from "@/lib/forms/form.types";
+import { validateFormData } from "@/lib/forms/form-validation";
 
 /**
- * Extracts and returns required invoice fields from a FormData object.
- *
- * - Throws if any required field is missing or not a string.
- * - Use this utility to safely parse form submissions for invoice creation or update.
- *
- * @param formData - The FormData object from a request.
- * @returns {Object} - Object containing rawAmount, rawCustomerId, and rawStatus as strings.
- * @throws {Error} - If any field is missing or invalid.
- *
- * @example
- * const { rawAmount, rawCustomerId, rawStatus } = extractInvoiceFormFields(formData);
+ * Validates and transforms form data for invoice creation.
+ * Returns branded DAL input or error state.
  */
-export function extractInvoiceFormFields(formData: FormData): {
-  rawAmount: string;
-  rawCustomerId: string;
-  rawStatus: string;
+export function processInvoiceFormData(formData: FormData): {
+  dalInput?: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">;
+  errors?: FormErrors<InvoiceFieldName>; // target type
+  message?: string;
 } {
-  const rawAmount = getFormField(formData, "amount");
-  const rawCustomerId = getFormField(formData, "customerId");
-  const rawStatus = getFormField(formData, "status");
-  return { rawAmount, rawCustomerId, rawStatus };
+  const validation = validateFormData(
+    formData,
+    CreateInvoiceSchema,
+    INVOICE_FIELD_NAMES,
+  );
+
+  if (!validation.success || !validation.data) {
+    return {
+      errors: validation.errors, // source type
+      message: "Invalid invoice input.",
+    };
+  }
+
+  try {
+    const transformed = transformUiInvoiceFields(validation.data);
+    const branded = brandInvoiceFields(transformed);
+
+    return {
+      dalInput: {
+        amount: branded.amount as number,
+        customerId: branded.customerId as CustomerId,
+        date: branded.date as string,
+        status: branded.status as InvoiceStatus,
+      },
+    };
+  } catch (error) {
+    return {
+      errors: {},
+      message:
+        error instanceof Error ? error.message : "Transformation failed.",
+    };
+  }
 }

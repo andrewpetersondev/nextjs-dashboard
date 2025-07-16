@@ -1,10 +1,7 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type * as z from "zod";
 import { getDB } from "@/db/connection";
-import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -15,13 +12,13 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import {
   CreateInvoiceSchema,
-  type FetchFilteredInvoicesData,
   type InvoiceEditState,
-  type InvoiceFieldName,
+  type InvoiceFormStateCreate,
+  type InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
+import { processInvoiceFormData } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
@@ -29,91 +26,61 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import type { FormState } from "@/lib/forms/form.types";
-import { validateFormData } from "@/lib/forms/form-validation";
+import { buildErrorMap } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
-import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
+import { getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Invoices ---
 
-// Use this as the return type for your action
-type InvoiceFormState = FormState<
-  InvoiceFieldName,
-  z.output<typeof CreateInvoiceSchema>
->;
-
 /**
  * Server action to create a new invoice.
+ * Validates input, brands fields, and persists to the database.
+ * @param _prevState - Previous form state (unused)
+ * @param formData - FormData from the client
+ * @returns InvoiceFormStateCreate - Form state with errors or created invoice DTO
  */
 export async function createInvoiceAction(
-  _prevState: InvoiceFormState,
+  _prevState: InvoiceFormStateCreate,
   formData: FormData,
-): Promise<InvoiceFormState> {
+): Promise<InvoiceFormStateCreate> {
   try {
     const db = getDB();
 
-    const validation = validateFormData<
-      InvoiceFieldName,
-      typeof CreateInvoiceSchema._output
-    >(formData, CreateInvoiceSchema);
+    const { dalInput, errors, message } = processInvoiceFormData(formData);
 
-    if (!validation.success) {
+    if (!dalInput) {
       logger.error({
-        context: "createInvoiceAction:validationError",
-        error: validation.errors,
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        context: "createInvoiceAction:validationOrTransformError",
+        errors,
+        message,
       });
-
       return {
-        errors: validation.errors,
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        errors: errors ?? {},
+        message: message ?? INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };
     }
-
-    const { amount, customerId, status } = validation.data!; // Non-null assertion since we validated success
-    const amountInCents = Math.round(amount * 100); // Avoid floating point issues
-    const now = new Date().toISOString().split("T")[0] as string; // typeof string | undefined --> string
-
-    const fields = { amount: amountInCents, customerId, date: now, status };
-    const brands = brandInvoiceFields(fields);
-
-    // Explicitly construct DAL input, ensuring all required fields are present
-    const dalInput: InvoiceCreateInput = {
-      amount: brands.amount!, // Non-null assertion; safe due to validation above
-      customerId: brands.customerId!,
-      date: brands.date!,
-      status: brands.status!,
-    };
 
     const invoice = await createInvoiceDal(db, dalInput);
 
     if (!invoice) {
       logger.error({
-        brands,
         context: "createInvoiceAction:createFailed",
+        dalInput,
         message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
-        success: false,
       });
-
-      // Provide a structured error response for the UI. Only include fields that are user-supplied.
       return {
-        errors: buildErrorMap({
-          amount: brands.amount ? undefined : ["Amount is required."],
-          customerId: brands.customerId ? undefined : ["Customer is required."],
-          date: brands.date ? undefined : ["Date is required."],
-          status: brands.status ? undefined : ["Status is required."],
-          // date and id are intentionally omitted, as it is not user-supplied
-        }),
+        errors: {},
         message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
     }
 
+    // Log success
     return {
-      // data: invoice, // Return the created invoice DTO if needed in the UI
+      data: invoice,
       errors: {},
-      message: "Invoice created successfully.",
+      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
       success: true,
     };
   } catch (error) {
@@ -123,12 +90,17 @@ export async function createInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
     });
     return {
-      errors: {}, // No field-level errors for unexpected exceptions
+      errors: {},
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
   }
-  // NOTE: returning actionResult on success made this unreachable.
+  // finally {
+  // cleanup if needed (close db connection, etc.)
+  // logger.info({})
+  // telemetry/tracing
+  // non-blocking side effects
+  // }
   // revalidatePath("/dashboard/invoices");
   // redirect("/dashboard/invoices");
 }
@@ -309,15 +281,43 @@ export async function deleteInvoiceFormAction(
 // --- Read Actions for Invoices ---
 
 /**
- * Server action to fetch the total number of invoice pages.
- * @param query - Search query string
- * @returns Total number of pages
+ * Server action to fetch the total number of invoice pages for pagination.
+ * @param query - Search query string (optional, defaults to empty string)
+ * @returns Promise<number> - Total number of pages (integer >= 1)
  */
 export async function readInvoicesPagesAction(
   query: string = "",
 ): Promise<number> {
-  const db = getDB();
-  return fetchInvoicesPages(db, query);
+  // Sanitize input to prevent SQL injection and ensure type safety
+  const sanitizedQuery = typeof query === "string" ? query.trim() : "";
+
+  try {
+    const db = getDB();
+
+    // Delegate to DAL, which already handles error logging and page calculation
+    const totalPages = await fetchInvoicesPages(db, sanitizedQuery);
+
+    // Defensive: Ensure a valid number is always returned
+    if (!Number.isInteger(totalPages) || totalPages < 1) {
+      logger.error({
+        context: "readInvoicesPagesAction",
+        message: "Invalid totalPages returned from DAL",
+        query: sanitizedQuery,
+      });
+      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
+    }
+
+    return totalPages;
+  } catch (error) {
+    logger.error({
+      context: "readInvoicesPagesAction",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      query,
+    });
+    // Rethrow or return a safe fallback (never expose internal errors to the client)
+    throw new Error(INVOICE_ERROR_MESSAGES.DB_ERROR);
+  }
 }
 
 /**
@@ -329,7 +329,7 @@ export async function readInvoicesPagesAction(
 export async function readFilteredInvoicesAction(
   query: string = "",
   currentPage: number = 1,
-): Promise<FetchFilteredInvoicesData[]> {
+): Promise<InvoiceTableRow[]> {
   const db = getDB();
   return fetchFilteredInvoices(db, query, currentPage);
 }

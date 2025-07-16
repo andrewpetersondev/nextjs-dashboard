@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { UserRole } from "@/features/users/user.types";
 import type { UserId } from "@/lib/definitions/brands";
 

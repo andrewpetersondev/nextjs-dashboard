@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FetchFilteredInvoicesData } from "@/features/invoices/invoice.types";
+import type { InvoiceTableRow } from "@/features/invoices/invoice.types";
 import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
 import { InvoiceStatusComponent } from "@/ui/invoices/status";
@@ -8,7 +8,7 @@ import { InvoiceStatusComponent } from "@/ui/invoices/status";
 export const DesktopTable = ({
   invoices,
 }: {
-  invoices: FetchFilteredInvoicesData[];
+  invoices: InvoiceTableRow[];
 }): JSX.Element => {
   return (
     <table className="hidden min-w-full text-text-primary md:table">
@@ -36,7 +36,7 @@ export const DesktopTable = ({
       </thead>
       <tbody className="bg-bg-primary">
         {invoices?.map(
-          (invoice: FetchFilteredInvoicesData): JSX.Element => (
+          (invoice): JSX.Element => (
             <tr
               className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
               key={invoice.id}

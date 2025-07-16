@@ -13,9 +13,11 @@ export const INVOICE_ERROR_MESSAGES = {
   FETCH_LATEST_FAILED: "Failed to fetch the latest invoices.",
   FETCH_PAGES_FAILED: "Failed to fetch the total number of invoice pages.",
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
+  MAPPING_FAILED: "Failed to map invoice data.",
   MISSING_FIELDS: "Missing required fields.",
   READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",
+  TRANSFORMATION_FAILED: "Failed to transform invoice data.",
   UPDATE_FAILED: "Failed to update invoice.",
   VALIDATION_FAILED: "Validation failed. Please check your input.",
 };
@@ -55,4 +57,12 @@ export const CUSTOMER_ERROR_MESSAGES = {
   NOT_FOUND: "Customer not found.",
   READ_FAILED: "Failed to read customer.",
   UPDATE_FAILED: "Failed to update customer.",
+};
+
+export const FORM_ERROR_MESSAGES = {
+  INVALID_FORM_DATA: "Invalid form data. Please check your input.",
+  MISSING_REQUIRED_FIELDS: "Please fill out all required fields.",
+  SUBMIT_FAILED: "Form submission failed. Please try again.",
+  UNEXPECTED_ERROR: "An unexpected error occurred. Please try again later.",
+  VALIDATION_FAILED: "Form validation failed. Please check your input.",
 };

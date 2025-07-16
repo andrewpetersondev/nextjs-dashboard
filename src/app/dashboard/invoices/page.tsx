@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Invoices",
 };
 
-// force this page to be dynamic, so it doesn't get cached
+// force this page to be dynamic, so it doesn't get cached. Why?
 export const dynamic = "force-dynamic";
 
 interface InvoicesSearchParams {
@@ -27,6 +27,7 @@ interface InvoicesPageProps {
 export default async function Page(
   dynamicUrl: InvoicesPageProps,
 ): Promise<JSX.Element> {
+  // The Page Component can read url search params because Search Component sets them.
   const searchParams: InvoicesSearchParams | undefined =
     await dynamicUrl.searchParams;
 

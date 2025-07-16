@@ -6,7 +6,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceCreateState } from "@/features/invoices/invoice.types";
+import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.types";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
@@ -17,11 +17,11 @@ export const CreateInvoiceForm = ({
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
-  // Initial state matches InvoiceCreateState
-  const initialState: InvoiceCreateState = {
-    errors: {},
-    message: "",
-    success: false, // false vs undefined??
+  const initialState: InvoiceFormStateCreate = {
+    // Omit `data` to satisfy exactOptionalPropertyTypes
+    errors: {}, // Valid as Partial<Record<..>>,
+    message: "", // No message initially
+    success: false, // No success initially
   };
   const [state, action, isPending] = useActionState(
     createInvoiceAction,

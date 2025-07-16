@@ -58,9 +58,7 @@ export type FormFieldError = string[] | undefined;
  *      };
  *
  */
-export type FormErrors<T extends string = string> = Partial<
-  Record<T, FormFieldError>
->;
+export type FormErrors<T extends string> = Partial<Record<T, FormFieldError>>;
 
 /**
  * Represents the complete state of a form, including validation errors, user-facing messages, success status, and optional validated data.
@@ -120,7 +118,7 @@ export type FormErrors<T extends string = string> = Partial<
  * @see FormErrors
  * @see FormFieldError
  */
-export type FormState<TFieldNames extends string = string, TData = unknown> = {
+export type FormState<TFieldNames extends string, TData = unknown> = {
   errors: FormErrors<TFieldNames>;
   message: string;
   success: boolean;
