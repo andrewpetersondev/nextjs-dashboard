@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * Validates that an object has all required fields with expected types.
  * Throws an error if any field is missing or of the wrong type.
