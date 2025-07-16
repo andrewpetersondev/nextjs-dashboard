@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { CustomerId } from "@/lib/definitions/brands";
 
 /**

@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 

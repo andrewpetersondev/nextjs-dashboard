@@ -41,13 +41,13 @@ import {
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
+import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logError } from "@/lib/utils/logger";
 import { stripProperties } from "@/lib/utils/utils";
 import {
   actionResult,
   getFormField,
   getValidUserRole,
-  normalizeFieldErrors,
 } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Users ---

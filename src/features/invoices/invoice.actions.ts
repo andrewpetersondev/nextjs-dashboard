@@ -2,8 +2,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDB } from "@/db/connection";
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
-import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -14,26 +12,23 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { transformUiInvoiceFields } from "@/features/invoices/invoice.mapper";
 import {
   CreateInvoiceSchema,
   type InvoiceEditState,
-  type InvoiceFieldName,
   type InvoiceFormStateCreate,
-  type InvoiceStatus,
   type InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
+import { processInvoiceFormData } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
-  type CustomerId,
   toCustomerId,
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import { validateFormData } from "@/lib/forms/form-validation";
+import { buildErrorMap } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
-import { buildErrorMap, getFormField } from "@/lib/utils/utils.server";
+import { getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Invoices ---
 
@@ -51,78 +46,31 @@ export async function createInvoiceAction(
   try {
     const db = getDB();
 
-    // Validate form data using schema
-    const validation = validateFormData<
-      InvoiceFieldName,
-      typeof CreateInvoiceSchema._output
-    >(formData, CreateInvoiceSchema);
+    const { dalInput, errors, message } = processInvoiceFormData(formData);
 
-    if (!validation.success) {
+    if (!dalInput) {
       logger.error({
-        context: "createInvoiceAction:validationError",
-        error: validation.errors,
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        context: "createInvoiceAction:validationOrTransformError",
+        errors,
+        message,
       });
-
       return {
-        errors: validation.errors,
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        errors: errors ?? {},
+        message: message ?? INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };
     }
 
-    // TypeScript: validation.data is possibly undefined, so add a runtime check
-    if (!validation.data) {
-      // Defensive: This should never happen, but handle gracefully
-      logger.error({
-        context: "createInvoiceAction:missingData",
-        message: "Validation succeeded but data is missing.",
-      });
-      return {
-        errors: {},
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
-        success: false,
-      };
-    }
-
-    // Destructure validated data
-    const { amount, customerId, status } = validation.data;
-
-    // Transform and brand fields
-    const fields = { amount, customerId, status };
-    const transformed = transformUiInvoiceFields(fields);
-    const branded = brandInvoiceFields(transformed);
-    // Prepare DAL input, ensure all required fields are present
-    // Use type-safe DAL input, omitting id and sensitiveData
-    const dalInput: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData"> = {
-      amount: branded.amount as number,
-      customerId: branded.customerId as CustomerId,
-      date: branded.date as string, // Ensure date is validated and present
-      status: branded.status as InvoiceStatus,
-    };
-
-    // Insert into database
     const invoice = await createInvoiceDal(db, dalInput);
 
     if (!invoice) {
       logger.error({
-        branded,
         context: "createInvoiceAction:createFailed",
+        dalInput,
         message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
-        success: false,
       });
-
-      // Provide a structured error response for the UI. Only include fields that are user-supplied.
       return {
-        errors: buildErrorMap({
-          amount: branded.amount ? undefined : ["Amount is required."],
-          customerId: branded.customerId
-            ? undefined
-            : ["Customer is required."],
-          date: branded.date ? undefined : ["Date is required."],
-          status: branded.status ? undefined : ["Status is required."],
-          // date and id are intentionally omitted, as it is not user-supplied
-        }),
+        errors: {},
         message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };

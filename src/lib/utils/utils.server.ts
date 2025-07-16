@@ -15,46 +15,6 @@ import {
 } from "@/features/users/user.types";
 
 /**
- * Builds a typed error map for form fields, including only fields with actual errors.
- *
- * @template T - Field name type.
- * @param errors - Partial error map with possible undefined values.
- * @returns Partial error map with only fields that have errors.
- */
-export const buildErrorMap = <T extends string>(
-  errors: Partial<Record<T, string[] | undefined>>,
-): Partial<Record<T, string[]>> => {
-  const result: Partial<Record<T, string[]>> = {};
-  for (const [key, value] of Object.entries(errors) as [
-    T,
-    string[] | undefined,
-  ][]) {
-    if (Array.isArray(value) && value.length > 0) {
-      result[key] = value;
-    }
-  }
-  return result;
-};
-
-/**
- * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
- *
- * @param fieldErrors - Zod fieldErrors object.
- * @returns Normalized error map.
- */
-export const normalizeFieldErrors = (
-  fieldErrors: Record<string, string[] | undefined>,
-): Record<string, string[]> => {
-  const result: Record<string, string[]> = {};
-  for (const key in fieldErrors) {
-    if (Object.hasOwn(fieldErrors, key)) {
-      result[key] = fieldErrors[key] ?? [];
-    }
-  }
-  return result;
-};
-
-/**
  * Returns a standardized action result object for server actions.
  *
  * - Always includes the required `success` property (defaults to `true` if omitted).
@@ -111,7 +71,7 @@ export function actionResult<T = undefined>(params: {
  * @returns The field value as type T.
  * @throws {Error} - If the field is missing or not a string.
  */
-export const getFormField = <T extends string = string>(
+export const getFormField = <T extends string>(
   formData: FormData,
   key: string,
 ): T => {

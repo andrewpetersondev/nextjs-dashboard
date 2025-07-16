@@ -1,114 +1,72 @@
 # GitHub Copilot Instructions
 
+## Table of Contents
+
+- [Code Response Guidelines](#code-response-guidelines)
+- [TypeScript Best Practices](#typescript-best-practices)
+- [Naming Conventions](#naming-conventions)
+- [Testing Guidelines](#testing-guidelines)
+- [Security & Secrets](#security--secrets)
+- [Documentation](#documentation)
+- [Performance](#performance)
+- [Error Handling & Logging](#error-handling--logging)
+- [Accessibility & Internationalization](#accessibility--internationalization)
+- [AI Code Review & Traceability](#ai-code-review--traceability)
+- [AI Prompt Engineering & Feedback](#ai-prompt-engineering--feedback)
+- [Resolving Instruction Conflicts](#resolving-instruction-conflicts)
+- [Version Constraints](#version-constraints)
+- [Additional Instructions](#additional-instructions)
+
 ## Code Response Guidelines
 
-- Take the role of my boss who is an experienced next.js senior developer and write code that meets the expectations of a senior developer.
-- Always clearly indicate code changes with inline comments.
-- Use best practices for readability, maintainability, and performance.
-- Use TypeScript with strict typing.
-- Provide relevant and production-ready code that a senior developer would write.
-- Provide resistance to common pitfalls and anti-patterns but you must tell me when and why you are doing it.
-- Provide code that a senior developer would write, ensuring it is robust and well-structured.
-- Avoid using deprecated APIs and patterns. Always use the latest features and best practices. Always check the latest documentation for updates. Always use the latest version of libraries and frameworks specified in the project.
-- Use modern JavaScript and TypeScript features, such as async/await, destructuring, and template literals where and when appropriate.
-- Use functional programming principles where appropriate.
-- Use descriptive variable and function names.
-- Avoid using magic numbers or strings; use constants instead.
-- Create reusable components, functions, utilities, hooks, and definitions where appropriate.
-- Create documentation for all APIs, components, and utilities.
-- Use ES Modules (ESM) syntax for imports and exports.
-- Provide cypress code that accommodates Next.js, Typescript, ESM, and the latest version of Next.js.
-
-## Next.js Application Stack
-
-- Next.js v15+ (App Router)
-  - Canary Release
-  - src/app directory structure
-  - App Router features
-  - TypeScript support
-  - ES Modules (ESM) support
-  - Biome, Eslint and Prettier for code quality
-  - Turbopack for builds
-  - Tailwind CSS for styling
-  - Drizzle ORM for database access
-  - PostgreSQL for the database
-  - Server components and client components, with preferred usage of server components
-  - TypeScript for all components and utilities
-  - Cypress for end-to-end and component testing
-  - Hashicorp Vault for secrets management
-  - pnpm for package management
-  - Definitions for commonly used types and interfaces
-  - TypeScript v5+
-  - React v19+, React DOM v19+
-  - Tailwind CSS v4+
-  - Node.js v24+
-  - Turbopack for builds
-  - PostgreSQL v17+
-  - Drizzle ORM v0.4+
-  - Cypress v14.5+ for testing
-
-## Additional Instructions
-
-- Ensure compatibility with all specified versions in the package.json.
-- Use Tailwind CSS for styling.
-- Use Drizzle ORM for database access.
-- Write code that is easy to test and extend.
+- Write code as an expert Next.js senior developer.
+- Use TypeScript with strict typing and latest ECMAScript features.
 - Avoid deprecated APIs and patterns.
+- Ensure code is secure, maintainable, and scalable.
+- Provide clear explanations for complex logic and architectural decisions.
+- Prefer visual representations (diagrams, flowcharts) when explaining complex patterns.
+- Always check the latest documentation for updates.
+- Ensure compatibility with versions specified in `package.json`.
+
+## TypeScript Best Practices
+
+- Use `interface` for object shapes, `type` for unions/intersections.
+- Use generics for flexible, type-safe utilities, components, and hooks.
+- Explicitly annotate function parameters, return types, and component props.
+- Use `enum` or `as const` for related constants.
+- Avoid `any`; use `unknown` or specific types.
+- Leverage utility types (`Partial`, `Pick`, `Omit`, `Record`, etc.).
+- Use type guards and assertion functions to narrow types.
+- Document all types, interfaces, and generics with TSDoc.
+- Handle `undefined` and `null` explicitly.
+- Prefer `readonly` and immutable types where possible.
+
+## Naming Conventions
+
+- Use kebab-case for file and directory names.
+- Use PascalCase for React components and TypeScript types/interfaces.
+- Use camelCase for variables and functions.
 
 ## Testing Guidelines
 
 - Use Cypress for end-to-end and component testing.
-- Ensure high code coverage and meaningful test cases.
-- Mock external dependencies and database access in tests.
-- Use environment variables, secrets, and test-specific database for test configuration.
+- Ensure compatibility with Next.js, TypeScript, ESM, and latest Next.js version.
+- Achieve high code coverage and meaningful test cases.
+- Mock external dependencies and database access.
+- Use environment variables and test-specific databases for configuration.
 
 ## Security & Secrets
 
-- Secrets are managed using Hashicorp Vault Secrets.
-- Secrets are accessed via environment variables.
+- Manage secrets with Hashicorp Vault, accessed via environment variables.
 - Never commit secrets or sensitive data to version control.
 - Sanitize and validate all user input.
 - Follow OWASP best practices for web application security.
 
-## CI/CD
-
-- Use GitHub Actions for continuous integration and deployment.
-- Run linting, type checks, and tests on every pull request.
-- Build and deploy using Turbopack and Docker.
-- Use separate environments for staging and production.
-
-## Linting & Formatting
-
-- Enforce linting and formatting in CI.
-
-### Linting
-
-- Use Biome.js for linting with recommended rules.
-- Use eslint for Next.js specific rules.
-
-### Formatting
-
-- Use prettier for Markdown files.
-- use Biome.js for formatting with recommended rules for all other files.
-
 ## Documentation
 
-- Document all public APIs and components.
-- Maintain up-to-date README and usage guides.
-- Use JSDoc/TSDoc for TypeScript documentation.
-
-## Accessibility
-
-- Follow accessibility best practices.
-- Use semantic HTML and ARIA attributes where appropriate.
-- Test accessibility with automated tools and manual checks.
-
-<!--
-
-## Internationalization (i18n)
-
-- Structure the app for easy localization.
-- Use Next.js i18n routing if supporting multiple languages. -->
+- Document all files, components, utilities, and APIs using TSDoc.
+- Keep README and usage guides up to date.
+- Use TSDoc for TypeScript documentation.
 
 ## Performance
 
@@ -117,5 +75,36 @@
 
 ## Error Handling & Logging
 
-- Implement global error boundaries in React.
-- Use structured logging for server and client errors.
+- Implement global error boundaries in React using ErrorBoundary components.
+- Use structured logging (e.g., JSON format) for server and client errors.
+- Log errors with sufficient context for debugging, without exposing sensitive data.
+
+## Accessibility & Internationalization
+
+- Ensure all UI components are accessible (WCAG 2.1 AA or better).
+- Use semantic HTML and ARIA attributes where appropriate.
+- Support internationalization and localization best practices.
+
+## AI Code Review & Traceability
+
+- Review all AI-generated code for correctness, security, and maintainability.
+- Ensure AI-generated code does not introduce licensing or attribution issues.
+- Document significant AI-generated code contributions in commit messages or PR descriptions.
+
+## AI Prompt Engineering & Feedback
+
+- Provide clear, specific prompts to Copilot for optimal results.
+- Give feedback on AI suggestions to improve future code quality.
+
+## Resolving Instruction Conflicts
+
+- If instructions conflict, consult the project maintainer for clarification.
+
+## Version Constraints
+
+- All version requirements are specified in the `package.json` file. Ensure responses are compatible with these versions.
+
+## Additional Instructions
+
+- Avoid deprecated APIs and patterns.
+- Ensure code is inclusive and free from bias.
