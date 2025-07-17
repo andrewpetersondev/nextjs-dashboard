@@ -1,10 +1,10 @@
 import "server-only";
 
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import { revenues } from "@/db/schema";
 import type { Revenue } from "@/features/revenues/revenue.types";
 
-export async function fetchRevenue(db: Db): Promise<Revenue[]> {
+export async function fetchRevenue(db: Database): Promise<Revenue[]> {
   const monthOrder: string[] = [
     "Jan",
     "Feb",

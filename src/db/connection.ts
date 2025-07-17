@@ -12,7 +12,7 @@ import * as schema from "@/db/schema";
 type DbType = "dev" | "test";
 
 // Add this type for convenience
-export type Db = NodePgDatabase<typeof schema> & {
+export type Database = NodePgDatabase<typeof schema> & {
   $client: NodePgClient;
 };
 
@@ -34,7 +34,7 @@ function getDatabaseUrl(type: DbType): string {
  * Returns a Drizzle database instance for the specified environment.
  * @param type - "dev" (default) or "test"
  */
-export function getDB(type: DbType = "test"): Db {
+export function getDB(type: DbType = "test"): Database {
   const url = getDatabaseUrl(type);
-  return drizzle({ casing: "snake_case", connection: url, schema }) as Db;
+  return drizzle({ casing: "snake_case", connection: url, schema }) as Database;
 }

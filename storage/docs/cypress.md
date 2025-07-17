@@ -9,7 +9,7 @@ configuration is never exposed.
 - **E2E tests:** Located in `cypress/e2e/`
 - **Component tests:** Located in `cypress/component/`
 - **Secrets:** Managed with `hcp vault-secrets`
-- **Database:** PostgreSQL (test Db managed via Docker)
+- **Database:** PostgreSQL (test Database managed via Docker)
 - **Test runner:** Cypress v14+, run via npm scripts
 
 ---
@@ -121,8 +121,8 @@ pnpm cyp:component:headless
 
 2. File Roles
 
-- support/commands.ts: Custom Cypress commands (UI flows, not Db).
-- support/db-tasks.ts: Cypress tasks for Db setup/teardown.
+- support/commands.ts: Custom Cypress commands (UI flows, not Database).
+- support/db-tasks.ts: Cypress tasks for Database setup/teardown.
 - fixtures/: Static test data.
 - utils/: Test helpers (e.g., random data generators).
 
@@ -135,7 +135,7 @@ pnpm cyp:component:headless
 
 4. Best Practices
 
-- Keep Db tasks out of UI flow tests except for setup/teardown.
+- Keep Database tasks out of UI flow tests except for setup/teardown.
 - Mock external APIs in tests.
 - Use strict typing and import aliases.
 - Document custom commands and tasks.
@@ -146,7 +146,7 @@ pnpm cyp:component:headless
 5. Test Types
 
 - UI Flows: Use custom commands (e.g., cy.signup, cy.login).
-- Setup/Teardown: Use cy.task("db:...") for Db state.
+- Setup/Teardown: Use cy.task("db:...") for Database state.
 
 ---
 

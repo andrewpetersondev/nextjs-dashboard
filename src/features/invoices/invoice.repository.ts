@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import {
   createInvoiceDal,
@@ -91,7 +91,7 @@ export class InvoiceRepository
    * Constructs a new InvoiceRepository.
    * @param db - Drizzle database instance.
    */
-  constructor(private readonly db: Db) {}
+  constructor(private readonly db: Database) {}
 
   /**
    * Creates a new invoice in the database.

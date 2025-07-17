@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import { getDB } from "@/db/connection";
 import { sessions } from "@/db/schema";
 import { mapDbSessionToSessionRecord } from "@/features/sessions/session.mapper";
@@ -19,7 +19,7 @@ import { logger } from "@/lib/utils/logger";
  */
 export async function insertSession(session: SessionRecord): Promise<void> {
   try {
-    const db: Db = getDB();
+    const db: Database = getDB();
 
     await db
       .insert(sessions)
@@ -50,7 +50,7 @@ export async function insertSession(session: SessionRecord): Promise<void> {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function _deleteSessionById(sessionId: string): Promise<void> {
   try {
-    const db: Db = getDB();
+    const db: Database = getDB();
     await db.delete(sessions).where(eq(sessions.id, sessionId));
     logger.info(
       { context: "deleteSessionById", sessionId },
@@ -75,11 +75,11 @@ async function _findSessionById(
   sessionId: string,
 ): Promise<SessionRecord | undefined> {
   try {
-    const db: Db = getDB();
+    const db: Database = getDB();
     const row = await db.query.sessions.findFirst({
       where: eq(sessions.id, sessionId),
     });
-    // --- Map Db row to SessionRecord for type safety ---
+    // --- Map Database row to SessionRecord for type safety ---
     return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
   } catch (error) {
     logger.error(
@@ -100,12 +100,12 @@ async function _findSessionByToken(
   token: string,
 ): Promise<SessionRecord | undefined> {
   try {
-    const db: Db = getDB();
+    const db: Database = getDB();
 
     const row = await db.query.sessions.findFirst({
       where: eq(sessions.token, token),
     });
-    // --- Map Db row to SessionRecord for type safety ---
+    // --- Map Database row to SessionRecord for type safety ---
     return row ? mapDbSessionToSessionRecord(row as DbSessionRow) : undefined;
   } catch (error) {
     logger.error(

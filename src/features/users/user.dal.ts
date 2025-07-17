@@ -5,7 +5,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import { demoUserCounters, users } from "@/db/schema";
 import { DatabaseError } from "@/errors/database-error";
 import {
@@ -27,7 +27,7 @@ import { createRandomPassword } from "@/lib/utils/password";
  * @param db
  */
 export async function createUserDal(
-  db: Db,
+  db: Database,
   {
     username,
     email,
@@ -63,7 +63,7 @@ export async function createUserDal(
  * @returns The user as UserDto, or null if not found.
  */
 export async function readUserDal(
-  db: Db,
+  db: Database,
   id: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
   try {
@@ -98,7 +98,7 @@ export async function readUserDal(
  * @returns The updated user as UserDto, or null if no changes or update failed.
  */
 export async function updateUserDal(
-  db: Db,
+  db: Database,
   id: UserId,
   patch: UserUpdatePatch,
 ): Promise<UserDto | null> {
@@ -137,7 +137,7 @@ export async function updateUserDal(
  * @returns UserDto if deleted, otherwise null
  */
 export async function deleteUserDal(
-  db: Db,
+  db: Database,
   userId: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
   try {
@@ -174,7 +174,7 @@ export async function deleteUserDal(
  * @returns UserDto if credentials are valid, otherwise null
  */
 export async function findUserForLogin(
-  db: Db,
+  db: Database,
   email: string,
   password: string,
 ): Promise<UserDto | null> {
@@ -218,7 +218,7 @@ export async function findUserForLogin(
  * @returns UserDto if found, otherwise null
  */
 export async function fetchUserById(
-  db: Db,
+  db: Database,
   id: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
   try {
@@ -246,7 +246,7 @@ export async function fetchUserById(
  * @param db - The database instance (Drizzle)
  * @returns Array of UserDto
  */
-export async function _fetchUsers(db: Db): Promise<UserDto[]> {
+export async function _fetchUsers(db: Database): Promise<UserDto[]> {
   try {
     // Fetch raw DB rows, not UserEntity
     const userRows = await db.select().from(users).orderBy(asc(users.username));
@@ -266,7 +266,10 @@ export async function _fetchUsers(db: Db): Promise<UserDto[]> {
  * @param query - Search query for username or email.
  * @returns Number of pages as a number.
  */
-export async function fetchUsersPages(db: Db, query: string): Promise<number> {
+export async function fetchUsersPages(
+  db: Database,
+  query: string,
+): Promise<number> {
   try {
     // Use Drizzle ORM to count users matching the query
     const [{ count: total } = { count: 0 }] = await db
@@ -304,7 +307,7 @@ export async function fetchUsersPages(db: Db, query: string): Promise<number> {
  * @returns Array of UserDto for the page.
  */
 export async function fetchFilteredUsers(
-  db: Db,
+  db: Database,
   query: string,
   currentPage: number,
 ): Promise<UserDto[]> {
@@ -340,7 +343,10 @@ export async function fetchFilteredUsers(
  * @param role - The branded UserRole
  * @returns The new counter value as a number
  */
-export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
+export async function demoUserCounter(
+  db: Database,
+  role: UserRole,
+): Promise<number> {
   try {
     // Insert a new counter-row for the given role and return the new id
     const [counterRow] = await db
@@ -374,7 +380,7 @@ export async function demoUserCounter(db: Db, role: UserRole): Promise<number> {
  * @returns The created demo user as UserDto, or null if creation failed
  */
 export async function createDemoUser(
-  db: Db,
+  db: Database,
   id: number,
   role: UserRole,
 ): Promise<UserDto | null> {

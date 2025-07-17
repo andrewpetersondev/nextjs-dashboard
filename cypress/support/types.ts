@@ -16,7 +16,7 @@ export type CreateUserInput = BaseUserFields & {
 
 export interface SignupUserInput extends BaseUserFields {}
 
-// --- Db Task Result Type ---
+// --- Database Task Result Type ---
 export type DbTaskResult<T> = {
   success: boolean;
   data: T | null;

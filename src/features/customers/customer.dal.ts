@@ -1,7 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
 import { DatabaseError } from "@/errors/database-error";
 import type {
@@ -19,7 +19,7 @@ import { formatCurrency } from "@/lib/utils/utils";
  * @param db - Drizzle database instance
  * @returns Array of customer fields with branded IDs
  */
-export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
+export async function fetchCustomers(db: Database): Promise<CustomerField[]> {
   try {
     const rows: CustomerSelectDbRow[] = await db
       .select({
@@ -47,7 +47,7 @@ export async function fetchCustomers(db: Db): Promise<CustomerField[]> {
  * @returns Array of formatted customer table rows with branded IDs
  */
 export async function fetchFilteredCustomers(
-  db: Db,
+  db: Database,
   query: string,
 ): Promise<FormattedCustomersTableRow[]> {
   try {

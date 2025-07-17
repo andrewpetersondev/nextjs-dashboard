@@ -46,7 +46,7 @@ export interface SessionRecord {
 
 /**
  * Represents a raw row from the session table as returned by Drizzle ORM.
- * This matches the Db schema exactly.
+ * This matches the Database schema exactly.
  */
 export interface DbSessionRow {
   id: string;

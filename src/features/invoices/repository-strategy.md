@@ -76,7 +76,7 @@ export class InvoiceRepository
       InvoiceId
     >
 {
-  constructor(private readonly db: Db) {}
+  constructor(private readonly db: Database) {}
 
   async create(
     data: Omit<InvoiceEntity, "id" | "sensitiveData">,

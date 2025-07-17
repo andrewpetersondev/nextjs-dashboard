@@ -1,7 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, sql } from "drizzle-orm";
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
 import { DatabaseError } from "@/errors/database-error";
 import type {
@@ -18,7 +18,7 @@ import { formatCurrency } from "@/lib/utils/utils";
  * @returns Dashboard card data
  */
 export async function fetchDashboardCardData(
-  db: Db,
+  db: Database,
 ): Promise<DashboardCardData> {
   try {
     // Use aggregate queries for performance
@@ -60,7 +60,7 @@ export async function fetchDashboardCardData(
  * @param limit - Number of invoices to fetch
  * @returns Array of latest invoices
  */
-export async function fetchLatestInvoices(db: Db, limit = 5) {
+export async function fetchLatestInvoices(db: Database, limit = 5) {
   try {
     const rows = await db
       .select({
@@ -98,7 +98,7 @@ export async function fetchLatestInvoices(db: Db, limit = 5) {
  * @param db - Drizzle database instance
  * @returns Array of revenue data points
  */
-export async function fetchRevenueData(db: Db): Promise<RevenueData[]> {
+export async function fetchRevenueData(db: Database): Promise<RevenueData[]> {
   try {
     // Example: Group by month for revenue chart
     const rows = await db

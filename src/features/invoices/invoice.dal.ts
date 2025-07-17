@@ -1,6 +1,6 @@
 import "server-only";
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
-import type { Db } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
@@ -34,7 +34,7 @@ import { logger } from "@/lib/utils/logger";
  * if (!dto) { // handle error  }
  */
 export async function createInvoiceDal(
-  db: Db,
+  db: Database,
   uiInvoiceEntity: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">,
 ): Promise<InvoiceDto | null> {
   try {
@@ -67,7 +67,7 @@ export async function createInvoiceDal(
  * Fetches an invoice by its ID.
  */
 export async function readInvoiceDal(
-  db: Db,
+  db: Database,
   id: InvoiceId,
 ): Promise<InvoiceDto | null> {
   try {
@@ -97,7 +97,7 @@ export async function readInvoiceDal(
  * Updates an existing invoice record in the database.
  */
 export async function updateInvoiceDal(
-  db: Db,
+  db: Database,
   id: InvoiceId,
   invoice: { amount: number; status: InvoiceStatus; customerId: CustomerId },
 ): Promise<InvoiceDto | null> {
@@ -124,7 +124,7 @@ export async function updateInvoiceDal(
  * Deletes an invoice by ID.
  */
 export async function deleteInvoiceDal(
-  db: Db,
+  db: Database,
   id: InvoiceId,
 ): Promise<InvoiceDto | null> {
   try {
@@ -150,7 +150,7 @@ export async function deleteInvoiceDal(
  * Fetches the latest invoices, limited to 5.
  */
 export async function fetchLatestInvoices(
-  db: Db,
+  db: Database,
   limit = 5,
 ): Promise<InvoiceTableRow[]> {
   try {
@@ -194,7 +194,7 @@ export async function fetchLatestInvoices(
  * Fetches filtered invoices with pagination.
  */
 export async function fetchFilteredInvoices(
-  db: Db,
+  db: Database,
   query: string,
   currentPage: number,
 ): Promise<InvoiceTableRow[]> {
@@ -260,7 +260,7 @@ export async function fetchFilteredInvoices(
  * @returns Total number of pages (integer >= 1)
  */
 export async function fetchInvoicesPages(
-  db: Db,
+  db: Database,
   query: string,
 ): Promise<number> {
   try {

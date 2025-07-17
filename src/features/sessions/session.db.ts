@@ -16,10 +16,10 @@ import {
 
 import { logger } from "@/lib/utils/logger";
 
-// --- Db session logic here ---
+// --- Database session logic here ---
 // export createDbSession, generateSessionToken, generateUUID
 
-// --- Db Session Logic (Node.js only, never import in Edge runtime) ---
+// --- Database Session Logic (Node.js only, never import in Edge runtime) ---
 
 /**
  * Generates a cryptographically secure random session token using the Web Crypto API.
@@ -74,7 +74,7 @@ async function _createDbSession(
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
   const token = generateSessionToken();
 
-  // --- Anti-pattern resistance: never import Db code in Edge runtime ---
+  // --- Anti-pattern resistance: never import Database code in Edge runtime ---
   // Only import here, not at module scope, to avoid accidental Edge import
   const { insertSession } = await import(
     "@/features/sessions/session.repository"

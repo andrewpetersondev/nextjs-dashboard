@@ -14,7 +14,7 @@
 
 1. **Testing**
    - No test code or test mocks are shown for DAL, mappers, or DTOs.
-   - **Best practice:** Add unit and integration tests, mock Db access, and use Cypress for E2E/component tests.
+   - **Best practice:** Add unit and integration tests, mock Database access, and use Cypress for E2E/component tests.
 
 2. **Validation**
    - While you use Zod for form validation, there’s no explicit validation for API input or output in the DAL or API routes.
@@ -40,14 +40,14 @@
 
 ### **Summary Table**
 
-| Area               | InvoiceStatusComponent | Recommendation                                  |
-| ------------------ | ---------------------- | ----------------------------------------------- |
-| Testing            | ⚠️                     | Add unit/E2E/component tests, mock Db in tests  |
-| Validation         | ⚠️                     | Validate all API input/output                   |
-| Error Handling     | ⚠️                     | Add global error boundaries, structured logging |
-| Documentation      | ⚠️                     | Document all public APIs/components             |
-| Secrets Management | ⚠️                     | Use Docker secrets for production               |
-| CI/CD              | ⚠️                     | Add GitHub Actions for CI/CD                    |
+| Area               | InvoiceStatusComponent | Recommendation                                       |
+| ------------------ | ---------------------- | ---------------------------------------------------- |
+| Testing            | ⚠️                     | Add unit/E2E/component tests, mock Database in tests |
+| Validation         | ⚠️                     | Validate all API input/output                        |
+| Error Handling     | ⚠️                     | Add global error boundaries, structured logging      |
+| Documentation      | ⚠️                     | Document all public APIs/components                  |
+| Secrets Management | ⚠️                     | Use Docker secrets for production                    |
+| CI/CD              | ⚠️                     | Add GitHub Actions for CI/CD                         |
 
 ---
 
