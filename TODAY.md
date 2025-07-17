@@ -1,124 +1,71 @@
-# Tasks For Today
+If server actions are moved out of the UI layer, a **UI Mapper** is introduced to handle form submission and result mapping. The architecture for creating an invoice via form submission with `useActionState` is as follows:
 
-Here is a senior-level plan to extract and centralize Zod form validation for the `signup` function, ensuring maintainability, type safety, and testability.
+### Layered Flow
 
----
+1. **UI Layer (React Component)**
 
-## 1. **Goal**
+- Renders the invoice form.
+- Uses `useActionState` to manage form state and submission.
+- Interacts with the **UI Mapper** for data transformation.
 
-- Extract Zod validation logic from `user.actions.ts` into a reusable, type-safe utility.
-- Ensure all form actions (including `signup`) use this utility for validation.
-- Provide clear input/output types for each function.
-- Centralize error normalization and result formatting.
+2. **UI Mapper**
 
----
+- Transforms form data into the shape expected by server actions.
+- Handles mapping of server responses (`InvoiceActionResult`) back to UI state.
+- Decouples UI from server action implementation.
 
-## 2. **Outline**
+3. **Server Actions**
 
-### **A. Create a Generic Form Validation Utility**
+- Receives mapped data from the UI Mapper.
+- Validates, processes, and orchestrates invoice creation.
+- Returns a uniform result (`InvoiceActionResult`).
 
-**File:** `src/lib/utils/form-validation.ts`
+4. **Repository/DAL/DB Mapper**
 
-#### **Function: validateFormData**
+- Handles business logic, data access, and entity mapping.
+- Not directly exposed to UI.
 
-- **Purpose:**  
-  Generic function to validate `FormData` against a Zod schema and return a standardized result.
+### Visual Diagram
 
-- **Inputs:**
-  - `formData: FormData` — The raw form data from the request.
-  - `schema: z.ZodSchema<T>` — The Zod schema for validation.
-  - `fieldMap?: Record<string, string>` — Optional mapping from form field names to schema keys (for renaming or aliasing).
+```mermaid
+flowchart TD
+    UI[UI Layer: InvoiceForm.tsx] -->|FormData| UIMapper[UI Mapper]
+    UIMapper -->|Mapped Input| ServerAction[createInvoiceActionUniform]
+    ServerAction -->|InvoiceActionResult| UIMapper
+    UIMapper -->|Mapped Result| UI
+```
 
-- **Outputs:**
-  - `ValidationResult<T>` —
-    ```typescript
-    type ValidationResult<T> = {
-      success: boolean;
-      data?: T;
-      errors: Record<string, string[]>;
-      message: string;
-    };
-    ```
+### Key Points
 
-- **Steps:**
-  1. Convert `FormData` to a plain object, applying `fieldMap` if provided.
-  2. Validate using `schema.safeParse`.
-  3. If invalid, normalize errors and return a failure result.
-  4. If valid, return the parsed data and a success result.
+- **UI Mapper** replaces direct server action calls in the UI.
+- `useActionState` interacts with the UI Mapper, not server actions.
+- The UI only deals with mapped results, ensuring separation of concerns and maintainability.
 
----
+### Example Usage
 
-### **B. Update Domain-Specific Validation Functions**
+```typescript
+// UI Layer: InvoiceForm.tsx
+const [state, dispatch] = useActionState(uiInvoiceMapper, initialState);
 
-**File:** `src/features/users/user.service.ts`
+function uiInvoiceMapper(formData: FormData): Promise<InvoiceActionResult> {
+  // Transform FormData to server action input
+  const mappedInput = mapFormDataToInvoiceInput(formData);
+  // Call server action
+  return createInvoiceActionUniform(mappedInput).then((result) =>
+    mapServerResultToUIState(result),
+  );
+}
+```
 
-#### **Function: validateSignupForm**
+**Summary:**  
+The UI Mapper acts as a bridge between the UI and server actions, handling all data transformations and result mapping. This enforces a clean separation, making the architecture scalable and testable.
 
-- **Purpose:**  
-  Use the generic utility to validate signup form data.
+Yes, each layer should have its own validation steps relevant to its responsibility:
 
-- **Inputs:**
-  - `formData: FormData`
+- **UI Layer**: Validates user input for format, required fields, and accessibility (e.g., form constraints, client-side checks).
+- **UI Mapper**: Ensures data is correctly shaped and sanitized before passing to server actions.
+- **Server Actions**: Perform business logic validation, authorization, and security checks.
+- **Repository/DAL**: Validates data integrity, consistency, and enforces domain rules before database operations.
+- **DB Mapper**: Validates mapping between raw database data and domain entities.
 
-- **Outputs:**
-  - `FormState<SignupFormFieldNames, SignupFormFields>`
-
-- **Steps:**
-  1. Call `validateFormData(formData, SignupFormSchema)`.
-  2. Map the result to `FormState` shape.
-  3. Return the result.
-
----
-
-### **C. Refactor Action Functions**
-
-**File:** `src/features/users/user.actions.ts`
-
-- Replace inline Zod validation in `signup` with a call to `validateSignupForm`.
-
----
-
-### **D. Types**
-
-- **ValidationResult<T>**:  
-  Standardized result for all form validations.
-- **FormState<TFieldNames, TData>**:  
-  Already defined, used for UI state.
-
----
-
-### **E. Error Normalization**
-
-- Use or extend `normalizeFieldErrors` utility for consistent error shapes.
-
----
-
-## 3. **Summary Table**
-
-| Function           | Input Types                       | Output Types                                      | File Location                      |
-| ------------------ | --------------------------------- | ------------------------------------------------- | ---------------------------------- |
-| validateFormData   | FormData, ZodSchema<T>, fieldMap? | ValidationResult<T>                               | src/lib/utils/form-validation.ts   |
-| validateSignupForm | FormData                          | FormState<SignupFormFieldNames, SignupFormFields> | src/features/users/user.service.ts |
-| signup (action)    | FormState, FormData               | FormState<SignupFormFieldNames, SignupFormFields> | src/features/users/user.actions.ts |
-
----
-
-## 4. **Benefits**
-
-- **DRY:** Centralizes validation logic.
-- **Type-Safe:** Ensures correct types throughout.
-- **Testable:** Utility can be unit tested in isolation.
-- **Maintainable:** Easy to add new forms or update validation.
-
----
-
-## 5. **Next Steps**
-
-1. Implement `validateFormData` utility.
-2. Refactor `validateSignupForm` to use the utility.
-3. Update `signup` action to use `validateSignupForm`.
-4. Add/extend tests for the new utility.
-
----
-
-This plan ensures robust, maintainable, and production-ready form validation across your Next.js app.
+This layered validation ensures robust, secure, and maintainable data flow, catching errors as early as possible and enforcing separation of concerns.

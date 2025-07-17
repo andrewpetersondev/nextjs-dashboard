@@ -12,6 +12,7 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import {
   CreateInvoiceSchema,
   type InvoiceEditState,
@@ -374,4 +375,166 @@ export async function readFilteredInvoicesAction(
 export async function readLatestInvoicesAction() {
   const db = getDB();
   return fetchLatestInvoices(db);
+}
+
+/**
+ * Server action to create an invoice using the new repository pattern.
+ */
+export async function createInvoiceAction_v2(
+  _prevState: InvoiceFormStateCreate,
+  formData: FormData,
+): Promise<InvoiceFormStateCreate> {
+  const repo = new InvoiceRepository(getDB());
+  const { dalInput, errors, message } = processInvoiceFormData(formData);
+
+  if (!dalInput) {
+    logger.error({
+      context: "createInvoiceAction:validationOrTransformError",
+      errors,
+      message,
+    });
+    return {
+      errors: errors ?? {},
+      message: message ?? INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      success: false,
+    };
+  }
+
+  try {
+    const invoice = await repo.create(dalInput);
+    if (!invoice) {
+      return {
+        errors: {},
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      };
+    }
+    return {
+      data: invoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "createInvoiceAction",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
+    return {
+      errors: {},
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Server action to fetch a single invoice by its ID.
+ */
+export async function readInvoiceAction_v2(
+  id: string,
+): Promise<InvoiceDto | null> {
+  try {
+    const repo = new InvoiceRepository(getDB());
+    const invoice = await repo.read(toInvoiceId(id));
+    return invoice;
+  } catch (error) {
+    logger.error({
+      context: "readInvoiceAction",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+    });
+    return null;
+  }
+}
+
+/**
+ * Server action to update an invoice using the repository pattern.
+ *
+ * - Validates and transforms form input using Zod schema and domain logic.
+ * - Brands fields for database safety and updates the invoice via repository.
+ * - Returns a strictly typed form state for UI feedback, including errors, messages, and the updated invoice DTO.
+ *
+ * @param id - Invoice ID as string.
+ * @param prevState - Previous form state for UI.
+ * @param formData - FormData from the client, containing invoice fields.
+ * @returns {Promise<InvoiceEditState>} Form state object for UI feedback.
+ */
+export async function updateInvoiceAction_v2(
+  id: string,
+  prevState: InvoiceEditState,
+  formData: FormData,
+): Promise<InvoiceEditState> {
+  const repo = new InvoiceRepository(getDB());
+
+  // Validate and transform input
+  const validated = CreateInvoiceSchema.safeParse({
+    amount: formData.get("amount"),
+    customerId: formData.get("customerId"),
+    status: formData.get("status"),
+  });
+
+  if (!validated.success) {
+    logger.error({
+      context: "updateInvoiceAction_v2:validationError",
+      error: validated.error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      prevState,
+    });
+    return {
+      errors: buildErrorMap(validated.error.flatten().fieldErrors),
+      invoice: prevState.invoice,
+      message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      success: false,
+    };
+  }
+
+  const { amount, customerId, status } = validated.data;
+
+  try {
+    const updatedInvoice = await repo.update(toInvoiceId(id), {
+      amount: Math.round(amount * 100),
+      customerId: toCustomerId(customerId),
+      status: toInvoiceStatusBrand(status),
+    });
+
+    if (!updatedInvoice) {
+      logger.error({
+        context: "updateInvoiceAction_v2:updateFailed",
+        id,
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+        prevState,
+      });
+      return {
+        errors: {},
+        invoice: prevState.invoice,
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+        success: false,
+      };
+    }
+
+    return {
+      errors: {},
+      invoice: updatedInvoice,
+      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "updateInvoiceAction_v2",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+    return {
+      errors: {},
+      invoice: prevState.invoice,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
 }

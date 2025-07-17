@@ -97,14 +97,36 @@ type InvoiceFormStateCreate = {
 
 ---
 
-## Data Flow Diagram
+## Architectural Diagram
+
+```mermaid
+flowchart TD
+    UI[UI Layer: React Components] -->|FormData| SA[Server Actions]
+    SA -->|DTO/Entities| REPO[InvoiceRepository]
+    REPO -->|CRUD| DAL[DAL Functions]
+    DAL -->|SQL| DB[(Database)]
+    DB -->|Raw Rows| DAL
+    DAL -->|Entities| MAP[Transformation/Mapping Layer]
+    MAP -->|DTOs| REPO
+    REPO -->|DTO| SA
+    SA -->|FormState| UI
+```
+
+---
+
+## Data Flow Diagram New
 
 ```mermaid
 flowchart TD
     A[UI: CreateInvoiceForm] -->|Submit FormData| B[Server: createInvoiceAction]
     B -->|Validate & Transform| C[Server: processInvoiceFormData]
-    C -->|Valid Data| D[DB: createInvoiceDal]
-    D -->|Persist & Return DTO| B
+    C -->|Valid Data| D[Repo: InvoiceRepository]
+    D -->|Create| E[DAL: createInvoiceDal]
+    E -->|SQL Insert| F[DB: Database]
+    F -->|Raw Row| E
+    E -->|Raw Row| G[Mapper: toInvoiceEntity/toInvoiceDto]
+    G -->|DTO| D
+    D -->|DTO| B
     C -->|Validation Errors| B
     B -->|Return FormState| A
 ```
@@ -147,3 +169,30 @@ For further details, see the source files:
 - `src/features/invoices/invoice.dal.ts`
 - `src/lib/forms/form-validation.ts`
 - `src/features/invoices/invoice.types.ts`
+
+  ***
+
+## Ideal Structure
+
+Yes, a "tower" diagram is a strong architectural choice for backend data flow. Each layer should only communicate with the layer directly above or below it, passing data up and down. This enforces separation of concerns, makes the flow clear, and simplifies maintenance and testing.
+
+**Characteristics of a Tower Diagram:**
+
+- **Vertical structure:** Each layer (UI, Server Actions, Repository, DAL, Mapper, Database) is stacked.
+- **Strict boundaries:** Data only flows between adjacent layers.
+- **Bidirectional arrows:** Show both requests and responses.
+- **Transformation/validation:** Explicitly shown between layers (e.g., Mapper between DAL and Repository).
+
+**Example (Mermaid):**
+
+```mermaid
+flowchart TD
+    UI[UI Layer] <--> MAP_UI[UI Mapper]
+    MAP_UI <--> SA[Server Actions]
+    SA <--> REPO[Repository]
+    REPO <--> DAL[DAL]
+    DAL <--> MAP_DB[DB Mapper]
+    MAP_DB <--> DB[(Database)]
+```
+
+This structure makes it easy to trace data, enforce contracts, and extend the system. Each layer is responsible for its own logic and only interacts with its immediate neighbors.
