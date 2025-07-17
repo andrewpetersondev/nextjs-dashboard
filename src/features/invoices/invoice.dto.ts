@@ -7,11 +7,11 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
  * - Intended for API/UI transport; never expose branded or internal types.
  * - Do not include sensitive or internal-only fields.
  *
- * @property id - Invoice ID as a string.
- * @property customerId - Customer ID as a string.
+ * @property id - Invoice ID as a string (UUID).
+ * @property customerId - Customer ID as a string (UUID).
  * @property amount - Invoice amount in cents.
  * @property status - Invoice status ("pending" | "paid").
- * @property date - ISO 8601 date string.
+ * @property date - ISO 8601 date string (YYYY-MM-DD).
  *
  * @remarks
  * - This DTO is used for transferring invoice data between layers (API, services, etc.).
@@ -19,20 +19,24 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
  *
  * @example
  * const invoice: InvoiceDto = {
- *  id: "123e4567-e89b-12d3-a456-426614174000",
- *  customerId: "456e7890-e12b-34d5-a678-426614174001",
- *  amount: 1500, // $15.00
- *  status: "pending",
- *  date: "2023-10-01T12:00:00Z"
- *  };
+ *   id: "123e4567-e89b-12d3-a456-426614174000",
+ *   customerId: "456e7890-e12b-34d5-a678-426614174001",
+ *   amount: 1500, // $15.00
+ *   status: "pending",
+ *   date: "2023-10-01"
+ * };
  *
  * @see InvoiceStatus for possible status values.
- *
  */
 export interface InvoiceDto {
-  readonly amount: number; // Amount in cents
+  /** Invoice amount in cents */
+  readonly amount: number;
+  /** Customer ID as a string (UUID) */
   readonly customerId: string;
-  readonly date: string; // ISO date string
+  /** Invoice date as ISO 8601 string (YYYY-MM-DD) */
+  readonly date: string;
+  /** Invoice ID as a string (UUID) */
   readonly id: string;
+  /** Invoice status ("pending" | "paid") */
   readonly status: InvoiceStatus;
 }

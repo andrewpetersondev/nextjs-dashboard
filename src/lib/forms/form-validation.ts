@@ -11,15 +11,21 @@ import { logger } from "@/lib/utils/logger";
 /**
  * Validates FormData against a Zod schema and normalizes errors.
  *
- * @template TFieldNames - The string literal union of valid form field names.
- * @template TData - The type of the schema's output.
+ * @template TFieldNames - String literal union of valid form field names.
+ * @template TData - Type of the schema's output.
  * @param formData - The FormData to validate.
  * @param schema - The Zod schema to validate against.
- * @param allowedFields - An array of allowed field names to include in the error map.
+ * @param allowedFields - Array of allowed field names to include in the error map.
+ * @returns FormState<TFieldNames, TData> - Typed form state including errors, message, success, and optional data.
+ *
  * @example
- * // import { INVOICE_FIELD_NAMES } from "@/features/invoices/invoice.types";
- * const result = validateFormData(formData, CreateInvoiceSchema, INVOICE_FIELD_NAMES);
- * @returns FormState<TFieldNames, TData>
+ * type FieldNames = "email" | "password";
+ * const result = validateFormData(formData, schema, ["email", "password"]);
+ *
+ * @remarks
+ * - Error messages should be localized for internationalization.
+ * - Use ARIA attributes for accessible error feedback in the UI.
+ * - Compatible with strict TypeScript settings (`exactOptionalPropertyTypes: true`).
  */
 export function validateFormData<TFieldNames extends string, TData = unknown>(
   formData: FormData,
@@ -55,9 +61,15 @@ export function validateFormData<TFieldNames extends string, TData = unknown>(
 
 /**
  * Maps Zod field errors to a domain-specific error map.
- * Ensures only allowed field names are present.
  *
- * So far, used for creating an invoice.
+ * @template TFieldNames - String literal union of valid field names.
+ * @param fieldErrors - Zod field errors object.
+ * @param allowedFields - Array of allowed field names.
+ * @returns FormErrors<TFieldNames> - Error map including only allowed fields with errors.
+ *
+ * @remarks
+ * - Only fields present in `allowedFields` are included.
+ * - Compatible with strict TypeScript settings.
  */
 function mapFieldErrors<TFieldNames extends string>(
   fieldErrors: Record<string, string[] | undefined>,
@@ -75,16 +87,19 @@ function mapFieldErrors<TFieldNames extends string>(
 /**
  * Builds a typed error map for form fields, including only fields with actual errors.
  *
- * @template T - Field name type.
+ * @template TFieldNames - String literal union of valid field names.
  * @param errors - Partial error map with possible undefined values.
- * @returns Partial error map with only fields that have errors.
+ * @returns Partial<Record<TFieldNames, string[]>> - Error map with only fields that have errors.
+ *
+ * @remarks
+ * - Filters out fields with no errors or empty arrays.
  */
-export const buildErrorMap = <T extends string>(
-  errors: Partial<Record<T, string[] | undefined>>,
-): Partial<Record<T, string[]>> => {
-  const result: Partial<Record<T, string[]>> = {};
+export function buildErrorMap<TFieldNames extends string>(
+  errors: Partial<Record<TFieldNames, string[] | undefined>>,
+): Partial<Record<TFieldNames, string[]>> {
+  const result: Partial<Record<TFieldNames, string[]>> = {};
   for (const [key, value] of Object.entries(errors) as [
-    T,
+    TFieldNames,
     string[] | undefined,
   ][]) {
     if (Array.isArray(value) && value.length > 0) {
@@ -92,17 +107,20 @@ export const buildErrorMap = <T extends string>(
     }
   }
   return result;
-};
+}
 
 /**
  * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
  *
  * @param fieldErrors - Zod fieldErrors object.
- * @returns Normalized error map.
+ * @returns Record<string, string[]> - Normalized error map.
+ *
+ * @remarks
+ * - Ensures all fields have an array (empty if no errors).
  */
-export const normalizeFieldErrors = (
+export function normalizeFieldErrors(
   fieldErrors: Record<string, string[] | undefined>,
-): Record<string, string[]> => {
+): Record<string, string[]> {
   const result: Record<string, string[]> = {};
   for (const key in fieldErrors) {
     if (Object.hasOwn(fieldErrors, key)) {
@@ -110,4 +128,4 @@ export const normalizeFieldErrors = (
     }
   }
   return result;
-};
+}

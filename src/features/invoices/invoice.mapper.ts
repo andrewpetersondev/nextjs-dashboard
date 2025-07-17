@@ -1,4 +1,5 @@
 import "server-only";
+
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceRawDrizzle } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
@@ -21,15 +22,11 @@ import { logger } from "@/lib/utils/logger";
  * - Validates primitive types at runtime; branding is compile-time only.
  * - Throws if required fields are missing or invalid.
  *
- * @param row - Raw invoice row from the database (may be branded by Drizzle).
- * @returns {InvoiceEntity} - The domain entity with enforced invariants and branding.
- * @throws {Error} - If required fields are missing or invalid.
- *
- * @example
- * const entity = toInvoiceEntity(dbRow);
+ * @param row - Raw invoice row from the database.
+ * @returns InvoiceEntity with branded types.
+ * @throws Error if required fields are missing or invalid.
  */
 export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
-  // Defensive: Validate all required fields
   if (
     !row ||
     typeof row.customerId !== "string" ||
@@ -50,14 +47,13 @@ export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
     });
     throw new Error("Invalid invoice row: missing required fields");
   }
-  // Defensive: Apply branding even though the properties are already branded in the DB schema
   return {
     amount: row.amount,
-    customerId: toCustomerId(row.customerId), // Defensive
+    customerId: toCustomerId(row.customerId),
     date: row.date,
-    id: toInvoiceId(row.id), // Defensive
-    sensitiveData: row.sensitiveData, // Sensitive data should not be exposed in DTOs
-    status: toInvoiceStatusBrand(row.status), // Defensive
+    id: toInvoiceId(row.id),
+    sensitiveData: row.sensitiveData,
+    status: toInvoiceStatusBrand(row.status),
   };
 }
 
@@ -69,10 +65,7 @@ export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
  * - Defensively converts all properties to plain types.
  *
  * @param entity - The domain entity to convert.
- * @returns {InvoiceDto} - The DTO with plain types.
- *
- * @example
- * const dto = toInvoiceDto(entity);
+ * @returns InvoiceDto with plain types.
  */
 export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
   return {
@@ -85,13 +78,14 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
 }
 
 /**
- * Maps and transforms UI invoice form input to a proper types for server logic.
+ * Maps and transforms UI invoice form input to a DTO shape for server logic.
+ *
  * - Converts amount to cents (integer).
  * - Adds current date in YYYY-MM-DD format.
  * - Validates input strictly.
  *
  * @param uiInput - UI invoice form input.
- * @returns Branded invoice fields for DAL/DTO.
+ * @returns InvoiceDto shape (without id).
  * @throws Error if input is invalid or branding fails.
  */
 export function transformUiInvoiceFields(
@@ -99,30 +93,27 @@ export function transformUiInvoiceFields(
 ): Omit<InvoiceDto, "id"> {
   const { amount, customerId, status } = uiInput;
 
-  // Validate amount
   if (Number.isNaN(amount) || amount < 0) {
     logger.error({
       amount,
-      context: "mapUiInvoiceInputToBrandedDto",
+      context: "transformUiInvoiceFields",
       message: "Invalid amount: must be a non-negative number.",
     });
     throw new Error("Invalid amount: must be a non-negative number.");
   }
 
-  // Validate customerId
   if (!customerId.trim()) {
     logger.error({
-      context: "mapUiInvoiceInputToBrandedDto",
+      context: "transformUiInvoiceFields",
       customerId,
       message: "Invalid customerId: must be a non-empty string.",
     });
     throw new Error("Invalid customerId: must be a non-empty string.");
   }
 
-  // Validate status
   if (!INVOICE_STATUSES.includes(status)) {
     logger.error({
-      context: "mapUiInvoiceInputToBrandedDto",
+      context: "transformUiInvoiceFields",
       message: `Invalid status: must be one of ${INVOICE_STATUSES.join(", ")}.`,
       status,
     });
@@ -131,12 +122,11 @@ export function transformUiInvoiceFields(
     );
   }
 
-  const amountInCents = Math.round(amount * 100); // Convert dollars to cents
-  const date = new Date().toISOString().split("T")[0] as string; // YYYY-MM-DD
+  const amountInCents = Math.round(amount * 100);
+  const date = new Date().toISOString().split("T")[0] as string;
 
   const fields = { amount: amountInCents, customerId, date, status };
 
-  // Defensive: Validate fields before returning
   if (
     !fields ||
     typeof fields.amount !== "number" ||
@@ -145,7 +135,7 @@ export function transformUiInvoiceFields(
     typeof fields.status !== "string"
   ) {
     logger.error({
-      context: "mapUiInvoiceInputToBrandedDto",
+      context: "transformUiInvoiceFields",
       expectedFields: [
         "amount (number)",
         "customerId (string)",

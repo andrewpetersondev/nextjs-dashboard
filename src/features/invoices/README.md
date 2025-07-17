@@ -14,6 +14,7 @@ This document explains the end-to-end process for creating invoices in the proje
 - Error Handling
 - Form Validation
 - Data Flow Diagram
+- File Reference & TSDoc
 
 ---
 
@@ -110,12 +111,31 @@ flowchart TD
 
 ---
 
+## File Reference & TSDoc
+
+All major files are documented with TSDoc for maintainability and traceability:
+
+- `invoice.actions.ts`: Server actions for CRUD operations.
+- `invoice.dal.ts`: Data access layer, handles database logic and error logging.
+- `invoice.dto.ts`: Data Transfer Object for safe UI/API transport.
+- `invoice.mapper.ts`: Transforms between raw DB rows, domain entities, and DTOs.
+- `invoice.branding.ts`: Brands fields for domain safety (compile-time only).
+- `invoice.types.ts`: Strict types, constants, and Zod schemas for validation.
+- `invoice.utils.ts`: Utility for validating and transforming form data.
+- `invoice.entity.ts`: Domain model for invoices with branded types.
+
+All types, interfaces, and functions are documented using TSDoc.  
+Refer to each file for details on parameters, return types, error handling, and usage examples.
+
+---
+
 ## Summary
 
 - **Type Safety**: Enforced at every layer using TypeScript and branded types.
 - **Error Handling**: Consistent error maps and messages for UI feedback.
 - **Validation**: Zod schemas and domain logic ensure data integrity.
 - **Separation of Concerns**: UI, server, and database logic are clearly separated for maintainability and scalability.
+- **Documentation**: All files and types are documented with TSDoc for future contributors.
 
 ---
 

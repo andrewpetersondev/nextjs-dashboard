@@ -33,11 +33,44 @@ import { getFormField } from "@/lib/utils/utils.server";
 // --- CRUD Actions for Invoices ---
 
 /**
- * Server action to create a new invoice.
- * Validates input, brands fields, and persists to the database.
- * @param _prevState - Previous form state (unused)
- * @param formData - FormData from the client
- * @returns InvoiceFormStateCreate - Form state with errors or created invoice DTO
+ * Server action for creating a new invoice.
+ *
+ * ## Overview
+ * - Validates and transforms form input using Zod schema and domain logic.
+ * - Brands fields for database safety and inserts the invoice via DAL.
+ * - Returns a strictly typed form state for UI feedback, including errors, messages, and the created invoice DTO.
+ *
+ * ## Parameters
+ * @param _prevState - Previous form state (unused, reserved for future stateful workflows).
+ * @param formData - FormData from the client, containing invoice fields.
+ *
+ * ## Returns
+ * @returns {Promise<InvoiceFormStateCreate>} Form state object:
+ * - `data`: The created invoice DTO (on success).
+ * - `errors`: Field-level error map (on validation failure).
+ * - `message`: General status or error message.
+ * - `success`: Indicates operation result.
+ *
+ * ## Error Handling
+ * - Validation and transformation errors are logged with context and returned to the UI.
+ * - Database errors are logged and returned as a general error message.
+ * - No sensitive data is exposed in error messages.
+ *
+ * ## Data Flow
+ * 1. Validate and transform input (`processInvoiceFormData`).
+ * 2. If valid, insert invoice via DAL (`createInvoiceDal`).
+ * 3. Return form state for UI feedback.
+ *
+ * ## Accessibility & Internationalization
+ * - Error messages are suitable for display in accessible UI components.
+ * - All messages should be localized for internationalization.
+ *
+ * ## Example
+ * ```typescript
+ * const result = await createInvoiceAction(prevState, formData);
+ * if (!result.success) {
+ *   // Display result.errors and result.message in the UI
+ * }
  */
 export async function createInvoiceAction(
   _prevState: InvoiceFormStateCreate,

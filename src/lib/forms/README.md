@@ -2,16 +2,16 @@
 
 ## Overview
 
-The `forms` folder provides a robust, type-safe foundation for form validation, error handling, and state management across UI and server layers. It leverages TypeScript generics, Zod schemas, and domain-specific types to ensure data integrity and maintainability.
+The `forms` module provides a robust, type-safe foundation for form validation, error handling, and state management in React/Next.js applications. It leverages TypeScript generics, Zod schemas, and domain-specific types to ensure data integrity, accessibility, and maintainability.
 
 ---
 
 ## Architecture
 
-- **Type Safety:** All form logic is strictly typed using generics and branded types.
-- **Validation:** Uses Zod schemas for runtime validation and normalization.
-- **Error Handling:** Errors are mapped to domain-specific field names for precise UI feedback.
-- **State Management:** Form state includes errors, messages, success status, and optionally validated data.
+- **Type Safety:** All form logic uses strict TypeScript generics and branded types for domain safety.
+- **Validation:** Zod schemas perform runtime validation and normalization of form data.
+- **Error Handling:** Errors are mapped to domain-specific field names for precise, accessible UI feedback.
+- **State Management:** Form state includes errors, messages, success status, and optionally validated data, all strictly typed.
 
 ---
 
@@ -28,6 +28,7 @@ The `forms` folder provides a robust, type-safe foundation for form validation, 
 - All types use generics for field names and data shapes.
 - Field names are constrained to string literal unions for domain safety.
 - Branded types prevent accidental misuse of IDs and domain values.
+- Optional properties are compatible with `exactOptionalPropertyTypes: true` in `tsconfig.json`.
 
 ---
 
@@ -41,11 +42,20 @@ The `forms` folder provides a robust, type-safe foundation for form validation, 
 
 ---
 
-## Error Handling
+## Error Handling & Logging
 
 - **Field Errors:** Mapped as `FormErrors<TFieldNames>`, only present for fields with errors.
 - **General Errors:** Provided as a message string for display above the form.
 - **Success State:** `success: boolean` indicates operation result.
+- **Logging:** Validation errors are logged with context using structured logging (see `logger` utility).
+
+---
+
+## Accessibility & Internationalization
+
+- Error messages are designed for clear, accessible UI feedback.
+- Field-level errors support ARIA attributes and semantic HTML.
+- All error messages should be localized for internationalization.
 
 ---
 
@@ -67,8 +77,6 @@ if (!result.success) {
 }
 ```
 
-````
-
 ---
 
 ## Data Flow Diagram
@@ -83,17 +91,11 @@ flowchart TD
 
 ---
 
-## Accessibility & Internationalization
-
-- Error messages are designed for clear, accessible UI feedback.
-- Field-level errors support ARIA attributes and semantic HTML.
-
----
-
 ## Extending & Customizing
 
 - Add new field name unions and schemas for each form domain.
 - Use provided types and utilities for consistent error handling and validation.
+- Document all new types, interfaces, and generics with TSDoc.
 
 ---
 
@@ -101,8 +103,9 @@ flowchart TD
 
 - `form-validation.ts`
 - `form.types.ts`
-- Zod documentation: https://zod.dev/
-- TypeScript documentation: https://www.typescriptlang.org/docs/
+- [Zod documentation](https://zod.dev/)
+- [TypeScript documentation](https://www.typescriptlang.org/docs/)
+- [MDN FormData documentation](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
 ---
 
@@ -110,4 +113,4 @@ flowchart TD
 
 - Review and update this documentation as new forms and validation logic are added.
 - Ensure all form types and schemas are documented with TSDoc.
-````
+- Follow project coding instructions and TypeScript best practices.

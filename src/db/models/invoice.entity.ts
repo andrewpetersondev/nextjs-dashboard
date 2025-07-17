@@ -4,24 +4,21 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
- * Represents the canonical structure of an invoice record in the domain layer.
- *
- * - All fields are readonly to enforce immutability.
- * - Use this type for all business logic and domain operations.
- * - Do not expose this type directly to the client/UI; use `InvoiceDto` instead.
- *
- * @property id - Branded unique identifier for the invoice.
- * @property customerId - Branded unique identifier for the customer.
- * @property amount - Invoice amount in cents.
- * @property date - ISO 8601 date string.
- * @property status - Invoice status ("pending" | "paid").
- * @property sensitiveData - Internal field, not for client exposure.
+ * Domain model for Invoice.
+ * Used for database and server logic.
+ * All fields are strictly typed and immutable.
  */
 export interface InvoiceEntity {
+  /** Invoice amount in cents */
   readonly amount: number;
+  /** Customer ID (branded) */
   readonly customerId: CustomerId;
-  readonly date: string; // ISO 8601
+  /** Invoice date as ISO 8601 string (YYYY-MM-DD) */
+  readonly date: string;
+  /** Invoice ID (branded) */
   readonly id: InvoiceId;
+  /** Sensitive data (internal use only) */
   readonly sensitiveData: string;
+  /** Invoice status (branded) */
   readonly status: InvoiceStatus;
 }

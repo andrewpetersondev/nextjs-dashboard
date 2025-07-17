@@ -18,10 +18,20 @@ import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Inserts a new invoice record into the database.
- * @param db - Drizzle database instance
- * @param uiInvoiceEntity - Invoice data (all fields except id and sensitiveData)
- * @returns The created InvoiceDto or null
+ * Inserts a new invoice into the database and returns a DTO for UI transport.
+ *
+ * @param db - Drizzle database instance.
+ * @param uiInvoiceEntity - Invoice data (all fields except id and sensitiveData).
+ * @returns Promise resolving to the created InvoiceDto, or null if creation fails.
+ *
+ * @remarks
+ * - Validates and transforms input before insertion.
+ * - Errors are logged with context; no sensitive data is exposed.
+ * - Use only branded types for database operations.
+ *
+ * @example
+ * const dto = await createInvoiceDal(db, invoiceEntity);
+ * if (!dto) { // handle error  }
  */
 export async function createInvoiceDal(
   db: Db,
