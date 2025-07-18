@@ -31,7 +31,7 @@ export class InvoiceService {
    * @returns The created InvoiceDto.
    * @throws {ZodError | Error} On validation or DB error.
    */
-  async createInvoice(formData: FormData): Promise<InvoiceDto> {
+  async createInvoiceService(formData: FormData): Promise<InvoiceDto> {
     const validated = CreateInvoiceSchema.safeParse({
       amount: formData.get("amount"),
       customerId: formData.get("customerId"),
@@ -86,7 +86,10 @@ export class InvoiceService {
    * @returns The updated InvoiceDto.
    * @throws {ZodError | Error} On validation or DB error.
    */
-  async updateInvoice(id: string, formData: FormData): Promise<InvoiceDto> {
+  async updateInvoiceService(
+    id: string,
+    formData: FormData,
+  ): Promise<InvoiceDto> {
     const validated = CreateInvoiceSchema.safeParse({
       amount: formData.get("amount"),
       customerId: formData.get("customerId"),
@@ -113,5 +116,24 @@ export class InvoiceService {
     }
 
     return updatedInvoice;
+  }
+
+  /**
+   * Deletes an invoice by its ID.
+   * @param id - Invoice ID as string.
+   * @returns The deleted InvoiceDto or null if not found.
+   * @param id
+   */
+  async deleteInvoiceService(id: string): Promise<InvoiceDto | null> {
+    if (!id) return null;
+
+    const invoiceId = toInvoiceId(id);
+    const deletedInvoice = await this.repo.deleteRepo(invoiceId);
+
+    if (!deletedInvoice) {
+      throw new Error(INVOICE_ERROR_MESSAGES.DELETE_FAILED);
+    }
+
+    return deletedInvoice;
   }
 }

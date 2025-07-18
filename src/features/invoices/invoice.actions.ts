@@ -9,7 +9,6 @@ import {
   fetchFilteredInvoices,
   fetchInvoicesPages,
   fetchLatestInvoices,
-  readInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
@@ -37,7 +36,7 @@ export async function createInvoiceAction(
   const service = new InvoiceService(repo);
 
   try {
-    const invoice = await service.createInvoice(formData);
+    const invoice = await service.createInvoiceService(formData);
     return {
       data: invoice,
       errors: {},
@@ -88,20 +87,50 @@ export async function createInvoiceAction(
  */
 export async function readInvoiceAction(
   id: string,
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto | null>> {
+  const repo = new InvoiceRepository(getDB());
+  const service = new InvoiceService(repo);
+
   try {
-    const db = getDB();
-    const brandedId = toInvoiceId(id);
-    const invoice = await readInvoiceDal(db, brandedId);
-    return invoice ? invoice : null;
+    const invoice = await service.readInvoiceService(toInvoiceId(id));
+
+    return {
+      data: invoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.READ_SUCCESS,
+      success: true,
+    };
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      handleServerError("readInvoiceAction:validationError", error, {
+        error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      });
+      logger.error({
+        context: "readInvoiceAction",
+        error,
+        id,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+      });
+      return {
+        errors: z.flattenError(error).fieldErrors,
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        success: false,
+      };
+    }
     logger.error({
       context: "readInvoiceAction",
       error,
       id,
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
     });
-    throw new Error("Database Error: Failed to Fetch InvoiceEntity.");
+    return {
+      data: null,
+      errors: {},
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
   }
 }
 
@@ -118,7 +147,7 @@ export async function updateInvoiceAction(
   const service = new InvoiceService(repo);
 
   try {
-    const updatedInvoice = await service.updateInvoice(id, formData);
+    const updatedInvoice = await service.updateInvoiceService(id, formData);
     return {
       data: updatedInvoice,
       errors: {},
@@ -157,8 +186,15 @@ export async function updateInvoiceAction(
  */
 export async function deleteInvoiceAction(
   id: string,
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto | null>> {
   const db = getDB();
+  const repo = new InvoiceRepository(db);
+  const service = new InvoiceService(repo);
+  try {
+    const invoice = await service.deleteInvoiceService(id);
+  } catch (error) {
+    console.error(error);
+  }
   return await deleteInvoiceDal(db, toInvoiceId(id));
 }
 
