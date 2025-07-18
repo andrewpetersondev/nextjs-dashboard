@@ -2,8 +2,8 @@ import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
+import { CreateInvoiceSchema } from "@/features/invoices/invoice.schemas";
 import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
-import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   toCustomerId,

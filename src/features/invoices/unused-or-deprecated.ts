@@ -9,10 +9,12 @@ import {
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   CreateInvoiceSchema,
-  type InvoiceActionResult,
-  type InvoiceEditState,
-  type InvoiceFieldName,
   type InvoiceFormStateCreate,
+} from "@/features/invoices/invoice.schemas";
+import type {
+  InvoiceActionResultGeneric,
+  InvoiceEditState,
+  InvoiceFieldName,
 } from "@/features/invoices/invoice.types";
 import { processInvoiceFormData } from "@/features/invoices/invoice.utils";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -222,12 +224,12 @@ export async function _updateInvoiceAction_old(
 
 /**
  * Read Invoice Action with prevState.
- * Uses InvoiceActionResult to maintain state across actions.
+ * Uses InvoiceActionResultGeneric to maintain state across actions.
  */
 export async function _readInvoiceActionWithState(
-  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
   id: string,
-): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
   try {
     const invoice = await readInvoiceDal(getDB(), toInvoiceId(id));
     if (!invoice) {
@@ -263,12 +265,12 @@ export async function _readInvoiceActionWithState(
 
 /**
  * Delete Invoice Action with prevState.
- * Uses InvoiceActionResult to maintain state across actions.
+ * Uses InvoiceActionResultGeneric to maintain state across actions.
  */
 export async function _deleteInvoiceActionWithState(
-  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
   id: string,
-): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
   try {
     const deletedInvoice = await deleteInvoiceDal(getDB(), toInvoiceId(id));
     if (!deletedInvoice) {

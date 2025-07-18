@@ -15,7 +15,7 @@ import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { InvoiceService } from "@/features/invoices/invoice.service";
 import type {
-  InvoiceActionResult,
+  InvoiceActionResultGeneric,
   InvoiceFieldName,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -30,9 +30,9 @@ import { handleServerError } from "@/lib/utils/utils.server";
  * Handles request/response and error formatting for the UI.
  */
 export async function createInvoiceAction(
-  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
   formData: FormData,
-): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
   const repo = new InvoiceRepository(getDB());
   const service = new InvoiceService(repo);
 
@@ -110,10 +110,10 @@ export async function readInvoiceAction(
  * Handles request/response and error formatting for the UI.
  */
 export async function updateInvoiceAction(
-  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
   id: string,
   formData: FormData,
-): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
   const repo = new InvoiceRepository(getDB());
   const service = new InvoiceService(repo);
 

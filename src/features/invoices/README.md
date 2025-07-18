@@ -361,3 +361,107 @@ Your `README.md` is comprehensive and well-structured, but for maximum clarity, 
    - Who to contact for questions, or where to file issues.
 
 Including these sections will make your `README.md` even more robust and helpful for new contributors and future maintainers.
+
+---
+
+## Questions
+
+---
+
+### Question 1
+
+Error Handling Flow Diagram shows that all errors in the `Server Action` layer are sent to the `Logger`. Am I right to assume that errors in the `User` layer, `UI`, and `UI Mapper` layers are handled being returned to the user as part of the `InvoiceActionResult`? If so, how are these errors structured? When using `"exactOptionalPropertyTypes": true` in `tsconfig.json`, how do you handle optional properties in the `InvoiceActionResult`? Specifically, form field errors are the most troublesome. I need a strategy to handle these errors in a type-safe way, ensuring that the UI can display them correctly without compromising type safety.
+
+### Answer 1
+
+You are correct: errors in the `UI`, `UI Mapper`, and `User` layers should be returned to the user as part of the `InvoiceActionResult`. With `"exactOptionalPropertyTypes": true`, you must be explicit about when a property is present, absent, or intentionally `undefined`. This is especially important for form field errors.
+
+**Recommended Strategy:**
+
+1. **Define a precise error map type for form fields.**
+2. **In `InvoiceActionResult`, make `errors` an explicit optional property, and always use `undefined` (not missing) when there are no errors.**
+3. **In the UI, always check for property existence before accessing.**
+
+**Example Types:**
+
+```typescript
+// src/features/invoices/invoice.types.ts
+
+/**
+ * Map of field names to error messages for form validation.
+ */
+export interface InvoiceErrorMap {
+  readonly [field: string]: string | undefined;
+}
+
+/**
+ * Uniform result shape for all invoice actions.
+ * With exactOptionalPropertyTypes, properties are only present if set.
+ */
+export interface InvoiceActionResult {
+  readonly data?: InvoiceDto | null;
+  readonly errors?: InvoiceErrorMap; // present only if there are errors
+  readonly message?: string;
+  readonly success: boolean;
+}
+```
+
+**How to Use in Server Action:**
+
+```typescript
+// src/features/invoices/invoice.actions.ts
+
+export async function createInvoiceAction(
+  dto: InvoiceDto
+): Promise<InvoiceActionResult> {
+  const validation = invoiceInputSchema.safeParse(dto);
+  if (!validation.success) {
+    // Build error map from Zod errors
+    const errors: InvoiceErrorMap = {};
+    for (const issue of validation.error.issues) {
+      if (issue.path.length > 0) {
+        errors[issue.path[0] as string] = issue.message;
+      }
+    }
+    return {
+      success: false,
+      errors, // present only if there are errors
+      message: "Validation failed",
+    };
+  }
+  // ... normal processing
+  return {
+    success: true,
+    data: /* ... */,
+  };
+}
+```
+
+**UI Handling Example:**
+
+```typescript
+// src/ui/invoices/create-invoice-form.tsx
+
+if (result.errors?.amount) {
+  // Show error for amount field
+}
+```
+
+**Key Points:**
+
+- Only include `errors` in `InvoiceActionResult` if there are actual errors.
+- Never set `errors: undefined` explicitly; omit the property if no errors.
+- In the UI, always use optional chaining (`result.errors?.fieldName`) to safely access errors.
+- This approach is fully type-safe and compatible with `exactOptionalPropertyTypes`.
+
+**Summary Table:**
+
+| Property  | When Present?               | How to Check in UI         |
+| --------- | --------------------------- | -------------------------- |
+| `errors`  | Only if there are errors    | `result.errors?.fieldName` |
+| `data`    | Only if success             | `result.data`              |
+| `message` | Optional, for user feedback | `result.message`           |
+
+This ensures robust, type-safe error handling and clear UI feedback.
+
+---

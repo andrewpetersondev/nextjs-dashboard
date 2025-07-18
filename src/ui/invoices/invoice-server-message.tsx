@@ -1,6 +1,5 @@
 import type { JSX } from "react";
-
-import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.types";
+import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.schemas";
 
 /**
  * Props for InvoiceServerMessage component.

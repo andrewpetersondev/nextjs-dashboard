@@ -3,8 +3,8 @@ import "server-only";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
 import { uiToInvoiceDto } from "@/features/invoices/invoice.mapper";
+import { CreateInvoiceSchema } from "@/features/invoices/invoice.schemas";
 import {
-  CreateInvoiceSchema,
   INVOICE_FIELD_NAMES,
   type InvoiceFieldName,
   type InvoiceStatus,

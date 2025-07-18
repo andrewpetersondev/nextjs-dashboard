@@ -1,10 +1,8 @@
 import "server-only";
 
-import * as z from "zod";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
-import type { FormState } from "@/lib/forms/form.types";
 
 /**
  * Allowed invoice statuses.
@@ -14,7 +12,6 @@ export const INVOICE_STATUSES = ["pending", "paid"] as const;
 
 /**
  * Invoice status type.
- * @example "pending" | "paid"
  */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
@@ -39,7 +36,7 @@ export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
  * Error map for invoice actions.
  * Maps field names to error messages.
  */
-export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
+export type InvoiceErrorMap_old = Partial<Record<InvoiceFieldName, string[]>>;
 
 /**
  * Row for invoice table queries (with customer info).
@@ -78,7 +75,7 @@ export interface InvoiceUpdateInput {
  */
 export type InvoiceEditState = Readonly<{
   invoice: InvoiceDto;
-  errors?: InvoiceErrorMap;
+  errors?: InvoiceErrorMap_old;
   message?: string;
   success?: boolean;
 }>;
@@ -90,6 +87,7 @@ export type InvoiceEditState = Readonly<{
 export interface UiInvoiceInput {
   amount: number;
   customerId: string;
+  date: string; // ISO date string
   status: InvoiceStatus;
 }
 
@@ -99,7 +97,7 @@ export interface UiInvoiceInput {
  * @remarks
  * Use for all invoice CRUD actions to ensure uniformity and reduce duplication.
  */
-export interface InvoiceActionResult<
+export interface InvoiceActionResultGeneric<
   TFieldNames extends string,
   TData = unknown,
 > {
@@ -110,76 +108,19 @@ export interface InvoiceActionResult<
 }
 
 /**
- * Form state for creating a new invoice.
- * Used in UI for create-invoice-form.
+ * Map of field names to error messages for form validation.
  */
-export type InvoiceFormStateCreate = FormState<
-  InvoiceFieldName,
-  z.output<typeof CreateInvoiceSchema>
->;
+export interface InvoiceErrorMap {
+  readonly [field: string]: string | undefined;
+}
 
 /**
- * Important type!
- * Allows partial data for sticky fields in the create invoice form.
- * Used when validation fails but we want to keep user input.
+ * Uniform result shape for all invoice actions.
+ * With exactOptionalPropertyTypes, properties are only present if set.
  */
-export type CreateInvoicePartial = Promise<
-  InvoiceActionResult<
-    InvoiceFieldName,
-    Partial<z.output<typeof CreateInvoiceSchema>>
-  >
->;
-
-/**
- * Partial output type for CreateInvoiceSchema.
- * Used for form state and validation feedback.
- * Allows partial data to keep user input on validation errors.
- */
-export type PartialInvoiceSchema = Partial<
-  z.output<typeof CreateInvoiceSchema>
->;
-
-/**
- * Zod schema for validating invoice creation input.
- * Exported for reuse in validation and tests.
- */
-const amountSchema = z.coerce
-  .number()
-  .gt(0, { error: "Amount must be greater than $0." })
-  .lt(10000, { error: "Amount must be less than $10,000." });
-
-const customerIdSchema = z.string({
-  error: (issue) =>
-    issue.input === undefined
-      ? "Customer ID is required."
-      : "Customer ID must be a string.",
-});
-
-const statusSchema = z.enum(INVOICE_STATUSES, {
-  error: (issue) =>
-    issue.input === undefined
-      ? "Invoice status is required"
-      : "Invalid invoice status",
-});
-
-/* Optional Properties */
-
-const dateSchema = z.iso.date({});
-
-const invoiceIdSchema = z.uuid({});
-
-/**
- * Zod schema for invoice creation.
- * Validates amount, customerId, and status.
- *
- * @remarks
- * Attempting to implement for all CRUD operations.
- * Optional properties like date and id are included for flexibility.
- */
-export const CreateInvoiceSchema = z.object({
-  amount: amountSchema,
-  customerId: customerIdSchema,
-  date: dateSchema,
-  id: invoiceIdSchema.optional(),
-  status: statusSchema,
-});
+export interface InvoiceActionResult {
+  readonly data?: InvoiceDto | null;
+  readonly errors?: InvoiceErrorMap; // present only if there are errors
+  readonly message?: string;
+  readonly success: boolean;
+}

@@ -6,7 +6,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.types";
+import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.schemas";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
