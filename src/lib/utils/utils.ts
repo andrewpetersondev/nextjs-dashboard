@@ -91,3 +91,13 @@ export const generatePagination = (
     totalPages,
   ];
 };
+
+/**
+ * Returns the current date in ISO format (YYYY-MM-DD).
+ * This is useful for setting default values in forms or APIs.
+ *
+ * @returns {string} The current date as a string in ISO format.
+ */
+export function getCurrentIsoDate(): string {
+  return new Date().toISOString().split("T")[0] as string;
+}

@@ -10,6 +10,7 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
+import { getCurrentIsoDate } from "@/lib/utils/utils";
 
 /**
  * Service for invoice business logic and validation.
@@ -44,11 +45,11 @@ export class InvoiceService {
     const dalInput: InvoiceCreateInput = {
       amount: Math.round(validated.data.amount * 100),
       customerId: toCustomerId(validated.data.customerId),
-      date: new Date().toISOString(),
+      date: getCurrentIsoDate(),
       status: toInvoiceStatusBrand(validated.data.status),
     };
 
-    const invoice = await this.repo.create(dalInput);
+    const invoice = await this.repo.createRepo(dalInput);
 
     if (!invoice) {
       throw new Error(INVOICE_ERROR_MESSAGES.CREATE_FAILED);
@@ -94,7 +95,7 @@ export class InvoiceService {
       throw validated.error;
     }
 
-    const updatedInvoice = await this.repo.update(toInvoiceId(id), {
+    const updatedInvoice = await this.repo.updateRepo(toInvoiceId(id), {
       amount: Math.round(validated.data.amount * 100),
       customerId: toCustomerId(validated.data.customerId),
       status: toInvoiceStatusBrand(validated.data.status),

@@ -42,7 +42,7 @@ import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";
-import { logError } from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 import { stripProperties } from "@/lib/utils/utils";
 import {
   actionResult,
@@ -92,9 +92,12 @@ export async function createUserAction(
       success: true,
     });
   } catch (error) {
-    logError("createUserAction", error, {
-      email: formData.get("email") as string,
+    logger.error({
+      context: "createUserAction",
+      error,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
+
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
@@ -110,7 +113,12 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
   try {
     return await fetchUserById(db, toUserId(id));
   } catch (error) {
-    logError("getUserByIdAction", error, { id });
+    logger.error({
+      context: "readUserAction",
+      error,
+      id,
+      message: USER_ERROR_MESSAGES.READ_FAILED,
+    });
     return null;
   }
 }
@@ -184,7 +192,12 @@ export async function updateUserAction(
       success: true,
     });
   } catch (error) {
-    logError("updateUserAction", error, { id });
+    logger.error({
+      context: "updateUserAction",
+      error,
+      id,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+    });
     return actionResult({
       message: USER_ERROR_MESSAGES.UPDATE_FAILED,
       success: false,
@@ -208,7 +221,12 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
     revalidatePath("/dashboard/users");
     redirect("/dashboard/users");
   } catch (error) {
-    logError("deleteUserAction", error, { userId });
+    logger.error({
+      context: "deleteUserAction",
+      error,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      userId,
+    });
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
@@ -264,7 +282,12 @@ export async function signup(
     }
     await setSessionToken(toUserId(user.id), toUserRoleBrand("user"));
   } catch (error) {
-    logError("signup", error, { email: formData.get("email") as string });
+    logger.error({
+      context: "signup",
+      email: formData.get("email") as string,
+      error,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+    });
 
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
@@ -303,7 +326,12 @@ export async function login(
 
     await setSessionToken(toUserId(user.id), toUserRoleBrand(user.role));
   } catch (error) {
-    logError("login", error, { email: formData.get("email") as string });
+    logger.error({
+      context: "login",
+      email: formData.get("email") as string,
+      error,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+    });
 
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
@@ -333,21 +361,32 @@ export async function demoUser(
   try {
     const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
     if (!counter) {
-      logError("demoUser:counter", new Error("Counter is zero or undefined"), {
+      logger.error({
+        context: "demoUser",
+        message: "Counter is zero or undefined",
         role,
       });
+
       throw new Error("Counter is zero or undefined");
     }
     demoUser = await createDemoUser(db, counter, toUserRoleBrand(role));
     if (!demoUser) {
-      logError("demoUser:create", new Error("Demo user creation failed"), {
+      logger.error({
+        context: "demoUser",
+        message: "Demo user creation failed",
         role,
       });
       throw new Error("Demo user creation failed");
     }
     await setSessionToken(toUserId(demoUser.id), toUserRoleBrand(role));
   } catch (error) {
-    logError("demoUser:session", error, { demoUser, role });
+    logger.error({
+      context: "demoUser",
+      demoUser,
+      error,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      role,
+    });
     return actionResult({
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,

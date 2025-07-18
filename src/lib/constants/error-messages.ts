@@ -34,6 +34,7 @@ export const USER_ERROR_MESSAGES = {
   NO_CHANGES: "No changes to update.",
   NOT_FOUND: "User not found.",
   NOT_FOUND_OR_DELETE_FAILED: "User not found or could not be deleted.",
+  READ_FAILED: "Failed to read user data.",
   UNEXPECTED: "An unexpected error occurred. Please try again.",
   UPDATE_FAILED: "Failed to update user. Please try again.",
   UPDATE_SUCCESS: "Profile updated!",

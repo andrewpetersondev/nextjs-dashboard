@@ -33,6 +33,7 @@ import {
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
+import { handleServerError } from "@/lib/utils/utils.server";
 
 /**
  * Server action for creating a new invoice.
@@ -84,11 +85,18 @@ export async function _createInvoiceAction_old(
     const { dalInput, errors, message } = processInvoiceFormData(formData);
 
     if (!dalInput) {
+      handleServerError(
+        "createInvoiceAction:processInvoiceFormDataError",
+        errors,
+        { errors, message },
+      );
+
       logger.error({
         context: "createInvoiceAction:validationOrTransformError",
         errors,
         message,
       });
+
       return {
         errors: errors ?? {},
         message: message ?? INVOICE_ERROR_MESSAGES.INVALID_INPUT,

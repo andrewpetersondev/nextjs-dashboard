@@ -17,7 +17,7 @@ import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
 import { toUserRoleBrand, type UserId } from "@/lib/definitions/brands";
-import { logError } from "@/lib/utils/logger";
+import { logger } from "@/lib/utils/logger";
 import { createRandomPassword } from "@/lib/utils/password";
 
 /**
@@ -50,7 +50,14 @@ export async function createUserDal(
     const user = userRow ? dbRowToUserEntity(userRow) : null;
     return user ? toUserDto(user) : null;
   } catch (error) {
-    logError("createUserDal", error, { email });
+    logger.error({
+      context: "createUserDal",
+      email,
+      error,
+      message: "Failed to create a user in the database.",
+      role,
+      username,
+    });
     throw new DatabaseError("Failed to create a user in the database.", error);
   }
 }
@@ -84,7 +91,12 @@ export async function readUserDal(
     // Map to DTO for safe return to client
     return toUserDto(userEntity);
   } catch (error) {
-    logError("readUserDal", error, { id });
+    logger.error({
+      context: "readUserDal",
+      error,
+      id,
+      message: "Failed to read user by ID.",
+    });
     throw new DatabaseError("Failed to read user by ID.", error);
   }
 }
@@ -124,7 +136,13 @@ export async function updateUserDal(
     // Map to DTO for safe return to client
     return toUserDto(userEntity);
   } catch (error) {
-    logError("updateUserDal", error, { id, patch });
+    logger.error({
+      context: "updateUserDal",
+      error,
+      id,
+      message: "Failed to update user.",
+      patch,
+    });
     throw new DatabaseError("Failed to update user.", error);
   }
 }
@@ -157,7 +175,12 @@ export async function deleteUserDal(
     // Map to DTO for safe return to client
     return toUserDto(deletedEntity);
   } catch (error) {
-    logError("deleteUserDal", error, { userId });
+    logger.error({
+      context: "deleteUserDal",
+      error,
+      message: "Failed to delete user.",
+      userId,
+    });
     throw new DatabaseError(
       "An unexpected error occurred. Please try again.",
       error,
@@ -205,7 +228,12 @@ export async function findUserForLogin(
     // Map to DTO for safe return
     return toUserDto(userEntity);
   } catch (error) {
-    logError("findUserForLogin", error, { email });
+    logger.error({
+      context: "findUserForLogin",
+      email,
+      error,
+      message: "Failed to find user for login.",
+    });
     throw new DatabaseError("Failed to read user by email.", error);
   }
 }
@@ -235,7 +263,12 @@ export async function fetchUserById(
     // Map to DTO for safe return to client
     return toUserDto(userEntity);
   } catch (error) {
-    logError("fetchUserById", error, { id });
+    logger.error({
+      context: "fetchUserById",
+      error,
+      id,
+      message: "Failed to fetch user by id.",
+    });
     throw new DatabaseError("Failed to fetch user by id.", error);
   }
 }
@@ -254,7 +287,11 @@ export async function _fetchUsers(db: Database): Promise<UserDto[]> {
     // Map each raw row to UserEntity, then to UserDto
     return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
   } catch (error) {
-    logError("fetchUsers", error, {});
+    logger.error({
+      context: "_fetchUsers",
+      error,
+      message: "Failed to fetch users.",
+    });
     throw new DatabaseError("Failed to fetch users.", error);
   }
 }
@@ -290,7 +327,13 @@ export async function fetchUsersPages(
 
     return Math.ceil(totalUsers / ITEMS_PER_PAGE_USERS);
   } catch (error) {
-    logError("fetchUsersPages", error, { query });
+    logger.error({
+      context: "fetchUsersPages",
+      error,
+      message: "Failed to fetch the total number of users.",
+      query,
+    });
+
     throw new DatabaseError(
       "Failed to fetch the total number of users.",
       error,
@@ -331,7 +374,13 @@ export async function fetchFilteredUsers(
     // Map each raw row to UserEntity, then to UserDto
     return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
   } catch (error) {
-    logError("fetchFilteredUsers", error, { currentPage, query });
+    logger.error({
+      context: "fetchFilteredUsers",
+      currentPage,
+      error,
+      message: "Failed to fetch filtered users.",
+      query,
+    });
     throw new DatabaseError("Failed to fetch filtered users.", error);
   }
 }
@@ -366,7 +415,12 @@ export async function demoUserCounter(
 
     return counterRow.id;
   } catch (error) {
-    logError("demoUserCounter", error, { role });
+    logger.error({
+      context: "demoUserCounter",
+      error,
+      message: "Failed to read the demo user counter.",
+      role,
+    });
     throw new DatabaseError("Failed to read the demo user counter.", error);
   }
 }
@@ -400,7 +454,13 @@ export async function createDemoUser(
       username: uniqueUsername,
     });
   } catch (error) {
-    logError("createDemoUser", error, { id, role });
+    logger.error({
+      context: "createDemoUser",
+      error,
+      id,
+      message: "Failed to create a demo user.",
+      role,
+    });
     return null; // Return null on failure for safe downstream handling
   }
 }

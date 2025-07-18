@@ -95,7 +95,7 @@ export class InvoiceRepository {
    * @param input - Validated and transformed invoice data.
    * @returns The created InvoiceDto or null.
    */
-  async create(input: InvoiceCreateInput): Promise<InvoiceDto | null> {
+  async createRepo(input: InvoiceCreateInput): Promise<InvoiceDto | null> {
     return createInvoiceDal(this.db, input);
   }
 
@@ -114,7 +114,7 @@ export class InvoiceRepository {
    * @param data - DTO for invoice update (amount, status, customerId).
    * @returns Promise resolving to the updated InvoiceDto, or null if update fails.
    */
-  async update(
+  async updateRepo(
     id: InvoiceId,
     data: InvoiceUpdateInput,
   ): Promise<InvoiceDto | null> {
@@ -126,7 +126,7 @@ export class InvoiceRepository {
    * @param id - Branded InvoiceId.
    * @returns Promise resolving to the deleted InvoiceDto, or null if deletion fails.
    */
-  async _delete(id: InvoiceId): Promise<InvoiceDto | null> {
+  async _deleteRepo(id: InvoiceId): Promise<InvoiceDto | null> {
     return deleteInvoiceDal(this.db, id);
   }
 
@@ -136,7 +136,7 @@ export class InvoiceRepository {
    * @param page - Optional page number for pagination (default: 1).
    * @returns Promise resolving to an array of InvoiceDto.
    */
-  async _list(query: string = "", page: number = 1): Promise<InvoiceDto[]> {
+  async _listRepo(query: string = "", page: number = 1): Promise<InvoiceDto[]> {
     return fetchFilteredInvoices(this.db, query, page);
   }
 }

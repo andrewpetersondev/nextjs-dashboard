@@ -14,6 +14,7 @@ import {
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
+import { getCurrentIsoDate } from "@/lib/utils/utils";
 
 /**
  * Transforms a raw database row (from Drizzle ORM) into a strongly-typed `InvoiceEntity`.
@@ -123,7 +124,7 @@ export function transformUiInvoiceFields(
   }
 
   const amountInCents = Math.round(amount * 100);
-  const date = new Date().toISOString().split("T")[0] as string;
+  const date = getCurrentIsoDate();
 
   const fields = { amount: amountInCents, customerId, date, status };
 

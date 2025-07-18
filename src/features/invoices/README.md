@@ -1,3 +1,5 @@
+Outdated Documentation
+
 # Invoice Creation Guide
 
 This document explains the end-to-end process for creating invoices in the project, covering type safety, error handling, form validation, and the separation of concerns across UI, server, and database layers.
