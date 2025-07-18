@@ -5,8 +5,8 @@ import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
-  toInvoiceDto,
-  toInvoiceEntity,
+  entityToInvoiceDto,
+  rawDbToInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type {
   InvoiceCreateInput,
@@ -46,10 +46,10 @@ export async function createInvoiceDal(
 
     if (!createdInvoice) return null;
 
-    const entity = toInvoiceEntity(createdInvoice);
+    const entity = rawDbToInvoiceEntity(createdInvoice);
     if (!entity) return null;
 
-    const dto = toInvoiceDto(entity);
+    const dto = entityToInvoiceDto(entity);
     if (!dto) return null;
 
     return dto;
@@ -76,10 +76,10 @@ export async function readInvoiceDal(
 
     if (!data) return null;
 
-    const entity = toInvoiceEntity(data);
+    const entity = rawDbToInvoiceEntity(data);
     if (!entity) return null;
 
-    const dto = toInvoiceDto(entity);
+    const dto = entityToInvoiceDto(entity);
     if (!dto) return null;
 
     return dto;
@@ -108,7 +108,7 @@ export async function updateInvoiceDal(
       .set(invoice)
       .where(eq(invoices.id, id))
       .returning();
-    return updated ? toInvoiceDto(toInvoiceEntity(updated)) : null;
+    return updated ? entityToInvoiceDto(rawDbToInvoiceEntity(updated)) : null;
   } catch (error) {
     logger.error({
       context: "updateInvoiceDal",
@@ -134,7 +134,7 @@ export async function deleteInvoiceDal(
       .where(eq(invoices.id, id))
       .returning();
     return deletedInvoice
-      ? toInvoiceDto(toInvoiceEntity(deletedInvoice))
+      ? entityToInvoiceDto(rawDbToInvoiceEntity(deletedInvoice))
       : null;
   } catch (error) {
     logger.error({

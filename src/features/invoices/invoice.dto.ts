@@ -36,7 +36,7 @@ export interface InvoiceDto {
   /** Invoice date as ISO 8601 string (YYYY-MM-DD) */
   readonly date: string;
   /** Invoice ID as a string (UUID) */
-  readonly id: string;
+  readonly id?: string;
   /** Invoice status ("pending" | "paid") */
   readonly status: InvoiceStatus;
 }

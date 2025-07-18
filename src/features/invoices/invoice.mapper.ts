@@ -5,6 +5,7 @@ import type { InvoiceRawDrizzle } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   INVOICE_STATUSES,
+  type InvoiceCreateInput,
   type UiInvoiceInput,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -27,14 +28,14 @@ import { getCurrentIsoDate } from "@/lib/utils/utils";
  * @returns InvoiceEntity with branded types.
  * @throws Error if required fields are missing or invalid.
  */
-export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
+export function rawDbToInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
   if (
     !row ||
     typeof row.customerId !== "string" ||
     typeof row.id !== "string"
   ) {
     logger.error({
-      context: "toInvoiceEntity",
+      context: "rawDbToInvoiceEntity",
       expectedFields: [
         "amount (number)",
         "customerId (string)",
@@ -68,13 +69,43 @@ export function toInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
  * @param entity - The domain entity to convert.
  * @returns InvoiceDto with plain types.
  */
-export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
+export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
   return {
     amount: Number(entity.amount),
     customerId: String(entity.customerId),
     date: String(entity.date),
     id: String(entity.id),
     status: toInvoiceStatusBrand(entity.status),
+  };
+}
+
+/**
+ * Maps and transforms an `InvoiceDto` to a UI input shape.
+ * - Converts amount to a float (dollars).
+ * @param dto
+ * @returns Dto  shape for UI forms.
+ *
+ * @remarks
+ * Ready to be extended. Now its only purpose is to convert the amount.
+ */
+export function dtoToInvoiceUi(dto: InvoiceDto): InvoiceDto {
+  if (
+    !dto ||
+    (dto as unknown as Record<string, unknown>)["sensitiveData"] !== undefined
+  ) {
+    logger.error({
+      context: "dtoToInvoiceUi",
+      dto,
+      message:
+        "Invalid InvoiceDto: missing or invalid amount or did not strip property.",
+    });
+    throw new Error(
+      "Invalid InvoiceDto: missing or invalid amount or did not strip property.",
+    );
+  }
+  return {
+    ...dto,
+    amount: dto.amount / 100, // Convert cents to dollars
   };
 }
 
@@ -89,15 +120,13 @@ export function toInvoiceDto(entity: InvoiceEntity): InvoiceDto {
  * @returns InvoiceDto shape (without id).
  * @throws Error if input is invalid or branding fails.
  */
-export function transformUiInvoiceFields(
-  uiInput: UiInvoiceInput,
-): Omit<InvoiceDto, "id"> {
-  const { amount, customerId, status } = uiInput;
+export function uiToInvoiceDto(input: UiInvoiceInput): Omit<InvoiceDto, "id"> {
+  const { amount, customerId, status } = input;
 
   if (Number.isNaN(amount) || amount < 0) {
     logger.error({
       amount,
-      context: "transformUiInvoiceFields",
+      context: "uiToInvoiceDto",
       message: "Invalid amount: must be a non-negative number.",
     });
     throw new Error("Invalid amount: must be a non-negative number.");
@@ -105,7 +134,7 @@ export function transformUiInvoiceFields(
 
   if (!customerId.trim()) {
     logger.error({
-      context: "transformUiInvoiceFields",
+      context: "uiToInvoiceDto",
       customerId,
       message: "Invalid customerId: must be a non-empty string.",
     });
@@ -114,7 +143,7 @@ export function transformUiInvoiceFields(
 
   if (!INVOICE_STATUSES.includes(status)) {
     logger.error({
-      context: "transformUiInvoiceFields",
+      context: "uiToInvoiceDto",
       message: `Invalid status: must be one of ${INVOICE_STATUSES.join(", ")}.`,
       status,
     });
@@ -123,14 +152,16 @@ export function transformUiInvoiceFields(
     );
   }
 
-  const amountInCents = Math.round(amount * 100);
-  const date = getCurrentIsoDate();
-
-  const fields = { amount: amountInCents, customerId, date, status };
+  const fields = {
+    amount: Math.round(amount * 100),
+    customerId,
+    date: getCurrentIsoDate(),
+    status,
+  };
 
   if (!fields) {
     logger.error({
-      context: "transformUiInvoiceFields",
+      context: "uiToInvoiceDto",
       expectedFields: [
         "amount (number)",
         "customerId (string)",
@@ -144,4 +175,56 @@ export function transformUiInvoiceFields(
   }
 
   return fields;
+}
+
+/**
+ * Maps an `InvoiceDto` to an Entity.
+ * - Converts amount to cents (integer).
+ * - Validates required fields.
+ * @param dto - InvoiceDto to convert.
+ * @returns InvoiceEntity with branded types.
+ * @throws Error if required fields are missing or invalid.
+ * @remarks
+ * This function is used to convert DTOs received from the client into Entity objects. ID WILL NOT EXIST FOR NEW INVOICES. CREATE AN ALTERNATIVE FOR THAT.
+ */
+export function dtoToInvoiceEntity(dto: InvoiceDto): InvoiceEntity {
+  if (!dto.id) throw new Error("ID required for entity.");
+
+  if (!dto || !dto.id || !dto.customerId) {
+    logger.error({
+      context: "dtoToInvoiceEntity",
+      dto,
+      message: "Invalid InvoiceDto: missing required fields.",
+    });
+    throw new Error("Invalid InvoiceDto: missing required fields.");
+  }
+
+  return {
+    amount: dto.amount * 100, // Convert dollars to cents
+    customerId: toCustomerId(dto.customerId),
+    date: dto.date,
+    id: toInvoiceId(dto.id),
+    sensitiveData: "", // Sensitive data should not be included in DTOs
+    status: toInvoiceStatusBrand(dto.status),
+  };
+}
+
+/**
+ * Maps an `InvoiceDto` to a specific create input for the database.
+ * - Converts amount to cents (integer).
+ * - Strips ID and sensitive data from required fields.
+ * @param dto
+ * @returns Omit<InvoiceEntity, "id" | "sensitiveData"> - InvoiceEntity without ID and sensitive data.
+ * @remarks
+ * This function is used to convert DTOs received from the client into a format suitable for creating new invoices in the database. It does not include ID or sensitive data, as those are not required for creation.
+ */
+export function specificCreateInvoiceMapper(
+  dto: InvoiceDto,
+): InvoiceCreateInput {
+  return {
+    amount: dto.amount * 100, // Convert dollars to cents
+    customerId: toCustomerId(dto.customerId),
+    date: dto.date,
+    status: toInvoiceStatusBrand(dto.status),
+  };
 }

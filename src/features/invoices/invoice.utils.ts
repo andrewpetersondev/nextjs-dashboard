@@ -2,7 +2,7 @@ import "server-only";
 
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { brandInvoiceFields } from "@/features/invoices/invoice.branding";
-import { transformUiInvoiceFields } from "@/features/invoices/invoice.mapper";
+import { uiToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import {
   CreateInvoiceSchema,
   INVOICE_FIELD_NAMES,
@@ -51,7 +51,7 @@ export function processInvoiceFormData(formData: FormData): {
   }
 
   try {
-    const transformed = transformUiInvoiceFields(validation.data);
+    const transformed = uiToInvoiceDto(validation.data);
     const branded = brandInvoiceFields(transformed);
 
     return {

@@ -48,7 +48,7 @@ They help catch bugs early by enforcing business rules at the boundaries of your
 
 How to enforce invariants:
 
-Use validation in constructors, factory functions, or mapping functions (e.g., toInvoiceEntity).
+Use validation in constructors, factory functions, or mapping functions (e.g., rawDbToInvoiceEntity).
 Use TypeScript types and branded types for compile-time safety.
 Use runtime checks for critical invariants that cannot be enforced by types alone.
 

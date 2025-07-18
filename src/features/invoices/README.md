@@ -126,7 +126,7 @@ flowchart TD
     D -->|Create| E[DAL: createInvoiceDal]
     E -->|SQL Insert| F[DB: Database]
     F -->|Raw Row| E
-    E -->|Raw Row| G[Mapper: toInvoiceEntity/toInvoiceDto]
+    E -->|Raw Row| G[Mapper: rawDbToInvoiceEntity/entityToInvoiceDto]
     G -->|DTO| D
     D -->|DTO| B
     C -->|Validation Errors| B

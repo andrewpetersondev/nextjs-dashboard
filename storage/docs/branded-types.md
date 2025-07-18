@@ -55,7 +55,7 @@
 // Mapper: Database row (plain string) -> Entity (branded)
 const toCustomerId = (id: string): CustomerId => id as CustomerId;
 
-export function toInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
+export function rawDbToInvoiceEntity(row: InvoiceByIdDbRow): InvoiceEntity {
   return {
     id: toInvoiceId(row.id),
     customerId: toCustomerId(row.customerId),
