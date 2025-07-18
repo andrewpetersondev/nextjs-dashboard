@@ -58,6 +58,25 @@ export class InvoiceService {
   }
 
   /**
+   * Reads an invoice by its ID.
+   * @param id - Invoice ID as string.
+   * @returns The InvoiceDto or null if not found.
+   * @throws {Error} If the invoice is not found.
+   */
+  async readInvoiceService(id: string): Promise<InvoiceDto | null> {
+    if (!id) return null;
+
+    const invoiceId = toInvoiceId(id);
+    const invoice = await this.repo.readRepo(invoiceId);
+
+    if (!invoice) {
+      throw new Error(INVOICE_ERROR_MESSAGES.NOT_FOUND);
+    }
+
+    return invoice;
+  }
+
+  /**
    * Validates and updates an invoice.
    * @param id - Invoice ID as string.
    * @param formData - FormData from the client.

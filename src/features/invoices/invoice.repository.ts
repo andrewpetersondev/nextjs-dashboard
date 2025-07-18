@@ -104,7 +104,7 @@ export class InvoiceRepository {
    * @param id - Branded InvoiceId.
    * @returns Promise resolving to the InvoiceDto, or null if not found.
    */
-  async read(id: InvoiceId): Promise<InvoiceDto | null> {
+  async readRepo(id: InvoiceId): Promise<InvoiceDto | null> {
     return readInvoiceDal(this.db, id);
   }
 
@@ -126,7 +126,7 @@ export class InvoiceRepository {
    * @param id - Branded InvoiceId.
    * @returns Promise resolving to the deleted InvoiceDto, or null if deletion fails.
    */
-  async delete(id: InvoiceId): Promise<InvoiceDto | null> {
+  async _delete(id: InvoiceId): Promise<InvoiceDto | null> {
     return deleteInvoiceDal(this.db, id);
   }
 
@@ -136,7 +136,7 @@ export class InvoiceRepository {
    * @param page - Optional page number for pagination (default: 1).
    * @returns Promise resolving to an array of InvoiceDto.
    */
-  async list(query: string = "", page: number = 1): Promise<InvoiceDto[]> {
+  async _list(query: string = "", page: number = 1): Promise<InvoiceDto[]> {
     return fetchFilteredInvoices(this.db, query, page);
   }
 }

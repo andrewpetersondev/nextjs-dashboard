@@ -127,13 +127,7 @@ export function transformUiInvoiceFields(
 
   const fields = { amount: amountInCents, customerId, date, status };
 
-  if (
-    !fields ||
-    typeof fields.amount !== "number" ||
-    typeof fields.customerId !== "string" ||
-    typeof fields.date !== "string" ||
-    typeof fields.status !== "string"
-  ) {
+  if (!fields) {
     logger.error({
       context: "transformUiInvoiceFields",
       expectedFields: [

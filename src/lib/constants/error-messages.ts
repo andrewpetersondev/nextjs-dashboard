@@ -15,6 +15,7 @@ export const INVOICE_ERROR_MESSAGES = {
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
   MAPPING_FAILED: "Failed to map invoice data.",
   MISSING_FIELDS: "Missing required fields.",
+  NOT_FOUND: "Invoice not found.",
   READ_FAILED: "Failed to read invoice.",
   STATUS_REQUIRED: "Status is required.",
   TRANSFORMATION_FAILED: "Failed to transform invoice data.",

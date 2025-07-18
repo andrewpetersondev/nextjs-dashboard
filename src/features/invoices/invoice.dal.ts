@@ -284,7 +284,7 @@ export async function fetchInvoicesPages(
     // Always return at least 1 page for UX consistency
     const pages = Math.ceil(total / ITEMS_PER_PAGE);
 
-    if (!pages || typeof pages !== "number" || Number.isNaN(pages)) {
+    if (!pages || Number.isNaN(pages)) {
       logger.error({
         context: "fetchInvoicesPages",
         message: INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED,

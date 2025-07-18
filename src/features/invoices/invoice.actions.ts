@@ -43,7 +43,7 @@ import { logger } from "@/lib/utils/logger";
  * - Returns a strictly typed form state for UI feedback, including errors, messages, and the created invoice DTO.
  *
  * ## Parameters
- * @param prevState - Previous form state (unused, reserved for future stateful workflows).
+ * @param _prevState - Previous form state (unused, reserved for future stateful workflows).
  * @param formData - FormData from the client, containing invoice fields.
  *
  * ## Returns
@@ -75,7 +75,7 @@ import { logger } from "@/lib/utils/logger";
  * }
  */
 export async function _createInvoiceAction_old(
-  prevState: InvoiceFormStateCreate,
+  _prevState: InvoiceFormStateCreate,
   formData: FormData,
 ): Promise<InvoiceFormStateCreate> {
   try {
