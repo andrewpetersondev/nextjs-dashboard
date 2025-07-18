@@ -19,7 +19,13 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 /**
  * Invoice field names for forms and error maps.
  */
-export const INVOICE_FIELD_NAMES = ["amount", "customerId", "status"] as const;
+export const INVOICE_FIELD_NAMES = [
+  "amount",
+  "customerId",
+  "date",
+  "id",
+  "status",
+] as const;
 
 /**
  * Invoice field name type.
@@ -32,16 +38,6 @@ export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
  * Maps field names to error messages.
  */
 export type InvoiceErrorMap = Partial<Record<InvoiceFieldName, string[]>>;
-
-/**
- * Input shape for creating a new invoice.
- * Excludes backend-generated fields.
- */
-export interface InvoiceCreateInput {
-  readonly amount: number;
-  readonly customerId: CustomerId;
-  readonly status: InvoiceStatus;
-}
 
 /**
  * Row for invoice table queries (with customer info).
@@ -80,6 +76,22 @@ export interface UiInvoiceInput {
 }
 
 /**
+ * @template TFieldNames - Valid field names for error mapping.
+ * @template TData - The data type returned by the action (e.g., InvoiceDto, form data).
+ * @remarks
+ * Use for all invoice CRUD actions to ensure uniformity and reduce duplication.
+ */
+export interface InvoiceActionResult<
+  TFieldNames extends string,
+  TData = unknown,
+> {
+  readonly data?: TData;
+  readonly errors?: Partial<Record<TFieldNames, string[]>>;
+  readonly message?: string;
+  readonly success: boolean;
+}
+
+/**
  * Form state for creating a new invoice.
  * Used in UI for create-invoice-form.
  */
@@ -111,12 +123,24 @@ const statusSchema = z.enum(INVOICE_STATUSES, {
       : "Invalid invoice status",
 });
 
+/* Optional Properties */
+
+const dateSchema = z.iso.date({});
+
+const invoiceIdSchema = z.uuid({});
+
 /**
  * Zod schema for invoice creation.
  * Validates amount, customerId, and status.
+ *
+ * @remarks
+ * Attempting to implement for all CRUD operations.
+ * Optional properties like date and id are included for flexibility.
  */
 export const CreateInvoiceSchema = z.object({
   amount: amountSchema,
   customerId: customerIdSchema,
+  date: dateSchema.optional(),
+  id: invoiceIdSchema.optional(),
   status: statusSchema,
 });

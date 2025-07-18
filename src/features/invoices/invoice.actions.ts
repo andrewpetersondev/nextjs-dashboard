@@ -15,7 +15,9 @@ import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import {
   CreateInvoiceSchema,
+  type InvoiceActionResult,
   type InvoiceEditState,
+  type InvoiceFieldName,
   type InvoiceFormStateCreate,
   type InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -533,6 +535,213 @@ export async function updateInvoiceAction_v2(
     return {
       errors: {},
       invoice: prevState.invoice,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Create Invoice Action with prevState.
+ * Uses InvoiceActionResult to maintain state across actions.
+ */
+export async function _createInvoiceActionWithState(
+  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  formData: FormData,
+): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+  try {
+    const validated = CreateInvoiceSchema.safeParse({
+      amount: formData.get("amount"),
+      customerId: formData.get("customerId"),
+      status: formData.get("status"),
+    });
+
+    if (!validated.success) {
+      return {
+        ...prevState,
+        errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        success: false,
+      };
+    }
+
+    const invoice = await createInvoiceDal(getDB(), {
+      amount: Math.round(validated.data.amount * 100),
+      customerId: toCustomerId(validated.data.customerId),
+      date: new Date().toISOString(),
+      status: toInvoiceStatusBrand(validated.data.status),
+    });
+
+    if (!invoice) {
+      return {
+        ...prevState,
+        errors: {},
+        message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
+        success: false,
+      };
+    }
+
+    return {
+      data: invoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "createInvoiceActionWithState",
+      error,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+    return {
+      ...prevState,
+      errors: {},
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Read Invoice Action with prevState.
+ * Uses InvoiceActionResult to maintain state across actions.
+ */
+export async function _readInvoiceActionWithState(
+  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  id: string,
+): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+  try {
+    const invoice = await readInvoiceDal(getDB(), toInvoiceId(id));
+    if (!invoice) {
+      return {
+        ...prevState,
+        data: null,
+        message: INVOICE_ERROR_MESSAGES.READ_FAILED,
+        success: false,
+      };
+    }
+    return {
+      data: invoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.READ_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "readInvoiceActionWithState",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+    return {
+      ...prevState,
+      data: null,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Update Invoice Action with prevState.
+ * Uses InvoiceActionResult to maintain state across actions.
+ */
+export async function _updateInvoiceActionWithState(
+  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  id: string,
+  formData: FormData,
+): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+  try {
+    const validated = CreateInvoiceSchema.safeParse({
+      amount: formData.get("amount"),
+      customerId: formData.get("customerId"),
+      status: formData.get("status"),
+    });
+
+    if (!validated.success) {
+      return {
+        ...prevState,
+        errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
+        success: false,
+      };
+    }
+
+    const updatedInvoice = await updateInvoiceDal(getDB(), toInvoiceId(id), {
+      amount: Math.round(validated.data.amount * 100),
+      customerId: toCustomerId(validated.data.customerId),
+      status: toInvoiceStatusBrand(validated.data.status),
+    });
+
+    if (!updatedInvoice) {
+      return {
+        ...prevState,
+        errors: {},
+        message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
+        success: false,
+      };
+    }
+
+    return {
+      data: updatedInvoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "updateInvoiceActionWithState",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+    return {
+      ...prevState,
+      errors: {},
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      success: false,
+    };
+  }
+}
+
+/**
+ * Delete Invoice Action with prevState.
+ * Uses InvoiceActionResult to maintain state across actions.
+ */
+export async function _deleteInvoiceActionWithState(
+  prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
+  id: string,
+): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
+  try {
+    const deletedInvoice = await deleteInvoiceDal(getDB(), toInvoiceId(id));
+    if (!deletedInvoice) {
+      return {
+        ...prevState,
+        data: null,
+        message: INVOICE_ERROR_MESSAGES.DELETE_FAILED,
+        success: false,
+      };
+    }
+    return {
+      data: deletedInvoice,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.DELETE_SUCCESS,
+      success: true,
+    };
+  } catch (error) {
+    logger.error({
+      context: "deleteInvoiceActionWithState",
+      error,
+      id,
+      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
+      prevState,
+    });
+    return {
+      ...prevState,
+      data: null,
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
