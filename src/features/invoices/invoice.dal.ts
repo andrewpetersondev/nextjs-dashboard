@@ -9,6 +9,7 @@ import {
   toInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type {
+  InvoiceCreateInput,
   InvoiceStatus,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -35,7 +36,7 @@ import { logger } from "@/lib/utils/logger";
  */
 export async function createInvoiceDal(
   db: Database,
-  uiInvoiceEntity: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">,
+  uiInvoiceEntity: InvoiceCreateInput,
 ): Promise<InvoiceDto | null> {
   try {
     const [createdInvoice] = await db

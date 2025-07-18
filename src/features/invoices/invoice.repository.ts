@@ -11,10 +11,9 @@ import {
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type {
   InvoiceCreateInput,
-  InvoiceStatus,
   InvoiceUpdateInput,
 } from "@/features/invoices/invoice.types";
-import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Generic repository interface for CRUD operations.

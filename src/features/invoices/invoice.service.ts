@@ -3,7 +3,11 @@ import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import { CreateInvoiceSchema } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { toCustomerId, toInvoiceStatusBrand } from "@/lib/definitions/brands";
+import {
+  toCustomerId,
+  toInvoiceId,
+  toInvoiceStatusBrand,
+} from "@/lib/definitions/brands";
 
 /**
  * Service for invoice business logic and validation.

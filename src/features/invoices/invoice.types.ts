@@ -1,5 +1,6 @@
 import "server-only";
 import * as z from "zod";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
