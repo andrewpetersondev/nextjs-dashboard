@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";

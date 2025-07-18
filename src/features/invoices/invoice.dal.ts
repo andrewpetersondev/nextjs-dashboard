@@ -1,7 +1,7 @@
 import "server-only";
+
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
