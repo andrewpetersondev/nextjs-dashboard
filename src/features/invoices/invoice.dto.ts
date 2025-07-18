@@ -37,6 +37,8 @@ export interface InvoiceDto {
   readonly date: string;
   /** Invoice ID as a string (UUID) */
   readonly id?: string;
+  /** Sensitive data can be in the UI for now */
+  readonly sensitiveData: string;
   /** Invoice status ("pending" | "paid") */
   readonly status: InvoiceStatus;
 }

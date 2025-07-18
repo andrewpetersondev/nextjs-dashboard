@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Database } from "@/db/connection";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -14,6 +15,7 @@ import type {
   InvoiceUpdateInput,
 } from "@/features/invoices/invoice.types";
 import type { InvoiceId } from "@/lib/definitions/brands";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Generic repository interface for CRUD operations.
@@ -93,41 +95,83 @@ export class InvoiceRepository {
   /**
    * Creates an invoice in the database.
    * @param input - Validated and transformed invoice data.
-   * @returns The created InvoiceDto or null.
+   * @returns The created InvoiceEntity or null.
    */
-  async createRepo(input: InvoiceCreateInput): Promise<InvoiceDto | null> {
-    return createInvoiceDal(this.db, input);
+  async createRepo(input: InvoiceCreateInput): Promise<InvoiceEntity | null> {
+    const insert = createInvoiceDal(this.db, input);
+    if (!insert) {
+      logger.error({
+        context: "InvoiceRepository.createRepo",
+        input,
+        message: "Failed to create invoice",
+      });
+      return null;
+    }
+    return insert;
   }
 
   /**
    * Reads an invoice by its branded ID.
    * @param id - Branded InvoiceId.
-   * @returns Promise resolving to the InvoiceDto, or null if not found.
+   * @returns Promise resolving to the InvoiceEntity, or null if not found.
    */
-  async readRepo(id: InvoiceId): Promise<InvoiceDto | null> {
-    return readInvoiceDal(this.db, id);
+  async readRepo(id: InvoiceId): Promise<InvoiceEntity | null> {
+    // return readInvoiceDal(this.db, id);
+    const read = readInvoiceDal(this.db, id);
+    if (!read) {
+      logger.error({
+        context: "InvoiceRepository.readRepo",
+        id,
+        message: "Invoice read failed",
+      });
+      return null;
+    }
+    return read;
   }
 
   /**
    * Updates an existing invoice by its branded ID.
    * @param id - Branded InvoiceId.
    * @param data - DTO for invoice update (amount, status, customerId).
-   * @returns Promise resolving to the updated InvoiceDto, or null if update fails.
+   * @returns Promise resolving to the updated InvoiceEntity, or null if update fails.
    */
   async updateRepo(
     id: InvoiceId,
     data: InvoiceUpdateInput,
-  ): Promise<InvoiceDto | null> {
-    return updateInvoiceDal(this.db, id, data);
+  ): Promise<InvoiceEntity | null> {
+    // return updateInvoiceDal(this.db, id, data);
+
+    const update = updateInvoiceDal(this.db, id, data);
+    if (!update) {
+      logger.error({
+        context: "InvoiceRepository.updateRepo",
+        data,
+        id,
+        message: "Invoice update failed",
+      });
+      return null;
+    }
+    return update;
   }
 
   /**
    * Deletes an invoice by its branded ID.
    * @param id - Branded InvoiceId.
-   * @returns Promise resolving to the deleted InvoiceDto, or null if deletion fails.
+   * @returns Promise resolving to the deleted InvoiceEntity, or null if deletion fails.
    */
-  async _deleteRepo(id: InvoiceId): Promise<InvoiceDto | null> {
-    return deleteInvoiceDal(this.db, id);
+  async _deleteRepo(id: InvoiceId): Promise<InvoiceEntity | null> {
+    const invoice = deleteInvoiceDal(this.db, id);
+
+    if (!invoice) {
+      logger.error({
+        context: "InvoiceRepository.deleteRepo",
+        id,
+        message: "Invoice deletion failed",
+      });
+      return null;
+    }
+
+    return invoice;
   }
 
   /**

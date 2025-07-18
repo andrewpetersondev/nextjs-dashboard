@@ -78,5 +78,6 @@ export const CreateInvoiceSchema = z.object({
   customerId: customerIdSchema,
   date: dateSchema,
   id: invoiceIdSchema.optional(),
+  sensitiveData: z.string(),
   status: statusSchema,
 });

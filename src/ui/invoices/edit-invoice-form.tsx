@@ -57,7 +57,6 @@ export const EditInvoiceForm = ({
     <div>
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-          {/* DATE */}
           <div>
             <label htmlFor="start">Start date:</label>
             <input
@@ -69,6 +68,27 @@ export const EditInvoiceForm = ({
               type="date"
               value="2025-07-22"
             />
+          </div>
+
+          {/* Sensitive Data */}
+          <div className="mb-4">
+            <Label htmlFor="sensitiveData" text="Sensitive Data" />
+            <input
+              aria-label="Sensitive Data"
+              autoComplete="off"
+              className="w-full rounded border px-3 py-2"
+              data-cy="sensitive-data-input"
+              defaultValue={state.invoice.sensitiveData}
+              disabled={pending}
+              id="sensitiveData"
+              name="sensitiveData"
+              type="text"
+            />
+            {state.errors?.sensitiveData && (
+              <div className="text-red-600" role="alert">
+                {state.errors.sensitiveData.join(", ")}
+              </div>
+            )}
           </div>
 
           {/* Customer */}

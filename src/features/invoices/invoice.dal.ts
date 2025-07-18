@@ -2,12 +2,9 @@ import "server-only";
 
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
+import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import {
-  entityToInvoiceDto,
-  rawDbToInvoiceEntity,
-} from "@/features/invoices/invoice.mapper";
+import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type {
   InvoiceCreateInput,
   InvoiceStatus,
@@ -19,25 +16,26 @@ import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Inserts a new invoice into the database and returns a DTO for UI transport.
+ * Inserts a new invoice into the database and returns an Entity for Server transport.
  *
  * @param db - Drizzle database instance.
  * @param uiInvoiceEntity - Invoice data (all fields except id and sensitiveData).
- * @returns Promise resolving to the created InvoiceDto, or null if creation fails.
+ * @returns Promise resolving to the created InvoiceEntity, or null if creation fails.
  *
  * @remarks
  * - Validates and transforms input before insertion.
  * - Errors are logged with context; no sensitive data is exposed.
  * - Use only branded types for database operations.
+ * - In the future, replace the return type with NewInvoiceRawDrizzle from schema.ts
  *
  * @example
- * const dto = await createInvoiceDal(db, invoiceEntity);
- * if (!dto) { // handle error  }
+ * const entity = await createInvoiceDal(db, invoiceEntity);
+ * if (!entity) { // handle error  }
  */
 export async function createInvoiceDal(
   db: Database,
   uiInvoiceEntity: InvoiceCreateInput,
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceEntity | null> {
   try {
     const [createdInvoice] = await db
       .insert(invoices)
@@ -49,10 +47,7 @@ export async function createInvoiceDal(
     const entity = rawDbToInvoiceEntity(createdInvoice);
     if (!entity) return null;
 
-    const dto = entityToInvoiceDto(entity);
-    if (!dto) return null;
-
-    return dto;
+    return entity;
   } catch (error) {
     logger.error({
       context: "createInvoiceDal",
@@ -70,7 +65,7 @@ export async function createInvoiceDal(
 export async function readInvoiceDal(
   db: Database,
   id: InvoiceId,
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceEntity | null> {
   try {
     const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
@@ -79,10 +74,7 @@ export async function readInvoiceDal(
     const entity = rawDbToInvoiceEntity(data);
     if (!entity) return null;
 
-    const dto = entityToInvoiceDto(entity);
-    if (!dto) return null;
-
-    return dto;
+    return entity;
   } catch (error) {
     logger.error({
       context: "readInvoiceDal",
@@ -101,14 +93,20 @@ export async function updateInvoiceDal(
   db: Database,
   id: InvoiceId,
   invoice: { amount: number; status: InvoiceStatus; customerId: CustomerId },
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceEntity | null> {
   try {
     const [updated] = await db
       .update(invoices)
       .set(invoice)
       .where(eq(invoices.id, id))
       .returning();
-    return updated ? entityToInvoiceDto(rawDbToInvoiceEntity(updated)) : null;
+
+    if (!updated) return null;
+
+    const entity = rawDbToInvoiceEntity(updated);
+    if (!entity) return null;
+
+    return entity;
   } catch (error) {
     logger.error({
       context: "updateInvoiceDal",
@@ -127,15 +125,20 @@ export async function updateInvoiceDal(
 export async function deleteInvoiceDal(
   db: Database,
   id: InvoiceId,
-): Promise<InvoiceDto | null> {
+): Promise<InvoiceEntity | null> {
   try {
     const [deletedInvoice] = await db
       .delete(invoices)
       .where(eq(invoices.id, id))
       .returning();
-    return deletedInvoice
-      ? entityToInvoiceDto(rawDbToInvoiceEntity(deletedInvoice))
-      : null;
+
+    if (!deletedInvoice) return null;
+
+    const entity = rawDbToInvoiceEntity(deletedInvoice);
+
+    if (!entity) return null;
+
+    return entity;
   } catch (error) {
     logger.error({
       context: "deleteInvoiceDal",
@@ -210,6 +213,7 @@ export async function fetchFilteredInvoices(
         id: invoices.id,
         imageUrl: customers.imageUrl,
         name: customers.name,
+        sensitiveData: customers.sensitiveData,
         status: invoices.status,
       })
       .from(invoices)

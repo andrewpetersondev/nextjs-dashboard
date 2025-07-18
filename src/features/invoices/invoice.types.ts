@@ -23,6 +23,7 @@ export const INVOICE_FIELD_NAMES = [
   "customerId",
   "date",
   "id",
+  "sensitiveData",
   "status",
 ] as const;
 
@@ -50,6 +51,7 @@ export type InvoiceTableRow = Readonly<{
   id: InvoiceId;
   imageUrl: string;
   name: string;
+  sensitiveData: string;
   status: InvoiceStatus;
 }>;
 
@@ -57,16 +59,20 @@ export type InvoiceTableRow = Readonly<{
  * Input type for creating an invoice in the DAL.
  * Omits fields not set by the user.
  */
-export type InvoiceCreateInput = Omit<InvoiceEntity, "id" | "sensitiveData">;
+export type InvoiceCreateInput = Omit<InvoiceEntity, "id">;
 
 /**
  * DTO for updating an invoice.
  * Only updatable fields are included.
+ * - sensitiveData can be updated by the user. eventually, it will be removed.
  */
 export interface InvoiceUpdateInput {
   readonly amount: number;
-  readonly status: InvoiceStatus;
   readonly customerId: CustomerId;
+  readonly date: string;
+  readonly id: InvoiceId;
+  readonly sensitiveData: string;
+  readonly status: InvoiceStatus;
 }
 
 /**
@@ -88,6 +94,7 @@ export interface UiInvoiceInput {
   amount: number;
   customerId: string;
   date: string; // ISO date string
+  sensitiveData: string;
   status: InvoiceStatus;
 }
 

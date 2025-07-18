@@ -75,6 +75,7 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
     customerId: String(entity.customerId),
     date: String(entity.date),
     id: String(entity.id),
+    sensitiveData: String(entity.sensitiveData),
     status: toInvoiceStatusBrand(entity.status),
   };
 }
@@ -89,10 +90,7 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
  * Ready to be extended. Now its only purpose is to convert the amount.
  */
 export function dtoToInvoiceUi(dto: InvoiceDto): InvoiceDto {
-  if (
-    !dto ||
-    (dto as unknown as Record<string, unknown>)["sensitiveData"] !== undefined
-  ) {
+  if (!dto) {
     logger.error({
       context: "dtoToInvoiceUi",
       dto,
@@ -116,12 +114,12 @@ export function dtoToInvoiceUi(dto: InvoiceDto): InvoiceDto {
  * - Adds current date in YYYY-MM-DD format.
  * - Validates input strictly.
  *
- * @param uiInput - UI invoice form input.
+ * @param input - UI invoice form input.
  * @returns InvoiceDto shape (without id).
  * @throws Error if input is invalid or branding fails.
  */
 export function uiToInvoiceDto(input: UiInvoiceInput): Omit<InvoiceDto, "id"> {
-  const { amount, customerId, status } = input;
+  const { amount, customerId, sensitiveData, status } = input;
 
   if (Number.isNaN(amount) || amount < 0) {
     logger.error({
@@ -156,6 +154,7 @@ export function uiToInvoiceDto(input: UiInvoiceInput): Omit<InvoiceDto, "id"> {
     amount: Math.round(amount * 100),
     customerId,
     date: getCurrentIsoDate(),
+    sensitiveData,
     status,
   };
 
@@ -225,6 +224,7 @@ export function specificCreateInvoiceMapper(
     amount: dto.amount * 100, // Convert dollars to cents
     customerId: toCustomerId(dto.customerId),
     date: dto.date,
+    sensitiveData: dto.sensitiveData,
     status: toInvoiceStatusBrand(dto.status),
   };
 }
