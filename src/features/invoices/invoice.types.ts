@@ -119,6 +119,27 @@ export type InvoiceFormStateCreate = FormState<
 >;
 
 /**
+ * Important type!
+ * Allows partial data for sticky fields in the create invoice form.
+ * Used when validation fails but we want to keep user input.
+ */
+export type CreateInvoicePartial = Promise<
+  InvoiceActionResult<
+    InvoiceFieldName,
+    Partial<z.output<typeof CreateInvoiceSchema>>
+  >
+>;
+
+/**
+ * Partial output type for CreateInvoiceSchema.
+ * Used for form state and validation feedback.
+ * Allows partial data to keep user input on validation errors.
+ */
+export type PartialInvoiceSchema = Partial<
+  z.output<typeof CreateInvoiceSchema>
+>;
+
+/**
  * Zod schema for validating invoice creation input.
  * Exported for reuse in validation and tests.
  */
@@ -158,7 +179,7 @@ const invoiceIdSchema = z.uuid({});
 export const CreateInvoiceSchema = z.object({
   amount: amountSchema,
   customerId: customerIdSchema,
-  date: dateSchema.optional(),
+  date: dateSchema,
   id: invoiceIdSchema.optional(),
   status: statusSchema,
 });

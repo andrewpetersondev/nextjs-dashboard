@@ -21,6 +21,7 @@
 
 - Write code as an expert Next.js senior developer.
 - Use TypeScript with strict typing and latest ECMAScript features.
+- Provide code that satisfies `tsconfig.json`. Notably, tsconfig sets `exactOptionalPropertyTypes` to `true`.
 - Avoid deprecated APIs and patterns.
 - Ensure code is secure, maintainable, and scalable.
 - Provide clear explanations for complex logic and architectural decisions.

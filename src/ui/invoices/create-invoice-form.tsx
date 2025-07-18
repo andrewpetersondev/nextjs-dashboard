@@ -42,6 +42,20 @@ export const CreateInvoiceForm = ({
   return (
     <section>
       <form action={action}>
+        {/* DATE */}
+        <div>
+          <label htmlFor="start">Start date:</label>
+          <input
+            id="start"
+            max="2029-12-31"
+            min="2024-01-01"
+            name="trip-start"
+            required={true}
+            type="date"
+            value="2025-07-22"
+          />
+        </div>
+
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
           <div className="mb-4">
             <Label htmlFor="customer" text="Choose customer" />
