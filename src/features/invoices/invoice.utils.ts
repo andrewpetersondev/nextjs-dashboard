@@ -33,7 +33,7 @@ import { validateFormData } from "@/lib/forms/form-validation";
  * }
  */
 export function processInvoiceFormData(formData: FormData): {
-  dalInput?: Omit<Readonly<InvoiceEntity>, "id" | "sensitiveData">;
+  dalInput?: Omit<Readonly<InvoiceEntity>, "id">;
   errors?: FormErrors<InvoiceFieldName>; // target type
   message?: string;
 } {
@@ -59,6 +59,7 @@ export function processInvoiceFormData(formData: FormData): {
         amount: branded.amount as number,
         customerId: branded.customerId as CustomerId,
         date: branded.date as string,
+        sensitiveData: branded.sensitiveData as string,
         status: branded.status as InvoiceStatus,
       },
     };

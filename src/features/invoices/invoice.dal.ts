@@ -167,6 +167,7 @@ export async function fetchLatestInvoices(
         id: invoices.id,
         imageUrl: customers.imageUrl,
         name: customers.name,
+        sensitiveData: invoices.sensitiveData,
         status: invoices.status,
       })
       .from(invoices)

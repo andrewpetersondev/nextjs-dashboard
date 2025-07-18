@@ -35,6 +35,7 @@ export class InvoiceService {
     const validated = CreateInvoiceSchema.safeParse({
       amount: formData.get("amount"),
       customerId: formData.get("customerId"),
+      sensitiveData: formData.get("sensitiveData"),
       status: formData.get("status"),
     });
 
@@ -46,6 +47,7 @@ export class InvoiceService {
       amount: Math.round(validated.data.amount * 100),
       customerId: toCustomerId(validated.data.customerId),
       date: getCurrentIsoDate(),
+      sensitiveData: validated.data.sensitiveData as string,
       status: toInvoiceStatusBrand(validated.data.status),
     };
 
@@ -88,6 +90,8 @@ export class InvoiceService {
     const validated = CreateInvoiceSchema.safeParse({
       amount: formData.get("amount"),
       customerId: formData.get("customerId"),
+      date: formData.get("date"),
+      sensitiveData: formData.get("sensitiveData"),
       status: formData.get("status"),
     });
 
@@ -98,6 +102,9 @@ export class InvoiceService {
     const updatedInvoice = await this.repo.updateRepo(toInvoiceId(id), {
       amount: Math.round(validated.data.amount * 100),
       customerId: toCustomerId(validated.data.customerId),
+      date: validated.data.date || getCurrentIsoDate(),
+      id: toInvoiceId(id),
+      sensitiveData: validated.data.sensitiveData as string,
       status: toInvoiceStatusBrand(validated.data.status),
     });
 

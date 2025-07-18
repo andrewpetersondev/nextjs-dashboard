@@ -48,12 +48,16 @@ export function brandInvoiceFields(fields: Partial<InvoiceDto>): Partial<{
   customerId: ReturnType<typeof toCustomerId>;
   date: string;
   id: ReturnType<typeof toInvoiceId>;
+  sensitiveData: string;
   status: ReturnType<typeof toInvoiceStatusBrand>;
 }> {
   return {
     ...(fields.amount !== undefined && { amount: fields.amount }),
     ...(fields.customerId !== undefined && {
       customerId: toCustomerId(fields.customerId),
+    }),
+    ...(fields.sensitiveData !== undefined && {
+      sensitiveData: fields.sensitiveData,
     }),
     ...(fields.status !== undefined && {
       status: toInvoiceStatusBrand(fields.status),
