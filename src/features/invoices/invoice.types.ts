@@ -55,6 +55,22 @@ export type InvoiceTableRow = Readonly<{
 }>;
 
 /**
+ * Input type for creating an invoice in the DAL.
+ * Omits fields not set by the user.
+ */
+export type InvoiceCreateInput = Omit<InvoiceEntity, "id" | "sensitiveData">;
+
+/**
+ * DTO for updating an invoice.
+ * Only updatable fields are included.
+ */
+export interface InvoiceUpdateInput {
+  readonly amount: number;
+  readonly status: InvoiceStatus;
+  readonly customerId: CustomerId;
+}
+
+/**
  * State for editing an invoice.
  * Includes current invoice, errors, message, and success flag.
  */

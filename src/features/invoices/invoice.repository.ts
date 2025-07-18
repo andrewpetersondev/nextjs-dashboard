@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { Database } from "@/db/connection";
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -10,7 +9,11 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { InvoiceStatus } from "@/features/invoices/invoice.types";
+import type {
+  InvoiceCreateInput,
+  InvoiceStatus,
+  InvoiceUpdateInput,
+} from "@/features/invoices/invoice.types";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
@@ -79,30 +82,22 @@ export interface IRepository<TEntity, TCreate, TUpdate, TId> {
  * const repo = new InvoiceRepository(getDB());
  * const invoice = await repo.create({ ... });
  */
-export class InvoiceRepository
-  implements
-    IRepository<
-      InvoiceDto,
-      Omit<InvoiceEntity, "id" | "sensitiveData">,
-      { amount: number; status: string; customerId: CustomerId },
-      InvoiceId
-    >
-{
+export class InvoiceRepository {
+  private readonly db: Database;
   /**
-   * Constructs a new InvoiceRepository.
-   * @param db - Drizzle database instance.
+   * @param db - Database instance (dependency injection for testability)
    */
-  constructor(private readonly db: Database) {}
+  constructor(db: Database) {
+    this.db = db;
+  }
 
   /**
-   * Creates a new invoice in the database.
-   * @param data - DTO for invoice creation (all fields except id and sensitiveData).
-   * @returns Promise resolving to the created InvoiceDto, or null if creation fails.
+   * Creates an invoice in the database.
+   * @param input - Validated and transformed invoice data.
+   * @returns The created InvoiceDto or null.
    */
-  async create(
-    data: Omit<InvoiceEntity, "id" | "sensitiveData">,
-  ): Promise<InvoiceDto | null> {
-    return createInvoiceDal(this.db, data);
+  async create(input: InvoiceCreateInput): Promise<InvoiceDto | null> {
+    return createInvoiceDal(this.db, input);
   }
 
   /**
@@ -122,7 +117,7 @@ export class InvoiceRepository
    */
   async update(
     id: InvoiceId,
-    data: { amount: number; status: InvoiceStatus; customerId: CustomerId },
+    data: InvoiceUpdateInput,
   ): Promise<InvoiceDto | null> {
     return updateInvoiceDal(this.db, id, data);
   }
