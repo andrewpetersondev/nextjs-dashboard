@@ -32,9 +32,7 @@ import {
   toInvoiceId,
   toInvoiceStatusBrand,
 } from "@/lib/definitions/brands";
-import { buildErrorMap } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
-import { getFormField } from "@/lib/utils/utils.server";
 
 /**
  * Server action for creating a new invoice.
@@ -45,7 +43,7 @@ import { getFormField } from "@/lib/utils/utils.server";
  * - Returns a strictly typed form state for UI feedback, including errors, messages, and the created invoice DTO.
  *
  * ## Parameters
- * @param _prevState - Previous form state (unused, reserved for future stateful workflows).
+ * @param prevState - Previous form state (unused, reserved for future stateful workflows).
  * @param formData - FormData from the client, containing invoice fields.
  *
  * ## Returns
@@ -77,7 +75,7 @@ import { getFormField } from "@/lib/utils/utils.server";
  * }
  */
 export async function _createInvoiceAction_old(
-  _prevState: InvoiceFormStateCreate,
+  prevState: InvoiceFormStateCreate,
   formData: FormData,
 ): Promise<InvoiceFormStateCreate> {
   try {
@@ -177,42 +175,10 @@ export async function _updateInvoiceAction_old(
   try {
     const db = getDB();
 
-    let rawAmount: string;
-    let rawCustomerId: string;
-    let rawStatus: string;
-    try {
-      rawAmount = getFormField(formData, "amount");
-      rawCustomerId = getFormField(formData, "customerId");
-      rawStatus = getFormField(formData, "status");
-    } catch (error) {
-      logger.error({
-        context: "updateInvoiceAction:missingFields",
-        error,
-        id,
-        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
-      });
-      return {
-        errors: buildErrorMap({
-          amount: formData.get("amount")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.AMOUNT_REQUIRED],
-          customerId: formData.get("customerId")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.CUSTOMER_ID_REQUIRED],
-          status: formData.get("status")
-            ? undefined
-            : [INVOICE_ERROR_MESSAGES.STATUS_REQUIRED],
-        }),
-        invoice: prevState.invoice,
-        message: INVOICE_ERROR_MESSAGES.MISSING_FIELDS,
-        success: false,
-      };
-    }
-
     const validated = CreateInvoiceSchema.safeParse({
-      amount: rawAmount,
-      customerId: rawCustomerId,
-      status: rawStatus,
+      amount: formData.get("amount"),
+      customerId: formData.get("customerId"),
+      status: formData.get("status"),
     });
 
     if (!validated.success) {
@@ -225,7 +191,7 @@ export async function _updateInvoiceAction_old(
       });
 
       return {
-        errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        errors: z.flattenError(validated.error).fieldErrors,
         invoice: prevState.invoice,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
@@ -233,15 +199,11 @@ export async function _updateInvoiceAction_old(
     }
 
     const { amount, customerId, status } = validated.data;
-    const brandedId = toInvoiceId(id);
-    const brandedCustomerId = toCustomerId(customerId);
-    const brandedStatus = toInvoiceStatusBrand(status);
-    const amountInCents = Math.round(amount * 100);
 
-    const updatedInvoice = await updateInvoiceDal(db, brandedId, {
-      amount: amountInCents,
-      customerId: brandedCustomerId,
-      status: brandedStatus,
+    const updatedInvoice = await updateInvoiceDal(db, toInvoiceId(id), {
+      amount: Math.round(amount * 100),
+      customerId: toCustomerId(customerId),
+      status: toInvoiceStatusBrand(status),
     });
 
     if (!updatedInvoice) {
@@ -326,7 +288,7 @@ export async function readInvoicesPagesAction(
   query: string = "",
 ): Promise<number> {
   // Sanitize input to prevent SQL injection and ensure type safety
-  const sanitizedQuery = typeof query === "string" ? query.trim() : "";
+  const sanitizedQuery = query.trim();
 
   try {
     const db = getDB();
@@ -436,7 +398,7 @@ export async function _readInvoiceActionWithState(
     if (!invoice) {
       return {
         ...prevState,
-        data: null,
+        // data: null,
         message: INVOICE_ERROR_MESSAGES.READ_FAILED,
         success: false,
       };
@@ -457,7 +419,7 @@ export async function _readInvoiceActionWithState(
     });
     return {
       ...prevState,
-      data: null,
+      // data: null,
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
@@ -522,7 +484,7 @@ export async function _deleteInvoiceActionWithState(
     if (!deletedInvoice) {
       return {
         ...prevState,
-        data: null,
+        // data: null,
         message: INVOICE_ERROR_MESSAGES.DELETE_FAILED,
         success: false,
       };
@@ -543,7 +505,7 @@ export async function _deleteInvoiceActionWithState(
     });
     return {
       ...prevState,
-      data: null,
+      // data: null,
       message: INVOICE_ERROR_MESSAGES.DB_ERROR,
       success: false,
     };
