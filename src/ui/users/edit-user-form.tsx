@@ -36,10 +36,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
     user.id,
   );
 
-  const [state, action, isPending] = useActionState<
-    EditUserFormState,
-    FormData
-  >(updateUserWithId, initialState);
+  const [state, action, pending] = useActionState<EditUserFormState, FormData>(
+    updateUserWithId,
+    initialState,
+  );
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -216,10 +216,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
           </div>
         </div>
         <FormActionRow cancelHref="/dashboard/users">
-          <FormSubmitButton
-            data-cy="edit-user-submit-button"
-            pending={isPending}
-          >
+          <FormSubmitButton data-cy="edit-user-submit-button" pending={pending}>
             Update User
           </FormSubmitButton>
         </FormActionRow>

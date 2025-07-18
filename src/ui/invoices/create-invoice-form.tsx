@@ -23,7 +23,7 @@ export const CreateInvoiceForm = ({
     message: "", // No message initially
     success: false, // No success initially
   };
-  const [state, action, isPending] = useActionState(
+  const [state, action, pending] = useActionState(
     createInvoiceAction,
     initialState,
   );
@@ -49,13 +49,13 @@ export const CreateInvoiceForm = ({
               customers={customers}
               dataCy="customer-select"
               defaultValue=""
-              disabled={isPending}
+              disabled={pending}
               error={state.errors?.customerId}
             />
           </div>
           <InvoiceAmountInput
             dataCy="amount-input"
-            disabled={isPending}
+            disabled={pending}
             error={state.errors?.amount}
             id="amount"
             label="Choose an amount"
@@ -66,7 +66,7 @@ export const CreateInvoiceForm = ({
           />
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
-            disabled={isPending}
+            disabled={pending}
             error={state.errors?.status}
             name="status"
             value="pending" // Default to "pending"
@@ -75,7 +75,7 @@ export const CreateInvoiceForm = ({
         <FormActionRow cancelHref="/dashboard/invoices">
           <FormSubmitButton
             data-cy="create-invoice-submit-button"
-            pending={isPending}
+            pending={pending}
           >
             Create Invoice
           </FormSubmitButton>

@@ -33,13 +33,13 @@ export const EditInvoiceForm = ({
   const updateInvoiceWithId = updateInvoiceAction.bind(null, invoice.id);
 
   // useActionState expects a reducer: (prevState, payload) => newState
-  const [state, formAction, isPending] = useActionState<
-    InvoiceEditState,
-    FormData
-  >(async (prevState, formData) => {
-    // Call the server action
-    return await updateInvoiceWithId(prevState, formData);
-  }, initialState);
+  const [state, action, pending] = useActionState<InvoiceEditState, FormData>(
+    async (prevState, formData) => {
+      // Call the server action
+      return await updateInvoiceWithId(prevState, formData);
+    },
+    initialState,
+  );
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -55,7 +55,7 @@ export const EditInvoiceForm = ({
 
   return (
     <div>
-      <form action={formAction}>
+      <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
           {/* Customer */}
           <div className="mb-4">
@@ -64,7 +64,7 @@ export const EditInvoiceForm = ({
               customers={customers}
               dataCy="customer-select"
               defaultValue={state.invoice.customerId}
-              disabled={isPending}
+              disabled={pending}
             />
           </div>
 
@@ -72,7 +72,7 @@ export const EditInvoiceForm = ({
           <InvoiceAmountInput
             dataCy="amount-input"
             defaultValue={state.invoice.amount / 100}
-            disabled={isPending}
+            disabled={pending}
             error={state.errors?.amount}
             id="amount"
             label="Choose an amount"
@@ -82,7 +82,7 @@ export const EditInvoiceForm = ({
           {/* Invoice Status */}
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
-            disabled={isPending}
+            disabled={pending}
             error={state.errors?.status}
             name="status"
             value={state.invoice.status}
@@ -92,7 +92,7 @@ export const EditInvoiceForm = ({
         <FormActionRow cancelHref="/dashboard/invoices">
           <FormSubmitButton
             data-cy="edit-invoice-submit-button"
-            pending={isPending}
+            pending={pending}
           >
             Edit Invoice
           </FormSubmitButton>
