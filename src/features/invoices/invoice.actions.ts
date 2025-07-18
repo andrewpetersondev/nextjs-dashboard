@@ -1,6 +1,8 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import * as z from "zod";
 import { getDB } from "@/db/connection";
 import {
   createInvoiceDal,
@@ -32,8 +34,6 @@ import {
 import { buildErrorMap } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
 import { getFormField } from "@/lib/utils/utils.server";
-
-// --- CRUD Actions for Invoices ---
 
 /**
  * Server action for creating a new invoice.
@@ -75,7 +75,7 @@ import { getFormField } from "@/lib/utils/utils.server";
  *   // Display result.errors and result.message in the UI
  * }
  */
-export async function createInvoiceAction(
+export async function _createInvoiceAction_old(
   _prevState: InvoiceFormStateCreate,
   formData: FormData,
 ): Promise<InvoiceFormStateCreate> {
@@ -168,7 +168,7 @@ export async function readInvoiceAction(
 /**
  * Server action to update an existing invoice.
  */
-export async function updateInvoiceAction(
+export async function _updateInvoiceAction_old(
   id: string,
   prevState: InvoiceEditState,
   formData: FormData,
@@ -545,7 +545,7 @@ export async function updateInvoiceAction_v2(
  * Create Invoice Action with prevState.
  * Uses InvoiceActionResult to maintain state across actions.
  */
-export async function _createInvoiceActionWithState(
+export async function createInvoiceAction(
   prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
   formData: FormData,
 ): Promise<InvoiceActionResult<InvoiceFieldName, InvoiceDto>> {
@@ -559,7 +559,8 @@ export async function _createInvoiceActionWithState(
     if (!validated.success) {
       return {
         ...prevState,
-        errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        // errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        errors: z.flattenError(validated.error).fieldErrors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };
@@ -648,7 +649,7 @@ export async function _readInvoiceActionWithState(
  * Update Invoice Action with prevState.
  * Uses InvoiceActionResult to maintain state across actions.
  */
-export async function _updateInvoiceActionWithState(
+export async function updateInvoiceAction(
   prevState: InvoiceActionResult<InvoiceFieldName, InvoiceDto>,
   id: string,
   formData: FormData,
@@ -663,7 +664,8 @@ export async function _updateInvoiceActionWithState(
     if (!validated.success) {
       return {
         ...prevState,
-        errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        // errors: buildErrorMap(validated.error.flatten().fieldErrors),
+        errors: z.flattenError(validated.error).fieldErrors,
         message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
         success: false,
       };

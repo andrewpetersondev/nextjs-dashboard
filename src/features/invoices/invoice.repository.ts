@@ -10,6 +10,7 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
@@ -121,7 +122,7 @@ export class InvoiceRepository
    */
   async update(
     id: InvoiceId,
-    data: { amount: number; status: string; customerId: CustomerId },
+    data: { amount: number; status: InvoiceStatus; customerId: CustomerId },
   ): Promise<InvoiceDto | null> {
     return updateInvoiceDal(this.db, id, data);
   }
