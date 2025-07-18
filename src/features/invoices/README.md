@@ -1,200 +1,363 @@
-Outdated Documentation
+Here is a unified, comprehensive, and improved `README.md` for your invoice feature. This document consolidates all previous strategies, fixes inconsistencies, and provides a prescriptive, actionable, and maintainable architecture for a high-traffic, secure, and accessible Next.js application using TypeScript.
 
-# Invoice Creation Guide
+---
 
-This document explains the end-to-end process for creating invoices in the project, covering type safety, error handling, form validation, and the separation of concerns across UI, server, and database layers.
+# Invoice Feature: Unified Architecture & Implementation Guide
+
+> **Status:** Up-to-date as of 2024-06  
+> This document is the single source of truth for the invoice feature’s architecture, type safety, server code, error handling, security, accessibility, and testing.
 
 ---
 
 ## Table of Contents
 
 - Overview
-- UI Layer
-- Server Layer
-- Database Layer
-- Type Safety
-- Error Handling
-- Form Validation
-- Data Flow Diagram
-- File Reference & TSDoc
+- Layered Architecture & Responsibilities
+- Data Flow & Type Safety
+- Server Code Implementation Plan
+- Error Handling & Logging
+- Security & Validation
+- Performance & Scalability
+- Accessibility & Internationalization
+- Testing & Documentation
+- Visual Diagrams
+- File Reference
+- Summary
 
 ---
 
 ## Overview
 
-Invoice creation is a multi-step process involving:
-
-1. **UI Form Submission**: User fills out and submits the invoice form.
-2. **Server Validation & Transformation**: Server validates and transforms the input.
-3. **Database Persistence**: Validated data is saved to the database.
-4. **Error Handling**: Errors are propagated back to the UI for user feedback.
+This feature uses a strict, neighbor-only layered architecture. Each layer has a single responsibility and communicates only with its immediate neighbor, ensuring separation of concerns, maintainability, and scalability. All code is written in TypeScript with strict typing, branded types, and comprehensive validation.
 
 ---
 
-## UI Layer
+## Layered Architecture & Responsibilities
 
-- **Component**: `CreateInvoiceForm`
-- **Type**: Uses `InvoiceFormStateCreate` for form state.
-- **Error Display**: Field-level errors are shown next to inputs; general messages are shown above the form.
-- **Form Submission**: Uses `useActionState` to call `createInvoiceAction`.
+| Layer         | Responsibility                                                                                    | Example File/Module       |
+| ------------- | ------------------------------------------------------------------------------------------------- | ------------------------- |
+| UI            | Renders forms, collects user input, displays feedback, ensures accessibility and localization.    | `create-invoice-form.tsx` |
+| UI Mapper     | Transforms UI input to DTOs, maps server results to UI state.                                     | `invoice.mapper.ts`       |
+| Server Action | Receives DTOs, validates, orchestrates business logic, returns uniform result.                    | `invoice.actions.ts`      |
+| Repository    | Abstracts data access, enforces domain rules, coordinates with DAL, manages transactions/caching. | `invoice.repository.ts`   |
+| DAL           | Direct database/cache access, error logging, low-level data operations.                           | `invoice.dal.ts`          |
+| DB Mapper     | Maps raw DB rows to domain entities and vice versa, enforces invariants.                          | `invoice.mapper.ts`       |
+| Database      | Stores and retrieves raw data, no business logic.                                                 | (DB schema)               |
 
-### Example State
+**Strict Rule:**  
+Each layer only communicates with its direct neighbor. No layer may skip another.
+
+---
+
+## Data Flow & Type Safety
+
+- **Strict TypeScript:** All data structures use explicit interfaces/types.
+- **DTOs:** Used for transport between layers.
+- **Branded Types:** Used for domain safety (e.g., `InvoiceId`, `CustomerId`).
+- **Immutability:** Use `readonly` and immutable types.
+- **Type Guards:** Used at boundaries.
+
+### Data Flow Example
+
+1. UI → UI Mapper: `UiInvoiceInput`
+2. UI Mapper → Server Action: `InvoiceDto`
+3. Server Action → Repository: `InvoiceEntity`
+4. Repository → DAL: `InvoiceEntity`
+5. DAL → DB Mapper: `InvoiceRawRow`
+6. DB Mapper → DAL: `InvoiceEntity`
+7. DAL → Repository: `InvoiceEntity`
+8. Repository → Server Action: `InvoiceEntity`
+9. Server Action → UI Mapper: `InvoiceActionResult`
+10. UI Mapper → UI: mapped result
+
+### Data Shape Table
+
+| Layer         | Data Sent      | Data Received       |
+| ------------- | -------------- | ------------------- |
+| UI            | UiInvoiceInput | Mapped UI result    |
+| UI Mapper     | InvoiceDto     | InvoiceActionResult |
+| Server Action | InvoiceDto     | InvoiceEntity       |
+| Repository    | InvoiceEntity  | InvoiceRawRow       |
+| DB Mapper     | InvoiceRawRow  | InvoiceEntity       |
+
+---
+
+## Server Code Implementation Plan
+
+### 1. File Structure
+
+```
+src/features/invoices/
+  ├── invoice.actions.ts      // Server actions (entry point for server logic)
+  ├── invoice.repository.ts   // Repository (business logic, data access abstraction)
+  ├── invoice.dal.ts         // DAL (raw DB access)
+  ├── invoice.mapper.ts      // Mappers (UI and DB)
+  ├── invoice.types.ts       // All types, interfaces, branded types
+  ├── invoice.schemas.ts     // Zod schemas for validation
+  └── README.md              // This documentation
+```
+
+### 2. Type Definitions
+
+- Define all types and branded types in `invoice.types.ts`.
+- Use `interface` for object shapes, `type` for unions/intersections.
+- Document all types with TSDoc.
+- Example:
 
 ```typescript
-type InvoiceFormStateCreate = {
-  data?: { amount: number; customerId: string; status: "pending" | "paid" };
-  errors: Partial<
-    Record<"amount" | "customerId" | "status", string[] | undefined>
-  >;
-  message: string;
-  success: boolean;
-};
+/**
+ * Domain model for Invoice.
+ * Used for database and server logic.
+ * All fields are strictly typed and immutable.
+ */
+export interface InvoiceEntity {
+  /** Invoice amount in cents */
+  readonly amount: number;
+  /** Customer ID (branded) */
+  readonly customerId: CustomerId;
+  /** Invoice date as ISO 8601 string (YYYY-MM-DD) */
+  readonly date: string;
+  /** Invoice ID (branded) */
+  readonly id: InvoiceId;
+  /** Sensitive data (internal use only) */
+  readonly sensitiveData: string;
+  /** Invoice status (branded) */
+  readonly status: InvoiceStatus;
+}
+```
+
+### 3. Validation
+
+- Use Zod schemas in `invoice.schemas.ts` for all user input and DTO validation.
+- Validate at every boundary: UI Mapper, Server Action, Repository, DAL.
+- Example:
+
+```typescript
+import { z } from "zod";
+
+/**
+ * Zod schema for invoice input validation.
+ */
+export const invoiceInputSchema = z.object({
+  amount: z.number().positive(),
+  description: z.string().min(1).max(255),
+  dueDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date format",
+  }),
+});
+```
+
+### 4. Server Actions (`invoice.actions.ts`)
+
+- Receive only DTOs from UI Mapper.
+- Validate input using Zod.
+- Call repository methods.
+- Return a uniform result type (`InvoiceActionResult`).
+- Never interact with DAL or DB Mapper directly.
+
+### 5. Repository (`invoice.repository.ts`)
+
+- Accept only domain entities or branded types.
+- Call DAL methods.
+- Handle business/domain rules.
+- Map DAL results to domain entities using DB Mapper.
+- Never expose raw DB rows or DAL details to server actions.
+
+### 6. DAL (`invoice.dal.ts`)
+
+- Only interacts with the database.
+- Accepts/returns only domain entities or raw DB rows.
+- Uses DB Mapper for all transformations.
+- Handles low-level errors and logging.
+
+### 7. DB Mapper (`invoice.mapper.ts`)
+
+- Maps raw DB rows to domain entities and vice versa.
+- Enforces type safety and invariants.
+- Never called directly by server actions or UI.
+
+### 8. Error Handling
+
+- Use structured error objects and logging at each layer.
+- Never leak sensitive data.
+- All errors propagate up as uniform result types.
+
+### 9. Testing
+
+- Mock repository and DAL in unit tests.
+- Use integration tests for DAL and repository.
+- Use Cypress for E2E and accessibility.
+
+---
+
+## Error Handling & Logging
+
+- Use structured logging (JSON) with context at every layer.
+- Use global error boundaries in React for UI errors.
+- Never expose sensitive data in logs or error messages.
+- Centralize error handling in middleware/server actions.
+- Example:
+
+```typescript
+import { Logger } from "tslog";
+
+/**
+ * Application-wide structured logger.
+ */
+export const appLogger = new Logger({
+  name: "nextjs-app",
+  type: "json",
+  minLevel: "info",
+});
 ```
 
 ---
 
-## Server Layer
+## Security & Validation
 
-- **Action**: `createInvoiceAction`
-- **Validation**: Calls `processInvoiceFormData` to validate and transform input.
-- **Error Propagation**: Returns errors and messages in the same shape as `InvoiceFormStateCreate`.
-- **Type Safety**: All data is strictly typed and branded before database insertion.
-
-### Error Handling
-
-- Validation errors are returned as a map of field names to error arrays.
-- Transformation or database errors return a general message and empty error map.
+- Validate and sanitize all user input at every boundary.
+- Use branded types for all IDs and sensitive fields.
+- Store secrets in environment variables.
+- Follow OWASP best practices.
+- Never commit secrets or sensitive data to version control.
 
 ---
 
-## Database Layer
+## Performance & Scalability
 
-- **DAL Function**: `createInvoiceDal`
-- **Type**: Accepts branded types for domain safety.
-- **Persistence**: Inserts validated invoice data and returns a DTO for the UI.
-
----
-
-## Type Safety
-
-- **Types & Interfaces**: All layers use strict TypeScript types and interfaces.
-- **Branding**: Domain-specific types (e.g., `CustomerId`, `InvoiceStatus`) prevent accidental misuse.
-- **DTOs**: Only plain types are exposed to the UI.
+- Use Redis for hot data, CDN for static assets.
+- Use connection pooling for DB and cache.
+- Use Next.js SSR/ISR/SSG for optimal rendering.
+- Monitor and optimize bundle size and server response times.
+- Use APM tools (Datadog, New Relic).
+- Support horizontal scaling with containers and load balancers.
 
 ---
 
-## Error Handling
+## Accessibility & Internationalization
 
-- **Field Errors**: Mapped as `FormErrors<TFieldNames>`, only present for fields with errors.
-- **General Errors**: Provided as a message string for display above the form.
-- **Success State**: `success: boolean` indicates operation result.
-
----
-
-## Form Validation
-
-- **Schema**: Uses Zod schemas for runtime validation.
-- **Error Mapping**: Only allowed field names are included in error maps.
-- **Transformation**: Input is sanitized and converted (e.g., amount to cents, date to ISO string).
+- All UI meets WCAG 2.1 AA accessibility standards.
+- Use semantic HTML and ARIA attributes.
+- Support localization with i18n libraries (e.g., next-i18next).
+- Ensure all actions are accessible via keyboard navigation.
 
 ---
 
-## Architectural Diagram
+## Testing & Documentation
+
+- Use Cypress for E2E/component tests.
+- Mock repositories/DAL in unit tests.
+- Achieve high code coverage and meaningful test cases.
+- Document all files, types, and functions with TSDoc.
+- Keep this README and usage guides up to date.
+
+---
+
+## Visual Diagrams
+
+### Layered Architecture Flow
 
 ```mermaid
 flowchart TD
-    UI[UI Layer: React Components] -->|FormData| SA[Server Actions]
-    SA -->|DTO/Entities| REPO[InvoiceRepository]
-    REPO -->|CRUD| DAL[DAL Functions]
-    DAL -->|SQL| DB[(Database)]
-    DB -->|Raw Rows| DAL
-    DAL -->|Entities| MAP[Transformation/Mapping Layer]
-    MAP -->|DTOs| REPO
-    REPO -->|DTO| SA
-    SA -->|FormState| UI
+    UI[UI Layer: InvoiceForm.tsx] -->|UiInvoiceInput| UIMapper[UI Mapper: invoice.mapper.ts]
+    UIMapper -->|InvoiceDto| ServerAction[Server Action: invoice.actions.ts]
+    ServerAction -->|InvoiceEntity| Repository[Repository: invoice.repository.ts]
+    Repository -->|InvoiceEntity| DAL[DAL: invoice.dal.ts]
+    DAL -->|InvoiceRawRow| DBMapper[DB Mapper: invoice.mapper.ts]
+    DBMapper -->|InvoiceEntity| DAL
+    DAL -->|InvoiceEntity| Repository
+    Repository -->|InvoiceEntity| ServerAction
+    ServerAction -->|InvoiceActionResult| UIMapper
+    UIMapper -->|Mapped Result| UI
 ```
 
----
-
-## Data Flow Diagram New
+### Error Handling Flow
 
 ```mermaid
-flowchart TD
-    A[UI: CreateInvoiceForm] -->|Submit FormData| B[Server: createInvoiceAction]
-    B -->|Validate & Transform| C[Server: processInvoiceFormData]
-    C -->|Valid Data| D[Repo: InvoiceRepository]
-    D -->|Create| E[DAL: createInvoiceDal]
-    E -->|SQL Insert| F[DB: Database]
-    F -->|Raw Row| E
-    E -->|Raw Row| G[Mapper: rawDbToInvoiceEntity/entityToInvoiceDto]
-    G -->|DTO| D
-    D -->|DTO| B
-    C -->|Validation Errors| B
-    B -->|Return FormState| A
+sequenceDiagram
+    participant User
+    participant UI
+    participant UIMapper
+    participant ServerAction
+    participant Repository
+    participant DAL
+    participant DBMapper
+    participant Logger
+
+    User->>UI: Submit form
+    UI->>UIMapper: Transform input
+    UIMapper->>ServerAction: Send InvoiceDto
+    ServerAction->>Repository: Validate & process
+    Repository->>DAL: Persist/fetch
+    DAL->>DBMapper: Map raw data
+    DBMapper-->>DAL: Return InvoiceEntity
+    DAL-->>Repository: Return InvoiceEntity
+    Repository-->>ServerAction: Return InvoiceEntity
+    ServerAction->>Logger: Log error (if any)
+    ServerAction-->>UIMapper: Return InvoiceActionResult
+    UIMapper-->>UI: Map result for display
+    UI-->>User: Show feedback
 ```
 
 ---
 
-## File Reference & TSDoc
+## File Reference
 
-All major files are documented with TSDoc for maintainability and traceability:
-
-- `invoice.actions.ts`: Server actions for CRUD operations.
-- `invoice.dal.ts`: Data access layer, handles database logic and error logging.
-- `invoice.dto.ts`: Data Transfer Object for safe UI/API transport.
-- `invoice.mapper.ts`: Transforms between raw DB rows, domain entities, and DTOs.
-- `invoice.branding.ts`: Brands fields for domain safety (compile-time only).
-- `invoice.types.ts`: Strict types, constants, and Zod schemas for validation.
-- `invoice.utils.ts`: Utility for validating and transforming form data.
-- `invoice.entity.ts`: Domain model for invoices with branded types.
-
-All types, interfaces, and functions are documented using TSDoc.  
-Refer to each file for details on parameters, return types, error handling, and usage examples.
+- `src/ui/invoices/create-invoice-form.tsx`: UI form component.
+- `src/features/invoices/invoice.actions.ts`: Server actions for CRUD.
+- `src/features/invoices/invoice.repository.ts`: Repository implementation.
+- `src/features/invoices/invoice.dal.ts`: Data access layer.
+- `src/features/invoices/invoice.mapper.ts`: Mapper functions for DTO/entity/raw.
+- `src/features/invoices/invoice.types.ts`: Types, interfaces, and schemas.
+- `src/features/invoices/invoice.schemas.ts`: Zod schemas for validation.
 
 ---
 
 ## Summary
 
-- **Type Safety**: Enforced at every layer using TypeScript and branded types.
-- **Error Handling**: Consistent error maps and messages for UI feedback.
-- **Validation**: Zod schemas and domain logic ensure data integrity.
-- **Separation of Concerns**: UI, server, and database logic are clearly separated for maintainability and scalability.
-- **Documentation**: All files and types are documented with TSDoc for future contributors.
+- **Strict layering:** Each layer only communicates with its direct neighbor.
+- **Type safety:** Enforced at every boundary using TypeScript and branded types.
+- **Validation:** Zod schemas and domain logic at every layer.
+- **Error handling:** Uniform result types and structured logging.
+- **Security:** Input validation, branded types, and environment-based secrets.
+- **Performance:** Caching, pooling, and monitoring for scalability.
+- **Accessibility:** WCAG 2.1 AA compliance and i18n support.
+- **Testing:** Unit, integration, and E2E coverage.
+- **Documentation:** All code and types documented with TSDoc.
 
 ---
 
-For further details, see the source files:
+> For further details, see TSDoc comments in each referenced file and the visual diagrams above. This README is the canonical reference for the invoice feature’s architecture and implementation.
 
-- `src/ui/invoices/create-invoice-form.tsx`
-- `src/features/invoices/invoice.actions.ts`
-- `src/features/invoices/invoice.utils.ts`
-- `src/features/invoices/invoice.dal.ts`
-- `src/lib/forms/form-validation.ts`
-- `src/features/invoices/invoice.types.ts`
+---
 
-  ***
+Your `README.md` is comprehensive and well-structured, but for maximum clarity, maintainability, and onboarding efficiency, consider including the following additional sections or details:
 
-## Ideal Structure
+1. **Environment Setup & Prerequisites**
+   - List required Node.js, npm, and database versions.
+   - Mention any required environment variables and how to configure them (without exposing secrets).
 
-Yes, a "tower" diagram is a strong architectural choice for backend data flow. Each layer should only communicate with the layer directly above or below it, passing data up and down. This enforces separation of concerns, makes the flow clear, and simplifies maintenance and testing.
+2. **Installation & Local Development**
+   - Step-by-step instructions for installing dependencies, running migrations, and starting the dev server.
+   - How to run tests (unit, integration, E2E).
 
-**Characteristics of a Tower Diagram:**
+3. **Deployment & CI/CD**
+   - Briefly describe the deployment process and any CI/CD pipelines.
+   - Mention how secrets are managed in production.
 
-- **Vertical structure:** Each layer (UI, Server Actions, Repository, DAL, Mapper, Database) is stacked.
-- **Strict boundaries:** Data only flows between adjacent layers.
-- **Bidirectional arrows:** Show both requests and responses.
-- **Transformation/validation:** Explicitly shown between layers (e.g., Mapper between DAL and Repository).
+4. **API Documentation**
+   - If you have public or internal APIs, link to OpenAPI/Swagger docs or describe endpoints, request/response shapes, and authentication.
 
-**Example (Mermaid):**
+5. **Contribution Guidelines**
+   - How to propose changes, coding standards, PR review process, and commit message conventions.
 
-```mermaid
-flowchart TD
-    UI[UI Layer] <--> MAP_UI[UI Mapper]
-    MAP_UI <--> SA[Server Actions]
-    SA <--> REPO[Repository]
-    REPO <--> DAL[DAL]
-    DAL <--> MAP_DB[DB Mapper]
-    MAP_DB <--> DB[(Database)]
-```
+6. **Known Issues & Troubleshooting**
+   - Common pitfalls, error messages, and how to resolve them.
 
-This structure makes it easy to trace data, enforce contracts, and extend the system. Each layer is responsible for its own logic and only interacts with its immediate neighbors.
+7. **Changelog or Release Notes**
+   - Link to a `CHANGELOG.md` or describe how releases are tracked.
+
+8. **Contact & Support**
+   - Who to contact for questions, or where to file issues.
+
+Including these sections will make your `README.md` even more robust and helpful for new contributors and future maintainers.
