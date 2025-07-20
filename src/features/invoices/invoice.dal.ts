@@ -80,36 +80,27 @@ export async function updateInvoiceDal(
 }
 
 /**
- * @remarks
- * Needs to be updated to not return null. needs to follow pattern of create, read, update.
  * Deletes an invoice by ID.
+ * @throws DatabaseError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
   db: Database,
   id: InvoiceId,
-): Promise<InvoiceEntity | null> {
-  try {
-    const [deletedInvoice] = await db
-      .delete(invoices)
-      .where(eq(invoices.id, id))
-      .returning();
+): Promise<InvoiceEntity> {
+  const [deletedInvoice] = await db
+    .delete(invoices)
+    .where(eq(invoices.id, id))
+    .returning();
 
-    if (!deletedInvoice) return null;
-
-    const entity = rawDbToInvoiceEntity(deletedInvoice);
-
-    if (!entity) return null;
-
-    return entity;
-  } catch (error) {
-    logger.error({
-      context: "deleteInvoiceDal",
-      error,
-      id,
-      message: INVOICE_ERROR_MESSAGES.DELETE_FAILED,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.DELETE_FAILED);
+  if (!deletedInvoice) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
   }
+
+  const entity = rawDbToInvoiceEntity(deletedInvoice);
+
+  if (!entity) return null;
+
+  return entity;
 }
 
 /**

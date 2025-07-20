@@ -1,6 +1,6 @@
 import "server-only";
 
-import { DatabaseError, ValidationError } from "@/errors/errors";
+import { ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
@@ -22,7 +22,7 @@ import { getCurrentIsoDate } from "@/lib/utils/utils";
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
-  private readonly logger: typeof defaultLogger;
+  // private readonly logger: typeof defaultLogger;
 
   constructor(
     repo: InvoiceRepository,
@@ -95,32 +95,16 @@ export class InvoiceService {
     return await this.repo.update(toInvoiceId(id), updateInput);
   }
 
+  /**
+   * Deletes an invoice by ID.
+   */
   async deleteInvoiceService(id: string): Promise<InvoiceDto> {
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
-    try {
-      const invoiceId = toInvoiceId(id);
-      return await this.repo.delete(invoiceId);
-    } catch (error) {
-      this.handleError("deleteInvoiceService", error);
-    }
-  }
 
-  private handleError(context: string, error: unknown): never {
-    if (error instanceof ValidationError) {
-      this.logger.warn({ context, error });
-      throw error;
-    }
-    if (error instanceof DatabaseError) {
-      this.logger.error({ context, error });
-      throw error;
-    }
-    this.logger.error({
-      context,
-      error,
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.SERVICE_ERROR);
+    const invoiceId = toInvoiceId(id);
+
+    return await this.repo.delete(invoiceId);
   }
 }

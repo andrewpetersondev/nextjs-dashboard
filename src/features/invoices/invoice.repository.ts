@@ -122,27 +122,18 @@ export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
   }
 
   /**
-   * Soft deletes an invoice.
-   * @throws {ValidationError|DatabaseError}
+   * Deletes an invoice.
+   * @throws ValidationError for invalid ID
+   * @throws DatabaseError for database failures
    */
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
-    try {
-      const entity = await deleteInvoiceDal(this.db, id);
-      if (!isInvoiceEntity(entity)) {
-        throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
-      }
-      return entityToInvoiceDto(entity);
-    } catch (error) {
-      this.logger.error({
-        context: "InvoiceRepository.delete",
-        error,
-        id,
-      });
-      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.DELETE_FAILED);
-    }
+    // Call DAL - let database errors bubble up
+    const entity = await deleteInvoiceDal(this.db, id);
+
+    return entityToInvoiceDto(entity);
   }
 
   /**
@@ -174,16 +165,6 @@ export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
       });
       throw this.wrapError(error, INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED);
     }
-  }
-
-  /**
-   * Redacts sensitive fields for logging.
-   */
-  private redact(obj: unknown): unknown {
-    if (!obj || typeof obj !== "object") return obj;
-    const clone = { ...obj } as Record<string, unknown>;
-    if ("sensitiveData" in clone) clone.sensitiveData = "[REDACTED]";
-    return clone;
   }
 
   /**
