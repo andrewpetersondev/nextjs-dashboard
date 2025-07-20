@@ -7,7 +7,7 @@ import "server-only";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { demoUserCounters, users } from "@/db/schema";
-import { DatabaseError } from "@/errors/database-error";
+import { DatabaseError } from "@/errors/errors";
 import {
   comparePassword,
   hashPassword,

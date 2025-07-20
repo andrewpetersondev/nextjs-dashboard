@@ -2,8 +2,7 @@ import "server-only";
 
 import * as z from "zod";
 import type { Database } from "@/db/connection";
-import { DatabaseError } from "@/errors/database-error";
-import { ValidationError } from "@/errors/validation-error";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -65,83 +64,61 @@ export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
 
   /**
    * Creates an invoice.
-   * @throws {ValidationError|DatabaseError}
+   * @throws ValidationError for invalid input
+   * @throws DatabaseError for database failures
    */
   async create(input: InvoiceCreateInput): Promise<InvoiceDto> {
+    // 1. Validate input
     const parseResult = InvoiceCreateSchema.safeParse(input);
+
     if (!parseResult.success) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
         issues: parseResult.error.issues,
       });
     }
-    try {
-      const entity = await createInvoiceDal(this.db, input);
-      if (!isInvoiceEntity(entity)) {
-        throw new DatabaseError(INVOICE_ERROR_MESSAGES.MAPPING_FAILED, {
-          input,
-        });
-      }
-      return entityToInvoiceDto(entity);
-    } catch (error) {
-      this.logger.error({
-        context: "InvoiceRepository.create",
-        error,
-        input: this.redact(input),
-      });
-      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.CREATE_FAILED);
-    }
+
+    // 2. Call DAL - let database errors bubble up
+    const entity = await createInvoiceDal(this.db, input);
+
+    // 3. Transform and return
+    return entityToInvoiceDto(entity);
   }
 
   /**
    * Reads an invoice by ID.
-   * @throws {ValidationError|DatabaseError}
+   * @throws ValidationError for invalid ID
+   * @throws DatabaseError for database failures
    */
   async read(id: InvoiceId): Promise<InvoiceDto> {
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
-    try {
-      const entity = await readInvoiceDal(this.db, id);
-      if (!isInvoiceEntity(entity)) {
-        throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
-      }
-      return entityToInvoiceDto(entity);
-    } catch (error) {
-      this.logger.error({
-        context: "InvoiceRepository.read",
-        error,
-        id,
-      });
-      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.READ_FAILED);
-    }
+
+    // Call DAL - let database errors bubble up
+    const entity = await readInvoiceDal(this.db, id);
+
+    return entityToInvoiceDto(entity);
   }
 
   /**
-   * Updates an invoice with optimistic concurrency.
-   * @throws {ValidationError|DatabaseError}
+   * Updates an invoice.
+   * @throws ValidationError for invalid input
+   * @throws DatabaseError for database failures
    */
   async update(id: InvoiceId, data: InvoiceUpdateInput): Promise<InvoiceDto> {
+    // 1. Validate input
     const parseResult = InvoiceUpdateSchema.safeParse({ ...data, id });
     if (!parseResult.success) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
         issues: parseResult.error.issues,
       });
     }
-    try {
-      const entity = await updateInvoiceDal(this.db, id, data);
-      if (!isInvoiceEntity(entity)) {
-        throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
-      }
-      return entityToInvoiceDto(entity);
-    } catch (error) {
-      this.logger.error({
-        context: "InvoiceRepository.update",
-        data: this.redact(data),
-        error,
-        id,
-      });
-      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.UPDATE_FAILED);
-    }
+
+    // 2. Call DAL - let database errors bubble up
+    const entity = await updateInvoiceDal(this.db, id, data);
+
+    // 3. Transform and return
+    return entityToInvoiceDto(entity);
   }
 
   /**

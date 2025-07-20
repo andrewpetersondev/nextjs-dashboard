@@ -3,7 +3,7 @@ import "server-only";
 import { asc, count, eq, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
-import { DatabaseError } from "@/errors/database-error";
+import { DatabaseError } from "@/errors/errors";
 import type {
   DashboardCardData,
   RevenueData,

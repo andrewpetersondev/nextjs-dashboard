@@ -4,6 +4,7 @@ import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
+import { DatabaseError } from "@/errors/errors";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type {
   InvoiceCreateInput,
@@ -20,107 +21,67 @@ import { logger } from "@/lib/utils/logger";
  * Inserts a new invoice into the database and returns an Entity for Server transport.
  *
  * @param db - Drizzle database instance.
- * @param uiInvoiceEntity - Invoice data (all fields except id and sensitiveData).
- * @returns Promise resolving to the created InvoiceEntity, or null if creation fails.
- *
- * @remarks
- * - Validates and transforms input before insertion.
- * - Errors are logged with context; no sensitive data is exposed.
- * - Use only branded types for database operations.
- * - In the future, replace the return type with NewInvoiceRawDrizzle from schema.ts
- *
- * @example
- * const entity = await createInvoiceDal(db, invoiceEntity);
- * if (!entity) { // handle error  }
+ * @param input - Invoice data (all fields except id and sensitiveData).
+ * @returns Promise resolving to the created InvoiceEntity.
+ * @throws DatabaseError if creation fails.
  */
 export async function createInvoiceDal(
   db: Database,
-  uiInvoiceEntity: InvoiceCreateInput,
-): Promise<InvoiceEntity | null> {
-  try {
-    const [createdInvoice] = await db
-      .insert(invoices)
-      .values(uiInvoiceEntity)
-      .returning();
+  input: InvoiceCreateInput,
+): Promise<InvoiceEntity> {
+  const [createdInvoice] = await db.insert(invoices).values(input).returning();
 
-    if (!createdInvoice) return null;
-
-    const entity = rawDbToInvoiceEntity(createdInvoice);
-    if (!entity) return null;
-
-    return entity;
-  } catch (error) {
-    logger.error({
-      context: "createInvoiceDal",
-      error,
-      message: INVOICE_ERROR_MESSAGES.CREATE_FAILED,
-      uiInvoiceEntity,
+  if (!createdInvoice) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
+      input,
     });
-    throw new Error(INVOICE_ERROR_MESSAGES.CREATE_FAILED);
   }
+
+  return rawDbToInvoiceEntity(createdInvoice);
 }
 
 /**
- * Fetches an invoice by its ID.
+ * Reads an invoice by ID.
+ * @throws DatabaseError if invoice not found
  */
 export async function readInvoiceDal(
   db: Database,
   id: InvoiceId,
-): Promise<InvoiceEntity | null> {
-  try {
-    const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
+): Promise<InvoiceEntity> {
+  const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
-    if (!data) return null;
-
-    const entity = rawDbToInvoiceEntity(data);
-    if (!entity) return null;
-
-    return entity;
-  } catch (error) {
-    logger.error({
-      context: "readInvoiceDal",
-      error,
-      id,
-      message: INVOICE_ERROR_MESSAGES.READ_FAILED,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.READ_FAILED);
+  if (!data) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
   }
+
+  return rawDbToInvoiceEntity(data);
 }
 
 /**
- * Updates an existing invoice record in the database.
+ * Updates an invoice in the database.
+ * @throws DatabaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
   db: Database,
   id: InvoiceId,
   invoice: { amount: number; status: InvoiceStatus; customerId: CustomerId },
-): Promise<InvoiceEntity | null> {
-  try {
-    const [updated] = await db
-      .update(invoices)
-      .set(invoice)
-      .where(eq(invoices.id, id))
-      .returning();
+): Promise<InvoiceEntity> {
+  const [updated] = await db
+    .update(invoices)
+    .set(invoice)
+    .where(eq(invoices.id, id))
+    .returning();
 
-    if (!updated) return null;
-
-    const entity = rawDbToInvoiceEntity(updated);
-    if (!entity) return null;
-
-    return entity;
-  } catch (error) {
-    logger.error({
-      context: "updateInvoiceDal",
-      error,
-      id,
-      invoice,
-      message: INVOICE_ERROR_MESSAGES.UPDATE_FAILED,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.UPDATE_FAILED);
+  if (!updated) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
   }
+
+  return rawDbToInvoiceEntity(updated);
 }
 
 /**
+ * @remarks
+ * Needs to be updated to not return null. needs to follow pattern of create, read, update.
  * Deletes an invoice by ID.
  */
 export async function deleteInvoiceDal(

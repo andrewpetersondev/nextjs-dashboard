@@ -3,7 +3,7 @@ import "server-only";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { SESSION_SECRET } from "@/config/env";
-import { ValidationError } from "@/errors/validation-error";
+import { ValidationError } from "@/errors/errors";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
@@ -22,7 +22,6 @@ import {
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
 } from "@/lib/constants/auth.constants";
-
 import { logger } from "@/lib/utils/logger";
 
 // --- JWT session logic here ---

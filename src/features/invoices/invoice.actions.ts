@@ -4,8 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import { getDB } from "@/db/connection";
-import { DatabaseError } from "@/errors/database-error";
-import { ValidationError } from "@/errors/validation-error";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   fetchFilteredInvoices,
   fetchInvoicesPages,
@@ -94,14 +93,6 @@ export async function readInvoiceAction(
   try {
     const invoice = await service.readInvoiceService(id);
 
-    if (!invoice) {
-      return {
-        errors: {},
-        message: INVOICE_ERROR_MESSAGES.NOT_FOUND,
-        success: false,
-      };
-    }
-
     return {
       data: invoice,
       errors: {},
@@ -109,41 +100,19 @@ export async function readInvoiceAction(
       success: true,
     };
   } catch (error) {
-    if (error instanceof ValidationError) {
-      logger.warn({
-        context: "readInvoiceAction",
-        error,
-        id,
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
-      });
-      return {
-        errors: {},
-        message: INVOICE_ERROR_MESSAGES.INVALID_INPUT,
-        success: false,
-      };
-    }
-    if (error instanceof DatabaseError) {
-      logger.error({
-        context: "readInvoiceAction",
-        error,
-        id,
-        message: INVOICE_ERROR_MESSAGES.DB_ERROR,
-      });
-      return {
-        errors: {},
-        message: INVOICE_ERROR_MESSAGES.DB_ERROR,
-        success: false,
-      };
-    }
+    // Single error handler - let Service/Repository determine error types
     logger.error({
       context: "readInvoiceAction",
       error,
       id,
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
+
     return {
       errors: {},
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message:
+        error instanceof ValidationError
+          ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
+          : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       success: false,
     };
   }

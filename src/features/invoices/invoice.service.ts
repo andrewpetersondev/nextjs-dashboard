@@ -1,10 +1,8 @@
 import "server-only";
 
-import { DatabaseError } from "@/errors/database-error";
-import { ValidationError } from "@/errors/validation-error";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { CreateInvoiceSchema } from "@/features/invoices/invoice.schemas";
 import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
@@ -18,6 +16,7 @@ import { getCurrentIsoDate } from "@/lib/utils/utils";
 /**
  * Service for invoice business logic and validation.
  * @remarks
+ * - Service should handle business logic, not duplicate validation.
  * - Handles error messages.
  * - Accepts a logger for testability.
  */
@@ -33,53 +32,44 @@ export class InvoiceService {
     this.logger = logger;
   }
 
+  /**
+   * Creates an invoice from form data.
+   * Handles business logic transformation only.
+   */
   async createInvoiceService(formData: FormData): Promise<InvoiceDto> {
     if (!formData) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
-        formData,
-      });
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    const validated = CreateInvoiceSchema.safeParse({
-      amount: formData.get("amount"),
-      customerId: formData.get("customerId"),
-      sensitiveData: formData.get("sensitiveData"),
-      status: formData.get("status"),
-    });
-
-    if (!validated.success) {
-      throw new ValidationError(
-        "Validation failed for invoice creation",
-        validated.error,
-      );
-    }
-
+    // Transform FormData to Repository input
     const dalInput: InvoiceCreateInput = {
-      amount: Math.round(validated.data.amount * 100),
-      customerId: toCustomerId(validated.data.customerId),
+      amount: Math.round(Number(formData.get("amount")) * 100),
+      customerId: toCustomerId(String(formData.get("customerId"))),
       date: getCurrentIsoDate(),
-      sensitiveData: validated.data.sensitiveData as string,
-      status: toInvoiceStatusBrand(validated.data.status),
+      sensitiveData: String(formData.get("sensitiveData")),
+      status: toInvoiceStatusBrand(String(formData.get("status"))),
     };
-    try {
-      return await this.repo.create(dalInput);
-    } catch (error) {
-      this.handleError("createInvoiceService", error);
-    }
+
+    // Let Repository handle validation and database operations
+    return await this.repo.create(dalInput);
   }
 
+  /**
+   * Reads an invoice by ID.
+   */
   async readInvoiceService(id: string): Promise<InvoiceDto> {
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
-    try {
-      const invoiceId = toInvoiceId(id);
-      return await this.repo.read(invoiceId);
-    } catch (error) {
-      this.handleError("readInvoiceService", error);
-    }
+
+    const invoiceId = toInvoiceId(id);
+    return await this.repo.read(invoiceId);
   }
 
+  /**
+   * Updates an invoice from form data.
+   * Handles business logic transformation only.
+   */
   async updateInvoiceService(
     id: string,
     formData: FormData,
@@ -91,33 +81,18 @@ export class InvoiceService {
       });
     }
 
-    const validated = CreateInvoiceSchema.safeParse({
-      amount: formData.get("amount"),
-      customerId: formData.get("customerId"),
-      date: formData.get("date"),
-      sensitiveData: formData.get("sensitiveData"),
-      status: formData.get("status"),
-    });
+    // Transform form data to Repository input
+    const updateInput: InvoiceUpdateInput = {
+      amount: Math.round(Number(formData.get("amount")) * 100),
+      customerId: toCustomerId(String(formData.get("customerId"))),
+      date: getCurrentIsoDate(),
+      id: toInvoiceId(id),
+      sensitiveData: String(formData.get("sensitiveData")),
+      status: toInvoiceStatusBrand(String(formData.get("status"))),
+    };
 
-    if (!validated.success) {
-      throw new ValidationError(
-        "Validation failed for invoice update",
-        validated.error,
-      );
-    }
-
-    try {
-      return await this.repo.update(toInvoiceId(id), {
-        amount: Math.round(validated.data.amount * 100),
-        customerId: toCustomerId(validated.data.customerId),
-        date: validated.data.date || getCurrentIsoDate(),
-        id: toInvoiceId(id),
-        sensitiveData: validated.data.sensitiveData as string,
-        status: toInvoiceStatusBrand(validated.data.status),
-      });
-    } catch (error) {
-      this.handleError("updateInvoiceService", error);
-    }
+    // Let Repository handle validation and database operations
+    return await this.repo.update(toInvoiceId(id), updateInput);
   }
 
   async deleteInvoiceService(id: string): Promise<InvoiceDto> {
