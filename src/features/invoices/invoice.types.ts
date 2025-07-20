@@ -56,6 +56,12 @@ export type InvoiceTableRow = Readonly<{
 }>;
 
 /**
+ * Type for invoice list filters.
+ * used in new repository.ts
+ */
+export type InvoiceListFilter = InvoiceTableRow;
+
+/**
  * Input type for creating an invoice in the DAL.
  * Omits fields not set by the user.
  */

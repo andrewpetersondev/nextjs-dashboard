@@ -7,6 +7,7 @@ import { customers, invoices } from "@/db/schema";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type {
   InvoiceCreateInput,
+  InvoiceListFilter,
   InvoiceStatus,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -148,6 +149,29 @@ export async function deleteInvoiceDal(
     });
     throw new Error(INVOICE_ERROR_MESSAGES.DELETE_FAILED);
   }
+}
+
+/**
+ * Lists invoices with pagination and filtering.
+ * @param db - Drizzle database instance
+ * @param filter - Filtering options for invoices
+ * @param page - Current page number (1-based)
+ * @param pageSize - Number of items per page
+ * @returns Promise resolving to an object with entities and total count
+ */
+export async function listInvoicesDal(
+  db: Database,
+  filter: InvoiceListFilter,
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<{ entities: InvoiceEntity[]; total: number }> {
+  console.log("listInvoicesDal not implemented yet");
+  console.log("filter", filter);
+  console.log("page", page);
+  console.log("pageSize", pageSize);
+  console.log("db", db);
+
+  return { entities: [], total: 0 };
 }
 
 /**

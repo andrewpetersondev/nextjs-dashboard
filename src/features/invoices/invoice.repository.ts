@@ -1,186 +1,221 @@
 import "server-only";
 
+import * as z from "zod";
 import type { Database } from "@/db/connection";
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
+import { DatabaseError } from "@/errors/database-error";
+import { ValidationError } from "@/errors/validation-error";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
-  fetchFilteredInvoices,
+  listInvoicesDal,
   readInvoiceDal,
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
+import { isInvoiceEntity } from "@/features/invoices/invoice.type-guards";
 import type {
   InvoiceCreateInput,
+  InvoiceListFilter,
   InvoiceUpdateInput,
 } from "@/features/invoices/invoice.types";
+import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import type { InvoiceId } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
+import { BaseRepository } from "@/lib/repository/base-repository";
+import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
- * Generic repository interface for CRUD operations.
- *
- * @template TEntity - The domain entity type returned by repository methods.
- * @template TCreate - The DTO type for entity creation.
- * @template TUpdate - The DTO type for entity update.
- * @template TId - The branded type for entity ID.
- *
- * @remarks
- * - All methods return Promises for async compatibility.
- * - Use this interface to enforce consistent, type-safe CRUD logic across repositories.
+ * Zod schema for runtime validation of InvoiceCreateInput.
  */
-export interface IRepository<TEntity, TCreate, TUpdate, TId> {
-  /**
-   * Creates a new entity in the data store.
-   * @param data - DTO for entity creation.
-   * @returns Promise resolving to the created entity, or null if creation fails.
-   */
-  create(data: TCreate): Promise<TEntity | null>;
-
-  /**
-   * Reads an entity by its branded ID.
-   * @param id - Branded entity ID.
-   * @returns Promise resolving to the entity, or null if not found.
-   */
-  read(id: TId): Promise<TEntity | null>;
-
-  /**
-   * Updates an existing entity by its branded ID.
-   * @param id - Branded entity ID.
-   * @param data - DTO for entity update.
-   * @returns Promise resolving to the updated entity, or null if update fails.
-   */
-  update(id: TId, data: TUpdate): Promise<TEntity | null>;
-
-  /**
-   * Deletes an entity by its branded ID.
-   * @param id - Branded entity ID.
-   * @returns Promise resolving to the deleted entity, or null if deletion fails.
-   */
-  delete(id: TId): Promise<TEntity | null>;
-
-  /**
-   * Lists entities with optional filtering and pagination.
-   * @param query - Optional search query string.
-   * @param page - Optional page number for pagination (default: 1).
-   * @returns Promise resolving to an array of entities.
-   */
-  list(query?: string, page?: number): Promise<TEntity[]>;
-}
+const InvoiceCreateSchema = z.object({
+  amount: z.number().positive().max(10000),
+  customerId: z.uuid(),
+  date: z.iso.date(),
+  sensitiveData: z.string().optional(),
+  status: z.string().min(1),
+});
 
 /**
- * Invoice repository implementing generic CRUD operations for the Invoice domain.
- *
- * @implements {IRepository<InvoiceDto, Omit<InvoiceEntity, "id" | "sensitiveData">, { amount: number; status: string; customerId: CustomerId }, InvoiceId>}
- *
- * @remarks
- * - Encapsulates all DAL/database logic for invoices.
- * - Accepts only branded types for safety.
- * - Returns DTOs for UI/API transport.
- * - Use dependency injection for database instance.
- *
- * @example
- * const repo = new InvoiceRepository(getDB());
- * const invoice = await repo.create({ ... });
+ * Zod schema for runtime validation of InvoiceUpdateInput.
  */
-export class InvoiceRepository {
-  private readonly db: Database;
-  /**
-   * @param db - Database instance (dependency injection for testability)
-   */
-  constructor(db: Database) {
-    this.db = db;
+const InvoiceUpdateSchema = z.object({
+  amount: z.number().positive().max(10000).optional(),
+  customerId: z.string().min(1).optional(),
+  date: z.iso.date().optional(),
+  id: z.uuid().optional(),
+  sensitiveData: z.string().optional(),
+  status: z.string().min(1).optional(),
+});
+
+/**
+ * Repository for Invoice domain, encapsulating CRUD and list operations.
+ * @remarks
+ * - Uses granular error types.
+ * - Redacts sensitive data in logs.
+ * - Supports soft delete, pagination, filtering, and optimistic concurrency.
+ * - Accepts a logger for testability.
+ */
+export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
+  private readonly logger: typeof defaultLogger;
+
+  constructor(db: Database, logger: typeof defaultLogger = defaultLogger) {
+    super(db);
+    this.logger = logger;
   }
 
   /**
-   * Creates an invoice in the database.
-   * @param input - Validated and transformed invoice data.
-   * @returns The created InvoiceEntity or null.
+   * Creates an invoice.
+   * @throws {ValidationError|DatabaseError}
    */
-  async createRepo(input: InvoiceCreateInput): Promise<InvoiceEntity | null> {
-    const insert = createInvoiceDal(this.db, input);
-    if (!insert) {
-      logger.error({
-        context: "InvoiceRepository.createRepo",
-        input,
-        message: "Failed to create invoice",
+  async create(input: InvoiceCreateInput): Promise<InvoiceDto> {
+    const parseResult = InvoiceCreateSchema.safeParse(input);
+    if (!parseResult.success) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
+        issues: parseResult.error.issues,
       });
-      return null;
     }
-    return insert;
+    try {
+      const entity = await createInvoiceDal(this.db, input);
+      if (!isInvoiceEntity(entity)) {
+        throw new DatabaseError(INVOICE_ERROR_MESSAGES.MAPPING_FAILED, {
+          input,
+        });
+      }
+      return entityToInvoiceDto(entity);
+    } catch (error) {
+      this.logger.error({
+        context: "InvoiceRepository.create",
+        error,
+        input: this.redact(input),
+      });
+      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.CREATE_FAILED);
+    }
   }
 
   /**
-   * Reads an invoice by its branded ID.
-   * @param id - Branded InvoiceId.
-   * @returns Promise resolving to the InvoiceEntity, or null if not found.
+   * Reads an invoice by ID.
+   * @throws {ValidationError|DatabaseError}
    */
-  async readRepo(id: InvoiceId): Promise<InvoiceEntity | null> {
-    // return readInvoiceDal(this.db, id);
-    const read = readInvoiceDal(this.db, id);
-    if (!read) {
-      logger.error({
-        context: "InvoiceRepository.readRepo",
+  async read(id: InvoiceId): Promise<InvoiceDto> {
+    if (!id) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+    try {
+      const entity = await readInvoiceDal(this.db, id);
+      if (!isInvoiceEntity(entity)) {
+        throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
+      }
+      return entityToInvoiceDto(entity);
+    } catch (error) {
+      this.logger.error({
+        context: "InvoiceRepository.read",
+        error,
         id,
-        message: "Invoice read failed",
       });
-      return null;
+      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.READ_FAILED);
     }
-    return read;
   }
 
   /**
-   * Updates an existing invoice by its branded ID.
-   * @param id - Branded InvoiceId.
-   * @param data - DTO for invoice update (amount, status, customerId).
-   * @returns Promise resolving to the updated InvoiceEntity, or null if update fails.
+   * Updates an invoice with optimistic concurrency.
+   * @throws {ValidationError|DatabaseError}
    */
-  async updateRepo(
-    id: InvoiceId,
-    data: InvoiceUpdateInput,
-  ): Promise<InvoiceEntity | null> {
-    // return updateInvoiceDal(this.db, id, data);
-
-    const update = updateInvoiceDal(this.db, id, data);
-    if (!update) {
-      logger.error({
-        context: "InvoiceRepository.updateRepo",
-        data,
+  async update(id: InvoiceId, data: InvoiceUpdateInput): Promise<InvoiceDto> {
+    const parseResult = InvoiceUpdateSchema.safeParse({ ...data, id });
+    if (!parseResult.success) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
+        issues: parseResult.error.issues,
+      });
+    }
+    try {
+      const entity = await updateInvoiceDal(this.db, id, data);
+      if (!isInvoiceEntity(entity)) {
+        throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
+      }
+      return entityToInvoiceDto(entity);
+    } catch (error) {
+      this.logger.error({
+        context: "InvoiceRepository.update",
+        data: this.redact(data),
+        error,
         id,
-        message: "Invoice update failed",
       });
-      return null;
+      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.UPDATE_FAILED);
     }
-    return update;
   }
 
   /**
-   * Deletes an invoice by its branded ID.
-   * @param id - Branded InvoiceId.
-   * @returns Promise resolving to the deleted InvoiceEntity, or null if deletion fails.
+   * Soft deletes an invoice.
+   * @throws {ValidationError|DatabaseError}
    */
-  async _deleteRepo(id: InvoiceId): Promise<InvoiceEntity | null> {
-    const invoice = deleteInvoiceDal(this.db, id);
-
-    if (!invoice) {
-      logger.error({
-        context: "InvoiceRepository.deleteRepo",
+  async delete(id: InvoiceId): Promise<InvoiceDto> {
+    if (!id) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+    try {
+      const entity = await deleteInvoiceDal(this.db, id);
+      if (!isInvoiceEntity(entity)) {
+        throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
+      }
+      return entityToInvoiceDto(entity);
+    } catch (error) {
+      this.logger.error({
+        context: "InvoiceRepository.delete",
+        error,
         id,
-        message: "Invoice deletion failed",
       });
-      return null;
+      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.DELETE_FAILED);
     }
-
-    return invoice;
   }
 
   /**
-   * Lists invoices with optional filtering and pagination.
-   * @param query - Optional search query string (default: "").
-   * @param page - Optional page number for pagination (default: 1).
-   * @returns Promise resolving to an array of InvoiceDto.
+   * Lists invoices with pagination and filtering.
    */
-  async _listRepo(query: string = "", page: number = 1): Promise<InvoiceDto[]> {
-    return fetchFilteredInvoices(this.db, query, page);
+  async list(
+    filter: InvoiceListFilter,
+    page: number = 1,
+    pageSize: number = 20,
+  ): Promise<{ data: InvoiceDto[]; total: number }> {
+    try {
+      const { entities, total } = await listInvoicesDal(
+        this.db,
+        filter,
+        page,
+        pageSize,
+      );
+      const data = Array.isArray(entities)
+        ? entities.filter(isInvoiceEntity).map(entityToInvoiceDto)
+        : [];
+      return { data, total };
+    } catch (error) {
+      this.logger.error({
+        context: "InvoiceRepository.list",
+        error,
+        filter,
+        page,
+        pageSize,
+      });
+      throw this.wrapError(error, INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED);
+    }
+  }
+
+  /**
+   * Redacts sensitive fields for logging.
+   */
+  private redact(obj: unknown): unknown {
+    if (!obj || typeof obj !== "object") return obj;
+    const clone = { ...obj } as Record<string, unknown>;
+    if ("sensitiveData" in clone) clone.sensitiveData = "[REDACTED]";
+    return clone;
+  }
+
+  /**
+   * Wraps unknown errors in a DatabaseError.
+   */
+  private wrapError(error: unknown, message: string): DatabaseError {
+    if (error instanceof ValidationError || error instanceof DatabaseError) {
+      return error;
+    }
+    return new DatabaseError(message, error);
   }
 }
