@@ -96,11 +96,7 @@ export async function deleteInvoiceDal(
     throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
   }
 
-  const entity = rawDbToInvoiceEntity(deletedInvoice);
-
-  if (!entity) return null;
-
-  return entity;
+  return rawDbToInvoiceEntity(deletedInvoice);
 }
 
 /**
@@ -218,11 +214,6 @@ export async function fetchFilteredInvoices(
     }
 
     return data;
-
-    // return data.map((invoice) => ({
-    //   ...invoice,
-    //   amount: formatCurrency(invoice.amount),
-    // }));
   } catch (error) {
     logger.error({
       context: "fetchFilteredInvoices",

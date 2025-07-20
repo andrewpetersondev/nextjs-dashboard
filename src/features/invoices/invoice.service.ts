@@ -3,7 +3,10 @@ import "server-only";
 import { ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
+import type {
+  InvoiceCreateInput,
+  InvoiceUpdateInput,
+} from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   toCustomerId,
@@ -22,7 +25,7 @@ import { getCurrentIsoDate } from "@/lib/utils/utils";
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
-  // private readonly logger: typeof defaultLogger;
+  private readonly logger: typeof defaultLogger;
 
   constructor(
     repo: InvoiceRepository,
