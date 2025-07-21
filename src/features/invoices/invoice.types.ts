@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
@@ -32,12 +31,6 @@ export const INVOICE_FIELD_NAMES = [
  * Used for form validation and error handling.
  */
 export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
-
-/**
- * Error map for invoice actions.
- * Maps field names to error messages.
- */
-export type InvoiceErrorMap_old = Partial<Record<InvoiceFieldName, string[]>>;
 
 /**
  * Row for invoice table queries (with customer info).
@@ -82,17 +75,6 @@ export interface InvoiceUpdateInput {
 }
 
 /**
- * State for editing an invoice.
- * Includes current invoice, errors, message, and success flag.
- */
-export type InvoiceEditState = Readonly<{
-  invoice: InvoiceDto;
-  errors?: InvoiceErrorMap_old;
-  message?: string;
-  success?: boolean;
-}>;
-
-/**
  * Strict input type for UI invoice form.
  * Used for client-side validation and transformation.
  */
@@ -116,24 +98,6 @@ export interface InvoiceActionResultGeneric<
 > {
   readonly data?: TData;
   readonly errors?: Partial<Record<TFieldNames, string[]>>;
-  readonly message?: string;
-  readonly success: boolean;
-}
-
-/**
- * Map of field names to error messages for form validation.
- */
-export interface InvoiceErrorMap {
-  readonly [field: string]: string | undefined;
-}
-
-/**
- * Uniform result shape for all invoice actions.
- * With exactOptionalPropertyTypes, properties are only present if set.
- */
-export interface InvoiceActionResult {
-  readonly data?: InvoiceDto | null;
-  readonly errors?: InvoiceErrorMap; // present only if there are errors
   readonly message?: string;
   readonly success: boolean;
 }

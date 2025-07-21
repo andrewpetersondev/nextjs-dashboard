@@ -7,7 +7,11 @@ import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { updateInvoiceAction } from "@/features/invoices/invoice.actions";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { InvoiceEditState } from "@/features/invoices/invoice.types";
+import { hasInvoiceId } from "@/features/invoices/invoice.type-guards";
+import type {
+  InvoiceActionResultGeneric,
+  InvoiceFieldName,
+} from "@/features/invoices/invoice.types";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
@@ -20,26 +24,35 @@ export const EditInvoiceForm = ({
   invoice: InvoiceDto;
   customers: CustomerField[];
 }): JSX.Element => {
-  // Initial state matches InvoiceEditState
-  const initialState: InvoiceEditState = {
-    // errors: {}, // Omit errors to satisfy exactOptionalPropertyTypes
-    invoice,
-    // message: "", // Omit message to satisfy exactOptionalPropertyTypes
-    // success: undefined, // Omit success to satisfy exactOptionalPropertyTypes
+  // Use the type guard to ensure `invoice.id` is defined
+  if (!hasInvoiceId(invoice)) {
+    throw new Error("Invoice ID is required for editing");
+  }
+
+  // Initial state matches Server Action's expected state
+  const initialState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto> =
+    {
+      data: invoice,
+      errors: {},
+      message: "",
+      success: false,
+    };
+
+  // Create wrapper action that matches useActionState signature
+  const wrappedUpdateAction = async (
+    prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+    formData: FormData,
+  ): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> => {
+    return await updateInvoiceAction(prevState, invoice.id, formData);
   };
 
-  // Bind the invoice ID to the action
-  // I think I used bind while this component was a traditional function, not an arrow function. Is this still needed?
-  const updateInvoiceWithId = updateInvoiceAction.bind(null, invoice.id);
+  const [state, action, pending] = useActionState<
+    InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+    FormData
+  >(wrappedUpdateAction, initialState);
 
-  // useActionState expects a reducer: (prevState, payload) => newState
-  const [state, action, pending] = useActionState<InvoiceEditState, FormData>(
-    async (prevState, formData) => {
-      // Call the server action
-      return await updateInvoiceWithId(prevState, formData);
-    },
-    initialState,
-  );
+  // Use the current state data or fall back to the initial invoice
+  const currentInvoice = state.data || invoice;
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -78,7 +91,7 @@ export const EditInvoiceForm = ({
               autoComplete="off"
               className="w-full rounded border px-3 py-2"
               data-cy="sensitive-data-input"
-              defaultValue={state.invoice.sensitiveData}
+              defaultValue={currentInvoice.sensitiveData}
               disabled={pending}
               id="sensitiveData"
               name="sensitiveData"
@@ -97,7 +110,7 @@ export const EditInvoiceForm = ({
             <CustomerSelect
               customers={customers}
               dataCy="customer-select"
-              defaultValue={state.invoice.customerId}
+              defaultValue={currentInvoice.customerId}
               disabled={pending}
             />
           </div>
@@ -105,7 +118,7 @@ export const EditInvoiceForm = ({
           {/* Amount */}
           <InvoiceAmountInput
             dataCy="amount-input"
-            defaultValue={state.invoice.amount / 100}
+            defaultValue={currentInvoice.amount / 100}
             disabled={pending}
             error={state.errors?.amount}
             id="amount"
@@ -119,7 +132,7 @@ export const EditInvoiceForm = ({
             disabled={pending}
             error={state.errors?.status}
             name="status"
-            value={state.invoice.status}
+            value={currentInvoice.status}
           />
         </div>
 

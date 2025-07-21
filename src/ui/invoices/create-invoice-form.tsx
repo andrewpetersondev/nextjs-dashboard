@@ -6,7 +6,12 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.schemas";
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type {
+  InvoiceActionResultGeneric,
+  InvoiceFieldName,
+} from "@/features/invoices/invoice.types";
+import { today } from "@/lib/constants/ui.constants";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
@@ -17,22 +22,25 @@ export const CreateInvoiceForm = ({
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
-  const initialState: InvoiceFormStateCreate = {
-    // Omit `data` to satisfy exactOptionalPropertyTypes
-    errors: {}, // Valid as Partial<Record<..>>,
-    message: "", // No message initially
-    success: false, // No success initially
-  };
-  const [state, action, pending] = useActionState(
-    createInvoiceAction,
-    initialState,
-  );
+  // Use the same type as the server action expects
+  const initialState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto> =
+    {
+      // Omit data property to satisfy exactOptionalPropertyTypes
+      errors: {},
+      message: "",
+      success: false,
+    };
+  const [state, action, pending] = useActionState<
+    InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+    FormData
+  >(createInvoiceAction, initialState);
+
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), 4000); // 4 seconds
+      const timer = setTimeout(() => setShowAlert(false), 4000);
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
@@ -45,13 +53,13 @@ export const CreateInvoiceForm = ({
         <div>
           <label htmlFor="start">Start date:</label>
           <input
+            defaultValue={today}
             id="start"
             max="2029-12-31"
             min="2024-01-01"
             name="trip-start"
             required={true}
             type="date"
-            value="2025-07-22"
           />
         </div>
 
@@ -103,7 +111,7 @@ export const CreateInvoiceForm = ({
             disabled={pending}
             error={state.errors?.status}
             name="status"
-            value="pending" // Default to "pending"
+            value="pending"
           />
         </div>
         <FormActionRow cancelHref="/dashboard/invoices">
