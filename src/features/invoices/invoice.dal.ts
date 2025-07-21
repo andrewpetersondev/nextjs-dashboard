@@ -1,6 +1,6 @@
 import "server-only";
 
-import { count, countDistinct, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
@@ -14,7 +14,6 @@ import type {
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
 import type { InvoiceId } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
 
 /**
  * Creates a new invoice in the database.
