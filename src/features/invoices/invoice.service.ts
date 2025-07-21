@@ -3,10 +3,7 @@ import "server-only";
 import { ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import type {
-  InvoiceCreateInput,
-  InvoiceUpdateInput,
-} from "@/features/invoices/invoice.types";
+import type { InvoiceCreateInput } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import {
   toCustomerId,
@@ -17,11 +14,8 @@ import { logger as defaultLogger } from "@/lib/utils/logger";
 import { getCurrentIsoDate } from "@/lib/utils/utils";
 
 /**
- * Service for invoice business logic and validation.
- * @remarks
- * - Service should handle business logic, not duplicate validation.
- * - Handles error messages.
- * - Accepts a logger for testability.
+ * Service for invoice business logic and transformation.
+ * Handles FormData transformation and delegates validation to Repository.
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
@@ -37,7 +31,9 @@ export class InvoiceService {
 
   /**
    * Creates an invoice from form data.
-   * Handles business logic transformation only.
+   * @param formData - FormData from client
+   * @returns Promise resolving to created InvoiceDto
+   * @throws ValidationError for invalid input
    */
   async createInvoiceService(formData: FormData): Promise<InvoiceDto> {
     if (!formData) {
@@ -49,7 +45,7 @@ export class InvoiceService {
       amount: Math.round(Number(formData.get("amount")) * 100),
       customerId: toCustomerId(String(formData.get("customerId"))),
       date: getCurrentIsoDate(),
-      sensitiveData: String(formData.get("sensitiveData")),
+      sensitiveData: String(formData.get("sensitiveData") || ""),
       status: toInvoiceStatusBrand(String(formData.get("status"))),
     };
 
@@ -59,6 +55,9 @@ export class InvoiceService {
 
   /**
    * Reads an invoice by ID.
+   * @param id - Invoice ID as string
+   * @returns Promise resolving to InvoiceDto
+   * @throws ValidationError for invalid ID
    */
   async readInvoiceService(id: string): Promise<InvoiceDto> {
     if (!id) {
@@ -71,7 +70,10 @@ export class InvoiceService {
 
   /**
    * Updates an invoice from form data.
-   * Handles business logic transformation only.
+   * @param id - Invoice ID as string
+   * @param formData - FormData from client
+   * @returns Promise resolving to updated InvoiceDto
+   * @throws ValidationError for invalid input
    */
   async updateInvoiceService(
     id: string,
@@ -84,22 +86,22 @@ export class InvoiceService {
       });
     }
 
-    // Transform form data to Repository input
-    const updateInput: InvoiceUpdateInput = {
+    const updateData = {
       amount: Math.round(Number(formData.get("amount")) * 100),
       customerId: toCustomerId(String(formData.get("customerId"))),
-      date: getCurrentIsoDate(),
-      id: toInvoiceId(id),
-      sensitiveData: String(formData.get("sensitiveData")),
+      sensitiveData: String(formData.get("sensitiveData") || ""),
       status: toInvoiceStatusBrand(String(formData.get("status"))),
     };
 
     // Let Repository handle validation and database operations
-    return await this.repo.update(toInvoiceId(id), updateInput);
+    return await this.repo.update(toInvoiceId(id), updateData);
   }
 
   /**
    * Deletes an invoice by ID.
+   * @param id - Invoice ID as string
+   * @returns Promise resolving to deleted InvoiceDto
+   * @throws ValidationError for invalid ID
    */
   async deleteInvoiceService(id: string): Promise<InvoiceDto> {
     if (!id) {

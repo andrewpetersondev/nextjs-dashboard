@@ -1,6 +1,6 @@
 import "server-only";
 
-import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { count, countDistinct, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
@@ -9,21 +9,19 @@ import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type {
   InvoiceCreateInput,
   InvoiceListFilter,
-  InvoiceStatus,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { InvoiceId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Inserts a new invoice into the database and returns an Entity for Server transport.
- *
- * @param db - Drizzle database instance.
- * @param input - Invoice data (all fields except id and sensitiveData).
- * @returns Promise resolving to the created InvoiceEntity.
- * @throws DatabaseError if creation fails.
+ * Creates a new invoice in the database.
+ * @param db - Drizzle database instance
+ * @param input - Invoice creation data
+ * @returns Promise resolving to created InvoiceEntity
+ * @throws DatabaseError if creation fails
  */
 export async function createInvoiceDal(
   db: Database,
@@ -42,6 +40,9 @@ export async function createInvoiceDal(
 
 /**
  * Reads an invoice by ID.
+ * @param db - Drizzle database instance
+ * @param id - Invoice ID
+ * @returns Promise resolving to InvoiceEntity
  * @throws DatabaseError if invoice not found
  */
 export async function readInvoiceDal(
@@ -59,16 +60,22 @@ export async function readInvoiceDal(
 
 /**
  * Updates an invoice in the database.
+ * @param db - Drizzle database instance
+ * @param id - Invoice ID
+ * @param updateData - Partial invoice data to update
+ * @returns Promise resolving to updated InvoiceEntity
  * @throws DatabaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
   db: Database,
   id: InvoiceId,
-  invoice: { amount: number; status: InvoiceStatus; customerId: CustomerId },
+  updateData: Partial<
+    Pick<InvoiceEntity, "amount" | "status" | "customerId" | "sensitiveData">
+  >,
 ): Promise<InvoiceEntity> {
   const [updated] = await db
     .update(invoices)
-    .set(invoice)
+    .set(updateData)
     .where(eq(invoices.id, id))
     .returning();
 
@@ -81,6 +88,9 @@ export async function updateInvoiceDal(
 
 /**
  * Deletes an invoice by ID.
+ * @param db - Drizzle database instance
+ * @param id - Invoice ID
+ * @returns Promise resolving to deleted InvoiceEntity
  * @throws DatabaseError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
@@ -105,7 +115,8 @@ export async function deleteInvoiceDal(
  * @param filter - Filtering options for invoices
  * @param page - Current page number (1-based)
  * @param pageSize - Number of items per page
- * @returns Promise resolving to an object with entities and total count
+ * @returns Promise resolving to object with entities and total count
+ * @throws DatabaseError if query fails
  */
 export async function listInvoicesDal(
   db: Database,
@@ -113,62 +124,57 @@ export async function listInvoicesDal(
   page: number = 1,
   pageSize: number = 20,
 ): Promise<{ entities: InvoiceEntity[]; total: number }> {
-  console.log("listInvoicesDal not implemented yet");
-  console.log("filter", filter);
-  console.log("page", page);
-  console.log("pageSize", pageSize);
-  console.log("db", db);
+  const offset = (page - 1) * pageSize;
 
-  return { entities: [], total: 0 };
+  const [entitiesResult, totalResult] = await Promise.all([
+    db.select().from(invoices).limit(pageSize).offset(offset),
+    db.select({ count: count() }).from(invoices),
+  ]);
+
+  const entities = entitiesResult.map(rawDbToInvoiceEntity);
+  const total = totalResult[0]?.count ?? 0;
+
+  return { entities, total };
 }
 
 /**
- * Fetches the latest invoices, limited to 5.
+ * Fetches the latest invoices with customer information.
+ * @param db - Drizzle database instance
+ * @param limit - Maximum number of invoices to fetch
+ * @returns Promise resolving to array of InvoiceTableRow
+ * @throws DatabaseError if query fails
  */
 export async function fetchLatestInvoices(
   db: Database,
   limit = 5,
 ): Promise<InvoiceTableRow[]> {
-  try {
-    const latestInvoices = await db
-      .select({
-        amount: invoices.amount,
-        customerId: invoices.customerId,
-        date: invoices.date,
-        email: customers.email,
-        id: invoices.id,
-        imageUrl: customers.imageUrl,
-        name: customers.name,
-        sensitiveData: invoices.sensitiveData,
-        status: invoices.status,
-      })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customerId, customers.id))
-      .orderBy(desc(invoices.date))
-      .limit(limit);
+  const data: InvoiceTableRow[] = await db
+    .select({
+      amount: invoices.amount,
+      customerId: invoices.customerId,
+      date: invoices.date,
+      email: customers.email,
+      id: invoices.id,
+      imageUrl: customers.imageUrl,
+      name: customers.name,
+      sensitiveData: invoices.sensitiveData,
+      status: invoices.status,
+    })
+    .from(invoices)
+    .innerJoin(customers, eq(invoices.customerId, customers.id))
+    .orderBy(desc(invoices.date))
+    .limit(limit);
 
-    if (!latestInvoices || latestInvoices.length === 0) {
-      logger.warn({
-        context: "fetchLatestInvoices",
-        limit,
-        message: INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED,
-      });
-      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED);
-    }
-    return latestInvoices;
-  } catch (error) {
-    logger.error({
-      context: "fetchLatestInvoices",
-      error,
-      limit,
-      message: INVOICE_ERROR_MESSAGES.DB_ERROR,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.DB_ERROR);
-  }
+  return data;
 }
 
 /**
- * Fetches filtered invoices with pagination.
+ * Fetches filtered invoices with pagination and customer information.
+ * @param db - Drizzle database instance
+ * @param query - Search query string
+ * @param currentPage - Current page number
+ * @returns Promise resolving to array of InvoiceTableRow
+ * @throws DatabaseError if query fails
  */
 export async function fetchFilteredInvoices(
   db: Database,
@@ -176,103 +182,65 @@ export async function fetchFilteredInvoices(
   currentPage: number,
 ): Promise<InvoiceTableRow[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  try {
-    const data: InvoiceTableRow[] = await db
-      .select({
-        amount: invoices.amount,
-        customerId: invoices.customerId,
-        date: invoices.date,
-        email: customers.email,
-        id: invoices.id,
-        imageUrl: customers.imageUrl,
-        name: customers.name,
-        sensitiveData: customers.sensitiveData,
-        status: invoices.status,
-      })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customerId, customers.id))
-      .where(
-        or(
-          ilike(customers.name, `%${query}%`),
-          ilike(customers.email, `%${query}%`),
-          ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
-        ),
-      )
-      .orderBy(desc(invoices.date))
-      .limit(ITEMS_PER_PAGE)
-      .offset(offset);
 
-    if (!data || data.length === 0) {
-      logger.warn({
-        context: "fetchFilteredInvoices",
-        currentPage,
-        message: INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
-        query,
-      });
-    }
+  const data: InvoiceTableRow[] = await db
+    .select({
+      amount: invoices.amount,
+      customerId: invoices.customerId,
+      date: invoices.date,
+      email: customers.email,
+      id: invoices.id,
+      imageUrl: customers.imageUrl,
+      name: customers.name,
+      sensitiveData: invoices.sensitiveData,
+      status: invoices.status,
+    })
+    .from(invoices)
+    .innerJoin(customers, eq(invoices.customerId, customers.id))
+    .where(
+      or(
+        ilike(customers.name, `%${query}%`),
+        ilike(customers.email, `%${query}%`),
+        ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
+        ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
+        ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
+      ),
+    )
+    .orderBy(desc(invoices.date))
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
 
-    return data;
-  } catch (error) {
-    logger.error({
-      context: "fetchFilteredInvoices",
-      currentPage,
-      error,
-      message: INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
-      query,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED);
-  }
+  return data;
 }
 
 /**
  * Fetches the total number of invoice pages for pagination.
  * @param db - Drizzle database instance
  * @param query - Search query string
- * @returns Total number of pages (integer >= 1)
+ * @returns Promise resolving to total number of pages
+ * @throws DatabaseError if query fails
  */
-export async function fetchInvoicesPages(
+export async function fetchInvoicesPagesDal(
   db: Database,
   query: string,
 ): Promise<number> {
-  try {
-    // Count invoices matching the search query
-    const [{ count: total = 0 } = { count: 0 }] = await db
-      .select({
-        count: count(invoices.id),
-      })
-      .from(invoices)
-      .innerJoin(customers, eq(invoices.customerId, customers.id))
-      .where(
-        or(
-          ilike(customers.name, `%${query}%`),
-          ilike(customers.email, `%${query}%`),
-          ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
-          ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
-        ),
-      );
-    // Always return at least 1 page for UX consistency
-    const pages = Math.ceil(total / ITEMS_PER_PAGE);
-
-    if (!pages || Number.isNaN(pages)) {
-      logger.error({
-        context: "fetchInvoicesPages",
-        message: INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED,
-        query,
-      });
-      throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
-    }
-
-    return pages;
-  } catch (error) {
-    logger.error({
-      context: "fetchInvoicesPages",
-      error,
-      message: INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED,
-      query,
-    });
-    throw new Error(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED);
-  }
+  // Count invoices matching the search query
+  const [{ count: total = 0 } = { count: 0 }] = await db
+    .select({
+      count: count(invoices.id),
+    })
+    .from(invoices)
+    .innerJoin(customers, eq(invoices.customerId, customers.id))
+    .where(
+      or(
+        ilike(customers.name, `%${query}%`),
+        ilike(customers.email, `%${query}%`),
+        ilike(sql<string>`${invoices.amount}::text`, `%${query}%`),
+        ilike(sql<string>`${invoices.date}::text`, `%${query}%`),
+        ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
+      ),
+    );
+  // Always return at least 1 page for UX consistency
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  return Math.max(totalPages, 1);
 }
