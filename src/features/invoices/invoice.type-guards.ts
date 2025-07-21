@@ -1,4 +1,8 @@
 import type { InvoiceEntity } from "@/db/models/invoice.entity";
+import type {
+  InvoiceDto,
+  InvoiceDtoWithId,
+} from "@/features/invoices/invoice.dto";
 
 /**
  * Type guard for InvoiceEntity.
@@ -22,8 +26,6 @@ export function isInvoiceEntity(entity: unknown): entity is InvoiceEntity {
  * @param invoice - The InvoiceDto object to check.
  * @returns `true` if `id` is defined, otherwise `false`.
  */
-export function hasInvoiceId(
-  invoice: InvoiceDto,
-): invoice is InvoiceDto & { id: string } {
+export function hasInvoiceId(invoice: InvoiceDto): invoice is InvoiceDtoWithId {
   return typeof invoice.id === "string" && invoice.id.trim().length > 0;
 }

@@ -6,7 +6,10 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { updateInvoiceAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type {
+  InvoiceDto,
+  InvoiceDtoWithId,
+} from "@/features/invoices/invoice.dto";
 import { hasInvoiceId } from "@/features/invoices/invoice.type-guards";
 import type {
   InvoiceActionResultGeneric,
@@ -21,7 +24,7 @@ export const EditInvoiceForm = ({
   invoice,
   customers,
 }: {
-  invoice: InvoiceDto;
+  invoice: InvoiceDtoWithId;
   customers: CustomerField[];
 }): JSX.Element => {
   // Use the type guard to ensure `invoice.id` is defined
@@ -30,13 +33,15 @@ export const EditInvoiceForm = ({
   }
 
   // Initial state matches Server Action's expected state
-  const initialState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto> =
-    {
-      data: invoice,
-      errors: {},
-      message: "",
-      success: false,
-    };
+  const initialState: InvoiceActionResultGeneric<
+    InvoiceFieldName,
+    InvoiceDtoWithId
+  > = {
+    data: invoice,
+    errors: {},
+    message: "",
+    success: false,
+  };
 
   // Create wrapper action that matches useActionState signature
   const wrappedUpdateAction = async (

@@ -36,9 +36,15 @@ export interface InvoiceDto {
   /** Invoice date as ISO 8601 string (YYYY-MM-DD) */
   readonly date: string;
   /** Invoice ID as a string (UUID) */
-  readonly id?: string;
+  readonly id?: string; // Keep optional for creation
   /** Sensitive data can be in the UI for now */
   readonly sensitiveData: string;
   /** Invoice status ("pending" | "paid") */
   readonly status: InvoiceStatus;
+}
+
+// Interface for editing
+export interface InvoiceDtoWithId extends Omit<InvoiceDto, "id"> {
+  /** Invoice ID as a string (UUID) */
+  readonly id: string; // Required for editing
 }
