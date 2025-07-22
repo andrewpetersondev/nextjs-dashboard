@@ -29,8 +29,10 @@ export default async function Page(
 ): Promise<JSX.Element> {
   const { id } = await props.params;
 
-  const [customers, invoice]: [CustomerField[], InvoiceDto | null] =
-    await Promise.all([readCustomersAction(), readInvoiceAction(id)]);
+  const [customers, invoice] = await Promise.all([
+    readCustomersAction(),
+    readInvoiceAction(id),
+  ]);
 
   if (!invoice) {
     notFound();

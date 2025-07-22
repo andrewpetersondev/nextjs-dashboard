@@ -1,39 +1,54 @@
-import type React from "react";
+/**
+ * @file CustomerSelect.tsx
+ * @description Accessible customer dropdown for invoice forms.
+ * @module CustomerSelect
+ */
+
+import type { JSX } from "react";
 import { ErrorMessage } from "@/components/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/components/select-menu";
 import type { CustomerField } from "@/features/customers/customer.types";
 
 /**
  * Props for the CustomerSelect component.
+ * @remarks
+ * - `customers`: List of customers to select from.
+ * - `error`: Optional error messages for validation.
  */
-interface CustomerSelectProps
+export interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
-  customers: CustomerField[];
-  error?: string[] | undefined;
+  readonly customers: readonly CustomerField[];
+  readonly error?: readonly string[] | undefined;
 }
 
 /**
- * The CustomerSelect dropdown component.
+ * Accessible customer dropdown for invoice forms.
+ * Ensures a valid customer is selected before submission.
  */
-export const CustomerSelect: React.FC<CustomerSelectProps> = ({
+export const CustomerSelect = ({
   customers,
   error,
   ...props
-}) => (
+}: CustomerSelectProps): JSX.Element => (
   <div>
     <SelectMenu
-      error={error}
+      aria-describedby={error ? "customer-select-error" : undefined}
+      aria-invalid={!!error}
+      defaultValue=""
       id="customer"
       name="customerId"
       options={customers}
       placeholder="Select a customer"
+      required
       {...props}
     />
-    <ErrorMessage
-      dataCy="customer-select-error"
-      error={error} // todo: should this be errors like in InvoiceAmountInput? That would be more consistent and versatile.
-      id="customer-select-error"
-      label="Customer selection error"
-    />
+    {error && error.length > 0 && (
+      <ErrorMessage
+        dataCy="customer-select-error"
+        error={error}
+        id="customer-select-error"
+        label="Customer selection error"
+      />
+    )}
   </div>
 );

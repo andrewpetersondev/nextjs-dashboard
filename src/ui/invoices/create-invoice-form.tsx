@@ -46,13 +46,13 @@ export const CreateInvoiceForm = ({
     <section>
       <form action={action}>
         <div>
-          <label htmlFor="start">Start date:</label>
+          <label htmlFor="date">Start date:</label>
           <input
             defaultValue={today}
-            id="start"
+            id="date"
             max="2029-12-31"
             min="2024-01-01"
-            name="trip-start"
+            name="date"
             required={true}
             type="date"
           />
@@ -88,6 +88,7 @@ export const CreateInvoiceForm = ({
               defaultValue=""
               disabled={pending}
               error={state.errors?.customerId}
+              // Ensure SelectMenu uses name="customerId" and value is a UUID string
             />
           </div>
           <InvoiceAmountInput
