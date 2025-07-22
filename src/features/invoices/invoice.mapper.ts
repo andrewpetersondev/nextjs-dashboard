@@ -35,7 +35,7 @@ export function rawDbToInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
  */
 export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
   return {
-    amount: entity.amount, // Keep in cents
+    amount: entity.amount, // store in cents
     customerId: String(entity.customerId), // Strip branding
     date: entity.date,
     id: String(entity.id), // Strip branding
@@ -71,7 +71,7 @@ export function dtoToCreateInvoiceEntity(
 export function partialDtoToCreateInvoiceEntity(
   dto: Partial<InvoiceFormDto>,
 ): Partial<InvoiceFormEntity> {
-  const result = {
+  return {
     ...(dto.amount !== undefined && { amount: dto.amount }),
     ...(dto.customerId !== undefined && {
       customerId: toCustomerId(dto.customerId),
@@ -82,6 +82,4 @@ export function partialDtoToCreateInvoiceEntity(
     }),
     ...(dto.status !== undefined && { status: toInvoiceStatus(dto.status) }),
   };
-
-  return result;
 }

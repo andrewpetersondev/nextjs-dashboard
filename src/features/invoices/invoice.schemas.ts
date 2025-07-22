@@ -23,8 +23,3 @@ export const CreateInvoiceSchema = InvoiceBaseSchema;
 
 // Schema for updates (all fields optional)
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
-
-// Schema for complete invoice (with ID and date)
-export const InvoiceSchema = InvoiceBaseSchema.extend({
-  id: z.uuid(),
-});

@@ -10,13 +10,11 @@ import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
-  listInvoicesDal,
   readInvoiceDal,
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
-import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { BaseRepository } from "@/lib/repository/base-repository";
 
@@ -112,27 +110,5 @@ export class InvoiceRepository extends BaseRepository<
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(deletedEntity);
-  }
-
-  /**
-   * Lists invoices with pagination and filtering.
-   * @param filter - Filtering options
-   * @param page - Current page number
-   * @param pageSize - Number of items per page
-   * @returns Promise resolving to paginated invoice data
-   */
-  async list(
-    filter: InvoiceListFilter,
-    page: number = 1,
-    pageSize: number = 20,
-  ): Promise<{ data: InvoiceDto[]; total: number }> {
-    const { entities, total } = await listInvoicesDal(
-      this.db,
-      filter,
-      page,
-      pageSize,
-    );
-    const data: InvoiceDto[] = entities.map(entityToInvoiceDto);
-    return { data, total };
   }
 }

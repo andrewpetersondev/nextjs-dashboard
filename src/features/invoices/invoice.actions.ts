@@ -169,12 +169,10 @@ export async function updateInvoiceAction(
 ): Promise<InvoiceActionResult> {
   try {
     // Validate parameters first
-    if (!id || typeof id !== "string") {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
-    }
-    if (!formData) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    if (!id || !formData) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, {
         formData,
+        id,
       });
     }
 
@@ -256,7 +254,7 @@ export async function deleteInvoiceAction(
 ): Promise<InvoiceActionResult> {
   try {
     // Basic validation of input. Throw error catch block.
-    if (!id || typeof id !== "string") {
+    if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
@@ -367,41 +365,4 @@ export async function readFilteredInvoicesAction(
 export async function readLatestInvoicesAction(): Promise<InvoiceListFilter[]> {
   const db = getDB();
   return fetchLatestInvoicesDal(db);
-}
-
-// Lists invoices with pagination and filtering
-export async function listInvoicesAction(
-  filter: InvoiceListFilter,
-  page: number = 1,
-  pageSize: number = 20,
-): Promise<InvoiceActionResult> {
-  try {
-    const repo = new InvoiceRepository(getDB());
-    const service = new InvoiceService(repo);
-
-    const { data, total } = await service.listInvoices(filter, page, pageSize);
-
-    return {
-      data,
-      errors: {},
-      message: INVOICE_SUCCESS_MESSAGES.LIST_SUCCESS,
-      success: true,
-      total,
-    };
-  } catch (error) {
-    logger.error({
-      context: "listInvoicesAction",
-      error,
-      filter,
-      page,
-      pageSize,
-    });
-    return {
-      data: [],
-      errors: {},
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
-      success: false,
-      total: 0,
-    };
-  }
 }

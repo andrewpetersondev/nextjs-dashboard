@@ -8,5 +8,5 @@ import type { InvoiceDto } from "@/features/invoices/invoice.dto";
  * @returns `true` if `id` is defined, otherwise `false`.
  */
 export function hasInvoiceId(invoice: InvoiceDto): invoice is InvoiceDto {
-  return typeof invoice.id === "string" && invoice.id.trim().length > 0;
+  return invoice.id.trim().length > 0;
 }
