@@ -26,13 +26,10 @@ import {
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
  * Repository for Invoice domain operations.
- * Transforms DTOs (plain) ↔ Entities (branded).
- * NO schema validation - that's service layer responsibility.
- * Handles validation and error transformation between Service and DAL layers.
+ * It uses DAL functions for DB operations.
  */
 export class InvoiceRepository extends BaseRepository<
   InvoiceDto, // TDto - what gets returned to service layer
@@ -40,11 +37,8 @@ export class InvoiceRepository extends BaseRepository<
   InvoiceFormDto, // TCreateInput - creation input type
   InvoiceFormPartialDto // TUpdateInput - update input type
 > {
-  private readonly logger: typeof defaultLogger;
-
-  constructor(db: Database, logger: typeof defaultLogger = defaultLogger) {
+  constructor(db: Database) {
     super(db);
-    this.logger = logger;
   }
 
   /**
@@ -161,7 +155,7 @@ export class InvoiceRepository extends BaseRepository<
       page,
       pageSize,
     );
-    const data = entities.map(entityToInvoiceDto);
+    const data: InvoiceDto[] = entities.map(entityToInvoiceDto);
     return { data, total };
   }
 }

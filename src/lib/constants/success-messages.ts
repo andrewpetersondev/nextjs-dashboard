@@ -12,6 +12,7 @@ export const INVOICE_SUCCESS_MESSAGES = {
   FETCH_FILTERED_SUCCESS: "Filtered invoices fetched successfully.",
   FETCH_LATEST_SUCCESS: "Latest invoices fetched successfully.",
   FETCH_PAGES_SUCCESS: "Total invoice pages fetched successfully.",
+  LIST_SUCCESS: "Invoices listed successfully.",
   READ_SUCCESS: "Invoice fetched successfully.",
   UPDATE_SUCCESS: "Invoice updated successfully.",
 };

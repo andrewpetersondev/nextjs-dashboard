@@ -6,9 +6,9 @@ import * as z from "zod";
 import { getDB } from "@/db/connection";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
-  fetchFilteredInvoices,
+  fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
-  fetchLatestInvoices,
+  fetchLatestInvoicesDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceFormDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
@@ -309,7 +309,7 @@ export async function readFilteredInvoicesAction(
   currentPage: number = 1,
 ): Promise<InvoiceListFilter[]> {
   const db = getDB();
-  return fetchFilteredInvoices(db, query, currentPage);
+  return fetchFilteredInvoicesDal(db, query, currentPage);
 }
 
 /**
@@ -318,5 +318,42 @@ export async function readFilteredInvoicesAction(
  */
 export async function readLatestInvoicesAction(): Promise<InvoiceListFilter[]> {
   const db = getDB();
-  return fetchLatestInvoices(db);
+  return fetchLatestInvoicesDal(db);
+}
+
+// Lists invoices with pagination and filtering
+export async function listInvoicesAction(
+  filter: InvoiceListFilter,
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<InvoiceActionResult> {
+  try {
+    const repo = new InvoiceRepository(getDB());
+    const service = new InvoiceService(repo);
+
+    const { data, total } = await service.listInvoices(filter, page, pageSize);
+
+    return {
+      data,
+      errors: {},
+      message: INVOICE_SUCCESS_MESSAGES.LIST_SUCCESS,
+      success: true,
+      total,
+    };
+  } catch (error) {
+    logger.error({
+      context: "listInvoicesAction",
+      error,
+      filter,
+      page,
+      pageSize,
+    });
+    return {
+      data: [],
+      errors: {},
+      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      success: false,
+      total: 0,
+    };
+  }
 }

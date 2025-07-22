@@ -1,6 +1,6 @@
 import "server-only";
 
-import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type {
   CreateInvoiceEntity,
@@ -124,13 +124,46 @@ export async function listInvoicesDal(
 ): Promise<{ entities: InvoiceEntity[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
+  // Build filter conditions
+  const conditions = [];
+  if (filter.status) {
+    conditions.push(eq(invoices.status, filter.status));
+  }
+  if (filter.customerId) {
+    conditions.push(eq(invoices.customerId, filter.customerId));
+  }
+  if (filter.date) {
+    conditions.push(eq(invoices.date, filter.date));
+  }
+  // Add more fields as needed
+
+  // Combine conditions with Drizzle's `and` if multiple
+  const whereClause =
+    conditions.length > 0
+      ? { where: conditions.length === 1 ? conditions[0] : and(...conditions) }
+      : {};
+
+  // Query with filters
   const [entitiesResult, totalResult] = await Promise.all([
-    db.select().from(invoices).limit(pageSize).offset(offset),
-    db.select({ count: count() }).from(invoices),
+    db
+      .select()
+      .from(invoices)
+      .limit(pageSize)
+      .offset(offset)
+      .where(whereClause.where),
+    db.select({ count: count() }).from(invoices).where(whereClause.where),
   ]);
 
   const entities = entitiesResult.map(rawDbToInvoiceEntity);
   const total = totalResult[0]?.count ?? 0;
+
+  if (!entities || entities.length === 0 || !total || total < 0) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
+      filter,
+      page,
+      pageSize,
+    });
+  }
 
   return { entities, total };
 }
@@ -142,7 +175,7 @@ export async function listInvoicesDal(
  * @returns Promise resolving to array of InvoiceListFilter
  * @throws DatabaseError if query fails
  */
-export async function fetchLatestInvoices(
+export async function fetchLatestInvoicesDal(
   db: Database,
   limit = 5,
 ): Promise<InvoiceListFilter[]> {
@@ -163,6 +196,12 @@ export async function fetchLatestInvoices(
     .orderBy(desc(invoices.date))
     .limit(limit);
 
+  if (!data || data.length === 0) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED, {
+      limit,
+    });
+  }
+
   return data;
 }
 
@@ -174,7 +213,7 @@ export async function fetchLatestInvoices(
  * @returns Promise resolving to array of InvoiceListFilter
  * @throws DatabaseError if query fails
  */
-export async function fetchFilteredInvoices(
+export async function fetchFilteredInvoicesDal(
   db: Database,
   query: string,
   currentPage: number,
@@ -208,6 +247,13 @@ export async function fetchFilteredInvoices(
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
+  if (!data || data.length === 0) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED, {
+      currentPage,
+      query,
+    });
+  }
+
   return data;
 }
 
@@ -238,7 +284,16 @@ export async function fetchInvoicesPagesDal(
         ilike(sql<string>`${invoices.status}::text`, `%${query}%`),
       ),
     );
+
+  if (!total || total < 0) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
+      query,
+      total,
+    });
+  }
+
   // Always return at least 1 page for UX consistency
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
   return Math.max(totalPages, 1);
 }

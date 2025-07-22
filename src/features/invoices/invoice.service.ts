@@ -12,8 +12,8 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
  * Service for invoice business logic and transformation.
@@ -21,18 +21,12 @@ import { logger as defaultLogger } from "@/lib/utils/logger";
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
-  private readonly logger: typeof defaultLogger;
 
   /**
    * @param repo - InvoiceRepository instance (injected)
-   * @param logger - Logger instance (injected, defaults to defaultLogger)
    */
-  constructor(
-    repo: InvoiceRepository,
-    logger: typeof defaultLogger = defaultLogger,
-  ) {
+  constructor(repo: InvoiceRepository) {
     this.repo = repo;
-    this.logger = logger;
   }
 
   /**
@@ -119,6 +113,22 @@ export class InvoiceService {
     }
 
     return await this.repo.delete(toInvoiceId(id));
+  }
+
+  /**
+   * Lists invoices with pagination and filtering.
+   * @param filter - Filtering options
+   * @param page - Page number
+   * @param pageSize - Items per page
+   * @returns Promise with invoice data and total count
+   */
+  async listInvoices(
+    filter: InvoiceListFilter,
+    page: number = 1,
+    pageSize: number = 20,
+  ): Promise<{ data: InvoiceDto[]; total: number }> {
+    // Business rules can be added here (e.g., filter sanitization)
+    return await this.repo.list(filter, page, pageSize);
   }
 
   /**
