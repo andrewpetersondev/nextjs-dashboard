@@ -10,12 +10,17 @@ import {
   fetchInvoicesPagesDal,
   fetchLatestInvoices,
 } from "@/features/invoices/invoice.dal";
+import type { InvoiceFormDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { CreateInvoiceSchema } from "@/features/invoices/invoice.schemas";
+import {
+  CreateInvoiceSchema,
+  UpdateInvoiceSchema,
+} from "@/features/invoices/invoice.schemas";
 import { InvoiceService } from "@/features/invoices/invoice.service";
 import type {
   InvoiceActionResult,
-  InvoiceTableRow,
+  InvoiceListFilter,
+  InvoiceStatus,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
@@ -32,12 +37,18 @@ export async function createInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceActionResult> {
   try {
-    const parsed = CreateInvoiceSchema.safeParse({
-      amount: formData.get("amount"),
-      customerId: formData.get("customerId"),
-      sensitiveData: formData.get("sensitiveData"),
-      status: formData.get("status"),
-    });
+    // Extract and coerce form data
+    const input: InvoiceFormDto = {
+      amount: Number(formData.get("amount")),
+      customerId: String(formData.get("customerId")),
+      date: String(formData.get("date")),
+      sensitiveData: String(formData.get("sensitiveData")),
+      status: String(formData.get("status")) as InvoiceStatus,
+    };
+
+    // Validate input using Zod schema
+    const parsed = CreateInvoiceSchema.safeParse(input);
+
     if (!parsed.success) {
       return {
         ...prevState,
@@ -47,9 +58,12 @@ export async function createInvoiceAction(
       };
     }
 
+    // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const invoice = await service.createInvoice(formData);
+
+    // Call service with validated DTO
+    const invoice = await service.createInvoice(parsed.data);
 
     return {
       data: invoice,
@@ -76,10 +90,7 @@ export async function createInvoiceAction(
     return {
       ...prevState,
       errors: {},
-      message:
-        error instanceof ValidationError
-          ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
-          : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       success: false,
     };
   }
@@ -124,6 +135,8 @@ export async function readInvoiceAction(
 
 /**
  * Server action for updating an invoice.
+ * Extracts and validates form data, then calls the service layer.
+ * Handles exact optional property types for strict TypeScript settings.
  * @param prevState - Previous form state
  * @param id - Invoice ID as a string
  * @param formData - FormData from the client
@@ -135,9 +148,38 @@ export async function updateInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceActionResult> {
   try {
+    // Build the partial DTO immutably using object spread
+    const input = {
+      ...(formData.has("amount") && { amount: Number(formData.get("amount")) }),
+      ...(formData.has("customerId") && {
+        customerId: String(formData.get("customerId")),
+      }),
+      ...(formData.has("date") && { date: String(formData.get("date")) }),
+      ...(formData.has("sensitiveData") && {
+        sensitiveData: String(formData.get("sensitiveData")),
+      }),
+      ...(formData.has("status") && {
+        status: String(formData.get("status")) as InvoiceStatus,
+      }),
+    } as Partial<InvoiceFormDto>;
+
+    // Validate input using update schema
+    const parsed = UpdateInvoiceSchema.safeParse(input);
+
+    if (!parsed.success) {
+      return {
+        ...prevState,
+        errors: z.flattenError(parsed.error).fieldErrors,
+        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+        success: false,
+      };
+    }
+
+    // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const updatedInvoice = await service.updateInvoice(id, formData);
+
+    const updatedInvoice = await service.updateInvoice(id, parsed.data);
 
     return {
       data: updatedInvoice,
@@ -159,9 +201,7 @@ export async function updateInvoiceAction(
       message:
         error instanceof ValidationError
           ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
-          : error instanceof DatabaseError
-            ? INVOICE_ERROR_MESSAGES.DB_ERROR
-            : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+          : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       success: false,
     };
   }
@@ -262,21 +302,21 @@ export async function readInvoicesPagesAction(
  * Server action to fetch filtered invoices for the invoices table.
  * @param query - Search query string
  * @param currentPage - Current page number
- * @returns Array of InvoiceTableRow
+ * @returns Array of InvoiceListFilter
  */
 export async function readFilteredInvoicesAction(
   query: string = "",
   currentPage: number = 1,
-): Promise<InvoiceTableRow[]> {
+): Promise<InvoiceListFilter[]> {
   const db = getDB();
   return fetchFilteredInvoices(db, query, currentPage);
 }
 
 /**
  * Server action to fetch the latest invoices for the dashboard.
- * @returns Array of InvoiceTableRow
+ * @returns Array of InvoiceListFilter
  */
-export async function readLatestInvoicesAction(): Promise<InvoiceTableRow[]> {
+export async function readLatestInvoicesAction(): Promise<InvoiceListFilter[]> {
   const db = getDB();
   return fetchLatestInvoices(db);
 }

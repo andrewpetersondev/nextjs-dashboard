@@ -2,32 +2,31 @@ import "server-only";
 
 import type { CreateInvoiceEntity } from "@/db/models/invoice.entity";
 import { ValidationError } from "@/errors/errors";
+import { toInvoiceId } from "@/features/invoices/invoice.brands";
 import type {
   InvoiceDto,
-  InvoiceFormInput,
+  InvoiceFormDto,
 } from "@/features/invoices/invoice.dto";
 import {
   dtoToCreateInvoiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import {
-  CreateInvoiceSchema,
-  UpdateInvoiceSchema,
-} from "@/features/invoices/invoice.schemas";
-import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { toInvoiceId } from "@/lib/definitions/brands";
 import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
  * Service for invoice business logic and transformation.
- * Handles FormData extraction, validation, business rules.
+ * Receives validated DTOs only.
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
   private readonly logger: typeof defaultLogger;
 
+  /**
+   * @param repo - InvoiceRepository instance (injected)
+   * @param logger - Logger instance (injected, defaults to defaultLogger)
+   */
   constructor(
     repo: InvoiceRepository,
     logger: typeof defaultLogger = defaultLogger,
@@ -37,28 +36,22 @@ export class InvoiceService {
   }
 
   /**
-   * Creates an invoice from form data.
-   * @param formData - FormData from client
+   * Creates an invoice from validated DTO.
+   * @param dto - Validated InvoiceFormDto
    * @returns Promise resolving to created InvoiceDto
    * @throws ValidationError for invalid input
-   * @remarks
-   * Applies business rules: dollars→cents conversion, date validation, branding.
    */
-  async createInvoice(formData: FormData): Promise<InvoiceDto> {
-    if (!formData) {
+  async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
+    if (!dto) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    const input: InvoiceFormInput = this.extractFormData(formData);
-
-    const validated = CreateInvoiceSchema.parse(input);
-
-    const createDto = {
-      amount: this.dollarsTocents(validated.amount),
-      customerId: validated.customerId,
-      date: this.validateAndFormatDate(validated.date),
-      sensitiveData: validated.sensitiveData,
-      status: validated.status,
+    const createDto: InvoiceFormDto = {
+      amount: this.dollarsTocents(dto.amount),
+      customerId: dto.customerId,
+      date: this.validateAndFormatDate(dto.date),
+      sensitiveData: dto.sensitiveData,
+      status: dto.status,
     };
 
     const entity: CreateInvoiceEntity = dtoToCreateInvoiceEntity(createDto);
@@ -71,8 +64,6 @@ export class InvoiceService {
    * @param id - Invoice ID as string
    * @returns Promise resolving to InvoiceDto
    * @throws ValidationError for invalid ID
-   * @remarks
-   * Applies business rules: branding is applied in the repository.
    */
   async readInvoice(id: string): Promise<InvoiceDto> {
     if (!id) {
@@ -83,38 +74,32 @@ export class InvoiceService {
   }
 
   /**
-   * Updates an invoice from form data.
+   * Updates an invoice from validated partial DTO.
    * @param id - Invoice ID as string
-   * @param formData - FormData from client
+   * @param dto - Partial validated InvoiceFormDto
    * @returns Promise resolving to updated InvoiceDto
    * @throws ValidationError for invalid input
-   * @remarks
-   * Applies business rules: dollars→cents conversion, date validation, branding.
    */
-  async updateInvoice(id: string, formData: FormData): Promise<InvoiceDto> {
-    if (!id || !formData) {
+  async updateInvoice(
+    id: string,
+    dto: Partial<InvoiceFormDto>,
+  ): Promise<InvoiceDto> {
+    if (!id || !dto) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    const input: InvoiceFormInput = this.extractFormData(formData);
-
-    const validated = UpdateInvoiceSchema.parse(input);
-
-    const updateDto = {
-      id,
-      ...(validated.amount !== undefined && {
-        amount: this.dollarsTocents(validated.amount),
+    const updateDto: Partial<InvoiceFormDto> = {
+      ...(dto.amount !== undefined && {
+        amount: this.dollarsTocents(dto.amount),
       }),
-      ...(validated.customerId && {
-        customerId: validated.customerId,
+      ...(dto.customerId !== undefined && { customerId: dto.customerId }),
+      ...(dto.date !== undefined && {
+        date: this.validateAndFormatDate(dto.date),
       }),
-      ...(validated.date && {
-        date: this.validateAndFormatDate(validated.date),
+      ...(dto.sensitiveData !== undefined && {
+        sensitiveData: dto.sensitiveData,
       }),
-      ...(validated.sensitiveData && {
-        sensitiveData: validated.sensitiveData,
-      }),
-      ...(validated.status && { status: validated.status }),
+      ...(dto.status !== undefined && { status: dto.status }),
     };
 
     const entity = partialDtoToCreateInvoiceEntity(updateDto);
@@ -127,8 +112,6 @@ export class InvoiceService {
    * @param id - Invoice ID as string
    * @returns Promise resolving to deleted InvoiceDto
    * @throws ValidationError for invalid ID
-   * @remarks
-   * Applies business rules and branding.
    */
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     if (!id) {
@@ -154,19 +137,5 @@ export class InvoiceService {
       throw new ValidationError("Invalid date format");
     }
     return date; // Already in ISO format from form
-  }
-
-  /**
-   * Extracts form data for creating/updating invoices.
-   * @excludes `id` because it is never in the form
-   */
-  private extractFormData(formData: FormData): InvoiceFormInput {
-    return {
-      amount: Number(formData.get("amount")),
-      customerId: String(formData.get("customerId")),
-      date: String(formData.get("date")),
-      sensitiveData: String(formData.get("sensitiveData")),
-      status: String(formData.get("status")) as InvoiceStatus,
-    };
   }
 }

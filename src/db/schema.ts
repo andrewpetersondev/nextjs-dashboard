@@ -11,10 +11,10 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import type { invoiceIdBrand } from "@/features/invoices/invoice.brands";
 import type {
   Brand,
   customerIdBrand,
-  invoiceIdBrand,
   userIdBrand,
 } from "@/lib/definitions/brands";
 
@@ -81,7 +81,6 @@ export const users = pgTable(TABLES.USERS, {
 
 /**
  * Demo user counters table schema.
- * @see {DemoUserCounter}
  */
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
   count: integer(COLUMNS.COUNT).notNull().default(0),
@@ -91,7 +90,6 @@ export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
 
 /**
  * Customers table schema.
- * @see {Customer}
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
   email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
@@ -108,7 +106,6 @@ export const customers = pgTable(TABLES.CUSTOMERS, {
 
 /**
  * Invoices table schema.
- * @see {Invoice}
  */
 export const invoices = pgTable(TABLES.INVOICES, {
   amount: integer(COLUMNS.AMOUNT).notNull(),
@@ -141,7 +138,6 @@ export const revenues = pgTable(TABLES.REVENUES, {
 
 /**
  * Sessions table schema.
- * @see {Session}
  */
 export const sessions = pgTable(TABLES.SESSIONS, {
   expiresAt: timestamp(COLUMNS.EXPIRES_AT).notNull(),
@@ -212,22 +208,13 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
  */
 export type UserRawDrizzle = typeof users.$inferSelect;
 export type NewUserRawDrizzle = typeof users.$inferInsert;
-// Demo User Counter
-export type _DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
-export type _NewDemoUserCounterRawDrizzle =
-  typeof demoUserCounters.$inferInsert;
 // Customer
 export type CustomerRawDrizzle = typeof customers.$inferSelect;
-export type _NewCustomerRawDrizzle = typeof customers.$inferInsert;
 // Invoice
 export type InvoiceRawDrizzle = typeof invoices.$inferSelect;
 export type NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
 // Revenue
 export type RevenueRawDrizzle = typeof revenues.$inferSelect;
-export type _NewRevenueRawDrizzle = typeof revenues.$inferInsert;
-// Session
-export type _SessionRawDrizzle = typeof sessions.$inferSelect;
-export type _NewSessionRawDrizzle = typeof sessions.$inferInsert;
 
 /**
  * ---------------------------------------------------------------------------

@@ -8,14 +8,11 @@ import type {
 } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import { DatabaseError } from "@/errors/errors";
+import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
-import type {
-  InvoiceListFilter,
-  InvoiceTableRow,
-} from "@/features/invoices/invoice.types";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import type { InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Creates a new invoice in the database.
@@ -142,14 +139,14 @@ export async function listInvoicesDal(
  * Fetches the latest invoices with customer information.
  * @param db - Drizzle database instance
  * @param limit - Maximum number of invoices to fetch
- * @returns Promise resolving to array of InvoiceTableRow
+ * @returns Promise resolving to array of InvoiceListFilter
  * @throws DatabaseError if query fails
  */
 export async function fetchLatestInvoices(
   db: Database,
   limit = 5,
-): Promise<InvoiceTableRow[]> {
-  const data: InvoiceTableRow[] = await db
+): Promise<InvoiceListFilter[]> {
+  const data: InvoiceListFilter[] = await db
     .select({
       amount: invoices.amount,
       customerId: invoices.customerId,
@@ -174,17 +171,17 @@ export async function fetchLatestInvoices(
  * @param db - Drizzle database instance
  * @param query - Search query string
  * @param currentPage - Current page number
- * @returns Promise resolving to array of InvoiceTableRow
+ * @returns Promise resolving to array of InvoiceListFilter
  * @throws DatabaseError if query fails
  */
 export async function fetchFilteredInvoices(
   db: Database,
   query: string,
   currentPage: number,
-): Promise<InvoiceTableRow[]> {
+): Promise<InvoiceListFilter[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const data: InvoiceTableRow[] = await db
+  const data: InvoiceListFilter[] = await db
     .select({
       amount: invoices.amount,
       customerId: invoices.customerId,

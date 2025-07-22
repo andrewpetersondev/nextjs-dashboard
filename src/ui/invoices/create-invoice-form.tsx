@@ -6,11 +6,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type {
-  InvoiceActionResultGeneric,
-  InvoiceFieldName,
-} from "@/features/invoices/invoice.types";
+import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
 import { today } from "@/lib/constants/ui.constants";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
@@ -23,15 +19,14 @@ export const CreateInvoiceForm = ({
   customers: CustomerField[];
 }): JSX.Element => {
   // Use the same type as the server action expects
-  const initialState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto> =
-    {
-      // Omit data property to satisfy exactOptionalPropertyTypes
-      errors: {},
-      message: "",
-      success: false,
-    };
+  const initialState: InvoiceActionResult = {
+    // Omit data property to satisfy exactOptionalPropertyTypes
+    errors: {},
+    message: "",
+    success: false,
+  };
   const [state, action, pending] = useActionState<
-    InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+    InvoiceActionResult,
     FormData
   >(createInvoiceAction, initialState);
 

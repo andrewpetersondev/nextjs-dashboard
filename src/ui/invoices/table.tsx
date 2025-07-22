@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { readFilteredInvoicesAction } from "@/features/invoices/invoice.actions";
-import type { InvoiceTableRow } from "@/features/invoices/invoice.types";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { DesktopTable } from "@/ui/invoices/desktop-table";
 import { MobileTable } from "@/ui/invoices/mobile-table";
 
@@ -15,7 +15,7 @@ export const InvoicesTable = async ({
   query: string;
   currentPage: number;
 }): Promise<JSX.Element> => {
-  const invoices: InvoiceTableRow[] = await readFilteredInvoicesAction(
+  const invoices: InvoiceListFilter[] = await readFilteredInvoicesAction(
     query,
     currentPage,
   );

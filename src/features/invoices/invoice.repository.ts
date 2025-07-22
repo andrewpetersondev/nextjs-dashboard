@@ -4,6 +4,10 @@ import type { Database } from "@/db/connection";
 import { ValidationError } from "@/errors/errors";
 import { BaseRepository } from "@/features/invoices/base-repository";
 import {
+  type InvoiceId,
+  toInvoiceId,
+} from "@/features/invoices/invoice.brands";
+import {
   createInvoiceDal,
   deleteInvoiceDal,
   listInvoicesDal,
@@ -11,9 +15,9 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type {
-  CreateInvoiceDto,
   InvoiceDto,
-  UpdateInvoiceDto,
+  InvoiceFormDto,
+  InvoiceFormPartialDto,
 } from "@/features/invoices/invoice.dto";
 import {
   dtoToCreateInvoiceEntity,
@@ -22,7 +26,6 @@ import {
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { type InvoiceId, toInvoiceId } from "@/lib/definitions/brands";
 import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
@@ -34,8 +37,8 @@ import { logger as defaultLogger } from "@/lib/utils/logger";
 export class InvoiceRepository extends BaseRepository<
   InvoiceDto, // TDto - what gets returned to service layer
   InvoiceId, // TId - branded ID type
-  CreateInvoiceDto, // TCreateInput - creation input type
-  UpdateInvoiceDto // TUpdateInput - update input type
+  InvoiceFormDto, // TCreateInput - creation input type
+  InvoiceFormPartialDto // TUpdateInput - update input type
 > {
   private readonly logger: typeof defaultLogger;
 
@@ -51,7 +54,7 @@ export class InvoiceRepository extends BaseRepository<
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
-  async create(input: CreateInvoiceDto): Promise<InvoiceDto> {
+  async create(input: InvoiceFormDto): Promise<InvoiceDto> {
     // Basic validation only -- no schema validation
     if (!input || typeof input !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
@@ -98,7 +101,10 @@ export class InvoiceRepository extends BaseRepository<
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
-  async update(id: InvoiceId, data: UpdateInvoiceDto): Promise<InvoiceDto> {
+  async update(
+    id: InvoiceId,
+    data: InvoiceFormPartialDto,
+  ): Promise<InvoiceDto> {
     // Basic validation only -- no schema validation
     if (!data || !id || typeof data !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);

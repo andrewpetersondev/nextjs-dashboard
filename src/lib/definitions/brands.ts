@@ -18,10 +18,6 @@
  * const invoiceStatus: InvoiceStatus = toInvoiceStatus(rawStatus);
  */
 
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "@/features/invoices/invoice.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
 /**
@@ -35,7 +31,6 @@ export type Brand<T, B extends symbol> = T & { readonly __brand: B };
  * Used to distinguish domain IDs and enums.
  */
 export const customerIdBrand = Symbol("CustomerId");
-export const invoiceIdBrand = Symbol("InvoiceId");
 export const userIdBrand = Symbol("UserId");
 
 /**
@@ -43,7 +38,6 @@ export const userIdBrand = Symbol("UserId");
  * Use for database, DAL, and server logic.
  */
 export type CustomerId = Brand<string, typeof customerIdBrand>;
-export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
 export type UserId = Brand<string, typeof userIdBrand>;
 
 /**
@@ -54,35 +48,11 @@ export type UserId = Brand<string, typeof userIdBrand>;
 export const toCustomerId = (id: string): CustomerId => id as CustomerId;
 
 /**
- * Converts a string to a branded InvoiceId.
- * @param id - Raw invoice ID string.
- * @returns InvoiceId (branded).
- */
-export const toInvoiceId = (id: string): InvoiceId => id as InvoiceId;
-
-/**
  * Converts a string to a branded UserId.
  * @param id - Raw user ID string.
  * @returns UserId (branded).
  */
 export const toUserId = (id: string): UserId => id as UserId;
-
-/**
- * Brands a string as InvoiceStatus after validating against allowed statuses.
- * Throws if the value is not a valid InvoiceStatus.
- *
- * @param status - Raw status string.
- * @returns InvoiceStatus (branded).
- * @throws Error if status is not allowed.
- */
-export const toInvoiceStatus = (status: string): InvoiceStatus => {
-  if ((INVOICE_STATUSES as readonly string[]).includes(status)) {
-    return status as InvoiceStatus;
-  }
-  throw new Error(
-    `Invalid InvoiceStatus: "${status}". Allowed values: ${INVOICE_STATUSES.join(", ")}`,
-  );
-};
 
 /**
  * Brands a string as UserRole after validating against allowed roles.

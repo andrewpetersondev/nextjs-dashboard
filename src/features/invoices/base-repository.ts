@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { Database } from "@/db/connection";
 
 /**

@@ -1,10 +1,8 @@
 import "server-only";
 
-import type {
-  CreateInvoiceDto,
-  InvoiceDto,
-} from "@/features/invoices/invoice.dto";
-import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { InvoiceId } from "@/features/invoices/invoice.brands";
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type { CustomerId } from "@/lib/definitions/brands";
 
 /**
  * Allowed invoice statuses.
@@ -21,7 +19,7 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
  * Row for invoice table queries (with customer info).
  * Used in invoice list views and table components.
  */
-export type InvoiceTableRow = Readonly<{
+export type InvoiceListFilter = Readonly<{
   amount: number;
   customerId: CustomerId;
   date: string;
@@ -34,40 +32,12 @@ export type InvoiceTableRow = Readonly<{
 }>;
 
 /**
- * Type for invoice list filters.
- * used in new repository.ts
+ * Result type for invoice actions (create, read, update, delete).
+ * Used in Server Actions.
  */
-export type InvoiceListFilter = InvoiceTableRow;
-
-/**
- * @deprecated
- * Phasing out and replacing with InvoiceActionResult
- *
- * Generic.
- * Use InvoiceActionResultGeneric instead for consistency.
- *
- * @template TFieldNames - Valid field names for error mapping.
- * @template TData - The data type returned by the action (e.g., InvoiceDto, form data).
- * @remarks
- * Use for all invoice CRUD actions to ensure uniformity and reduce duplication.
- */
-export interface InvoiceActionResultGeneric<
-  TFieldNames extends string,
-  TData = unknown,
-> {
-  readonly data?: TData;
-  readonly errors?: Partial<Record<TFieldNames, string[]>>;
-  readonly message?: string;
-  readonly success: boolean;
-}
-
-// types below are part of the refactor to  simplify types. DO NOT REMOVE
-
 export type InvoiceActionResult = {
   data?: InvoiceDto;
   errors?: Record<string, string[]>;
   message?: string;
   success: boolean;
 };
-
-export type InvoiceFieldName = keyof CreateInvoiceDto;

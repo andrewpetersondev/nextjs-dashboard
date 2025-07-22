@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { InvoiceTableRow } from "@/features/invoices/invoice.types";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
 import { InvoiceStatusComponent } from "@/ui/invoices/status";
@@ -18,7 +18,7 @@ import { InvoiceStatusComponent } from "@/ui/invoices/status";
 export const MobileTable = ({
   invoices,
 }: {
-  invoices: InvoiceTableRow[];
+  invoices: InvoiceListFilter[];
 }): JSX.Element => {
   return (
     <div className="md:hidden">
