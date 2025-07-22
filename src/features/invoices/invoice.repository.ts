@@ -6,10 +6,7 @@ import type {
   InvoiceFormPartialEntity,
 } from "@/db/models/invoice.entity";
 import { ValidationError } from "@/errors/errors";
-import {
-  type InvoiceId,
-  toInvoiceId,
-} from "@/features/invoices/invoice.brands";
+import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -17,11 +14,7 @@ import {
   readInvoiceDal,
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
-import type {
-  InvoiceDto,
-  InvoiceFormDto,
-  InvoiceFormPartialDto,
-} from "@/features/invoices/invoice.dto";
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -34,25 +27,21 @@ import { BaseRepository } from "@/lib/repository/base-repository";
 export class InvoiceRepository extends BaseRepository<
   InvoiceDto, // TDto - what gets returned to service layer
   InvoiceId, // TId - branded ID type
-  InvoiceFormDto, // TCreateInput - creation input type
-  InvoiceFormPartialDto // TUpdateInput - update input type
+  InvoiceFormEntity, // TCreateInput - creation input type
+  InvoiceFormPartialEntity // TUpdateInput - update input type
 > {
   /**
    * Creates an invoice.
    * @param input - Invoice creation data as InvoiceFormEntity
-   * @returns Promise resolving to created InvoiceDto returning to Service? or Actions? layer.
+   * @returns Promise resolving to created InvoiceDto returning to Service layer.
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
   async create(input: InvoiceFormEntity): Promise<InvoiceDto> {
-    // Basic validation only -- no schema validation
+    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!input || typeof input !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
-
-    // Transform DTO (plain) → Entity (branded)
-    // No longer needed because input is already branded
-    // const entity = dtoToCreateInvoiceEntity(input);
 
     // Call DAL with branded entity. Function returns InvoiceEntity.
     const createdEntity: InvoiceEntity = await createInvoiceDal(this.db, input);
@@ -63,22 +52,19 @@ export class InvoiceRepository extends BaseRepository<
 
   /**
    * Reads an invoice by ID.
-   * @param id - string
+   * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceDto
-   * @throws ValidationError for invalid ID
+   * @throws ValidationError for invalid parameter id
    * @throws DatabaseError for database failures
    */
-  async read(id: string): Promise<InvoiceDto> {
-    // Basic validation only -- no schema validation
+  async read(id: InvoiceId): Promise<InvoiceDto> {
+    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
-    // Transform plain string → branded ID
-    const invoiceId = toInvoiceId(id);
-
     // Call DAL with branded ID
-    const entity = await readInvoiceDal(this.db, invoiceId);
+    const entity = await readInvoiceDal(this.db, id);
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(entity);
@@ -96,7 +82,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
-    // Basic validation only. Throw error to Actions layer?
+    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!data || !id || typeof data !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
@@ -116,16 +102,13 @@ export class InvoiceRepository extends BaseRepository<
    * @throws DatabaseError for database failures
    */
   async delete(id: InvoiceId): Promise<InvoiceDto> {
-    // Basic validation only -- no schema validation
+    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
-    // Transform plain string → branded ID
-    const invoiceId = toInvoiceId(id);
-
     // Call DAL with branded ID
-    const deletedEntity = await deleteInvoiceDal(this.db, invoiceId);
+    const deletedEntity = await deleteInvoiceDal(this.db, id);
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(deletedEntity);

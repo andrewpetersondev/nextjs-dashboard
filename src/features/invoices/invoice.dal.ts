@@ -7,7 +7,7 @@ import type {
   InvoiceFormEntity,
 } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
-import { DatabaseError } from "@/errors/errors";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
@@ -39,20 +39,29 @@ export async function createInvoiceDal(
 /**
  * Reads an invoice by ID.
  * @param db - Drizzle database instance
- * @param id - Invoice ID
+ * @param id - branded Invoice ID
  * @returns Promise resolving to InvoiceEntity
  * @throws DatabaseError if invoice not found
+ * @throws ValidationError if input parameters are invalid
  */
 export async function readInvoiceDal(
   db: Database,
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
+  // Basic validation of parameters
+  if (!db || !id) {
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+  }
+
+  // Fetch invoice by ID
   const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
+  // Check if invoice exists
   if (!data) {
     throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
   }
 
+  // Convert raw database row to InvoiceEntity
   return rawDbToInvoiceEntity(data);
 }
 
@@ -104,15 +113,23 @@ export async function deleteInvoiceDal(
   db: Database,
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
+  // Ensure db and id are not empty
+  if (!db || !id) {
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+  }
+
+  // db operations
   const [deletedInvoice] = await db
     .delete(invoices)
     .where(eq(invoices.id, id))
     .returning();
 
+  // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
     throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
   }
 
+  // Convert raw database row to InvoiceEntity and return
   return rawDbToInvoiceEntity(deletedInvoice);
 }
 

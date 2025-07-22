@@ -42,7 +42,7 @@ export class InvoiceService {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    // Business transformation:
+    // Business transformation
     const createDto: InvoiceFormDto = {
       amount: this.dollarsTocents(dto.amount),
       customerId: dto.customerId,
@@ -65,10 +65,12 @@ export class InvoiceService {
    * @throws ValidationError for invalid ID
    */
   async readInvoice(id: string): Promise<InvoiceDto> {
+    // Basic validation of input. Throw error to Actions layer.
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
+    // Transform plain string → branded ID and call repository
     return await this.repo.read(toInvoiceId(id));
   }
 
@@ -88,7 +90,7 @@ export class InvoiceService {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    // What is this solution called?
+    // What is this solution called? Object Spread Immutability.
     const updateDto: Partial<InvoiceFormDto> = {
       ...(dto.amount !== undefined && {
         amount: this.dollarsTocents(dto.amount),
@@ -115,10 +117,12 @@ export class InvoiceService {
    * @throws ValidationError for invalid ID
    */
   async deleteInvoice(id: string): Promise<InvoiceDto> {
+    // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
+    // Call repo with branded ID and return Dto to Actions layer
     return await this.repo.delete(toInvoiceId(id));
   }
 

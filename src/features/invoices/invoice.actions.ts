@@ -40,6 +40,13 @@ export async function createInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceActionResult> {
   try {
+    // Basic validation of formData. If not present, throw error to catch block.
+    if (!formData || !(formData instanceof FormData)) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+        formData,
+      });
+    }
+
     // Extract and coerce form data
     const input: InvoiceFormDto = {
       amount: Number(formData.get("amount")),
@@ -113,10 +120,14 @@ export async function readInvoiceAction(
   id: string,
 ): Promise<InvoiceActionResult> {
   try {
+    // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
+    // Create service instance with injected repository
     const service = new InvoiceService(repo);
-    const invoice = await service.readInvoice(id);
+    // Call service with validated DTO to retrieve complete InvoiceDto
+    const invoice: InvoiceDto = await service.readInvoice(id);
 
+    // Return success result with invoice data shaped as InvoiceActionResult
     return {
       data: invoice,
       errors: {},
@@ -130,6 +141,7 @@ export async function readInvoiceAction(
       id,
     });
 
+    // Return error response shaped as InvoiceActionResult
     return {
       errors: {},
       message:
@@ -156,6 +168,16 @@ export async function updateInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceActionResult> {
   try {
+    // Validate parameters first
+    if (!id || typeof id !== "string") {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+    if (!formData) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+        formData,
+      });
+    }
+
     // Build the partial DTO immutably using object spread strategy
     const input = {
       ...(formData.has("amount") && { amount: Number(formData.get("amount")) }),
@@ -233,10 +255,19 @@ export async function deleteInvoiceAction(
   id: string,
 ): Promise<InvoiceActionResult> {
   try {
+    // Basic validation of input. Throw error catch block.
+    if (!id || typeof id !== "string") {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+
+    // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
+    // Create service instance with injected repository
     const service = new InvoiceService(repo);
+    // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice = await service.deleteInvoice(id);
 
+    // Return success result with deleted invoice data shaped as InvoiceActionResult
     return {
       data: invoice,
       errors: {},
