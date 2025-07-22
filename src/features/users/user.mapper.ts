@@ -1,46 +1,6 @@
 import type { UserEntity } from "@/db/models/user.entity";
-import type { UserRawDrizzle } from "@/db/schema";
 import type { UserDto } from "@/features/users/user.dto";
 import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
-
-/**
- * Transforms a raw database row (from Drizzle ORM) into a strongly-typed `UserEntity`.
- *
- * - Enforces domain invariants and applies defensive branding.
- * - Validates primitive types at runtime; branding is compile-time only.
- * - Throws if required fields are missing or invalid.
- *
- * @param row - Raw user row from the database (may be branded by Drizzle).
- * @returns {UserEntity} - The domain entity with enforced invariants and branding.
- * @throws {Error} - If required fields are missing or invalid.
- *
- * @example
- * const entity = toUserEntity(dbRow);
- *
- */
-export function toUserEntity(row: UserRawDrizzle): UserEntity {
-  // Defensive: Validate all required fields
-  if (
-    !row ||
-    typeof row.email !== "string" ||
-    typeof row.id !== "string" ||
-    typeof row.password !== "string" ||
-    typeof row.role !== "string" ||
-    typeof row.sensitiveData !== "string" ||
-    typeof row.username !== "string"
-  ) {
-    throw new Error("Invalid user row: missing required fields");
-  }
-  // Defensive: Apply branding even though the properties are already branded in the DB schema
-  return {
-    email: row.email,
-    id: toUserId(row.id),
-    password: row.password,
-    role: toUserRoleBrand(row.role),
-    sensitiveData: row.sensitiveData,
-    username: row.username,
-  };
-}
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.

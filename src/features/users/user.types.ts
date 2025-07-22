@@ -100,21 +100,15 @@ export type EditUserFormFieldNames = keyof EditUserFormFields;
  * --- Form State Aliases ---
  * Use generic FormState<TFieldNames> for all form state types.
  */
-export type SignupFormState = FormState<SignupFormFieldNames>;
-export type _LoginFormState = FormState<LoginFormFieldNames>; // Internal use
+// export type SignupFormState = FormState<SignupFormFieldNames>;
+// export type _LoginFormState = FormState<LoginFormFieldNames>; // Internal use
 export type CreateUserFormState = FormState<CreateUserFormFieldNames>;
-export type _EditUserFormState = FormState<EditUserFormFieldNames>; // Internal use
+// export type _EditUserFormState = FormState<EditUserFormFieldNames>; // Internal use
 
 /**
  * --- Error Types ---
  * Internal error map types for user forms.
  */
-export type _UserErrorMap = Partial<
-  Record<keyof CreateUserFormFields, string[]>
->;
-export type _UserFormErrors = Partial<
-  Record<keyof CreateUserFormFields, string[]>
->;
 
 /**
  * --- Action Result Type ---

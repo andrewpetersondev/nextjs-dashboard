@@ -3,13 +3,6 @@ import "server-only";
 import bcryptjs from "bcryptjs";
 import { SALT_ROUNDS } from "@/lib/constants/auth.constants";
 
-/**
- * Safely retrieves a string cookie value.
- */
-export function getCookieValue(cookie: unknown): string | undefined {
-  return typeof cookie === "string" ? cookie : undefined;
-}
-
 export const hashPassword = async (password: string): Promise<string> => {
   try {
     const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);

@@ -274,29 +274,6 @@ export async function fetchUserById(
 }
 
 /**
- * Fetches all users, ordered by username.
- * Always maps raw DB rows to UserEntity, then to UserDto for strict typing.
- * @param db - The database instance (Drizzle)
- * @returns Array of UserDto
- */
-export async function _fetchUsers(db: Database): Promise<UserDto[]> {
-  try {
-    // Fetch raw DB rows, not UserEntity
-    const userRows = await db.select().from(users).orderBy(asc(users.username));
-
-    // Map each raw row to UserEntity, then to UserDto
-    return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
-  } catch (error) {
-    logger.error({
-      context: "_fetchUsers",
-      error,
-      message: "Failed to fetch users.",
-    });
-    throw new DatabaseError("Failed to fetch users.", error);
-  }
-}
-
-/**
  * Fetches the total number of user pages for pagination.
  * Always uses strict typing and constants.
  * @param db - The database instance.

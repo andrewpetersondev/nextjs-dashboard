@@ -29,32 +29,6 @@ export interface SessionVerificationResult {
   role: UserRole;
 }
 
-/**
- * Represents a row from the session table in the database.
- * This type is aligned with the Drizzle ORM schema.
- */
-export interface SessionRecord {
-  /** Unique session identifier (UUID) */
-  id: string;
-  /** Opaque session token (random, unique) */
-  token: string;
-  /** Session expiration timestamp (ISO 8601 string) */
-  expiresAt: string;
-  /** Associated user ID (UUID) */
-  userId: string;
-}
-
-/**
- * Represents a raw row from the session table as returned by Drizzle ORM.
- * This matches the Database schema exactly.
- */
-export interface DbSessionRow {
-  id: string;
-  token: string | null;
-  expiresAt: Date;
-  userId: string | null;
-}
-
 // --- Zod Schemas ---
 
 // --- Zod Field Schemas ---
