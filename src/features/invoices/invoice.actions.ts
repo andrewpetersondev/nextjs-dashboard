@@ -10,7 +10,10 @@ import {
   fetchInvoicesPagesDal,
   fetchLatestInvoicesDal,
 } from "@/features/invoices/invoice.dal";
-import type { InvoiceFormDto } from "@/features/invoices/invoice.dto";
+import type {
+  InvoiceDto,
+  InvoiceFormDto,
+} from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import {
   CreateInvoiceSchema,
@@ -49,6 +52,7 @@ export async function createInvoiceAction(
     // Validate input using Zod schema
     const parsed = CreateInvoiceSchema.safeParse(input);
 
+    // If validation fails, shape the error response to match InvoiceActionResult
     if (!parsed.success) {
       return {
         ...prevState,
@@ -60,11 +64,14 @@ export async function createInvoiceAction(
 
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
+
+    // Create service instance with injected repository
     const service = new InvoiceService(repo);
 
-    // Call service with validated DTO
-    const invoice = await service.createInvoice(parsed.data);
+    // Call service with validated DTO to retrieve complete InvoiceDto
+    const invoice: InvoiceDto = await service.createInvoice(parsed.data);
 
+    // Return success result with created invoice data, id is returned, but is it used? Should I add a step so Entities are used, then transform to DTO?
     return {
       data: invoice,
       errors: {},
@@ -78,6 +85,7 @@ export async function createInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
 
+    // Find out where this error can come from.
     if (error instanceof z.ZodError) {
       return {
         ...prevState,
@@ -148,7 +156,7 @@ export async function updateInvoiceAction(
   formData: FormData,
 ): Promise<InvoiceActionResult> {
   try {
-    // Build the partial DTO immutably using object spread
+    // Build the partial DTO immutably using object spread strategy
     const input = {
       ...(formData.has("amount") && { amount: Number(formData.get("amount")) }),
       ...(formData.has("customerId") && {
@@ -166,6 +174,7 @@ export async function updateInvoiceAction(
     // Validate input using update schema
     const parsed = UpdateInvoiceSchema.safeParse(input);
 
+    // If validation fails, shape the error response to match InvoiceActionResult
     if (!parsed.success) {
       return {
         ...prevState,
@@ -177,10 +186,17 @@ export async function updateInvoiceAction(
 
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
+
+    // Create service instance with injected repository
     const service = new InvoiceService(repo);
 
-    const updatedInvoice = await service.updateInvoice(id, parsed.data);
+    // Call service to update invoice with validated DTO. Function returns InvoiceDto.
+    const updatedInvoice: InvoiceDto = await service.updateInvoice(
+      id,
+      parsed.data,
+    );
 
+    // Return success result with updated invoice data shaped as InvoiceActionResult
     return {
       data: updatedInvoice,
       errors: {},
@@ -195,6 +211,7 @@ export async function updateInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       prevState,
     });
+    // Return error response shaped as InvoiceActionResult
     return {
       ...prevState,
       errors: {},

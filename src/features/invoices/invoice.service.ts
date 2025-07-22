@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CreateInvoiceEntity } from "@/db/models/invoice.entity";
+import type { InvoiceFormEntity } from "@/db/models/invoice.entity";
 import { ValidationError } from "@/errors/errors";
 import { toInvoiceId } from "@/features/invoices/invoice.brands";
 import type {
@@ -18,6 +18,7 @@ import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 /**
  * Service for invoice business logic and transformation.
  * Receives validated DTOs only.
+ * Sends out branded entities and DTOs.
  */
 export class InvoiceService {
   private readonly repo: InvoiceRepository;
@@ -36,10 +37,12 @@ export class InvoiceService {
    * @throws ValidationError for invalid input
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
+    // Basic validation of input. Throw error to Actions layer.
     if (!dto) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
+    // Business transformation:
     const createDto: InvoiceFormDto = {
       amount: this.dollarsTocents(dto.amount),
       customerId: dto.customerId,
@@ -48,8 +51,10 @@ export class InvoiceService {
       status: dto.status,
     };
 
-    const entity: CreateInvoiceEntity = dtoToCreateInvoiceEntity(createDto);
+    // Transform DTO (plain) → Entity (branded)
+    const entity: InvoiceFormEntity = dtoToCreateInvoiceEntity(createDto);
 
+    // Call repository to create invoice
     return await this.repo.create(entity);
   }
 
@@ -78,10 +83,12 @@ export class InvoiceService {
     id: string,
     dto: Partial<InvoiceFormDto>,
   ): Promise<InvoiceDto> {
+    // Basic validation of input. Throw error to Actions layer.
     if (!id || !dto) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
+    // What is this solution called?
     const updateDto: Partial<InvoiceFormDto> = {
       ...(dto.amount !== undefined && {
         amount: this.dollarsTocents(dto.amount),

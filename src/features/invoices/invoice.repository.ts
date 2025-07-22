@@ -1,8 +1,11 @@
 import "server-only";
 
-import type { Database } from "@/db/connection";
+import type {
+  InvoiceEntity,
+  InvoiceFormEntity,
+  InvoiceFormPartialEntity,
+} from "@/db/models/invoice.entity";
 import { ValidationError } from "@/errors/errors";
-import { BaseRepository } from "@/features/invoices/base-repository";
 import {
   type InvoiceId,
   toInvoiceId,
@@ -19,13 +22,10 @@ import type {
   InvoiceFormDto,
   InvoiceFormPartialDto,
 } from "@/features/invoices/invoice.dto";
-import {
-  dtoToCreateInvoiceEntity,
-  entityToInvoiceDto,
-  partialDtoToCreateInvoiceEntity,
-} from "@/features/invoices/invoice.mapper";
+import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import { BaseRepository } from "@/lib/repository/base-repository";
 
 /**
  * Repository for Invoice domain operations.
@@ -37,28 +37,25 @@ export class InvoiceRepository extends BaseRepository<
   InvoiceFormDto, // TCreateInput - creation input type
   InvoiceFormPartialDto // TUpdateInput - update input type
 > {
-  constructor(db: Database) {
-    super(db);
-  }
-
   /**
    * Creates an invoice.
-   * @param input - Invoice creation data
-   * @returns Promise resolving to created InvoiceDto
+   * @param input - Invoice creation data as InvoiceFormEntity
+   * @returns Promise resolving to created InvoiceDto returning to Service? or Actions? layer.
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
-  async create(input: InvoiceFormDto): Promise<InvoiceDto> {
+  async create(input: InvoiceFormEntity): Promise<InvoiceDto> {
     // Basic validation only -- no schema validation
     if (!input || typeof input !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
     // Transform DTO (plain) → Entity (branded)
-    const entity = dtoToCreateInvoiceEntity(input);
+    // No longer needed because input is already branded
+    // const entity = dtoToCreateInvoiceEntity(input);
 
-    // Call DAL with branded entity
-    const createdEntity = await createInvoiceDal(this.db, entity);
+    // Call DAL with branded entity. Function returns InvoiceEntity.
+    const createdEntity: InvoiceEntity = await createInvoiceDal(this.db, input);
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(createdEntity);
@@ -90,25 +87,22 @@ export class InvoiceRepository extends BaseRepository<
   /**
    * Updates an invoice.
    * @param id - InvoiceId (branded type)
-   * @param data - Update data
+   * @param data - Update data as InvoiceFormPartialEntity
    * @returns Promise resolving to updated InvoiceDto
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
   async update(
     id: InvoiceId,
-    data: InvoiceFormPartialDto,
+    data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
-    // Basic validation only -- no schema validation
+    // Basic validation only. Throw error to Actions layer?
     if (!data || !id || typeof data !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
-    // Transform DTO (plain) → Entity (branded)
-    const updateEntity = partialDtoToCreateInvoiceEntity(data);
-
     // Call DAL with branded types
-    const updatedEntity = await updateInvoiceDal(this.db, id, updateEntity);
+    const updatedEntity = await updateInvoiceDal(this.db, id, data);
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(updatedEntity);
