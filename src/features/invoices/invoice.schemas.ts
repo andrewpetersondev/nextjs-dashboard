@@ -1,44 +1,22 @@
-import "server-only";
-
 import * as z from "zod";
 import { INVOICE_STATUSES } from "@/features/invoices/invoice.types";
 
-const amountSchema = z.coerce
-  .number()
-  .gt(0, { error: "Amount must be greater than $0." })
-  .lt(10000, { error: "Amount must be less than $10,000." });
-
-const customerIdSchema = z.string({
-  error: (issue) =>
-    issue.input === undefined
-      ? "Customer ID is required."
-      : "Customer ID must be a string.",
+// Base validation schema - single source of truth
+export const InvoiceBaseSchema = z.object({
+  amount: z.coerce.number().positive().max(10000),
+  customerId: z.uuid(),
+  date: z.iso.date(),
+  sensitiveData: z.string().min(2),
+  status: z.enum(INVOICE_STATUSES),
 });
 
-const statusSchema = z.enum(INVOICE_STATUSES, {
-  error: (issue) =>
-    issue.input === undefined
-      ? "Invoice status is required"
-      : "Invalid invoice status",
-});
+// Schema for creation (no ID, auto-generated date)
+export const CreateInvoiceSchema = InvoiceBaseSchema;
 
-const dateSchema = z.iso.date({});
+// Schema for updates (all fields optional)
+export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
 
-const invoiceIdSchema = z.uuid({});
-
-/**
- * Zod schema for invoice creation.
- * Validates amount, customerId, and status.
- *
- * @remarks
- * Attempting to implement for all CRUD operations.
- * Optional properties like date and id are included for flexibility.
- */
-export const CreateInvoiceSchema = z.object({
-  amount: amountSchema,
-  customerId: customerIdSchema,
-  date: dateSchema,
-  id: invoiceIdSchema.optional(),
-  sensitiveData: z.string(),
-  status: statusSchema,
+// Schema for complete invoice (with ID and date)
+export const InvoiceSchema = InvoiceBaseSchema.extend({
+  id: z.uuid(),
 });

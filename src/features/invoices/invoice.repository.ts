@@ -1,8 +1,8 @@
 import "server-only";
 
-import * as z from "zod";
 import type { Database } from "@/db/connection";
 import { ValidationError } from "@/errors/errors";
+import { BaseRepository } from "@/features/invoices/base-repository";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -10,49 +10,33 @@ import {
   readInvoiceDal,
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type {
-  InvoiceCreateInput,
-  InvoiceListFilter,
-  InvoiceUpdateInput,
-} from "@/features/invoices/invoice.types";
+  CreateInvoiceDto,
+  InvoiceDto,
+  UpdateInvoiceDto,
+} from "@/features/invoices/invoice.dto";
+import {
+  dtoToCreateInvoiceEntity,
+  entityToInvoiceDto,
+  partialDtoToCreateInvoiceEntity,
+} from "@/features/invoices/invoice.mapper";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import type { InvoiceId } from "@/lib/definitions/brands";
-import { BaseRepository } from "@/lib/repository/base-repository";
+import { type InvoiceId, toInvoiceId } from "@/lib/definitions/brands";
 import { logger as defaultLogger } from "@/lib/utils/logger";
 
 /**
- * Zod schema for runtime validation of InvoiceCreateInput.
- */
-const InvoiceCreateSchema = z.object({
-  amount: z.number().positive().max(1000000),
-  customerId: z.string().uuid(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  sensitiveData: z.string().optional().default(""),
-  status: z.enum(["pending", "paid"]),
-});
-
-/**
- * Zod schema for runtime validation of InvoiceUpdateInput.
- */
-const InvoiceUpdateSchema = z.object({
-  amount: z.number().positive().max(1000000).optional(),
-  customerId: z.string().uuid().optional(),
-  date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .optional(),
-  id: z.string().uuid().optional(),
-  sensitiveData: z.string().optional(),
-  status: z.enum(["pending", "paid"]).optional(),
-});
-
-/**
  * Repository for Invoice domain operations.
+ * Transforms DTOs (plain) ↔ Entities (branded).
+ * NO schema validation - that's service layer responsibility.
  * Handles validation and error transformation between Service and DAL layers.
  */
-export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
+export class InvoiceRepository extends BaseRepository<
+  InvoiceDto, // TDto - what gets returned to service layer
+  InvoiceId, // TId - branded ID type
+  CreateInvoiceDto, // TCreateInput - creation input type
+  UpdateInvoiceDto // TUpdateInput - update input type
+> {
   private readonly logger: typeof defaultLogger;
 
   constructor(db: Database, logger: typeof defaultLogger = defaultLogger) {
@@ -67,83 +51,90 @@ export class InvoiceRepository extends BaseRepository<InvoiceDto, InvoiceId> {
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
-  async create(input: InvoiceCreateInput): Promise<InvoiceDto> {
-    // 1. Validate input
-    const parseResult = InvoiceCreateSchema.safeParse(input);
-
-    if (!parseResult.success) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
-        issues: parseResult.error.issues,
-      });
+  async create(input: CreateInvoiceDto): Promise<InvoiceDto> {
+    // Basic validation only -- no schema validation
+    if (!input || typeof input !== "object") {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
-    // 2. Call DAL - let database errors bubble up
-    const entity = await createInvoiceDal(this.db, input);
+    // Transform DTO (plain) → Entity (branded)
+    const entity = dtoToCreateInvoiceEntity(input);
 
-    // 3. Transform and return
-    return entityToInvoiceDto(entity);
+    // Call DAL with branded entity
+    const createdEntity = await createInvoiceDal(this.db, entity);
+
+    // Transform Entity (branded) → DTO (plain)
+    return entityToInvoiceDto(createdEntity);
   }
 
   /**
    * Reads an invoice by ID.
-   * @param id - Invoice ID
+   * @param id - string
    * @returns Promise resolving to InvoiceDto
    * @throws ValidationError for invalid ID
    * @throws DatabaseError for database failures
    */
-  async read(id: InvoiceId): Promise<InvoiceDto> {
+  async read(id: string): Promise<InvoiceDto> {
+    // Basic validation only -- no schema validation
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
-    // Call DAL - let database errors bubble up
-    const entity = await readInvoiceDal(this.db, id);
+    // Transform plain string → branded ID
+    const invoiceId = toInvoiceId(id);
 
+    // Call DAL with branded ID
+    const entity = await readInvoiceDal(this.db, invoiceId);
+
+    // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(entity);
   }
 
   /**
    * Updates an invoice.
-   * @param id - Invoice ID
+   * @param id - InvoiceId (branded type)
    * @param data - Update data
    * @returns Promise resolving to updated InvoiceDto
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
    */
-  async update(
-    id: InvoiceId,
-    data: Partial<InvoiceUpdateInput>,
-  ): Promise<InvoiceDto> {
-    // 1. Validate input
-    const parseResult = InvoiceUpdateSchema.safeParse({ ...data, id });
-    if (!parseResult.success) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED, {
-        issues: parseResult.error.issues,
-      });
+  async update(id: InvoiceId, data: UpdateInvoiceDto): Promise<InvoiceDto> {
+    // Basic validation only -- no schema validation
+    if (!data || !id || typeof data !== "object") {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
-    // 2. Call DAL - let database errors bubble up
-    const entity = await updateInvoiceDal(this.db, id, data);
+    // Transform DTO (plain) → Entity (branded)
+    const updateEntity = partialDtoToCreateInvoiceEntity(data);
 
-    // 3. Transform and return
-    return entityToInvoiceDto(entity);
+    // Call DAL with branded types
+    const updatedEntity = await updateInvoiceDal(this.db, id, updateEntity);
+
+    // Transform Entity (branded) → DTO (plain)
+    return entityToInvoiceDto(updatedEntity);
   }
 
   /**
    * Deletes an invoice.
-   * @param id - Invoice ID
+   * @param id - InvoiceId (branded type)
    * @returns Promise resolving to deleted InvoiceDto
    * @throws ValidationError for invalid ID
    * @throws DatabaseError for database failures
    */
   async delete(id: InvoiceId): Promise<InvoiceDto> {
+    // Basic validation only -- no schema validation
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
-    // Call DAL - let database errors bubble up
-    const entity = await deleteInvoiceDal(this.db, id);
 
-    return entityToInvoiceDto(entity);
+    // Transform plain string → branded ID
+    const invoiceId = toInvoiceId(id);
+
+    // Call DAL with branded ID
+    const deletedEntity = await deleteInvoiceDal(this.db, invoiceId);
+
+    // Transform Entity (branded) → DTO (plain)
+    return entityToInvoiceDto(deletedEntity);
   }
 
   /**

@@ -212,15 +212,20 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
  */
 export type UserRawDrizzle = typeof users.$inferSelect;
 export type NewUserRawDrizzle = typeof users.$inferInsert;
+// Demo User Counter
 export type _DemoUserCounterRawDrizzle = typeof demoUserCounters.$inferSelect;
 export type _NewDemoUserCounterRawDrizzle =
   typeof demoUserCounters.$inferInsert;
+// Customer
 export type CustomerRawDrizzle = typeof customers.$inferSelect;
 export type _NewCustomerRawDrizzle = typeof customers.$inferInsert;
+// Invoice
 export type InvoiceRawDrizzle = typeof invoices.$inferSelect;
 export type NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
+// Revenue
 export type RevenueRawDrizzle = typeof revenues.$inferSelect;
 export type _NewRevenueRawDrizzle = typeof revenues.$inferInsert;
+// Session
 export type _SessionRawDrizzle = typeof sessions.$inferSelect;
 export type _NewSessionRawDrizzle = typeof sessions.$inferInsert;
 

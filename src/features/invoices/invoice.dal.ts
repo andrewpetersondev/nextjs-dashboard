@@ -2,12 +2,14 @@ import "server-only";
 
 import { count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
+import type {
+  CreateInvoiceEntity,
+  InvoiceEntity,
+} from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import { DatabaseError } from "@/errors/errors";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type {
-  InvoiceCreateInput,
   InvoiceListFilter,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
@@ -24,7 +26,7 @@ import type { InvoiceId } from "@/lib/definitions/brands";
  */
 export async function createInvoiceDal(
   db: Database,
-  input: InvoiceCreateInput,
+  input: CreateInvoiceEntity,
 ): Promise<InvoiceEntity> {
   const [createdInvoice] = await db.insert(invoices).values(input).returning();
 

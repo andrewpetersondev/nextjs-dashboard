@@ -1,6 +1,9 @@
 import "server-only";
 
-import type { InvoiceEntity } from "@/db/models/invoice.entity";
+import type {
+  CreateInvoiceDto,
+  InvoiceDto,
+} from "@/features/invoices/invoice.dto";
 import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
@@ -13,24 +16,6 @@ export const INVOICE_STATUSES = ["pending", "paid"] as const;
  * Invoice status type.
  */
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
-
-/**
- * Invoice field names for forms and error maps.
- */
-export const INVOICE_FIELD_NAMES = [
-  "amount",
-  "customerId",
-  "date",
-  "id",
-  "sensitiveData",
-  "status",
-] as const;
-
-/**
- * Invoice field name type.
- * Used for form validation and error handling.
- */
-export type InvoiceFieldName = (typeof INVOICE_FIELD_NAMES)[number];
 
 /**
  * Row for invoice table queries (with customer info).
@@ -55,38 +40,12 @@ export type InvoiceTableRow = Readonly<{
 export type InvoiceListFilter = InvoiceTableRow;
 
 /**
- * Input type for creating an invoice in the DAL.
- * Omits fields not set by the user.
- */
-export type InvoiceCreateInput = Omit<InvoiceEntity, "id">;
-
-/**
- * DTO for updating an invoice.
- * Only updatable fields are included.
- * - sensitiveData can be updated by the user. eventually, it will be removed.
- */
-export interface InvoiceUpdateInput {
-  readonly amount: number;
-  readonly customerId: CustomerId;
-  readonly date: string;
-  readonly id: InvoiceId;
-  readonly sensitiveData: string;
-  readonly status: InvoiceStatus;
-}
-
-/**
- * Strict input type for UI invoice form.
- * Used for client-side validation and transformation.
- */
-export interface UiInvoiceInput {
-  amount: number;
-  customerId: string;
-  date: string; // ISO date string
-  sensitiveData: string;
-  status: InvoiceStatus;
-}
-
-/**
+ * @deprecated
+ * Phasing out and replacing with InvoiceActionResult
+ *
+ * Generic.
+ * Use InvoiceActionResultGeneric instead for consistency.
+ *
  * @template TFieldNames - Valid field names for error mapping.
  * @template TData - The data type returned by the action (e.g., InvoiceDto, form data).
  * @remarks
@@ -101,3 +60,14 @@ export interface InvoiceActionResultGeneric<
   readonly message?: string;
   readonly success: boolean;
 }
+
+// types below are part of the refactor to  simplify types. DO NOT REMOVE
+
+export type InvoiceActionResult = {
+  data?: InvoiceDto;
+  errors?: Record<string, string[]>;
+  message?: string;
+  success: boolean;
+};
+
+export type InvoiceFieldName = keyof CreateInvoiceDto;

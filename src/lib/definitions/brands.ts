@@ -15,7 +15,7 @@
  * ## Example
  * ```typescript
  * const customerId: CustomerId = toCustomerId(rawId);
- * const invoiceStatus: InvoiceStatus = toInvoiceStatusBrand(rawStatus);
+ * const invoiceStatus: InvoiceStatus = toInvoiceStatus(rawStatus);
  */
 
 import {
@@ -75,7 +75,7 @@ export const toUserId = (id: string): UserId => id as UserId;
  * @returns InvoiceStatus (branded).
  * @throws Error if status is not allowed.
  */
-export const toInvoiceStatusBrand = (status: string): InvoiceStatus => {
+export const toInvoiceStatus = (status: string): InvoiceStatus => {
   if ((INVOICE_STATUSES as readonly string[]).includes(status)) {
     return status as InvoiceStatus;
   }

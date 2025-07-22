@@ -10,13 +10,11 @@ import {
   fetchInvoicesPagesDal,
   fetchLatestInvoices,
 } from "@/features/invoices/invoice.dal";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { CreateInvoiceSchema } from "@/features/invoices/invoice.schemas";
 import { InvoiceService } from "@/features/invoices/invoice.service";
 import type {
-  InvoiceActionResultGeneric,
-  InvoiceFieldName,
+  InvoiceActionResult,
   InvoiceTableRow,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
@@ -30,9 +28,9 @@ import { logger } from "@/lib/utils/logger";
  * @returns InvoiceActionResultGeneric with data, errors, message, and success
  */
 export async function createInvoiceAction(
-  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResult,
   formData: FormData,
-): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResult> {
   try {
     const parsed = CreateInvoiceSchema.safeParse({
       amount: formData.get("amount"),
@@ -51,7 +49,7 @@ export async function createInvoiceAction(
 
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const invoice = await service.createInvoiceService(formData);
+    const invoice = await service.createInvoice(formData);
 
     return {
       data: invoice,
@@ -65,6 +63,16 @@ export async function createInvoiceAction(
       error,
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
+
+    if (error instanceof z.ZodError) {
+      return {
+        ...prevState,
+        errors: z.flattenError(error).fieldErrors,
+        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+        success: false,
+      };
+    }
+
     return {
       ...prevState,
       errors: {},
@@ -80,15 +88,15 @@ export async function createInvoiceAction(
 /**
  * Server action to fetch a single invoice by its ID.
  * @param id - The invoice ID (string)
- * @returns An InvoiceActionResultGeneric with data, errors, message, and success
+ * @returns An InvoiceActionResult with data, errors, message, and success
  */
 export async function readInvoiceAction(
   id: string,
-): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResult> {
   try {
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const invoice = await service.readInvoiceService(id);
+    const invoice = await service.readInvoice(id);
 
     return {
       data: invoice,
@@ -119,32 +127,17 @@ export async function readInvoiceAction(
  * @param prevState - Previous form state
  * @param id - Invoice ID as a string
  * @param formData - FormData from the client
- * @returns InvoiceActionResultGeneric with data, errors, message, and success
+ * @returns InvoiceActionResult with data, errors, message, and success
  */
 export async function updateInvoiceAction(
-  prevState: InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>,
+  prevState: InvoiceActionResult,
   id: string,
   formData: FormData,
-): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResult> {
   try {
-    const parsed = CreateInvoiceSchema.safeParse({
-      amount: formData.get("amount"),
-      customerId: formData.get("customerId"),
-      sensitiveData: formData.get("sensitiveData"),
-      status: formData.get("status"),
-    });
-    if (!parsed.success) {
-      return {
-        ...prevState,
-        errors: z.flattenError(parsed.error).fieldErrors,
-        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      };
-    }
-
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const updatedInvoice = await service.updateInvoiceService(id, formData);
+    const updatedInvoice = await service.updateInvoice(id, formData);
 
     return {
       data: updatedInvoice,
@@ -181,11 +174,11 @@ export async function updateInvoiceAction(
  */
 export async function deleteInvoiceAction(
   id: string,
-): Promise<InvoiceActionResultGeneric<InvoiceFieldName, InvoiceDto>> {
+): Promise<InvoiceActionResult> {
   try {
     const repo = new InvoiceRepository(getDB());
     const service = new InvoiceService(repo);
-    const invoice = await service.deleteInvoiceService(id);
+    const invoice = await service.deleteInvoice(id);
 
     return {
       data: invoice,
