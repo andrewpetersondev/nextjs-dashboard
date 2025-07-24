@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DenoSettings">
+    <option name="enableFormatting" value="false" />
     <option name="useDenoValue" value="DISABLE" />
   </component>
 </project>

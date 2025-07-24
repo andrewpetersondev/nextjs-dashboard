@@ -1,5 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server Debugging 9230" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" focusToolWindowBeforeRun="true" port="9230">
-    <method v="2" />
-  </configuration>
-</component>
