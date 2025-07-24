@@ -1,16 +1,43 @@
 "use server";
 
 import { getDB } from "@/db/connection";
-import { fetchDashboardCardData } from "@/features/data/data.dal";
-import type { DashboardCardData } from "@/features/data/data.types";
-
-// TODO: THIS FILE SHOULD BE TEMPORARY AND REPLACED WITH A BETTER SOLUTION
+import { fetchTotalCustomersCountDal } from "@/features/customers/customer.dal";
+import type { DashboardData } from "@/features/data/data.types";
+import {
+  fetchLatestInvoicesDal,
+  fetchTotalInvoicesCountDal,
+  fetchTotalPaidInvoicesDal,
+  fetchTotalPendingInvoicesDal,
+} from "@/features/invoices/invoice.dal";
+import { formatCurrency } from "@/lib/utils/utils";
 
 /**
- * Server action to fetch dashboard card data.
- * @returns CardData object for dashboard cards.
+ * Server action to fetch all dashboard data including cards and latest invoices.
  */
-export async function readCardDataAction(): Promise<DashboardCardData> {
+export async function readDashboardDataAction(): Promise<DashboardData> {
   const db = getDB();
-  return fetchDashboardCardData(db);
+
+  const [
+    invoicesCount,
+    totalPending,
+    totalPaid,
+    totalCustomers,
+    latestInvoices,
+  ] = await Promise.all([
+    fetchTotalInvoicesCountDal(db),
+    fetchTotalPendingInvoicesDal(db),
+    fetchTotalPaidInvoicesDal(db),
+    fetchTotalCustomersCountDal(db),
+    fetchLatestInvoicesDal(db),
+  ]);
+
+  return {
+    cards: {
+      totalCustomers,
+      totalInvoices: invoicesCount,
+      totalPaid: formatCurrency(totalPaid),
+      totalPending: formatCurrency(totalPending),
+    },
+    latestInvoices,
+  };
 }

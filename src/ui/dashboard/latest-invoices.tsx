@@ -2,16 +2,21 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import { readLatestInvoicesAction } from "@/features/invoices/invoice.actions";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
+import { formatCurrency } from "@/lib/utils/utils";
 import { H2, H3 } from "@/ui/headings";
 
+interface LatestInvoicesProps {
+  readonly latestInvoices: readonly InvoiceListFilter[];
+}
+
 /**
- * LatestInvoices component.
- * Fetches the latest invoices using a server action and renders the list.
+ * Latest invoices component with updated invoice schema support.
+ * Displays recent invoices with customer information and formatted amounts.
  */
-export async function LatestInvoices(): Promise<JSX.Element> {
-  // Fetch data via server action for decoupling and testability
-  const latestInvoices = await readLatestInvoicesAction();
+export async function LatestInvoices({
+  latestInvoices,
+}: LatestInvoicesProps): Promise<JSX.Element> {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <H2 className="mb-4">Latest Invoices</H2>
@@ -33,7 +38,7 @@ export async function LatestInvoices(): Promise<JSX.Element> {
                     alt={`${invoice.name}'s profile picture`}
                     className="mr-4 rounded-full"
                     height={32}
-                    src={invoice.imageUrl || "/default-avatar.png"}
+                    src={invoice.imageUrl}
                     width={32}
                   />
                   <div className="min-w-0">
@@ -46,7 +51,7 @@ export async function LatestInvoices(): Promise<JSX.Element> {
                   </div>
                 </div>
                 <p className="truncate font-medium text-sm text-text-secondary md:text-base">
-                  {invoice.amount}
+                  {formatCurrency(invoice.amount)}
                 </p>
               </div>
             );

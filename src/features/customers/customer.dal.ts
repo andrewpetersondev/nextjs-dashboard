@@ -3,7 +3,7 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
-import { DatabaseError } from "@/errors/errors";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   CustomerField,
   CustomerSelectDbRow,
@@ -86,4 +86,22 @@ export async function fetchFilteredCustomers(
       error,
     );
   }
+}
+
+/**
+ * Fetches the total number of customers.
+ * @param db - Drizzle database instance
+ * @returns Total number of customers
+ */
+export async function fetchTotalCustomersCountDal(db: Database) {
+  const rows = await db
+    .select({ value: count(customers.id) })
+    .from(customers)
+    .then((rows) => rows[0]?.value ?? 0);
+
+  if (rows === undefined) {
+    throw new ValidationError(CUSTOMER_ERROR_MESSAGES.FETCH_TOTAL_FAILED);
+  }
+
+  return rows;
 }

@@ -11,7 +11,10 @@ import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
-import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import {
+  DATA_ERROR_MESSAGES,
+  INVOICE_ERROR_MESSAGES,
+} from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
 
 /**
@@ -322,4 +325,56 @@ export async function fetchInvoicesPagesDal(
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return Math.max(totalPages, 1);
+}
+
+/**
+ * Fetches the total number of invoices.
+ * @param db - Drizzle database instance
+ * @returns Total number of invoices as a number.
+ */
+export async function fetchTotalInvoicesCountDal(
+  db: Database,
+): Promise<number> {
+  try {
+    const [result] = await db
+      .select({ value: count(invoices.id) })
+      .from(invoices);
+    return result?.value ?? 0;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new DatabaseError(
+      DATA_ERROR_MESSAGES.ERROR_FETCH_DASHBOARD_CARDS,
+      error,
+    );
+  }
+}
+
+export async function fetchTotalPaidInvoicesDal(db: Database): Promise<number> {
+  const paid = await db
+    .select({ value: sql<number>`sum(${invoices.amount})` })
+    .from(invoices)
+    .where(eq(invoices.status, "paid"))
+    .then((rows) => rows[0]?.value ?? 0);
+
+  if (paid === undefined) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PAID_FAILED);
+  }
+
+  return paid;
+}
+
+export async function fetchTotalPendingInvoicesDal(
+  db: Database,
+): Promise<number> {
+  const pending = await db
+    .select({ value: sql<number>`sum(${invoices.amount})` })
+    .from(invoices)
+    .where(eq(invoices.status, "pending"))
+    .then((rows) => rows[0]?.value ?? 0);
+
+  if (pending === undefined) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PENDING_FAILED);
+  }
+
+  return pending;
 }

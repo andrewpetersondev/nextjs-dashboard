@@ -16,7 +16,7 @@ const SIDENAV_WRAPPER_CLASS = "w-full flex-none md:w-64";
 const MAIN_CONTENT_CLASS = "grow p-6 md:overflow-y-auto md:p-12";
 
 interface LayoutProps {
-  children: ReactNode;
+  readonly children: ReactNode;
 }
 
 /**
@@ -30,9 +30,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <aside aria-label="Sidebar Navigation" className={SIDENAV_WRAPPER_CLASS}>
         <SideNav />
       </aside>
-      <section className={MAIN_CONTENT_CLASS} tabIndex={-1}>
+      <main className={MAIN_CONTENT_CLASS} tabIndex={-1}>
         {children}
-      </section>
+      </main>
     </section>
   );
 };

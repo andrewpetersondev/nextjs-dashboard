@@ -39,6 +39,11 @@
 - Implement a clean architecture with layers for database, data access layer, repositories, services, actions, and more.
 - Use dependency injection for better testability and flexibility, but I do not know what that is so explain it.
 
+### User Interface (Next.js App Router)
+
+- Use best practices for Next.js App Router.
+- Prefer fetching data in server components and page.tsx files rather than in client components.
+
 ## Error Handling & Logging
 
 - Log errors with sufficient context for debugging, without exposing sensitive data.

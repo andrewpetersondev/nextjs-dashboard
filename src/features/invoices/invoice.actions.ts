@@ -8,7 +8,6 @@ import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
-  fetchLatestInvoicesDal,
 } from "@/features/invoices/invoice.dal";
 import type {
   InvoiceDto,
@@ -356,13 +355,4 @@ export async function readFilteredInvoicesAction(
 ): Promise<InvoiceListFilter[]> {
   const db = getDB();
   return fetchFilteredInvoicesDal(db, query, currentPage);
-}
-
-/**
- * Server action to fetch the latest invoices for the dashboard.
- * @returns Array of InvoiceListFilter
- */
-export async function readLatestInvoicesAction(): Promise<InvoiceListFilter[]> {
-  const db = getDB();
-  return fetchLatestInvoicesDal(db);
 }

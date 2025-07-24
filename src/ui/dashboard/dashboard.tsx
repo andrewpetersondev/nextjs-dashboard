@@ -1,6 +1,6 @@
 import { type JSX, Suspense } from "react";
-import { readCardDataAction } from "@/features/data/data.actions";
 import type { DashboardCardData } from "@/features/data/data.types";
+import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/ui/dashboard/revenue-chart";
@@ -11,14 +11,10 @@ import {
   RevenueChartSkeleton,
 } from "@/ui/skeletons";
 
-/**
- * Props for the Dashboard component.
- */
 interface DashboardProps {
-  /**
-   * The dashboard title to display.
-   */
-  title: string;
+  readonly dashboardCardData: DashboardCardData;
+  readonly latestInvoices: InvoiceListFilter[];
+  readonly title: string;
 }
 
 /**
@@ -28,10 +24,10 @@ interface DashboardProps {
  * @returns The dashboard JSX element.
  */
 export const Dashboard = async ({
+  dashboardCardData,
+  latestInvoices,
   title,
 }: DashboardProps): Promise<JSX.Element> => {
-  // Fetch card data with strict typing.
-  const dashboardCardData: DashboardCardData = await readCardDataAction();
   return (
     <section>
       <H1 className="mb-4">{title}</H1>
@@ -46,7 +42,7 @@ export const Dashboard = async ({
           <RevenueChart />
         </Suspense>
         <Suspense fallback={<LatestInvoicesSkeleton />}>
-          <LatestInvoices />
+          <LatestInvoices latestInvoices={latestInvoices} />
         </Suspense>
       </div>
     </section>

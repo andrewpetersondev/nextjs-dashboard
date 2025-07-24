@@ -12,6 +12,10 @@ export const INVOICE_ERROR_MESSAGES = {
   FETCH_FILTERED_FAILED: "Failed to fetch filtered invoices.",
   FETCH_LATEST_FAILED: "Failed to fetch the latest invoices.",
   FETCH_PAGES_FAILED: "Failed to fetch the total number of invoice pages.",
+  FETCH_TOTAL_PAID_FAILED:
+    "Failed to fetch the total amount of pending invoices.",
+  FETCH_TOTAL_PENDING_FAILED:
+    "Failed to fetch the total amount of pending invoices.",
   INVALID_ID: "Invalid invoice ID provided.",
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
   MAPPING_FAILED: "Failed to map invoice data.",
@@ -51,6 +55,14 @@ export const DATA_ERROR_MESSAGES = {
   ERROR_FETCH_DASHBOARD_CARDS: "Failed to fetch dashboard cards.",
   ERROR_FETCH_LATEST_INVOICES: "Failed to fetch latest invoices.",
   ERROR_FETCH_REVENUE: "Failed to fetch revenue data.",
+  ERROR_FETCH_TOTAL_CUSTOMERS: "Failed to fetch total customers.",
+  ERROR_FETCH_TOTAL_INVOICES_COUNT: "Failed to fetch total invoices count.",
+  ERROR_FETCH_TOTAL_INVOICES_PAGES: "Failed to fetch total invoice pages.",
+  ERROR_FETCH_TOTAL_REVENUE: "Failed to fetch total revenue.",
+  ERROR_FETCH_TOTAL_USERS: "Failed to fetch total users.",
+  ERROR_INVALID_INPUT: "Invalid input. Please check your data.",
+  ERROR_UNEXPECTED: "An unexpected error occurred. Please try again later.",
+  ERROR_VALIDATION_FAILED: "Validation failed. Please check your data.",
 };
 
 export const CUSTOMER_ERROR_MESSAGES = {
@@ -58,6 +70,9 @@ export const CUSTOMER_ERROR_MESSAGES = {
   DELETE_FAILED: "Failed to delete customer.",
   FETCH_ALL_FAILED: "Failed to fetch all customers.",
   FETCH_FILTERED_FAILED: "Failed to fetch filtered customers.",
+  FETCH_LATEST_FAILED: "Failed to fetch latest customers.",
+  FETCH_PAGES_FAILED: "Failed to fetch total number of customer pages.",
+  FETCH_TOTAL_FAILED: "Failed to fetch total customers.",
   INVALID_INPUT: "Invalid input. Please check your data.",
   NOT_FOUND: "Customer not found.",
   READ_FAILED: "Failed to read customer.",

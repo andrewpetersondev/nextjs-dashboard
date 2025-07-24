@@ -1,52 +1,49 @@
 import type { JSX } from "react";
+import { readDashboardDataAction } from "@/features/data/data.actions";
 import { verifySessionOptimistic } from "@/features/sessions/session.service";
-import type { SessionVerificationResult } from "@/features/sessions/session.types";
 import type { UserRole } from "@/features/users/user.types";
 import { DASHBOARD_TITLES } from "@/lib/constants/ui.constants";
 import { getValidUserRole } from "@/lib/utils/utils.server";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 
-// Force this page to be dynamic to prevent build-time caching
 export const dynamic = "force-dynamic";
 
 /**
- * Overview dashboard page.
- * Renders the appropriate dashboard based on a user role.
- * @returns The dashboard page.
+ * Overview dashboard page with updated invoice integration.
+ * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-  const session: SessionVerificationResult = await verifySessionOptimistic();
+  const [session, dashboardData] = await Promise.all([
+    verifySessionOptimistic(),
+    readDashboardDataAction(),
+  ]);
+
   const role: UserRole = getValidUserRole(session?.role);
 
-  if (role === "admin") {
-    return (
-      <main>
-        <MiddlewareCard />
-        <Dashboard title={DASHBOARD_TITLES.ADMIN} />
-      </main>
-    );
+  const commonContent = (
+    <main>
+      <MiddlewareCard />
+      <Dashboard
+        dashboardCardData={dashboardData.cards}
+        latestInvoices={dashboardData.latestInvoices}
+        title={
+          role === "admin"
+            ? DASHBOARD_TITLES.ADMIN
+            : role === "user"
+              ? DASHBOARD_TITLES.USER
+              : role === "guest"
+                ? DASHBOARD_TITLES.GUEST
+                : "Dashboard"
+        }
+      />
+    </main>
+  );
+
+  if (["admin", "user", "guest"].includes(role)) {
+    return commonContent;
   }
 
-  if (role === "user") {
-    return (
-      <main>
-        <MiddlewareCard />
-        <Dashboard title={DASHBOARD_TITLES.USER} />
-      </main>
-    );
-  }
-
-  if (role === "guest") {
-    return (
-      <main>
-        <MiddlewareCard />
-        <Dashboard title={DASHBOARD_TITLES.GUEST} />
-      </main>
-    );
-  }
-
-  // Fallback for unknown roles (defensive programming)
   return (
     <main>
       <MiddlewareCard />
