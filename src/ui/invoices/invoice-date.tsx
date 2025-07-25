@@ -1,10 +1,10 @@
 import type { InputHTMLAttributes, JSX } from "react";
 
 /**
- * Uncontrolled date input for now.
+ * Uncontrolled date input component for invoice forms.
  *
  * @remarks
- * change to controlled input. need to add onChange handler.
+ * Currently uncontrolled - consider changing to controlled input with onChange handler.
  */
 interface InvoiceDateProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
@@ -12,6 +12,10 @@ interface InvoiceDateProps
   label?: string;
 }
 
+/**
+ * Date input component that follows the invoice form design system.
+ * Provides consistent styling with other form components.
+ */
 export function InvoiceDate({
   value,
   defaultValue,
@@ -24,11 +28,13 @@ export function InvoiceDate({
   ...rest
 }: InvoiceDateProps): JSX.Element {
   return (
-    <div className="my-4 bg-bg-secondary p-4">
-      <label htmlFor={id}>{label}</label>
-      <div className="m-1 flex items-center justify-between rounded-md border-4 border-bg-accent">
+    <div className="mb-4">
+      <label className="block font-medium text-sm" htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative mt-2 rounded-md">
         <input
-          className="flex-1 justify-between p-2"
+          className="block w-full rounded-md border-0 px-4 py-2 text-text-primary outline-2 ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm"
           defaultValue={defaultValue}
           id={id}
           max={max}

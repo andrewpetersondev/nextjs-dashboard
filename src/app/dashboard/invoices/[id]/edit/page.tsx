@@ -49,11 +49,7 @@ export default async function Page(
           },
         ]}
       />
-      <H1>edit invoice</H1>
-
-      <section>
-        <p>Edit some stuff.</p>
-      </section>
+      <H1 className="mb-4">edit invoice</H1>
 
       <EditInvoiceForm customers={customers} invoice={invoice} />
     </main>

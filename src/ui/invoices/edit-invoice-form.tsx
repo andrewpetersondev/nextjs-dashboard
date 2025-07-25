@@ -12,6 +12,7 @@ import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceDate } from "@/ui/invoices/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
+import { SensitiveData } from "@/ui/invoices/sensitve-data";
 import { ServerMessage } from "@/ui/users/server-message";
 
 export const EditInvoiceForm = ({
@@ -62,39 +63,11 @@ export const EditInvoiceForm = ({
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
           <InvoiceDate defaultValue={currentInvoice.date} />
-          <div>
-            <label htmlFor="start">Start date:</label>
-            <input
-              id="start"
-              max="2029-12-31"
-              min="2024-01-01"
-              name="trip-start"
-              required={true}
-              type="date"
-              value="2025-07-22"
-            />
-          </div>
 
-          {/* Sensitive Data */}
-          <div className="mb-4">
-            <Label htmlFor="sensitiveData" text="Sensitive Data" />
-            <input
-              aria-label="Sensitive Data"
-              autoComplete="off"
-              className="w-full rounded border px-3 py-2"
-              data-cy="sensitive-data-input"
-              defaultValue={currentInvoice.sensitiveData}
-              disabled={pending}
-              id="sensitiveData"
-              name="sensitiveData"
-              type="text"
-            />
-            {state.errors?.sensitiveData && (
-              <div className="text-red-600" role="alert">
-                {state.errors.sensitiveData.join(", ")}
-              </div>
-            )}
-          </div>
+          <SensitiveData
+            disabled={pending}
+            error={state.errors?.sensitiveData}
+          />
 
           {/* Customer */}
           <div className="mb-4">

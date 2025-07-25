@@ -13,6 +13,7 @@ import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceDate } from "@/ui/invoices/invoice-date";
 import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
+import { SensitiveData } from "@/ui/invoices/sensitve-data";
 
 export const CreateInvoiceForm = ({
   customers,
@@ -46,47 +47,14 @@ export const CreateInvoiceForm = ({
   return (
     <section>
       <form action={action}>
-        <InvoiceDate defaultValue={getCurrentIsoDate()} />
-        <div className=" my-4 bg-bg-secondary p-4">
-          <label className="" htmlFor="date">
-            Date
-          </label>
-          <div className="m-1 flex items-center justify-between rounded-md border-4 border-bg-accent">
-            <input
-              className="flex-1 justify-between p-2"
-              defaultValue={getCurrentIsoDate()}
-              id="date"
-              max="2029-12-31"
-              min="2020-01-01"
-              name="date"
-              required
-              type="date"
-            />
-          </div>
-        </div>
-
-        {/* Sensitive Data */}
-        <div className="mb-4">
-          <Label htmlFor="sensitiveData" text="Sensitive Data" />
-          <input
-            aria-label="Sensitive Data"
-            autoComplete="off"
-            className="w-full rounded border px-3 py-2"
-            data-cy="sensitive-data-input"
-            defaultValue={"you suck"}
-            disabled={pending}
-            id="sensitiveData"
-            name="sensitiveData"
-            type="text"
-          />
-          {state.errors?.sensitiveData && (
-            <div className="text-red-600" role="alert">
-              {state.errors.sensitiveData.join(", ")}
-            </div>
-          )}
-        </div>
-
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+          <InvoiceDate defaultValue={getCurrentIsoDate()} />
+
+          <SensitiveData
+            disabled={pending}
+            error={state.errors?.sensitiveData}
+          />
+
           <div className="mb-4">
             <Label htmlFor="customer" text="Choose customer" />
             <CustomerSelect
