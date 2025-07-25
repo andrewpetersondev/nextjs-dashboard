@@ -10,21 +10,7 @@ import {
   entityToSimpleDto,
 } from "@/features/revenues/revenue.mapper";
 import { RevenueService } from "@/features/revenues/revenue.service";
-
-const monthOrder: string[] = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+import { MONTH_ORDER, type MonthName } from "@/features/revenues/revenue.types";
 
 export async function fetchRevenue(
   db: Database,
@@ -37,7 +23,9 @@ export async function fetchRevenue(
     const revenueEntities = await revenueService.getRevenueForYear(targetYear);
 
     const sortedRevenue = revenueEntities.sort(
-      (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
+      (a, b) =>
+        MONTH_ORDER.indexOf(a.month as MonthName) -
+        MONTH_ORDER.indexOf(b.month as MonthName),
     );
 
     return sortedRevenue.map(entityToDto);
@@ -58,7 +46,9 @@ export async function fetchSimpleRevenue(
     const revenueEntities = await revenueService.getRevenueForYear(targetYear);
 
     const sortedRevenue = revenueEntities.sort(
-      (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
+      (a, b) =>
+        MONTH_ORDER.indexOf(a.month as MonthName) -
+        MONTH_ORDER.indexOf(b.month as MonthName),
     );
 
     return sortedRevenue.map(entityToSimpleDto);
@@ -80,7 +70,9 @@ export async function recalculateRevenue(
       await revenueService.recalculateRevenueForYear(targetYear);
 
     const sortedRevenue = revenueEntities.sort(
-      (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month),
+      (a, b) =>
+        MONTH_ORDER.indexOf(a.month as MonthName) -
+        MONTH_ORDER.indexOf(b.month as MonthName),
     );
 
     return sortedRevenue.map(entityToDto);

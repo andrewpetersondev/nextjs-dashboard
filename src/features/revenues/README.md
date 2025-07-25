@@ -22,73 +22,210 @@ The Revenue Management feature provides dynamic revenue calculation and tracking
 
 ## Architecture Overview
 
-The revenue feature follows a clean architecture pattern with clear separation of concerns:
+The revenue feature follows a clean architecture pattern with clear separation of concerns and proper dependency flow:
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   UI Layer      │    │  Data Access    │    │   Database      │
-│   (Dashboard)   │◄──►│     Layer       │◄──►│    Tables       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-│
 ┌─────────────────┐
+│   UI Layer      │
+│ (Client/Server  │
+│  Components)    │
+└─────────┬───────┘
+│
+┌─────────▼───────┐
+│  Actions Layer  │
+│ (Server Actions │
+│ & Validation)   │
+└─────────┬───────┘
+│
+┌─────────▼───────┐
 │  Service Layer  │
-│   (Business     │
-│     Logic)      │
-└─────────────────┘
+│  (Business      │
+│   Logic)        │
+└─────────┬───────┘
 │
-┌─────────────────┐
+┌─────────▼───────┐
 │  Repository     │
 │     Layer       │
+└─────────┬───────┘
+│
+┌─────────▼───────┐
+│   Database      │
 └─────────────────┘
 ```
+
+### Layer Responsibilities
+
+**UI Layer**: React components (client and server) that handle user interaction and display. Never directly accesses lower layers.
+
+**Actions Layer**: Next.js Server Actions that handle input validation, error boundaries, and coordinate between UI and business logic. Provides type-safe client-server communication.
+
+**Service Layer**: Core business logic for revenue calculations, caching strategies, and domain rules. Pure business logic with no framework dependencies.
+
+**Repository Layer**: Data access abstraction that handles database operations. Isolated from business logic concerns.
+
+**Database Layer**: PostgreSQL tables and queries. Only accessed through the Repository layer.
 
 ## Core Components
 
-### 1. Data Access Layer (`revenue.dal.ts`)
-**Purpose**: Primary interface for UI components to fetch revenue data
-- `fetchRevenue()` - Get full revenue data with metadata
-- `fetchSimpleRevenue()` - Get simplified data for charts
-- `recalculateRevenue()` - Force fresh calculations
+### 1. Actions Layer (`revenue.actions.ts`)
+**Purpose**: Server Actions providing validated entry points for UI interactions
+
+```typescript
+// Key functions
+- getRevenueAction() - Validated revenue fetching with error handling
+- recalculateRevenueAction() - Force recalculation with cache invalidation
+```
+
+**Features**:
+- Input validation using Zod schemas
+- Consistent error response formatting
+- Next.js cache revalidation
+- Type-safe client-server communication
 
 ### 2. Service Layer (`revenue.service.ts`)
 **Purpose**: Business logic for revenue calculations and caching
-- `getRevenueForYear()` - Smart caching: check database first, calculate if needed
-- `calculateMonthlyRevenue()` - Core invoice aggregation logic
-- `recalculateRevenueForYear()` - Fresh calculation with cache invalidation
+
+```typescript
+// Core business methods
+- getRevenueForYear() - Smart caching: check database first, calculate if needed
+- calculateMonthlyRevenue() - Core invoice aggregation logic
+- recalculateRevenueForYear() - Fresh calculation with cache invalidation
+```
+
+**Features**:
+- Pure business logic with no framework dependencies
+- Intelligent caching strategies
+- Domain-specific validation and rules
 
 ### 3. Repository Layer (`revenue.repository.ts`)
 **Purpose**: Direct database operations for revenue table
+
+```typescript
+// Database operations
+- findByYear() - Retrieve cached revenue data
+- save() - Store calculated revenue
+- deleteByYear() - Clear cached data for recalculation
+```
+
+**Features**:
 - CRUD operations for stored revenue records
 - Year-based filtering for efficient queries
 - Clean separation from business logic
+- Database-specific optimizations
 
 ### 4. Mapping Layer (`revenue.mapper.ts`)
 **Purpose**: Data transformation between layers
-- `entityToDomain()` - Database entities to domain objects
-- `domainToDto()` - Domain objects to client DTOs
-- `invoiceDataToRevenue()` - Raw invoice data to revenue objects
+
+```typescript
+// Transformation functions
+- entityToDomain() - Database entities to domain objects
+- domainToDto() - Domain objects to client DTOs
+- invoiceDataToRevenue() - Raw invoice data to revenue objects
+```
+
+### 5. Data Access Layer (`revenue.dal.ts`) - **Deprecated**
+**Status**: Legacy component being phased out
+- Previously provided direct database access to UI
+- **Migration Path**: Move functionality to Actions and Service layers
+- **Current State**: Maintained for backward compatibility only
 
 ## Data Flow
 
-### Initial Revenue Request
-1. **UI Request** → `fetchRevenue(db, year)`
-2. **Cache Check** → `RevenueService.getRevenueForYear()`
-3. **Database Query** → `RevenueRepository.findByYear()`
-4. **If No Data** → Calculate from invoices → Store in database
-5. **Return** → Sorted and mapped revenue data
+### Modern Architecture Flow (Recommended)
+1. **UI Request** → Server Action (`getRevenueAction`)
+2. **Input Validation** → Zod schema validation
+3. **Business Logic** → `RevenueService.getRevenueForYear()`
+4. **Cache Check** → `RevenueRepository.findByYear()`
+5. **If No Data** → Calculate from invoices → Store in database
+6. **Response** → Validated DTO returned to UI
+7. **Error Handling** → Structured error responses
 
 ### Invoice-Based Calculation
+When cached data is unavailable, the system calculates revenue from invoices:
+
 ```sql
--- Core aggregation query
-SELECT 
+SELECT
   COUNT(invoices.id) as invoiceCount,
   TO_CHAR(invoices.date, 'Mon') as month,
   SUM(invoices.amount)::integer as revenue,
   EXTRACT(YEAR FROM invoices.date)::integer as year
-FROM invoices 
+FROM invoices
 WHERE invoices.date >= ? AND invoices.date <= ?
 GROUP BY EXTRACT(MONTH FROM invoices.date), TO_CHAR(invoices.date, 'Mon')
 ORDER BY EXTRACT(MONTH FROM invoices.date)
+```
+
+## Usage Examples
+
+### Server Component Usage
+```typescript
+// In a server component
+async function RevenuePageComponent({ year }: { year?: number }) {
+  const result = await getRevenueAction(db, { year });
+  
+  if (!result.success) {
+    return <ErrorDisplay message={result.error} />;
+  }
+  
+  return <RevenueChart data={result.data} />;
+}
+```
+
+### Client Component with Form
+```typescript
+// In a client component with form submission
+function RecalculateRevenueForm() {
+  const [isPending, startTransition] = useTransition();
+  
+  const handleSubmit = (formData: FormData) => {
+    startTransition(async () => {
+      const year = Number(formData.get("year"));
+      const result = await recalculateRevenueAction(db, { year });
+      
+      if (!result.success) {
+        toast.error(result.error);
+      } else {
+        toast.success("Revenue recalculated successfully");
+      }
+    });
+  };
+  
+  return (
+    <form action={handleSubmit}>
+      <input name="year" type="number" required />
+      <button disabled={isPending}>
+        {isPending ? "Recalculating..." : "Recalculate"}
+      </button>
+    </form>
+  );
+}
+```
+
+## Migration Guidelines
+
+### From DAL to Actions Pattern
+
+**Before (Legacy DAL Usage):**
+```typescript
+// In UI component - NOT RECOMMENDED
+const revenue = await fetchRevenue(db, 2024);
+```
+
+**After (Actions Pattern):**
+```typescript
+// In Server Component
+const result = await getRevenueAction(db, { year: 2024 });
+if (!result.success) {
+  return <ErrorDisplay message={result.error} />;
+}
+return <RevenueChart data={result.data} />;
+
+// In Client Component with form
+const handleRecalculate = async (formData: FormData) => {
+  const year = Number(formData.get("year"));
+  const result = await recalculateRevenueAction(db, { year });
+  // Handle result...
+};
 ```
 
 ## Key Features
@@ -96,7 +233,7 @@ ORDER BY EXTRACT(MONTH FROM invoices.date)
 ### Smart Caching Strategy
 - **First Request**: Calculate from invoices, store in database
 - **Subsequent Requests**: Retrieve from database for fast response
-- **Manual Refresh**: `recalculateRevenue()` for fresh data
+- **Manual Refresh**: `recalculateRevenueAction()` for fresh data
 - **Automatic Metadata**: Track calculation source and timestamp
 
 ### Invoice Integration
@@ -106,8 +243,24 @@ ORDER BY EXTRACT(MONTH FROM invoices.date)
 
 ### Data Consistency
 - **Branded Types**: `RevenueId` ensures type safety across layers
-- **Validation**: Comprehensive error handling with context
+- **Input Validation**: Zod schemas prevent invalid data from reaching business logic
 - **Audit Trail**: Track calculation source, date, and metadata
+
+## Benefits of Updated Architecture
+
+**1. Input Validation**: Centralized validation prevents invalid data from reaching business logic
+
+**2. Error Boundaries**: Consistent error handling across all revenue operations
+
+**3. Type Safety**: Strong typing between client/server boundaries with Zod schemas
+
+**4. Cache Management**: Automatic Next.js cache revalidation
+
+**5. Security**: Server-side validation and sanitization
+
+**6. Testability**: Each layer can be unit tested independently
+
+**7. Framework Isolation**: Business logic remains pure and framework-agnostic
 
 ## Performance Considerations
 
@@ -121,33 +274,42 @@ ORDER BY EXTRACT(MONTH FROM invoices.date)
 - **Selective Recalculation**: Only recalculate when explicitly requested
 - **Memory Efficient**: Uses database as cache storage
 
-## Usage Examples
-
-### Basic Revenue Fetching
-```typescript
-// Get current year revenue
-const currentYearRevenue = await fetchRevenue(db);
-
-// Get specific year revenue
-const revenue2024 = await fetchRevenue(db, 2024);
-
-// Get simple data for charts
-const chartData = await fetchSimpleRevenue(db, 2024);
-```
-
-### Force Recalculation
-```typescript
-// Recalculate after invoice changes
-const freshRevenue = await recalculateRevenue(db, 2024);
-```
-
 ## Error Handling
 
 The system implements comprehensive error handling:
-- **Validation Errors**: Invalid year or date parameters
-- **Database Errors**: Connection issues or query failures
-- **Calculation Errors**: Invoice data inconsistencies
-- **Context Preservation**: Detailed error messages for debugging
+
+### Input Validation Errors
+```typescript
+// Zod schema validation
+const GetRevenueSchema = z.object({
+  year: z.number().int().min(2000).max(2100).optional(),
+});
+```
+
+### Structured Error Responses
+```typescript
+type ActionResult<T> =
+  | { success: true; data: T }
+  | { success: false; error: string };
+```
+
+### Context Preservation
+- Detailed error messages for debugging
+- Error boundary integration with React components
+- Structured logging for server errors
+
+## Testing Strategy
+
+### Unit Testing
+- **Actions Layer**: Test input validation and error handling
+- **Service Layer**: Test business logic in isolation
+- **Repository Layer**: Test database operations with mocks
+- **Mapper Layer**: Test data transformations
+
+### Integration Testing
+- End-to-end revenue calculation flow
+- Cache invalidation behavior
+- Error propagation through layers
 
 ## Future Enhancements
 
@@ -170,8 +332,9 @@ The system implements comprehensive error handling:
 
 ### Key Libraries
 - **Drizzle ORM** - Database queries and aggregations
-- **Branded Types** - Type safety for domain objects
-- **Clean Architecture** - Separation of concerns
+- **Zod** - Input validation and type safety
+- **Next.js App Router** - Server Actions and caching
+- **TypeScript** - Type safety across all layers
 
 ## Monitoring & Maintenance
 
@@ -179,8 +342,11 @@ The system implements comprehensive error handling:
 - **Calculation Performance**: Time to calculate monthly revenue
 - **Cache Hit Rate**: Percentage of requests served from cache
 - **Data Accuracy**: Revenue totals vs. invoice sums
+- **Error Rates**: Validation and calculation failures
 
 ### Maintenance Tasks
 - **Periodic Recalculation**: Refresh revenue data for accuracy
 - **Index Monitoring**: Ensure invoice date indexes remain optimal
 - **Storage Cleanup**: Archive old revenue calculations if needed
+- **Performance Monitoring**: Track query execution times
+

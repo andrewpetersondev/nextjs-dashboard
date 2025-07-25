@@ -1,20 +1,38 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import { getDB } from "@/db/connection";
-import { fetchRevenue } from "@/features/revenues/revenue.dal";
+import { getRevenueChartDataAction } from "@/features/revenues/revenue.actions";
 import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
 import { generateYAxis } from "@/lib/utils/utils";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
   const db = getDB();
-  const revenue: SimpleRevenueDto[] = await fetchRevenue(db);
+
+  const result = await getRevenueChartDataAction(db);
+
+  // Handle error state
+  if (!result.success) {
+    return (
+      <div className="w-full md:col-span-4">
+        <H2 className="mb-4">Recent Revenue</H2>
+        <p className="mt-4 text-text-error">{result.error}</p>
+      </div>
+    );
+  }
+
+  const revenue: SimpleRevenueDto[] = result.data;
   const chartHeight = 350;
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);
 
   if (!revenue || revenue.length === 0) {
-    return <p className="mt-4 text-text-error">No data available.</p>;
+    return (
+      <div className="w-full md:col-span-4">
+        <H2 className="mb-4">Recent Revenue</H2>
+        <p className="mt-4 text-text-error">No data available.</p>
+      </div>
+    );
   }
 
   return (

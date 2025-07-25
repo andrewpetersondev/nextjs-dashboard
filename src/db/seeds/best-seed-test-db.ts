@@ -152,9 +152,9 @@ async function main(): Promise<void> {
       count: 6,
       with: {
         invoices: [
-          { count: [1, 2, 3], weight: 0.6 },
+          { count: [1, 2, 3], weight: 0.3 },
           { count: [4, 5], weight: 0.3 },
-          { count: [6, 7, 8], weight: 0.1 },
+          { count: [6, 7, 8], weight: 0.4 },
         ],
       },
     },
@@ -169,23 +169,23 @@ async function main(): Promise<void> {
       columns: {
         amount: f.weightedRandom([
           {
-            value: f.default({ defaultValue: 1000 }), // For the first record
-            weight: 1 / 15,
+            value: f.default({ defaultValue: 100000 }), // For the first record
+            weight: 5 / 15,
           },
           {
-            value: f.int({ maxValue: 10000, minValue: 100 }), // For remaining records
-            weight: 14 / 15,
+            value: f.int({ maxValue: 1000000, minValue: 10000 }), // For remaining records
+            weight: 10 / 15,
           },
         ]),
-        date: f.date({ maxDate: "2025-01-01", minDate: "2024-01-01" }),
+        date: f.date({ maxDate: "2025-07-01", minDate: "2024-01-01" }),
         status: f.valuesFromArray({ values: ["pending", "paid"] }),
       },
-      count: 15,
+      count: 70,
     },
     revenues: {
       columns: {
         month: f.valuesFromArray({ isUnique: true, values: months }),
-        revenue: f.int({ maxValue: 10000, minValue: 100 }),
+        revenue: f.int({ maxValue: 1000000, minValue: 10000 }),
       },
       count: 12,
     },

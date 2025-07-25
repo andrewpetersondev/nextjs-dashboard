@@ -15,7 +15,7 @@ export interface RevenueEntity {
   readonly isCalculated: boolean;
   readonly calculationSource: string;
   readonly calculationDate: Date | null; // timestamp - correct
-  readonly year: number;
+  readonly year: number; // 2023, 2024, etc. - should be number // seed gives it a crazy value like 9999 or -1000344
   readonly startDate: string; // date - should be string 'YYYY-MM-DD'
   readonly endDate: string; // date - should be string 'YYYY-MM-DD'
   readonly createdAt: Date; // timestamp - correct
