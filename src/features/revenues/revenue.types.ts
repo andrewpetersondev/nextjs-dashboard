@@ -1,9 +1,6 @@
-export type Revenue = {
+export type MonthlyData = {
+  invoiceCount: number;
   month: string;
   revenue: number;
-};
-
-export interface YAxisResult {
-  yAxisLabels: string[];
-  topLabel: number;
-}
+  year: number;
+}[];

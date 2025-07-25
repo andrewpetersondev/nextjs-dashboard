@@ -1,13 +1,23 @@
 import "server-only";
 
+import type { RevenueId } from "@/lib/definitions/brands";
+
 /**
  * Represents a revenue entity in the database, defining the structure and properties of a revenue record.
- *  - **Best Practices:**
- *    - All fields are readonly to prevent accidental mutations.
- *    - Use branded types for IDs to ensure type safety.
+ * Updated to remove unused sensitiveData field and align with invoice-calculated revenue.
  */
 export interface RevenueEntity {
-  readonly revenue: number;
+  readonly id: RevenueId;
   readonly month: string;
-  readonly sensitiveData: string;
+  readonly revenue: number;
+  readonly calculatedFromInvoices: number;
+  readonly invoiceCount: number;
+  readonly isCalculated: boolean;
+  readonly calculationSource: string;
+  readonly calculationDate: Date | null; // timestamp - correct
+  readonly year: number;
+  readonly startDate: string; // date - should be string 'YYYY-MM-DD'
+  readonly endDate: string; // date - should be string 'YYYY-MM-DD'
+  readonly createdAt: Date; // timestamp - correct
+  readonly updatedAt: Date; // timestamp - correct
 }

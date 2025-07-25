@@ -17,12 +17,14 @@ export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 export const customerIdBrand = Symbol("CustomerId");
 export const userIdBrand = Symbol("UserId");
 export const invoiceIdBrand = Symbol("InvoiceId");
+export const revenueIdBrand = Symbol("RevenueId");
 export const sessionIdBrand = Symbol("SessionId");
 
 // Branded types
 export type CustomerId = Brand<string, typeof customerIdBrand>;
 export type UserId = Brand<string, typeof userIdBrand>;
 export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
+export type RevenueId = Brand<string, typeof revenueIdBrand>;
 export type SessionId = Brand<string, typeof sessionIdBrand>;
 
 // Consistent validation for all UUID-based IDs
@@ -63,6 +65,11 @@ export const toUserId = (id: string): UserId => {
 export const toInvoiceId = (id: string): InvoiceId => {
   validateUuid(id, "InvoiceId");
   return id as InvoiceId;
+};
+
+export const toRevenueId = (id: string): RevenueId => {
+  validateUuid(id, "RevenueId");
+  return id as RevenueId;
 };
 
 /**

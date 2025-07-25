@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   date,
   integer,
   pgEnum,
@@ -32,23 +33,33 @@ export const TABLES = {
 
 export const COLUMNS = {
   AMOUNT: "amount",
+  CALCULATED_FROM_INVOICES: "calculated_from_invoices",
+  CALCULATION_DATE: "calculation_date",
+  CALCULATION_SOURCE: "calculation_source",
   COUNT: "count",
+  CREATED_AT: "created_at",
   CUSTOMER_ID: "customer_id",
   DATE: "date",
   EMAIL: "email",
+  END_DATE: "end_date",
   EXPIRES_AT: "expires_at",
   ID: "id",
   IMAGE_URL: "image_url",
+  INVOICE_COUNT: "invoice_count",
+  IS_CALCULATED: "is_calculated",
   MONTH: "month",
   NAME: "name",
   PASSWORD: "password",
   REVENUE: "revenue",
   ROLE: "role",
   SENSITIVE_DATA: "sensitive_data",
+  START_DATE: "start_date",
   STATUS: "status",
   TOKEN: "token",
+  UPDATED_AT: "updated_at",
   USER_ID: "user_id",
   USERNAME: "username",
+  YEAR: "year",
 } as const;
 
 /**
@@ -132,12 +143,27 @@ export const invoices = pgTable(TABLES.INVOICES, {
 
 /**
  * Revenues table schema for monthly revenue tracking.
- * Aggregated data for reporting and analytics.
+ * Aggregated data for reporting and analytics with audit trail and metadata.
  */
 export const revenues = pgTable(TABLES.REVENUES, {
+  calculatedFromInvoices: integer("calculated_from_invoices")
+    .notNull()
+    .default(0),
+  calculationDate: timestamp("calculation_date"),
+  calculationSource: varchar("calculation_source", { length: 50 })
+    .notNull()
+    .default("seed"),
+  createdAt: commonFields.timestamps.createdAt(),
+  endDate: date("end_date").notNull(),
+  id: commonFields.id.uuid(),
+  invoiceCount: integer("invoice_count").notNull().default(0),
+  isCalculated: boolean("is_calculated").notNull().default(false),
   month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
   revenue: integer(COLUMNS.REVENUE).notNull(),
   sensitiveData: commonFields.sensitiveData(),
+  startDate: date("start_date").notNull(),
+  updatedAt: commonFields.timestamps.updatedAt(),
+  year: integer("year").notNull().default(new Date().getFullYear()),
 });
 
 /**

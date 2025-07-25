@@ -2,13 +2,13 @@ import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import { getDB } from "@/db/connection";
 import { fetchRevenue } from "@/features/revenues/revenue.dal";
-import type { Revenue } from "@/features/revenues/revenue.types";
+import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
 import { generateYAxis } from "@/lib/utils/utils";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
   const db = getDB();
-  const revenue: Revenue[] = await fetchRevenue(db);
+  const revenue: SimpleRevenueDto[] = await fetchRevenue(db);
   const chartHeight = 350;
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);
@@ -35,7 +35,7 @@ export async function RevenueChart(): Promise<JSX.Element> {
           </div>
 
           {revenue.map(
-            (month: Revenue): JSX.Element => (
+            (month: SimpleRevenueDto): JSX.Element => (
               <div
                 className="flex flex-col items-center gap-2"
                 key={month.month}

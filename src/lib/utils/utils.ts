@@ -1,6 +1,11 @@
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
 
-import type { Revenue, YAxisResult } from "@/features/revenues/revenue.types";
+import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
+
+interface YAxisResult {
+  yAxisLabels: string[];
+  topLabel: number;
+}
 
 export const formatCurrency = (amount: number): string => {
   return (amount / 100).toLocaleString("en-US", {
@@ -26,10 +31,10 @@ export const formatDateToLocal = (
   return formatter.format(date);
 };
 
-export const generateYAxis = (revenue: Revenue[]): YAxisResult => {
+export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
   const yAxisLabels: string[] = [];
   const highestRecord: number = Math.max(
-    ...revenue.map((month: Revenue) => month.revenue),
+    ...revenue.map((month: SimpleRevenueDto) => month.revenue),
   );
   const topLabel: number = Math.ceil(highestRecord / 1000) * 1000;
 
