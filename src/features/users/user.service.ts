@@ -1,10 +1,12 @@
 import {
-  type LoginFormFieldNames,
-  type LoginFormFields,
   LoginFormSchema,
-  type SignupFormFieldNames,
-  type SignupFormFields,
   SignupFormSchema,
+} from "@/features/users/user.schema";
+import type {
+  LoginFormFieldNames,
+  LoginFormFields,
+  SignupFormFieldNames,
+  SignupFormFields,
 } from "@/features/users/user.types";
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";

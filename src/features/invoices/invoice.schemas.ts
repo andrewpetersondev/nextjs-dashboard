@@ -2,17 +2,19 @@ import "server-only";
 
 import * as z from "zod";
 import { INVOICE_STATUSES } from "@/features/invoices/invoice.types";
+import { toCustomerId } from "@/lib/definitions/brands";
 
+// const uuidSchema = z.uuid();
 const amountSchema = z.coerce.number().positive().max(10000);
-export const uuidSchema = z.uuid();
 const isoDateSchema = z.iso.date();
 const sensitiveDataSchema = z.string().min(2);
 const statusSchema = z.enum(INVOICE_STATUSES);
+const customerIdSchema = z.string().transform(toCustomerId);
 
 // Base validation schema - single source of truth
 export const InvoiceBaseSchema = z.object({
   amount: amountSchema,
-  customerId: uuidSchema,
+  customerId: customerIdSchema,
   date: isoDateSchema,
   sensitiveData: sensitiveDataSchema,
   status: statusSchema,

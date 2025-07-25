@@ -8,7 +8,6 @@ import type {
 } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import { DatabaseError, ValidationError } from "@/errors/errors";
-import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import {
@@ -16,6 +15,7 @@ import {
   INVOICE_ERROR_MESSAGES,
 } from "@/lib/constants/error-messages";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
+import type { InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Creates a new invoice in the database.

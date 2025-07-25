@@ -5,15 +5,15 @@ import type {
   InvoiceFormEntity,
 } from "@/db/models/invoice.entity";
 import type { InvoiceRawDrizzle } from "@/db/schema";
-import {
-  toInvoiceId,
-  toInvoiceStatus,
-} from "@/features/invoices/invoice.brands";
 import type {
   InvoiceDto,
   InvoiceFormDto,
 } from "@/features/invoices/invoice.dto";
-import { toCustomerId } from "@/lib/definitions/brands";
+import {
+  toCustomerId,
+  toInvoiceId,
+  toInvoiceStatus,
+} from "@/lib/definitions/brands";
 
 /**
  * Maps raw database row to branded Entity.

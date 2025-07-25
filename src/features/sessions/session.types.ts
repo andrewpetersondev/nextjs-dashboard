@@ -1,5 +1,6 @@
 import * as z from "zod";
-import { roleSchema, type UserRole } from "@/features/users/user.types";
+import { roleSchema } from "@/features/users/user.schema";
+import type { UserRole } from "@/features/users/user.types";
 
 /**
  * Payload for encrypting a session (JWT or similar).

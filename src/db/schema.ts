@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-  type AnyPgColumn,
   date,
   integer,
   pgEnum,
@@ -11,15 +10,16 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import type { invoiceIdBrand } from "@/features/invoices/invoice.brands";
 import type {
-  Brand,
-  customerIdBrand,
-  userIdBrand,
+  CustomerId,
+  InvoiceId,
+  SessionId,
+  UserId,
 } from "@/lib/definitions/brands";
 
 /**
- * Table and column name constants for maintainability.
+ * Database table and column name constants for maintainability and consistency.
+ * These constants help prevent typos and make refactoring easier.
  */
 export const TABLES = {
   CUSTOMERS: "customers",
@@ -52,131 +52,126 @@ export const COLUMNS = {
 } as const;
 
 /**
- * Role enum for user roles.
+ * PostgreSQL enums for role and status fields.
+ * These should match the constants in your type definitions.
  */
 export const roleEnum = pgEnum("role", ["guest", "admin", "user"]);
 
-/**
- * Status enum for invoice status.
- */
 export const statusEnum = pgEnum("status", ["pending", "paid"]);
 
 /**
- * Users table schema.
- * @see {User}
+ * Common field configurations for reusability and consistency.
+ */
+const commonFields = {
+  email: () => varchar(COLUMNS.EMAIL, { length: 255 }).notNull().unique(),
+  id: {
+    serial: () => serial(COLUMNS.ID).primaryKey(),
+    uuid: () => uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  },
+  name: () => varchar(COLUMNS.NAME, { length: 255 }).notNull(),
+  sensitiveData: () =>
+    varchar(COLUMNS.SENSITIVE_DATA, { length: 255 })
+      .notNull()
+      .default("cantTouchThis"),
+  timestamps: {
+    createdAt: () => timestamp("created_at").defaultNow().notNull(),
+    updatedAt: () => timestamp("updated_at").defaultNow().notNull(),
+  },
+} as const;
+
+/**
+ * Users table schema with branded UserId type.
+ * Stores user authentication and profile information.
  */
 export const users = pgTable(TABLES.USERS, {
-  email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-  id: uuid(COLUMNS.ID)
-    .defaultRandom()
-    .primaryKey()
-    .$type<Brand<string, typeof userIdBrand>>(),
+  email: commonFields.email(),
+  id: commonFields.id.uuid().$type<UserId>(),
   password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
   role: roleEnum(COLUMNS.ROLE).default("user").notNull(),
-  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
-    .notNull()
-    .default("cantTouchThis"),
-  username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull(),
+  sensitiveData: commonFields.sensitiveData(),
+  username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull().unique(),
 });
 
 /**
- * Demo user counters table schema.
+ * Demo user counters table schema for tracking demo usage.
+ * Separate table to avoid polluting the main users table.
  */
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
   count: integer(COLUMNS.COUNT).notNull().default(0),
-  id: serial(COLUMNS.ID).primaryKey(),
+  id: commonFields.id.serial(),
   role: roleEnum(COLUMNS.ROLE).notNull().default("guest"),
 });
 
 /**
- * Customers table schema.
+ * Customers table schema with branded CustomerId type.
+ * Stores customer information for invoice management.
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
-  email: varchar(COLUMNS.EMAIL, { length: 50 }).notNull().unique(),
-  id: uuid(COLUMNS.ID)
-    .defaultRandom()
-    .primaryKey()
-    .$type<Brand<string, typeof customerIdBrand>>(),
+  email: commonFields.email(),
+  id: commonFields.id.uuid().$type<CustomerId>(),
   imageUrl: varchar(COLUMNS.IMAGE_URL, { length: 255 }).notNull(),
-  name: varchar(COLUMNS.NAME, { length: 50 }).notNull(),
-  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
-    .notNull()
-    .default("cantTouchThis"),
+  name: commonFields.name(),
+  sensitiveData: commonFields.sensitiveData(),
 });
 
 /**
- * Invoices table schema.
+ * Invoices table schema with branded InvoiceId and CustomerId types.
+ * Links customers to their invoices with proper foreign key relationships.
  */
 export const invoices = pgTable(TABLES.INVOICES, {
   amount: integer(COLUMNS.AMOUNT).notNull(),
   customerId: uuid(COLUMNS.CUSTOMER_ID)
     .notNull()
-    .references((): AnyPgColumn => customers.id)
-    .$type<Brand<string, typeof customerIdBrand>>(), // <-- Use branded type
+    .references(() => customers.id, { onDelete: "cascade" })
+    .$type<CustomerId>(),
   date: date(COLUMNS.DATE).notNull(),
-  id: uuid(COLUMNS.ID)
-    .defaultRandom()
-    .primaryKey()
-    .$type<Brand<string, typeof invoiceIdBrand>>(),
-  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
-    .notNull()
-    .default("cantTouchThis"),
+  id: commonFields.id.uuid().$type<InvoiceId>(),
+  sensitiveData: commonFields.sensitiveData(),
   status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
 });
 
 /**
- * Revenues table schema.
- * @see {Revenue}
+ * Revenues table schema for monthly revenue tracking.
+ * Aggregated data for reporting and analytics.
  */
 export const revenues = pgTable(TABLES.REVENUES, {
   month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
   revenue: integer(COLUMNS.REVENUE).notNull(),
-  sensitiveData: varchar(COLUMNS.SENSITIVE_DATA, { length: 50 })
-    .notNull()
-    .default("cantTouchThis"),
+  sensitiveData: commonFields.sensitiveData(),
 });
 
 /**
- * Sessions table schema.
+ * Sessions table schema with branded SessionId and UserId types.
+ * Manages user authentication sessions with automatic cleanup.
  */
 export const sessions = pgTable(TABLES.SESSIONS, {
+  createdAt: commonFields.timestamps.createdAt(),
   expiresAt: timestamp(COLUMNS.EXPIRES_AT).notNull(),
-  id: uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-  token: text(COLUMNS.TOKEN).notNull(), // Enforce notNull for authentication
+  id: commonFields.id.uuid().$type<SessionId>(),
+  token: text(COLUMNS.TOKEN).notNull().unique(),
+  updatedAt: commonFields.timestamps.updatedAt(),
   userId: uuid(COLUMNS.USER_ID)
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" })
+    .$type<UserId>(),
 });
 
 /**
- * User relations.
+ * Table relations for type-safe joins and queries.
  */
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
 }));
 
-/**
- * Demo user counters relations.
- */
 export const demoUserCountersRelations = relations(
   demoUserCounters,
   () => ({}),
 );
 
-/**
- * Customer relations.
- *
- * Customers have many invoices.
- */
 export const customersRelations = relations(customers, ({ many }) => ({
   invoices: many(invoices),
 }));
 
-/**
- * Invoice relations.
- *
- * Invoices belong to one customer.
- */
 export const invoicesRelations = relations(invoices, ({ one }) => ({
   customer: one(customers, {
     fields: [invoices.customerId],
@@ -184,16 +179,8 @@ export const invoicesRelations = relations(invoices, ({ one }) => ({
   }),
 }));
 
-/**
- * Revenue relations.
- */
 export const revenuesRelations = relations(revenues, () => ({}));
 
-/**
- * Session relations.
- *
- * Sessions belong to one user.
- */
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
@@ -202,19 +189,33 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 }));
 
 /**
- * Table row types for type safety and reusability.
- *
- * These types represent the raw rows from the database. They cannot easily swap with existing types because of branding, id, and date types.
+ * Inferred types from Drizzle schema for type safety.
+ * These represent the raw database rows and should be used with caution
+ * due to branded types that require validation before use.
  */
-export type UserRawDrizzle = typeof users.$inferSelect;
-export type NewUserRawDrizzle = typeof users.$inferInsert;
-// Customer
-export type CustomerRawDrizzle = typeof customers.$inferSelect;
-// Invoice
-export type InvoiceRawDrizzle = typeof invoices.$inferSelect;
-export type NewInvoiceRawDrizzle = typeof invoices.$inferInsert;
-// Revenue
-export type RevenueRawDrizzle = typeof revenues.$inferSelect;
+export type UserRow = typeof users.$inferSelect;
+export type NewUserRow = typeof users.$inferInsert;
+export type CustomerRow = typeof customers.$inferSelect;
+export type NewCustomerRow = typeof customers.$inferInsert;
+export type InvoiceRow = typeof invoices.$inferSelect;
+export type NewInvoiceRow = typeof invoices.$inferInsert;
+export type RevenueRow = typeof revenues.$inferSelect;
+export type NewRevenueRow = typeof revenues.$inferInsert;
+export type SessionRow = typeof sessions.$inferSelect;
+export type NewSessionRow = typeof sessions.$inferInsert;
+export type DemoUserCounterRow = typeof demoUserCounters.$inferSelect;
+export type NewDemoUserCounterRow = typeof demoUserCounters.$inferInsert;
+
+/**
+ * Union types for easier type checking and validation.
+ */
+export type AnyTableRow =
+  | UserRow
+  | CustomerRow
+  | InvoiceRow
+  | RevenueRow
+  | SessionRow
+  | DemoUserCounterRow;
 
 /**
  * ---------------------------------------------------------------------------

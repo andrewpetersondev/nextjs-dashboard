@@ -1,8 +1,7 @@
 import "server-only";
 
-import type { InvoiceId } from "@/features/invoices/invoice.brands";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { CustomerId } from "@/lib/definitions/brands";
+import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Allowed invoice statuses.

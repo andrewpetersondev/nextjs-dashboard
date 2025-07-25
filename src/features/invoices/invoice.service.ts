@@ -2,7 +2,6 @@ import "server-only";
 
 import type { InvoiceFormEntity } from "@/db/models/invoice.entity";
 import { ValidationError } from "@/errors/errors";
-import { toInvoiceId } from "@/features/invoices/invoice.brands";
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -13,6 +12,7 @@ import {
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import { toInvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Service for invoice business logic and transformation.

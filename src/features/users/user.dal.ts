@@ -16,7 +16,7 @@ import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
-import { toUserRoleBrand, type UserId } from "@/lib/definitions/brands";
+import { toUserRole, type UserId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 import { createRandomPassword } from "@/lib/utils/password";
 
@@ -32,7 +32,7 @@ export async function createUserDal(
     username,
     email,
     password,
-    role = toUserRoleBrand("user"),
+    role = toUserRole("user"),
   }: {
     username: string;
     email: string;

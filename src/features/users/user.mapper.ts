@@ -1,6 +1,6 @@
 import type { UserEntity } from "@/db/models/user.entity";
 import type { UserDto } from "@/features/users/user.dto";
-import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
+import { toUserId, toUserRole } from "@/lib/definitions/brands";
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.
@@ -20,7 +20,7 @@ export function toUserDto(entity: UserEntity): UserDto {
   return {
     email: String(entity.email),
     id: String(entity.id),
-    role: toUserRoleBrand(entity.role) as UserDto["role"], // Ensure role is branded correctly
+    role: toUserRole(entity.role) as UserDto["role"], // Ensure role is branded correctly
     username: String(entity.username),
   };
 }
@@ -47,7 +47,7 @@ export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
     email: row.email,
     id: toUserId(row.id),
     password: row.password,
-    role: toUserRoleBrand(row.role),
+    role: toUserRole(row.role),
     sensitiveData: row.sensitiveData,
     username: row.username,
   };

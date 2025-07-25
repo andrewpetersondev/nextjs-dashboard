@@ -1,72 +1,81 @@
-/**
- * @fileoverview
- * Domain branding utilities for type-safe IDs and enums.
- *
- * ## Purpose
- * - Prevents accidental assignment between domain IDs (e.g., CustomerId vs InvoiceId).
- * - Provides runtime helpers for safe conversion and validation.
- * - Centralizes branding logic for maintainability and traceability.
- *
- * ## Usage
- * - Use branded types for all database/entity IDs and domain enums.
- * - Use conversion helpers when mapping raw DB values to branded types.
- * - Never expose branded types to UI or external consumers.
- *
- * ## Example
- * ```typescript
- * const customerId: CustomerId = toCustomerId(rawId);
- * const invoiceStatus: InvoiceStatus = toInvoiceStatus(rawStatus);
- */
+import "server-only";
 
+import * as z from "zod";
+import { ValidationError } from "@/errors/errors";
+import {
+  INVOICE_STATUSES,
+  type InvoiceStatus,
+} from "@/features/invoices/invoice.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
-/**
- * Utility type for creating branded types.
- * Prevents accidental assignment between different branded types.
- */
+const uuidSchema = z.uuid();
+
 export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 
-/**
- * Unique symbols for each brand.
- * Used to distinguish domain IDs and enums.
- */
+// Centralize all brand symbols
 export const customerIdBrand = Symbol("CustomerId");
 export const userIdBrand = Symbol("UserId");
+export const invoiceIdBrand = Symbol("InvoiceId");
+export const sessionIdBrand = Symbol("SessionId");
 
-/**
- * Branded ID types for domain entities.
- * Use for database, DAL, and server logic.
- */
+// Branded types
 export type CustomerId = Brand<string, typeof customerIdBrand>;
 export type UserId = Brand<string, typeof userIdBrand>;
+export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
+export type SessionId = Brand<string, typeof sessionIdBrand>;
 
-/**
- * Converts a string to a branded CustomerId.
- * @param id - Raw customer ID string.
- * @returns CustomerId (branded).
- */
-export const toCustomerId = (id: string): CustomerId => id as CustomerId;
-
-/**
- * Converts a string to a branded UserId.
- * @param id - Raw user ID string.
- * @returns UserId (branded).
- */
-export const toUserId = (id: string): UserId => id as UserId;
-
-/**
- * Brands a string as UserRole after validating against allowed roles.
- * Throws if the value is not a valid UserRole.
- *
- * @param role - Raw role string.
- * @returns UserRole (branded).
- * @throws Error if role is not allowed.
- */
-export const toUserRoleBrand = (role: string): UserRole => {
-  if ((USER_ROLES as readonly string[]).includes(role)) {
-    return role as UserRole;
+// Consistent validation for all UUID-based IDs
+const validateUuid = (id: string, brandName: string): void => {
+  if (!uuidSchema.safeParse(id).success) {
+    throw new ValidationError(
+      `Invalid ${brandName}: "${id}". Must be a valid UUID.`,
+    );
   }
-  throw new Error(
-    `Invalid UserRole: "${role}". Allowed values: ${USER_ROLES.join(", ")}`,
+};
+
+// Generic enum validation function
+const validateEnum = <T extends string>(
+  value: string,
+  enumValues: readonly T[],
+  enumName: string,
+): T => {
+  if (enumValues.includes(value as T)) {
+    return value as T;
+  }
+  throw new ValidationError(
+    `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
   );
+};
+
+// ID validation functions
+export const toCustomerId = (id: string): CustomerId => {
+  validateUuid(id, "CustomerId");
+  return id as CustomerId;
+};
+
+export const toUserId = (id: string): UserId => {
+  validateUuid(id, "UserId");
+  return id as UserId;
+};
+
+export const toInvoiceId = (id: string): InvoiceId => {
+  validateUuid(id, "InvoiceId");
+  return id as InvoiceId;
+};
+
+/**
+ * Database is not being used for sessions yet
+ */
+export const _toSessionId = (id: string): SessionId => {
+  validateUuid(id, "SessionId");
+  return id as SessionId;
+};
+
+// Enum validation functions using the generic validateEnum
+export const toUserRole = (role: string): UserRole => {
+  return validateEnum(role, USER_ROLES, "UserRole");
+};
+
+export const toInvoiceStatus = (status: string): InvoiceStatus => {
+  return validateEnum(status, INVOICE_STATUSES, "InvoiceStatus");
 };

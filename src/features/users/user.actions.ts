@@ -22,24 +22,26 @@ import {
 } from "@/features/users/user.dal";
 import type { UserDto } from "@/features/users/user.dto";
 import {
+  CreateUserFormSchema,
+  EditUserFormSchema,
+} from "@/features/users/user.schema";
+import {
   validateLoginForm,
   validateSignupForm,
 } from "@/features/users/user.service";
-import {
-  type ActionResult,
-  type CreateUserFormFieldNames,
-  CreateUserFormSchema,
-  type EditUserFormFieldNames,
-  EditUserFormSchema,
-  type LoginFormFieldNames,
-  type LoginFormFields,
-  type SignupFormFieldNames,
-  type SignupFormFields,
-  type UserCreateState,
-  type UserRole,
+import type {
+  ActionResult,
+  CreateUserFormFieldNames,
+  EditUserFormFieldNames,
+  LoginFormFieldNames,
+  LoginFormFields,
+  SignupFormFieldNames,
+  SignupFormFields,
+  UserCreateState,
+  UserRole,
 } from "@/features/users/user.types";
 import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
-import { toUserId, toUserRoleBrand } from "@/lib/definitions/brands";
+import { toUserId, toUserRole } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
@@ -78,7 +80,7 @@ export async function createUserAction(
     const user = await createUserDal(db, {
       email,
       password,
-      role: toUserRoleBrand(role),
+      role: toUserRole(role),
       username,
     });
     if (!user) {
@@ -164,7 +166,7 @@ export async function updateUserAction(
       patch.email = validated.data.email;
     }
     if (validated.data.role && validated.data.role !== existingUser.role) {
-      patch.role = toUserRoleBrand(validated.data.role);
+      patch.role = toUserRole(validated.data.role);
     }
     if (validated.data.password && validated.data.password.length > 0) {
       patch.password = await hashPassword(validated.data.password);
@@ -270,7 +272,7 @@ export async function signup(
     const user = await createUserDal(db, {
       email,
       password,
-      role: toUserRoleBrand("user"),
+      role: toUserRole("user"),
       username,
     });
 
@@ -280,7 +282,7 @@ export async function signup(
         success: false,
       });
     }
-    await setSessionToken(toUserId(user.id), toUserRoleBrand("user"));
+    await setSessionToken(toUserId(user.id), toUserRole("user"));
   } catch (error) {
     logger.error({
       context: "signup",
@@ -324,7 +326,7 @@ export async function login(
       });
     }
 
-    await setSessionToken(toUserId(user.id), toUserRoleBrand(user.role));
+    await setSessionToken(toUserId(user.id), toUserRole(user.role));
   } catch (error) {
     logger.error({
       context: "login",
@@ -354,12 +356,12 @@ export async function logout(): Promise<void> {
  * Creates a demo user and logs them in.
  */
 export async function demoUser(
-  role: UserRole = toUserRoleBrand("guest"),
+  role: UserRole = toUserRole("guest"),
 ): Promise<ActionResult> {
   let demoUser: UserDto | null = null;
   const db = getDB();
   try {
-    const counter: number = await demoUserCounter(db, toUserRoleBrand(role));
+    const counter: number = await demoUserCounter(db, toUserRole(role));
     if (!counter) {
       logger.error({
         context: "demoUser",
@@ -369,7 +371,7 @@ export async function demoUser(
 
       throw new Error("Counter is zero or undefined");
     }
-    demoUser = await createDemoUser(db, counter, toUserRoleBrand(role));
+    demoUser = await createDemoUser(db, counter, toUserRole(role));
     if (!demoUser) {
       logger.error({
         context: "demoUser",
@@ -378,7 +380,7 @@ export async function demoUser(
       });
       throw new Error("Demo user creation failed");
     }
-    await setSessionToken(toUserId(demoUser.id), toUserRoleBrand(role));
+    await setSessionToken(toUserId(demoUser.id), toUserRole(role));
   } catch (error) {
     logger.error({
       context: "demoUser",
