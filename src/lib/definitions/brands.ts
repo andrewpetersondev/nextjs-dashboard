@@ -1,6 +1,6 @@
 import "server-only";
 
-import * as z from "zod";
+// import * as z from "zod";
 import { ValidationError } from "@/errors/errors";
 import {
   INVOICE_STATUSES,
@@ -8,7 +8,8 @@ import {
 } from "@/features/invoices/invoice.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
-const uuidSchema = z.uuid();
+const relaxedUuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 
@@ -26,7 +27,8 @@ export type SessionId = Brand<string, typeof sessionIdBrand>;
 
 // Consistent validation for all UUID-based IDs
 const validateUuid = (id: string, brandName: string): void => {
-  if (!uuidSchema.safeParse(id).success) {
+  // if (!z.uuid.safeParse(id).success) {
+  if (!relaxedUuidRegex.test(id)) {
     throw new ValidationError(
       `Invalid ${brandName}: "${id}". Must be a valid UUID.`,
     );

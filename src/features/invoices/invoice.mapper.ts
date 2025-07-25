@@ -4,7 +4,7 @@ import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/db/models/invoice.entity";
-import type { InvoiceRawDrizzle } from "@/db/schema";
+import type { InvoiceRow } from "@/db/schema";
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -18,7 +18,7 @@ import {
 /**
  * Maps raw database row to branded Entity.
  */
-export function rawDbToInvoiceEntity(row: InvoiceRawDrizzle): InvoiceEntity {
+export function rawDbToInvoiceEntity(row: InvoiceRow): InvoiceEntity {
   return {
     amount: row.amount,
     customerId: toCustomerId(row.customerId),
