@@ -10,6 +10,7 @@ import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
+import { InvoiceDate } from "@/ui/invoices/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
 import { ServerMessage } from "@/ui/users/server-message";
 
@@ -60,6 +61,7 @@ export const EditInvoiceForm = ({
     <div>
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+          <InvoiceDate defaultValue={currentInvoice.date} />
           <div>
             <label htmlFor="start">Start date:</label>
             <input

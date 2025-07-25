@@ -15,32 +15,32 @@ import {
 // Schemas generated from the database schema using drizzle-zod
 
 // USER SCHEMAS
-export const userSelectSchema = createSelectSchema(users);
+export const _userSelectSchema = createSelectSchema(users);
 
-export const userInsertSchema = createInsertSchema(users, {
+export const _userInsertSchema = createInsertSchema(users, {
   // Override role to use your existing validation logic
   role: (schema) => schema.transform(toUserRole),
 });
 
-export const userUpdateSchema = createUpdateSchema(users, {
+export const _userUpdateSchema = createUpdateSchema(users, {
   role: (schema) =>
     schema.optional().transform((val) => (val ? toUserRole(val) : undefined)),
 });
 
 // CUSTOMER SCHEMAS
-export const customerSelectSchema = createSelectSchema(customers);
+export const _customerSelectSchema = createSelectSchema(customers);
 
-export const customerInsertSchema = createInsertSchema(customers);
+export const _customerInsertSchema = createInsertSchema(customers);
 
 // INVOICE SCHEMAS
-export const invoiceSelectSchema = createSelectSchema(invoices);
+export const _invoiceSelectSchema = createSelectSchema(invoices);
 
-export const invoiceInsertSchema = createInsertSchema(invoices, {
+export const _invoiceInsertSchema = createInsertSchema(invoices, {
   customerId: (schema) => schema.transform(toCustomerId),
   status: (schema) => schema.transform(toInvoiceStatus),
 });
 
-export const invoiceUpdateSchema = createUpdateSchema(invoices, {
+export const _invoiceUpdateSchema = createUpdateSchema(invoices, {
   customerId: (schema) =>
     schema.optional().transform((val) => (val ? toCustomerId(val) : undefined)),
   status: (schema) =>
@@ -50,4 +50,4 @@ export const invoiceUpdateSchema = createUpdateSchema(invoices, {
 });
 
 // SESSION SCHEMAS
-const sessionSelectSchema = createSelectSchema(sessions);
+const _sessionSelectSchema = createSelectSchema(sessions);

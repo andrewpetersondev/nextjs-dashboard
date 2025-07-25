@@ -7,9 +7,10 @@ import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
 import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
-import { today } from "@/lib/constants/ui.constants";
+import { getCurrentIsoDate } from "@/lib/utils/utils";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
+import { InvoiceDate } from "@/ui/invoices/invoice-date";
 import { InvoiceServerMessage } from "@/ui/invoices/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/ui/invoices/invoice-status-radio-group";
 
@@ -45,17 +46,23 @@ export const CreateInvoiceForm = ({
   return (
     <section>
       <form action={action}>
-        <div>
-          <label htmlFor="date">Start date:</label>
-          <input
-            defaultValue={today}
-            id="date"
-            max="2029-12-31"
-            min="2024-01-01"
-            name="date"
-            required={true}
-            type="date"
-          />
+        <InvoiceDate defaultValue={getCurrentIsoDate()} />
+        <div className=" my-4 bg-bg-secondary p-4">
+          <label className="" htmlFor="date">
+            Date
+          </label>
+          <div className="m-1 flex items-center justify-between rounded-md border-4 border-bg-accent">
+            <input
+              className="flex-1 justify-between p-2"
+              defaultValue={getCurrentIsoDate()}
+              id="date"
+              max="2029-12-31"
+              min="2020-01-01"
+              name="date"
+              required
+              type="date"
+            />
+          </div>
         </div>
 
         {/* Sensitive Data */}
