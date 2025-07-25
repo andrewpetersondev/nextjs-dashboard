@@ -30,12 +30,6 @@ export type InvoiceListFilter = Readonly<{
   status: InvoiceStatus;
 }>;
 
-export type InvoiceListFilterUI = Readonly<
-  Omit<InvoiceListFilter, "amount"> & {
-    amount: string; // Formatted currency string
-  }
->;
-
 /**
  * Result type for invoice actions (create, read, update, delete).
  * Used in Server Actions.

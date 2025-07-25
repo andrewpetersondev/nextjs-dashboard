@@ -7,5 +7,3 @@ export const DASHBOARD_TITLES = {
   GUEST: "Guest Dashboard",
   USER: "User Dashboard",
 };
-
-export const today = new Date().toISOString();

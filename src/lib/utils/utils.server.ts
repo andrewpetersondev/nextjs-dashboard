@@ -13,7 +13,6 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/user.types";
-import { logger } from "@/lib/utils/logger";
 
 /**
  * Returns a standardized action result object for server actions.
@@ -91,26 +90,3 @@ export const getFormField = <T extends string>(
  */
 export const getValidUserRole = (role: unknown): UserRole =>
   USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";
-
-/**
- * Handles and logs server errors in a structured, context-rich way.
- *
- * @param context - A string describing where the error occurred.
- * @param error - The error object or message.
- * @param extra - Optional additional metadata for debugging.
- */
-export function handleServerError(
-  context: string,
-  error: unknown,
-  extra?: Record<string, unknown>,
-): void {
-  logger.error({
-    context,
-    error:
-      error instanceof Error
-        ? { message: error.message, stack: error.stack }
-        : error,
-    ...extra,
-    timestamp: new Date().toISOString(),
-  });
-}

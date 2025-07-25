@@ -85,31 +85,6 @@ function mapFieldErrors<TFieldNames extends string>(
 }
 
 /**
- * Builds a typed error map for form fields, including only fields with actual errors.
- *
- * @template TFieldNames - String literal union of valid field names.
- * @param errors - Partial error map with possible undefined values.
- * @returns Partial<Record<TFieldNames, string[]>> - Error map with only fields that have errors.
- *
- * @remarks
- * - Filters out fields with no errors or empty arrays.
- */
-export function buildErrorMap<TFieldNames extends string>(
-  errors: Partial<Record<TFieldNames, string[] | undefined>>,
-): Partial<Record<TFieldNames, string[]>> {
-  const result: Partial<Record<TFieldNames, string[]>> = {};
-  for (const [key, value] of Object.entries(errors) as [
-    TFieldNames,
-    string[] | undefined,
-  ][]) {
-    if (Array.isArray(value) && value.length > 0) {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
-/**
  * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
  *
  * @param fieldErrors - Zod fieldErrors object.

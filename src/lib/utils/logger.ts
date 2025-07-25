@@ -2,13 +2,6 @@ import "server-only";
 
 import pino from "pino";
 
-export type LogMeta = {
-  userId?: string;
-  email?: string;
-  action?: string;
-  [key: string]: unknown;
-};
-
 /**
  * Pino logger instance for structured logging.
  *
