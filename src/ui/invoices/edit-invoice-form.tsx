@@ -7,7 +7,6 @@ import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { updateInvoiceAction } from "@/features/invoices/invoice.actions";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { hasInvoiceId } from "@/features/invoices/invoice.type-guards";
 import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
@@ -21,11 +20,6 @@ export const EditInvoiceForm = ({
   invoice: InvoiceDto;
   customers: CustomerField[];
 }): JSX.Element => {
-  // Use the type guard to ensure `invoice.id` is defined
-  if (!hasInvoiceId(invoice)) {
-    throw new Error("Invoice ID is required for editing");
-  }
-
   // Initial state matches Server Action's expected state
   const initialState: InvoiceActionResult = {
     data: invoice,

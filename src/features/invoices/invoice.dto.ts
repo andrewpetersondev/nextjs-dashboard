@@ -25,6 +25,8 @@ export interface InvoiceDto {
   readonly status: InvoiceStatus;
 }
 
+export type InvoiceDto_v2 = Omit<InvoiceDto, "sensitiveData">;
+
 /**
  * Data Transfer Object (DTO) for creating a new invoice.
  * Used in API requests to create an invoice.

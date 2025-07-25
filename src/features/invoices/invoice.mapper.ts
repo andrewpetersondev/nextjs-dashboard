@@ -7,6 +7,7 @@ import type {
 import type { InvoiceRow } from "@/db/schema";
 import type {
   InvoiceDto,
+  InvoiceDto_v2,
   InvoiceFormDto,
 } from "@/features/invoices/invoice.dto";
 import {
@@ -42,6 +43,34 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
     sensitiveData: entity.sensitiveData,
     status: entity.status, // InvoiceStatus is not branded
   };
+}
+
+/**
+ * Maps branded Entity to plain DTO.
+ * Strips ALL branding for service/API layer.
+ * @param entity - The invoice entity to map
+ * @param includeSensitive - Whether to include sensitive data (default: false)
+ */
+export function entityToInvoiceDto_v2(
+  entity: InvoiceEntity,
+  includeSensitive: boolean = false,
+): InvoiceDto_v2 {
+  const baseDto = {
+    amount: entity.amount,
+    customerId: String(entity.customerId),
+    date: entity.date,
+    id: String(entity.id),
+    status: entity.status,
+  };
+
+  if (includeSensitive) {
+    return {
+      ...baseDto,
+      sensitiveData: entity.sensitiveData,
+    } as InvoiceDto_v2 & { sensitiveData: string };
+  }
+
+  return baseDto;
 }
 
 /**

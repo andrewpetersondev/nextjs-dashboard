@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import { readCustomersAction } from "@/features/customers/customer.actions";
-import { readInvoiceAction } from "@/features/invoices/invoice.actions";
+import type { CustomerField } from "@/features/customers/customer.types";
+import { readInvoiceByIdAction } from "@/features/invoices/invoice.actions";
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { H1 } from "@/ui/headings";
 import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
 import { EditInvoiceForm } from "@/ui/invoices/edit-invoice-form";
@@ -27,10 +29,9 @@ export default async function Page(
 ): Promise<JSX.Element> {
   const { id } = await props.params;
 
-  const [customers, invoice] = await Promise.all([
-    readCustomersAction(),
-    readInvoiceAction(id),
-  ]);
+  const [customers, invoice]: [CustomerField[], InvoiceDto] = await Promise.all(
+    [readCustomersAction(), readInvoiceByIdAction(id)],
+  );
 
   if (!invoice) {
     notFound();
