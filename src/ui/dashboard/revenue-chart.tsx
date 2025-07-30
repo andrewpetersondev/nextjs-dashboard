@@ -1,15 +1,12 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
-import { getDB } from "@/db/connection";
-import { getRevenueChartDataAction } from "@/features/revenues/revenue.actions";
+import { getRevenueChartAction } from "@/features/revenues/revenue.actions";
 import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
 import { generateYAxis } from "@/lib/utils/utils";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
-  const db = getDB();
-
-  const result = await getRevenueChartDataAction(db);
+  const result = await getRevenueChartAction();
 
   // Handle error state
   if (!result.success) {
@@ -40,9 +37,10 @@ export async function RevenueChart(): Promise<JSX.Element> {
       <H2 className="mb-4">Recent Revenue</H2>
 
       <div className="rounded-xl bg-bg-secondary p-4">
-        <div className="mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-bg-primary p-4 sm:grid-cols-13 md:gap-4">
+        {/* Grid layout with 12 columns on mobile, 13 on small screens and up to accommodate y-axis labels and revenue bars */}
+        <div className="mt-0 grid grid-cols-[auto_repeat(11,_1fr)] items-end gap-2 rounded-md bg-bg-primary p-4 sm:grid-cols-[auto_repeat(12,_1fr)] md:gap-4">
           <div
-            className="mb-6 hidden flex-col justify-between text-sm text-text-primary sm:flex"
+            className="mb-6 flex flex-col justify-between text-sm text-text-primary sm:flex"
             style={{ height: `${chartHeight}px` }}
           >
             {yAxisLabels.map(

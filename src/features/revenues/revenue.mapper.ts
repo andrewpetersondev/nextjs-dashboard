@@ -1,6 +1,9 @@
 import "server-only";
 
-import type { RevenueEntity } from "@/db/models/revenue.entity";
+import type {
+  RevenueCreateEntity,
+  RevenueEntity,
+} from "@/db/models/revenue.entity";
 import type { RevenueRow } from "@/db/schema";
 import { ValidationError } from "@/errors/errors";
 import type {
@@ -12,7 +15,7 @@ import { toRevenueId } from "@/lib/definitions/brands";
 /**
  * Convert database row to entity (validates and adds branded types)
  */
-export function rowToEntity(row: RevenueRow): RevenueEntity {
+export function rawDbToRevenueEntity(row: RevenueRow): RevenueEntity {
   return {
     calculatedFromInvoices: row.calculatedFromInvoices,
     calculationDate: row.calculationDate,
@@ -33,7 +36,7 @@ export function rowToEntity(row: RevenueRow): RevenueEntity {
 /**
  * Convert entity to DTO for client exposure
  */
-export function entityToDto(entity: RevenueEntity): RevenueDto {
+export function entityToRevenueDto(entity: RevenueEntity): RevenueDto {
   return {
     calculationDate: entity.calculationDate?.toISOString(),
     calculationSource: entity.calculationSource,
@@ -135,5 +138,17 @@ export function dtoToSimpleDto(dto: RevenueDto): SimpleRevenueDto {
   return {
     month: dto.month,
     revenue: dto.revenue,
+  };
+}
+
+export function dtoToCreateRevenueEntity(dto: RevenueDto): RevenueCreateEntity {
+  return {
+    // calculationDate?: dto.calculationDate,
+    calculationSource: dto.calculationSource,
+    invoiceCount: dto.invoiceCount,
+    isCalculated: dto.isCalculated,
+    month: dto.month,
+    revenue: dto.revenue,
+    year: dto.year,
   };
 }

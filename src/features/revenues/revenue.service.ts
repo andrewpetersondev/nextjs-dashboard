@@ -1,26 +1,74 @@
 import "server-only";
 
 import { and, count, eq, gte, lte, sql } from "drizzle-orm";
-import type { Database } from "@/db/connection";
-import type { RevenueEntity } from "@/db/models/revenue.entity";
+import { boolean } from "drizzle-orm/pg-core";
+import type {
+  RevenueCreateEntity,
+  RevenueEntity,
+} from "@/db/models/revenue.entity";
 import { invoices } from "@/db/schema";
-import { invoiceDataToRevenue } from "@/features/revenues/revenue.mapper";
-import { RevenueRepository } from "@/features/revenues/revenue.repository";
-import type { CustomerId } from "@/lib/definitions/brands";
+import { ValidationError } from "@/errors/errors";
+import type { RevenueDto } from "@/features/revenues/revenue.dto";
+import {
+  dtoToCreateRevenueEntity,
+  invoiceDataToRevenue,
+} from "@/features/revenues/revenue.mapper";
+import type { RevenueRepository } from "@/features/revenues/revenue.repository";
+import { REVENUE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
+import type { CustomerId, RevenueId } from "@/lib/definitions/brands";
 
 export class RevenueService {
-  private revenueRepository: RevenueRepository;
+  private readonly repo: RevenueRepository;
 
-  constructor(private readonly db: Database) {
-    this.revenueRepository = new RevenueRepository(db);
+  constructor(repo: RevenueRepository) {
+    this.repo = repo;
   }
+
+  async createRevenue(dto: RevenueDto): Promise<RevenueDto> {
+    if (!dto) {
+      throw new ValidationError(REVENUE_ERROR_MESSAGES.INVALID_INPUT);
+    }
+
+    // Business transformation
+    const createDto: RevenueDto = {
+      // calculationDate?: dto.calculationDate,
+      calculationSource: dto.calculationSource,
+      invoiceCount: dto.invoiceCount,
+      isCalculated: dto.isCalculated,
+      month: dto.month,
+      revenue: dto.revenue,
+      year: dto.year,
+    };
+
+    // Transform DTO (plain) -> Entity (branded)
+    const entity: RevenueCreateEntity = dtoToCreateRevenueEntity(createDto);
+  }
+
+  /**
+   * Read revenue by ID
+   * @param id - Revenue ID (branded)
+   * @returns Promise resolving to RevenueDto
+   * @throws ValidationError for invalid input
+   */
+  async readRevenue(id: RevenueId): Promise<RevenueDto> {
+    // Basic validation of parameters. Throw error to Actions layer.
+    if (!id) {
+      throw new ValidationError(REVENUE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+
+    // Call repository to read revenue by ID. Returns a RevenueDto to the Actions layer.
+    return await this.repo.read(id);
+  }
+
+  // async updateRevenue(): Promise<RevenueDto> {}
+  // async deleteRevenue(): Promise<RevenueDto> {}
 
   /**
    * Get or calculate revenue for a specific year
    */
   async getRevenueForYear(year: number): Promise<RevenueEntity[]> {
     try {
-      const existingRevenue = await this.revenueRepository.findByYear(year);
+      const existingRevenue = await this.repo.findByYear(year);
 
       if (existingRevenue.length > 0) {
         return existingRevenue;
@@ -51,7 +99,7 @@ export class RevenueService {
       const storedRevenue: RevenueEntity[] = [];
 
       for (const revenue of calculatedRevenue) {
-        const stored = await this.revenueRepository.create({
+        const stored = await this.repo.create({
           calculatedFromInvoices: revenue.calculatedFromInvoices,
           calculationDate: revenue.calculationDate,
           calculationSource: revenue.calculationSource,
@@ -129,10 +177,10 @@ export class RevenueService {
    */
   async recalculateRevenueForYear(year: number): Promise<RevenueEntity[]> {
     try {
-      const existingRevenue = await this.revenueRepository.findByYear(year);
+      const existingRevenue = await this.repo.findByYear(year);
 
       for (const revenue of existingRevenue) {
-        await this.revenueRepository.delete(revenue.id);
+        await this.repo.delete(revenue.id);
       }
 
       const startDate = new Date(year, 0, 1);
