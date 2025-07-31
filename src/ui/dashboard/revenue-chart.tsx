@@ -2,13 +2,12 @@ import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import { getRevenueChartAction } from "@/features/revenues/revenue.actions";
 import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
-import { generateYAxis } from "@/lib/utils/utils";
+import { generateYAxis } from "@/features/revenues/revenue.utils";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
   const result = await getRevenueChartAction();
 
-  // Handle error state
   if (!result.success) {
     return (
       <div className="w-full md:col-span-4">

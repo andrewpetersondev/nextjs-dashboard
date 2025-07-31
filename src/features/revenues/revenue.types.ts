@@ -1,5 +1,3 @@
-import * as z from "zod";
-
 export const MONTH_ORDER = [
   "Jan",
   "Feb",
@@ -16,40 +14,6 @@ export const MONTH_ORDER = [
 ] as const;
 export type MonthName = (typeof MONTH_ORDER)[number];
 
-export const DEFAULT_YEAR_RANGE = {
-  MAX: 2100,
-  MIN: 2000,
-} as const;
-
-/**
- * Validation schema for revenue queries with optional year parameter
- */
-export const GetRevenueSchema = z.object({
-  year: z
-    .number()
-    .int()
-    .min(DEFAULT_YEAR_RANGE.MIN)
-    .max(DEFAULT_YEAR_RANGE.MAX)
-    .optional(),
-});
-
-/**
- * Validation schema for revenue recalculation with required year parameter
- */
-export const RecalculateRevenueSchema = z.object({
-  year: z
-    .number()
-    .int()
-    .min(DEFAULT_YEAR_RANGE.MIN)
-    .max(DEFAULT_YEAR_RANGE.MAX),
-});
-
-export type RevenueQueryInput = z.infer<typeof GetRevenueSchema>;
-
-export type RevenueRecalculationInput = z.infer<
-  typeof RecalculateRevenueSchema
->;
-
 /**
  * Standard action result type for revenue operations
  * Provides consistent success/error response structure
@@ -57,3 +21,52 @@ export type RevenueRecalculationInput = z.infer<
 export type RevenueActionResult<T> =
   | { success: true; data: T }
   | { success: false; error: string };
+
+/**
+ * Represents metadata for a month in a 12-month period
+ */
+export interface RollingMonthData {
+  readonly displayOrder: number;
+  readonly month: MonthName;
+  readonly monthNumber: number;
+  readonly year: number;
+}
+
+/**
+ * Raw database query result - exactly what SQL returns
+ */
+export interface MonthlyRevenueQueryResult {
+  readonly month: string;
+  readonly revenue: number; // Raw cents from database
+  readonly invoiceCount: number;
+  readonly year: number;
+  readonly monthNumber: number;
+}
+
+/**
+ * Statistics calculated from revenue data
+ */
+export interface RevenueStatistics {
+  readonly maximum: number;
+  readonly minimum: number;
+  readonly average: number;
+  readonly total: number;
+  readonly monthsWithData: number;
+}
+
+export interface YAxisResult {
+  yAxisLabels: string[];
+  topLabel: number;
+}
+
+export interface StatisticsLine {
+  value: number;
+  label: string;
+  className: string;
+}
+
+export interface YAxisWithStatistics {
+  yAxisLabels: string[];
+  topLabel: number;
+  statisticsLines: StatisticsLine[];
+}

@@ -1,12 +1,5 @@
 // Note: Utility functions should use const (arrow functions) for better performance and readability.
 
-import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
-
-interface YAxisResult {
-  yAxisLabels: string[];
-  topLabel: number;
-}
-
 export const formatCurrency = (amount: number): string => {
   return (amount / 100).toLocaleString("en-US", {
     currency: "USD",
@@ -29,20 +22,6 @@ export const formatDateToLocal = (
     options,
   );
   return formatter.format(date);
-};
-
-export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
-  const yAxisLabels: string[] = [];
-  const highestRecord: number = Math.max(
-    ...revenue.map((month: SimpleRevenueDto) => month.revenue),
-  );
-  const topLabel: number = Math.ceil(highestRecord / 1000) * 1000;
-
-  for (let i: number = topLabel; i >= 0; i -= 100000) {
-    yAxisLabels.push(`$${i / 1000}K`);
-  }
-
-  return { topLabel, yAxisLabels };
 };
 
 // Delete properties whose values match ANY of the given conditions

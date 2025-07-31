@@ -20,5 +20,26 @@ export interface RevenueDto {
  */
 export interface SimpleRevenueDto {
   readonly month: string;
-  readonly revenue: number;
+  readonly revenue: number; // Converted to dollars
+  readonly monthNumber: number; // For proper ordering/scrolling
+}
+
+/**
+ * Chart-specific DTO with converted values and statistics
+ */
+export interface RevenueChartDto {
+  readonly monthlyData: SimpleRevenueDto[];
+  readonly statistics: RevenueStatisticsDto;
+  readonly year: number;
+}
+
+/**
+ * Statistics DTO with converted dollar values
+ */
+export interface RevenueStatisticsDto {
+  readonly maximum: number; // Dollars
+  readonly minimum: number; // Dollars
+  readonly average: number; // Dollars
+  readonly total: number; // Dollars
+  readonly monthsWithData: number;
 }
