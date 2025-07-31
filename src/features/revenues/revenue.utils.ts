@@ -17,23 +17,21 @@ export function convertCentsToDollars(cents: number): number {
   return Math.round(cents / 100);
 }
 
-/**
- * Get current year as default fallback
- * Provides a consistent way to get the current year across revenue operations
- */
-export function getCurrentYear(): number {
-  return new Date().getFullYear();
-}
-
 export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
   const yAxisLabels: string[] = [];
   const highestRecord: number = Math.max(
     ...revenue.map((month: SimpleRevenueDto) => month.revenue),
   );
-  const topLabel: number = Math.ceil(highestRecord / 1000) * 1000;
 
-  for (let i: number = topLabel; i >= 0; i -= 100000) {
-    yAxisLabels.push(`$${i / 1000}K`);
+  // Calculate appropriate top label with 10% padding
+  const topLabel: number = Math.ceil((highestRecord * 1.1) / 1000) * 1000;
+
+  // Generate 5-6 evenly spaced labels
+  const labelCount = 5;
+
+  for (let i = labelCount; i >= 0; i--) {
+    const value = Math.round((topLabel * i) / labelCount);
+    yAxisLabels.push(`$${value / 1000}K`);
   }
 
   return { topLabel, yAxisLabels };

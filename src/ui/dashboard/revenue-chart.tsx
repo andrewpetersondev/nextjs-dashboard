@@ -17,7 +17,7 @@ export async function RevenueChart(): Promise<JSX.Element> {
     );
   }
 
-  const revenue: SimpleRevenueDto[] = result.data;
+  const revenue: SimpleRevenueDto[] = result.data.monthlyData;
   const chartHeight = 350;
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);
@@ -36,38 +36,45 @@ export async function RevenueChart(): Promise<JSX.Element> {
       <H2 className="mb-4">Recent Revenue</H2>
 
       <div className="rounded-xl bg-bg-secondary p-4">
-        {/* Grid layout with 12 columns on mobile, 13 on small screens and up to accommodate y-axis labels and revenue bars */}
-        <div className="mt-0 grid grid-cols-[auto_repeat(11,_1fr)] items-end gap-2 rounded-md bg-bg-primary p-4 sm:grid-cols-[auto_repeat(12,_1fr)] md:gap-4">
-          <div
-            className="mb-6 flex flex-col justify-between text-sm text-text-primary sm:flex"
-            style={{ height: `${chartHeight}px` }}
-          >
-            {yAxisLabels.map(
-              (label: string): JSX.Element => (
-                <p key={label}>{label}</p>
+        {/* Horizontal scrollable container for the chart */}
+        <div className="overflow-x-auto">
+          <div className="flex min-w-fit items-end gap-2 rounded-md bg-bg-primary p-4 md:gap-4">
+            {/* Y-axis labels - fixed position */}
+            <div
+              className="flex flex-shrink-0 flex-col justify-between text-sm text-text-primary"
+              style={{ height: `${chartHeight}px` }}
+            >
+              {yAxisLabels.map(
+                (label: string): JSX.Element => (
+                  <p className="mb-6 last:mb-0" key={label}>
+                    {label}
+                  </p>
+                ),
+              )}
+            </div>
+
+            {/* Revenue bars - scrollable content */}
+            {revenue.map(
+              (month: SimpleRevenueDto): JSX.Element => (
+                <div
+                  className="flex min-w-[40px] flex-shrink-0 flex-col items-center gap-2 sm:min-w-[60px]"
+                  key={month.month}
+                >
+                  <div
+                    className="w-full rounded-md bg-bg-accent"
+                    style={{
+                      height: `${(chartHeight / topLabel) * month.revenue}px`,
+                    }}
+                  />
+                  <p className="whitespace-nowrap text-sm text-text-primary">
+                    {month.month}
+                  </p>
+                </div>
               ),
             )}
           </div>
-
-          {revenue.map(
-            (month: SimpleRevenueDto): JSX.Element => (
-              <div
-                className="flex flex-col items-center gap-2"
-                key={month.month}
-              >
-                <div
-                  className="w-full rounded-md bg-bg-accent"
-                  style={{
-                    height: `${(chartHeight / topLabel) * month.revenue}px`,
-                  }}
-                />
-                <p className="-rotate-90 text-sm text-text-primary sm:rotate-0">
-                  {month.month}
-                </p>
-              </div>
-            ),
-          )}
         </div>
+
         <div className="flex items-center pt-6 pb-2 text-text-primary">
           <CalendarIcon className="h-5 w-5" />
           <H3 className="ml-2">Last 12 months</H3>
