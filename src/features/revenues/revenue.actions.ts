@@ -8,7 +8,36 @@ import { RevenueCalculatorService } from "@/features/revenues/revenue-calculator
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Get complete revenue chart data for the last 12 months with statistics
+ * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
+ *
+ * This server action orchestrates the revenue calculation process by:
+ * 1. Instantiating the revenue calculator service with database dependency
+ * 2. Fetching raw revenue entities and statistics in parallel
+ * 3. Converting cent values to dollar amounts for presentation
+ * 4. Formatting data according to chart requirements
+ *
+ * @returns Promise resolving to RevenueActionResult containing chart data or error
+ *
+ * @throws {Error} When database connection fails
+ * @throws {Error} When revenue calculation service encounters errors
+ * @throws {Error} When data transformation fails
+ *
+ * @example
+ * ```typescript
+ * const result = await getRevenueChartAction();
+ * if (result.success) {
+ *   console.log(`Total revenue: $${result.data.statistics.total}`);
+ *   console.log(`Months with data: ${result.data.statistics.monthsWithData}`);
+ * } else {
+ *   console.error(result.error);
+ * }
+ * ```
+ *
+ * @remarks
+ * **Architecture Notes:**
+ * - Uses dependency injection pattern for database access
+ * - Separates business logic (service) from presentation logic (action)
+ * - Implements proper error handling with structured logging
  * Converts raw database values to presentation format
  */
 export async function getRevenueChartAction(): Promise<
@@ -17,13 +46,13 @@ export async function getRevenueChartAction(): Promise<
   try {
     const calculator = new RevenueCalculatorService(getDB());
 
-    // Get pure database values for rolling 12-month period
+    // Get pure database values for a rolling 12-month period
     const [entities, rawStatistics] = await Promise.all([
       calculator.calculateForYear(),
       calculator.calculateStatistics(),
     ]);
 
-    // Apply business logic conversions in action layer
+    // Apply business logic conversions in the action layer
     const chartData: RevenueChartDto = {
       monthlyData: entities.map((entity, index) => ({
         month: entity.month,
