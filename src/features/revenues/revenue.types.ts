@@ -58,15 +58,3 @@ export interface YAxisResult {
   yAxisLabels: string[];
   topLabel: number;
 }
-
-export interface StatisticsLine {
-  value: number;
-  label: string;
-  className: string;
-}
-
-export interface YAxisWithStatistics {
-  yAxisLabels: string[];
-  topLabel: number;
-  statisticsLines: StatisticsLine[];
-}

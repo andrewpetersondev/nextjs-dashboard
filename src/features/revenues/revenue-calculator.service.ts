@@ -13,7 +13,7 @@ import { MONTH_ORDER } from "@/features/revenues/revenue.types";
 import type { RevenueId } from "@/lib/definitions/brands";
 
 /**
- * Service for calculating revenue statistics using dependency injection pattern.
+ * Service for calculating revenue statistics using a dependency injection pattern.
  * Provides methods to calculate revenue for the last 12 months with pure functions.
  *
  * **Dependency Injection**: This service receives its database dependency through
@@ -26,14 +26,14 @@ export class RevenueCalculatorService {
   constructor(private readonly db: Database) {}
 
   /**
-   * Calculate revenue for the last 12 months (current month + previous 11 months)
-   * Returns complete 12-month rolling period with zero values for months without data
+   * Calculate revenue for the last 12 months (current month and previous 11 months)
+   * Returns a complete 12-month rolling period with zero values for months without data
    */
   async calculateForYear(): Promise<RevenueEntity[]> {
     const { startDate, endDate } = this.calculateDateRange();
     const monthsTemplate = this.generateMonthsTemplate();
 
-    // Get actual data from invoices table
+    // Get actual data from invoice table
     const monthlyData = await this.fetchMonthlyRevenueData(startDate, endDate);
 
     // Fill missing months and transform to entities
@@ -42,9 +42,15 @@ export class RevenueCalculatorService {
       monthsTemplate,
     );
 
-    return completeData.map((data, index) =>
-      this.transformToRevenueEntity(data, index, monthsTemplate[index]),
-    );
+    return completeData.map((data, index) => {
+      const template = monthsTemplate[index];
+      if (!template) {
+        throw new Error(
+          `Template data missing for index ${index}. Expected 12 months of template data.`,
+        );
+      }
+      return this.transformToRevenueEntity(data, index, template);
+    });
   }
 
   /**
@@ -81,42 +87,97 @@ export class RevenueCalculatorService {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
 
-    // First day of month 12 months ago
+    // First day of the month 12 months ago
     const startDate = new Date(currentYear, currentMonth - 11, 1);
 
-    // Last day of current month
+    // Last day of the current month
     const endDate = new Date(currentYear, currentMonth + 1, 0);
 
     return {
-      endDate: endDate.toISOString().split("T")[0],
-      startDate: startDate.toISOString().split("T")[0],
+      endDate: String(endDate.toISOString().split("T")[0]),
+      startDate: String(startDate.toISOString().split("T")[0]),
     };
   }
 
   /**
-   * Generate template for 12 months with proper ordering
+   * Generate a template for 12 months with proper ordering
    * Each month includes display order, month name, number, and year
    */
   private generateMonthsTemplate(): RollingMonthData[] {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
+    const rollingStartDate = this.calculateRollingStartDate();
 
-    return Array.from({ length: 12 }, (_, index) => {
-      const monthDate = new Date(currentYear, currentMonth - 11 + index, 1);
-      const monthIndex = monthDate.getMonth();
+    return Array.from({ length: 12 }, (_, monthIndex) => {
+      const monthDate = this.calculateMonthDateFromStart(
+        rollingStartDate,
+        monthIndex,
+      );
+      const calendarMonthIndex = monthDate.getMonth();
 
-      return {
-        displayOrder: index,
-        month: MONTH_ORDER[monthIndex],
-        monthNumber: monthIndex + 1,
-        year: monthDate.getFullYear(),
-      };
+      return this.createMonthTemplateData(
+        monthIndex,
+        monthDate,
+        calendarMonthIndex,
+      );
     });
   }
 
   /**
-   * Fetch monthly revenue data from database for the specified date range
+   * Calculate the starting date for the 12-month rolling period
+   * Returns date object representing first day of month 12 months ago
+   */
+  private calculateRollingStartDate(): Date {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    return new Date(currentYear, currentMonth - 11, 1);
+  }
+
+  /**
+   * Calculate specific month date from rolling start date
+   * @param startDate - The rolling period start date
+   * @param monthOffset - Offset from start date (0-11)
+   */
+  private calculateMonthDateFromStart(
+    startDate: Date,
+    monthOffset: number,
+  ): Date {
+    return new Date(
+      startDate.getFullYear(),
+      startDate.getMonth() + monthOffset,
+      1,
+    );
+  }
+
+  /**
+   * Create month template data with guaranteed non-undefined month name
+   * @param displayOrder - Display order in the 12-month sequence (0-11)
+   * @param monthDate - Date object for the specific month
+   * @param calendarMonthIndex - Zero-based month index (0-11)
+   */
+  private createMonthTemplateData(
+    displayOrder: number,
+    monthDate: Date,
+    calendarMonthIndex: number,
+  ): RollingMonthData {
+    const monthName = MONTH_ORDER[calendarMonthIndex];
+
+    if (!monthName) {
+      throw new Error(
+        `Invalid month index: ${calendarMonthIndex}. Expected 0-11.`,
+      );
+    }
+
+    return {
+      displayOrder,
+      month: monthName,
+      monthNumber: calendarMonthIndex + 1,
+      year: monthDate.getFullYear(),
+    };
+  }
+
+  /**
+   * Fetch monthly revenue data from a database for the specified date range
    */
   private async fetchMonthlyRevenueData(
     startDate: string,
@@ -144,7 +205,7 @@ export class RevenueCalculatorService {
   }
 
   /**
-   * Merge actual data with month template to ensure all 12 months are present
+   * Merge actual data with a month template to ensure all 12 months are present
    * Uses a lookup strategy for O(1) data retrieval and template-driven completion
    */
   private mergeDataWithTemplate(
@@ -159,7 +220,7 @@ export class RevenueCalculatorService {
   }
 
   /**
-   * Create efficient lookup map for revenue data by year-month key
+   * Create an efficient lookup map for revenue data by year-month key
    * Time complexity: O(n) where n is the number of actual data records
    */
   private createDataLookupMap(
@@ -196,7 +257,7 @@ export class RevenueCalculatorService {
   }
 
   /**
-   * Generate consistent lookup key for year-month combination
+   * Generate a consistent lookup key for year-month combination
    * Format: "YYYY-MM" for reliable map key generation
    */
   private generateLookupKey(year: number, monthNumber: number): string {
@@ -204,7 +265,7 @@ export class RevenueCalculatorService {
   }
 
   /**
-   * Create default month data structure for months without revenue
+   * Create a default month data structure for months without revenue
    * Ensures type safety and consistent zero-value initialization
    */
   private createDefaultMonthData(
@@ -222,33 +283,53 @@ export class RevenueCalculatorService {
   }
 
   /**
-   * Transform query result to revenue entity with proper date formatting
+   * Transform a query result to a revenue entity with proper date formatting
    */
   private transformToRevenueEntity(
     data: MonthlyRevenueQueryResult,
     displayOrder: number,
     template: RollingMonthData,
   ): RevenueEntity {
-    const now = new Date();
-    const { startDate, endDate } = this.formatMonthDateRange(
+    const dateRange = this.formatMonthDateRange(
       template.year,
       template.monthNumber,
     );
+    const baseTimestamp = new Date();
+    const entityId = crypto.randomUUID() as RevenueId;
 
+    return this.createRevenueEntityData(
+      data,
+      template,
+      dateRange,
+      baseTimestamp,
+      entityId,
+    );
+  }
+
+  /**
+   * Create a revenue entity data structure with all required fields
+   */
+  private createRevenueEntityData(
+    data: MonthlyRevenueQueryResult,
+    template: RollingMonthData,
+    dateRange: { startDate: string; endDate: string },
+    timestamp: Date,
+    entityId: RevenueId,
+  ): RevenueEntity {
     return {
       calculatedFromInvoices: data.revenue,
-      calculationDate: now,
+      calculationDate: timestamp,
       calculationSource: "invoice_aggregation_rolling_12m",
-      createdAt: now,
-      endDate,
-      id: crypto.randomUUID() as RevenueId,
+      createdAt: timestamp,
+      endDate: dateRange.endDate,
+      id: entityId,
       invoiceCount: data.invoiceCount,
       isCalculated: true,
       month: data.month,
       revenue: data.revenue,
-      startDate,
-      updatedAt: now,
-      year: template.year, // Use template year for consistency
+      startDate: dateRange.startDate,
+      updatedAt: timestamp,
+      year: template.year,
     };
   }
 
@@ -258,21 +339,30 @@ export class RevenueCalculatorService {
   private formatMonthDateRange(
     year: number,
     month: number,
-  ): {
-    startDate: string;
-    endDate: string;
-  } {
-    const startDate = `${year}-${String(month).padStart(2, "0")}-01`;
-
-    // Calculate last day of month
-    const lastDay = new Date(year, month, 0).getDate();
-    const endDate = `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  ): { startDate: string; endDate: string } {
+    const startDate = this.formatMonthStartDate(year, month);
+    const endDate = this.formatMonthEndDate(year, month);
 
     return { endDate, startDate };
   }
 
   /**
-   * Create empty statistics object when no revenue data exists
+   * Format the first day of a month as an ISO date string
+   */
+  private formatMonthStartDate(year: number, month: number): string {
+    return `${year}-${String(month).padStart(2, "0")}-01`;
+  }
+
+  /**
+   * Format the last day of a month as an ISO date string
+   */
+  private formatMonthEndDate(year: number, month: number): string {
+    const lastDay = new Date(year, month, 0).getDate();
+    return `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  }
+
+  /**
+   * Create an empty statistics object when no revenue data exists
    */
   private createEmptyStatistics(): RevenueStatistics {
     return {
