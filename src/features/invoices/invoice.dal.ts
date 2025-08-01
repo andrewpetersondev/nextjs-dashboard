@@ -378,3 +378,33 @@ export async function fetchTotalPendingInvoicesDal(
 
   return pending;
 }
+
+/**
+ * Fetches all paid invoices from the database.
+ * @returns Promise resolving to an array of InvoiceEntity
+ * @throws DatabaseError if fetching fails or no paid invoices found
+ * @throws ValidationError if db is not provided
+ * @param db - Drizzle database instance
+ */
+export async function fetchAllPaidInvoicesDal(
+  db: Database,
+): Promise<InvoiceEntity[]> {
+  if (!db) {
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+      db: "Database instance is required",
+    });
+  }
+  const data = await db
+    .select()
+    .from(invoices)
+    .where(eq(invoices.status, "paid"))
+    .orderBy(desc(invoices.date));
+  if (!data || data.length === 0) {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
+  }
+  // Convert raw database rows to InvoiceEntity
+  const entities: InvoiceEntity[] = data.map((row) =>
+    rawDbToInvoiceEntity(row),
+  );
+  return entities;
+}

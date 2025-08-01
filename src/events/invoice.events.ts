@@ -228,8 +228,8 @@ export class InvoiceEventHandler {
       await this.revenueCalculator.calculateForYear();
 
       logger.info({
-        invoiceId: invoice.id,
         amount: invoice.amount,
+        invoiceId: invoice.id,
         message: "Revenue recognized for paid invoice",
       });
     } catch (error) {

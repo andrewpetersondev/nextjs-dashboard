@@ -7,7 +7,7 @@ import type {
 } from "@/db/models/revenue.entity";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import type { RevenueRepository } from "@/features/revenues/revenue.repository";
-import type { InvoiceId, RevenueId } from "@/lib/definitions/brands";
+import type { InvoiceId } from "@/lib/definitions/brands";
 
 /**
  * Business service for revenue processing and management.
@@ -136,7 +136,7 @@ export class RevenueService {
       calculationDate: new Date(),
       calculationSource: "invoice_recognition",
       endDate,
-      id: crypto.randomUUID() as RevenueId,
+      // id: toRevenueId(crypto.randomUUID()),
       invoiceCount: 1,
       isCalculated: true,
       month,

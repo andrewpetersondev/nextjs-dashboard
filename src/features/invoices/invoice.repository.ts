@@ -5,10 +5,11 @@ import type {
   InvoiceFormEntity,
   InvoiceFormPartialEntity,
 } from "@/db/models/invoice.entity";
-import { ValidationError } from "@/errors/errors";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
+  fetchAllPaidInvoicesDal,
   readInvoiceDal,
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
@@ -110,5 +111,36 @@ export class InvoiceRepository extends BaseRepository<
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(deletedEntity);
+  }
+
+  /**
+   * Finds an invoice by ID.
+   * @param id - InvoiceId (branded type)
+   * @returns Promise resolving to InvoiceEntity
+   * @throws ValidationError for invalid parameter id
+   * @throws DatabaseError for database failures
+   */
+  async findById(id: InvoiceId): Promise<InvoiceEntity> {
+    if (!id) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+    }
+    const entity: InvoiceEntity = await readInvoiceDal(this.db, id);
+    if (!entity) {
+      throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
+    }
+    return entity;
+  }
+
+  /**
+   * Finds all invoices.
+   * @returns Promise resolving to array of InvoiceEntity
+   * @throws DatabaseError for database failures
+   */
+  async findAll(): Promise<InvoiceEntity[]> {
+    const invoices: InvoiceEntity[] = await fetchAllPaidInvoicesDal(this.db);
+    if (!invoices) {
+      throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND);
+    }
+    return invoices;
   }
 }

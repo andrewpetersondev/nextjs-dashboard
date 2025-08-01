@@ -63,8 +63,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Validate required parameters
     if (!startDateParam || !endDateParam) {
       const errorResponse: ErrorResponse = {
-        error: "startDate and endDate parameters are required",
         code: "MISSING_REQUIRED_PARAMS",
+        error: "startDate and endDate parameters are required",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -73,18 +73,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const startDate = new Date(startDateParam);
     const endDate = new Date(endDateParam);
 
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       const errorResponse: ErrorResponse = {
-        error: "Invalid date format. Use ISO date strings (YYYY-MM-DD)",
         code: "INVALID_DATE_FORMAT",
+        error: "Invalid date format. Use ISO date strings (YYYY-MM-DD)",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
     if (startDate >= endDate) {
       const errorResponse: ErrorResponse = {
-        error: "startDate must be before endDate",
         code: "INVALID_DATE_RANGE",
+        error: "startDate must be before endDate",
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -110,8 +110,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Log successful request
     logger.info({
       context: {
+        dateRange: { endDate: endDateParam, startDate: startDateParam },
         endpoint: "GET /api/revenue",
-        dateRange: { startDate: startDateParam, endDate: endDateParam },
         includeStats,
         resultCount: revenue.length,
       },
@@ -129,8 +129,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Return generic error response
     const errorResponse: ErrorResponse = {
-      error: "Failed to fetch revenue data",
       code: "INTERNAL_SERVER_ERROR",
+      error: "Failed to fetch revenue data",
     };
 
     return NextResponse.json(errorResponse, { status: 500 });
@@ -153,8 +153,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Only allow sync endpoint
     if (!url.pathname.endsWith("/sync")) {
       const errorResponse: ErrorResponse = {
-        error: "POST method only supported for /sync endpoint",
         code: "METHOD_NOT_ALLOWED",
+        error: "POST method only supported for /sync endpoint",
       };
       return NextResponse.json(errorResponse, { status: 405 });
     }
@@ -178,8 +178,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     const errorResponse: ErrorResponse = {
-      error: "Failed to synchronize revenue data",
       code: "SYNC_FAILED",
+      error: "Failed to synchronize revenue data",
     };
 
     return NextResponse.json(errorResponse, { status: 500 });

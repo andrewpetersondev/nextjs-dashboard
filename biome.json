@@ -84,7 +84,6 @@
     },
     "enabled": true,
     "rules": {
-      "nursery": { "recommended": true, "useSortedClasses": "error" },
       "recommended": true
     }
   },

@@ -6,7 +6,9 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/db/models/revenue.entity";
-import { revenues } from "@/db/schema";
+import { type RevenueRow, revenues } from "@/db/schema";
+import { DatabaseError, ValidationError } from "@/errors/errors";
+import { rawDbToRevenueEntity } from "@/features/revenues/revenue.mapper";
 import type { RevenueId } from "@/lib/definitions/brands";
 
 /**
@@ -74,10 +76,19 @@ export class DatabaseRevenueRepository implements RevenueRepository {
     startDate: Date,
     endDate: Date,
   ): Promise<RevenueEntity[]> {
-    const startDateStr = startDate.toISOString().split("T")[0];
-    const endDateStr = endDate.toISOString().split("T")[0];
+    if (!startDate || !endDate) {
+      throw new ValidationError("Start and end dates are required");
+    }
 
-    return this.db
+    const startDateStr = String(startDate.toISOString().split("T")[0]);
+    const endDateStr = String(endDate.toISOString().split("T")[0]);
+
+    if (!startDateStr || !endDateStr) {
+      throw new Error("Date to String conversion failed");
+    }
+
+    // Query revenues within the specified date range
+    const data: RevenueRow[] = await this.db
       .select()
       .from(revenues)
       .where(
@@ -87,6 +98,16 @@ export class DatabaseRevenueRepository implements RevenueRepository {
         ),
       )
       .orderBy(desc(revenues.year), desc(revenues.month));
+
+    if (!data) {
+      throw new DatabaseError("Failed to retrieve revenue records");
+    }
+
+    const entities: RevenueEntity[] = data.map((row) =>
+      rawDbToRevenueEntity(row),
+    );
+
+    return entities;
   }
 
   /**
@@ -94,9 +115,13 @@ export class DatabaseRevenueRepository implements RevenueRepository {
    * Uses month field as the conflict resolution key.
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
+    if (!revenueData.month) {
+      throw new ValidationError("Revenue MONTH data is required");
+    }
+
     const now = new Date();
 
-    const [result] = await this.db
+    const [data] = await this.db
       .insert(revenues)
       .values({
         ...revenueData,
@@ -116,6 +141,16 @@ export class DatabaseRevenueRepository implements RevenueRepository {
         target: revenues.month,
       })
       .returning();
+
+    if (!data) {
+      throw new DatabaseError("Failed to upsert revenue record");
+    }
+
+    const result: RevenueEntity = rawDbToRevenueEntity(data);
+
+    if (!result) {
+      throw new DatabaseError("Failed to convert revenue record");
+    }
 
     return result;
   }

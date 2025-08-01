@@ -225,3 +225,96 @@ This document outlines the implementation plan for transitioning your revenue sy
 5. **Add resilience**: Implement error handling and retry logic
 
 This architecture will transform your revenue system from a reactive CRUD system into a truly event-driven, automatically synchronized system that maintains consistency with your invoice data while remaining completely decoupled.
+
+## Example Charts
+
+```mermaid
+sequenceDiagram
+participant U as User
+participant OS as Order Service
+participant EB as Event Bus
+participant PS as Payment Service
+participant IS as Inventory Service
+participant NS as Notification Service
+
+    U->>OS: Place Order
+    OS->>EB: Publish "OrderCreated" Event
+    EB->>PS: Route to Payment Service
+    EB->>IS: Route to Inventory Service
+    
+    PS->>EB: Publish "PaymentProcessed" Event
+    IS->>EB: Publish "InventoryReserved" Event
+    
+    EB->>NS: Route Payment/Inventory Events
+    NS->>U: Send Order Confirmation
+    
+    Note over EB: Events are processed asynchronously
+```
+```mermaid
+graph TB
+    subgraph "Event Producers"
+        A["User Service"]
+        B["Order Service"]
+        C["Payment Service"]
+        D["Inventory Service"]
+    end
+    
+    subgraph "Event Infrastructure"
+        E["Event Bus/Broker"]
+        F["Event Store"]
+    end
+    
+    subgraph "Event Consumers"
+        G["Email Service"]
+        H["Analytics Service"]
+        I["Notification Service"]
+        J["Audit Service"]
+    end
+    
+    A -->|"User Events"| E
+    B -->|"Order Events"| E
+    C -->|"Payment Events"| E
+    D -->|"Inventory Events"| E
+    
+    E --> F
+    E --> G
+    E --> H
+    E --> I
+    E --> J
+    
+    F -->|"Event Replay"| E
+```
+```mermaid
+graph TB
+  subgraph "Next.js App Router"
+    A["Server Actions"]
+    B["Route Handlers"]
+    C["Server Components"]
+    D["Client Components"]
+  end
+
+  subgraph "Event System"
+    E["Event Emitter"]
+    F["Event Types"]
+    G["Event Handlers"]
+    H["Event Queue"]
+  end
+
+  subgraph "External Services"
+    I["Database"]
+    J["Email Service"]
+    K["Analytics"]
+    L["Webhooks"]
+  end
+
+  A --> E
+  B --> E
+  E --> G
+  G --> I
+  G --> J
+  G --> K
+  G --> L
+
+  C --> A
+  D --> B
+```
