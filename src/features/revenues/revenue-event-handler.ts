@@ -1,5 +1,4 @@
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { toRevenueId } from "@/lib/definitions/brands";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
