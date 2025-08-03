@@ -5,6 +5,7 @@ import type {
   RevenueEntity,
 } from "@/db/models/revenue.entity";
 import { DatabaseError, ValidationError } from "@/errors/errors";
+import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { RevenueRepositoryInterface } from "@/features/revenues/revenue.repository";
 import type { RevenueId } from "@/lib/definitions/brands";
 
@@ -109,7 +110,13 @@ export class RevenueService {
     return this.revenueRepository.findByDateRange(startDate, endDate);
   }
 
-  async getRevenueByPeriod(period: string): Promise<RevenueEntity> {
+  /**
+   * Retrieves a revenue record by its period.
+   *
+   * @param period - The period in YYYY-MM format
+   * @returns Promise resolving to the revenue entity or null if not found
+   */
+  async getRevenueByPeriod(period: string): Promise<RevenueEntity | null> {
     if (!period) {
       throw new ValidationError("Period is required");
     }
@@ -137,5 +144,59 @@ export class RevenueService {
     const average = count > 0 ? Math.round(total / count) : 0;
 
     return { average, count, total };
+  }
+
+  /**
+   * Creates or updates a revenue record for a specific month based on invoice data.
+   * This method is called by the event handler when invoices are created, updated, or deleted.
+   *
+   * @param period - The period in YYYY-MM format
+   * @param invoice - The invoice data that triggered the update
+   * @returns Promise resolving to the created or updated revenue entity
+   */
+  async upsertMonthlyRevenue(period: string, invoice: InvoiceDto): Promise<RevenueEntity> {
+    if (!period) {
+      throw new ValidationError("Period is required");
+    }
+
+    if (!invoice) {
+      throw new ValidationError("Invoice data is required");
+    }
+
+    // Check if a revenue record already exists for this period
+    const existingRevenue = await this.revenueRepository.findByPeriod(period);
+
+    // If no existing revenue or the invoice is not paid, create a new record or update with zero amount
+    if (!existingRevenue) {
+      // Create new revenue record
+      const newRevenue: RevenueCreateEntity = {
+        calculationSource: "handler",
+        createdAt: new Date(),
+        invoiceCount: invoice.status === "paid" ? 1 : 0,
+        period,
+        revenue: invoice.status === "paid" ? invoice.amount : 0,
+        updatedAt: new Date(),
+      };
+
+      return this.revenueRepository.upsertByPeriod(period, newRevenue);
+    }
+
+    // Update existing revenue record
+    const updatedRevenue: RevenueCreateEntity = {
+      calculationSource: "handler",
+      createdAt: existingRevenue.createdAt,
+      // If the invoice is paid, increment the count, otherwise keep it the same
+      invoiceCount: invoice.status === "paid"
+        ? existingRevenue.invoiceCount + 1
+        : existingRevenue.invoiceCount,
+      period: existingRevenue.period,
+      // If the invoice is paid, add its amount, otherwise keep the same revenue
+      revenue: invoice.status === "paid"
+        ? existingRevenue.revenue + invoice.amount
+        : existingRevenue.revenue,
+      updatedAt: new Date(),
+    };
+
+    return this.revenueRepository.upsertByPeriod(period, updatedRevenue);
   }
 }

@@ -72,8 +72,8 @@ export class RevenueEventHandler {
       status: event.invoice.status,
     });
 
-    // i need to check if a revenue record already exists for the month of the invoice
-    // should the service be able to return null if no record exists?
+    // Check if a revenue record already exists for the month of the invoice
+    // The service returns null if no record exists for the period
     const existingRevenue = await this.revenueService.getRevenueByPeriod(
       event.invoice.date.substring(0, 7), // Extract YYYY-MM from date
     );
@@ -86,10 +86,20 @@ export class RevenueEventHandler {
         message:
           "No existing revenue record found, creating new revenue record",
       });
-      // do something
+      // Create new revenue record
+      const revenue = {
+        calculationSource: "handler",
+        createdAt: new Date(),
+        invoiceCount: 1,
+        period: event.invoice.date.substring(0, 7), // Extract YYYY-MM from date
+        revenue: event.invoice.amount,
+        updatedAt: new Date(),
+      };
+      await this.revenueService.createRevenue(revenue);
+      return; // Exit early since we've created a new record
     }
 
-    // if invoiceCount and revenue are  0, we need to create a new revenue record
+    // if invoiceCount and revenue are 0, we need to create a new revenue record
     if (existingRevenue.invoiceCount === 0 && existingRevenue.revenue === 0) {
       logger.info({
         context: "RevenueEventHandler.handleInvoiceCreated",
