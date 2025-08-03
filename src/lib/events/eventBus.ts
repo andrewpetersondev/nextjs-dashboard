@@ -25,10 +25,10 @@ export class EventBus {
    * @param handler - The handler function to invoke when the event is published
    */
   static subscribe<T>(eventName: string, handler: EventHandler<T>): void {
-    if (!this.handlers[eventName]) {
-      this.handlers[eventName] = [];
+    if (!EventBus.handlers[eventName]) {
+      EventBus.handlers[eventName] = [];
     }
-    this.handlers[eventName].push(handler);
+    EventBus.handlers[eventName].push(handler);
   }
 
   /**
@@ -37,7 +37,7 @@ export class EventBus {
    * @param event - The event payload
    */
   static async publish<T>(eventName: string, event: T): Promise<void> {
-    const handlers = this.handlers[eventName] || [];
+    const handlers = EventBus.handlers[eventName] || [];
     for (const handler of handlers) {
       try {
         await handler(event);

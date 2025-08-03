@@ -443,7 +443,7 @@ export class RevenueCalculatorService {
    * such as date ranges, timestamps, and unique identifiers.
    *
    * @param data - Monthly revenue data from query or default
-   * @param displayOrder - Order index within the 12-month sequence
+   * @param _displayOrder - Order index within the 12-month sequence
    * @param template - Template data containing month metadata
    * @returns Complete RevenueEntity with all required fields
    *
@@ -451,7 +451,7 @@ export class RevenueCalculatorService {
    */
   private transformToRevenueEntity(
     data: MonthlyRevenueQueryResult,
-    displayOrder: number,
+    _displayOrder: number,
     template: RollingMonthData,
   ): RevenueEntity {
     const dateRange = this.formatMonthDateRange(
@@ -474,8 +474,8 @@ export class RevenueCalculatorService {
    * Creates a complete revenue entity data structure with all required fields.
    *
    * @param data - Monthly revenue query result
-   * @param template - Month template data
-   * @param dateRange - Start and end dates for the month
+   * @param _template - Month template data
+   * @param _dateRange - Start and end dates for the month
    * @param timestamp - Creation/update timestamp
    * @param entityId - Unique identifier for the entity
    * @returns Complete RevenueEntity object
@@ -484,8 +484,8 @@ export class RevenueCalculatorService {
    */
   private createRevenueEntityData(
     data: MonthlyRevenueQueryResult,
-    template: RollingMonthData,
-    dateRange: { startDate: string; endDate: string },
+    _template: RollingMonthData,
+    _dateRange: { startDate: string; endDate: string },
     timestamp: Date,
     entityId: RevenueId,
   ): RevenueEntity {
