@@ -2,9 +2,11 @@
 
 import { getDB } from "@/db/connection";
 import type { RevenueChartDto } from "@/features/revenues/revenue.dto";
+import { RevenueRepository } from "@/features/revenues/revenue.repository";
 import type { RevenueActionResult } from "@/features/revenues/revenue.types";
+import { MONTH_ORDER } from "@/features/revenues/revenue.types";
 import { convertCentsToDollars } from "@/features/revenues/revenue.utils";
-import { RevenueCalculatorService } from "@/features/revenues/revenue-calculator.service";
+import { RevenueStatisticsService } from "@/features/revenues/revenue-statistics.service";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -13,8 +15,9 @@ import { logger } from "@/lib/utils/logger";
  * This server action orchestrates the revenue calculation process by:
  * 1. Instantiating the revenue calculator service with database dependency
  * 2. Fetching raw revenue entities and statistics in parallel
- * 3. Converting cent values to dollar amounts for presentation
- * 4. Formatting data according to chart requirements
+ * 3. Deriving month names from period values (YYYY-MM format)
+ * 4. Converting cent values to dollar amounts for presentation
+ * 5. Formatting data according to chart requirements
  *
  * @returns Promise resolving to RevenueActionResult containing chart data or error
  *
@@ -38,13 +41,18 @@ import { logger } from "@/lib/utils/logger";
  * - Uses dependency injection pattern for database access
  * - Separates business logic (service) from presentation logic (action)
  * - Implements proper error handling with structured logging
- * Converts raw database values to presentation format
+ * - Converts raw database values to presentation format
+ * - Derives month names from period values using MONTH_ORDER constant
  */
 export async function getRevenueChartAction(): Promise<
   RevenueActionResult<RevenueChartDto>
 > {
   try {
-    const calculator = new RevenueCalculatorService(getDB());
+    // Create repository with database connection
+    const revenueRepository = new RevenueRepository(getDB());
+
+    // Create calculator service with repository dependency
+    const calculator = new RevenueStatisticsService(revenueRepository);
 
     // Get pure database values for a rolling 12-month period
     const [entities, rawStatistics] = await Promise.all([
@@ -54,11 +62,18 @@ export async function getRevenueChartAction(): Promise<
 
     // Apply business logic conversions in the action layer
     const chartData: RevenueChartDto = {
-      monthlyData: entities.map((entity, index) => ({
-        month: entity.month,
-        monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
-        revenue: convertCentsToDollars(entity.revenue), // Convert to dollars
-      })),
+      monthlyData: entities.map((entity, index) => {
+        // Extract month number from period (format: YYYY-MM)
+        const monthNumber = parseInt(entity.period.substring(5, 7), 10);
+        // Get month abbreviation from MONTH_ORDER array (0-indexed, so subtract 1)
+        const monthAbbreviation = MONTH_ORDER[monthNumber - 1];
+
+        return {
+          month: monthAbbreviation,
+          monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
+          revenue: convertCentsToDollars(entity.revenue), // Convert to dollars
+        };
+      }),
       statistics: {
         average: convertCentsToDollars(rawStatistics.average),
         maximum: convertCentsToDollars(rawStatistics.maximum),

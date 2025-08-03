@@ -57,39 +57,23 @@ export class RevenueEventHandler {
     );
   }
 
+  /**
+   * Handles invoice creation events by updating the corresponding revenue record.
+   * When a paid invoice is created, we need to increment the invoice count and add
+   * the invoice amount to the revenue total for the affected period.
+   *
+   * @param event - The invoice creation event containing the new invoice data
+   */
   private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {
     try {
-      // Validate the invoice
-      const validation = validateInvoiceForRevenue(event.invoice);
-      if (!validation.isValid) {
-        logger.warn({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice?.id,
-          message: validation.errorMessage || "Invalid invoice parameters",
-        });
-        return; // Skip if invoice validation fails
-      }
-
-      // Skip if the invoice is not paid
-      if (event.invoice.status !== "paid") {
-        logger.info({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice.id,
-          message: "Invoice status is not 'paid', skipping revenue calculation",
-        });
+      // Validate the invoice and check if it's eligible for revenue calculation
+      if (
+        !this.isInvoiceEligibleForRevenue(event.invoice, "handleInvoiceCreated")
+      ) {
         return;
       }
 
-      // Extract period safely
-      const period = extractPeriodFromInvoice(event.invoice);
-      if (!period) {
-        logger.warn({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice.id,
-          message: "Could not extract valid period from invoice date",
-        });
-        return;
-      }
+      const period = extractPeriodFromInvoice(event.invoice)!; // Safe because we validated in isInvoiceEligibleForRevenue
 
       // Log the creation event
       logger.info({
@@ -100,76 +84,8 @@ export class RevenueEventHandler {
         status: event.invoice.status,
       });
 
-      // Check if a revenue record already exists for the period
-      const existingRevenue =
-        await this.revenueService.getRevenueByPeriod(period);
-
-      // If no existing revenue, create a new record
-      if (!existingRevenue) {
-        logger.info({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice.id,
-          message:
-            "No existing revenue record found, creating new revenue record",
-          period,
-        });
-
-        const revenue = {
-          calculationSource: "handler",
-          createdAt: new Date(),
-          invoiceCount: 1,
-          period,
-          revenue: event.invoice.amount,
-          updatedAt: new Date(),
-        };
-
-        await this.revenueService.createRevenue(revenue);
-        return; // Exit early since we've created a new record
-      }
-
-      // If existing revenue has zero values, create a new record
-      if (existingRevenue.invoiceCount === 0 && existingRevenue.revenue === 0) {
-        logger.info({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice.id,
-          message: "Existing revenue record has zero values, updating record",
-          period,
-        });
-
-        const revenue = {
-          calculationSource: "handler",
-          createdAt: existingRevenue.createdAt,
-          invoiceCount: 1,
-          period: existingRevenue.period,
-          revenue: event.invoice.amount,
-          updatedAt: new Date(),
-        };
-
-        await this.revenueService.updateRevenue(existingRevenue.id, revenue);
-        return;
-      }
-
-      // If existing revenue has non-zero values, update the record
-      if (existingRevenue.invoiceCount > 0 || existingRevenue.revenue > 0) {
-        logger.info({
-          context: "RevenueEventHandler.handleInvoiceCreated",
-          invoiceId: event.invoice.id,
-          message:
-            "Existing revenue record found, updating existing revenue record",
-          period,
-        });
-
-        const revenue = {
-          calculationSource: "handler",
-          createdAt: existingRevenue.createdAt,
-          invoiceCount: existingRevenue.invoiceCount + 1,
-          period: existingRevenue.period,
-          revenue: existingRevenue.revenue + event.invoice.amount,
-          updatedAt: new Date(),
-        };
-
-        await this.revenueService.updateRevenue(existingRevenue.id, revenue);
-      }
+      // Process the invoice for revenue calculation
+      await this.processInvoiceForRevenue(event.invoice, period);
     } catch (error) {
       handleEventError("RevenueEventHandler.handleInvoiceCreated", error, {
         invoiceId: event.invoice?.id,
@@ -177,6 +93,125 @@ export class RevenueEventHandler {
     }
   }
 
+  /**
+   * Validates if an invoice is eligible for revenue calculation.
+   * An invoice is eligible if it's valid, paid, and has a valid period.
+   *
+   * @param invoice - The invoice to validate
+   * @param contextMethod - The name of the calling method for logging context
+   * @returns True if the invoice is eligible, false otherwise
+   * @private
+   */
+  private isInvoiceEligibleForRevenue(
+    invoice: InvoiceDto | undefined,
+    contextMethod: string,
+  ): boolean {
+    // Validate the invoice
+    const validation = validateInvoiceForRevenue(invoice);
+    if (!validation.isValid) {
+      logger.warn({
+        context: `RevenueEventHandler.${contextMethod}`,
+        invoiceId: invoice?.id,
+        message: validation.errorMessage || "Invalid invoice parameters",
+      });
+      return false;
+    }
+
+    // Skip if the invoice is not paid
+    if (invoice!.status !== "paid") {
+      logger.info({
+        context: `RevenueEventHandler.${contextMethod}`,
+        invoiceId: invoice!.id,
+        message: "Invoice status is not 'paid', skipping revenue calculation",
+      });
+      return false;
+    }
+
+    // Extract period safely
+    const period = extractPeriodFromInvoice(invoice);
+    if (!period) {
+      logger.warn({
+        context: `RevenueEventHandler.${contextMethod}`,
+        invoiceId: invoice!.id,
+        message: "Could not extract valid period from invoice date",
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Processes an invoice for revenue calculation by creating or updating the revenue record.
+   *
+   * @param invoice - The invoice to process
+   * @param period - The period (YYYY-MM) to associate with the revenue
+   * @private
+   */
+  private async processInvoiceForRevenue(
+    invoice: InvoiceDto,
+    period: string,
+  ): Promise<void> {
+    // Check if a revenue record already exists for the period
+    const existingRevenue =
+      await this.revenueService.getRevenueByPeriod(period);
+
+    // If no existing revenue, create a new record
+    if (!existingRevenue) {
+      logger.info({
+        context: "RevenueEventHandler.processInvoiceForRevenue",
+        invoiceId: invoice.id,
+        message:
+          "No existing revenue record found, creating new revenue record",
+        period,
+      });
+
+      const revenue = {
+        calculationSource: "handler",
+        createdAt: new Date(),
+        invoiceCount: 1,
+        period,
+        revenue: invoice.amount,
+        updatedAt: new Date(),
+      };
+
+      await this.revenueService.createRevenue(revenue);
+      return;
+    }
+
+    // For existing revenue records (with zero or non-zero values), update the record
+    const logMessage =
+      existingRevenue.invoiceCount === 0 && existingRevenue.revenue === 0
+        ? "Existing revenue record has zero values, updating record"
+        : "Existing revenue record found, updating existing revenue record";
+
+    logger.info({
+      context: "RevenueEventHandler.processInvoiceForRevenue",
+      invoiceId: invoice.id,
+      message: logMessage,
+      period,
+    });
+
+    const revenue = {
+      calculationSource: "handler",
+      createdAt: existingRevenue.createdAt,
+      invoiceCount: existingRevenue.invoiceCount + 1,
+      period: existingRevenue.period,
+      revenue: existingRevenue.revenue + invoice.amount,
+      updatedAt: new Date(),
+    };
+
+    await this.revenueService.updateRevenue(existingRevenue.id, revenue);
+  }
+
+  /**
+   * Handles invoice update events by recalculating revenue if necessary.
+   * Revenue recalculation is needed when:
+   * 1. The invoice status changes (e.g., from draft to paid)
+   * 2. The amount changes for a paid invoice
+   *
+   * @param event - The invoice update event containing the updated invoice data
+   */
   private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
     try {
       // Validate the invoice
@@ -206,7 +241,26 @@ export class RevenueEventHandler {
           statusChanged,
         });
 
-        await this.recalculateRevenue(event.invoice);
+        // If the invoice is now paid, process it for revenue calculation
+        if (event.invoice.status === "paid") {
+          const period = extractPeriodFromInvoice(event.invoice);
+          if (period) {
+            await this.processInvoiceForRevenue(event.invoice, period);
+          } else {
+            logger.warn({
+              context: "RevenueEventHandler.handleInvoiceUpdated",
+              invoiceId: event.invoice.id,
+              message: "Could not extract valid period from invoice date",
+            });
+          }
+        }
+        // If the invoice was previously paid but is no longer paid, adjust revenue
+        else if (event.previousInvoice?.status === "paid") {
+          await this.adjustRevenueForStatusChange(
+            event.previousInvoice,
+            event.invoice,
+          );
+        }
       } else {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceUpdated",
@@ -222,73 +276,27 @@ export class RevenueEventHandler {
     }
   }
 
-  private async recalculateRevenue(invoice: InvoiceDto): Promise<void> {
-    try {
-      // Extract period safely
-      const period = extractPeriodFromInvoice(invoice);
-      if (!period) {
-        logger.warn({
-          context: "RevenueEventHandler.recalculateRevenue",
-          invoiceId: invoice.id,
-          message: "Could not extract valid period from invoice date",
-        });
-        return;
-      }
-
-      // Create or update monthly revenue record
-      await this.revenueService.upsertMonthlyRevenue(period, invoice);
-
-      logger.info({
-        amount: invoice.amount,
-        context: "RevenueEventHandler.recalculateRevenue",
-        invoiceId: invoice.id,
-        period,
-        status: invoice.status,
-      });
-    } catch (error) {
-      handleEventError("RevenueEventHandler.recalculateRevenue", error, {
-        invoiceId: invoice.id,
-      });
-    }
-  }
-
   /**
-   * Handles invoice deletion events by updating the corresponding revenue record.
-   * When an invoice is deleted, we need to decrement the invoice count and subtract
-   * the invoice amount from the revenue total for the affected period.
+   * Adjusts revenue when an invoice status changes from paid to unpaid.
+   * This decrements the invoice count and subtracts the invoice amount from the revenue.
    *
-   * @param event - The invoice deletion event containing the deleted invoice data
+   * @param previousInvoice - The previous state of the invoice (paid)
+   * @param currentInvoice - The current state of the invoice (not paid)
+   * @private
    */
-  private async handleInvoiceDeleted(event: BaseInvoiceEvent): Promise<void> {
+  private async adjustRevenueForStatusChange(
+    previousInvoice: InvoiceDto | undefined,
+    currentInvoice: InvoiceDto,
+  ): Promise<void> {
+    if (!previousInvoice) return;
+
     try {
-      // Validate the invoice
-      const validation = validateInvoiceForRevenue(event.invoice);
-      if (!validation.isValid) {
-        logger.warn({
-          context: "RevenueEventHandler.handleInvoiceDeleted",
-          invoiceId: event.invoice?.id,
-          message: validation.errorMessage || "Invalid invoice parameters",
-        });
-        return;
-      }
-
-      // Only paid invoices affect revenue
-      if (event.invoice.status !== "paid") {
-        logger.info({
-          context: "RevenueEventHandler.handleInvoiceDeleted",
-          invoiceId: event.invoice.id,
-          message: "Deleted invoice was not paid, no revenue adjustment needed",
-        });
-        return;
-      }
-
-      // Extract period safely
-      const period = extractPeriodFromInvoice(event.invoice);
+      const period = extractPeriodFromInvoice(previousInvoice);
       if (!period) {
         logger.warn({
-          context: "RevenueEventHandler.handleInvoiceDeleted",
-          invoiceId: event.invoice.id,
-          message: "Could not extract valid period from invoice date",
+          context: "RevenueEventHandler.adjustRevenueForStatusChange",
+          invoiceId: currentInvoice.id,
+          message: "Could not extract valid period from previous invoice date",
         });
         return;
       }
@@ -299,20 +307,20 @@ export class RevenueEventHandler {
 
       if (!existingRevenue) {
         logger.warn({
-          context: "RevenueEventHandler.handleInvoiceDeleted",
-          invoiceId: event.invoice.id,
+          context: "RevenueEventHandler.adjustRevenueForStatusChange",
+          invoiceId: currentInvoice.id,
           message:
-            "No revenue record found for the period of the deleted invoice",
+            "No revenue record found for the period of the updated invoice",
           period,
         });
         return;
       }
 
-      // Calculate new values after removing the deleted invoice
+      // Calculate new values after removing the invoice
       const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
       const newRevenue = Math.max(
         0,
-        existingRevenue.revenue - event.invoice.amount,
+        existingRevenue.revenue - previousInvoice.amount,
       );
 
       // Update the revenue record
@@ -331,17 +339,123 @@ export class RevenueEventHandler {
       );
 
       logger.info({
+        context: "RevenueEventHandler.adjustRevenueForStatusChange",
+        invoiceId: currentInvoice.id,
+        message: "Revenue record updated after invoice status change",
+        newInvoiceCount,
+        newRevenue,
+        period,
+      });
+    } catch (error) {
+      handleEventError(
+        "RevenueEventHandler.adjustRevenueForStatusChange",
+        error,
+        {
+          invoiceId: currentInvoice.id,
+        },
+      );
+    }
+  }
+
+  /**
+   * Handles invoice deletion events by updating the corresponding revenue record.
+   * When a paid invoice is deleted, we need to decrement the invoice count and subtract
+   * the invoice amount from the revenue total for the affected period.
+   *
+   * @param event - The invoice deletion event containing the deleted invoice data
+   */
+  private async handleInvoiceDeleted(event: BaseInvoiceEvent): Promise<void> {
+    try {
+      // Validate the invoice and check if it's eligible for revenue adjustment
+      if (
+        !this.isInvoiceEligibleForRevenue(event.invoice, "handleInvoiceDeleted")
+      ) {
+        return;
+      }
+
+      const period = extractPeriodFromInvoice(event.invoice)!; // Safe because we validated in isInvoiceEligibleForRevenue
+
+      // Log the deletion event
+      logger.info({
+        amount: event.invoice.amount,
         context: "RevenueEventHandler.handleInvoiceDeleted",
         invoiceId: event.invoice.id,
+        period,
+        status: event.invoice.status,
+      });
+
+      // Adjust revenue for the deleted invoice
+      await this.adjustRevenueForDeletedInvoice(event.invoice, period);
+    } catch (error) {
+      handleEventError("RevenueEventHandler.handleInvoiceDeleted", error, {
+        invoiceId: event.invoice?.id,
+      });
+    }
+  }
+
+  /**
+   * Adjusts revenue when a paid invoice is deleted.
+   * This decrements the invoice count and subtracts the invoice amount from the revenue.
+   *
+   * @param invoice - The deleted invoice
+   * @param period - The period (YYYY-MM) associated with the invoice
+   * @private
+   */
+  private async adjustRevenueForDeletedInvoice(
+    invoice: InvoiceDto,
+    period: string,
+  ): Promise<void> {
+    try {
+      // Get the existing revenue record for this period
+      const existingRevenue =
+        await this.revenueService.getRevenueByPeriod(period);
+
+      if (!existingRevenue) {
+        logger.warn({
+          context: "RevenueEventHandler.adjustRevenueForDeletedInvoice",
+          invoiceId: invoice.id,
+          message:
+            "No revenue record found for the period of the deleted invoice",
+          period,
+        });
+        return;
+      }
+
+      // Calculate new values after removing the deleted invoice
+      const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
+      const newRevenue = Math.max(0, existingRevenue.revenue - invoice.amount);
+
+      // Update the revenue record
+      const updatedRevenue = {
+        calculationSource: "handler",
+        createdAt: existingRevenue.createdAt,
+        invoiceCount: newInvoiceCount,
+        period: existingRevenue.period,
+        revenue: newRevenue,
+        updatedAt: new Date(),
+      };
+
+      await this.revenueService.updateRevenue(
+        existingRevenue.id,
+        updatedRevenue,
+      );
+
+      logger.info({
+        context: "RevenueEventHandler.adjustRevenueForDeletedInvoice",
+        invoiceId: invoice.id,
         message: "Revenue record updated after invoice deletion",
         newInvoiceCount,
         newRevenue,
         period,
       });
     } catch (error) {
-      handleEventError("RevenueEventHandler.handleInvoiceDeleted", error, {
-        invoiceId: event.invoice?.id,
-      });
+      handleEventError(
+        "RevenueEventHandler.adjustRevenueForDeletedInvoice",
+        error,
+        {
+          invoiceId: invoice.id,
+        },
+      );
     }
   }
 }
