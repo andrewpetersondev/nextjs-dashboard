@@ -47,7 +47,10 @@ export interface RevenueRepositoryInterface {
     period: "month" | "quarter" | "year",
   ): Promise<RevenueAggregate[]>;
   findByPeriod(period: string): Promise<RevenueEntity | null>;
-  upsertByPeriod(period: string, revenue: RevenueCreateEntity): Promise<RevenueEntity>;
+  upsertByPeriod(
+    period: string,
+    revenue: RevenueCreateEntity,
+  ): Promise<RevenueEntity>;
 }
 
 /**
@@ -271,7 +274,9 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     }
 
     if (!revenueData.period) {
-      throw new ValidationError("Revenue period (YYYY-MM) is required and must be unique");
+      throw new ValidationError(
+        "Revenue period (YYYY-MM) is required and must be unique",
+      );
     }
 
     const now = new Date();
@@ -308,9 +313,12 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       return result;
     } catch (error) {
       // Handle specific database errors related to uniqueness constraint
-      if (error instanceof Error && error.message.includes("unique constraint")) {
+      if (
+        error instanceof Error &&
+        error.message.includes("unique constraint")
+      ) {
         throw new ValidationError(
-          `Revenue record with period ${revenueData.period} already exists and could not be updated`
+          `Revenue record with period ${revenueData.period} already exists and could not be updated`,
         );
       }
       throw error;
@@ -360,7 +368,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param revenue - Revenue data to create or update
    * @returns Promise resolving to the created or updated revenue entity
    */
-  async upsertByPeriod(period: string, revenue: RevenueCreateEntity): Promise<RevenueEntity> {
+  async upsertByPeriod(
+    period: string,
+    revenue: RevenueCreateEntity,
+  ): Promise<RevenueEntity> {
     if (!period) {
       throw new ValidationError("Period is required");
     }

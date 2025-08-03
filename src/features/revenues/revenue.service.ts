@@ -154,7 +154,10 @@ export class RevenueService {
    * @param invoice - The invoice data that triggered the update
    * @returns Promise resolving to the created or updated revenue entity
    */
-  async upsertMonthlyRevenue(period: string, invoice: InvoiceDto): Promise<RevenueEntity> {
+  async upsertMonthlyRevenue(
+    period: string,
+    invoice: InvoiceDto,
+  ): Promise<RevenueEntity> {
     if (!period) {
       throw new ValidationError("Period is required");
     }
@@ -186,14 +189,16 @@ export class RevenueService {
       calculationSource: "handler",
       createdAt: existingRevenue.createdAt,
       // If the invoice is paid, increment the count, otherwise keep it the same
-      invoiceCount: invoice.status === "paid"
-        ? existingRevenue.invoiceCount + 1
-        : existingRevenue.invoiceCount,
+      invoiceCount:
+        invoice.status === "paid"
+          ? existingRevenue.invoiceCount + 1
+          : existingRevenue.invoiceCount,
       period: existingRevenue.period,
       // If the invoice is paid, add its amount, otherwise keep the same revenue
-      revenue: invoice.status === "paid"
-        ? existingRevenue.revenue + invoice.amount
-        : existingRevenue.revenue,
+      revenue:
+        invoice.status === "paid"
+          ? existingRevenue.revenue + invoice.amount
+          : existingRevenue.revenue,
       updatedAt: new Date(),
     };
 
