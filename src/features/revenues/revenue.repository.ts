@@ -49,11 +49,15 @@ export interface RevenueRepositoryInterface {
  */
 export class RevenueRepository implements RevenueRepositoryInterface {
   /**
-   * Notes about constructor:
-   * - Pattern: Accepts concrete database dependency
-   * - Purpose: Data persistence operations
-   * - Good Practice: ✅ Single responsibility, clear dependency
-   * @param db
+   * Constructor using dependency injection pattern.
+   *
+   * @remarks
+   * **Dependency Injection Benefits:**
+   * - Single responsibility: focuses on data persistence operations
+   * - Clear dependency contract through constructor injection
+   * - Enhanced testability with mock database implementations
+   *
+   * @param db - Database connection instance for data operations
    */
   constructor(private readonly db: Database) {}
 
@@ -170,29 +174,31 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new ValidationError("Start and end dates are required");
     }
 
-    const startDateStr = String(startDate.toISOString().split("T")[0]);
-    const endDateStr = String(endDate.toISOString().split("T")[0]);
+    const formatDateToPeriod = (date: Date): string => {
+      return String(date.toISOString().split("T")[0]!.substring(0, 7)); // Format: YYYY-MM
+    };
 
-    if (!startDateStr || !endDateStr) {
-      throw new Error("Date to String conversion failed");
-    }
+    const startPeriod = formatDateToPeriod(startDate);
+    const endPeriod = formatDateToPeriod(endDate);
 
     // Query revenues within the specified date range
-    const data: RevenueRow[] = await this.db
+    const revenueRows: RevenueRow[] = await this.db
       .select()
       .from(revenues)
-      .where(and(gte(startDateStr), lte(endDateStr)))
+      .where(
+        and(gte(revenues.period, startPeriod), lte(revenues.period, endPeriod)),
+      )
       .orderBy(desc(revenues.period));
 
-    if (!data) {
+    if (!revenueRows) {
       throw new DatabaseError("Failed to retrieve revenue records");
     }
 
-    const entities: RevenueEntity[] = data.map((row) =>
+    const revenueEntities: RevenueEntity[] = revenueRows.map((row) =>
       rawDbToRevenueEntity(row),
     );
 
-    return entities;
+    return revenueEntities;
   }
 
   async findByPeriod(period: string): Promise<RevenueEntity> {

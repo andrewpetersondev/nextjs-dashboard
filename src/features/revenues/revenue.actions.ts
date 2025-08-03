@@ -48,7 +48,7 @@ export async function getRevenueChartAction(): Promise<
 
     // Get pure database values for a rolling 12-month period
     const [entities, rawStatistics] = await Promise.all([
-      calculator.calculateForYear(),
+      calculator.calculateForRollingYear(),
       calculator.calculateStatistics(),
     ]);
 

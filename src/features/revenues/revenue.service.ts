@@ -14,11 +14,16 @@ import type { RevenueId } from "@/lib/definitions/brands";
  */
 export class RevenueService {
   /**
-   * Notes about constructor:
-   * - Pattern: Accepts an interface dependency
-   * - Purpose: Business logic coordination Good
-   * - Practice: ✅ Depends on abstraction (interface), not concrete implementation
-   * @param revenueRepository - Repository for revenue data access
+   * Constructor using dependency injection pattern.
+   *
+   * @remarks
+   * **Dependency Injection Benefits:**
+   * - Depends on abstraction (interface) rather than concrete implementation
+   * - Enhanced testability through mock repository injection
+   * - Follows dependency inversion principle
+   * - Business logic coordination without tight coupling
+   *
+   * @param revenueRepository - Repository interface for revenue data access
    */
   constructor(private readonly revenueRepository: RevenueRepositoryInterface) {}
 

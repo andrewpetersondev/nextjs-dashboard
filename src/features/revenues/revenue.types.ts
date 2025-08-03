@@ -144,6 +144,7 @@ export interface RollingMonthData {
  *   invoiceCount: 25,    // COUNT(invoices.id)
  *   year: 2025,          // EXTRACT(YEAR FROM date)
  *   monthNumber: 1       // EXTRACT(MONTH FROM date)
+ *   period: "2025-01"     // Concatenated year and month
  * };
  * ```
  */

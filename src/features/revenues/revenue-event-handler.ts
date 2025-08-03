@@ -1,24 +1,40 @@
-import { type Database, getDB } from "@/db/connection";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { toRevenueId } from "@/lib/definitions/brands";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
-import { RevenueRepository } from "./revenue.repository";
-import { RevenueService } from "./revenue.service";
+import type { RevenueService } from "./revenue.service";
 
 /**
  * Handles invoice events and determines if revenue recalculation is needed.
  */
 export class RevenueEventHandler {
-  private revenueService: RevenueService;
+  private readonly revenueService: RevenueService;
 
-  constructor() {
-    const db: Database = getDB();
-    const revenueRepository = new RevenueRepository(db);
+  /**
+   * Constructor using dependency injection pattern.
+   *
+   * @remarks
+   * **Dependency Injection Benefits:**
+   * - Testable through mock service injection
+   * - Clear separation of event handling from business logic
+   * - Follows dependency inversion principle
+   * - Eliminates tight coupling to concrete implementations
+   *
+   * @param revenueService - Service instance for revenue operations
+   */
+  constructor(revenueService: RevenueService) {
+    this.revenueService = revenueService;
+    this.setupEventSubscriptions();
+  }
 
-    this.revenueService = new RevenueService(revenueRepository);
-
-    // Subscribe only to events that trigger revenue recalculation
+  /**
+   * Sets up event subscriptions for invoice events.
+   * Separated from constructor to improve testability.
+   *
+   * @private
+   */
+  private setupEventSubscriptions(): void {
     EventBus.subscribe<BaseInvoiceEvent>(
       "InvoiceCreatedEvent",
       this.handleInvoiceCreated.bind(this),
@@ -28,8 +44,6 @@ export class RevenueEventHandler {
       "InvoiceUpdatedEvent",
       this.handleInvoiceUpdated.bind(this),
     );
-
-    // Note: Don't subscribe to deleted events if they don't affect revenue
   }
 
   private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {

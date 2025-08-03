@@ -1,9 +1,10 @@
 import "server-only";
 
-import { between, count, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type { RevenueEntity } from "@/db/models/revenue.entity";
-import { invoices } from "@/db/schema";
+import { type RevenueRow, revenues } from "@/db/schema";
+import { rawDbToRevenueEntity } from "@/features/revenues/revenue.mapper";
 import type {
   MonthlyRevenueQueryResult,
   RevenueStatistics,
@@ -28,17 +29,21 @@ import type { RevenueId } from "@/lib/definitions/brands";
  * @example
  * ```typescript
  * const revenueService = new RevenueCalculatorService(database);
- * const yearlyRevenue = await revenueService.calculateForYear();
+ * const yearlyRevenue = await revenueService.calculateForRollingYear();
  * const statistics = await revenueService.calculateStatistics();
  * ```
  */
 export class RevenueCalculatorService {
   /**
-   * Notes about constructor:
-   * - Pattern: Accepts concrete database dependency
-   * - Purpose: Data persistence operations
-   * - Good Practice: ✅ Single responsibility, clear dependency
-   * @param db
+   * Constructor using dependency injection pattern.
+   *
+   * @remarks
+   * **Dependency Injection Benefits:**
+   * - Enhanced testability through mock database injection
+   * - Improved flexibility with different database implementations
+   * - Adherence to SOLID principles (dependency inversion)
+   *
+   * @param db - Database connection instance for data operations
    */
   constructor(private readonly db: Database) {}
 
@@ -55,17 +60,20 @@ export class RevenueCalculatorService {
    *
    * @example
    * ```typescript
-   * const yearlyData = await service.calculateForYear();
+   * const yearlyData = await service.calculateForRollingYear();
    * // Returns 12 months of data, oldest first
    * console.log(yearlyData.length); // 12
    * ```
    */
-  async calculateForYear(): Promise<RevenueEntity[]> {
+  async calculateForRollingYear(): Promise<RevenueEntity[]> {
     const { startDate, endDate } = this.calculateDateRange();
-    const monthsTemplate = this.generateMonthsTemplate();
+    const monthsTemplate: RollingMonthData[] = this.generateMonthsTemplate();
 
     // Get actual data from invoice table
-    const monthlyData = await this.fetchMonthlyRevenueData(startDate, endDate);
+    const monthlyData = await this.fetchCustomPeriodRevenueData(
+      startDate,
+      endDate,
+    );
 
     // Fill missing months and transform to entities
     const completeData = this.mergeDataWithTemplate(
@@ -85,10 +93,55 @@ export class RevenueCalculatorService {
   }
 
   /**
+   * Fetches revenue data for a custom date range.
+   * @param start - Start date in ISO format (YYYY-MM-DD)
+   * @param end - End date in ISO format (YYYY-MM-DD)
+   * @returns Promise resolving to array of MonthlyRevenueQueryResult objects
+   */
+  async fetchCustomPeriodRevenueData(
+    start: string,
+    end: string,
+  ): Promise<MonthlyRevenueQueryResult[]> {
+    if (!this.isValidISODate(start) || !this.isValidISODate(end)) {
+      throw new Error("Invalid date range for revenue query");
+    }
+
+    const periods = this.generateMonthlyPeriods(start, end);
+    const results: MonthlyRevenueQueryResult[] = [];
+
+    for (const period of periods) {
+      const monthlyData = await this.fetchMonthlyRevenueData(period);
+      results.push(monthlyData);
+    }
+
+    return results;
+  }
+
+  /**
+   * Generates monthly periods between start and end dates.
+   * @param start - Start date in ISO format (YYYY-MM-DD)
+   * @param end - End date in ISO format (YYYY-MM-DD)
+   * @returns Array of period strings in YYYY-MM format
+   */
+  private generateMonthlyPeriods(start: string, end: string): string[] {
+    const periods: string[] = [];
+    const currentDate = new Date(start);
+    const endDate = new Date(end);
+
+    while (currentDate <= endDate) {
+      const period = currentDate.toISOString().substring(0, 7); // YYYY-MM format
+      periods.push(period);
+      currentDate.setMonth(currentDate.getMonth() + 1); // Move to next month
+    }
+
+    return periods;
+  }
+
+  /**
    * Calculates statistical metrics from revenue data for the rolling 12-month period.
    *
    * This is a pure calculation method that doesn't perform database operations directly,
-   * but calls `calculateForYear()` to get the underlying data.
+   * but calls `calculateForRollingYear()` to get the underlying data.
    *
    * @returns Promise resolving to RevenueStatistics containing calculated metrics
    *
@@ -99,7 +152,7 @@ export class RevenueCalculatorService {
    * ```
    */
   async calculateStatistics(): Promise<RevenueStatistics> {
-    const entities = await this.calculateForYear();
+    const entities = await this.calculateForRollingYear();
     const revenueValues = entities
       .map((entity) => entity.revenue)
       .filter((revenue) => revenue > 0);
@@ -265,60 +318,34 @@ export class RevenueCalculatorService {
     };
   }
 
-  /**
-   * Fetches monthly revenue data from database for the specified date range.
-   *
-   * Executes a SQL query that groups invoices by month and year, calculating
-   * total revenue and invoice count for each month within the date range.
-   *
-   * @param startDate - ISO date string for query start date
-   * @param endDate - ISO date string for query end date
-   * @returns Promise resolving to array of monthly revenue query results
-   *
-   * @throws {Error} When date range parameters are invalid
-   * @throws {Error} When database query returns no data
-   *
-   * @internal
-   */
   private async fetchMonthlyRevenueData(
-    startDate: string,
-    endDate: string,
-  ): Promise<MonthlyRevenueQueryResult[]> {
-    if (!startDate || !endDate) {
+    period: string,
+  ): Promise<MonthlyRevenueQueryResult> {
+    if (!period) {
       throw new Error("Invalid date range for revenue query");
     }
-    if (!this.isValidISODate(startDate) || !this.isValidISODate(endDate)) {
+    if (!this.isValidPeriod(period)) {
       throw new Error(
-        "Invalid date format: dates must be in ISO format (YYYY-MM-DD)",
+        "Invalid date format: dates must be in ISO format (YYYY-MM)",
       );
     }
+    const [data] = await this.db
+      .select()
+      .from(revenues)
+      .where(eq(revenues.period, period));
 
-    if (new Date(startDate) >= new Date(endDate)) {
-      throw new Error("Invalid date range: startDate must be before endDate");
-    }
-    const data = await this.db
-      .select({
-        invoiceCount: count(invoices.id),
-        month: sql<string>`TO_CHAR(${invoices.date}, 'Mon')`,
-        monthNumber: sql<number>`EXTRACT(MONTH FROM ${invoices.date})::integer`,
-        revenue: sql<number>`COALESCE(SUM(${invoices.amount}), 0)::integer`,
-        year: sql<number>`EXTRACT(YEAR FROM ${invoices.date})::integer`,
-      })
-      .from(invoices)
-      .where(between(invoices.date, startDate, endDate))
-      .groupBy(
-        sql`TO_CHAR(${invoices.date}, 'Mon')`,
-        sql`EXTRACT(YEAR FROM ${invoices.date})`,
-        sql`EXTRACT(MONTH FROM ${invoices.date})`,
-      )
-      .orderBy(
-        sql`EXTRACT(YEAR FROM ${invoices.date})`,
-        sql`EXTRACT(MONTH FROM ${invoices.date})`,
-      );
-    if (!data || data.length === 0) {
+    if (!data) {
       throw new Error("No revenue data found for the specified date range");
     }
-    return data;
+
+    const entity: RevenueRow = rawDbToRevenueEntity(data);
+
+    return {
+      ...entity,
+      month: entity.period.substring(5, 7), // Extract month from period
+      monthNumber: parseInt(entity.period.substring(5, 7), 10), //
+      year: parseInt(entity.period.substring(0, 4), 10), // Extract year from period
+    };
   }
 
   /**
@@ -431,6 +458,7 @@ export class RevenueCalculatorService {
       invoiceCount: 0,
       month,
       monthNumber,
+      period: `${year}-${String(monthNumber).padStart(2, "0")}`,
       revenue: 0,
       year,
     } as const;
@@ -572,6 +600,20 @@ export class RevenueCalculatorService {
    */
   private isValidISODate(dateString: string): boolean {
     const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    return (
+      isoDateRegex.test(dateString) && !Number.isNaN(Date.parse(dateString))
+    );
+  }
+  /**
+   * Validates if a string is a properly formatted period (YYYY-MM).
+   *
+   * @param dateString - String to validate as ISO date partial
+   * @returns True if valid, false otherwise
+   *
+   * @internal
+   */
+  private isValidPeriod(dateString: string): boolean {
+    const isoDateRegex = /^\d{4}-\d{2}$/;
     return (
       isoDateRegex.test(dateString) && !Number.isNaN(Date.parse(dateString))
     );
