@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getDB } from "@/db/connection";
 import type { RevenueEntity } from "@/db/models/revenue.entity";
 import { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { DatabaseRevenueRepository } from "@/features/revenues/revenue.repository";
+import { RevenueRepository } from "@/features/revenues/revenue.repository";
 import { RevenueService } from "@/features/revenues/revenue.service";
 import { logger } from "@/lib/utils/logger";
 
@@ -36,7 +36,7 @@ interface ErrorResponse {
 
 // Initialize service with dependency injection
 const revenueService = new RevenueService(
-  new DatabaseRevenueRepository(),
+  new RevenueRepository(),
   new InvoiceRepository(getDB()),
 );
 

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { and, count, desc, eq, gte, lte, sql, sum } from "drizzle-orm";
-import { getDB } from "@/db/connection";
+import type { Database } from "@/db/connection";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -28,7 +28,7 @@ export interface RevenueAggregate {
  * Repository interface for revenue data access operations.
  * Defines the contract for revenue persistence and retrieval.
  */
-export interface RevenueRepository {
+export interface RevenueRepositoryInterface {
   /**
    * Finds revenue records within a specific date range.
    * @param startDate - Start of the date range (inclusive)
@@ -65,8 +65,8 @@ export interface RevenueRepository {
  * Database implementation of the revenue repository using Drizzle ORM.
  * Provides concrete data access operations for revenue entities.
  */
-export class DatabaseRevenueRepository implements RevenueRepository {
-  private readonly db = getDB();
+export class RevenueRepository implements RevenueRepositoryInterface {
+  constructor(private readonly db: Database) {}
 
   /**
    * Finds revenue records within the specified date range.

@@ -26,6 +26,8 @@ import type {
 } from "@/features/invoices/invoice.types";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
+import { INVOICE_EVENTS } from "@/lib/events/event-names";
+import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -76,6 +78,15 @@ export async function createInvoiceAction(
 
     // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice: InvoiceDto = await service.createInvoice(parsed.data);
+
+    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    const { EventBus } = await import("@/lib/events/eventBus");
+    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
+      eventId: crypto.randomUUID(),
+      eventTimestamp: new Date().toISOString(),
+      invoice,
+      operation: "invoice_created",
+    });
 
     // Return success result with created invoice data, id is returned, but is it used? Should I add a step so Entities are used, then transform to DTO?
     return {
@@ -209,11 +220,24 @@ export async function updateInvoiceAction(
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
 
+    // Get previous invoice state for event emission TODO: idk how i feel about this.
+    const previousInvoice: InvoiceDto = await service.readInvoice(id);
+
     // Call service to update invoice with validated DTO. Function returns InvoiceDto.
     const updatedInvoice: InvoiceDto = await service.updateInvoice(
       id,
       parsed.data,
     );
+
+    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    const { EventBus } = await import("@/lib/events/eventBus");
+    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
+      eventId: crypto.randomUUID(),
+      eventTimestamp: new Date().toISOString(),
+      invoice: updatedInvoice,
+      operation: "invoice_updated",
+      previousInvoice,
+    });
 
     // Return success result with updated invoice data shaped as InvoiceActionResult
     return {
@@ -263,6 +287,15 @@ export async function deleteInvoiceAction(
     const service = new InvoiceService(repo);
     // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice = await service.deleteInvoice(id);
+
+    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    const { EventBus } = await import("@/lib/events/eventBus");
+    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
+      eventId: crypto.randomUUID(),
+      eventTimestamp: new Date().toISOString(),
+      invoice,
+      operation: "invoice_deleted",
+    });
 
     // Return success result with deleted invoice data shaped as InvoiceActionResult
     return {
