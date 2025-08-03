@@ -22,13 +22,6 @@ import type { YAxisResult } from "@/features/revenues/revenue.types";
  * - Action layer data transformation
  * - DTO preparation for client consumption
  * - Statistics conversion for display
- *
- * @example
- * ```typescript
- * const dollarsFromCents = convertCentsToDollars(1599); // 16
- * const dollarsFromLarge = convertCentsToDollars(2500000); // 25000
- * const dollarsFromZero = convertCentsToDollars(0); // 0
- * ```
  */
 export function convertCentsToDollars(cents: number): number {
   return Math.round(cents / 100);
@@ -60,21 +53,6 @@ export function convertCentsToDollars(cents: number): number {
  * - "$0K" for zero baseline
  * - "$XXK" format for thousands (e.g., "$25K", "$100K")
  * - Ascending order for proper chart axis display
- *
- * @example
- * ```typescript
- * const revenueData: SimpleRevenueDto[] = [
- *   { month: "Jan", revenue: 15000, monthNumber: 1 },
- *   { month: "Feb", revenue: 22000, monthNumber: 2 },
- *   { month: "Mar", revenue: 18000, monthNumber: 3 }
- * ];
- *
- * const axis = generateYAxis(revenueData);
- * // Result: {
- * //   yAxisLabels: ["$0K", "$5K", "$10K", "$15K", "$20K", "$25K"],
- * //   topLabel: 25000
- * // }
- * ```
  *
  * @throws {Error} When revenue array is empty
  * @throws {Error} When revenue data contains invalid numeric values

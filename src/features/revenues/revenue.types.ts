@@ -36,12 +36,6 @@ export const MONTH_ORDER = [
  *
  * Derived from MONTH_ORDER constant to ensure consistency between
  * the month array and type definitions.
- *
- * @example
- * ```typescript
- * const currentMonth: MonthName = "Mar"; // Valid
- * const invalidMonth: MonthName = "March"; // TypeScript error
- * ```
  */
 export type MonthName = (typeof MONTH_ORDER)[number];
 
@@ -94,16 +88,6 @@ export type RevenueActionResult<T> =
  * - month: Standardized three-letter abbreviation
  * - monthNumber: Calendar month number for date calculations
  * - year: Full year for proper date range calculations
- *
- * @example
- * ```typescript
- * const januaryTemplate: RollingMonthData = {
- *   displayOrder: 0,     // First in 12-month sequence
- *   month: "Jan",        // Display name
- *   monthNumber: 1,      // Calendar month (1-12)
- *   year: 2025          // Full year
- * };
- * ```
  */
 export interface RollingMonthData {
   /** Zero-based position in the 12-month chronological sequence (0-11) */
@@ -170,16 +154,6 @@ export interface MonthlyRevenueQueryResult {
  * - Maintains precision by avoiding premature rounding
  * - Enables consistent statistical calculations across services
  *
- * @example
- * ```typescript
- * const rawStats: RevenueStatistics = {
- *   maximum: 2500000,    // $25,000 in cents
- *   minimum: 800000,     // $8,000 in cents
- *   average: 1650000,    // $16,500 in cents
- *   total: 19800000,     // $198,000 in cents
- *   monthsWithData: 10   // Non-zero months
- * };
- * ```
  */
 export interface RevenueStatistics {
   /** Highest revenue amount in cents across months with data */
@@ -210,14 +184,6 @@ export interface RevenueStatistics {
  * - Currency values formatted as "$XXK" (e.g., "$25K", "$100K")
  * - Evenly spaced intervals for clean chart appearance
  * - Includes zero baseline for proper scale representation
- *
- * @example
- * ```typescript
- * const axisResult: YAxisResult = {
- *   yAxisLabels: ["$0K", "$5K", "$10K", "$15K", "$20K", "$25K"],
- *   topLabel: 25000  // Maximum chart value in dollars
- * };
- * ```
  */
 export interface YAxisResult {
   /** Array of formatted Y-axis labels in ascending order */

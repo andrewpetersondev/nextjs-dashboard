@@ -79,7 +79,6 @@ export function validateInvoiceForRevenue(invoice: InvoiceDto): {
   isValid: boolean;
   errorMessage?: string;
 } {
-
   if (!invoice.id) {
     return { errorMessage: "Invoice ID is missing", isValid: false };
   }

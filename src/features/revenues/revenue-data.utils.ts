@@ -1,3 +1,12 @@
+/**
+ * @file revenue-data.utils.ts
+ * Utility functions for data transformation and manipulation related to revenue calculations.
+ *
+ * This file contains functions for creating, transforming, and manipulating revenue data
+ * structures. These functions have been extracted from the RevenueCalculatorService to
+ * improve code organization and reusability.
+ */
+
 import "server-only";
 
 import type { RevenueEntity } from "@/db/models/revenue.entity";
@@ -10,14 +19,6 @@ import { MONTH_ORDER } from "@/features/revenues/revenue.types";
 import { formatMonthDateRange } from "@/features/revenues/revenue-date.utils";
 import type { RevenueId } from "@/lib/definitions/brands";
 import { toRevenueId } from "@/lib/definitions/brands";
-
-/**
- * Utility functions for data transformation and manipulation related to revenue calculations.
- *
- * This file contains functions for creating, transforming, and manipulating revenue data
- * structures. These functions have been extracted from the RevenueCalculatorService to
- * improve code organization and reusability.
- */
 
 /**
  * Creates an efficient lookup map for revenue data indexed by year-month key.
@@ -105,11 +106,13 @@ export function createDefaultMonthData(
 }
 
 /**
- * Creates default revenue data for a specific period.
- * Centralizes the creation of default revenue records to ensure consistency.
+ * Creates default revenue query result data for a specific period.
+ * This function creates a MonthlyRevenueQueryResult object, which is an intermediate
+ * representation that includes additional properties not present in the RevenueEntity.
+ * Use createDefaultRevenueEntity if you need a database-compatible entity.
  *
  * @param period - Period in YYYY-MM format
- * @returns Complete revenue data with default values
+ * @returns Complete MonthlyRevenueQueryResult with default values
  */
 export function createDefaultRevenueData(
   period: string,
@@ -119,18 +122,37 @@ export function createDefaultRevenueData(
   const month = String(monthNumber).padStart(2, "0");
 
   const result: MonthlyRevenueQueryResult = {
-    calculationSource: "invoice_aggregation_rolling_12m",
-    createdAt: new Date(),
-    id: toRevenueId(crypto.randomUUID()),
     invoiceCount: 0,
     month,
     monthNumber,
     period,
     revenue: 0,
-    updatedAt: new Date(),
     year,
   };
   return result;
+}
+
+/**
+ * Creates a default RevenueEntity for a specific period.
+ * Centralizes the creation of default revenue database records to ensure consistency.
+ * This function creates a database-compatible entity that matches the RevenueEntity interface.
+ *
+ * @param period - Period in YYYY-MM format
+ * @returns Complete RevenueEntity with default values
+ */
+export function createDefaultRevenueEntity(period: string): RevenueEntity {
+  const timestamp = new Date();
+  const entityId = toRevenueId(crypto.randomUUID());
+
+  return {
+    calculationSource: "invoice_aggregation_rolling_12m",
+    createdAt: timestamp,
+    id: entityId,
+    invoiceCount: 0,
+    period,
+    revenue: 0,
+    updatedAt: timestamp,
+  };
 }
 
 /**

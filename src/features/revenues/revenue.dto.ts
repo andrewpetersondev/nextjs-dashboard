@@ -16,15 +16,6 @@ import "server-only";
  * **Data Conversion:**
  * - Revenue values are converted from database cents to dollars
  * - Month numbers are sequential (1-12) for proper ordering/scrolling
- *
- * @example
- * ```typescript
- * const monthData: SimpleRevenueDto = {
- *   month: "Jan",
- *   revenue: 15000, // $15,000 (converted from 1500000 cents)
- *   monthNumber: 1
- * };
- * ```
  */
 export interface SimpleRevenueDto {
   /** Three-letter month abbreviation (e.g., "Jan", "Feb", "Mar") */
@@ -51,24 +42,6 @@ export interface SimpleRevenueDto {
  * - Designed for direct consumption by chart components
  * - Includes both data points and contextual metadata
  * - Optimized for dashboard and analytics displays
- *
- * @example
- * ```typescript
- * const chartData: RevenueChartDto = {
- *   monthlyData: [
- *     { month: "Jan", revenue: 12000, monthNumber: 1 },
- *     { month: "Feb", revenue: 15000, monthNumber: 2 }
- *   ],
- *   statistics: {
- *     total: 27000,
- *     average: 13500,
- *     maximum: 15000,
- *     minimum: 12000,
- *     monthsWithData: 2
- *   },
- *   year: 2025
- * };
- * ```
  */
 export interface RevenueChartDto {
   /** Array of monthly revenue data in chronological order */
@@ -95,17 +68,6 @@ export interface RevenueChartDto {
  * - Zero-revenue months are excluded from min/max/average calculations
  * - Total includes all months (including zero values)
  * - Average is calculated from months with actual revenue data
- *
- * @example
- * ```typescript
- * const stats: RevenueStatisticsDto = {
- *   maximum: 25000,    // Highest revenue month in dollars
- *   minimum: 8000,     // Lowest revenue month in dollars (non-zero)
- *   average: 16500,    // Average of non-zero months
- *   total: 198000,     // Sum of all 12 months
- *   monthsWithData: 10 // Months with actual revenue data
- * };
- * ```
  */
 export interface RevenueStatisticsDto {
   /** Highest revenue amount in dollars across all months with data */
