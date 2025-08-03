@@ -7,6 +7,7 @@ import type {
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { RevenueRepositoryInterface } from "@/features/revenues/revenue.repository";
+import { formatDateToPeriod } from "@/features/revenues/revenue-date.utils";
 import type { RevenueId } from "@/lib/definitions/brands";
 
 /**
@@ -107,7 +108,9 @@ export class RevenueService {
     startDate: Date,
     endDate: Date,
   ): Promise<RevenueEntity[]> {
-    return this.revenueRepository.findByDateRange(startDate, endDate);
+    const startPeriod = formatDateToPeriod(startDate);
+    const endPeriod = formatDateToPeriod(endDate);
+    return this.revenueRepository.findByDateRange(startPeriod, endPeriod);
   }
 
   /**

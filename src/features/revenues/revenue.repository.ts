@@ -9,21 +9,11 @@ import type {
 } from "@/db/models/revenue.entity";
 import { type RevenueRow, revenues } from "@/db/schema";
 import { DatabaseError, ValidationError } from "@/errors/errors";
-import { rawDbToRevenueEntity } from "@/features/revenues/revenue.mapper";
+import {
+  mapRevenueRowsToEntities,
+  rawDbToRevenueEntity,
+} from "@/features/revenues/revenue.mapper";
 import type { RevenueId } from "@/lib/definitions/brands";
-
-/**
- * Aggregated revenue data grouped by time period.
- * Used for analytics and reporting across different time scales.
- */
-export interface RevenueAggregate {
-  /** Number of revenue records in this period */
-  readonly count: number;
-  /** Time period identifier (format depends on period type) */
-  readonly period: string;
-  /** Total revenue amount in cents for this period */
-  readonly totalAmount: number;
-}
 
 /**
  * Repository interface for revenue data access operations.
@@ -40,12 +30,12 @@ export interface RevenueRepositoryInterface {
   read(id: RevenueId): Promise<RevenueEntity>;
   update(id: RevenueId, revenue: RevenuePartialEntity): Promise<RevenueEntity>;
   delete(id: RevenueId): Promise<void>;
-  findByDateRange(startDate: Date, endDate: Date): Promise<RevenueEntity[]>;
+  findByDateRange(
+    startPeriod: string,
+    endPeriod: string,
+  ): Promise<RevenueEntity[]>;
   upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
   deleteById(id: RevenueId): Promise<void>;
-  aggregateByPeriod(
-    period: "month" | "quarter" | "year",
-  ): Promise<RevenueAggregate[]>;
   findByPeriod(period: string): Promise<RevenueEntity | null>;
   upsertByPeriod(
     period: string,
@@ -84,7 +74,6 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     }
     const now = new Date();
 
-    // todo: why is this not using NewRevenueRow? confirm why this is returning an array?
     const [data]: RevenueRow[] = await this.db
       .insert(revenues)
       .values({
@@ -180,23 +169,20 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Finds revenue records within the specified date range.
-   * Uses startDate and endDate fields from revenue entities for filtering.
+   * Finds revenue records within the specified period range.
+   * Uses period field from revenue entities for filtering.
+   *
+   * @param startPeriod - The start period in YYYY-MM format
+   * @param endPeriod - The end period in YYYY-MM format
+   * @returns Promise resolving to array of revenue entities
    */
   async findByDateRange(
-    startDate: Date,
-    endDate: Date,
+    startPeriod: string,
+    endPeriod: string,
   ): Promise<RevenueEntity[]> {
-    if (!startDate || !endDate) {
-      throw new ValidationError("Start and end dates are required");
+    if (!startPeriod || !endPeriod) {
+      throw new ValidationError("Start and end periods are required");
     }
-
-    const formatDateToPeriod = (date: Date): string => {
-      return String(date.toISOString().split("T")[0]!.substring(0, 7)); // Format: YYYY-MM
-    };
-
-    const startPeriod = formatDateToPeriod(startDate);
-    const endPeriod = formatDateToPeriod(endDate);
 
     // Query revenues within the specified date range
     const revenueRows: RevenueRow[] = await this.db
@@ -211,11 +197,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Failed to retrieve revenue records");
     }
 
-    const revenueEntities: RevenueEntity[] = revenueRows.map((row) =>
-      rawDbToRevenueEntity(row),
-    );
-
-    return revenueEntities;
+    return mapRevenueRowsToEntities(revenueRows);
   }
 
   /**
@@ -330,27 +312,6 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async deleteById(id: RevenueId): Promise<void> {
     await this.db.delete(revenues).where(eq(revenues.id, id));
-  }
-
-  /**
-   * Aggregates revenue data by the specified time period.
-   * Groups revenue records and calculates totals for analytics.
-   */
-  async aggregateByPeriod(): Promise<RevenueAggregate[]> {
-    // validate parameters
-    // db call
-    // validate db call
-    // transform results
-    // validate transformation
-    // return results
-
-    const results = [{ count: 1, period: "2024-01", totalAmount: 100 }]; // Mocked data for demonstration
-
-    return results.map((result) => ({
-      count: Number(result.count) || 0,
-      period: result.period,
-      totalAmount: Number(result.totalAmount) || 0,
-    }));
   }
 
   /**

@@ -198,7 +198,10 @@ export class RevenueStatisticsService {
       });
 
       // Use repository to fetch revenue data
-      const revenueEntities = await this.repository.findByDateRange(start, end);
+      const revenueEntities = await this.repository.findByDateRange(
+        startPeriod,
+        endPeriod,
+      );
 
       logger.info({
         context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",

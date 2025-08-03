@@ -73,7 +73,16 @@ export class RevenueEventHandler {
         return;
       }
 
-      const period = extractPeriodFromInvoice(event.invoice)!; // Safe because we validated in isInvoiceEligibleForRevenue
+      const period = extractPeriodFromInvoice(event.invoice);
+
+      if (!period) {
+        logger.warn({
+          context: "RevenueEventHandler.handleInvoiceCreated",
+          invoiceId: event.invoice.id,
+          message: "Could not extract period from invoice date",
+        });
+        return;
+      }
 
       // Log the creation event
       logger.info({
@@ -106,12 +115,21 @@ export class RevenueEventHandler {
     invoice: InvoiceDto | undefined,
     contextMethod: string,
   ): boolean {
+    // Check if invoice exists
+    if (!invoice) {
+      logger.warn({
+        context: `RevenueEventHandler.${contextMethod}`,
+        message: "Invoice is undefined or null",
+      });
+      return false;
+    }
+
     // Validate the invoice
     const validation = validateInvoiceForRevenue(invoice);
     if (!validation.isValid) {
       logger.warn({
         context: `RevenueEventHandler.${contextMethod}`,
-        invoiceId: invoice?.id,
+        invoiceId: invoice.id,
         message: validation.errorMessage || "Invalid invoice parameters",
       });
       return false;
@@ -214,12 +232,22 @@ export class RevenueEventHandler {
    */
   private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
     try {
+      // According to the BaseInvoiceEvent interface, invoice should always be defined
+      // But we'll add a safety check just in case
+      if (!event.invoice) {
+        logger.warn({
+          context: "RevenueEventHandler.handleInvoiceUpdated",
+          message: "Event invoice is undefined or null",
+        });
+        return;
+      }
+
       // Validate the invoice
       const validation = validateInvoiceForRevenue(event.invoice);
       if (!validation.isValid) {
         logger.warn({
           context: "RevenueEventHandler.handleInvoiceUpdated",
-          invoiceId: event.invoice?.id,
+          invoiceId: event.invoice.id,
           message: validation.errorMessage || "Invalid invoice parameters",
         });
         return;
@@ -373,7 +401,16 @@ export class RevenueEventHandler {
         return;
       }
 
-      const period = extractPeriodFromInvoice(event.invoice)!; // Safe because we validated in isInvoiceEligibleForRevenue
+      const period = extractPeriodFromInvoice(event.invoice);
+
+      if (!period) {
+        logger.warn({
+          context: "RevenueEventHandler.handleInvoiceDeleted",
+          invoiceId: event.invoice.id,
+          message: "Could not extract valid period from invoice date",
+        });
+        return;
+      }
 
       // Log the deletion event
       logger.info({

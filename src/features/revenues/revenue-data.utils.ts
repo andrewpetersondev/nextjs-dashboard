@@ -9,6 +9,7 @@ import type {
 import { MONTH_ORDER } from "@/features/revenues/revenue.types";
 import { formatMonthDateRange } from "@/features/revenues/revenue-date.utils";
 import type { RevenueId } from "@/lib/definitions/brands";
+import { toRevenueId } from "@/lib/definitions/brands";
 
 /**
  * Utility functions for data transformation and manipulation related to revenue calculations.
@@ -117,10 +118,10 @@ export function createDefaultRevenueData(
   const monthNumber = parseInt(period.substring(5, 7), 10);
   const month = String(monthNumber).padStart(2, "0");
 
-  return {
+  const result: MonthlyRevenueQueryResult = {
     calculationSource: "invoice_aggregation_rolling_12m",
     createdAt: new Date(),
-    id: crypto.randomUUID() as RevenueId,
+    id: toRevenueId(crypto.randomUUID()),
     invoiceCount: 0,
     month,
     monthNumber,
@@ -128,7 +129,8 @@ export function createDefaultRevenueData(
     revenue: 0,
     updatedAt: new Date(),
     year,
-  } as MonthlyRevenueQueryResult;
+  };
+  return result;
 }
 
 /**
@@ -244,7 +246,7 @@ export function transformToRevenueEntity(
 ): RevenueEntity {
   const dateRange = formatMonthDateRange(template.year, template.monthNumber);
   const baseTimestamp = new Date();
-  const entityId = crypto.randomUUID() as RevenueId;
+  const entityId = toRevenueId(crypto.randomUUID());
 
   return createRevenueEntityData(
     data,

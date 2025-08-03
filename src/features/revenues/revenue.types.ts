@@ -135,18 +135,6 @@ export interface RollingMonthData {
  * 2. Service layer merges with templates for completeness
  * 3. Action layer converts to presentation DTOs
  *
- * @example
- * ```typescript
- * // Direct from SQL query
- * const queryResult: MonthlyRevenueQueryResult = {
- *   month: "Jan",        // From TO_CHAR(date, 'Mon')
- *   revenue: 1500000,    // $15,000 in cents
- *   invoiceCount: 25,    // COUNT(invoices.id)
- *   year: 2025,          // EXTRACT(YEAR FROM date)
- *   monthNumber: 1       // EXTRACT(MONTH FROM date)
- *   period: "2025-01"     // Concatenated year and month
- * };
- * ```
  */
 export interface MonthlyRevenueQueryResult {
   /** Database-generated month abbreviation (typically from TO_CHAR function) */

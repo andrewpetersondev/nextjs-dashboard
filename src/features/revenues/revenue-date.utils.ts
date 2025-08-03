@@ -1,12 +1,15 @@
-import "server-only";
-
 /**
+ * @file
  * Utility functions for date operations related to revenue calculations.
  *
  * This file contains pure functions for working with dates, periods, and date ranges
  * that are used in revenue calculations. These functions have been extracted from
  * the RevenueCalculatorService to improve code organization and reusability.
  */
+
+import "server-only";
+
+import { ValidationError } from "@/errors/errors";
 
 /**
  * Calculates the starting date for the 12-month rolling period.
@@ -140,4 +143,20 @@ export function generateMonthlyPeriods(start: string, end: string): string[] {
   }
 
   return periods;
+}
+
+/**
+ * Formats a Date object to a period string in YYYY-MM format.
+ *
+ * @param date - Date object to format
+ * @returns Formatted period string
+ * @throws ValidationError if the date is invalid or not in the correct format
+ */
+export function formatDateToPeriod(date: Date): string {
+  const isoDate = date.toISOString().split("T")[0];
+  const formatted = isoDate ? isoDate.substring(0, 7) : "";
+  if (!formatted || formatted.length !== 7) {
+    throw new ValidationError("Invalid date format for period");
+  }
+  return formatted;
 }

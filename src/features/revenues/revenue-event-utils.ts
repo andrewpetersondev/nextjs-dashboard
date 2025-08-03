@@ -11,7 +11,7 @@ import { logger } from "@/lib/utils/logger";
  * Safely extracts the period (YYYY-MM) from an invoice date
  *
  * @param invoice - The invoice to extract the period from
- * @returns The period in YYYY-MM format or null if extraction fails
+ * @returns The `period` in YYYY-MM format or `null` if extraction fails
  */
 export function extractPeriodFromInvoice(
   invoice: InvoiceDto | undefined,
@@ -75,13 +75,10 @@ export function handleEventError(
  * @param invoice - The invoice to validate
  * @returns An object with validation result and error message if invalid
  */
-export function validateInvoiceForRevenue(invoice: InvoiceDto | undefined): {
+export function validateInvoiceForRevenue(invoice: InvoiceDto): {
   isValid: boolean;
   errorMessage?: string;
 } {
-  if (!invoice) {
-    return { errorMessage: "Invoice is undefined or null", isValid: false };
-  }
 
   if (!invoice.id) {
     return { errorMessage: "Invoice ID is missing", isValid: false };
