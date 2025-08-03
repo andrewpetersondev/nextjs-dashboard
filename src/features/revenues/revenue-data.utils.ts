@@ -11,11 +11,14 @@ import "server-only";
 
 import type { RevenueEntity } from "@/db/models/revenue.entity";
 import type {
-  MonthlyRevenueQueryResult,
+  RevenueDisplayEntity,
   RevenueStatistics,
   RollingMonthData,
 } from "@/features/revenues/revenue.types";
-import { MONTH_ORDER } from "@/features/revenues/revenue.types";
+import {
+  createRevenueDisplayEntity,
+  MONTH_ORDER,
+} from "@/features/revenues/revenue.types";
 import { formatMonthDateRange } from "@/features/revenues/revenue-date.utils";
 import type { RevenueId } from "@/lib/definitions/brands";
 import { toRevenueId } from "@/lib/definitions/brands";
@@ -30,9 +33,9 @@ import { toRevenueId } from "@/lib/definitions/brands";
  * Time complexity: O(n) where n is the number of actual data records
  */
 export function createDataLookupMap(
-  actualData: MonthlyRevenueQueryResult[],
-): Map<string, MonthlyRevenueQueryResult> {
-  const dataMap = new Map<string, MonthlyRevenueQueryResult>();
+  actualData: RevenueDisplayEntity[],
+): Map<string, RevenueDisplayEntity> {
+  const dataMap = new Map<string, RevenueDisplayEntity>();
 
   actualData.forEach((dataItem) => {
     const { year, monthNumber } = dataItem;
@@ -55,8 +58,8 @@ export function createDataLookupMap(
  */
 export function getMonthDataOrDefault(
   monthTemplate: RollingMonthData,
-  dataLookup: Map<string, MonthlyRevenueQueryResult>,
-): MonthlyRevenueQueryResult {
+  dataLookup: Map<string, RevenueDisplayEntity>,
+): RevenueDisplayEntity {
   const { year, monthNumber, month } = monthTemplate;
   const lookupKey = generateLookupKey(year, monthNumber);
   const existingData = dataLookup.get(lookupKey);
@@ -88,48 +91,51 @@ export function generateLookupKey(year: number, monthNumber: number): string {
  * @param month - Month name (e.g., "Jan", "Feb")
  * @param monthNumber - Month number (1-12)
  * @param year - Four-digit year
- * @returns MonthlyRevenueQueryResult with zero values
+ * @returns RevenueDisplayEntity with zero values
  */
 export function createDefaultMonthData(
   month: string,
   monthNumber: number,
   year: number,
-): MonthlyRevenueQueryResult {
-  return {
+): RevenueDisplayEntity {
+  const period = `${year}-${String(monthNumber).padStart(2, "0")}`;
+  // Create a default RevenueEntity and then transform it to RevenueDisplayEntity
+  const defaultEntity: RevenueEntity = {
+    calculationSource: "template",
+    createdAt: new Date(),
+    id: toRevenueId(`template-${period}`),
     invoiceCount: 0,
-    month,
-    monthNumber,
-    period: `${year}-${String(monthNumber).padStart(2, "0")}`,
+    period,
     revenue: 0,
-    year,
-  } as const;
+    updatedAt: new Date(),
+  };
+
+  return createRevenueDisplayEntity(defaultEntity);
 }
 
 /**
- * Creates default revenue query result data for a specific period.
- * This function creates a MonthlyRevenueQueryResult object, which is an intermediate
- * representation that includes additional properties not present in the RevenueEntity.
+ * Creates default revenue display entity for a specific period.
+ * This function creates a RevenueDisplayEntity object by first creating a default
+ * RevenueEntity and then transforming it using the factory method.
  * Use createDefaultRevenueEntity if you need a database-compatible entity.
  *
  * @param period - Period in YYYY-MM format
- * @returns Complete MonthlyRevenueQueryResult with default values
+ * @returns Complete RevenueDisplayEntity with default values
  */
-export function createDefaultRevenueData(
-  period: string,
-): MonthlyRevenueQueryResult {
-  const year = parseInt(period.substring(0, 4), 10);
-  const monthNumber = parseInt(period.substring(5, 7), 10);
-  const month = String(monthNumber).padStart(2, "0");
-
-  const result: MonthlyRevenueQueryResult = {
+export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
+  // Create a default RevenueEntity
+  const defaultEntity: RevenueEntity = {
+    calculationSource: "template",
+    createdAt: new Date(),
+    id: toRevenueId(`template-${period}`),
     invoiceCount: 0,
-    month,
-    monthNumber,
     period,
     revenue: 0,
-    year,
+    updatedAt: new Date(),
   };
-  return result;
+
+  // Transform to RevenueDisplayEntity using the factory method
+  return createRevenueDisplayEntity(defaultEntity);
 }
 
 /**
@@ -189,7 +195,7 @@ export function createMonthTemplateData(
 /**
  * Creates a complete revenue entity data structure with all required fields.
  *
- * @param data - Monthly revenue query result
+ * @param data - Revenue display entity
  * @param _template - Month template data
  * @param _dateRange - Start and end dates for the month
  * @param timestamp - Creation/update timestamp
@@ -197,7 +203,7 @@ export function createMonthTemplateData(
  * @returns Complete RevenueEntity object
  */
 export function createRevenueEntityData(
-  data: MonthlyRevenueQueryResult,
+  data: RevenueDisplayEntity,
   _template: RollingMonthData,
   _dateRange: { startDate: string; endDate: string },
   timestamp: Date,
@@ -237,12 +243,12 @@ export function createEmptyStatistics(): RevenueStatistics {
  *
  * @param actualData - Array of actual revenue data from database
  * @param template - Array of 12 month templates
- * @returns Array of 12 complete monthly revenue results
+ * @returns Array of 12 complete revenue display entities
  */
 export function mergeDataWithTemplate(
-  actualData: MonthlyRevenueQueryResult[],
+  actualData: RevenueDisplayEntity[],
   template: RollingMonthData[],
-): MonthlyRevenueQueryResult[] {
+): RevenueDisplayEntity[] {
   const dataLookup = createDataLookupMap(actualData);
 
   return template.map((monthTemplate) =>
@@ -251,18 +257,18 @@ export function mergeDataWithTemplate(
 }
 
 /**
- * Transforms a monthly query result into a complete revenue entity.
+ * Transforms a revenue display entity into a complete revenue entity.
  *
- * Combines query data with template information and adds metadata
+ * Combines display entity data with template information and adds metadata
  * such as date ranges, timestamps, and unique identifiers.
  *
- * @param data - Monthly revenue data from query or default
+ * @param data - Revenue display entity from query or default
  * @param _displayOrder - Order index within the 12-month sequence
  * @param template - Template data containing month metadata
  * @returns Complete RevenueEntity with all required fields
  */
 export function transformToRevenueEntity(
-  data: MonthlyRevenueQueryResult,
+  data: RevenueDisplayEntity,
   _displayOrder: number,
   template: RollingMonthData,
 ): RevenueEntity {

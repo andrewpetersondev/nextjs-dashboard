@@ -1,3 +1,5 @@
+import type { RevenueEntity } from "@/db/models/revenue.entity";
+
 /**
  * Ordered array of three-letter month abbreviations for consistent display.
  *
@@ -119,6 +121,9 @@ export interface RollingMonthData {
  * 2. Service layer merges with templates for completeness
  * 3. Action layer converts to presentation DTOs
  *
+ * @deprecated Use RevenueDisplayEntity instead. This interface is maintained for backward compatibility
+ * and will be removed in a future release. The RevenueDisplayEntity interface extends RevenueEntity
+ * with display-oriented fields and provides better type safety and consistency.
  */
 export interface MonthlyRevenueQueryResult {
   /** Database-generated month abbreviation (typically from TO_CHAR function) */
@@ -190,4 +195,54 @@ export interface YAxisResult {
   yAxisLabels: string[];
   /** Maximum chart value in dollars for scaling purposes */
   topLabel: number;
+}
+
+/**
+ * Display-oriented entity that extends the database RevenueEntity with UI-specific fields.
+ *
+ * Maintains the database structure while adding derived fields for display purposes.
+ * This approach centralizes the transformation logic and improves type safety.
+ *
+ * @remarks
+ * **Display Fields:**
+ * - month: String representation of the month (e.g., "01", "02")
+ * - year: Four-digit year extracted from period
+ * - monthNumber: Calendar month number (1-12) extracted from period
+ *
+ * **Usage Context:**
+ * - Used for UI presentation after database retrieval
+ * - Created via factory method createRevenueDisplayEntity
+ * - Replaces MonthlyRevenueQueryResult in the data flow
+ */
+export interface RevenueDisplayEntity extends RevenueEntity {
+  readonly month: string;
+  readonly year: number;
+  readonly monthNumber: number;
+}
+
+/**
+ * Factory method to construct RevenueDisplayEntity from RevenueEntity.
+ *
+ * Centralizes the logic for extracting month/year from period string,
+ * ensuring consistent transformation across the application.
+ *
+ * @param entity - The source RevenueEntity from database
+ * @returns A RevenueDisplayEntity with additional display-oriented fields
+ *
+ * @example
+ * ```typescript
+ * const displayEntity = createRevenueDisplayEntity(databaseEntity);
+ * console.log(displayEntity.month); // "01"
+ * console.log(displayEntity.year); // 2025
+ * ```
+ */
+export function createRevenueDisplayEntity(
+  entity: RevenueEntity,
+): RevenueDisplayEntity {
+  return {
+    ...entity,
+    month: entity.period.substring(5, 7),
+    monthNumber: parseInt(entity.period.substring(5, 7), 10),
+    year: parseInt(entity.period.substring(0, 4), 10),
+  };
 }

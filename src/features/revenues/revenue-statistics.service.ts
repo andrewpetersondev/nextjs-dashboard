@@ -3,10 +3,11 @@ import "server-only";
 import type { RevenueEntity } from "@/db/models/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/revenue.repository";
 import type {
-  MonthlyRevenueQueryResult,
+  RevenueDisplayEntity,
   RevenueStatistics,
   RollingMonthData,
 } from "@/features/revenues/revenue.types";
+import { createRevenueDisplayEntity } from "@/features/revenues/revenue.types";
 import {
   createDefaultRevenueData,
   createEmptyStatistics,
@@ -142,12 +143,12 @@ export class RevenueStatisticsService {
    *
    * @param start - Start date in ISO format (YYYY-MM-DD)
    * @param end - End date in ISO format (YYYY-MM-DD)
-   * @returns Promise resolving to array of MonthlyRevenueQueryResult objects
+   * @returns Promise resolving to array of RevenueDisplayEntity objects
    */
   async fetchCustomPeriodRevenueData(
     start: string,
     end: string,
-  ): Promise<MonthlyRevenueQueryResult[]> {
+  ): Promise<RevenueDisplayEntity[]> {
     try {
       logger.info({
         context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
@@ -216,19 +217,15 @@ export class RevenueStatisticsService {
       });
 
       // Transform each period into a result, using actual data or defaults
-      const results: MonthlyRevenueQueryResult[] = periods.map((period) => {
+      const results: RevenueDisplayEntity[] = periods.map((period) => {
         const entity = revenueByPeriod.get(period);
 
         if (entity) {
-          // Transform existing data
-          return {
-            ...entity,
-            month: entity.period.substring(5, 7), // Extract month from period
-            monthNumber: parseInt(entity.period.substring(5, 7), 10),
-            year: parseInt(entity.period.substring(0, 4), 10), // Extract year from period
-          };
+          // Transform existing data using the factory method
+          return createRevenueDisplayEntity(entity);
         } else {
           // Create default data for missing periods
+          // Note: createDefaultRevenueData needs to be updated to return RevenueDisplayEntity
           return createDefaultRevenueData(period);
         }
       });
