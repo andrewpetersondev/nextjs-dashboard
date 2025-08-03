@@ -1,3 +1,11 @@
+/**
+ * @file features/revenues/core/revenue.entity.ts
+ * Entity definitions for the revenue feature.
+ *
+ * This file contains the entity interfaces that represent the database models
+ * and their display-oriented extensions for the revenue feature.
+ */
+
 import "server-only";
 
 import type { RevenueId } from "@/lib/definitions/brands";
@@ -26,3 +34,26 @@ export type RevenueCreateEntity = Omit<RevenueEntity, "id">;
  * Partial domain model for updating a revenue record. All fields are optional to allow partial updates.
  */
 export type RevenuePartialEntity = Partial<RevenueCreateEntity>;
+
+/**
+ * Display-oriented entity that extends the database RevenueEntity with UI-specific fields.
+ *
+ * Maintains the database structure while adding derived fields for display purposes.
+ * This approach centralizes the transformation logic and improves type safety.
+ *
+ * @remarks
+ * **Display Fields:**
+ * - month: String representation of the month (e.g., "01", "02")
+ * - year: Four-digit year extracted from period
+ * - monthNumber: Calendar month number (1-12) extracted from period
+ *
+ * **Usage Context:**
+ * - Used for UI presentation after database retrieval
+ * - Created via factory method createRevenueDisplayEntity
+ * - Replaces MonthlyRevenueQueryResult in the data flow
+ */
+export interface RevenueDisplayEntity extends RevenueEntity {
+  readonly month: string;
+  readonly year: number;
+  readonly monthNumber: number;
+}

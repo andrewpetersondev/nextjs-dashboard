@@ -94,7 +94,7 @@ export function generateLookupKey(year: number, monthNumber: number): string {
  * @returns RevenueDisplayEntity with zero values
  */
 export function createDefaultMonthData(
-  month: string,
+  _month: string,
   monthNumber: number,
   year: number,
 ): RevenueDisplayEntity {
