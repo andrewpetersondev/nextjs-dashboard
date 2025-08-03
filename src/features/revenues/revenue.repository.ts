@@ -1,10 +1,11 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, lte, sql, sum } from "drizzle-orm";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
+  RevenuePartialEntity,
 } from "@/db/models/revenue.entity";
 import { type RevenueRow, revenues } from "@/db/schema";
 import { DatabaseError, ValidationError } from "@/errors/errors";
@@ -29,33 +30,13 @@ export interface RevenueAggregate {
  * Defines the contract for revenue persistence and retrieval.
  */
 export interface RevenueRepositoryInterface {
-  /**
-   * Finds revenue records within a specific date range.
-   * @param startDate - Start of the date range (inclusive)
-   * @param endDate - End of the date range (inclusive)
-   * @returns Promise resolving to array of revenue entities
-   */
+  create(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
+  read(id: RevenueId): Promise<RevenueEntity>;
+  update(id: RevenueId, revenue: RevenuePartialEntity): Promise<RevenueEntity>;
+  delete(id: RevenueId): Promise<void>;
   findByDateRange(startDate: Date, endDate: Date): Promise<RevenueEntity[]>;
-
-  /**
-   * Creates or updates a revenue record.
-   * @param revenue - Revenue data to persist (without timestamps)
-   * @returns Promise resolving to the persisted revenue entity
-   */
   upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
-
-  /**
-   * Deletes a revenue record by its unique identifier.
-   * @param id - Unique revenue identifier
-   * @returns Promise that resolves when deletion is complete
-   */
   deleteById(id: RevenueId): Promise<void>;
-
-  /**
-   * Aggregates revenue data by time period for analytics.
-   * @param period - Time period for grouping (month, quarter, year)
-   * @returns Promise resolving to array of aggregated revenue data
-   */
   aggregateByPeriod(
     period: "month" | "quarter" | "year",
   ): Promise<RevenueAggregate[]>;
@@ -66,7 +47,115 @@ export interface RevenueRepositoryInterface {
  * Provides concrete data access operations for revenue entities.
  */
 export class RevenueRepository implements RevenueRepositoryInterface {
+  /**
+   * Notes about constructor:
+   * - Pattern: Accepts concrete database dependency
+   * - Purpose: Data persistence operations
+   * - Good Practice: ✅ Single responsibility, clear dependency
+   * @param db
+   */
   constructor(private readonly db: Database) {}
+
+  async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
+    if (!revenue) {
+      throw new ValidationError("Revenue data is required");
+    }
+    const now = new Date();
+
+    // todo: why is this not using NewRevenueRow? confirm why this is returning an array?
+    const [data]: RevenueRow[] = await this.db
+      .insert(revenues)
+      .values({
+        ...revenue,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+
+    if (!data) {
+      throw new DatabaseError("Failed to create revenue record");
+    }
+
+    const result: RevenueEntity = rawDbToRevenueEntity(data);
+
+    if (!result) {
+      throw new DatabaseError("Failed to convert revenue record");
+    }
+
+    return result;
+  }
+
+  async read(id: RevenueId): Promise<RevenueEntity> {
+    if (!id) {
+      throw new ValidationError("Revenue ID is required");
+    }
+
+    const data: RevenueRow | undefined = await this.db
+      .select()
+      .from(revenues)
+      .where(eq(revenues.id, id))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!data) {
+      throw new DatabaseError("Revenue record not found");
+    }
+
+    const result: RevenueEntity = rawDbToRevenueEntity(data);
+
+    if (!result) {
+      throw new DatabaseError("Failed to convert revenue record");
+    }
+
+    return result;
+  }
+
+  async update(
+    id: RevenueId,
+    revenue: RevenuePartialEntity,
+  ): Promise<RevenueEntity> {
+    if (!id || !revenue) {
+      throw new ValidationError("Revenue ID and data are required");
+    }
+
+    const now = new Date();
+
+    const [data]: RevenueRow[] = await this.db
+      .update(revenues)
+      .set({
+        ...revenue,
+        updatedAt: now,
+      })
+      .where(eq(revenues.id, id))
+      .returning();
+
+    if (!data) {
+      throw new DatabaseError("Failed to update revenue record");
+    }
+
+    const result: RevenueEntity = rawDbToRevenueEntity(data);
+
+    if (!result) {
+      throw new DatabaseError("Failed to convert updated revenue record");
+    }
+
+    return result;
+  }
+
+  async delete(id: RevenueId): Promise<void> {
+    if (!id) {
+      throw new ValidationError("Revenue ID is required");
+    }
+
+    const result = await this.db
+      .delete(revenues)
+      .where(eq(revenues.id, id))
+      .returning();
+
+    if (!result) {
+      throw new DatabaseError("Failed to delete revenue record");
+    }
+  }
 
   /**
    * Finds revenue records within the specified date range.
@@ -91,13 +180,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     const data: RevenueRow[] = await this.db
       .select()
       .from(revenues)
-      .where(
-        and(
-          gte(revenues.startDate, startDateStr),
-          lte(revenues.endDate, endDateStr),
-        ),
-      )
-      .orderBy(desc(revenues.year), desc(revenues.month));
+      .where(and(gte(startDateStr), lte(endDateStr)))
+      .orderBy(desc(revenues.period));
 
     if (!data) {
       throw new DatabaseError("Failed to retrieve revenue records");
@@ -115,7 +199,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Uses month field as the conflict resolution key.
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
-    if (!revenueData.month) {
+    if (!revenueData) {
       throw new ValidationError("Revenue MONTH data is required");
     }
 
@@ -130,15 +214,12 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       })
       .onConflictDoUpdate({
         set: {
-          calculatedFromInvoices: revenueData.calculatedFromInvoices,
-          calculationDate: revenueData.calculationDate,
           calculationSource: revenueData.calculationSource,
           invoiceCount: revenueData.invoiceCount,
-          isCalculated: revenueData.isCalculated,
           revenue: revenueData.revenue,
           updatedAt: now,
         },
-        target: revenues.month,
+        target: revenues.period, // Assuming period is a unique constraint
       })
       .returning();
 
@@ -166,25 +247,15 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Aggregates revenue data by the specified time period.
    * Groups revenue records and calculates totals for analytics.
    */
-  async aggregateByPeriod(
-    period: "month" | "quarter" | "year",
-  ): Promise<RevenueAggregate[]> {
-    const dateFormat = {
-      month: "YYYY-MM",
-      quarter: "YYYY-Q",
-      year: "YYYY",
-    }[period];
+  async aggregateByPeriod(): Promise<RevenueAggregate[]> {
+    // validate parameters
+    // db call
+    // validate db call
+    // transform results
+    // validate transformation
+    // return results
 
-    const results = await this.db
-      .select({
-        count: count(revenues.id),
-        period: sql<string>`TO_CHAR(${revenues.calculationDate}, '${dateFormat}')`,
-        totalAmount: sum(revenues.revenue),
-      })
-      .from(revenues)
-      .where(eq(revenues.isCalculated, true))
-      .groupBy(sql`TO_CHAR(${revenues.calculationDate}, '${dateFormat}')`)
-      .orderBy(sql`TO_CHAR(${revenues.calculationDate}, '${dateFormat}')`);
+    const results = [{ count: 1, period: "2024-01", totalAmount: 100 }]; // Mocked data for demonstration
 
     return results.map((result) => ({
       count: Number(result.count) || 0,

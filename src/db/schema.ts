@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-  boolean,
   date,
   integer,
   pgEnum,
@@ -14,6 +13,7 @@ import {
 import type {
   CustomerId,
   InvoiceId,
+  RevenueId,
   SessionId,
   UserId,
 } from "@/lib/definitions/brands";
@@ -50,6 +50,7 @@ export const COLUMNS = {
   MONTH: "month",
   NAME: "name",
   PASSWORD: "password",
+  PERIOD: "period",
   REVENUE: "revenue",
   ROLE: "role",
   SENSITIVE_DATA: "sensitive_data",
@@ -146,24 +147,15 @@ export const invoices = pgTable(TABLES.INVOICES, {
  * Aggregated data for reporting and analytics with audit trail and metadata.
  */
 export const revenues = pgTable(TABLES.REVENUES, {
-  calculatedFromInvoices: integer("calculated_from_invoices")
-    .notNull()
-    .default(0),
-  calculationDate: timestamp("calculation_date"),
   calculationSource: varchar("calculation_source", { length: 50 })
     .notNull()
     .default("seed"),
   createdAt: commonFields.timestamps.createdAt(),
-  endDate: date("end_date").notNull(),
-  id: commonFields.id.uuid(),
+  id: commonFields.id.uuid().$type<RevenueId>(),
   invoiceCount: integer("invoice_count").notNull().default(0),
-  isCalculated: boolean("is_calculated").notNull().default(false),
-  month: varchar(COLUMNS.MONTH, { length: 4 }).notNull().unique(),
+  period: varchar(COLUMNS.PERIOD, { length: 7 }).notNull().unique(), // Format: YYYY-MM
   revenue: integer(COLUMNS.REVENUE).notNull(),
-  sensitiveData: commonFields.sensitiveData(),
-  startDate: date("start_date").notNull(),
   updatedAt: commonFields.timestamps.updatedAt(),
-  year: integer("year").notNull().default(new Date().getFullYear()),
 });
 
 /**

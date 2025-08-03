@@ -50,12 +50,28 @@ export class RevenueEventHandler {
   }
 
   private async recalculateRevenue(invoice: InvoiceDto): Promise<void> {
-    // Implement actual revenue recalculation logic
-    logger.info({
-      amount: invoice.amount,
-      context: "RevenueEventHandler.recalculateRevenue",
-      invoiceId: invoice.id,
-      status: invoice.status,
-    });
+    try {
+      // Extract YYYY-MM from invoice date
+      const invoiceDate = new Date(invoice.date);
+      const monthKey = invoiceDate.toISOString().substring(0, 7); // "YYYY-MM"
+
+      // Create or update monthly revenue record
+      await this.revenueService.upsertMonthlyRevenue(monthKey, invoice);
+
+      logger.info({
+        amount: invoice.amount,
+        context: "RevenueEventHandler.recalculateRevenue",
+        invoiceId: invoice.id,
+        monthKey,
+        status: invoice.status,
+      });
+    } catch (error) {
+      // Don't throw - avoid blocking the event bus
+      logger.error({
+        context: "RevenueEventHandler.recalculateRevenue",
+        error,
+        invoiceId: invoice.id,
+      });
+    }
   }
 }

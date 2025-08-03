@@ -34,9 +34,11 @@ import type { RevenueId } from "@/lib/definitions/brands";
  */
 export class RevenueCalculatorService {
   /**
-   * Creates a new RevenueCalculatorService instance.
-   *
-   * @param db - Database connection for executing revenue queries
+   * Notes about constructor:
+   * - Pattern: Accepts concrete database dependency
+   * - Purpose: Data persistence operations
+   * - Good Practice: ✅ Single responsibility, clear dependency
+   * @param db
    */
   constructor(private readonly db: Database) {}
 
@@ -488,19 +490,13 @@ export class RevenueCalculatorService {
     entityId: RevenueId,
   ): RevenueEntity {
     return {
-      calculatedFromInvoices: data.revenue,
-      calculationDate: timestamp,
       calculationSource: "invoice_aggregation_rolling_12m",
       createdAt: timestamp,
-      endDate: dateRange.endDate,
       id: entityId,
       invoiceCount: data.invoiceCount,
-      isCalculated: true,
-      month: data.month,
+      period: data.period,
       revenue: data.revenue,
-      startDate: dateRange.startDate,
       updatedAt: timestamp,
-      year: template.year,
     };
   }
 

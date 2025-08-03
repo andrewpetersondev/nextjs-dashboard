@@ -10,18 +10,12 @@ export function rawDbToRevenueEntity(row: RevenueRow): RevenueEntity {
     throw new ValidationError("Invalid revenue row data");
   }
   return {
-    calculatedFromInvoices: row.calculatedFromInvoices,
-    calculationDate: row.calculationDate ? new Date(row.calculationDate) : null,
     calculationSource: row.calculationSource,
-    createdAt: new Date(row.createdAt),
-    endDate: row.endDate, // Assuming this is already in 'YYYY-MM-DD' format
-    id: toRevenueId(row.id),
+    createdAt: row.createdAt,
+    id: toRevenueId(row.id), // pretty sure it is stored as a branded type in the database
     invoiceCount: row.invoiceCount,
-    isCalculated: row.isCalculated,
-    month: row.month,
+    period: row.period, // Assuming period is a string like '2024-01'
     revenue: row.revenue,
-    startDate: row.startDate, // Assuming this is already in 'YYYY-MM-DD' format
-    updatedAt: new Date(row.updatedAt),
-    year: row.year,
+    updatedAt: row.updatedAt,
   };
 }

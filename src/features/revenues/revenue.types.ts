@@ -158,6 +158,8 @@ export interface MonthlyRevenueQueryResult {
   readonly year: number;
   /** Calendar month number (1-12) extracted from invoice dates */
   readonly monthNumber: number;
+  /** Unique period identifier combining year and month (ex. 2025-01)  */
+  readonly period: string;
 }
 
 /**
