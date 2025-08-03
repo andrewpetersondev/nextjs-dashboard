@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
+import { and, gte, lte } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import type { RevenueEntity } from "@/db/models/revenue.entity";
 import { type RevenueRow, revenues } from "@/db/schema";
@@ -12,6 +12,7 @@ import type {
 } from "@/features/revenues/revenue.types";
 import { MONTH_ORDER } from "@/features/revenues/revenue.types";
 import type { RevenueId } from "@/lib/definitions/brands";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Service for calculating revenue statistics using dependency injection pattern.
@@ -66,34 +67,89 @@ export class RevenueCalculatorService {
    * ```
    */
   async calculateForRollingYear(): Promise<RevenueEntity[]> {
-    const { startDate, endDate } = this.calculateDateRange();
-    const monthsTemplate: RollingMonthData[] = this.generateMonthsTemplate();
+    try {
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        message: "Starting calculation of rolling 12-month revenue data",
+      });
 
-    // Get actual data from invoice table
-    const monthlyData = await this.fetchCustomPeriodRevenueData(
-      startDate,
-      endDate,
-    );
+      const { startDate, endDate } = this.calculateDateRange();
 
-    // Fill missing months and transform to entities
-    const completeData = this.mergeDataWithTemplate(
-      monthlyData,
-      monthsTemplate,
-    );
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        endDate,
+        message: "Calculated date range for rolling 12-month period",
+        startDate,
+      });
 
-    return completeData.map((data, index) => {
-      const template = monthsTemplate[index];
-      if (!template) {
-        throw new Error(
-          `Template data missing for index ${index}. Expected 12 months of template data.`,
-        );
-      }
-      return this.transformToRevenueEntity(data, index, template);
-    });
+      const monthsTemplate: RollingMonthData[] = this.generateMonthsTemplate();
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        message: "Generated months template",
+        monthCount: monthsTemplate.length,
+      });
+
+      // Get actual data from invoice table
+      const monthlyData = await this.fetchCustomPeriodRevenueData(
+        startDate,
+        endDate,
+      );
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        message: "Fetched revenue data for custom period",
+        monthsWithData: monthlyData.filter((m) => m.revenue > 0).length,
+        totalMonths: monthlyData.length,
+      });
+
+      // Fill missing months and transform to entities
+      const completeData = this.mergeDataWithTemplate(
+        monthlyData,
+        monthsTemplate,
+      );
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        message: "Merged data with template",
+        resultCount: completeData.length,
+      });
+
+      const result = completeData.map((data, index) => {
+        const template = monthsTemplate[index];
+        if (!template) {
+          const error = `Template data missing for index ${index}. Expected 12 months of template data.`;
+          logger.error({
+            context: "RevenueCalculatorService.calculateForRollingYear",
+            error,
+            index,
+          });
+          throw new Error(error);
+        }
+        return this.transformToRevenueEntity(data, index, template);
+      });
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        message: "Successfully calculated rolling 12-month revenue data",
+        resultCount: result.length,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error({
+        context: "RevenueCalculatorService.calculateForRollingYear",
+        error,
+        message: "Error calculating rolling 12-month revenue data",
+      });
+      throw error;
+    }
   }
 
   /**
    * Fetches revenue data for a custom date range.
+   * Optimized to use a single database query for all periods.
+   *
    * @param start - Start date in ISO format (YYYY-MM-DD)
    * @param end - End date in ISO format (YYYY-MM-DD)
    * @returns Promise resolving to array of MonthlyRevenueQueryResult objects
@@ -102,19 +158,117 @@ export class RevenueCalculatorService {
     start: string,
     end: string,
   ): Promise<MonthlyRevenueQueryResult[]> {
-    if (!this.isValidISODate(start) || !this.isValidISODate(end)) {
-      throw new Error("Invalid date range for revenue query");
+    try {
+      logger.info({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        end,
+        message: "Fetching revenue data for custom period",
+        start,
+      });
+
+      if (!this.isValidISODate(start) || !this.isValidISODate(end)) {
+        const error = "Invalid date range for revenue query";
+        logger.error({
+          context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+          end,
+          error,
+          start,
+        });
+        throw new Error(error);
+      }
+
+      // Generate all periods we need to fetch
+      const periods = this.generateMonthlyPeriods(start, end);
+
+      logger.info({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        message: "Generated monthly periods",
+        periodCount: periods.length,
+      });
+
+      // Extract start and end periods for database query
+      const startPeriod = periods[0];
+      const endPeriod = periods[periods.length - 1];
+
+      if (!startPeriod || !endPeriod) {
+        const error = "Failed to generate valid periods for revenue query";
+        logger.error({
+          context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+          error,
+          periodsGenerated: periods.length,
+        });
+        throw new Error(error);
+      }
+
+      logger.info({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        endPeriod,
+        message: "Executing database query for revenue data",
+        startPeriod,
+      });
+
+      // Fetch all revenue data in a single query
+      const revenueRows = await this.db
+        .select()
+        .from(revenues)
+        .where(
+          and(
+            gte(revenues.period, startPeriod),
+            lte(revenues.period, endPeriod),
+          ),
+        );
+
+      logger.info({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        message: "Retrieved revenue rows from database",
+        rowCount: revenueRows.length,
+      });
+
+      // Create a map for quick lookups
+      const revenueByPeriod = new Map<string, RevenueRow>();
+      revenueRows.forEach((row) => {
+        revenueByPeriod.set(row.period, row);
+      });
+
+      // Transform each period into a result, using actual data or defaults
+      const results: MonthlyRevenueQueryResult[] = periods.map((period) => {
+        const data = revenueByPeriod.get(period);
+
+        if (data) {
+          // Transform existing data
+          const entity = rawDbToRevenueEntity(data);
+          return {
+            ...entity,
+            month: entity.period.substring(5, 7), // Extract month from period
+            monthNumber: parseInt(entity.period.substring(5, 7), 10),
+            year: parseInt(entity.period.substring(0, 4), 10), // Extract year from period
+          };
+        } else {
+          // Create default data for missing periods
+          return this.createDefaultRevenueData(period);
+        }
+      });
+
+      const periodsWithData = results.filter((r) => r.revenue > 0).length;
+
+      logger.info({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        message: "Successfully processed revenue data for custom period",
+        periodsWithData,
+        totalPeriods: results.length,
+      });
+
+      return results;
+    } catch (error) {
+      logger.error({
+        context: "RevenueCalculatorService.fetchCustomPeriodRevenueData",
+        end,
+        error,
+        message: "Error fetching revenue data for custom period",
+        start,
+      });
+      throw error;
     }
-
-    const periods = this.generateMonthlyPeriods(start, end);
-    const results: MonthlyRevenueQueryResult[] = [];
-
-    for (const period of periods) {
-      const monthlyData = await this.fetchMonthlyRevenueData(period);
-      results.push(monthlyData);
-    }
-
-    return results;
   }
 
   /**
@@ -152,24 +306,72 @@ export class RevenueCalculatorService {
    * ```
    */
   async calculateStatistics(): Promise<RevenueStatistics> {
-    const entities = await this.calculateForRollingYear();
-    const revenueValues = entities
-      .map((entity) => entity.revenue)
-      .filter((revenue) => revenue > 0);
+    try {
+      logger.info({
+        context: "RevenueCalculatorService.calculateStatistics",
+        message: "Starting calculation of revenue statistics",
+      });
 
-    if (revenueValues.length === 0) {
-      return this.createEmptyStatistics();
+      const entities = await this.calculateForRollingYear();
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateStatistics",
+        entityCount: entities.length,
+        message: "Retrieved revenue entities for statistics calculation",
+      });
+
+      const revenueValues = entities
+        .map((entity) => entity.revenue)
+        .filter((revenue) => revenue > 0);
+
+      logger.info({
+        context: "RevenueCalculatorService.calculateStatistics",
+        message: "Filtered revenue values for statistics calculation",
+        nonZeroValueCount: revenueValues.length,
+        totalEntityCount: entities.length,
+      });
+
+      if (revenueValues.length === 0) {
+        logger.info({
+          context: "RevenueCalculatorService.calculateStatistics",
+          message:
+            "No non-zero revenue values found, returning empty statistics",
+        });
+        return this.createEmptyStatistics();
+      }
+
+      const total = revenueValues.reduce((sum, value) => sum + value, 0);
+      const average = Math.round(total / revenueValues.length);
+      const maximum = Math.max(...revenueValues);
+      const minimum = Math.min(...revenueValues);
+
+      const statistics = {
+        average,
+        maximum,
+        minimum,
+        monthsWithData: revenueValues.length,
+        total,
+      };
+
+      logger.info({
+        average,
+        context: "RevenueCalculatorService.calculateStatistics",
+        maximum,
+        message: "Successfully calculated revenue statistics",
+        minimum,
+        monthsWithData: revenueValues.length,
+        total,
+      });
+
+      return statistics;
+    } catch (error) {
+      logger.error({
+        context: "RevenueCalculatorService.calculateStatistics",
+        error,
+        message: "Error calculating revenue statistics",
+      });
+      throw error;
     }
-
-    const total = revenueValues.reduce((sum, value) => sum + value, 0);
-
-    return {
-      average: Math.round(total / revenueValues.length),
-      maximum: Math.max(...revenueValues),
-      minimum: Math.min(...revenueValues),
-      monthsWithData: revenueValues.length,
-      total,
-    };
   }
 
   /**
@@ -318,36 +520,6 @@ export class RevenueCalculatorService {
     };
   }
 
-  private async fetchMonthlyRevenueData(
-    period: string,
-  ): Promise<MonthlyRevenueQueryResult> {
-    if (!period) {
-      throw new Error("Invalid date range for revenue query");
-    }
-    if (!this.isValidPeriod(period)) {
-      throw new Error(
-        "Invalid date format: dates must be in ISO format (YYYY-MM)",
-      );
-    }
-    const [data] = await this.db
-      .select()
-      .from(revenues)
-      .where(eq(revenues.period, period));
-
-    if (!data) {
-      throw new Error("No revenue data found for the specified date range");
-    }
-
-    const entity: RevenueRow = rawDbToRevenueEntity(data);
-
-    return {
-      ...entity,
-      month: entity.period.substring(5, 7), // Extract month from period
-      monthNumber: parseInt(entity.period.substring(5, 7), 10), //
-      year: parseInt(entity.period.substring(0, 4), 10), // Extract year from period
-    };
-  }
-
   /**
    * Merges actual revenue data with month template to ensure complete 12-month dataset.
    *
@@ -462,6 +634,32 @@ export class RevenueCalculatorService {
       revenue: 0,
       year,
     } as const;
+  }
+
+  /**
+   * Creates default revenue data for a specific period.
+   * Centralizes the creation of default revenue records to ensure consistency.
+   *
+   * @param period - Period in YYYY-MM format
+   * @returns Complete revenue data with default values
+   */
+  private createDefaultRevenueData(period: string): MonthlyRevenueQueryResult {
+    const year = parseInt(period.substring(0, 4), 10);
+    const monthNumber = parseInt(period.substring(5, 7), 10);
+    const month = String(monthNumber).padStart(2, "0");
+
+    return {
+      calculationSource: "invoice_aggregation_rolling_12m",
+      createdAt: new Date(),
+      id: crypto.randomUUID() as RevenueId,
+      invoiceCount: 0,
+      month,
+      monthNumber,
+      period,
+      revenue: 0,
+      updatedAt: new Date(),
+      year,
+    } as MonthlyRevenueQueryResult;
   }
 
   /**
@@ -600,20 +798,6 @@ export class RevenueCalculatorService {
    */
   private isValidISODate(dateString: string): boolean {
     const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    return (
-      isoDateRegex.test(dateString) && !Number.isNaN(Date.parse(dateString))
-    );
-  }
-  /**
-   * Validates if a string is a properly formatted period (YYYY-MM).
-   *
-   * @param dateString - String to validate as ISO date partial
-   * @returns True if valid, false otherwise
-   *
-   * @internal
-   */
-  private isValidPeriod(dateString: string): boolean {
-    const isoDateRegex = /^\d{4}-\d{2}$/;
     return (
       isoDateRegex.test(dateString) && !Number.isNaN(Date.parse(dateString))
     );
