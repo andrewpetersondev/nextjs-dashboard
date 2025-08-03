@@ -40,6 +40,7 @@ export interface RevenueRepositoryInterface {
   aggregateByPeriod(
     period: "month" | "quarter" | "year",
   ): Promise<RevenueAggregate[]>;
+  findByPeriod(period: string): Promise<RevenueEntity>;
 }
 
 /**
@@ -192,6 +193,33 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     );
 
     return entities;
+  }
+
+  async findByPeriod(period: string): Promise<RevenueEntity> {
+    if (!period) {
+      throw new ValidationError("Period is required");
+    }
+
+    const data: RevenueRow | undefined = await this.db
+      .select()
+      .from(revenues)
+      .where(eq(revenues.period, period))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!data) {
+      throw new DatabaseError(
+        "Revenue record not found for the specified period",
+      );
+    }
+
+    const result: RevenueEntity = rawDbToRevenueEntity(data);
+
+    if (!result) {
+      throw new DatabaseError("Failed to convert revenue record");
+    }
+
+    return result;
   }
 
   /**

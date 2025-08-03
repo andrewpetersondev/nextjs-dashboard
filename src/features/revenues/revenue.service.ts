@@ -1,6 +1,9 @@
 import "server-only";
 
-import type { RevenueEntity } from "@/db/models/revenue.entity";
+import type {
+  RevenueCreateEntity,
+  RevenueEntity,
+} from "@/db/models/revenue.entity";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { RevenueRepositoryInterface } from "@/features/revenues/revenue.repository";
 import type { RevenueId } from "@/lib/definitions/brands";
@@ -25,7 +28,7 @@ export class RevenueService {
    * @param revenue - Revenue entity to create
    * @returns Promise resolving to created revenue entity
    */
-  async createRevenue(revenue: RevenueEntity): Promise<RevenueEntity> {
+  async createRevenue(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
       throw new ValidationError("Invalid revenue data");
     }
@@ -99,6 +102,13 @@ export class RevenueService {
     endDate: Date,
   ): Promise<RevenueEntity[]> {
     return this.revenueRepository.findByDateRange(startDate, endDate);
+  }
+
+  async getRevenueByPeriod(period: string): Promise<RevenueEntity> {
+    if (!period) {
+      throw new ValidationError("Period is required");
+    }
+    return this.revenueRepository.findByPeriod(period);
   }
 
   /**
