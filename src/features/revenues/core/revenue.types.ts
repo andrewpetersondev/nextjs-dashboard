@@ -52,6 +52,13 @@ export const MONTH_ORDER = [
 export type MonthName = (typeof MONTH_ORDER)[number];
 
 /**
+ * Standardized period durations used in revenue calculations.
+ * USED IN revenue-statistics.service.ts
+ */
+export const PERIOD_DURATIONS = ["year", "month"] as const;
+export type PeriodDuration = (typeof PERIOD_DURATIONS)[number];
+
+/**
  * Standard discriminated union type for revenue operation results.
  *
  * Provides consistent success/error response structure across all revenue

@@ -6,6 +6,10 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "@/features/invoices/invoice.types";
+import {
+  PERIOD_DURATIONS,
+  type PeriodDuration,
+} from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
 const relaxedUuidRegex =
@@ -87,4 +91,8 @@ export const toUserRole = (role: string): UserRole => {
 
 export const toInvoiceStatus = (status: string): InvoiceStatus => {
   return validateEnum(status, INVOICE_STATUSES, "InvoiceStatus");
+};
+
+export const toPeriodDuration = (duration: string): PeriodDuration => {
+  return validateEnum(duration, PERIOD_DURATIONS, "PeriodDuration");
 };

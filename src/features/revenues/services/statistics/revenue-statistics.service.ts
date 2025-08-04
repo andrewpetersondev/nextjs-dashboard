@@ -11,25 +11,21 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import type {
-  RevenueStatistics,
-  RollingMonthData,
-} from "@/features/revenues/core/revenue.types";
+import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
 import { createRevenueDisplayEntity } from "@/features/revenues/core/revenue.types";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import {
   createDefaultRevenueData,
   createEmptyStatistics,
-  createMonthTemplateData,
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-statistics.utils";
 import {
   calculateDateRange,
-  calculateMonthDateFromStart,
-  calculateRollingStartDate,
   generateMonthlyPeriods,
+  generateMonthsTemplate,
   isValidISODate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
+import { toPeriodDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -62,8 +58,8 @@ export class RevenueStatisticsService {
         message: "Calculating rolling 12-month revenue data",
       });
 
-      // Calculate the date range for the rolling 12-month period
-      const { startDate, endDate } = calculateDateRange();
+      // Calculate the date range for the rolling 12-month period.
+      const { startDate, endDate, period } = calculateDateRange();
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
@@ -73,7 +69,22 @@ export class RevenueStatisticsService {
       });
 
       // Generate the template for the 12-month period
-      const template = this.generateMonthsTemplate();
+      const template = generateMonthsTemplate(
+        startDate,
+        toPeriodDuration(period),
+      );
+
+      // Extract the start and end periods from the template
+      if (template.length === 0) {
+        throw new Error("Template generation failed: no months generated");
+      }
+
+      const firstMonth = template[0];
+      const lastMonth = template[template.length - 1];
+
+      if (!firstMonth || !lastMonth) {
+        throw new Error("Template generation failed: invalid month data");
+      }
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
@@ -81,12 +92,12 @@ export class RevenueStatisticsService {
         templateMonths: template.length,
       });
 
-      // Extract the start and end periods from the template
-      const startPeriod = `${template[0].year}-${String(
-        template[0].monthNumber,
+      const startPeriod = `${firstMonth.year}-${String(
+        firstMonth.monthNumber,
       ).padStart(2, "0")}`;
-      const endPeriod = `${template[template.length - 1].year}-${String(
-        template[template.length - 1].monthNumber,
+
+      const endPeriod = `${lastMonth.year}-${String(
+        lastMonth.monthNumber,
       ).padStart(2, "0")}`;
 
       logger.info({
@@ -326,39 +337,5 @@ export class RevenueStatisticsService {
       });
       throw error;
     }
-  }
-
-  /**
-   * Generates a template for the 12-month rolling period.
-   *
-   * @returns Array of RollingMonthData objects for the 12-month period
-   */
-  private generateMonthsTemplate(): RollingMonthData[] {
-    const rollingStartDate = calculateRollingStartDate();
-
-    // Generate 12 months of template data
-    return Array.from({ length: 12 }, (_, index) => {
-      const monthIndex = this.createMonthTemplateFromIndex(
-        rollingStartDate,
-        index,
-      );
-      return monthIndex;
-    });
-  }
-
-  /**
-   * Creates a month template for a specific index in the rolling period.
-   *
-   * @param rollingStartDate - The start date of the rolling period
-   * @param monthIndex - The index of the month in the rolling period (0-11)
-   * @returns RollingMonthData object for the specified month
-   */
-  private createMonthTemplateFromIndex(
-    rollingStartDate: Date,
-    monthIndex: number,
-  ): RollingMonthData {
-    const monthDate = calculateMonthDateFromStart(rollingStartDate, monthIndex);
-    const calendarMonthIndex = monthDate.getMonth();
-    return createMonthTemplateData(monthIndex, monthDate, calendarMonthIndex);
   }
 }
