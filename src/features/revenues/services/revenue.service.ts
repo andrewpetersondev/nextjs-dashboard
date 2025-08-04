@@ -74,6 +74,8 @@ export class RevenueService {
   /**
    * Updates an existing revenue record.
    *
+   * @concern NOTE: Method uses RevenuePartialEntity (which omits id) but the id is used in another parameter.
+   *
    * @param id - Unique identifier of the revenue record
    * @param revenue - Partial revenue entity with updated fields
    * @returns Promise resolving to the updated revenue entity

@@ -1,7 +1,11 @@
 "use server";
 
 import { getDB } from "@/db/connection";
-import type { RevenueChartDto } from "@/features/revenues/core/revenue.dto";
+import type {
+  RevenueChartDto,
+  RevenueStatisticsDto,
+  SimpleRevenueDto,
+} from "@/features/revenues/core/revenue.dto";
 import type { RevenueActionResult } from "@/features/revenues/core/revenue.types";
 import { MONTH_ORDER } from "@/features/revenues/core/revenue.types";
 import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
@@ -60,27 +64,31 @@ export async function getRevenueChartAction(): Promise<
       calculator.calculateStatistics(),
     ]);
 
+    const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
+      // Extract month number from period (format: YYYY-MM)
+      const monthNumber = parseInt(entity.period.substring(5, 7), 10);
+      // Get month abbreviation from MONTH_ORDER array (0-indexed, so subtract 1)
+      const monthAbbreviation = MONTH_ORDER[monthNumber - 1];
+
+      return {
+        month: monthAbbreviation,
+        monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
+        revenue: convertCentsToDollars(entity.revenue), // Convert to dollars
+      };
+    });
+
+    const statistics: RevenueStatisticsDto = {
+      average: convertCentsToDollars(rawStatistics.average),
+      maximum: convertCentsToDollars(rawStatistics.maximum),
+      minimum: convertCentsToDollars(rawStatistics.minimum),
+      monthsWithData: rawStatistics.monthsWithData,
+      total: convertCentsToDollars(rawStatistics.total),
+    };
+
     // Apply business logic conversions in the action layer
     const chartData: RevenueChartDto = {
-      monthlyData: entities.map((entity, index) => {
-        // Extract month number from period (format: YYYY-MM)
-        const monthNumber = parseInt(entity.period.substring(5, 7), 10);
-        // Get month abbreviation from MONTH_ORDER array (0-indexed, so subtract 1)
-        const monthAbbreviation = MONTH_ORDER[monthNumber - 1];
-
-        return {
-          month: monthAbbreviation,
-          monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
-          revenue: convertCentsToDollars(entity.revenue), // Convert to dollars
-        };
-      }),
-      statistics: {
-        average: convertCentsToDollars(rawStatistics.average),
-        maximum: convertCentsToDollars(rawStatistics.maximum),
-        minimum: convertCentsToDollars(rawStatistics.minimum),
-        monthsWithData: rawStatistics.monthsWithData,
-        total: convertCentsToDollars(rawStatistics.total),
-      },
+      monthlyData,
+      statistics,
       year: new Date().getFullYear(), // Current year for display
     };
 

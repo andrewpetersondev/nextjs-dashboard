@@ -5,8 +5,10 @@
  * revenue domain model, excluding entity definitions which are in revenue.entity.ts.
  */
 
-import type { RevenueEntity } from "@/db/models/revenue.entity";
-import type { RevenueDisplayEntity } from "./revenue.entity";
+import type {
+  RevenueDisplayEntity,
+  RevenueEntity,
+} from "@/features/revenues/core/revenue.entity";
 
 /**
  * Ordered array of three-letter month abbreviations for consistent display.
@@ -108,44 +110,6 @@ export interface RollingMonthData {
   readonly monthNumber: number;
   /** Four-digit year for the month */
   readonly year: number;
-}
-
-/**
- * Raw database query result containing unprocessed revenue data.
- *
- * Represents the exact structure returned from SQL revenue aggregation queries,
- * with no business logic transformations applied. All monetary values are in
- * database-native cents format.
- *
- * @remarks
- * **Data Characteristics:**
- * - Revenue values are in cents (database native format)
- * - Month names are database-generated (e.g., PostgreSQL TO_CHAR format)
- * - No business logic transformations or validations applied
- * - Direct mapping from SQL SELECT results
- *
- * **Processing Pipeline:**
- * 1. Raw query returns MonthlyRevenueQueryResult[]
- * 2. Service layer merges with templates for completeness
- * 3. Action layer converts to presentation DTOs
- *
- * @deprecated Use RevenueDisplayEntity instead. This interface is maintained for backward compatibility
- * and will be removed in a future release. The RevenueDisplayEntity interface extends RevenueEntity
- * with display-oriented fields and provides better type safety and consistency.
- */
-export interface MonthlyRevenueQueryResult {
-  /** Database-generated month abbreviation (typically from TO_CHAR function) */
-  readonly month: string;
-  /** Revenue amount in cents (database native format) */
-  readonly revenue: number;
-  /** Number of invoices contributing to this month's revenue */
-  readonly invoiceCount: number;
-  /** Four-digit year extracted from invoice dates */
-  readonly year: number;
-  /** Calendar month number (1-12) extracted from invoice dates */
-  readonly monthNumber: number;
-  /** Unique period identifier combining year and month (ex. 2025-01)  */
-  readonly period: string;
 }
 
 /**

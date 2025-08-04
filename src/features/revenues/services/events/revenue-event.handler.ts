@@ -76,20 +76,20 @@ export class RevenueEventHandler {
     try {
       logger.info({
         context: "RevenueEventHandler.handleInvoiceCreated",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Processing invoice created event",
       });
 
       // Extract the invoice from the event
-      const invoice = event.payload;
+      const invoice = event.invoice;
 
       // Check if the invoice is eligible for revenue calculation
       if (!this.isInvoiceEligibleForRevenue(invoice, "handleInvoiceCreated")) {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceCreated",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Invoice not eligible for revenue calculation, skipping",
         });
         return;
@@ -101,8 +101,8 @@ export class RevenueEventHandler {
       if (!period) {
         logger.error({
           context: "RevenueEventHandler.handleInvoiceCreated",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Failed to extract period from invoice",
         });
         return;
@@ -113,8 +113,8 @@ export class RevenueEventHandler {
 
       logger.info({
         context: "RevenueEventHandler.handleInvoiceCreated",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Successfully processed invoice created event",
         period,
       });
@@ -266,22 +266,22 @@ export class RevenueEventHandler {
     try {
       logger.info({
         context: "RevenueEventHandler.handleInvoiceUpdated",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Processing invoice updated event",
       });
 
       // Extract the current and previous invoice states
-      const currentInvoice = event.payload;
-      const previousInvoice = event.previousState;
+      const currentInvoice = event.invoice;
+      const previousInvoice = event.previousInvoice;
 
       // Check if both invoice states are available
       if (!currentInvoice || !previousInvoice) {
         logger.error({
           context: "RevenueEventHandler.handleInvoiceUpdated",
           currentInvoice: !!currentInvoice,
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Missing current or previous invoice state",
           previousInvoice: !!previousInvoice,
         });
@@ -293,8 +293,8 @@ export class RevenueEventHandler {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceUpdated",
           currentStatus: currentInvoice.status,
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Invoice status changed, adjusting revenue",
           previousStatus: previousInvoice.status,
         });
@@ -309,8 +309,8 @@ export class RevenueEventHandler {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceUpdated",
           currentAmount: currentInvoice.amount,
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Invoice amount changed, adjusting revenue",
           previousAmount: previousInvoice.amount,
         });
@@ -321,8 +321,8 @@ export class RevenueEventHandler {
         if (!period) {
           logger.error({
             context: "RevenueEventHandler.handleInvoiceUpdated",
-            eventId: event.id,
-            invoiceId: event.invoiceId,
+            eventId: event.eventId,
+            invoiceId: event.invoice.id,
             message: "Failed to extract period from invoice",
           });
           return;
@@ -344,8 +344,8 @@ export class RevenueEventHandler {
           logger.info({
             amountDifference,
             context: "RevenueEventHandler.handleInvoiceUpdated",
-            eventId: event.id,
-            invoiceId: event.invoiceId,
+            eventId: event.eventId,
+            invoiceId: event.invoice.id,
             message: "Updated revenue record with new amount",
             period,
             revenueId: existingRevenue.id,
@@ -354,16 +354,16 @@ export class RevenueEventHandler {
       } else {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceUpdated",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "No relevant changes for revenue calculation",
         });
       }
 
       logger.info({
         context: "RevenueEventHandler.handleInvoiceUpdated",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Successfully processed invoice updated event",
       });
     } catch (error) {
@@ -504,20 +504,20 @@ export class RevenueEventHandler {
     try {
       logger.info({
         context: "RevenueEventHandler.handleInvoiceDeleted",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Processing invoice deleted event",
       });
 
       // Extract the deleted invoice
-      const deletedInvoice = event.payload;
+      const deletedInvoice = event.invoice;
 
       // Check if the invoice is available
       if (!deletedInvoice) {
         logger.error({
           context: "RevenueEventHandler.handleInvoiceDeleted",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Missing deleted invoice data",
         });
         return;
@@ -532,8 +532,8 @@ export class RevenueEventHandler {
       ) {
         logger.info({
           context: "RevenueEventHandler.handleInvoiceDeleted",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Deleted invoice was not eligible for revenue, skipping",
         });
         return;
@@ -545,8 +545,8 @@ export class RevenueEventHandler {
       if (!period) {
         logger.error({
           context: "RevenueEventHandler.handleInvoiceDeleted",
-          eventId: event.id,
-          invoiceId: event.invoiceId,
+          eventId: event.eventId,
+          invoiceId: event.invoice.id,
           message: "Failed to extract period from deleted invoice",
         });
         return;
@@ -557,8 +557,8 @@ export class RevenueEventHandler {
 
       logger.info({
         context: "RevenueEventHandler.handleInvoiceDeleted",
-        eventId: event.id,
-        invoiceId: event.invoiceId,
+        eventId: event.eventId,
+        invoiceId: event.invoice.id,
         message: "Successfully processed invoice deleted event",
         period,
       });

@@ -7,9 +7,11 @@
 
 import "server-only";
 
-import type { RevenueEntity } from "@/features/revenues/core/revenue.entity";
 import type {
   RevenueDisplayEntity,
+  RevenueEntity,
+} from "@/features/revenues/core/revenue.entity";
+import type {
   RevenueStatistics,
   RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
@@ -20,7 +22,6 @@ import {
   createEmptyStatistics,
   createMonthTemplateData,
   mergeDataWithTemplate,
-  transformToRevenueEntity,
 } from "@/features/revenues/utils/data/revenue-statistics.utils";
 import {
   calculateDateRange,

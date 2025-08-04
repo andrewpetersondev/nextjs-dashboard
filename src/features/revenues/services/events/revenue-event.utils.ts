@@ -68,8 +68,8 @@ export function handleEventError(
   logger.error({
     context,
     error,
-    eventId: event.id,
-    invoiceId: event.invoiceId,
+    eventId: event.eventId,
+    invoiceId: event.invoice.id,
     message: "Error handling invoice event",
     timestamp: new Date().toISOString(),
   });

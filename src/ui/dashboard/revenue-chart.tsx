@@ -1,8 +1,8 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
-import { getRevenueChartAction } from "@/features/revenues/revenue.actions";
-import type { SimpleRevenueDto } from "@/features/revenues/revenue.dto";
-import { generateYAxis } from "@/features/revenues/revenue.utils";
+import { getRevenueChartAction } from "@/features/revenues/actions/revenue.actions";
+import type { SimpleRevenueDto } from "@/features/revenues/core/revenue.dto";
+import { generateYAxis } from "@/features/revenues/utils/display/revenue-display.utils";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {
