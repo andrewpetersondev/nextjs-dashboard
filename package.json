@@ -6,6 +6,7 @@
     "autoprefixer": "^10.4.21",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.4",
     "drizzle-zod": "^0.8.2",
     "jose": "^6.0.12",

@@ -1,6 +1,5 @@
 import "server-only";
 
-// import * as z from "zod";
 import { ValidationError } from "@/errors/errors";
 import {
   INVOICE_STATUSES,
@@ -23,6 +22,7 @@ export const userIdBrand = Symbol("UserId");
 export const invoiceIdBrand = Symbol("InvoiceId");
 export const revenueIdBrand = Symbol("RevenueId");
 export const sessionIdBrand = Symbol("SessionId");
+export const periodBrand = Symbol("Period");
 
 // Branded types
 export type CustomerId = Brand<string, typeof customerIdBrand>;
@@ -30,6 +30,7 @@ export type UserId = Brand<string, typeof userIdBrand>;
 export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
 export type RevenueId = Brand<string, typeof revenueIdBrand>;
 export type SessionId = Brand<string, typeof sessionIdBrand>;
+export type Period = Brand<string, typeof periodBrand>; // YYYY-MM
 
 // Consistent validation for all UUID-based IDs
 const validateUuid = (id: string, brandName: string): void => {
@@ -95,4 +96,11 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
 
 export const toPeriodDuration = (duration: string): PeriodDuration => {
   return validateEnum(duration, PERIOD_DURATIONS, "PeriodDuration");
+};
+
+export const toPeriod = (period: string): Period => {
+  if (!/^\d{4}-\d{2}$/.test(period)) {
+    throw new ValidationError(`Invalid period: "${period}"`);
+  }
+  return period as Period;
 };

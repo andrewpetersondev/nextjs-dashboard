@@ -10,7 +10,6 @@ import "server-only";
 import type { RevenueRow } from "@/db/schema";
 import { ValidationError } from "@/errors/errors";
 import type { RevenueEntity } from "@/features/revenues/core/revenue.entity";
-import { toRevenueId } from "@/lib/definitions/brands";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -26,9 +25,9 @@ export function rawDbToRevenueEntity(row: RevenueRow): RevenueEntity {
   return {
     calculationSource: row.calculationSource,
     createdAt: row.createdAt,
-    id: toRevenueId(row.id), // pretty sure it is stored as a branded type in the database
+    id: row.id, // Already RevenueId
     invoiceCount: row.invoiceCount,
-    period: row.period, // Assuming period is a string like '2024-01'
+    period: row.period, // Already Period ('2024-01')
     revenue: row.revenue,
     updatedAt: row.updatedAt,
   };

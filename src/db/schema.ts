@@ -13,6 +13,7 @@ import {
 import type {
   CustomerId,
   InvoiceId,
+  Period,
   RevenueId,
   SessionId,
   UserId,
@@ -153,7 +154,10 @@ export const revenues = pgTable(TABLES.REVENUES, {
   createdAt: commonFields.timestamps.createdAt(),
   id: commonFields.id.uuid().$type<RevenueId>(),
   invoiceCount: integer("invoice_count").notNull().default(0),
-  period: varchar(COLUMNS.PERIOD, { length: 7 }).notNull().unique(), // Format: YYYY-MM
+  period: varchar(COLUMNS.PERIOD, { length: 7 })
+    .notNull()
+    .unique()
+    .$type<Period>(), // Format: YYYY-MM
   revenue: integer(COLUMNS.REVENUE).notNull(),
   updatedAt: commonFields.timestamps.updatedAt(),
 });
