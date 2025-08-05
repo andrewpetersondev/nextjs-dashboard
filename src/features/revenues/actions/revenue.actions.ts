@@ -67,8 +67,23 @@ export async function getRevenueChartAction(): Promise<
     const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
       // Extract month number from period (format: YYYY-MM)
       const monthNumber = parseInt(entity.period.substring(5, 7), 10);
+
+      // Validate month number is within valid range (1-12)
+      if (monthNumber < 1 || monthNumber > 12) {
+        throw new Error(
+          `Invalid month number ${monthNumber} in period ${entity.period}`,
+        );
+      }
+
       // Get month abbreviation from MONTH_ORDER array (0-indexed, so subtract 1)
       const monthAbbreviation = MONTH_ORDER[monthNumber - 1];
+
+      // Additional safety check to ensure we have a valid month name
+      if (!monthAbbreviation) {
+        throw new Error(
+          `Failed to get month abbreviation for month number ${monthNumber}`,
+        );
+      }
 
       return {
         month: monthAbbreviation,

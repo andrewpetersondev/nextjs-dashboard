@@ -7,7 +7,7 @@
 
 import "server-only";
 
-import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.types";
+import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 
 /**
  * Creates an efficient lookup map for revenue data indexed by year-month key.
