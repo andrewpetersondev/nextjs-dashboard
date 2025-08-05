@@ -1,5 +1,5 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 import bcryptjs from "bcryptjs";
-import { count } from "drizzle-orm";
 import { seed } from "drizzle-seed";
 import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
