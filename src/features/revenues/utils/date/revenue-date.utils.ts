@@ -1,12 +1,3 @@
-/**
- * @file
- * Utility functions for date operations related to revenue calculations.
- *
- * This file contains pure functions for working with dates, periods, and date ranges
- * that are used in revenue calculations. These functions have been extracted from
- * the RevenueCalculatorService to improve code organization and reusability.
- */
-
 import "server-only";
 
 import { ValidationError } from "@/errors/errors";
@@ -21,7 +12,6 @@ import { createMonthTemplateData } from "@/features/revenues/utils/data/template
  *
  * @param startDate - The rolling period start date
  * @param monthOffset - Offset from start date (0-11)
- * @returns Date object for the calculated month
  */
 export function calculateMonthDateFromStart(
   startDate: Date,
@@ -92,7 +82,7 @@ export function formatMonthDateRange(
  * Formats the first day of a month as an ISO date string.
  *
  * @param year - Four-digit year
- * @param month - Month number (1-12)
+ * @param month - Month number (1-12) or (0-11)?
  * @returns ISO date string for the first day of the month
  */
 export function formatMonthStartDate(year: number, month: number): string {
@@ -103,7 +93,7 @@ export function formatMonthStartDate(year: number, month: number): string {
  * Formats the last day of a month as an ISO date string.
  *
  * @param year - Four-digit year
- * @param month - Month number (1-12)
+ * @param month - Month number (1-12) or (0-11)?
  * @returns ISO date string for the last day of the month
  */
 export function formatMonthEndDate(year: number, month: number): string {
@@ -148,7 +138,6 @@ export function generateMonthlyPeriods(start: string, end: string): string[] {
  *
  * @param date - Date object to format
  * @returns Formatted period string
- * @throws ValidationError if the date is invalid or not in the correct format
  */
 export function formatDateToPeriod(date: Date): string {
   const isoDate = date.toISOString().split("T")[0];

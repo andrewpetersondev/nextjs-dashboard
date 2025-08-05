@@ -18,7 +18,7 @@ import {
   generateMonthsTemplate,
   isValidISODate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toPeriodDuration } from "@/lib/definitions/brands";
+import { toPeriod, toPeriodDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -102,8 +102,8 @@ export class RevenueStatisticsService {
 
       // Fetch revenue data from the repository
       const revenueEntities = await this.repository.findByDateRange(
-        startPeriod,
-        endPeriod,
+        toPeriod(startPeriod),
+        toPeriod(endPeriod),
       );
 
       logger.info({
@@ -200,8 +200,8 @@ export class RevenueStatisticsService {
 
       // Use repository to fetch revenue data
       const revenueEntities = await this.repository.findByDateRange(
-        startPeriod,
-        endPeriod,
+        toPeriod(startPeriod),
+        toPeriod(endPeriod),
       );
 
       logger.info({

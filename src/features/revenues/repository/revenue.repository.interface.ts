@@ -5,7 +5,7 @@ import type {
   RevenueEntity,
   RevenuePartialEntity,
 } from "@/features/revenues/core/revenue.entity";
-import type { RevenueId } from "@/lib/definitions/brands";
+import type { Period, RevenueId } from "@/lib/definitions/brands";
 
 /**
  * Interface defining the contract for revenue repository operations.
@@ -31,18 +31,18 @@ export interface RevenueRepositoryInterface {
   delete(id: RevenueId): Promise<void>;
   /** Finds revenue records within a date range */
   findByDateRange(
-    startPeriod: string,
-    endPeriod: string,
+    startPeriod: Period,
+    endPeriod: Period,
   ): Promise<RevenueEntity[]>;
   /** Creates or updates a revenue record */
   upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
   /** Deletes a revenue record by ID */
   deleteById(id: RevenueId): Promise<void>;
   /** Finds a revenue record by period */
-  findByPeriod(period: string): Promise<RevenueEntity | null>;
+  findByPeriod(period: Period): Promise<RevenueEntity | null>;
   /** Creates or updates a revenue record by period */
   upsertByPeriod(
-    period: string,
+    period: Period,
     revenue: RevenuePartialEntity,
   ): Promise<RevenueEntity>;
 }

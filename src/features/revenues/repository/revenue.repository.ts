@@ -14,7 +14,11 @@ import {
   mapRevRowToRevEnt,
 } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import { type RevenueId, toPeriod } from "@/lib/definitions/brands";
+import {
+  type Period,
+  type RevenueId,
+  toPeriod,
+} from "@/lib/definitions/brands";
 
 /**
  * Database implementation of the revenue repository using Drizzle ORM.
@@ -147,11 +151,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param startPeriod - The start period in YYYY-MM format
    * @param endPeriod - The end period in YYYY-MM format
-   * @returns Promise resolving to array of revenue entities
    */
   async findByDateRange(
-    startPeriod: string,
-    endPeriod: string,
+    startPeriod: Period,
+    endPeriod: Period,
   ): Promise<RevenueEntity[]> {
     if (!startPeriod || !endPeriod) {
       throw new ValidationError("Start and end periods are required");
@@ -186,9 +189,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * - Supporting the decision to create or update a revenue record
    *
    * @param period - The period in YYYY-MM format
-   * @returns Promise resolving to the revenue entity or null if not found
    */
-  async findByPeriod(period: string): Promise<RevenueEntity | null> {
+  async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
       throw new ValidationError("Period is required");
     }
@@ -303,10 +305,9 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param period - The period in YYYY-MM format
    * @param revenue - Revenue data to create or update
-   * @returns Promise resolving to the created or updated revenue entity
    */
   async upsertByPeriod(
-    period: string,
+    period: Period,
     revenue: RevenuePartialEntity,
   ): Promise<RevenueEntity> {
     if (!period) {

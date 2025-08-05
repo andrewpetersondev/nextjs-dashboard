@@ -120,7 +120,10 @@ export class RevenueService {
   ): Promise<RevenueEntity[]> {
     const startPeriod = formatDateToPeriod(startDate);
     const endPeriod = formatDateToPeriod(endDate);
-    return this.repository.findByDateRange(startPeriod, endPeriod);
+    return this.repository.findByDateRange(
+      toPeriod(startPeriod),
+      toPeriod(endPeriod),
+    );
   }
 
   /**
@@ -133,7 +136,7 @@ export class RevenueService {
     if (!period) {
       throw new ValidationError("Period is required");
     }
-    return this.repository.findByPeriod(period);
+    return this.repository.findByPeriod(toPeriod(period));
   }
 
   /**
@@ -180,7 +183,9 @@ export class RevenueService {
     }
 
     // Check if a revenue record already exists for this period
-    const existingRevenue = await this.repository.findByPeriod(period);
+    const existingRevenue = await this.repository.findByPeriod(
+      toPeriod(period),
+    );
 
     // If no existing revenue or the invoice is not paid, create a new record or update with zero amount
     if (!existingRevenue) {
@@ -194,7 +199,7 @@ export class RevenueService {
         updatedAt: new Date(),
       };
 
-      return this.repository.upsertByPeriod(period, newRevenue);
+      return this.repository.upsertByPeriod(toPeriod(period), newRevenue);
     }
 
     // Update existing revenue record
@@ -215,6 +220,6 @@ export class RevenueService {
       updatedAt: new Date(),
     };
 
-    return this.repository.upsertByPeriod(period, updatedRevenue);
+    return this.repository.upsertByPeriod(toPeriod(period), updatedRevenue);
   }
 }
