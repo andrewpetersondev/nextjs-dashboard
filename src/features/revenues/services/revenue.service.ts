@@ -15,8 +15,9 @@ import type {
   RevenuePartialEntity,
 } from "@/features/revenues/core/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
-import { type RevenueId, toPeriod } from "@/lib/definitions/brands";
+import type { RevenueId } from "@/lib/definitions/brands";
 
 /**
  * Business service for revenue processing and management.

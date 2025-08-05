@@ -7,7 +7,7 @@ import {
   validateInvoiceForRevenue,
 } from "@/features/revenues/services/events/revenue-event.utils";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
-import { toPeriod } from "@/lib/definitions/brands";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";

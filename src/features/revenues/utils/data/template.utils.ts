@@ -17,7 +17,8 @@ import {
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { generateLookupKey } from "@/features/revenues/utils/data/lookup.utils";
-import { toPeriod, toRevenueId } from "@/lib/definitions/brands";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import { toRevenueId } from "@/lib/definitions/brands";
 
 /**
  * Creates a default month data structure for months without revenue.

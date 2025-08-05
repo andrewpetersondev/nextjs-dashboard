@@ -1,5 +1,6 @@
 import { format, parse } from "date-fns";
-import { type Period, toPeriod } from "@/lib/definitions/brands";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import type { Period } from "@/lib/definitions/brands";
 
 export function formatDateToPeriod(date: Date): Period {
   return toPeriod(format(date, "yyyy-MM"));

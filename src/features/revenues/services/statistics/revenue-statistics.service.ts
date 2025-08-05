@@ -12,13 +12,14 @@ import {
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-data.utils";
 import { createDefaultRevenueData } from "@/features/revenues/utils/data/template.utils";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import {
   calculateDateRange,
   generateMonthlyPeriods,
   generateMonthsTemplate,
   isValidISODate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toPeriod, toPeriodDuration } from "@/lib/definitions/brands";
+import { toPeriodDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**

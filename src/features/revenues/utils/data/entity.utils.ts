@@ -12,12 +12,9 @@ import type {
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
 import type { RollingMonthData } from "@/features/revenues/core/revenue.types";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import { formatMonthDateRange } from "@/features/revenues/utils/date/revenue-date.utils";
-import {
-  type RevenueId,
-  toPeriod,
-  toRevenueId,
-} from "@/lib/definitions/brands";
+import { type RevenueId, toRevenueId } from "@/lib/definitions/brands";
 
 /**
  * Creates a default RevenueEntity for a specific period.

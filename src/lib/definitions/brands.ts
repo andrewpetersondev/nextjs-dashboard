@@ -97,10 +97,3 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
 export const toPeriodDuration = (duration: string): PeriodDuration => {
   return validateEnum(duration, PERIOD_DURATIONS, "PeriodDuration");
 };
-
-export const toPeriod = (period: string): Period => {
-  if (!/^\d{4}-\d{2}$/.test(period)) {
-    throw new ValidationError(`Invalid period: "${period}"`);
-  }
-  return period as Period;
-};
