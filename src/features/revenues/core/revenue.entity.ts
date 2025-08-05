@@ -1,8 +1,3 @@
-/**
- * @file features/revenues/core/revenue.entity.ts
- * Entity definitions for the revenue feature.
- */
-
 import "server-only";
 
 import type { Period, RevenueId } from "@/lib/definitions/brands";
@@ -32,6 +27,7 @@ export type RevenuePartialEntity = Partial<RevenueCreateEntity>;
 
 /**
  * Display-oriented entity extending RevenueEntity with UI-specific fields.
+ * @param month - note i think month is a string like '00', --- '11'
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
   readonly month: string;

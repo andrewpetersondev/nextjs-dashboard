@@ -1,10 +1,3 @@
-/**
- * Event handler for revenue-related invoice events.
- *
- * This class handles invoice events (created, updated, deleted) and updates
- * revenue records accordingly, ensuring revenue data stays in sync with invoices.
- */
-
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";

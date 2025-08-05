@@ -9,7 +9,10 @@ export function periodToDate(period: Period): Date {
   return parse(period, "yyyy-MM", new Date());
 }
 
-export function extractMonthFromPeriod(period: Period): number {
+/**
+ * @return '00', '01', '02'
+ */
+export function extractMonthNumberFromPeriod(period: Period): number {
   return parseInt(period.substring(5, 7), 10);
 }
 

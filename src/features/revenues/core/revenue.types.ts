@@ -1,8 +1,4 @@
 /**
- * Core type definitions for the revenue feature.
- */
-
-/**
  * Ordered array of three-letter month abbreviations.
  */
 export const MONTH_ORDER = [

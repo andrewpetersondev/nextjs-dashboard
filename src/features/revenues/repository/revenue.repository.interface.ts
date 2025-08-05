@@ -1,10 +1,3 @@
-/**
- * Interface for revenue repository operations.
- *
- * This file defines the contract for revenue data access operations,
- * following the repository pattern to abstract database interactions.
- */
-
 import "server-only";
 
 import type {

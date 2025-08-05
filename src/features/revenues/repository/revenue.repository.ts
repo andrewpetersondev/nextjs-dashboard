@@ -1,10 +1,3 @@
-/**
- * Database implementation of the revenue repository.
- *
- * This file contains the concrete implementation of the revenue repository
- * interface using Drizzle ORM for database operations.
- */
-
 import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";

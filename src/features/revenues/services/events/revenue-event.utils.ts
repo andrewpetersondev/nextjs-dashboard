@@ -1,10 +1,3 @@
-/**
- * Utility functions for revenue event handling.
- *
- * This file contains utility functions for handling revenue-related events,
- * including invoice validation, period extraction, and error handling.
- */
-
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";

@@ -1,10 +1,3 @@
-/**
- * Service for calculating revenue statistics.
- *
- * This service provides methods for calculating revenue statistics for different time periods.
- * It uses the repository pattern for data access and utility functions for data transformation.
- */
-
 import "server-only";
 
 import type {
