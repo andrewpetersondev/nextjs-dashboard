@@ -18,10 +18,10 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import {
   mapRevenueRowsToEntities,
-  rawDbToRevenueEntity,
-} from "@/features/revenues/repository/revenue.mapper";
+  mapRevRowToRevEnt,
+} from "@/features/revenues/core/revenue.mapper";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import type { RevenueId } from "@/lib/definitions/brands";
+import { type RevenueId, toPeriod } from "@/lib/definitions/brands";
 
 /**
  * Database implementation of the revenue repository using Drizzle ORM.
@@ -67,7 +67,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Failed to create revenue record");
     }
 
-    const result: RevenueEntity = rawDbToRevenueEntity(data);
+    const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert revenue record");
@@ -92,7 +92,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Revenue record not found");
     }
 
-    const result: RevenueEntity = rawDbToRevenueEntity(data);
+    const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert revenue record");
@@ -124,7 +124,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Failed to update revenue record");
     }
 
-    const result: RevenueEntity = rawDbToRevenueEntity(data);
+    const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert updated revenue record");
@@ -169,7 +169,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .select()
       .from(revenues)
       .where(
-        and(gte(revenues.period, startPeriod), lte(revenues.period, endPeriod)),
+        and(
+          gte(revenues.period, toPeriod(startPeriod)),
+          lte(revenues.period, toPeriod(endPeriod)),
+        ),
       )
       .orderBy(desc(revenues.period));
 
@@ -200,7 +203,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     const data: RevenueRow | undefined = await this.db
       .select()
       .from(revenues)
-      .where(eq(revenues.period, period))
+      .where(eq(revenues.period, toPeriod(period)))
       .limit(1)
       .then((rows) => rows[0]);
 
@@ -208,7 +211,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       return null; // Return null when no record is found for the period
     }
 
-    const result: RevenueEntity = rawDbToRevenueEntity(data);
+    const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert revenue record");
@@ -266,7 +269,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
         throw new DatabaseError("Failed to upsert revenue record");
       }
 
-      const result: RevenueEntity = rawDbToRevenueEntity(data);
+      const result: RevenueEntity = mapRevRowToRevEnt(data);
 
       if (!result) {
         throw new DatabaseError("Failed to convert revenue record");
@@ -324,7 +327,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     // Ensure the period in the revenue data matches the provided period
     const revenueWithPeriod: RevenueCreateEntity = {
       ...(revenue as RevenueCreateEntity),
-      period,
+      period: toPeriod(period),
     };
 
     return this.upsert(revenueWithPeriod);

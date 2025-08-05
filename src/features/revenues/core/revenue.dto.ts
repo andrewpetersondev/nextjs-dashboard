@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Data Transfer Object for simplified revenue display data.
  *

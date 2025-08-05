@@ -1,3 +1,4 @@
+import { USER_ERROR_MESSAGES } from "@/errors/error-messages";
 import {
   LoginFormSchema,
   SignupFormSchema,
@@ -8,7 +9,6 @@ import type {
   SignupFormFieldNames,
   SignupFormFields,
 } from "@/features/users/user.types";
-import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { validateFormData } from "@/lib/forms/form-validation";

@@ -5,8 +5,6 @@
  * including currency conversion and chart axis generation.
  */
 
-import "server-only";
-
 import type { SimpleRevenueDto } from "@/features/revenues/core/revenue.dto";
 import type { YAxisResult } from "@/features/revenues/core/revenue.types";
 

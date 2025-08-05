@@ -11,14 +11,14 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
+import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
-import { createRevenueDisplayEntity } from "@/features/revenues/core/revenue.types";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import {
-  createDefaultRevenueData,
   createEmptyStatistics,
   mergeDataWithTemplate,
-} from "@/features/revenues/utils/data/revenue-statistics.utils";
+} from "@/features/revenues/utils/data/revenue-data.utils";
+import { createDefaultRevenueData } from "@/features/revenues/utils/data/template.utils";
 import {
   calculateDateRange,
   generateMonthlyPeriods,
@@ -121,7 +121,7 @@ export class RevenueStatisticsService {
 
       // Transform the revenue entities to display entities
       const displayEntities = revenueEntities.map((entity) =>
-        createRevenueDisplayEntity(entity),
+        mapRevEntToRevDisplayEnt(entity),
       );
 
       // Merge the display entities with the template
@@ -229,10 +229,9 @@ export class RevenueStatisticsService {
 
         if (entity) {
           // Transform existing data using the factory method
-          return createRevenueDisplayEntity(entity);
+          return mapRevEntToRevDisplayEnt(entity);
         } else {
           // Create default data for missing periods
-          // Note: createDefaultRevenueData needs to be updated to return RevenueDisplayEntity
           return createDefaultRevenueData(period);
         }
       });

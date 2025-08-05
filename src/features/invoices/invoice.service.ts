@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { InvoiceFormEntity } from "@/db/models/invoice.entity";
+import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
 import { ValidationError } from "@/errors/errors";
 import type {
   InvoiceDto,
@@ -11,7 +12,6 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toInvoiceId } from "@/lib/definitions/brands";
 
 /**

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDB } from "@/db/connection";
+import { USER_ERROR_MESSAGES } from "@/errors/error-messages";
 import {
   deleteSessionToken,
   setSessionToken,
@@ -40,7 +41,6 @@ import type {
   UserCreateState,
   UserRole,
 } from "@/features/users/user.types";
-import { USER_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import { toUserId, toUserRole } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";

@@ -5,6 +5,7 @@ import type {
   InvoiceFormEntity,
   InvoiceFormPartialEntity,
 } from "@/db/models/invoice.entity";
+import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   createInvoiceDal,
@@ -15,7 +16,6 @@ import {
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
-import { INVOICE_ERROR_MESSAGES } from "@/lib/constants/error-messages";
 import type { InvoiceId } from "@/lib/definitions/brands";
 import { BaseRepository } from "@/lib/repository/base-repository";
 

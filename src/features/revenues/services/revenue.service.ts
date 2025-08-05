@@ -16,7 +16,7 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
-import type { RevenueId } from "@/lib/definitions/brands";
+import { type RevenueId, toPeriod } from "@/lib/definitions/brands";
 
 /**
  * Business service for revenue processing and management.
@@ -189,7 +189,7 @@ export class RevenueService {
         calculationSource: "handler",
         createdAt: new Date(),
         invoiceCount: invoice.status === "paid" ? 1 : 0,
-        period,
+        period: toPeriod(period),
         revenue: invoice.status === "paid" ? invoice.amount : 0,
         updatedAt: new Date(),
       };

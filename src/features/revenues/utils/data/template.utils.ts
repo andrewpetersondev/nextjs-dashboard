@@ -7,11 +7,73 @@
 
 import "server-only";
 
-import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
-import type { RollingMonthData } from "@/features/revenues/core/revenue.types";
-import { MONTH_ORDER } from "@/features/revenues/core/revenue.types";
-import { createDefaultMonthData } from "./entity.utils";
-import { generateLookupKey } from "./lookup.utils";
+import type {
+  RevenueDisplayEntity,
+  RevenueEntity,
+} from "@/features/revenues/core/revenue.entity";
+import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
+import {
+  MONTH_ORDER,
+  type RollingMonthData,
+} from "@/features/revenues/core/revenue.types";
+import { generateLookupKey } from "@/features/revenues/utils/data/lookup.utils";
+import { toPeriod, toRevenueId } from "@/lib/definitions/brands";
+
+/**
+ * Creates a default month data structure for months without revenue.
+ *
+ * Ensures type safety and consistent zero-value initialization for months
+ * that don't have corresponding invoice data.
+ *
+ * @param _month - Month name (e.g., "Jan", "Feb")
+ * @param monthNumber - Month number (1-12)
+ * @param year - Four-digit year
+ * @returns RevenueDisplayEntity with zero values
+ */
+function createDefaultMonthData(
+  _month: string,
+  monthNumber: number,
+  year: number,
+): RevenueDisplayEntity {
+  const period = `${year}-${String(monthNumber).padStart(2, "0")}`;
+  // Create a default RevenueEntity and then transform it to RevenueDisplayEntity
+  const defaultEntity: RevenueEntity = {
+    calculationSource: "template",
+    createdAt: new Date(),
+    id: toRevenueId(`template-${period}`),
+    invoiceCount: 0,
+    period: toPeriod(period),
+    revenue: 0,
+    updatedAt: new Date(),
+  };
+
+  return mapRevEntToRevDisplayEnt(defaultEntity);
+}
+
+/**
+ * Creates default revenue display entity for a specific period.
+ * This function creates a RevenueDisplayEntity object by first creating a default
+ * RevenueEntity and then transforming it using the factory method.
+ * Use createDefaultRevenueEntity if you need a database-compatible entity.
+ *
+ * @param period - Period in YYYY-MM format
+ * @returns Complete RevenueDisplayEntity with default values
+ */
+export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
+  // Create a default RevenueEntity
+  const defaultEntity: RevenueEntity = {
+    calculationSource: "template",
+    createdAt: new Date(),
+    id: toRevenueId(`template-${period}`),
+    invoiceCount: 0,
+    period: toPeriod(period),
+    revenue: 0,
+    updatedAt: new Date(),
+  };
+
+  // Transform to RevenueDisplayEntity using the factory method
+  return mapRevEntToRevDisplayEnt(defaultEntity);
+}
 
 /**
  * Retrieves existing revenue data for a month or creates default empty data.

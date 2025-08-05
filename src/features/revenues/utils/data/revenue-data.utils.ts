@@ -12,8 +12,8 @@ import type {
   RevenueStatistics,
   RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
-import { createDataLookupMap } from "./lookup.utils";
-import { getMonthDataOrDefault } from "./template.utils";
+import { createDataLookupMap } from "@/features/revenues/utils/data/lookup.utils";
+import { getMonthDataOrDefault } from "@/features/revenues/utils/data/template.utils";
 
 /**
  * Creates an empty statistics object when no revenue data exists.

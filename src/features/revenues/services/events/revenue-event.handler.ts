@@ -14,6 +14,7 @@ import {
   validateInvoiceForRevenue,
 } from "@/features/revenues/services/events/revenue-event.utils";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
+import { toPeriod } from "@/lib/definitions/brands";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
@@ -233,7 +234,7 @@ export class RevenueEventHandler {
           calculationSource: "invoice_event",
           createdAt: new Date(),
           invoiceCount: 1,
-          period,
+          period: toPeriod(period),
           revenue: invoice.amount,
           updatedAt: new Date(),
         });

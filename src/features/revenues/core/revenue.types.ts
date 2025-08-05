@@ -2,12 +2,6 @@
  * Core type definitions for the revenue feature.
  */
 
-import type {
-  RevenueDisplayEntity,
-  RevenueEntity,
-} from "@/features/revenues/core/revenue.entity";
-import { extractMonthFromPeriod } from "@/lib/utils/date-utils";
-
 /**
  * Ordered array of three-letter month abbreviations.
  */
@@ -107,20 +101,4 @@ export interface YAxisResult {
   yAxisLabels: string[];
   /** Maximum chart value in dollars for scaling purposes */
   topLabel: number;
-}
-
-/**
- * Creates a RevenueDisplayEntity from RevenueEntity.
- */
-export function createRevenueDisplayEntity(
-  entity: RevenueEntity,
-): RevenueDisplayEntity {
-  const monthNumber = extractMonthFromPeriod(entity.period);
-  const yearNumber = parseInt(entity.period.substring(0, 4), 10);
-  return {
-    ...entity,
-    month: entity.period.substring(5, 7),
-    monthNumber,
-    year: yearNumber,
-  };
 }
