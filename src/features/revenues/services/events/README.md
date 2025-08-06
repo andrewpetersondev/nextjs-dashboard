@@ -1,145 +1,79 @@
-# Revenue Event System Documentation
+# Revenue Event Handling
 
-This directory contains the event handling system for revenue calculations. The system uses an event-driven architecture to maintain consistency between invoices and revenue records.
+This directory contains code for handling invoice events and updating revenue records accordingly.
 
-## Core Components
+## Recent Simplifications
 
-### 1. Event Handler (`revenue-event.handler.ts`)
+The revenue event code has been simplified to improve maintainability and reduce complexity:
 
-The `RevenueEventHandler` class manages the subscription to invoice events and coordinates the processing of these events to update revenue records:
+### 1. Consolidated Files
 
-- Subscribes to `invoice.created`, `invoice.updated`, and `invoice.deleted` events
-- Validates incoming events for eligibility
-- Delegates to specific processing functions based on event type
-- Maintains idempotent processing for reliability
+- **Before**: Code was split between `revenue-event.utils.ts` and `revenue-event.helpers.ts`
+- **After**: All functionality is now in a single `revenue-event.service.ts` file
 
-### 2. Helper Functions (`revenue-event.helpers.ts`)
+### 2. Improved Organization
 
-Contains specialized functions for processing different event scenarios:
+The new service file organizes functions into logical groups:
 
-- `processInvoiceForRevenue`: Handles adding new invoices to revenue records
-- `adjustRevenueForDeletedInvoice`: Updates revenue when invoices are deleted
-- `adjustRevenueForStatusChange`: Manages revenue changes based on invoice status transitions
-- `handleInvoiceEvent`: Common processing logic for invoice events
+- **Logging Functions**: For standardized logging
+- **Validation Functions**: For validating invoices and extracting data
+- **Processing Functions**: For handling revenue calculations and updates
 
-### 3. Utility Functions (`revenue-event.utils.ts`)
+### 3. Simplified API
 
-Provides supporting utilities for event processing:
+- Replaced `handleInvoiceEvent` with a more straightforward `processInvoiceEvent` function
+- Standardized error handling patterns
+- Made function signatures more consistent
+- Improved function documentation
 
-- `extractPeriodFromInvoice`: Extracts YYYY-MM period from invoice dates
-- `withErrorHandling`: Provides standardized error handling patterns
-- `validateInvoiceForRevenue`: Checks if an invoice has all required fields for revenue calculation
-- `handleEventError`: Safely processes errors without disrupting the event bus
+### 4. Streamlined Handler Implementation
 
-## Event Flow
+- Simplified the complex `handleInvoiceUpdated` method
+- Made the handler methods more consistent
+- Reduced code duplication
+- Improved error handling
 
-### 1. Invoice Creation
-```mermaid
-sequenceDiagram
-    participant Invoice Service
-    participant EventBus
-    participant RevenueEventHandler
-    participant RevenueService
-    participant DB
+## File Structure
 
-    Invoice Service->>EventBus: publish("invoice.created")
-    EventBus-->>RevenueEventHandler: handleInvoiceCreated()
-    RevenueEventHandler->>RevenueEventHandler: isInvoiceEligibleForRevenue()
-    alt is eligible
-        RevenueEventHandler->>RevenueService: processInvoiceForRevenue()
-        RevenueService->>DB: update revenue record
-    else not eligible
-        RevenueEventHandler-->>RevenueEventHandler: log and exit
-    end
-```
+- `revenue-event.service.ts`: Core service with all utility and helper functions
+- `revenue-event.handler.ts`: Event handler that subscribes to invoice events and processes them
 
-### 2. Invoice Update
-```mermaid
-sequenceDiagram
-    participant Invoice Service
-    participant EventBus
-    participant RevenueEventHandler
-    participant RevenueService
-    participant DB
+## Key Functions
 
-    Invoice Service->>EventBus: publish("invoice.updated")
-    EventBus-->>RevenueEventHandler: handleInvoiceUpdated()
-    
-    alt status changed
-        RevenueEventHandler->>RevenueService: adjustRevenueForStatusChange()
-    else amount changed
-        RevenueEventHandler->>RevenueService: update with amount difference
-    else no relevant changes
-        RevenueEventHandler-->>RevenueEventHandler: log and exit
-    end
-    
-    RevenueService->>DB: update revenue record
-```
+### Validation
 
-### 3. Invoice Deletion
-```mermaid
-sequenceDiagram
-    participant Invoice Service
-    participant EventBus
-    participant RevenueEventHandler
-    participant RevenueService
-    participant DB
+- `extractPeriodFromInvoice`: Extracts period (YYYY-MM) from invoice dates
+- `isStatusEligibleForRevenue`: Checks if an invoice status is eligible for revenue
+- `validateInvoiceForRevenue`: Validates invoices for revenue calculations
+- `isInvoiceEligibleForRevenue`: Checks if an invoice is eligible for revenue
 
-    Invoice Service->>EventBus: publish("invoice.deleted")
-    EventBus-->>RevenueEventHandler: handleInvoiceDeleted()
-    RevenueEventHandler->>RevenueEventHandler: isInvoiceEligibleForRevenue()
-    alt is eligible
-        RevenueEventHandler->>RevenueService: adjustRevenueForDeletedInvoice()
-        RevenueService->>DB: update or delete revenue record
-    else not eligible
-        RevenueEventHandler-->>RevenueEventHandler: log and exit
-    end
-```
+### Processing
 
-## Key Design Patterns
+- `processInvoiceEvent`: Processes an invoice event with standardized error handling
+- `processInvoiceForRevenue`: Processes an invoice for revenue calculation
+- `adjustRevenueForDeletedInvoice`: Adjusts revenue for deleted invoices
+- `adjustRevenueForStatusChange`: Adjusts revenue based on invoice status changes
 
-### 1. Event-Driven Architecture
-Events drive revenue calculations, ensuring data consistency between services while maintaining loose coupling.
+### Utilities
 
-### 2. Idempotent Processing
-The system is designed to safely handle duplicate events without side effects.
-
-### 3. Robust Error Handling
-- Errors are caught and logged without disrupting the event bus
-- Structured logging with rich contextual information
-- Error isolation prevents cascading failures
-
-### 4. Eligibility Validation
-Strict validation ensures only eligible invoices affect revenue calculations:
-- Valid status (`paid` or `pending`)
-- Positive amount
-- Complete required fields (id, date, amount, status)
-- Valid period extraction
+- `withErrorHandling`: Wraps functions with standardized error handling
+- `logInfo` and `logError`: Standardized logging functions
+- `handleEventError`: Error handling for event bus
+- `extractAndValidatePeriod`: Extracts and validates period from invoice
+- `updateRevenueRecord`: Updates revenue records
 
 ## Usage
 
-The revenue event system initializes automatically when the application starts. The `RevenueEventHandler` constructor sets up all necessary event subscriptions.
-
-To manually initialize the event handler:
+The `RevenueEventHandler` class subscribes to invoice events and uses the service functions to process them:
 
 ```typescript
-// Create a new event handler instance
-const revenueService = new RevenueService();
-const eventHandler = new RevenueEventHandler(revenueService);
+// Example: Processing an invoice created event
+private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {
+  await processInvoiceEvent(
+    event,
+    this.revenueService,
+    "handleInvoiceCreated",
+    (invoice, period) => processInvoiceForRevenue(this.revenueService, invoice, period)
+  );
+}
 ```
-
-## Error Handling Strategy
-
-The system employs a multi-layered approach to error management:
-
-1. **Validation before processing**: Checks invoice eligibility before calculation
-2. **Function-level error boundaries**: Each operation wrapped in try/catch
-3. **Structured logging**: Rich context for troubleshooting
-4. **Non-throwing event handlers**: Prevents event bus disruption
-
-## Period Calculation
-
-Periods are extracted from invoice dates in YYYY-MM format, supporting:
-- ISO date strings
-- Date objects
-- Direct YYYY-MM strings

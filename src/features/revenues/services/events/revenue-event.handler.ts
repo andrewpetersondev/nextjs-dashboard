@@ -3,17 +3,12 @@ import "server-only";
 import {
   adjustRevenueForDeletedInvoice,
   adjustRevenueForStatusChange,
-  handleInvoiceEvent,
-  processInvoiceForRevenue,
-  updateRevenueRecord,
-} from "@/features/revenues/services/events/revenue-event.helpers";
-import {
-  extractAndValidatePeriod,
-  handleEventError,
-  isInvoiceEligibleForRevenue,
   logError,
   logInfo,
-} from "@/features/revenues/services/events/revenue-event.utils";
+  processInvoiceEvent,
+  processInvoiceForRevenue,
+  updateRevenueRecord,
+} from "@/features/revenues/services/events/revenue-event.service";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
@@ -74,11 +69,10 @@ export class RevenueEventHandler {
    * @param event - The invoice created event
    */
   private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {
-    await handleInvoiceEvent(
+    await processInvoiceEvent(
       event,
       this.revenueService,
       "handleInvoiceCreated",
-      isInvoiceEligibleForRevenue,
       (invoice, period) =>
         processInvoiceForRevenue(this.revenueService, invoice, period),
     );
@@ -90,109 +84,86 @@ export class RevenueEventHandler {
    * @param event - The invoice updated event
    */
   private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
-    try {
-      const context = "RevenueEventHandler.handleInvoiceUpdated";
-      logInfo(context, "Processing invoice updated event", {
-        eventId: event.eventId,
-        invoiceId: event.invoice.id,
-      });
+    await processInvoiceEvent(
+      event,
+      this.revenueService,
+      "handleInvoiceUpdated",
+      async (invoice, period) => {
+        const context = "RevenueEventHandler.handleInvoiceUpdated";
+        const previousInvoice = event.previousInvoice;
 
-      // Extract the current and previous invoice states
-      const currentInvoice = event.invoice;
-      const previousInvoice = event.previousInvoice;
-
-      // Check if both invoice states are available
-      if (!currentInvoice || !previousInvoice) {
-        logError(
-          context,
-          "Missing current or previous invoice state",
-          undefined,
-          {
-            currentInvoice: !!currentInvoice,
-            eventId: event.eventId,
-            invoiceId: event.invoice.id,
-            previousInvoice: !!previousInvoice,
-          },
-        );
-        return;
-      }
-
-      // Check if the status has changed
-      if (previousInvoice.status !== currentInvoice.status) {
-        logInfo(context, "Invoice status changed, adjusting revenue", {
-          currentStatus: currentInvoice.status,
-          eventId: event.eventId,
-          invoiceId: event.invoice.id,
-          previousStatus: previousInvoice.status,
-        });
-
-        // Adjust revenue based on status change
-        await adjustRevenueForStatusChange(
-          this.revenueService,
-          previousInvoice,
-          currentInvoice,
-        );
-      } else if (previousInvoice.amount !== currentInvoice.amount) {
-        // If only the amount has changed, handle it as a simple update
-        logInfo(context, "Invoice amount changed, adjusting revenue", {
-          currentAmount: currentInvoice.amount,
-          eventId: event.eventId,
-          invoiceId: event.invoice.id,
-          previousAmount: previousInvoice.amount,
-        });
-
-        // Extract the period from the current invoice
-        const period = extractAndValidatePeriod(
-          currentInvoice,
-          context,
-          event.eventId,
-        );
-
-        if (!period) {
+        // Check if previous invoice state is available
+        if (!previousInvoice) {
+          logError(
+            context,
+            "Missing previous invoice state",
+            new Error("Invalid invoice update event"),
+            {
+              eventId: event.eventId,
+              invoiceId: invoice.id,
+            },
+          );
           return;
         }
 
-        // Get the existing revenue record
-        const existingRevenue = await this.revenueService.findByPeriod(period);
+        // Handle status change
+        if (previousInvoice.status !== invoice.status) {
+          logInfo(context, "Invoice status changed, adjusting revenue", {
+            currentStatus: invoice.status,
+            eventId: event.eventId,
+            invoiceId: invoice.id,
+            previousStatus: previousInvoice.status,
+          });
 
-        if (existingRevenue) {
-          // Calculate the amount difference
-          const amountDifference =
-            currentInvoice.amount - previousInvoice.amount;
-
-          // Update the revenue record with the new amount
-          await updateRevenueRecord(
+          await adjustRevenueForStatusChange(
             this.revenueService,
-            existingRevenue.id,
-            existingRevenue.invoiceCount,
-            existingRevenue.revenue + amountDifference,
-            context,
-            {
-              amountDifference,
-              eventId: event.eventId,
-              invoiceId: event.invoice.id,
-              period,
-            },
+            previousInvoice,
+            invoice,
           );
+          return;
         }
-      } else {
+
+        // Handle amount change
+        if (previousInvoice.amount !== invoice.amount) {
+          const existingRevenue =
+            await this.revenueService.findByPeriod(period);
+
+          if (existingRevenue) {
+            const amountDifference = invoice.amount - previousInvoice.amount;
+
+            await updateRevenueRecord(
+              this.revenueService,
+              existingRevenue.id,
+              existingRevenue.invoiceCount,
+              existingRevenue.revenue + amountDifference,
+              context,
+              {
+                amountDifference,
+                eventId: event.eventId,
+                invoiceId: invoice.id,
+                period,
+              },
+            );
+          } else {
+            await processInvoiceForRevenue(
+              this.revenueService,
+              invoice,
+              period,
+              context,
+              true, // This is an update
+              previousInvoice.amount,
+            );
+          }
+          return;
+        }
+
+        // No relevant changes
         logInfo(context, "No relevant changes for revenue calculation", {
           eventId: event.eventId,
-          invoiceId: event.invoice.id,
+          invoiceId: invoice.id,
         });
-      }
-
-      logInfo(context, "Successfully processed invoice updated event", {
-        eventId: event.eventId,
-        invoiceId: event.invoice.id,
-      });
-    } catch (error) {
-      handleEventError(
-        "RevenueEventHandler.handleInvoiceUpdated",
-        event,
-        error,
-      );
-    }
+      },
+    );
   }
 
   /**
@@ -201,11 +172,10 @@ export class RevenueEventHandler {
    * @param event - The invoice deleted event
    */
   private async handleInvoiceDeleted(event: BaseInvoiceEvent): Promise<void> {
-    await handleInvoiceEvent(
+    await processInvoiceEvent(
       event,
       this.revenueService,
       "handleInvoiceDeleted",
-      isInvoiceEligibleForRevenue,
       (invoice, period) =>
         adjustRevenueForDeletedInvoice(this.revenueService, invoice, period),
     );
