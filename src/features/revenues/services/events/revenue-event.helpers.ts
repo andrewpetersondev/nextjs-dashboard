@@ -1,91 +1,17 @@
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import { extractPeriodFromInvoice } from "@/features/revenues/services/events/revenue-event.utils";
+import {
+  extractAndValidatePeriod,
+  isStatusEligibleForRevenue,
+  logError,
+  logInfo,
+  withErrorHandling,
+} from "@/features/revenues/services/events/revenue-event.utils";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import { toRevenueId } from "@/lib/definitions/brands";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
-import { logger } from "@/lib/utils/logger";
-
-/**
- * Wraps a function with standardized error handling
- *
- * @param context - The logging context
- * @param operation - The operation description for logging
- * @param fn - The function to execute
- * @param metadata - Additional metadata for logging
- * @returns The result of the function execution
- */
-export async function withErrorHandling<T>(
-  context: string,
-  operation: string,
-  fn: () => Promise<T>,
-  metadata?: Record<string, unknown>,
-): Promise<T> {
-  try {
-    logInfo(context, `${operation} - started`, metadata);
-
-    const result = await fn();
-
-    logInfo(context, `${operation} - completed successfully`, metadata);
-    return result;
-  } catch (error) {
-    logError(context, `Error ${operation.toLowerCase()}`, error, metadata);
-    throw error;
-  }
-}
-
-/**
- * Creates a standardized log entry
- *
- * @param context - The logging context
- * @param message - The log message
- * @param metadata - Additional metadata for the log
- */
-export function logInfo(
-  context: string,
-  message: string,
-  metadata?: Record<string, unknown>,
-): void {
-  logger.info({
-    context,
-    message,
-    ...metadata,
-  });
-}
-
-/**
- * Creates a standardized error log entry
- *
- * @param context - The logging context
- * @param message - The error message
- * @param error - The error object
- * @param metadata - Additional metadata for the log
- */
-export function logError(
-  context: string,
-  message: string,
-  error?: unknown,
-  metadata?: Record<string, unknown>,
-): void {
-  logger.error({
-    context,
-    error,
-    message,
-    ...metadata,
-  });
-}
-
-/**
- * Checks if an invoice status is eligible for revenue
- *
- * @param status - The invoice status
- * @returns True if the status is eligible for revenue
- */
-export function isStatusEligibleForRevenue(status: string): boolean {
-  return status === "paid" || status === "pending";
-}
 
 /**
  * Processes an invoice for revenue calculation
@@ -140,32 +66,6 @@ export async function processInvoiceForRevenue(
     },
     metadata,
   );
-}
-
-/**
- * Extracts and validates the period from an invoice
- *
- * @param invoice - The invoice to extract the period from
- * @param context - The context for logging
- * @param eventId - Optional event ID for logging
- * @returns The extracted period or null if extraction failed
- */
-export function extractAndValidatePeriod(
-  invoice: InvoiceDto,
-  context: string,
-  eventId?: string,
-): string | null {
-  const period = extractPeriodFromInvoice(invoice);
-
-  if (!period) {
-    logError(context, "Failed to extract period from invoice", undefined, {
-      eventId,
-      invoiceId: invoice.id,
-    });
-    return null;
-  }
-
-  return period;
 }
 
 /**

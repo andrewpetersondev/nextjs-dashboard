@@ -1,20 +1,18 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import {
   adjustRevenueForDeletedInvoice,
   adjustRevenueForStatusChange,
-  extractAndValidatePeriod,
   handleInvoiceEvent,
-  isStatusEligibleForRevenue,
-  logError,
-  logInfo,
   processInvoiceForRevenue,
   updateRevenueRecord,
 } from "@/features/revenues/services/events/revenue-event.helpers";
 import {
+  extractAndValidatePeriod,
   handleEventError,
-  validateInvoiceForRevenue,
+  isInvoiceEligibleForRevenue,
+  logError,
+  logInfo,
 } from "@/features/revenues/services/events/revenue-event.utils";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import { EventBus } from "@/lib/events/eventBus";
@@ -80,74 +78,10 @@ export class RevenueEventHandler {
       event,
       this.revenueService,
       "handleInvoiceCreated",
-      (invoice, context) => this.isInvoiceEligibleForRevenue(invoice, context),
+      isInvoiceEligibleForRevenue,
       (invoice, period) =>
         processInvoiceForRevenue(this.revenueService, invoice, period),
     );
-  }
-
-  /**
-   * Checks if an invoice is eligible for revenue calculation.
-   *
-   * @param invoice - The invoice to check
-   * @param contextMethod - The method context for logging
-   * @returns True if the invoice is eligible, false otherwise
-   */
-  private isInvoiceEligibleForRevenue(
-    invoice: InvoiceDto | undefined,
-    contextMethod: string,
-  ): boolean {
-    const context = `RevenueEventHandler.${contextMethod}`;
-
-    try {
-      // Validate the invoice
-      const validationResult = validateInvoiceForRevenue(invoice);
-
-      if (!validationResult.valid) {
-        logInfo(
-          context,
-          `Invoice not eligible for revenue: ${validationResult.reason}`,
-          {
-            invoice: invoice?.id,
-            reason: validationResult.reason,
-          },
-        );
-        return false;
-      }
-
-      // Check if the invoice has a valid amount
-      if (!invoice?.amount || invoice.amount <= 0) {
-        logInfo(context, "Invoice has zero or negative amount, skipping", {
-          invoice: invoice?.id,
-        });
-        return false;
-      }
-
-      // Check if the invoice has a valid status
-      if (!isStatusEligibleForRevenue(invoice.status)) {
-        logInfo(
-          context,
-          `Invoice status ${invoice.status} not eligible for revenue`,
-          {
-            invoice: invoice?.id,
-            status: invoice.status,
-          },
-        );
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      logError(
-        context,
-        "Error checking invoice eligibility for revenue",
-        error,
-        {
-          invoice: invoice?.id,
-        },
-      );
-      return false;
-    }
   }
 
   /**
@@ -271,7 +205,7 @@ export class RevenueEventHandler {
       event,
       this.revenueService,
       "handleInvoiceDeleted",
-      (invoice, context) => this.isInvoiceEligibleForRevenue(invoice, context),
+      isInvoiceEligibleForRevenue,
       (invoice, period) =>
         adjustRevenueForDeletedInvoice(this.revenueService, invoice, period),
     );

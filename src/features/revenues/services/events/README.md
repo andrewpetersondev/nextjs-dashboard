@@ -20,7 +20,6 @@ Contains specialized functions for processing different event scenarios:
 - `processInvoiceForRevenue`: Handles adding new invoices to revenue records
 - `adjustRevenueForDeletedInvoice`: Updates revenue when invoices are deleted
 - `adjustRevenueForStatusChange`: Manages revenue changes based on invoice status transitions
-- `withErrorHandling`: Provides standardized error handling patterns
 - `handleInvoiceEvent`: Common processing logic for invoice events
 
 ### 3. Utility Functions (`revenue-event.utils.ts`)
@@ -28,6 +27,7 @@ Contains specialized functions for processing different event scenarios:
 Provides supporting utilities for event processing:
 
 - `extractPeriodFromInvoice`: Extracts YYYY-MM period from invoice dates
+- `withErrorHandling`: Provides standardized error handling patterns
 - `validateInvoiceForRevenue`: Checks if an invoice has all required fields for revenue calculation
 - `handleEventError`: Safely processes errors without disrupting the event bus
 
