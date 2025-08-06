@@ -1,6 +1,8 @@
 import "server-only";
 
+import { isValid, parseISO } from "date-fns";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import { dateToPeriod } from "@/features/revenues/utils/date/period.utils";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
@@ -18,18 +20,27 @@ export function extractPeriodFromInvoice(
   }
 
   try {
-    // Try to parse as ISO date first
-    const date = new Date(invoice.date);
-    if (!Number.isNaN(date.getTime())) {
-      return date.toISOString().substring(0, 7); // "YYYY-MM"
-    }
+    // Handle different date formats
+    if (typeof invoice.date === "string") {
+      // Try to parse as ISO date
+      const parsedDate = parseISO(invoice.date);
 
-    // Fallback to direct substring if the date is already in YYYY-MM-DD format
-    if (
-      typeof invoice.date === "string" &&
-      invoice.date.match(/^\d{4}-\d{2}/)
-    ) {
-      return invoice.date.substring(0, 7);
+      // Check if the date is valid
+      if (isValid(parsedDate)) {
+        return dateToPeriod(parsedDate);
+      }
+
+      // If it's a partial date in YYYY-MM format, validate and return it
+      if (invoice.date.match(/^\d{4}-\d{2}$/)) {
+        // Add a day to make it a complete date for validation
+        const testDate = parseISO(`${invoice.date}-01`);
+        if (isValid(testDate)) {
+          return invoice.date;
+        }
+      }
+    } else if (true && isValid(invoice.date)) {
+      // Handle Date object directly
+      return dateToPeriod(invoice.date);
     }
 
     return null;

@@ -1,11 +1,22 @@
 import "server-only";
 
+import {
+  addMonths,
+  endOfMonth,
+  format,
+  getMonth,
+  isValid,
+  lastDayOfMonth,
+  parseISO,
+  startOfMonth,
+} from "date-fns";
 import { ValidationError } from "@/errors/errors";
 import type {
   PeriodDuration,
   RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { createMonthTemplateData } from "@/features/revenues/utils/data/template.utils";
+import { dateToPeriod } from "@/features/revenues/utils/date/period.utils";
 
 /**
  * Calculates specific month date from rolling start date with offset.
@@ -17,11 +28,8 @@ export function calculateMonthDateFromStart(
   startDate: Date,
   monthOffset: number,
 ): Date {
-  return new Date(
-    startDate.getFullYear(),
-    startDate.getMonth() + monthOffset,
-    1,
-  );
+  // Use date-fns to add months and get the first day of the month
+  return startOfMonth(addMonths(startDate, monthOffset));
 }
 
 /**
@@ -45,19 +53,17 @@ export function calculateDateRange(): {
   period: string;
 } {
   const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
 
-  // First day of the month 12 months ago
-  const startDate = new Date(currentYear, currentMonth - 11, 1);
+  // First day of the month 12 months ago using date-fns
+  const startDate = startOfMonth(addMonths(now, -11));
 
-  // Last day of the current month
-  const endDate = new Date(currentYear, currentMonth + 1, 0);
+  // Last day of the current month using date-fns
+  const endDate = endOfMonth(now);
 
   return {
-    endDate: String(endDate.toISOString().split("T")[0]),
+    endDate: format(endDate, "yyyy-MM-dd"),
     period: "year",
-    startDate: String(startDate.toISOString().split("T")[0]),
+    startDate: format(startDate, "yyyy-MM-dd"),
   };
 }
 
@@ -82,23 +88,31 @@ export function formatMonthDateRange(
  * Formats the first day of a month as an ISO date string.
  *
  * @param year - Four-digit year
- * @param month - Month number (1-12) or (0-11)?
+ * @param month - Month number (1-12)
  * @returns ISO date string for the first day of the month
  */
 export function formatMonthStartDate(year: number, month: number): string {
-  return `${year}-${String(month).padStart(2, "0")}-01`;
+  // Adjust month for date-fns (0-11 based)
+  const adjustedMonth = month - 1;
+  // Create date for first day of month and format it
+  const firstDayOfMonth = new Date(year, adjustedMonth, 1);
+  return format(firstDayOfMonth, "yyyy-MM-dd");
 }
 
 /**
  * Formats the last day of a month as an ISO date string.
  *
  * @param year - Four-digit year
- * @param month - Month number (1-12) or (0-11)?
+ * @param month - Month number (1-12)
  * @returns ISO date string for the last day of the month
  */
 export function formatMonthEndDate(year: number, month: number): string {
-  const lastDay = new Date(year, month, 0).getDate();
-  return `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  // Adjust month for date-fns (0-11 based)
+  const adjustedMonth = month - 1;
+  // Create date and get last day of month using date-fns
+  const date = new Date(year, adjustedMonth, 1);
+  const lastDayDate = lastDayOfMonth(date);
+  return format(lastDayDate, "yyyy-MM-dd");
 }
 
 /**
@@ -108,8 +122,14 @@ export function formatMonthEndDate(year: number, month: number): string {
  * @returns True if valid ISO date, false otherwise
  */
 export function isValidISODate(dateString: string): boolean {
-  const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  return isoDateRegex.test(dateString) && !Number.isNaN(Date.parse(dateString));
+  // Check if the string matches the ISO date format (YYYY-MM-DD)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return false;
+  }
+
+  // Use date-fns to parse and validate the date
+  const parsedDate = parseISO(dateString);
+  return isValid(parsedDate);
 }
 
 /**
@@ -121,13 +141,25 @@ export function isValidISODate(dateString: string): boolean {
  */
 export function generateMonthlyPeriods(start: string, end: string): string[] {
   const periods: string[] = [];
-  const currentDate = new Date(start);
-  const endDate = new Date(end);
 
-  while (currentDate <= endDate) {
-    const period = currentDate.toISOString().substring(0, 7); // YYYY-MM format
-    periods.push(period);
-    currentDate.setMonth(currentDate.getMonth() + 1); // Move to next month
+  // Parse the dates using date-fns
+  const startDate = parseISO(start);
+  const endDate = parseISO(end);
+
+  // Validate the dates
+  if (!isValid(startDate) || !isValid(endDate)) {
+    throw new ValidationError("Invalid date format for period generation");
+  }
+
+  // Start with the first day of the start month
+  let currentDate = startOfMonth(startDate);
+  const lastDate = endOfMonth(endDate);
+
+  // Generate periods until we reach or pass the end date
+  while (currentDate <= lastDate) {
+    periods.push(dateToPeriod(currentDate));
+    // Move to the next month using date-fns
+    currentDate = addMonths(currentDate, 1);
   }
 
   return periods;
@@ -140,12 +172,10 @@ export function generateMonthlyPeriods(start: string, end: string): string[] {
  * @returns Formatted period string
  */
 export function formatDateToPeriod(date: Date): string {
-  const isoDate = date.toISOString().split("T")[0];
-  const formatted = isoDate ? isoDate.substring(0, 7) : "";
-  if (!formatted || formatted.length !== 7) {
-    throw new ValidationError("Invalid date format for period");
+  if (!isValid(date)) {
+    throw new ValidationError("Invalid date for period formatting");
   }
-  return formatted;
+  return dateToPeriod(date);
 }
 
 /**
@@ -208,6 +238,6 @@ export function createMonthTemplateFromIndex(
   monthIndex: number,
 ): RollingMonthData {
   const monthDate = calculateMonthDateFromStart(rollingStartDate, monthIndex);
-  const calendarMonthIndex = monthDate.getMonth();
+  const calendarMonthIndex = getMonth(monthDate);
   return createMonthTemplateData(monthIndex, monthDate, calendarMonthIndex);
 }
