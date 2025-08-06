@@ -13,7 +13,8 @@ The actions in this directory follow Next.js Server Actions pattern to handle re
 
 ## File Structure
 
-- `revenue.actions.ts` - Contains server actions for revenue operations
+- `revenue.actions.ts` - Contains server actions for revenue operations, including:
+  - `getRevenueChartAction()` - Retrieves complete revenue chart data for the last 12 months with statistical metrics
 
 ## Server Actions
 
@@ -37,28 +38,26 @@ The actions in this directory integrate with:
 ```typescript
 'use client';
 
-import { createRevenue, fetchRevenueById } from '@/features/revenues/actions/revenue.actions';
+import { getRevenueChartAction } from '@/features/revenues/actions/revenue.actions';
 
-// In a client component
-async function handleSubmit(formData: FormData) {
-  try {
-    const result = await createRevenue(formData);
-    // Handle successful creation
-  } catch (error) {
-    // Handle error case
-  }
-}
-
-// Example of using a server action to fetch data
-const RevenueDetails = ({ id }: { id: string }) => {
-  const handleRefresh = async () => {
-    const data = await fetchRevenueById(id);
-    // Update UI with new data
+// Example of using a server action to fetch revenue chart data
+const RevenueChart = () => {
+  const handleFetchData = async () => {
+    const result = await getRevenueChartAction();
+    
+    if (result.success) {
+      console.log(`Total revenue: $${result.data.statistics.total}`);
+      console.log(`Months with data: ${result.data.statistics.monthsWithData}`);
+      // Update UI with chart data
+    } else {
+      console.error(result.error);
+      // Handle error case
+    }
   };
 
   return (
-    <button onClick={handleRefresh}>
-      Refresh Revenue Data
+    <button onClick={handleFetchData}>
+      Load Revenue Chart Data
     </button>
   );
 };

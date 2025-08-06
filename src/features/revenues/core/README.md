@@ -16,21 +16,44 @@ The core module provides:
 
 Defines the main revenue entity model used within the application domain.
 
-- Contains the core `RevenueEntity` class/interface representing revenue records in the domain
-- Includes entity validation rules and business constraints
-- Provides type safety for revenue domain objects
+- Contains the core `RevenueEntity` interface representing revenue records in the domain
+- Includes derived entity types for creating and updating revenue records
+- Provides display-oriented entity extensions for UI purposes
+
+**Key Entities:**
+
+- `RevenueEntity` - Represents a revenue entity in the database
+- `RevenueCreateEntity` - Domain model for creating a new revenue record (excludes `id`)
+- `RevenuePartialEntity` - Partial domain model for updating a revenue record
+- `RevenueDisplayEntity` - Display-oriented entity extending RevenueEntity with UI-specific fields
 
 **Usage Example:**
 ```typescript
-import { RevenueEntity } from '@/features/revenues/core/revenue.entity';
+import { 
+  RevenueEntity, 
+  RevenueCreateEntity, 
+  RevenueDisplayEntity 
+} from '@/features/revenues/core/revenue.entity';
 
 // Working with revenue entities in services
 const revenueEntity: RevenueEntity = {
-  id: '123',
-  amount: 1500.00,
-  date: new Date('2023-10-15'),
-  category: 'subscription',
-  description: 'Monthly subscription payment'
+  id: 'rev_123456789',
+  calculationSource: 'seed',
+  createdAt: new Date('2025-08-01'),
+  invoiceCount: 5,
+  period: '2025-08',
+  revenue: 150000, // In cents
+  updatedAt: new Date('2025-08-05')
+};
+
+// Creating a new revenue entity
+const newRevenue: RevenueCreateEntity = {
+  calculationSource: 'handler',
+  createdAt: new Date(),
+  invoiceCount: 3,
+  period: '2025-08',
+  revenue: 75000, // In cents
+  updatedAt: new Date()
 };
 ```
 
@@ -40,18 +63,37 @@ Contains Data Transfer Objects used for transferring revenue data between layers
 
 - Defines structures for incoming and outgoing API data
 - Separates external API contracts from internal domain models
-- Provides request/response object definitions
+- Provides request/response object definitions for revenue operations
+
+**Key DTOs:**
+
+- `SimpleRevenueDto` - Data Transfer Object for simplified revenue display data
+- `RevenueChartDto` - Complete chart data transfer object with revenue data and statistical metrics
+- `RevenueStatisticsDto` - Statistical metrics data transfer object with dollar-converted values
 
 **Usage Example:**
 ```typescript
-import { CreateRevenueDto, RevenueResponseDto } from '@/features/revenues/core/revenue.dto';
+import { 
+  SimpleRevenueDto, 
+  RevenueChartDto, 
+  RevenueStatisticsDto 
+} from '@/features/revenues/core/revenue.dto';
 
-// Creating a DTO for API request
-const createDto: CreateRevenueDto = {
-  amount: 750.50,
-  date: '2023-11-01',
-  category: 'one-time',
-  description: 'Consulting services'
+// Working with revenue chart data
+const chartData: RevenueChartDto = {
+  monthlyData: [
+    { month: "Jan", monthNumber: 1, revenue: 1250.75 },
+    { month: "Feb", monthNumber: 2, revenue: 1420.50 },
+    // Additional months...
+  ],
+  statistics: {
+    average: 1350.25,
+    maximum: 1750.00,
+    minimum: 950.50,
+    total: 16203.00,
+    monthsWithData: 12
+  },
+  year: 2025
 };
 ```
 
@@ -59,37 +101,85 @@ const createDto: CreateRevenueDto = {
 
 Defines TypeScript types, interfaces, and type aliases specific to the revenue domain.
 
-- Includes enums for revenue categories, statuses, etc.
+- Includes constants like `MONTH_ORDER` and `PERIOD_DURATIONS`
+- Defines type-safe unions like `MonthName` and `PeriodDuration`
 - Contains utility types for operations on revenue data
-- Defines shared types used across the revenue feature
+- Provides standardized result types like `RevenueActionResult<T>`
+- Defines interfaces for revenue statistics and chart data
+
+**Key Types:**
+
+- `MONTH_ORDER` - Ordered array of three-letter month abbreviations
+- `MonthName` - Type-safe union of valid month name abbreviations
+- `PERIOD_DURATIONS` - Standardized period durations for revenue calculations
+- `PeriodDuration` - Type-safe union of valid period durations
+- `RevenueActionResult<T>` - Discriminated union type for revenue operation results
+- `RollingMonthData` - Metadata for a single month in a 12-month rolling period
+- `RevenueStatistics` - Calculated statistical metrics from revenue data
+- `YAxisResult` - Chart axis data for revenue charts
 
 **Usage Example:**
 ```typescript
-import { RevenueCategory, RevenueStatus } from '@/features/revenues/core/revenue.types';
+import { 
+  MonthName, 
+  RevenueActionResult, 
+  RevenueStatistics 
+} from '@/features/revenues/core/revenue.types';
 
-// Using revenue-specific types
-function filterRevenuesByCategory(revenues: RevenueEntity[], category: RevenueCategory) {
-  return revenues.filter(revenue => revenue.category === category);
+// Using the RevenueActionResult type for type-safe error handling
+const result: RevenueActionResult<RevenueChartDto> = await getRevenueChartAction();
+
+if (result.success) {
+  // TypeScript knows result.data is RevenueChartDto
+  console.log(result.data.statistics.total);
+} else {
+  // TypeScript knows result.error is string
+  console.error(result.error);
 }
+
+// Using MonthName type for type-safe month references
+const currentMonth: MonthName = "Jan";
 ```
 
 ### `revenue.mapper.ts`
 
 Contains mapping functions to transform between different representations of revenue data.
 
-- Provides functions to convert between entities and DTOs
+- Provides functions to convert between database rows and domain entities
 - Handles data transformation and normalization
 - Ensures consistency when moving data between layers
 
+**Key Mapping Functions:**
+
+- `mapRevRowToRevEnt` - Maps a raw revenue row from the database to a RevenueEntity object
+- `mapRevenueRowsToEntities` - Maps an array of raw revenue rows to an array of RevenueEntity objects
+- `mapRevEntToRevDisplayEnt` - Maps RevenueEntity to RevenueDisplayEntity with UI-specific fields
+
 **Usage Example:**
 ```typescript
-import { toRevenueEntity, toRevenueResponseDto } from '@/features/revenues/core/revenue.mapper';
+import { 
+  mapRevRowToRevEnt, 
+  mapRevenueRowsToEntities,
+  mapRevEntToRevDisplayEnt 
+} from '@/features/revenues/core/revenue.mapper';
+import type { RevenueRow } from "@/db/schema";
 
-// Convert from DTO to entity
-const entity = toRevenueEntity(incomingData);
+// Convert a database row to an entity
+const revenueRow: RevenueRow = {
+  id: 'rev_123456789',
+  calculationSource: 'seed',
+  createdAt: new Date('2025-08-01'),
+  invoiceCount: 5,
+  period: '2025-08',
+  revenue: 150000,
+  updatedAt: new Date('2025-08-05')
+};
+const entity = mapRevRowToRevEnt(revenueRow);
 
-// Convert from entity to response DTO
-const responseDto = toRevenueResponseDto(revenueEntity);
+// Convert an entity to a display entity
+const displayEntity = mapRevEntToRevDisplayEnt(entity);
+console.log(displayEntity.month); // "08"
+console.log(displayEntity.year); // 2025
 ```
 
 ## Integration Points

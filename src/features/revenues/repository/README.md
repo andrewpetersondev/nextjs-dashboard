@@ -15,49 +15,97 @@ The repository layer handles:
 
 ### `revenue.repository.interface.ts`
 
-Defines the contract for the revenue repository through an interface:
+Defines the contract for the revenue repository through the `RevenueRepositoryInterface`:
 
 - Specifies all available revenue data operations
 - Ensures consistent implementation across different repository implementations
 - Enables dependency injection and testability through abstraction
+- Provides a comprehensive set of methods for revenue data management
+
+**Key Methods:**
+
+| Method | Purpose | Parameters | Return Type |
+|--------|---------|------------|-------------|
+| `create` | Creates a new revenue record | `revenue: RevenueCreateEntity` | `Promise<RevenueEntity>` |
+| `read` | Retrieves a revenue record by ID | `id: RevenueId` | `Promise<RevenueEntity>` |
+| `update` | Updates an existing revenue record | `id: RevenueId, revenue: RevenuePartialEntity` | `Promise<RevenueEntity>` |
+| `delete` | Deletes a revenue record by ID | `id: RevenueId` | `Promise<void>` |
+| `findByDateRange` | Finds revenue records within a date range | `startPeriod: Period, endPeriod: Period` | `Promise<RevenueEntity[]>` |
+| `upsert` | Creates or updates a revenue record | `revenue: RevenueCreateEntity` | `Promise<RevenueEntity>` |
+| `findByPeriod` | Finds a revenue record by period | `period: Period` | `Promise<RevenueEntity \| null>` |
+| `upsertByPeriod` | Creates or updates a revenue record by period | `period: Period, revenue: RevenuePartialEntity` | `Promise<RevenueEntity>` |
 
 **Usage Example:**
 ```typescript
-import { IRevenueRepository } from '@/features/revenues/repository/revenue.repository.interface';
+import { RevenueRepositoryInterface } from '@/features/revenues/repository/revenue.repository.interface';
+import type { Period, RevenueId } from "@/lib/definitions/brands";
 
-// In a service constructor (dependency injection)
-constructor(private revenueRepository: IRevenueRepository) {}
+// In a service class
+class RevenueService {
+  constructor(private readonly revenueRepository: RevenueRepositoryInterface) {}
 
-// Using the repository through its interface
-async function getRevenueById(id: string) {
-  return this.revenueRepository.findById(id);
+  // Using the repository through its interface
+  async getRevenueById(id: RevenueId) {
+    return this.revenueRepository.read(id);
+  }
+
+  // Finding revenue by period
+  async getRevenueByPeriod(period: Period) {
+    return this.revenueRepository.findByPeriod(period);
+  }
 }
 ```
 
 ### `revenue.repository.ts`
 
-Implements the revenue repository interface with concrete data access logic:
+Implements the `RevenueRepositoryInterface` with concrete data access logic using Drizzle ORM:
 
-- Contains actual database queries and operations
-- Handles data mapping between database and domain entities
-- Implements error handling for data access operations
+- Contains actual database queries and operations for revenue data
+- Handles data mapping between database rows and domain entities
+- Implements comprehensive error handling for all data access operations
 - Manages database connections and transactions
+- Provides optimized query implementations for all repository operations
+
+**Key Implementation Details:**
+
+| Method | Implementation Highlights |
+|--------|---------------------------|
+| `create` | Creates a new revenue record with proper validation and error handling |
+| `read` | Retrieves a revenue record by ID with NotFoundError if record doesn't exist |
+| `update` | Updates an existing revenue record with optimistic concurrency control |
+| `delete` | Deletes a revenue record by ID with proper error handling |
+| `findByDateRange` | Uses SQL range queries to efficiently find revenues in a date range |
+| `findByPeriod` | Finds a revenue record by period with proper null handling |
+| `upsert` | Implements an atomic upsert operation with conflict resolution |
+| `upsertByPeriod` | Specialized upsert that uses period as the unique key |
 
 **Usage Example:**
 ```typescript
 import { RevenueRepository } from '@/features/revenues/repository/revenue.repository';
-import { db } from '@/db';
+import { getDB } from '@/db/connection';
+import type { RevenueCreateEntity } from '@/features/revenues/core/revenue.entity';
 
-// Creating a repository instance
-const revenueRepository = new RevenueRepository(db);
+// Creating a repository instance with dependency injection
+const revenueRepository = new RevenueRepository(getDB());
 
 // Using the repository for data operations
-async function createNewRevenue(revenueData: CreateRevenueDto) {
+async function createNewRevenue(revenueData: RevenueCreateEntity) {
   try {
-    return await revenueRepository.create(revenueData);
+    // Create a new revenue record
+    const newRevenue = await revenueRepository.create(revenueData);
+    console.log(`Created revenue record with ID: ${newRevenue.id}`);
+    return newRevenue;
   } catch (error) {
-    // Error handling
+    console.error('Failed to create revenue record:', error);
+    throw error;
   }
+}
+
+// Finding revenues in a date range
+async function getRevenuesForDateRange(startPeriod: Period, endPeriod: Period) {
+  const revenues = await revenueRepository.findByDateRange(startPeriod, endPeriod);
+  console.log(`Found ${revenues.length} revenue records in the specified date range`);
+  return revenues;
 }
 ```
 
@@ -91,25 +139,33 @@ The repository layer integrates with:
 ```typescript
 import { DatabaseError, NotFoundError } from '@/errors/errors';
 import { logger } from '@/lib/utils/logger';
+import type { RevenueEntity } from '@/features/revenues/core/revenue.entity';
+import type { RevenueId } from '@/lib/definitions/brands';
 
-// In the repository implementation
-async findById(id: string): Promise<RevenueEntity> {
-  try {
-    const result = await this.db.revenue.findUnique({ where: { id } });
-    
-    if (!result) {
-      throw new NotFoundError(`Revenue with id ${id} not found`);
+// In the repository implementation class
+class RevenueRepository implements RevenueRepositoryInterface {
+  // Other methods...
+  
+  async read(id: RevenueId): Promise<RevenueEntity> {
+    try {
+      const result = await this.db.query.revenues.findFirst({
+        where: eq(revenues.id, id)
+      });
+      
+      if (!result) {
+        throw new NotFoundError(`Revenue with id ${id} not found`);
+      }
+      
+      return mapRevRowToRevEnt(result);
+    } catch (error) {
+      logger.error({ error, id }, 'Failed to retrieve revenue by id');
+      
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      
+      throw new DatabaseError('Database error when retrieving revenue', { cause: error });
     }
-    
-    return this.mapToEntity(result);
-  } catch (error) {
-    logger.error({ error, id }, 'Failed to retrieve revenue by id');
-    
-    if (error instanceof NotFoundError) {
-      throw error;
-    }
-    
-    throw new DatabaseError('Database error when retrieving revenue', { cause: error });
   }
 }
 ```
