@@ -97,7 +97,7 @@
     "drizzle-dev-migrate": "hcp vault-secrets run -- pnpm drizzle-kit migrate --config=drizzle-dev.config.ts",
     "drizzle-push-dev": "hcp vault-secrets run -- pnpm drizzle-kit push --config=drizzle-dev.config.ts",
     "drizzle-push-test": "hcp vault-secrets run -- pnpm drizzle-kit push --config=drizzle-test.config.ts",
-    "drizzle-reset-dev-db": "hcp vault-secrets run -- pnpm dlx tsx src/db/seeds/reset.ts",
+    "drizzle-reset-dev-db": "hcp vault-secrets run -- pnpm dlx tsx src/db/seeds/reset-dev-db.ts",
     "drizzle-reset-test-db": "hcp vault-secrets run -- pnpm dlx tsx src/db/seeds/reset-test-db.ts",
     "drizzle-seed": "hcp vault-secrets run -- pnpm tsx src/db/seeds/seed.ts --config=drizzle-test.config.ts",
     "drizzle-seed-dev-db": "hcp vault-secrets run -- pnpm tsx src/db/seeds/best-seed-dev-db.ts --config=drizzle-dev.config.ts",
