@@ -1,3 +1,4 @@
+import { ValidationError } from "@/errors/errors";
 import type { Period } from "@/lib/definitions/brands";
 
 /**
@@ -28,6 +29,29 @@ export type MonthName = (typeof MONTH_ORDER)[number];
  */
 export const INTERVAL_DURATIONS = ["year", "month"] as const;
 export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
+
+export const REVENUE_SOURCES = [
+  "seed",
+  "handler",
+  "invoice_event",
+  "rolling_calculation",
+  "template",
+] as const;
+export type RevenueSource = (typeof REVENUE_SOURCES)[number];
+
+/**
+ * Runtime validator to narrow arbitrary strings to RevenueSource.
+ * Throws ValidationError if the value is not in the allowed list.
+ */
+
+export function toRevenueSource(value: string): RevenueSource {
+  if ((REVENUE_SOURCES as readonly string[]).includes(value)) {
+    return value as RevenueSource;
+  }
+  throw new ValidationError(
+    `Invalid RevenueSource: "${value}". Allowed values: ${REVENUE_SOURCES.join(", ")}`,
+  );
+}
 
 /**
  * Standard discriminated union type for revenue operation results.

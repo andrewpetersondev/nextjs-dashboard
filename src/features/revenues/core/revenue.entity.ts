@@ -1,12 +1,13 @@
 import "server-only";
 
+import type { RevenueSource } from "@/features/revenues/core/revenue.types";
 import type { Period, RevenueId } from "@/lib/definitions/brands";
 
 /**
  * Represents a revenue entity in the database.
  */
 export interface RevenueEntity {
-  readonly calculationSource: string; // 'seed' or 'handler' or 'rolling_calculation'
+  readonly calculationSource: RevenueSource;
   readonly createdAt: Date;
   readonly id: RevenueId;
   readonly invoiceCount: number;

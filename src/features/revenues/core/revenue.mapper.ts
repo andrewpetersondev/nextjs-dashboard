@@ -6,6 +6,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
+import { toRevenueSource } from "@/features/revenues/core/revenue.types";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 
 /**
@@ -16,7 +17,7 @@ export function mapRevRowToRevEnt(row: RevenueRow): RevenueEntity {
     throw new ValidationError("Invalid revenue row data");
   }
   return {
-    calculationSource: row.calculationSource,
+    calculationSource: toRevenueSource(row.calculationSource),
     createdAt: row.createdAt,
     id: row.id,
     invoiceCount: row.invoiceCount,
