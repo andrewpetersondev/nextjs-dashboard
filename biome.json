@@ -27,11 +27,12 @@
   "files": {
     "ignoreUnknown": true,
     "includes": [
-      "*.{ts,tsx,mts,mjs,json}",
-      "src/app/globals.css",
       "src/**/*.{ts,tsx}",
+      "src/app/globals.css",
+      "*.{ts,tsx,mts,mjs,json}",
       "!node_modules/**",
       "!.next/**",
+      "!next-env.d.ts",
       "!out/**",
       "!storage/**",
       "!src/lib/db/drizzle/**",
@@ -44,8 +45,9 @@
       "!build/**",
       "!coverage/**",
       "!.nyc_output/**",
-      "*!.log",
-      "!.env*"
+      "!*.log",
+      "!.env*",
+      "!tsconfig.tsbuildinfo"
     ]
   },
   "formatter": {
@@ -80,6 +82,7 @@
   "linter": {
     "domains": {
       "next": "recommended",
+      "project": "recommended",
       "react": "recommended"
     },
     "enabled": true,

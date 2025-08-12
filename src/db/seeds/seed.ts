@@ -1,4 +1,5 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
+/** biome-ignore-all lint/style/noNonNullAssertion: this seed file works well enough */
+
 import bcryptjs from "bcryptjs";
 import { seed } from "drizzle-seed";
 import * as schema from "../schema";

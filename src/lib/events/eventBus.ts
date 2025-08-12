@@ -14,9 +14,9 @@ export type EventHandler<T> = (event: T) => void | Promise<void>;
 /**
  * EventBus for domain events. Supports subscribing and publishing events by event name.
  */
-
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation> // TODO: Should I keep this class as static only for now?
 export class EventBus {
+  // TODO: Why does the EventHandler allow "any"? Can I make it more type-safe by using a generic?
   private static handlers: Record<string, EventHandler<any>[]> = {};
 
   /**

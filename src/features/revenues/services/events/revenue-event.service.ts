@@ -579,7 +579,7 @@ export async function adjustRevenueForStatusChange(
  */
 export async function processInvoiceEvent(
   event: BaseInvoiceEvent,
-  revenueService: RevenueService,
+  revenueService: RevenueService, // TODO: Why is revenueService unused? Can I use it in a meaningful way?
   contextMethod: string,
   processor: (invoice: InvoiceDto, period: string) => Promise<void>,
 ): Promise<void> {
