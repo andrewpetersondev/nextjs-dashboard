@@ -132,13 +132,8 @@ export interface RevenueRepositoryInterface {
    * Upserts a revenue record for the given period.
    *
    * Contract and behavior
-   * - Period enforcement: the provided `period` parameter is the source of truth and
-   *   must overwrite any incoming period on the payload.
-   * - Payload shapes:
-   *   - RevenueCreateEntity: treated as a creation-shaped payload. `createdAt` is
-   *     preserved from input, and `updatedAt` is set to now.
-   *   - RevenueUpdatable: expanded into a full creation payload with `createdAt = now`
-   *     and `updatedAt = now`.
+   * - Period enforcement: the provided `period` parameter is the source of truth.
+   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, revenue).
    * - Delegation: implementors should call upsert() to perform the actual insert/update
    *   using the period uniqueness constraint.
    *
@@ -148,10 +143,10 @@ export interface RevenueRepositoryInterface {
    *
    * Typical usage
    * - Services and event handlers that already computed a period and want to
-   *   create/update the revenue row for that period.
+   *   create/update the revenue row for that period without passing timestamps.
    *
    * @param period - Target Period (YYYY-MM)
-   * @param revenue - Either a full creation entity (preserves `createdAt`) or an updatable subset
+   * @param revenue - Updatable fields only (invoiceCount, revenue, calculationSource)
    * @returns The created or updated RevenueEntity
    * @throws ValidationError If `period` or `revenue` is missing/invalid
    * @throws ValidationError Propagated from upsert() on uniqueness/conflict-related errors
@@ -159,6 +154,6 @@ export interface RevenueRepositoryInterface {
    */
   upsertByPeriod(
     period: Period,
-    revenue: RevenueUpdatable | RevenueCreateEntity,
+    revenue: RevenueUpdatable,
   ): Promise<RevenueEntity>;
 }

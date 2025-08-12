@@ -336,10 +336,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Upserts a revenue record for the given period.
    *
    * Contract and behavior
-   * - Period enforcement: the provided `period` parameter is the source of truth and overwrites any incoming period.
-   * - Payload shapes:
-   *   - RevenueCreateEntity: treated as a creation-shaped payload. `createdAt` is preserved from input, and `updatedAt` is set to `now`.
-   *   - RevenueUpdatable: expanded into a full creation payload with `createdAt = now` and `updatedAt = now`.
+   * - Period enforcement: the provided `period` parameter is the source of truth.
+   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, revenue).
    * - Delegation: calls `upsert()` to perform the actual insert/update using the period uniqueness constraint.
    *
    * Timestamps
@@ -347,10 +345,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * - Update path: `updatedAt = now` while preserving the original `createdAt`.
    *
    * Typical usage
-   * - Services and event handlers that already computed a `period` and want to create/update the revenue row for that period.
+   * - Services and event handlers that already computed a `period` and want to create/update the revenue row for that period without passing timestamps.
    *
    * @param period - Target Period (YYYY-MM).
-   * @param revenue - Either a full creation entity (preserves `createdAt`) or an updatable subset.
+   * @param revenue - Updatable fields only (invoiceCount, revenue, calculationSource).
    * @returns The created or updated RevenueEntity.
    * @throws ValidationError If `period` or `revenue` is missing.
    * @throws ValidationError Propagated from `upsert()` on uniqueness/conflict-related errors.
@@ -358,7 +356,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async upsertByPeriod(
     period: Period,
-    revenue: RevenueUpdatable | RevenueCreateEntity,
+    revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!period) {
       throw new ValidationError("Period is required");
@@ -368,25 +366,16 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new ValidationError("Revenue data is required");
     }
 
-    // Normalize to a full creation entity while enforcing the provided period
     const now = new Date();
-    const revenueWithPeriod: RevenueCreateEntity =
-      "createdAt" in revenue
-        ? {
-            ...revenue,
-            period: toPeriod(period),
-            updatedAt: now,
-            // createdAt preserved from input
-          }
-        : {
-            calculationSource: revenue.calculationSource,
-            createdAt: now,
-            invoiceCount: revenue.invoiceCount,
-            period: toPeriod(period),
-            revenue: revenue.revenue,
-            updatedAt: now,
-          };
+    const payload: RevenueCreateEntity = {
+      calculationSource: revenue.calculationSource,
+      createdAt: now,
+      invoiceCount: revenue.invoiceCount,
+      period: toPeriod(period),
+      revenue: revenue.revenue,
+      updatedAt: now,
+    };
 
-    return this.upsert(revenueWithPeriod);
+    return this.upsert(payload);
   }
 }

@@ -181,34 +181,28 @@ export class RevenueService {
     // If no existing revenue, create a new record or update with zero amounts
     if (!existingRevenue) {
       // Create a new revenue record
-      const newRevenue: RevenueCreateEntity = {
+      const newRevenue: RevenueUpdatable = {
         calculationSource: "handler",
-        createdAt: new Date(),
         invoiceCount: invoice.status === "paid" ? 1 : 0,
-        period: toPeriod(period),
         revenue: invoice.status === "paid" ? invoice.amount : 0,
-        updatedAt: new Date(),
       };
 
       return this.repository.upsertByPeriod(toPeriod(period), newRevenue);
     }
 
     // Update existing revenue record
-    const updatedRevenue: RevenueCreateEntity = {
+    const updatedRevenue: RevenueUpdatable = {
       calculationSource: "handler",
-      createdAt: existingRevenue.createdAt,
       // If the invoice is paid, increment the count, otherwise keep it the same
       invoiceCount:
         invoice.status === "paid"
           ? existingRevenue.invoiceCount + 1
           : existingRevenue.invoiceCount,
-      period: existingRevenue.period,
       // If the invoice is paid, add its amount, otherwise keep the same revenue
       revenue:
         invoice.status === "paid"
           ? existingRevenue.revenue + invoice.amount
           : existingRevenue.revenue,
-      updatedAt: new Date(),
     };
 
     return this.repository.upsertByPeriod(toPeriod(period), updatedRevenue);

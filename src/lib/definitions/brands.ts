@@ -97,3 +97,41 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
 export const toIntervalDuration = (duration: string): IntervalDuration => {
   return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
 };
+
+/**
+ * Non-throwing branded type guards and helpers
+ *
+ * These are useful in UI and API layers where you want to narrow types safely
+ * without exceptions. They only check shape/format and do not hit the DB.
+ */
+
+// Reusable UUID guard
+export function isUuid(value: unknown): value is string {
+  return typeof value === "string" && relaxedUuidRegex.test(value);
+}
+
+// ID type guards
+export function isCustomerId(value: unknown): value is CustomerId {
+  return isUuid(value);
+}
+
+export function isUserId(value: unknown): value is UserId {
+  return isUuid(value);
+}
+
+export function isInvoiceId(value: unknown): value is InvoiceId {
+  return isUuid(value);
+}
+
+export function isRevenueId(value: unknown): value is RevenueId {
+  return isUuid(value);
+}
+
+export function isSessionId(value: unknown): value is SessionId {
+  return isUuid(value);
+}
+
+// Period guard: YYYY-MM with zero-padded month
+export function isPeriod(value: unknown): value is Period {
+  return typeof value === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+}

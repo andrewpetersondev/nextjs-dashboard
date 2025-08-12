@@ -57,10 +57,9 @@ Key methods:
   - Alias for delete(id); retained for backward compatibility.
 - findByPeriod(period: Period): Promise<RevenueEntity | null>
   - Returns null if not found (absence is non-exceptional).
-- upsertByPeriod(period: Period, revenue: RevenueUpdatable | RevenueCreateEntity): Promise<RevenueEntity>
-  - Enforces the provided period as the source of truth:
-    - With RevenueCreateEntity: preserves createdAt from input, sets updatedAt = now.
-    - With RevenueUpdatable: expands to a full creation payload with createdAt = now, updatedAt = now.
+- upsertByPeriod(period: Period, revenue: RevenueUpdatable): Promise<RevenueEntity>
+  - Enforces the provided period as the source of truth.
+  - Accepts only updatable fields; timestamps are assigned internally (createdAt = now on insert, updatedAt = now on every write).
   - Delegates to upsert() for conflict handling.
 
 ### revenue.repository.ts
@@ -148,21 +147,11 @@ Using upsertByPeriod with a known period:
 // TypeScript
 const period = "2024-08" as Period;
 
-// With an updatable payload: expands to full creation payload internally
-const result1 = await repo.upsertByPeriod(period, {
-calculationSource: "invoice_event",
-invoiceCount: 1,
-revenue: 20_00,
-});
-
-// With a full creation entity: preserves createdAt, refreshes updatedAt
-const result2 = await repo.upsertByPeriod(period, {
-calculationSource: "handler",
-createdAt: new Date("2024-08-01T00:00:00Z"),
-invoiceCount: 2,
-period,                     // will be overwritten with the parameter
-revenue: 40_00,
-updatedAt: new Date(),      // will be refreshed to now
+// Provide only updatable fields; repository assigns timestamps internally
+const result = await repo.upsertByPeriod(period, {
+  calculationSource: "invoice_event",
+  invoiceCount: 1,
+  revenue: 20_00,
 });
 ```
 ## Testing and DI
