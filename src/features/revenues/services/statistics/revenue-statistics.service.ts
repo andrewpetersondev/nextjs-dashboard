@@ -95,6 +95,7 @@ export class RevenueStatisticsService {
       const revenueEntities: RevenueEntity[] =
         await this.repository.findByDateRange(startPeriod, endPeriod);
 
+      // 9 entities are returned
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         entityCount: revenueEntities.length,
@@ -107,6 +108,13 @@ export class RevenueStatisticsService {
           mapRevEntToRevDisplayEnt(entity),
       );
 
+      logger.info({
+        context: "RevenueStatisticsService.calculateForRollingYear",
+        displayEntities,
+        displayEntityCount: displayEntities.length,
+        message: "Transformed revenue entities to display entities",
+      });
+
       // Merge the display entities with the template
       const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
         displayEntities,
@@ -116,6 +124,7 @@ export class RevenueStatisticsService {
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         message: "Successfully calculated rolling 12-month revenue data",
+        result,
         resultCount: result.length,
         withDataCount: displayEntities.length,
       });
