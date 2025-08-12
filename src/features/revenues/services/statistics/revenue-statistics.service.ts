@@ -5,18 +5,24 @@ import type {
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
 import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
-import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
+import type {
+  RevenueStatistics,
+  RollingMonthData,
+} from "@/features/revenues/core/revenue.types";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import {
   createEmptyStatistics,
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-data.utils";
-import { rollingMonthToPeriod } from "@/features/revenues/utils/date/period.utils";
+import {
+  rollingMonthToPeriod,
+  toPeriod,
+} from "@/features/revenues/utils/date/period.utils";
 import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toIntervalDuration } from "@/lib/definitions/brands";
+import { type Period, toIntervalDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -115,21 +121,67 @@ export class RevenueStatisticsService {
         message: "Transformed revenue entities to display entities",
       });
 
-      // Merge the display entities with the template
-      const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
-        displayEntities,
-        template,
-      );
+      try {
+        // Build a merge-ready template with a period added
+        const mergeReadyTemplate = template.map((m) => ({
+          ...m,
+          period: rollingMonthToPeriod(m), // yields 'YYYY-MM' (branded Period)
+        }));
 
-      logger.info({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        message: "Successfully calculated rolling 12-month revenue data",
-        result,
-        resultCount: result.length,
-        withDataCount: displayEntities.length,
-      });
+        // Merge the display entities with the template
+        const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
+          displayEntities,
+          mergeReadyTemplate,
+        );
+        logger.info({
+          context: "RevenueStatisticsService.calculateForRollingYear",
+          message: "Successfully calculated rolling 12-month revenue data",
+          result,
+          resultCount: result.length,
+          withDataCount: displayEntities.length,
+        });
+        return result;
+      } catch (e) {
+        // Minimal, targeted diagnostics to locate data issues
+        const periods: Period[] = displayEntities.map(
+          (d: RevenueDisplayEntity): Period => d.period,
+        );
 
-      return result;
+        // Properly format template periods as YYYY-MM with zero-padded month
+        const templatePeriods: Period[] = template.map((m: RollingMonthData) =>
+          toPeriod(`${m.year}-${String(m.month).padStart(2, "0")}`),
+        );
+
+        const duplicates: Period[] = [
+          ...new Set(periods.filter((p, i) => periods.indexOf(p) !== i)),
+        ];
+        const missing = templatePeriods.filter((p) => !periods.includes(p));
+        const unexpected = periods.filter((p) => !templatePeriods.includes(p));
+        const invalidFormat = periods.filter((p) => !/^\d{4}-\d{2}$/.test(p));
+        const badRevenue = displayEntities
+          .filter(
+            (d) => typeof d.revenue !== "number" || Number.isNaN(d.revenue),
+          )
+          .map((d) => d.period);
+
+        logger.error({
+          context: "RevenueStatisticsService.calculateForRollingYear",
+          error: e,
+          message: "Merge validation failed",
+          stats: {
+            badRevenue,
+            displayCount: displayEntities.length,
+            duplicates,
+            invalidFormat,
+            missing,
+            periods,
+            templateCount: template.length,
+            templatePeriods,
+            unexpected,
+          },
+        });
+        throw e;
+      }
     } catch (error) {
       logger.error({
         context: "RevenueStatisticsService.calculateForRollingYear",
