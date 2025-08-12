@@ -302,12 +302,19 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new ValidationError("Revenue data is required");
     }
 
-    // Ensure the period in the revenue data matches the provided period
-    const revenueWithPeriod: RevenueCreateEntity = {
-      // If the caller provided a full creation shape, use its createdAt; otherwise supply now in upsert()
-      ...(revenue as Partial<RevenueCreateEntity>),
-      period: toPeriod(period),
-    } as RevenueCreateEntity;
+    // Normalize to a full creation entity while enforcing the provided period
+    const now = new Date();
+    const revenueWithPeriod: RevenueCreateEntity =
+      "createdAt" in revenue && "updatedAt" in revenue
+        ? { ...revenue, period: toPeriod(period) }
+        : {
+            calculationSource: revenue.calculationSource,
+            createdAt: now,
+            invoiceCount: revenue.invoiceCount,
+            period: toPeriod(period),
+            revenue: revenue.revenue,
+            updatedAt: now,
+          };
 
     return this.upsert(revenueWithPeriod);
   }

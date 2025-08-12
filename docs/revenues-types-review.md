@@ -21,38 +21,7 @@ Summary of findings
 
 Suggested refactorings (prioritized)
 
-1. Replace calculationSource: string with a narrow union or enum
-   Files: revenue.entity.ts, repository upsert(), template creators
-   Why: calculationSource currently accepts any string. In code, only "seed", "handler", and "invoice_event" are used, sometimes different labels (e.g., "template"). A union prevents typos and makes filtering easier.
-   Proposal:
-   - Define a union in revenue.types.ts:
-     export const REVENUE_SOURCES = ["seed", "handler", "invoice_event", "rolling_calculation", "template"] as const;
-     export type RevenueSource = (typeof REVENUE_SOURCES)[number];
-   - In revenue.entity.ts: change calculationSource: RevenueSource.
-   - Update creators/mappers to use one of the allowed values.
 
-2. Tighten update contract: avoid Partial<RevenueCreateEntity>
-   Files: revenue.entity.ts, revenue.repository.interface.ts, revenue.repository.ts, services using update/upsertByPeriod
-   Why: Partial<RevenueCreateEntity> allows optional createdAt/period, which should not be set during updates arbitrarily (repository overrides timestamps, and period should be immutable per id). This can cause accidental writes or confusion.
-   Proposal:
-   - Define an explicit set of updatable fields, e.g.:
-     export type RevenueUpdatable = Pick<RevenueEntity, "invoiceCount" | "revenue" | "calculationSource">;
-   - Change update(id, revenue: RevenueUpdatable) and upsertByPeriod(period, revenue: RevenueUpdatable | RevenueCreateEntity) signatures accordingly.
-   - Adjust call sites in services to pass only allowed fields.
-
-3. Clarify RevenueDisplayEntity.month type
-   Files: revenue.entity.ts, revenue.mapper.ts
-   Issue: The comment suggests month is '00'..'11', but mapper assigns 'MM' ("01".."12"). Elsewhere, SimpleRevenueDto uses MonthName ("Jan".."Dec"). This creates cognitive load.
-   Options:
-   - Option A (recommended): Make RevenueDisplayEntity.month a MonthName and adjust mapper to format accordingly, keeping monthNumber for numeric logic. This aligns all display models on MonthName.
-   - Option B: Rename field to monthPadded: string ("01".."12") and document it; leave MonthName usage to DTOs only.
-
-4. Ensure Period is the single source of truth for display entities
-   Files: revenue.mapper.ts, utils/data/lookup.utils.ts
-   Observation: derivePeriodFromDisplayEntity falls back to year/monthNumber, implying some display entities may lose the period. Since RevenueDisplayEntity extends RevenueEntity, period should always exist. If we enforce that in the mapper and in default creators, we can simplify derivePeriodFromDisplayEntity to just validate-and-return entity.period.
-   Proposal:
-   - Verify all creators of RevenueDisplayEntity always include a valid period (already true via mapRevEntToRevDisplayEnt and template utils).
-   - Simplify derivePeriodFromDisplayEntity to use entity.period directly (remove casts and error branches). Keep a runtime guard if desired.
 
 5. Normalize Period creation: prefer toPeriod/dateToPeriod everywhere
    Files: revenue.service.ts, revenue.repository.ts, event service
@@ -138,16 +107,16 @@ export function mapRevEntToRevDisplayEnt(entity: RevenueEntity): RevenueDisplayE
   };
 }
 
-C. Simplify derivePeriodFromDisplayEntity
+C. Simplify mapRevDisplayEntityToPeriod
 
-export function derivePeriodFromDisplayEntity(dataItem: RevenueDisplayEntity): Period {
+export function mapRevDisplayEntityToPeriod(dataItem: RevenueDisplayEntity): Period {
   return toPeriod(dataItem.period); // validate/brand once more; or just return dataItem.period
 }
 
 Risk and migration notes
 - Changing calculationSource type and update contracts is a breaking type change; update call sites accordingly (services and tests). This is localized and low-risk.
 - Adjusting RevenueDisplayEntity.month to MonthName requires updating any consumers that expect "MM" strings. UI that displays month abbreviations will benefit.
-- Simplifying derivePeriodFromDisplayEntity is safe if we ensure all display entities originate from domain entities (mapper) or template utils—which already include period.
+- Simplifying mapRevDisplayEntityToPeriod is safe if we ensure all display entities originate from domain entities (mapper) or template utils—which already include period.
 
 Quick wins you can do right away
 - Add RevenueSource union and use it in RevenueEntity. Update a few literal assignments.

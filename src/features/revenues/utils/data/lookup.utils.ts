@@ -62,7 +62,7 @@ export function createDataLookupMap(
   const duplicates: Period[] = [];
 
   for (const dataItem of actualData) {
-    const periodKey = derivePeriodFromDisplayEntity(dataItem);
+    const periodKey = toPeriod(dataItem.period);
 
     if (dataMap.has(periodKey)) {
       duplicates.push(periodKey);
@@ -118,9 +118,7 @@ export function computeTemplatePeriods<
 export function makeCoverageReport<
   T extends { year: number } & ({ monthNumber: number } | { month: number }),
 >(actualData: RevenueDisplayEntity[], template: T[]) {
-  const periods: Period[] = actualData.map((d) =>
-    derivePeriodFromDisplayEntity(d),
-  );
+  const periods: Period[] = actualData.map((d) => toPeriod(d.period));
   const templatePeriods: Period[] = computeTemplatePeriods(template);
 
   const duplicates: Period[] = [
@@ -131,7 +129,7 @@ export function makeCoverageReport<
   const unexpected = periods.filter((p) => !templatePeriods.includes(p));
   const badRevenue = actualData
     .filter((d) => Number.isNaN(d.revenue))
-    .map((d) => derivePeriodFromDisplayEntity(d));
+    .map((d) => toPeriod(d.period));
 
   return {
     badRevenue,
@@ -169,54 +167,4 @@ export function logCoverageReport(report: {
       unexpected: report.unexpected,
     },
   });
-}
-
-/**
- * Derives a branded Period (YYYY-MM) from a RevenueDisplayEntity.
- * - Prefers entity.period if present.
- * - Otherwise constructs it from year and monthNumber.
- * - Always normalizes to YYYY-MM and validates the final format.
- */
-function derivePeriodFromDisplayEntity(dataItem: RevenueDisplayEntity): Period {
-  // Prefer a period field if present on the display entity
-  const maybePeriod = (dataItem as unknown as { period?: string }).period;
-
-  if (maybePeriod) {
-    const normalized = normalizePeriod(maybePeriod);
-    if (!isValidPeriod(normalized)) {
-      throw new ValidationError(
-        `Invalid period format on entity.period: ${maybePeriod} -> ${normalized}`,
-      );
-    }
-    return toPeriod(normalized);
-  }
-
-  // Fallback: construct from year and monthNumber fields
-  const { year, monthNumber } = dataItem as unknown as {
-    year?: number;
-    monthNumber?: number;
-  };
-
-  if (typeof year !== "number" || typeof monthNumber !== "number") {
-    throw new ValidationError(
-      "RevenueDisplayEntity missing 'period' and 'year/monthNumber' fields to derive Period",
-    );
-  }
-
-  const normalized = normalizePeriod(`${year}-${monthNumber}`);
-  if (!isValidPeriod(normalized)) {
-    throw new ValidationError(
-      `Invalid derived period format from year/monthNumber: ${year}/${monthNumber} -> ${normalized}`,
-    );
-  }
-
-  const period = toPeriod(normalized);
-
-  logger.debug({
-    context: "derivePeriodFromDisplayEntity",
-    message: "Derived period from the display entity",
-    period,
-  });
-
-  return period;
 }
