@@ -1,4 +1,4 @@
-import { SESSION_COOKIE_NAME } from "@/features/sessions/session.ui.constants.ts";
+import { SESSION_COOKIE_NAME } from "../../../src/lib/constants/auth.constants.ts"
 import { TEST_USER_CREDENTIALS, TEST_USER_DB } from "../../support/types.ts";
 
 const DASHBOARD_ROUTE = "/dashboard";
