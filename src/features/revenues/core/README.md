@@ -101,8 +101,8 @@ const chartData: RevenueChartDto = {
 
 Defines TypeScript types, interfaces, and type aliases specific to the revenue domain.
 
-- Includes constants like `MONTH_ORDER` and `PERIOD_DURATIONS`
-- Defines type-safe unions like `MonthName` and `PeriodDuration`
+- Includes constants like `MONTH_ORDER` and `INTERVAL_DURATIONS`
+- Defines type-safe unions like `MonthName` and `IntervalDuration`
 - Contains utility types for operations on revenue data
 - Provides standardized result types like `RevenueActionResult<T>`
 - Defines interfaces for revenue statistics and chart data
@@ -111,8 +111,8 @@ Defines TypeScript types, interfaces, and type aliases specific to the revenue d
 
 - `MONTH_ORDER` - Ordered array of three-letter month abbreviations
 - `MonthName` - Type-safe union of valid month name abbreviations
-- `PERIOD_DURATIONS` - Standardized period durations for revenue calculations
-- `PeriodDuration` - Type-safe union of valid period durations
+- `INTERVAL_DURATIONS` - Standardized period durations for revenue calculations
+- `IntervalDuration` - Type-safe union of valid period durations
 - `RevenueActionResult<T>` - Discriminated union type for revenue operation results
 - `RollingMonthData` - Metadata for a single month in a 12-month rolling period
 - `RevenueStatistics` - Calculated statistical metrics from revenue data

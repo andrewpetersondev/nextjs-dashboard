@@ -9,7 +9,7 @@ import {
 } from "date-fns";
 import { ValidationError } from "@/errors/errors";
 import type {
-  PeriodDuration,
+  IntervalDuration,
   RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { createMonthTemplateData } from "@/features/revenues/utils/data/template.utils";
@@ -101,7 +101,7 @@ export function formatDateToPeriod(date: Date): string {
  * @param period - The period type ('year' or 'month')
  * @returns The number of intervals to generate
  */
-export function getIntervalCount(period: PeriodDuration): number {
+export function getIntervalCount(period: IntervalDuration): number {
   switch (period) {
     case "year":
       return 12;
@@ -123,7 +123,7 @@ export function getIntervalCount(period: PeriodDuration): number {
  */
 export function generateMonthsTemplate(
   startDate: Date,
-  duration: PeriodDuration,
+  duration: IntervalDuration,
 ): RollingMonthData[] {
   const intervalCount = getIntervalCount(duration);
 

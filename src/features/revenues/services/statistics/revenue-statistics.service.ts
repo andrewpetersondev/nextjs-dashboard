@@ -16,7 +16,7 @@ import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toPeriodDuration } from "@/lib/definitions/brands";
+import { toIntervalDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -65,7 +65,7 @@ export class RevenueStatisticsService {
       // TODO: rename period to interval?
       const template = generateMonthsTemplate(
         startDate,
-        toPeriodDuration(period),
+        toIntervalDuration(period),
       );
 
       // Extract the start and end periods from the template

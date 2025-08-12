@@ -24,8 +24,8 @@ export type MonthName = (typeof MONTH_ORDER)[number];
 /**
  * Standardized period durations used in revenue calculations.
  */
-export const PERIOD_DURATIONS = ["year", "month"] as const;
-export type PeriodDuration = (typeof PERIOD_DURATIONS)[number];
+export const INTERVAL_DURATIONS = ["year", "month"] as const;
+export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
 
 /**
  * Standard discriminated union type for revenue operation results.

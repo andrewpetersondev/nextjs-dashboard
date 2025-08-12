@@ -6,8 +6,8 @@ import {
   type InvoiceStatus,
 } from "@/features/invoices/invoice.types";
 import {
-  PERIOD_DURATIONS,
-  type PeriodDuration,
+  INTERVAL_DURATIONS,
+  type IntervalDuration,
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
@@ -94,6 +94,6 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
   return validateEnum(status, INVOICE_STATUSES, "InvoiceStatus");
 };
 
-export const toPeriodDuration = (duration: string): PeriodDuration => {
-  return validateEnum(duration, PERIOD_DURATIONS, "PeriodDuration");
+export const toIntervalDuration = (duration: string): IntervalDuration => {
+  return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
 };
