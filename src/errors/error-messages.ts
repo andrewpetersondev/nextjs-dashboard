@@ -101,9 +101,9 @@ export const REVENUE_ERROR_MESSAGES = {
   INVALID_YEAR: "Invalid year parameter provided.",
   MAPPING_ERROR: "Error mapping revenue data to DTO.",
   MISSING_FIELDS: "Missing required fields for revenue operations.",
-  NO_REVENUE_DATA: "No revenue data available for the specified year.",
+  NO_REVENUE_DATA: "No revenue data are available for the specified year.",
   NOT_DELETED: "Revenue data was not deleted successfully.",
-  NOT_FOUND: "Revenue data not found for the specified year.",
+  NOT_FOUND: "Revenue data aren't found for the specified year.",
   NOT_UPDATED: "Revenue data was not updated successfully.",
   PARAMETER_ERROR: "Invalid parameters provided for revenue operations.",
   READ_FAILED: "Failed to read revenue data.",
@@ -117,4 +117,11 @@ export const REVENUE_ERROR_MESSAGES = {
   VALIDATION_FAILED: "Validation failed. Please check your input.",
   YEAR_NOT_FOUND: "Revenue data for the specified year not found.",
   YEAR_REQUIRED: "Year is required for revenue operations.",
+};
+
+/**
+ * Default Form validation messages.
+ */
+export const FORM_VALIDATION_ERROR_MESSAGES = {
+  FAILED_VALIDATION: "Failed to validate form data.",
 };

@@ -1,10 +1,8 @@
 import "server-only";
 
 import type * as z from "zod";
-import {
-  VALIDATION_FAILED_MESSAGE,
-  VALIDATION_SUCCESS_MESSAGE,
-} from "@/lib/constants/form.constants";
+import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/error-messages";
+import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import type { FormErrors, FormState } from "@/lib/forms/form.types";
 import { logger } from "@/lib/utils/logger";
 
@@ -40,13 +38,13 @@ export function validateFormData<TFieldNames extends string, TData = unknown>(
       context: "validateFormData",
       data,
       error: parsed.error,
-      message: VALIDATION_FAILED_MESSAGE,
+      message: FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
     });
 
     const { fieldErrors } = parsed.error.flatten();
     return {
       errors: mapFieldErrors(fieldErrors, allowedFields),
-      message: VALIDATION_FAILED_MESSAGE,
+      message: FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
       success: false,
     };
   }
@@ -54,7 +52,7 @@ export function validateFormData<TFieldNames extends string, TData = unknown>(
   return {
     data: parsed.data,
     errors: {},
-    message: VALIDATION_SUCCESS_MESSAGE,
+    message: FORM_VALIDATION_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     success: true,
   };
 }

@@ -16,3 +16,7 @@ export const INVOICE_SUCCESS_MESSAGES = {
   READ_SUCCESS: "Invoice fetched successfully.",
   UPDATE_SUCCESS: "Invoice updated successfully.",
 };
+
+export const FORM_VALIDATION_SUCCESS_MESSAGES = {
+  SUCCESS_MESSAGE: "Form validation successful.",
+};

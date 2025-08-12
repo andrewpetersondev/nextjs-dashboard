@@ -1,11 +1,12 @@
 import "server-only";
 
+import { ValidationError } from "@/errors/errors";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import type { Period } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
-const PERIOD_REGEX = /^\d{4}-\d{2}$/;
+const PERIOD_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 const normalizePeriod = (p: string): string => {
   const [y, m] = p.split("-");
@@ -27,7 +28,9 @@ export function normalizeToPeriod(
   if (typeof input === "string") {
     const normalized = normalizePeriod(input);
     if (!isValidPeriod(normalized)) {
-      throw new Error(`Invalid period string: ${input} -> ${normalized}`);
+      throw new ValidationError(
+        `Invalid period string: ${input} -> ${normalized}`,
+      );
     }
     return toPeriod(normalized);
   }
@@ -38,7 +41,7 @@ export function normalizeToPeriod(
     (input as { month?: number }).month;
   const normalized = normalizePeriod(`${year}-${monthValue}`);
   if (!isValidPeriod(normalized)) {
-    throw new Error(
+    throw new ValidationError(
       `Invalid year/month input: ${year}/${monthValue} -> ${normalized}`,
     );
   }
@@ -181,7 +184,7 @@ function derivePeriodFromDisplayEntity(dataItem: RevenueDisplayEntity): Period {
   if (maybePeriod) {
     const normalized = normalizePeriod(maybePeriod);
     if (!isValidPeriod(normalized)) {
-      throw new Error(
+      throw new ValidationError(
         `Invalid period format on entity.period: ${maybePeriod} -> ${normalized}`,
       );
     }
@@ -195,14 +198,14 @@ function derivePeriodFromDisplayEntity(dataItem: RevenueDisplayEntity): Period {
   };
 
   if (typeof year !== "number" || typeof monthNumber !== "number") {
-    throw new Error(
+    throw new ValidationError(
       "RevenueDisplayEntity missing 'period' and 'year/monthNumber' fields to derive Period",
     );
   }
 
   const normalized = normalizePeriod(`${year}-${monthNumber}`);
   if (!isValidPeriod(normalized)) {
-    throw new Error(
+    throw new ValidationError(
       `Invalid derived period format from year/monthNumber: ${year}/${monthNumber} -> ${normalized}`,
     );
   }
