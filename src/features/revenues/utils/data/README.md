@@ -14,17 +14,6 @@ The Data Utilities module provides a comprehensive set of functions for manipula
 
 ## 1. Core Utility Files
 
-### a. **Entity Utilities** (`entity.utils.ts`)
-
-The Entity Utilities provide functions for creating and transforming revenue entities, centralizing the logic for entity manipulation across the application.
-
-**Key Functions:**
-- `createRevenueEntityData()` - Creates complete revenue entity data with all required fields
-- `_createDefaultRevenueEntity()` - Creates default database-compatible revenue entities
-- `_transformToRevenueEntity()` - Transforms display entities into complete revenue entities
-
-**Usage Context:**
-These utilities ensure that all revenue entities follow a consistent structure throughout the application, regardless of their source (database, user input, or default templates).
 
 ### b. **Lookup Utilities** (`lookup.utils.ts`)
 

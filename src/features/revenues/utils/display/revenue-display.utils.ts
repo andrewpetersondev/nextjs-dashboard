@@ -1,10 +1,3 @@
-/**
- * Display utility functions for revenue data.
- *
- * This file contains utility functions for formatting and displaying revenue data,
- * including currency conversion and chart axis generation.
- */
-
 import type { SimpleRevenueDto } from "@/features/revenues/core/revenue.dto";
 import type { YAxisResult } from "@/features/revenues/core/revenue.types";
 
@@ -18,16 +11,6 @@ import type { YAxisResult } from "@/features/revenues/core/revenue.types";
  * @param cents - Monetary value in cents (database format)
  * @returns Monetary value in dollars, rounded to nearest whole dollar
  *
- * @remarks
- * **Conversion Logic:**
- * - Divides by 100 to convert cents to dollars
- * - Applies Math.round() to eliminate fractional cents
- * - Maintains precision during calculation before final rounding
- *
- * **Usage Context:**
- * - Action layer data transformation
- * - DTO preparation for client consumption
- * - Statistics conversion for display
  */
 export function convertCentsToDollars(cents: number): number {
   return Math.round(cents / 100);

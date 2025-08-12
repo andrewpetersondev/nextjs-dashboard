@@ -113,7 +113,15 @@ export function getMonthDataOrDefault(
     return existingData;
   }
 
-  return createDefaultMonthData(month, monthNumber, year);
+  const defaultData = createDefaultMonthData(month, monthNumber, year);
+
+  logger.info({
+    context: "getMonthDataOrDefault",
+    defaultData,
+    message: "Created default data for missing month",
+  });
+
+  return defaultData;
 }
 
 /**
