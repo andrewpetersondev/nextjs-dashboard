@@ -51,7 +51,7 @@ export function mergeDataWithTemplate(
     getMonthDataOrDefault(monthTemplate, dataLookup),
   );
 
-  logger.info({
+  logger.debug({
     context: "mergeDataWithTemplate",
     mergedDataCount: mergedData.length,
     message: "Merged actual data with a template",

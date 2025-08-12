@@ -25,10 +25,10 @@ import type { RevenueId } from "@/lib/definitions/brands";
  */
 export class RevenueService {
   /**
-   * Constructor using dependency injection pattern.
+   * Constructor using a dependency injection pattern.
    *
    * @remarks
-   * **Dependency Injection Benefits:**
+   * **Dependency Injection Benefits: **
    * - Depends on abstraction (interface) rather than concrete implementation
    * - Enhanced testability through mock repository injection
    * - Follows dependency inversion principle
@@ -50,7 +50,7 @@ export class RevenueService {
     }
     const created = await this.repository.create(revenue);
     if (!created) {
-      throw new DatabaseError("Failed to create revenue record");
+      throw new DatabaseError("Failed to create a revenue record");
     }
     return created;
   }
@@ -113,7 +113,7 @@ export class RevenueService {
    *
    * @param startDate - Start of the date range (inclusive)
    * @param endDate - End of the date range (inclusive)
-   * @returns Promise resolving to array of revenue entities
+   * @returns Promise resolving to an array of revenue entities
    */
   async getRevenueByDateRange(
     startDate: Date,
@@ -121,10 +121,7 @@ export class RevenueService {
   ): Promise<RevenueEntity[]> {
     const startPeriod = formatDateToPeriod(startDate);
     const endPeriod = formatDateToPeriod(endDate);
-    return this.repository.findByDateRange(
-      toPeriod(startPeriod),
-      toPeriod(endPeriod),
-    );
+    return this.repository.findByDateRange(startPeriod, endPeriod);
   }
 
   /**
@@ -188,9 +185,9 @@ export class RevenueService {
       toPeriod(period),
     );
 
-    // If no existing revenue or the invoice is not paid, create a new record or update with zero amount
+    // If no existing revenue, create a new record or update with zero amounts
     if (!existingRevenue) {
-      // Create new revenue record
+      // Create a new revenue record
       const newRevenue: RevenueCreateEntity = {
         calculationSource: "handler",
         createdAt: new Date(),

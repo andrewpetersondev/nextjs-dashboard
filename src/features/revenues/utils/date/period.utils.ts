@@ -1,6 +1,5 @@
 import { format, isValid, parse } from "date-fns";
 import { ValidationError } from "@/errors/errors";
-import type { RollingMonthData } from "@/features/revenues/core/revenue.types";
 import type { Period } from "@/lib/definitions/brands";
 
 /**
@@ -39,11 +38,14 @@ export function formatPeriod(period: Period): string {
 }
 
 /**
- * Constructs a date range element from RollingMonthData to use in service for calculateForRollingYear. Prepares for values to be used in  repo.findByDateRange
- * @param element
- * @returns branded period string in YYYY-MM format
+ * Extracts the month number from a Period string.
+ *
+ * @param period - A branded Period string in YYYY-MM format
+ * @returns The month number (1-12) extracted from the period
+ * @example
+ * const period = "2024-08" as Period;
+ * const monthNumber = extractMonthNumberFromPeriod(period); // Returns 8
  */
-export function rollingMonthToPeriod(element: RollingMonthData): Period {
-  const period = `${element.year}-${String(element.monthNumber).padStart(2, "0")}`;
-  return toPeriod(period);
+export function extractMonthNumberFromPeriod(period: Period): number {
+  return parseInt(period.substring(5, 7), 10);
 }

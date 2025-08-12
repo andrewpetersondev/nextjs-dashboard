@@ -1,5 +1,7 @@
+import type { Period } from "@/lib/definitions/brands";
+
 /**
- * Ordered array of three-letter month abbreviations.
+ * An ordered array of three-letter month abbreviations.
  */
 export const MONTH_ORDER = [
   "Jan",
@@ -71,6 +73,8 @@ export interface RollingMonthData {
   readonly monthNumber: number;
   /** Four-digit year for the month */
   readonly year: number;
+  /** Branded period (YYYY-MM) for this month (source of truth) */
+  readonly period: Period;
 }
 
 /**

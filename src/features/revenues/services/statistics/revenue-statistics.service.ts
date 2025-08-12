@@ -5,24 +5,21 @@ import type {
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
 import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
-import type {
-  RevenueStatistics,
-  RollingMonthData,
-} from "@/features/revenues/core/revenue.types";
+import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
+import {
+  logCoverageReport,
+  makeCoverageReport,
+} from "@/features/revenues/utils/data/lookup.utils";
 import {
   createEmptyStatistics,
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-data.utils";
 import {
-  rollingMonthToPeriod,
-  toPeriod,
-} from "@/features/revenues/utils/date/period.utils";
-import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { type Period, toIntervalDuration } from "@/lib/definitions/brands";
+import { toIntervalDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -56,22 +53,20 @@ export class RevenueStatisticsService {
       });
 
       // Calculate the date range for the rolling 12-month period.
-      // TODO: period should be renamed to interval so it does not get confused with DB Schema?
-      const { startDate, endDate, period } = calculateDateRange();
+      const { startDate, endDate, duration } = calculateDateRange();
 
-      logger.info({
+      logger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
+        duration,
         endDate,
         message: "Calculated date range for a rolling 12-month period",
-        period,
         startDate,
       });
 
-      // Generate the template for the 12-month period
-      // TODO: rename period to interval?
+      // Generate the template for the 12-month duration
       const template = generateMonthsTemplate(
         startDate,
-        toIntervalDuration(period),
+        toIntervalDuration(duration),
       );
 
       // Extract the start and end periods from the template
@@ -86,10 +81,10 @@ export class RevenueStatisticsService {
         throw new Error("Template generation failed: invalid month data");
       }
 
-      const startPeriod = rollingMonthToPeriod(firstMonth);
-      const endPeriod = rollingMonthToPeriod(lastMonth);
+      const startPeriod = firstMonth.period;
+      const endPeriod = lastMonth.period;
 
-      logger.info({
+      logger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endPeriod,
         message: "Prepared template for a 12-month period",
@@ -102,7 +97,7 @@ export class RevenueStatisticsService {
         await this.repository.findByDateRange(startPeriod, endPeriod);
 
       // 9 entities are returned
-      logger.info({
+      logger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         entityCount: revenueEntities.length,
         message: "Fetched revenue data from repository",
@@ -114,81 +109,61 @@ export class RevenueStatisticsService {
           mapRevEntToRevDisplayEnt(entity),
       );
 
-      logger.info({
+      logger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
-        displayEntities,
         displayEntityCount: displayEntities.length,
         message: "Transformed revenue entities to display entities",
       });
 
       try {
-        // Build a merge-ready template with a period added
-        const mergeReadyTemplate = template.map((m) => ({
-          ...m,
-          period: rollingMonthToPeriod(m), // yields 'YYYY-MM' (branded Period)
-        }));
-
-        // Merge the display entities with the template
+        // Merge the display entities with the template (template-driven order)
         const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
           displayEntities,
-          mergeReadyTemplate,
+          template,
         );
         logger.info({
           context: "RevenueStatisticsService.calculateForRollingYear",
           message: "Successfully calculated rolling 12-month revenue data",
-          result,
           resultCount: result.length,
           withDataCount: displayEntities.length,
         });
         return result;
       } catch (e) {
-        // Minimal, targeted diagnostics to locate data issues
-        const periods: Period[] = displayEntities.map(
-          (d: RevenueDisplayEntity): Period => d.period,
-        );
-
-        // Properly format template periods as YYYY-MM with zero-padded month
-        const templatePeriods: Period[] = template.map((m: RollingMonthData) =>
-          toPeriod(`${m.year}-${String(m.month).padStart(2, "0")}`),
-        );
-
-        const duplicates: Period[] = [
-          ...new Set(periods.filter((p, i) => periods.indexOf(p) !== i)),
-        ];
-        const missing = templatePeriods.filter((p) => !periods.includes(p));
-        const unexpected = periods.filter((p) => !templatePeriods.includes(p));
-        const invalidFormat = periods.filter((p) => !/^\d{4}-\d{2}$/.test(p));
-        const badRevenue = displayEntities
-          .filter(
-            (d) => typeof d.revenue !== "number" || Number.isNaN(d.revenue),
-          )
-          .map((d) => d.period);
-
+        const report = makeCoverageReport(displayEntities, template);
+        logCoverageReport(report);
         logger.error({
           context: "RevenueStatisticsService.calculateForRollingYear",
           error: e,
-          message: "Merge validation failed",
-          stats: {
-            badRevenue,
-            displayCount: displayEntities.length,
-            duplicates,
-            invalidFormat,
-            missing,
-            periods,
-            templateCount: template.length,
-            templatePeriods,
-            unexpected,
-          },
+          message: "Merge failed; returning defaults from template",
         });
-        throw e;
+        // Fallback: return a safe template-filled dataset (all defaults)
+        return mergeDataWithTemplate([], template);
       }
     } catch (error) {
       logger.error({
         context: "RevenueStatisticsService.calculateForRollingYear",
         error,
-        message: "Error calculating rolling 12-month revenue data",
+        message:
+          "Error calculating rolling 12-month revenue data; returning defaults",
       });
-      throw error;
+      // Fallback path: attempt to build a fresh template and return defaults
+      try {
+        const { startDate, duration } = calculateDateRange();
+        const template = generateMonthsTemplate(
+          startDate,
+          toIntervalDuration(duration),
+        );
+        return mergeDataWithTemplate([], template);
+      } catch (fallbackError) {
+        logger.error({
+          context: "RevenueStatisticsService.calculateForRollingYear",
+          error: fallbackError,
+          message:
+            "Fallback template generation failed; returning empty dataset",
+        });
+        // Final fallback: avoid throwing to prevent a UI error path
+        return [];
+      }
     }
   }
 
@@ -210,7 +185,7 @@ export class RevenueStatisticsService {
       // Get the revenue data for the rolling 12-month period
       const revenueData = await this.calculateForRollingYear();
 
-      logger.info({
+      logger.debug({
         context: "RevenueStatisticsService.calculateStatistics",
         message: "Retrieved revenue data for statistics calculation",
         revenueDataCount: revenueData.length,
@@ -218,7 +193,7 @@ export class RevenueStatisticsService {
 
       // If there's no data, return empty statistics
       if (!revenueData || revenueData.length === 0) {
-        logger.info({
+        logger.debug({
           context: "RevenueStatisticsService.calculateStatistics",
           message: "No revenue data available, returning empty statistics",
         });
@@ -232,7 +207,7 @@ export class RevenueStatisticsService {
 
       // If there are no non-zero revenues, return empty statistics
       if (nonZeroRevenues.length === 0) {
-        logger.info({
+        logger.debug({
           context: "RevenueStatisticsService.calculateStatistics",
           message:
             "No non-zero revenue data available, returning empty statistics",
@@ -266,9 +241,10 @@ export class RevenueStatisticsService {
       logger.error({
         context: "RevenueStatisticsService.calculateStatistics",
         error,
-        message: "Error calculating revenue statistics",
+        message:
+          "Error calculating revenue statistics; returning empty statistics",
       });
-      throw error;
+      return createEmptyStatistics();
     }
   }
 }

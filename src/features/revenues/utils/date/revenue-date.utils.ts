@@ -35,13 +35,13 @@ export function calculateMonthDateFromStart(
  *
  * @returns startDate - First day of the month 12 months ago
  * @returns endDate - Last day of the current month
- * @returns period - String "year" indicating the period type
+ * @returns duration - String "year" indicating the period type
  *
  */
 export function calculateDateRange(): {
   endDate: Date;
   startDate: Date;
-  period: "year";
+  duration: "year";
 } {
   const now = new Date();
 
@@ -52,8 +52,8 @@ export function calculateDateRange(): {
   const endDate = endOfMonth(now);
 
   return {
+    duration: "year",
     endDate: endDate,
-    period: "year",
     startDate: startDate,
   };
 }
@@ -88,7 +88,7 @@ export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
  * @param date - Date object to format
  * @returns Formatted period string
  */
-export function formatDateToPeriod(date: Date): string {
+export function formatDateToPeriod(date: Date): Period {
   if (!isValid(date)) {
     throw new ValidationError("Invalid date for period formatting");
   }

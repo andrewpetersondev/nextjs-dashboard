@@ -9,16 +9,13 @@ import {
   MONTH_ORDER,
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
-import {
-  rollingMonthToPeriod,
-  toPeriod,
-} from "@/features/revenues/utils/date/period.utils";
+import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import type { Period } from "@/lib/definitions/brands";
 import { toRevenueId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Creates a default month data structure for months without revenue.
+ * Creates a default month data structure for months without a revenue.
  *
  * Ensures type safety and consistent zero-value initialization for months
  * that don't have corresponding invoice data.
@@ -47,18 +44,17 @@ function createDefaultMonthData(
 
   const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
 
-  logger.info({
+  logger.debug({
     context: "createDefaultMonthData",
-    defaultEntity,
-    mappedData,
     message: "Created default month data",
+    period,
   });
 
   return mappedData;
 }
 
 /**
- * Creates default revenue display entity for a specific period.
+ * Creates a default revenue display entity for a specific period.
  * This function creates a RevenueDisplayEntity object by first creating a default
  * RevenueEntity and then transforming it using the factory method.
  * Use createDefaultRevenueEntity if you need a database-compatible entity.
@@ -66,7 +62,7 @@ function createDefaultMonthData(
  * @param period - Period in YYYY-MM format
  * @returns Complete RevenueDisplayEntity with default values
  */
-export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
+export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
   // Create a default RevenueEntity
   const defaultEntity: RevenueEntity = {
     calculationSource: "template",
@@ -81,11 +77,10 @@ export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
   // Transform to RevenueDisplayEntity using the factory method
   const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
 
-  logger.info({
+  logger.debug({
     context: "createDefaultRevenueData",
-    defaultEntity,
-    mappedData,
     message: "Created default revenue data",
+    period,
   });
 
   return mappedData;
@@ -94,7 +89,7 @@ export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
 /**
  * Retrieves existing revenue data for a month or creates default empty data.
  *
- * Ensures consistent data structure across all 12 months by providing
+ * Ensures a consistent data structure across all 12 months by providing
  * zero-value defaults for months without revenue data.
  *
  * @param monthTemplate - Template data for the target month
@@ -105,8 +100,7 @@ export function getMonthDataOrDefault(
   monthTemplate: RollingMonthData,
   dataLookup: Map<Period, RevenueDisplayEntity>,
 ): RevenueDisplayEntity {
-  const { year, monthNumber, month } = monthTemplate;
-  const period = rollingMonthToPeriod(monthTemplate);
+  const { year, monthNumber, month, period } = monthTemplate;
   const existingData = dataLookup.get(period);
 
   if (existingData) {
@@ -115,10 +109,12 @@ export function getMonthDataOrDefault(
 
   const defaultData = createDefaultMonthData(month, monthNumber, year);
 
-  logger.info({
+  logger.debug({
     context: "getMonthDataOrDefault",
-    defaultData,
     message: "Created default data for missing month",
+    monthNumber,
+    period,
+    year,
   });
 
   return defaultData;
@@ -147,17 +143,25 @@ export function createMonthTemplateData(
     );
   }
 
-  const data = {
+  const monthNumber = calendarMonthIndex + 1;
+  const year = monthDate.getFullYear();
+  const period = toPeriod(`${year}-${String(monthNumber).padStart(2, "0")}`);
+
+  const data: RollingMonthData = {
     displayOrder,
     month: monthName,
-    monthNumber: calendarMonthIndex + 1,
-    year: monthDate.getFullYear(),
+    monthNumber,
+    period,
+    year,
   };
 
-  logger.info({
+  logger.debug({
     context: "createMonthTemplateData",
-    data,
+    displayOrder,
     message: "Created month template data",
+    month: monthName,
+    monthNumber,
+    year,
   });
 
   return data;

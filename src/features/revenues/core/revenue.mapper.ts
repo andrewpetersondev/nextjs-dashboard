@@ -6,7 +6,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import { extractMonthNumberFromPeriod } from "@/lib/utils/date-utils";
+import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -18,9 +18,9 @@ export function mapRevRowToRevEnt(row: RevenueRow): RevenueEntity {
   return {
     calculationSource: row.calculationSource,
     createdAt: row.createdAt,
-    id: row.id, // Already RevenueId
+    id: row.id,
     invoiceCount: row.invoiceCount,
-    period: row.period, // Already Period ('2024-01')
+    period: row.period,
     revenue: row.revenue,
     updatedAt: row.updatedAt,
   };
