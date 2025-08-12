@@ -1,12 +1,3 @@
-/**
- * @fileoverview
- * Type-safe utilities for form validation, error handling, and state management.
- * Designed for React/Next.js apps using strict TypeScript settings.
- * All types use generics for domain safety and are compatible with `exactOptionalPropertyTypes`.
- *
- * @author andrewpetersondev
- */
-
 import "server-only";
 
 /**

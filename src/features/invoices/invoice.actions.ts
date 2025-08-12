@@ -26,8 +26,10 @@ import type {
   InvoiceStatus,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
-import { INVOICE_EVENTS } from "@/lib/events/event-names";
-import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
+import {
+  type BaseInvoiceEvent,
+  INVOICE_EVENTS,
+} from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -79,7 +81,8 @@ export async function createInvoiceAction(
     // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice: InvoiceDto = await service.createInvoice(parsed.data);
 
-    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    // Emit base event with all context.
+    // TODO: why do i have await here? It seems unnecessary to scale.
     const { EventBus } = await import("@/lib/events/eventBus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
       eventId: crypto.randomUUID(),
@@ -220,7 +223,8 @@ export async function updateInvoiceAction(
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
 
-    // Get previous invoice state for event emission TODO: idk how i feel about this.
+    // Get previous invoice state for event emission
+    // TODO: idk how i feel about this.
     const previousInvoice: InvoiceDto = await service.readInvoice(id);
 
     // Call service to update invoice with validated DTO. Function returns InvoiceDto.
@@ -229,7 +233,8 @@ export async function updateInvoiceAction(
       parsed.data,
     );
 
-    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    // Emit base event with all context.
+    // TODO: why do i have await here? It seems unnecessary to scale.
     const { EventBus } = await import("@/lib/events/eventBus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
       eventId: crypto.randomUUID(),
@@ -288,7 +293,8 @@ export async function deleteInvoiceAction(
     // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice = await service.deleteInvoice(id);
 
-    // Emit base event with all context. TODO: why do i have await here? It seems unnecessary to scale.
+    // Emit base event with all context.
+    // TODO: why do i have await here? It seems unnecessary to scale.
     const { EventBus } = await import("@/lib/events/eventBus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
       eventId: crypto.randomUUID(),

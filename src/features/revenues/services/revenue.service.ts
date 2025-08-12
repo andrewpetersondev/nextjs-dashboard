@@ -1,10 +1,3 @@
-/**
- * Business service for revenue processing and management.
- *
- * This service handles the coordination between invoice and revenue data,
- * providing methods for creating, reading, updating, and deleting revenue records.
- */
-
 import "server-only";
 
 import { DatabaseError, ValidationError } from "@/errors/errors";

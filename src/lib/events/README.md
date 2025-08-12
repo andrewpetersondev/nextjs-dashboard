@@ -7,9 +7,6 @@ This directory contains event-driven utilities and type definitions for domain e
 - **`eventBus.ts`**  
   In-memory event bus for publishing and subscribing to domain events. Enables decoupling between event publishers and subscribers. Includes structured error logging.
 
-- **`event-names.ts`**  
-  Defines string constants and types for invoice-related event names, ensuring type safety and consistency across the codebase.
-
 - **`invoice.events.ts`**  
   Type definitions and constants for invoice domain events, including base event interfaces and supported invoice operations.
 

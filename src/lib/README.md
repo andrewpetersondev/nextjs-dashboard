@@ -19,7 +19,6 @@ Branded types and domain-specific type definitions.
 
 ### `events/`
 Event-driven utilities and type definitions for domain events.
-- **`event-names.ts`**: String constants and types for event names.
 - **`eventBus.ts`**: In-memory event bus for publishing and subscribing to domain events.
 - **`invoice.events.ts`**: Type definitions and constants for invoice-related events.
 - **`README.md`**: Documentation for the events module.
@@ -34,10 +33,6 @@ Type-safe utilities and types for form validation and state management.
 Base repository abstractions for data access.
 - **`base-repository.ts`**: Generic abstract class for CRUD operations, designed for extension.
 - **`README.md`**: Documentation for the repository module.
-
-### `schemas/`
-Generated schemas for validation and type safety.
-- **`generated.ts`**: Auto-generated Zod schemas and types.
 
 ### `utils/`
 Shared utility functions and helpers for both server and client code.

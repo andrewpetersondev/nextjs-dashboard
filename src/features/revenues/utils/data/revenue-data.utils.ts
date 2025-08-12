@@ -1,10 +1,3 @@
-/**
- * Core data utility functions for revenue calculations.
- *
- * This file contains the fundamental data manipulation functions used
- * across the revenue feature, focusing on data lookup and transformation.
- */
-
 import "server-only";
 
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";

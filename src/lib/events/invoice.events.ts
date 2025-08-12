@@ -9,6 +9,12 @@ const InvoiceOperations = [
   "invoice_deleted",
 ] as const;
 
+export const INVOICE_EVENTS = {
+  CREATED: "InvoiceCreatedEvent",
+  DELETED: "InvoiceDeletedEvent",
+  UPDATED: "InvoiceUpdatedEvent",
+} as const;
+
 /**
  * @description Base interface for invoice events.
  * Contains common properties shared by all invoice-related events.
