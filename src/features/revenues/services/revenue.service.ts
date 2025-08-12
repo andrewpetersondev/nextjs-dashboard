@@ -5,7 +5,7 @@ import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
-  RevenuePartialEntity,
+  RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { toPeriod } from "@/features/revenues/utils/date/period.utils";
@@ -76,7 +76,7 @@ export class RevenueService {
    */
   async update(
     id: RevenueId,
-    revenue: RevenuePartialEntity,
+    revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!id || !revenue) {
       throw new ValidationError("Invalid revenue ID or data");

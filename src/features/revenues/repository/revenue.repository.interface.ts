@@ -3,7 +3,7 @@ import "server-only";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
-  RevenuePartialEntity,
+  RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
 import type { Period, RevenueId } from "@/lib/definitions/brands";
 
@@ -14,19 +14,22 @@ import type { Period, RevenueId } from "@/lib/definitions/brands";
  * abstracting the underlying database implementation details.
  *
  * @remarks
- * **Repository Pattern:**
+ * **Repository Pattern: **
  * - Centralizes data access logic
  * - Enables dependency injection for testing
  * - Abstracts database implementation details
  * - Provides domain-focused data access methods
  */
 export interface RevenueRepositoryInterface {
-  /** Creates a new revenue record */
+  /**
+   * Creates a new revenue record.
+   * Note: Implementation delegates to upsert() to reduce duplication.
+   */
   create(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
   /** Retrieves a revenue record by ID */
   read(id: RevenueId): Promise<RevenueEntity>;
   /** Updates an existing revenue record */
-  update(id: RevenueId, revenue: RevenuePartialEntity): Promise<RevenueEntity>;
+  update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>;
   /** Deletes a revenue record by ID */
   delete(id: RevenueId): Promise<void>;
   /** Finds revenue records within a date range */
@@ -36,13 +39,18 @@ export interface RevenueRepositoryInterface {
   ): Promise<RevenueEntity[]>;
   /** Creates or updates a revenue record */
   upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
-  /** Deletes a revenue record by ID */
+  /**
+   * @deprecated Use delete(id) instead. This is an alias kept for backward compatibility.
+   */
   deleteById(id: RevenueId): Promise<void>;
   /** Finds a revenue record by period */
   findByPeriod(period: Period): Promise<RevenueEntity | null>;
-  /** Creates or updates a revenue record by period */
+  /**
+   * Convenience wrapper around upsert() that enforces the provided period.
+   * Prefer calling upsert(revenue) directly when you already have a complete RevenueCreateEntity.
+   */
   upsertByPeriod(
     period: Period,
-    revenue: RevenuePartialEntity,
+    revenue: RevenueUpdatable | RevenueCreateEntity,
   ): Promise<RevenueEntity>;
 }

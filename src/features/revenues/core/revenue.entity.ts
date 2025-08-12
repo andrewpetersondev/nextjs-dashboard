@@ -22,9 +22,12 @@ export interface RevenueEntity {
 export type RevenueCreateEntity = Omit<RevenueEntity, "id">;
 
 /**
- * Partial domain model for updating a revenue record.
+ * Narrow domain model for updating a revenue record (only updatable fields).
  */
-export type RevenuePartialEntity = Partial<RevenueCreateEntity>;
+export type RevenueUpdatable = Pick<
+  RevenueEntity,
+  "invoiceCount" | "revenue" | "calculationSource"
+>;
 
 /**
  * Display-oriented entity extending RevenueEntity with UI-specific fields.

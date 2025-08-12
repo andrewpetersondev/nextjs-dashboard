@@ -74,26 +74,17 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): string | null {
 
   try {
     // Handle different date formats
-    if (typeof invoice.date === "string") {
-      // Try to parse as ISO date
-      const parsedDate = parseISO(invoice.date);
-
-      // Check if the date is valid
-      if (isValid(parsedDate)) {
-        return dateToPeriod(parsedDate);
+    // Try to parse as ISO date
+    const parsedDate = parseISO(invoice.date);
+    if (isValid(parsedDate)) {
+      return dateToPeriod(parsedDate);
+    }
+    if (invoice.date.match(/^\d{4}-\d{2}$/)) {
+      // Add a day to make it a complete date for validation
+      const testDate = parseISO(`${invoice.date}-01`);
+      if (isValid(testDate)) {
+        return invoice.date;
       }
-
-      // If it's a partial date in YYYY-MM format, validate and return it
-      if (invoice.date.match(/^\d{4}-\d{2}$/)) {
-        // Add a day to make it a complete date for validation
-        const testDate = parseISO(`${invoice.date}-01`);
-        if (isValid(testDate)) {
-          return invoice.date;
-        }
-      }
-    } else if (isValid(invoice.date)) {
-      // Handle Date object directly
-      return dateToPeriod(invoice.date);
     }
 
     return null;
@@ -132,10 +123,6 @@ export function validateInvoiceForRevenue(invoice: InvoiceDto | undefined): {
     return { reason: "Invoice date is missing", valid: false };
   }
 
-  if (typeof invoice.amount !== "number") {
-    return { reason: "Invoice amount is not a number", valid: false };
-  }
-
   if (!invoice.status) {
     return { reason: "Invoice status is missing", valid: false };
   }
@@ -143,7 +130,7 @@ export function validateInvoiceForRevenue(invoice: InvoiceDto | undefined): {
   const period = extractPeriodFromInvoice(invoice);
   if (!period) {
     return {
-      reason: "Could not extract valid period from invoice date",
+      reason: "Could not extract a valid period from the invoice date",
       valid: false,
     };
   }
@@ -243,7 +230,7 @@ export function extractAndValidatePeriod(
   if (!period) {
     logError(
       context,
-      "Failed to extract period from invoice",
+      "Failed to extract period from the invoice",
       new Error("Invalid invoice date"),
       {
         eventId,
@@ -276,6 +263,7 @@ export async function updateRevenueRecord(
   });
 
   await revenueService.update(toRevenueId(revenueId), {
+    calculationSource: "invoice_event",
     invoiceCount,
     revenue,
   });
@@ -323,23 +311,30 @@ export async function processInvoiceForRevenue(
 
           // Update the existing revenue record with the amount difference
           await revenueService.update(existingRevenue.id, {
+            calculationSource: "invoice_event",
             // Invoice count stays the same for updates
+            invoiceCount: existingRevenue.invoiceCount,
             revenue: existingRevenue.revenue + amountDifference,
           });
         } else {
-          logInfo(context, "Updating existing revenue record for new invoice", {
-            existingRevenue: existingRevenue.id,
-            ...metadata,
-          });
+          logInfo(
+            context,
+            "Updating the existing revenue record for a new invoice",
+            {
+              existingRevenue: existingRevenue.id,
+              ...metadata,
+            },
+          );
 
           // Update the existing revenue record for a new invoice
           await revenueService.update(existingRevenue.id, {
+            calculationSource: "invoice_event",
             invoiceCount: existingRevenue.invoiceCount + 1,
             revenue: existingRevenue.revenue + invoice.amount,
           });
         }
       } else {
-        logInfo(context, "Creating new revenue record", metadata);
+        logInfo(context, "Creating a new revenue record", metadata);
 
         // Create a new revenue record
         await revenueService.create({
@@ -387,10 +382,10 @@ export async function adjustRevenueForDeletedInvoice(
         return;
       }
 
-      if (typeof invoice.amount !== "number" || invoice.amount <= 0) {
+      if (invoice.amount <= 0) {
         logInfo(
           context,
-          "Deleted invoice had invalid amount, no adjustment needed",
+          "Deleted invoice had an invalid amount, no adjustment needed",
           {
             ...metadata,
             amount: invoice.amount,
@@ -405,7 +400,7 @@ export async function adjustRevenueForDeletedInvoice(
       if (!existingRevenue) {
         logInfo(
           context,
-          "No existing revenue record found for period",
+          "No existing revenue record was found for a period",
           metadata,
         );
         return;
@@ -419,7 +414,7 @@ export async function adjustRevenueForDeletedInvoice(
       if (newInvoiceCount === 0) {
         logInfo(
           context,
-          "No more invoices for period, deleting revenue record",
+          "No more invoices for a period, deleting revenue record",
           {
             ...metadata,
             revenueId: existingRevenue.id,
@@ -478,7 +473,7 @@ export async function adjustRevenueForStatusChange(
       if (!existingRevenue) {
         logInfo(
           context,
-          "No existing revenue record found for period",
+          "No existing revenue record was found for a period",
           metadataWithPeriod,
         );
 
@@ -503,7 +498,7 @@ export async function adjustRevenueForStatusChange(
         // Invoice is no longer eligible for revenue, remove it
         logInfo(
           context,
-          "Invoice no longer eligible for revenue, removing from total",
+          "Invoice no longer eligible for revenue, removing from the total",
           metadataWithPeriod,
         );
 
@@ -522,7 +517,7 @@ export async function adjustRevenueForStatusChange(
         // Invoice is now eligible for revenue, add it
         logInfo(
           context,
-          "Invoice now eligible for revenue, adding to total",
+          "Invoice now eligible for revenue, adding to the total",
           metadataWithPeriod,
         );
 
@@ -539,7 +534,7 @@ export async function adjustRevenueForStatusChange(
         isStatusEligibleForRevenue(currentInvoice.status) &&
         previousInvoice.amount !== currentInvoice.amount
       ) {
-        // Both invoices are eligible for revenue, but amount has changed
+        // Both invoices are eligible for revenue, but the amount has changed
         logInfo(
           context,
           "Invoice amount changed while remaining eligible for revenue",

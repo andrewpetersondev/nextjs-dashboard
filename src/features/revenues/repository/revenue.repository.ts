@@ -7,7 +7,7 @@ import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
-  RevenuePartialEntity,
+  RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
 import {
   mapRevenueRowsToEntities,
@@ -46,28 +46,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     if (!revenue) {
       throw new ValidationError("Revenue data is required");
     }
-    const now = new Date();
-
-    const [data]: RevenueRow[] = await this.db
-      .insert(revenues)
-      .values({
-        ...revenue,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning();
-
-    if (!data) {
-      throw new DatabaseError("Failed to create revenue record");
-    }
-
-    const result: RevenueEntity = mapRevRowToRevEnt(data);
-
-    if (!result) {
-      throw new DatabaseError("Failed to convert revenue record");
-    }
-
-    return result;
+    // Delegate to upsert to avoid duplication; upsert handles insert and conflict update.
+    return this.upsert(revenue);
   }
 
   async read(id: RevenueId): Promise<RevenueEntity> {
@@ -97,7 +77,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
 
   async update(
     id: RevenueId,
-    revenue: RevenuePartialEntity,
+    revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!id || !revenue) {
       throw new ValidationError("Revenue ID and data are required");
@@ -108,7 +88,9 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     const [data]: RevenueRow[] = await this.db
       .update(revenues)
       .set({
-        ...revenue,
+        calculationSource: revenue.calculationSource,
+        invoiceCount: revenue.invoiceCount,
+        revenue: revenue.revenue,
         updatedAt: now,
       })
       .where(eq(revenues.id, id))
@@ -225,6 +207,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param revenueData - Revenue data to create or update
    * @returns Promise resolving to the created or updated revenue entity
    */
+  /**
+   * Creates or updates a revenue record.
+   * Delegated target for create() and upsertByPeriod() to reduce duplication.
+   */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenueData) {
       throw new ValidationError("Revenue data is required");
@@ -286,7 +272,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Deletes a revenue record by its unique identifier.
    */
   async deleteById(id: RevenueId): Promise<void> {
-    await this.db.delete(revenues).where(eq(revenues.id, id));
+    // Alias for delete(id); kept for backward compatibility
+    return this.delete(id);
   }
 
   /**
@@ -305,7 +292,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async upsertByPeriod(
     period: Period,
-    revenue: RevenuePartialEntity,
+    revenue: RevenueUpdatable | RevenueCreateEntity,
   ): Promise<RevenueEntity> {
     if (!period) {
       throw new ValidationError("Period is required");
@@ -317,9 +304,10 @@ export class RevenueRepository implements RevenueRepositoryInterface {
 
     // Ensure the period in the revenue data matches the provided period
     const revenueWithPeriod: RevenueCreateEntity = {
-      ...(revenue as RevenueCreateEntity),
+      // If the caller provided a full creation shape, use its createdAt; otherwise supply now in upsert()
+      ...(revenue as Partial<RevenueCreateEntity>),
       period: toPeriod(period),
-    };
+    } as RevenueCreateEntity;
 
     return this.upsert(revenueWithPeriod);
   }
