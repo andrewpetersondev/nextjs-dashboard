@@ -12,7 +12,10 @@ import {
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-data.utils";
 import { createDefaultRevenueData } from "@/features/revenues/utils/data/template.utils";
-import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import {
+  rollingMonthToPeriod,
+  toPeriod,
+} from "@/features/revenues/utils/date/period.utils";
 import {
   calculateDateRange,
   generateMonthlyPeriods,
@@ -52,17 +55,17 @@ export class RevenueStatisticsService {
         message: "Calculating rolling 12-month revenue data",
       });
 
-      // Calculate the date range for the rolling 12-month period.
+      // Calculate the date range for the rolling 12-month period. // TODO: period should be renamed to interval so it does not get confused with DB Schema?
       const { startDate, endDate, period } = calculateDateRange();
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endDate,
-        message: "Calculated date range for rolling 12-month period",
+        message: "Calculated date range for a rolling 12-month period",
         startDate,
       });
 
-      // Generate the template for the 12-month period
+      // Generate the template for the 12-month period // TODO: rename period to interval?
       const template = generateMonthsTemplate(
         startDate,
         toPeriodDuration(period),
@@ -82,30 +85,24 @@ export class RevenueStatisticsService {
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
-        message: "Generated template for 12-month period",
+        message: "Generated template for a 12-month period",
         templateMonths: template.length,
       });
 
-      const startPeriod = `${firstMonth.year}-${String(
-        firstMonth.monthNumber,
-      ).padStart(2, "0")}`;
+      const startPeriod = rollingMonthToPeriod(firstMonth);
 
-      const endPeriod = `${lastMonth.year}-${String(
-        lastMonth.monthNumber,
-      ).padStart(2, "0")}`;
+      const endPeriod = rollingMonthToPeriod(lastMonth);
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endPeriod,
-        message: "Extracted start and end periods from template",
+        message: "Extracted start and end periods from the template",
         startPeriod,
       });
 
       // Fetch revenue data from the repository
-      const revenueEntities = await this.repository.findByDateRange(
-        toPeriod(startPeriod),
-        toPeriod(endPeriod),
-      );
+      const revenueEntities: RevenueEntity[] =
+        await this.repository.findByDateRange(startPeriod, endPeriod);
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
@@ -114,12 +111,16 @@ export class RevenueStatisticsService {
       });
 
       // Transform the revenue entities to display entities
-      const displayEntities = revenueEntities.map((entity) =>
-        mapRevEntToRevDisplayEnt(entity),
+      const displayEntities: RevenueDisplayEntity[] = revenueEntities.map(
+        (entity: RevenueEntity): RevenueDisplayEntity =>
+          mapRevEntToRevDisplayEnt(entity),
       );
 
       // Merge the display entities with the template
-      const result = mergeDataWithTemplate(displayEntities, template);
+      const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
+        displayEntities,
+        template,
+      );
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",

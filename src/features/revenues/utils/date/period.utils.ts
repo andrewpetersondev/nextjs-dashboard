@@ -1,5 +1,6 @@
 import { format, isValid, parse } from "date-fns";
 import { ValidationError } from "@/errors/errors";
+import type { RollingMonthData } from "@/features/revenues/core/revenue.types";
 import type { Period } from "@/lib/definitions/brands";
 
 /**
@@ -7,7 +8,7 @@ import type { Period } from "@/lib/definitions/brands";
  * Throws a ValidationError if invalid.
  */
 export function toPeriod(period: string): Period {
-  // Parse with strict mask, e.g. "2024-08" -> Date object (1st of month)
+  // Parse with a strict mask, e.g. "2024-08" -> Date object (1st of the month)
   const parsed = parse(period, "yyyy-MM", new Date());
   if (!isValid(parsed) || format(parsed, "yyyy-MM") !== period) {
     throw new ValidationError(`Invalid period: "${period}"`);
@@ -35,4 +36,14 @@ export function periodToDate(period: Period): Date {
  */
 export function formatPeriod(period: Period): string {
   return format(periodToDate(period), "MMMM yyyy");
+}
+
+/**
+ * Constructs a date range element from RollingMonthData to use in service for calculateForRollingYear. Prepares for values to be used in  repo.findByDateRange
+ * @param element
+ * @returns branded period string in YYYY-MM format
+ */
+export function rollingMonthToPeriod(element: RollingMonthData): Period {
+  const period = `${element.year}-${String(element.monthNumber).padStart(2, "0")}`;
+  return toPeriod(period);
 }

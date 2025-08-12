@@ -41,8 +41,8 @@ import { logger } from "@/lib/utils/logger";
  * ```
  *
  * @remarks
- * **Architecture Notes:**
- * - Uses dependency injection pattern for database access
+ * **Architecture Notes: **
+ * - Uses a dependency injection pattern for database access
  * - Separates business logic (service) from presentation logic (action)
  * - Implements proper error handling with structured logging
  * - Converts raw database values to presentation format
@@ -55,7 +55,7 @@ export async function getRevenueChartAction(): Promise<
     // Create repository with database connection
     const revenueRepository = new RevenueRepository(getDB());
 
-    // Create calculator service with repository dependency
+    // Create a calculator service with repository dependency
     const calculator = new RevenueStatisticsService(revenueRepository);
 
     // Get pure database values for a rolling 12-month period
@@ -65,10 +65,10 @@ export async function getRevenueChartAction(): Promise<
     ]);
 
     const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
-      // Extract month number from period (format: YYYY-MM)
+      // Extract the month number from a period (format: YYYY-MM)
       const monthNumber = parseInt(entity.period.substring(5, 7), 10);
 
-      // Validate month number is within valid range (1-12)
+      // Validate month number is within the valid range (1-12)
       if (monthNumber < 1 || monthNumber > 12) {
         throw new Error(
           `Invalid month number ${monthNumber} in period ${entity.period}`,
