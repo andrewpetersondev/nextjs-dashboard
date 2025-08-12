@@ -1,6 +1,7 @@
 import "server-only";
 
 import type {
+  Cents,
   MonthName,
   RevenueSource,
 } from "@/features/revenues/core/revenue.types";
@@ -14,8 +15,8 @@ export interface RevenueEntity {
   readonly createdAt: Date;
   readonly id: RevenueId;
   readonly invoiceCount: number;
-  readonly period: Period; // e.g. 2024-01
-  readonly revenue: number; // In cents
+  readonly period: Period;
+  readonly revenue: Cents;
   readonly updatedAt: Date;
 }
 
@@ -34,11 +35,12 @@ export type RevenueUpdatable = Pick<
 
 /**
  * Display-oriented entity extending RevenueEntity with UI-specific fields.
- * - month: Three-letter month abbreviation (e.g., "Jan", "Feb")
- * - monthNumber: Calendar month number (1-12)
+ * @prop month - Three-letter month abbreviation (e.g., "Jan", "Feb")
+ * @prop year - The year in YYYY format
+ * @prop monthNumber - Calendar month number (1-12)
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
   readonly month: MonthName;
   readonly year: number;
-  readonly monthNumber: number; // 1..12
+  readonly monthNumber: number;
 }

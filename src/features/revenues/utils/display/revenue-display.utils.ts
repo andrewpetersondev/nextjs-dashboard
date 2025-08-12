@@ -1,45 +1,44 @@
 import type { SimpleRevenueDto } from "@/features/revenues/core/revenue.dto";
-import type { YAxisResult } from "@/features/revenues/core/revenue.types";
+import type {
+  Cents,
+  Dollars,
+  YAxisResult,
+} from "@/features/revenues/core/revenue.types";
 
 /**
  * Converts monetary values from database cents to display dollars.
  *
- * Performs business logic conversion from database-native cent storage
- * to user-friendly dollar amounts. Includes rounding to eliminate
- * fractional cents in presentation layer.
- *
  * @param cents - Monetary value in cents (database format)
  * @returns Monetary value in dollars, rounded to nearest whole dollar
- *
  */
-export function convertCentsToDollars(cents: number): number {
+export function convertCentsToDollars(cents: Cents): Dollars {
   return Math.round(cents / 100);
 }
 
 /**
  * Generates formatted Y-axis labels and scaling information for revenue charts.
  *
- * Analyzes revenue data to determine appropriate chart scaling and creates
- * evenly-spaced, formatted axis labels with currency notation. Includes
+ * Analyzes revenue data to determine the appropriate chart scaling and creates
+ * evenly spaced, formatted axis labels with currency notation. Includes
  * 10% padding above the highest value for visual clarity.
  *
  * @param revenue - Array of revenue data points for analysis
  * @returns YAxisResult containing formatted labels and scaling information
  *
  * @remarks
- * **Algorithm Details:**
+ * **Algorithm Details: **
  * 1. Finds maximum revenue value across all data points
- * 2. Adds 10% padding and rounds up to nearest thousand
- * 3. Generates 6 evenly-spaced labels (0 to topLabel)
+ * 2. Adds 10% padding and rounds up to the nearest thousandth
+ * 3. Generates 6 evenly spaced labels (0 to topLabel)
  * 4. Formats labels with currency symbol and K notation
  *
- * **Scaling Strategy:**
+ * **Scaling Strategy: **
  * - Ensures chart doesn't appear cramped by adding padding
  * - Rounds to clean thousands for professional appearance
  * - Uses K notation to reduce label width and improve readability
  *
- * **Label Format:**
- * - "$0K" for zero baseline
+ * **Label Format: **
+ * - "$0K" for zero-baseline
  * - "$XXK" format for thousands (e.g., "$25K", "$100K")
  * - Ascending order for proper chart axis display
  *

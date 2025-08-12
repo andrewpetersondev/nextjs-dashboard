@@ -1,41 +1,47 @@
-import type { MonthName } from "@/features/revenues/core/revenue.types";
+import type {
+  Dollars,
+  MonthName,
+} from "@/features/revenues/core/revenue.types";
 
 /**
  * Data Transfer Object for simplified revenue display data.
+ *
+ * @prop month - Three-letter month abbreviation (e.g., "Jan", "Feb", "Mar")
+ * @prop revenue - Revenue amount in dollars (converted from database cents)
+ * @prop monthNumber - Sequential month number for proper chronological ordering and scrolling logic
  */
 export interface SimpleRevenueDto {
-  /** Three-letter month abbreviation (e.g., "Jan", "Feb", "Mar") */
   readonly month: MonthName;
-  /** Revenue amount in dollars (converted from database cents) */
-  readonly revenue: number;
-  /** Sequential month number for proper chronological ordering and scrolling logic */
+  readonly revenue: Dollars;
   readonly monthNumber: number;
 }
 
 /**
  * Complete chart data transfer object with revenue data and statistical metrics.
+ *
+ * @prop monthlyData - Array of monthly revenue data in chronological order
+ * @prop statistics - Aggregated statistical metrics for the dataset
+ * @prop year - Current year for display context and chart labeling
  */
 export interface RevenueChartDto {
-  /** Array of monthly revenue data in chronological order */
   readonly monthlyData: SimpleRevenueDto[];
-  /** Aggregated statistical metrics for the dataset */
   readonly statistics: RevenueStatisticsDto;
-  /** Current year for display context and chart labeling */
   readonly year: number;
 }
 
 /**
  * Statistical metrics data transfer object with dollar-converted values.
+ *
+ * @prop maximum - Highest revenue amount in dollars across all months with data
+ * @prop minimum - Lowest revenue amount in dollars (excluding zero-revenue months)
+ * @prop average - Average revenue in dollars calculated from months with data
+ * @prop total - Total revenue in dollars across all 12 months (including zeros)
+ * @prop monthsWithData - Count of months containing actual revenue data (non-zero values)
  */
 export interface RevenueStatisticsDto {
-  /** Highest revenue amount in dollars across all months with data */
-  readonly maximum: number;
-  /** Lowest revenue amount in dollars (excluding zero-revenue months) */
-  readonly minimum: number;
-  /** Average revenue in dollars calculated from months with data */
-  readonly average: number;
-  /** Total revenue in dollars across all 12 months (including zeros) */
-  readonly total: number;
-  /** Count of months containing actual revenue data (non-zero values) */
+  readonly maximum: Dollars;
+  readonly minimum: Dollars;
+  readonly average: Dollars;
+  readonly total: Dollars;
   readonly monthsWithData: number;
 }
