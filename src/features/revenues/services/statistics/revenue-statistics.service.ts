@@ -11,16 +11,10 @@ import {
   createEmptyStatistics,
   mergeDataWithTemplate,
 } from "@/features/revenues/utils/data/revenue-data.utils";
-import { createDefaultRevenueData } from "@/features/revenues/utils/data/template.utils";
-import {
-  rollingMonthToPeriod,
-  toPeriod,
-} from "@/features/revenues/utils/date/period.utils";
+import { rollingMonthToPeriod } from "@/features/revenues/utils/date/period.utils";
 import {
   calculateDateRange,
-  generateMonthlyPeriods,
   generateMonthsTemplate,
-  isValidISODate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
 import { toPeriodDuration } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
@@ -44,9 +38,9 @@ export class RevenueStatisticsService {
 
   /**
    * Calculates revenue data for the rolling 12-month period.
-   * Uses the repository to fetch data and transforms it into the required format.
+   * Ensures all months in the period have data entries, even if no revenue exists.
    *
-   * @returns Promise resolving to array of RevenueDisplayEntity objects
+   * @returns Promise resolving to an array of RevenueDisplayEntity objects
    */
   async calculateForRollingYear(): Promise<RevenueDisplayEntity[]> {
     try {
@@ -55,17 +49,20 @@ export class RevenueStatisticsService {
         message: "Calculating rolling 12-month revenue data",
       });
 
-      // Calculate the date range for the rolling 12-month period. // TODO: period should be renamed to interval so it does not get confused with DB Schema?
+      // Calculate the date range for the rolling 12-month period.
+      // TODO: period should be renamed to interval so it does not get confused with DB Schema?
       const { startDate, endDate, period } = calculateDateRange();
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endDate,
         message: "Calculated date range for a rolling 12-month period",
+        period,
         startDate,
       });
 
-      // Generate the template for the 12-month period // TODO: rename period to interval?
+      // Generate the template for the 12-month period
+      // TODO: rename period to interval?
       const template = generateMonthsTemplate(
         startDate,
         toPeriodDuration(period),
@@ -83,21 +80,15 @@ export class RevenueStatisticsService {
         throw new Error("Template generation failed: invalid month data");
       }
 
-      logger.info({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        message: "Generated template for a 12-month period",
-        templateMonths: template.length,
-      });
-
       const startPeriod = rollingMonthToPeriod(firstMonth);
-
       const endPeriod = rollingMonthToPeriod(lastMonth);
 
       logger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endPeriod,
-        message: "Extracted start and end periods from the template",
+        message: "Prepared template for a 12-month period",
         startPeriod,
+        templateMonths: template.length,
       });
 
       // Fetch revenue data from the repository
@@ -126,6 +117,7 @@ export class RevenueStatisticsService {
         context: "RevenueStatisticsService.calculateForRollingYear",
         message: "Successfully calculated rolling 12-month revenue data",
         resultCount: result.length,
+        withDataCount: displayEntities.length,
       });
 
       return result;
@@ -140,123 +132,9 @@ export class RevenueStatisticsService {
   }
 
   /**
-   * Fetches revenue data for a custom date range.
-   * Uses the repository to fetch data and transforms it into the required format.
-   *
-   * @param start - Start date in ISO format (YYYY-MM-DD)
-   * @param end - End date in ISO format (YYYY-MM-DD)
-   * @returns Promise resolving to array of RevenueDisplayEntity objects
-   */
-  async fetchCustomPeriodRevenueData(
-    start: string,
-    end: string,
-  ): Promise<RevenueDisplayEntity[]> {
-    try {
-      logger.info({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        end,
-        message: "Fetching revenue data for custom period",
-        start,
-      });
-
-      if (!isValidISODate(start) || !isValidISODate(end)) {
-        const error = "Invalid date range for revenue query";
-        logger.error({
-          context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-          end,
-          error,
-          start,
-        });
-        throw new Error(error);
-      }
-
-      // Generate all periods we need to fetch
-      const periods = generateMonthlyPeriods(start, end);
-
-      logger.info({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        message: "Generated monthly periods",
-        periodCount: periods.length,
-      });
-
-      // Extract start and end periods for repository query
-      const startPeriod = periods[0];
-      const endPeriod = periods[periods.length - 1];
-
-      if (!startPeriod || !endPeriod) {
-        const error = "Failed to generate valid periods for revenue query";
-        logger.error({
-          context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-          error,
-          periodsGenerated: periods.length,
-        });
-        throw new Error(error);
-      }
-
-      logger.info({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        endPeriod,
-        message: "Fetching revenue data from repository",
-        startPeriod,
-      });
-
-      // Use repository to fetch revenue data
-      const revenueEntities = await this.repository.findByDateRange(
-        toPeriod(startPeriod),
-        toPeriod(endPeriod),
-      );
-
-      logger.info({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        entityCount: revenueEntities.length,
-        message: "Retrieved revenue entities from repository",
-      });
-
-      // Create a map for quick lookups
-      const revenueByPeriod = new Map<string, RevenueEntity>();
-      revenueEntities.forEach((entity) => {
-        revenueByPeriod.set(entity.period, entity);
-      });
-
-      // Transform each period into a result, using actual data or defaults
-      const results: RevenueDisplayEntity[] = periods.map((period) => {
-        const entity = revenueByPeriod.get(period);
-
-        if (entity) {
-          // Transform existing data using the factory method
-          return mapRevEntToRevDisplayEnt(entity);
-        } else {
-          // Create default data for missing periods
-          return createDefaultRevenueData(period);
-        }
-      });
-
-      const periodsWithData = results.filter((r) => r.revenue > 0).length;
-
-      logger.info({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        message: "Successfully processed revenue data for custom period",
-        periodsWithData,
-        totalPeriods: results.length,
-      });
-
-      return results;
-    } catch (error) {
-      logger.error({
-        context: "RevenueStatisticsService.fetchCustomPeriodRevenueData",
-        end,
-        error,
-        message: "Error fetching revenue data for custom period",
-        start,
-      });
-      throw error;
-    }
-  }
-
-  /**
    * Calculates statistical metrics from revenue data for the rolling 12-month period.
    *
-   * This is a pure calculation method that doesn't perform database operations directly,
+   * This is a pure calculation method that doesn't perform database operations directly
    * but calls `calculateForRollingYear()` to get the underlying data.
    *
    * @returns Promise resolving to RevenueStatistics object
@@ -286,7 +164,7 @@ export class RevenueStatisticsService {
         return createEmptyStatistics();
       }
 
-      // Filter out months with zero revenue for min/max/average calculations
+      // Filter out months with zero revenues for min/max/average calculations
       const nonZeroRevenues = revenueData
         .filter((entity) => entity.revenue > 0)
         .map((entity) => entity.revenue);

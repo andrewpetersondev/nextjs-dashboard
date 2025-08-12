@@ -14,6 +14,7 @@ import type {
 } from "@/features/revenues/core/revenue.types";
 import { createDataLookupMap } from "@/features/revenues/utils/data/lookup.utils";
 import { getMonthDataOrDefault } from "@/features/revenues/utils/data/template.utils";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Creates an empty statistics object when no revenue data exists.
@@ -46,7 +47,15 @@ export function mergeDataWithTemplate(
 ): RevenueDisplayEntity[] {
   const dataLookup = createDataLookupMap(actualData);
 
-  return template.map((monthTemplate) =>
+  const mergedData = template.map((monthTemplate) =>
     getMonthDataOrDefault(monthTemplate, dataLookup),
   );
+
+  logger.info({
+    context: "mergeDataWithTemplate",
+    mergedDataCount: mergedData.length,
+    message: "Merged actual data with a template",
+  });
+
+  return mergedData;
 }

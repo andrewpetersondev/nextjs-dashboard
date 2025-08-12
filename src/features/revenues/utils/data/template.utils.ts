@@ -1,10 +1,3 @@
-/**
- * Template utility functions for revenue data.
- *
- * This file contains functions for creating and manipulating templates
- * used to ensure complete data sets for revenue reporting.
- */
-
 import "server-only";
 
 import type {
@@ -16,9 +9,13 @@ import {
   MONTH_ORDER,
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
-import { generateLookupKey } from "@/features/revenues/utils/data/lookup.utils";
-import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import {
+  rollingMonthToPeriod,
+  toPeriod,
+} from "@/features/revenues/utils/date/period.utils";
+import type { Period } from "@/lib/definitions/brands";
 import { toRevenueId } from "@/lib/definitions/brands";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Creates a default month data structure for months without revenue.
@@ -48,7 +45,16 @@ function createDefaultMonthData(
     updatedAt: new Date(),
   };
 
-  return mapRevEntToRevDisplayEnt(defaultEntity);
+  const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
+
+  logger.info({
+    context: "createDefaultMonthData",
+    defaultEntity,
+    mappedData,
+    message: "Created default month data",
+  });
+
+  return mappedData;
 }
 
 /**
@@ -73,7 +79,16 @@ export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
   };
 
   // Transform to RevenueDisplayEntity using the factory method
-  return mapRevEntToRevDisplayEnt(defaultEntity);
+  const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
+
+  logger.info({
+    context: "createDefaultRevenueData",
+    defaultEntity,
+    mappedData,
+    message: "Created default revenue data",
+  });
+
+  return mappedData;
 }
 
 /**
@@ -83,16 +98,16 @@ export function createDefaultRevenueData(period: string): RevenueDisplayEntity {
  * zero-value defaults for months without revenue data.
  *
  * @param monthTemplate - Template data for the target month
- * @param dataLookup - Map containing actual revenue data
+ * @param dataLookup - Map containing actual revenue data keyed by Period
  * @returns Complete monthly revenue data (actual or default)
  */
 export function getMonthDataOrDefault(
   monthTemplate: RollingMonthData,
-  dataLookup: Map<string, RevenueDisplayEntity>,
+  dataLookup: Map<Period, RevenueDisplayEntity>,
 ): RevenueDisplayEntity {
   const { year, monthNumber, month } = monthTemplate;
-  const lookupKey = generateLookupKey(year, monthNumber);
-  const existingData = dataLookup.get(lookupKey);
+  const period = rollingMonthToPeriod(monthTemplate);
+  const existingData = dataLookup.get(period);
 
   if (existingData) {
     return existingData;
@@ -124,10 +139,18 @@ export function createMonthTemplateData(
     );
   }
 
-  return {
+  const data = {
     displayOrder,
     month: monthName,
     monthNumber: calendarMonthIndex + 1,
     year: monthDate.getFullYear(),
   };
+
+  logger.info({
+    context: "createMonthTemplateData",
+    data,
+    message: "Created month template data",
+  });
+
+  return data;
 }
