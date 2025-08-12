@@ -8,11 +8,7 @@
 
 import "server-only";
 
-import {
-  type ActionResult,
-  USER_ROLES,
-  type UserRole,
-} from "@/features/users/user.types";
+import type { ActionResult } from "@/features/users/user.types";
 
 /**
  * Returns a standardized action result object for server actions.
@@ -81,12 +77,3 @@ export const getFormField = <T extends string>(
   }
   return value as T;
 };
-
-/**
- * Validates and returns a user role, defaulting to "guest" if invalid.
- *
- * @param role - The role to validate.
- * @returns {UserRole} - A valid user role.
- */
-export const getValidUserRole = (role: unknown): UserRole =>
-  USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";

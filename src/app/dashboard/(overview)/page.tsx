@@ -2,8 +2,8 @@ import type { JSX } from "react";
 import { readDashboardDataAction } from "@/features/data/data.actions";
 import { verifySessionOptimistic } from "@/features/sessions/session.service";
 import type { UserRole } from "@/features/users/user.types";
+import { getValidUserRole } from "@/features/users/user.utils";
 import { DASHBOARD_TITLES } from "@/lib/constants/ui.constants";
-import { getValidUserRole } from "@/lib/utils/utils.server";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 

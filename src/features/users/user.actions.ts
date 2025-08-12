@@ -41,16 +41,13 @@ import type {
   UserCreateState,
   UserRole,
 } from "@/features/users/user.types";
+import { getValidUserRole } from "@/features/users/user.utils";
 import { toUserId, toUserRole } from "@/lib/definitions/brands";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/utils/logger";
 import { stripProperties } from "@/lib/utils/utils";
-import {
-  actionResult,
-  getFormField,
-  getValidUserRole,
-} from "@/lib/utils/utils.server";
+import { actionResult, getFormField } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Users ---
 
