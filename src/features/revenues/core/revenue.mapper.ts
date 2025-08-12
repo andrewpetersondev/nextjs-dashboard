@@ -6,7 +6,10 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import { toRevenueSource } from "@/features/revenues/core/revenue.types";
+import {
+  getMonthName,
+  toRevenueSource,
+} from "@/features/revenues/core/revenue.types";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 
 /**
@@ -43,11 +46,11 @@ export function mapRevenueRowsToEntities(rows: RevenueRow[]): RevenueEntity[] {
 export function mapRevEntToRevDisplayEnt(
   entity: RevenueEntity,
 ): RevenueDisplayEntity {
-  const monthNumber = extractMonthNumberFromPeriod(entity.period);
+  const monthNumber = extractMonthNumberFromPeriod(entity.period); // 1..12
   const yearNumber = parseInt(entity.period.substring(0, 4), 10);
   return {
     ...entity,
-    month: entity.period.substring(5, 7),
+    month: getMonthName(monthNumber),
     monthNumber,
     year: yearNumber,
   };

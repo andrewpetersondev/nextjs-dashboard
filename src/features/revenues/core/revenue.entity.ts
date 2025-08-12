@@ -1,6 +1,9 @@
 import "server-only";
 
-import type { RevenueSource } from "@/features/revenues/core/revenue.types";
+import type {
+  MonthName,
+  RevenueSource,
+} from "@/features/revenues/core/revenue.types";
 import type { Period, RevenueId } from "@/lib/definitions/brands";
 
 /**
@@ -31,10 +34,11 @@ export type RevenueUpdatable = Pick<
 
 /**
  * Display-oriented entity extending RevenueEntity with UI-specific fields.
- * @param month - note i think month is a string like '00', --- '11'
+ * - month: Three-letter month abbreviation (e.g., "Jan", "Feb")
+ * - monthNumber: Calendar month number (1-12)
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
-  readonly month: string;
+  readonly month: MonthName;
   readonly year: number;
-  readonly monthNumber: number;
+  readonly monthNumber: number; // 1..12
 }

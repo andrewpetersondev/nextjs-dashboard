@@ -126,3 +126,18 @@ export interface YAxisResult {
   /** Maximum chart value in dollars for scaling purposes */
   topLabel: number;
 }
+
+/**
+ * Safely convert a calendar month number (1-12) to a MonthName.
+ * Throws a ValidationError if the input is out of range.
+ */
+export function getMonthName(monthNumber: number): MonthName {
+  const index = monthNumber - 1; // convert to 0-based index
+  const name = MONTH_ORDER[index];
+  if (!name) {
+    throw new ValidationError(
+      `Invalid month number: ${monthNumber}. Expected a value between 1 and 12.`,
+    );
+  }
+  return name;
+}
