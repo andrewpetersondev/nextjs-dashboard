@@ -18,30 +18,46 @@ import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import type { Period, RevenueId } from "@/lib/definitions/brands";
 
 /**
- * Database implementation of the revenue repository using Drizzle ORM.
- * Provides concrete data access operations for revenue entities.
+ * RevenueRepository
  *
- * @remarks
- * This implementation supports the event-driven architecture by:
- * - Ensuring period uniqueness through database constraints
- * - Providing methods to find, create, update, and upsert revenue records by period
- * - Handling conflicts when multiple invoice events affect the same period
- * - Supporting the calculation of revenue based on invoice events
+ * Concrete repository implementation backed by Drizzle ORM.
+ * Encapsulates all persistence operations for revenue records and enforces
+ * core invariants:
+ * - Period is the uniqueness key (one row per YYYY-MM).
+ * - Timestamps: createdAt is set on insert, updatedAt is refreshed on every write.
+ * - All inputs are validated; API throws domain-centric errors (ValidationError/DatabaseError).
+ *
+ * Notes on consistency and conflicts
+ * - All writes go through upsert(), which uses the period uniqueness constraint and
+ *   applies conflict resolution (insert or update in a single round-trip).
+ * - Timestamps are assigned server-side to avoid trust in caller-provided clocks.
+ *
+ * Error model
+ * - ValidationError: missing/invalid inputs, constraint violations surfaced as user-facing validation errors.
+ * - DatabaseError: unexpected persistence failures or mapping errors (conversion from raw rows).
  */
 export class RevenueRepository implements RevenueRepositoryInterface {
   /**
-   * Constructor using dependency injection pattern.
+   * Construct the repository with an injected Database connection.
    *
-   * @remarks
-   * **Dependency Injection Benefits:**
-   * - Single responsibility: focuses on data persistence operations
-   * - Clear dependency contract through constructor injection
-   * - Enhanced testability with mock database implementations
+   * Dependency Injection benefits:
+   * - Testability: pass an in-memory or mocked DB.
+   * - Separation of concerns: the repository focuses purely on persistence.
    *
-   * @param db - Database connection instance for data operations
+   * @param db - Database connection instance
    */
   constructor(private readonly db: Database) {}
 
+  /**
+   * Create a new revenue record.
+   *
+   * Delegates to upsert() to leverage a single conflict-handling path and avoid duplication.
+   *
+   * @param revenue - Full creation payload
+   * @returns The created RevenueEntity
+   * @throws ValidationError If payload is missing/invalid
+   * @throws DatabaseError On persistence/mapping failures
+   */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
       throw new ValidationError("Revenue data is required");
@@ -50,6 +66,14 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     return this.upsert(revenue);
   }
 
+  /**
+   * Read a revenue record by its unique identifier.
+   *
+   * @param id - RevenueId
+   * @returns The RevenueEntity
+   * @throws ValidationError If id is missing
+   * @throws DatabaseError If record not found or mapping fails
+   */
   async read(id: RevenueId): Promise<RevenueEntity> {
     if (!id) {
       throw new ValidationError("Revenue ID is required");
@@ -75,6 +99,19 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     return result;
   }
 
+  /**
+   * Update mutable fields of a revenue record by id.
+   *
+   * Timestamp semantics:
+   * - updatedAt is set to now for every update.
+   * - createdAt is never changed by updates.
+   *
+   * @param id - RevenueId of the row to update
+   * @param revenue - Updatable fields (invoiceCount, revenue, calculationSource)
+   * @returns The updated RevenueEntity
+   * @throws ValidationError If inputs are missing
+   * @throws DatabaseError If update or mapping fails
+   */
   async update(
     id: RevenueId,
     revenue: RevenueUpdatable,
@@ -109,6 +146,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     return result;
   }
 
+  /**
+   * Delete a revenue record by id.
+   *
+   * @param id - RevenueId of the row to delete
+   * @throws ValidationError If id is missing
+   * @throws DatabaseError If deletion fails
+   */
   async delete(id: RevenueId): Promise<void> {
     if (!id) {
       throw new ValidationError("Revenue ID is required");
@@ -125,11 +169,17 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Finds revenue records within the specified period range.
-   * Uses period field from revenue entities for filtering.
+   * Find revenue records within an inclusive period range.
    *
-   * @param startPeriod - The start period in YYYY-MM format
-   * @param endPeriod - The end period in YYYY-MM format
+   * Query characteristics:
+   * - Filters by branded Period (YYYY-MM) using gte/lte.
+   * - Results are ordered by period descending (most recent first).
+   *
+   * @param startPeriod - Inclusive start period (YYYY-MM)
+   * @param endPeriod - Inclusive end period (YYYY-MM)
+   * @returns A list of RevenueEntity records if present; empty array otherwise
+   * @throws ValidationError If either period is missing
+   * @throws DatabaseError On retrieval or mapping failures
    */
   async findByDateRange(
     startPeriod: Period,
@@ -159,15 +209,16 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Finds a revenue record by its period.
+   * Find a revenue record by its period.
    *
-   * @remarks
-   * This method supports the event-driven architecture by:
-   * - Allowing the event handler to check if a revenue record exists for a period
-   * - Returning null instead of throwing an error when no record is found
-   * - Supporting the decision to create or update a revenue record
+   * Behavior:
+   * - Returns null when no record exists for the given period (non-exceptional absence).
+   * - Validates period input and maps DB row to domain entity.
    *
-   * @param period - The period in YYYY-MM format
+   * @param period - Target Period (YYYY-MM)
+   * @returns The RevenueEntity or null when not found
+   * @throws ValidationError If period is missing
+   * @throws DatabaseError On mapping failures
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
@@ -195,21 +246,20 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Creates or updates a revenue record based on period uniqueness.
-   * Uses period field as the conflict resolution key.
+   * Upsert (insert-or-update) a revenue record.
    *
-   * @remarks
-   * This method is a key part of the event-driven architecture:
-   * - It handles conflicts when multiple invoice events affect the same period
-   * - It ensures that only one revenue record exists for each period (YYYY-MM)
-   * - It updates existing records when new invoice data is received
+   * Conflict handling:
+   * - Uses the period uniqueness constraint as the conflict target.
+   * - On conflict, updates calculationSource, invoiceCount, revenue, and refreshed updatedAt.
    *
-   * @param revenueData - Revenue data to create or update
-   * @returns Promise resolving to the created or updated revenue entity
-   */
-  /**
-   * Creates or updates a revenue record.
-   * Delegated target for create() and upsertByPeriod() to reduce duplication.
+   * Timestamp semantics:
+   * - Insert path: createdAt = provided value or now; updatedAt = now.
+   * - Update path: createdAt remains unchanged; updatedAt = now.
+   *
+   * @param revenueData - Full creation payload including period
+   * @returns The created or updated RevenueEntity
+   * @throws ValidationError If payload or period is missing, or when uniqueness violations are detected
+   * @throws DatabaseError On persistence/mapping failures
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenueData) {
@@ -255,7 +305,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
 
       return result;
     } catch (error) {
-      // Handle specific database errors related to uniqueness constraint
+      // Convert uniqueness-related errors into a domain-level ValidationError
       if (
         error instanceof Error &&
         error.message.includes("unique constraint")
@@ -269,7 +319,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Deletes a revenue record by its unique identifier.
+   * Delete a revenue record by id (alias of delete()).
+   *
+   * Retained for backward compatibility with older callers.
+   *
+   * @param id - RevenueId
+   * @throws ValidationError If id is missing
+   * @throws DatabaseError If deletion fails
    */
   async deleteById(id: RevenueId): Promise<void> {
     // Alias for delete(id); kept for backward compatibility
@@ -277,18 +333,28 @@ export class RevenueRepository implements RevenueRepositoryInterface {
   }
 
   /**
-   * Creates or updates a revenue record based on the period.
-   * Uses period as the conflict resolution key to ensure uniqueness.
+   * Upserts a revenue record for the given period.
    *
-   * @remarks
-   * This method supports the event-driven architecture by:
-   * - Providing a convenient way to upsert revenue records by period
-   * - Ensuring the period in the revenue data matches the provided period
-   * - Delegating to the main upsert method for conflict resolution
-   * - Supporting the revenue calculation triggered by invoice events
+   * Contract and behavior
+   * - Period enforcement: the provided `period` parameter is the source of truth and overwrites any incoming period.
+   * - Payload shapes:
+   *   - RevenueCreateEntity: treated as a creation-shaped payload. `createdAt` is preserved from input, and `updatedAt` is set to `now`.
+   *   - RevenueUpdatable: expanded into a full creation payload with `createdAt = now` and `updatedAt = now`.
+   * - Delegation: calls `upsert()` to perform the actual insert/update using the period uniqueness constraint.
    *
-   * @param period - The period in YYYY-MM format
-   * @param revenue - Revenue data to create or update
+   * Timestamps
+   * - Insert path: `createdAt = now`, `updatedAt = now`.
+   * - Update path: `updatedAt = now` while preserving the original `createdAt`.
+   *
+   * Typical usage
+   * - Services and event handlers that already computed a `period` and want to create/update the revenue row for that period.
+   *
+   * @param period - Target Period (YYYY-MM).
+   * @param revenue - Either a full creation entity (preserves `createdAt`) or an updatable subset.
+   * @returns The created or updated RevenueEntity.
+   * @throws ValidationError If `period` or `revenue` is missing.
+   * @throws ValidationError Propagated from `upsert()` on uniqueness/conflict-related errors.
+   * @throws DatabaseError Propagated from persistence/mapping failures.
    */
   async upsertByPeriod(
     period: Period,
@@ -305,8 +371,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     // Normalize to a full creation entity while enforcing the provided period
     const now = new Date();
     const revenueWithPeriod: RevenueCreateEntity =
-      "createdAt" in revenue && "updatedAt" in revenue
-        ? { ...revenue, period: toPeriod(period) }
+      "createdAt" in revenue
+        ? {
+            ...revenue,
+            period: toPeriod(period),
+            updatedAt: now,
+            // createdAt preserved from input
+          }
         : {
             calculationSource: revenue.calculationSource,
             createdAt: now,

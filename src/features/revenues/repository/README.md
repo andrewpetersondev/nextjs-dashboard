@@ -1,180 +1,187 @@
 # Revenues Repository
 
-This directory contains the repository layer for the revenue feature. The repository pattern provides a clean abstraction over data access operations, isolating the domain model from data persistence concerns.
+This directory contains the repository layer for the revenue feature. The repository pattern provides a clean abstraction over data access operations, isolating domain logic from persistence details.
 
 ## Overview
 
 The repository layer handles:
-- Data access operations for revenue entities
-- Persistence logic (CRUD operations)
-- Data mapping between database models and domain entities
-- Transaction management
-- Query operations
+- Persistence operations for revenue entities (CRUD + queries)
+- Mapping between database rows and domain entities
+- Conflict resolution on period uniqueness (upsert)
+- Validation and error normalization (domain-centric errors)
+
+## Core invariants
+
+- Period is the uniqueness key: exactly one row per YYYY-MM.
+- Timestamps:
+  - createdAt is set on insert.
+  - updatedAt is refreshed on every write (insert and update).
+- All inputs are validated; invalid inputs and constraint violations surface as ValidationError. Unexpected persistence or mapping failures surface as DatabaseError.
+
+## Error model
+
+- ValidationError:
+  - Missing/invalid inputs
+  - Period branding/format errors
+  - Uniqueness/constraint violations (surfaced as validation errors)
+- DatabaseError:
+  - Unexpected persistence failures
+  - Mapping issues converting raw rows to domain entities
+
+## Types (at a glance)
+
+- RevenueCreateEntity: Full creation payload (all fields except id).
+- RevenueUpdatable: Narrow update payload (invoiceCount, revenue, calculationSource).
+- Period: Branded string in YYYY-MM; always validate/brand with toPeriod() at boundaries.
 
 ## Files
 
-### `revenue.repository.interface.ts`
+### revenue.repository.interface.ts
 
-Defines the contract for the revenue repository through the `RevenueRepositoryInterface`:
+Defines the contract for the revenue repository via RevenueRepositoryInterface. Implementations should enforce the core invariants and error model.
 
-- Specifies all available revenue data operations
-- Ensures consistent implementation across different repository implementations
-- Enables dependency injection and testability through abstraction
-- Provides a comprehensive set of methods for revenue data management
+Key methods:
+- create(revenue: RevenueCreateEntity): Promise<RevenueEntity>
+  - Delegates to upsert() in implementations to avoid duplication.
+- read(id: RevenueId): Promise<RevenueEntity>
+  - Fetches by ID; throws ValidationError on bad input, DatabaseError if not found or mapping fails.
+- update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>
+  - Updates invoiceCount, revenue, calculationSource. Sets updatedAt = now; createdAt unchanged.
+- delete(id: RevenueId): Promise<void>
+  - Deletes by ID with validation and error handling.
+- findByDateRange(startPeriod: Period, endPeriod: Period): Promise<RevenueEntity[]>
+  - Inclusive range query by branded Period (YYYY-MM); implementations typically sort by period desc.
+- upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>
+  - Insert-or-update by unique period. On conflict, updates fields and sets updatedAt = now. Insert sets createdAt (provided or now) and updatedAt = now.
+- deleteById(id: RevenueId): Promise<void>
+  - Alias for delete(id); retained for backward compatibility.
+- findByPeriod(period: Period): Promise<RevenueEntity | null>
+  - Returns null if not found (absence is non-exceptional).
+- upsertByPeriod(period: Period, revenue: RevenueUpdatable | RevenueCreateEntity): Promise<RevenueEntity>
+  - Enforces the provided period as the source of truth:
+    - With RevenueCreateEntity: preserves createdAt from input, sets updatedAt = now.
+    - With RevenueUpdatable: expands to a full creation payload with createdAt = now, updatedAt = now.
+  - Delegates to upsert() for conflict handling.
 
-**Key Methods:**
+### revenue.repository.ts
 
-| Method | Purpose | Parameters | Return Type |
-|--------|---------|------------|-------------|
-| `create` | Creates a new revenue record | `revenue: RevenueCreateEntity` | `Promise<RevenueEntity>` |
-| `read` | Retrieves a revenue record by ID | `id: RevenueId` | `Promise<RevenueEntity>` |
-| `update` | Updates an existing revenue record | `id: RevenueId, revenue: RevenuePartialEntity` | `Promise<RevenueEntity>` |
-| `delete` | Deletes a revenue record by ID | `id: RevenueId` | `Promise<void>` |
-| `findByDateRange` | Finds revenue records within a date range | `startPeriod: Period, endPeriod: Period` | `Promise<RevenueEntity[]>` |
-| `upsert` | Creates or updates a revenue record | `revenue: RevenueCreateEntity` | `Promise<RevenueEntity>` |
-| `findByPeriod` | Finds a revenue record by period | `period: Period` | `Promise<RevenueEntity \| null>` |
-| `upsertByPeriod` | Creates or updates a revenue record by period | `period: Period, revenue: RevenuePartialEntity` | `Promise<RevenueEntity>` |
+Concrete implementation backed by Drizzle ORM.
 
-**Usage Example:**
+Highlights:
+- All writes funnel through upsert() to ensure consistent conflict handling.
+- Timestamps are assigned server-side; caller clocks are not trusted.
+- Mappers convert DB rows to domain entities; failures surface as DatabaseError.
+- Period inputs are validated/braned via toPeriod().
+
+Method behavior and timestamp semantics:
+- create(): delegates to upsert() for insert-or-update.
+- read(): retrieves by ID; throws DatabaseError if missing or mapping fails.
+- update(): updates mutable fields; sets updatedAt = now (createdAt unchanged).
+- delete(): deletes by ID with validation and error handling.
+- findByDateRange(): inclusive query by branded Period; typically ordered by period desc.
+- findByPeriod(): returns entity or null if absent.
+- upsert():
+  - Insert: createdAt = provided or now; updatedAt = now.
+  - Update (conflict on period): createdAt unchanged; updatedAt = now.
+- upsertByPeriod():
+  - Overwrites any incoming period with the provided method parameter.
+  - RevenueCreateEntity -> preserve createdAt, set updatedAt = now.
+  - RevenueUpdatable -> build full creation payload with createdAt = now, updatedAt = now.
+  - Delegates to upsert().
+
+## Choosing the right method
+
+- You have a complete creation payload with a trusted createdAt: use upsert().
+- You computed the period externally and only have updatable fields: use upsertByPeriod(period, updatable).
+- You just want to modify invoiceCount/revenue/calculationSource by id: use update(id, updatable).
+- You need to fetch a specific period or a range: use findByPeriod() or findByDateRange().
+
+## Usage examples
+
+Creating and querying:
 ```typescript
-import { RevenueRepositoryInterface } from '@/features/revenues/repository/revenue.repository.interface';
-import type { Period, RevenueId } from "@/lib/definitions/brands";
+// TypeScript
+import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
+import { getDB } from "@/db/connection";
+import type { Period } from "@/lib/definitions/brands";
+import type {
+RevenueCreateEntity,
+RevenueUpdatable,
+} from "@/features/revenues/core/revenue.entity";
 
-// In a service class
-class RevenueService {
-  constructor(private readonly revenueRepository: RevenueRepositoryInterface) {}
+const repo = new RevenueRepository(getDB());
 
-  // Using the repository through its interface
-  async getRevenueById(id: RevenueId) {
-    return this.revenueRepository.read(id);
-  }
+// Create (delegates to upsert)
+const created = await repo.create({
+calculationSource: "seed",
+createdAt: new Date(),
+invoiceCount: 3,
+period: "2024-08" as Period,
+revenue: 125_00, // cents
+updatedAt: new Date(),
+});
 
-  // Finding revenue by period
-  async getRevenueByPeriod(period: Period) {
-    return this.revenueRepository.findByPeriod(period);
-  }
-}
+// Upsert directly
+const upserted = await repo.upsert({
+...created,
+revenue: 150_00,
+});
+
+// Update by id (only mutable fields)
+const updated = await repo.update(created.id, {
+calculationSource: "handler",
+invoiceCount: 4,
+revenue: 175_00,
+});
+
+// Find by period
+const existing = await repo.findByPeriod("2024-08" as Period);
+
+// Range query
+const ranged = await repo.findByDateRange(
+"2024-01" as Period,
+"2024-12" as Period,
+);
 ```
-
-### `revenue.repository.ts`
-
-Implements the `RevenueRepositoryInterface` with concrete data access logic using Drizzle ORM:
-
-- Contains actual database queries and operations for revenue data
-- Handles data mapping between database rows and domain entities
-- Implements comprehensive error handling for all data access operations
-- Manages database connections and transactions
-- Provides optimized query implementations for all repository operations
-
-**Key Implementation Details:**
-
-| Method | Implementation Highlights |
-|--------|---------------------------|
-| `create` | Creates a new revenue record with proper validation and error handling |
-| `read` | Retrieves a revenue record by ID with NotFoundError if record doesn't exist |
-| `update` | Updates an existing revenue record with optimistic concurrency control |
-| `delete` | Deletes a revenue record by ID with proper error handling |
-| `findByDateRange` | Uses SQL range queries to efficiently find revenues in a date range |
-| `findByPeriod` | Finds a revenue record by period with proper null handling |
-| `upsert` | Implements an atomic upsert operation with conflict resolution |
-| `upsertByPeriod` | Specialized upsert that uses period as the unique key |
-
-**Usage Example:**
+Using upsertByPeriod with a known period:
 ```typescript
-import { RevenueRepository } from '@/features/revenues/repository/revenue.repository';
-import { getDB } from '@/db/connection';
-import type { RevenueCreateEntity } from '@/features/revenues/core/revenue.entity';
+// TypeScript
+const period = "2024-08" as Period;
 
-// Creating a repository instance with dependency injection
-const revenueRepository = new RevenueRepository(getDB());
+// With an updatable payload: expands to full creation payload internally
+const result1 = await repo.upsertByPeriod(period, {
+calculationSource: "invoice_event",
+invoiceCount: 1,
+revenue: 20_00,
+});
 
-// Using the repository for data operations
-async function createNewRevenue(revenueData: RevenueCreateEntity) {
-  try {
-    // Create a new revenue record
-    const newRevenue = await revenueRepository.create(revenueData);
-    console.log(`Created revenue record with ID: ${newRevenue.id}`);
-    return newRevenue;
-  } catch (error) {
-    console.error('Failed to create revenue record:', error);
-    throw error;
-  }
-}
-
-// Finding revenues in a date range
-async function getRevenuesForDateRange(startPeriod: Period, endPeriod: Period) {
-  const revenues = await revenueRepository.findByDateRange(startPeriod, endPeriod);
-  console.log(`Found ${revenues.length} revenue records in the specified date range`);
-  return revenues;
-}
+// With a full creation entity: preserves createdAt, refreshes updatedAt
+const result2 = await repo.upsertByPeriod(period, {
+calculationSource: "handler",
+createdAt: new Date("2024-08-01T00:00:00Z"),
+invoiceCount: 2,
+period,                     // will be overwritten with the parameter
+revenue: 40_00,
+updatedAt: new Date(),      // will be refreshed to now
+});
 ```
+## Testing and DI
 
-## Integration Points
+- Inject a Database instance via the repository constructor.
+- For unit tests, provide a mock or in-memory DB to verify:
+  - Period uniqueness and conflict behavior (upsert paths)
+  - Timestamp semantics (createdAt vs updatedAt)
+  - Validation and error translation (ValidationError/DatabaseError)
 
-The repository layer integrates with:
-- Database layer (`src/db`)
-- Revenue core domain models (`src/features/revenues/core`)
-- Revenue services (`src/features/revenues/services`)
-- Error handling system (`src/errors/errors.ts`)
-- Logging utilities (`src/lib/utils/logger.ts`)
+## Performance and consistency notes
 
-## Repository Pattern Benefits
+- Upsert uses a single round-trip with conflict resolution on the period key.
+- Ensure an index/unique constraint on the period column for correctness and performance.
+- Prefer branded Period utilities (toPeriod/dateToPeriod) at boundaries to prevent format drift.
 
-1. **Separation of Concerns**: Isolates data access logic from business logic
-2. **Testability**: Makes testing easier through dependency injection and mocking
-3. **Flexibility**: Allows changing data sources without affecting domain logic
-4. **Consistency**: Provides a uniform interface for data operations
+## Best practices
 
-## Best Practices
-
-1. **Interface-First Design**: Always define the repository interface before implementation
-2. **Error Handling**: Use domain-specific error classes from `src/errors/errors.ts`
-3. **Logging**: Include proper logging for debugging and monitoring
-4. **Transactions**: Manage database transactions carefully
-5. **Mapping**: Keep entity mapping logic within repositories or dedicated mappers
-6. **Query Optimization**: Optimize queries for performance
-
-## Error Handling Example
-
-```typescript
-import { DatabaseError, NotFoundError } from '@/errors/errors';
-import { logger } from '@/lib/utils/logger';
-import type { RevenueEntity } from '@/features/revenues/core/revenue.entity';
-import type { RevenueId } from '@/lib/definitions/brands';
-
-// In the repository implementation class
-class RevenueRepository implements RevenueRepositoryInterface {
-  // Other methods...
-  
-  async read(id: RevenueId): Promise<RevenueEntity> {
-    try {
-      const result = await this.db.query.revenues.findFirst({
-        where: eq(revenues.id, id)
-      });
-      
-      if (!result) {
-        throw new NotFoundError(`Revenue with id ${id} not found`);
-      }
-      
-      return mapRevRowToRevEnt(result);
-    } catch (error) {
-      logger.error({ error, id }, 'Failed to retrieve revenue by id');
-      
-      if (error instanceof NotFoundError) {
-        throw error;
-      }
-      
-      throw new DatabaseError('Database error when retrieving revenue', { cause: error });
-    }
-  }
-}
-```
-
-## Architecture Notes
-
-The repository layer is a key component in the application's clean architecture:
-
-- It isolates the domain model from database implementation details
-- It provides a boundary between infrastructure and domain layers
-- It enables swapping data sources without changing business logic
-- It centralizes data access logic for better maintainability
+- Use upsertByPeriod in event-driven flows where period is derived from the event.
+- Use upsert when preserving an authoritative createdAt matters.
+- Keep business calculations outside the repository; pass only the final values to persist.
+- Log at service boundaries; repository methods already surface domain-centric errors.
