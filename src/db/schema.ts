@@ -10,6 +10,14 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import type { InvoiceStatus } from "@/features/invoices/invoice.types";
+import { INVOICE_STATUSES } from "@/features/invoices/invoice.types";
+import {
+  REVENUE_SOURCES,
+  type RevenueSource,
+} from "@/features/revenues/core/revenue.types";
+import type { UserRole } from "@/features/users/user.types";
+import { USER_ROLES } from "@/features/users/user.types";
 import type {
   CustomerId,
   InvoiceId,
@@ -34,43 +42,38 @@ export const TABLES = {
 
 export const COLUMNS = {
   AMOUNT: "amount",
-  CALCULATED_FROM_INVOICES: "calculated_from_invoices",
-  CALCULATION_DATE: "calculation_date",
   CALCULATION_SOURCE: "calculation_source",
   COUNT: "count",
   CREATED_AT: "created_at",
   CUSTOMER_ID: "customer_id",
   DATE: "date",
   EMAIL: "email",
-  END_DATE: "end_date",
   EXPIRES_AT: "expires_at",
   ID: "id",
   IMAGE_URL: "image_url",
   INVOICE_COUNT: "invoice_count",
-  IS_CALCULATED: "is_calculated",
-  MONTH: "month",
   NAME: "name",
   PASSWORD: "password",
   PERIOD: "period",
   REVENUE: "revenue",
   ROLE: "role",
   SENSITIVE_DATA: "sensitive_data",
-  START_DATE: "start_date",
   STATUS: "status",
   TOKEN: "token",
   UPDATED_AT: "updated_at",
   USER_ID: "user_id",
   USERNAME: "username",
-  YEAR: "year",
 } as const;
 
-/**
- * PostgreSQL enums for role and status fields.
- * These should match the constants in your type definitions.
- */
-export const roleEnum = pgEnum("role", ["guest", "admin", "user"]);
+// Build DB enums from domain constants to avoid duplication and drift
+export const roleEnum = pgEnum(COLUMNS.ROLE, USER_ROLES);
 
-export const statusEnum = pgEnum("status", ["pending", "paid"]);
+export const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
+
+export const calculationSourceEnum = pgEnum(
+  COLUMNS.CALCULATION_SOURCE,
+  REVENUE_SOURCES,
+);
 
 /**
  * Common field configurations for reusability and consistency.
@@ -87,20 +90,20 @@ const commonFields = {
       .notNull()
       .default("cantTouchThis"),
   timestamps: {
-    createdAt: () => timestamp("created_at").defaultNow().notNull(),
-    updatedAt: () => timestamp("updated_at").defaultNow().notNull(),
+    createdAt: () => timestamp(COLUMNS.CREATED_AT).defaultNow().notNull(),
+    updatedAt: () => timestamp(COLUMNS.UPDATED_AT).defaultNow().notNull(),
   },
 } as const;
 
 /**
- * Users table schema with branded UserId type.
+ * Users table schema with a branded UserId type.
  * Stores user authentication and profile information.
  */
 export const users = pgTable(TABLES.USERS, {
   email: commonFields.email(),
   id: commonFields.id.uuid().$type<UserId>(),
   password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
-  role: roleEnum(COLUMNS.ROLE).default("user").notNull(),
+  role: roleEnum(COLUMNS.ROLE).default("user").notNull().$type<UserRole>(),
   sensitiveData: commonFields.sensitiveData(),
   username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull().unique(),
 });
@@ -112,11 +115,11 @@ export const users = pgTable(TABLES.USERS, {
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
   count: integer(COLUMNS.COUNT).notNull().default(0),
   id: commonFields.id.serial(),
-  role: roleEnum(COLUMNS.ROLE).notNull().default("guest"),
+  role: roleEnum(COLUMNS.ROLE).notNull().default("guest").$type<UserRole>(),
 });
 
 /**
- * Customers table schema with branded CustomerId type.
+ * Customers table schema with a branded CustomerId type.
  * Stores customer information for invoice management.
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
@@ -140,7 +143,10 @@ export const invoices = pgTable(TABLES.INVOICES, {
   date: date(COLUMNS.DATE).notNull(),
   id: commonFields.id.uuid().$type<InvoiceId>(),
   sensitiveData: commonFields.sensitiveData(),
-  status: statusEnum(COLUMNS.STATUS).default("pending").notNull(),
+  status: statusEnum(COLUMNS.STATUS)
+    .default("pending")
+    .notNull()
+    .$type<InvoiceStatus>(),
 });
 
 /**
@@ -148,12 +154,14 @@ export const invoices = pgTable(TABLES.INVOICES, {
  * Aggregated data for reporting and analytics with audit trail and metadata.
  */
 export const revenues = pgTable(TABLES.REVENUES, {
-  calculationSource: varchar("calculation_source", { length: 50 })
+  // Backed by pgEnum from REVENUE_SOURCES to keep DB and domain in sync.
+  calculationSource: calculationSourceEnum(COLUMNS.CALCULATION_SOURCE)
+    .default("seed")
     .notNull()
-    .default("seed"),
+    .$type<RevenueSource>(),
   createdAt: commonFields.timestamps.createdAt(),
   id: commonFields.id.uuid().$type<RevenueId>(),
-  invoiceCount: integer("invoice_count").notNull().default(0),
+  invoiceCount: integer(COLUMNS.INVOICE_COUNT).notNull().default(0),
   period: varchar(COLUMNS.PERIOD, { length: 7 })
     .notNull()
     .unique()
@@ -211,7 +219,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 }));
 
 /**
- * Inferred types from Drizzle schema for type safety.
+ * Inferred types from the Drizzle schema for type safety.
  * These represent the raw database rows and should be used with caution
  * due to branded types that require validation before use.
  */
@@ -247,7 +255,7 @@ export type AnyTableRow =
  * When running Drizzle CLI or seeding the database, you may see warnings like:
  *
  *   "You are providing a one-to-many relation between the 'customers' and 'invoices' tables,
- *    while the 'invoices' table object already has foreign key constraint in the schema referencing 'customers' table.
+ *    while the 'invoices' table object already has a foreign key constraint in the schema referencing 'customers' table.
  *    In this case, the foreign key constraint will be used."
  *
  * Cause:
@@ -257,7 +265,7 @@ export type AnyTableRow =
  *
  * Why it is Irrelevant:
  * - The warning is informational only. Drizzle will use the foreign key constraint for relation mapping.
- * - Defining both is not harmful and is considered best practice for type safety and advanced querying.
+ * - Defining both is not harmful and is considered the best practice for type safety and advanced querying.
  * - No action is required; this does not affect runtime behavior or data integrity.
  *
  * Reference:

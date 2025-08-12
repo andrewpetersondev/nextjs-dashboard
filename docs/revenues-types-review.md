@@ -21,27 +21,6 @@ Summary of findings
 
 Suggested refactorings (prioritized)
 
-
-
-5. Normalize Period creation: prefer toPeriod/dateToPeriod everywhere
-   Files: revenue.service.ts, revenue.repository.ts, event service
-   Observation: Most places already call toPeriod/dateToPeriod. Maintain this convention for any new inputs to prevent unbranded strings entering the domain.
-   Action: No code change required, just keep the practice. Consider ESLint rule to discourage raw string periods.
-
-6. Align repository contracts with domain invariants
-   Files: revenue.repository.interface.ts, revenue.repository.ts
-   - update should not accept period or createdAt changes.
-   - upsert(revenueData) should accept RevenueCreateEntity (kept), but upsertByPeriod should take (period: Period, revenue: RevenueUpdatable) rather than Partial<...> to prevent passing timestamps by mistake.
-   - In upsert(), consider restricting set fields in onConflictDoUpdate to only updatable ones (already mostly true).
-
-7. Add branded type guards and factory helpers
-   Files: src/lib/definitions/brands.ts
-   - You already have toRevenueId, toPeriod etc. Consider adding isPeriod(value: unknown): value is Period and similar for IDs. Useful for runtime input checks without throwing, especially in UI or API layers.
-
-8. Consistency between DB schema and domain brands
-   Files: src/db/schema.ts
-   - Excellent: Drizzle columns are branded via .$type<Brand>() ensuring typed IDs in rows. Keep this pattern. Ensure that any new columns referencing enums/brands use the same technique.
-
 9. DTOs vs Entities: keep boundaries simple
    Files: revenue.dto.ts, revenue.entity.ts
    - DTOs use dollars, Entities use cents. This is clear and good. Continue ensuring conversions happen only at display/action boundary. Consider a Money utility or branded Cent/Dollar types to prevent accidental mixing:
@@ -57,6 +36,7 @@ Illustrative code sketches
 
 A. Narrow calculationSource and updatable fields (non-breaking staged change)
 
+```typescript
 // src/features/revenues/core/revenue.types.ts
 export const REVENUE_SOURCES = [
   "seed",
@@ -66,7 +46,9 @@ export const REVENUE_SOURCES = [
   "template",
 ] as const;
 export type RevenueSource = (typeof REVENUE_SOURCES)[number];
+```
 
+```typescript
 // src/features/revenues/core/revenue.entity.ts
 export interface RevenueEntity {
   readonly calculationSource: RevenueSource;
@@ -76,17 +58,23 @@ export type RevenueUpdatable = Pick<
   RevenueEntity,
   "invoiceCount" | "revenue" | "calculationSource"
 >;
+```
 
+```typescript
 // src/features/revenues/repository/revenue.repository.interface.ts
 update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>;
 upsertByPeriod(period: Period, revenue: RevenueUpdatable): Promise<RevenueEntity>;
+```
 
+```typescript
 // src/features/revenues/repository/revenue.repository.ts
 async update(id: RevenueId, revenue: RevenueUpdatable) { /* ... */ }
 async upsertByPeriod(period: Period, revenue: RevenueUpdatable) { /* ... */ }
+```
 
 B. Align display entity month
 
+````typescript
 // Option A
 // src/features/revenues/core/revenue.entity.ts
 export interface RevenueDisplayEntity extends RevenueEntity {
@@ -94,7 +82,9 @@ export interface RevenueDisplayEntity extends RevenueEntity {
   readonly year: number;
   readonly monthNumber: number; // 1..12
 }
+````
 
+```typescript
 // src/features/revenues/core/revenue.mapper.ts
 import { MONTH_ORDER } from "./revenue.types";
 export function mapRevEntToRevDisplayEnt(entity: RevenueEntity): RevenueDisplayEntity {
@@ -106,12 +96,15 @@ export function mapRevEntToRevDisplayEnt(entity: RevenueEntity): RevenueDisplayE
     year: parseInt(entity.period.substring(0, 4), 10),
   };
 }
+```
 
 C. Simplify mapRevDisplayEntityToPeriod
 
+```typescript
 export function mapRevDisplayEntityToPeriod(dataItem: RevenueDisplayEntity): Period {
   return toPeriod(dataItem.period); // validate/brand once more; or just return dataItem.period
 }
+```
 
 Risk and migration notes
 - Changing calculationSource type and update contracts is a breaking type change; update call sites accordingly (services and tests). This is localized and low-risk.

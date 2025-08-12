@@ -4,17 +4,14 @@ import { ValidationError } from "@/errors/errors";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import { toPeriod } from "@/features/revenues/utils/date/period.utils";
 import type { Period } from "@/lib/definitions/brands";
+import { isPeriod } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
-
-const PERIOD_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 const normalizePeriod = (p: string): string => {
   const [y, m] = p.split("-");
   const mm = String(Number(m)).padStart(2, "0");
   return `${y}-${mm}`;
 };
-
-const isValidPeriod = (p: string): boolean => PERIOD_REGEX.test(p);
 
 /**
  * Normalize any acceptable input into a branded Period (YYYY-MM).
@@ -27,7 +24,7 @@ export function normalizeToPeriod(
 ): Period {
   if (typeof input === "string") {
     const normalized = normalizePeriod(input);
-    if (!isValidPeriod(normalized)) {
+    if (!isPeriod(normalized)) {
       throw new ValidationError(
         `Invalid period string: ${input} -> ${normalized}`,
       );
@@ -40,7 +37,7 @@ export function normalizeToPeriod(
     (input as { monthNumber?: number }).monthNumber ??
     (input as { month?: number }).month;
   const normalized = normalizePeriod(`${year}-${monthValue}`);
-  if (!isValidPeriod(normalized)) {
+  if (!isPeriod(normalized)) {
     throw new ValidationError(
       `Invalid year/month input: ${year}/${monthValue} -> ${normalized}`,
     );
@@ -124,7 +121,7 @@ export function makeCoverageReport<
   const duplicates: Period[] = [
     ...new Set(periods.filter((p, i) => periods.indexOf(p) !== i)),
   ];
-  const invalidFormat = periods.filter((p) => !PERIOD_REGEX.test(p));
+  const invalidFormat = periods.filter((p) => !isPeriod(p));
   const missing = templatePeriods.filter((p) => !periods.includes(p));
   const unexpected = periods.filter((p) => !templatePeriods.includes(p));
   const badRevenue = actualData
