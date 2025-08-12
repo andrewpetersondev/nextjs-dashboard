@@ -7,23 +7,6 @@ export const formatCurrency = (amount: number): string => {
   });
 };
 
-export const formatDateToLocal = (
-  dateStr: string,
-  locale = "en-US",
-): string => {
-  const date: Date = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
-  const formatter: Intl.DateTimeFormat = new Intl.DateTimeFormat(
-    locale,
-    options,
-  );
-  return formatter.format(date);
-};
-
 // Delete properties whose values match ANY of the given conditions
 export const stripProperties = (
   obj: { [s: string]: unknown } | ArrayLike<unknown>,
@@ -75,13 +58,3 @@ export const generatePagination = (
     totalPages,
   ];
 };
-
-/**
- * Returns the current date in ISO format (YYYY-MM-DD).
- * This is useful for setting default values in forms or APIs.
- *
- * @returns {string} The current date as a string in ISO format.
- */
-export function getCurrentIsoDate(): string {
-  return new Date().toISOString().split("T")[0] as string;
-}

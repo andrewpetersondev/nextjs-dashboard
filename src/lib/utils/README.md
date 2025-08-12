@@ -5,7 +5,7 @@ This directory provides shared utility functions and helpers for both server and
 ## Files
 
 - **`date-utils.ts`**  
-  Utilities for date formatting, parsing, and period conversion. Includes helpers for working with domain-specific `Period` types.
+  Utilities for date formatting and getting the iso date.
 
 - **`logger.ts`**  
   Exports a configured `pino` logger instance for structured, environment-aware logging. Use for all server-side logging.

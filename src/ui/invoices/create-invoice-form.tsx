@@ -7,7 +7,7 @@ import { Label } from "@/components/label";
 import type { CustomerField } from "@/features/customers/customer.types";
 import { createInvoiceAction } from "@/features/invoices/invoice.actions";
 import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
-import { getCurrentIsoDate } from "@/lib/utils/utils";
+import { getCurrentIsoDate } from "@/lib/utils/date-utils";
 import { CustomerSelect } from "@/ui/invoices/customer-select";
 import { InvoiceAmountInput } from "@/ui/invoices/invoice-amount-input";
 import { InvoiceDate } from "@/ui/invoices/invoice-date";

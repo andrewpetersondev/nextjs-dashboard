@@ -1,7 +1,8 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
-import { formatCurrency, formatDateToLocal } from "@/lib/utils/utils";
+import { formatDateToLocal } from "@/lib/utils/date-utils";
+import { formatCurrency } from "@/lib/utils/utils";
 import { DeleteInvoice, UpdateInvoice } from "@/ui/invoices/buttons";
 import { InvoiceStatusComponent } from "@/ui/invoices/status";
 
