@@ -3,6 +3,10 @@ import type {
   RevenueStatisticsDto,
   SimpleRevenueDto,
 } from "@/features/revenues/core/revenue.dto";
+import {
+  MONTH_ORDER,
+  type MonthName,
+} from "@/features/revenues/core/revenue.types";
 
 /**
  * Type guard to validate SimpleRevenueDto structure.
@@ -70,4 +74,11 @@ export function isRevenueChartDto(value: unknown): value is RevenueChartDto {
     isRevenueStatisticsDto(dto.statistics) &&
     typeof dto.year === "number"
   );
+}
+
+/**
+ * Type guard to check if a value is a valid MonthName.
+ */
+export function isMonthName(value: unknown): value is MonthName {
+  return typeof value === "string" && MONTH_ORDER.includes(value as MonthName);
 }

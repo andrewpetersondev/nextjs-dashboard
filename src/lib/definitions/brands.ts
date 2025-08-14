@@ -9,6 +9,8 @@ import {
 import {
   INTERVAL_DURATIONS,
   type IntervalDuration,
+  REVENUE_SOURCES,
+  type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 
@@ -56,7 +58,8 @@ const validateEnum = <T extends string>(
   );
 };
 
-// ID validation functions
+// --- ID validation functions ---
+
 export const toCustomerId = (id: string): CustomerId => {
   validateUuid(id, "CustomerId");
   return id as CustomerId;
@@ -77,15 +80,13 @@ export const toRevenueId = (id: string): RevenueId => {
   return id as RevenueId;
 };
 
-/**
- * Database is not being used for sessions yet
- */
 export const _toSessionId = (id: string): SessionId => {
   validateUuid(id, "SessionId");
   return id as SessionId;
 };
 
-// Enum branding functions using the generic validateEnum
+// --- Enum branding functions using the generic validateEnum ---
+
 export const toUserRole = (role: string): UserRole => {
   return validateEnum(role, USER_ROLES, "UserRole");
 };
@@ -94,9 +95,30 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
   return validateEnum(status, INVOICE_STATUSES, "InvoiceStatus");
 };
 
+// IntervalDuration is not in the DB schema.
 export const toIntervalDuration = (duration: string): IntervalDuration => {
   return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
 };
+
+export const toRevenueSourceV2 = (source: string): RevenueSource => {
+  return validateEnum(source, REVENUE_SOURCES, "RevenueSource");
+};
+
+export function toRevenueSource(value: unknown): RevenueSource {
+  if (typeof value !== "string") {
+    throw new ValidationError(
+      `Invalid RevenueSource type: expected string, got ${typeof value}`,
+    );
+  }
+
+  if (!isRevenueSource(value)) {
+    throw new ValidationError(
+      `Invalid RevenueSource: "${value}". Allowed values: ${REVENUE_SOURCES.join(", ")}`,
+    );
+  }
+
+  return value;
+}
 
 // Other branding functions
 
@@ -174,5 +196,15 @@ export function isPeriod(value: unknown): value is Period {
     value instanceof Date &&
     !Number.isNaN(value.getTime()) &&
     value.getUTCDate() === 1
+  );
+}
+
+/**
+ * Type guard to check if a value is a valid RevenueSource.
+ */
+export function isRevenueSource(value: unknown): value is RevenueSource {
+  return (
+    typeof value === "string" &&
+    REVENUE_SOURCES.includes(value as RevenueSource)
   );
 }

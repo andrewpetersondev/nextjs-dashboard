@@ -115,23 +115,6 @@ export interface YAxisResult {
 }
 
 /**
- * Type guard to check if a value is a valid MonthName.
- */
-export function isMonthName(value: unknown): value is MonthName {
-  return typeof value === "string" && MONTH_ORDER.includes(value as MonthName);
-}
-
-/**
- * Type guard to check if a value is a valid RevenueSource.
- */
-export function isRevenueSource(value: unknown): value is RevenueSource {
-  return (
-    typeof value === "string" &&
-    REVENUE_SOURCES.includes(value as RevenueSource)
-  );
-}
-
-/**
  * Safely convert a calendar month number (1-12) to a MonthName.
  *
  * @param monthNumber - The month number (1-12)
@@ -164,29 +147,6 @@ export function getMonthNumber(monthName: MonthName): number {
     );
   }
   return index + 1;
-}
-
-/**
- * Runtime validator to narrow arbitrary strings to RevenueSource.
- *
- * @param value - The string value to validate
- * @returns The validated RevenueSource
- * @throws {ValidationError} When value is not a valid RevenueSource
- */
-export function toRevenueSource(value: unknown): RevenueSource {
-  if (typeof value !== "string") {
-    throw new ValidationError(
-      `Invalid RevenueSource type: expected string, got ${typeof value}`,
-    );
-  }
-
-  if (!isRevenueSource(value)) {
-    throw new ValidationError(
-      `Invalid RevenueSource: "${value}". Allowed values: ${REVENUE_SOURCES.join(", ")}`,
-    );
-  }
-
-  return value;
 }
 
 /**

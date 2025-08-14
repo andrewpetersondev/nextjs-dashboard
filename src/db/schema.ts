@@ -13,8 +13,10 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import type { InvoiceStatus } from "@/features/invoices/invoice.types";
-import { INVOICE_STATUSES } from "@/features/invoices/invoice.types";
+import {
+  INVOICE_STATUSES,
+  type InvoiceStatus,
+} from "@/features/invoices/invoice.types";
 import {
   REVENUE_SOURCES,
   type RevenueSource,

@@ -6,11 +6,9 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import {
-  getMonthName,
-  toRevenueSource,
-} from "@/features/revenues/core/revenue.types";
+import { getMonthName } from "@/features/revenues/core/revenue.types";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
+import { toRevenueSource } from "@/lib/definitions/brands";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
