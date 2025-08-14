@@ -17,7 +17,7 @@ export async function RevenueChart(): Promise<JSX.Element> {
     );
   }
 
-  const revenue: SimpleRevenueDto[] = result.data.monthlyData;
+  const revenue: SimpleRevenueDto[] = [...result.data.monthlyData];
   const chartHeight = 350;
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);

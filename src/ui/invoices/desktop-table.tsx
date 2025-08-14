@@ -59,7 +59,7 @@ export const DesktopTable = ({
                 {formatCurrency(invoice.amount)}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
-                {formatDateToLocal(invoice.date)}
+                {formatDateToLocal(invoice.date.toISOString())}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
                 <InvoiceStatusComponent status={invoice.status} />

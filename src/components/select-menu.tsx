@@ -19,6 +19,7 @@ export interface SelectMenuProps<
   className?: string;
   dataCy?: string;
   disabled?: boolean;
+  required?: boolean;
   error?: FormFieldError;
 }
 
@@ -39,6 +40,7 @@ export const SelectMenu = React.memo(
     className = "",
     dataCy,
     disabled = false,
+    required,
     error,
   }: SelectMenuProps<T>) => (
     <div className="relative">
@@ -55,6 +57,7 @@ export const SelectMenu = React.memo(
         id={id}
         name={name}
         onChange={onChange}
+        required={required}
         // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
         value={value !== undefined ? value : undefined}
       >

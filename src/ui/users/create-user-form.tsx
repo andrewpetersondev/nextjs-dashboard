@@ -17,7 +17,7 @@ import { SelectRole } from "@/ui/users/select-role";
 import { ServerMessage } from "@/ui/users/server-message";
 
 export function CreateUserForm(): JSX.Element {
-  const initialState = { errors: {}, message: "", success: undefined };
+  const initialState = { errors: {}, message: "", success: false };
 
   const [state, action, pending] = useActionState<
     CreateUserFormState,

@@ -12,7 +12,7 @@ import { InvoiceStatusComponent } from "@/ui/invoices/status";
  * This component is only visible on mobile devices (hidden on md breakpoint and above).
  *
  * @param {Object} props - Component props
- * @param {FetchFilteredInvoicesData[]} props.invoices - Array of invoice data to display
+ * @param {InvoiceListFilter[]} props.invoices - Array of invoice data to display
  * @returns {JSX.Element} Mobile-friendly table component
  */
 
@@ -45,7 +45,7 @@ export const MobileTable = ({
                 </div>
                 <p className="text-sm text-text-primary">{invoice.email}</p>
               </div>
-              <InvoiceStatusComponent status={invoice.status || "unknown"} />
+              <InvoiceStatusComponent status={invoice.status} />
             </div>
             {/* Amount, date and actions section */}
             <div className="flex w-full items-center justify-between pt-4">
@@ -53,7 +53,7 @@ export const MobileTable = ({
                 <p className="font-medium text-xl">
                   {formatCurrency(invoice.amount)}
                 </p>
-                <p>{formatDateToLocal(invoice.date)}</p>
+                <p>{formatDateToLocal(invoice.date.toISOString())}</p>
               </div>
               <div className="flex justify-end gap-2">
                 <UpdateInvoice id={invoice.id} />

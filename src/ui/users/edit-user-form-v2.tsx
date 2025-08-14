@@ -3,8 +3,6 @@
 import { type JSX, useActionState } from "react";
 import { updateUserAction } from "@/features/users/user.actions";
 import type { UserDto } from "@/features/users/user.dto";
-import type { EditUserFormFields } from "@/features/users/user.types";
-import type { FormState } from "@/lib/forms/form.types";
 import { UserForm } from "@/ui/users/user-form";
 import { UserInfoPanel } from "@/ui/users/user-info-panel";
 
@@ -21,15 +19,12 @@ type EditUserFormState = Readonly<{
 
 export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
   const initialState = { errors: {}, message: "", success: undefined };
-  const updateUserWithId: (
-    prevState: FormState<EditUserFormFields>,
+  const updateUserWithId = updateUserAction.bind(null, user.id) as (
+    prevState: EditUserFormState,
     formData: FormData,
-  ) => Promise<FormState<EditUserFormFields>> = updateUserAction.bind(
-    null,
-    user.id,
-  );
+  ) => Promise<EditUserFormState>;
 
-  const [state, action, pending] = useActionState<EditUserFormState, FormData>(
+  const [state, action, pending] = useActionState(
     updateUserWithId,
     initialState,
   );

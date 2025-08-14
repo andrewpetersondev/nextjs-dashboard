@@ -32,8 +32,8 @@ const initialState = {
  */
 export const SignupForm: FC = (): JSX.Element => {
   const [state, action, pending] = useActionState<
-    typeof signup,
-    FormState<SignupFormFieldNames>
+    FormState<SignupFormFieldNames>,
+    FormData
   >(signup, initialState);
 
   return (

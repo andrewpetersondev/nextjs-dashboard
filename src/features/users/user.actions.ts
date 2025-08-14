@@ -38,7 +38,6 @@ import type {
   LoginFormFields,
   SignupFormFieldNames,
   SignupFormFields,
-  UserCreateState,
   UserRole,
 } from "@/features/users/user.types";
 import { getValidUserRole } from "@/features/users/user.utils";
@@ -254,7 +253,7 @@ export async function deleteUserFormAction(formData: FormData): Promise<void> {
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
-): Promise<UserCreateState> {
+): Promise<FormState<SignupFormFieldNames>> {
   const validated = validateSignupForm(formData);
 
   if (!validated.success || typeof validated.data === "undefined") {
@@ -274,10 +273,11 @@ export async function signup(
     });
 
     if (!user) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
-      });
+      };
     }
     await setSessionToken(toUserId(user.id), toUserRole("user"));
   } catch (error) {
@@ -288,10 +288,11 @@ export async function signup(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
-    });
+    };
   }
   redirect("/dashboard");
 }

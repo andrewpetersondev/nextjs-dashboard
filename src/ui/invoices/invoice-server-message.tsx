@@ -1,12 +1,12 @@
 import type { JSX } from "react";
-import type { InvoiceFormStateCreate } from "@/features/invoices/invoice.schemas";
+import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
 
 /**
  * Props for InvoiceServerMessage component.
  */
 interface InvoiceServerMessageProps {
   showAlert: boolean;
-  state: InvoiceFormStateCreate;
+  state: InvoiceActionResult;
 }
 
 /**

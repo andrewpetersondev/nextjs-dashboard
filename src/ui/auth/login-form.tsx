@@ -28,8 +28,8 @@ const initialState: FormState<LoginFormFieldNames> = {
 export const LoginForm: FC = (): JSX.Element => {
   // useActionState returns a tuple: [state, action, pending]
   const [state, action, pending] = useActionState<
-    typeof login,
-    FormState<LoginFormFieldNames>
+    FormState<LoginFormFieldNames>,
+    FormData
   >(login, initialState);
 
   return (

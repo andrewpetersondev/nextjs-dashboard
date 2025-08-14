@@ -18,7 +18,7 @@ import type { CustomerField } from "@/features/customers/customer.types";
 export interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
   readonly customers: readonly CustomerField[];
-  readonly error?: readonly string[] | undefined;
+  readonly error?: import("@/lib/forms/form.types").FormFieldError;
 }
 
 /**
@@ -29,26 +29,30 @@ export const CustomerSelect = ({
   customers,
   error,
   ...props
-}: CustomerSelectProps): JSX.Element => (
-  <div>
-    <SelectMenu
-      aria-describedby={error ? "customer-select-error" : undefined}
-      aria-invalid={!!error}
-      defaultValue=""
-      id="customer"
-      name="customerId"
-      options={customers}
-      placeholder="Select a customer"
-      required
-      {...props}
-    />
-    {error && error.length > 0 && (
-      <ErrorMessage
-        dataCy="customer-select-error"
-        error={error}
-        id="customer-select-error"
-        label="Customer selection error"
+}: CustomerSelectProps): JSX.Element => {
+  const ERROR_ID = "customer-select-error";
+  const hasError = !!(error && error.length > 0);
+  return (
+    <div>
+      <SelectMenu
+        aria-describedby={hasError ? ERROR_ID : undefined}
+        aria-invalid={hasError}
+        defaultValue=""
+        id="customer"
+        name="customerId"
+        options={[...customers]}
+        placeholder="Select a customer"
+        required
+        {...props}
       />
-    )}
-  </div>
-);
+      {hasError && (
+        <ErrorMessage
+          dataCy={ERROR_ID}
+          error={error}
+          id={ERROR_ID}
+          label="Customer selection error"
+        />
+      )}
+    </div>
+  );
+};
