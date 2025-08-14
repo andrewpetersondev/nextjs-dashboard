@@ -24,6 +24,7 @@ import { USER_ROLES } from "@/features/users/user.types";
 import type {
   CustomerId,
   InvoiceId,
+  Period,
   RevenueId,
   SessionId,
   UserId,
@@ -178,7 +179,10 @@ export const revenues = pgTable(
     createdAt: commonFields.timestamps.createdAt(),
     id: commonFields.id.uuid().$type<RevenueId>(),
     invoiceCount: integer(COLUMNS.INVOICE_COUNT).notNull().default(0),
-    period: date(COLUMNS.PERIOD, { mode: "date" }).notNull().unique(),
+    period: date(COLUMNS.PERIOD, { mode: "date" })
+      .notNull()
+      .unique()
+      .$type<Period>(),
     // bigint to avoid overflow for large aggregates
     totalAmount: bigint(COLUMNS.TOTAL_AMOUNT, { mode: "number" })
       .notNull()
@@ -217,7 +221,8 @@ export const invoices = pgTable(
     id: commonFields.id.uuid().$type<InvoiceId>(),
     revenuePeriod: date(COLUMNS.REVENUE_PERIOD, { mode: "date" })
       .notNull()
-      .references(() => revenues.period, { onDelete: "restrict" }),
+      .references(() => revenues.period, { onDelete: "restrict" })
+      .$type<Period>(),
     sensitiveData: commonFields.sensitiveData(),
     status: statusEnum(COLUMNS.STATUS)
       .default("pending")
@@ -230,7 +235,7 @@ export const invoices = pgTable(
     // Integrity: keep revenuePeriod aligned with date's month (first day)
     check(
       "invoices_revenue_period_matches_date",
-      sql`${table.revenuePeriod} = date_trunc('month', ${table.date}::timestamp)::date`,
+      sql`${table.revenuePeriod} = date_trunc('month', ${table.date})::date`,
     ),
     // Performance: efficient joins/filters
     index("invoices_customer_id_idx").on(table.customerId),

@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
+import type { Period } from "@/lib/definitions/brands";
 import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
 
@@ -252,7 +253,7 @@ async function main(): Promise<void> {
       periodDates.map((periodDate) => ({
         calculationSource: "seed" as const,
         invoiceCount: 0,
-        period: periodDate, // Date instance for DATE column
+        period: periodDate as Period, // Cast to branded Period type
         totalAmount: 0,
       })),
     );
@@ -282,13 +283,9 @@ async function main(): Promise<void> {
      * For each iteration:
      * - Randomly selects a customer from existing customers
      * - Randomly selects a period from predefined periods
-     * - Validates that the period is first day of month
-     * - Creates invoice with:
-     *   - Random amount using generateInvoiceAmount()
-     *   - Selected customer ID
-     *   - Period date as both date and revenuePeriod
-     *   - Random status (pending/paid)
-     * Throws error if customer or period selection fails
+     * - Generates a random date within that month for the invoice date
+     * - Uses the period (first day of month) as the revenue period
+     * - Creates invoice with random amount and status
      */
     for (let i = 0; i < SEED_CONFIG.INVOICE_COUNT; i++) {
       const customer =
@@ -304,13 +301,27 @@ async function main(): Promise<void> {
       }
       validatePeriod(period);
 
-      const periodDate = new Date(period + "T00:00:00.000Z");
+      // Revenue period is always the first day of the month
+      const revenuePeriod = new Date(period + "T00:00:00.000Z");
+
+      // Generate a random date within the same month as the period
+      const [year, month] = period.split("-").map(Number);
+
+      if (!year || !month || month < 1 || month > 12) {
+        throw new Error(
+          `Invalid period format: ${period}. Expected YYYY-MM-DD`,
+        );
+      }
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
+      const invoiceDate = new Date(Date.UTC(year, month - 1, randomDay));
 
       invoiceRows.push({
         amount: generateInvoiceAmount(),
         customerId: customer.id,
-        date: periodDate, // DATE column expects Date
-        revenuePeriod: periodDate, // FK to revenues.period (DATE)
+        date: invoiceDate, // Random date within the month
+        revenuePeriod: revenuePeriod as Period, // Always first day of the month
         status: randomInvoiceStatus(),
       });
     }
