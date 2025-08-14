@@ -1,70 +1,143 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-import { seed } from "drizzle-seed";
+import type { Period } from "@/lib/definitions/brands";
 import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
 
-const SALT_ROUNDS = 10;
+/**
+ * Configuration constants for seeding operations.
+ * Extracted to improve maintainability and testability.
+ */
+const SEED_CONFIG = {
+  /** Number of invoices to generate */
+  INVOICE_COUNT: 70,
+  /** Threshold for large amounts in cents */
+  LARGE_AMOUNT_THRESHOLD: 1_500_001,
+  /** Maximum amount for regular invoices in cents ($15,000) */
+  MAX_AMOUNT_CENTS: 1_500_000,
+  /** Maximum amount for large invoices in cents ($50,000) */
+  MAX_LARGE_AMOUNT_CENTS: 5_000_000,
+  /** Minimum amount for regular invoices in cents ($5.00) */
+  MIN_AMOUNT_CENTS: 500,
+  /** Number of salt rounds for password hashing */
+  SALT_ROUNDS: 10,
+  /** Probability of generating zero amounts for edge case testing */
+  ZERO_AMOUNT_PROBABILITY: 0.05,
+} as const;
 
+/**
+ * Validates that a period string represents the first day of a month.
+ * Ensures compliance with database check constraints.
+ *
+ * @param period - Date string in YYYY-MM-DD format
+ * @throws {Error} When period is not the first day of the month
+ */
+function validatePeriod(period: string): void {
+  const date = new Date(period + "T00:00:00.000Z");
+  if (date.getUTCDate() !== 1) {
+    throw new Error(`Generated period ${period} is not first day of month`);
+  }
+}
+
+/**
+ * Hashes a password using bcrypt with configured salt rounds.
+ *
+ * @param password - Plain text password to hash
+ * @returns Promise resolving to the hashed password
+ */
 async function hashPassword(password: string): Promise<string> {
-  const salt = await bcryptjs.genSalt(SALT_ROUNDS);
+  const salt = await bcryptjs.genSalt(SEED_CONFIG.SALT_ROUNDS);
   return bcryptjs.hash(password, salt);
 }
 
-// Periods for revenues (must be first day of month to satisfy checks/FKs). Should these be Date objects?
-const periods: string[] = [
-  "2024-01-01",
-  "2024-02-01",
-  "2024-03-01",
-  "2024-04-01",
-  "2024-05-01",
-  "2024-06-01",
-  "2024-07-01",
-  "2024-08-01",
-  "2024-09-01",
-  "2024-10-01",
-  "2024-11-01",
-  "2024-12-01",
-  "2025-01-01",
-  "2025-02-01",
-  "2025-03-01",
-  "2025-04-01",
-  "2025-05-01",
-  "2025-06-01",
-  "2025-07-01",
-];
+/**
+ * Generate first-of-month periods as YYYY-MM-DD strings.
+ */
+function generateMonthlyPeriods(start: string, months: number): string[] {
+  if (!start) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
+  if (!months || months < 0) {
+    throw new Error(
+      `Invalid months count: ${months}. Must be a positive integer.`,
+    );
+  }
+  const [yearStr, monthStr] = start.split("-");
+  if (!yearStr || !monthStr) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  if (Number.isNaN(year) || Number.isNaN(month)) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
 
+  const out: string[] = [];
+  for (let i = 0; i < months; i++) {
+    const currentYear = year + Math.floor((month - 1 + i) / 12);
+    const currentMonth = ((month - 1 + i) % 12) + 1;
+    const d = new Date(Date.UTC(currentYear, currentMonth - 1, 1));
+    const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    out.push(iso);
+  }
+  return out;
+}
+
+/**
+ * Predefined periods for revenue table seeding.
+ * Covers 19 months starting from 2024-01-01.
+ */
+const periods = generateMonthlyPeriods("2024-01-01", 19);
+
+// Convert to UTC Date objects for Drizzle DATE columns
+const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
+
+/**
+ * Available user roles for demo user counters.
+ */
 const roles = ["guest", "admin", "user"] as const;
 
-const customerFullNames: string[] = [
-  "Evil Rabbits",
-  "Delba de Oliveira",
-  "Lee Robinson",
-  "Michael Novotny",
-  "Amy Burns",
-  "Balazs Orban",
-];
+/**
+ * Predefined customer data with aligned attributes.
+ */
+const customersData: Array<{ name: string; email: string; imageUrl: string }> =
+  [
+    {
+      email: "evil@rabbit.com",
+      imageUrl: "/customers/evil-rabbit.png",
+      name: "Evil Rabbits",
+    },
+    {
+      email: "delba@oliveira.com",
+      imageUrl: "/customers/delba-de-oliveira.png",
+      name: "Delba de Oliveira",
+    },
+    {
+      email: "lee@robinson.com",
+      imageUrl: "/customers/lee-robinson.png",
+      name: "Lee Robinson",
+    },
+    {
+      email: "michael@novotny.com",
+      imageUrl: "/customers/michael-novotny.png",
+      name: "Michael Novotny",
+    },
+    {
+      email: "amy@burns.com",
+      imageUrl: "/customers/amy-burns.png",
+      name: "Amy Burns",
+    },
+    {
+      email: "balazs@orban.com",
+      imageUrl: "/customers/balazs-orban.png",
+      name: "Balazs Orban",
+    },
+  ];
 
-const customerEmails: string[] = [
-  "evil@rabbit.com",
-  "delba@oliveira.com",
-  "lee@robinson.com",
-  "michael@novotny.com",
-  "amy@burns.com",
-  "balazs@orban.com",
-];
-
-const customerImageUrls: string[] = [
-  "/customers/evil-rabbit.png",
-  "/customers/delba-de-oliveira.png",
-  "/customers/lee-robinson.png",
-  "/customers/michael-novotny.png",
-  "/customers/amy-burns.png",
-  "/customers/balazs-orban.png",
-];
-
+/**
+ * Checks if all main tables are empty using efficient EXISTS queries.
+ */
 async function isEmpty(): Promise<boolean> {
-  // Fast emptiness check using EXISTS
   const checks = await Promise.all([
     nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
@@ -85,8 +158,10 @@ async function isEmpty(): Promise<boolean> {
   return checks.every((r: any) => r.rows?.[0]?.v === false);
 }
 
+/**
+ * Truncates all tables and resets identity sequences.
+ */
 async function truncateAll(): Promise<void> {
-  // Safe in dev/test: resets serials and cascades to dependents
   await nodeEnvTestDb.execute(sql`TRUNCATE TABLE
     ${schema.sessions},
     ${schema.invoices},
@@ -94,9 +169,47 @@ async function truncateAll(): Promise<void> {
     ${schema.revenues},
     ${schema.demoUserCounters},
     ${schema.users}
-  RESTART IDENTITY CASCADE`);
+    RESTART IDENTITY CASCADE`);
 }
 
+/**
+ * Generates realistic invoice amounts (in cents).
+ */
+function generateInvoiceAmount(): number {
+  const r = Math.random();
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) return 0;
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.05) return 1;
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.1)
+    return SEED_CONFIG.MIN_AMOUNT_CENTS;
+
+  if (r < 0.9) {
+    return (
+      Math.floor(
+        Math.random() *
+          (SEED_CONFIG.MAX_AMOUNT_CENTS - SEED_CONFIG.MIN_AMOUNT_CENTS + 1),
+      ) + SEED_CONFIG.MIN_AMOUNT_CENTS
+    );
+  }
+  return (
+    Math.floor(
+      Math.random() *
+        (SEED_CONFIG.MAX_LARGE_AMOUNT_CENTS -
+          SEED_CONFIG.LARGE_AMOUNT_THRESHOLD +
+          1),
+    ) + SEED_CONFIG.LARGE_AMOUNT_THRESHOLD
+  );
+}
+
+/**
+ * Randomly selects an invoice status.
+ */
+function randomInvoiceStatus(): "pending" | "paid" {
+  return Math.random() < 0.5 ? "pending" : "paid";
+}
+
+/**
+ * Main seeding function.
+ */
 async function main(): Promise<void> {
   const shouldReset = process.env.SEED_RESET === "true";
 
@@ -134,125 +247,121 @@ async function main(): Promise<void> {
     },
   ];
 
-  // 1) Seed revenues first (parents)
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    revenues: {
-      columns: {
-        calculationSource: f.default({ defaultValue: "seed" }),
-        invoiceCount: f.default({ defaultValue: 0 }),
-        // I do not like how periods are set from a fixed array
-        period: f.valuesFromArray({ isUnique: true, values: periods }),
-        // Leave aggregates at zero and compute them after invoices
-        totalAmount: f.default({ defaultValue: 0 }),
-      },
-      count: periods.length,
-    },
-  }));
+  await nodeEnvTestDb.transaction(async (tx) => {
+    // 1) Seed revenues with Dates directly (no valuesFromArray)
+    await tx.insert(schema.revenues).values(
+      periodDates.map((periodDate) => ({
+        calculationSource: "seed" as const,
+        invoiceCount: 0,
+        period: periodDate as Period, // Cast to branded Period type
+        totalAmount: 0,
+      })),
+    );
 
-  // 2) Seed customers (with invoices referencing existing revenues)
-  // I do not like how seeding customers can create a customer with email, imageUrl, and names that are clearly not intended to belong together. (e.g., Amy Burns should have the email address amy@burns.com and the image url containing her name.
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    customers: {
-      columns: {
-        email: f.valuesFromArray({ isUnique: true, values: customerEmails }),
-        imageUrl: f.valuesFromArray({
-          isUnique: true,
-          values: customerImageUrls,
-        }),
-        name: f.valuesFromArray({ isUnique: true, values: customerFullNames }),
-      },
-      count: customerFullNames.length,
-    },
-  }));
+    // 2) Seed customers in a single batch
+    await tx.insert(schema.customers).values(
+      customersData.map((c) => ({
+        email: c.email,
+        imageUrl: c.imageUrl,
+        name: c.name,
+      })),
+    );
 
-  // 3) Seed invoices
-  // Generate invoices that:
-  // - choose a revenuePeriod from seeded revenues
-  // - set date equal to that revenuePeriod (first of month) to satisfy the check constraint
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    invoices: {
-      columns: {
-        // amounts in cents; bigint-compatible and non-negative
-        // I do not like how the amount uses weights. I'd prefer a random distribution which also provides values for edge cases
-        amount: f.weightedRandom([
-          { value: f.default({ defaultValue: 100_000 }), weight: 5 / 15 },
-          {
-            value: f.int({ maxValue: 1_000_000, minValue: 10_000 }),
-            weight: 10 / 15,
-          },
-        ]),
-        // customerId will be auto-populated if we relate via with:, but since we’re seeding invoices standalone we assign a random customerId from existing rows.
-        // What does the above comment mean?
-        // f.ref() does not exist on the type. what is this trying to do and how do I make sure that the seeded invoices are properly generated to align with my schema file?
-        customerId: f.ref(schema.customers.id),
-        date: f.valuesFromArray({ values: periods }),
-        // Pick a period and use it for both date and revenuePeriod to satisfy the FK + check
-        revenuePeriod: f.valuesFromArray({ values: periods }),
-        status: f.valuesFromArray({ values: ["pending", "paid"] }),
-      },
-      count: 70,
-    },
-  }));
+    // 3) Seed invoices using Date objects for date/revenuePeriod
+    const existingCustomers = await tx
+      .select({ id: schema.customers.id })
+      .from(schema.customers);
 
-  // 4) Seed demo user counters
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    demoUserCounters: {
-      columns: {
-        count: f.int({ maxValue: 100, minValue: 1 }),
-        role: f.valuesFromArray({ isUnique: true, values: [...roles] }),
-      },
-      count: roles.length,
-    },
-  }));
+    if (existingCustomers.length === 0) {
+      throw new Error("No customers found after seeding customers.");
+    }
 
-  // 5) Seed users
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    users: {
-      columns: {
-        email: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.email),
-        }),
-        password: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.password),
-        }),
-        role: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.role),
-        }),
-        username: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.username),
-        }),
-      },
-      count: userSeed.length,
-    },
-  }));
+    const invoiceRows: Array<typeof schema.invoices.$inferInsert> = [];
 
-  // 6) Recompute revenue aggregates from invoices
-  // totalAmount: sum of invoice amounts for that period
-  // invoiceCount: number of invoices for that period
-  await nodeEnvTestDb.execute(sql`
-    UPDATE ${schema.revenues} r
-    SET
-      ${schema.revenues.totalAmount} = COALESCE(agg.total_amount, 0),
-      ${schema.revenues.invoiceCount} = COALESCE(agg.invoice_count, 0),
-      ${schema.revenues.updatedAt} = NOW()
-    FROM (
-      SELECT
-        ${schema.invoices.revenuePeriod} AS period,
-        SUM(${schema.invoices.amount}) AS total_amount,
-        COUNT(*) AS invoice_count
-      FROM ${schema.invoices}
-      GROUP BY ${schema.invoices.revenuePeriod}
-    ) AS agg
-    WHERE r.${schema.revenues.period} = agg.period
-  `);
+    /**
+     * Generates invoice records by iterating INVOICE_COUNT times.
+     * For each iteration:
+     * - Randomly selects a customer from existing customers
+     * - Randomly selects a period from predefined periods
+     * - Generates a random date within that month for the invoice date
+     * - Uses the period (first day of month) as the revenue period
+     * - Creates invoice with random amount and status
+     */
+    for (let i = 0; i < SEED_CONFIG.INVOICE_COUNT; i++) {
+      const customer =
+        existingCustomers[Math.floor(Math.random() * existingCustomers.length)];
+
+      const period = periods[Math.floor(Math.random() * periods.length)];
+
+      if (!customer?.id) {
+        throw new Error(`Invalid customer at index ${i}`);
+      }
+      if (!period) {
+        throw new Error(`Invalid period at index ${i}`);
+      }
+      validatePeriod(period);
+
+      // Revenue period is always the first day of the month
+      const revenuePeriod = new Date(period + "T00:00:00.000Z");
+
+      // Generate a random date within the same month as the period
+      const [year, month] = period.split("-").map(Number);
+
+      if (!year || !month || month < 1 || month > 12) {
+        throw new Error(
+          `Invalid period format: ${period}. Expected YYYY-MM-DD`,
+        );
+      }
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
+      const invoiceDate = new Date(Date.UTC(year, month - 1, randomDay));
+
+      invoiceRows.push({
+        amount: generateInvoiceAmount(),
+        customerId: customer.id,
+        date: invoiceDate, // Random date within the month
+        revenuePeriod: revenuePeriod as Period, // Always first day of the month
+        status: randomInvoiceStatus(),
+      });
+    }
+
+    if (invoiceRows.length > 0) {
+      await tx.insert(schema.invoices).values(invoiceRows);
+    }
+
+    // 4) Seed demo user counters (one per role)
+    await tx.insert(schema.demoUserCounters).values(
+      roles.map((role) => ({
+        count: Math.floor(Math.random() * 100) + 1,
+        role,
+      })),
+    );
+
+    // 5) Seed users (pre-hashed passwords)
+    await tx.insert(schema.users).values(userSeed);
+
+    // 6) Recompute revenue aggregates from invoices
+    await tx.execute(sql`
+      UPDATE revenues AS r
+      SET total_amount  = COALESCE(agg.total_amount, 0),
+          invoice_count = COALESCE(agg.invoice_count, 0),
+          updated_at    = NOW() FROM (
+  SELECT
+    invoices.revenue_period AS period,
+    SUM(invoices.amount) AS total_amount,
+    COUNT(*) AS invoice_count
+  FROM invoices
+  GROUP BY invoices.revenue_period
+) AS agg
+      WHERE r.period = agg.period;
+    `);
+  });
 
   console.log("Database seeded successfully.");
 }
 
+// Execute seeding with proper error handling and process exit
 main().catch((error) => {
   console.error("Error seeding database:", error);
   process.exit(1);
