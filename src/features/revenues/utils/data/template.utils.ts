@@ -12,7 +12,7 @@ import {
 } from "@/features/revenues/core/revenue.types";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
 import { type Period, toPeriod, toRevenueId } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

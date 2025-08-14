@@ -5,8 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import { getDB } from "@/db/connection";
-import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
-import { DatabaseError, ValidationError } from "@/errors/errors";
 import {
   fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
@@ -27,11 +25,13 @@ import type {
   InvoiceStatus,
 } from "@/features/invoices/invoice.types";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
+import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
+import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/lib/events/invoice.events";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Server action for creating a new invoice.

@@ -1,3 +1,12 @@
+/**
+ * @file schema.ts
+ * Drizzle ORM schema definitions for application tables, enums, and relations.
+ *
+ * Conventions:
+ * - Monetary values stored as bigint cents.
+ * - Timestamps use timestamptz for cross-timezone safety.
+ * - Branded types constrain cross-table usage at compile time.
+ */
 import { relations, sql } from "drizzle-orm";
 import {
   bigint,
@@ -43,7 +52,6 @@ import type {
 
 /**
  * Constants for DB table and column names to prevent typos and ease refactors.
- * Note: Some column keys may remain for backward-compatibility even if not used in this file.
  */
 export const TABLES = {
   CUSTOMERS: "customers",

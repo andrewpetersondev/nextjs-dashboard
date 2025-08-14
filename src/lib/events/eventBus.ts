@@ -4,7 +4,7 @@
  * @see src/features/revenues/event-driven-revenue-strategy.md
  */
 
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Type for event handler functions.

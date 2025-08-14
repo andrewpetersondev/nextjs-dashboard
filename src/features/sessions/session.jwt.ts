@@ -3,7 +3,6 @@ import "server-only";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { SESSION_SECRET } from "@/config/env";
-import { ValidationError } from "@/errors/errors";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
@@ -14,15 +13,14 @@ import {
   type EncryptPayload,
   EncryptPayloadSchema,
 } from "@/features/sessions/session.types";
-// import { getCookieValue } from "@/features/sessions/session.utils";
 import type { UserRole } from "@/features/users/user.types";
 import {
   JWT_EXPIRATION,
-  // ONE_DAY_MS,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
 } from "@/lib/constants/auth.constants";
-import { logger } from "@/lib/utils/logger";
+import { ValidationError } from "@/lib/errors/errors";
+import { logger } from "@/lib/logging/logger";
 
 // --- JWT session logic here ---
 // export createSessionToken, readSessionToken, setSessionToken, updateSessionToken, deleteSessionToken

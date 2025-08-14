@@ -20,7 +20,7 @@ import {
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
 import { toIntervalDuration } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Service for calculating revenue statistics.

@@ -7,7 +7,6 @@ import "server-only";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { demoUserCounters, users } from "@/db/schema";
-import { DatabaseError } from "@/errors/errors";
 import {
   comparePassword,
   hashPassword,
@@ -17,7 +16,8 @@ import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
 import { toUserRole, type UserId } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
+import { DatabaseError } from "@/lib/errors/errors";
+import { logger } from "@/lib/logging/logger";
 import { createRandomPassword } from "@/lib/utils/password";
 
 /**

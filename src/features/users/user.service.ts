@@ -1,4 +1,5 @@
-import { USER_ERROR_MESSAGES } from "@/errors/error-messages";
+import "server-only";
+
 import {
   LoginFormSchema,
   SignupFormSchema,
@@ -10,6 +11,7 @@ import type {
   SignupFormFields,
 } from "@/features/users/user.types";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
+import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { validateFormData } from "@/lib/forms/form-validation";
 

@@ -1,3 +1,12 @@
+/**
+ * @file connection.ts
+ * Shared application database connection factory using Drizzle ORM.
+ *
+ * Notes:
+ * - Prefer this module in runtime code. Do not import dev-/test-database helpers.
+ * - Default environment is "test" to align with the project's current setup.
+ * - See src/config/README.md and src/config/env.ts for environment variable details.
+ */
 import "server-only";
 
 import {
@@ -11,7 +20,7 @@ import * as schema from "@/db/schema";
 // Supported database types
 type DbType = "dev" | "test";
 
-// Add this type for convenience
+// Database instance type with strongly-typed schema
 export type Database = NodePgDatabase<typeof schema> & {
   $client: NodePgClient;
 };
@@ -32,7 +41,7 @@ function getDatabaseUrl(type: DbType): string {
 
 /**
  * Returns a Drizzle database instance for the specified environment.
- * @param type - "dev" (default) or "test"
+ * @param type - "test" (default) or "dev"
  */
 export function getDB(type: DbType = "test"): Database {
   const url = getDatabaseUrl(type);

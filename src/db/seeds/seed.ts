@@ -5,6 +5,19 @@ import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
 
 /**
+ * @file seeds/seed.ts
+ * Seed script for initializing the test database with realistic sample data.
+ *
+ * - Target database: test_db (via POSTGRES_URL_TESTDB)
+ * - Entry point: run directly with ts-node
+ * - Idempotency: refuses to seed if data exists unless SEED_RESET=true
+ *
+ * Quick start:
+ *   POSTGRES_URL_TESTDB=postgres://... pnpm ts-node src/db/seeds/seed.ts
+ *   SEED_RESET=true pnpm ts-node src/db/seeds/seed.ts  # force re-seed (TRUNCATE)
+ */
+
+/**
  * Configuration constants for seeding operations.
  * Extracted to improve maintainability and testability.
  */

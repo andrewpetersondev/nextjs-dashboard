@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { RevenueRow } from "@/db/schema";
-import { ValidationError } from "@/errors/errors";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -15,6 +14,7 @@ import {
   toRevenueId,
   toRevenueSource,
 } from "@/lib/definitions/brands";
+import { ValidationError } from "@/lib/errors/errors";
 import { isValidDate } from "@/lib/utils/date.utils";
 
 // Small internal assertion helper to keep validation DRY and readable

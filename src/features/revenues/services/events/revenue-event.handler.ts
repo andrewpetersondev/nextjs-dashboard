@@ -13,7 +13,7 @@ import type { RevenueService } from "@/features/revenues/services/revenue.servic
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { INVOICE_EVENTS } from "@/lib/events/invoice.events";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Handles invoice events and updates revenue records accordingly.

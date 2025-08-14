@@ -22,9 +22,6 @@ build/
 out/
 node_modules/
 
-# or specific file types in a folder
-src/**/*.md
-
 # or even specific files
 tsconfig.tsbuildinfo
 

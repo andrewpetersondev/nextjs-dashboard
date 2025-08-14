@@ -7,7 +7,7 @@ import type {
 } from "@/features/revenues/core/revenue.types";
 import { createDataLookupMap } from "@/features/revenues/utils/data/lookup.utils";
 import { getMonthDataOrDefault } from "@/features/revenues/utils/data/template.utils";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Creates an empty statistics object when no revenue data exists.

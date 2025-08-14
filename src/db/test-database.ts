@@ -4,6 +4,7 @@
  * This file is used **only** for Drizzle Kit test operations (e.g., generating test migrations, seeding the test database).
  *
  * - Do **not** import or use this file in application runtime code.
+ * - Active test database: "test_db" (connected via `POSTGRES_URL_TESTDB`).
  * - Uses environment variable `POSTGRES_URL_TESTDB` for the test database connection.
  * - All credentials are managed via environment variables and Hashicorp Vault.
  *

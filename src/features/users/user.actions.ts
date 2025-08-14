@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDB } from "@/db/connection";
-import { USER_ERROR_MESSAGES } from "@/errors/error-messages";
 import {
   deleteSessionToken,
   setSessionToken,
@@ -42,9 +41,10 @@ import type {
 } from "@/features/users/user.types";
 import { getValidUserRole } from "@/features/users/user.utils";
 import { toUserId, toUserRole } from "@/lib/definitions/brands";
+import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 import { stripProperties } from "@/lib/utils/utils";
 import { actionResult, getFormField } from "@/lib/utils/utils.server";
 

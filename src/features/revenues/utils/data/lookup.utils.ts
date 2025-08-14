@@ -3,7 +3,7 @@ import "server-only";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
 import { isPeriod, type Period, toPeriod } from "@/lib/definitions/brands";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 const normalizePeriod = (p: string): string => {
   const [y, m] = p.split("-");

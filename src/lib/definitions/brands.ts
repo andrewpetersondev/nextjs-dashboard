@@ -1,7 +1,6 @@
 import "server-only";
 
 import { format, isValid, parse } from "date-fns";
-import { ValidationError } from "@/errors/errors";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
@@ -13,6 +12,7 @@ import {
   type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import { ValidationError } from "@/lib/errors/errors";
 import {
   isValidDate,
   normalizeToFirstOfMonthUTC,

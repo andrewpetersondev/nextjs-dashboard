@@ -14,7 +14,7 @@ import { RevenueRepository } from "@/features/revenues/repository/revenue.reposi
 import { RevenueStatisticsService } from "@/features/revenues/services/statistics/revenue-statistics.service";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { convertCentsToDollars } from "@/features/revenues/utils/display/revenue-display.utils";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

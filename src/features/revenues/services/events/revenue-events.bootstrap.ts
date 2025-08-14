@@ -5,7 +5,7 @@ import { RevenueRepository } from "@/features/revenues/repository/revenue.reposi
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { RevenueEventHandler } from "@/features/revenues/services/events/revenue-event.handler";
 import { RevenueService } from "@/features/revenues/services/revenue.service";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@/lib/logging/logger";
 
 // Ensure single initialization across hot reloads / serverless invocations
 // by storing the instance on the global object.

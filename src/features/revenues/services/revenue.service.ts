@@ -1,6 +1,5 @@
 import "server-only";
 
-import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type {
   RevenueCreateEntity,
@@ -10,6 +9,7 @@ import type {
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
 import type { Period, RevenueId } from "@/lib/definitions/brands";
+import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 
 /**
  * Business service for revenue processing and management.

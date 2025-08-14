@@ -3,8 +3,6 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { customers, invoices } from "@/db/schema";
-import { CUSTOMER_ERROR_MESSAGES } from "@/errors/error-messages";
-import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   CustomerField,
   CustomerSelectDbRow,
@@ -12,6 +10,8 @@ import type {
   FormattedCustomersTableRow,
 } from "@/features/customers/customer.types";
 import { toCustomerId } from "@/lib/definitions/brands";
+import { CUSTOMER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
+import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import { formatCurrency } from "@/lib/utils/utils";
 
 /**
