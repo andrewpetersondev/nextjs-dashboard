@@ -291,9 +291,7 @@ export async function processInvoiceForRevenue(
     "Processing invoice for revenue calculation",
     async () => {
       // Get the existing revenue record for the period
-      const existingRevenue = await revenueService.findByPeriod(
-        periodKey(period),
-      );
+      const existingRevenue = await revenueService.findByPeriod(period);
 
       if (existingRevenue) {
         if (isUpdate && previousAmount !== undefined) {
@@ -397,9 +395,7 @@ export async function adjustRevenueForDeletedInvoice(
       }
 
       // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(
-        periodKey(period),
-      );
+      const existingRevenue = await revenueService.findByPeriod(period);
 
       if (!existingRevenue) {
         logInfo(
@@ -475,9 +471,7 @@ export async function adjustRevenueForStatusChange(
       const metadataWithPeriod = { ...metadata, period };
 
       // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(
-        periodKey(period),
-      );
+      const existingRevenue = await revenueService.findByPeriod(period);
 
       if (!existingRevenue) {
         logInfo(

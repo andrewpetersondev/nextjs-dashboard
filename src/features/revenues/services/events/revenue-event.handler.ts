@@ -10,7 +10,6 @@ import {
   updateRevenueRecord,
 } from "@/features/revenues/services/events/revenue-event.service";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
-import { periodKey } from "@/features/revenues/utils/date/period.utils";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
@@ -126,9 +125,8 @@ export class RevenueEventHandler {
 
         // Handle amount change
         if (previousInvoice.amount !== invoice.amount) {
-          const existingRevenue = await this.revenueService.findByPeriod(
-            periodKey(period),
-          );
+          const existingRevenue =
+            await this.revenueService.findByPeriod(period);
 
           if (existingRevenue) {
             const amountDifference = invoice.amount - previousInvoice.amount;

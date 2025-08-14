@@ -9,7 +9,7 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
-import { type RevenueId, toPeriod } from "@/lib/definitions/brands";
+import type { Period, RevenueId } from "@/lib/definitions/brands";
 
 /**
  * Business service for revenue processing and management.
@@ -119,15 +119,14 @@ export class RevenueService {
   /**
    * Retrieves a revenue record by its period.
    *
-   * @param period - The period (first-of-month DATE), accepts string or Date
+   * @param period - The period (first-of-month DATE)
    * @returns Promise resolving to the revenue entity or null if not found
-   * TODO: should the parameter just accept a date?
    */
-  async findByPeriod(period: string): Promise<RevenueEntity | null> {
+  async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
       throw new ValidationError("Period is required");
     }
-    return this.repository.findByPeriod(toPeriod(period));
+    return this.repository.findByPeriod(period);
   }
 
   /**
@@ -160,13 +159,12 @@ export class RevenueService {
    * Creates or updates a revenue record for a specific month based on invoice data.
    * This method is called by the event handler when invoices are created, updated, or deleted.
    *
-   * @param period - The period (first-of-month DATE), accepts string or Date
+   * @param period - The period (first-of-month DATE)
    * @param invoice - The invoice data that triggered the update
    * @returns Promise resolving to the created or updated revenue entity
-   * TODO: should the period parameter just accpet a date?
    */
   async upsertMonthlyRevenue(
-    period: string,
+    period: Period,
     invoice: InvoiceDto,
   ): Promise<RevenueEntity> {
     if (!period) {
@@ -178,9 +176,7 @@ export class RevenueService {
     }
 
     // Check if a revenue record already exists for this period
-    const existingRevenue = await this.repository.findByPeriod(
-      toPeriod(period),
-    );
+    const existingRevenue = await this.repository.findByPeriod(period);
 
     // If no existing revenue, create a new record or update with zero amounts
     if (!existingRevenue) {
@@ -191,7 +187,7 @@ export class RevenueService {
         totalAmount: invoice.status === "paid" ? invoice.amount : 0,
       };
 
-      return this.repository.upsertByPeriod(toPeriod(period), newRevenue);
+      return this.repository.upsertByPeriod(period, newRevenue);
     }
 
     // Update existing revenue record
@@ -209,6 +205,6 @@ export class RevenueService {
           : existingRevenue.totalAmount,
     };
 
-    return this.repository.upsertByPeriod(toPeriod(period), updatedRevenue);
+    return this.repository.upsertByPeriod(period, updatedRevenue);
   }
 }
