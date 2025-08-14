@@ -12,7 +12,7 @@ The repository layer handles:
 
 ## Core invariants
 
-- Period is the uniqueness key: exactly one row per YYYY-MM.
+- Period is the uniqueness key: exactly one row per month (period is a DATE set to the first day of the month).
 - Timestamps:
   - createdAt is set on insert.
   - updatedAt is refreshed on every write (insert and update).
@@ -31,8 +31,8 @@ The repository layer handles:
 ## Types (at a glance)
 
 - RevenueCreateEntity: Full creation payload (all fields except id).
-- RevenueUpdatable: Narrow update payload (invoiceCount, revenue, calculationSource).
-- Period: Branded string in YYYY-MM; always validate/brand with toPeriod() at boundaries.
+- RevenueUpdatable: Narrow update payload (invoiceCount, totalAmount, calculationSource).
+- Period: Branded first-of-month date value (e.g., "2025-08-01"); always validate/convert with toPeriod() at boundaries.
 
 ## Files
 
@@ -46,11 +46,11 @@ Key methods:
 - read(id: RevenueId): Promise<RevenueEntity>
   - Fetches by ID; throws ValidationError on bad input, DatabaseError if not found or mapping fails.
 - update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>
-  - Updates invoiceCount, revenue, calculationSource. Sets updatedAt = now; createdAt unchanged.
+  - Updates invoiceCount, totalAmount, calculationSource. Sets updatedAt = now; createdAt unchanged.
 - delete(id: RevenueId): Promise<void>
   - Deletes by ID with validation and error handling.
 - findByDateRange(startPeriod: Period, endPeriod: Period): Promise<RevenueEntity[]>
-  - Inclusive range query by branded Period (YYYY-MM); implementations typically sort by period desc.
+  - Inclusive range query by branded Period (first-of-month DATE); implementations typically sort by period desc.
 - upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>
   - Insert-or-update by unique period. On conflict, updates fields and sets updatedAt = now. Insert sets createdAt (provided or now) and updatedAt = now.
 - deleteById(id: RevenueId): Promise<void>
@@ -70,7 +70,7 @@ Highlights:
 - All writes funnel through upsert() to ensure consistent conflict handling.
 - Timestamps are assigned server-side; caller clocks are not trusted.
 - Mappers convert DB rows to domain entities; failures surface as DatabaseError.
-- Period inputs are validated/braned via toPeriod().
+- Period inputs are validated/branded via toPeriod() as first-of-month DATE values.
 
 Method behavior and timestamp semantics:
 - create(): delegates to upsert() for insert-or-update.
@@ -92,7 +92,7 @@ Method behavior and timestamp semantics:
 
 - You have a complete creation payload with a trusted createdAt: use upsert().
 - You computed the period externally and only have updatable fields: use upsertByPeriod(period, updatable).
-- You just want to modify invoiceCount/revenue/calculationSource by id: use update(id, updatable).
+- You just want to modify invoiceCount/totalAmount/calculationSource by id: use update(id, updatable).
 - You need to fetch a specific period or a range: use findByPeriod() or findByDateRange().
 
 ## Usage examples
@@ -115,43 +115,43 @@ const created = await repo.create({
 calculationSource: "seed",
 createdAt: new Date(),
 invoiceCount: 3,
-period: "2024-08" as Period,
-revenue: 125_00, // cents
+period: new Date("2024-08-01") as Period,
+totalAmount: 125_00, // cents
 updatedAt: new Date(),
 });
 
 // Upsert directly
 const upserted = await repo.upsert({
 ...created,
-revenue: 150_00,
+totalAmount: 150_00,
 });
 
 // Update by id (only mutable fields)
 const updated = await repo.update(created.id, {
 calculationSource: "handler",
 invoiceCount: 4,
-revenue: 175_00,
+totalAmount: 175_00,
 });
 
 // Find by period
-const existing = await repo.findByPeriod("2024-08" as Period);
+const existing = await repo.findByPeriod(new Date("2024-08-01") as Period);
 
 // Range query
 const ranged = await repo.findByDateRange(
-"2024-01" as Period,
-"2024-12" as Period,
+new Date("2024-01-01") as Period,
+new Date("2024-12-01") as Period,
 );
 ```
 Using upsertByPeriod with a known period:
 ```typescript
 // TypeScript
-const period = "2024-08" as Period;
+const period = new Date("2024-08-01") as Period;
 
 // Provide only updatable fields; repository assigns timestamps internally
 const result = await repo.upsertByPeriod(period, {
   calculationSource: "invoice_event",
   invoiceCount: 1,
-  revenue: 20_00,
+  totalAmount: 20_00,
 });
 ```
 ## Testing and DI

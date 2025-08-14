@@ -12,7 +12,7 @@ import type { Period, RevenueId } from "@/lib/definitions/brands";
  *
  * Contract for revenue persistence operations, abstracting the underlying DB.
  * Implementations should enforce core invariants:
- * - Period is the uniqueness key (one row per YYYY-MM).
+ * - Period is the uniqueness key (one row per month; period is a DATE = first day of the month).
  * - Timestamps: createdAt is set on insert; updatedAt is refreshed on every write.
  * - Inputs are validated and failures surface as domain-centric errors.
  *
@@ -52,7 +52,7 @@ export interface RevenueRepositoryInterface {
    * - createdAt is never changed by updates.
    *
    * @param id - RevenueId of the row to update
-   * @param revenue - Updatable fields (invoiceCount, revenue, calculationSource)
+   * @param revenue - Updatable fields (invoiceCount, totalAmount, calculationSource)
    * @returns The updated RevenueEntity
    * @throws ValidationError If inputs are missing/invalid
    * @throws DatabaseError If update or mapping fails
@@ -72,11 +72,11 @@ export interface RevenueRepositoryInterface {
    * Find revenue records within an inclusive period range.
    *
    * Query characteristics:
-   * - Filters by branded Period (YYYY-MM) using gte/lte.
+   * - Filters by branded Period (first-of-month DATE) using gte/lte.
    * - Results are typically ordered by period descending (implementation detail).
    *
-   * @param startPeriod - Inclusive start period (YYYY-MM)
-   * @param endPeriod - Inclusive end period (YYYY-MM)
+   * @param startPeriod - Inclusive start period (first-of-month DATE)
+   * @param endPeriod - Inclusive end period (first-of-month DATE)
    * @returns A list of RevenueEntity records if present; empty array otherwise
    * @throws ValidationError If either period is missing/invalid
    * @throws DatabaseError On retrieval or mapping failures
@@ -91,7 +91,7 @@ export interface RevenueRepositoryInterface {
    *
    * Conflict handling:
    * - Uses the period uniqueness constraint as the conflict target.
-   * - On conflict, updates calculationSource, invoiceCount, revenue,
+   * - On conflict, updates calculationSource, invoiceCount, totalAmount,
    *   and refreshed updatedAt.
    *
    * Timestamp semantics:
@@ -122,7 +122,7 @@ export interface RevenueRepositoryInterface {
    * - Returns null when no record exists for the given period (non-exceptional absence).
    * - Validates period input; implementors map DB row to domain entity.
    *
-   * @param period - Target Period (YYYY-MM)
+   * @param period - Target Period (first-of-month DATE)
    * @returns The RevenueEntity or null when not found
    * @throws ValidationError If period is missing/invalid
    * @throws DatabaseError On mapping failures
@@ -133,7 +133,7 @@ export interface RevenueRepositoryInterface {
    *
    * Contract and behavior
    * - Period enforcement: the provided `period` parameter is the source of truth.
-   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, revenue).
+   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, totalAmount).
    * - Delegation: implementors should call upsert() to perform the actual insert/update
    *   using the period uniqueness constraint.
    *
@@ -145,8 +145,8 @@ export interface RevenueRepositoryInterface {
    * - Services and event handlers that already computed a period and want to
    *   create/update the revenue row for that period without passing timestamps.
    *
-   * @param period - Target Period (YYYY-MM)
-   * @param revenue - Updatable fields only (invoiceCount, revenue, calculationSource)
+   * @param period - Target Period (first-of-month DATE)
+   * @param revenue - Updatable fields only (invoiceCount, totalAmount, calculationSource)
    * @returns The created or updated RevenueEntity
    * @throws ValidationError If `period` or `revenue` is missing/invalid
    * @throws ValidationError Propagated from upsert() on uniqueness/conflict-related errors

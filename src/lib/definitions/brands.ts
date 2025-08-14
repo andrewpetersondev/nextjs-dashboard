@@ -30,7 +30,8 @@ export type UserId = Brand<string, typeof userIdBrand>;
 export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
 export type RevenueId = Brand<string, typeof revenueIdBrand>;
 export type SessionId = Brand<string, typeof sessionIdBrand>;
-export type Period = Brand<string, typeof periodBrand>; // YYYY-MM
+// Period is a first-of-month Date branded for type safety
+export type Period = Brand<Date, typeof periodBrand>;
 
 // Consistent validation for all UUID-based IDs
 const validateUuid = (id: string, brandName: string): void => {
@@ -131,7 +132,11 @@ export function isSessionId(value: unknown): value is SessionId {
   return isUuid(value);
 }
 
-// Period guard: YYYY-MM with zero-padded month
+// Period guard: first-of-month Date
 export function isPeriod(value: unknown): value is Period {
-  return typeof value === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+  return (
+    value instanceof Date &&
+    !Number.isNaN(value.getTime()) &&
+    value.getUTCDate() === 1
+  );
 }

@@ -70,7 +70,7 @@ export function isSimpleRevenueDto(value: unknown): value is SimpleRevenueDto {
 
   return (
     typeof dto.month === "string" &&
-    typeof dto.revenue === "number" &&
+    typeof dto.totalAmount === "number" &&
     typeof dto.monthNumber === "number" &&
     dto.monthNumber >= 1 &&
     dto.monthNumber <= 12

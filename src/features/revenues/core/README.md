@@ -24,7 +24,7 @@ Defines the main revenue entity model used within the application domain.
 
 - `RevenueEntity` - Represents a revenue entity in the database
 - `RevenueCreateEntity` - Domain model for creating a new revenue record (excludes `id`)
-- `RevenuePartialEntity` - Partial domain model for updating a revenue record
+- `RevenueUpdatable` - Narrow domain model for updating a revenue record
 - `RevenueDisplayEntity` - Display-oriented entity extending RevenueEntity with UI-specific fields
 
 **Usage Example:**
@@ -41,8 +41,8 @@ const revenueEntity: RevenueEntity = {
   calculationSource: 'seed',
   createdAt: new Date('2025-08-01'),
   invoiceCount: 5,
-  period: '2025-08',
-  revenue: 150000, // In cents
+  period: new Date('2025-08-01') as Period,
+  totalAmount: 150000, // In cents
   updatedAt: new Date('2025-08-05')
 };
 
@@ -51,8 +51,8 @@ const newRevenue: RevenueCreateEntity = {
   calculationSource: 'handler',
   createdAt: new Date(),
   invoiceCount: 3,
-  period: '2025-08',
-  revenue: 75000, // In cents
+  period: new Date('2025-08-01') as Period,
+  totalAmount: 75000, // In cents
   updatedAt: new Date()
 };
 ```
@@ -82,8 +82,8 @@ import {
 // Working with revenue chart data
 const chartData: RevenueChartDto = {
   monthlyData: [
-    { month: "Jan", monthNumber: 1, revenue: 1250.75 },
-    { month: "Feb", monthNumber: 2, revenue: 1420.50 },
+    { month: "Jan", monthNumber: 1, totalAmount: 1250.75 },
+    { month: "Feb", monthNumber: 2, totalAmount: 1420.50 },
     // Additional months...
   ],
   statistics: {
@@ -151,9 +151,9 @@ Contains mapping functions to transform between different representations of rev
 
 **Key Mapping Functions:**
 
-- `mapRevRowToRevEnt` - Maps a raw revenue row from the database to a RevenueEntity object
+- `mapRevenueRowToEntity` - Maps a raw revenue row from the database to a RevenueEntity object
 - `mapRevenueRowsToEntities` - Maps an array of raw revenue rows to an array of RevenueEntity objects
-- `mapRevEntToRevDisplayEnt` - Maps RevenueEntity to RevenueDisplayEntity with UI-specific fields
+- `mapRevenueEntityToDisplayEntity` - Maps RevenueEntity to RevenueDisplayEntity with UI-specific fields
 
 **Usage Example:**
 ```typescript
@@ -170,15 +170,15 @@ const revenueRow: RevenueRow = {
   calculationSource: 'seed',
   createdAt: new Date('2025-08-01'),
   invoiceCount: 5,
-  period: '2025-08',
-  revenue: 150000,
+  period: new Date('2025-08-01') as Period, // first day of month
+  totalAmount: 150000, // cents
   updatedAt: new Date('2025-08-05')
 };
 const entity = mapRevRowToRevEnt(revenueRow);
 
 // Convert an entity to a display entity
 const displayEntity = mapRevEntToRevDisplayEnt(entity);
-console.log(displayEntity.month); // "08"
+console.log(displayEntity.month); // "Aug"
 console.log(displayEntity.year); // 2025
 ```
 

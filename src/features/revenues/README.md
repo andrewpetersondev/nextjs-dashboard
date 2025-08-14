@@ -88,14 +88,14 @@ The revenue system's complex business logic is organized into specialized helper
 
 | Function | Purpose | Input | Output |
 |----------|---------|-------|--------|
-| `extractPeriodFromInvoice` | Converts invoice dates to standard period format | Invoice object | String (YYYY-MM) |
+| `extractPeriodFromInvoice` | Converts invoice dates to standard Period (first-of-month DATE) | Invoice object | Period |
 | `handleEventError` | Gracefully handles errors in event processing | Error object, context | void |
 | `validateInvoiceForRevenue` | Validates invoice data completeness | Invoice object | Boolean |
 
 **Example Usage:**
 ```typescript
-// Converting an invoice date to a period string
-const period = extractPeriodFromInvoice(invoice); // Returns "2025-08"
+// Converting an invoice date to a Period value
+const period = extractPeriodFromInvoice(invoice); // Returns branded Date for first of month, e.g., new Date("2025-08-01") as Period
 
 // Validating an invoice before processing
 if (validateInvoiceForRevenue(invoice)) {

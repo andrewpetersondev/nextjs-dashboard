@@ -32,16 +32,6 @@ export function mapRevenueRowToEntity(row: RevenueRow): RevenueEntity {
       "Invalid revenue row: missing required field 'id'",
     );
   }
-  if (typeof row.totalAmount !== "number") {
-    throw new ValidationError(
-      "Invalid revenue row: 'revenue' must be a number",
-    );
-  }
-  if (typeof row.invoiceCount !== "number") {
-    throw new ValidationError(
-      "Invalid revenue row: 'invoiceCount' must be a number",
-    );
-  }
   if (!row.period) {
     throw new ValidationError(
       "Invalid revenue row: missing required field 'period'",
@@ -121,12 +111,10 @@ export function mapRevenueEntityToDisplayEntity(
 
   try {
     const monthNumber = extractMonthNumberFromPeriod(entity.period);
-    const yearNumber = parseInt(entity.period.substring(0, 4), 10);
+    const yearNumber = entity.period.getUTCFullYear();
 
     if (Number.isNaN(yearNumber) || yearNumber < 1000 || yearNumber > 9999) {
-      throw new ValidationError(
-        `Invalid year extracted from period "${entity.period}"`,
-      );
+      throw new ValidationError(`Invalid year extracted from period`);
     }
 
     return {

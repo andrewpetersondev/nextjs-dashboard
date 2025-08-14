@@ -23,7 +23,7 @@ import type { Period, RevenueId } from "@/lib/definitions/brands";
  * Concrete repository implementation backed by Drizzle ORM.
  * Encapsulates all persistence operations for revenue records and enforces
  * core invariants:
- * - Period is the uniqueness key (one row per YYYY-MM).
+ * - Period is the uniqueness key (one row per month; period is a DATE = first day of the month).
  * - Timestamps: createdAt is set on insert, updatedAt is refreshed on every write.
  * - All inputs are validated; API throws domain-centric errors (ValidationError/DatabaseError).
  *
@@ -172,11 +172,11 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Find revenue records within an inclusive period range.
    *
    * Query characteristics:
-   * - Filters by branded Period (YYYY-MM) using gte/lte.
+   * - Filters by branded Period (first-of-month DATE) using gte/lte.
    * - Results are ordered by period descending (most recent first).
    *
-   * @param startPeriod - Inclusive start period (YYYY-MM)
-   * @param endPeriod - Inclusive end period (YYYY-MM)
+   * @param startPeriod - Inclusive start period (first-of-month DATE)
+   * @param endPeriod - Inclusive end period (first-of-month DATE)
    * @returns A list of RevenueEntity records if present; empty array otherwise
    * @throws ValidationError If either period is missing
    * @throws DatabaseError On retrieval or mapping failures
@@ -215,7 +215,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * - Returns null when no record exists for the given period (non-exceptional absence).
    * - Validates period input and maps DB row to domain entity.
    *
-   * @param period - Target Period (YYYY-MM)
+   * @param period - Target Period (first-of-month DATE)
    * @returns The RevenueEntity or null when not found
    * @throws ValidationError If period is missing
    * @throws DatabaseError On mapping failures
@@ -250,7 +250,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * Conflict handling:
    * - Uses the period uniqueness constraint as the conflict target.
-   * - On conflict, updates calculationSource, invoiceCount, revenue, and refreshed updatedAt.
+   * - On conflict, updates calculationSource, invoiceCount, totalAmount, and refreshed updatedAt.
    *
    * Timestamp semantics:
    * - Insert path: createdAt = provided value or now; updatedAt = now.
@@ -268,7 +268,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
 
     if (!revenueData.period) {
       throw new ValidationError(
-        "Revenue period (YYYY-MM) is required and must be unique",
+        "Revenue period (first-of-month DATE) is required and must be unique",
       );
     }
 
@@ -337,7 +337,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * Contract and behavior
    * - Period enforcement: the provided `period` parameter is the source of truth.
-   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, revenue).
+   * - Payload shape: accepts only RevenueUpdatable (calculationSource, invoiceCount, totalAmount).
    * - Delegation: calls `upsert()` to perform the actual insert/update using the period uniqueness constraint.
    *
    * Timestamps
@@ -347,8 +347,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Typical usage
    * - Services and event handlers that already computed a `period` and want to create/update the revenue row for that period without passing timestamps.
    *
-   * @param period - Target Period (YYYY-MM).
-   * @param revenue - Updatable fields only (invoiceCount, revenue, calculationSource).
+   * @param period - Target Period (first-of-month DATE).
+   * @param revenue - Updatable fields only (invoiceCount, totalAmount, calculationSource).
    * @returns The created or updated RevenueEntity.
    * @throws ValidationError If `period` or `revenue` is missing.
    * @throws ValidationError Propagated from `upsert()` on uniqueness/conflict-related errors.

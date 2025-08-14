@@ -71,9 +71,9 @@ export function isRevenueEntity(value: unknown): value is RevenueEntity {
 
   return (
     typeof entity.id === "string" &&
-    typeof entity.revenue === "number" &&
+    typeof entity.totalAmount === "number" &&
     typeof entity.invoiceCount === "number" &&
-    typeof entity.period === "string" &&
+    entity.period instanceof Date &&
     typeof entity.calculationSource === "string" &&
     entity.createdAt instanceof Date &&
     entity.updatedAt instanceof Date

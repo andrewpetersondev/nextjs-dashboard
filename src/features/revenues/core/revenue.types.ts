@@ -77,7 +77,7 @@ export type RevenueActionResult<T> =
  * @prop month - Three-letter month abbreviation for display purposes (e.g., "Jan", "Feb")
  * @prop monthNumber - Calendar month number (1-12) for date calculations
  * @prop year - Four-digit year for the month (e.g., 2023)
- * @prop period - Branded period (YYYY-MM) for this month, used as the source of truth
+ * @prop period - Branded Period (first-of-month Date) for this month, used as the source of truth
  */
 export interface RollingMonthData {
   readonly displayOrder: number;
