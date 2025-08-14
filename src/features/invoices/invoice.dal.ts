@@ -5,6 +5,7 @@ import type { Database } from "@/db/connection";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
+  InvoiceServiceEntity,
 } from "@/db/models/invoice.entity";
 import { customers, invoices } from "@/db/schema";
 import {
@@ -20,13 +21,13 @@ import type { InvoiceId } from "@/lib/definitions/brands";
 /**
  * Creates a new invoice in the database.
  * @param db - Drizzle database instance
- * @param input - Invoice creation data
+ * @param input - Invoice creation data (ORIGIN: dal <-- service <-- formEntity <-- Business Transformation <-- UI )
  * @returns Promise resolving to created InvoiceEntity
  * @throws DatabaseError if creation fails
  */
 export async function createInvoiceDal(
   db: Database,
-  input: InvoiceFormEntity,
+  input: InvoiceServiceEntity,
 ): Promise<InvoiceEntity> {
   const [createdInvoice] = await db.insert(invoices).values(input).returning();
 
@@ -162,7 +163,7 @@ export async function listInvoicesDal(
     conditions.push(eq(invoices.customerId, filter.customerId));
   }
   if (filter.date) {
-    conditions.push(eq(invoices.date, filter.date));
+    conditions.push(eq(invoices.date, new Date(filter.date)));
   }
   // Add more fields as needed
 

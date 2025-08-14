@@ -38,3 +38,21 @@ export const formatDateToLocal = (
   );
   return formatter.format(date);
 };
+
+/**
+ * Converts a date to the first day of the same month.
+ * @param date - The input date
+ * @returns A new Date object representing the first day of the month
+ */
+export function toFirstOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+/**
+ * Validates if a Date object is valid and represents a real date.
+ * @param date - The Date object to validate
+ * @returns true if the date is valid, false otherwise
+ */
+export function isValidDate(date: Date): boolean {
+  return !Number.isNaN(date.getTime());
+}

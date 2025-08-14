@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { InvoiceFormEntity } from "@/db/models/invoice.entity";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
 import { ValidationError } from "@/errors/errors";
 import type {
@@ -9,6 +8,7 @@ import type {
 } from "@/features/invoices/invoice.dto";
 import {
   dtoToCreateInvoiceEntity,
+  invoiceFormEntityToServiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
@@ -30,31 +30,69 @@ export class InvoiceService {
   }
 
   /**
-   * Creates an invoice from validated DTO.
-   * @param dto - Validated InvoiceFormDto
-   * @returns Promise resolving to created InvoiceDto
-   * @throws ValidationError for invalid input
+   * Business rule: Convert dollars to cents
    */
-  async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
-    // Basic validation of input. Throw error to Actions layer.
-    if (!dto) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
-    }
+  private dollarsToCents(dollars: number): number {
+    return Math.round(dollars * 100);
+  }
 
-    // Business transformation
-    const createDto: InvoiceFormDto = {
+  /**
+   * Business rule: Validate and format date
+   */
+  private validateAndFormatDate(date: string): string {
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) {
+      throw new ValidationError("Invalid date format");
+    }
+    return date; // Already in ISO format from form
+  }
+
+  /**
+   * Applies business rules to invoice creation data.
+   * @param dto - Raw InvoiceFormDto
+   * @returns Transformed InvoiceFormDto with business rules applied
+   *
+   * @remarks
+   * - Converts amount from dollars to cents
+   * - Validates and formats date to ISO string
+   *
+   * @Business-Layer-Concepts:
+   * - Separates business logic from technical validation and entity conversions. Am I right?
+   */
+  private applyBusinessRules(dto: InvoiceFormDto): InvoiceFormDto {
+    return {
       amount: this.dollarsToCents(dto.amount),
       customerId: dto.customerId,
       date: this.validateAndFormatDate(dto.date),
       sensitiveData: dto.sensitiveData,
       status: dto.status,
     };
+  }
 
-    // Transform DTO (plain) → Entity (branded)
-    const entity: InvoiceFormEntity = dtoToCreateInvoiceEntity(createDto);
+  /**
+   * Creates an invoice from validated DTO.
+   * @param dto - Validated InvoiceFormDto
+   * @returns Promise resolving to created InvoiceDto
+   * @throws ValidationError for invalid input to the Actions layer
+   */
+  async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
+    // Basic validation of input
+    if (!dto) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
+    }
 
-    // Call repository to create invoice
-    return await this.repo.create(entity);
+    // Apply business transformations
+    const transformedDto = this.applyBusinessRules(dto);
+
+    // Transform DTO → FormEntity → ServiceEntity
+    const formEntity = dtoToCreateInvoiceEntity(transformedDto);
+    const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
+
+    // Call repository to create the entity
+    const entity = await this.repo.create(serviceEntity);
+
+    // Transform entity to DTO for Actions layer
+    return entityToInvoiceDto(entity);
   }
 
   /**
@@ -123,23 +161,5 @@ export class InvoiceService {
 
     // Call repo with branded ID and return Dto to Actions layer
     return await this.repo.delete(toInvoiceId(id));
-  }
-
-  /**
-   * Business rule: Convert dollars to cents
-   */
-  private dollarsToCents(dollars: number): number {
-    return Math.round(dollars * 100);
-  }
-
-  /**
-   * Business rule: Validate and format date
-   */
-  private validateAndFormatDate(date: string): string {
-    const parsed = new Date(date);
-    if (Number.isNaN(parsed.getTime())) {
-      throw new ValidationError("Invalid date format");
-    }
-    return date; // Already in ISO format from form
   }
 }
