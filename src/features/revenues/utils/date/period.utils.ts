@@ -1,5 +1,6 @@
 import { addMonths, format } from "date-fns";
 import { type Period, toPeriod } from "@/lib/definitions/brands";
+import { formatYearMonth } from "@/lib/utils/date.utils";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).
@@ -46,5 +47,5 @@ export function extractMonthNumberFromPeriod(period: Period): number {
  */
 export function periodKey(period: Period): string {
   const d = periodToDate(period);
-  return format(d, "yyyy-MM");
+  return formatYearMonth(d);
 }

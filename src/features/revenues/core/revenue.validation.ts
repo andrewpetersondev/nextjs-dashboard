@@ -14,6 +14,7 @@ import {
   type MonthName,
 } from "@/features/revenues/core/revenue.types";
 import {
+  isIntegerInRange,
   isNonNegativeInteger,
   isNonNegativeNumber,
   isPeriod,
@@ -38,10 +39,7 @@ export function isSimpleRevenueDto(value: unknown): value is SimpleRevenueDto {
   return (
     typeof dto.month === "string" &&
     isNonNegativeNumber(dto.totalAmount) &&
-    typeof dto.monthNumber === "number" &&
-    Number.isInteger(dto.monthNumber) &&
-    dto.monthNumber >= 1 &&
-    dto.monthNumber <= 12
+    isIntegerInRange(dto.monthNumber, 1, 12)
   );
 }
 
@@ -65,9 +63,7 @@ export function isRevenueStatisticsDto(
     isNonNegativeNumber(dto.minimum) &&
     isNonNegativeNumber(dto.average) &&
     isNonNegativeNumber(dto.total) &&
-    typeof dto.monthsWithData === "number" &&
-    Number.isInteger(dto.monthsWithData) &&
-    dto.monthsWithData >= 0
+    isIntegerInRange(dto.monthsWithData, 0, Number.MAX_SAFE_INTEGER)
   );
 }
 
@@ -88,8 +84,7 @@ export function isRevenueChartDto(value: unknown): value is RevenueChartDto {
     Array.isArray(dto.monthlyData) &&
     dto.monthlyData.every(isSimpleRevenueDto) &&
     isRevenueStatisticsDto(dto.statistics) &&
-    typeof dto.year === "number" &&
-    Number.isInteger(dto.year)
+    isIntegerInRange(dto.year, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
   );
 }
 
@@ -141,11 +136,11 @@ export function isRevenueDisplayEntity(
 
   return (
     isMonthName(displayEntity.month) &&
-    typeof displayEntity.year === "number" &&
-    Number.isInteger(displayEntity.year) &&
-    typeof displayEntity.monthNumber === "number" &&
-    Number.isInteger(displayEntity.monthNumber) &&
-    displayEntity.monthNumber >= 1 &&
-    displayEntity.monthNumber <= 12
+    isIntegerInRange(
+      displayEntity.year,
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
+    ) &&
+    isIntegerInRange(displayEntity.monthNumber, 1, 12)
   );
 }

@@ -360,3 +360,21 @@ export function isNonNegativeInteger(value: unknown): value is number {
 export function isNonNegativeNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
+
+/**
+ * Generic guard to check if a value is an integer within an inclusive range.
+ * Keeps revenue validators DRY and intent-revealing.
+ */
+export function isIntegerInRange(
+  value: unknown,
+  minInclusive: number,
+  maxInclusive: number,
+): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isInteger(value) &&
+    Number.isFinite(value) &&
+    value >= minInclusive &&
+    value <= maxInclusive
+  );
+}

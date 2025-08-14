@@ -1,10 +1,11 @@
 import "server-only";
 
+import { randomUUID } from "node:crypto";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
+import { mapRevenueEntityToDisplayEntity } from "@/features/revenues/core/revenue.mapper";
 import {
   MONTH_ORDER,
   type RollingMonthData,
@@ -12,6 +13,22 @@ import {
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
 import { type Period, toPeriod, toRevenueId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
+
+/**
+ * Internal helper: construct a default RevenueEntity for a given period.
+ * DRY: used by default month and default period creators.
+ */
+function makeDefaultRevenueEntity(p: Period): RevenueEntity {
+  return {
+    calculationSource: "template",
+    createdAt: new Date(),
+    id: toRevenueId(randomUUID()),
+    invoiceCount: 0,
+    period: toPeriod(p),
+    totalAmount: 0,
+    updatedAt: new Date(),
+  };
+}
 
 /**
  * Creates a default month data structure for months without a revenue.
@@ -29,24 +46,17 @@ function createDefaultMonthData(
   monthNumber: number,
   year: number,
 ): RevenueDisplayEntity {
-  const period = `${year}-${String(monthNumber).padStart(2, "0")}`;
+  const periodStr = `${year}-${String(monthNumber).padStart(2, "0")}`;
+  const period = toPeriod(periodStr);
   // Create a default RevenueEntity and then transform it to RevenueDisplayEntity
-  const defaultEntity: RevenueEntity = {
-    calculationSource: "template",
-    createdAt: new Date(),
-    id: toRevenueId(`template-${period}`),
-    invoiceCount: 0,
-    period: toPeriod(period),
-    totalAmount: 0,
-    updatedAt: new Date(),
-  };
+  const defaultEntity = makeDefaultRevenueEntity(period);
 
-  const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
+  const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
   logger.debug({
     context: "createDefaultMonthData",
     message: "Created default month data",
-    period,
+    period: periodStr,
   });
 
   return mappedData;
@@ -63,18 +73,10 @@ function createDefaultMonthData(
  */
 export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
   // Create a default RevenueEntity
-  const defaultEntity: RevenueEntity = {
-    calculationSource: "template",
-    createdAt: new Date(),
-    id: toRevenueId(`template-${period}`),
-    invoiceCount: 0,
-    period: toPeriod(period),
-    totalAmount: 0,
-    updatedAt: new Date(),
-  };
+  const defaultEntity: RevenueEntity = makeDefaultRevenueEntity(period);
 
   // Transform to RevenueDisplayEntity using the factory method
-  const mappedData = mapRevEntToRevDisplayEnt(defaultEntity);
+  const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
   logger.debug({
     context: "createDefaultRevenueData",

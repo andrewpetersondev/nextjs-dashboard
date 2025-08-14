@@ -1,0 +1,36 @@
+# An .aiignore file follows the same syntax as a .gitignore file.
+# .gitignore documentation: https://git-scm.com/docs/gitignore
+
+# TEMPORARY
+src/app/
+src/components/
+src/ui/
+storage/
+cypress/
+
+# you can ignore files
+.DS_Store
+*.log
+*.tmp
+
+# Ignore environment and secrets
+.env
+.env.*
+secrets/**
+
+
+# or folders
+dist/
+build/
+out/
+node_modules/
+
+# or specific file types in a folder
+src/**/*.md
+
+# or even specific files
+tsconfig.tsbuildinfo
+
+# Match by extension
+*.min.js
+*.map
