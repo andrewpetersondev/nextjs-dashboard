@@ -74,25 +74,22 @@ export class InvoiceService {
    * @param dto - Validated InvoiceFormDto
    * @returns Promise resolving to created InvoiceDto
    * @throws ValidationError for invalid input to the Actions layer
+   * @throws
+   * - Error bubbles up through the repository layer to the Actions layer.
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
-    // Basic validation of input
     if (!dto) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
-    // Apply business transformations
     const transformedDto = this.applyBusinessRules(dto);
 
-    // Transform DTO → FormEntity → ServiceEntity
     const formEntity = dtoToCreateInvoiceEntity(transformedDto);
     const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
 
-    // Call repository to create the entity
-    const entity = await this.repo.create(serviceEntity);
+    const responseDTO = await this.repo.create(serviceEntity);
 
-    // Transform entity to DTO for Actions layer
-    return entityToInvoiceDto(entity);
+    return responseDTO;
   }
 
   /**

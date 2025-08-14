@@ -33,6 +33,7 @@ const SEED_CONFIG = {
  * @throws {Error} When period is not the first day of the month
  */
 function validatePeriod(period: string): void {
+  // biome-ignore lint/style/useTemplate: <there is no safe fix>
   const date = new Date(period + "T00:00:00.000Z");
   if (date.getUTCDate() !== 1) {
     throw new Error(`Generated period ${period} is not first day of month`);
@@ -90,6 +91,7 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
 const periods = generateMonthlyPeriods("2024-01-01", 19);
 
 // Convert to UTC Date objects for Drizzle DATE columns
+// biome-ignore lint/style/useTemplate: <there is no safe fix>
 const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
 
 /**
@@ -155,6 +157,7 @@ async function isEmpty(): Promise<boolean> {
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   return checks.every((r: any) => r.rows?.[0]?.v === false);
 }
 
@@ -302,6 +305,7 @@ async function main(): Promise<void> {
       validatePeriod(period);
 
       // Revenue period is always the first day of the month
+      // biome-ignore lint/style/useTemplate: <there is no safe fix>
       const revenuePeriod = new Date(period + "T00:00:00.000Z");
 
       // Generate a random date within the same month as the period

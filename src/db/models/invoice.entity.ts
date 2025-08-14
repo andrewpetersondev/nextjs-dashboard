@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
-import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { CustomerId, InvoiceId, Period } from "@/lib/definitions/brands";
 
 /**
  * Domain model for Invoice.
@@ -15,7 +15,7 @@ export interface InvoiceEntity {
   readonly customerId: CustomerId;
   readonly date: Date;
   readonly id: InvoiceId;
-  readonly revenuePeriod: Date;
+  readonly revenuePeriod: Period;
   readonly sensitiveData: string;
   readonly status: InvoiceStatus;
 }

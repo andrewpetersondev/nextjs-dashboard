@@ -1,5 +1,5 @@
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { CustomerId, InvoiceId } from "@/lib/definitions/brands";
+import type { CustomerId, InvoiceId, Period } from "@/lib/definitions/brands";
 
 /**
  * Allowed invoice statuses.
@@ -19,11 +19,12 @@ export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 export type InvoiceListFilter = Readonly<{
   amount: number;
   customerId: CustomerId;
-  date: string;
+  date: Date;
   email: string;
   id: InvoiceId;
   imageUrl: string;
   name: string;
+  revenuePeriod: Period;
   sensitiveData: string;
   status: InvoiceStatus;
 }>;

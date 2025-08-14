@@ -2,8 +2,8 @@ import "server-only";
 
 import type {
   InvoiceEntity,
-  InvoiceFormEntity,
   InvoiceFormPartialEntity,
+  InvoiceServiceEntity,
 } from "@/db/models/invoice.entity";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/errors/errors";
@@ -26,26 +26,27 @@ import { BaseRepository } from "@/lib/repository/base-repository";
 export class InvoiceRepository extends BaseRepository<
   InvoiceDto, // TDto - what gets returned to service layer
   InvoiceId, // TId - branded ID type
-  InvoiceFormEntity, // TCreateInput - creation input type
+  InvoiceServiceEntity, // TCreateInput - creation input type
   InvoiceFormPartialEntity // TUpdateInput - update input type
 > {
   /**
-   * Creates an invoice.
-   * @param input - Invoice creation data as InvoiceFormEntity
+   * Repo method to create an invoice.
+   * - Accepts values created/set by users in the UI (`InvoiceFormEntity`), AS WELL AS
+   * - generated values in the service layer (`InvoiceServiceEntity`).
+   * @param input - Invoice creation data as InvoiceServiceEntity
    * @returns Promise resolving to created InvoiceDto returning to Service layer.
    * @throws ValidationError for invalid input
    * @throws DatabaseError for database failures
+   * @throws
+   * - Error bubbles up through the Service Layer to the Actions layer.
    */
-  async create(input: InvoiceFormEntity): Promise<InvoiceDto> {
-    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
+  async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
-    // Call DAL with branded entity. Function returns InvoiceEntity.
-    const createdEntity: InvoiceEntity = await createInvoiceDal(this.db, input);
+    const createdEntity = await createInvoiceDal(this.db, input);
 
-    // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(createdEntity);
   }
 

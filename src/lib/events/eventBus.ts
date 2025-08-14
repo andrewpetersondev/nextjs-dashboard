@@ -17,6 +17,7 @@ export type EventHandler<T> = (event: T) => void | Promise<void>;
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation> // TODO: Should I keep this class as static only for now?
 export class EventBus {
   // TODO: Why does the EventHandler allow "any"? Can I make it more type-safe by using a generic?
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   private static handlers: Record<string, EventHandler<any>[]> = {};
 
   /**

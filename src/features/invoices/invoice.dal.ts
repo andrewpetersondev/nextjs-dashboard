@@ -7,7 +7,7 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/db/models/invoice.entity";
-import { customers, invoices } from "@/db/schema";
+import { customers, invoices, revenues } from "@/db/schema";
 import {
   DATA_ERROR_MESSAGES,
   INVOICE_ERROR_MESSAGES,
@@ -16,7 +16,7 @@ import { DatabaseError, ValidationError } from "@/errors/errors";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import type { InvoiceId } from "@/lib/definitions/brands";
+import { type InvoiceId, toPeriod } from "@/lib/definitions/brands";
 
 /**
  * Creates a new invoice in the database.
@@ -29,15 +29,32 @@ export async function createInvoiceDal(
   db: Database,
   input: InvoiceServiceEntity,
 ): Promise<InvoiceEntity> {
-  const [createdInvoice] = await db.insert(invoices).values(input).returning();
+  // We must ensure the referenced revenues.period exists due to FK.
+  // Use a transaction to:
+  // 1) Upsert the revenue period (no-op if it already exists)
+  // 2) Insert the invoice with the derived revenuePeriod
+  return await db.transaction(async (tx) => {
+    // Upsert the revenue period row so FK doesn't fail.
+    // Only period is required here; other fields use defaults.
+    await tx
+      .insert(revenues)
+      .values({ period: toPeriod(input.revenuePeriod) })
+      .onConflictDoNothing({ target: revenues.period });
 
-  if (!createdInvoice) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
-      input,
-    });
-  }
+    // Insert the invoice including revenuePeriod.
+    const [createdInvoice] = await tx
+      .insert(invoices)
+      .values(input)
+      .returning();
 
-  return rawDbToInvoiceEntity(createdInvoice);
+    if (!createdInvoice) {
+      throw new DatabaseError(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
+        input,
+      });
+    }
+
+    return rawDbToInvoiceEntity(createdInvoice);
+  });
 }
 
 /**
@@ -218,6 +235,7 @@ export async function fetchLatestInvoicesDal(
       id: invoices.id,
       imageUrl: customers.imageUrl,
       name: customers.name,
+      revenuePeriod: invoices.revenuePeriod,
       sensitiveData: invoices.sensitiveData,
       status: invoices.status,
     })
@@ -259,6 +277,7 @@ export async function fetchFilteredInvoicesDal(
       id: invoices.id,
       imageUrl: customers.imageUrl,
       name: customers.name,
+      revenuePeriod: invoices.revenuePeriod,
       sensitiveData: invoices.sensitiveData,
       status: invoices.status,
     })

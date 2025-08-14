@@ -129,7 +129,8 @@ export function getMonthName(monthNumber: number): MonthName {
   }
 
   const index = monthNumber - 1;
-  return MONTH_ORDER[index]!; // Safe due to validation above
+  // biome-ignore lint/style/noNonNullAssertion: <Safe due to validation above>
+  return MONTH_ORDER[index]!;
 }
 
 /**
