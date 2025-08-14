@@ -8,7 +8,13 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { getMonthName } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toRevenueSource } from "@/lib/definitions/brands";
+import {
+  isNonNegativeInteger,
+  isNonNegativeNumber,
+  toPeriod,
+  toRevenueId,
+  toRevenueSource,
+} from "@/lib/definitions/brands";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -24,7 +30,7 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     );
   }
 
-  // Validate required fields
+  // Validate required fields presence and shapes early for clearer errors
   if (!revenueRow.id) {
     throw new ValidationError(
       "Invalid revenue row: missing required field 'id'",
@@ -50,14 +56,24 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
       "Invalid revenue row: 'updatedAt' must be a Date",
     );
   }
+  if (!isNonNegativeInteger(revenueRow.invoiceCount)) {
+    throw new ValidationError(
+      "Invalid revenue row: 'invoiceCount' must be a non-negative integer",
+    );
+  }
+  if (!isNonNegativeNumber(revenueRow.totalAmount)) {
+    throw new ValidationError(
+      "Invalid revenue row: 'totalAmount' must be a non-negative number",
+    );
+  }
 
   try {
     return {
       calculationSource: toRevenueSource(revenueRow.calculationSource),
       createdAt: revenueRow.createdAt,
-      id: revenueRow.id,
+      id: toRevenueId(revenueRow.id),
       invoiceCount: revenueRow.invoiceCount,
-      period: revenueRow.period,
+      period: toPeriod(revenueRow.period),
       totalAmount: revenueRow.totalAmount,
       updatedAt: revenueRow.updatedAt,
     };

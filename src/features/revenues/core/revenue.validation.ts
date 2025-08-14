@@ -13,6 +13,13 @@ import {
   MONTH_ORDER,
   type MonthName,
 } from "@/features/revenues/core/revenue.types";
+import {
+  isNonNegativeInteger,
+  isNonNegativeNumber,
+  isPeriod,
+  isRevenueId,
+  isRevenueSource,
+} from "@/lib/definitions/brands";
 
 /**
  * Type guard to validate SimpleRevenueDto structure.
@@ -29,8 +36,9 @@ export function isSimpleRevenueDto(value: unknown): value is SimpleRevenueDto {
 
   return (
     typeof dto.month === "string" &&
-    typeof dto.totalAmount === "number" &&
+    isNonNegativeNumber(dto.totalAmount) &&
     typeof dto.monthNumber === "number" &&
+    Number.isInteger(dto.monthNumber) &&
     dto.monthNumber >= 1 &&
     dto.monthNumber <= 12
   );
@@ -52,11 +60,12 @@ export function isRevenueStatisticsDto(
   const dto = value as Record<string, unknown>;
 
   return (
-    typeof dto.maximum === "number" &&
-    typeof dto.minimum === "number" &&
-    typeof dto.average === "number" &&
-    typeof dto.total === "number" &&
+    isNonNegativeNumber(dto.maximum) &&
+    isNonNegativeNumber(dto.minimum) &&
+    isNonNegativeNumber(dto.average) &&
+    isNonNegativeNumber(dto.total) &&
     typeof dto.monthsWithData === "number" &&
+    Number.isInteger(dto.monthsWithData) &&
     dto.monthsWithData >= 0
   );
 }
@@ -78,7 +87,8 @@ export function isRevenueChartDto(value: unknown): value is RevenueChartDto {
     Array.isArray(dto.monthlyData) &&
     dto.monthlyData.every(isSimpleRevenueDto) &&
     isRevenueStatisticsDto(dto.statistics) &&
-    typeof dto.year === "number"
+    typeof dto.year === "number" &&
+    Number.isInteger(dto.year)
   );
 }
 
@@ -103,11 +113,11 @@ export function isRevenueEntity(value: unknown): value is RevenueEntity {
   const entity = value as Record<string, unknown>;
 
   return (
-    typeof entity.id === "string" &&
-    typeof entity.totalAmount === "number" &&
-    typeof entity.invoiceCount === "number" &&
-    entity.period instanceof Date &&
-    typeof entity.calculationSource === "string" &&
+    isRevenueId(entity.id) &&
+    isNonNegativeNumber(entity.totalAmount) &&
+    isNonNegativeInteger(entity.invoiceCount) &&
+    isPeriod(entity.period) &&
+    isRevenueSource(entity.calculationSource) &&
     entity.createdAt instanceof Date &&
     entity.updatedAt instanceof Date
   );
@@ -129,8 +139,12 @@ export function isRevenueDisplayEntity(
   const displayEntity = value as unknown as Record<string, unknown>;
 
   return (
-    typeof displayEntity.month === "string" &&
+    isMonthName(displayEntity.month) &&
     typeof displayEntity.year === "number" &&
-    typeof displayEntity.monthNumber === "number"
+    Number.isInteger(displayEntity.year) &&
+    typeof displayEntity.monthNumber === "number" &&
+    Number.isInteger(displayEntity.monthNumber) &&
+    displayEntity.monthNumber >= 1 &&
+    displayEntity.monthNumber <= 12
   );
 }

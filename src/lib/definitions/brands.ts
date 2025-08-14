@@ -350,3 +350,18 @@ export function isRevenueSource(value: unknown): value is RevenueSource {
 export function isPeriod(value: unknown): value is Period {
   return value instanceof Date && isValid(value) && value.getUTCDate() === 1;
 }
+
+// Common numeric validators used across revenue domain
+/**
+ * Type guard to check if a value is a non-negative integer
+ */
+export function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0;
+}
+
+/**
+ * Type guard to check if a value is a non-negative finite number
+ */
+export function isNonNegativeNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
