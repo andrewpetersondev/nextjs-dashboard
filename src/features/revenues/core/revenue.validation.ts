@@ -1,8 +1,14 @@
+import "server-only";
+
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
   SimpleRevenueDto,
 } from "@/features/revenues/core/revenue.dto";
+import type {
+  RevenueDisplayEntity,
+  RevenueEntity,
+} from "@/features/revenues/core/revenue.entity";
 import {
   MONTH_ORDER,
   type MonthName,
@@ -81,4 +87,50 @@ export function isRevenueChartDto(value: unknown): value is RevenueChartDto {
  */
 export function isMonthName(value: unknown): value is MonthName {
   return typeof value === "string" && MONTH_ORDER.includes(value as MonthName);
+}
+
+/**
+ * Type guard to validate RevenueEntity structure.
+ *
+ * @param value - The value to check
+ * @returns True if the value is a valid RevenueEntity
+ */
+export function isRevenueEntity(value: unknown): value is RevenueEntity {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const entity = value as Record<string, unknown>;
+
+  return (
+    typeof entity.id === "string" &&
+    typeof entity.totalAmount === "number" &&
+    typeof entity.invoiceCount === "number" &&
+    entity.period instanceof Date &&
+    typeof entity.calculationSource === "string" &&
+    entity.createdAt instanceof Date &&
+    entity.updatedAt instanceof Date
+  );
+}
+
+/**
+ * Type guard to validate RevenueDisplayEntity structure.
+ *
+ * @param value - The value to check
+ * @returns True if the value is a valid RevenueDisplayEntity
+ */
+export function isRevenueDisplayEntity(
+  value: unknown,
+): value is RevenueDisplayEntity {
+  if (!isRevenueEntity(value)) {
+    return false;
+  }
+
+  const displayEntity = value as unknown as Record<string, unknown>;
+
+  return (
+    typeof displayEntity.month === "string" &&
+    typeof displayEntity.year === "number" &&
+    typeof displayEntity.monthNumber === "number"
+  );
 }
