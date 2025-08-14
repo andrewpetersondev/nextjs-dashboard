@@ -86,9 +86,9 @@ const { startDate, endDate, period } = calculateDateRange();
 
 ```typescript
 import { 
-  toPeriod, 
   formatPeriod 
-} from "@/features/revenues/utils/date/period.utils";
+} from "@/features/revenues/utils/date/period.utils"; 
+import {toPeriod} from "./brands";
 
 // Validate and create a typed period
 const period = toPeriod("2025-08");

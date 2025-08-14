@@ -1,5 +1,6 @@
 import "server-only";
 
+import { format, isValid, parse } from "date-fns";
 import { ValidationError } from "@/errors/errors";
 import {
   INVOICE_STATUSES,
@@ -30,12 +31,10 @@ export type UserId = Brand<string, typeof userIdBrand>;
 export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
 export type RevenueId = Brand<string, typeof revenueIdBrand>;
 export type SessionId = Brand<string, typeof sessionIdBrand>;
-// Period is a first-of-month Date branded for type safety
 export type Period = Brand<Date, typeof periodBrand>;
 
 // Consistent validation for all UUID-based IDs
 const validateUuid = (id: string, brandName: string): void => {
-  // if (!z.uuid.safeParse(id).success) {
   if (!relaxedUuidRegex.test(id)) {
     throw new ValidationError(
       `Invalid ${brandName}: "${id}". Must be a valid UUID.`,
@@ -86,7 +85,7 @@ export const _toSessionId = (id: string): SessionId => {
   return id as SessionId;
 };
 
-// Enum validation functions using the generic validateEnum
+// Enum branding functions using the generic validateEnum
 export const toUserRole = (role: string): UserRole => {
   return validateEnum(role, USER_ROLES, "UserRole");
 };
@@ -98,6 +97,43 @@ export const toInvoiceStatus = (status: string): InvoiceStatus => {
 export const toIntervalDuration = (duration: string): IntervalDuration => {
   return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
 };
+
+// Other branding functions
+
+/**
+ * Normalize an input into a branded Period (first-of-month Date)
+ * Accepted inputs:
+ * - Date: returns first day of its month
+ * - string: "yyyy-MM" or "yyyy-MM-01"; normalized to first-of-month Date
+ * todo: will i ever need "yyyy-MM"? can i just pass in date objects? does this actually brand by casting?
+ */
+export function toPeriod(input: Date | string): Period {
+  if (input instanceof Date) {
+    if (!isValid(input)) throw new ValidationError("Invalid Date for period");
+    const normalized = new Date(
+      Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), 1),
+    );
+    return normalized as Period;
+  }
+
+  if (typeof input === "string") {
+    // Try yyyy-MM first
+    let parsed = parse(input, "yyyy-MM", new Date());
+    if (!isValid(parsed) || format(parsed, "yyyy-MM") !== input) {
+      // Try yyyy-MM-dd (must be first day)
+      parsed = parse(input, "yyyy-MM-dd", new Date());
+      if (!isValid(parsed) || format(parsed, "yyyy-MM-dd") !== input) {
+        throw new ValidationError(`Invalid period: "${input}"`);
+      }
+    }
+    const normalized = new Date(
+      Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), 1),
+    );
+    return normalized as Period;
+  }
+
+  throw new ValidationError("Unsupported period input type");
+}
 
 /**
  * Non-throwing branded type guards and helpers

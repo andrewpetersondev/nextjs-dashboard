@@ -14,8 +14,11 @@ import {
   mapRevRowToRevEnt,
 } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import { toPeriod } from "@/features/revenues/utils/date/period.utils";
-import type { Period, RevenueId } from "@/lib/definitions/brands";
+import {
+  type Period,
+  type RevenueId,
+  toPeriod,
+} from "@/lib/definitions/brands";
 
 /**
  * RevenueRepository

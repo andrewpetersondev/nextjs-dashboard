@@ -1,41 +1,6 @@
-import { addMonths, format, isValid, parse } from "date-fns";
+import { addMonths, format, isValid } from "date-fns";
 import { ValidationError } from "@/errors/errors";
 import type { Period } from "@/lib/definitions/brands";
-
-/**
- * Normalize an input into a branded Period (first-of-month Date)
- * Accepted inputs:
- * - Date: returns first day of its month
- * - string: "yyyy-MM" or "yyyy-MM-01"; normalized to first-of-month Date
- * todo: will i ever need "yyyy-MM"? can i just pass in date objects? does this actually brand by casting?
- */
-export function toPeriod(input: Date | string): Period {
-  if (input instanceof Date) {
-    if (!isValid(input)) throw new ValidationError("Invalid Date for period");
-    const normalized = new Date(
-      Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), 1),
-    );
-    return normalized as Period;
-  }
-
-  if (typeof input === "string") {
-    // Try yyyy-MM first
-    let parsed = parse(input, "yyyy-MM", new Date());
-    if (!isValid(parsed) || format(parsed, "yyyy-MM") !== input) {
-      // Try yyyy-MM-dd (must be first day)
-      parsed = parse(input, "yyyy-MM-dd", new Date());
-      if (!isValid(parsed) || format(parsed, "yyyy-MM-dd") !== input) {
-        throw new ValidationError(`Invalid period: "${input}"`);
-      }
-    }
-    const normalized = new Date(
-      Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), 1),
-    );
-    return normalized as Period;
-  }
-
-  throw new ValidationError("Unsupported period input type");
-}
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).

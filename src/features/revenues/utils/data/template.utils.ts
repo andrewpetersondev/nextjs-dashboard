@@ -9,12 +9,8 @@ import {
   MONTH_ORDER,
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
-import {
-  periodKey,
-  toPeriod,
-} from "@/features/revenues/utils/date/period.utils";
-import type { Period } from "@/lib/definitions/brands";
-import { toRevenueId } from "@/lib/definitions/brands";
+import { periodKey } from "@/features/revenues/utils/date/period.utils";
+import { type Period, toPeriod, toRevenueId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
 
 /**

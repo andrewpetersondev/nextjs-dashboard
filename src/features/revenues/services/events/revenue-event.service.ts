@@ -7,9 +7,8 @@ import type { RevenueService } from "@/features/revenues/services/revenue.servic
 import {
   dateToPeriod,
   periodKey,
-  toPeriod,
 } from "@/features/revenues/utils/date/period.utils";
-import { type Period, toRevenueId } from "@/lib/definitions/brands";
+import { type Period, toPeriod, toRevenueId } from "@/lib/definitions/brands";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
