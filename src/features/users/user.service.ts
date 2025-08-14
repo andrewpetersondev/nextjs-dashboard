@@ -22,14 +22,18 @@ import { validateFormData } from "@/lib/forms/form-validation";
 export function validateSignupForm(
   formData: FormData,
 ): FormState<SignupFormFieldNames, SignupFormFields> {
-  const result = validateFormData<SignupFormFields>(formData, SignupFormSchema);
+  const result = validateFormData(formData, SignupFormSchema, [
+    "username",
+    "email",
+    "password",
+  ]);
   return {
-    errors: result.errors as FormState<SignupFormFieldNames>["errors"], //Ensures correct error typing
+    errors: result.errors,
     message: result.success
       ? USER_SUCCESS_MESSAGES.PARSE_SUCCESS
       : USER_ERROR_MESSAGES.VALIDATION_FAILED,
     success: result.success,
-    ...(result.data ? { data: result.data } : {}), // Only include data on success
+    ...(result.data ? { data: result.data } : {}),
   };
 }
 
@@ -42,13 +46,16 @@ export function validateSignupForm(
 export const validateLoginForm = (
   formData: FormData,
 ): FormState<LoginFormFieldNames, LoginFormFields> => {
-  const result = validateFormData<LoginFormFields>(formData, LoginFormSchema);
+  const result = validateFormData(formData, LoginFormSchema, [
+    "email",
+    "password",
+  ]);
   return {
-    errors: result.errors as FormState<LoginFormFieldNames>["errors"], //Ensures correct error typing
+    errors: result.errors,
     message: result.success
       ? USER_SUCCESS_MESSAGES.PARSE_SUCCESS
       : USER_ERROR_MESSAGES.VALIDATION_FAILED,
     success: result.success,
-    ...(result.data ? { data: result.data } : {}), // Only include data on success
+    ...(result.data ? { data: result.data } : {}),
   };
 };

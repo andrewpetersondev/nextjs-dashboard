@@ -41,7 +41,7 @@ export async function getRevenueChartAction(): Promise<
     ]);
 
     const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
-      // Extract the month number from a period (format: YYYY-MM)
+      // Extract the month number from a period (format: YYYY-MM-DD)
       const monthNumber = parseInt(entity.period.substring(5, 7), 10);
 
       // Validate month number is within the valid range (1-12)
