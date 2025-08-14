@@ -251,21 +251,21 @@ export async function updateRevenueRecord(
   revenueService: RevenueService,
   revenueId: string,
   invoiceCount: number,
-  revenue: number,
+  totalAmount: number,
   context: string,
   metadata?: Record<string, unknown>,
 ): Promise<void> {
   logInfo(context, "Updating revenue record", {
     invoiceCount,
-    revenue,
     revenueId,
+    totalAmount,
     ...metadata,
   });
 
   await revenueService.update(toRevenueId(revenueId), {
     calculationSource: "invoice_event",
     invoiceCount,
-    revenue,
+    totalAmount,
   });
 }
 
@@ -314,7 +314,7 @@ export async function processInvoiceForRevenue(
             calculationSource: "invoice_event",
             // Invoice count stays the same for updates
             invoiceCount: existingRevenue.invoiceCount,
-            revenue: existingRevenue.revenue + amountDifference,
+            totalAmount: existingRevenue.totalAmount + amountDifference,
           });
         } else {
           logInfo(
@@ -330,7 +330,7 @@ export async function processInvoiceForRevenue(
           await revenueService.update(existingRevenue.id, {
             calculationSource: "invoice_event",
             invoiceCount: existingRevenue.invoiceCount + 1,
-            revenue: existingRevenue.revenue + invoice.amount,
+            totalAmount: existingRevenue.totalAmount + invoice.amount,
           });
         }
       } else {
@@ -342,7 +342,7 @@ export async function processInvoiceForRevenue(
           createdAt: new Date(),
           invoiceCount: 1,
           period: toPeriod(period),
-          revenue: invoice.amount,
+          totalAmount: invoice.amount,
           updatedAt: new Date(),
         });
       }
@@ -408,7 +408,10 @@ export async function adjustRevenueForDeletedInvoice(
 
       // Calculate the new invoice count and revenue
       const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
-      const newRevenue = Math.max(0, existingRevenue.revenue - invoice.amount);
+      const newRevenue = Math.max(
+        0,
+        existingRevenue.totalAmount - invoice.amount,
+      );
 
       // If there are no more invoices for this period, delete the revenue record
       if (newInvoiceCount === 0) {
@@ -506,7 +509,7 @@ export async function adjustRevenueForStatusChange(
           revenueService,
           existingRevenue.id,
           Math.max(0, existingRevenue.invoiceCount - 1),
-          Math.max(0, existingRevenue.revenue - previousInvoice.amount),
+          Math.max(0, existingRevenue.totalAmount - previousInvoice.amount),
           context,
           metadataWithPeriod,
         );
@@ -525,7 +528,7 @@ export async function adjustRevenueForStatusChange(
           revenueService,
           existingRevenue.id,
           existingRevenue.invoiceCount + 1,
-          existingRevenue.revenue + currentInvoice.amount,
+          existingRevenue.totalAmount + currentInvoice.amount,
           context,
           metadataWithPeriod,
         );
@@ -553,7 +556,7 @@ export async function adjustRevenueForStatusChange(
           revenueService,
           existingRevenue.id,
           existingRevenue.invoiceCount,
-          existingRevenue.revenue + amountDifference,
+          existingRevenue.totalAmount + amountDifference,
           context,
           metadataWithPeriod,
         );

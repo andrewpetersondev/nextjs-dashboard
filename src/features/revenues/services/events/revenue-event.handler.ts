@@ -135,7 +135,7 @@ export class RevenueEventHandler {
               this.revenueService,
               existingRevenue.id,
               existingRevenue.invoiceCount,
-              existingRevenue.revenue + amountDifference,
+              existingRevenue.totalAmount + amountDifference,
               context,
               {
                 amountDifference,

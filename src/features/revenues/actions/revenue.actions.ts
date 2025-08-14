@@ -64,7 +64,7 @@ export async function getRevenueChartAction(): Promise<
       return {
         month: monthAbbreviation,
         monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
-        revenue: convertCentsToDollars(entity.revenue), // Convert to dollars
+        totalAmount: convertCentsToDollars(entity.totalAmount), // Convert to dollars
       };
     });
 

@@ -65,30 +65,10 @@ export type RevenueSource = (typeof REVENUE_SOURCES)[number];
  * actions and services. Enables type-safe error handling and result processing.
  *
  * @template T - The type of data returned on successful operations
- *
- * @remarks
- * **Pattern Benefits: **
- * - Type-safe error handling with discriminated unions
- * - Consistent API response structure across revenue operations
- * - Eliminates a need for exception-based error handling in actions
- * - Enables exhaustive pattern matching in consuming code
- *
- * @example
- * ```typescript
- * const result: RevenueActionResult<RevenueChartDto> = await getRevenueChartAction();
- *
- * if (result.success) {
- *   // TypeScript knows result.data is RevenueChartDto
- *   console.log(result.data.statistics.total);
- * } else {
- *   // TypeScript knows result.error is string
- *   console.error(result.error);
- * }
- * ```
  */
 export type RevenueActionResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
+  | { readonly success: true; readonly data: T }
+  | { readonly success: false; readonly error: string };
 
 /**
  * Metadata for a single month in a 12-month rolling period.
@@ -130,35 +110,95 @@ export interface RevenueStatistics {
  * @prop topLabel - Maximum chart value in dollars for scaling purposes
  */
 export interface YAxisResult {
-  yAxisLabels: string[];
-  topLabel: Dollars;
+  readonly yAxisLabels: readonly string[];
+  readonly topLabel: Dollars;
+}
+
+/**
+ * Type guard to check if a value is a valid MonthName.
+ */
+export function isMonthName(value: unknown): value is MonthName {
+  return typeof value === "string" && MONTH_ORDER.includes(value as MonthName);
+}
+
+/**
+ * Type guard to check if a value is a valid RevenueSource.
+ */
+export function isRevenueSource(value: unknown): value is RevenueSource {
+  return (
+    typeof value === "string" &&
+    REVENUE_SOURCES.includes(value as RevenueSource)
+  );
 }
 
 /**
  * Safely convert a calendar month number (1-12) to a MonthName.
- * Throws a ValidationError if the input is out of range.
+ *
+ * @param monthNumber - The month number (1-12)
+ * @returns The corresponding month name
+ * @throws {ValidationError} When monthNumber is not between 1 and 12
  */
 export function getMonthName(monthNumber: number): MonthName {
-  // convert to 0-based index
-  const index = monthNumber - 1;
-  const name = MONTH_ORDER[index];
-  if (!name) {
+  if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) {
     throw new ValidationError(
-      `Invalid month number: ${monthNumber}. Expected a value between 1 and 12.`,
+      `Invalid month number: ${monthNumber}. Expected an integer between 1 and 12.`,
     );
   }
-  return name;
+
+  const index = monthNumber - 1;
+  return MONTH_ORDER[index]!; // Safe due to validation above
+}
+
+/**
+ * Get the month number (1-12) from a MonthName.
+ *
+ * @param monthName - The month name abbreviation
+ * @returns The corresponding month number (1-12)
+ * @throws {ValidationError} When monthName is not a valid MonthName
+ */
+export function getMonthNumber(monthName: MonthName): number {
+  const index = MONTH_ORDER.indexOf(monthName);
+  if (index === -1) {
+    throw new ValidationError(
+      `Invalid month name: "${monthName}". Expected one of: ${MONTH_ORDER.join(", ")}`,
+    );
+  }
+  return index + 1;
 }
 
 /**
  * Runtime validator to narrow arbitrary strings to RevenueSource.
- * Throws ValidationError if the value is not in the allowed list.
+ *
+ * @param value - The string value to validate
+ * @returns The validated RevenueSource
+ * @throws {ValidationError} When value is not a valid RevenueSource
  */
-export function toRevenueSource(value: string): RevenueSource {
-  if ((REVENUE_SOURCES as readonly string[]).includes(value)) {
-    return value as RevenueSource;
+export function toRevenueSource(value: unknown): RevenueSource {
+  if (typeof value !== "string") {
+    throw new ValidationError(
+      `Invalid RevenueSource type: expected string, got ${typeof value}`,
+    );
   }
-  throw new ValidationError(
-    `Invalid RevenueSource: "${value}". Allowed values: ${REVENUE_SOURCES.join(", ")}`,
-  );
+
+  if (!isRevenueSource(value)) {
+    throw new ValidationError(
+      `Invalid RevenueSource: "${value}". Allowed values: ${REVENUE_SOURCES.join(", ")}`,
+    );
+  }
+
+  return value;
+}
+
+/**
+ * Create a success result for RevenueActionResult.
+ */
+export function createSuccessResult<T>(data: T): RevenueActionResult<T> {
+  return { data, success: true } as const;
+}
+
+/**
+ * Create an error result for RevenueActionResult.
+ */
+export function createErrorResult<T>(error: string): RevenueActionResult<T> {
+  return { error, success: false } as const;
 }

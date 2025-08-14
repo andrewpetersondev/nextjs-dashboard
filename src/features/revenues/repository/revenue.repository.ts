@@ -127,7 +127,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .set({
         calculationSource: revenue.calculationSource,
         invoiceCount: revenue.invoiceCount,
-        revenue: revenue.revenue,
+        totalAmount: revenue.totalAmount,
         updatedAt: now,
       })
       .where(eq(revenues.id, id))
@@ -286,7 +286,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
           set: {
             calculationSource: revenueData.calculationSource,
             invoiceCount: revenueData.invoiceCount,
-            revenue: revenueData.revenue,
+            totalAmount: revenueData.totalAmount,
             updatedAt: now,
           },
           target: revenues.period, // Period is a unique constraint in the database
@@ -372,7 +372,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       createdAt: now,
       invoiceCount: revenue.invoiceCount,
       period: toPeriod(period),
-      revenue: revenue.revenue,
+      totalAmount: revenue.totalAmount,
       updatedAt: now,
     };
 

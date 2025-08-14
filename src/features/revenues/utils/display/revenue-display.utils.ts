@@ -48,7 +48,7 @@ export function convertCentsToDollars(cents: Cents): Dollars {
 export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
   const yAxisLabels: string[] = [];
   const highestRecord: number = Math.max(
-    ...revenue.map((month: SimpleRevenueDto) => month.revenue),
+    ...revenue.map((month: SimpleRevenueDto) => month.totalAmount),
   );
 
   // Calculate the appropriate top label with 10% padding

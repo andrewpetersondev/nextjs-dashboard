@@ -202,8 +202,8 @@ export class RevenueStatisticsService {
 
       // Filter out months with zero revenues for min/max/average calculations
       const nonZeroRevenues = revenueData
-        .filter((entity) => entity.revenue > 0)
-        .map((entity) => entity.revenue);
+        .filter((entity) => entity.totalAmount > 0)
+        .map((entity) => entity.totalAmount);
 
       // If there are no non-zero revenues, return empty statistics
       if (nonZeroRevenues.length === 0) {
@@ -218,7 +218,10 @@ export class RevenueStatisticsService {
       // Calculate statistics
       const maximum = Math.max(...nonZeroRevenues);
       const minimum = Math.min(...nonZeroRevenues);
-      const total = revenueData.reduce((sum, value) => sum + value.revenue, 0);
+      const total = revenueData.reduce(
+        (sum, value) => sum + value.totalAmount,
+        0,
+      );
       const average = Math.round(total / nonZeroRevenues.length);
 
       const statistics: RevenueStatistics = {

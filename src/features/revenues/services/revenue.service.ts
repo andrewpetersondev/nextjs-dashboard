@@ -146,7 +146,10 @@ export class RevenueService {
     total: number;
   }> {
     const revenues = await this.getRevenueByDateRange(startDate, endDate);
-    const total = revenues.reduce((sum, revenue) => sum + revenue.revenue, 0);
+    const total = revenues.reduce(
+      (sum, revenue) => sum + revenue.totalAmount,
+      0,
+    );
     const count = revenues.length;
     const average = count > 0 ? Math.round(total / count) : 0;
 
@@ -184,7 +187,7 @@ export class RevenueService {
       const newRevenue: RevenueUpdatable = {
         calculationSource: "handler",
         invoiceCount: invoice.status === "paid" ? 1 : 0,
-        revenue: invoice.status === "paid" ? invoice.amount : 0,
+        totalAmount: invoice.status === "paid" ? invoice.amount : 0,
       };
 
       return this.repository.upsertByPeriod(toPeriod(period), newRevenue);
@@ -199,10 +202,10 @@ export class RevenueService {
           ? existingRevenue.invoiceCount + 1
           : existingRevenue.invoiceCount,
       // If the invoice is paid, add its amount, otherwise keep the same revenue
-      revenue:
+      totalAmount:
         invoice.status === "paid"
-          ? existingRevenue.revenue + invoice.amount
-          : existingRevenue.revenue,
+          ? existingRevenue.totalAmount + invoice.amount
+          : existingRevenue.totalAmount,
     };
 
     return this.repository.upsertByPeriod(toPeriod(period), updatedRevenue);

@@ -125,7 +125,7 @@ export function makeCoverageReport<
   const missing = templatePeriods.filter((p) => !periods.includes(p));
   const unexpected = periods.filter((p) => !templatePeriods.includes(p));
   const badRevenue = actualData
-    .filter((d) => Number.isNaN(d.revenue))
+    .filter((d) => Number.isNaN(d.totalAmount))
     .map((d) => toPeriod(d.period));
 
   return {

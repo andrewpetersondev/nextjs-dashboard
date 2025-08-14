@@ -38,7 +38,7 @@ function createDefaultMonthData(
     id: toRevenueId(`template-${period}`),
     invoiceCount: 0,
     period: toPeriod(period),
-    revenue: 0,
+    totalAmount: 0,
     updatedAt: new Date(),
   };
 
@@ -70,7 +70,7 @@ export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
     id: toRevenueId(`template-${period}`),
     invoiceCount: 0,
     period: toPeriod(period),
-    revenue: 0,
+    totalAmount: 0,
     updatedAt: new Date(),
   };
 

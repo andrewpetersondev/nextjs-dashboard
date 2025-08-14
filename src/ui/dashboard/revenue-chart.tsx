@@ -63,7 +63,7 @@ export async function RevenueChart(): Promise<JSX.Element> {
                   <div
                     className="w-full rounded-md bg-bg-accent"
                     style={{
-                      height: `${(chartHeight / topLabel) * month.revenue}px`,
+                      height: `${(chartHeight / topLabel) * month.totalAmount}px`,
                     }}
                   />
                   <p className="whitespace-nowrap text-sm text-text-primary">
