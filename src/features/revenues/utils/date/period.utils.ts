@@ -1,16 +1,11 @@
-import { addMonths, format, isValid } from "date-fns";
-import { ValidationError } from "@/errors/errors";
-import type { Period } from "@/lib/definitions/brands";
+import { addMonths, format } from "date-fns";
+import { type Period, toPeriod } from "@/lib/definitions/brands";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).
  */
 export function dateToPeriod(date: Date): Period {
-  if (!isValid(date)) throw new ValidationError("Invalid Date");
-  const normalized = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1),
-  );
-  return normalized as Period;
+  return toPeriod(date);
 }
 
 /**

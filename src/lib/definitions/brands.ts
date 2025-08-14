@@ -13,6 +13,10 @@ import {
   type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import {
+  isValidDate,
+  normalizeToFirstOfMonthUTC,
+} from "@/lib/utils/date.utils";
 
 /**
  * Compiled regex for UUID validation (cached for performance)
@@ -198,23 +202,17 @@ export const toRevenueSource = (source: unknown): RevenueSource => {
  */
 export function toPeriod(input: Date | string): Period {
   if (input instanceof Date) {
-    if (!isValid(input)) {
+    if (!isValidDate(input)) {
       throw new ValidationError("Invalid Date provided for period conversion");
     }
-    const normalized = new Date(
-      Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), 1),
-    );
-    return normalized as Period;
+    return normalizeToFirstOfMonthUTC(input) as Period;
   }
 
   if (typeof input === "string") {
     // Try yyyy-MM format first
     let parsed = parse(input, "yyyy-MM", new Date());
     if (isValid(parsed) && format(parsed, "yyyy-MM") === input) {
-      const normalized = new Date(
-        Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), 1),
-      );
-      return normalized as Period;
+      return normalizeToFirstOfMonthUTC(parsed) as Period;
     }
 
     // Try yyyy-MM-dd format (must be first day of month)
@@ -225,10 +223,7 @@ export function toPeriod(input: Date | string): Period {
           `Period date must be the first day of the month, got: "${input}"`,
         );
       }
-      const normalized = new Date(
-        Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), 1),
-      );
-      return normalized as Period;
+      return normalizeToFirstOfMonthUTC(parsed) as Period;
     }
 
     throw new ValidationError(

@@ -20,6 +20,7 @@ import {
   isRevenueId,
   isRevenueSource,
 } from "@/lib/definitions/brands";
+import { isValidDate } from "@/lib/utils/date.utils";
 
 /**
  * Type guard to validate SimpleRevenueDto structure.
@@ -118,8 +119,8 @@ export function isRevenueEntity(value: unknown): value is RevenueEntity {
     isNonNegativeInteger(entity.invoiceCount) &&
     isPeriod(entity.period) &&
     isRevenueSource(entity.calculationSource) &&
-    entity.createdAt instanceof Date &&
-    entity.updatedAt instanceof Date
+    isValidDate(entity.createdAt) &&
+    isValidDate(entity.updatedAt)
   );
 }
 

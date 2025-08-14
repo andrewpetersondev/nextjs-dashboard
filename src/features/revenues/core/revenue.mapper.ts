@@ -15,6 +15,14 @@ import {
   toRevenueId,
   toRevenueSource,
 } from "@/lib/definitions/brands";
+import { isValidDate } from "@/lib/utils/date.utils";
+
+// Small internal assertion helper to keep validation DRY and readable
+const ensure = (condition: unknown, message: string): void => {
+  if (!condition) {
+    throw new ValidationError(message);
+  }
+};
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -31,41 +39,31 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   }
 
   // Validate required fields presence and shapes early for clearer errors
-  if (!revenueRow.id) {
-    throw new ValidationError(
-      "Invalid revenue row: missing required field 'id'",
-    );
-  }
-  if (!revenueRow.period) {
-    throw new ValidationError(
-      "Invalid revenue row: missing required field 'period'",
-    );
-  }
-  if (!revenueRow.calculationSource) {
-    throw new ValidationError(
-      "Invalid revenue row: missing required field 'calculationSource'",
-    );
-  }
-  if (!(revenueRow.createdAt instanceof Date)) {
-    throw new ValidationError(
-      "Invalid revenue row: 'createdAt' must be a Date",
-    );
-  }
-  if (!(revenueRow.updatedAt instanceof Date)) {
-    throw new ValidationError(
-      "Invalid revenue row: 'updatedAt' must be a Date",
-    );
-  }
-  if (!isNonNegativeInteger(revenueRow.invoiceCount)) {
-    throw new ValidationError(
-      "Invalid revenue row: 'invoiceCount' must be a non-negative integer",
-    );
-  }
-  if (!isNonNegativeNumber(revenueRow.totalAmount)) {
-    throw new ValidationError(
-      "Invalid revenue row: 'totalAmount' must be a non-negative number",
-    );
-  }
+  ensure(revenueRow.id, "Invalid revenue row: missing required field 'id'");
+  ensure(
+    revenueRow.period,
+    "Invalid revenue row: missing required field 'period'",
+  );
+  ensure(
+    revenueRow.calculationSource,
+    "Invalid revenue row: missing required field 'calculationSource'",
+  );
+  ensure(
+    isValidDate(revenueRow.createdAt),
+    "Invalid revenue row: 'createdAt' must be a Date",
+  );
+  ensure(
+    isValidDate(revenueRow.updatedAt),
+    "Invalid revenue row: 'updatedAt' must be a Date",
+  );
+  ensure(
+    isNonNegativeInteger(revenueRow.invoiceCount),
+    "Invalid revenue row: 'invoiceCount' must be a non-negative integer",
+  );
+  ensure(
+    isNonNegativeNumber(revenueRow.totalAmount),
+    "Invalid revenue row: 'totalAmount' must be a non-negative number",
+  );
 
   try {
     return {

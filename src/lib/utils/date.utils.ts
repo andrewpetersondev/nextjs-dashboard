@@ -1,3 +1,38 @@
+import { format, isValid } from "date-fns";
+import { ValidationError } from "@/errors/errors";
+
+/**
+ * Normalizes a Date to the first day of its month in UTC.
+ * Throws ValidationError if the provided date is invalid.
+ */
+export function normalizeToFirstOfMonthUTC(date: Date): Date {
+  if (!isValid(date)) {
+    throw new ValidationError("Invalid Date");
+  }
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+}
+
+/**
+ * Safe Date validator combining instanceof check with date-fns isValid.
+ */
+export function isValidDate(value: unknown): value is Date {
+  return value instanceof Date && isValid(value);
+}
+
+/**
+ * Formats a Date as yyyy-MM (UTC-based string useful for keys).
+ */
+export function formatYearMonth(date: Date): string {
+  return format(date, "yyyy-MM");
+}
+
+/**
+ * Gets the UTC full year from a Date.
+ */
+export function getUTCYear(date: Date): number {
+  return date.getUTCFullYear();
+}
+
 /**
  * Returns the current date in ISO format (YYYY-MM-DD).
  * This is useful for setting default values in forms or APIs.
@@ -46,13 +81,4 @@ export const formatDateToLocal = (
  */
 export function toFirstOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-/**
- * Validates if a Date object is valid and represents a real date.
- * @param date - The Date object to validate
- * @returns true if the date is valid, false otherwise
- */
-export function isValidDate(date: Date): boolean {
-  return !Number.isNaN(date.getTime());
 }

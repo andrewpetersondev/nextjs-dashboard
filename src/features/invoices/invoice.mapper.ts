@@ -16,7 +16,7 @@ import {
   toInvoiceStatus,
   toPeriod,
 } from "@/lib/definitions/brands";
-import { isValidDate, toFirstOfMonth } from "@/lib/utils/date-utils";
+import { isValidDate, toFirstOfMonth } from "@/lib/utils/date.utils";
 
 /**
  * Maps raw database row to branded Entity.

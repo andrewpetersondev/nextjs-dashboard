@@ -6,10 +6,13 @@ import type {
   RevenueStatisticsDto,
   SimpleRevenueDto,
 } from "@/features/revenues/core/revenue.dto";
-import type { RevenueActionResult } from "@/features/revenues/core/revenue.types";
-import { MONTH_ORDER } from "@/features/revenues/core/revenue.types";
+import {
+  MONTH_ORDER,
+  type RevenueActionResult,
+} from "@/features/revenues/core/revenue.types";
 import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
 import { RevenueStatisticsService } from "@/features/revenues/services/statistics/revenue-statistics.service";
+import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { convertCentsToDollars } from "@/features/revenues/utils/display/revenue-display.utils";
 import { logger } from "@/lib/utils/logger";
 
@@ -41,8 +44,8 @@ export async function getRevenueChartAction(): Promise<
     ]);
 
     const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
-      // Extract the month number from a period (format: YYYY-MM-DD)
-      const monthNumber = parseInt(entity.period.substring(5, 7), 10);
+      // Extract the month number from Period value (1-12)
+      const monthNumber = extractMonthNumberFromPeriod(entity.period);
 
       // Validate month number is within the valid range (1-12)
       if (monthNumber < 1 || monthNumber > 12) {
