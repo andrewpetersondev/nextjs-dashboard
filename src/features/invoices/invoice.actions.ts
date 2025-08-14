@@ -1,5 +1,6 @@
 "use server";
 
+import "@/features/revenues/services/events/revenue-events.bootstrap";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
@@ -92,6 +93,8 @@ export async function createInvoiceAction(
     });
 
     // Return success result with created invoice data, id is returned, but is it used? Should I add a step so Entities are used, then transform to DTO?
+    // Invalidate dashboard cache so revenue chart updates immediately (KISS)
+    revalidatePath("/dashboard");
     return {
       data: invoice,
       errors: {},
@@ -245,6 +248,8 @@ export async function updateInvoiceAction(
     });
 
     // Return success result with updated invoice data shaped as InvoiceActionResult
+    // Invalidate dashboard cache so revenue chart updates
+    revalidatePath("/dashboard");
     return {
       data: updatedInvoice,
       errors: {},
@@ -304,6 +309,8 @@ export async function deleteInvoiceAction(
     });
 
     // Return success result with deleted invoice data shaped as InvoiceActionResult
+    // Invalidate dashboard cache so revenue chart updates
+    revalidatePath("/dashboard");
     return {
       data: invoice,
       errors: {},

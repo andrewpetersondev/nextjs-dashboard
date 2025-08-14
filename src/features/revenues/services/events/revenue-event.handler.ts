@@ -12,6 +12,7 @@ import {
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import { EventBus } from "@/lib/events/eventBus";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
+import { INVOICE_EVENTS } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
 /**
@@ -52,10 +53,19 @@ export class RevenueEventHandler {
       message: "Setting up event subscriptions",
     });
 
-    // Subscribe to invoice events
-    EventBus.subscribe("invoice.created", this.handleInvoiceCreated.bind(this));
-    EventBus.subscribe("invoice.updated", this.handleInvoiceUpdated.bind(this));
-    EventBus.subscribe("invoice.deleted", this.handleInvoiceDeleted.bind(this));
+    // Subscribe to invoice events using centralized constants (DRY)
+    EventBus.subscribe(
+      INVOICE_EVENTS.CREATED,
+      this.handleInvoiceCreated.bind(this),
+    );
+    EventBus.subscribe(
+      INVOICE_EVENTS.UPDATED,
+      this.handleInvoiceUpdated.bind(this),
+    );
+    EventBus.subscribe(
+      INVOICE_EVENTS.DELETED,
+      this.handleInvoiceDeleted.bind(this),
+    );
 
     logger.info({
       context: "RevenueEventHandler.setupEventSubscriptions",
