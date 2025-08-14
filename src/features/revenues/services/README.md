@@ -44,7 +44,7 @@ The `RevenueService` class provides the foundation for all revenue management op
 |--------|---------|------------|--------|
 | `createRevenue` | Creates a new revenue record | RevenueCreateDTO | Promise<Revenue> |
 | `getRevenueById` | Retrieves a specific revenue record | string | Promise<Revenue> |
-| `getRevenueByPeriod` | Finds revenue for a specific period | string (YYYY-MM) | Promise<Revenue> |
+| `getRevenueByPeriod` | Finds revenue for a specific period | string or Date (first-of-month) | Promise<Revenue> |
 | `updateRevenue` | Updates an existing revenue record | string, RevenueUpdateDTO | Promise<Revenue> |
 | `deleteRevenue` | Removes a revenue record | string | Promise<void> |
 | `calculateTotalRevenue` | Calculates total revenue for a period range | DateRange | Promise<number> |
@@ -77,7 +77,7 @@ Contains specialized functions for different event scenarios:
 
 Supporting utility functions for event processing:
 
-- **Period Extraction**: Converts invoice dates to standardized period format (YYYY-MM)
+- **Period Extraction**: Converts invoice dates to standardized Period (first-of-month DATE)
 - **Validation**: Verifies invoice data completeness and integrity
 - **Error Handling**: Specialized error handling for the event processing pipeline
 
@@ -150,14 +150,14 @@ const statisticsService = new RevenueStatisticsService(revenueService);
 ```typescript
 // Create a new revenue record
 const newRevenue = await revenueService.createRevenue({
-    period: '2025-08',
+    period: '2025-08-01',
     amount: 15000,
     invoiceCount: 5,
     notes: 'Monthly revenue for August 2025'
 });
 
 // Get revenue for a specific period
-const augustRevenue = await revenueService.getRevenueByPeriod('2025-08');
+const augustRevenue = await revenueService.getRevenueByPeriod('2025-08-01');
 
 // Calculate total revenue for Q3 2025
 const q3Revenue = await revenueService.calculateTotalRevenue({

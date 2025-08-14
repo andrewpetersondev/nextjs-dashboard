@@ -42,7 +42,7 @@ The new service file organizes functions into logical groups:
 
 ### Validation
 
-- `extractPeriodFromInvoice`: Extracts period (YYYY-MM) from invoice dates
+- `extractPeriodFromInvoice`: Extracts Period (first-of-month DATE) from invoice dates
 - `isStatusEligibleForRevenue`: Checks if an invoice status is eligible for revenue
 - `validateInvoiceForRevenue`: Validates invoices for revenue calculations
 - `isInvoiceEligibleForRevenue`: Checks if an invoice is eligible for revenue

@@ -1,8 +1,10 @@
 import "server-only";
 
-import { ValidationError } from "@/errors/errors";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
-import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import {
+  periodKey,
+  toPeriod,
+} from "@/features/revenues/utils/date/period.utils";
 import type { Period } from "@/lib/definitions/brands";
 import { isPeriod } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
@@ -14,21 +16,17 @@ const normalizePeriod = (p: string): string => {
 };
 
 /**
- * Normalize any acceptable input into a branded Period (YYYY-MM).
+ * Normalize any acceptable input into a branded Period (first-of-month DATE).
  * Accepts:
- * - string like "2025-7" or "2025-07"
- * - { year, month } object
+ * - string like "2025-7", "2025-07", or a full date like "2025-07-15" (normalized to first day)
+ * - { year, month } object (month can be 1-12 or zero-padded)
+ * TODO: simplify this function to only accept full date like "2025-07-15" (normalized to first day)
  */
 export function normalizeToPeriod(
   input: string | { year: number; month?: number; monthNumber?: number },
 ): Period {
   if (typeof input === "string") {
     const normalized = normalizePeriod(input);
-    if (!isPeriod(normalized)) {
-      throw new ValidationError(
-        `Invalid period string: ${input} -> ${normalized}`,
-      );
-    }
     return toPeriod(normalized);
   }
 
@@ -37,40 +35,36 @@ export function normalizeToPeriod(
     (input as { monthNumber?: number }).monthNumber ??
     (input as { month?: number }).month;
   const normalized = normalizePeriod(`${year}-${monthValue}`);
-  if (!isPeriod(normalized)) {
-    throw new ValidationError(
-      `Invalid year/month input: ${year}/${monthValue} -> ${normalized}`,
-    );
-  }
   return toPeriod(normalized);
 }
 
 /**
- * Creates an efficient lookup map for revenue data indexed by Period (YYYY-MM).
+ * Creates an efficient lookup map for revenue data indexed by Period month-key.
  *
- * - Normalizes all period keys to YYYY-MM (zero-padded month).
+ * - Normalizes all period keys to a stable "yyyy-MM" key (first-of-month semantics).
  * - Logs duplicate keys (later item overwrites earlier one).
  * - Avoids logging the entire map to keep logs concise.
+ * TODO: would it make sense to simplify the function to use "yyyy-MM-dd"
  */
 export function createDataLookupMap(
   actualData: RevenueDisplayEntity[],
-): Map<Period, RevenueDisplayEntity> {
-  const dataMap = new Map<Period, RevenueDisplayEntity>();
-  const duplicates: Period[] = [];
+): Map<string, RevenueDisplayEntity> {
+  const dataMap = new Map<string, RevenueDisplayEntity>();
+  const duplicates: string[] = [];
 
   for (const dataItem of actualData) {
-    const periodKey = toPeriod(dataItem.period);
+    const key = periodKey(toPeriod(dataItem.period));
 
-    if (dataMap.has(periodKey)) {
-      duplicates.push(periodKey);
+    if (dataMap.has(key)) {
+      duplicates.push(key);
       logger.warn({
         context: "createDataLookupMap",
         message: "Duplicate period encountered; overwriting existing entry",
-        period: periodKey,
+        period: key,
       });
     }
 
-    dataMap.set(periodKey, dataItem);
+    dataMap.set(key, dataItem);
   }
 
   // For logging, only include summary info to avoid noisy/empty {} for Map
@@ -86,7 +80,7 @@ export function createDataLookupMap(
 }
 
 /**
- * Compute an ordered list of template periods (YYYY-MM) from a rolling-month template.
+ * Compute an ordered list of template periods from a rolling-month template.
  * Each template item must contain { year: number, month: number } fields.
  */
 export function computeTemplatePeriods<

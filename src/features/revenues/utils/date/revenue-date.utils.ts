@@ -63,7 +63,7 @@ export function calculateDateRange(): {
  *
  * @param start
  * @param end
- * @returns Array of period strings in Period YYYY-MM format
+ * @returns Array of branded Period values (first-of-month Date)
  */
 export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
   const periods: Period[] = [];
@@ -83,7 +83,7 @@ export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
 }
 
 /**
- * Formats a Date object to a period string in YYYY-MM format.
+ * Formats a Date object to a branded Period (first-of-month Date).
  *
  * @param date - Date object to format
  * @returns Formatted period string

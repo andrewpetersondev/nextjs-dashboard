@@ -30,12 +30,12 @@ These utilities ensure consistent date handling across revenue calculations, rep
 
 ### b. **Period Utilities** (`period.utils.ts`)
 
-The Period Utilities provide functions for handling period strings (YYYY-MM format) with type safety and validation.
+The Period Utilities provide functions for handling month periods as branded first-of-month Date values with type safety and validation.
 
 **Key Functions:**
-- `toPeriod()` - Validates and brands a period string with strong typing
-- `dateToPeriod()` - Converts a Date object to a branded Period (YYYY-MM)
-- `periodToDate()` - Parses a Period to a Date (1st day of that month)
+- `toPeriod()` - Validates and converts input (string or Date) to a branded first-of-month Date
+- `dateToPeriod()` - Converts a Date object to a branded first-of-month Date
+- `periodToDate()` - Returns the underlying Date for the branded Period
 - `formatPeriod()` - Formats a branded Period for display (e.g., "August 2024")
 
 **Type Safety:**
@@ -49,7 +49,7 @@ The Period utilities use TypeScript's branded types to ensure that only valid pe
 
 All date handling in the revenue system follows the ISO 8601 standard:
 - Date strings use the format `YYYY-MM-DD` (e.g., "2025-08-05")
-- Period strings use the format `YYYY-MM` (e.g., "2025-08")
+- Periods are represented as first-of-month Date values (e.g., new Date("2025-08-01")) and can be keyed as "yyyy-MM" via periodKey()
 - Full timestamps use the format `YYYY-MM-DDTHH:mm:ssZ` (e.g., "2025-08-05T19:55:00Z")
 
 This standardization ensures consistent date handling across the application and compatibility with external systems.

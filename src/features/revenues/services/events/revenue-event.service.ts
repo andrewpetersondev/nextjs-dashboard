@@ -6,9 +6,10 @@ import type { InvoiceStatus } from "@/features/invoices/invoice.types";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import {
   dateToPeriod,
+  periodKey,
   toPeriod,
 } from "@/features/revenues/utils/date/period.utils";
-import { toRevenueId } from "@/lib/definitions/brands";
+import { type Period, toRevenueId } from "@/lib/definitions/brands";
 import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
 import { logger } from "@/lib/utils/logger";
 
@@ -65,9 +66,9 @@ export function handleEventError(
 // ===== Validation Functions =====
 
 /**
- * Safely extracts the period (YYYY-MM) from an invoice date.
+ * Safely extracts the Period (first-of-month DATE) from an invoice date.
  */
-export function extractPeriodFromInvoice(invoice: InvoiceDto): string | null {
+export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
   if (!invoice || !invoice.date) {
     return null;
   }
@@ -83,7 +84,7 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): string | null {
       // Add a day to make it a complete date for validation
       const testDate = parseISO(`${invoice.date}-01`);
       if (isValid(testDate)) {
-        return invoice.date;
+        return toPeriod(invoice.date);
       }
     }
 
@@ -224,7 +225,7 @@ export function extractAndValidatePeriod(
   invoice: InvoiceDto,
   context: string,
   eventId?: string,
-): string | null {
+): Period | null {
   const period = extractPeriodFromInvoice(invoice);
 
   if (!period) {
@@ -275,7 +276,7 @@ export async function updateRevenueRecord(
 export async function processInvoiceForRevenue(
   revenueService: RevenueService,
   invoice: InvoiceDto,
-  period: string,
+  period: Period,
   context = "RevenueEventHandler.processInvoiceForRevenue",
   isUpdate = false,
   previousAmount?: number,
@@ -283,7 +284,7 @@ export async function processInvoiceForRevenue(
   const metadata = {
     invoice: invoice.id,
     isUpdate,
-    period,
+    period: periodKey(period),
   };
 
   await withErrorHandling(
@@ -291,7 +292,9 @@ export async function processInvoiceForRevenue(
     "Processing invoice for revenue calculation",
     async () => {
       // Get the existing revenue record for the period
-      const existingRevenue = await revenueService.findByPeriod(period);
+      const existingRevenue = await revenueService.findByPeriod(
+        periodKey(period),
+      );
 
       if (existingRevenue) {
         if (isUpdate && previousAmount !== undefined) {
@@ -357,12 +360,12 @@ export async function processInvoiceForRevenue(
 export async function adjustRevenueForDeletedInvoice(
   revenueService: RevenueService,
   invoice: InvoiceDto,
-  period: string,
+  period: Period,
 ): Promise<void> {
   const context = "RevenueEventHandler.adjustRevenueForDeletedInvoice";
   const metadata = {
     invoice: invoice.id,
-    period,
+    period: periodKey(period),
   };
 
   await withErrorHandling(
@@ -395,7 +398,9 @@ export async function adjustRevenueForDeletedInvoice(
       }
 
       // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(period);
+      const existingRevenue = await revenueService.findByPeriod(
+        periodKey(period),
+      );
 
       if (!existingRevenue) {
         logInfo(
@@ -471,7 +476,9 @@ export async function adjustRevenueForStatusChange(
       const metadataWithPeriod = { ...metadata, period };
 
       // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(period);
+      const existingRevenue = await revenueService.findByPeriod(
+        periodKey(period),
+      );
 
       if (!existingRevenue) {
         logInfo(
@@ -579,7 +586,7 @@ export async function processInvoiceEvent(
   event: BaseInvoiceEvent,
   revenueService: RevenueService, // TODO: Why is revenueService unused? Can I use it in a meaningful way?
   contextMethod: string,
-  processor: (invoice: InvoiceDto, period: string) => Promise<void>,
+  processor: (invoice: InvoiceDto, period: Period) => Promise<void>,
 ): Promise<void> {
   const context = `RevenueEventHandler.${contextMethod}`;
 

@@ -9,7 +9,10 @@ import {
   MONTH_ORDER,
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
-import { toPeriod } from "@/features/revenues/utils/date/period.utils";
+import {
+  periodKey,
+  toPeriod,
+} from "@/features/revenues/utils/date/period.utils";
 import type { Period } from "@/lib/definitions/brands";
 import { toRevenueId } from "@/lib/definitions/brands";
 import { logger } from "@/lib/utils/logger";
@@ -59,7 +62,7 @@ function createDefaultMonthData(
  * RevenueEntity and then transforming it using the factory method.
  * Use createDefaultRevenueEntity if you need a database-compatible entity.
  *
- * @param period - Period in YYYY-MM format
+ * @param period - Branded Period (first-of-month Date)
  * @returns Complete RevenueDisplayEntity with default values
  */
 export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
@@ -98,10 +101,10 @@ export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
  */
 export function getMonthDataOrDefault(
   monthTemplate: RollingMonthData,
-  dataLookup: Map<Period, RevenueDisplayEntity>,
+  dataLookup: Map<string, RevenueDisplayEntity>,
 ): RevenueDisplayEntity {
   const { year, monthNumber, month, period } = monthTemplate;
-  const existingData = dataLookup.get(period);
+  const existingData = dataLookup.get(periodKey(period));
 
   if (existingData) {
     return existingData;

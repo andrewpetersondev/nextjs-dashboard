@@ -120,8 +120,9 @@ export class RevenueService {
   /**
    * Retrieves a revenue record by its period.
    *
-   * @param period - The period in YYYY-MM format
+   * @param period - The period (first-of-month DATE), accepts string or Date
    * @returns Promise resolving to the revenue entity or null if not found
+   * TODO: should the parameter just accept a date?
    */
   async findByPeriod(period: string): Promise<RevenueEntity | null> {
     if (!period) {
@@ -160,9 +161,10 @@ export class RevenueService {
    * Creates or updates a revenue record for a specific month based on invoice data.
    * This method is called by the event handler when invoices are created, updated, or deleted.
    *
-   * @param period - The period in YYYY-MM format
+   * @param period - The period (first-of-month DATE), accepts string or Date
    * @param invoice - The invoice data that triggered the update
    * @returns Promise resolving to the created or updated revenue entity
+   * TODO: should the period parameter just accpet a date?
    */
   async upsertMonthlyRevenue(
     period: string,
