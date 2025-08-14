@@ -1,6 +1,9 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
+  bigint,
+  check,
   date,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -21,15 +24,23 @@ import { USER_ROLES } from "@/features/users/user.types";
 import type {
   CustomerId,
   InvoiceId,
-  Period,
   RevenueId,
   SessionId,
   UserId,
 } from "@/lib/definitions/brands";
 
 /**
- * Database table and column name constants for maintainability and consistency.
- * These constants help prevent typos and make refactoring easier.
+ * Schema overview
+ * - Uses branded IDs (UserId, InvoiceId, etc.) to constrain cross-table usage at compile time.
+ * - Represents money in integer cents for precision (no floating-point). Uses bigint to avoid overflow.
+ * - Timestamps are stored as timestamptz for consistency across time zones.
+ * - Check constraints enforce basic data invariants.
+ * - Indexes are added for common joins/filters.
+ */
+
+/**
+ * Constants for DB table and column names to prevent typos and ease refactors.
+ * Note: Some column keys may remain for backward-compatibility even if not used in this file.
  */
 export const TABLES = {
   CUSTOMERS: "customers",
@@ -55,17 +66,19 @@ export const COLUMNS = {
   NAME: "name",
   PASSWORD: "password",
   PERIOD: "period",
-  REVENUE: "revenue",
+  REVENUE: "revenue", // kept for compatibility; not used in this file
+  REVENUE_PERIOD: "revenue_period",
   ROLE: "role",
   SENSITIVE_DATA: "sensitive_data",
   STATUS: "status",
   TOKEN: "token",
+  TOTAL_AMOUNT: "total_amount",
   UPDATED_AT: "updated_at",
   USER_ID: "user_id",
   USERNAME: "username",
 } as const;
 
-// Build DB enums from domain constants to avoid duplication and drift
+// DB enums from domain constants to avoid duplication and drift
 export const roleEnum = pgEnum(COLUMNS.ROLE, USER_ROLES);
 
 export const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
@@ -76,28 +89,48 @@ export const calculationSourceEnum = pgEnum(
 );
 
 /**
- * Common field configurations for reusability and consistency.
+ * Common field builders for consistency.
  */
 const commonFields = {
   email: () => varchar(COLUMNS.EMAIL, { length: 255 }).notNull().unique(),
+
   id: {
+    // Primary keys do not need unique() (PK implies uniqueness)
     serial: () => serial(COLUMNS.ID).primaryKey(),
+
     uuid: () => uuid(COLUMNS.ID).defaultRandom().primaryKey(),
   },
+
   name: () => varchar(COLUMNS.NAME, { length: 255 }).notNull(),
+
   sensitiveData: () =>
     varchar(COLUMNS.SENSITIVE_DATA, { length: 255 })
       .notNull()
       .default("cantTouchThis"),
+
   timestamps: {
-    createdAt: () => timestamp(COLUMNS.CREATED_AT).defaultNow().notNull(),
-    updatedAt: () => timestamp(COLUMNS.UPDATED_AT).defaultNow().notNull(),
+    // Use timestamptz for safer cross-timezone handling
+    createdAt: () =>
+      timestamp(COLUMNS.CREATED_AT, { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
+
+    // Sessions set their own expiry; no default here on purpose
+    expiresAt: () =>
+      timestamp(COLUMNS.EXPIRES_AT, {
+        mode: "date",
+        withTimezone: true,
+      }).notNull(),
+
+    updatedAt: () =>
+      timestamp(COLUMNS.UPDATED_AT, { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
   },
 } as const;
 
 /**
- * Users table schema with a branded UserId type.
- * Stores user authentication and profile information.
+ * Users: authentication and profile info.
  */
 export const users = pgTable(TABLES.USERS, {
   email: commonFields.email(),
@@ -109,8 +142,7 @@ export const users = pgTable(TABLES.USERS, {
 });
 
 /**
- * Demo user counters table schema for tracking demo usage.
- * Separate table to avoid polluting the main users table.
+ * Demo user counters: separate concerns from users table.
  */
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
   count: integer(COLUMNS.COUNT).notNull().default(0),
@@ -119,8 +151,7 @@ export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
 });
 
 /**
- * Customers table schema with a branded CustomerId type.
- * Stores customer information for invoice management.
+ * Customers: customer information for invoices.
  */
 export const customers = pgTable(TABLES.CUSTOMERS, {
   email: commonFields.email(),
@@ -131,63 +162,112 @@ export const customers = pgTable(TABLES.CUSTOMERS, {
 });
 
 /**
- * Invoices table schema with branded InvoiceId and CustomerId types.
- * Links customers to their invoices with proper foreign key relationships.
+ * Revenues: monthly aggregates for reporting/analytics.
+ * - period is the first day of the month (e.g., 2025-05-01).
+ * - totalAmount is the sum of invoice amounts for that period (integer cents).
+ *
+ * Note: Defined before invoices to avoid forward-reference issues in pgTable column FKs.
  */
-export const invoices = pgTable(TABLES.INVOICES, {
-  amount: integer(COLUMNS.AMOUNT).notNull(),
-  customerId: uuid(COLUMNS.CUSTOMER_ID)
-    .notNull()
-    .references(() => customers.id, { onDelete: "cascade" })
-    .$type<CustomerId>(),
-  date: date(COLUMNS.DATE).notNull(),
-  id: commonFields.id.uuid().$type<InvoiceId>(),
-  sensitiveData: commonFields.sensitiveData(),
-  status: statusEnum(COLUMNS.STATUS)
-    .default("pending")
-    .notNull()
-    .$type<InvoiceStatus>(),
-});
+export const revenues = pgTable(
+  TABLES.REVENUES,
+  {
+    calculationSource: calculationSourceEnum(COLUMNS.CALCULATION_SOURCE)
+      .default("seed")
+      .notNull()
+      .$type<RevenueSource>(),
+    createdAt: commonFields.timestamps.createdAt(),
+    id: commonFields.id.uuid().$type<RevenueId>(),
+    invoiceCount: integer(COLUMNS.INVOICE_COUNT).notNull().default(0),
+    period: date(COLUMNS.PERIOD, { mode: "date" }).notNull().unique(),
+    // bigint to avoid overflow for large aggregates
+    totalAmount: bigint(COLUMNS.TOTAL_AMOUNT, { mode: "number" })
+      .notNull()
+      .default(0),
+    updatedAt: commonFields.timestamps.updatedAt(),
+  },
+  (table) => [
+    // Ensure period is first-of-month
+    check(
+      "revenues_period_is_first_of_month",
+      sql`extract(day from ${table.period}) = 1`,
+    ),
+    // Integrity: non-negative aggregates
+    check("revenues_total_amount_non_negative", sql`${table.totalAmount} >= 0`),
+    check(
+      "revenues_invoice_count_non_negative",
+      sql`${table.invoiceCount} >= 0`,
+    ),
+  ],
+);
 
 /**
- * Revenues table schema for monthly revenue tracking.
- * Aggregated data for reporting and analytics with audit trail and metadata.
+ * Invoices: links customers to their invoices.
+ * - revenuePeriod is the first day of the month this invoice contributes to.
  */
-export const revenues = pgTable(TABLES.REVENUES, {
-  // Backed by pgEnum from REVENUE_SOURCES to keep DB and domain in sync.
-  calculationSource: calculationSourceEnum(COLUMNS.CALCULATION_SOURCE)
-    .default("seed")
-    .notNull()
-    .$type<RevenueSource>(),
-  createdAt: commonFields.timestamps.createdAt(),
-  id: commonFields.id.uuid().$type<RevenueId>(),
-  invoiceCount: integer(COLUMNS.INVOICE_COUNT).notNull().default(0),
-  period: varchar(COLUMNS.PERIOD, { length: 7 })
-    .notNull()
-    .unique()
-    .$type<Period>(), // Format: YYYY-MM
-  revenue: integer(COLUMNS.REVENUE).notNull(),
-  updatedAt: commonFields.timestamps.updatedAt(),
-});
+export const invoices = pgTable(
+  TABLES.INVOICES,
+  {
+    // bigint cents to avoid overflow on large invoice amounts
+    amount: bigint(COLUMNS.AMOUNT, { mode: "number" }).notNull(),
+    customerId: uuid(COLUMNS.CUSTOMER_ID)
+      .notNull()
+      .references(() => customers.id, { onDelete: "cascade" })
+      .$type<CustomerId>(),
+    date: date(COLUMNS.DATE, { mode: "date" }).notNull(),
+    id: commonFields.id.uuid().$type<InvoiceId>(),
+    revenuePeriod: date(COLUMNS.REVENUE_PERIOD, { mode: "date" })
+      .notNull()
+      .references(() => revenues.period, { onDelete: "restrict" }),
+    sensitiveData: commonFields.sensitiveData(),
+    status: statusEnum(COLUMNS.STATUS)
+      .default("pending")
+      .notNull()
+      .$type<InvoiceStatus>(),
+  },
+  (table) => [
+    // Integrity: amount must be non-negative
+    check("invoices_amount_non_negative", sql`${table.amount} >= 0`),
+    // Integrity: keep revenuePeriod aligned with date's month (first day)
+    check(
+      "invoices_revenue_period_matches_date",
+      sql`${table.revenuePeriod} = date_trunc('month', ${table.date}::timestamp)::date`,
+    ),
+    // Performance: efficient joins/filters
+    index("invoices_customer_id_idx").on(table.customerId),
+    index("invoices_revenue_period_idx").on(table.revenuePeriod),
+    // Helpful filter: by customer + status
+    index("invoices_customer_id_status_idx").on(table.customerId, table.status),
+  ],
+);
 
 /**
- * Sessions table schema with branded SessionId and UserId types.
- * Manages user authentication sessions with automatic cleanup.
+ * Sessions: manages user authentication sessions.
+ * - expiresAt uses timestamptz and no default; application sets expiry.
  */
-export const sessions = pgTable(TABLES.SESSIONS, {
-  createdAt: commonFields.timestamps.createdAt(),
-  expiresAt: timestamp(COLUMNS.EXPIRES_AT).notNull(),
-  id: commonFields.id.uuid().$type<SessionId>(),
-  token: text(COLUMNS.TOKEN).notNull().unique(),
-  updatedAt: commonFields.timestamps.updatedAt(),
-  userId: uuid(COLUMNS.USER_ID)
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" })
-    .$type<UserId>(),
-});
+export const sessions = pgTable(
+  TABLES.SESSIONS,
+  {
+    createdAt: commonFields.timestamps.createdAt(),
+    expiresAt: commonFields.timestamps.expiresAt(),
+    id: commonFields.id.uuid().$type<SessionId>(),
+    token: text(COLUMNS.TOKEN).notNull().unique(),
+    updatedAt: commonFields.timestamps.updatedAt(),
+    userId: uuid(COLUMNS.USER_ID)
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" })
+      .$type<UserId>(),
+  },
+  (table) => [
+    // Performance: frequent lookups and cleanup tasks
+    index("sessions_user_id_idx").on(table.userId),
+    index("sessions_expires_at_idx").on(table.expiresAt),
+  ],
+);
 
 /**
- * Table relations for type-safe joins and queries.
+ * Relations for type-safe joins and queries.
+ * Note: Drizzle may emit an informational warning when both FK constraints and relations are defined.
+ * This is expected; the FK constraint will be used for relation mapping.
  */
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
@@ -207,9 +287,16 @@ export const invoicesRelations = relations(invoices, ({ one }) => ({
     fields: [invoices.customerId],
     references: [customers.id],
   }),
+  // Link invoice to its revenue month via first-of-month date
+  revenue: one(revenues, {
+    fields: [invoices.revenuePeriod], // invoices.revenue_period (DATE)
+    references: [revenues.period], // revenues.period (DATE, unique, first-of-month)
+  }),
 }));
 
-export const revenuesRelations = relations(revenues, () => ({}));
+export const revenuesRelations = relations(revenues, ({ many }) => ({
+  invoices: many(invoices),
+}));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
@@ -219,9 +306,8 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 }));
 
 /**
- * Inferred types from the Drizzle schema for type safety.
- * These represent the raw database rows and should be used with caution
- * due to branded types that require validation before use.
+ * Inferred row types for type safety.
+ * These represent raw DB rows; branded IDs require validation before cross-entity use.
  */
 export type UserRow = typeof users.$inferSelect;
 export type NewUserRow = typeof users.$inferInsert;
@@ -237,7 +323,7 @@ export type DemoUserCounterRow = typeof demoUserCounters.$inferSelect;
 export type NewDemoUserCounterRow = typeof demoUserCounters.$inferInsert;
 
 /**
- * Union types for easier type checking and validation.
+ * Union type for convenience in generic data-handling utilities.
  */
 export type AnyTableRow =
   | UserRow
@@ -248,29 +334,8 @@ export type AnyTableRow =
   | DemoUserCounterRow;
 
 /**
- * ---------------------------------------------------------------------------
- * Drizzle ORM Relation Warning Documentation
- * ---------------------------------------------------------------------------
- *
- * When running Drizzle CLI or seeding the database, you may see warnings like:
- *
- *   "You are providing a one-to-many relation between the 'customers' and 'invoices' tables,
- *    while the 'invoices' table object already has a foreign key constraint in the schema referencing 'customers' table.
- *    In this case, the foreign key constraint will be used."
- *
- * Cause:
- * - This warning occurs because both a foreign key constraint is defined in the table schema
- *   (e.g., `invoices.customerId.references(customers.id)`) and an explicit relation is defined
- *   using Drizzle's `relations()` function.
- *
- * Why it is Irrelevant:
- * - The warning is informational only. Drizzle will use the foreign key constraint for relation mapping.
- * - Defining both is not harmful and is considered the best practice for type safety and advanced querying.
- * - No action is required; this does not affect runtime behavior or data integrity.
- *
- * Reference:
- * - https://orm.drizzle.team/docs/relations
- *
- * Safe to ignore for production and development.
- * ---------------------------------------------------------------------------
+ * Drizzle ORM relation warning (informational)
+ * When both a foreign key constraint is defined in the table and a relation is specified via relations(),
+ * Drizzle prints an informational warning and uses the FK for mapping. This is expected and safe to ignore.
+ * Reference: https://orm.drizzle.team/docs/relations
  */

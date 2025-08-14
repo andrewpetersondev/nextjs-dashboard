@@ -1,207 +1,356 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: this seed file works well enough */
-
 import bcryptjs from "bcryptjs";
-import { seed } from "drizzle-seed";
+import { sql } from "drizzle-orm";
 import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
 
-const SALT_ROUNDS: number = 10;
+/**
+ * Configuration constants for seeding operations.
+ * Extracted to improve maintainability and testability.
+ */
+const SEED_CONFIG = {
+  /** Number of invoices to generate */
+  INVOICE_COUNT: 70,
+  /** Threshold for large amounts in cents */
+  LARGE_AMOUNT_THRESHOLD: 1_500_001,
+  /** Maximum amount for regular invoices in cents ($15,000) */
+  MAX_AMOUNT_CENTS: 1_500_000,
+  /** Maximum amount for large invoices in cents ($50,000) */
+  MAX_LARGE_AMOUNT_CENTS: 5_000_000,
+  /** Minimum amount for regular invoices in cents ($5.00) */
+  MIN_AMOUNT_CENTS: 500,
+  /** Number of salt rounds for password hashing */
+  SALT_ROUNDS: 10,
+  /** Probability of generating zero amounts for edge case testing */
+  ZERO_AMOUNT_PROBABILITY: 0.05,
+} as const;
 
-const hashPassword = async (password: string): Promise<string> => {
-  try {
-    const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);
-    return await bcryptjs.hash(password, salt);
-  } catch (error: unknown) {
-    console.error("Error while hashing password:", error);
-    throw error;
+/**
+ * Validates that a period string represents the first day of a month.
+ * Ensures compliance with database check constraints.
+ *
+ * @param period - Date string in YYYY-MM-DD format
+ * @throws {Error} When period is not the first day of the month
+ */
+function validatePeriod(period: string): void {
+  const date = new Date(period + "T00:00:00.000Z");
+  if (date.getUTCDate() !== 1) {
+    throw new Error(`Generated period ${period} is not first day of month`);
   }
-};
+}
 
-const customerFullNames: string[] = [
-  "Evil Rabbits",
-  "Delba de Oliveira",
-  "Lee Robinson",
-  "Michael Novotny",
-  "Amy Burns",
-  "Balazs Orban",
-];
+/**
+ * Hashes a password using bcrypt with configured salt rounds.
+ *
+ * @param password - Plain text password to hash
+ * @returns Promise resolving to the hashed password
+ */
+async function hashPassword(password: string): Promise<string> {
+  const salt = await bcryptjs.genSalt(SEED_CONFIG.SALT_ROUNDS);
+  return bcryptjs.hash(password, salt);
+}
 
-const customerEmails: string[] = [
-  "evil@rabbit.com",
-  "delba@oliveira.com",
-  "lee@robinson.com",
-  "michael@novotny.com",
-  "amy@burns.com",
-  "balazs@orban.com",
-];
+/**
+ * Generate first-of-month periods as YYYY-MM-DD strings.
+ */
+function generateMonthlyPeriods(start: string, months: number): string[] {
+  if (!start) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
+  if (!months || months < 0) {
+    throw new Error(
+      `Invalid months count: ${months}. Must be a positive integer.`,
+    );
+  }
+  const [yearStr, monthStr] = start.split("-");
+  if (!yearStr || !monthStr) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  if (Number.isNaN(year) || Number.isNaN(month)) {
+    throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
+  }
 
-const customerImageUrls: string[] = [
-  "/customers/evil-rabbit.png",
-  "/customers/delba-de-oliveira.png",
-  "/customers/lee-robinson.png",
-  "/customers/michael-novotny.png",
-  "/customers/amy-burns.png",
-  "/customers/balazs-orban.png",
-];
+  const out: string[] = [];
+  for (let i = 0; i < months; i++) {
+    const currentYear = year + Math.floor((month - 1 + i) / 12);
+    const currentMonth = ((month - 1 + i) % 12) + 1;
+    const d = new Date(Date.UTC(currentYear, currentMonth - 1, 1));
+    const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    out.push(iso);
+  }
+  return out;
+}
 
-const periods: string[] = [
-  "2025-01",
-  "2025-02",
-  "2025-03",
-  "2025-04",
-  "2025-05",
-  "2024-06",
-  "2024-07",
-  "2024-08",
-  "2024-09",
-  "2024-10",
-  "2024-11",
-  "2024-12",
-];
+/**
+ * Predefined periods for revenue table seeding.
+ * Covers 19 months starting from 2024-01-01.
+ */
+const periods = generateMonthlyPeriods("2024-01-01", 19);
 
+// Convert to UTC Date objects for Drizzle DATE columns
+const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
+
+/**
+ * Available user roles for demo user counters.
+ */
 const roles = ["guest", "admin", "user"] as const;
 
-interface User {
-  username: string;
-  email: string;
-  password: string;
-  role: "admin" | "user" | "guest";
+/**
+ * Predefined customer data with aligned attributes.
+ */
+const customersData: Array<{ name: string; email: string; imageUrl: string }> =
+  [
+    {
+      email: "evil@rabbit.com",
+      imageUrl: "/customers/evil-rabbit.png",
+      name: "Evil Rabbits",
+    },
+    {
+      email: "delba@oliveira.com",
+      imageUrl: "/customers/delba-de-oliveira.png",
+      name: "Delba de Oliveira",
+    },
+    {
+      email: "lee@robinson.com",
+      imageUrl: "/customers/lee-robinson.png",
+      name: "Lee Robinson",
+    },
+    {
+      email: "michael@novotny.com",
+      imageUrl: "/customers/michael-novotny.png",
+      name: "Michael Novotny",
+    },
+    {
+      email: "amy@burns.com",
+      imageUrl: "/customers/amy-burns.png",
+      name: "Amy Burns",
+    },
+    {
+      email: "balazs@orban.com",
+      imageUrl: "/customers/balazs-orban.png",
+      name: "Balazs Orban",
+    },
+  ];
+
+/**
+ * Checks if all main tables are empty using efficient EXISTS queries.
+ */
+async function isEmpty(): Promise<boolean> {
+  const checks = await Promise.all([
+    nodeEnvTestDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
+    ),
+    nodeEnvTestDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
+    ),
+    nodeEnvTestDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
+    ),
+    nodeEnvTestDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
+    ),
+    nodeEnvTestDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
+    ),
+  ]);
+  return checks.every((r: any) => r.rows?.[0]?.v === false);
 }
 
-const userSeed: User[] = [
-  {
-    email: "user@user.com",
-    password: await hashPassword("UserPassword123!"),
-    role: "user",
-    username: "user",
-  },
-  {
-    email: "admin@admin.com",
-    password: await hashPassword("AdminPassword123!"),
-    role: "admin",
-    username: "admin",
-  },
-  {
-    email: "guest@guest.com",
-    password: await hashPassword("GuestPassword123!"),
-    role: "guest",
-    username: "guest",
-  },
-];
+/**
+ * Truncates all tables and resets identity sequences.
+ */
+async function truncateAll(): Promise<void> {
+  await nodeEnvTestDb.execute(sql`TRUNCATE TABLE
+    ${schema.sessions},
+    ${schema.invoices},
+    ${schema.customers},
+    ${schema.revenues},
+    ${schema.demoUserCounters},
+    ${schema.users}
+    RESTART IDENTITY CASCADE`);
+}
 
+/**
+ * Generates realistic invoice amounts (in cents).
+ */
+function generateInvoiceAmount(): number {
+  const r = Math.random();
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) return 0;
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.05) return 1;
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.1)
+    return SEED_CONFIG.MIN_AMOUNT_CENTS;
+
+  if (r < 0.9) {
+    return (
+      Math.floor(
+        Math.random() *
+          (SEED_CONFIG.MAX_AMOUNT_CENTS - SEED_CONFIG.MIN_AMOUNT_CENTS + 1),
+      ) + SEED_CONFIG.MIN_AMOUNT_CENTS
+    );
+  }
+  return (
+    Math.floor(
+      Math.random() *
+        (SEED_CONFIG.MAX_LARGE_AMOUNT_CENTS -
+          SEED_CONFIG.LARGE_AMOUNT_THRESHOLD +
+          1),
+    ) + SEED_CONFIG.LARGE_AMOUNT_THRESHOLD
+  );
+}
+
+/**
+ * Randomly selects an invoice status.
+ */
+function randomInvoiceStatus(): "pending" | "paid" {
+  return Math.random() < 0.5 ? "pending" : "paid";
+}
+
+/**
+ * Main seeding function.
+ */
 async function main(): Promise<void> {
-  // Check if the database is empty
+  const shouldReset = process.env.SEED_RESET === "true";
 
-  const { rows: userCount } = (await nodeEnvTestDb.execute(
-    "SELECT COUNT(*) FROM users",
-  )) as { rows: { count: number }[] };
-
-  const { rows: customerCount } = (await nodeEnvTestDb.execute(
-    "SELECT COUNT(*) FROM customers",
-  )) as { rows: { count: number }[] };
-
-  const { rows: invoiceCount } = (await nodeEnvTestDb.execute(
-    "SELECT COUNT(*) FROM invoices",
-  )) as { rows: { count: number }[] };
-
-  const { rows: revenueCount } = (await nodeEnvTestDb.execute(
-    "SELECT COUNT(*) FROM revenues",
-  )) as { rows: { count: number }[] };
-
-  const { rows: demoUserCount } = (await nodeEnvTestDb.execute(
-    "SELECT COUNT(*) FROM demo_user_counters",
-  )) as { rows: { count: number }[] };
-
-  if (
-    userCount[0]!.count > 0 ||
-    customerCount[0]!.count > 0 ||
-    invoiceCount[0]!.count > 0 ||
-    revenueCount[0]!.count > 0 ||
-    demoUserCount[0]!.count > 0
-  ) {
-    console.error("Database is not empty. Exiting...");
-    return;
+  if (shouldReset) {
+    await truncateAll();
+  } else {
+    const empty = await isEmpty();
+    if (!empty) {
+      console.error(
+        "Database is not empty. Set SEED_RESET=true to force reseed. Exiting...",
+      );
+      return;
+    }
   }
 
-  await seed(nodeEnvTestDb, schema).refine((f) => ({
-    customers: {
-      columns: {
-        email: f.valuesFromArray({ isUnique: true, values: customerEmails }),
-        imageUrl: f.valuesFromArray({
-          isUnique: true,
-          values: customerImageUrls,
-        }),
-        name: f.valuesFromArray({ isUnique: true, values: customerFullNames }),
-      },
-      count: 6,
-      with: {
-        invoices: [
-          { count: [1, 2, 3], weight: 0.3 },
-          { count: [4, 5], weight: 0.3 },
-          { count: [6, 7, 8], weight: 0.4 },
-        ],
-      },
+  // Prepare users with hashed passwords
+  const userSeed = [
+    {
+      email: "user@user.com",
+      password: await hashPassword("UserPassword123!"),
+      role: "user" as const,
+      username: "user",
     },
-    demoUserCounters: {
-      columns: {
-        count: f.intPrimaryKey({ maxValue: 100, minValue: 1 }),
-        role: f.valuesFromArray({ isUnique: true, values: [...roles] }),
-      },
-      count: 3,
+    {
+      email: "admin@admin.com",
+      password: await hashPassword("AdminPassword123!"),
+      role: "admin" as const,
+      username: "admin",
     },
-    invoices: {
-      columns: {
-        amount: f.weightedRandom([
-          {
-            value: f.default({ defaultValue: 100000 }), // For the first record
-            weight: 5 / 15,
-          },
-          {
-            value: f.int({ maxValue: 1000000, minValue: 10000 }), // For remaining records
-            weight: 10 / 15,
-          },
-        ]),
-        date: f.date({ maxDate: "2025-07-01", minDate: "2024-01-01" }),
-        status: f.valuesFromArray({ values: ["pending", "paid"] }),
-      },
-      count: 70,
+    {
+      email: "guest@guest.com",
+      password: await hashPassword("GuestPassword123!"),
+      role: "guest" as const,
+      username: "guest",
     },
-    revenues: {
-      columns: {
-        calculationSource: f.default({ defaultValue: "seed" }),
-        invoiceCount: f.int({ maxValue: 10, minValue: 1 }),
-        period: f.valuesFromArray({
-          isUnique: true,
-          values: periods,
-        }),
-        revenue: f.int({ maxValue: 1000000, minValue: 100000 }),
-      },
-      count: 12,
-    },
-    users: {
-      columns: {
-        email: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.email),
-        }),
-        password: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.password),
-        }),
-        role: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u: User) => u.role),
-        }),
-        username: f.valuesFromArray({
-          isUnique: true,
-          values: userSeed.map((u) => u.username),
-        }),
-      },
-      count: 3,
-    },
-  }));
+  ];
+
+  await nodeEnvTestDb.transaction(async (tx) => {
+    // 1) Seed revenues with Dates directly (no valuesFromArray)
+    await tx.insert(schema.revenues).values(
+      periodDates.map((periodDate) => ({
+        calculationSource: "seed" as const,
+        invoiceCount: 0,
+        period: periodDate, // Date instance for DATE column
+        totalAmount: 0,
+      })),
+    );
+
+    // 2) Seed customers in a single batch
+    await tx.insert(schema.customers).values(
+      customersData.map((c) => ({
+        email: c.email,
+        imageUrl: c.imageUrl,
+        name: c.name,
+      })),
+    );
+
+    // 3) Seed invoices using Date objects for date/revenuePeriod
+    const existingCustomers = await tx
+      .select({ id: schema.customers.id })
+      .from(schema.customers);
+
+    if (existingCustomers.length === 0) {
+      throw new Error("No customers found after seeding customers.");
+    }
+
+    const invoiceRows: Array<typeof schema.invoices.$inferInsert> = [];
+
+    /**
+     * Generates invoice records by iterating INVOICE_COUNT times.
+     * For each iteration:
+     * - Randomly selects a customer from existing customers
+     * - Randomly selects a period from predefined periods
+     * - Validates that the period is first day of month
+     * - Creates invoice with:
+     *   - Random amount using generateInvoiceAmount()
+     *   - Selected customer ID
+     *   - Period date as both date and revenuePeriod
+     *   - Random status (pending/paid)
+     * Throws error if customer or period selection fails
+     */
+    for (let i = 0; i < SEED_CONFIG.INVOICE_COUNT; i++) {
+      const customer =
+        existingCustomers[Math.floor(Math.random() * existingCustomers.length)];
+
+      const period = periods[Math.floor(Math.random() * periods.length)];
+
+      if (!customer?.id) {
+        throw new Error(`Invalid customer at index ${i}`);
+      }
+      if (!period) {
+        throw new Error(`Invalid period at index ${i}`);
+      }
+      validatePeriod(period);
+
+      const periodDate = new Date(period + "T00:00:00.000Z");
+
+      invoiceRows.push({
+        amount: generateInvoiceAmount(),
+        customerId: customer.id,
+        date: periodDate, // DATE column expects Date
+        revenuePeriod: periodDate, // FK to revenues.period (DATE)
+        status: randomInvoiceStatus(),
+      });
+    }
+
+    if (invoiceRows.length > 0) {
+      await tx.insert(schema.invoices).values(invoiceRows);
+    }
+
+    // 4) Seed demo user counters (one per role)
+    await tx.insert(schema.demoUserCounters).values(
+      roles.map((role) => ({
+        count: Math.floor(Math.random() * 100) + 1,
+        role,
+      })),
+    );
+
+    // 5) Seed users (pre-hashed passwords)
+    await tx.insert(schema.users).values(userSeed);
+
+    // 6) Recompute revenue aggregates from invoices
+    await tx.execute(sql`
+      UPDATE revenues AS r
+      SET total_amount  = COALESCE(agg.total_amount, 0),
+          invoice_count = COALESCE(agg.invoice_count, 0),
+          updated_at    = NOW() FROM (
+  SELECT
+    invoices.revenue_period AS period,
+    SUM(invoices.amount) AS total_amount,
+    COUNT(*) AS invoice_count
+  FROM invoices
+  GROUP BY invoices.revenue_period
+) AS agg
+      WHERE r.period = agg.period;
+    `);
+  });
+
+  console.log("Database seeded successfully.");
 }
 
+// Execute seeding with proper error handling and process exit
 main().catch((error) => {
   console.error("Error seeding database:", error);
   process.exit(1);
