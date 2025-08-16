@@ -3,8 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/Notes" />
       <excludeFolder url="file://$MODULE_DIR$/storage/containers" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/notes" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/old-docs" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>

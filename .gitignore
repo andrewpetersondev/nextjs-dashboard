@@ -79,6 +79,14 @@ containers/
 other/
 
 # ================================
+# Storage
+# ================================
+storage/
+storage/containers
+storage/notes
+storage/old-docs
+
+# ================================
 # Cypress generated JS files
 # ================================
 cypress.config.js
