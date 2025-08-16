@@ -13,11 +13,11 @@
 
 ## Refactor Implementation Plan
 
-- The goal of the refactor is to implement DRY, SOLID, and KISS principles.
+- The goal of the refactor is to implement DRY, SOLID, and KISS principles. (also improve organization)
 
 ### Phase 1: Foundation Infrastructure (Results, Error Handling, & Validation) (Days 1-3)
 
-[Phase 1](phase-1.md)
+[Phase 1](phase-1/phase-1.md)
 
 ### Phase 2: Core Types (Days 4-5)
 
