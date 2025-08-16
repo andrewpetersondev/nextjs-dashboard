@@ -13,6 +13,7 @@
  * - Err: Representing failure with associated error
  */
 
+// Todo: This result shape is pretty bare. What is best practice?
 export type Result<T, E = Error> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
