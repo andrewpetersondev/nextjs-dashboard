@@ -2,9 +2,9 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -26,15 +26,12 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
       "@/app/*": ["./src/app/*"],
       "@/components/*": ["./src/components/*"],
       "@/config/*": ["./src/config/*"],
       "@/db/*": ["./src/db/*"],
-      "@/errors/*": ["./src/errors/*"],
       "@/features/*": ["./src/features/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/styles/*": ["./src/styles/*"],
       "@/ui/*": ["./src/ui/*"]
     },
 
@@ -43,24 +40,36 @@
       {
         "name": "next"
       }
-    ],
+    ]
 
     /* Types */
-    "types": ["node", "react", "react-dom"]
+    /* Removed because .next/types/ in the include path is enough (according to AI chat) */
+    /* "types": ["node", "react", "react-dom"] */
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/**/*"
+    "next-env.d.ts",
+    "drizzle-dev.config.ts",
+    "drizzle-test.config.ts",
+    "envConfig.ts",
+    "next.config.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
     ".next",
     "out",
+    "build",
+    "dist",
     "storage",
+    "docs",
     "cypress",
-    "cypress.config.ts"
+    "coverage",
+    "cypress.config.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }
