@@ -1,82 +1,73 @@
-### Phase 2: Error Handling & Validation (Days 4-5)
+# Phase 2: Core Types(Days 4-5)
 
-#### 2.1 Enhanced Error System (`src/lib/errors/`)
+## 2.1 Brand Types System (`src/lib/core/brand.ts`)
 
-```typescript
-// src/lib/errors/base.error.ts
+~~~typescript
+// src/lib/core/brand.ts
 /**
- * Base class for all application errors.
- * Provides structured error handling with context and HTTP status codes.
+ * Creates a symbol-constrained branded type to prevent mixing incompatible values.
+ * Symbols ensure true uniqueness at both compile-time and runtime.
+ *
+ * @template T - The underlying type being branded
+ * @template B - The brand symbol type for uniqueness
+ *
+ * @example
+ * ```ts
+ * const userIdBrand = Symbol('UserId');
+ * type UserId = Brand<string, typeof userIdBrand>;
+ *
+ * const createUserId = (value: string): UserId => value as UserId;
+ * const userId = createUserId('user-123');
+ * ```
  */
-export abstract class BaseError extends Error {
-  abstract readonly code: string;
-  abstract readonly statusCode: number;
-  public readonly timestamp: Date;
+export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 
-  constructor(
-    message: string,
-    public readonly context: Record<string, unknown> = {},
-    public readonly cause?: Error,
-  ) {
-    super(message);
-    this.name = this.constructor.name;
-    this.timestamp = new Date();
+/**
+ * Creates a branded value factory function for a specific symbol.
+ * Provides type-safe branding with runtime symbol validation capability.
+ *
+ * @param brandSymbol - The unique symbol for this brand
+ * @returns Factory function that creates branded values
+ * @example
+ * ```ts
+ * export const USER_ID_BRAND = Symbol("UserId");
+ * export type UserId = Brand<string, typeof USER_ID_BRAND>;
+ * const brandUserId = createBrand(USER_ID_BRAND);
+ * ```
+ * @template T - The underlying type being branded
+ * @template B - The brand symbol type for uniqueness
+ * @return A function that takes a value of type T and returns a Brand<T, B>
+ *
+ */
+export const createBrand = <T, B extends symbol>(brandSymbol: B) => {
+  return (value: T): Brand<T, B> => value as Brand<T, B>;
+};
 
-    // Maintain proper stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
+/**
+ * Type guard to check if a value has a specific brand.
+ * Useful for runtime brand validation in complex scenarios.
+ *
+ * @param value - The value to check
+ * @param validator - Function to validate the underlying type
+ * @returns True if value matches the brand type
+ */
+export const isBrand = <T, B extends symbol>(
+  value: unknown,
+  validator: (v: unknown) => v is T,
+): value is Brand<T, B> => validator(value);
 
-  /**
-   * Serializes error for logging/API responses.
-   */
-  toJSON(): Record<string, unknown> {
-    return {
-      name: this.name,
-      message: this.message,
-      code: this.code,
-      statusCode: this.statusCode,
-      context: this.context,
-      timestamp: this.timestamp.toISOString(),
-      ...(this.cause && { cause: this.cause.message }),
-    };
-  }
-}
+/**
+ * Extracts the underlying value from a branded type.
+ * Use sparingly - prefer keeping values branded throughout the system.
+ *
+ * @param brandedValue - The branded value to unwrap
+ * @returns The underlying unbranded value
+ */
+export const unbrand = <T, B extends symbol>(brandedValue: Brand<T, B>): T =>
+  brandedValue as T;
+~~~
 
-// src/lib/errors/domain.errors.ts
-export class ValidationError extends BaseError {
-  readonly code = "VALIDATION_ERROR";
-  readonly statusCode = 400;
-}
-
-export class NotFoundError extends BaseError {
-  readonly code = "NOT_FOUND";
-  readonly statusCode = 404;
-}
-
-export class UnauthorizedError extends BaseError {
-  readonly code = "UNAUTHORIZED";
-  readonly statusCode = 401;
-}
-
-export class DatabaseError extends BaseError {
-  readonly code = "DATABASE_ERROR";
-  readonly statusCode = 500;
-}
-
-export class CacheError extends BaseError {
-  readonly code = "CACHE_ERROR";
-  readonly statusCode = 500;
-}
-
-export class CryptoError extends BaseError {
-  readonly code = "CRYPTO_ERROR";
-  readonly statusCode = 500;
-}
-```
-
-#### 2.2 Enhanced Brand Definitions (`src/lib/types/brands.ts`)
+## 2.2 Enhanced Brand Definitions (`src/lib/types/brands.ts`)
 
 ~~~typescript
 // src/lib/types/brands.ts
@@ -135,60 +126,3 @@ export const createInvoiceId = (
   return Ok(brandInvoiceId(value.trim()));
 };
 ~~~
-
-#### 2.3 Validation Framework (`src/lib/validation/`)
-
-```typescript
-// src/lib/validation/validator.interface.ts
-import { Result } from "../core/result";
-import { ValidationError } from "../errors/domain.errors";
-
-export interface Validator<T> {
-  validate(value: unknown): Result<T, ValidationError>;
-}
-
-export interface ValidationRule<T> {
-  test(value: T): boolean;
-  message: string;
-}
-
-// src/lib/validation/common.validators.ts
-export class StringValidator implements Validator<string> {
-  constructor(private readonly rules: ValidationRule<string>[] = []) {}
-
-  static required(): ValidationRule<string> {
-    return {
-      test: (value) => value.trim().length > 0,
-      message: "Field is required",
-    };
-  }
-
-  static minLength(min: number): ValidationRule<string> {
-    return {
-      test: (value) => value.length >= min,
-      message: `Must be at least ${min} characters`,
-    };
-  }
-
-  static maxLength(max: number): ValidationRule<string> {
-    return {
-      test: (value) => value.length <= max,
-      message: `Must not exceed ${max} characters`,
-    };
-  }
-
-  validate(value: unknown): Result<string, ValidationError> {
-    if (typeof value !== "string") {
-      return Err(new ValidationError("Value must be a string"));
-    }
-
-    for (const rule of this.rules) {
-      if (!rule.test(value)) {
-        return Err(new ValidationError(rule.message, { value }));
-      }
-    }
-
-    return Ok(value);
-  }
-}
-```
