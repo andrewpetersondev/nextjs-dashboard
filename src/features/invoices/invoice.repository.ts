@@ -1,10 +1,5 @@
 import "server-only";
 
-import type {
-  InvoiceEntity,
-  InvoiceFormPartialEntity,
-  InvoiceServiceEntity,
-} from "@/db/models/invoice.entity";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -13,6 +8,11 @@ import {
   updateInvoiceDal,
 } from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
+import type {
+  InvoiceEntity,
+  InvoiceFormPartialEntity,
+  InvoiceServiceEntity,
+} from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceId } from "@/lib/definitions/brands";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";

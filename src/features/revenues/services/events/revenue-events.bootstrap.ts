@@ -9,7 +9,6 @@ import { logger } from "@/lib/logging/logger";
 
 // Ensure single initialization across hot reloads / serverless invocations
 // by storing the instance on the global object.
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const globalForRevenueHandler = globalThis as any;
 
 if (!globalForRevenueHandler.__revenueEventHandler) {

@@ -2,12 +2,12 @@ import "server-only";
 
 import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/db/connection";
+import { customers, invoices, revenues } from "@/db/schema";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
   InvoiceServiceEntity,
-} from "@/db/models/invoice.entity";
-import { customers, invoices, revenues } from "@/db/schema";
+} from "@/features/invoices/invoice.entity";
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";

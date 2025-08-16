@@ -1,15 +1,15 @@
 import "server-only";
 
-import type {
-  InvoiceEntity,
-  InvoiceFormEntity,
-  InvoiceServiceEntity,
-} from "@/db/models/invoice.entity";
 import type { InvoiceRow } from "@/db/schema";
 import type {
   InvoiceDto,
   InvoiceFormDto,
 } from "@/features/invoices/invoice.dto";
+import type {
+  InvoiceEntity,
+  InvoiceFormEntity,
+  InvoiceServiceEntity,
+} from "@/features/invoices/invoice.entity";
 import {
   toCustomerId,
   toInvoiceId,

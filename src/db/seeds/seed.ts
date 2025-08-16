@@ -170,7 +170,6 @@ async function isEmpty(): Promise<boolean> {
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   return checks.every((r: any) => r.rows?.[0]?.v === false);
 }
 

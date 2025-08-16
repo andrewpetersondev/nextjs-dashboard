@@ -1,4 +1,4 @@
-import type { UserEntity } from "@/db/models/user.entity";
+import type { UserEntity } from "@/features/users/user.entity";
 import type { FormState } from "@/lib/forms/form.types";
 
 /** --- User Domain Types --- */
