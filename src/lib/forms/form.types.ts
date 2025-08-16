@@ -34,32 +34,25 @@ export type FormErrors<TFieldNames extends string> = Partial<
 >;
 
 /**
- * Complete state of a form, including errors, messages, success status, and optional validated data.
+ * Complete state of a form, including errors, messages, success status, and validated data (on success).
  *
- * @template TFieldNames - String literal union of valid field names.
- * @template TData - Type of validated form data.
- *
- * @property errors - Field-level validation errors. Only present for fields with errors.
- * @property message - General user-facing message (error or success).
- * @property success - Indicates if the form action was successful.
- * @property data - Optional validated data, present only on success.
- *
- * @example
- * type RegistrationFields = "email" | "password";
- * const formState: FormState<RegistrationFields, { email: string; password: string }> = {
- *   errors: { email: ["Email is required"] },
- *   message: "Please fix the errors.",
- *   success: false
- * };
+ * On failure, include raw input `values` for repopulating the form.
  *
  * @remarks
- * - Use specific string literal types for `TFieldNames` for type safety.
- * - The `data` property is optional and only present when validation succeeds.
- * - Designed for strict TypeScript settings (`exactOptionalPropertyTypes: true`).
+ * - `data` is only present on success and contains validated, typed data.
+ * - `values` may be present on failure and should contain non-sensitive raw inputs for convenience.
+ * - For security, avoid returning sensitive fields (e.g., passwords) in `values`.
  */
-export type FormState<TFieldNames extends string, TData = unknown> = {
-  errors: FormErrors<TFieldNames>;
-  message: string;
-  success: boolean;
-  data?: TData; // Optional: only present on success
-};
+export type FormState<TFieldNames extends string, TData = unknown> =
+  | {
+      data: TData;
+      errors?: never;
+      message: string;
+      success: true;
+    }
+  | {
+      errors: FormErrors<TFieldNames>;
+      message: string;
+      success: false;
+      values?: Partial<Record<TFieldNames, string>>;
+    };

@@ -39,6 +39,7 @@ import type {
   UserRole,
 } from "@/features/users/user.types";
 import { getValidUserRole } from "@/features/users/user.utils";
+import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import { toUserId, toUserRole } from "@/lib/definitions/brands";
 import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
@@ -81,14 +82,14 @@ export async function createUserAction(
     });
     if (!user) {
       return {
-        errors: {},
+        errors: {}, // todo: the error message should be more specific
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
     }
     return {
-      errors: {},
-      message: USER_ERROR_MESSAGES.CREATE_SUCCESS,
+      data: user,
+      message: USER_SUCCESS_MESSAGES.CREATE_SUCCESS,
       success: true,
     };
   } catch (error) {
@@ -156,33 +157,41 @@ export async function updateUserAction(
     }
 
     const patch: Record<string, unknown> = {};
+
     if (
       validated.data.username &&
       validated.data.username !== existingUser.username
     ) {
       patch.username = validated.data.username;
     }
+
     if (validated.data.email && validated.data.email !== existingUser.email) {
       patch.email = validated.data.email;
     }
+
     if (validated.data.role && validated.data.role !== existingUser.role) {
       patch.role = toUserRole(validated.data.role);
     }
+
     if (validated.data.password && validated.data.password.length > 0) {
       patch.password = await hashPassword(validated.data.password);
     }
+
+    // If no fields have changed, return early
     if (Object.keys(patch).length === 0) {
       return {
-        errors: {},
-        message: USER_ERROR_MESSAGES.NO_CHANGES,
+        data: existingUser,
+        message: USER_SUCCESS_MESSAGES.NO_CHANGES,
         success: true,
       };
     }
+
     const updatedUser: UserDto | null = await updateUserDal(
       db,
       toUserId(id),
       patch,
     );
+
     if (!updatedUser) {
       return {
         errors: {},
@@ -192,8 +201,8 @@ export async function updateUserAction(
     }
     revalidatePath("/dashboard/users");
     return {
-      errors: {},
-      message: USER_ERROR_MESSAGES.UPDATE_SUCCESS,
+      data: updatedUser,
+      message: USER_SUCCESS_MESSAGES.UPDATE_SUCCESS,
       success: true,
     };
   } catch (error) {
@@ -204,7 +213,7 @@ export async function updateUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
     return {
-      errors: {},
+      errors: {}, // TODO: return a more specific error message
       message: USER_ERROR_MESSAGES.UPDATE_FAILED,
       success: false,
     };

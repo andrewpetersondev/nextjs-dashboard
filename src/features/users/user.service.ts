@@ -1,5 +1,6 @@
 import "server-only";
 
+import type * as z from "zod";
 import {
   LoginFormSchema,
   SignupFormSchema,
@@ -10,33 +11,43 @@ import type {
   SignupFormFieldNames,
   SignupFormFields,
 } from "@/features/users/user.types";
-import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
-import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { validateFormData } from "@/lib/forms/form-validation";
+
+/**
+ * Generic form validation function that can handle different types of forms.
+ *
+ * @template TFieldNames - String literal union of valid form field names
+ * @template TData - Type of the validated form data
+ * @param formData - The FormData object from the form
+ * @param schema - The Zod schema to validate against
+ * @param fields - Array of field names to validate
+ * @returns FormState<TFieldNames, TData>
+ */
+export function validateForm<TFieldNames extends string, TData>(
+  formData: FormData,
+  schema: z.ZodSchema<TData>,
+  fields: readonly TFieldNames[],
+): FormState<TFieldNames, TData> {
+  return validateFormData(formData, schema, fields);
+}
 
 /**
  * Validates signup form data using the generic form validation utility.
  *
  * @param formData - The FormData object from the signup form.
  * @returns FormState<SignupFormFieldNames, SignupFormFields>
+ * @remarks
+ * This function is ridiculously stupid. Am I wrong?
  */
 export function validateSignupForm(
   formData: FormData,
 ): FormState<SignupFormFieldNames, SignupFormFields> {
-  const result = validateFormData(formData, SignupFormSchema, [
+  return validateForm(formData, SignupFormSchema, [
     "username",
     "email",
     "password",
   ]);
-  return {
-    errors: result.errors,
-    message: result.success
-      ? USER_SUCCESS_MESSAGES.PARSE_SUCCESS
-      : USER_ERROR_MESSAGES.VALIDATION_FAILED,
-    success: result.success,
-    ...(result.data ? { data: result.data } : {}),
-  };
 }
 
 /**
@@ -44,20 +55,11 @@ export function validateSignupForm(
  *
  * @param formData - The FormData object from the login form.
  * @returns FormState<LoginFormFieldNames, LoginFormFields>
+ * @remarks
+ * This function is ridiculously stupid. Am I wrong?
  */
 export const validateLoginForm = (
   formData: FormData,
 ): FormState<LoginFormFieldNames, LoginFormFields> => {
-  const result = validateFormData(formData, LoginFormSchema, [
-    "email",
-    "password",
-  ]);
-  return {
-    errors: result.errors,
-    message: result.success
-      ? USER_SUCCESS_MESSAGES.PARSE_SUCCESS
-      : USER_ERROR_MESSAGES.VALIDATION_FAILED,
-    success: result.success,
-    ...(result.data ? { data: result.data } : {}),
-  };
+  return validateForm(formData, LoginFormSchema, ["email", "password"]);
 };

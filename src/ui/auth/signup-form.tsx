@@ -8,19 +8,13 @@ import {
 import { type FC, type JSX, useActionState } from "react";
 import { signup } from "@/features/users/user.actions";
 import type { SignupFormFieldNames } from "@/features/users/user.types";
-import type { FormState } from "@/lib/forms/form.types";
+import type { FormFieldError, FormState } from "@/lib/forms/form.types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
 import { InputField } from "@/ui/auth/input-field";
 import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
-
-const initialState = {
-  errors: {},
-  message: "",
-  success: false,
-};
 
 /**
  * SignupForm component for user registration.
@@ -31,6 +25,15 @@ const initialState = {
  * @returns Rendered SignupForm component.
  */
 export const SignupForm: FC = (): JSX.Element => {
+  const initialState: Extract<
+    FormState<SignupFormFieldNames>,
+    { success: false }
+  > = {
+    errors: {} as Partial<Record<SignupFormFieldNames, FormFieldError>>,
+    message: "",
+    success: false, // literal false due to the annotation
+  };
+
   const [state, action, pending] = useActionState<
     FormState<SignupFormFieldNames>,
     FormData
