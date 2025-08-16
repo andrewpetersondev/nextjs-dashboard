@@ -2,6 +2,17 @@
 # IDE and Editor Configuration
 # ================================
 .DS_Store
+# .idea: keep project config minimal, exclude per-user files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/libraries
+# optionally ignore all .idea then re-allow specific shared files:
+ .idea/*
+# !.idea/inspectionProfiles
+# !.idea/codeStyles
 
 # ================================
 # Dependencies
