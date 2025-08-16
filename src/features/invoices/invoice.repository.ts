@@ -14,6 +14,7 @@ import type {
   InvoiceServiceEntity,
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
+import { Err, fromPromise, Ok, type Result } from "@/lib/core/result";
 import type { InvoiceId } from "@/lib/definitions/brands";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/lib/errors/errors";
@@ -29,6 +30,25 @@ export class InvoiceRepository extends BaseRepository<
   InvoiceServiceEntity, // TCreateInput - creation input type
   InvoiceFormPartialEntity // TUpdateInput - update input type
 > {
+  /**
+   * "Safe" create: returns Result instead of throwing.
+   */
+  async createSafe(
+    input: InvoiceServiceEntity,
+  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+    if (!input || typeof input !== "object") {
+      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+    }
+
+    const createdEntityRes = (await fromPromise(
+      createInvoiceDal(this.db, input),
+    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+
+    if (!createdEntityRes.success) return createdEntityRes;
+
+    return Ok(entityToInvoiceDto(createdEntityRes.data));
+  }
+
   /**
    * Repo method to create an invoice.
    * - Accepts values created/set by users in the UI (`InvoiceFormEntity`), AS WELL AS
@@ -51,6 +71,26 @@ export class InvoiceRepository extends BaseRepository<
   }
 
   /**
+   * "Safe" read: returns Result instead of throwing.
+   */
+  async readSafe(
+    id: InvoiceId,
+  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+    if (!id) {
+      return Err(
+        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+      );
+    }
+
+    const entityRes = (await fromPromise(
+      readInvoiceDal(this.db, id),
+    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+    if (!entityRes.success) return entityRes;
+
+    return Ok(entityToInvoiceDto(entityRes.data));
+  }
+
+  /**
    * Reads an invoice by ID.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceDto
@@ -68,6 +108,26 @@ export class InvoiceRepository extends BaseRepository<
 
     // Transform Entity (branded) → DTO (plain)
     return entityToInvoiceDto(entity);
+  }
+
+  /**
+   * "Safe" update: returns Result instead of throwing.
+   */
+  async updateSafe(
+    id: InvoiceId,
+    data: InvoiceFormPartialEntity,
+  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+    if (!data || !id || typeof data !== "object") {
+      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+    }
+
+    const updatedEntityRes = (await fromPromise(
+      updateInvoiceDal(this.db, id, data),
+    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+
+    if (!updatedEntityRes.success) return updatedEntityRes;
+
+    return Ok(entityToInvoiceDto(updatedEntityRes.data));
   }
 
   /**
@@ -95,6 +155,27 @@ export class InvoiceRepository extends BaseRepository<
   }
 
   /**
+   * "Safe" delete: returns Result instead of throwing.
+   */
+  async deleteSafe(
+    id: InvoiceId,
+  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+    if (!id) {
+      return Err(
+        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+      );
+    }
+
+    const deletedEntityRes = (await fromPromise(
+      deleteInvoiceDal(this.db, id),
+    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+
+    if (!deletedEntityRes.success) return deletedEntityRes;
+
+    return Ok(entityToInvoiceDto(deletedEntityRes.data));
+  }
+
+  /**
    * Deletes an invoice.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to deleted InvoiceDto
@@ -115,6 +196,23 @@ export class InvoiceRepository extends BaseRepository<
   }
 
   /**
+   * "Safe" findById: returns Result instead of throwing.
+   */
+  async findByIdSafe(
+    id: InvoiceId,
+  ): Promise<Result<InvoiceEntity, ValidationError | DatabaseError>> {
+    if (!id) {
+      return Err(
+        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+      );
+    }
+    return (await fromPromise(readInvoiceDal(this.db, id))) as Result<
+      InvoiceEntity,
+      ValidationError | DatabaseError
+    >;
+  }
+
+  /**
    * Finds an invoice by ID.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceEntity
@@ -130,6 +228,24 @@ export class InvoiceRepository extends BaseRepository<
       throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
     }
     return entity;
+  }
+
+  /**
+   * "Safe" findAll: returns Result instead of throwing.
+   */
+  async findAllSafe(): Promise<
+    Result<InvoiceEntity[], ValidationError | DatabaseError>
+  > {
+    const res = (await fromPromise(fetchAllPaidInvoicesDal(this.db))) as Result<
+      InvoiceEntity[],
+      ValidationError | DatabaseError
+    >;
+    if (!res.success) return res;
+
+    if (!res.data) {
+      return Err(new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND));
+    }
+    return Ok(res.data);
   }
 
   /**

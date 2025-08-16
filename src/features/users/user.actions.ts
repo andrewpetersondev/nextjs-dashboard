@@ -46,7 +46,7 @@ import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/logging/logger";
 import type { ActionResult } from "@/lib/types/action-result";
 import { stripProperties } from "@/lib/utils/utils";
-import { actionResult, getFormField } from "@/lib/utils/utils.server";
+import { actionResult } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Users ---
 
@@ -60,17 +60,17 @@ export async function createUserAction(
   const db = getDB();
   try {
     const validated = CreateUserFormSchema.safeParse({
-      email: getFormField(formData, "email"),
-      password: getFormField(formData, "password"),
+      email: formData.get("email"),
+      password: formData.get("password"),
       role: getValidUserRole(formData.get("role")),
-      username: getFormField(formData, "username"),
+      username: formData.get("username"),
     });
     if (!validated.success) {
-      return actionResult({
+      return {
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
-      });
+      };
     }
     const { username, email, password, role } = validated.data;
     const user = await createUserDal(db, {
@@ -80,15 +80,17 @@ export async function createUserAction(
       username,
     });
     if (!user) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
-      });
+      };
     }
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.CREATE_SUCCESS,
       success: true,
-    });
+    };
   } catch (error) {
     logger.error({
       context: "createUserAction",
@@ -96,10 +98,11 @@ export async function createUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
-    });
+    };
   }
 }
 
@@ -136,19 +139,20 @@ export async function updateUserAction(
     const validated = EditUserFormSchema.safeParse(clean);
 
     if (!validated.success) {
-      return actionResult({
+      return {
         errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
-      });
+      };
     }
 
     const existingUser: UserDto | null = await readUserDal(db, toUserId(id));
     if (!existingUser) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.NOT_FOUND,
         success: false,
-      });
+      };
     }
 
     const patch: Record<string, unknown> = {};
@@ -168,10 +172,11 @@ export async function updateUserAction(
       patch.password = await hashPassword(validated.data.password);
     }
     if (Object.keys(patch).length === 0) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.NO_CHANGES,
         success: true,
-      });
+      };
     }
     const updatedUser: UserDto | null = await updateUserDal(
       db,
@@ -179,16 +184,18 @@ export async function updateUserAction(
       patch,
     );
     if (!updatedUser) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.UPDATE_FAILED,
         success: false,
-      });
+      };
     }
     revalidatePath("/dashboard/users");
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.UPDATE_SUCCESS,
       success: true,
-    });
+    };
   } catch (error) {
     logger.error({
       context: "updateUserAction",
@@ -196,10 +203,11 @@ export async function updateUserAction(
       id,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.UPDATE_FAILED,
       success: false,
-    });
+    };
   }
 }
 
@@ -318,10 +326,11 @@ export async function login(
     const user = await findUserForLogin(db, email, password);
 
     if (!user) {
-      return actionResult({
+      return {
+        errors: {},
         message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
         success: false,
-      });
+      };
     }
 
     await setSessionToken(toUserId(user.id), toUserRole(user.role));
@@ -333,10 +342,11 @@ export async function login(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return actionResult({
+    return {
+      errors: {},
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
-    });
+    };
   }
   // keep: why does redirect have to be here instead of after the session is created?
   redirect("/dashboard");
