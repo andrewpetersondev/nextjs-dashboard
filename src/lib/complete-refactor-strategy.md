@@ -7,12 +7,14 @@ I'll refine your refactor strategy with a logical implementation order and compr
 **Current Rating: 60/100**
 
 **Strengths:**
+
 - Good TypeScript usage with `as const` assertions
 - Clear JSDoc documentation in some areas
 - Logical constant grouping
 - Basic event system foundation
 
 **Critical Issues:**
+
 - Inconsistent error handling patterns
 - Missing comprehensive type safety
 - No dependency injection framework
@@ -38,15 +40,17 @@ export type Result<T, E = Error> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
 
-export const Ok = <T>(data: T): Result<T, never> => ({ 
-  success: true, 
-  data 
-}) as const;
+export const Ok = <T>(data: T): Result<T, never> =>
+  ({
+    success: true,
+    data,
+  }) as const;
 
-export const Err = <E>(error: E): Result<never, E> => ({ 
-  success: false, 
-  error 
-}) as const;
+export const Err = <E>(error: E): Result<never, E> =>
+  ({
+    success: false,
+    error,
+  }) as const;
 
 /**
  * Utility to safely unwrap a Result, throwing if it's an error.
@@ -62,7 +66,7 @@ export const unwrap = <T, E>(result: Result<T, E>): T => {
  */
 export const mapResult = <T, U, E>(
   result: Result<T, E>,
-  fn: (value: T) => U
+  fn: (value: T) => U,
 ): Result<U, E> => {
   return result.success ? Ok(fn(result.data)) : result;
 };
@@ -72,7 +76,7 @@ export const mapResult = <T, U, E>(
  */
 export const flatMapResult = <T, U, E>(
   result: Result<T, E>,
-  fn: (value: T) => Result<U, E>
+  fn: (value: T) => Result<U, E>,
 ): Result<U, E> => {
   return result.success ? fn(result.data) : result;
 };
@@ -88,15 +92,14 @@ export const flatMapResult = <T, U, E>(
  */
 export type Brand<T, B> = T & { readonly __brand: B };
 
-export const brand = <T, B>(value: T): Brand<T, B> => 
-  value as Brand<T, B>;
+export const brand = <T, B>(value: T): Brand<T, B> => value as Brand<T, B>;
 
 /**
  * Type guard to check if a value is of a specific brand.
  */
 export const isBrand = <T, B>(
   value: unknown,
-  validator: (v: unknown) => v is T
+  validator: (v: unknown) => v is T,
 ): value is Brand<T, B> => validator(value);
 ```
 
@@ -104,53 +107,65 @@ export const isBrand = <T, B>(
 
 ```typescript
 // src/lib/types/brands.ts
-import { Brand, brand } from '../core/brand';
-import { Result, Ok, Err } from '../core/result';
+import { Brand, brand } from "../core/brand";
+import { Result, Ok, Err } from "../core/result";
 
 // Domain-specific branded types
-export type UserId = Brand<string, 'UserId'>;
-export type Email = Brand<string, 'Email'>;
-export type InvoiceId = Brand<string, 'InvoiceId'>;
-export type TaskId = Brand<string, 'TaskId'>;
-export type CustomerId = Brand<string, 'CustomerId'>;
-export type SessionId = Brand<string, 'SessionId'>;
+export type UserId = Brand<string, "UserId">;
+export type Email = Brand<string, "Email">;
+export type InvoiceId = Brand<string, "InvoiceId">;
+export type TaskId = Brand<string, "TaskId">;
+export type CustomerId = Brand<string, "CustomerId">;
+export type SessionId = Brand<string, "SessionId">;
 
 // Validation errors
 export class BrandValidationError extends Error {
   constructor(
     public readonly brandType: string,
     public readonly value: unknown,
-    public readonly reason: string
+    public readonly reason: string,
   ) {
     super(`Invalid ${brandType}: ${reason}`);
-    this.name = 'BrandValidationError';
+    this.name = "BrandValidationError";
   }
 }
 
 // Factory functions with validation
-export const createUserId = (value: string): Result<UserId, BrandValidationError> => {
+export const createUserId = (
+  value: string,
+): Result<UserId, BrandValidationError> => {
   if (!value || value.trim().length === 0) {
-    return Err(new BrandValidationError('UserId', value, 'cannot be empty'));
+    return Err(new BrandValidationError("UserId", value, "cannot be empty"));
   }
   if (value.length > 50) {
-    return Err(new BrandValidationError('UserId', value, 'cannot exceed 50 characters'));
+    return Err(
+      new BrandValidationError("UserId", value, "cannot exceed 50 characters"),
+    );
   }
-  return Ok(brand<string, 'UserId'>(value.trim()));
+  return Ok(brand<string, "UserId">(value.trim()));
 };
 
-export const createEmail = (value: string): Result<Email, BrandValidationError> => {
+export const createEmail = (
+  value: string,
+): Result<Email, BrandValidationError> => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(value)) {
-    return Err(new BrandValidationError('Email', value, 'invalid email format'));
+    return Err(
+      new BrandValidationError("Email", value, "invalid email format"),
+    );
   }
-  return Ok(brand<string, 'Email'>(value.toLowerCase()));
+  return Ok(brand<string, "Email">(value.toLowerCase()));
 };
 
-export const createInvoiceId = (value: string): Result<InvoiceId, BrandValidationError> => {
-  if (!value.startsWith('INV-')) {
-    return Err(new BrandValidationError('InvoiceId', value, 'must start with INV-'));
+export const createInvoiceId = (
+  value: string,
+): Result<InvoiceId, BrandValidationError> => {
+  if (!value.startsWith("INV-")) {
+    return Err(
+      new BrandValidationError("InvoiceId", value, "must start with INV-"),
+    );
   }
-  return Ok(brand<string, 'InvoiceId'>(value));
+  return Ok(brand<string, "InvoiceId">(value));
 };
 ```
 
@@ -172,12 +187,12 @@ export abstract class BaseError extends Error {
   constructor(
     message: string,
     public readonly context: Record<string, unknown> = {},
-    public readonly cause?: Error
+    public readonly cause?: Error,
   ) {
     super(message);
     this.name = this.constructor.name;
     this.timestamp = new Date();
-    
+
     // Maintain proper stack trace
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
@@ -195,39 +210,39 @@ export abstract class BaseError extends Error {
       statusCode: this.statusCode,
       context: this.context,
       timestamp: this.timestamp.toISOString(),
-      ...(this.cause && { cause: this.cause.message })
+      ...(this.cause && { cause: this.cause.message }),
     };
   }
 }
 
 // src/lib/errors/domain.errors.ts
 export class ValidationError extends BaseError {
-  readonly code = 'VALIDATION_ERROR';
+  readonly code = "VALIDATION_ERROR";
   readonly statusCode = 400;
 }
 
 export class NotFoundError extends BaseError {
-  readonly code = 'NOT_FOUND';
+  readonly code = "NOT_FOUND";
   readonly statusCode = 404;
 }
 
 export class UnauthorizedError extends BaseError {
-  readonly code = 'UNAUTHORIZED';
+  readonly code = "UNAUTHORIZED";
   readonly statusCode = 401;
 }
 
 export class DatabaseError extends BaseError {
-  readonly code = 'DATABASE_ERROR';
+  readonly code = "DATABASE_ERROR";
   readonly statusCode = 500;
 }
 
 export class CacheError extends BaseError {
-  readonly code = 'CACHE_ERROR';
+  readonly code = "CACHE_ERROR";
   readonly statusCode = 500;
 }
 
 export class CryptoError extends BaseError {
-  readonly code = 'CRYPTO_ERROR';
+  readonly code = "CRYPTO_ERROR";
   readonly statusCode = 500;
 }
 ```
@@ -236,8 +251,8 @@ export class CryptoError extends BaseError {
 
 ```typescript
 // src/lib/validation/validator.interface.ts
-import { Result } from '../core/result';
-import { ValidationError } from '../errors/domain.errors';
+import { Result } from "../core/result";
+import { ValidationError } from "../errors/domain.errors";
 
 export interface Validator<T> {
   validate(value: unknown): Result<T, ValidationError>;
@@ -250,34 +265,32 @@ export interface ValidationRule<T> {
 
 // src/lib/validation/common.validators.ts
 export class StringValidator implements Validator<string> {
-  constructor(
-    private readonly rules: ValidationRule<string>[] = []
-  ) {}
+  constructor(private readonly rules: ValidationRule<string>[] = []) {}
 
   static required(): ValidationRule<string> {
     return {
       test: (value) => value.trim().length > 0,
-      message: 'Field is required'
+      message: "Field is required",
     };
   }
 
   static minLength(min: number): ValidationRule<string> {
     return {
       test: (value) => value.length >= min,
-      message: `Must be at least ${min} characters`
+      message: `Must be at least ${min} characters`,
     };
   }
 
   static maxLength(max: number): ValidationRule<string> {
     return {
       test: (value) => value.length <= max,
-      message: `Must not exceed ${max} characters`
+      message: `Must not exceed ${max} characters`,
     };
   }
 
   validate(value: unknown): Result<string, ValidationError> {
-    if (typeof value !== 'string') {
-      return Err(new ValidationError('Value must be a string'));
+    if (typeof value !== "string") {
+      return Err(new ValidationError("Value must be a string"));
     }
 
     for (const rule of this.rules) {
@@ -297,18 +310,21 @@ export class StringValidator implements Validator<string> {
 
 ```typescript
 // src/lib/config/config.schema.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const ConfigSchema = z.object({
   app: z.object({
-    environment: z.enum(['development', 'staging', 'production', 'test']),
-    logLevel: z.enum(['debug', 'info', 'warn', 'error']),
+    environment: z.enum(["development", "staging", "production", "test"]),
+    logLevel: z.enum(["debug", "info", "warn", "error"]),
     port: z.number().int().positive().default(3000),
   }),
   auth: z.object({
-    sessionDuration: z.number().positive().default(24 * 60 * 60 * 1000), // 24 hours
+    sessionDuration: z
+      .number()
+      .positive()
+      .default(24 * 60 * 60 * 1000), // 24 hours
     saltRounds: z.number().int().min(8).max(15).default(12),
-    jwtExpiration: z.string().default('24h'),
+    jwtExpiration: z.string().default("24h"),
     jwtSecret: z.string().min(32),
   }),
   database: z.object({
@@ -330,7 +346,7 @@ export const ConfigSchema = z.object({
 export type Config = z.infer<typeof ConfigSchema>;
 
 // src/lib/config/config.service.ts
-import { ConfigSchema, type Config } from './config.schema';
+import { ConfigSchema, type Config } from "./config.schema";
 
 class ConfigService {
   private static instance: ConfigService;
@@ -348,42 +364,52 @@ class ConfigService {
 
     const envConfig = {
       app: {
-        environment: process.env.NODE_ENV || 'development',
-        logLevel: process.env.LOG_LEVEL || 'info',
+        environment: process.env.NODE_ENV || "development",
+        logLevel: process.env.LOG_LEVEL || "info",
         port: process.env.PORT ? parseInt(process.env.PORT, 10) : undefined,
       },
       auth: {
-        sessionDuration: process.env.SESSION_DURATION 
-          ? parseInt(process.env.SESSION_DURATION, 10) : undefined,
-        saltRounds: process.env.SALT_ROUNDS 
-          ? parseInt(process.env.SALT_ROUNDS, 10) : undefined,
+        sessionDuration: process.env.SESSION_DURATION
+          ? parseInt(process.env.SESSION_DURATION, 10)
+          : undefined,
+        saltRounds: process.env.SALT_ROUNDS
+          ? parseInt(process.env.SALT_ROUNDS, 10)
+          : undefined,
         jwtExpiration: process.env.JWT_EXPIRATION,
         jwtSecret: process.env.JWT_SECRET,
       },
       database: {
         url: process.env.DATABASE_URL,
-        maxConnections: process.env.DB_MAX_CONNECTIONS 
-          ? parseInt(process.env.DB_MAX_CONNECTIONS, 10) : undefined,
-        queryTimeout: process.env.DB_QUERY_TIMEOUT 
-          ? parseInt(process.env.DB_QUERY_TIMEOUT, 10) : undefined,
+        maxConnections: process.env.DB_MAX_CONNECTIONS
+          ? parseInt(process.env.DB_MAX_CONNECTIONS, 10)
+          : undefined,
+        queryTimeout: process.env.DB_QUERY_TIMEOUT
+          ? parseInt(process.env.DB_QUERY_TIMEOUT, 10)
+          : undefined,
       },
       cache: {
-        defaultTtl: process.env.CACHE_DEFAULT_TTL 
-          ? parseInt(process.env.CACHE_DEFAULT_TTL, 10) : undefined,
-        maxSize: process.env.CACHE_MAX_SIZE 
-          ? parseInt(process.env.CACHE_MAX_SIZE, 10) : undefined,
+        defaultTtl: process.env.CACHE_DEFAULT_TTL
+          ? parseInt(process.env.CACHE_DEFAULT_TTL, 10)
+          : undefined,
+        maxSize: process.env.CACHE_MAX_SIZE
+          ? parseInt(process.env.CACHE_MAX_SIZE, 10)
+          : undefined,
       },
       features: {
-        enableAdvancedAnalytics: process.env.ENABLE_ADVANCED_ANALYTICS === 'true',
-        enableBulkOperations: process.env.ENABLE_BULK_OPERATIONS !== 'false',
-        newDashboardRollout: process.env.NEW_DASHBOARD_ROLLOUT 
-          ? parseInt(process.env.NEW_DASHBOARD_ROLLOUT, 10) : undefined,
+        enableAdvancedAnalytics:
+          process.env.ENABLE_ADVANCED_ANALYTICS === "true",
+        enableBulkOperations: process.env.ENABLE_BULK_OPERATIONS !== "false",
+        newDashboardRollout: process.env.NEW_DASHBOARD_ROLLOUT
+          ? parseInt(process.env.NEW_DASHBOARD_ROLLOUT, 10)
+          : undefined,
       },
     };
 
     const result = ConfigSchema.safeParse(envConfig);
     if (!result.success) {
-      throw new Error(`Configuration validation failed: ${result.error.message}`);
+      throw new Error(
+        `Configuration validation failed: ${result.error.message}`,
+      );
     }
 
     this.config = result.data;
@@ -392,7 +418,7 @@ class ConfigService {
 
   get(): Config {
     if (!this.config) {
-      throw new Error('Configuration not loaded. Call load() first.');
+      throw new Error("Configuration not loaded. Call load() first.");
     }
     return this.config;
   }
@@ -421,9 +447,9 @@ export interface ILogger {
 }
 
 // src/lib/logging/pino.logger.ts
-import pino from 'pino';
-import { ILogger, LogContext } from './logger.interface';
-import { configService } from '../config/config.service';
+import pino from "pino";
+import { ILogger, LogContext } from "./logger.interface";
+import { configService } from "../config/config.service";
 
 class PinoLogger implements ILogger {
   private logger: pino.Logger;
@@ -445,14 +471,19 @@ class PinoLogger implements ILogger {
   }
 
   error(message: string, error?: Error, context: LogContext = {}): void {
-    this.logger.error({ 
-      ...context, 
-      error: error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      } : undefined 
-    }, message);
+    this.logger.error(
+      {
+        ...context,
+        error: error
+          ? {
+              message: error.message,
+              stack: error.stack,
+              name: error.name,
+            }
+          : undefined,
+      },
+      message,
+    );
   }
 
   child(bindings: Record<string, unknown>): ILogger {
@@ -464,10 +495,13 @@ class PinoLogger implements ILogger {
 const config = configService.load();
 const pinoLogger = pino({
   level: config.app.logLevel,
-  transport: config.app.environment === 'development' ? {
-    target: 'pino-pretty',
-    options: { colorize: true }
-  } : undefined,
+  transport:
+    config.app.environment === "development"
+      ? {
+          target: "pino-pretty",
+          options: { colorize: true },
+        }
+      : undefined,
 });
 
 export const logger: ILogger = new PinoLogger(pinoLogger);
@@ -476,16 +510,16 @@ export const logger: ILogger = new PinoLogger(pinoLogger);
 export class PerformanceLogger {
   static startTimer(operation: string, context: LogContext = {}): () => void {
     const start = process.hrtime.bigint();
-    
+
     return () => {
       const end = process.hrtime.bigint();
       const duration = Number(end - start) / 1_000_000; // Convert to ms
-      
-      logger.info('Operation completed', {
+
+      logger.info("Operation completed", {
         ...context,
         operation,
         duration,
-        unit: 'ms'
+        unit: "ms",
       });
     };
   }
@@ -493,7 +527,7 @@ export class PerformanceLogger {
   static async timeAsync<T>(
     operation: string,
     fn: () => Promise<T>,
-    context: LogContext = {}
+    context: LogContext = {},
   ): Promise<T> {
     const endTimer = this.startTimer(operation, context);
     try {
@@ -514,7 +548,10 @@ export class PerformanceLogger {
 
 ```typescript
 // src/lib/di/container.types.ts
-export type ServiceToken<T = unknown> = string | symbol | (new (...args: any[]) => T);
+export type ServiceToken<T = unknown> =
+  | string
+  | symbol
+  | (new (...args: any[]) => T);
 
 export type Factory<T> = (...args: any[]) => T;
 export type AsyncFactory<T> = (...args: any[]) => Promise<T>;
@@ -528,9 +565,12 @@ export interface Registration<T> {
 
 // src/lib/di/container.ts
 export class DIError extends Error {
-  constructor(message: string, public readonly token?: ServiceToken) {
+  constructor(
+    message: string,
+    public readonly token?: ServiceToken,
+  ) {
     super(message);
-    this.name = 'DIError';
+    this.name = "DIError";
   }
 }
 
@@ -561,7 +601,8 @@ export class Container {
     }
 
     // Resolve dependencies
-    const dependencies = registration.dependencies?.map(dep => this.resolve(dep)) || [];
+    const dependencies =
+      registration.dependencies?.map((dep) => this.resolve(dep)) || [];
 
     // Create instance
     const instance = registration.factory(...dependencies);
@@ -593,45 +634,50 @@ export const container = new Container();
 
 ```typescript
 // src/lib/security/crypto.service.ts
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-import { Result, Ok, Err } from '../core/result';
-import { CryptoError } from '../errors/domain.errors';
-import { configService } from '../config/config.service';
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { Result, Ok, Err } from "../core/result";
+import { CryptoError } from "../errors/domain.errors";
+import { configService } from "../config/config.service";
 
 export class CryptoService {
-  static async hashPassword(password: string): Promise<Result<string, CryptoError>> {
+  static async hashPassword(
+    password: string,
+  ): Promise<Result<string, CryptoError>> {
     try {
       const config = configService.get();
       const hash = await bcrypt.hash(password, config.auth.saltRounds);
       return Ok(hash);
     } catch (error) {
-      return Err(new CryptoError('Password hashing failed', { error }));
+      return Err(new CryptoError("Password hashing failed", { error }));
     }
   }
 
   static async comparePassword(
     password: string,
-    hash: string
+    hash: string,
   ): Promise<Result<boolean, CryptoError>> {
     try {
       const isValid = await bcrypt.compare(password, hash);
       return Ok(isValid);
     } catch (error) {
-      return Err(new CryptoError('Password comparison failed', { error }));
+      return Err(new CryptoError("Password comparison failed", { error }));
     }
   }
 
   static generateSecureToken(length: number = 32): string {
-    return crypto.randomBytes(length).toString('hex');
+    return crypto.randomBytes(length).toString("hex");
   }
 
   static generateUUID(): string {
     return crypto.randomUUID();
   }
 
-  static async hashData(data: string, algorithm: string = 'sha256'): Promise<string> {
-    return crypto.createHash(algorithm).update(data).digest('hex');
+  static async hashData(
+    data: string,
+    algorithm: string = "sha256",
+  ): Promise<string> {
+    return crypto.createHash(algorithm).update(data).digest("hex");
   }
 }
 
@@ -642,9 +688,9 @@ export class SanitizerService {
    */
   static sanitizeString(input: string): string {
     return input
-      .replace(/[<>]/g, '') // Remove basic HTML brackets
-      .replace(/javascript:/gi, '') // Remove javascript: protocols
-      .replace(/on\w+=/gi, '') // Remove event handlers
+      .replace(/[<>]/g, "") // Remove basic HTML brackets
+      .replace(/javascript:/gi, "") // Remove javascript: protocols
+      .replace(/on\w+=/gi, "") // Remove event handlers
       .trim();
   }
 
@@ -653,19 +699,21 @@ export class SanitizerService {
    */
   static sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
     const sanitized: Record<string, unknown> = {};
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const sanitizedKey = this.sanitizeString(key);
-      
-      if (typeof value === 'string') {
+
+      if (typeof value === "string") {
         sanitized[sanitizedKey] = this.sanitizeString(value);
-      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
-        sanitized[sanitizedKey] = this.sanitizeObject(value as Record<string, unknown>);
+      } else if (value && typeof value === "object" && !Array.isArray(value)) {
+        sanitized[sanitizedKey] = this.sanitizeObject(
+          value as Record<string, unknown>,
+        );
       } else {
         sanitized[sanitizedKey] = value;
       }
     }
-    
+
     return sanitized;
   }
 }
@@ -677,14 +725,19 @@ export class SanitizerService {
 
 ```typescript
 // src/lib/repository/interfaces.ts
-import { Result } from '../core/result';
-import { DatabaseError } from '../errors/domain.errors';
+import { Result } from "../core/result";
+import { DatabaseError } from "../errors/domain.errors";
 
 export interface Repository<TEntity, TId> {
   findById(id: TId): Promise<Result<TEntity | null, DatabaseError>>;
-  findMany(criteria?: Partial<TEntity>): Promise<Result<TEntity[], DatabaseError>>;
+  findMany(
+    criteria?: Partial<TEntity>,
+  ): Promise<Result<TEntity[], DatabaseError>>;
   save(entity: TEntity): Promise<Result<TEntity, DatabaseError>>;
-  update(id: TId, updates: Partial<TEntity>): Promise<Result<TEntity, DatabaseError>>;
+  update(
+    id: TId,
+    updates: Partial<TEntity>,
+  ): Promise<Result<TEntity, DatabaseError>>;
   delete(id: TId): Promise<Result<void, DatabaseError>>;
 }
 
@@ -697,30 +750,37 @@ export interface UnitOfWork {
 
 export interface QueryBuilder<T> {
   where(field: keyof T, operator: string, value: unknown): QueryBuilder<T>;
-  orderBy(field: keyof T, direction: 'ASC' | 'DESC'): QueryBuilder<T>;
+  orderBy(field: keyof T, direction: "ASC" | "DESC"): QueryBuilder<T>;
   limit(count: number): QueryBuilder<T>;
   offset(count: number): QueryBuilder<T>;
   execute(): Promise<Result<T[], DatabaseError>>;
 }
 
 // src/lib/repository/base.repository.ts
-export abstract class BaseRepository<TEntity, TId> implements Repository<TEntity, TId> {
+export abstract class BaseRepository<TEntity, TId>
+  implements Repository<TEntity, TId>
+{
   constructor(
     protected readonly tableName: string,
-    protected readonly db: any // Replace with your DB client type
+    protected readonly db: any, // Replace with your DB client type
   ) {}
 
   abstract findById(id: TId): Promise<Result<TEntity | null, DatabaseError>>;
-  abstract findMany(criteria?: Partial<TEntity>): Promise<Result<TEntity[], DatabaseError>>;
+  abstract findMany(
+    criteria?: Partial<TEntity>,
+  ): Promise<Result<TEntity[], DatabaseError>>;
   abstract save(entity: TEntity): Promise<Result<TEntity, DatabaseError>>;
-  abstract update(id: TId, updates: Partial<TEntity>): Promise<Result<TEntity, DatabaseError>>;
+  abstract update(
+    id: TId,
+    updates: Partial<TEntity>,
+  ): Promise<Result<TEntity, DatabaseError>>;
   abstract delete(id: TId): Promise<Result<void, DatabaseError>>;
 
   protected handleDbError(error: unknown, operation: string): DatabaseError {
-    return new DatabaseError(
-      `Database operation failed: ${operation}`,
-      { tableName: this.tableName, originalError: error }
-    );
+    return new DatabaseError(`Database operation failed: ${operation}`, {
+      tableName: this.tableName,
+      originalError: error,
+    });
   }
 }
 ```
@@ -729,8 +789,8 @@ export abstract class BaseRepository<TEntity, TId> implements Repository<TEntity
 
 ```typescript
 // src/lib/cache/cache.interface.ts
-import { Result } from '../core/result';
-import { CacheError } from '../errors/domain.errors';
+import { Result } from "../core/result";
+import { CacheError } from "../errors/domain.errors";
 
 export interface CacheEntry<T = unknown> {
   value: T;
@@ -740,7 +800,11 @@ export interface CacheEntry<T = unknown> {
 
 export interface ICache {
   get<T>(key: string): Promise<Result<T | null, CacheError>>;
-  set<T>(key: string, value: T, ttlMs?: number): Promise<Result<void, CacheError>>;
+  set<T>(
+    key: string,
+    value: T,
+    ttlMs?: number,
+  ): Promise<Result<void, CacheError>>;
   delete(key: string): Promise<Result<void, CacheError>>;
   clear(): Promise<Result<void, CacheError>>;
   invalidatePattern(pattern: string): Promise<Result<void, CacheError>>;
@@ -760,7 +824,7 @@ export class MemoryCache implements ICache {
   async get<T>(key: string): Promise<Result<T | null, CacheError>> {
     try {
       const entry = this.store.get(key);
-      
+
       if (!entry) {
         return Ok(null);
       }
@@ -772,11 +836,15 @@ export class MemoryCache implements ICache {
 
       return Ok(entry.value as T);
     } catch (error) {
-      return Err(new CacheError('Cache get operation failed', { key, error }));
+      return Err(new CacheError("Cache get operation failed", { key, error }));
     }
   }
 
-  async set<T>(key: string, value: T, ttlMs?: number): Promise<Result<void, CacheError>> {
+  async set<T>(
+    key: string,
+    value: T,
+    ttlMs?: number,
+  ): Promise<Result<void, CacheError>> {
     try {
       // Enforce size limit
       if (this.store.size >= this.maxSize && !this.store.has(key)) {
@@ -794,7 +862,7 @@ export class MemoryCache implements ICache {
 
       return Ok(undefined);
     } catch (error) {
-      return Err(new CacheError('Cache set operation failed', { key, error }));
+      return Err(new CacheError("Cache set operation failed", { key, error }));
     }
   }
 
@@ -803,7 +871,9 @@ export class MemoryCache implements ICache {
       this.store.delete(key);
       return Ok(undefined);
     } catch (error) {
-      return Err(new CacheError('Cache delete operation failed', { key, error }));
+      return Err(
+        new CacheError("Cache delete operation failed", { key, error }),
+      );
     }
   }
 
@@ -812,7 +882,7 @@ export class MemoryCache implements ICache {
       this.store.clear();
       return Ok(undefined);
     } catch (error) {
-      return Err(new CacheError('Cache clear operation failed', { error }));
+      return Err(new CacheError("Cache clear operation failed", { error }));
     }
   }
 
@@ -833,7 +903,9 @@ export class MemoryCache implements ICache {
 
       return Ok(undefined);
     } catch (error) {
-      return Err(new CacheError('Cache pattern invalidation failed', { pattern, error }));
+      return Err(
+        new CacheError("Cache pattern invalidation failed", { pattern, error }),
+      );
     }
   }
 
@@ -866,13 +938,13 @@ export class MemoryCache implements ICache {
 ```typescript
 // src/lib/features/feature-flags.ts
 export const FEATURE_FLAGS = {
-  ADVANCED_ANALYTICS: 'advanced_analytics',
-  NEW_DASHBOARD: 'new_dashboard',
-  BULK_OPERATIONS: 'bulk_operations',
-  REAL_TIME_NOTIFICATIONS: 'real_time_notifications',
+  ADVANCED_ANALYTICS: "advanced_analytics",
+  NEW_DASHBOARD: "new_dashboard",
+  BULK_OPERATIONS: "bulk_operations",
+  REAL_TIME_NOTIFICATIONS: "real_time_notifications",
 } as const;
 
-export type FeatureFlag = typeof FEATURE_FLAGS[keyof typeof FEATURE_FLAGS];
+export type FeatureFlag = (typeof FEATURE_FLAGS)[keyof typeof FEATURE_FLAGS];
 
 export interface FeatureFlagContext {
   userId?: string;
@@ -890,35 +962,40 @@ export interface IFeatureFlagService {
 export class ConfigBasedFeatureFlagService implements IFeatureFlagService {
   constructor(private readonly config: Config) {}
 
-  async isEnabled(flag: FeatureFlag, context?: FeatureFlagContext): Promise<boolean> {
+  async isEnabled(
+    flag: FeatureFlag,
+    context?: FeatureFlagContext,
+  ): Promise<boolean> {
     switch (flag) {
       case FEATURE_FLAGS.ADVANCED_ANALYTICS:
         return this.config.features.enableAdvancedAnalytics;
-      
+
       case FEATURE_FLAGS.BULK_OPERATIONS:
         return this.config.features.enableBulkOperations;
-      
+
       case FEATURE_FLAGS.NEW_DASHBOARD:
         // Percentage rollout based on user ID hash
         if (!context?.userId) return false;
         const hash = await this.hashUserId(context.userId);
         const percentage = hash % 100;
         return percentage < this.config.features.newDashboardRollout;
-      
+
       default:
         return false;
     }
   }
 
-  async getEnabledFeatures(context?: FeatureFlagContext): Promise<FeatureFlag[]> {
+  async getEnabledFeatures(
+    context?: FeatureFlagContext,
+  ): Promise<FeatureFlag[]> {
     const enabled: FeatureFlag[] = [];
-    
+
     for (const flag of Object.values(FEATURE_FLAGS)) {
       if (await this.isEnabled(flag, context)) {
         enabled.push(flag);
       }
     }
-    
+
     return enabled;
   }
 
@@ -934,7 +1011,7 @@ export class ConfigBasedFeatureFlagService implements IFeatureFlagService {
 ```typescript
 // src/lib/health/health-check.interface.ts
 export interface HealthStatus {
-  status: 'healthy' | 'unhealthy' | 'degraded';
+  status: "healthy" | "unhealthy" | "degraded";
   message?: string;
   details?: Record<string, unknown>;
   timestamp: Date;
@@ -963,7 +1040,7 @@ export class HealthCheckService {
     const check = this.checks.get(name);
     if (!check) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         message: `Health check '${name}' not found`,
         timestamp: new Date(),
       };
@@ -973,7 +1050,7 @@ export class HealthCheckService {
   }
 
   async checkAll(): Promise<{
-    status: 'healthy' | 'unhealthy' | 'degraded';
+    status: "healthy" | "unhealthy" | "degraded";
     checks: Record<string, HealthStatus>;
     timestamp: Date;
   }> {
@@ -982,9 +1059,9 @@ export class HealthCheckService {
 
     for (const [name, check] of this.checks) {
       promises.push(
-        this.executeWithTimeout(check).then(status => {
+        this.executeWithTimeout(check).then((status) => {
           results[name] = status;
-        })
+        }),
       );
     }
 
@@ -1006,40 +1083,46 @@ export class HealthCheckService {
       const promise = check.check();
       const timeoutPromise = new Promise<HealthStatus>((_, reject) => {
         setTimeout(() => {
-          reject(new Error(`Health check '${check.name}' timed out after ${timeout}ms`));
+          reject(
+            new Error(
+              `Health check '${check.name}' timed out after ${timeout}ms`,
+            ),
+          );
         }, timeout);
       });
 
       return await Promise.race([promise, timeoutPromise]);
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         message: `Health check '${check.name}' failed`,
-        details: { 
-          error: error instanceof Error ? error.message : 'Unknown error',
-          timeout: timeout 
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+          timeout: timeout,
         },
         timestamp: new Date(),
       };
     }
   }
 
-  private determineOverallStatus(statuses: HealthStatus[]): 'healthy' | 'unhealthy' | 'degraded' {
-    if (statuses.every(s => s.status === 'healthy')) {
-      return 'healthy';
+  private determineOverallStatus(
+    statuses: HealthStatus[],
+  ): "healthy" | "unhealthy" | "degraded" {
+    if (statuses.every((s) => s.status === "healthy")) {
+      return "healthy";
     }
-    
-    if (statuses.some(s => s.status === 'unhealthy')) {
-      return 'unhealthy';
+
+    if (statuses.some((s) => s.status === "unhealthy")) {
+      return "unhealthy";
     }
-    
-    return 'degraded';
+
+    return "degraded";
   }
 }
 
 // src/lib/health/checks/database.health-check.ts
 export class DatabaseHealthCheck implements HealthCheck {
-  readonly name = 'database';
+  readonly name = "database";
   readonly timeout = 3000;
 
   constructor(private readonly db: any) {} // Replace with your DB client type
@@ -1047,19 +1130,19 @@ export class DatabaseHealthCheck implements HealthCheck {
   async check(): Promise<HealthStatus> {
     try {
       // Simple query to test database connectivity
-      await this.db.raw('SELECT 1');
-      
+      await this.db.raw("SELECT 1");
+
       return {
-        status: 'healthy',
-        message: 'Database connection is healthy',
+        status: "healthy",
+        message: "Database connection is healthy",
         timestamp: new Date(),
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
-        message: 'Database connection failed',
-        details: { 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        status: "unhealthy",
+        message: "Database connection failed",
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
         },
         timestamp: new Date(),
       };
@@ -1073,19 +1156,19 @@ export class DatabaseHealthCheck implements HealthCheck {
 #### 7.1 Migration Strategy
 
 1. **Update existing files gradually**:
-    - Replace error throwing with Result pattern
-    - Update imports to use new branded types
-    - Integrate with DI container where beneficial
+   - Replace error throwing with Result pattern
+   - Update imports to use new branded types
+   - Integrate with DI container where beneficial
 
 2. **Maintain backward compatibility**:
-    - Create adapter functions for existing APIs
-    - Add deprecation warnings where appropriate
-    - Provide clear migration paths
+   - Create adapter functions for existing APIs
+   - Add deprecation warnings where appropriate
+   - Provide clear migration paths
 
 3. **Update tests**:
-    - Refactor existing tests to use new patterns
-    - Add comprehensive test coverage for new utilities
-    - Create integration tests for complex scenarios
+   - Refactor existing tests to use new patterns
+   - Add comprehensive test coverage for new utilities
+   - Create integration tests for complex scenarios
 
 #### 7.2 Updated Constants (`src/lib/constants/`)
 
@@ -1116,13 +1199,19 @@ export const APP_CONSTANTS = {
 } as const;
 
 // Validation functions with Result pattern
-export const validatePageSize = (size: number): Result<number, ValidationError> => {
-  if (size < APP_CONSTANTS.PAGINATION.MIN_PAGE_SIZE || 
-      size > APP_CONSTANTS.PAGINATION.MAX_PAGE_SIZE) {
-    return Err(new ValidationError(
-      `Page size must be between ${APP_CONSTANTS.PAGINATION.MIN_PAGE_SIZE} and ${APP_CONSTANTS.PAGINATION.MAX_PAGE_SIZE}`,
-      { pageSize: size }
-    ));
+export const validatePageSize = (
+  size: number,
+): Result<number, ValidationError> => {
+  if (
+    size < APP_CONSTANTS.PAGINATION.MIN_PAGE_SIZE ||
+    size > APP_CONSTANTS.PAGINATION.MAX_PAGE_SIZE
+  ) {
+    return Err(
+      new ValidationError(
+        `Page size must be between ${APP_CONSTANTS.PAGINATION.MIN_PAGE_SIZE} and ${APP_CONSTANTS.PAGINATION.MAX_PAGE_SIZE}`,
+        { pageSize: size },
+      ),
+    );
   }
   return Ok(size);
 };
@@ -1142,24 +1231,24 @@ export const createMockLogger = (): ILogger => ({
 
 export const createTestContainer = (): Container => {
   const container = new Container();
-  container.registerValue('logger', createMockLogger());
+  container.registerValue("logger", createMockLogger());
   return container;
 };
 
 export const createMockConfig = (overrides: Partial<Config> = {}): Config => ({
   app: {
-    environment: 'test',
-    logLevel: 'error',
+    environment: "test",
+    logLevel: "error",
     port: 3000,
   },
   auth: {
     sessionDuration: 24 * 60 * 60 * 1000,
     saltRounds: 10,
-    jwtExpiration: '24h',
-    jwtSecret: 'test-secret-key-that-is-long-enough',
+    jwtExpiration: "24h",
+    jwtSecret: "test-secret-key-that-is-long-enough",
   },
   database: {
-    url: 'postgres://test:test@localhost:5432/test',
+    url: "postgres://test:test@localhost:5432/test",
     maxConnections: 5,
     queryTimeout: 5000,
   },
