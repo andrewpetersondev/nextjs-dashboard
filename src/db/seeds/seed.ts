@@ -1,19 +1,19 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
+import { nodeEnvDb } from "@/db/dev-database";
 import type { Period } from "@/lib/definitions/brands";
 import * as schema from "../schema";
-import { nodeEnvTestDb } from "../test-database";
 
 /**
  * @file seeds/seed.ts
  * Seed script for initializing the test database with realistic sample data.
  *
- * - Target database: test_db (via POSTGRES_URL_TESTDB)
+ * - Target database: dev_db (via POSTGRES_URL)
  * - Entry point: run directly with ts-node
  * - Idempotency: refuses to seed if data exists unless SEED_RESET=true
  *
  * Quick start:
- *   POSTGRES_URL_TESTDB=postgres://... pnpm ts-node src/db/seeds/seed.ts
+ *   POSTGRES_URL=postgres://... pnpm ts-node src/db/seeds/seed.ts
  *   SEED_RESET=true pnpm ts-node src/db/seeds/seed.ts  # force re-seed (TRUNCATE)
  */
 
@@ -154,19 +154,19 @@ const customersData: Array<{ name: string; email: string; imageUrl: string }> =
  */
 async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    nodeEnvTestDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
     ),
-    nodeEnvTestDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
     ),
-    nodeEnvTestDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
     ),
-    nodeEnvTestDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
     ),
-    nodeEnvTestDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
@@ -177,7 +177,7 @@ async function isEmpty(): Promise<boolean> {
  * Truncates all tables and resets identity sequences.
  */
 async function truncateAll(): Promise<void> {
-  await nodeEnvTestDb.execute(sql`TRUNCATE TABLE
+  await nodeEnvDb.execute(sql`TRUNCATE TABLE
     ${schema.sessions},
     ${schema.invoices},
     ${schema.customers},
@@ -262,7 +262,7 @@ async function main(): Promise<void> {
     },
   ];
 
-  await nodeEnvTestDb.transaction(async (tx) => {
+  await nodeEnvDb.transaction(async (tx) => {
     // 1) Seed revenues with Dates directly (no valuesFromArray)
     await tx.insert(schema.revenues).values(
       periodDates.map((periodDate) => ({
