@@ -6,6 +6,7 @@
   color-scheme: light dark;
 }
 
+/* biome-ignore lint/suspicious/noUnknownAtRules: <this is part of tailwindcss> */
 @theme {
   /* === FONTS (experiment) === */
   --font-experiment: "Doto", sans-serif;
@@ -44,8 +45,9 @@
   --color-bg-error: light-dark(var(--color-red-100), var(--color-red-900));
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+/* Merge both triggers (.dark and [data-theme=dark]) into a single custom variant */
+/* biome-ignore lint/suspicious/noUnknownAtRules: <this is part of tailwindcss> */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme=dark], [data-theme=dark] *));
 
 p {
   font-family: var(--font-eyegrab), sans-serif;

@@ -1,6 +1,10 @@
-import type { ZodType } from "zod";
+import "server-only";
+
+import type { core, ZodType } from "zod";
 import { Err, Ok, type Result } from "@/lib/core/result";
 import { ValidationError_New } from "@/lib/errors/domain.error";
+
+export type ZodIssue = core.$ZodIssue;
 
 /**
  * Zod adapters for validation.
@@ -11,9 +15,7 @@ import { ValidationError_New } from "@/lib/errors/domain.error";
 
 export type FieldErrors = Record<string, string[]>;
 
-export const zodToFieldErrors = (
-  issues: { path: (string | number)[]; message: string }[],
-): FieldErrors => {
+export const zodToFieldErrors = (issues: ZodIssue[]): FieldErrors => {
   const errors: FieldErrors = {};
   for (const i of issues) {
     const key = i.path.join(".") || "_root";
@@ -52,7 +54,7 @@ export const validateWithZod = <T>(
     ? Ok(parsed.data as T)
     : Err(
         new ValidationError_New("Validation failed", {
-          fieldErrors: zodToFieldErrors(parsed.error.issues as any),
+          fieldErrors: zodToFieldErrors(parsed.error.issues),
         }),
       );
 };
