@@ -5,15 +5,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/cypress/screenshots" />
-      <excludeFolder url="file://$MODULE_DIR$/cypress/videos" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/.vscode" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/Notes" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/containers" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/keep" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/other" />
-      <excludeFolder url="file://$MODULE_DIR$/storage/secrets" />
-      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
