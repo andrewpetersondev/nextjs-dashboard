@@ -104,6 +104,8 @@
     "drizzle-seed-test-db": "hcp vault-secrets run -- pnpm tsx src/db/seeds/best-seed-test-db.ts --config=drizzle-test.config.ts",
     "drizzle-test-generate": "hcp vault-secrets run -- pnpm drizzle-kit generate --config=drizzle-test.config.ts",
     "drizzle-test-migrate": "hcp vault-secrets run -- pnpm drizzle-kit migrate --config=drizzle-test.config.ts",
+    "drizzle-truncate": "hcp vault-secrets run -- pnpm drizzle-truncate-helper",
+    "drizzle-truncate-helper": "SEED_RESET=true pnpm tsx src/db/seeds/seed.ts",
     "hcp-view-secrets-list": "hcp vault-secrets secrets list --app dashboard-app",
     "hcp-view-secrets-open": "hcp vault-secrets secrets open [your-secret-name]",
     "lint": "next lint && biome lint",
