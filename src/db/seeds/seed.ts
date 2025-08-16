@@ -170,7 +170,7 @@ async function isEmpty(): Promise<boolean> {
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
-  return checks.every((r: any) => r.rows?.[0]?.v === false);
+  return checks.every((r) => r.rows?.[0]?.v === false);
 }
 
 /**
