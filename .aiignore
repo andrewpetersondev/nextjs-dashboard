@@ -14,7 +14,7 @@ cypress/
 .env
 .env.*
 secrets/**
-storage/secrets/
+storage/Notes/Docker/secrets/
 
 
 # or folders
