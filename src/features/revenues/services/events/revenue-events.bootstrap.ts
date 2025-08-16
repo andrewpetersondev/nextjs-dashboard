@@ -7,9 +7,17 @@ import { RevenueEventHandler } from "@/features/revenues/services/events/revenue
 import { RevenueService } from "@/features/revenues/services/revenue.service";
 import { logger } from "@/lib/logging/logger";
 
+declare global {
+  // Use var for global augmentation compatibility
+  // eslint-disable-next-line no-var
+  var __revenueEventHandler: RevenueEventHandler | undefined;
+}
+
 // Ensure single initialization across hot reloads / serverless invocations
 // by storing the instance on the global object.
-const globalForRevenueHandler = globalThis as any;
+const globalForRevenueHandler = globalThis as typeof globalThis & {
+  __revenueEventHandler?: RevenueEventHandler;
+};
 
 if (!globalForRevenueHandler.__revenueEventHandler) {
   try {
