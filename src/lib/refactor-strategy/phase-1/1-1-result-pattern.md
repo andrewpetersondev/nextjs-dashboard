@@ -103,7 +103,7 @@ export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
 - Use this at boundaries (e.g., server actions) to present a consistent shape:
 
 ~~~typescript
-import type { ActionResult } from "@/lib/user.types";
+import type { ActionResult } from "@/lib/types/action-result";
 
 export const toActionResult = <T>(
     r: Result<T, unknown>,

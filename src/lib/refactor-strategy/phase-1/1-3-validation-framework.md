@@ -13,7 +13,7 @@ Core API
 ```typescript
 // TypeScript
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError } from "@/lib/errors";
+import { ValidationError } from "@/lib/errors/domain.errors";
 
 export interface Validator<T> {
   validate(value: unknown): Result<T, ValidationError>;
@@ -27,15 +27,17 @@ export type ValidationRule<T> = {
 
 export const compose =
   <T>(...validators: Validator<T>[]): Validator<T> => ({
-    validate(value: unknown): Result<T, ValidationError> {
+    validate(initial: unknown): Result<T, ValidationError> {
+      if (validators.length === 0) {
+        return Err(new ValidationError("No validators provided"));
+      }
+      let value: unknown = initial;
       for (const v of validators) {
         const r = v.validate(value);
         if (!r.success) return r;
+        value = r.data;
       }
-      // Last validator decides the type; if none, return as-is
-      return validators.length > 0
-        ? validators[validators.length - 1].validate(value)
-        : Err(new ValidationError("No validators provided"));
+      return Ok(value as T);
     },
   });
 
@@ -50,8 +52,8 @@ export const asValidator =
 ```typescript
 // TypeScript
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError } from "@/lib/errors";
-import type { ValidationRule, Validator } from "./validator.interface";
+import { ValidationError } from "@/lib/errors/domain.errors";
+import type { ValidationRule, Validator } from "@/lib/validation/types";
 
 export class StringValidator implements Validator<string> {
   constructor(private readonly rules: ValidationRule<string>[] = []) {}
@@ -92,9 +94,9 @@ export class StringValidator implements Validator<string> {
 3) Zod adapter (recommended default)
 ```typescript
 // TypeScript
-import type { z, ZodTypeAny } from "zod";
+import type { ZodType } from "zod";
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError } from "@/lib/errors";
+import { ValidationError } from "@/lib/errors/domain.errors";
 
 export const zodToFieldErrors = (issues: { path: (string | number)[]; message: string }[]) => {
   const errors: Record<string, string[]> = {};
@@ -106,7 +108,7 @@ export const zodToFieldErrors = (issues: { path: (string | number)[]; message: s
 };
 
 export class ZodValidator<T> {
-  constructor(private readonly schema: z.ZodType<T>) {}
+  constructor(private readonly schema: ZodType<T>) {}
   validate(value: unknown): Result<T, ValidationError> {
     const parsed = this.schema.safeParse(value);
     if (!parsed.success) {
@@ -117,7 +119,7 @@ export class ZodValidator<T> {
 }
 
 // Helper to validate and emit field-error map for forms
-export const validateWithZod = <T>(schema: ZodTypeAny, value: unknown): Result<T, ValidationError> => {
+export const validateWithZod = <T>(schema: ZodType<T>, value: unknown): Result<T, ValidationError> => {
   const parsed = schema.safeParse(value);
   return parsed.success
     ? Ok(parsed.data as T)
@@ -129,9 +131,9 @@ export const validateWithZod = <T>(schema: ZodTypeAny, value: unknown): Result<T
 4) Adapters for form/server-action boundaries
 ```typescript
 // TypeScript
-import type { ActionResult } from "@/lib/user.types";
+import type { ActionResult } from "@/lib/types/action-result";
 import type { Result } from "@/lib/core/result";
-import { ValidationError } from "@/lib/errors";
+import { ValidationError } from "@/lib/errors/domain.errors";
 
 export const toActionValidationResult = <T>(
   r: Result<T, unknown>,

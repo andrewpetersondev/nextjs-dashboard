@@ -44,8 +44,14 @@ export abstract class BaseError extends Error {
     };
   }
 }
+```
 
+### 1.2.2 Domain Errors (`src/lib/errors/domain.errors.ts`)
+
+```typescript
 // src/lib/errors/domain.errors.ts
+import { BaseError } from "./base.error";
+
 export class ValidationError extends BaseError {
   readonly code = "VALIDATION_ERROR";
   readonly statusCode = 400;
@@ -59,6 +65,16 @@ export class NotFoundError extends BaseError {
 export class UnauthorizedError extends BaseError {
   readonly code = "UNAUTHORIZED";
   readonly statusCode = 401;
+}
+
+export class ForbiddenError extends BaseError {
+  readonly code = "FORBIDDEN";
+  readonly statusCode = 403;
+}
+
+export class ConflictError extends BaseError {
+  readonly code = "CONFLICT";
+  readonly statusCode = 409;
 }
 
 export class DatabaseError extends BaseError {
@@ -77,54 +93,13 @@ export class CryptoError extends BaseError {
 }
 ```
 
-### 1.2.2 Domain Errors (`src/lib/errors/domain.error.ts`)
-
-~~~typescript
-export class ValidationError extends BaseError {
-  readonly code = "VALIDATION_ERROR";
-  readonly statusCode = 400 as const;
-}
-
-export class NotFoundError extends BaseError {
-  readonly code = "NOT_FOUND";
-  readonly statusCode = 404 as const;
-}
-
-export class UnauthorizedError extends BaseError {
-  readonly code = "UNAUTHORIZED";
-  readonly statusCode = 401 as const;
-}
-
-export class ForbiddenError extends BaseError {
-  readonly code = "FORBIDDEN";
-  readonly statusCode = 403 as const;
-}
-
-export class ConflictError extends BaseError {
-  readonly code = "CONFLICT";
-  readonly statusCode = 409 as const;
-}
-
-export class DatabaseError extends BaseError {
-  readonly code = "DATABASE_ERROR";
-  readonly statusCode = 500 as const;
-}
-
-export class CacheError extends BaseError {
-  readonly code = "CACHE_ERROR";
-  readonly statusCode = 500 as const;
-}
-
-export class CryptoError extends BaseError {
-  readonly code = "CRYPTO_ERROR";
-  readonly statusCode = 500 as const;
-}
-~~~
-
 ### 1.2.3 Helpers (`src/lib/errors/error-helpers.ts`)
 
-~~~typescript
-import { Err, Ok, type Result } from "@/lib/core/result";
+```typescript
+// src/lib/errors/error-helpers.ts
+import { Err, Ok, type Result } from "../core/result";
+import { BaseError } from "./base.error";
+import { DatabaseError } from "./domain.errors";
 
 export type HttpErrorBody = {
   error: {
@@ -170,8 +145,8 @@ export const errorToHttp = (e: unknown): { status: number; body: HttpErrorBody }
     body: { error: { code: err.code, message: err.message, context: err.context } },
   };
 };
-~~~
+```
 
 Usage patterns
 - Throw domain errors in business logic when you want short-circuit flow with stack traces.
-- At boundaries (controllers/server actions), wrap with safeFromPromise or errorToHttp to avoid leaking raw exceptions and to convert to Result/HTTP consistently.
+- At boundaries (Next.js route handlers and server actions), wrap with safeFromPromise or errorToHttp to avoid leaking raw exceptions and to convert to Result/HTTP consistently.
