@@ -1,39 +1,74 @@
 # ================================
+# Storage, Notes, Etc.
+# ================================
+storage/
+storage/containers
+storage/notes
+storage/old-docs
+Notes/
+keep/
+.vscode/
+containers/
+other/
+
+# ================================
 # IDE and Editor Configuration
 # ================================
 .DS_Store
-# .idea: keep project config minimal, exclude per-user files
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/shelf/
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/libraries
-# optionally ignore all .idea then re-allow specific shared files:
- .idea/*
-# !.idea/inspectionProfiles
-# !.idea/codeStyles
+.idea
 
 # ================================
 # Dependencies
 # ================================
 node_modules/
 .pnpm-store/
-.yarn/*
-.pnp
-.pnp.*
+.yarn/
 
-# Include specific Yarn files
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # ================================
 # Testing and Coverage
 # ================================
 coverage/
 .swc/
+.nyc_output/
+.tap/
+.jest/
+cypress/videos
+cypress/screenshots
+cypress/downloads
+cypress/reports
+cypress.config.js
+cypress.config.js.map
+cypress/**/*.js
+cypress/**/*.jsx
+cypress/**/*.js.map
+cypress/**/*.jsx.map
+cypress/.html-report/
+cypress/.nyc_output/
+
+# ================================
+# Tooling (Docker, Secrets, Vault, Vercel)
+# ================================
+.vercel/
+password.txt
+postgres-certs/
+secrets/
+.vault-token
+.vault/
+vault/
+vault.env
+vault*.env
+vault/*.env
+vault/*.json
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env*
+.envrc
+.direnv/
+
 
 # ================================
 # Build Artifacts
@@ -45,71 +80,46 @@ dist/
 .turbo/
 logs/
 .cache/
-
-# ================================
-# Environment Files
-# ================================
-.env
-.env.local
-.env.development
-.env.test
-.env.production
-.env*
-next-env.d.ts
+.eslintcache
+.stylelintcache
 *.tsbuildinfo
 
+
 # ================================
-# Debug Logs
+# Postgres (local data/dumps)
 # ================================
+pgdata/
+postgres-data/
+docker/postgres-data/
+db_dumps/
+dumps/
+backups/
+*.dump
+*.psql
+
+# ================================
+# Suggested additions
+# ================================
+Thumbs.db
+.history/
+.fleet/
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+*.der
+.pnp
+.pnp.*
+package-lock.json
+yarn.lock
+*.tgz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# ================================
-# Vercel Configuration
-# ================================
-.vercel/
-
-# ================================
-# Docker and Secrets
-# ================================
-password.txt
-postgres-certs/
-secrets/
-
-
-# ================================
-# Other/Miscellaneous Files
-# ================================
-Notes/
-*.pem
-keep/
-.vscode/
-containers/
-other/
-
-# ================================
-# Storage
-# ================================
-storage/
-storage/containers
-storage/notes
-storage/old-docs
-
-# ================================
-# Cypress generated JS files
-# ================================
-cypress.config.js
-cypress.config.js.map
-cypress/**/*.js
-cypress/**/*.jsx
-cypress/**/*.js.map
-cypress/**/*.jsx.map
-
-# ================================
-# Cypress
-# ================================
-cypress/videos
-cypress/screenshots
-cypress/downloads
+*.log
+logs/*.log
+.node_repl_history
+tmp/
+temp/
