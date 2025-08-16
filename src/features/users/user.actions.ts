@@ -30,7 +30,6 @@ import {
   validateSignupForm,
 } from "@/features/users/user.service";
 import type {
-  ActionResult,
   CreateUserFormFieldNames,
   EditUserFormFieldNames,
   LoginFormFieldNames,
@@ -45,6 +44,7 @@ import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/logging/logger";
+import type { ActionResult } from "@/lib/types/action-result";
 import { stripProperties } from "@/lib/utils/utils";
 import { actionResult, getFormField } from "@/lib/utils/utils.server";
 

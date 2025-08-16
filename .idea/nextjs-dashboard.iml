@@ -14,8 +14,6 @@
       <excludeFolder url="file://$MODULE_DIR$/storage/other" />
       <excludeFolder url="file://$MODULE_DIR$/storage/secrets" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
-      <excludeFolder url="file://$MODULE_DIR$/cypress" />
-      <excludeFolder url="file://$MODULE_DIR$/storage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
