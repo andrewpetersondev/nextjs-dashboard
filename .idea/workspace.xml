@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7117928-8ffa-4eeb-98b4-d228a43bf697" name="Changes" comment="moving files">
-      <change beforePath="$PROJECT_DIR$/.idea/nextjs-dashboard.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nextjs-dashboard.iml" afterDir="false" />
+    <list default="true" id="a7117928-8ffa-4eeb-98b4-d228a43bf697" name="Changes" comment="update: configure IDE project settings and exclude unnecessary folders &#10;&#10;Included `.idea` project configuration files and set exclusions for Cypress screenshots/videos directories.">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,13 +44,17 @@
     "git-widget-placeholder": "main",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
+    "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/Users/ap/code/my-github/nextjs-dashboard",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
-    "settings.editor.selected.configurable": "editor.preferences.tabs",
+    "settings.editor.selected.configurable": "Settings.Biome",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -84,7 +89,8 @@
       <option name="presentableId" value="Default" />
       <updated>1755338106101</updated>
       <workItem from="1755338107241" duration="2152000" />
-      <workItem from="1755340316044" duration="257000" />
+      <workItem from="1755340316044" duration="446000" />
+      <workItem from="1755340790436" duration="459000" />
     </task>
     <task id="LOCAL-00001" summary="trying to reset default settings. moved docs out of storage.">
       <option name="closed" value="true" />
@@ -110,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755340240688</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="update: configure IDE project settings and exclude unnecessary folders &#10;&#10;Included `.idea` project configuration files and set exclusions for Cypress screenshots/videos directories.">
+      <option name="closed" value="true" />
+      <created>1755340692578</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1755340692578</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,7 +134,8 @@
     <option name="MARK_IGNORED_AS_EXCLUDED" value="true" />
     <MESSAGE value="trying to reset default settings. moved docs out of storage." />
     <MESSAGE value="moving files" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving files" />
+    <MESSAGE value="update: configure IDE project settings and exclude unnecessary folders &#10;&#10;Included `.idea` project configuration files and set exclusions for Cypress screenshots/videos directories." />
+    <option name="LAST_COMMIT_MESSAGE" value="update: configure IDE project settings and exclude unnecessary folders &#10;&#10;Included `.idea` project configuration files and set exclusions for Cypress screenshots/videos directories." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

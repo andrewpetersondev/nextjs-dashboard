@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BiomeSettings">
+    <option name="enableLspFormat" value="true" />
+    <option name="formatOnSave" value="true" />
+    <option name="sortImportOnSave" value="true" />
+    <option name="supportedExtensions">
+      <list>
+        <option value=".css" />
+        <option value=".js" />
+        <option value=".mjs" />
+        <option value=".json" />
+        <option value=".html" />
+        <option value=".ts" />
+        <option value=".mts" />
+        <option value=".cts" />
+        <option value=".tsx" />
+      </list>
+    </option>
+  </component>
+</project>
