@@ -143,19 +143,21 @@ export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
 };
 
 // Combine a tuple of Results into a Result of a tuple (preserves tuple types)
-export const allTuple = <T extends readonly [...Result<any, any>[]]>(
+type OkType<R> = R extends Result<infer U, unknown> ? U : never;
+type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
+
+export function allTuple<T extends readonly Result<unknown, unknown>[]>(
   ...results: T
-): Result<
-  { [K in keyof T]: T[K] extends Result<infer U, any> ? U : never },
-  T[number] extends Result<any, infer E> ? E : never
-> => {
+): Result<{ [K in keyof T]: OkType<T[K]> }, ErrType<T[number]>> {
   const acc: unknown[] = [];
   for (const r of results) {
-    if (!r.success) return r as any;
+    if (!r.success) {
+      return r as Result<never, ErrType<T[number]>>;
+    }
     acc.push(r.data);
   }
-  return Ok(acc as any);
-};
+  return Ok(acc as { [K in keyof T]: OkType<T[K]> });
+}
 
 // Return the first Ok, or the last Err if none succeeded
 export const anyOk = <T, E>(results: Result<T, E>[]): Result<T, E> => {
