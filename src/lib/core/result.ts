@@ -1,24 +1,3 @@
-# Phase 1
-
-## 1.1 Result Pattern (`src/lib/core/`)
-
-Result Pattern Implementation
-
-This module implements the Result pattern, a functional programming construct for handling
-success and error cases in a type-safe way. It provides:
-
-- Type-safe error handling without exceptions
-- Composable operations (map, chain, bimap)
-- Utility functions for working with async operations
-- Pattern matching capabilities
-
-The Result type is a union type that can either be:
-
-- Ok: Representing success with associated data
-- Err: Representing failure with associated error
-
-```typescript
-// src/lib/core/result.ts
 /**
  * Result Pattern Implementation
  *
@@ -39,10 +18,10 @@ export type Result<T, E = Error> =
   | { readonly success: false; readonly error: E };
 
 export const Ok = <T>(data: T): Result<T, never> =>
-  ({ success: true, data }) as const;
+  ({ data, success: true }) as const;
 
 export const Err = <E>(error: E): Result<never, E> =>
-  ({ success: false, error }) as const;
+  ({ error, success: false }) as const;
 
 export const unwrap = <T, E>(r: Result<T, E>): T => {
   if (r.success) return r.data;
@@ -135,27 +114,3 @@ export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
   }
   return Ok(acc);
 };
-```
-
-### 1.1.1 Adapter to my ActionResult
-
-- Use this at boundaries (e.g., server actions) to present a consistent shape:
-
-```typescript
-import type { ActionResult } from "@/lib/types/action-result";
-
-export const toActionResult = <T>(
-  r: Result<T, unknown>,
-  successMessage = "OK",
-  errorMessage = "Request failed",
-): ActionResult<T> =>
-  r.success
-    ? { success: true, message: successMessage, errors: {}, data: r.data }
-    : {
-        success: false,
-        message: errorMessage,
-        errors: {
-          _root: [r.error instanceof Error ? r.error.message : String(r.error)],
-        },
-      };
-```

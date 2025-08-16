@@ -103,19 +103,3 @@ export type EditUserFormFieldNames = keyof EditUserFormFields;
 // export type _LoginFormState = FormState<LoginFormFieldNames>; // Internal use
 export type CreateUserFormState = FormState<CreateUserFormFieldNames>;
 // export type _EditUserFormState = FormState<EditUserFormFieldNames>; // Internal use
-
-/**
- * --- Error Types ---
- * Internal error map types for user forms.
- */
-
-/**
- * --- Action Result Type ---
- * Standardized result for server actions.
- */
-export type ActionResult<TData = unknown> = {
-  readonly message: string;
-  readonly success: boolean;
-  readonly errors: Record<string, string[]>;
-  readonly data?: TData;
-};

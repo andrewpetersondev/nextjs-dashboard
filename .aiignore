@@ -3,27 +3,34 @@
 
 # TEMPORARY
 storage/
+storage/containers/
+storage/notes
+storage/old-docs
 cypress/
 
-# you can ignore files
+# System Files
 .DS_Store
 *.log
 *.tmp
 
-# Ignore environment and secrets
-.env
-.env.*
-secrets/**
-
-
-# or folders
+# Build folders
 dist/
 build/
 out/
 node_modules/
 
-# or even specific files
+# Ignore environment and secrets
+.env
+.env.*
+secrets/**
+storage/notes/Docker/secrets/
+
+# Project root files
 tsconfig.tsbuildinfo
+eslint.config.mjs
+next-env.d.ts
+pnpm-lock.yaml
+pnpm-workspace.yaml
 
 # Match by extension
 *.min.js
