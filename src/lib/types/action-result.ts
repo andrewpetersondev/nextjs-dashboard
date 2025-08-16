@@ -2,9 +2,17 @@
  * --- Action Result Type ---
  * Standardized result for server actions.
  */
-export type ActionResult<TData = unknown> = {
-  readonly message: string;
-  readonly success: boolean;
-  readonly errors: Record<string, string[]>;
-  readonly data?: TData;
-};
+export type FieldErrors = Record<string, string[]>;
+
+// ... existing code ...
+export type ActionResult<TData = unknown> =
+  | {
+      readonly success: true;
+      readonly message: string;
+      readonly data?: TData;
+    }
+  | {
+      readonly success: false;
+      readonly message: string;
+      readonly errors: FieldErrors;
+    };
