@@ -35,7 +35,6 @@ export const INVOICE_ERROR_MESSAGES = {
  */
 export const USER_ERROR_MESSAGES = {
   CREATE_FAILED: "Failed to create an account. Please try again.",
-  CREATE_SUCCESS: "User created successfully.",
   DELETE_FAILED: "User not found or could not be deleted.",
   INVALID_CREDENTIALS: "Invalid email or password.",
   NO_CHANGES: "No changes to update.",
@@ -44,7 +43,6 @@ export const USER_ERROR_MESSAGES = {
   READ_FAILED: "Failed to read user data.",
   UNEXPECTED: "An unexpected error occurred. Please try again.",
   UPDATE_FAILED: "Failed to update user. Please try again.",
-  UPDATE_SUCCESS: "Profile updated!",
   VALIDATION_FAILED: "Validation failed. Please check your input.",
 };
 

@@ -9,15 +9,27 @@ import { type JSX, useActionState, useEffect, useState } from "react";
 import { FormActionRow } from "@/components/form-action-row";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { createUserAction } from "@/features/users/user.actions";
-import type { CreateUserFormState } from "@/features/users/user.types";
-import { USER_ROLES, type UserRole } from "@/features/users/user.types"; // <-- Ensure import
+import {
+  type CreateUserFormFieldNames,
+  type CreateUserFormState,
+  USER_ROLES,
+  type UserRole,
+} from "@/features/users/user.types";
+import type { FormFieldError, FormState } from "@/lib/forms/form.types";
 import { InputField } from "@/ui/auth/input-field";
 import { H1 } from "@/ui/headings";
 import { SelectRole } from "@/ui/users/select-role";
 import { ServerMessage } from "@/ui/users/server-message";
 
 export function CreateUserForm(): JSX.Element {
-  const initialState = { errors: {}, message: "", success: false };
+  const initialState: Extract<
+    FormState<CreateUserFormFieldNames>,
+    { success: false }
+  > = {
+    errors: {} as Partial<Record<CreateUserFormFieldNames, FormFieldError>>,
+    message: "",
+    success: false, // literal false due to the annotation
+  };
 
   const [state, action, pending] = useActionState<
     CreateUserFormState,

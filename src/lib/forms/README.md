@@ -8,6 +8,7 @@ The `forms` module provides a robust, type-safe foundation for form validation, 
 
 ## Architecture
 
+- **INTENTIONALLY ALWAYS RETURNS ERROR OBJECTS:** Errors are always returned as objects to provide a consistent shape for UI.
 - **Type Safety:** All form logic uses strict TypeScript generics and branded types for domain safety.
 - **Validation:** Zod schemas perform runtime validation and normalization of form data.
 - **Error Handling:** Errors are mapped to domain-specific field names for precise, accessible UI feedback.

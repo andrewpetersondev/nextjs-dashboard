@@ -14,16 +14,6 @@ import { logger } from "@/lib/logging/logger";
  * @param formData - The FormData to validate.
  * @param schema - The Zod schema to validate against.
  * @param allowedFields - Array of allowed field names to include in the error map.
- * @returns FormState<TFieldNames, TData> - Typed form state including errors, message, success, and optional data.
- *
- * @example
- * type FieldNames = "email" | "password";
- * const result = validateFormData(formData, schema, ["email", "password"]);
- *
- * @remarks
- * - Error messages should be localized for internationalization.
- * - Use ARIA attributes for accessible error feedback in the UI.
- * - Compatible with strict TypeScript settings (`exactOptionalPropertyTypes: true`).
  */
 export function validateFormData<TFieldNames extends string, TData = unknown>(
   formData: FormData,
@@ -42,16 +32,28 @@ export function validateFormData<TFieldNames extends string, TData = unknown>(
     });
 
     const { fieldErrors } = parsed.error.flatten();
+
+    // Build non-sensitive raw values for repopulating the form.
+    const values: Partial<Record<TFieldNames, string>> = {};
+    for (const key of allowedFields) {
+      // Avoid echoing sensitive fields like passwords
+      if (key === ("password" as TFieldNames)) continue;
+      const v = data[key as string];
+      if (typeof v === "string") {
+        values[key] = v;
+      }
+    }
+
     return {
       errors: mapFieldErrors(fieldErrors, allowedFields),
       message: FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
       success: false,
+      values,
     };
   }
 
   return {
     data: parsed.data,
-    errors: {},
     message: FORM_VALIDATION_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     success: true,
   };
@@ -63,11 +65,6 @@ export function validateFormData<TFieldNames extends string, TData = unknown>(
  * @template TFieldNames - String literal union of valid field names.
  * @param fieldErrors - Zod field errors object.
  * @param allowedFields - Array of allowed field names.
- * @returns FormErrors<TFieldNames> - Error map including only allowed fields with errors.
- *
- * @remarks
- * - Only fields present in `allowedFields` are included.
- * - Compatible with strict TypeScript settings.
  */
 function mapFieldErrors<TFieldNames extends string>(
   fieldErrors: Record<string, string[] | undefined>,
@@ -84,12 +81,6 @@ function mapFieldErrors<TFieldNames extends string>(
 
 /**
  * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
- *
- * @param fieldErrors - Zod fieldErrors object.
- * @returns Record<string, string[]> - Normalized error map.
- *
- * @remarks
- * - Ensures all fields have an array (empty if no errors).
  */
 export function normalizeFieldErrors(
   fieldErrors: Record<string, string[] | undefined>,
