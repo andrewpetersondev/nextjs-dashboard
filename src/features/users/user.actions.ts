@@ -40,6 +40,7 @@ import type {
 } from "@/features/users/user.types";
 import { getValidUserRole } from "@/features/users/user.utils";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
+import { actionResult } from "@/lib/core/action-result";
 import { toUserId, toUserRole } from "@/lib/definitions/brands";
 import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
@@ -47,7 +48,6 @@ import { normalizeFieldErrors } from "@/lib/forms/form-validation";
 import { logger } from "@/lib/logging/logger";
 import type { ActionResult } from "@/lib/types/action-result";
 import { stripProperties } from "@/lib/utils/utils";
-import { actionResult } from "@/lib/utils/utils.server";
 
 // --- CRUD Actions for Users ---
 

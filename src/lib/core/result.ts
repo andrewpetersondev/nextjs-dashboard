@@ -13,7 +13,6 @@
  * - Err: Representing failure with associated error
  */
 
-// Todo: This result shape is pretty bare. What is best practice?
 export type Result<T, E = Error> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
@@ -28,6 +27,17 @@ export const unwrap = <T, E>(r: Result<T, E>): T => {
   if (r.success) return r.data;
   throw r.error;
 };
+
+// Safe unwraps
+export const unwrapOr =
+  <T, E>(fallback: T) =>
+  (r: Result<T, E>): T =>
+    r.success ? r.data : fallback;
+
+export const unwrapOrElse =
+  <T, E>(fallback: (e: E) => T) =>
+  (r: Result<T, E>): T =>
+    r.success ? r.data : fallback(r.error);
 
 // Type guards
 export const isOk = <T, E>(r: Result<T, E>): r is { success: true; data: T } =>
@@ -46,6 +56,9 @@ export const chain =
   <T, U, E1, E2>(fn: (v: T) => Result<U, E2>) =>
   (r: Result<T, E1>): Result<U, E1 | E2> =>
     r.success ? fn(r.data) : r;
+
+// Alias for FP communities (aka bind/flatMap)
+export const andThen = chain;
 
 export const mapError =
   <T, E1, E2>(fn: (e: E1) => E2) =>
@@ -88,6 +101,11 @@ export const fromPromise = async <T, E = Error>(
   }
 };
 
+// Interop: convert Result to a Promise (rejects with error on Err)
+export const toPromise = async <T, E>(r: Result<T, E>): Promise<T> => {
+  return r.success ? r.data : Promise.reject(r.error);
+};
+
 // Utilities
 export const tap =
   <T, E>(fn: (v: T) => void) =>
@@ -104,6 +122,14 @@ export const tapError =
   };
 
 /**
+ * Lift a nullable/undefined into a Result.
+ */
+export const fromNullable = <T, E>(
+  v: T | null | undefined,
+  onNull: () => E,
+): Result<T, E> => (v == null ? Err(onNull()) : Ok(v));
+
+/**
  * Combines an array of Results into a single Result containing an array of success values.
  * If any Result is an Err, returns the first Err encountered.
  */
@@ -114,4 +140,29 @@ export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
     acc.push(r.data);
   }
   return Ok(acc);
+};
+
+// Combine a tuple of Results into a Result of a tuple (preserves tuple types)
+export const allTuple = <T extends readonly [...Result<any, any>[]]>(
+  ...results: T
+): Result<
+  { [K in keyof T]: T[K] extends Result<infer U, any> ? U : never },
+  T[number] extends Result<any, infer E> ? E : never
+> => {
+  const acc: unknown[] = [];
+  for (const r of results) {
+    if (!r.success) return r as any;
+    acc.push(r.data);
+  }
+  return Ok(acc as any);
+};
+
+// Return the first Ok, or the last Err if none succeeded
+export const anyOk = <T, E>(results: Result<T, E>[]): Result<T, E> => {
+  let lastErr: Result<never, E> | null = null;
+  for (const r of results) {
+    if (r.success) return r;
+    lastErr = r as Result<never, E>;
+  }
+  return lastErr ?? Err<E>(new Error("No results provided") as E);
 };
