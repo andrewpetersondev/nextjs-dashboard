@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7117928-8ffa-4eeb-98b4-d228a43bf697" name="Changes" comment="update: configure IDE project settings and exclude unnecessary folders &#10;&#10;Included `.idea` project configuration files and set exclusions for Cypress screenshots/videos directories.">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,7 +52,7 @@
     "node.js.selected.package.standard": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
-    "settings.editor.selected.configurable": "Settings.Biome",
+    "settings.editor.selected.configurable": "JavaScript.Libraries",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
