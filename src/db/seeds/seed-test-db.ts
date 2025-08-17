@@ -1,20 +1,20 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-import { nodeEnvDb } from "@/db/dev-database";
 import type { Period } from "@/lib/core/brands";
 import * as schema from "../schema";
+import { nodeEnvTestDb } from "../test-database";
 
 /**
- * @file seeds/seed.ts
+ * @file seeds/seed-test-db.ts
  * Seed script for initializing the test database with realistic sample data.
  *
- * - Target database: dev_db (via POSTGRES_URL)
+ * - Target database: test_db (via POSTGRES_URL_TESTDB)
  * - Entry point: run directly with ts-node
  * - Idempotency: refuses to seed if data exists unless SEED_RESET=true
  *
  * Quick start:
- *   POSTGRES_URL=postgres://... pnpm ts-node src/db/seeds/seed.ts
- *   SEED_RESET=true pnpm ts-node src/db/seeds/seed.ts  # force re-seed (TRUNCATE)
+ *   POSTGRES_URL_TESTDB=postgres://... pnpm ts-node src/db/seeds/seed-test-db.ts
+ *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-test-db.ts # force re-seed (TRUNCATE)
  */
 
 /**
@@ -154,19 +154,19 @@ const customersData: Array<{ name: string; email: string; imageUrl: string }> =
  */
 async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    nodeEnvDb.execute(
+    nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeEnvTestDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
@@ -177,14 +177,14 @@ async function isEmpty(): Promise<boolean> {
  * Truncates all tables and resets identity sequences.
  */
 async function truncateAll(): Promise<void> {
-  await nodeEnvDb.execute(sql`TRUNCATE TABLE
-        ${schema.sessions},
-        ${schema.invoices},
-        ${schema.customers},
-        ${schema.revenues},
-        ${schema.demoUserCounters},
-        ${schema.users}
-        RESTART IDENTITY CASCADE`);
+  await nodeEnvTestDb.execute(sql`TRUNCATE TABLE
+    ${schema.sessions},
+    ${schema.invoices},
+    ${schema.customers},
+    ${schema.revenues},
+    ${schema.demoUserCounters},
+    ${schema.users}
+    RESTART IDENTITY CASCADE`);
 }
 
 /**
@@ -262,7 +262,7 @@ async function main(): Promise<void> {
     },
   ];
 
-  await nodeEnvDb.transaction(async (tx) => {
+  await nodeEnvTestDb.transaction(async (tx) => {
     // 1) Seed revenues with Dates directly (no valuesFromArray)
     await tx.insert(schema.revenues).values(
       periodDates.map((periodDate) => ({
@@ -359,10 +359,10 @@ async function main(): Promise<void> {
 
     // 6) Recompute revenue aggregates from invoices
     await tx.execute(sql`
-            UPDATE revenues AS r
-            SET total_amount  = COALESCE(agg.total_amount, 0),
-                invoice_count = COALESCE(agg.invoice_count, 0),
-                updated_at    = NOW() FROM (
+      UPDATE revenues AS r
+      SET total_amount  = COALESCE(agg.total_amount, 0),
+          invoice_count = COALESCE(agg.invoice_count, 0),
+          updated_at    = NOW() FROM (
   SELECT
     invoices.revenue_period AS period,
     SUM(invoices.amount) AS total_amount,
@@ -370,8 +370,8 @@ async function main(): Promise<void> {
   FROM invoices
   GROUP BY invoices.revenue_period
 ) AS agg
-            WHERE r.period = agg.period;
-        `);
+      WHERE r.period = agg.period;
+    `);
   });
 
   console.log("Database seeded successfully.");
