@@ -1,22 +1,13 @@
+import "server-only";
 import { Err, Ok, type Result } from "@/lib/core/result.base";
 
 /**
- * Executes a function and converts its result or any thrown error into a `Result`.
- *
- * @typeParam T - The type of the value returned on success.
- * @typeParam E - The type of the error returned on failure. Defaults to `Error`.
- * @param fn - The function to execute. If it throws, the error will be caught.
- * @param mapError - An optional callback to map the caught error to type `E`.
- * @returns A `Result` containing the return value of `fn` on success (`Ok<T>`) or the error on failure (`Err<E>`).
- * @remarks If `mapError` is omitted, the thrown value is cast to type `E`.
- *
- * @example
- * ```typescript
- * const result = tryCatch<string, string>(() => {
- *   if (Math.random() > 0.5) throw new Error("Random failure");
- *   return "Success";
- * }, e => e instanceof Error ? e.message : "Unknown error");
- * ```
+ * Run fn and wrap result or thrown error in Result.
+ * @typeParam T - Success type.
+ * @typeParam E - Error type (default `Error`).
+ * @param fn - Synchronous function to execute.
+ * @param mapError - Optional mapper for unknown error.
+ * @returns Ok(fn()) or Err(mapped error).
  */
 export const tryCatch = <T, E = Error>(
   fn: () => T,
@@ -30,28 +21,12 @@ export const tryCatch = <T, E = Error>(
 };
 
 /**
- * Executes an asynchronous operation and wraps its result in a `Result` object.
- *
- * @typeParam T - The type of the value resolved by the asynchronous operation on success.
- * @typeParam E - The type of the error wrapped in the `Result` on failure. Defaults to `Error`.
- * @param fn - A function that performs an asynchronous operation and returns a `Promise` resolving to a value of type `T`.
- * @param mapError - An optional callback to map a thrown or rejected value to an error of type `E`.
- *                   If omitted, the thrown/rejected value is cast to type `E` directly.
- * @returns A `Promise` that resolves to `Ok<T>` on success or `Err<E>` on failure, where:
- *          - `Ok<T>` wraps the resolved value of `fn` on success.
- *          - `Err<E>` wraps the error returned by `mapError` or the cast error when `mapError` is omitted.
- * @remarks This utility provides a structured way to handle errors in asynchronous operations using `Result<T, E>`.
- *
- * @example
- * ```typescript
- * const result = await tryCatchAsync<number, string>(
- *   async () => {
- *     if (Math.random() > 0.5) throw new Error("Random failure");
- *     return 42;
- *   },
- *   (e) => e instanceof Error ? e.message : "Unknown error"
- * );
- * ```
+ * Run async fn and wrap resolve/reject in Result.
+ * @typeParam T - Success type.
+ * @typeParam E - Error type (default `Error`).
+ * @param fn - Function returning Promise<T>.
+ * @param mapError - Optional mapper for unknown error.
+ * @returns Promise of Ok or Err.
  */
 export const tryCatchAsync = async <T, E = Error>(
   fn: () => Promise<T>,
