@@ -1,5 +1,5 @@
 /**
- * @file reset-dev-db.ts
+ * @file reset-dev.ts
  * @description
  * Resets all tables in the development database using Drizzle Seed.
  *

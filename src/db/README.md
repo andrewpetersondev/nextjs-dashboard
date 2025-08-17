@@ -10,9 +10,9 @@ This folder contains all database-related code used by the application and CLI t
 - schema.ts – Database schema definitions using Drizzle ORM.
 - seeds/ – Seed and reset scripts for populating or clearing databases.
   - seeds/seed.ts – Main seed script for this project (targets the test database by default).
-  - seeds/reset-test-db.ts – Resets all tables in the test database using drizzle-seed.
-  - seeds/reset-dev-db.ts – Resets all tables in the dev database using drizzle-seed.
-  - seeds/best-seed-*.ts – Alternative/experimental seed scripts (not the default path).
+  - seeds/reset-test.ts – Resets all tables in the test database using drizzle-seed.
+  - seeds/reset-dev.ts – Resets all tables in the dev database using drizzle-seed.
+  - seeds/best-seed-\*.ts – Alternative/experimental seed scripts (not the default path).
 
 Note: Older references to folders like migrations/ or models/ are not applicable here and have been removed to avoid confusion.
 
@@ -24,7 +24,7 @@ Note: Older references to folders like migrations/ or models/ are not applicable
 ## Environment variables
 
 - POSTGRES_URL – Development database connection URL (used by dev-database.ts and connection.ts when type="dev").
-- POSTGRES_URL_TESTDB – Test database connection URL (used by seed.ts, reset-test-db.ts, and connection.ts when type="test").
+- POSTGRES_URL_TESTDB – Test database connection URL (used by seed.ts, reset-test.ts, and connection.ts when type="test").
 - SEED_RESET – When set to "true", seed.ts will TRUNCATE all tables and reseed even if data exists.
 
 Credentials are managed via environment variables and Hashicorp Vault. Never commit secrets.
@@ -32,22 +32,26 @@ Credentials are managed via environment variables and Hashicorp Vault. Never com
 ## Seeding the test database (test_db)
 
 Prerequisites:
+
 - Ensure POSTGRES_URL_TESTDB is set (in your shell or .env) to point to your test_db instance.
 
 Run a normal seed:
+
 - pnpm ts-node src/db/seeds/seed.ts
 
 Force re-seed (truncate first):
+
 - SEED_RESET=true pnpm ts-node src/db/seeds/seed.ts
 
 Behavior:
+
 - The script exits early if the database is not empty unless SEED_RESET=true is set.
 - The script writes to the test database only (via nodeEnvTestDb from test-database.ts).
 
 ## Resetting databases (CLI)
 
-- Test DB: pnpm ts-node src/db/seeds/reset-test-db.ts
-- Dev DB: pnpm ts-node src/db/seeds/reset-dev-db.ts
+- Test DB: pnpm ts-node src/db/seeds/reset-test.ts
+- Dev DB: pnpm ts-node src/db/seeds/reset-dev.ts
 
 ## Application runtime usage
 
@@ -57,10 +61,11 @@ Behavior:
 ## Verification tips
 
 After seeding, you can verify data with quick queries (psql, console, or your DB client):
-- SELECT COUNT(*) FROM users;
-- SELECT COUNT(*) FROM customers;
-- SELECT COUNT(*) FROM invoices;
-- SELECT COUNT(*) FROM revenues;
+
+- SELECT COUNT(\*) FROM users;
+- SELECT COUNT(\*) FROM customers;
+- SELECT COUNT(\*) FROM invoices;
+- SELECT COUNT(\*) FROM revenues;
 
 ## Documentation notes
 

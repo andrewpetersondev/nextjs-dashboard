@@ -1,5 +1,5 @@
 /**
- * @file reset-test-db.ts
+ * @file reset-test.ts
  * @description
  * Resets all tables in the test database using Drizzle Seed.
  *
