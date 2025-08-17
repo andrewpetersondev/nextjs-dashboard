@@ -1,37 +1,43 @@
+import "server-only";
 import type { Result } from "@/lib/core/result.base";
 
 /**
- * Extracts the contained value from a `Result` object if the operation was successful.
- * Throws an error if the operation was unsuccessful.
+ * Extract the success value from a {@link Result}, or throw on error.
  *
- * @typeParam T - The type of the value contained within a successful `Result`.
- * @typeParam E - The type of the error contained within an unsuccessful `Result`.
+ * If the result contains a success, the contained value is returned. Otherwise,
+ * the function throws the associated error.
  *
- * @param r - The `Result` object from which to extract the value or throw an error.
- *   - `r.success`: A boolean indicating whether the operation was successful.
- *   - `r.data`: The value contained in a successful `Result`.
- *   - `r.error`: The error object contained in an unsuccessful `Result`.
+ * @typeParam T - The success type of the result.
+ * @typeParam E - The error type of the result.
+ * @param r - The {@link Result} to unwrap; must be a success, or it will throw.
+ * @returns The success value of the result.
+ * @throws Throws the error value if the result is an error.
+ * @example
+ * ```typescript
+ * const success = { success: true, data: 42 };
+ * const error = { success: false, error: new Error("Failure") };
  *
- * @returns The value of type `T` contained within the `Result` if successful.
- *
- * @throws The error of type `E` if the `Result` indicates failure.
+ * console.log(unwrap(success)); // 42
+ * console.log(unwrap(error));   // Throws: Error: Failure
+ * ```
  */
-
 export const unwrap = <T, E>(r: Result<T, E>): T => {
   if (r.success) return r.data;
   throw r.error;
 };
 
-// Safe unwraps
-
 /**
- * A utility function that provides a fallback value if a `Result` is not successful.
+ * Provide a fallback value for an error result.
  *
- * @template T - The type of the successful `Result` data.
- * @template E - The type of the error in the `Result`.
- *
- * @param fallback - A default value of type `T` to return if the `Result` is not successful.
- * @returns A function that takes a `Result` of type `T` and `E`. If the `Result` is successful, it will return the contained value; otherwise, it will return the provided fallback value.
+ * @typeParam T - The type of the value contained in the success branch.
+ * @typeParam E - The type of the value contained in the error branch.
+ * @param fallback - A value of type T to return if the result is an error.
+ * @returns A function that takes a `Result<T, E>` and returns the success value or the fallback.
+ * @example
+ * ```typescript
+ * const result: Result<number, string> = { success: false, error: "Not found" };
+ * const value = unwrapOr(42)(result); // 42
+ * ```
  */
 export const unwrapOr =
   <T, E>(fallback: T) =>
@@ -39,40 +45,50 @@ export const unwrapOr =
     r.success ? r.data : fallback;
 
 /**
- * A functional utility that takes a fallback function and returns a function
- * to extract the value from a `Result` type. If the `Result` is a success,
- * it returns the contained value; otherwise, it invokes the fallback function
- * with the error value and returns the result of that function.
+ * Provide a fallback value for a failed result.
  *
- * @template T - The type of the success value contained in the `Result`.
- * @template E - The type of the error value contained in the `Result`.
+ * Returns the successful value if present, otherwise applies the fallback.
  *
- * @param fallback - A function that receives an error value of type `E` and
- * produces a fallback value of type `T` in case the `Result` is an error.
+ * @typeParam T - The success value type.
+ * @typeParam E - The error value type.
+ * @param fallback - A function that maps the error value `e` to a fallback success value `T`.
+ * @returns A function that takes a `Result<T, E>` and returns either the success value or the fallback value.
+ * @example
+ * ```typescript
+ * const result: Result<number, string> = { success: false, error: "Error" };
+ * const fallback = (e: string) => 42;
  *
- * @returns A function that takes a `Result` of type `Result<T, E>` and returns
- * the success value of type `T` if the `Result` is a success, or the fallback
- * value obtained by applying the `fallback` function to the error in case the
- * `Result` is a failure.
+ * const unwrap = unwrapOrElse(fallback);
+ * console.log(unwrap(result)); // 42
+ * ```
  */
 export const unwrapOrElse =
   <T, E>(fallback: (e: E) => T) =>
   (r: Result<T, E>): T =>
     r.success ? r.data : fallback(r.error);
 
-// Matching
-
 /**
- * The `match` function processes a `Result` and returns a value based on whether
- * the `Result` is successful or contains an error.
+ * Pattern-match on a Result<T, E>.
  *
- * @param r - A `Result` instance containing either a success value or an error value.
- * @param onOk - A callback function executed when the `Result` is successful.
- * Receives the success value as its argument and returns a value of type `U`.
- * @param onErr - A callback function executed when the `Result` contains an error.
- * Receives the error value as its argument and returns a value of type `U`.
- * @returns Returns the value from the execution of either `onOk` or `onErr`, based on
- * whether the `Result` is a success or error.
+ * Calls `onOk` if the result is a success or `onErr` if it's an error.
+ *
+ * @typeParam T - The success value type.
+ * @typeParam E - The error value type.
+ * @typeParam U - The return type of the callbacks.
+ * @param r - The Result to match on.
+ * @param onOk - Callback invoked with the success value if `r` is a success.
+ * @param onErr - Callback invoked with the error value if `r` is an error.
+ * @returns The return value of either `onOk` or `onErr`.
+ * @example
+ * ```typescript
+ * const result: Result<number, string> = { success: true, data: 42 };
+ * const message = match(
+ *   result,
+ *   (value) => `Success with value: ${value}`,
+ *   (error) => `Error: ${error}`
+ * );
+ * console.log(message); // "Success with value: 42"
+ * ```
  */
 export const match = <T, E, U>(
   r: Result<T, E>,
@@ -81,14 +97,8 @@ export const match = <T, E, U>(
 ): U => (r.success ? onOk(r.data) : onErr(r.error));
 
 /**
- * Represents a function that applies a folding operation, which transforms or reduces a data structure
- * (such as an `Option` or a `Result`) into a single value based on pattern matching.
+ * Alias for {@link match}. Provides pattern matching functionality.
  *
- * It typically takes two functions or handlers for matching against possible cases (e.g., `Some` and `None` cases in an `Option`),
- * and returns a resulting value based on the specific match.
- *
- * Example use case:
- * - Folding over an `Option` to provide a default value if no value is present.
- * - Conditionally handling success or error cases in a computation.
+ * @see match
  */
 export const fold = match;
