@@ -1,13 +1,28 @@
 import "server-only";
 
 /**
- * @remarks Base class error to Replace `AppError`
+ * Abstract base class for custom errors with structured metadata.
  *
- * Base class for all application errors.
- * Provides structured error handling with context and HTTP status codes.
+ * Provides a consistent interface for error handling with additional context,
+ * status codes, timestamps, and JSON serialization.
  *
- * Documentation (conceptual, minimal code):
- * docs/lib/refactor-strategy/phase-1/1-2-error-handling.md
+ * @abstract
+ * @property code - Unique error identifier.
+ * @property statusCode - HTTP-like status code for the error.
+ * @property timestamp - Date when the error was instantiated.
+ * @param message - Error message description.
+ * @param context - Additional metadata to provide context (default: empty object).
+ * @param cause - Optional root cause error.
+ * @example
+ * ```typescript
+ * class NotFoundError extends BaseError {
+ *   readonly code = "NOT_FOUND";
+ *   readonly statusCode = 404;
+ * }
+ *
+ * const error = new NotFoundError("Resource not found", { resourceId: 123 });
+ * console.error(error.toJSON());
+ * ```
  */
 export abstract class BaseError extends Error {
   abstract readonly code: string;

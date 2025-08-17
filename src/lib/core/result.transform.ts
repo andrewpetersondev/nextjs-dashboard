@@ -1,19 +1,30 @@
+import "server-only";
 import { Err, Ok, type Result } from "@/lib/core/result.base";
 
 /**
- * Transforms the successful value of a `Result` using the provided mapping function, leaving the error value unchanged.
+ * Transform the success value of a Result using a mapping function.
  *
- * This higher-order function takes a mapping function `fn` to apply to the data in a `Result` if it is successful.
- * If the `Result` contains an error, the error remains unchanged, and the mapping function is not applied.
+ * Applies the provided function to the `success` branch of the given `Result<T, E>`.
+ * If the result is an error, it is returned unchanged.
  *
- * @typeParam T - The type of the successful value in the input `Result`.
- * @typeParam U - The type of the successful value in the transformed `Result`, as determined by the mapping function.
- * @typeParam E - The type of the error value in the `Result`, which remains unchanged.
+ * @typeParam T - The type of the success value in the input result.
+ * @typeParam U - The type of the success value in the mapped result.
+ * @typeParam E - The type of the error value in both input and output results.
+ * @param fn - Function to transform the success value.
+ * @returns A function that accepts a `Result<T, E>`. It returns:
+ * - `Result<U, E>` if the input is a success branch, with the success value transformed.
+ * - `Result<T, E>` if the input is an error branch, unchanged.
+ * @example
+ * ```typescript
+ * const convertToUpper = map<string, string, Error>((value) => value.toUpperCase());
+ * const result1 = convertToUpper(Ok("hello"));
+ * // result1: { success: true, data: "HELLO" }
  *
- * @param fn - A function that takes a value of type `T` and returns a value of type `U`. This function is used to transform the successful value in the `Result`.
- * @returns A function that takes a `Result<T, E>` and returns a new `Result<U, E>`:
- *          - If the input `Result` is a success (`Ok`), the successful value is passed through the mapping function `fn`, and the output is wrapped in an `Ok<U>`.
- *          - If the input `Result` is an error (`Err`), the same error is returned untouched.
+ * const result2 = convertToUpper(Err(new Error("Something wrong")));
+ * // result2: { success: false, error: Error("Something wrong") }
+ * ```
+ * @remarks
+ * This function does not mutate the input and produces a new instance for the `success` case.
  */
 export const map =
   <T, U, E>(fn: (v: T) => U) =>
@@ -21,26 +32,32 @@ export const map =
     r.success ? Ok(fn(r.data)) : r;
 
 /**
- * Chains the transformation of a `Result` by applying a provided function to the
- * `success` value of the input `Result`. If the input `Result` is an error, it is
- * returned as is without invoking the function.
+ * Chain two computations in a result pipeline.
  *
- * @typeParam T - The type of the input `success` value in the incoming `Result`.
- * @typeParam U - The type of the `success` value in the resulting `Result`.
- * @typeParam E1 - The type of the error in the incoming `Result`.
- * @typeParam E2 - The type of the error in the resulting `Result` if the function returns an error.
+ * Applies the provided function to the success branch of the input result and
+ * forwards the result, preserving the error branch if present.
  *
- * @param fn - A transformation function that takes a value of type `T` and returns a `Result<U, E2>`.
- * @returns A function that accepts a `Result<T, E1>` and returns a `Result<U, E1 | E2>`.
- *
+ * @typeParam T - Type of the input success value.
+ * @typeParam U - Type of the output success value.
+ * @typeParam E1 - Type of the initial error value.
+ * @typeParam E2 - Type of the error value from the chained function.
+ * @param fn - A function mapping a success value of type `T` to a `Result<U, E2>`.
+ * @returns A `Result<U, E1 | E2>` representing the chained computation.
  * @example
- * ```
- * const transform = chain<number, string, Error, TypeError>((v: number) => {
- *   return v > 0 ? ok(v.toString()) : err(new TypeError('Value must be positive'));
- * });
+ * ```typescript
+ * const parseNumber = (v: string): Result<number, string> =>
+ *   isNaN(Number(v)) ? { success: false, error: "Invalid number" } : { success: true, data: Number(v) };
  *
- * const result = transform(ok(42)); // Produces: Result<string, Error | TypeError>
+ * const toSquare = (n: number): Result<number, never> => ({ success: true, data: n * n });
+ *
+ * const pipeline = chain(toSquare);
+ *
+ * const result1 = pipeline(parseNumber("4")); // { success: true, data: 16 }
+ * const result2 = pipeline(parseNumber("abc")); // { success: false, error: "Invalid number" }
  * ```
+ * @remarks
+ * - Preserves the original error if the input result is an error branch.
+ * - Allocates a new result object only when mapping the success branch.
  */
 export const chain =
   <T, U, E1, E2>(fn: (v: T) => Result<U, E2>) =>
@@ -48,34 +65,45 @@ export const chain =
     r.success ? fn(r.data) : r;
 
 /**
- * Represents a method or function used to chain multiple operations together in a sequential manner.
- * The `andThen` variable provides functionality to connect operations such that the output of one
- * operation serves as the input to the next, promoting a fluent and readable chaining mechanism.
+ * Chain a computation on the success branch of a result.
  *
- * Alias: `chain`
+ * Transforms a `Result<T, E>` by applying a function to the success value of
+ * `Ok`, producing a new `Result`. Does nothing on the error branch.
  *
- * Use Cases:
- * - Chaining asynchronous or synchronous operations.
- * - Creating a pipeline of dependent transformations.
- * - Simplifying and organizing complex data flows by linearizing function calls.
+ * @typeParam T - The type of the success value in the input result.
+ * @typeParam E - The type of the error value in the input result.
+ * @typeParam U - The type of the success value in the resulting result.
+ * @param fn - Callback applied to the success value; returns `Result<U, E>`.
+ * @returns A function that accepts a `Result<T, E>` and returns `Result<U, E>`.
+ * @example
+ * ```typescript
+ * const result: Result<number, string> = ok(42);
+ * const chained = andThen((n) => n > 0 ? ok(n * 2) : err('Negative'))(result);
+ * console.log(chained); // Ok(84)
+ * ```
+ * @remarks
+ * - No side effects; does not modify the original `Result`.
+ * - Returns the error branch unchanged when the input is `Err`.
  */
 export const andThen = chain;
 
 /**
- * Transforms the error part of a `Result` type using the provided mapping function.
+ * Map the error value of a `Result` to a new type.
  *
- * @template T - The type of the successful result value.
- * @template E1 - The type of the original error value.
- * @template E2 - The type of the transformed error value.
+ * Applies the given transformation to the error if the result is an error branch;
+ * leaves the success branch unchanged.
  *
- * @param fn - A function that takes an error of type `E1` and maps it to a new error of type `E2`.
- * @returns A function that takes a `Result` of either a success value of type `T` or an error of type `E1`
- *          and returns a new `Result` of either a success value of type `T` or an error of type `E2`.
- *
- * @remarks
- * This utility is useful for chaining or transforming error handling logic in functional programming contexts.
- * If the original `Result` is a success, it remains unaffected. If it is an error, the error is transformed
- * using the provided mapping function.
+ * @typeParam T - Type of the success value.
+ * @typeParam E1 - Current error type of the `Result`.
+ * @typeParam E2 - Transformed error type after mapping.
+ * @param fn - Function to transform the error value.
+ * @returns A new `Result<T, E2>` with the error transformed, or the original success unchanged.
+ * @example
+ * ```typescript
+ * const original = Err<number, string>("network error");
+ * const mapped = mapError((e) => `Handled: ${e}`)(original);
+ * // mapped is Err<number, string> with error: "Handled: network error".
+ * ```
  */
 export const mapError =
   <T, E1, E2>(fn: (e: E1) => E2) =>
@@ -83,22 +111,27 @@ export const mapError =
     r.success ? r : Err(fn(r.error));
 
 /**
- * Transforms both the success and error variants of a `Result` using the provided mapping functions.
+ * Transform both success and error branches of a {@link Result}.
  *
- * The `bimap` function accepts two transformer functions: `onOk` to map the success value
- * and `onErr` to map the error value. It then applies the appropriate function based on
- * whether the input `Result` is a success or an error.
+ * Applies `onOk` to the success value and `onErr` to the error value, returning
+ * a new `Result` with transformed branches.
  *
- * @typeParam T - The type of the success value in the input `Result`.
- * @typeParam U - The type of the success value in the output `Result`.
- * @typeParam E1 - The type of the error value in the input `Result`.
- * @typeParam E2 - The type of the error value in the output `Result`.
- *
- * @param onOk - A function that transforms the success value of the `Result`.
- * @param onErr - A function that transforms the error value of the `Result`.
- *
- * @returns A function that takes a `Result` and returns a new `Result`
- * with the transformed success or error value.
+ * @typeParam T - Type of the input success value.
+ * @typeParam U - Type of the transformed success value.
+ * @typeParam E1 - Type of the input error value.
+ * @typeParam E2 - Type of the transformed error value.
+ * @param onOk - Function to transform the success value.
+ * @param onErr - Function to transform the error value.
+ * @returns A function that takes a `Result<T, E1>` and returns a `Result<U, E2>`.
+ * @example
+ * ```typescript
+ * const result: Result<number, string> = Ok(42);
+ * const transformed = bimap(
+ *   (v) => v * 2,
+ *   (e) => `Error: ${e}`
+ * )(result);
+ * // transformed: Result<number, string> with success value 84.
+ * ```
  */
 export const bimap =
   <T, U, E1, E2>(onOk: (v: T) => U, onErr: (e: E1) => E2) =>
