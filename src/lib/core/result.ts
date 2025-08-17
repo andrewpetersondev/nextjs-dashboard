@@ -47,6 +47,27 @@ export const isErr = <T, E>(
 ): r is { success: false; error: E } => !r.success;
 
 // Transformations
+/**
+ * Transforms the data contained in a `Result` using the provided mapping function.
+ *
+ * This higher-order function takes a mapping function `fn` and applies it to the data
+ * within a successful `Result` instance. If the `Result` represents a failure, the
+ * mapping function is not applied, and the failure `Result` is returned unchanged.
+ *
+ * @template T - The type of the input data within the `Result`.
+ * @template U - The type of the transformed data after applying the mapping function.
+ * @template E - The type of the error in the `Result`.
+ *
+ * @param {function(T): U} fn - The transformation function to apply to the data within the `Result` on success.
+ * @returns A function that takes a `Result` of type T and applies the mapping function to its data if successful, returning a new `Result`.
+ *
+ * @example
+ * const r1 = Ok(5);
+ * const doubled = map((x: number) => x * 2)(r1); // Ok(10)
+ *
+ * const r2 = Err("error");
+ * const doubled2 = map((x: number) => x * 2)(r2); // Err("error")
+ */
 export const map =
   <T, U, E>(fn: (v: T) => U) =>
   (r: Result<T, E>): Result<U, E> =>
@@ -90,6 +111,8 @@ export const tryCatch = <T, E = Error>(
   }
 };
 
+// - Type casting on fromPromise
+//     - The pattern (await fromPromise(...)) as Result<...> relies on casts. If possible, make fromPromise generic-aware or wrap it to avoid repetitive casting and ensure type-safety.
 export const fromPromise = async <T, E = Error>(
   p: Promise<T>,
   mapError?: (e: unknown) => E,

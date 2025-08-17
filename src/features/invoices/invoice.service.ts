@@ -11,6 +11,11 @@ import {
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { toInvoiceId } from "@/lib/core/brands";
+import { Err, type Result } from "@/lib/core/result";
+import {
+  type DatabaseError_New,
+  ValidationError_New,
+} from "@/lib/errors/domain.error";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { ValidationError } from "@/lib/errors/errors";
 
@@ -87,9 +92,38 @@ export class InvoiceService {
     const formEntity = dtoToCreateInvoiceEntity(transformedDto);
     const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
 
-    const responseDTO = await this.repo.create(serviceEntity);
+    return await this.repo.create(serviceEntity);
+  }
 
-    return responseDTO;
+  /**
+   * Safe variant: returns Result instead of throwing.
+   * Pairs with repository.createSafe and preserves business rules.
+   */
+  async createInvoiceSafe(
+    dto: InvoiceFormDto,
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+    if (!dto) {
+      return Err(new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT));
+    }
+
+    let transformedDto: InvoiceFormDto;
+
+    try {
+      transformedDto = this.applyBusinessRules(dto);
+    } catch (e) {
+      // Map legacy ValidationError -> new error type for Result branch
+      const message =
+        e instanceof Error && e.message
+          ? e.message
+          : INVOICE_ERROR_MESSAGES.VALIDATION_FAILED;
+
+      return Err(new ValidationError_New(message));
+    }
+
+    const formEntity = dtoToCreateInvoiceEntity(transformedDto);
+    const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
+
+    return this.repo.createSafe(serviceEntity);
   }
 
   /**
