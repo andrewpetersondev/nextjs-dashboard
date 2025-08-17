@@ -1,3 +1,4 @@
+import "server-only";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 
 /**

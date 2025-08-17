@@ -10,9 +10,9 @@ import {
   updateRevenueRecord,
 } from "@/features/revenues/services/events/revenue-event.service";
 import type { RevenueService } from "@/features/revenues/services/revenue.service";
-import { EventBus } from "@/lib/events/eventBus";
-import type { BaseInvoiceEvent } from "@/lib/events/invoice.events";
-import { INVOICE_EVENTS } from "@/lib/events/invoice.events";
+import { EventBus } from "@/lib/events/event.bus";
+import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
+import { INVOICE_EVENTS } from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
 
 /**

@@ -12,7 +12,7 @@ import type {
   SignupFormFields,
 } from "@/features/users/user.types";
 import type { FormState } from "@/lib/forms/form.types";
-import { validateFormData } from "@/lib/forms/form-validation";
+import { validateFormData } from "@/lib/forms/form.validation";
 
 /**
  * Generic form validation function that can handle different types of forms.

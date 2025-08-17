@@ -23,7 +23,7 @@ import {
 import type { RepoError } from "@/lib/errors/error.mapper";
 import { fromDal } from "@/lib/errors/error.wrapper";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
-import { BaseRepository } from "@/lib/repository/base-repository";
+import { BaseRepository } from "@/lib/repository/repository.base";
 
 /**
  * Repository for Invoice domain operations.

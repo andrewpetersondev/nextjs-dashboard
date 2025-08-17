@@ -1,14 +1,13 @@
 i am trying to understand my revenue event code. the return type of the event handlers are void, the return type of the event helpers are void, and the return type of utils is slightly mixed. is the pattern of return type on my event code in line with professional projects?
 
-
-
 Let me analyze the return type patterns in your revenue event code and compare them with professional practices:
 
 ### Current Pattern Analysis
 
 1. **Event Handlers (void)**
+
 ```typescript
-// From eventBus.ts
+// From event.bus.ts
 type EventHandler<T> = (event: T) => void | Promise<void>;
 ```
 
@@ -19,6 +18,7 @@ This is correct. Event handlers typically return void because they're responsibl
 
 3. **Utility Functions (mixed)**
    Your utilities have more varied return types based on their purpose:
+
 - Validation functions return boolean
 - Extraction functions return specific types or null
 - Logging functions return void
@@ -28,6 +28,7 @@ This is correct. Event handlers typically return void because they're responsibl
 Your current pattern is mostly aligned with professional practices, but here are some considerations for improvement:
 
 1. **Consider Result Types for Operations**
+
 ```typescript
 type OperationResult = {
   success: boolean;
@@ -40,8 +41,8 @@ async function processInvoiceForRevenue(...): Promise<OperationResult> {
     // ... existing code ...
     return { success: true, metadata: { invoiceId, period } };
   } catch (error) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error.message,
       metadata: { invoiceId, period }
     };
@@ -49,8 +50,8 @@ async function processInvoiceForRevenue(...): Promise<OperationResult> {
 }
 ```
 
-
 2. **Event Handler Results**
+
 ```typescript
 interface EventHandlerResult {
   handled: boolean;
@@ -67,8 +68,8 @@ async function handleInvoiceEvent(...): Promise<EventHandlerResult> {
 }
 ```
 
-
 3. **Validation Results with Context**
+
 ```typescript
 interface ValidationResult {
   valid: boolean;
@@ -81,27 +82,30 @@ function validateInvoiceForRevenue(...): ValidationResult {
 }
 ```
 
-
 ### Recommendations
 
 1. **For Event Handlers**
+
 - Keep `void` return types if you're strictly following event-driven architecture
 - Consider returning operation results if you need to track success/failure
 
 2. **For Helpers**
+
 - Consider returning operation results instead of void
 - This helps with:
-    - Error handling at higher levels
-    - Audit logging
-    - Testing
-    - Debugging
+  - Error handling at higher levels
+  - Audit logging
+  - Testing
+  - Debugging
 
 3. **For Utilities**
+
 - Keep current pattern of specific return types based on function purpose
 - Consider adding more context to validation results
 - Use discriminated unions for complex operations
 
 Example Implementation:
+
 ```typescript
 type RevenueOperationResult = {
   success: boolean;
@@ -144,8 +148,8 @@ async function processRevenueOperation(...): Promise<RevenueOperationResult> {
 }
 ```
 
-
 These patterns would improve:
+
 - Debugging capabilities
 - Testing assertions
 - Error tracking

@@ -30,7 +30,7 @@ import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/lib/events/invoice.events";
+} from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
 
 /**
@@ -84,7 +84,7 @@ export async function createInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/eventBus");
+    const { EventBus } = await import("@/lib/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -238,7 +238,7 @@ export async function updateInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/eventBus");
+    const { EventBus } = await import("@/lib/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -300,7 +300,7 @@ export async function deleteInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/eventBus");
+    const { EventBus } = await import("@/lib/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),

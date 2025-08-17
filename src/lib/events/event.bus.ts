@@ -3,7 +3,7 @@
  * @description In-memory event bus for decoupling event publishers and subscribers.
  * @see src/features/revenues/event-driven-revenue-strategy.md
  */
-
+import "server-only";
 import { logger } from "@/lib/logging/logger";
 
 /**
