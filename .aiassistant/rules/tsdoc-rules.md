@@ -2,6 +2,8 @@
 apply: manually
 ---
 
+This is an AI Rule. You MUST follow it if it contains any instructions or use it as a context otherwise.
+
 # AI Agent TSDoc Rules (Consolidated and Extended)
 
 This document defines deterministic, automatable TSDoc rules and templates for functions, types, React/Next.js components, and platform-specific APIs. It resolves duplication, standardizes formatting, and adds guidance for identity/immutability, overloads, and generics.
@@ -15,6 +17,13 @@ This document defines deterministic, automatable TSDoc rules and templates for f
 - Keep the first (brief) line of each doc comment imperative and ≤ 80 characters.
 - Prefer one blank line between paragraphs inside TSDoc.
 
+**Brevity-first principles**
+
+- Default to the minimal set of tags needed for consumer understanding.
+- Omit @remarks unless the decision tree requires it.
+- Keep examples minimal (single snippet) and strictly typed.
+- Avoid repeating obvious facts (e.g., “does not modify input” for pure one-liners) unless non-obvious.
+
 Example of a TSDoc block containing an example:
 
 ````typescript
@@ -24,7 +33,7 @@ Example of a TSDoc block containing an example:
  * Transforms the success branch and preserves the error branch unchanged.
  *
  * @typeParam T - Success type.
- * @typeParam E - Error type. Defaults to `Error`.
+ * @typeParam E - Error type.
  * @typeParam U - Mapped success type.
  * @param res - Input result.
  * @param fn - Mapping callback (value: T) => U.
@@ -33,7 +42,6 @@ Example of a TSDoc block containing an example:
  * ```typescript
  * const r = ok(1);
  * const r2 = map(r, (n: number) => n + 1);
- * // r2 is Result<number, Error>
  * ```
  * @remarks
  * Avoids allocation when the input is already an error; returns it unchanged.
@@ -44,7 +52,7 @@ Example of a TSDoc block containing an example:
 
 ## 1) Executable TSDoc Templates
 
-Use these exact templates (with edits filled in) for all exported APIs.
+Use these templates (fill in blanks). Prefer the smallest tag set that communicates intent.
 
 ### 1.1 Functions and Methods
 
@@ -52,20 +60,20 @@ Use these exact templates (with edits filled in) for all exported APIs.
 /**
  * [ACTION_VERB] [brief description ≤ 80 chars].
  *
- * [Detailed description (1–2 sentences) focusing on core effect or transformation.]
+ * [Optional: 1 sentence focusing on core behavior or transformation.]
  *
  * @typeParam T - [Purpose of success type, if generic.]
- * @typeParam E - [Purpose of error type, if relevant]. Defaults to `Error`.
+ * @typeParam E - [Purpose of error type, if relevant].
  * @typeParam U - [Additional generic param purpose, if any.]
- * @param paramName - [Description with type context; include callback signature if applicable.]
- * @returns [Return structure]. Mention success/error branches; note Promise wrapping explicitly.
+ * @param paramName - [Description; include callback signature if applicable.]
+ * @returns [Return structure]. Note branches or Promise wrapping if applicable.
  * @example
  * ```typescript
- * // Minimal, typed, copy-pasteable example that compiles under strict mode.
+ * // Minimal, typed example that compiles under strict mode.
  * ```
  * @remarks
- * [Include only if required by the decision tree: side effects, edge cases, identity semantics,
- * performance/allocations, error mapping, deviations from conventional behavior.]
+ * [Include ONLY if required: side effects, edge cases, identity/allocations if non-obvious,
+ * error mapping, deviations from conventional behavior.]
  */
 ````
 
@@ -75,12 +83,12 @@ Use these exact templates (with edits filled in) for all exported APIs.
 /**
  * [ACTION_VERB or NOUN PHRASE] [brief description of the type’s role].
  *
- * [1 sentence on discriminants, immutability/readonly, branch shapes, and key invariants.]
+ * [1 sentence on discriminants/readonly/branch shapes and key invariants.]
  *
  * @typeParam T - [Purpose].
- * @typeParam E - [Purpose]. Defaults to `Error`.
+ * @typeParam E - [Purpose].
  * @remarks
- * State invariants, readonly guarantees per field, performance trade-offs, and branding if used.
+ * Include invariants, readonly guarantees, performance trade-offs, and branding if used.
  */
 ```
 
@@ -88,7 +96,7 @@ Include for discriminated unions:
 
 - Name the discriminant key and literal values.
 - List each variant’s required fields and readonly status.
-- Clarify identity and allocation expectations for containers.
+- Clarify identity/allocation expectations for containers only if non-trivial.
 
 ### 1.3 React Components (Function Components)
 
@@ -96,25 +104,24 @@ Include for discriminated unions:
 /**
  * Render [component purpose].
  *
- * [1–2 sentences: core responsibility, controlled/uncontrolled behavior, and constraints.]
+ * [1 sentence: core responsibility and constraints.]
  *
  * @param props - Component props. Document required/optional and defaults.
- * @returns React element. [State SSR/CSR compatibility or server/client constraints.]
+ * @returns React element. [Mention SSR/CSR constraints if relevant.]
  * @example
  * ```tsx
  * <MyComponent foo="bar" />
  * ```
  * @remarks
- * - Accessibility: [expected ARIA roles/attributes, keyboard interactions, labeling rules].
- * - Performance: [memoization guidance, stable callback/refs expectations].
- * - Identity: [whether props/state mutations occur; generally "No side effects."].
+ * - Accessibility: [ARIA roles/attributes or keyboard interactions].
+ * - Performance: [memoization guidance if material].
  */
 ````
 
 Props documentation guidance:
 
-- For each prop: type, default, whether controlled or uncontrolled, and interactions.
-- For events: callback signature, when invoked, and whether it must be stable (e.g., useCallback).
+- For each prop: type, default, controlled/uncontrolled, and interactions.
+- For events: callback signature, when invoked, and stability expectations.
 
 ### 1.4 React Hooks
 
@@ -122,18 +129,16 @@ Props documentation guidance:
 /**
  * [ACTION_VERB] [what the hook computes or manages].
  *
- * [1–2 sentences on inputs, memoization, effects, and cache/identity guarantees.]
+ * [1 sentence on inputs/memoization/effects or identity guarantees.]
  *
  * @param arg - [Input shape].
- * @returns [Return tuple/object shape] with explicit meanings of fields.
+ * @returns [Return tuple/object shape] with meanings of fields.
  * @example
  * ```typescript
  * const [value, setValue] = useMyHook(initial);
  * ```
  * @remarks
- * - Side effects: [describe useEffect/useLayoutEffect usage if any].
- * - Identity: [stable references guarantees across renders].
- * - Performance: [memoization, allocation on each render].
+ * Include side effects or performance notes only if non-obvious/material.
  */
 ````
 
@@ -143,18 +148,18 @@ Props documentation guidance:
 /**
  * Handle [HTTP method or action purpose].
  *
- * [1–2 sentences on inputs, auth/context expectations, and response shape.]
+ * [1 sentence on inputs, auth/context expectations, and response shape.]
  *
- * @param req - Request object [document headers/body/query usage].
- * @returns Response or Promise<Response>. [State JSON shape or streaming semantics.]
+ * @param req - Request object [headers/body/query usage].
+ * @returns Response or Promise<Response>. [State JSON/streaming if relevant.]
  * @example
  * ```typescript
- * // curl example or fetch invocation demonstrating request/response shape.
+ * // Minimal curl/fetch demonstrating request/response shape.
  * ```
  * @remarks
- * - Runtime: [node/edge] and any limitations (e.g., no fs on edge).
- * - Errors: [map errors to HTTP status; structure of error responses].
- * - Side effects: [db writes, logging, external calls].
+ * - Runtime: [node/edge] if it impacts usage.
+ * - Errors: [how errors map to HTTP status, if applicable].
+ * - Side effects: [db writes, logging, external calls] if material.
  */
 ````
 
@@ -165,28 +170,29 @@ Props documentation guidance:
 Include sections based on the criteria below.
 
 - @remarks
-  - REQUIRED: Side effects exist (DOM, IO, logging), edge cases (empty input, nullish, cancellation/abort), error mapping/narrowing, deviations from conventional semantics (e.g., non-throwing by design).
-  - OPTIONAL: Performance and allocation behavior material to consumers.
+  - REQUIRED: Side effects (DOM, IO, logging), meaningful edge cases (empty input, nullish, cancellation/abort), error mapping/narrowing, or deviations from conventional semantics.
+  - OPTIONAL: Performance/allocation behavior only if it affects consumer usage or is non-obvious.
+  - OMIT: Restating obvious purity/identity for simple, synchronous utilities.
 
 - @example
-  - REQUIRED: Public API or complex generics/inference.
-  - OPTIONAL but recommended: Constructors and helpers.
-  - OPTIONAL: Pure data types unless discriminated unions benefit from examples.
+  - REQUIRED: Public API or where generics/inference could confuse usage.
+  - OPTIONAL: Constructors and helpers if not obvious.
+  - OMIT: When usage is self-evident and no type inference pitfalls exist.
 
 - Return structure description
-  - REQUIRED: Result-like or Option-like structures; Promises of Result/Option; identity semantics (returns same instance).
-  - REQUIRED: Streams, Iterables/AsyncIterables (push/pull, backpressure, consumption rules).
+  - REQUIRED: Result/Option-like structures; Promises of those; stream/iterable semantics.
+  - OMIT: Redundant rephrasing of the signature when it adds no new information.
 
 - Parameter depth
-  - REQUIRED: Callbacks (list parameter types and return contract).
-  - REQUIRED: Optional params with defaults (state default and effect).
+  - REQUIRED: Callbacks (parameter types and return contract).
+  - REQUIRED: Optional params with defaults (state the default and effect).
   - REQUIRED: Variadic/union-typed params (enumerate accepted shapes).
 
 ---
 
 ## 3) Standardized Language Patterns
 
-Use these phrases verbatim to ensure consistency:
+Use these phrases for consistency (apply only when relevant):
 
 - Constructors: “Success constructor.” / “Error constructor.”
 - Type guards: “Type guard for [success|error] branch.”
@@ -196,31 +202,35 @@ Use these phrases verbatim to ensure consistency:
 - Error behavior: “Maps unknown errors to E.” / “Passes through existing error.”
 - Performance: “Allocates new container.” / “Avoids allocation on unchanged branch.”
 
+Aliases and re-exports:
+
+- For aliases or thin wrappers, write a brief doc and reference the primary API with {@link PrimarySymbol} instead of duplicating content. Prefer @see over repeating details.
+
 ---
 
 ## 4) Overloads and Generics Nuance
 
 - Overloads
-  - Document either:
-    - A single canonical signature with a precise description of overload behavior, or
-    - Each overload separately with its own concise @example focused on that variant.
-  - In @returns, enumerate the result shapes per overload if the return type varies.
-  - In @remarks, state resolution rules if overload selection depends on runtime shape.
+  - Prefer a single canonical signature description if behavior is uniform.
+  - If overloads differ materially, document each briefly with a focused @example.
+  - In @returns, enumerate result shapes per overload if the return type varies.
+  - In @remarks, state resolution rules only if runtime shape affects selection.
 
 - Generics
-  - Document all @typeParam entries; state defaults explicitly (e.g., “E defaults to Error”).
-  - Show at least one example that relies on type inference (no explicit generics) and one that pins generics when inference might be ambiguous.
+  - Document all @typeParam entries actually present.
+  - State a default only if the type parameter has a syntactic default in the signature.
+  - Provide one example relying on inference and (if helpful) one that pins generics when inference may be ambiguous.
   - For constrained generics, include the constraint and any runtime invariants that must also hold.
 
 ---
 
 ## 5) Identity, Immutability, and Allocation Checklist
 
-If any apply, include in @remarks:
+Include in @remarks only when non-obvious or material:
 
 - Mutations
   - Mutates input arguments: [yes/no]. If yes, list which and how.
-  - Mutates internal state only: [describe scope and visibility].
+  - Mutates internal state only: [scope and visibility].
 - Identity
   - Returns the same instance on no-op paths: [yes/no].
   - Preserves reference equality for unchanged branches: [yes/no].
@@ -229,37 +239,37 @@ If any apply, include in @remarks:
   - Avoids allocation when no change occurs: [yes/no].
 - Concurrency/Async
   - Reuses buffers/objects across emissions (streams/iterables): [yes/no].
-  - Cancellation/AbortSignal semantics: [how to cancel and guarantees on cleanup].
+  - Cancellation/AbortSignal semantics: [how to cancel and cleanup guarantees].
 
 ---
 
 ## 6) Broadened Return-Type Guidance
 
-Document specifics for these common families:
+Document specifics for these families only as needed:
 
-- Raw values: State units/invariants (e.g., normalized, sorted, deduped).
-- Option/Maybe: Name the none/some shapes; identity and allocation behavior on map.
-- Discriminated unions: Name discriminant key and exact literal values; list variant fields.
-- Iterables/AsyncIterables: Consumption rules (single-use vs reusable), backpressure, and error delivery (throw vs error item).
-- Streams/Readable-like: Push vs pull, encoding, chunk type, and close/cancel semantics.
+- Raw values: State units/invariants (e.g., normalized, sorted, deduped) if relevant.
+- Option/Maybe: Name none/some shapes; identity/allocation behavior only if non-trivial.
+- Discriminated unions: Name discriminant key and exact literal values; list variant fields succinctly.
+- Iterables/AsyncIterables: Consumption rules (single-use vs reusable), backpressure, and error delivery.
+- Streams/Readable-like: Push vs pull, encoding, chunk type, close/cancel semantics.
 - Promises: Whether rejections are used or errors are wrapped in Result/Option; whether the function always resolves.
 
 ---
 
 ## 7) Tag Policy (Allowed and When to Use)
 
-Use these tags consistently:
+Use these tags when they add value:
 
 - @public, @internal: Mark API surface intentionally.
 - @deprecated: Include replacement and rationale.
 - @beta or @alpha: Stability and expected changes.
 - @since: First version where this symbol appeared.
 - @defaultValue: For fields/props with defaults (state effect).
-- @see: Related symbols or concepts.
+- @see: Related symbols or concepts (prefer for aliases).
 - @example: As per decision tree.
 - @remarks: As per decision tree.
 - @privateRemarks: Maintainer notes not intended for published docs.
-- @throws: Use only when the function throws synchronously; otherwise, document error mapping/Result behavior in @returns/@remarks. If throws are discouraged, prefer documenting error branches over @throws.
+- @throws: Only when the function throws synchronously; otherwise, explain error branches in @returns/@remarks.
 
 Linking:
 
@@ -269,37 +279,38 @@ Linking:
 
 ## 8) Mini-Playbooks
 
+Keep each playbook concise; prefer one example and an optional remark only if non-obvious.
+
 - ok/err constructors
   - Brief: “Success constructor.” / “Error constructor.”
   - Returns: “Result<T, E> with [success|error] branch.”
   - Example: Construct and assert via type guard.
-  - Remarks: Allocation/identity on repeated calls if relevant.
 
 - map/mapError
   - Brief: “Map [success|error] value.”
   - Params: callback signature and return contract.
   - Return: “Result<U, E>” or “Result<T, F>”.
-  - Remarks: Allocation behavior; unchanged branch returned as-is.
+  - Remarks: Allocation/identity notes only if non-trivial.
 
 - match
   - Brief: “Pattern-match on result.”
-  - Params: onSuccess, onError callbacks with signatures.
-  - Return: “Returns the callback result; does not wrap in Result.”
-  - Remarks: Side effects allowed; document expectations.
+  - Params: onSuccess, onError callback signatures.
+  - Return: “Returns the callback result; not wrapped in Result.”
+  - Remarks: Side effects allowed in callbacks (if worth stating).
 
 - React components
   - Brief: “Render [component purpose].”
   - Props: required/optional, defaults, controlled/uncontrolled.
-  - Remarks: Accessibility, performance (memo), SSR/CSR constraints.
+  - Remarks: Accessibility or SSR/CSR constraints only if material.
 
 - Hooks
   - Brief: “Compute/manage [responsibility].”
-  - Returns: Tuple/object with stable identities documented.
-  - Remarks: Side effects and memoization specifics.
+  - Returns: Tuple/object; document stable identities if relevant.
+  - Remarks: Side effects/memoization specifics only if non-obvious.
 
 - Next.js handlers/actions
   - Brief: “Handle [method/action].”
-  - Remarks: Runtime (node/edge), error mapping to HTTP status, streaming/caching semantics.
+  - Remarks: Runtime (node/edge), error mapping, streaming/caching if applicable.
 
 ---
 
@@ -314,7 +325,7 @@ Result mapping:
  * Transforms the success branch and preserves the error branch unchanged.
  *
  * @typeParam T - Success type.
- * @typeParam E - Error type. Defaults to `Error`.
+ * @typeParam E - Error type.
  * @typeParam U - Mapped success type.
  * @param res - Input result.
  * @param fn - (value: T) => U mapping callback.
@@ -322,11 +333,8 @@ Result mapping:
  * @example
  * ```typescript
  * const r = ok(1);
- * const r2 = map(r, (n: number) => n + 1);
- * // r2 is Result<number, Error>
+ * const r2 = map(r, (n) => n + 1);
  * ```
- * @remarks
- * Avoids allocation when the input is already an error; returns it unchanged.
  */
 ````
 
@@ -344,10 +352,6 @@ React component:
  * ```tsx
  * <LabeledInput id="email" label="Email" value={email} onChange={setEmail} />
  * ```
- * @remarks
- * - Accessibility: Associates label via htmlFor and id.
- * - Performance: Prefer stable onChange to avoid re-renders.
- * - No side effects.
  */
 ````
 
@@ -357,7 +361,7 @@ Hook:
 /**
  * Manage debounced value updates.
  *
- * Returns a debounced value and a setter; the value updates after the delay.
+ * Returns a debounced value and a setter.
  *
  * @param initial - Initial value.
  * @param delayMs - Debounce delay in milliseconds. Defaults to 300.
@@ -366,9 +370,6 @@ Hook:
  * ```typescript
  * const [q, setQ] = useDebouncedValue("", 250);
  * ```
- * @remarks
- * - Side effects: Uses timers; cleared on unmount or delay change.
- * - Identity: setValue is stable across renders.
  */
 ````
 
@@ -378,7 +379,7 @@ Next.js handler:
 /**
  * Handle GET user profile.
  *
- * Validates auth and returns user JSON; returns 401/404 on failure.
+ * Validates auth and returns user JSON.
  *
  * @param req - Incoming request; requires Authorization header.
  * @returns Promise<Response> with JSON body or error status.
@@ -386,10 +387,6 @@ Next.js handler:
  * ```typescript
  * const res = await fetch("/api/user", { headers: { Authorization: "Bearer ..." } });
  * ```
- * @remarks
- * - Runtime: node.
- * - Errors: Maps domain errors to HTTP status codes; returns JSON error body.
- * - Side effects: Database reads; structured logging per request.
  */
 ````
 
@@ -400,14 +397,15 @@ Next.js handler:
 All exported symbols MUST satisfy:
 
 - [ ] Brief line is imperative and ≤ 80 chars.
-- [ ] All generics documented with @typeParam; defaults stated where applicable.
-- [ ] All parameters documented with type context; callbacks include signature and return contract.
-- [ ] Return structure explained (branches, Promise/stream wrapping as applicable).
-- [ ] Example present for public APIs and complex generics; compiles under strict mode.
-- [ ] Side effects explicitly mentioned or “No side effects.”
-- [ ] Identity/immutability/allocations stated when relevant.
-- [ ] Error mapping and fallbacks documented (unknown → Error/E or none).
-- [ ] Edge cases captured in @remarks per decision tree.
+- [ ] Only generics present in the signature are documented with @typeParam.
+- [ ] Defaults are stated only when syntactically defined in the signature.
+- [ ] All parameters documented; callbacks include signature and return contract.
+- [ ] Return structure explained when non-trivial (branches, Promise/stream).
+- [ ] Exactly one minimal example for public APIs where inference could confuse usage.
+- [ ] @remarks included only when required by the decision tree.
+- [ ] No redundant notes on purity/identity/allocation for trivial, pure utilities.
+- [ ] Error mapping and fallbacks documented when applicable.
+- [ ] Aliases/thin wrappers reference the primary API via {@link} or @see (no duplication).
 - [ ] Consistent vocabulary from Standardized Language Patterns.
 
 ---
