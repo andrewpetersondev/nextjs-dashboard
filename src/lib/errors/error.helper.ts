@@ -1,13 +1,7 @@
-/**
- * Documentation (conceptual, minimal code):
- * docs/lib/refactor-strategy/phase-1/1-2-error-handling.md
- */
-
 import "server-only";
-
+import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { BaseError } from "@/lib/errors/error.base";
 import { DatabaseError_New } from "@/lib/errors/error.domain";
-import { Err, Ok, type Result } from "../core/result";
 
 export type HttpErrorBody = {
   error: {

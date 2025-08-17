@@ -60,11 +60,11 @@ Notes
 Mental model (at a glance)
 
 [Ok]
-  | data -> map/chain -> more Ok
-  | side‑effects via tap
+| data -> map/chain -> more Ok
+| side‑effects via tap
 [Err]
-  | error flows unchanged through map/chain
-  | transform with mapError/bimap
+| error flows unchanged through map/chain
+| transform with mapError/bimap
 Stop early: all(...) returns the first Err it sees
 
 ---
@@ -72,7 +72,8 @@ Stop early: all(...) returns the first Err it sees
 Tiny example (only for orientation)
 
 ```ts
-import { Ok, Err, isOk, match, type Result } from "@/lib/core/result";
+import { Err, isOk, Ok, Result } from "./result.base";
+import { match } from "./result.match";
 
 function parseIntSafe(s: string): Result<number, string> {
   const n = Number.parseInt(s, 10);
@@ -80,7 +81,11 @@ function parseIntSafe(s: string): Result<number, string> {
 }
 
 const r = parseIntSafe("42");
-const msg = match(r, (v) => `ok:${v}`, (e) => `err:${e}`);
+const msg = match(
+  r,
+  (v) => `ok:${v}`,
+  (e) => `err:${e}`,
+);
 if (isOk(r)) console.log(r.data);
 ```
 

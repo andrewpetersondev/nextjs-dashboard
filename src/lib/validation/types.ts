@@ -1,10 +1,5 @@
-/**
- * Validation of core types and helpers.
- *
- * Documentation (conceptual, minimal code):
- * docs/lib/refactor-strategy/phase-1/1-3-validation-framework.md
- */
-import { Err, Ok, type Result } from "@/lib/core/result";
+import "server-only";
+import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { ValidationError_New } from "@/lib/errors/error.domain";
 
 export interface Validator<T> {

@@ -1,5 +1,4 @@
 import "server-only";
-
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -11,7 +10,7 @@ import {
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { toInvoiceId } from "@/lib/core/brands";
-import { Err, type Result } from "@/lib/core/result";
+import { Err, type Result } from "@/lib/core/result.base";
 import {
   type DatabaseError_New,
   ValidationError_New,

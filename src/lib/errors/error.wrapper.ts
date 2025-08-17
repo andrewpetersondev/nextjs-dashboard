@@ -1,6 +1,6 @@
 import "server-only";
-
-import { fromPromise, type Result } from "@/lib/core/result";
+import { fromPromise } from "@/lib/core/result.async";
+import type { Result } from "@/lib/core/result.base";
 import { mapToRepoError, type RepoError } from "@/lib/errors/error.mapper";
 
 /**

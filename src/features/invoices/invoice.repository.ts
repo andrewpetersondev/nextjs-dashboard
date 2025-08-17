@@ -1,5 +1,4 @@
 import "server-only";
-
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -15,7 +14,8 @@ import type {
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceId } from "@/lib/core/brands";
-import { Err, map, Ok, type Result } from "@/lib/core/result";
+import { Err, Ok, type Result } from "@/lib/core/result.base";
+import { map } from "@/lib/core/result.transform";
 import {
   type DatabaseError_New,
   ValidationError_New,

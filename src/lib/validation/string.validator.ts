@@ -1,4 +1,5 @@
-import { Err, Ok, type Result } from "@/lib/core/result";
+import "server-only";
+import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { ValidationError_New } from "@/lib/errors/error.domain";
 import type { ValidationRule, Validator } from "@/lib/validation/types";
 
