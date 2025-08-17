@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Result } from "@/lib/core/result";
-import { ValidationError_New } from "@/lib/errors/domain.error";
+import { ValidationError_New } from "@/lib/errors/error.domain";
 import type { ActionResult, FieldErrors } from "@/lib/types/action-result";
 
 export const toActionValidationResult = <T>(

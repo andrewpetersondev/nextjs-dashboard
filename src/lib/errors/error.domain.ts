@@ -1,4 +1,6 @@
-import { BaseError } from "@/lib/errors/base.error";
+import "server-only";
+
+import { BaseError } from "@/lib/errors/error.base";
 
 export class ValidationError_New extends BaseError {
   readonly code = "VALIDATION_ERROR";

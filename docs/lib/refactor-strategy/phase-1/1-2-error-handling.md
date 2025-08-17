@@ -20,9 +20,9 @@ Why it matters
 
 Where is the code?
 
-- Base class: docs/lib/refactor-strategy/code/base.error.ts
+- Base class: docs/lib/refactor-strategy/code/error.base.ts
 - Domain errors: docs/lib/refactor-strategy/code/domain.errors.ts
-- Helpers: docs/lib/refactor-strategy/code/error-helpers.ts
+- Helpers: docs/lib/refactor-strategy/code/error.helper.ts
 - Import paths in app code (via tsconfig aliases):
   - src/lib/errors/base.error
   - src/lib/errors/domain.errors
@@ -58,8 +58,8 @@ Notes
 Mental model (at a glance)
 
 [Throw domain errors] in core to stop execution and preserve stack
-  | asAppError converts unknown exceptions to a safe BaseError subtype
-  | errorToResult wraps unknowns into Result for composition
+| asAppError converts unknown exceptions to a safe BaseError subtype
+| errorToResult wraps unknowns into Result for composition
 At boundaries (HTTP/server actions): errorToHttp maps BaseError to stable wire shape
 
 ---

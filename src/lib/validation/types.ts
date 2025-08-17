@@ -5,7 +5,7 @@
  * docs/lib/refactor-strategy/phase-1/1-3-validation-framework.md
  */
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError_New } from "@/lib/errors/domain.error";
+import { ValidationError_New } from "@/lib/errors/error.domain";
 
 export interface Validator<T> {
   validate(value: unknown): Result<T, ValidationError_New>;

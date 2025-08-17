@@ -15,7 +15,7 @@ import { type InvoiceId, toPeriod } from "@/lib/core/brands";
 import {
   DatabaseError_New,
   ValidationError_New,
-} from "@/lib/errors/domain.error";
+} from "@/lib/errors/error.domain";
 import {
   DATA_ERROR_MESSAGES,
   INVOICE_ERROR_MESSAGES,

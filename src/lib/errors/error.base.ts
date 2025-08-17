@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * @remarks Base class error to Replace `AppError`
  *

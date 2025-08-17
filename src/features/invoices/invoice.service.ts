@@ -15,7 +15,7 @@ import { Err, type Result } from "@/lib/core/result";
 import {
   type DatabaseError_New,
   ValidationError_New,
-} from "@/lib/errors/domain.error";
+} from "@/lib/errors/error.domain";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { ValidationError } from "@/lib/errors/errors";
 

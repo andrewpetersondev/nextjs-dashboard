@@ -19,7 +19,7 @@ import { Err, map, Ok, type Result } from "@/lib/core/result";
 import {
   type DatabaseError_New,
   ValidationError_New,
-} from "@/lib/errors/domain.error";
+} from "@/lib/errors/error.domain";
 import type { RepoError } from "@/lib/errors/error.mapper";
 import { fromDal } from "@/lib/errors/error.wrapper";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";

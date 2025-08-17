@@ -2,7 +2,7 @@ import "server-only";
 
 import type { core, ZodType } from "zod";
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError_New } from "@/lib/errors/domain.error";
+import { ValidationError_New } from "@/lib/errors/error.domain";
 
 export type ZodIssue = core.$ZodIssue;
 

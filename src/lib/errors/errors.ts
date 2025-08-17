@@ -1,8 +1,10 @@
-import { BaseError } from "@/lib/errors/base.error";
+import "server-only";
+
+import { BaseError } from "@/lib/errors/error.base";
 import {
   DatabaseError_New,
   ValidationError_New,
-} from "@/lib/errors/domain.error";
+} from "@/lib/errors/error.domain";
 
 /**
  * Deprecated: Use `BaseError` and domain-specific errors instead.

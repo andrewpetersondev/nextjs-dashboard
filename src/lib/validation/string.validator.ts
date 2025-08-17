@@ -1,6 +1,6 @@
 import { Err, Ok, type Result } from "@/lib/core/result";
-import { ValidationError_New } from "@/lib/errors/domain.error";
-import type { ValidationRule, Validator } from "./types";
+import { ValidationError_New } from "@/lib/errors/error.domain";
+import type { ValidationRule, Validator } from "@/lib/validation/types";
 
 /**
  * StringValidator with tiny rule-based checks.
