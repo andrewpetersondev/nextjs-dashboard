@@ -37,7 +37,7 @@
 
 ## Software Architecture
 
-- Follow modular architecture with clear separation of concerns.
+- Follow modular architecture with a clear separation of concerns.
 - Use branded types for domain-specific logic.
 - Follow clean architecture: separate layers for database, data access, repositories, services, actions, and more.
 - Use dependency injection to improve testability and flexibility. If unfamiliar, provide a brief explanation in context.
@@ -53,7 +53,7 @@
 - Use Markdown for code blocks, labeled with the appropriate language.
 - Precede complex or non-obvious code with a clear, concise explanation.
 - Never reference or make assumptions about secrets or credentials.
-- Prefer existing project conventions, especially imports from `src/lib/utils/logger.ts` and `src/errors/errors.ts`.
+- Prefer existing project conventions, especially imports from `src/lib/logging/logger.ts` and `src/lib/errors/error.base.ts`.
 
 ## Automation and Refactoring
 
@@ -66,10 +66,10 @@
 - Use error handling best practices for both server and client code.
 - Log errors with sufficient context for debugging, never exposing sensitive data.
 - Use built-in Next.js error handling mechanisms where appropriate.
-- Use exported error classes from `src/errors/errors.ts` for consistency.
+- Use exported error classes from `src/lib/errors/error.base.ts` and `src/lib/errors/error.domain.ts` for consistency.
 - Implement global error boundaries in React using ErrorBoundary components.
 - Use structured (JSON) logging in server and client code.
-- Use the `pino` logger as exported from `src/lib/utils/logger.ts`.
+- Use the `pino` logger as exported from `src/lib/logging/logger.ts`.
 
 ## Resolving Instruction Conflicts
 
@@ -85,12 +85,13 @@
 ## Documentation
 
 - Document all files, components, utilities, and APIs using TSDoc.
+- Create or update README.md for each folder.
 - Keep README and usage guides up to date.
 
 ## Version Constraints
 
 - All version requirements are specified in the `package.json` file. Ensure all responses are compatible with these versions.
 
-## Fallback Instructions 
+## Fallback Instructions
 
 - Default to safest practices if uncertain.
