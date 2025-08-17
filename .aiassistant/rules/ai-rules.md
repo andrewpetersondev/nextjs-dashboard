@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 ---
 
 # GitHub Copilot & AI Assistant Instructions
