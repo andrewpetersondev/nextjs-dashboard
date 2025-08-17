@@ -20,7 +20,7 @@ import {
   isPeriod,
   isRevenueId,
   isRevenueSource,
-} from "@/lib/definitions/brands";
+} from "@/lib/core/brands";
 import { isValidDate } from "@/lib/utils/date.utils";
 
 /**

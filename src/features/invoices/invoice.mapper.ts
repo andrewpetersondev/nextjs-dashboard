@@ -15,7 +15,7 @@ import {
   toInvoiceId,
   toInvoiceStatus,
   toPeriod,
-} from "@/lib/definitions/brands";
+} from "@/lib/core/brands";
 import { isValidDate, toFirstOfMonth } from "@/lib/utils/date.utils";
 
 /**

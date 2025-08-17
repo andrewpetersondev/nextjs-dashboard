@@ -19,7 +19,7 @@ import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toIntervalDuration } from "@/lib/definitions/brands";
+import { toIntervalDuration } from "@/lib/core/brands";
 import { logger } from "@/lib/logging/logger";
 
 /**

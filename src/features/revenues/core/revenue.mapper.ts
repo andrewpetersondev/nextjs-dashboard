@@ -13,7 +13,7 @@ import {
   toPeriod,
   toRevenueId,
   toRevenueSource,
-} from "@/lib/definitions/brands";
+} from "@/lib/core/brands";
 import { ValidationError } from "@/lib/errors/errors";
 import { isValidDate } from "@/lib/utils/date.utils";
 

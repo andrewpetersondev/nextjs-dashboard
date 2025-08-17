@@ -1,4 +1,4 @@
-import type { CustomerId } from "@/lib/definitions/brands";
+import type { CustomerId } from "@/lib/core/brands";
 
 /**
  * DB row for customer select options.

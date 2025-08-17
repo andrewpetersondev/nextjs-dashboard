@@ -15,7 +15,7 @@ import {
 } from "@/features/revenues/core/revenue.types";
 import { createMonthTemplateData } from "@/features/revenues/utils/data/template.utils";
 import { dateToPeriod } from "@/features/revenues/utils/date/period.utils";
-import type { Period } from "@/lib/definitions/brands";
+import type { Period } from "@/lib/core/brands";
 import { ValidationError } from "@/lib/errors/errors";
 
 /**

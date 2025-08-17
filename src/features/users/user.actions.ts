@@ -41,7 +41,7 @@ import type {
 import { getValidUserRole } from "@/features/users/user.utils";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import { actionResult } from "@/lib/core/action-result";
-import { toUserId, toUserRole } from "@/lib/definitions/brands";
+import { toUserId, toUserRole } from "@/lib/core/brands";
 import { USER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormState } from "@/lib/forms/form.types";
 import { normalizeFieldErrors } from "@/lib/forms/form-validation";

@@ -11,7 +11,7 @@ import type {
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import { type InvoiceId, toPeriod } from "@/lib/definitions/brands";
+import { type InvoiceId, toPeriod } from "@/lib/core/brands";
 import {
   DATA_ERROR_MESSAGES,
   INVOICE_ERROR_MESSAGES,

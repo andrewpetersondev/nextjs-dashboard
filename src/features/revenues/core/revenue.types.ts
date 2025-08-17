@@ -1,4 +1,4 @@
-import type { Period } from "@/lib/definitions/brands";
+import type { Period } from "@/lib/core/brands";
 
 /**
  * Money unit aliases to make dollars vs cents explicit at type level.

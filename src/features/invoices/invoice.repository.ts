@@ -14,8 +14,8 @@ import type {
   InvoiceServiceEntity,
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
+import type { InvoiceId } from "@/lib/core/brands";
 import { Err, fromPromise, Ok, type Result } from "@/lib/core/result";
-import type { InvoiceId } from "@/lib/definitions/brands";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import { BaseRepository } from "@/lib/repository/base-repository";

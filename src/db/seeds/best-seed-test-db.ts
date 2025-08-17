@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-import type { Period } from "@/lib/definitions/brands";
+import type { Period } from "@/lib/core/brands";
 import * as schema from "../schema";
 import { nodeEnvTestDb } from "../test-database";
 

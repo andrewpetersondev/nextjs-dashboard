@@ -15,7 +15,7 @@ import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
-import { toUserRole, type UserId } from "@/lib/definitions/brands";
+import { toUserRole, type UserId } from "@/lib/core/brands";
 import { DatabaseError } from "@/lib/errors/errors";
 import { logger } from "@/lib/logging/logger";
 import { createRandomPassword } from "@/lib/utils/password";

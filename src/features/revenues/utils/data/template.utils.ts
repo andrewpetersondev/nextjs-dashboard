@@ -11,7 +11,7 @@ import {
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
-import { type Period, toPeriod, toRevenueId } from "@/lib/definitions/brands";
+import { type Period, toPeriod, toRevenueId } from "@/lib/core/brands";
 import { logger } from "@/lib/logging/logger";
 
 /**

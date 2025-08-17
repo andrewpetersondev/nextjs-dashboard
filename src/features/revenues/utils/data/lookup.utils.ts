@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
-import { isPeriod, type Period, toPeriod } from "@/lib/definitions/brands";
+import { isPeriod, type Period, toPeriod } from "@/lib/core/brands";
 import { logger } from "@/lib/logging/logger";
 
 const normalizePeriod = (p: string): string => {

@@ -5,7 +5,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
-import type { Period, RevenueId } from "@/lib/definitions/brands";
+import type { Period, RevenueId } from "@/lib/core/brands";
 
 /**
  * RevenueRepositoryInterface

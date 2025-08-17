@@ -39,7 +39,7 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "@/lib/definitions/brands";
+} from "@/lib/core/brands";
 
 /**
  * Schema overview

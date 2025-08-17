@@ -10,7 +10,7 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { toInvoiceId } from "@/lib/definitions/brands";
+import { toInvoiceId } from "@/lib/core/brands";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { ValidationError } from "@/lib/errors/errors";
 
