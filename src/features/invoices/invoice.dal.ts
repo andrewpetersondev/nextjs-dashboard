@@ -13,17 +13,21 @@ import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
 import { type InvoiceId, toPeriod } from "@/lib/core/brands";
 import {
+  DatabaseError_New,
+  ValidationError_New,
+} from "@/lib/errors/domain.error";
+import {
   DATA_ERROR_MESSAGES,
   INVOICE_ERROR_MESSAGES,
 } from "@/lib/errors/error-messages";
-import { DatabaseError, ValidationError } from "@/lib/errors/errors";
+import { logger } from "@/lib/logging/logger";
 
 /**
  * Creates a new invoice in the database.
  * @param db - Drizzle database instance
  * @param input - Invoice creation data (ORIGIN: dal <-- service <-- formEntity <-- Business Transformation <-- UI )
  * @returns Promise resolving to created InvoiceEntity
- * @throws DatabaseError if creation fails
+ * @throws DatabaseError_New if creation fails
  */
 export async function createInvoiceDal(
   db: Database,
@@ -48,7 +52,7 @@ export async function createInvoiceDal(
       .returning();
 
     if (!createdInvoice) {
-      throw new DatabaseError(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
+      throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
         input,
       });
     }
@@ -62,8 +66,8 @@ export async function createInvoiceDal(
  * @param db - Drizzle database instance
  * @param id - branded Invoice ID
  * @returns Promise resolving to InvoiceEntity
- * @throws DatabaseError if invoice not found
- * @throws ValidationError if input parameters are invalid
+ * @throws DatabaseError_New if invoice not found
+ * @throws ValidationError_New if input parameters are invalid
  */
 export async function readInvoiceDal(
   db: Database,
@@ -71,7 +75,7 @@ export async function readInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Basic validation of parameters
   if (!db || !id) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
   }
 
   // Fetch invoice by ID
@@ -79,7 +83,7 @@ export async function readInvoiceDal(
 
   // Check if invoice exists
   if (!data) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
   }
 
   // Convert raw database row to InvoiceEntity
@@ -92,7 +96,8 @@ export async function readInvoiceDal(
  * @param id - Branded InvoiceId from url
  * @param updateData - Partial invoice data to update which omits `id`
  * @returns Promise resolving to updated InvoiceEntity
- * @throws DatabaseError if update fails or invoice not found
+ * @throws ValidationError_New if input parameters are invalid
+ * @throws DatabaseError_New if update fails or invoice not found
  */
 export async function updateInvoiceDal(
   db: Database,
@@ -101,7 +106,7 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
   if (!db || !id || !updateData) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
       id,
       updateData,
     });
@@ -116,7 +121,7 @@ export async function updateInvoiceDal(
 
   // Check if update was successful
   if (!updated) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
   }
 
   // Convert raw database row to InvoiceEntity
@@ -128,7 +133,7 @@ export async function updateInvoiceDal(
  * @param db - Drizzle database instance
  * @param id - Invoice ID
  * @returns Promise resolving to deleted InvoiceEntity
- * @throws DatabaseError if deletion fails or invoice not found
+ * @throws DatabaseError_New if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
   db: Database,
@@ -136,7 +141,7 @@ export async function deleteInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
   if (!db || !id) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
   }
 
   // db operations
@@ -147,7 +152,7 @@ export async function deleteInvoiceDal(
 
   // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.DELETE_FAILED, { id });
   }
 
   // Convert raw database row to InvoiceEntity and return
@@ -161,7 +166,7 @@ export async function deleteInvoiceDal(
  * @param page - Current page number (1-based)
  * @param pageSize - Number of items per page
  * @returns Promise resolving to object with entities and total count
- * @throws DatabaseError if query fails
+ * @throws DatabaseError_New if query fails
  */
 export async function listInvoicesDal(
   db: Database,
@@ -173,39 +178,42 @@ export async function listInvoicesDal(
 
   // Build filter conditions
   const conditions = [];
+
   if (filter.status) {
     conditions.push(eq(invoices.status, filter.status));
   }
+
   if (filter.customerId) {
     conditions.push(eq(invoices.customerId, filter.customerId));
   }
+
   if (filter.date) {
     conditions.push(eq(invoices.date, new Date(filter.date)));
   }
   // Add more fields as needed
 
-  // Combine conditions with Drizzle's `and` if multiple
-  const whereClause =
-    conditions.length > 0
-      ? { where: conditions.length === 1 ? conditions[0] : and(...conditions) }
-      : {};
+  // Combine conditions; avoid calling `.where(undefined).
+  const whereExpr =
+    conditions.length === 0
+      ? undefined
+      : conditions.length === 1
+        ? conditions[0]
+        : and(...conditions);
 
-  // Query with filters
+  const baseSelect = db.select().from(invoices).limit(pageSize).offset(offset);
+  const baseCount = db.select({ count: count() }).from(invoices);
+
   const [entitiesResult, totalResult] = await Promise.all([
-    db
-      .select()
-      .from(invoices)
-      .limit(pageSize)
-      .offset(offset)
-      .where(whereClause.where),
-    db.select({ count: count() }).from(invoices).where(whereClause.where),
+    whereExpr ? baseSelect.where(whereExpr) : baseSelect,
+    whereExpr ? baseCount.where(whereExpr) : baseCount,
   ]);
 
   const entities = entitiesResult.map(rawDbToInvoiceEntity);
   const total = totalResult[0]?.count ?? 0;
 
+  // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!entities || entities.length === 0 || !total || total < 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
       filter,
       page,
       pageSize,
@@ -220,7 +228,7 @@ export async function listInvoicesDal(
  * @param db - Drizzle database instance
  * @param limit - Maximum number of invoices to fetch
  * @returns Promise resolving to array of InvoiceListFilter
- * @throws DatabaseError if query fails
+ * @throws DatabaseError_New if query fails
  */
 export async function fetchLatestInvoicesDal(
   db: Database,
@@ -244,8 +252,9 @@ export async function fetchLatestInvoicesDal(
     .orderBy(desc(invoices.date))
     .limit(limit);
 
+  // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED, {
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED, {
       limit,
     });
   }
@@ -259,7 +268,7 @@ export async function fetchLatestInvoicesDal(
  * @param query - Search query string
  * @param currentPage - Current page number
  * @returns Promise resolving to array of InvoiceListFilter
- * @throws DatabaseError if query fails
+ * @throws DatabaseError_New if query fails
  */
 export async function fetchFilteredInvoicesDal(
   db: Database,
@@ -296,8 +305,9 @@ export async function fetchFilteredInvoicesDal(
     .limit(ITEMS_PER_PAGE)
     .offset(offset);
 
+  // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED, {
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED, {
       currentPage,
       query,
     });
@@ -311,7 +321,7 @@ export async function fetchFilteredInvoicesDal(
  * @param db - Drizzle database instance
  * @param query - Search query string
  * @returns Promise resolving to total number of pages
- * @throws DatabaseError if query fails
+ * @throws DatabaseError_New if query fails
  */
 export async function fetchInvoicesPagesDal(
   db: Database,
@@ -334,8 +344,9 @@ export async function fetchInvoicesPagesDal(
       ),
     );
 
+  // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
       query,
       total,
     });
@@ -359,12 +370,22 @@ export async function fetchTotalInvoicesCountDal(
     const [result] = await db
       .select({ value: count(invoices.id) })
       .from(invoices);
+
     return result?.value ?? 0;
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new DatabaseError(
+    logger.error({
+      error: error instanceof Error ? error.message : "Unknown error",
+      message: "Error fetching total invoices count",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    const context = error instanceof Error ? {} : { error };
+    const cause = error instanceof Error ? error : undefined;
+
+    throw new DatabaseError_New(
       DATA_ERROR_MESSAGES.ERROR_FETCH_DASHBOARD_CARDS,
-      error,
+      context,
+      cause,
     );
   }
 }
@@ -377,7 +398,7 @@ export async function fetchTotalPaidInvoicesDal(db: Database): Promise<number> {
     .then((rows) => rows[0]?.value ?? 0);
 
   if (paid === undefined) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PAID_FAILED);
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PAID_FAILED);
   }
 
   return paid;
@@ -393,7 +414,9 @@ export async function fetchTotalPendingInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (pending === undefined) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PENDING_FAILED);
+    throw new DatabaseError_New(
+      INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PENDING_FAILED,
+    );
   }
 
   return pending;
@@ -402,29 +425,34 @@ export async function fetchTotalPendingInvoicesDal(
 /**
  * Fetches all paid invoices from the database.
  * @returns Promise resolving to an array of InvoiceEntity
- * @throws DatabaseError if fetching fails or no paid invoices found
- * @throws ValidationError if db is not provided
+ * @throws DatabaseError_New if fetching fails or no paid invoices found
+ * @throws ValidationError_New if db is not provided
  * @param db - Drizzle database instance
  */
 export async function fetchAllPaidInvoicesDal(
   db: Database,
 ): Promise<InvoiceEntity[]> {
   if (!db) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
       db: "Database instance is required",
     });
   }
+
   const data = await db
     .select()
     .from(invoices)
     .where(eq(invoices.status, "paid"))
     .orderBy(desc(invoices.date));
+
+  // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
+    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
   }
+
   // Convert raw database rows to InvoiceEntity
   const entities: InvoiceEntity[] = data.map((row) =>
     rawDbToInvoiceEntity(row),
   );
+
   return entities;
 }

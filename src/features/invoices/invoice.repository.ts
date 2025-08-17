@@ -16,8 +16,11 @@ import type {
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceId } from "@/lib/core/brands";
 import { Err, fromPromise, Ok, type Result } from "@/lib/core/result";
+import {
+  type DatabaseError_New,
+  ValidationError_New,
+} from "@/lib/errors/domain.error";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
-import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import { BaseRepository } from "@/lib/repository/base-repository";
 
 /**
@@ -35,14 +38,16 @@ export class InvoiceRepository extends BaseRepository<
    */
   async createSafe(
     input: InvoiceServiceEntity,
-  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
     if (!input || typeof input !== "object") {
-      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+      return Err(
+        new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED),
+      );
     }
 
     const createdEntityRes = (await fromPromise(
       createInvoiceDal(this.db, input),
-    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+    )) as Result<InvoiceEntity, ValidationError_New | DatabaseError_New>;
 
     if (!createdEntityRes.success) return createdEntityRes;
 
@@ -55,14 +60,14 @@ export class InvoiceRepository extends BaseRepository<
    * - generated values in the service layer (`InvoiceServiceEntity`).
    * @param input - Invoice creation data as InvoiceServiceEntity
    * @returns Promise resolving to created InvoiceDto returning to Service layer.
-   * @throws ValidationError for invalid input
-   * @throws DatabaseError for database failures
+   * @throws ValidationError_New for invalid input
+   * @throws DatabaseError_New for database failures
    * @throws
    * - Error bubbles up through the Service Layer to the Actions layer.
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
     const createdEntity = await createInvoiceDal(this.db, input);
@@ -75,16 +80,16 @@ export class InvoiceRepository extends BaseRepository<
    */
   async readSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
     if (!id) {
       return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+        new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
       );
     }
 
     const entityRes = (await fromPromise(
       readInvoiceDal(this.db, id),
-    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+    )) as Result<InvoiceEntity, ValidationError_New | DatabaseError_New>;
     if (!entityRes.success) return entityRes;
 
     return Ok(entityToInvoiceDto(entityRes.data));
@@ -94,13 +99,13 @@ export class InvoiceRepository extends BaseRepository<
    * Reads an invoice by ID.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceDto
-   * @throws ValidationError for invalid parameter id
-   * @throws DatabaseError for database failures
+   * @throws ValidationError_New for invalid parameter id
+   * @throws DatabaseError_New for database failures
    */
   async read(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
     // Call DAL with branded ID
@@ -116,14 +121,16 @@ export class InvoiceRepository extends BaseRepository<
   async updateSafe(
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
-  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
     if (!data || !id || typeof data !== "object") {
-      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+      return Err(
+        new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED),
+      );
     }
 
     const updatedEntityRes = (await fromPromise(
       updateInvoiceDal(this.db, id, data),
-    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+    )) as Result<InvoiceEntity, ValidationError_New | DatabaseError_New>;
 
     if (!updatedEntityRes.success) return updatedEntityRes;
 
@@ -135,8 +142,8 @@ export class InvoiceRepository extends BaseRepository<
    * @param id - InvoiceId (branded type)
    * @param data - Update data as InvoiceFormPartialEntity
    * @returns Promise resolving to updated InvoiceDto
-   * @throws ValidationError for invalid input
-   * @throws DatabaseError for database failures
+   * @throws ValidationError_New for invalid input
+   * @throws DatabaseError_New for database failures
    */
   async update(
     id: InvoiceId,
@@ -144,7 +151,7 @@ export class InvoiceRepository extends BaseRepository<
   ): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!data || !id || typeof data !== "object") {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
     }
 
     // Call DAL with branded types
@@ -159,16 +166,16 @@ export class InvoiceRepository extends BaseRepository<
    */
   async deleteSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
     if (!id) {
       return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+        new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
       );
     }
 
     const deletedEntityRes = (await fromPromise(
       deleteInvoiceDal(this.db, id),
-    )) as Result<InvoiceEntity, ValidationError | DatabaseError>;
+    )) as Result<InvoiceEntity, ValidationError_New | DatabaseError_New>;
 
     if (!deletedEntityRes.success) return deletedEntityRes;
 
@@ -179,13 +186,13 @@ export class InvoiceRepository extends BaseRepository<
    * Deletes an invoice.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to deleted InvoiceDto
-   * @throws ValidationError for invalid ID
-   * @throws DatabaseError for database failures
+   * @throws ValidationError_New for invalid ID
+   * @throws DatabaseError_New for database failures
    */
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
     // Call DAL with branded ID
@@ -200,15 +207,15 @@ export class InvoiceRepository extends BaseRepository<
    */
   async findByIdSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceEntity, ValidationError | DatabaseError>> {
+  ): Promise<Result<InvoiceEntity, ValidationError_New | DatabaseError_New>> {
     if (!id) {
       return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
+        new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
       );
     }
     return (await fromPromise(readInvoiceDal(this.db, id))) as Result<
       InvoiceEntity,
-      ValidationError | DatabaseError
+      ValidationError_New | DatabaseError_New
     >;
   }
 
@@ -216,17 +223,15 @@ export class InvoiceRepository extends BaseRepository<
    * Finds an invoice by ID.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceEntity
-   * @throws ValidationError for invalid parameter id
-   * @throws DatabaseError for database failures
+   * @throws ValidationError_New for invalid parameter id
+   * @throws DatabaseError_New for database failures
    */
   async findById(id: InvoiceId): Promise<InvoiceEntity> {
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
     const entity: InvoiceEntity = await readInvoiceDal(this.db, id);
-    if (!entity) {
-      throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
-    }
+
     return entity;
   }
 
@@ -234,30 +239,25 @@ export class InvoiceRepository extends BaseRepository<
    * "Safe" findAll: returns Result instead of throwing.
    */
   async findAllSafe(): Promise<
-    Result<InvoiceEntity[], ValidationError | DatabaseError>
+    Result<InvoiceEntity[], ValidationError_New | DatabaseError_New>
   > {
     const res = (await fromPromise(fetchAllPaidInvoicesDal(this.db))) as Result<
       InvoiceEntity[],
-      ValidationError | DatabaseError
+      ValidationError_New | DatabaseError_New
     >;
     if (!res.success) return res;
 
-    if (!res.data) {
-      return Err(new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND));
-    }
     return Ok(res.data);
   }
 
   /**
    * Finds all invoices.
    * @returns Promise resolving to array of InvoiceEntity
-   * @throws DatabaseError for database failures
+   * @throws DatabaseError_New for database failures
    */
   async findAll(): Promise<InvoiceEntity[]> {
     const invoices: InvoiceEntity[] = await fetchAllPaidInvoicesDal(this.db);
-    if (!invoices) {
-      throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND);
-    }
+
     return invoices;
   }
 }
