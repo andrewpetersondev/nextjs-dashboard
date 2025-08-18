@@ -1,5 +1,6 @@
 import { addMonths, format } from "date-fns";
-import { type Period, toPeriod } from "@/lib/core/brands";
+import { toPeriod } from "@/lib/core/brands";
+import type { Period } from "@/lib/types/types.brands";
 import { formatYearMonth } from "@/lib/utils/date.utils";
 
 /**

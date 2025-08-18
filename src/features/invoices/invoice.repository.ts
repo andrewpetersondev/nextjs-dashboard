@@ -13,7 +13,6 @@ import type {
   InvoiceServiceEntity,
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
-import type { InvoiceId } from "@/lib/core/brands";
 import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { map } from "@/lib/core/result.transform";
 import {
@@ -24,6 +23,7 @@ import type { RepoError } from "@/lib/errors/error.mapper";
 import { fromDal } from "@/lib/errors/error.wrapper";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { BaseRepository } from "@/lib/repository/repository.base";
+import type { InvoiceId } from "@/lib/types/types.brands";
 
 /**
  * Repository for Invoice domain operations.

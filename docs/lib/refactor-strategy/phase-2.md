@@ -2,7 +2,7 @@
 
 ## 2.1 Brand Types System (`src/lib/core/brand.ts`)
 
-~~~typescript
+````typescript
 // src/lib/core/brand.ts
 /**
  * Creates a symbol-constrained branded type to prevent mixing incompatible values.
@@ -65,12 +65,12 @@ export const isBrand = <T, B extends symbol>(
  */
 export const unbrand = <T, B extends symbol>(brandedValue: Brand<T, B>): T =>
   brandedValue as T;
-~~~
+````
 
 ## 2.2 Enhanced Brand Definitions (`src/lib/types/brands.ts`)
 
-~~~typescript
-// src/lib/types/brands.ts
+```typescript
+// src/lib/types/types.brands.ts
 import { Brand, createBrand } from "../core/brand";
 import { Result, Ok, Err } from "../core/result";
 import { ValidationError } from "../errors/domain.errors";
@@ -125,4 +125,4 @@ export const createInvoiceId = (
   }
   return Ok(brandInvoiceId(value.trim()));
 };
-~~~
+```

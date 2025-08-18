@@ -1,5 +1,5 @@
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { CustomerId, InvoiceId, Period } from "@/lib/core/brands";
+import type { CustomerId, InvoiceId, Period } from "@/lib/types/types.brands";
 
 /**
  * Allowed invoice statuses.

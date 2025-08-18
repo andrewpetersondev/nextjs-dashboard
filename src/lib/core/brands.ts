@@ -13,6 +13,14 @@ import {
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
 import { ValidationError } from "@/lib/errors/errors";
+import type {
+  CustomerId,
+  InvoiceId,
+  Period,
+  RevenueId,
+  SessionId,
+  UserId,
+} from "@/lib/types/types.brands";
 import {
   isValidDate,
   normalizeToFirstOfMonthUTC,
@@ -29,21 +37,49 @@ const UUID_REGEX =
  */
 export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 
-// Centralized brand symbols
-export const customerIdBrand = Symbol("CustomerId");
-export const userIdBrand = Symbol("UserId");
-export const invoiceIdBrand = Symbol("InvoiceId");
-export const revenueIdBrand = Symbol("RevenueId");
-export const sessionIdBrand = Symbol("SessionId");
-export const periodBrand = Symbol("Period");
+/**
+ * Creates a branded value factory function for a specific symbol.
+ * Provides type-safe branding with runtime symbol validation capability.
+ *
+ * @param _brandSymbol - The unique symbol for this brand
+ * @returns Factory function that creates branded values
+ * @example
+ * ```ts
+ * export const USER_ID_BRAND = Symbol("UserId");
+ * export type UserId = Brand<string, typeof USER_ID_BRAND>;
+ * const brandUserId = createBrand(USER_ID_BRAND);
+ * ```
+ * @template T - The underlying type being branded
+ * @template B - The brand symbol type for uniqueness
+ * @return A function that takes a value of type T and returns a Brand<T, B>
+ *
+ */
+export const createBrand = <T, B extends symbol>(_brandSymbol: B) => {
+  return (value: T): Brand<T, B> => value as Brand<T, B>;
+};
 
-// Branded types
-export type CustomerId = Brand<string, typeof customerIdBrand>;
-export type UserId = Brand<string, typeof userIdBrand>;
-export type InvoiceId = Brand<string, typeof invoiceIdBrand>;
-export type RevenueId = Brand<string, typeof revenueIdBrand>;
-export type SessionId = Brand<string, typeof sessionIdBrand>;
-export type Period = Brand<Date, typeof periodBrand>;
+/**
+ * Type guard to check if a value has a specific brand.
+ * Useful for runtime brand validation in complex scenarios.
+ *
+ * @param value - The value to check
+ * @param validator - Function to validate the underlying type
+ * @returns True if value matches the brand type
+ */
+export const isBrand = <T, B extends symbol>(
+  value: unknown,
+  validator: (v: unknown) => v is T,
+): value is Brand<T, B> => validator(value);
+
+/**
+ * Extracts the underlying value from a branded type.
+ * Use sparingly - prefer keeping values branded throughout the system.
+ *
+ * @param brandedValue - The branded value to unwrap
+ * @returns The underlying unbranded value
+ */
+export const unbrand = <T, B extends symbol>(brandedValue: Brand<T, B>): T =>
+  brandedValue as T;
 
 /**
  * Validates that a string is a valid UUID format

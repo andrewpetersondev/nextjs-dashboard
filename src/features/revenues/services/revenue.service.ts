@@ -8,8 +8,8 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
-import type { Period, RevenueId } from "@/lib/core/brands";
 import { DatabaseError, ValidationError } from "@/lib/errors/errors";
+import type { Period, RevenueId } from "@/lib/types/types.brands";
 
 /**
  * Business service for revenue processing and management.

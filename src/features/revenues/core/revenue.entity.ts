@@ -5,7 +5,7 @@ import type {
   MonthName,
   RevenueSource,
 } from "@/features/revenues/core/revenue.types";
-import type { Period, RevenueId } from "@/lib/core/brands";
+import type { Period, RevenueId } from "@/lib/types/types.brands";
 
 /**
  * Represents a revenue entity in the database.

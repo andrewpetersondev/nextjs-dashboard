@@ -1,5 +1,4 @@
 import "server-only";
-
 import { isValid, parseISO } from "date-fns";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
@@ -8,9 +7,10 @@ import {
   dateToPeriod,
   periodKey,
 } from "@/features/revenues/utils/date/period.utils";
-import { type Period, toPeriod, toRevenueId } from "@/lib/core/brands";
+import { toPeriod, toRevenueId } from "@/lib/core/brands";
 import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
+import type { Period } from "@/lib/types/types.brands";
 
 // ===== Logging Functions =====
 

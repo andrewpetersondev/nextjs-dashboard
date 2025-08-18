@@ -3,7 +3,6 @@
  * Uses Drizzle ORM for database access.
  */
 import "server-only";
-
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import type { Database } from "@/db/connection";
 import { demoUserCounters, users } from "@/db/schema";
@@ -15,9 +14,10 @@ import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
-import { toUserRole, type UserId } from "@/lib/core/brands";
+import { toUserRole } from "@/lib/core/brands";
 import { DatabaseError } from "@/lib/errors/errors";
 import { logger } from "@/lib/logging/logger";
+import type { UserId } from "@/lib/types/types.brands";
 import { createRandomPassword } from "@/lib/utils/password";
 
 /**
