@@ -12,6 +12,7 @@ import {
   type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { ValidationError } from "@/lib/errors/errors";
 import type {
   CustomerId,
@@ -33,38 +34,70 @@ const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Brand type utility for creating nominal types
+ * Build a branded type for type safety.
+ *
+ * Provides a unique symbol-based brand to distinguish the type from similar
+ * structures, ensuring it is only used where intended.
+ *
+ * @typeParam T - Base type to extend with the brand.
+ * @typeParam B - Unique symbol representing the brand.
+ * @remarks
+ * - The brand is applied via intersection with a readonly `__brand` property.
+ * - Useful for creating uniquely-typed identifiers or ensuring stricter API typing.
+ * - No runtime changes; branding only affects TypeScript type checking.
+ * @example
+ * ```typescript
+ * declare const UserID: unique symbol;
+ * type UserId = Brand<string, typeof UserID>;
+ *
+ * const id: UserId = "1234" as UserId; // Valid.
+ * const invalidId: UserId = "1234";    // Error: Type 'string' is not assignable.
+ * ```
  */
 export type Brand<T, B extends symbol> = T & { readonly __brand: B };
 
 /**
- * Creates a branded value factory function for a specific symbol.
- * Provides type-safe branding with runtime symbol validation capability.
+ * Create a branded type for stricter type safety.
  *
- * @param _brandSymbol - The unique symbol for this brand
- * @returns Factory function that creates branded values
+ * Ensures a value is cast to a `Brand<T, B>` type to distinguish it from similar types.
+ *
+ * @typeParam T - The underlying value type to brand.
+ * @typeParam B - The symbol representing the unique brand.
+ * @param _brandSymbol - The branding symbol (not used at runtime, only for type distinction).
+ * @returns A function that casts a value to the branded type.
  * @example
- * ```ts
- * export const USER_ID_BRAND = Symbol("UserId");
- * export type UserId = Brand<string, typeof USER_ID_BRAND>;
- * const brandUserId = createBrand(USER_ID_BRAND);
- * ```
- * @template T - The underlying type being branded
- * @template B - The brand symbol type for uniqueness
- * @return A function that takes a value of type T and returns a Brand<T, B>
+ * ```typescript
+ * declare const userIdBrand: unique symbol;
+ * type UserId = Brand<string, typeof userIdBrand>;
  *
+ * const createUserId = createBrand<string, typeof userIdBrand>(userIdBrand);
+ * const id: UserId = createUserId('12345'); // Valid
+ * ```
  */
 export const createBrand = <T, B extends symbol>(_brandSymbol: B) => {
   return (value: T): Brand<T, B> => value as Brand<T, B>;
 };
 
 /**
- * Type guard to check if a value has a specific brand.
- * Useful for runtime brand validation in complex scenarios.
+ * Type guard to validate if a value is a branded type.
  *
- * @param value - The value to check
- * @param validator - Function to validate the underlying type
- * @returns True if value matches the brand type
+ * Ensures the value conforms to {@link Brand<T, B>} by verifying it satisfies the
+ * provided type validator.
+ *
+ * @typeParam T - The underlying type of the value being checked.
+ * @typeParam B - The branding symbol associated with the type.
+ * @param value - The value to validate as a branded type.
+ * @param validator - A predicate function to check if the value matches the base type.
+ * @returns `true` if the value is a valid branded type, otherwise `false`.
+ * @example
+ * ```typescript
+ * const isString = (v: unknown): v is string => typeof v === 'string';
+ * const value = 'hello' as unknown;
+ *
+ * if (isBrand<string, typeof MyBrandSymbol>(value, isString)) {
+ *   // value is now narrowed to Brand<string, typeof MyBrandSymbol>
+ * }
+ * ```
  */
 export const isBrand = <T, B extends symbol>(
   value: unknown,
@@ -100,6 +133,35 @@ const validateUuid = (id: string, brandName: string): void => {
     );
   }
 };
+
+export const validateUuidResult = (
+  value: unknown,
+  label = "UserId",
+): Result<string, ValidationError> => {
+  if (typeof value !== "string") {
+    return Err(
+      new ValidationError(
+        `Invalid ${label}: expected string, got ${typeof value}`,
+      ),
+    );
+  }
+  const v = value.trim();
+  if (v.length === 0) {
+    return Err(new ValidationError(`${label} cannot be empty`));
+  }
+  if (!UUID_REGEX.test(v)) {
+    return Err(
+      new ValidationError(
+        `Invalid ${label}: "${value}". Must be a valid UUID format.`,
+      ),
+    );
+  }
+  return Ok(v);
+};
+
+export function isUserIdSafe(value: unknown): value is UserId {
+  return typeof value === "string" && UUID_REGEX.test(value);
+}
 
 /**
  * Generic enum validation function with improved type safety
