@@ -4,6 +4,7 @@ import {
   createBrand,
   isUuid,
   UUID_REGEX,
+  validatePeriodResult,
   validateUuid,
   validateUuidResult,
 } from "@/lib/core/brands";
@@ -32,8 +33,114 @@ export type RevenueId = Brand<string, typeof REVENUE_ID_BRAND>;
 export type SessionId = Brand<string, typeof SESSION_ID_BRAND>;
 export type Period = Brand<Date, typeof PERIOD_BRAND>;
 
+// Generic helpers to reduce duplication
+
+export const mapNewToLegacyError = <T>(
+  r: Result<T, ValidationError_New>,
+): Result<T, ValidationError> =>
+  r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
+
+export const uuidValidatorFor =
+  (label: string) =>
+  (value: unknown): Result<string, ValidationError_New> => {
+    const r = validateUuidResult(value, label);
+    return r.success
+      ? Ok(r.data)
+      : Err(new ValidationError_New(r.error.message));
+  };
+
+export const periodValidator = (
+  value: unknown,
+): Result<Date, ValidationError_New> => {
+  const r = validatePeriodResult(value);
+  return r.success ? Ok(r.data) : Err(new ValidationError_New(r.error.message));
+};
+
 // Factory: explicitly bind base type and brand symbol to avoid inference issues
+
+// Factories: explicitly bind base type and brand symbol to avoid inference issues
+
+const brandCustomerId = createBrand<string, typeof CUSTOMER_ID_BRAND>(
+  CUSTOMER_ID_BRAND,
+);
+
 const brandUserId = createBrand<string, typeof USER_ID_BRAND>(USER_ID_BRAND);
+
+const brandInvoiceId = createBrand<string, typeof INVOICE_ID_BRAND>(
+  INVOICE_ID_BRAND,
+);
+
+const brandRevenueId = createBrand<string, typeof REVENUE_ID_BRAND>(
+  REVENUE_ID_BRAND,
+);
+
+const brandSessionId = createBrand<string, typeof SESSION_ID_BRAND>(
+  SESSION_ID_BRAND,
+);
+
+const brandPeriod = createBrand<Date, typeof PERIOD_BRAND>(PERIOD_BRAND);
+
+// Compose validation + branding generically using brandWith()
+// UUID-based brands
+
+const createCustomerIdInternal = brandWith<string, CustomerId>(
+  uuidValidatorFor("CustomerId"),
+  brandCustomerId,
+);
+
+const createUserIdInternal = brandWith<string, UserId>(
+  uuidValidatorFor("UserId"),
+  brandUserId,
+);
+
+const createInvoiceIdInternal = brandWith<string, InvoiceId>(
+  uuidValidatorFor("InvoiceId"),
+  brandInvoiceId,
+);
+
+const createRevenueIdInternal = brandWith<string, RevenueId>(
+  uuidValidatorFor("RevenueId"),
+  brandRevenueId,
+);
+
+const createSessionIdInternal = brandWith<string, SessionId>(
+  uuidValidatorFor("SessionId"),
+  brandSessionId,
+);
+
+// Date-based brand (Period)
+const createPeriodInternal = brandWith<Date, Period>(
+  periodValidator,
+  brandPeriod,
+);
+
+// Public API: keep the original error type expected by callers
+
+export const createCustomerId = (
+  value: unknown,
+): Result<CustomerId, ValidationError> =>
+  mapNewToLegacyError(createCustomerIdInternal(value));
+
+export const createUserId = (value: unknown): Result<UserId, ValidationError> =>
+  mapNewToLegacyError(createUserIdInternal(value));
+
+export const createInvoiceId = (
+  value: unknown,
+): Result<InvoiceId, ValidationError> =>
+  mapNewToLegacyError(createInvoiceIdInternal(value));
+
+export const createRevenueId = (
+  value: unknown,
+): Result<RevenueId, ValidationError> =>
+  mapNewToLegacyError(createRevenueIdInternal(value));
+
+export const createSessionId = (
+  value: unknown,
+): Result<SessionId, ValidationError> =>
+  mapNewToLegacyError(createSessionIdInternal(value));
+
+export const createPeriod = (value: unknown): Result<Period, ValidationError> =>
+  mapNewToLegacyError(createPeriodInternal(value));
 
 // Compose a validator that returns ValidationError_New using your UUID validator
 const validateUserIdNew = (
@@ -50,7 +157,7 @@ const createUserIdNew = brandWith<string, UserId>(
 );
 
 // Public API: keep the original error type (ValidationError) for callers
-export const createUserId = (
+export const createUserId_Legacy = (
   value: string,
 ): Result<UserId, ValidationError> => {
   const r = createUserIdNew(value);
