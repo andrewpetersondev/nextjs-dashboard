@@ -1,7 +1,8 @@
+import "tsconfig-paths/register";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import webpackPreprocessor from "@cypress/webpack-preprocessor";
 import { defineConfig } from "cypress";
-import path from "path";
-import { fileURLToPath } from "url";
 import { dbTasks } from "./cypress/support/db-tasks";
 
 const __filename = fileURLToPath(import.meta.url);

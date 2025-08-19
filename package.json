@@ -55,6 +55,7 @@
     "stylelint-config-prettier": "^9.0.5",
     "tailwindcss": "^4.1.12",
     "ts-loader": "^9.5.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "webpack": "^5.101.3"
