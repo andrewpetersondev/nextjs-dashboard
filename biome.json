@@ -27,6 +27,7 @@
   "files": {
     "ignoreUnknown": true,
     "includes": [
+      "*.{css,ts,tsx,mts,mjs,json}",
       "**/*.{css,ts,tsx,mts,mjs,json}",
       "!.aiassistant",
       "!.github",

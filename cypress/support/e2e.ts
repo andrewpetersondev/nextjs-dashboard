@@ -2,6 +2,8 @@
 import "@testing-library/cypress/add-commands";
 import "cypress-axe";
 
+// THIS IS THE E2E SUPPORT FILE
+
 // Add custom commands or global hooks here if needed.
 // Note: For accessibility checks with cypress-axe, inject axe AFTER visiting a page:
 //   cy.visit('/');
