@@ -1,12 +1,11 @@
-// cypress.config.ts
-import { type CypressConfig, defineConfig } from "cypress";
-import { dbTasks } from "./cypress/support/db-tasks.ts";
+import { defineConfig } from "cypress";
+import { dbTasks } from "./cypress/support/db-tasks";
 
 // Constants for magic values
 const DEFAULT_BASE_URL = "http://localhost:3000";
 
 // Cypress configuration for Next.js v15+ (App Router), TypeScript, and ESM
-const config: CypressConfig = defineConfig({
+const config = defineConfig({
   // Component testing configuration
   component: {
     devServer: {

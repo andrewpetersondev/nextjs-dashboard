@@ -27,9 +27,10 @@
   "files": {
     "ignoreUnknown": true,
     "includes": [
+      "*.{ts,tsx,mts,mjs,json}",
       "src/**/*.{ts,tsx}",
       "src/app/globals.css",
-      "*.{ts,tsx,mts,mjs,json}",
+      "cypress/**/*.{ts,tsx,css,json}",
       "!node_modules",
       "!.next",
       "!next-env.d.ts",
@@ -38,8 +39,6 @@
       "!src/lib/db/drizzle",
       "!pnpm-lock.yaml",
       "!pnpm-workspace.yaml",
-      "!cypress.config.ts",
-      "!cypress",
       "!.turbo",
       "!**/dist",
       "!build",
