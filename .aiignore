@@ -6,7 +6,6 @@ storage/
 storage/containers/
 storage/notes
 storage/old-docs
-cypress/
 
 # System Files
 .DS_Store

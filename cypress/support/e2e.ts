@@ -1,4 +1,4 @@
-import "./index.ts";
+import "./index";
 
 // Add any e2e-specific commands or configuration here
 

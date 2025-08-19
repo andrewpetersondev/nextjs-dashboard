@@ -1,15 +1,15 @@
-import type { DbTaskResult } from "./types.ts";
+import type { DbTaskResult } from "./types";
 
 export function createDbError<T>(
-	error: string,
-	errorMessage: string,
+  error: string,
+  errorMessage: string,
 ): DbTaskResult<T> {
-	return {
-		data: null,
-		error,
-		errorMessage,
-		success: false,
-	};
+  return {
+    data: null,
+    error,
+    errorMessage,
+    success: false,
+  };
 }
 
 // Usage example in a Cypress test or task

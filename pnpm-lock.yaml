@@ -72,6 +72,9 @@ importers:
       '@cypress/webpack-dev-server':
         specifier: ^5.1.1
         version: 5.1.1(cypress@14.5.4)(webpack@5.101.3(esbuild@0.25.9))
+      '@cypress/webpack-preprocessor':
+        specifier: ^7.0.0
+        version: 7.0.0(@babel/core@7.28.3)(@babel/preset-env@7.26.9(@babel/core@7.28.3))(babel-loader@9.2.1(@babel/core@7.28.3)(webpack@5.101.3(esbuild@0.25.9)))(webpack@5.101.3(esbuild@0.25.9))
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.1
@@ -162,6 +165,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.12
         version: 4.1.12
+      ts-loader:
+        specifier: ^9.5.2
+        version: 9.5.2(typescript@5.9.2)(webpack@5.101.3(esbuild@0.25.9))
       tsx:
         specifier: ^4.20.4
         version: 4.20.4
@@ -755,6 +761,14 @@ packages:
       '@babel/preset-env': ^7.25.3
       babel-loader: ^8.3 || ^9 || ^10
       webpack: ^4 || ^5
+
+  '@cypress/webpack-preprocessor@7.0.0':
+    resolution: {integrity: sha512-pcWYnDBFNQg96Qrz3IaRnezDPkvoQTxI+4Bg+NDEqCZOkWlvsWaaebWvQblazfM3inL2+rFqbg4g/53ELwUJQw==}
+    peerDependencies:
+      '@babel/core': ^7.25.2
+      '@babel/preset-env': ^7.25.3
+      babel-loader: ^9 || ^10
+      webpack: ^5
 
   '@cypress/xvfb@1.2.4':
     resolution: {integrity: sha512-skbBzPggOVYCbnGgV+0dmBdW/s77ZkAOXIC1knS8NagwDjBrNC1LuXtQJeiN6l+m7lzmHtaoUw/ctJKdqkG57Q==}
@@ -4981,6 +4995,10 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
+  source-map@0.7.6:
+    resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
+    engines: {node: '>= 12'}
+
   spawn-wrap@2.0.0:
     resolution: {integrity: sha512-EeajNjfN9zMnULLwhZZQU3GWBoFNkbngTUPfaawT4RkMiviTxcX0qfhVbGey39mfctfDHkWtuecgQ8NJcyQWHg==}
     engines: {node: '>=8'}
@@ -5252,6 +5270,13 @@ packages:
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
+
+  ts-loader@9.5.2:
+    resolution: {integrity: sha512-Qo4piXvOTWcMGIgRiuFa6nHNm+54HbYaZCKqc9eeZCLRy3XqafQgwX2F7mofrbJG3g7EEb+lkiR+z2Lic2s3Zw==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      typescript: '*'
+      webpack: ^5.0.0
 
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
@@ -5630,7 +5655,7 @@ snapshots:
       '@babel/traverse': 7.28.3
       '@babel/types': 7.28.2
       convert-source-map: 2.0.0
-      debug: 4.4.0
+      debug: 4.4.1(supports-color@8.1.1)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -6362,6 +6387,19 @@ snapshots:
       babel-loader: 9.2.1(@babel/core@7.28.3)(webpack@5.101.3(esbuild@0.25.9))
       bluebird: 3.7.1
       debug: 4.4.0
+      lodash: 4.17.21
+      semver: 7.7.2
+      webpack: 5.101.3(esbuild@0.25.9)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@cypress/webpack-preprocessor@7.0.0(@babel/core@7.28.3)(@babel/preset-env@7.26.9(@babel/core@7.28.3))(babel-loader@9.2.1(@babel/core@7.28.3)(webpack@5.101.3(esbuild@0.25.9)))(webpack@5.101.3(esbuild@0.25.9))':
+    dependencies:
+      '@babel/core': 7.28.3
+      '@babel/preset-env': 7.26.9(@babel/core@7.28.3)
+      babel-loader: 9.2.1(@babel/core@7.28.3)(webpack@5.101.3(esbuild@0.25.9))
+      bluebird: 3.7.1
+      debug: 4.4.1(supports-color@8.1.1)
       lodash: 4.17.21
       semver: 7.7.2
       webpack: 5.101.3(esbuild@0.25.9)
@@ -10663,6 +10701,8 @@ snapshots:
 
   source-map@0.6.1: {}
 
+  source-map@0.7.6: {}
+
   spawn-wrap@2.0.0:
     dependencies:
       foreground-child: 2.0.0
@@ -10989,6 +11029,16 @@ snapshots:
   ts-api-utils@2.1.0(typescript@5.9.2):
     dependencies:
       typescript: 5.9.2
+
+  ts-loader@9.5.2(typescript@5.9.2)(webpack@5.101.3(esbuild@0.25.9)):
+    dependencies:
+      chalk: 4.1.2
+      enhanced-resolve: 5.18.3
+      micromatch: 4.0.8
+      semver: 7.7.2
+      source-map: 0.7.6
+      typescript: 5.9.2
+      webpack: 5.101.3(esbuild@0.25.9)
 
   tsconfig-paths@3.15.0:
     dependencies:

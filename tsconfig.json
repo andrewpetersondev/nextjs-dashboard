@@ -24,15 +24,9 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path Mapping */
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/app/*": ["./src/app/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/config/*": ["./src/config/*"],
-      "@/db/*": ["./src/db/*"],
-      "@/features/*": ["./src/features/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/ui/*": ["./src/ui/*"]
+      "@/*": ["./src/*"]
     },
 
     /* Next.js specific */
@@ -54,7 +48,8 @@
     "envConfig.ts",
     "next.config.ts",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "types"
   ],
   "exclude": [
     "node_modules",
@@ -66,7 +61,6 @@
     "docs",
     "cypress",
     "coverage",
-    "cypress.config.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
