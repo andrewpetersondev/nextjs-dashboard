@@ -32,3 +32,37 @@ describe("Signup flow", () => {
     );
   });
 });
+
+describe.skip("Signup flow with Database Tasks", () => {
+  beforeEach(() => {
+    // Ensure clean test database state
+    cy.cleanupTestDatabase();
+    cy.setupTestDatabase();
+  });
+
+  // test fails in after
+  after(() => {
+    // Clean up after all tests
+    cy.cleanupTestDatabase();
+  });
+
+  it("allows a new user to sign up and redirects to dashboard", () => {
+    const user = createTestUser();
+
+    cy.visit("/signup");
+    cy.findByRole("heading", { name: /Sign up for an account/i }).should(
+      "be.visible",
+    );
+
+    cy.get('[data-cy="signup-username-input"]').type(user.username);
+    cy.get('[data-cy="signup-email-input"]').type(user.email);
+    cy.get('[data-cy="signup-password-input"]').type(user.password);
+
+    cy.get('[data-cy="signup-submit-button"]').click();
+    cy.url({ timeout: 20000 }).should("include", "/dashboard");
+
+    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
+      "be.visible",
+    );
+  });
+});
