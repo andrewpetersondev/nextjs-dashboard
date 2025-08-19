@@ -19,8 +19,25 @@ describe("Home smoke test", () => {
       "be.visible",
     );
 
-    // Optional: basic accessibility check on login page
+    // Detailed accessibility check with violation logging
     cy.injectAxe();
-    cy.checkA11y(undefined, { includedImpacts: ["critical", "serious"] });
+    cy.checkA11y(
+      undefined,
+      {
+        includedImpacts: ["critical", "serious"],
+      },
+      (violations) => {
+        // Log detailed violation information
+        violations.forEach((violation) => {
+          cy.log(`A11y violation: ${violation.id}`);
+          cy.log(`Description: ${violation.description}`);
+          cy.log(`Help: ${violation.helpUrl}`);
+          violation.nodes.forEach((node) => {
+            cy.log(`Element: ${node.target.join(", ")}`);
+            cy.log(`Summary: ${node.failureSummary}`);
+          });
+        });
+      },
+    );
   });
 });

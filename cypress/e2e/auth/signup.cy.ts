@@ -1,9 +1,8 @@
+import { createTestUser } from "../__fixtures__/users";
+
 describe("Signup flow", () => {
   it("allows a new user to sign up and redirects to dashboard", () => {
-    const ts = Date.now() % 99999999;
-    const username = `e2e_user_${ts}`;
-    const email = `e2e_${ts}@example.com`;
-    const password = "P@ssw0rd!123"; // meets zod requirements: length, letter, number, special
+    const user = createTestUser();
 
     cy.visit("/signup");
 
@@ -13,9 +12,9 @@ describe("Signup flow", () => {
     );
 
     // Fill out the form
-    cy.get('[data-cy="signup-username-input"]').type(username);
-    cy.get('[data-cy="signup-email-input"]').type(email);
-    cy.get('[data-cy="signup-password-input"]').type(password);
+    cy.get('[data-cy="signup-username-input"]').type(user.username);
+    cy.get('[data-cy="signup-email-input"]').type(user.email);
+    cy.get('[data-cy="signup-password-input"]').type(user.password);
 
     // Optional: basic a11y check before submitting
     cy.injectAxe();

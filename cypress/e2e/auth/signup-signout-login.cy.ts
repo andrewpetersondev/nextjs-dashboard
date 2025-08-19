@@ -1,9 +1,8 @@
+import { createTestUser } from "../__fixtures__/users";
+
 describe("Signup → Sign out → Login flow", () => {
   it("allows a user to sign up, sign out, and then log back in", () => {
-    const ts = Date.now() % 99999999;
-    const username = `e2e_user_${ts}`;
-    const email = `e2e_${ts}@example.com`;
-    const password = "P@ssw0rd!123"; // meets zod requirements
+    const user = createTestUser();
 
     // 1) Sign up
     cy.visit("/signup");
@@ -11,15 +10,15 @@ describe("Signup → Sign out → Login flow", () => {
       "be.visible",
     );
 
-    cy.get('[data-cy="signup-username-input"]').type(username);
-    cy.get('[data-cy="signup-email-input"]').type(email);
-    cy.get('[data-cy="signup-password-input"]').type(password);
+    cy.get('[data-cy="signup-username-input"]').type(user.username);
+    cy.get('[data-cy="signup-email-input"]').type(user.email);
+    cy.get('[data-cy="signup-password-input"]').type(user.password);
 
     cy.get('[data-cy="signup-submit-button"]').click();
 
     // 2) Redirects to dashboard after signup
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
-    cy.findByRole("heading", { name: /User Dashboard/i, level: 1 }).should(
+    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
       "be.visible",
     );
 
@@ -35,13 +34,13 @@ describe("Signup → Sign out → Login flow", () => {
     cy.get('[data-testid="login-button"]').click();
     cy.url().should("include", "/login");
 
-    cy.get('[data-cy="login-email-input"]').type(email);
-    cy.get('[data-cy="login-password-input"]').type(password);
+    cy.get('[data-cy="login-email-input"]').type(user.email);
+    cy.get('[data-cy="login-password-input"]').type(user.password);
     cy.get('[data-cy="login-submit-button"]').click();
 
     // 6) Back on dashboard after login
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
-    cy.findByRole("heading", { name: /User Dashboard/i, level: 1 }).should(
+    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
       "be.visible",
     );
   });
