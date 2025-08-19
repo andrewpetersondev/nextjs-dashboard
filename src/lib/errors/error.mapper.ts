@@ -1,9 +1,11 @@
 import "server-only";
+import { Err, Ok, type Result } from "@/lib/core/result.base";
 import {
   DatabaseError_New,
   ValidationError_New,
 } from "@/lib/errors/error.domain";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
+import { ValidationError } from "@/lib/errors/errors";
 
 /**
  * Union type representing repository errors.
@@ -32,3 +34,17 @@ export function mapToRepoError(e: unknown): RepoError {
   // Attach the original unknown error as cause in a typed context object
   return new DatabaseError_New(INVOICE_ERROR_MESSAGES.DB_ERROR, { cause: e });
 }
+
+/**
+ * Map a `ValidationError_New` to a `ValidationError`.
+ *
+ * Transforms the error branch of a `Result` while preserving the success data.
+ *
+ * @typeParam T - Type of the success data.
+ * @param r - Result containing either success data or `ValidationError_New`.
+ * @returns `Result<T, ValidationError>` with mapped error on the error branch.
+ */
+export const mapNewToLegacyError = <T>(
+  r: Result<T, ValidationError_New>,
+): Result<T, ValidationError> =>
+  r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));

@@ -1,5 +1,6 @@
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
-import { validateEnum } from "@/lib/core/brands";
+
+import { validateEnum } from "@/lib/validation/enum";
 
 /**
  * Validates and converts a value to a UserRole
