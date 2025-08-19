@@ -9,9 +9,9 @@ import type {
   CustomerTableDbRow,
   FormattedCustomersTableRow,
 } from "@/features/customers/customer.types";
-import { toCustomerId } from "@/lib/core/brands";
 import { CUSTOMER_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/lib/errors/errors";
+import { toCustomerId } from "@/lib/types/types.brands";
 import { formatCurrency } from "@/lib/utils/utils";
 
 /**

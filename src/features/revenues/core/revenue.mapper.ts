@@ -5,16 +5,12 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
+import { toRevenueSource } from "@/features/revenues/core/revenue.validation";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { getMonthName } from "@/features/revenues/utils/date/revenue-date.utils";
-import {
-  isNonNegativeInteger,
-  isNonNegativeNumber,
-  toPeriod,
-  toRevenueId,
-  toRevenueSource,
-} from "@/lib/core/brands";
+import { isNonNegativeInteger, isNonNegativeNumber } from "@/lib/core/brands";
 import { ValidationError } from "@/lib/errors/errors";
+import { toPeriod, toRevenueId } from "@/lib/types/types.brands";
 import { isValidDate } from "@/lib/utils/date.utils";
 
 // Small internal assertion helper to keep validation DRY and readable

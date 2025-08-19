@@ -13,8 +13,8 @@ import {
 import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
+import { toUserRole } from "@/features/users/user.validation";
 import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui.constants";
-import { toUserRole } from "@/lib/core/brands";
 import { DatabaseError } from "@/lib/errors/errors";
 import { logger } from "@/lib/logging/logger";
 import type { UserId } from "@/lib/types/types.brands";

@@ -2,7 +2,8 @@ import "server-only";
 
 import * as z from "zod";
 import { INVOICE_STATUSES } from "@/features/invoices/invoice.types";
-import { toCustomerId } from "@/lib/core/brands";
+
+import { toCustomerId } from "@/lib/types/types.brands";
 
 // const uuidSchema = z.uuid();
 const amountSchema = z.coerce.number().positive().max(10000);

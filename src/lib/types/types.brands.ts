@@ -1,7 +1,19 @@
-import { type Brand, createBrand, validateUuidResult } from "@/lib/core/brands";
+import { format, isValid, parse } from "date-fns";
+import {
+  type Brand,
+  createBrand,
+  isUuid,
+  UUID_REGEX,
+  validateUuid,
+  validateUuidResult,
+} from "@/lib/core/brands";
 import { Err, Ok, type Result } from "@/lib/core/result.base";
 import { ValidationError_New } from "@/lib/errors/error.domain";
 import { ValidationError } from "@/lib/errors/errors";
+import {
+  isValidDate,
+  normalizeToFirstOfMonthUTC,
+} from "@/lib/utils/date.utils";
 import { brandWith } from "@/lib/validation/types";
 
 // Unique symbols for each domain concept
@@ -44,3 +56,154 @@ export const createUserId = (
   const r = createUserIdNew(value);
   return r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
 };
+
+export function isUserIdSafe(value: unknown): value is UserId {
+  return typeof value === "string" && UUID_REGEX.test(value);
+}
+
+/**
+ * Validates and converts a string to a branded CustomerId
+ * @param id - The UUID string to validate
+ * @returns A branded CustomerId
+ * @throws {ValidationError} If the ID is invalid
+ */
+export const toCustomerId = (id: string): CustomerId => {
+  validateUuid(id, "CustomerId");
+  return id as CustomerId;
+};
+/**
+ * Validates and converts a string to a branded UserId
+ * @param id - The UUID string to validate
+ * @returns A branded UserId
+ * @throws {ValidationError} If the ID is invalid
+ */
+export const toUserId = (id: string): UserId => {
+  validateUuid(id, "UserId");
+  return id as UserId;
+};
+/**
+ * Validates and converts a string to a branded InvoiceId
+ * @param id - The UUID string to validate
+ * @returns A branded InvoiceId
+ * @throws {ValidationError} If the ID is invalid
+ */
+export const toInvoiceId = (id: string): InvoiceId => {
+  validateUuid(id, "InvoiceId");
+  return id as InvoiceId;
+};
+/**
+ * Validates and converts a string to a branded RevenueId
+ * @param id - The UUID string to validate
+ * @returns A branded RevenueId
+ * @throws {ValidationError} If the ID is invalid
+ */
+export const toRevenueId = (id: string): RevenueId => {
+  validateUuid(id, "RevenueId");
+  return id as RevenueId;
+};
+/**
+ * Validates and converts a string to a branded SessionId
+ * @param id - The UUID string to validate
+ * @returns A branded SessionId
+ * @throws {ValidationError} If the ID is invalid
+ */
+export const toSessionId = (id: string): SessionId => {
+  validateUuid(id, "SessionId");
+  return id as SessionId;
+};
+
+/**
+ * Normalizes an input into a branded Period (first-of-month Date in UTC)
+ * @param input - Date object, "yyyy-MM", or "yyyy-MM-dd" string
+ * @returns A branded Period representing the first day of the month
+ * @throws {ValidationError} If the input cannot be parsed or normalized
+ */
+export function toPeriod(input: Date | string): Period {
+  if (input instanceof Date) {
+    if (!isValidDate(input)) {
+      throw new ValidationError("Invalid Date provided for period conversion");
+    }
+    return normalizeToFirstOfMonthUTC(input) as Period;
+  }
+
+  if (typeof input === "string") {
+    // Try yyyy-MM format first
+    let parsed = parse(input, "yyyy-MM", new Date());
+    if (isValid(parsed) && format(parsed, "yyyy-MM") === input) {
+      return normalizeToFirstOfMonthUTC(parsed) as Period;
+    }
+
+    // Try yyyy-MM-dd format (must be first day of month)
+    parsed = parse(input, "yyyy-MM-dd", new Date());
+    if (isValid(parsed) && format(parsed, "yyyy-MM-dd") === input) {
+      if (parsed.getUTCDate() !== 1) {
+        throw new ValidationError(
+          `Period date must be the first day of the month, got: "${input}"`,
+        );
+      }
+      return normalizeToFirstOfMonthUTC(parsed) as Period;
+    }
+
+    throw new ValidationError(
+      `Invalid period format: "${input}". Expected "yyyy-MM" or "yyyy-MM-01"`,
+    );
+  }
+
+  throw new ValidationError(
+    `Unsupported period input type: ${typeof input}. Expected Date or string`,
+  );
+}
+
+/**
+ * Type guard to check if a value is a valid CustomerId
+ * @param value - The value to check
+ * @returns True if the value is a valid CustomerId
+ */
+export function isCustomerId(value: unknown): value is CustomerId {
+  return isUuid(value);
+}
+
+/**
+ * Type guard to check if a value is a valid UserId
+ * @param value - The value to check
+ * @returns True if the value is a valid UserId
+ */
+export function isUserId(value: unknown): value is UserId {
+  return isUuid(value);
+}
+
+/**
+ * Type guard to check if a value is a valid InvoiceId
+ * @param value - The value to check
+ * @returns True if the value is a valid InvoiceId
+ */
+export function isInvoiceId(value: unknown): value is InvoiceId {
+  return isUuid(value);
+}
+
+/**
+ * Type guard to check if a value is a valid RevenueId
+ * @param value - The value to check
+ * @returns True if the value is a valid RevenueId
+ */
+export function isRevenueId(value: unknown): value is RevenueId {
+  return isUuid(value);
+}
+
+/**
+ * Type guard to check if a value is a valid SessionId
+ * @param value - The value to check
+ * @returns True if the value is a valid SessionId
+ */
+export function isSessionId(value: unknown): value is SessionId {
+  return isUuid(value);
+}
+
+/**
+ * Type guard to check if a value is a valid Period (first-of-month Date)
+ * @param value - The value to check
+ * @returns True if the value is a valid Period
+ */
+export function isPeriod(value: unknown): value is Period {
+  return value instanceof Date && isValid(value) && value.getUTCDate() === 1;
+}

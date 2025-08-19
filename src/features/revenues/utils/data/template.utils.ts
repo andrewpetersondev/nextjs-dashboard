@@ -10,9 +10,8 @@ import {
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
-import { toPeriod, toRevenueId } from "@/lib/core/brands";
 import { logger } from "@/lib/logging/logger";
-import type { Period } from "@/lib/types/types.brands";
+import { type Period, toPeriod, toRevenueId } from "@/lib/types/types.brands";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

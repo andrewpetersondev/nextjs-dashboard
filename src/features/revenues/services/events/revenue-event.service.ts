@@ -7,10 +7,9 @@ import {
   dateToPeriod,
   periodKey,
 } from "@/features/revenues/utils/date/period.utils";
-import { toPeriod, toRevenueId } from "@/lib/core/brands";
 import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
-import type { Period } from "@/lib/types/types.brands";
+import { type Period, toPeriod, toRevenueId } from "@/lib/types/types.brands";
 
 // ===== Logging Functions =====
 

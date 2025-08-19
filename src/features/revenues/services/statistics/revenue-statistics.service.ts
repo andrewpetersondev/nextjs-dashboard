@@ -6,6 +6,7 @@ import type {
 } from "@/features/revenues/core/revenue.entity";
 import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
+import { toIntervalDuration } from "@/features/revenues/core/revenue.validation";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import {
   logCoverageReport,
@@ -19,7 +20,6 @@ import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toIntervalDuration } from "@/lib/core/brands";
 import { logger } from "@/lib/logging/logger";
 
 /**

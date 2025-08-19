@@ -9,7 +9,6 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
 import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
-import { toInvoiceId } from "@/lib/core/brands";
 import { Err, type Result } from "@/lib/core/result.base";
 import {
   type DatabaseError_New,
@@ -17,6 +16,7 @@ import {
 } from "@/lib/errors/error.domain";
 import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import { ValidationError } from "@/lib/errors/errors";
+import { toInvoiceId } from "@/lib/types/types.brands";
 
 /**
  * Service for invoice business logic and transformation.

@@ -10,17 +10,20 @@ import type {
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
 import {
+  INTERVAL_DURATIONS,
+  type IntervalDuration,
   MONTH_ORDER,
   type MonthName,
+  REVENUE_SOURCES,
+  type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
 import {
   isIntegerInRange,
   isNonNegativeInteger,
   isNonNegativeNumber,
-  isPeriod,
-  isRevenueId,
-  isRevenueSource,
+  validateEnum,
 } from "@/lib/core/brands";
+import { isPeriod, isRevenueId } from "@/lib/types/types.brands";
 import { isValidDate } from "@/lib/utils/date.utils";
 
 /**
@@ -93,6 +96,49 @@ export function isRevenueChartDto(value: unknown): value is RevenueChartDto {
  */
 export function isMonthName(value: unknown): value is MonthName {
   return typeof value === "string" && MONTH_ORDER.includes(value as MonthName);
+}
+
+/**
+ * Validates and converts a value to an IntervalDuration
+ * @param duration - The duration value to validate
+ * @returns A validated IntervalDuration
+ * @throws {ValidationError} If the duration is invalid
+ */
+export const toIntervalDuration = (duration: unknown): IntervalDuration => {
+  return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
+};
+/**
+ * Validates and converts a value to a RevenueSource
+ * @param source - The source value to validate
+ * @returns A validated RevenueSource
+ * @throws {ValidationError} If the source is invalid
+ */
+export const toRevenueSource = (source: unknown): RevenueSource => {
+  return validateEnum(source, REVENUE_SOURCES, "RevenueSource");
+};
+
+/**
+ * Type guard to check if a value is a valid IntervalDuration
+ * @param value - The value to check
+ * @returns True if the value is a valid IntervalDuration
+ */
+export function isIntervalDuration(value: unknown): value is IntervalDuration {
+  return (
+    typeof value === "string" &&
+    INTERVAL_DURATIONS.includes(value as IntervalDuration)
+  );
+}
+
+/**
+ * Type guard to check if a value is a valid RevenueSource
+ * @param value - The value to check
+ * @returns True if the value is a valid RevenueSource
+ */
+export function isRevenueSource(value: unknown): value is RevenueSource {
+  return (
+    typeof value === "string" &&
+    REVENUE_SOURCES.includes(value as RevenueSource)
+  );
 }
 
 /**

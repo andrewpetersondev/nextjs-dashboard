@@ -11,7 +11,6 @@ import type {
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import { toPeriod } from "@/lib/core/brands";
 import {
   DatabaseError_New,
   ValidationError_New,
@@ -21,7 +20,7 @@ import {
   INVOICE_ERROR_MESSAGES,
 } from "@/lib/errors/error-messages";
 import { logger } from "@/lib/logging/logger";
-import type { InvoiceId } from "@/lib/types/types.brands";
+import { type InvoiceId, toPeriod } from "@/lib/types/types.brands";
 
 /**
  * Creates a new invoice in the database.

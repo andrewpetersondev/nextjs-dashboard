@@ -10,12 +10,8 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/features/invoices/invoice.entity";
-import {
-  toCustomerId,
-  toInvoiceId,
-  toInvoiceStatus,
-  toPeriod,
-} from "@/lib/core/brands";
+import { toInvoiceStatus } from "@/features/invoices/invoice.validation";
+import { toCustomerId, toInvoiceId, toPeriod } from "@/lib/types/types.brands";
 import { isValidDate, toFirstOfMonth } from "@/lib/utils/date.utils";
 
 /**
