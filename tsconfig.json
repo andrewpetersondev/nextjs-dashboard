@@ -35,22 +35,8 @@
         "name": "next"
       }
     ]
-
-    /* Types */
-    /* Removed because .next/types/ in the include path is enough (according to AI chat) */
-    /* "types": ["node", "react", "react-dom"] */
   },
-  "include": [
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    "drizzle-dev.config.ts",
-    "drizzle-test.config.ts",
-    "envConfig.ts",
-    "next.config.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "types"
-  ],
+  "include": [".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "next-env.d.ts"],
   "exclude": [
     "node_modules",
     ".next",
@@ -64,6 +50,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "**/*.cy.ts",
+    "**/*.cy.tsx"
   ]
 }

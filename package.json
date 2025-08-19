@@ -115,6 +115,10 @@
     "standalone": "rm -rf .next/ && pnpm build && pnpm start-standalone",
     "start": "node .next/standalone/server.js",
     "start-standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+    "test:db:setup": "NODE_ENV=test tsx scripts/setup-test-db.ts",
+    "test:e2e": "NODE_ENV=test cypress run",
+    "test:e2e:headed": "NODE_ENV=test cypress run --headed",
+    "test:e2e:open": "NODE_ENV=test cypress open",
     "type-check": "tsc --noEmit"
   },
   "type": "module",
