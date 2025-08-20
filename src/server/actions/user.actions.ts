@@ -14,6 +14,7 @@ import type { UserDto } from "@/features/users/user.dto";
 import {
   CreateUserFormSchema,
   EditUserFormSchema,
+  SignupAllowedFields,
   SignupFormSchema,
 } from "@/features/users/user.schema";
 import type {
@@ -276,7 +277,7 @@ export async function signup(
   const validated = (await validateFormGeneric<
     SignupFormFieldNames,
     SignupFormFields
-  >(formData, SignupFormSchema, ["username", "email", "password"] as const, {
+  >(formData, SignupFormSchema, SignupAllowedFields, {
     returnMode: "form",
     // Example: normalize email; redact password is default
     transform: (d) => ({

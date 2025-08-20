@@ -75,3 +75,5 @@ export const EditUserFormSchema = z.object({
   role: roleSchema.optional(),
   username: usernameSchema.optional(),
 });
+
+export const SignupAllowedFields = ["username", "email", "password"] as const;
