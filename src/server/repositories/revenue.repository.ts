@@ -8,17 +8,17 @@ import type {
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
 import {
-  mapRevenueRowsToEntities,
-  mapRevRowToRevEnt,
-} from "@/features/revenues/core/revenue.mapper";
-import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import {
   type Period,
   type RevenueId,
   toPeriod,
 } from "@/lib/types/types.brands";
 import type { Database } from "@/server/db/connection";
 import { type RevenueRow, revenues } from "@/server/db/schema";
+import {
+  mapRevenueRowsToEntities,
+  mapRevRowToRevEnt,
+} from "@/server/mappers/revenue.mapper";
+import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 
 /**
  * RevenueRepository

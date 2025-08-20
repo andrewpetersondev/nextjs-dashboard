@@ -6,7 +6,6 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import { createUserAction } from "@/features/users/user.actions";
 import {
   type CreateUserFormFieldNames,
   type CreateUserFormState,
@@ -14,6 +13,7 @@ import {
   type UserRole,
 } from "@/features/users/user.types";
 import type { FormFieldError, FormState } from "@/lib/forms/form.types";
+import { createUserAction } from "@/server/actions/user.actions";
 import { InputField } from "@/ui/auth/input-field";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";

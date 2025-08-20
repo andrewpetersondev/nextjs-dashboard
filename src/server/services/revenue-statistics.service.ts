@@ -4,10 +4,8 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/features/revenues/core/revenue.entity";
-import { mapRevEntToRevDisplayEnt } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueStatistics } from "@/features/revenues/core/revenue.types";
 import { toIntervalDuration } from "@/features/revenues/core/revenue.validation";
-import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import {
   logCoverageReport,
   makeCoverageReport,
@@ -21,6 +19,8 @@ import {
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
 import { logger } from "@/lib/logging/logger";
+import { mapRevEntToRevDisplayEnt } from "@/server/mappers/revenue.mapper";
+import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 
 /**
  * Service for calculating revenue statistics.

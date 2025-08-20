@@ -1,25 +1,19 @@
 "use server";
 
-import "@/features/revenues/services/events/revenue-events.bootstrap";
+import "@/server/events/revenue/revenue-events.bootstrap";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/errors/errors";
-import {
-  fetchFilteredInvoicesDal,
-  fetchInvoicesPagesDal,
-} from "@/features/invoices/invoice.dal";
 import type {
   InvoiceDto,
   InvoiceFormDto,
 } from "@/features/invoices/invoice.dto";
-import { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import {
   CreateInvoiceSchema,
   UpdateInvoiceSchema,
 } from "@/features/invoices/invoice.schemas";
-import { InvoiceService } from "@/features/invoices/invoice.service";
 import type {
   InvoiceActionResult,
   InvoiceListFilter,
@@ -31,7 +25,13 @@ import {
   INVOICE_EVENTS,
 } from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
+import {
+  fetchFilteredInvoicesDal,
+  fetchInvoicesPagesDal,
+} from "@/server/dals/invoice.dal";
 import { getDB } from "@/server/db/connection";
+import { InvoiceRepository } from "@/server/repositories/invoice.repository";
+import { InvoiceService } from "@/server/services/invoice.service";
 
 /**
  * Server action for creating a new invoice.

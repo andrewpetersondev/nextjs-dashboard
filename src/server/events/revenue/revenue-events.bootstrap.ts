@@ -1,11 +1,11 @@
 import "server-only";
 
-import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
-import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import { RevenueEventHandler } from "@/features/revenues/services/events/revenue-event.handler";
-import { RevenueService } from "@/features/revenues/services/revenue.service";
 import { logger } from "@/lib/logging/logger";
 import { getDB } from "@/server/db/connection";
+import { RevenueEventHandler } from "@/server/events/revenue/revenue-event.handler";
+import { RevenueRepository } from "@/server/repositories/revenue.repository";
+import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
+import { RevenueService } from "@/server/services/revenue.service";
 
 declare global {
   // Use var for global augmentation compatibility

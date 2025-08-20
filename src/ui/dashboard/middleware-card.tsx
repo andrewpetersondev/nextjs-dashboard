@@ -1,7 +1,7 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/features/sessions/session.service";
 import type { SessionVerificationResult } from "@/features/sessions/session.types";
 import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import { verifySessionOptimistic } from "@/server/services/session.service";
 import { H6 } from "@/ui/headings";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;

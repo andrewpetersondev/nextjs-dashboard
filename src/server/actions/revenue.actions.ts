@@ -9,12 +9,12 @@ import {
   MONTH_ORDER,
   type RevenueActionResult,
 } from "@/features/revenues/core/revenue.types";
-import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
-import { RevenueStatisticsService } from "@/features/revenues/services/statistics/revenue-statistics.service";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { convertCentsToDollars } from "@/features/revenues/utils/display/revenue-display.utils";
 import { logger } from "@/lib/logging/logger";
 import { getDB } from "@/server/db/connection";
+import { RevenueRepository } from "@/server/repositories/revenue.repository";
+import { RevenueStatisticsService } from "@/server/services/revenue-statistics.service";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

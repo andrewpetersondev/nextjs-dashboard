@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { readCustomersAction } from "@/features/customers/customer.actions";
 import type { CustomerField } from "@/features/customers/customer.types";
+import { readCustomersAction } from "@/server/actions/customer.actions";
 import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
 import { CreateInvoiceForm } from "@/ui/invoices/create-invoice-form";
 

@@ -9,27 +9,11 @@ import {
   setSessionToken,
 } from "@/features/sessions/session.jwt";
 import { hashPassword } from "@/features/sessions/session.utils";
-import {
-  createDemoUser,
-  createUserDal,
-  deleteUserDal,
-  demoUserCounter,
-  fetchFilteredUsers,
-  fetchUserById,
-  fetchUsersPages,
-  findUserForLogin,
-  readUserDal,
-  updateUserDal,
-} from "@/features/users/user.dal";
 import type { UserDto } from "@/features/users/user.dto";
 import {
   CreateUserFormSchema,
   EditUserFormSchema,
 } from "@/features/users/user.schema";
-import {
-  validateLoginForm,
-  validateSignupForm,
-} from "@/features/users/user.service";
 import type {
   CreateUserFormFieldNames,
   EditUserFormFieldNames,
@@ -48,7 +32,23 @@ import { logger } from "@/lib/logging/logger";
 import type { ActionResult } from "@/lib/types/action-result";
 import { toUserId } from "@/lib/types/types.brands";
 import { stripProperties } from "@/lib/utils/utils";
+import {
+  createDemoUser,
+  createUserDal,
+  deleteUserDal,
+  demoUserCounter,
+  fetchFilteredUsers,
+  fetchUserById,
+  fetchUsersPages,
+  findUserForLogin,
+  readUserDal,
+  updateUserDal,
+} from "@/server/dals/user.dal";
 import { getDB } from "@/server/db/connection";
+import {
+  validateLoginForm,
+  validateSignupForm,
+} from "@/server/services/user.service";
 
 // --- CRUD Actions for Users ---
 

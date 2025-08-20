@@ -2,7 +2,6 @@ import "server-only";
 import { isValid, parseISO } from "date-fns";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type { InvoiceStatus } from "@/features/invoices/invoice.types";
-import type { RevenueService } from "@/features/revenues/services/revenue.service";
 import {
   dateToPeriod,
   periodKey,
@@ -10,6 +9,7 @@ import {
 import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
 import { logger } from "@/lib/logging/logger";
 import { type Period, toPeriod, toRevenueId } from "@/lib/types/types.brands";
+import type { RevenueService } from "@/server/services/revenue.service";
 
 // ===== Logging Functions =====
 

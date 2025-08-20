@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readInvoicesPagesAction } from "@/features/invoices/invoice.actions";
+import { readInvoicesPagesAction } from "@/server/actions/invoice.actions";
 import { H1 } from "@/ui/headings";
 import { CreateInvoice } from "@/ui/invoices/buttons";
 import { Pagination } from "@/ui/invoices/pagination";

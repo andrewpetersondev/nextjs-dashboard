@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import type {
   RevenueStatistics,

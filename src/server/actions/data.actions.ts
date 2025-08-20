@@ -1,14 +1,14 @@
 "use server";
 
-import { fetchTotalCustomersCountDal } from "@/features/customers/customer.dal";
 import type { DashboardData } from "@/features/data/data.types";
+import { formatCurrency } from "@/lib/utils/utils";
+import { fetchTotalCustomersCountDal } from "@/server/dals/customer.dal";
 import {
   fetchLatestInvoicesDal,
   fetchTotalInvoicesCountDal,
   fetchTotalPaidInvoicesDal,
   fetchTotalPendingInvoicesDal,
-} from "@/features/invoices/invoice.dal";
-import { formatCurrency } from "@/lib/utils/utils";
+} from "@/server/dals/invoice.dal";
 import { getDB } from "@/server/db/connection";
 
 /**

@@ -9,13 +9,6 @@ import {
 import type { RepoError } from "@/errors/error.mapper";
 import { fromDal } from "@/errors/error.wrapper";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
-import {
-  createInvoiceDal,
-  deleteInvoiceDal,
-  fetchAllPaidInvoicesDal,
-  readInvoiceDal,
-  updateInvoiceDal,
-} from "@/features/invoices/invoice.dal";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type {
   InvoiceEntity,
@@ -24,7 +17,14 @@ import type {
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
 import type { InvoiceId } from "@/lib/types/types.brands";
-import { BaseRepository } from "@/server/repository/repository.base";
+import {
+  createInvoiceDal,
+  deleteInvoiceDal,
+  fetchAllPaidInvoicesDal,
+  readInvoiceDal,
+  updateInvoiceDal,
+} from "@/server/dals/invoice.dal";
+import { BaseRepository } from "@/server/repositories/repository.base";
 
 /**
  * Repository for Invoice domain operations.

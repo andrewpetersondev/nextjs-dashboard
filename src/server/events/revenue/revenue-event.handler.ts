@@ -1,5 +1,10 @@
 import "server-only";
 
+import { EventBus } from "@/lib/events/event.bus";
+import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
+import { INVOICE_EVENTS } from "@/lib/events/event.invoice";
+import { logger } from "@/lib/logging/logger";
+import type { RevenueService } from "@/server/services/revenue.service";
 import {
   adjustRevenueForDeletedInvoice,
   adjustRevenueForStatusChange,
@@ -8,12 +13,7 @@ import {
   processInvoiceEvent,
   processInvoiceForRevenue,
   updateRevenueRecord,
-} from "@/features/revenues/services/events/revenue-event.service";
-import type { RevenueService } from "@/features/revenues/services/revenue.service";
-import { EventBus } from "@/lib/events/event.bus";
-import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
-import { INVOICE_EVENTS } from "@/lib/events/event.invoice";
-import { logger } from "@/lib/logging/logger";
+} from "@/server/services/revenue-event.service";
 
 /**
  * Handles invoice events and updates revenue records accordingly.

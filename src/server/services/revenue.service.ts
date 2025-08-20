@@ -7,9 +7,9 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
-import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
 import type { Period, RevenueId } from "@/lib/types/types.brands";
+import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 
 /**
  * Business service for revenue processing and management.

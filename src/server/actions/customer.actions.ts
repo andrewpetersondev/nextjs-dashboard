@@ -1,13 +1,13 @@
 "use server";
 
-import {
-  fetchCustomers,
-  fetchFilteredCustomers,
-} from "@/features/customers/customer.dal";
 import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/customer.types";
+import {
+  fetchCustomers,
+  fetchFilteredCustomers,
+} from "@/server/dals/customer.dal";
 import { getDB } from "@/server/db/connection";
 
 /**

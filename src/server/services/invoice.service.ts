@@ -16,8 +16,8 @@ import {
   invoiceFormEntityToServiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
-import type { InvoiceRepository } from "@/features/invoices/invoice.repository";
 import { toInvoiceId } from "@/lib/types/types.brands";
+import type { InvoiceRepository } from "@/server/repositories/invoice.repository";
 
 /**
  * Service for invoice business logic and transformation.

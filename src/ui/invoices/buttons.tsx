@@ -1,7 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteInvoiceFormAction } from "@/features/invoices/invoice.actions";
+import { deleteInvoiceFormAction } from "@/server/actions/invoice.actions";
 
 /**
  * Props for invoice action buttons.

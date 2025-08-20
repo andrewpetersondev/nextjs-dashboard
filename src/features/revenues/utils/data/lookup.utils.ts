@@ -1,4 +1,3 @@
-import "server-only";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/revenue.entity";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
 import { logger } from "@/lib/logging/logger";
