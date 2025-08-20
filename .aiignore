@@ -10,6 +10,7 @@
 # Temporary
 # src/app
 # src/ui
+# scripts
 
 
 # My Files (General)
@@ -19,7 +20,6 @@ cypress
 docs
 drizzle
 public
-scripts
 storage
 .env
 .env.*
