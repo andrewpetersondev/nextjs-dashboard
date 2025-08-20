@@ -1,6 +1,5 @@
 "use server";
 
-import { getDB } from "@/db/connection";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
@@ -15,6 +14,7 @@ import { RevenueStatisticsService } from "@/features/revenues/services/statistic
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { convertCentsToDollars } from "@/features/revenues/utils/display/revenue-display.utils";
 import { logger } from "@/lib/logging/logger";
+import { getDB } from "@/server/db/connection";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

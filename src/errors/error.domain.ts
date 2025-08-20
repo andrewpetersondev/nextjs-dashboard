@@ -1,5 +1,5 @@
 import "server-only";
-import { BaseError } from "@/lib/errors/error.base";
+import { BaseError } from "@/errors/error.base";
 
 /**
  * Validation error representation with code and status.

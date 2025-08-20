@@ -1,8 +1,7 @@
 import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import type { Database } from "@/db/connection";
-import { type RevenueRow, revenues } from "@/db/schema";
+import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -13,12 +12,13 @@ import {
   mapRevRowToRevEnt,
 } from "@/features/revenues/core/revenue.mapper";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
-import { DatabaseError, ValidationError } from "@/lib/errors/errors";
 import {
   type Period,
   type RevenueId,
   toPeriod,
 } from "@/lib/types/types.brands";
+import type { Database } from "@/server/db/connection";
+import { type RevenueRow, revenues } from "@/server/db/schema";
 
 /**
  * RevenueRepository

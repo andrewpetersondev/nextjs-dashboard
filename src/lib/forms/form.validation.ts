@@ -1,8 +1,8 @@
 import "server-only";
 
 import type * as z from "zod";
+import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/error-messages";
 import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
-import { FORM_VALIDATION_ERROR_MESSAGES } from "@/lib/errors/error-messages";
 import type { FormErrors, FormState } from "@/lib/forms/form.types";
 import { logger } from "@/lib/logging/logger";
 

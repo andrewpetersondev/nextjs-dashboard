@@ -1,11 +1,11 @@
 import "server-only";
 
-import { getDB } from "@/db/connection";
 import { RevenueRepository } from "@/features/revenues/repository/revenue.repository";
 import type { RevenueRepositoryInterface } from "@/features/revenues/repository/revenue.repository.interface";
 import { RevenueEventHandler } from "@/features/revenues/services/events/revenue-event.handler";
 import { RevenueService } from "@/features/revenues/services/revenue.service";
 import { logger } from "@/lib/logging/logger";
+import { getDB } from "@/server/db/connection";
 
 declare global {
   // Use var for global augmentation compatibility

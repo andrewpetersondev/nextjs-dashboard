@@ -1,6 +1,5 @@
 "use server";
 
-import { getDB } from "@/db/connection";
 import {
   fetchCustomers,
   fetchFilteredCustomers,
@@ -9,6 +8,7 @@ import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/customer.types";
+import { getDB } from "@/server/db/connection";
 
 /**
  * Server action to read customers.

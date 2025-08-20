@@ -1,6 +1,6 @@
 import "server-only";
-import { Err, Ok, type Result } from "@/lib/core/result.base";
-import { ValidationError_New } from "@/lib/errors/error.domain";
+import { Err, Ok, type Result } from "@/core/result.base";
+import { ValidationError_New } from "@/errors/error.domain";
 
 export interface Validator<T> {
   validate(value: unknown): Result<T, ValidationError_New>;

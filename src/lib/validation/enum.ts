@@ -1,5 +1,5 @@
-import { Err, Ok, type Result } from "@/lib/core/result.base";
-import { ValidationError } from "@/lib/errors/errors";
+import { Err, Ok, type Result } from "@/core/result.base";
+import { ValidationError } from "@/errors/errors";
 
 /**
  * Generic enum validation (Result-based)

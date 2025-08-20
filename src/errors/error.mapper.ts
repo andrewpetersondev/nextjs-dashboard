@@ -1,11 +1,8 @@
 import "server-only";
-import { Err, Ok, type Result } from "@/lib/core/result.base";
-import {
-  DatabaseError_New,
-  ValidationError_New,
-} from "@/lib/errors/error.domain";
-import { INVOICE_ERROR_MESSAGES } from "@/lib/errors/error-messages";
-import { ValidationError } from "@/lib/errors/errors";
+import { Err, Ok, type Result } from "@/core/result.base";
+import { DatabaseError_New, ValidationError_New } from "@/errors/error.domain";
+import { INVOICE_ERROR_MESSAGES } from "@/errors/error-messages";
+import { ValidationError } from "@/errors/errors";
 
 /**
  * Union type representing repository errors.

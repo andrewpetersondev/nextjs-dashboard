@@ -1,5 +1,5 @@
 import "server-only";
-import type { Result } from "@/lib/core/result.base";
+import type { Result } from "@/core/result.base";
 
 /**
  * Extract the success value from a {@link Result}, or throw on error.

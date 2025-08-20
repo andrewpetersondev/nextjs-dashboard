@@ -1,8 +1,8 @@
-import { type Brand, createBrand } from "@/lib/core/brands";
-import { Err, Ok, type Result } from "@/lib/core/result.base";
-import { ValidationError_New } from "@/lib/errors/error.domain";
-import { mapNewToLegacyError } from "@/lib/errors/error.mapper";
-import type { ValidationError } from "@/lib/errors/errors";
+import { type Brand, createBrand } from "@/core/brands";
+import { Err, Ok, type Result } from "@/core/result.base";
+import { ValidationError_New } from "@/errors/error.domain";
+import { mapNewToLegacyError } from "@/errors/error.mapper";
+import type { ValidationError } from "@/errors/errors";
 import { validatePeriodResult } from "@/lib/validation/period";
 import { brandWith } from "@/lib/validation/types";
 import { isUuid, validateUuidResult } from "@/lib/validation/uuid";

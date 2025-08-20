@@ -1,5 +1,5 @@
 import "server-only";
-import type { Database } from "@/db/connection";
+import type { Database } from "@/server/db/connection";
 
 /**
  * Generic base repository for CRUD operations.

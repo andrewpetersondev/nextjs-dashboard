@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { Result } from "@/lib/core/result.base";
-import { ValidationError_New } from "@/lib/errors/error.domain";
+import type { Result } from "@/core/result.base";
+import { ValidationError_New } from "@/errors/error.domain";
 import type { ActionResult, FieldErrors } from "@/lib/types/action-result";
 
 /**

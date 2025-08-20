@@ -15,7 +15,7 @@
  */
 
 import { reset } from "drizzle-seed";
-import * as schema from "../src/db/schema";
+import * as schema from "@/server/db/schema";
 import { nodeEnvTestDb } from "./test-database";
 
 async function main(): Promise<void> {

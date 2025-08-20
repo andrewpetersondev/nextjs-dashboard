@@ -1,8 +1,11 @@
 import "server-only";
 
 import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
-import type { Database } from "@/db/connection";
-import { customers, invoices, revenues } from "@/db/schema";
+import { DatabaseError_New, ValidationError_New } from "@/errors/error.domain";
+import {
+  DATA_ERROR_MESSAGES,
+  INVOICE_ERROR_MESSAGES,
+} from "@/errors/error-messages";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
@@ -11,16 +14,10 @@ import type {
 import { rawDbToInvoiceEntity } from "@/features/invoices/invoice.mapper";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
 import { ITEMS_PER_PAGE } from "@/lib/constants/ui.constants";
-import {
-  DatabaseError_New,
-  ValidationError_New,
-} from "@/lib/errors/error.domain";
-import {
-  DATA_ERROR_MESSAGES,
-  INVOICE_ERROR_MESSAGES,
-} from "@/lib/errors/error-messages";
 import { logger } from "@/lib/logging/logger";
 import { type InvoiceId, toPeriod } from "@/lib/types/types.brands";
+import type { Database } from "@/server/db/connection";
+import { customers, invoices, revenues } from "@/server/db/schema";
 
 /**
  * Creates a new invoice in the database.

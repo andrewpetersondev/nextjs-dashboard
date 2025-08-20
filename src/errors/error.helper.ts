@@ -1,7 +1,7 @@
 import "server-only";
-import { Err, Ok, type Result } from "@/lib/core/result.base";
-import { BaseError } from "@/lib/errors/error.base";
-import { DatabaseError_New } from "@/lib/errors/error.domain";
+import { Err, Ok, type Result } from "@/core/result.base";
+import { BaseError } from "@/errors/error.base";
+import { DatabaseError_New } from "@/errors/error.domain";
 
 export type HttpErrorBody = {
   error: {

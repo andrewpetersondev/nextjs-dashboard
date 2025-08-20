@@ -1,5 +1,5 @@
 import "server-only";
-import { Err, Ok, type Result } from "@/lib/core/result.base";
+import { Err, Ok, type Result } from "@/core/result.base";
 
 /**
  * Run fn and wrap result or thrown error in Result.

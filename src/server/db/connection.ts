@@ -19,7 +19,7 @@ import {
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
 } from "@/config/env";
-import * as schema from "@/db/schema";
+import * as schema from "@/server/db/schema";
 
 // Supported database types
 type DbType = "development" | "test" | "production";

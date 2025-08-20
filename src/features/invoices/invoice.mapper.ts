@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { InvoiceRow } from "@/db/schema";
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -13,6 +12,7 @@ import type {
 import { toInvoiceStatus } from "@/features/invoices/invoice.validation";
 import { toCustomerId, toInvoiceId, toPeriod } from "@/lib/types/types.brands";
 import { isValidDate, toFirstOfMonth } from "@/lib/utils/date.utils";
+import type { InvoiceRow } from "@/server/db/schema";
 
 /**
  * Maps raw database row to branded Entity.
