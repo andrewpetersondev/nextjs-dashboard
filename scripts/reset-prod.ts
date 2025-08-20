@@ -1,25 +1,25 @@
 /**
- * @file reset-test.ts
+ * @file reset-prod.ts
  * @description
- * Resets all tables in the test database using Drizzle Seed.
+ * Resets all tables in the development database using Drizzle Seed.
  *
  * - Intended for CLI tooling and Cypress only.
  * - Do **not** import or use in application runtime code.
  * - Do **not** import "server-only" code.
  * - This file MAY need to include file extensions like .ts for compatibility with the CLI tools and Cypress.
  * - This file MAY need to use RELATIVE IMPORTS for compatibility with the CLI tools and Cypress.
- * - Uses the test database connection from `test-database.ts`.
+ * - Uses the dev database connection from `dev-database.ts`.
  * - All credentials are managed via environment variables and Hashicorp Vault.
  *
  * @see https://orm.drizzle.team/docs/seed
  */
 
 import { reset } from "drizzle-seed";
-import * as schema from "../schema";
-import { nodeEnvTestDb } from "../test-database";
+import { nodeEnvDb } from "../src/db/dev-database";
+import * as schema from "../src/db/schema";
 
 async function main(): Promise<void> {
-  await reset(nodeEnvTestDb, schema);
+  await reset(nodeEnvDb, schema);
 }
 
 // Fix: Handle floating promise with .catch for error logging
@@ -28,5 +28,5 @@ main()
     console.log("drizzle reset complete, tables remain, but values are gone");
   })
   .catch((error) => {
-    console.error("Error resetting test Database:", error);
+    console.error("Error resetting Dev Database:", error);
   });
