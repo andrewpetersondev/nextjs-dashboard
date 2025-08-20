@@ -15,11 +15,11 @@
  */
 
 import { reset } from "drizzle-seed";
-import { nodeEnvDb } from "../src/db/dev-database";
 import * as schema from "../src/db/schema";
+import { nodeEnvProdDb } from "./prod-database";
 
 async function main(): Promise<void> {
-  await reset(nodeEnvDb, schema);
+  await reset(nodeEnvProdDb, schema);
 }
 
 // Fix: Handle floating promise with .catch for error logging

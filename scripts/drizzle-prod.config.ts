@@ -12,6 +12,6 @@ export default defineConfig({
     url: process.env.POSTGRES_URL_PRODDB!,
   },
   dialect: "postgresql",
-  out: "./src/db/migrations/prod/",
-  schema: "./src/db/schema.ts",
+  out: "../drizzle/migrations/prod/",
+  schema: "../src/db/schema.ts",
 });

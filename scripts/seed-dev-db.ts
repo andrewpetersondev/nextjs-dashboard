@@ -1,8 +1,8 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-import { nodeEnvDb } from "../src/db/dev-database";
 import * as schema from "../src/db/schema";
 import type { Period } from "../src/lib/types/types.brands";
+import { nodeEnvDb } from "./dev-database";
 
 /**
  * @file seeds/seed-dev-db.ts
