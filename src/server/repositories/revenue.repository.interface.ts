@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { Period, RevenueId } from "@/core/types/types.brands";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
-import type { Period, RevenueId } from "@/lib/types/types.brands";
 
 /**
  * RevenueRepositoryInterface

@@ -11,8 +11,8 @@ import type {
   SignupFormFieldNames,
   SignupFormFields,
 } from "@/features/users/user.types";
-import type { FormState } from "@/lib/forms/form.types";
-import { validateFormData } from "@/lib/forms/form.validation";
+import { validateFormData } from "@/server/forms/form.validation";
+import type { FormState } from "@/shared/forms/form.types";
 
 /**
  * Generic form validation function that can handle different types of forms.

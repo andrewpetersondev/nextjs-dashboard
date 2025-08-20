@@ -3,8 +3,8 @@ import "server-only";
 import type * as z from "zod";
 import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/error-messages";
 import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
-import type { FormErrors, FormState } from "@/lib/forms/form.types";
-import { logger } from "@/lib/logging/logger";
+import { logger } from "@/server/logging/logger";
+import type { FormErrors, FormState } from "@/shared/forms/form.types";
 
 /**
  * Validates FormData against a Zod schema and normalizes errors.

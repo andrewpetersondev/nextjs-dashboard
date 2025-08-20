@@ -1,8 +1,8 @@
 import "server-only";
 
-import { logger } from "@/lib/logging/logger";
 import { getDB } from "@/server/db/connection";
 import { RevenueEventHandler } from "@/server/events/revenue/revenue-event.handler";
+import { logger } from "@/server/logging/logger";
 import { RevenueRepository } from "@/server/repositories/revenue.repository";
 import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 import { RevenueService } from "@/server/services/revenue.service";

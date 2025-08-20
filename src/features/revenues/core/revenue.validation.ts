@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isPeriod, isRevenueId } from "@/core/types/types.brands";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
@@ -17,14 +18,13 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/features/revenues/core/revenue.types";
-import { isPeriod, isRevenueId } from "@/lib/types/types.brands";
-import { isValidDate } from "@/lib/utils/date.utils";
 import { validateEnum } from "@/lib/validation/enum";
 import {
   isIntegerInRange,
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/lib/validation/number";
+import { isValidDate } from "@/shared/utils/date";
 
 /**
  * Type guard to validate SimpleRevenueDto structure.

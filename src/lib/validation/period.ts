@@ -1,10 +1,7 @@
 import { format, isValid, parse } from "date-fns";
 import { Err, Ok, type Result } from "@/core/result.base";
 import { ValidationError } from "@/errors/errors";
-import {
-  isValidDate,
-  normalizeToFirstOfMonthUTC,
-} from "@/lib/utils/date.utils";
+import { isValidDate, normalizeToFirstOfMonthUTC } from "@/shared/utils/date";
 
 /**
  * Result-based normalization into a first-of-month UTC Date.

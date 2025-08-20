@@ -1,6 +1,6 @@
 import { addMonths, format } from "date-fns";
-import { type Period, toPeriod } from "@/lib/types/types.brands";
-import { formatYearMonth } from "@/lib/utils/date.utils";
+import { type Period, toPeriod } from "@/core/types/types.brands";
+import { formatYearMonth } from "@/shared/utils/date";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).

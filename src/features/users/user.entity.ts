@@ -1,6 +1,7 @@
 import "server-only";
+
+import type { UserId } from "@/core/types/types.brands";
 import type { UserRole } from "@/features/users/user.types";
-import type { UserId } from "@/lib/types/types.brands";
 
 /**
  * Represents a user entity in the database, defining the structure and properties of a user record.

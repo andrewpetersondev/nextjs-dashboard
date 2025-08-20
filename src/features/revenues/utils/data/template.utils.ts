@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Period, toPeriod, toRevenueId } from "@/core/types/types.brands";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -8,8 +9,7 @@ import {
   type RollingMonthData,
 } from "@/features/revenues/core/revenue.types";
 import { periodKey } from "@/features/revenues/utils/date/period.utils";
-import { logger } from "@/lib/logging/logger";
-import { type Period, toPeriod, toRevenueId } from "@/lib/types/types.brands";
+import { logger } from "@/server/logging/logger";
 import { mapRevenueEntityToDisplayEntity } from "@/server/mappers/revenue.mapper";
 
 /**

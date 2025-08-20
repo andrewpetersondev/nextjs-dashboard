@@ -1,5 +1,6 @@
 import "server-only";
 
+import { toPeriod, toRevenueId } from "@/core/types/types.brands";
 import { ValidationError } from "@/errors/errors";
 import type {
   RevenueDisplayEntity,
@@ -8,13 +9,12 @@ import type {
 import { toRevenueSource } from "@/features/revenues/core/revenue.validation";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { getMonthName } from "@/features/revenues/utils/date/revenue-date.utils";
-import { toPeriod, toRevenueId } from "@/lib/types/types.brands";
-import { isValidDate } from "@/lib/utils/date.utils";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/lib/validation/number";
 import type { RevenueRow } from "@/server/db/schema";
+import { isValidDate } from "@/shared/utils/date";
 
 // Small internal assertion helper to keep validation DRY and readable
 const ensure = (condition: unknown, message: string): void => {

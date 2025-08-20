@@ -13,13 +13,15 @@ export default defineConfig({
         async "db:cleanup"() {
           // Clean up test data after tests
           const { cleanupTestDatabase } = await import(
-            "./src/lib/db/test-utils"
+            "./src/server/db/test-utils"
           );
           return cleanupTestDatabase();
         },
         async "db:seed"() {
           // Seed test database with minimal required data
-          const { seedTestDatabase } = await import("./src/lib/db/test-utils");
+          const { seedTestDatabase } = await import(
+            "./src/server/db/test-utils"
+          );
           return seedTestDatabase();
         },
       });

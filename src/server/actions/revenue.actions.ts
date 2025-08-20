@@ -11,8 +11,8 @@ import {
 } from "@/features/revenues/core/revenue.types";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period.utils";
 import { convertCentsToDollars } from "@/features/revenues/utils/display/revenue-display.utils";
-import { logger } from "@/lib/logging/logger";
 import { getDB } from "@/server/db/connection";
+import { logger } from "@/server/logging/logger";
 import { RevenueRepository } from "@/server/repositories/revenue.repository";
 import { RevenueStatisticsService } from "@/server/services/revenue-statistics.service";
 

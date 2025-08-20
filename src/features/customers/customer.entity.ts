@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CustomerId } from "@/lib/types/types.brands";
+import type { CustomerId } from "@/core/types/types.brands";
 
 /**
  * Represents a customer entity in the database, defining the structure and properties of a customer record.

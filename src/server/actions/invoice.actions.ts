@@ -21,15 +21,15 @@ import type {
 } from "@/features/invoices/invoice.types";
 import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
-  type BaseInvoiceEvent,
-  INVOICE_EVENTS,
-} from "@/lib/events/event.invoice";
-import { logger } from "@/lib/logging/logger";
-import {
   fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
 } from "@/server/dals/invoice.dal";
 import { getDB } from "@/server/db/connection";
+import {
+  type BaseInvoiceEvent,
+  INVOICE_EVENTS,
+} from "@/server/events/event.invoice";
+import { logger } from "@/server/logging/logger";
 import { InvoiceRepository } from "@/server/repositories/invoice.repository";
 import { InvoiceService } from "@/server/services/invoice.service";
 
@@ -84,7 +84,7 @@ export async function createInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/event.bus");
+    const { EventBus } = await import("@/server/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -238,7 +238,7 @@ export async function updateInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/event.bus");
+    const { EventBus } = await import("@/server/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -300,7 +300,7 @@ export async function deleteInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/lib/events/event.bus");
+    const { EventBus } = await import("@/server/events/event.bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { Err, type Result } from "@/core/result.base";
+import { toInvoiceId } from "@/core/types/types.brands";
 import {
   type DatabaseError_New,
   ValidationError_New,
@@ -16,7 +17,6 @@ import {
   invoiceFormEntityToServiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/features/invoices/invoice.mapper";
-import { toInvoiceId } from "@/lib/types/types.brands";
 import type { InvoiceRepository } from "@/server/repositories/invoice.repository";
 
 /**

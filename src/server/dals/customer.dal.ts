@@ -1,6 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
+import { toCustomerId } from "@/core/types/types.brands";
 import { CUSTOMER_ERROR_MESSAGES } from "@/errors/error-messages";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
@@ -9,10 +10,9 @@ import type {
   CustomerTableDbRow,
   FormattedCustomersTableRow,
 } from "@/features/customers/customer.types";
-import { toCustomerId } from "@/lib/types/types.brands";
-import { formatCurrency } from "@/lib/utils/utils";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
+import { formatCurrency } from "@/shared/utils/general";
 
 /**
  * Fetches all customers for select options.

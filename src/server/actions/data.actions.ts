@@ -1,7 +1,6 @@
 "use server";
 
 import type { DashboardData } from "@/features/data/data.types";
-import { formatCurrency } from "@/lib/utils/utils";
 import { fetchTotalCustomersCountDal } from "@/server/dals/customer.dal";
 import {
   fetchLatestInvoicesDal,
@@ -10,6 +9,7 @@ import {
   fetchTotalPendingInvoicesDal,
 } from "@/server/dals/invoice.dal";
 import { getDB } from "@/server/db/connection";
+import { formatCurrency } from "@/shared/utils/general";
 
 /**
  * Server action to fetch all dashboard data including cards and latest invoices.

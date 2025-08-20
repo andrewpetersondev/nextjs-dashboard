@@ -2,6 +2,7 @@ import "server-only";
 
 import { Err, Ok, type Result } from "@/core/result.base";
 import { map } from "@/core/result.transform";
+import type { InvoiceId } from "@/core/types/types.brands";
 import {
   type DatabaseError_New,
   ValidationError_New,
@@ -16,7 +17,6 @@ import type {
   InvoiceServiceEntity,
 } from "@/features/invoices/invoice.entity";
 import { entityToInvoiceDto } from "@/features/invoices/invoice.mapper";
-import type { InvoiceId } from "@/lib/types/types.brands";
 import {
   createInvoiceDal,
   deleteInvoiceDal,

@@ -18,7 +18,7 @@ import {
   calculateDateRange,
   generateMonthsTemplate,
 } from "@/features/revenues/utils/date/revenue-date.utils";
-import { logger } from "@/lib/logging/logger";
+import { logger } from "@/server/logging/logger";
 import { mapRevEntToRevDisplayEnt } from "@/server/mappers/revenue.mapper";
 import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 

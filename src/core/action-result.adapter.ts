@@ -2,7 +2,7 @@ import "server-only";
 
 import type { Result } from "@/core/result.base";
 import { ValidationError_New } from "@/errors/error.domain";
-import type { ActionResult, FieldErrors } from "@/lib/types/action-result";
+import type { ActionResult, FieldErrors } from "@/shared/types/action-result";
 
 /**
  * Transforms a `Result` into an `ActionResult` with a standardized structure for handling success and validation errors.

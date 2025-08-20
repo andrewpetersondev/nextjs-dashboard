@@ -1,4 +1,4 @@
-import "server-only";
+// Shared form types (client-safe)
 
 /**
  * Represents validation errors for a single form field.

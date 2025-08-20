@@ -1,9 +1,9 @@
 import "server-only";
 
-import { EventBus } from "@/lib/events/event.bus";
-import type { BaseInvoiceEvent } from "@/lib/events/event.invoice";
-import { INVOICE_EVENTS } from "@/lib/events/event.invoice";
-import { logger } from "@/lib/logging/logger";
+import { EventBus } from "@/server/events/event.bus";
+import type { BaseInvoiceEvent } from "@/server/events/event.invoice";
+import { INVOICE_EVENTS } from "@/server/events/event.invoice";
+import { logger } from "@/server/logging/logger";
 import type { RevenueService } from "@/server/services/revenue.service";
 import {
   adjustRevenueForDeletedInvoice,

@@ -1,4 +1,4 @@
-// Note: Utility functions should use const (arrow functions) for better performance and readability.
+// Shared general utilities
 
 export const formatCurrency = (amount: number): string => {
   return (amount / 100).toLocaleString("en-US", {

@@ -5,6 +5,7 @@ import {
   isValid,
   startOfMonth,
 } from "date-fns";
+import type { Period } from "@/core/types/types.brands";
 import { ValidationError } from "@/errors/errors";
 import {
   type IntervalDuration,
@@ -14,7 +15,6 @@ import {
 } from "@/features/revenues/core/revenue.types";
 import { createMonthTemplateData } from "@/features/revenues/utils/data/template.utils";
 import { dateToPeriod } from "@/features/revenues/utils/date/period.utils";
-import type { Period } from "@/lib/types/types.brands";
 
 /**
  * Calculates a specific month date from rolling start date with offset.

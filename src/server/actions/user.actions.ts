@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { actionResult } from "@/core/action-result";
+import { toUserId } from "@/core/types/types.brands";
 import { USER_ERROR_MESSAGES } from "@/errors/error-messages";
 import {
   deleteSessionToken,
@@ -26,12 +27,6 @@ import type {
 import { getValidUserRole } from "@/features/users/user.utils";
 import { toUserRole } from "@/features/users/user.validation";
 import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
-import type { FormState } from "@/lib/forms/form.types";
-import { normalizeFieldErrors } from "@/lib/forms/form.validation";
-import { logger } from "@/lib/logging/logger";
-import type { ActionResult } from "@/lib/types/action-result";
-import { toUserId } from "@/lib/types/types.brands";
-import { stripProperties } from "@/lib/utils/utils";
 import {
   createDemoUser,
   createUserDal,
@@ -45,10 +40,15 @@ import {
   updateUserDal,
 } from "@/server/dals/user.dal";
 import { getDB } from "@/server/db/connection";
+import { normalizeFieldErrors } from "@/server/forms/form.validation";
+import { logger } from "@/server/logging/logger";
 import {
   validateLoginForm,
   validateSignupForm,
 } from "@/server/services/user.service";
+import type { FormState } from "@/shared/forms/form.types";
+import type { ActionResult } from "@/shared/types/action-result";
+import { stripProperties } from "@/shared/utils/general";
 
 // --- CRUD Actions for Users ---
 

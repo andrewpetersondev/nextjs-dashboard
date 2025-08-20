@@ -20,7 +20,7 @@ import {
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
 } from "@/lib/constants/auth.constants";
-import { logger } from "@/lib/logging/logger";
+import { logger } from "@/server/logging/logger";
 
 // --- JWT session logic here ---
 // export createSessionToken, readSessionToken, setSessionToken, updateSessionToken, deleteSessionToken

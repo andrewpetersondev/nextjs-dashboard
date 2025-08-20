@@ -1,9 +1,9 @@
 import "server-only";
 
+import { toUserId } from "@/core/types/types.brands";
 import type { UserDto } from "@/features/users/user.dto";
 import type { UserEntity } from "@/features/users/user.entity";
 import { toUserRole } from "@/features/users/user.validation";
-import { toUserId } from "@/lib/types/types.brands";
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.

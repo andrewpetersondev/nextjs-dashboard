@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Period, RevenueId } from "@/core/types/types.brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/invoice.dto";
 import type {
@@ -8,7 +9,6 @@ import type {
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/revenue-date.utils";
-import type { Period, RevenueId } from "@/lib/types/types.brands";
 import type { RevenueRepositoryInterface } from "@/server/repositories/revenue.repository.interface";
 
 /**

@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/features/invoices/invoice.types";
-import { formatCurrency } from "@/lib/utils/utils";
+import { formatCurrency } from "@/shared/utils/general";
 import { H2, H3 } from "@/ui/headings";
 
 interface LatestInvoicesProps {

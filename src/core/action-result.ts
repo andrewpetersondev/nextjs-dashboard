@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ActionResult, FieldErrors } from "@/lib/types/action-result";
+import type { ActionResult, FieldErrors } from "@/shared/types/action-result";
 
 /**
  * Constructs and returns an ActionResult object based on the provided parameters.

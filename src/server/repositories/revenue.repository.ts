@@ -1,17 +1,17 @@
 import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";
+import {
+  type Period,
+  type RevenueId,
+  toPeriod,
+} from "@/core/types/types.brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/features/revenues/core/revenue.entity";
-import {
-  type Period,
-  type RevenueId,
-  toPeriod,
-} from "@/lib/types/types.brands";
 import type { Database } from "@/server/db/connection";
 import { type RevenueRow, revenues } from "@/server/db/schema";
 import {
