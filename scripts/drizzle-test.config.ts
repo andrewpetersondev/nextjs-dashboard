@@ -1,4 +1,4 @@
-import "./envConfig.ts";
+import "../envConfig.ts";
 import { defineConfig } from "drizzle-kit";
 
 // WRONG inside Docker:
