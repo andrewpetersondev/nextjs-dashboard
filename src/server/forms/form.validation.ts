@@ -1,10 +1,21 @@
 import "server-only";
 
 import type * as z from "zod";
+import type { Result } from "@/core/result.base";
 import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/error-messages";
 import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import { logger } from "@/server/logging/logger";
 import type { FormErrors, FormState } from "@/shared/forms/form.types";
+
+// Helper: derive allowed field names from a Zod object schema
+// function deriveAllowedFields<TFieldNames extends string>(
+//   schema: z.ZodSchema<any>,
+// ): readonly TFieldNames[] {
+//   if ("shape" in schema && typeof (schema as any).shape === "object") {
+//     return Object.keys((schema as any).shape) as readonly TFieldNames[];
+//   }
+//   return [] as const;
+// }
 
 /**
  * Validates FormData against a Zod schema and normalizes errors.
@@ -92,4 +103,140 @@ export function normalizeFieldErrors(
     }
   }
   return result;
+}
+
+// --- Generic validate + transform with selectable return shape ---
+
+/**
+ * Options for form validation configuration.
+ *
+ * Allows transforming parsed data, customizing return mode, managing success/failure
+ * messages, and redacting sensitive fields.
+ *
+ * @typeParam TFieldNames - Names of the form fields to redact.
+ * @typeParam TIn - Input type of the form data.
+ * @typeParam TOut - Output type of the transformed data (defaults to TIn).
+ *
+ * @property transform - Optional transformer applied to successfully parsed data. Can return a value synchronously or as a Promise.
+ * @property returnMode - Defines the return structure: `"form"` for form-like values (default) or `"result"` for a Result-based response.
+ * @property messages - Customizable success and failure messages when using `form` return mode.
+ * @property redactFields - List of field names to exclude from the output (e.g., sensitive data like passwords).
+ *
+ * @example
+ * ```typescript
+ * const options: ValidateFormOptions<'password', { username: string; password: string }, { username: string }> = {
+ *   transform: (data) => ({ username: data.username }),
+ *   returnMode: "result",
+ *   messages: { success: "Validation passed", failure: "Validation failed" },
+ *   redactFields: ['password'],
+ * };
+ * ```
+ */
+export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
+  // Optional transformer applied only on successful parse
+  transform?: (data: TIn) => TOut | Promise<TOut>;
+  // Choose return shape: form (default) or result
+  returnMode?: "form" | "result";
+  // Override success/failure messages for form mode
+  messages?: {
+    success?: string;
+    failure?: string;
+  };
+  // Do not echo these fields back in values (e.g., passwords)
+  redactFields?: readonly TFieldNames[];
+};
+
+/**
+ * Generic form validation function that supports data transformation and flexible return types.
+ *
+ * @typeParam TFieldNames - String literal union of valid form field names
+ * @typeParam TIn - Input type the form data is parsed into
+ * @typeParam TOut - Optional output type after transformation (defaults to TIn)
+ *
+ * @param formData - The FormData object to validate
+ * @param schema - Zod schema to validate the form data against
+ * @param allowedFields - Array of allowed field names
+ * @param options - Optional configuration for validation behavior
+ *
+ * @example
+ * ```typescript
+ * // TypeScript
+ * const res = await validateFormGeneric(formData, SignupSchema, ["email","password","username"], {
+ *   transform: d => ({ ...d, email: d.email.toLowerCase().trim() }),
+ *   returnMode: "result",
+ * });
+ * ```
+ *
+ * @returns Promise resolving to either FormState or Result based on returnMode option
+ */
+export async function validateFormGeneric<
+  TFieldNames extends string,
+  TIn,
+  TOut = TIn,
+>(
+  formData: FormData,
+  schema: z.ZodSchema<TIn>,
+  allowedFields: readonly TFieldNames[],
+  options: ValidateFormOptions<TFieldNames, TIn, TOut> = {},
+): Promise<
+  FormState<TFieldNames, TOut> | Result<TOut, Record<string, string[]>>
+> {
+  // Destructure options
+  const {
+    transform,
+    returnMode = "form",
+    messages,
+    redactFields = ["password" as TFieldNames],
+  } = options;
+
+  const raw = Object.fromEntries(formData.entries());
+  const parsed = schema.safeParse(raw);
+
+  if (!parsed.success) {
+    const { fieldErrors } = parsed.error.flatten();
+    const normalized = mapFieldErrors(fieldErrors, allowedFields);
+
+    if (returnMode === "result") {
+      const denseErrors = normalizeFieldErrors(
+        normalized as Record<string, string[] | undefined>,
+      );
+      return { error: denseErrors, success: false };
+    }
+
+    const values: Partial<Record<TFieldNames, string>> = {};
+    for (const key of allowedFields) {
+      if (redactFields.includes(key)) continue;
+      const v = raw[key as string];
+      if (typeof v === "string") values[key] = v;
+    }
+
+    logger.error({
+      context: "validateFormGeneric",
+      error: parsed.error,
+      message:
+        messages?.failure ?? FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
+    });
+
+    return {
+      errors: normalized,
+      message:
+        messages?.failure ?? FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
+      success: false,
+      values,
+    };
+  }
+
+  const dataIn = parsed.data as TIn;
+  const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
+
+  if (returnMode === "result") {
+    return { data: dataOut, success: true };
+  }
+
+  return {
+    data: dataOut,
+    message:
+      messages?.success ?? FORM_VALIDATION_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
+    success: true,
+  };
 }

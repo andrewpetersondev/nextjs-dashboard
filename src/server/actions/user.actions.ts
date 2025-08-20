@@ -14,6 +14,7 @@ import type { UserDto } from "@/features/users/user.dto";
 import {
   CreateUserFormSchema,
   EditUserFormSchema,
+  SignupFormSchema,
 } from "@/features/users/user.schema";
 import type {
   CreateUserFormFieldNames,
@@ -40,12 +41,12 @@ import {
   updateUserDal,
 } from "@/server/dals/user.dal";
 import { getDB } from "@/server/db/connection";
-import { normalizeFieldErrors } from "@/server/forms/form.validation";
-import { logger } from "@/server/logging/logger";
 import {
-  validateLoginForm,
-  validateSignupForm,
-} from "@/server/services/user.service";
+  normalizeFieldErrors,
+  validateFormGeneric,
+} from "@/server/forms/form.validation";
+import { logger } from "@/server/logging/logger";
+import { validateLoginForm } from "@/server/services/user.service";
 import type { FormState } from "@/shared/forms/form.types";
 import type { ActionResult } from "@/shared/types/action-result";
 import { stripProperties } from "@/shared/utils/general";
@@ -272,13 +273,24 @@ export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
-  const validated = validateSignupForm(formData);
+  const validated = (await validateFormGeneric<
+    SignupFormFieldNames,
+    SignupFormFields
+  >(formData, SignupFormSchema, ["username", "email", "password"] as const, {
+    returnMode: "form",
+    // Example: normalize email; redact password is default
+    transform: (d) => ({
+      ...d,
+      email: d.email.toLowerCase().trim(),
+      username: d.username.trim(),
+    }),
+  })) as FormState<SignupFormFieldNames, SignupFormFields>;
 
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }
 
-  const { username, email, password } = validated.data as SignupFormFields;
+  const { username, email, password } = validated.data;
 
   const db = getDB();
 

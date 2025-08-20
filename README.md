@@ -20,25 +20,7 @@ A modern, production-ready dashboard application built with Next.js (App Router)
 
 ```
 nextjs-dashboard/
-├── src/                # All application source code
-│   ├── app/            # Next.js App Router entrypoint and routes
-│   ├── components/     # Composite and feature-level React components
-│   ├── ui/             # Atomic, reusable UI components
-│   ├── features/       # Feature slices (actions, types, utils, etc.)
-│   ├── db/             # Database models, migrations, seeds (Drizzle ORM)
-│   ├── config/         # Application and environment configuration
-│   ├── errors/         # Custom error classes and error handling
-│   ├── lib/            # Shared utilities, constants, and types
-│   ├── styles/         # Global and shared styles
-│   ├── __tests__/      # Unit and integration tests (Jest/Vitest)
-│   └── README.md
-├── cypress/            # Cypress E2E and component tests
-├── public/             # Static assets
-├── storage/            # Local storage (if needed)
-├── .github/            # GitHub Actions workflows
-├── README.md           # Project documentation
-├── package.json
-├── tsconfig.json
+├── src/
 └── ...
 ```
 
