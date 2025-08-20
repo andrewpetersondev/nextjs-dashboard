@@ -1,36 +1,53 @@
 # An .aiignore file follows the same syntax as a .gitignore file.
 # .gitignore documentation: https://git-scm.com/docs/gitignore
 
-# TEMPORARY
-storage/
-storage/containers/
-storage/notes
-storage/old-docs
+# Match by extension
+*.min.js
+*.map
+*.md
+
+
+# Temporary
+# src/app
+# src/ui
+
+
+# My Files (General)
+.github
+.idea
+cypress
+docs
+drizzle
+public
+scripts
+storage
+.env
+.env.*
+.gitignore
+biome.json
+CONFIG.md
+cypress.config.ts
+envConfig.ts
+eslint.config.mjs
+next-env.d.ts
+pnpm-lock.yaml
+pnpm-workspace.yaml
+README.md
+
+
+
+# Build
+tsconfig.tsbuildinfo
+.next/
+dist/
+build/
+out/
+node_modules/
 
 # System Files
 .DS_Store
 *.log
 *.tmp
 
-# Build folders
-dist/
-build/
-out/
-node_modules/
 
-# Ignore environment and secrets
-.env
-.env.*
-secrets/**
-storage/notes/Docker/secrets/
 
-# Project root files
-tsconfig.tsbuildinfo
-eslint.config.mjs
-next-env.d.ts
-pnpm-lock.yaml
-pnpm-workspace.yaml
-
-# Match by extension
-*.min.js
-*.map
