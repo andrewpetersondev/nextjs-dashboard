@@ -1,73 +1,26 @@
 import "server-only";
 
-import type * as z from "zod";
+import * as z from "zod";
 import type { Result } from "@/core/result.base";
 import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/error-messages";
 import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import { logger } from "@/server/logging/logger";
 import type { FormErrors, FormState } from "@/shared/forms/form.types";
 
+// Strongly typed guard for ZodObject (avoids `any` casts)
+function isZodObject(
+  schema: z.ZodTypeAny,
+): schema is z.ZodObject<z.ZodRawShape> {
+  return schema instanceof z.ZodObject;
+}
+
 // Helper: derive allowed field names from a Zod object schema
-// function deriveAllowedFields<TFieldNames extends string>(
-//   schema: z.ZodSchema<any>,
-// ): readonly TFieldNames[] {
-//   if ("shape" in schema && typeof (schema as any).shape === "object") {
-//     return Object.keys((schema as any).shape) as readonly TFieldNames[];
-//   }
-//   return [] as const;
-// }
-
-/**
- * Validates FormData against a Zod schema and normalizes errors.
- *
- * @template TFieldNames - String literal union of valid form field names.
- * @template TData - Type of the schema's output.
- * @param formData - The FormData to validate.
- * @param schema - The Zod schema to validate against.
- * @param allowedFields - Array of allowed field names to include in the error map.
- */
-export function validateFormData<TFieldNames extends string, TData = unknown>(
-  formData: FormData,
-  schema: z.ZodSchema<TData>,
-  allowedFields: readonly TFieldNames[],
-): FormState<TFieldNames, TData> {
-  const data = Object.fromEntries(formData.entries());
-  const parsed = schema.safeParse(data);
-
-  if (!parsed.success) {
-    logger.error({
-      context: "validateFormData",
-      data,
-      error: parsed.error,
-      message: FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
-    });
-
-    const { fieldErrors } = parsed.error.flatten();
-
-    // Build non-sensitive raw values for repopulating the form.
-    const values: Partial<Record<TFieldNames, string>> = {};
-    for (const key of allowedFields) {
-      // Avoid echoing sensitive fields like passwords
-      if (key === ("password" as TFieldNames)) continue;
-      const v = data[key as string];
-      if (typeof v === "string") {
-        values[key] = v;
-      }
-    }
-
-    return {
-      errors: mapFieldErrors(fieldErrors, allowedFields),
-      message: FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
-      success: false,
-      values,
-    };
-  }
-
-  return {
-    data: parsed.data,
-    message: FORM_VALIDATION_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
-    success: true,
-  };
+function deriveAllowedFieldsFromSchema<S extends z.ZodObject<z.ZodRawShape>>(
+  schema: S,
+): ReadonlyArray<Extract<keyof z.infer<S>, string>> {
+  type Keys = Extract<keyof z.infer<S>, string>;
+  const keys = Object.keys(schema.shape) as Keys[];
+  return keys as ReadonlyArray<Keys>;
 }
 
 /**
@@ -176,12 +129,11 @@ export async function validateFormGeneric<
 >(
   formData: FormData,
   schema: z.ZodSchema<TIn>,
-  allowedFields: readonly TFieldNames[],
+  allowedFields?: readonly TFieldNames[],
   options: ValidateFormOptions<TFieldNames, TIn, TOut> = {},
 ): Promise<
   FormState<TFieldNames, TOut> | Result<TOut, Record<string, string[]>>
 > {
-  // Destructure options
   const {
     transform,
     returnMode = "form",
@@ -192,9 +144,16 @@ export async function validateFormGeneric<
   const raw = Object.fromEntries(formData.entries());
   const parsed = schema.safeParse(raw);
 
+  // Derive fields if not provided, without using `any`
+  const fields =
+    allowedFields ??
+    (isZodObject(schema)
+      ? (deriveAllowedFieldsFromSchema(schema) as ReadonlyArray<TFieldNames>)
+      : ([] as const));
+
   if (!parsed.success) {
     const { fieldErrors } = parsed.error.flatten();
-    const normalized = mapFieldErrors(fieldErrors, allowedFields);
+    const normalized = mapFieldErrors(fieldErrors, fields);
 
     if (returnMode === "result") {
       const denseErrors = normalizeFieldErrors(
@@ -204,7 +163,7 @@ export async function validateFormGeneric<
     }
 
     const values: Partial<Record<TFieldNames, string>> = {};
-    for (const key of allowedFields) {
+    for (const key of fields) {
       if (redactFields.includes(key)) continue;
       const v = raw[key as string];
       if (typeof v === "string") values[key] = v;

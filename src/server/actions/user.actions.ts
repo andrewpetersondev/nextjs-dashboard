@@ -14,6 +14,7 @@ import type { UserDto } from "@/features/users/user.dto";
 import {
   CreateUserFormSchema,
   EditUserFormSchema,
+  LoginFormSchema,
   SignupAllowedFields,
   SignupFormSchema,
 } from "@/features/users/user.schema";
@@ -47,7 +48,6 @@ import {
   validateFormGeneric,
 } from "@/server/forms/form.validation";
 import { logger } from "@/server/logging/logger";
-import { validateLoginForm } from "@/server/services/user.service";
 import type { FormState } from "@/shared/forms/form.types";
 import type { ActionResult } from "@/shared/types/action-result";
 import { stripProperties } from "@/shared/utils/general";
@@ -335,13 +335,22 @@ export async function login(
   _prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<LoginFormFieldNames>> {
-  const validated = validateLoginForm(formData);
+  const validated = (await validateFormGeneric<
+    LoginFormFieldNames,
+    LoginFormFields
+  >(formData, LoginFormSchema, undefined, {
+    returnMode: "form",
+    transform: (d) => ({
+      ...d,
+      email: d.email.toLowerCase().trim(),
+    }),
+  })) as FormState<LoginFormFieldNames, LoginFormFields>;
 
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }
 
-  const { email, password } = validated.data as LoginFormFields;
+  const { email, password } = validated.data;
 
   const db = getDB();
 
