@@ -28,7 +28,6 @@ import type {
 } from "@/features/users/user.types";
 import { getValidUserRole } from "@/features/users/user.utils";
 import { toUserRole } from "@/features/users/user.validation";
-import { USER_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
   createDemoUser,
   createUserDal,
@@ -48,6 +47,7 @@ import {
 } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
 import { hashPassword } from "@/server/security/password";
+import { USER_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 import type { FormState } from "@/shared/forms/types";
 import { stripProperties } from "@/shared/utils/general";
 

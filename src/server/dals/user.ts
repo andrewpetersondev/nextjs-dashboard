@@ -11,7 +11,6 @@ import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
 import { toUserRole } from "@/features/users/user.validation";
-import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { logger } from "@/server/logging/logger";
@@ -20,6 +19,7 @@ import {
   createRandomPassword,
   hashPassword,
 } from "@/server/security/password";
+import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
 
 /**
  * Inserts a new user record into the database.

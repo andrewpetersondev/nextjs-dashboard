@@ -18,13 +18,13 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/features/revenues/core/types";
-import { validateEnum } from "@/lib/validation/enum";
+import { isValidDate } from "@/shared/utils/date";
+import { validateEnum } from "@/shared/validation/enum";
 import {
   isIntegerInRange,
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/lib/validation/number";
-import { isValidDate } from "@/shared/utils/date";
+} from "@/shared/validation/number";
 
 /**
  * Type guard to validate SimpleRevenueDto structure.

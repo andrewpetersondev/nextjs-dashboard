@@ -16,7 +16,6 @@ import type {
   InvoiceListFilter,
   InvoiceStatus,
 } from "@/features/invoices/types";
-import { INVOICE_SUCCESS_MESSAGES } from "@/lib/constants/success-messages";
 import {
   fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
@@ -26,6 +25,7 @@ import { type BaseInvoiceEvent, INVOICE_EVENTS } from "@/server/events/invoice";
 import { logger } from "@/server/logging/logger";
 import { InvoiceRepository } from "@/server/repositories/invoice";
 import { InvoiceService } from "@/server/services/invoice";
+import { INVOICE_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 
 /**
  * Server action for creating a new invoice.

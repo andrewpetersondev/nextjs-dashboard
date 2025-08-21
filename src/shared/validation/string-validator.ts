@@ -1,7 +1,7 @@
 import "server-only";
 import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError_New } from "@/errors/errors-domain";
-import type { ValidationRule, Validator } from "@/lib/validation/types";
+import type { ValidationRule, Validator } from "@/shared/validation/types";
 
 /**
  * StringValidator with tiny rule-based checks.

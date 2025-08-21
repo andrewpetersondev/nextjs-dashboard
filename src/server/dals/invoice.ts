@@ -14,10 +14,10 @@ import type {
 } from "@/features/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/features/invoices/mapper";
 import type { InvoiceListFilter } from "@/features/invoices/types";
-import { ITEMS_PER_PAGE } from "@/lib/constants/ui";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices, revenues } from "@/server/db/schema";
 import { logger } from "@/server/logging/logger";
+import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
 
 /**
  * Creates a new invoice in the database.

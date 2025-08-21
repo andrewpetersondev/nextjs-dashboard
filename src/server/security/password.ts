@@ -1,6 +1,6 @@
 import "server-only";
 import * as bcryptjs from "bcryptjs";
-import { SALT_ROUNDS } from "@/lib/constants/auth";
+import { SALT_ROUNDS } from "@/shared/constants/auth";
 
 /**
  * Generates a random password string with at least one capital letter, one number, and one special character.

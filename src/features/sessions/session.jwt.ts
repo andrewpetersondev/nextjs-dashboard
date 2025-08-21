@@ -15,12 +15,12 @@ import {
   EncryptPayloadSchema,
 } from "@/features/sessions/types";
 import type { UserRole } from "@/features/users/user.types";
+import { logger } from "@/server/logging/logger";
 import {
   JWT_EXPIRATION,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-} from "@/lib/constants/auth";
-import { logger } from "@/server/logging/logger";
+} from "@/shared/constants/auth";
 
 // --- JWT session logic here ---
 // export createSessionToken, readSessionToken, setSessionToken, updateSessionToken, deleteSessionToken

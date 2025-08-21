@@ -9,12 +9,12 @@ import type {
 import { toRevenueSource } from "@/features/revenues/core/validator";
 import { getMonthName } from "@/features/revenues/utils/date/date";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period";
+import type { RevenueRow } from "@/server/db/schema";
+import { isValidDate } from "@/shared/utils/date";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/lib/validation/number";
-import type { RevenueRow } from "@/server/db/schema";
-import { isValidDate } from "@/shared/utils/date";
+} from "@/shared/validation/number";
 
 // Small internal assertion helper to keep validation DRY and readable
 const ensure = (condition: unknown, message: string): void => {

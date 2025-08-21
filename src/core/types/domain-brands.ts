@@ -3,9 +3,9 @@ import { Err, Ok, type Result } from "@/core/result-base";
 import type { ValidationError } from "@/errors/errors";
 import { ValidationError_New } from "@/errors/errors-domain";
 import { mapNewToLegacyError } from "@/errors/errors-mapper";
-import { validatePeriodResult } from "@/lib/validation/period";
-import { brandWith } from "@/lib/validation/types";
-import { isUuid, validateUuidResult } from "@/lib/validation/uuid";
+import { validatePeriodResult } from "@/shared/validation/period";
+import { brandWith } from "@/shared/validation/types";
+import { isUuid, validateUuidResult } from "@/shared/validation/uuid";
 
 // Unique symbols for each domain concept
 const CUSTOMER_ID_BRAND = Symbol("CustomerId");
