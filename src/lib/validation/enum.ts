@@ -1,4 +1,4 @@
-import { Err, Ok, type Result } from "@/core/result.base";
+import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError } from "@/errors/errors";
 
 /**

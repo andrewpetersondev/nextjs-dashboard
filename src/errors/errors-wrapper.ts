@@ -1,0 +1,14 @@
+import "server-only";
+import { fromPromise } from "@/core/result-async";
+import type { Result } from "@/core/result-base";
+import { mapToRepoError, type RepoError } from "@/errors/errors-mapper";
+
+/**
+ * Typed wrapper around fromPromise to infer E via mapToRepoError,
+ * eliminating repetitive type casts at call sites.
+ *
+ * Note: We fix the error type as RepoError to avoid inference widening to `unknown`.
+ */
+export function fromDal<T>(p: Promise<T>): Promise<Result<T, RepoError>> {
+  return fromPromise<T, RepoError>(p, mapToRepoError);
+}

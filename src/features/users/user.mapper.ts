@@ -1,6 +1,6 @@
 import "server-only";
 
-import { toUserId } from "@/core/types/types.brands";
+import { toUserId } from "@/core/types/types-brands";
 import type { UserDto } from "@/features/users/user.dto";
 import type { UserEntity } from "@/features/users/user.entity";
 import { toUserRole } from "@/features/users/user.validation";

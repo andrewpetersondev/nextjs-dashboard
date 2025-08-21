@@ -1,6 +1,6 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import type { FormFieldError } from "@/shared/forms/form.types";
+import type { FormFieldError } from "@/shared/forms/types";
 
 /**
  * Props for the SelectMenu component.

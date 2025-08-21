@@ -2,24 +2,24 @@ import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { SESSION_SECRET } from "@/config/env";
+import { SESSION_SECRET } from "@/config/environment";
 import { ValidationError } from "@/errors/errors";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/features/sessions/session.mapper";
+} from "@/features/sessions/mapper";
 import {
   type DecryptPayload,
   DecryptPayloadSchema,
   type EncryptPayload,
   EncryptPayloadSchema,
-} from "@/features/sessions/session.types";
+} from "@/features/sessions/types";
 import type { UserRole } from "@/features/users/user.types";
 import {
   JWT_EXPIRATION,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-} from "@/lib/constants/auth.constants";
+} from "@/lib/constants/auth";
 import { logger } from "@/server/logging/logger";
 
 // --- JWT session logic here ---

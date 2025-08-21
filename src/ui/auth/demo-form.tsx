@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import type { UserRole } from "@/features/users/user.types";
-import { demoUser } from "@/server/actions/user.actions";
+import { demoUser } from "@/server/actions/user";
 import { Button } from "@/ui/button";
 
 /**

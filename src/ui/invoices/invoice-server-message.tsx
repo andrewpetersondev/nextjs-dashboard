@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
+import type { InvoiceActionResult } from "@/features/invoices/types";
 
 /**
  * Props for InvoiceServerMessage component.

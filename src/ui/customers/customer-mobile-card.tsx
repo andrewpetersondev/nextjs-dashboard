@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import type { FormattedCustomersTableRow } from "@/features/customers/customer.types";
+import type { FormattedCustomersTableRow } from "@/features/customers/types";
 
 /**
  * Label constants for customer card fields.

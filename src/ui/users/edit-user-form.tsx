@@ -2,7 +2,7 @@
 
 import { type JSX, useActionState } from "react";
 import type { UserDto } from "@/features/users/user.dto";
-import { updateUserAction } from "@/server/actions/user.actions";
+import { updateUserAction } from "@/server/actions/user";
 import { UserForm } from "@/ui/users/user-form";
 import { UserInfoPanel } from "@/ui/users/user-info-panel";
 

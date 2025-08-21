@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import type { DashboardCardData } from "@/features/data/data.types";
+import type { DashboardCardData } from "@/features/data/types";
 import { H3 } from "@/ui/headings";
 
 /**

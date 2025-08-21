@@ -1,5 +1,5 @@
 import type { UserEntity } from "@/features/users/user.entity";
-import type { FormState } from "@/shared/forms/form.types";
+import type { FormState } from "@/shared/forms/types";
 
 /** --- User Domain Types --- */
 

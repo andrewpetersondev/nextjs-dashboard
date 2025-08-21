@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readUsersPagesAction } from "@/server/actions/user.actions";
+import { readUsersPagesAction } from "@/server/actions/user";
 import { H1 } from "@/ui/headings";
 import { Pagination } from "@/ui/invoices/pagination";
 import { Search } from "@/ui/search";

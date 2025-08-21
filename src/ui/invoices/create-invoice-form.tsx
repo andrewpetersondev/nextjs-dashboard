@@ -1,9 +1,9 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/features/customers/customer.types";
-import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
-import { createInvoiceAction } from "@/server/actions/invoice.actions";
+import type { CustomerField } from "@/features/customers/types";
+import type { InvoiceActionResult } from "@/features/invoices/types";
+import { createInvoiceAction } from "@/server/actions/invoice";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { UserDto } from "@/features/users/user.dto";
-import { readUserAction } from "@/server/actions/user.actions";
+import { readUserAction } from "@/server/actions/user";
 import { H1 } from "@/ui/headings";
 import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
 import { EditUserForm } from "@/ui/users/edit-user-form";

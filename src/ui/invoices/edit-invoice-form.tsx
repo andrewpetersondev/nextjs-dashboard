@@ -1,10 +1,10 @@
 "use client";
 
 import { type JSX, useActionState, useEffect, useState } from "react";
-import type { CustomerField } from "@/features/customers/customer.types";
-import type { InvoiceDto } from "@/features/invoices/invoice.dto";
-import type { InvoiceActionResult } from "@/features/invoices/invoice.types";
-import { updateInvoiceAction } from "@/server/actions/invoice.actions";
+import type { CustomerField } from "@/features/customers/types";
+import type { InvoiceDto } from "@/features/invoices/dto";
+import type { InvoiceActionResult } from "@/features/invoices/types";
+import { updateInvoiceAction } from "@/server/actions/invoice";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";
 import { Label } from "@/ui/components/label";

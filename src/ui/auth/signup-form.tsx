@@ -7,8 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { type FC, type JSX, useActionState } from "react";
 import type { SignupFormFieldNames } from "@/features/users/user.types";
-import { signup } from "@/server/actions/user.actions";
-import type { FormFieldError, FormState } from "@/shared/forms/form.types";
+import { signup } from "@/server/actions/user";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
 import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";

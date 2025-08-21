@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
 } from "react";
-import type { FormFieldError } from "@/shared/forms/form.types";
+import type { FormFieldError } from "@/shared/forms/types";
 import { FieldError } from "@/ui/auth/field-error";
 import { InputFieldCard } from "@/ui/components/input-field-card";
 

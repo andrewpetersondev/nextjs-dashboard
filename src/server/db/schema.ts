@@ -29,15 +29,15 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "@/core/types/types.brands";
+} from "@/core/types/types-brands";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/features/invoices/invoice.types";
+} from "@/features/invoices/types";
 import {
   REVENUE_SOURCES,
   type RevenueSource,
-} from "@/features/revenues/core/revenue.types";
+} from "@/features/revenues/core/types";
 import type { UserRole } from "@/features/users/user.types";
 import { USER_ROLES } from "@/features/users/user.types";
 

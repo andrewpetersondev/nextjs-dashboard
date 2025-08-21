@@ -12,8 +12,8 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/user.types";
-import { createUserAction } from "@/server/actions/user.actions";
-import type { FormFieldError, FormState } from "@/shared/forms/form.types";
+import { createUserAction } from "@/server/actions/user";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { InputField } from "@/ui/auth/input-field";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";

@@ -1,7 +1,7 @@
 import "server-only";
 
-import { BaseError } from "@/errors/error.base";
-import { DatabaseError_New, ValidationError_New } from "@/errors/error.domain";
+import { BaseError } from "@/errors/errors-base";
+import { DatabaseError_New, ValidationError_New } from "@/errors/errors-domain";
 
 /**
  * Deprecated: Use `BaseError` and domain-specific errors instead.

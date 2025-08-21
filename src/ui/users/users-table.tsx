@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import type { UserDto } from "@/features/users/user.dto";
-import { readFilteredUsersAction } from "@/server/actions/user.actions"; // Use server action
+import { readFilteredUsersAction } from "@/server/actions/user"; // Use server action
 import { DeleteUser, UpdateUser } from "@/ui/users/buttons";
 
 /**

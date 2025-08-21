@@ -5,7 +5,7 @@
  */
 
 import type { JSX } from "react";
-import type { CustomerField } from "@/features/customers/customer.types";
+import type { CustomerField } from "@/features/customers/types";
 import { ErrorMessage } from "@/ui/components/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
 
@@ -18,7 +18,7 @@ import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
 export interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
   readonly customers: readonly CustomerField[];
-  readonly error?: import("@/shared/forms/form.types").FormFieldError;
+  readonly error?: import("@/shared/forms/types").FormFieldError;
 }
 
 /**
