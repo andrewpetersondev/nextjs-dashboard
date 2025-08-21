@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Period, toPeriod, toRevenueId } from "@/core/types/types-brands";
+import { type Period, toPeriod, toRevenueId } from "@/core/types/domain-brands";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,

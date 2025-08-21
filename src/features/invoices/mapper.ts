@@ -1,6 +1,10 @@
 import "server-only";
 
-import { toCustomerId, toInvoiceId, toPeriod } from "@/core/types/types-brands";
+import {
+  toCustomerId,
+  toInvoiceId,
+  toPeriod,
+} from "@/core/types/domain-brands";
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/dto";
 import type {
   InvoiceEntity,

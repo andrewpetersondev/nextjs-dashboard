@@ -1,8 +1,9 @@
 import "server-only";
 
+import type { ActionResult } from "@/core/action-result";
 import type { Result } from "@/core/result-base";
 import { ValidationError_New } from "@/errors/errors-domain";
-import type { ActionResult, FieldErrors } from "@/shared/types/action-result";
+import type { FieldErrors } from "@/shared/forms/types";
 
 /**
  * Transforms a `Result` into an `ActionResult` with a standardized structure for handling success and validation errors.
@@ -28,20 +29,23 @@ export const toActionValidationResult = <T>(
   r: Result<T, unknown>,
   okMessage = "OK",
   errorMessage = "Invalid input",
-): ActionResult<T> =>
-  r.success
-    ? { data: r.data, message: okMessage, success: true }
-    : {
-        errors:
-          r.error instanceof ValidationError_New &&
-          (r.error as ValidationError_New).context?.fieldErrors
-            ? ((r.error as ValidationError_New).context
-                .fieldErrors as FieldErrors)
-            : {
-                _root: [
-                  r.error instanceof Error ? r.error.message : String(r.error),
-                ],
-              },
-        message: errorMessage,
-        success: false,
-      };
+): ActionResult<T> => {
+  if (r.success) {
+    return { data: r.data, message: okMessage, success: true };
+  }
+
+  const err = r.error;
+  let errors: FieldErrors;
+
+  if (err instanceof ValidationError_New) {
+    const fieldErrors = err.context?.fieldErrors as FieldErrors | undefined;
+    errors =
+      fieldErrors && Object.keys(fieldErrors).length > 0
+        ? fieldErrors
+        : { _root: [err.message] };
+  } else {
+    errors = { _root: [err instanceof Error ? err.message : String(err)] };
+  }
+
+  return { errors, message: errorMessage, success: false };
+};

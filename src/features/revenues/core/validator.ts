@@ -1,6 +1,6 @@
 import "server-only";
 
-import { isPeriod, isRevenueId } from "@/core/types/types-brands";
+import { isPeriod, isRevenueId } from "@/core/types/domain-brands";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,

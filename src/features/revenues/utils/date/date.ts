@@ -5,7 +5,7 @@ import {
   isValid,
   startOfMonth,
 } from "date-fns";
-import type { Period } from "@/core/types/types-brands";
+import type { Period } from "@/core/types/domain-brands";
 import { ValidationError } from "@/errors/errors";
 import {
   type IntervalDuration,

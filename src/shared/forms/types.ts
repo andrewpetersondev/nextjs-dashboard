@@ -1,5 +1,7 @@
 // Shared form types (client-safe)
 
+export type FieldErrors = Record<string, string[]>;
+
 /**
  * Represents validation errors for a single form field.
  *

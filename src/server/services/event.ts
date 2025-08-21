@@ -1,6 +1,6 @@
 import "server-only";
 import { isValid, parseISO } from "date-fns";
-import { type Period, toPeriod, toRevenueId } from "@/core/types/types-brands";
+import { type Period, toPeriod, toRevenueId } from "@/core/types/domain-brands";
 import type { InvoiceDto } from "@/features/invoices/dto";
 import type { InvoiceStatus } from "@/features/invoices/types";
 import { dateToPeriod, periodKey } from "@/features/revenues/utils/date/period";

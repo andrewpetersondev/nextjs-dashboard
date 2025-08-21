@@ -1,4 +1,4 @@
-import type { Period } from "@/core/types/types-brands";
+import type { Period } from "@/core/types/domain-brands";
 
 /**
  * Money unit aliases to make dollars vs cents explicit at type level.

@@ -1,4 +1,3 @@
-import "server-only";
 import { Err, Ok, type Result } from "@/core/result-base";
 
 /**

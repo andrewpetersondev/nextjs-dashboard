@@ -29,7 +29,7 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "@/core/types/types-brands";
+} from "@/core/types/domain-brands";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,

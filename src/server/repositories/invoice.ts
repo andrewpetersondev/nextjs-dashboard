@@ -2,7 +2,7 @@ import "server-only";
 
 import { Err, Ok, type Result } from "@/core/result-base";
 import { map } from "@/core/result-transform";
-import type { InvoiceId } from "@/core/types/types-brands";
+import type { InvoiceId } from "@/core/types/domain-brands";
 import {
   type DatabaseError_New,
   ValidationError_New,

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { toPeriod, toRevenueId } from "@/core/types/types-brands";
+import { toPeriod, toRevenueId } from "@/core/types/domain-brands";
 import { ValidationError } from "@/errors/errors";
 import type {
   RevenueDisplayEntity,

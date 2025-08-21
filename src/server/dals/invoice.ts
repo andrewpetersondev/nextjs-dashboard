@@ -1,7 +1,7 @@
 import "server-only";
 
 import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
-import { type InvoiceId, toPeriod } from "@/core/types/types-brands";
+import { type InvoiceId, toPeriod } from "@/core/types/domain-brands";
 import { DatabaseError_New, ValidationError_New } from "@/errors/errors-domain";
 import {
   DATA_ERROR_MESSAGES,

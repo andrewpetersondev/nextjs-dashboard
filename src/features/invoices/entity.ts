@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CustomerId, InvoiceId, Period } from "@/core/types/types-brands";
+import type { CustomerId, InvoiceId, Period } from "@/core/types/domain-brands";
 import type { InvoiceStatus } from "@/features/invoices/types";
 
 /**

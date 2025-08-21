@@ -1,4 +1,4 @@
-import type { CustomerId, InvoiceId, Period } from "@/core/types/types-brands";
+import type { CustomerId, InvoiceId, Period } from "@/core/types/domain-brands";
 import type { InvoiceDto } from "@/features/invoices/dto";
 
 /**

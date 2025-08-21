@@ -1,11 +1,23 @@
-import "server-only";
+import type { FieldErrors } from "@/shared/forms/types";
 
-import type { ActionResult, FieldErrors } from "@/shared/types/action-result";
+/**
+ * --- Action Result Type ---
+ * Standardized result for server actions.
+ */
+export type ActionResult<TData = unknown> =
+  | {
+      readonly success: true;
+      readonly message: string;
+      readonly data?: TData;
+    }
+  | {
+      readonly success: false;
+      readonly message: string;
+      readonly errors: FieldErrors;
+    };
 
 /**
  * Constructs and returns an ActionResult object based on the provided parameters.
- *
- * Currently used in user.actions.ts but should probably be used for more core actions.
  *
  * Accepts either:
  * - Success shape: { success: true; message: string; data? }

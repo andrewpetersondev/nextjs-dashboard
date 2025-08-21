@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Err, type Result } from "@/core/result-base";
-import { toInvoiceId } from "@/core/types/types-brands";
+import { toInvoiceId } from "@/core/types/domain-brands";
 import { ValidationError } from "@/errors/errors";
 import {
   type DatabaseError_New,

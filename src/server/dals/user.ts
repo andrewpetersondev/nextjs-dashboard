@@ -5,9 +5,8 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import type { UserId } from "@/core/types/types-brands";
+import type { UserId } from "@/core/types/domain-brands";
 import { DatabaseError } from "@/errors/errors";
-import { comparePassword, hashPassword } from "@/features/sessions/utils";
 import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
 import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
@@ -16,7 +15,11 @@ import { ITEMS_PER_PAGE_USERS } from "@/lib/constants/ui";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { logger } from "@/server/logging/logger";
-import { createRandomPassword } from "@/server/security/password";
+import {
+  comparePassword,
+  createRandomPassword,
+  hashPassword,
+} from "@/server/security/password";
 
 /**
  * Inserts a new user record into the database.

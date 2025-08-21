@@ -1,4 +1,4 @@
-import { isPeriod, type Period, toPeriod } from "@/core/types/types-brands";
+import { isPeriod, type Period, toPeriod } from "@/core/types/domain-brands";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/entity";
 import { periodKey } from "@/features/revenues/utils/date/period";
 import { logger } from "@/server/logging/logger";

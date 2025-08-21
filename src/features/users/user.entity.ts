@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserId } from "@/core/types/types-brands";
+import type { UserId } from "@/core/types/domain-brands";
 import type { UserRole } from "@/features/users/user.types";
 
 /**

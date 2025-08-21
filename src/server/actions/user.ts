@@ -2,14 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { actionResult } from "@/core/action-result";
-import { toUserId } from "@/core/types/types-brands";
+import { type ActionResult, actionResult } from "@/core/action-result";
+import { toUserId } from "@/core/types/domain-brands";
 import { USER_ERROR_MESSAGES } from "@/errors/errors-messages";
 import {
   deleteSessionToken,
   setSessionToken,
 } from "@/features/sessions/session.jwt";
-import { hashPassword } from "@/features/sessions/utils";
 import type { UserDto } from "@/features/users/user.dto";
 import {
   CreateUserFormSchema,
@@ -48,8 +47,8 @@ import {
   validateFormGeneric,
 } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
+import { hashPassword } from "@/server/security/password";
 import type { FormState } from "@/shared/forms/types";
-import type { ActionResult } from "@/shared/types/action-result";
 import { stripProperties } from "@/shared/utils/general";
 
 // --- CRUD Actions for Users ---

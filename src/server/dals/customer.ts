@@ -1,7 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import { toCustomerId } from "@/core/types/types-brands";
+import { toCustomerId } from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import { CUSTOMER_ERROR_MESSAGES } from "@/errors/errors-messages";
 import type {

@@ -1,4 +1,3 @@
-import "server-only";
 import { Err, Ok, type Result } from "@/core/result-base";
 
 /**
@@ -6,6 +5,7 @@ import { Err, Ok, type Result } from "@/core/result-base";
  * @typeParam R - Result-like type.
  */
 type OkType<R> = R extends Result<infer U, unknown> ? U : never;
+
 /**
  * Error type of a Result.
  * @typeParam R - Result-like type.
@@ -91,18 +91,17 @@ export function allTuple<T extends readonly Result<unknown, unknown>[]>(
 // Return the first Ok, or the last Err if none succeeded
 /**
  * First Ok or last Err.
+ *
+ * @deprecated Prefer anyOkOrElse to avoid unsafe default error construction when input is empty.
  * @typeParam T - Success type.
  * @typeParam E - Error type.
  * @param results - Results to scan.
- * @returns First Ok found; otherwise last Err (or Err on empty input).
+ * @returns First Ok found; otherwise last Err (or an Err with generic error if none provided).
  */
 export const anyOk = <T, E>(results: Result<T, E>[]): Result<T, E> => {
-  let lastErr: Result<never, E> | null = null;
-  for (const r of results) {
-    if (r.success) return r;
-    lastErr = r as Result<never, E>;
-  }
-  return lastErr ?? Err<E>(new Error("No results provided") as E);
+  return anyOkOrElse<T, E>(() => new Error("No results provided") as E)(
+    results,
+  );
 };
 
 /**

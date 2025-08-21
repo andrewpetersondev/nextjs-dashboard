@@ -1,7 +1,7 @@
 import "server-only";
 
 import * as z from "zod";
-import { toCustomerId } from "@/core/types/types-brands";
+import { toCustomerId } from "@/core/types/domain-brands";
 import { INVOICE_STATUSES } from "@/features/invoices/types";
 
 // const uuidSchema = z.uuid();

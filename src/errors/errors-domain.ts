@@ -1,4 +1,5 @@
 import "server-only";
+
 import { BaseError } from "@/errors/errors-base";
 
 /**

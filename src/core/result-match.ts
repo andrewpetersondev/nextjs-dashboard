@@ -1,4 +1,3 @@
-import "server-only";
 import type { Result } from "@/core/result-base";
 
 /**

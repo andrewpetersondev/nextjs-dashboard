@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Period, RevenueId } from "@/core/types/types-brands";
+import type { Period, RevenueId } from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type { InvoiceDto } from "@/features/invoices/dto";
 import type {

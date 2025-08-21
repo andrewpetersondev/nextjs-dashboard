@@ -5,7 +5,7 @@ import {
   type Period,
   type RevenueId,
   toPeriod,
-} from "@/core/types/types-brands";
+} from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   RevenueCreateEntity,
