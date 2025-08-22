@@ -1,34 +1,42 @@
 import "server-only";
 
-import type { CustomerField } from "@/features/customers/types";
 import {
-  fetchCustomers,
+  fetchCustomersSelectDal,
   fetchFilteredCustomersDal,
   fetchTotalCustomersCountDal,
 } from "@/server/customers/dal";
-import type { CustomerTableDbRowRaw } from "@/server/customers/types";
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/server/customers/dto";
+import {
+  mapCustomerAggregatesRawToDto,
+  mapCustomerSelectRawToDto,
+} from "@/server/customers/mappers";
 import type { Database } from "@/server/db/connection";
 
 /**
- * Simple repository for Customers.
- * Wraps DAL calls to centralize data access and keep Actions clean.
+ * Repository for Customers.
+ * - DAL returns raw DB projections.
+ * - Repository maps to server DTOs (brands IDs, normalizes sums).
  */
 export class CustomersRepository {
   constructor(private readonly db: Database) {}
 
   /**
-   * Returns customers for select options (id + name).
+   * Returns customers for select options (id + name) as server DTOs.
    */
-  async fetchSelect(): Promise<CustomerField[]> {
-    return fetchCustomers(this.db);
+  async fetchSelect(): Promise<CustomerSelectServerDto[]> {
+    const rows = await fetchCustomersSelectDal(this.db);
+    return rows.map(mapCustomerSelectRawToDto);
   }
 
   /**
-   * Returns raw rows for the customers table filtered by query.
-   * Mapping to UI/view model remains in the feature layer.
+   * Returns aggregated rows for the customers table filtered by query as server DTOs.
    */
-  async fetchFiltered(query: string): Promise<CustomerTableDbRowRaw[]> {
-    return fetchFilteredCustomersDal(this.db, query);
+  async fetchFiltered(query: string): Promise<CustomerAggregatesServerDto[]> {
+    const rows = await fetchFilteredCustomersDal(this.db, query);
+    return rows.map(mapCustomerAggregatesRawToDto);
   }
 
   /**

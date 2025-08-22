@@ -1,22 +1,22 @@
-// src/features/customers/lib/mapToViewModel.ts
-
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/features/customers/dto";
 import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
-import type {
-  CustomerSelectDbRow,
-  CustomerTableDbRowRaw,
-} from "@/server/customers/types";
 import { formatCurrency } from "@/shared/utils/general";
 
-export const toCustomerField = (row: CustomerSelectDbRow): CustomerField => ({
+export const toCustomerField = (
+  row: CustomerSelectServerDto,
+): CustomerField => ({
   id: row.id,
   name: row.name,
 });
 
 export const toFormattedCustomersTableRow = (
-  row: CustomerTableDbRowRaw,
+  row: CustomerAggregatesServerDto,
 ): FormattedCustomersTableRow => ({
   email: row.email,
   id: row.id,
