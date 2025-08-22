@@ -1,101 +1,29 @@
 import "server-only";
 
-import * as z from "zod";
-import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/errors-messages";
+import type * as z from "zod";
+
 import { logger } from "@/server/logging/logger";
-import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
-import type { FormErrors, FormState } from "@/shared/forms/types";
+
+import {
+  FORM_ERROR_MESSAGES,
+  FORM_SUCCESS_MESSAGES,
+} from "@/shared/forms/messages";
+import type { FieldErrors, FormState } from "@/shared/forms/types";
+import {
+  deriveAllowedFieldsFromSchema,
+  isZodObject,
+  mapFieldErrors,
+  normalizeFieldErrors,
+} from "@/shared/forms/utils";
 import type { Result } from "@/shared/result/result-base";
 
-// Strongly typed guard for ZodObject (avoids `any` casts)
-function isZodObject(
-  schema: z.ZodTypeAny,
-): schema is z.ZodObject<z.ZodRawShape> {
-  return schema instanceof z.ZodObject;
-}
-
-// Helper: derive allowed field names from a Zod object schema
-function deriveAllowedFieldsFromSchema<S extends z.ZodObject<z.ZodRawShape>>(
-  schema: S,
-): ReadonlyArray<Extract<keyof z.infer<S>, string>> {
-  type Keys = Extract<keyof z.infer<S>, string>;
-  const keys = Object.keys(schema.shape) as Keys[];
-  return keys as ReadonlyArray<Keys>;
-}
-
-/**
- * Maps Zod field errors to a domain-specific error map.
- *
- * @template TFieldNames - String literal union of valid field names.
- * @param fieldErrors - Zod field errors object.
- * @param allowedFields - Array of allowed field names.
- */
-function mapFieldErrors<TFieldNames extends string>(
-  fieldErrors: Record<string, string[] | undefined>,
-  allowedFields: readonly TFieldNames[],
-): FormErrors<TFieldNames> {
-  const errors: FormErrors<TFieldNames> = {};
-  for (const key of allowedFields) {
-    if (fieldErrors[key]) {
-      errors[key] = fieldErrors[key];
-    }
-  }
-  return errors;
-}
-
-/**
- * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
- */
-export function normalizeFieldErrors(
-  fieldErrors: Record<string, string[] | undefined>,
-): Record<string, string[]> {
-  const result: Record<string, string[]> = {};
-  for (const key in fieldErrors) {
-    if (Object.hasOwn(fieldErrors, key)) {
-      result[key] = fieldErrors[key] ?? [];
-    }
-  }
-  return result;
-}
-
-// --- Generic validate + transform with selectable return shape ---
-
-/**
- * Options for form validation configuration.
- *
- * Allows transforming parsed data, customizing return mode, managing success/failure
- * messages, and redacting sensitive fields.
- *
- * @typeParam TFieldNames - Names of the form fields to redact.
- * @typeParam TIn - Input type of the form data.
- * @typeParam TOut - Output type of the transformed data (defaults to TIn).
- *
- * @property transform - Optional transformer applied to successfully parsed data. Can return a value synchronously or as a Promise.
- * @property returnMode - Defines the return structure: `"form"` for form-like values (default) or `"result"` for a Result-based response.
- * @property messages - Customizable success and failure messages when using `form` return mode.
- * @property redactFields - List of field names to exclude from the output (e.g., sensitive data like passwords).
- *
- * @example
- * ```typescript
- * const options: ValidateFormOptions<'password', { username: string; password: string }, { username: string }> = {
- *   transform: (data) => ({ username: data.username }),
- *   returnMode: "result",
- *   messages: { success: "Validation passed", failure: "Validation failed" },
- *   redactFields: ['password'],
- * };
- * ```
- */
 export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
-  // Optional transformer applied only on successful parse
   transform?: (data: TIn) => TOut | Promise<TOut>;
-  // Choose return shape: form (default) or result
   returnMode?: "form" | "result";
-  // Override success/failure messages for form mode
   messages?: {
     success?: string;
     failure?: string;
   };
-  // Do not echo these fields back in values (e.g., passwords)
   redactFields?: readonly TFieldNames[];
 };
 
@@ -110,6 +38,10 @@ export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
  * @param schema - Zod schema to validate the form data against
  * @param allowedFields - Array of allowed field names
  * @param options - Optional configuration for validation behavior
+ *
+ * @remarks
+ * - In "form" mode: returns FormState for easy use in server actions.
+ * - In "result" mode: returns Result for pipelines or functional handlers.
  *
  * @example
  * ```typescript
@@ -131,9 +63,7 @@ export async function validateFormGeneric<
   schema: z.ZodSchema<TIn>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateFormOptions<TFieldNames, TIn, TOut> = {},
-): Promise<
-  FormState<TFieldNames, TOut> | Result<TOut, Record<string, string[]>>
-> {
+): Promise<FormState<TFieldNames, TOut> | Result<TOut, FieldErrors>> {
   const {
     transform,
     returnMode = "form",
@@ -172,14 +102,12 @@ export async function validateFormGeneric<
     logger.error({
       context: "validateFormGeneric",
       error: parsed.error,
-      message:
-        messages?.failure ?? FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
+      message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
 
     return {
       errors: normalized,
-      message:
-        messages?.failure ?? FORM_VALIDATION_ERROR_MESSAGES.FAILED_VALIDATION,
+      message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
       success: false,
       values,
     };
@@ -194,8 +122,7 @@ export async function validateFormGeneric<
 
   return {
     data: dataOut,
-    message:
-      messages?.success ?? FORM_VALIDATION_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
+    message: messages?.success ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     success: true,
   };
 }

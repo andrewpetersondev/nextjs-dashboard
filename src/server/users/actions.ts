@@ -17,10 +17,7 @@ import {
 import { hashPassword } from "@/server/auth/hashing";
 import { deleteSessionToken, setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
-import {
-  normalizeFieldErrors,
-  validateFormGeneric,
-} from "@/server/forms/validation";
+import { validateFormGeneric } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
 import {
   createDemoUser,
@@ -51,6 +48,7 @@ import {
 import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
+import { normalizeFieldErrors } from "@/shared/forms/utils";
 import { stripProperties } from "@/shared/utils/general";
 
 // --- CRUD Actions for Users ---

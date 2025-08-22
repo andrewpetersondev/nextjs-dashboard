@@ -11,15 +11,3 @@ export const DATA_ERROR_MESSAGES = {
   ERROR_UNEXPECTED: "An unexpected error occurred. Please try again later.",
   ERROR_VALIDATION_FAILED: "Validation failed. Please check your data.",
 };
-
-export const FORM_ERROR_MESSAGES = {
-  INVALID_FORM_DATA: "Invalid form data. Please check your input.",
-  MISSING_REQUIRED_FIELDS: "Please fill out all required fields.",
-  SUBMIT_FAILED: "Form submission failed. Please try again.",
-  UNEXPECTED_ERROR: "An unexpected error occurred. Please try again later.",
-  VALIDATION_FAILED: "Form validation failed. Please check your input.",
-};
-
-export const FORM_VALIDATION_ERROR_MESSAGES = {
-  FAILED_VALIDATION: "Failed to validate form data.",
-};
