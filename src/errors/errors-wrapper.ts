@@ -1,4 +1,3 @@
-import "server-only";
 import { fromPromise } from "@/core/result-async";
 import type { Result } from "@/core/result-base";
 import { mapToRepoError, type RepoError } from "@/errors/errors-mapper";

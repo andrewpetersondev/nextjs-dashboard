@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Abstract base class for custom errors with structured metadata.
  *

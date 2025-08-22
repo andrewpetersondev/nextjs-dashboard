@@ -1,4 +1,3 @@
-import "server-only";
 import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError } from "@/errors/errors";
 import { DatabaseError_New, ValidationError_New } from "@/errors/errors-domain";
