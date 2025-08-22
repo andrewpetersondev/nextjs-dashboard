@@ -1,11 +1,11 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import { DatabaseError } from "@/errors/errors";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { comparePassword, hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
+import { DatabaseError } from "@/server/errors/errors";
 import { logger } from "@/server/logging/logger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";

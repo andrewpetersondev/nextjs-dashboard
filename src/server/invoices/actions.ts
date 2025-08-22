@@ -4,10 +4,13 @@ import "@/server/revenues/events/revenue-events.bootstrap";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
-import { DatabaseError, ValidationError } from "@/errors/errors";
-import { INVOICE_ERROR_MESSAGES } from "@/errors/errors-messages";
+import {
+  INVOICE_ERROR_MESSAGES,
+  INVOICE_SUCCESS_MESSAGES,
+} from "@/features/invoices/messages";
 import type { InvoiceStatus } from "@/features/invoices/types";
 import { getDB } from "@/server/db/connection";
+import { DatabaseError, ValidationError } from "@/server/errors/errors";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -28,7 +31,6 @@ import type {
   InvoiceListFilter,
 } from "@/server/invoices/types";
 import { logger } from "@/server/logging/logger";
-import { INVOICE_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 
 /**
  * Server action for creating a new invoice.

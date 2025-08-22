@@ -1,0 +1,39 @@
+export const INVOICE_ERROR_MESSAGES = {
+  AMOUNT_REQUIRED: "Amount is required.",
+  CREATE_FAILED: "Failed to create invoice.",
+  CUSTOMER_ID_REQUIRED: "Customer ID is required.",
+  DB_ERROR: "Database Error. Please try again.",
+  DELETE_FAILED: "Failed to delete invoice.",
+  FETCH_FAILED: "Database Error. Failed to Fetch InvoiceEntity.",
+  FETCH_FILTERED_FAILED: "Failed to fetch filtered invoices.",
+  FETCH_LATEST_FAILED: "Failed to fetch the latest invoices.",
+  FETCH_PAGES_FAILED: "Failed to fetch the total number of invoice pages.",
+  FETCH_TOTAL_PAID_FAILED:
+    "Failed to fetch the total amount of pending invoices.",
+  FETCH_TOTAL_PENDING_FAILED:
+    "Failed to fetch the total amount of pending invoices.",
+  INVALID_ID: "Invalid invoice ID provided.",
+  INVALID_INPUT: "Invalid input. Failed to create invoice.",
+  MAPPING_FAILED: "Failed to map invoice data.",
+  MISSING_FIELDS: "Missing required fields.",
+  NOT_FOUND: "Invoice not found.",
+  READ_FAILED: "Failed to read invoice.",
+  REPO_ERROR: "Invoice Repository Error. Please try again.",
+  SERVICE_ERROR: "Invoice Service Error. Please try again.",
+  STATUS_REQUIRED: "Status is required.",
+  TRANSFORMATION_FAILED: "Failed to transform invoice data.",
+  UPDATE_FAILED: "Failed to update invoice.",
+  VALIDATION_FAILED: "Validation failed. Please check your input.",
+};
+
+export const INVOICE_SUCCESS_MESSAGES = {
+  CREATE_SUCCESS: "Invoice created successfully.",
+  DELETE_SUCCESS: "Invoice deleted successfully.",
+  FETCH_ALL_SUCCESS: "All invoices fetched successfully.",
+  FETCH_FILTERED_SUCCESS: "Filtered invoices fetched successfully.",
+  FETCH_LATEST_SUCCESS: "Latest invoices fetched successfully.",
+  FETCH_PAGES_SUCCESS: "Total invoice pages fetched successfully.",
+  LIST_SUCCESS: "Invoices listed successfully.",
+  READ_SUCCESS: "Invoice fetched successfully.",
+  UPDATE_SUCCESS: "Invoice updated successfully.",
+};

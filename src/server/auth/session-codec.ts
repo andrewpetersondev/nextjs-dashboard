@@ -1,16 +1,12 @@
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
-
-import { SESSION_SECRET } from "@/config/environment";
-
-import { ValidationError } from "@/errors/errors";
-
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
+import { SESSION_SECRET } from "@/server/config/environment";
+import { ValidationError } from "@/server/errors/errors";
 import { logger } from "@/server/logging/logger";
 
-import { JWT_EXPIRATION } from "@/shared/auth/constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
@@ -75,7 +71,7 @@ export async function createSessionToken(
     const token = await new SignJWT(jwtPayload)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
-      .setExpirationTime(JWT_EXPIRATION)
+      .setExpirationTime(new Date(validatedFields.data.user.expiresAt))
       .sign(key);
 
     logger.info(

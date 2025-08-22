@@ -1,8 +1,7 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import { DatabaseError, ValidationError } from "@/errors/errors";
-import { CUSTOMER_ERROR_MESSAGES } from "@/errors/errors-messages";
+import { CUSTOMER_ERROR_MESSAGES } from "@/features/customers/messages";
 import type { CustomerField } from "@/features/customers/types";
 import type {
   CustomerSelectDbRow,
@@ -10,6 +9,7 @@ import type {
 } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
+import { DatabaseError, ValidationError } from "@/server/errors/errors";
 import { toCustomerId } from "@/shared/brands/domain-brands";
 
 /**

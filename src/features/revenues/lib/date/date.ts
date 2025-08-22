@@ -1,5 +1,5 @@
-import { ValidationError } from "@/errors/errors";
 import { MONTH_ORDER, type MonthName } from "@/features/revenues/core/types";
+import { ValidationError } from "@/server/errors/errors";
 
 /**
  * Safely convert a calendar month number (1-12) to a MonthName.

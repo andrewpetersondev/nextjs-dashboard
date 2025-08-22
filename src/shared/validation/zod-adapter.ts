@@ -1,5 +1,5 @@
 import type { core, ZodType } from "zod";
-import { ValidationError_New } from "@/errors/errors-domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 export type ZodIssue = core.$ZodIssue;

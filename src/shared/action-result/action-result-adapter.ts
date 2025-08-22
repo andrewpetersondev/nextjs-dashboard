@@ -1,5 +1,5 @@
-import { ValidationError_New } from "@/errors/errors-domain";
 import type { ActionResult } from "@/shared/action-result/action-result";
+import { ValidationError_New } from "@/shared/errors/domain";
 import type { FieldErrors } from "@/shared/forms/types";
 import type { Result } from "@/shared/result/result-base";
 

@@ -1,9 +1,9 @@
 import "server-only";
 
-import { ValidationError } from "@/errors/errors";
 import { getMonthName } from "@/features/revenues/lib/date/date";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/lib/date/period";
 import type { RevenueRow } from "@/server/db/schema";
+import { ValidationError } from "@/server/errors/errors";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,

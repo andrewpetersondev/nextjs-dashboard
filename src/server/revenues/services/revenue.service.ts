@@ -1,7 +1,7 @@
 import "server-only";
 
-import { DatabaseError, ValidationError } from "@/errors/errors";
 import { formatDateToPeriod } from "@/features/revenues/lib/date/format";
+import { DatabaseError, ValidationError } from "@/server/errors/errors";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type {
   RevenueCreateEntity,

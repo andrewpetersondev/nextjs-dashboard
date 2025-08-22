@@ -1,12 +1,9 @@
 import "server-only";
 
-import {
-  type DatabaseError_New,
-  ValidationError_New,
-} from "@/errors/errors-domain";
-import type { RepoError } from "@/errors/errors-mapper";
-import { INVOICE_ERROR_MESSAGES } from "@/errors/errors-messages";
-import { fromDal } from "@/errors/errors-wrapper";
+import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
+import type { DatabaseError_New } from "@/server/errors/infrastructure";
+import type { RepoError } from "@/server/errors/mappers";
+import { fromDal } from "@/server/errors/wrappers";
 import {
   createInvoiceDal,
   deleteInvoiceDal,
@@ -23,6 +20,7 @@ import type {
 import { entityToInvoiceDto } from "@/server/invoices/mapper";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { map } from "@/shared/result/result-transform";
 

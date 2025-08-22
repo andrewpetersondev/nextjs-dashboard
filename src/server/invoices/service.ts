@@ -1,11 +1,8 @@
 import "server-only";
 
-import { ValidationError } from "@/errors/errors";
-import {
-  type DatabaseError_New,
-  ValidationError_New,
-} from "@/errors/errors-domain";
-import { INVOICE_ERROR_MESSAGES } from "@/errors/errors-messages";
+import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
+import { ValidationError } from "@/server/errors/errors";
+import type { DatabaseError_New } from "@/server/errors/infrastructure";
 import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import {
   dtoToCreateInvoiceEntity,
@@ -14,6 +11,7 @@ import {
 } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/domain-brands";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, type Result } from "@/shared/result/result-base";
 
 /**

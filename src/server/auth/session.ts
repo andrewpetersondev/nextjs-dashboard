@@ -70,7 +70,9 @@ export async function setSessionToken(
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
-    const cookie: string | undefined = (await cookies()).get("session")?.value;
+    const cookie: string | undefined = (await cookies()).get(
+      SESSION_COOKIE_NAME,
+    )?.value;
     if (!cookie) {
       console.error("No session cookie found");
       redirect("/login");

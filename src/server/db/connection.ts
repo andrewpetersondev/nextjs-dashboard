@@ -18,7 +18,7 @@ import {
   POSTGRES_URL,
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
-} from "@/config/environment";
+} from "@/server/config/environment";
 import * as schema from "@/server/db/schema";
 
 // Supported database types

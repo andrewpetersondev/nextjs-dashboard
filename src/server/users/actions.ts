@@ -2,8 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { USER_ERROR_MESSAGES } from "@/errors/errors-messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/features/users/messages";
 import {
   CreateUserFormSchema,
   EditUserFormSchema,
@@ -47,7 +50,6 @@ import {
 } from "@/shared/action-result/action-result";
 import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/domain-brands";
-import { USER_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 import type { FormState } from "@/shared/forms/types";
 import { stripProperties } from "@/shared/utils/general";
 
