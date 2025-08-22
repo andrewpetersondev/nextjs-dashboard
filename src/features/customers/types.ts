@@ -1,4 +1,4 @@
-import type { CustomerId } from "@/core/types/domain-brands";
+import type { CustomerId } from "@/shared/brands/domain-brands";
 
 /**
  * DB row for customer select options.

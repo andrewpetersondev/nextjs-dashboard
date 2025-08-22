@@ -1,7 +1,6 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import { toCustomerId } from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import { CUSTOMER_ERROR_MESSAGES } from "@/errors/errors-messages";
 import type {
@@ -12,6 +11,7 @@ import type {
 } from "@/features/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
+import { toCustomerId } from "@/shared/brands/domain-brands";
 import { formatCurrency } from "@/shared/utils/general";
 
 /**

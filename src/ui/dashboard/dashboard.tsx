@@ -1,6 +1,6 @@
 import { type JSX, Suspense } from "react";
 import type { DashboardCardData } from "@/features/data/types";
-import type { InvoiceListFilter } from "@/features/invoices/types";
+import type { InvoiceListFilter } from "@/server/invoices/types";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
 import { RevenueChart } from "@/ui/dashboard/revenue-chart";

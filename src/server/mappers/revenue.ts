@@ -1,6 +1,5 @@
 import "server-only";
 
-import { toPeriod, toRevenueId } from "@/core/types/domain-brands";
 import { ValidationError } from "@/errors/errors";
 import type {
   RevenueDisplayEntity,
@@ -10,6 +9,7 @@ import { toRevenueSource } from "@/features/revenues/core/validator";
 import { getMonthName } from "@/features/revenues/utils/date/date";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/utils/date/period";
 import type { RevenueRow } from "@/server/db/schema";
+import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
 import { isValidDate } from "@/shared/utils/date";
 import {
   isNonNegativeInteger,

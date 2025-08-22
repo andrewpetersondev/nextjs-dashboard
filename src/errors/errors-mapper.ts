@@ -1,7 +1,7 @@
-import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError } from "@/errors/errors";
 import { DatabaseError_New, ValidationError_New } from "@/errors/errors-domain";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/errors-messages";
+import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
  * Union type representing repository errors.

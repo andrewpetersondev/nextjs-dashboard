@@ -1,4 +1,3 @@
-// Common numeric validators used across revenue domain
 export function isNonNegativeInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= 0;
 }

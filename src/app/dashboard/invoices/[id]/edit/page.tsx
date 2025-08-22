@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
-import type { InvoiceDto } from "@/features/invoices/dto";
+import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
+import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-form";
 import { readCustomersAction } from "@/server/actions/customer";
-import { readInvoiceByIdAction } from "@/server/actions/invoice";
+import { readInvoiceByIdAction } from "@/server/invoices/actions";
+import type { InvoiceDto } from "@/server/invoices/dto";
 import { H1 } from "@/ui/headings";
-import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
-import { EditInvoiceForm } from "@/ui/invoices/edit-invoice-form";
 
 export const metadata: Metadata = {
   title: "Edit Invoice",

@@ -1,5 +1,5 @@
-import * as z from "zod";
-import { roleSchema } from "@/features/users/user.schema";
+import "server-only";
+
 import type { UserRole } from "@/features/users/user.types";
 
 /**
@@ -29,25 +29,3 @@ export interface SessionVerificationResult {
   userId: string;
   role: UserRole;
 }
-
-// --- Zod Schemas ---
-
-// --- Zod Field Schemas ---
-export const userIdSchema = z.uuid();
-export const expiresAtSchema = z.number();
-export const iatSchema = z.number();
-export const expSchema = z.number();
-
-// --- Zod Validation Schemas ---
-export const EncryptPayloadSchema = z.object({
-  user: z.object({
-    expiresAt: expiresAtSchema,
-    role: roleSchema,
-    userId: userIdSchema,
-  }),
-});
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-  exp: expSchema,
-  iat: iatSchema,
-});

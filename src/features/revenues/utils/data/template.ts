@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { type Period, toPeriod, toRevenueId } from "@/core/types/domain-brands";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -11,6 +10,11 @@ import {
 import { periodKey } from "@/features/revenues/utils/date/period";
 import { logger } from "@/server/logging/logger";
 import { mapRevenueEntityToDisplayEntity } from "@/server/mappers/revenue";
+import {
+  type Period,
+  toPeriod,
+  toRevenueId,
+} from "@/shared/brands/domain-brands";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

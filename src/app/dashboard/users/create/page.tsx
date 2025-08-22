@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
+import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
 import { CreateUserForm } from "@/ui/users/create-user-form";
 import { CreateUserFormV2 } from "@/ui/users/create-user-form-v2";
 

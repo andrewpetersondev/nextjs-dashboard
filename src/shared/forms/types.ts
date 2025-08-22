@@ -1,5 +1,3 @@
-// Shared form types (client-safe)
-
 export type FieldErrors = Record<string, string[]>;
 
 /**

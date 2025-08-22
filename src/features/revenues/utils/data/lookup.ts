@@ -1,7 +1,7 @@
-import { isPeriod, type Period, toPeriod } from "@/core/types/domain-brands";
 import type { RevenueDisplayEntity } from "@/features/revenues/core/entity";
 import { periodKey } from "@/features/revenues/utils/date/period";
 import { logger } from "@/server/logging/logger";
+import { isPeriod, type Period, toPeriod } from "@/shared/brands/domain-brands";
 
 const normalizePeriod = (p: string): string => {
   const [y, m] = p.split("-");

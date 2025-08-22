@@ -5,7 +5,6 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import type { UserId } from "@/core/types/domain-brands";
 import { DatabaseError } from "@/errors/errors";
 import type { UserDto } from "@/features/users/user.dto";
 import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
@@ -19,6 +18,7 @@ import {
   createRandomPassword,
   hashPassword,
 } from "@/server/security/password";
+import type { UserId } from "@/shared/brands/domain-brands";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
 
 /**

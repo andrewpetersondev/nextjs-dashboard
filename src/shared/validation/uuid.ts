@@ -1,5 +1,5 @@
-import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError } from "@/errors/errors";
+import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
  * Compiled regex for UUID validation (cached for performance)

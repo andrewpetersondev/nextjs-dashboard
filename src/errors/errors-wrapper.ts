@@ -1,6 +1,6 @@
-import { fromPromise } from "@/core/result-async";
-import type { Result } from "@/core/result-base";
 import { mapToRepoError, type RepoError } from "@/errors/errors-mapper";
+import { fromPromise } from "@/shared/result/result-async";
+import type { Result } from "@/shared/result/result-base";
 
 /**
  * Typed wrapper around fromPromise to infer E via mapToRepoError,

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readInvoicesPagesAction } from "@/server/actions/invoice";
+import { CreateInvoice } from "@/features/invoices/components/buttons";
+import { Pagination } from "@/features/invoices/components/pagination";
+import { InvoicesTable } from "@/features/invoices/components/table";
+import { readInvoicesPagesAction } from "@/server/invoices/actions";
 import { H1 } from "@/ui/headings";
-import { CreateInvoice } from "@/ui/invoices/buttons";
-import { Pagination } from "@/ui/invoices/pagination";
-import { InvoicesTable } from "@/ui/invoices/table";
 import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton, InvoicesTableSkeleton } from "@/ui/skeletons";
 

@@ -1,11 +1,11 @@
 import "server-only";
 
 import * as z from "zod";
-import type { Result } from "@/core/result-base";
 import { FORM_VALIDATION_ERROR_MESSAGES } from "@/errors/errors-messages";
 import { logger } from "@/server/logging/logger";
 import { FORM_VALIDATION_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 import type { FormErrors, FormState } from "@/shared/forms/types";
+import type { Result } from "@/shared/result/result-base";
 
 // Strongly typed guard for ZodObject (avoids `any` casts)
 function isZodObject(

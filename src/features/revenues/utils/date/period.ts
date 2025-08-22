@@ -1,5 +1,5 @@
 import { addMonths, format } from "date-fns";
-import { type Period, toPeriod } from "@/core/types/domain-brands";
+import { type Period, toPeriod } from "@/shared/brands/domain-brands";
 import { formatYearMonth } from "@/shared/utils/date";
 
 /**

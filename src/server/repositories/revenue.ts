@@ -1,11 +1,6 @@
 import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import {
-  type Period,
-  type RevenueId,
-  toPeriod,
-} from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import type {
   RevenueCreateEntity,
@@ -19,6 +14,11 @@ import {
   mapRevRowToRevEnt,
 } from "@/server/mappers/revenue";
 import type { RevenueRepositoryInterface } from "@/server/repositories/revenue-interface";
+import {
+  type Period,
+  type RevenueId,
+  toPeriod,
+} from "@/shared/brands/domain-brands";
 
 /**
  * RevenueRepository

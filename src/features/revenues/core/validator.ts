@@ -1,6 +1,5 @@
 import "server-only";
 
-import { isPeriod, isRevenueId } from "@/core/types/domain-brands";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
@@ -18,6 +17,7 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/features/revenues/core/types";
+import { isPeriod, isRevenueId } from "@/shared/brands/domain-brands";
 import { isValidDate } from "@/shared/utils/date";
 import { validateEnum } from "@/shared/validation/enum";
 import {

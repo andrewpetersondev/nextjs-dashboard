@@ -1,15 +1,15 @@
 import "server-only";
 
-import type { Period, RevenueId } from "@/core/types/domain-brands";
 import { DatabaseError, ValidationError } from "@/errors/errors";
-import type { InvoiceDto } from "@/features/invoices/dto";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/features/revenues/core/entity";
 import { formatDateToPeriod } from "@/features/revenues/utils/date/date";
+import type { InvoiceDto } from "@/server/invoices/dto";
 import type { RevenueRepositoryInterface } from "@/server/repositories/revenue-interface";
+import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 
 /**
  * Business service for revenue processing and management.

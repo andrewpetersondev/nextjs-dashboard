@@ -1,6 +1,6 @@
-import { Err, Ok, type Result } from "@/core/result-base";
 import { BaseError } from "@/errors/errors-base";
 import { DatabaseError_New } from "@/errors/errors-domain";
+import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 export type HttpErrorBody = {
   error: {

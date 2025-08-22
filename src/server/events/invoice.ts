@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/features/invoices/dto";
+import type { InvoiceDto } from "@/server/invoices/dto";
 
 /**
  * @description This list defines the operations that can be performed on invoices.

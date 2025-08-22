@@ -1,5 +1,5 @@
-import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError_New } from "@/errors/errors-domain";
+import { Err, Ok, type Result } from "@/shared/result/result-base";
 import type { ValidationRule, Validator } from "@/shared/validation/types";
 
 /**

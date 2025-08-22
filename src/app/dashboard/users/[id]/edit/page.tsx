@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
+import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
 import type { UserDto } from "@/features/users/user.dto";
 import { readUserAction } from "@/server/actions/user";
 import { H1 } from "@/ui/headings";
-import { Breadcrumbs } from "@/ui/invoices/breadcrumbs";
 import { EditUserForm } from "@/ui/users/edit-user-form";
 import { EditUserFormV2 } from "@/ui/users/edit-user-form-v2";
 

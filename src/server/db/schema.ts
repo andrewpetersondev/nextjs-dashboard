@@ -22,14 +22,6 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import type {
-  CustomerId,
-  InvoiceId,
-  Period,
-  RevenueId,
-  SessionId,
-  UserId,
-} from "@/core/types/domain-brands";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
@@ -40,6 +32,14 @@ import {
 } from "@/features/revenues/core/types";
 import type { UserRole } from "@/features/users/user.types";
 import { USER_ROLES } from "@/features/users/user.types";
+import type {
+  CustomerId,
+  InvoiceId,
+  Period,
+  RevenueId,
+  SessionId,
+  UserId,
+} from "@/shared/brands/domain-brands";
 
 /**
  * Schema overview

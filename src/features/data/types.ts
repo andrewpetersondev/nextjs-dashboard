@@ -1,4 +1,4 @@
-import type { InvoiceListFilter } from "@/features/invoices/types";
+import type { InvoiceListFilter } from "@/server/invoices/types";
 
 /**
  * Dashboard card summary data.
