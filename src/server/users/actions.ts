@@ -231,6 +231,7 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
     const deletedUser = await deleteUserDal(db, toUserId(userId));
     if (!deletedUser) {
       return actionResult({
+        errors: { _root: ["User not found or delete failed"] },
         message: USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED,
         success: false,
       });
@@ -245,6 +246,7 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
       userId,
     });
     return actionResult({
+      errors: { _root: ["User delete unsuccessful"] },
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
@@ -429,6 +431,7 @@ export async function demoUser(
       role,
     });
     return actionResult({
+      errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     });
