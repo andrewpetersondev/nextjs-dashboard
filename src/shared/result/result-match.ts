@@ -21,7 +21,9 @@ import type { Result } from "@/shared/result/result-base";
  * ```
  */
 export const unwrap = <T, E>(r: Result<T, E>): T => {
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 

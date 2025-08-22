@@ -27,8 +27,12 @@ export type RepoError = ValidationError_New | DatabaseError_New;
  * @returns A {@link RepoError}, retaining type if already a compatible error.
  */
 export function mapToRepoError(e: unknown): RepoError {
-  if (e instanceof ValidationError_New) return e;
-  if (e instanceof DatabaseError_New) return e;
+  if (e instanceof ValidationError_New) {
+    return e;
+  }
+  if (e instanceof DatabaseError_New) {
+    return e;
+  }
 
   // Attach the original unknown error as cause in a typed context object
   return new DatabaseError_New(INVOICE_ERROR_MESSAGES.DB_ERROR, { cause: e });

@@ -228,16 +228,16 @@ Suggested refactor sequence
 - Remove unique constraint catch from upsert.
 - Make upsertByPeriod the canonical public write method; deprecate others by delegating to it.
 
-2) Boundary tightening
+1) Boundary tightening
 - Decide timestamp ownership: if server-owned, remove createdAt/updatedAt from create payloads and adjust types.
 - Require branded types at repository boundaries (RevenueId, Period, RevenueSource).
 - Keep validation at ingress (API/services) with toX factories; assume branded correctness inside repo.
 
-3) Domain consolidation
+1) Domain consolidation
 - Introduce a minimal Period helper/VO; move month/year display extraction there.
 - Optionally brand Cents to avoid dollar/cents mixing.
 
-4) Mapper simplification
+1) Mapper simplification
 - Keep one mapper per boundary; avoid repeated checks elsewhere.
 - Decide whether to keep per-index error wrapping in array mappers.
 

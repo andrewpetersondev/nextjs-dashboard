@@ -58,7 +58,9 @@ export function computeTemplatePeriods<
   return template.map((t) => {
     // Prefer a direct period if present (e.g., RollingMonthData)
     const maybePeriod = (t as { period?: Period }).period;
-    if (maybePeriod) return maybePeriod;
+    if (maybePeriod) {
+      return maybePeriod;
+    }
 
     // Otherwise, normalize from year/month or monthNumber
     const year = (t as { year?: number }).year;

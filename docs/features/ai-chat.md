@@ -13,10 +13,10 @@ type EventHandler<T> = (event: T) => void | Promise<void>;
 
 This is correct. Event handlers typically return void because they're responsible for side effects (like updating the database) rather than returning data.
 
-2. **Helper Functions (void)**
+1. **Helper Functions (void)**
    Your helper functions like `processInvoiceForRevenue`, `adjustRevenueForStatusChange`, etc., all return `Promise<void>`. This pattern makes sense when the functions are purely performing operations without needing to return results.
 
-3. **Utility Functions (mixed)**
+2. **Utility Functions (mixed)**
    Your utilities have more varied return types based on their purpose:
 
 - Validation functions return boolean
@@ -50,7 +50,7 @@ async function processInvoiceForRevenue(...): Promise<OperationResult> {
 }
 ```
 
-2. **Event Handler Results**
+1. **Event Handler Results**
 
 ```typescript
 interface EventHandlerResult {
@@ -68,7 +68,7 @@ async function handleInvoiceEvent(...): Promise<EventHandlerResult> {
 }
 ```
 
-3. **Validation Results with Context**
+1. **Validation Results with Context**
 
 ```typescript
 interface ValidationResult {
@@ -89,7 +89,7 @@ function validateInvoiceForRevenue(...): ValidationResult {
 - Keep `void` return types if you're strictly following event-driven architecture
 - Consider returning operation results if you need to track success/failure
 
-2. **For Helpers**
+1. **For Helpers**
 
 - Consider returning operation results instead of void
 - This helps with:
@@ -98,7 +98,7 @@ function validateInvoiceForRevenue(...): ValidationResult {
   - Testing
   - Debugging
 
-3. **For Utilities**
+1. **For Utilities**
 
 - Keep current pattern of specific return types based on function purpose
 - Consider adding more context to validation results

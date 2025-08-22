@@ -192,10 +192,15 @@ async function truncateAll(): Promise<void> {
  */
 function generateInvoiceAmount(): number {
   const r = Math.random();
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) return 0;
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.05) return 1;
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.1)
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) {
+    return 0;
+  }
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.05) {
+    return 1;
+  }
+  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.1) {
     return SEED_CONFIG.MIN_AMOUNT_CENTS;
+  }
 
   if (r < 0.9) {
     return (

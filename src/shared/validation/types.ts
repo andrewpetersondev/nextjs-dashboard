@@ -32,8 +32,6 @@ export const asValidator = <T>(
   validate: fn,
 });
 
-// --- existing code ---
-
 // Map the Ok branch of a Result without changing the error type.
 export const mapResult =
   <A, B, E>(fn: (a: A) => B) =>

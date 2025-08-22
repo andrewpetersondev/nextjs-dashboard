@@ -13,7 +13,9 @@ export type HttpErrorBody = {
 };
 
 export const asAppError = (e: unknown): BaseError => {
-  if (e instanceof BaseError) return e;
+  if (e instanceof BaseError) {
+    return e;
+  }
   if (e instanceof Error) {
     return new DatabaseError_New(e.message, {}, e); // choose a safe default or map upstream
   }

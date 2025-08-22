@@ -243,7 +243,9 @@ export class InvoiceRepository extends BaseRepository<
   > {
     const res = await fromDal(fetchAllPaidInvoicesDal(this.db));
 
-    if (!res.success) return res;
+    if (!res.success) {
+      return res;
+    }
 
     return Ok(res.data);
   }

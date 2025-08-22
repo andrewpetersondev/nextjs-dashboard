@@ -22,7 +22,9 @@ type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
 export const tap =
   <T, E>(fn: (v: T) => void) =>
   (r: Result<T, E>): Result<T, E> => {
-    if (r.success) fn(r.data);
+    if (r.success) {
+      fn(r.data);
+    }
     return r;
   };
 
@@ -36,7 +38,9 @@ export const tap =
 export const tapError =
   <T, E>(fn: (e: E) => void) =>
   (r: Result<T, E>): Result<T, E> => {
-    if (!r.success) fn(r.error);
+    if (!r.success) {
+      fn(r.error);
+    }
     return r;
   };
 
@@ -63,7 +67,9 @@ export const fromNullable = <T, E>(
 export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
   const acc: T[] = [];
   for (const r of results) {
-    if (!r.success) return r;
+    if (!r.success) {
+      return r;
+    }
     acc.push(r.data);
   }
   return Ok(acc);
@@ -116,7 +122,9 @@ export const anyOkOrElse =
   (results: Result<T, E>[]): Result<T, E> => {
     let lastErr: Result<never, E> | null = null;
     for (const r of results) {
-      if (r.success) return r;
+      if (r.success) {
+        return r;
+      }
       lastErr = r as Result<never, E>;
     }
     return lastErr ?? Err(onEmpty());

@@ -36,6 +36,8 @@ export const validateEnum = <T extends string>(
   enumName: string,
 ): T => {
   const r = validateEnumResult(value, enumValues, enumName);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };

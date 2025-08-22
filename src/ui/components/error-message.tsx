@@ -14,7 +14,9 @@ export const ErrorMessage: FC<ErrorMessageProps> = ({
   id,
   label,
 }) => {
-  if (!error || (Array.isArray(error) && error.length === 0)) return null;
+  if (!error || (Array.isArray(error) && error.length === 0)) {
+    return null;
+  }
 
   const errors = Array.isArray(error) ? error : [error];
 

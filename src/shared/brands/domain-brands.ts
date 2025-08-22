@@ -150,7 +150,9 @@ export const toPeriodResult = (
  */
 export const toCustomerId = (id: string): CustomerId => {
   const r = toCustomerIdResult(id);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 /**
@@ -158,7 +160,9 @@ export const toCustomerId = (id: string): CustomerId => {
  */
 export const toUserId = (id: string): UserId => {
   const r = toUserIdResult(id);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 
@@ -167,7 +171,9 @@ export const toUserId = (id: string): UserId => {
  */
 export const toInvoiceId = (id: string): InvoiceId => {
   const r = toInvoiceIdResult(id);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 
@@ -176,7 +182,9 @@ export const toInvoiceId = (id: string): InvoiceId => {
  */
 export const toRevenueId = (id: string): RevenueId => {
   const r = toRevenueIdResult(id);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 
@@ -185,7 +193,9 @@ export const toRevenueId = (id: string): RevenueId => {
  */
 export const toSessionId = (id: string): SessionId => {
   const r = toSessionIdResult(id);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 };
 
@@ -194,7 +204,9 @@ export const toSessionId = (id: string): SessionId => {
  */
 export function toPeriod(input: Date | string): Period {
   const r = toPeriodResult(input);
-  if (r.success) return r.data;
+  if (r.success) {
+    return r.data;
+  }
   throw r.error;
 }
 
