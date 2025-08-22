@@ -1,10 +1,14 @@
 "use server";
 
+import { toFormattedCustomersTableRow } from "@/features/customers/lib/mapToViewModel";
 import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
-import { fetchCustomers, fetchFilteredCustomers } from "@/server/dals/customer";
+import {
+  fetchCustomers,
+  fetchFilteredCustomersDal,
+} from "@/server/customers/dal";
 import { getDB } from "@/server/db/connection";
 
 /**
@@ -25,5 +29,6 @@ export async function readFilteredCustomersAction(
   query: string = "",
 ): Promise<FormattedCustomersTableRow[]> {
   const db = getDB();
-  return fetchFilteredCustomers(db, query);
+  const rows = await fetchFilteredCustomersDal(db, query);
+  return rows.map(toFormattedCustomersTableRow);
 }

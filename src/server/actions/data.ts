@@ -1,7 +1,7 @@
 "use server";
 
 import type { DashboardData } from "@/features/data/types";
-import { fetchTotalCustomersCountDal } from "@/server/dals/customer";
+import { fetchTotalCustomersCountDal } from "@/server/customers/dal";
 import { getDB } from "@/server/db/connection";
 import {
   fetchLatestInvoicesDal,

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
+import { CustomersTable } from "@/features/customers/components/table";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { readFilteredCustomersAction } from "@/server/actions/customer";
-import { CustomersTable } from "@/ui/customers/table";
+import { readFilteredCustomersAction } from "@/server/customers/actions";
 
 export const metadata: Metadata = {
   title: "Customers",

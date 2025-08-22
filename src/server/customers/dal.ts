@@ -3,16 +3,14 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { DatabaseError, ValidationError } from "@/errors/errors";
 import { CUSTOMER_ERROR_MESSAGES } from "@/errors/errors-messages";
+import type { CustomerField } from "@/features/customers/types";
 import type {
-  CustomerField,
   CustomerSelectDbRow,
-  CustomerTableDbRow,
-  FormattedCustomersTableRow,
-} from "@/features/customers/types";
+  CustomerTableDbRowRaw,
+} from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { toCustomerId } from "@/shared/brands/domain-brands";
-import { formatCurrency } from "@/shared/utils/general";
 
 /**
  * Fetches all customers for select options.
@@ -41,17 +39,18 @@ export async function fetchCustomers(db: Database): Promise<CustomerField[]> {
 }
 
 /**
- * Fetches customers filtered by query for the customer table.
+ * Fetches customers filtered by query for the customer table (server: raw numeric totals).
+ * Caller (feature/ui) maps to formatted UI rows.
  * @param db - Drizzle database instance
  * @param query - Search query string
- * @returns Array of formatted customer table rows with branded IDs
+ * @returns Array of raw customer table rows with branded IDs and numeric totals
  */
-export async function fetchFilteredCustomers(
+export async function fetchFilteredCustomersDal(
   db: Database,
   query: string,
-): Promise<FormattedCustomersTableRow[]> {
+): Promise<CustomerTableDbRowRaw[]> {
   try {
-    const rows: CustomerTableDbRow[] = await db
+    const rows = await db
       .select({
         email: customers.email,
         id: customers.id,
@@ -75,8 +74,9 @@ export async function fetchFilteredCustomers(
     return rows.map((row) => ({
       ...row,
       id: toCustomerId(row.id),
-      totalPaid: formatCurrency(row.totalPaid),
-      totalPending: formatCurrency(row.totalPending),
+      // Note: totals remain numbers; UI formatting happens in features layer
+      totalPaid: Number(row.totalPaid ?? 0),
+      totalPending: Number(row.totalPending ?? 0),
     }));
   } catch (error) {
     // Use structured logging in production

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { toInvoiceStatus } from "@/features/invoices/lib/validator";
+import { toInvoiceStatus } from "@/features/invoices/lib/to-invoice-status";
 import type { InvoiceRow } from "@/server/db/schema";
 import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import type {

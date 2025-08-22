@@ -1,7 +1,7 @@
 import type { JSX } from "react";
+import { DesktopTable } from "@/features/customers/components/desktop-table";
+import { MobileTable } from "@/features/customers/components/mobile-table";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { DesktopTable } from "@/ui/customers/desktop-table";
-import { MobileTable } from "@/ui/customers/mobile-table";
 import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
 
