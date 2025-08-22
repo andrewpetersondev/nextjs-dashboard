@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { ClientLoginSection } from "@/ui/auth/client-login-section";
-import { Heading } from "@/ui/auth/heading";
+import { ClientLoginSection } from "@/features/auth/components/client-login-section";
+import { Heading } from "@/features/auth/components/heading";
 
 /**
  * Renders the login page.

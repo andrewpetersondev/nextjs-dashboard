@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import type { UserRole } from "@/features/users/types";
 import { demoUser } from "@/server/users/actions";
+import type { AuthRole } from "@/shared/auth/roles";
 import { Button } from "@/ui/button";
 
 /**
@@ -15,7 +15,7 @@ interface DemoFormProps {
   /** Button text */
   text: string;
   /** User role for demo login */
-  userRole: UserRole;
+  userRole: AuthRole;
 }
 
 export const DemoForm: FC<DemoFormProps> = ({ text, userRole, label }) => (

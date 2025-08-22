@@ -1,5 +1,5 @@
 import type React from "react";
-import { USER_ROLES, type UserRole } from "@/features/users/types";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/components/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
@@ -8,13 +8,13 @@ import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";
  * Role option type for select menu.
  */
 interface RoleOption {
-  id: UserRole; // UserRole is a string union
+  id: AuthRole; // UserRole is a string union
   name: string;
 }
 
 // --- Define ROLE_OPTIONS constant ---
 // Filters out "guest" and maps roles to { id, name } objects with capitalized names.
-const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
+const ROLE_OPTIONS: RoleOption[] = AUTH_ROLES.filter(
   (role) => role !== "guest",
 ).map((role) => ({
   id: role,
@@ -28,7 +28,7 @@ interface SelectRoleProps
     "options" | "id" | "name" | "value"
   > {
   error?: FormFieldError;
-  value?: UserRole;
+  value?: AuthRole;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 

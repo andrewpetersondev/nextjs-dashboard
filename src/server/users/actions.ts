@@ -4,15 +4,21 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/errors/errors-messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { UserRole } from "@/features/users/types";
+import {
+  CreateUserFormSchema,
+  EditUserFormSchema,
+  LoginFormSchema,
+  SignupAllowedFields,
+  SignupFormSchema,
+} from "@/features/users/schema.client";
+import { hashPassword } from "@/server/auth/hashing";
+import { deleteSessionToken, setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import {
   normalizeFieldErrors,
   validateFormGeneric,
 } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
-import { hashPassword } from "@/server/security/password";
-import { deleteSessionToken, setSessionToken } from "@/server/sessions/jwt";
 import {
   createDemoUser,
   createUserDal,
@@ -26,13 +32,6 @@ import {
   updateUserDal,
 } from "@/server/users/dal";
 import type { UserDto } from "@/server/users/dto";
-import {
-  CreateUserFormSchema,
-  EditUserFormSchema,
-  LoginFormSchema,
-  SignupAllowedFields,
-  SignupFormSchema,
-} from "@/server/users/schema";
 import type {
   CreateUserFormFieldNames,
   EditUserFormFieldNames,
@@ -46,6 +45,7 @@ import {
   type ActionResult,
   actionResult,
 } from "@/shared/action-result/action-result";
+import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/domain-brands";
 import { USER_SUCCESS_MESSAGES } from "@/shared/constants/success-messages";
 import type { FormState } from "@/shared/forms/types";
@@ -395,7 +395,7 @@ export async function logout(): Promise<void> {
  * Creates a demo user and logs them in.
  */
 export async function demoUser(
-  role: UserRole = toUserRole("guest"),
+  role: AuthRole = toUserRole("guest"),
 ): Promise<ActionResult> {
   let demoUser: UserDto | null = null;
   const db = getDB();

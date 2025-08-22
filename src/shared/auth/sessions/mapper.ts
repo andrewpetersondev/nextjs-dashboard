@@ -1,5 +1,5 @@
-import type { EncryptPayload } from "@/features/sessions/types";
-import type { UserRole } from "@/features/users/types";
+import type { AuthRole } from "@/shared/auth/roles";
+import type { EncryptPayload } from "@/shared/auth/types";
 
 /**
  * Flattens EncryptPayload for JWT compatibility.
@@ -23,7 +23,7 @@ export function unflattenEncryptPayload(
   return {
     user: {
       expiresAt: payload.expiresAt as number,
-      role: payload.role as UserRole,
+      role: payload.role as AuthRole,
       userId: payload.userId as string,
     },
   };

@@ -3,18 +3,15 @@ import "server-only";
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { DatabaseError } from "@/errors/errors";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { UserRole } from "@/features/users/types";
+import { comparePassword, hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { logger } from "@/server/logging/logger";
-import {
-  comparePassword,
-  createRandomPassword,
-  hashPassword,
-} from "@/server/security/password";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { UserUpdatePatch } from "@/server/users/types";
+import { createRandomPassword } from "@/shared/auth/password";
+import type { AuthRole } from "@/shared/auth/roles";
 import type { UserId } from "@/shared/brands/domain-brands";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
 
@@ -35,7 +32,7 @@ export async function createUserDal(
     username: string;
     email: string;
     password: string;
-    role?: UserRole;
+    role?: AuthRole;
   },
 ): Promise<UserDto | null> {
   try {
@@ -369,7 +366,7 @@ export async function fetchFilteredUsers(
  */
 export async function demoUserCounter(
   db: Database,
-  role: UserRole,
+  role: AuthRole,
 ): Promise<number> {
   try {
     // Insert a new counter-row for the given role and return the new id
@@ -411,7 +408,7 @@ export async function demoUserCounter(
 export async function createDemoUser(
   db: Database,
   id: number,
-  role: UserRole,
+  role: AuthRole,
 ): Promise<UserDto | null> {
   try {
     // Generate a secure random password for the demo user

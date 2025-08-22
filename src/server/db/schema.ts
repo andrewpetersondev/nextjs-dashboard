@@ -27,7 +27,7 @@ import {
   type InvoiceStatus,
 } from "@/features/invoices/types";
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import { USER_ROLES, type UserRole } from "@/features/users/types";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type {
   CustomerId,
   InvoiceId,
@@ -86,7 +86,7 @@ export const COLUMNS = {
 } as const;
 
 // DB enums from domain constants to avoid duplication and drift
-export const roleEnum = pgEnum(COLUMNS.ROLE, USER_ROLES);
+export const roleEnum = pgEnum(COLUMNS.ROLE, AUTH_ROLES);
 
 export const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
 
@@ -143,7 +143,7 @@ export const users = pgTable(TABLES.USERS, {
   email: commonFields.email(),
   id: commonFields.id.uuid().$type<UserId>(),
   password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
-  role: roleEnum(COLUMNS.ROLE).default("user").notNull().$type<UserRole>(),
+  role: roleEnum(COLUMNS.ROLE).default("user").notNull().$type<AuthRole>(),
   sensitiveData: commonFields.sensitiveData(),
   username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull().unique(),
 });
@@ -154,7 +154,7 @@ export const users = pgTable(TABLES.USERS, {
 export const demoUserCounters = pgTable(TABLES.DEMO_USER_COUNTERS, {
   count: integer(COLUMNS.COUNT).notNull().default(0),
   id: commonFields.id.serial(),
-  role: roleEnum(COLUMNS.ROLE).notNull().default("guest").$type<UserRole>(),
+  role: roleEnum(COLUMNS.ROLE).notNull().default("guest").$type<AuthRole>(),
 });
 
 /**

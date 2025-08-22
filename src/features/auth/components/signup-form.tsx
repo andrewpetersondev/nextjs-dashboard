@@ -6,14 +6,14 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type FC, type JSX, useActionState } from "react";
+import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
+import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
+import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
+import { InputField } from "@/features/auth/components/input-field";
+import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import { signup } from "@/server/users/actions";
 import type { SignupFormFieldNames } from "@/server/users/types";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { AuthServerMessage } from "@/ui/auth/auth-server-message";
-import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";
-import { ForgotPasswordLink } from "@/ui/auth/forgot-password-link";
-import { InputField } from "@/ui/auth/input-field";
-import { RememberMeCheckbox } from "@/ui/auth/remember-me-checkbox";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
 /**

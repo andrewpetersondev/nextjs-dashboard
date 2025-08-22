@@ -1,8 +1,8 @@
 import type { JSX } from "react";
-import type { UserRole } from "@/features/users/types";
 import { readDashboardDataAction } from "@/server/actions/data";
-import { verifySessionOptimistic } from "@/server/sessions/session";
+import { verifySessionOptimistic } from "@/server/auth/session";
 import { getValidUserRole } from "@/server/users/utils";
+import type { AuthRole } from "@/shared/auth/roles";
 import { DASHBOARD_TITLES } from "@/shared/constants/ui";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
@@ -19,7 +19,7 @@ export default async function Page(): Promise<JSX.Element> {
     readDashboardDataAction(),
   ]);
 
-  const role: UserRole = getValidUserRole(session?.role);
+  const role: AuthRole = getValidUserRole(session?.role);
 
   const commonContent = (
     <main>

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserRole } from "@/features/users/types";
+import type { AuthRole } from "@/shared/auth/roles";
 
 /**
  * Data Transfer Object (DTO) representing a user entity.
@@ -23,5 +23,5 @@ export interface UserDto {
   readonly id: string;
   readonly username: string;
   readonly email: string;
-  readonly role: UserRole;
+  readonly role: AuthRole;
 }

@@ -1,30 +1,22 @@
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
-import { cookies } from "next/headers";
+
 import { SESSION_SECRET } from "@/config/environment";
+
 import { ValidationError } from "@/errors/errors";
-import {
-  DecryptPayloadSchema,
-  EncryptPayloadSchema,
-} from "@/features/sessions/schema";
-import type { DecryptPayload, EncryptPayload } from "@/features/sessions/types";
-import type { UserRole } from "@/features/users/types";
+
+import type { DecryptPayload } from "@/server/auth/types";
+import { DecryptPayloadSchema } from "@/server/auth/zod";
 import { logger } from "@/server/logging/logger";
-import {
-  JWT_EXPIRATION,
-  SESSION_COOKIE_NAME,
-  SESSION_DURATION_MS,
-} from "@/shared/constants/auth";
+
+import { JWT_EXPIRATION } from "@/shared/auth/constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/shared/sessions/mapper";
-
-// --- JWT session logic here ---
-// export createSessionToken, readSessionToken, setSessionToken, updateSessionToken, deleteSessionToken
-
-// --- Internal Utility Types & Constants ---
+} from "@/shared/auth/sessions/mapper";
+import type { EncryptPayload } from "@/shared/auth/types";
+import { EncryptPayloadSchema } from "@/shared/auth/zod";
 
 let encodedKey: Uint8Array | undefined;
 
@@ -160,114 +152,4 @@ export async function readSessionToken(
     );
     return undefined;
   }
-}
-
-// /**
-//  * Updates the session cookie's expiration if valid.
-//  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
-//  */
-// async function _updateSessionToken(): Promise<null | void> {
-//   const cookieStore = await cookies();
-//
-//   const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
-//
-//   const session = getCookieValue(rawCookie?.value);
-//
-//   if (!session) {
-//     logger.warn(
-//       { context: "updateSession" },
-//       "No session cookie found to update",
-//     );
-//     return null;
-//   }
-//
-//   const payload = await readSessionToken(session);
-//
-//   if (!payload?.user) {
-//     logger.warn(
-//       { context: "updateSession" },
-//       "Session payload invalid or missing user",
-//     );
-//     return null;
-//   }
-//
-//   const now = Date.now();
-//
-//   const expiration = new Date(payload.user.expiresAt).getTime();
-//
-//   if (now > expiration) {
-//     logger.info(
-//       { context: "updateSession", userId: payload.user.userId },
-//       "Session expired, not updating",
-//     );
-//     return null;
-//   }
-//
-//   const { user } = payload;
-//   const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
-//
-//   const minimalPayload: EncryptPayload = {
-//     user: {
-//       expiresAt: newExpiration,
-//       role: user.role,
-//       userId: user.userId,
-//     },
-//   };
-//
-//   const updatedToken = await createSessionToken(minimalPayload);
-//
-//   cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-//     expires: new Date(newExpiration),
-//     httpOnly: true,
-//     path: "/",
-//     sameSite: "lax",
-//     secure: process.env.NODE_ENV === "production",
-//   });
-//
-//   logger.info(
-//     { context: "updateSession", newExpiration, userId: user.userId },
-//     "Session updated with new expiration",
-//   );
-// }
-
-/**
- * Deletes the session cookie.
- * @returns {Promise<void>}
- */
-export async function deleteSessionToken(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
-  logger.info({ context: "deleteSession" }, "Session cookie deleted");
-}
-
-/**
- * Creates a new session cookie for the user.
- * @param userId - The user's unique identifier.
- * @param role - The user's role.
- * @returns {Promise<void>}
- */
-export async function setSessionToken(
-  userId: string,
-  role: UserRole = "user",
-): Promise<void> {
-  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
-
-  const session: string = await createSessionToken({
-    user: { expiresAt, role, userId },
-  });
-
-  const cookieStore = await cookies();
-
-  cookieStore.set(SESSION_COOKIE_NAME, session, {
-    expires: new Date(expiresAt),
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  logger.info(
-    { context: "createSession", expiresAt, role, userId },
-    `Session created for user ${userId} with role ${role}`,
-  );
 }

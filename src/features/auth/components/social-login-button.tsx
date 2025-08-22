@@ -1,6 +1,6 @@
 import type React from "react";
 import { memo } from "react";
-import { GitHubIcon, GoogleIcon } from "@/ui/auth/icons";
+import { GitHubIcon, GoogleIcon } from "@/features/auth/components/icons";
 
 /**
  * Supported social login providers.

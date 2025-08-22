@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { UserRole } from "@/features/users/types";
 import type { UserEntity } from "@/server/users/entity";
+import type { AuthRole } from "@/shared/auth/roles";
 import type { FormState } from "@/shared/forms/types";
 
 export type UserUpdatePatch = Partial<
@@ -20,14 +20,14 @@ export type SignupFormFields = BaseUserFormFields & {
 };
 
 export type CreateUserFormFields = SignupFormFields & {
-  role: UserRole;
+  role: AuthRole;
 };
 
 export type EditUserFormFields = Partial<{
   username: string;
   email: string;
   password: string;
-  role: UserRole;
+  role: AuthRole;
 }>;
 
 export type SignupFormFieldNames = keyof SignupFormFields;

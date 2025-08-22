@@ -6,16 +6,16 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
+import { InputField } from "@/features/auth/components/input-field";
 import { SelectRole } from "@/features/users/components/select-role";
 import { ServerMessage } from "@/features/users/components/server-message";
-import { USER_ROLES, type UserRole } from "@/features/users/types";
 import { createUserAction } from "@/server/users/actions";
 import type {
   CreateUserFormFieldNames,
   CreateUserFormState,
 } from "@/server/users/types";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { InputField } from "@/ui/auth/input-field";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";
 import { H1 } from "@/ui/headings";
@@ -38,7 +38,7 @@ export function CreateUserForm(): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
 
   // Track the selected role in the local state, strictly typed as UserRole
-  const [selectedRole, setSelectedRole] = useState<UserRole | undefined>(
+  const [selectedRole, setSelectedRole] = useState<AuthRole | undefined>(
     undefined,
   );
 
@@ -118,8 +118,8 @@ export function CreateUserForm(): JSX.Element {
             error={state?.errors?.role}
             // Update the selected role state, ensuring type safety
             onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-              const value = event.target.value as UserRole;
-              setSelectedRole(USER_ROLES.includes(value) ? value : undefined);
+              const value = event.target.value as AuthRole;
+              setSelectedRole(AUTH_ROLES.includes(value) ? value : undefined);
             }}
             value={selectedRole}
           />

@@ -1,12 +1,14 @@
-import "server-only";
-
 import * as z from "zod";
-import { roleSchema } from "@/server/users/schema";
+import { AUTH_ROLES } from "@/shared/auth/roles";
 
 export const userIdSchema = z.uuid();
 export const expiresAtSchema = z.number();
-export const iatSchema = z.number();
-export const expSchema = z.number();
+
+// User role validation schema.
+export const roleSchema = z.enum(AUTH_ROLES, {
+  error: (issue) =>
+    issue.input === undefined ? "Role is required." : "Invalid user role.",
+});
 
 export const EncryptPayloadSchema = z.object({
   user: z.object({
@@ -14,9 +16,4 @@ export const EncryptPayloadSchema = z.object({
     role: roleSchema,
     userId: userIdSchema,
   }),
-});
-
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
-  exp: expSchema,
-  iat: iatSchema,
 });

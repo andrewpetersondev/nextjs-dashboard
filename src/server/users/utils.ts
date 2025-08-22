@@ -1,12 +1,12 @@
 import "server-only";
 
-import { USER_ROLES, type UserRole } from "@/features/users/types";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 
 /**
  * Validates and returns a user role, defaulting to "guest" if invalid.
  *
  * @param role - The role to validate.
- * @returns {UserRole} - A valid user role.
+ * @returns {AuthRole} - A valid user role.
  */
-export const getValidUserRole = (role: unknown): UserRole =>
-  USER_ROLES.includes(role as UserRole) ? (role as UserRole) : "guest";
+export const getValidUserRole = (role: unknown): AuthRole =>
+  AUTH_ROLES.includes(role as AuthRole) ? (role as AuthRole) : "guest";
