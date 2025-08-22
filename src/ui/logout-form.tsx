@@ -1,6 +1,6 @@
 import { PowerIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { logout } from "@/server/actions/user";
+import { logout } from "@/server/users/actions";
 
 /**
  * LogoutForm component for user sign out.

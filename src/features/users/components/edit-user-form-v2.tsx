@@ -1,10 +1,10 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import type { UserDto } from "@/features/users/user.dto";
-import { updateUserAction } from "@/server/actions/user";
-import { UserForm } from "@/ui/users/user-form";
-import { UserInfoPanel } from "@/ui/users/user-info-panel";
+import { UserForm } from "@/features/users/components/user-form";
+import { UserInfoPanel } from "@/features/users/components/user-info-panel";
+import { updateUserAction } from "@/server/users/actions";
+import type { UserDto } from "@/server/users/dto";
 
 type EditUserFormState = Readonly<{
   errors?: {
@@ -17,7 +17,7 @@ type EditUserFormState = Readonly<{
   success?: boolean;
 }>;
 
-export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
+export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
   const initialState = { errors: {}, message: "", success: undefined };
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: EditUserFormState,

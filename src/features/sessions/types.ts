@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserRole } from "@/features/users/user.types";
+import type { UserRole } from "@/features/users/types";
 
 /**
  * Payload for encrypting a session (JWT or similar).

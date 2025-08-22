@@ -1,7 +1,7 @@
 import "server-only";
 
 import * as z from "zod";
-import { roleSchema } from "@/features/users/user.schema";
+import { roleSchema } from "@/server/users/schema";
 
 export const userIdSchema = z.uuid();
 export const expiresAtSchema = z.number();

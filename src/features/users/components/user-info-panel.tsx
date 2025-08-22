@@ -1,4 +1,4 @@
-import type { UserDto } from "@/features/users/user.dto";
+import type { UserDto } from "@/server/users/dto";
 
 export function UserInfoPanel({ user }: { user: UserDto }) {
   return (

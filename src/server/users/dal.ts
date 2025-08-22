@@ -1,15 +1,9 @@
-/**
- * User Data Access Layer (DAL) for CRUD operations on User entities.
- * Uses Drizzle ORM for database access.
- */
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { DatabaseError } from "@/errors/errors";
-import type { UserDto } from "@/features/users/user.dto";
-import { dbRowToUserEntity, toUserDto } from "@/features/users/user.mapper";
-import type { UserRole, UserUpdatePatch } from "@/features/users/user.types";
-import { toUserRole } from "@/features/users/user.validation";
+import { toUserRole } from "@/features/users/lib/to-user-role";
+import type { UserRole } from "@/features/users/types";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { logger } from "@/server/logging/logger";
@@ -18,6 +12,9 @@ import {
   createRandomPassword,
   hashPassword,
 } from "@/server/security/password";
+import type { UserDto } from "@/server/users/dto";
+import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
+import type { UserUpdatePatch } from "@/server/users/types";
 import type { UserId } from "@/shared/brands/domain-brands";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
 
@@ -48,8 +45,8 @@ export async function createUserDal(
       .values({ email, password: hashedPassword, role, username })
       .returning();
     // --- Map raw DB row to UserEntity before mapping to DTO ---
-    const user = userRow ? dbRowToUserEntity(userRow) : null;
-    return user ? toUserDto(user) : null;
+    const user = userRow ? userDbRowToEntity(userRow) : null;
+    return user ? userEntityToDto(user) : null;
   } catch (error) {
     logger.error({
       context: "createUserDal",
@@ -87,10 +84,10 @@ export async function readUserDal(
     }
 
     // Map raw DB row to UserEntity for type safety (brands id/role)
-    const userEntity = dbRowToUserEntity(userRow);
+    const userEntity = userDbRowToEntity(userRow);
 
     // Map to DTO for safe return to client
-    return toUserDto(userEntity);
+    return userEntityToDto(userEntity);
   } catch (error) {
     logger.error({
       context: "readUserDal",
@@ -132,10 +129,10 @@ export async function updateUserDal(
     }
 
     // Map raw DB row to UserEntity (brands id/role)
-    const userEntity = dbRowToUserEntity(userRow);
+    const userEntity = userDbRowToEntity(userRow);
 
     // Map to DTO for safe return to client
-    return toUserDto(userEntity);
+    return userEntityToDto(userEntity);
   } catch (error) {
     logger.error({
       context: "updateUserDal",
@@ -171,10 +168,10 @@ export async function deleteUserDal(
     }
 
     // Map raw DB row to UserEntity for type safety
-    const deletedEntity = dbRowToUserEntity(deletedRow);
+    const deletedEntity = userDbRowToEntity(deletedRow);
 
     // Map to DTO for safe return to client
-    return toUserDto(deletedEntity);
+    return userEntityToDto(deletedEntity);
   } catch (error) {
     logger.error({
       context: "deleteUserDal",
@@ -218,7 +215,7 @@ export async function findUserForLogin(
     }
 
     // Map raw DB row to UserEntity (brands id/role)
-    const userEntity = dbRowToUserEntity(userRow);
+    const userEntity = userDbRowToEntity(userRow);
 
     // Securely compare password
     const validPassword = await comparePassword(password, userEntity.password);
@@ -227,7 +224,7 @@ export async function findUserForLogin(
     }
 
     // Map to DTO for safe return
-    return toUserDto(userEntity);
+    return userEntityToDto(userEntity);
   } catch (error) {
     logger.error({
       context: "findUserForLogin",
@@ -259,10 +256,10 @@ export async function fetchUserById(
     }
 
     // Map raw DB row to UserEntity for type safety
-    const userEntity = dbRowToUserEntity(userRow);
+    const userEntity = userDbRowToEntity(userRow);
 
     // Map to DTO for safe return to client
-    return toUserDto(userEntity);
+    return userEntityToDto(userEntity);
   } catch (error) {
     logger.error({
       context: "fetchUserById",
@@ -350,7 +347,7 @@ export async function fetchFilteredUsers(
       .offset(offset);
 
     // Map each raw row to UserEntity, then to UserDto
-    return userRows.map((row) => toUserDto(dbRowToUserEntity(row)));
+    return userRows.map((row) => userEntityToDto(userDbRowToEntity(row)));
   } catch (error) {
     logger.error({
       context: "fetchFilteredUsers",

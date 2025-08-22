@@ -7,13 +7,13 @@ import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amoun
 import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
+import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";
 import { Label } from "@/ui/components/label";
-import { ServerMessage } from "@/ui/users/server-message";
 
 export const EditInvoiceForm = ({
   invoice,

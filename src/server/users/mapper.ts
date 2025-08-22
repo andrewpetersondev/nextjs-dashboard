@@ -1,8 +1,9 @@
 import "server-only";
 
-import type { UserDto } from "@/features/users/user.dto";
-import type { UserEntity } from "@/features/users/user.entity";
-import { toUserRole } from "@/features/users/user.validation";
+import { toUserRole } from "@/features/users/lib/to-user-role";
+import type { UserRow } from "@/server/db/schema";
+import type { UserDto } from "@/server/users/dto";
+import type { UserEntity } from "@/server/users/entity";
 import { toUserId } from "@/shared/brands/domain-brands";
 
 /**
@@ -19,7 +20,7 @@ import { toUserId } from "@/shared/brands/domain-brands";
  * const dto = toUserDto(user);
  *
  */
-export function toUserDto(entity: UserEntity): UserDto {
+export function userEntityToDto(entity: UserEntity): UserDto {
   return {
     email: String(entity.email),
     id: String(entity.id),
@@ -34,18 +35,7 @@ export function toUserDto(entity: UserEntity): UserDto {
  * @param row - The raw DB row.
  * @returns The corresponding UserEntity.
  */
-export function dbRowToUserEntity(row: Record<string, unknown>): UserEntity {
-  // Defensive: validate and brand fields
-  if (
-    typeof row.id !== "string" ||
-    typeof row.username !== "string" ||
-    typeof row.email !== "string" ||
-    typeof row.role !== "string" ||
-    typeof row.password !== "string" ||
-    typeof row.sensitiveData !== "string"
-  ) {
-    throw new Error("Invalid DB row: missing or invalid user fields");
-  }
+export function userDbRowToEntity(row: UserRow): UserEntity {
   return {
     email: row.email,
     id: toUserId(row.id),

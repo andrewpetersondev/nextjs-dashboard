@@ -1,5 +1,5 @@
 import type React from "react";
-import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import { USER_ROLES, type UserRole } from "@/features/users/types";
 import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/components/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/ui/components/select-menu";

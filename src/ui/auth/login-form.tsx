@@ -3,8 +3,8 @@
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { type FC, useActionState } from "react";
-import type { LoginFormFieldNames } from "@/features/users/user.types";
-import { login } from "@/server/actions/user";
+import { login } from "@/server/users/actions";
+import type { LoginFormFieldNames } from "@/server/users/types";
 import type { FormState } from "@/shared/forms/types";
 import { AuthServerMessage } from "@/ui/auth/auth-server-message";
 import { AuthSubmitButton } from "@/ui/auth/auth-submit-button";

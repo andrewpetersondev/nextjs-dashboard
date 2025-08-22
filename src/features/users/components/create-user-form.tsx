@@ -6,20 +6,19 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useEffect, useState } from "react";
-import {
-  type CreateUserFormFieldNames,
-  type CreateUserFormState,
-  USER_ROLES,
-  type UserRole,
-} from "@/features/users/user.types";
-import { createUserAction } from "@/server/actions/user";
+import { SelectRole } from "@/features/users/components/select-role";
+import { ServerMessage } from "@/features/users/components/server-message";
+import { USER_ROLES, type UserRole } from "@/features/users/types";
+import { createUserAction } from "@/server/users/actions";
+import type {
+  CreateUserFormFieldNames,
+  CreateUserFormState,
+} from "@/server/users/types";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { InputField } from "@/ui/auth/input-field";
 import { FormActionRow } from "@/ui/components/form-action-row";
 import { FormSubmitButton } from "@/ui/components/form-submit-button";
 import { H1 } from "@/ui/headings";
-import { SelectRole } from "@/ui/users/select-role";
-import { ServerMessage } from "@/ui/users/server-message";
 
 export function CreateUserForm(): JSX.Element {
   const initialState: Extract<

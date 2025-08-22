@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
-import { CreateUserForm } from "@/ui/users/create-user-form";
-import { CreateUserFormV2 } from "@/ui/users/create-user-form-v2";
+import { CreateUserForm } from "@/features/users/components/create-user-form";
+import { CreateUserFormV2 } from "@/features/users/components/create-user-form-v2";
 
 export const metadata: Metadata = {
   title: "Create User",

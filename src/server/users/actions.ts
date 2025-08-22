@@ -3,25 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/errors/errors-messages";
-import type { UserDto } from "@/features/users/user.dto";
+import { toUserRole } from "@/features/users/lib/to-user-role";
+import type { UserRole } from "@/features/users/types";
+import { getDB } from "@/server/db/connection";
 import {
-  CreateUserFormSchema,
-  EditUserFormSchema,
-  LoginFormSchema,
-  SignupAllowedFields,
-  SignupFormSchema,
-} from "@/features/users/user.schema";
-import type {
-  CreateUserFormFieldNames,
-  EditUserFormFieldNames,
-  LoginFormFieldNames,
-  LoginFormFields,
-  SignupFormFieldNames,
-  SignupFormFields,
-  UserRole,
-} from "@/features/users/user.types";
-import { getValidUserRole } from "@/features/users/user.utils";
-import { toUserRole } from "@/features/users/user.validation";
+  normalizeFieldErrors,
+  validateFormGeneric,
+} from "@/server/forms/validation";
+import { logger } from "@/server/logging/logger";
+import { hashPassword } from "@/server/security/password";
+import { deleteSessionToken, setSessionToken } from "@/server/sessions/jwt";
 import {
   createDemoUser,
   createUserDal,
@@ -33,15 +24,24 @@ import {
   findUserForLogin,
   readUserDal,
   updateUserDal,
-} from "@/server/dals/user";
-import { getDB } from "@/server/db/connection";
+} from "@/server/users/dal";
+import type { UserDto } from "@/server/users/dto";
 import {
-  normalizeFieldErrors,
-  validateFormGeneric,
-} from "@/server/forms/validation";
-import { logger } from "@/server/logging/logger";
-import { hashPassword } from "@/server/security/password";
-import { deleteSessionToken, setSessionToken } from "@/server/sessions/jwt";
+  CreateUserFormSchema,
+  EditUserFormSchema,
+  LoginFormSchema,
+  SignupAllowedFields,
+  SignupFormSchema,
+} from "@/server/users/schema";
+import type {
+  CreateUserFormFieldNames,
+  EditUserFormFieldNames,
+  LoginFormFieldNames,
+  LoginFormFields,
+  SignupFormFieldNames,
+  SignupFormFields,
+} from "@/server/users/types";
+import { getValidUserRole } from "@/server/users/utils";
 import {
   type ActionResult,
   actionResult,

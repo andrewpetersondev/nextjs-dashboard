@@ -1,5 +1,7 @@
+import "server-only";
+
 import * as z from "zod";
-import { USER_ROLES } from "@/features/users/user.types";
+import { USER_ROLES } from "@/features/users/types";
 
 /**
  * Username validation schema.

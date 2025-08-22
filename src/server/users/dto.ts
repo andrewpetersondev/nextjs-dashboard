@@ -1,4 +1,6 @@
-import type { UserRole } from "@/features/users/user.types";
+import "server-only";
+
+import type { UserRole } from "@/features/users/types";
 
 /**
  * Data Transfer Object (DTO) representing a user entity.
@@ -15,16 +17,6 @@ import type { UserRole } from "@/features/users/user.types";
  * @property username - Username of the user.
  * @property email - Email address of the user.
  * @property role - Role of the user (e.g., "admin", "user").
- *
- * @example
- * const user: UserDto = {
- *  id: "b1a2c3d4-e5f6-7890-abcd-1234567890ef",
- *  username: "johndoe",
- *  email: "johndoe@mail.com",
- *  role: "user",
- *  };
- *
- * @see UserRole for possible role values.
  *
  */
 export interface UserDto {

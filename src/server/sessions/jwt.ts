@@ -9,7 +9,7 @@ import {
   EncryptPayloadSchema,
 } from "@/features/sessions/schema";
 import type { DecryptPayload, EncryptPayload } from "@/features/sessions/types";
-import type { UserRole } from "@/features/users/user.types";
+import type { UserRole } from "@/features/users/types";
 import { logger } from "@/server/logging/logger";
 import {
   JWT_EXPIRATION,

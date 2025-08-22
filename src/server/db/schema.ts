@@ -30,8 +30,7 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/features/revenues/core/types";
-import type { UserRole } from "@/features/users/user.types";
-import { USER_ROLES } from "@/features/users/user.types";
+import { USER_ROLES, type UserRole } from "@/features/users/types";
 import type {
   CustomerId,
   InvoiceId,

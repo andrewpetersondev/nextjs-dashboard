@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 import type { SessionVerificationResult } from "@/features/sessions/types";
-import type { UserRole } from "@/features/users/user.types";
-import { getValidUserRole } from "@/features/users/user.utils";
+import type { UserRole } from "@/features/users/types";
 import { verifySessionOptimistic } from "@/server/sessions/session";
+import { getValidUserRole } from "@/server/users/utils";
 import { NavLinks } from "@/ui/dashboard/nav-links";
 
 export async function NavLinksWrapper(): Promise<JSX.Element> {

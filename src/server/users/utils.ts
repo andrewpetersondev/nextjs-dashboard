@@ -1,6 +1,6 @@
 import "server-only";
 
-import { USER_ROLES, type UserRole } from "@/features/users/user.types";
+import { USER_ROLES, type UserRole } from "@/features/users/types";
 
 /**
  * Validates and returns a user role, defaulting to "guest" if invalid.

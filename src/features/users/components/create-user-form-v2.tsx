@@ -1,10 +1,10 @@
 "use client";
 
 import { type JSX, useActionState } from "react";
-import type { CreateUserFormFieldNames } from "@/features/users/user.types";
-import { createUserAction } from "@/server/actions/user";
+import { UserForm } from "@/features/users/components/user-form";
+import { createUserAction } from "@/server/users/actions";
+import type { CreateUserFormFieldNames } from "@/server/users/types";
 import type { FormState } from "@/shared/forms/types";
-import { UserForm } from "@/ui/users/user-form";
 
 export function CreateUserFormV2(): JSX.Element {
   const initialState: FormState<CreateUserFormFieldNames> = {

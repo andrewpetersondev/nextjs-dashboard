@@ -1,8 +1,8 @@
 import type { JSX } from "react";
-import type { UserRole } from "@/features/users/user.types";
-import { getValidUserRole } from "@/features/users/user.utils";
+import type { UserRole } from "@/features/users/types";
 import { readDashboardDataAction } from "@/server/actions/data";
 import { verifySessionOptimistic } from "@/server/sessions/session";
+import { getValidUserRole } from "@/server/users/utils";
 import { DASHBOARD_TITLES } from "@/shared/constants/ui";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
