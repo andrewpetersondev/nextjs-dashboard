@@ -9,8 +9,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "target": "ES2022",
-    "types": ["cypress", "@testing-library/cypress"]
+    "types": ["cypress", "node", "@testing-library/cypress"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

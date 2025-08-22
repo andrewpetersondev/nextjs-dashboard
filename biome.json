@@ -42,7 +42,7 @@
       "!pnpm-workspace.yaml",
       "!out",
       "!.turbo",
-      "!**/dist",
+      "!dist",
       "!build",
       "!coverage",
       "!.nyc_output",
@@ -53,7 +53,8 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "indentWidth": 2
   },
   "javascript": {
     "assist": {

@@ -1,4 +1,3 @@
-import "server-only";
 import type { core, ZodType } from "zod";
 import { Err, Ok, type Result } from "@/core/result-base";
 import { ValidationError_New } from "@/errors/errors-domain";

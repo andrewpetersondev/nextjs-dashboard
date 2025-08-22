@@ -11,12 +11,14 @@
 # src/app
 # src/ui
 # scripts
+# envConfig.ts
+# cypress
+# cypress.config.ts
 
 
 # My Files (General)
 .github
 .idea
-cypress
 docs
 drizzle
 public
@@ -26,8 +28,6 @@ storage
 .gitignore
 biome.json
 CONFIG.md
-cypress.config.ts
-envConfig.ts
 eslint.config.mjs
 next-env.d.ts
 pnpm-lock.yaml
