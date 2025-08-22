@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/server/auth/session";
-import { fetchTotalCustomersCountDal } from "@/server/customers/dal";
+import { readTotalCustomersCountAction } from "@/server/customers/actions";
 import { getDB } from "@/server/db/connection";
 import {
   readInvoicesSummary,
@@ -27,7 +27,7 @@ export default async function Page(): Promise<JSX.Element> {
       verifySessionOptimistic(),
       readInvoicesSummary(db),
       readLatestInvoices(db, 5),
-      fetchTotalCustomersCountDal(db),
+      readTotalCustomersCountAction(),
     ]);
 
   const role: AuthRole = getValidUserRole(session?.role);

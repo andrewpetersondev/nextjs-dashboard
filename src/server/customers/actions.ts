@@ -5,10 +5,7 @@ import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
-import {
-  fetchCustomers,
-  fetchFilteredCustomersDal,
-} from "@/server/customers/dal";
+import { createCustomersRepository } from "@/server/customers/repo";
 import { getDB } from "@/server/db/connection";
 
 /**
@@ -17,7 +14,8 @@ import { getDB } from "@/server/db/connection";
  */
 export async function readCustomersAction(): Promise<CustomerField[]> {
   const db = getDB();
-  return fetchCustomers(db);
+  const repo = createCustomersRepository(db);
+  return repo.fetchSelect();
 }
 
 /**
@@ -29,6 +27,13 @@ export async function readFilteredCustomersAction(
   query: string = "",
 ): Promise<FormattedCustomersTableRow[]> {
   const db = getDB();
-  const rows = await fetchFilteredCustomersDal(db, query);
+  const repo = createCustomersRepository(db);
+  const rows = await repo.fetchFiltered(query);
   return rows.map(toFormattedCustomersTableRow);
+}
+
+export async function readTotalCustomersCountAction(): Promise<number> {
+  const db = getDB();
+  const repo = createCustomersRepository(db);
+  return repo.fetchTotalCount();
 }

@@ -93,7 +93,9 @@ export async function fetchFilteredCustomersDal(
  * @param db - Drizzle database instance
  * @returns Total number of customers
  */
-export async function fetchTotalCustomersCountDal(db: Database) {
+export async function fetchTotalCustomersCountDal(
+  db: Database,
+): Promise<number> {
   const rows = await db
     .select({ value: count(customers.id) })
     .from(customers)
