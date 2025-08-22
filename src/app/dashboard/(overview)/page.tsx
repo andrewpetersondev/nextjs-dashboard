@@ -1,9 +1,15 @@
 import type { JSX } from "react";
-import { readDashboardDataAction } from "@/server/actions/data";
 import { verifySessionOptimistic } from "@/server/auth/session";
+import { fetchTotalCustomersCountDal } from "@/server/customers/dal";
+import { getDB } from "@/server/db/connection";
+import {
+  readInvoicesSummary,
+  readLatestInvoices,
+} from "@/server/invoices/queries";
 import { getValidUserRole } from "@/server/users/utils";
 import type { AuthRole } from "@/shared/auth/roles";
 import { DASHBOARD_TITLES } from "@/shared/constants/ui";
+import { formatCurrency } from "@/shared/utils/general";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 
@@ -14,12 +20,27 @@ export const dynamic = "force-dynamic";
  * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-  const [session, dashboardData] = await Promise.all([
-    verifySessionOptimistic(),
-    readDashboardDataAction(),
-  ]);
+  const db = getDB();
+
+  const [session, invoicesSummary, latestInvoices, totalCustomers] =
+    await Promise.all([
+      verifySessionOptimistic(),
+      readInvoicesSummary(db),
+      readLatestInvoices(db, 5),
+      fetchTotalCustomersCountDal(db),
+    ]);
 
   const role: AuthRole = getValidUserRole(session?.role);
+
+  const dashboardData = {
+    cards: {
+      totalCustomers,
+      totalInvoices: invoicesSummary.totalInvoices,
+      totalPaid: formatCurrency(invoicesSummary.totalPaid),
+      totalPending: formatCurrency(invoicesSummary.totalPending),
+    },
+    latestInvoices,
+  };
 
   const commonContent = (
     <main>

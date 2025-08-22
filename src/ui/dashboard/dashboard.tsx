@@ -1,9 +1,9 @@
 import { type JSX, Suspense } from "react";
-import type { DashboardCardData } from "@/features/data/types";
+import { LatestInvoices } from "@/features/invoices/components/latest-invoices";
 import { RevenueChart } from "@/features/revenues/components/revenue-chart";
 import type { InvoiceListFilter } from "@/server/invoices/types";
 import { CardWrapper } from "@/ui/dashboard/cards";
-import { LatestInvoices } from "@/ui/dashboard/latest-invoices";
+import type { DashboardCardData } from "@/ui/dashboard/types";
 import { H1 } from "@/ui/headings";
 import {
   CardsSkeleton,
