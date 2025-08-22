@@ -1,6 +1,6 @@
 "use server";
 
-import "@/server/events/revenue/bootstrap";
+import "@/server/revenues/events/revenue-events.bootstrap";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as z from "zod";
@@ -8,7 +8,10 @@ import { DatabaseError, ValidationError } from "@/errors/errors";
 import { INVOICE_ERROR_MESSAGES } from "@/errors/errors-messages";
 import type { InvoiceStatus } from "@/features/invoices/types";
 import { getDB } from "@/server/db/connection";
-import { type BaseInvoiceEvent, INVOICE_EVENTS } from "@/server/events/invoice";
+import {
+  type BaseInvoiceEvent,
+  INVOICE_EVENTS,
+} from "@/server/events/invoice/invoice-event.types";
 import {
   fetchFilteredInvoicesDal,
   fetchInvoicesPagesDal,
@@ -78,7 +81,7 @@ export async function createInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/server/events/bus");
+    const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -232,7 +235,7 @@ export async function updateInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/server/events/bus");
+    const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
@@ -294,7 +297,7 @@ export async function deleteInvoiceAction(
 
     // Emit base event with all context.
     // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/server/events/bus");
+    const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),

@@ -21,7 +21,7 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { entityToInvoiceDto } from "@/server/invoices/mapper";
-import { BaseRepository } from "@/server/repositories/base";
+import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { map } from "@/shared/result/result-transform";

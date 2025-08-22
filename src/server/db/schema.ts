@@ -26,10 +26,7 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "@/features/invoices/types";
-import {
-  REVENUE_SOURCES,
-  type RevenueSource,
-} from "@/features/revenues/core/types";
+import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
 import { USER_ROLES, type UserRole } from "@/features/users/types";
 import type {
   CustomerId,

@@ -1,16 +1,6 @@
+import type { Cents, INTERVAL_DURATIONS } from "@/features/revenues/types";
 import type { Period } from "@/shared/brands/domain-brands";
 
-/**
- * Money unit aliases to make dollars vs cents explicit at type level.
- * These are plain number aliases (non-branded) to keep the refactor minimal
- * while still documenting intent throughout the codebase.
- */
-export type Cents = number;
-export type Dollars = number;
-
-/**
- * An ordered array of three-letter month abbreviations.
- */
 export const MONTH_ORDER = [
   "Jan",
   "Feb",
@@ -26,48 +16,11 @@ export const MONTH_ORDER = [
   "Dec",
 ] as const;
 
-/**
- * Type-safe union of valid month name abbreviations.
- */
+// Type-safe union of valid month name abbreviations.
 export type MonthName = (typeof MONTH_ORDER)[number];
 
-/**
- * Standardized period durations used in revenue calculations.
- */
-export const INTERVAL_DURATIONS = ["year", "month"] as const;
-
-/**
- * Type-safe union of valid interval durations.
- */
+// Type-safe union of valid interval durations.
 export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
-
-/**
- * Standardized sources of revenue data.
- */
-export const REVENUE_SOURCES = [
-  "seed",
-  "handler",
-  "invoice_event",
-  "rolling_calculation",
-  "template",
-] as const;
-
-/**
- * Type-safe union of valid revenue sources.
- */
-export type RevenueSource = (typeof REVENUE_SOURCES)[number];
-
-/**
- * Standard discriminated union type for revenue operation results.
- *
- * Provides a consistent success / error response structure across all revenue
- * actions and services. Enables type-safe error handling and result processing.
- *
- * @template T - The type of data returned on successful operations
- */
-export type RevenueActionResult<T> =
-  | { readonly success: true; readonly data: T }
-  | { readonly success: false; readonly error: string };
 
 /**
  * Metadata for a single month in a 12-month rolling period.
@@ -101,28 +54,4 @@ export interface RevenueStatistics {
   readonly average: Cents;
   readonly total: Cents;
   readonly monthsWithData: number;
-}
-
-/**
- * Chart axis data for revenue charts.
- * @prop yAxisLabels - Array of formatted Y-axis labels in ascending order
- * @prop topLabel - Maximum chart value in dollars for scaling purposes
- */
-export interface YAxisResult {
-  readonly yAxisLabels: readonly string[];
-  readonly topLabel: Dollars;
-}
-
-/**
- * Create a success result for RevenueActionResult.
- */
-export function createSuccessResult<T>(data: T): RevenueActionResult<T> {
-  return { data, success: true } as const;
-}
-
-/**
- * Create an error result for RevenueActionResult.
- */
-export function createErrorResult<T>(error: string): RevenueActionResult<T> {
-  return { error, success: false } as const;
 }
