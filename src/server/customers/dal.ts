@@ -18,14 +18,13 @@ export async function fetchCustomersSelectDal(
   db: Database,
 ): Promise<CustomerSelectRowRaw[]> {
   try {
-    const rows: CustomerSelectRowRaw[] = await db
+    return await db
       .select({
         id: customers.id,
         name: customers.name,
       })
       .from(customers)
       .orderBy(asc(customers.name));
-    return rows;
   } catch (error) {
     // Use structured logging in production
     console.error("Database Error:", error);
@@ -45,19 +44,33 @@ export async function fetchFilteredCustomersDal(
   query: string,
 ): Promise<CustomerAggregatesRowRaw[]> {
   try {
-    const rows: CustomerAggregatesRowRaw[] = await db
+    return await db
       .select({
         email: customers.email,
         id: customers.id,
         imageUrl: customers.imageUrl,
         name: customers.name,
         totalInvoices: count(invoices.id),
-        totalPaid: sql<
-          number | null
-        >`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'paid')`,
-        totalPending: sql<
-          number | null
-        >`sum(${invoices.amount}) FILTER (WHERE ${invoices.status} = 'pending')`,
+        totalPaid: sql<number | null>`sum(
+            ${invoices.amount}
+            )
+            FILTER
+            (
+            WHERE
+            ${invoices.status}
+            =
+            'paid'
+            )`,
+        totalPending: sql<number | null>`sum(
+            ${invoices.amount}
+            )
+            FILTER
+            (
+            WHERE
+            ${invoices.status}
+            =
+            'pending'
+            )`,
       })
       .from(customers)
       .leftJoin(invoices, eq(customers.id, invoices.customerId))
@@ -69,7 +82,6 @@ export async function fetchFilteredCustomersDal(
       )
       .groupBy(customers.id)
       .orderBy(asc(customers.name));
-    return rows;
   } catch (error) {
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);

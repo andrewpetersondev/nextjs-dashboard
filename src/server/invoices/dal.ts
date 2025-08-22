@@ -446,9 +446,5 @@ export async function fetchAllPaidInvoicesDal(
   }
 
   // Convert raw database rows to InvoiceEntity
-  const entities: InvoiceEntity[] = data.map((row) =>
-    rawDbToInvoiceEntity(row),
-  );
-
-  return entities;
+  return data.map((row) => rawDbToInvoiceEntity(row));
 }

@@ -33,6 +33,67 @@ import type {
 import { logger } from "@/server/logging/logger";
 
 /**
+ * Validation rule for parameters.
+ * Encapsulates a validation function and an associated error message.
+ * @typeParam V - Type of value to validate.
+ * @property validate - Function to check if the value passes the rule.
+ * @property message - Error message to display if the rule fails.
+ */
+type ParamRule<V> = {
+  validate: (value: V) => boolean;
+  message: string;
+};
+
+/**
+ * Defines validation rules for a subset of object properties.
+ * Accepts a record type `T` and keys `K` from `T` to map each selected property
+ * to a validation rule of type {@link ParamRule}.
+ * @typeParam T - The object type being validated.
+ * @typeParam K - Keys of the object `T` that require validations.
+ * @remarks
+ * Each key in `K` maps to a {@link ParamRule} corresponding to the value type of
+ * that key in `T`.
+ */
+type ParamValidators<T extends Record<string, unknown>, K extends keyof T> = {
+  [P in K]: ParamRule<T[P]>;
+};
+
+/**
+ * Assert that provided parameters meet specified validation rules.
+ * Iterates over the given validators and checks each parameter against its
+ * corresponding rule. Throws a `ValidationError` if a parameter fails validation.
+ * @typeParam T - Type representing the overall structure of the parameters.
+ * @typeParam K - Keys of `T` which are validated.
+ * @param params - Object containing the parameters to validate.
+ * @param validators - Object where keys match `params` keys and values define
+ * validation rules for the corresponding parameter.
+ * @returns void - Throws an error if validation fails; otherwise, no return value.
+ * @remarks
+ * - At least one validator must be provided in the `validators` object.
+ * - Throws `ValidationError` if a parameter fails its respective validation rule.
+ */
+function assertParams<
+  T extends Record<string, unknown>,
+  K extends keyof T & string,
+>(params: T, validators: ParamValidators<T, K>): void {
+  // Ensure at least one validator is provided
+  if (Object.keys(validators).length === 0) {
+    throw new ValidationError("No validators provided", { params });
+  }
+
+  // Iterate defined validators; no non-null assertion needed
+  for (const [key, rule] of Object.entries(validators) as [
+    K,
+    ParamRule<T[K]>,
+  ][]) {
+    const value = params[key];
+    if (!rule.validate(value)) {
+      throw new ValidationError(rule.message, { param: key, value });
+    }
+  }
+}
+
+/**
  * Server action for creating a new invoice.
  * @param prevState - Previous form state
  * @param formData - FormData from the client
@@ -42,6 +103,8 @@ export async function createInvoiceAction(
   prevState: InvoiceActionResult,
   formData: FormData,
 ): Promise<InvoiceActionResult> {
+  let result: InvoiceActionResult;
+
   try {
     // Basic validation of formData. If not present, throw error to catch block.
     if (!formData || !(formData instanceof FormData)) {
@@ -62,44 +125,44 @@ export async function createInvoiceAction(
     // Validate input using Zod schema
     const parsed = CreateInvoiceSchema.safeParse(input);
 
-    // If validation fails, shape the error response to match InvoiceActionResult
     if (!parsed.success) {
-      return {
+      // Shape the error response to match InvoiceActionResult
+      result = {
         ...prevState,
         errors: z.flattenError(parsed.error).fieldErrors,
         message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       };
+    } else {
+      // Dependency injection: pass repository to service
+      const repo = new InvoiceRepository(getDB());
+
+      // Create service instance with injected repository
+      const service = new InvoiceService(repo);
+
+      // Call service with validated DTO to retrieve complete InvoiceDto
+      const invoice: InvoiceDto = await service.createInvoice(parsed.data);
+
+      // Emit base event with all context.
+      const { EventBus } = await import("@/server/events/event-bus");
+      await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
+        eventId: crypto.randomUUID(),
+        eventTimestamp: new Date().toISOString(),
+        invoice,
+        operation: "invoice_created",
+      });
+
+      // Invalidate dashboard cache so revenue chart updates immediately (KISS)
+      revalidatePath("/dashboard");
+
+      // Success result
+      result = {
+        data: invoice,
+        errors: {},
+        message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
+        success: true,
+      };
     }
-
-    // Dependency injection: pass repository to service
-    const repo = new InvoiceRepository(getDB());
-
-    // Create service instance with injected repository
-    const service = new InvoiceService(repo);
-
-    // Call service with validated DTO to retrieve complete InvoiceDto
-    const invoice: InvoiceDto = await service.createInvoice(parsed.data);
-
-    // Emit base event with all context.
-    // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/server/events/event-bus");
-    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
-      eventId: crypto.randomUUID(),
-      eventTimestamp: new Date().toISOString(),
-      invoice,
-      operation: "invoice_created",
-    });
-
-    // Return success result with created invoice data, id is returned, but is it used? Should I add a step so Entities are used, then transform to DTO?
-    // Invalidate dashboard cache so revenue chart updates immediately (KISS)
-    revalidatePath("/dashboard");
-    return {
-      data: invoice,
-      errors: {},
-      message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
-      success: true,
-    };
   } catch (error) {
     logger.error({
       context: "createInvoiceAction",
@@ -107,23 +170,21 @@ export async function createInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
 
-    // Find out where this error can come from.
-    if (error instanceof z.ZodError) {
-      return {
-        ...prevState,
-        errors: z.flattenError(error).fieldErrors,
-        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      };
-    }
+    const isZod = error instanceof z.ZodError;
+    const errors = isZod ? z.flattenError(error).fieldErrors : {};
+    const message = isZod
+      ? INVOICE_ERROR_MESSAGES.VALIDATION_FAILED
+      : INVOICE_ERROR_MESSAGES.SERVICE_ERROR;
 
-    return {
+    result = {
       ...prevState,
-      errors: {},
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      errors,
+      message,
       success: false,
     };
   }
+
+  return result;
 }
 
 /**
@@ -134,16 +195,29 @@ export async function createInvoiceAction(
 export async function readInvoiceAction(
   id: string,
 ): Promise<InvoiceActionResult> {
+  let result: InvoiceActionResult;
+
   try {
+    // Validate parameters using generic assertParams
+    assertParams(
+      { id },
+      {
+        id: {
+          message: INVOICE_ERROR_MESSAGES.INVALID_ID,
+          validate: (v) => v.trim().length > 0,
+        },
+      },
+    );
+
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
-    // Call service with validated DTO to retrieve complete InvoiceDto
+    // Call service and get invoice
     const invoice: InvoiceDto = await service.readInvoice(id);
 
-    // Return success result with invoice data shaped as InvoiceActionResult
-    return {
+    // Success result with invoice data
+    result = {
       data: invoice,
       errors: {},
       message: INVOICE_SUCCESS_MESSAGES.READ_SUCCESS,
@@ -156,8 +230,8 @@ export async function readInvoiceAction(
       id,
     });
 
-    // Return error response shaped as InvoiceActionResult
-    return {
+    // Error response shaped as InvoiceActionResult
+    result = {
       errors: {},
       message:
         error instanceof ValidationError
@@ -166,6 +240,8 @@ export async function readInvoiceAction(
       success: false,
     };
   }
+
+  return result;
 }
 
 /**
@@ -182,10 +258,19 @@ export async function updateInvoiceAction(
   id: string,
   formData: FormData,
 ): Promise<InvoiceActionResult> {
+  let result: InvoiceActionResult = prevState;
+
   try {
     // Validate parameters first
-    if (!id || !formData) {
+    if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, {
+        formData,
+        id,
+      });
+    }
+
+    if (!formData) {
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_FORM_DATA, {
         formData,
         id,
       });
@@ -206,12 +291,10 @@ export async function updateInvoiceAction(
       }),
     } as Partial<InvoiceFormDto>;
 
-    // Validate input using update schema
     const parsed = UpdateInvoiceSchema.safeParse(input);
 
-    // If validation fails, shape the error response to match InvoiceActionResult
     if (!parsed.success) {
-      return {
+      result = {
         ...prevState,
         errors: z.flattenError(parsed.error).fieldErrors,
         message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -219,42 +302,34 @@ export async function updateInvoiceAction(
       };
     }
 
-    // Dependency injection: pass repository to service
-    const repo = new InvoiceRepository(getDB());
+    if (parsed.success) {
+      // success path only runs when valid
+      const repo = new InvoiceRepository(getDB());
+      const service = new InvoiceService(repo);
 
-    // Create service instance with injected repository
-    const service = new InvoiceService(repo);
+      const previousInvoice = await service.readInvoice(id);
+      const updatedInvoice = await service.updateInvoice(id, parsed.data);
 
-    // Get previous invoice state for event emission
-    // TODO: idk how i feel about this.
-    const previousInvoice: InvoiceDto = await service.readInvoice(id);
+      const { EventBus } = await import("@/server/events/event-bus");
+      await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
+        eventId: crypto.randomUUID(),
+        eventTimestamp: new Date().toISOString(),
+        invoice: updatedInvoice,
+        operation: "invoice_updated",
+        previousInvoice,
+      });
 
-    // Call service to update invoice with validated DTO. Function returns InvoiceDto.
-    const updatedInvoice: InvoiceDto = await service.updateInvoice(
-      id,
-      parsed.data,
-    );
+      // Invalidate dashboard cache so revenue chart updates
+      revalidatePath("/dashboard");
 
-    // Emit base event with all context.
-    // TODO: why do i have await here? It seems unnecessary to scale.
-    const { EventBus } = await import("@/server/events/event-bus");
-    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
-      eventId: crypto.randomUUID(),
-      eventTimestamp: new Date().toISOString(),
-      invoice: updatedInvoice,
-      operation: "invoice_updated",
-      previousInvoice,
-    });
-
-    // Return success result with updated invoice data shaped as InvoiceActionResult
-    // Invalidate dashboard cache so revenue chart updates
-    revalidatePath("/dashboard");
-    return {
-      data: updatedInvoice,
-      errors: {},
-      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
-      success: true,
-    };
+      // Success result
+      result = {
+        data: updatedInvoice,
+        errors: {},
+        message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
+        success: true,
+      };
+    }
   } catch (error) {
     logger.error({
       context: "updateInvoiceAction",
@@ -263,8 +338,9 @@ export async function updateInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       prevState,
     });
-    // Return error response shaped as InvoiceActionResult
-    return {
+
+    // Error response shaped as InvoiceActionResult
+    result = {
       ...prevState,
       errors: {},
       message:
@@ -274,6 +350,8 @@ export async function updateInvoiceAction(
       success: false,
     };
   }
+
+  return result;
 }
 
 /**
@@ -284,8 +362,10 @@ export async function updateInvoiceAction(
 export async function deleteInvoiceAction(
   id: string,
 ): Promise<InvoiceActionResult> {
+  let result: InvoiceActionResult;
+
   try {
-    // Basic validation of input. Throw error catch block.
+    // Basic validation of input. Throw to catch block.
     if (!id) {
       throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
@@ -294,11 +374,10 @@ export async function deleteInvoiceAction(
     const repo = new InvoiceRepository(getDB());
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
-    // Call service with validated DTO to retrieve complete InvoiceDto
+    // Call service with validated ID to delete the invoice
     const invoice = await service.deleteInvoice(id);
 
     // Emit base event with all context.
-    // TODO: why do i have await here? It seems unnecessary to scale.
     const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
       eventId: crypto.randomUUID(),
@@ -307,10 +386,11 @@ export async function deleteInvoiceAction(
       operation: "invoice_deleted",
     });
 
-    // Return success result with deleted invoice data shaped as InvoiceActionResult
     // Invalidate dashboard cache so revenue chart updates
     revalidatePath("/dashboard");
-    return {
+
+    // Success result
+    result = {
       data: invoice,
       errors: {},
       message: INVOICE_SUCCESS_MESSAGES.DELETE_SUCCESS,
@@ -323,7 +403,9 @@ export async function deleteInvoiceAction(
       id,
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
-    return {
+
+    // Error result
+    result = {
       errors: {},
       message:
         error instanceof ValidationError
@@ -334,6 +416,8 @@ export async function deleteInvoiceAction(
       success: false,
     };
   }
+
+  return result;
 }
 
 /**

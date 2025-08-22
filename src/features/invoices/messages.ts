@@ -12,6 +12,7 @@ export const INVOICE_ERROR_MESSAGES = {
     "Failed to fetch the total amount of pending invoices.",
   FETCH_TOTAL_PENDING_FAILED:
     "Failed to fetch the total amount of pending invoices.",
+  INVALID_FORM_DATA: "Invalid form data. Please check your input.",
   INVALID_ID: "Invalid invoice ID provided.",
   INVALID_INPUT: "Invalid input. Failed to create invoice.",
   MAPPING_FAILED: "Failed to map invoice data.",

@@ -33,7 +33,7 @@ export const InvoiceStatusRadioGroup = ({
   if (error) {
     if (Array.isArray(error)) {
       errors.push(...error);
-    } else if (typeof error === "string") {
+    } else {
       errors.push(error);
     }
   }

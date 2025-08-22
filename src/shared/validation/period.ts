@@ -20,22 +20,24 @@ export function validatePeriodResult(
 
   if (typeof input === "string") {
     // Try yyyy-MM format first
-    let parsed = parse(input, "yyyy-MM", new Date());
-    if (isValid(parsed) && format(parsed, "yyyy-MM") === input) {
-      return Ok(normalizeToFirstOfMonthUTC(parsed));
+    const parsedMonth = parse(input, "yyyy-MM", new Date());
+
+    if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === input) {
+      return Ok(normalizeToFirstOfMonthUTC(parsedMonth));
     }
 
     // Try yyyy-MM-dd format (must be first day of month)
-    parsed = parse(input, "yyyy-MM-dd", new Date());
-    if (isValid(parsed) && format(parsed, "yyyy-MM-dd") === input) {
-      if (parsed.getUTCDate() !== 1) {
+    const parsedDay = parse(input, "yyyy-MM-dd", new Date());
+
+    if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === input) {
+      if (parsedDay.getUTCDate() !== 1) {
         return Err(
           new ValidationError(
             `Period date must be the first day of the month, got: "${input}"`,
           ),
         );
       }
-      return Ok(normalizeToFirstOfMonthUTC(parsed));
+      return Ok(normalizeToFirstOfMonthUTC(parsedDay));
     }
 
     return Err(

@@ -19,7 +19,9 @@ export const compose = <T>(...validators: Validator<T>[]): Validator<T> => ({
     let value: unknown = initial;
     for (const v of validators) {
       const r = v.validate(value);
-      if (!r.success) return r;
+      if (!r.success) {
+        return r;
+      }
       value = r.data;
     }
     return Ok(value as T);
