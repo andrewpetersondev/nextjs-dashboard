@@ -5,13 +5,14 @@ import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
 import { updateUserAction } from "@/server/users/actions";
 import type { UserDto } from "@/server/users/dto";
+import type { FormFieldError } from "@/shared/forms/types";
 
 type EditUserFormState = Readonly<{
   errors?: {
-    username?: string[];
-    email?: string[];
-    role?: string[];
-    password?: string[];
+    username?: FormFieldError;
+    email?: FormFieldError;
+    role?: FormFieldError;
+    password?: FormFieldError;
   };
   message?: string;
   success?: boolean;
