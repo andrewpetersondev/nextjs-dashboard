@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
-import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
 import { CreateInvoiceForm } from "@/features/invoices/components/create-invoice-form";
 import { readCustomersAction } from "@/server/customers/actions";
+import { Breadcrumbs } from "@/ui/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Create Invoice",

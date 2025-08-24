@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { Breadcrumbs } from "@/features/invoices/components/breadcrumbs";
 import { EditUserForm } from "@/features/users/components/edit-user-form";
 import { EditUserFormV2 } from "@/features/users/components/edit-user-form-v2";
 import { readUserAction } from "@/server/users/actions";
 import type { UserDto } from "@/server/users/dto";
+import { Breadcrumbs } from "@/ui/breadcrumbs";
 import { H1 } from "@/ui/headings";
 
 export const metadata: Metadata = {
