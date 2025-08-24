@@ -3,6 +3,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/server/invoices/types";
+import { IMAGE_SIZES } from "@/shared/constants/ui";
 import { formatCurrency } from "@/shared/utils/general";
 import { H2, H3 } from "@/ui/headings";
 
@@ -14,9 +15,9 @@ interface LatestInvoicesProps {
  * Latest invoices component with updated invoice schema support.
  * Displays recent invoices with customer information and formatted amounts.
  */
-export async function LatestInvoices({
+export function LatestInvoices({
   latestInvoices,
-}: LatestInvoicesProps): Promise<JSX.Element> {
+}: LatestInvoicesProps): JSX.Element {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <H2 className="mb-4">Latest Invoices</H2>
@@ -37,9 +38,9 @@ export async function LatestInvoices({
                   <Image
                     alt={`${invoice.name}'s profile picture`}
                     className="mr-4 rounded-full"
-                    height={32}
+                    height={IMAGE_SIZES.SMALL}
                     src={invoice.imageUrl}
-                    width={32}
+                    width={IMAGE_SIZES.SMALL}
                   />
                   <div className="min-w-0">
                     <p className="truncate font-semibold text-sm text-text-secondary md:text-base">

@@ -11,7 +11,7 @@ import type { FieldErrors, FormState } from "@/shared/forms/types";
 import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
-  normalizeFieldErrors,
+  toDenseFormErrors,
 } from "@/shared/forms/utils";
 import type { Result } from "@/shared/result/result-base";
 
@@ -88,9 +88,7 @@ export async function validateFormGeneric<
     const normalized = mapFieldErrors(fieldErrors, fields);
 
     if (returnMode === "result") {
-      const denseErrors = normalizeFieldErrors(
-        normalized as Record<string, string[] | undefined>,
-      );
+      const denseErrors = toDenseFormErrors(normalized, fields);
       finalResult = { error: denseErrors, success: false };
     } else {
       const values: Partial<Record<TFieldNames, string>> = {};

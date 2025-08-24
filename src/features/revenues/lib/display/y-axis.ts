@@ -1,5 +1,6 @@
 import type { YAxisResult } from "@/features/revenues/types";
 import type { SimpleRevenueDto } from "@/server/revenues/dto";
+import { CHART_Y_AXIS } from "@/shared/constants/ui";
 
 /**
  * Generates formatted Y-axis labels and scaling information for revenue charts.
@@ -38,14 +39,17 @@ export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
   );
 
   // Calculate the appropriate top label with 10% padding
-  const topLabel: number = Math.ceil((highestRecord * 1.1) / 1000) * 1000;
+  const topLabel: number =
+    Math.ceil(
+      (highestRecord * (1 + CHART_Y_AXIS.PADDING_RATIO)) / CHART_Y_AXIS.STEP,
+    ) * CHART_Y_AXIS.STEP;
 
   // Generate 5-6 evenly spaced labels
-  const labelCount = 5;
+  const labelCount = CHART_Y_AXIS.LABEL_COUNT;
 
   for (let i = labelCount; i >= 0; i--) {
     const value = Math.round((topLabel * i) / labelCount);
-    yAxisLabels.push(`$${value / 1000}K`);
+    yAxisLabels.push(`$${value / CHART_Y_AXIS.STEP}K`);
   }
 
   return { topLabel, yAxisLabels };

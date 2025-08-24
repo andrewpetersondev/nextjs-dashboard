@@ -39,7 +39,7 @@ export function SensitiveData({
           disabled={disabled}
           id="sensitiveData"
           name="sensitiveData"
-          required
+          required={true}
           type="text"
           {...props}
         />

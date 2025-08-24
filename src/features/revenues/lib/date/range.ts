@@ -44,8 +44,8 @@ export function calculateDateRange(): {
 
   return {
     duration: "year",
-    endDate: endDate,
-    startDate: startDate,
+    endDate,
+    startDate,
   };
 }
 

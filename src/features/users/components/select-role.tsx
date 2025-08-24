@@ -37,6 +37,7 @@ interface SelectRoleProps
  * @param error - Validation errors for the role field.
  * @param value - The selected user role.
  * @param onChange - Handler for role selection changes.
+ * @param props - Additional props for the SelectMenu component.
  */
 export const SelectRole: React.FC<SelectRoleProps> = ({
   error,
@@ -49,7 +50,7 @@ export const SelectRole: React.FC<SelectRoleProps> = ({
       error={error}
       id="role"
       name="role"
-      onChange={onChange ?? (() => {})} // Ensure a function is always passed
+      onChange={onChange}
       options={ROLE_OPTIONS}
       placeholder="Select a role"
       value={value as string | undefined}

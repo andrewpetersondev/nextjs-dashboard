@@ -1,6 +1,7 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
+import { TIMER } from "@/shared/constants/ui";
 import type { FormFieldError } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
@@ -56,7 +57,7 @@ export function UserForm({
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), 4000);
+      const timer = setTimeout(() => setShowAlert(false), TIMER.TYPING_MS);
       return () => clearTimeout(timer);
     }
     setShowAlert(false);

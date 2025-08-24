@@ -10,11 +10,20 @@ export const DASHBOARD_TITLES = {
   USER: "User Dashboard",
 };
 
-export const DEFAULT_ATTRIBUTES = {
-  IMAGE_SIZE: 40,
-  IMAGE_SIZE_SMALL: 28,
+export const IMAGE_SIZES = {
+  MEDIUM: 40,
+  SMALL: 30,
 };
 
 export const TIMER = {
   ALERT_AUTO_HIDE_MS: 5000,
+  TYPING_MS: 4000,
+};
+
+export const CHART_Y_AXIS = {
+  CURRENCY_PREFIX: "$",
+  LABEL_COUNT: 5,
+  PADDING_RATIO: 0.1,
+  STEP: 1000,
+  THOUSANDS_SUFFIX: "K",
 };

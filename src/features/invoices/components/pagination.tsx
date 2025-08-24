@@ -11,71 +11,6 @@ import {
 import type { JSX } from "react";
 import { generatePagination } from "@/shared/utils/general";
 
-export const Pagination = ({
-  totalPages,
-}: {
-  totalPages: number;
-}): JSX.Element => {
-  const pathname: string = usePathname();
-  const searchParams: ReadonlyURLSearchParams = useSearchParams();
-  const currentPage: number = Number(searchParams.get("page")) || 1;
-  const allPages: (string | number)[] = generatePagination(
-    currentPage,
-    totalPages,
-  );
-
-  const createPageUrl = (pageNumber: number | string): string => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
-  };
-
-  return (
-    <div className="inline-flex">
-      <PaginationArrow
-        direction="left"
-        href={createPageUrl(currentPage - 1)}
-        isDisabled={currentPage <= 1}
-      />
-
-      <div className="-space-x-px flex">
-        {allPages.map((page: string | number, index: number): JSX.Element => {
-          let position: "first" | "last" | "single" | "middle" | undefined;
-
-          if (index === 0) {
-            position = "first";
-          }
-          if (index === allPages.length - 1) {
-            position = "last";
-          }
-          if (allPages.length === 1) {
-            position = "single";
-          }
-          if (page === "...") {
-            position = "middle";
-          }
-
-          return (
-            <PaginationNumber
-              href={createPageUrl(page)}
-              isActive={currentPage === page}
-              key={page}
-              page={page}
-              position={position}
-            />
-          );
-        })}
-      </div>
-
-      <PaginationArrow
-        direction="right"
-        href={createPageUrl(currentPage + 1)}
-        isDisabled={currentPage >= totalPages}
-      />
-    </div>
-  );
-};
-
 const PaginationNumber = ({
   href,
   isActive,
@@ -140,5 +75,70 @@ const PaginationArrow = ({
     <Link className={className} href={href}>
       {icon}
     </Link>
+  );
+};
+
+export const Pagination = ({
+  totalPages,
+}: {
+  totalPages: number;
+}): JSX.Element => {
+  const pathname: string = usePathname();
+  const searchParams: ReadonlyURLSearchParams = useSearchParams();
+  const currentPage: number = Number(searchParams.get("page")) || 1;
+  const allPages: (string | number)[] = generatePagination(
+    currentPage,
+    totalPages,
+  );
+
+  const createPageUrl = (pageNumber: number | string): string => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
+
+  return (
+    <div className="inline-flex">
+      <PaginationArrow
+        direction="left"
+        href={createPageUrl(currentPage - 1)}
+        isDisabled={currentPage <= 1}
+      />
+
+      <div className="-space-x-px flex">
+        {allPages.map((page: string | number, index: number): JSX.Element => {
+          let position: "first" | "last" | "single" | "middle" | undefined;
+
+          if (index === 0) {
+            position = "first";
+          }
+          if (index === allPages.length - 1) {
+            position = "last";
+          }
+          if (allPages.length === 1) {
+            position = "single";
+          }
+          if (page === "...") {
+            position = "middle";
+          }
+
+          return (
+            <PaginationNumber
+              href={createPageUrl(page)}
+              isActive={currentPage === page}
+              key={page}
+              page={page}
+              position={position}
+            />
+          );
+        })}
+      </div>
+
+      <PaginationArrow
+        direction="right"
+        href={createPageUrl(currentPage + 1)}
+        isDisabled={currentPage >= totalPages}
+      />
+    </div>
   );
 };
