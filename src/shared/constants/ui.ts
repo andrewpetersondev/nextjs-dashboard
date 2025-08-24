@@ -14,3 +14,7 @@ export const DEFAULT_ATTRIBUTES = {
   IMAGE_SIZE: 40,
   IMAGE_SIZE_SMALL: 28,
 };
+
+export const TIMER = {
+  ALERT_AUTO_HIDE_MS: 5000,
+};

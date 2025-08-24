@@ -10,6 +10,7 @@ import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { createInvoiceAction } from "@/server/invoices/actions";
 import type { InvoiceActionResult } from "@/server/invoices/types";
+import { TIMER } from "@/shared/constants/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
@@ -20,13 +21,12 @@ export const CreateInvoiceForm = ({
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
-  // Use the same type as the server action expects
   const initialState: InvoiceActionResult = {
-    // Omit data property to satisfy exactOptionalPropertyTypes
     errors: {},
     message: "",
     success: false,
   };
+
   const [state, action, pending] = useActionState<
     InvoiceActionResult,
     FormData
@@ -37,7 +37,10 @@ export const CreateInvoiceForm = ({
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), 4000);
+      const timer = setTimeout(
+        () => setShowAlert(false),
+        TIMER.ALERT_AUTO_HIDE_MS,
+      );
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
@@ -57,15 +60,16 @@ export const CreateInvoiceForm = ({
 
           <div className="mb-4">
             <Label htmlFor="customer" text="Choose customer" />
+
             <CustomerSelect
               customers={customers}
               dataCy="customer-select"
               defaultValue=""
               disabled={pending}
               error={state.errors?.customerId}
-              // Ensure SelectMenu uses name="customerId" and value is a UUID string
             />
           </div>
+
           <InvoiceAmountInput
             dataCy="amount-input"
             disabled={pending}
@@ -77,6 +81,7 @@ export const CreateInvoiceForm = ({
             step="0.01"
             type="number"
           />
+
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
             disabled={pending}
@@ -85,6 +90,7 @@ export const CreateInvoiceForm = ({
             value="pending"
           />
         </div>
+
         <FormActionRow cancelHref="/dashboard/invoices">
           <FormSubmitButton
             data-cy="create-invoice-submit-button"

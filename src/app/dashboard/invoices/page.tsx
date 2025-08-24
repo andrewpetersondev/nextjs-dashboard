@@ -8,13 +8,6 @@ import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton, InvoicesTableSkeleton } from "@/ui/skeletons";
 
-export const metadata: Metadata = {
-  title: "Invoices",
-};
-
-// force this page to be dynamic, so it doesn't get cached. Why?
-export const dynamic = "force-dynamic";
-
 interface InvoicesSearchParams {
   query?: string;
   page?: string;
@@ -23,6 +16,13 @@ interface InvoicesSearchParams {
 interface InvoicesPageProps {
   searchParams?: Promise<InvoicesSearchParams>;
 }
+
+export const metadata: Metadata = {
+  title: "Invoices",
+};
+
+// force this page to be dynamic, so it doesn't get cached. Why?
+export const dynamic = "force-dynamic";
 
 export default async function Page(
   dynamicUrl: InvoicesPageProps,

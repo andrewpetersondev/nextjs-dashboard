@@ -42,7 +42,7 @@ export const CustomerSelect = ({
         name="customerId"
         options={[...customers]}
         placeholder="Select a customer"
-        required
+        required={true}
         {...props}
       />
       {hasError && (

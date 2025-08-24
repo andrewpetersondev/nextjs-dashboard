@@ -1,6 +1,8 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+// biome-ignore lint/correctness/noUndeclaredDependencies: <no longer in use>
 import { FlatCompat } from "@eslint/eslintrc";
+// biome-ignore lint/correctness/noUndeclaredDependencies: <no longer in use>
 import pluginCypress from "eslint-plugin-cypress";
 
 const __filename = fileURLToPath(import.meta.url);

@@ -8,13 +8,6 @@ import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton } from "@/ui/skeletons";
 
-export const metadata: Metadata = {
-  title: "Users",
-};
-
-// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
-export const dynamic = "force-dynamic";
-
 interface UsersSearchParams {
   query?: string;
   page?: string;
@@ -23,6 +16,13 @@ interface UsersSearchParams {
 interface UsersPageProps {
   searchParams?: Promise<UsersSearchParams>;
 }
+
+export const metadata: Metadata = {
+  title: "Users",
+};
+
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+export const dynamic = "force-dynamic";
 
 export default async function Page(
   dynamicUrl: UsersPageProps,

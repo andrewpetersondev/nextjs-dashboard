@@ -11,6 +11,7 @@ import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type { InvoiceActionResult } from "@/server/invoices/types";
+import { TIMER } from "@/shared/constants/ui";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
@@ -51,7 +52,10 @@ export const EditInvoiceForm = ({
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), 4000);
+      const timer = setTimeout(
+        () => setShowAlert(false),
+        TIMER.ALERT_AUTO_HIDE_MS,
+      );
       return () => clearTimeout(timer);
     }
     setShowAlert(false);

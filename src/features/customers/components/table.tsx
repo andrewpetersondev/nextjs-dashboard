@@ -9,9 +9,9 @@ interface CustomersTableProps {
   customers: FormattedCustomersTableRow[];
 }
 
-export async function CustomersTable({
+export function CustomersTable({
   customers,
-}: CustomersTableProps): Promise<JSX.Element> {
+}: CustomersTableProps): JSX.Element {
   return (
     <section aria-labelledby="customers-heading" className="w-full">
       <H1 className="mb-8" id="customers-heading">

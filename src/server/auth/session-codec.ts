@@ -18,10 +18,10 @@ let encodedKey: Uint8Array | undefined;
 
 /**
  * Lazily retrieves and caches the session secret key as a Uint8Array.
- * @returns {Promise<Uint8Array>} The encoded session secret key.
+ * @returns {<Uint8Array>} The encoded session secret key.
  * @throws If SESSION_SECRET is not defined.
  */
-const getEncodedKey = async (): Promise<Uint8Array> => {
+const getEncodedKey = (): Uint8Array => {
   if (encodedKey) {
     return encodedKey;
   }
@@ -47,7 +47,7 @@ const getEncodedKey = async (): Promise<Uint8Array> => {
 export async function createSessionToken(
   payload: EncryptPayload,
 ): Promise<string> {
-  const key = await getEncodedKey();
+  const key = getEncodedKey();
 
   const validatedFields = EncryptPayloadSchema.safeParse(payload);
 
@@ -108,7 +108,7 @@ export async function readSessionToken(
     return undefined;
   }
 
-  const key = await getEncodedKey();
+  const key = getEncodedKey();
 
   try {
     const { payload } = await jwtVerify(session, key, {
@@ -136,11 +136,13 @@ export async function readSessionToken(
       return undefined;
     }
 
+    const data = validatedFields.data as unknown as DecryptPayload;
+
     logger.debug(
-      { context: "decrypt", userId: validatedFields.data.user.userId },
+      { context: "decrypt", userId: data.user.userId },
       "Session decrypted successfully",
     );
-    return validatedFields.data as DecryptPayload;
+    return data;
   } catch (error: unknown) {
     logger.error(
       { context: "decrypt", err: error },

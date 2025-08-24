@@ -8,13 +8,6 @@ import type { UserDto } from "@/server/users/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 import { H1 } from "@/ui/headings";
 
-export const metadata: Metadata = {
-  title: "Edit User",
-};
-
-// force this page to be dynamic, so it doesn't get cached
-export const dynamic = "force-dynamic";
-
 interface EditUserPageParams {
   id: string;
 }
@@ -22,6 +15,13 @@ interface EditUserPageParams {
 interface EditUserPageProps {
   params: Promise<EditUserPageParams>;
 }
+
+export const metadata: Metadata = {
+  title: "Edit User",
+};
+
+// force this page to be dynamic, so it doesn't get cached
+export const dynamic = "force-dynamic";
 
 // promises are allowed in props params because Partial Pre-Rendering is enabled
 export default async function Page(

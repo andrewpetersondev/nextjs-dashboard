@@ -9,13 +9,6 @@ import type { InvoiceDto } from "@/server/invoices/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 import { H1 } from "@/ui/headings";
 
-export const metadata: Metadata = {
-  title: "Edit Invoice",
-};
-
-// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
-export const dynamic = "force-dynamic";
-
 interface EditInvoicePageParams {
   id: string;
 }
@@ -23,6 +16,13 @@ interface EditInvoicePageParams {
 interface EditInvoicePageProps {
   params: Promise<EditInvoicePageParams>;
 }
+
+export const metadata: Metadata = {
+  title: "Edit Invoice",
+};
+
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+export const dynamic = "force-dynamic";
 
 export default async function Page(
   props: EditInvoicePageProps,

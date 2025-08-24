@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // force this page to be dynamic, so it doesn't get cached
 export const dynamic = "force-dynamic";
 
-export default async function Page(): Promise<JSX.Element> {
+export default function Page(): JSX.Element {
   return (
     <main>
       <Breadcrumbs

@@ -4,13 +4,6 @@ import { CustomersTable } from "@/features/customers/components/table";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
 import { readFilteredCustomersAction } from "@/server/customers/actions";
 
-export const metadata: Metadata = {
-  title: "Customers",
-};
-
-// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
-export const dynamic = "force-dynamic";
-
 interface CustomersSearchParams {
   query?: string;
   page?: string;
@@ -19,6 +12,13 @@ interface CustomersSearchParams {
 interface CustomersPageProps {
   searchParams?: Promise<CustomersSearchParams>;
 }
+
+export const metadata: Metadata = {
+  title: "Customers",
+};
+
+// force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
+export const dynamic = "force-dynamic";
 
 export default async function Page(
   props: CustomersPageProps,

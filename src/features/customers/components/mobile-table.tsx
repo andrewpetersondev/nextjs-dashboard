@@ -7,11 +7,11 @@ import { CustomerMobileCard } from "./customer-mobile-card";
  * @param customers - Array of formatted customer table rows.
  * @returns JSX.Element
  */
-export async function MobileTable({
+export function MobileTable({
   customers,
 }: {
   customers: FormattedCustomersTableRow[];
-}): Promise<JSX.Element> {
+}): JSX.Element {
   return (
     <div className="md:hidden" data-testid="mobile-table">
       {customers.map((customer) => (
