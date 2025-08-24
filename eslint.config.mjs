@@ -1,8 +1,6 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-// biome-ignore lint/correctness/noUndeclaredDependencies: <no longer in use>
 import { FlatCompat } from "@eslint/eslintrc";
-// biome-ignore lint/correctness/noUndeclaredDependencies: <no longer in use>
 import pluginCypress from "eslint-plugin-cypress";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +23,30 @@ const eslintConfig = [
     languageOptions: pluginCypress.configs.recommended.languageOptions,
     plugins: pluginCypress.configs.recommended.plugins,
     rules: pluginCypress.configs.recommended.rules,
+  },
+  // Disallow importing server code inside feature modules
+  {
+    files: ["src/features/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            "@/server/*",
+            "@/server/**",
+            // Also guard against relative imports that crawl up to server dir
+            "../../server/*",
+            "../../server/**",
+            "../server/*",
+            "../server/**",
+            "./server/*",
+            "./server/**",
+            "/server/*",
+            "/server/**",
+          ],
+        },
+      ],
+    },
   },
   // Revenues: discourage raw YYYY-MM strings for period. Prefer toPeriod()/dateToPeriod().
   {
