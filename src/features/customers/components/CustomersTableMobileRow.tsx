@@ -1,16 +1,8 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { CUSTOMER_LABELS } from "@/shared/constants/customers";
 import { DEFAULT_ATTRIBUTES } from "@/shared/constants/ui";
-
-/**
- * Label constants for customer card fields.
- */
-const LABELS = {
-  invoices: "invoices",
-  paid: "Paid",
-  pending: "Pending",
-} as const;
 
 /**
  * Props for the CustomerMobileCard component.
@@ -23,7 +15,7 @@ interface CustomerMobileCardProps {
  * Renders a single customer card for mobile view.
  * @param customer - The customer data to display.
  */
-export function CustomerMobileCard({
+export function CustomersTableMobileRow({
   customer,
 }: CustomerMobileCardProps): JSX.Element {
   return (
@@ -55,11 +47,11 @@ export function CustomerMobileCard({
       {/* Customer financial details: pending and paid amounts */}
       <div className="flex w-full items-center justify-between border-b py-5">
         <div className="flex w-1/2 flex-col">
-          <p className="text-xs">{LABELS.pending}</p>
+          <p className="text-xs">{CUSTOMER_LABELS.pending}</p>
           <p className="font-medium">{customer.totalPending}</p>
         </div>
         <div className="flex w-1/2 flex-col">
-          <p className="text-xs">{LABELS.paid}</p>
+          <p className="text-xs">{CUSTOMER_LABELS.paid}</p>
           <p className="font-medium">{customer.totalPaid}</p>
         </div>
       </div>
@@ -67,7 +59,7 @@ export function CustomerMobileCard({
       {/* Customer invoice total */}
       <div className="pt-4 text-sm">
         <p>
-          {customer.totalInvoices} {LABELS.invoices}
+          {customer.totalInvoices} {CUSTOMER_LABELS.invoices}
         </p>
       </div>
     </div>

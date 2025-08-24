@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { DesktopTable } from "@/features/customers/components/desktop-table";
-import { MobileTable } from "@/features/customers/components/mobile-table";
+import { CustomersTableDesktop } from "@/features/customers/components/CustomersTableDesktop";
+import { CustomersTableMobile } from "@/features/customers/components/CustomersTableMobile";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
 import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
@@ -22,8 +22,8 @@ export function CustomersTable({
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-bg-accent p-2 md:pt-0">
-              <MobileTable customers={customers} />
-              <DesktopTable customers={customers} />
+              <CustomersTableMobile customers={customers} />
+              <CustomersTableDesktop customers={customers} />
             </div>
           </div>
         </div>

@@ -1,13 +1,13 @@
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { CustomerMobileCard } from "./mobile-row";
+import { CustomersTableMobileRow } from "./CustomersTableMobileRow";
 
 /**
  * Renders a responsive mobile table for customer data.
  * @param customers - Array of formatted customer table rows.
  * @returns JSX.Element
  */
-export function MobileTable({
+export function CustomersTableMobile({
   customers,
 }: {
   customers: FormattedCustomersTableRow[];
@@ -15,7 +15,7 @@ export function MobileTable({
   return (
     <div className="md:hidden" data-testid="mobile-table">
       {customers.map((customer) => (
-        <CustomerMobileCard customer={customer} key={customer.id} />
+        <CustomersTableMobileRow customer={customer} key={customer.id} />
       ))}
     </div>
   );

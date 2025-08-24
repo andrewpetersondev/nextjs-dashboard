@@ -1,6 +1,7 @@
 import type React from "react";
 import { memo } from "react";
 import { GitHubIcon, GoogleIcon } from "@/features/auth/components/icons";
+import { SOCIAL_ANCHOR_BUTTON_CLASSES } from "@/ui/button-classes";
 
 /**
  * Supported social login providers.
@@ -26,9 +27,6 @@ const providerIcons: Record<Provider, React.ReactNode> = {
   Google: <GoogleIcon />,
 };
 
-const buttonClasses =
-  "bg-bg-primary text-text-primary ring-bg-accent hover:bg-bg-accent focus-visible:ring-bg-focus flex w-full items-center justify-center gap-3 rounded-md px-3 py-2 text-sm font-semibold ring-1 focus-visible:ring-2";
-
 /**
  * Renders a social login button for OAuth providers.
  * @param props SocialLoginButtonProps
@@ -38,7 +36,7 @@ export const SocialLoginButton: React.NamedExoticComponent<SocialLoginButtonProp
     return (
       <a
         aria-label={`${mode === "signup" ? "Sign up" : "Sign in"} with ${provider}`}
-        className={buttonClasses}
+        className={SOCIAL_ANCHOR_BUTTON_CLASSES}
         data-cy={dataCy}
         href={href}
         rel="noopener noreferrer"

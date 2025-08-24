@@ -14,7 +14,7 @@ interface CustomerTableRowProps {
  * Renders a single customer row for the desktop table.
  * @param customer - The customer data to display.
  */
-export function CustomerTableRow({
+export function CustomersTableDesktopRow({
   customer,
 }: CustomerTableRowProps): JSX.Element {
   return (

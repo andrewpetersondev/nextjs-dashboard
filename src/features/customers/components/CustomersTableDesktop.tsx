@@ -1,30 +1,33 @@
 import type { JSX } from "react";
-import { CustomerTableRow } from "@/features/customers/components/desktop-row";
+import { CustomersTableDesktopRow } from "@/features/customers/components/CustomersTableDesktopRow";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { CUSTOMER_TABLE_HEADERS } from "@/shared/constants/customers";
 
 /**
  * Table column definitions for customer data.
  */
 const TABLE_COLUMNS = [
-  { key: "name", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "totalInvoices", label: "Total Invoices" },
-  { key: "totalPending", label: "Total Pending" },
-  { key: "totalPaid", label: "Total Paid" },
+  { key: "name", label: CUSTOMER_TABLE_HEADERS.name },
+  { key: "email", label: CUSTOMER_TABLE_HEADERS.email },
+  { key: "totalInvoices", label: CUSTOMER_TABLE_HEADERS.totalInvoices },
+  { key: "totalPending", label: CUSTOMER_TABLE_HEADERS.totalPending },
+  { key: "totalPaid", label: CUSTOMER_TABLE_HEADERS.totalPaid },
 ] as const;
 
 type ColumnKey = (typeof TABLE_COLUMNS)[number]["key"];
 
 const HEADER_BASE_CLASS = "py-5 font-medium";
 
+const HEADER_PADDING_MAP: Record<ColumnKey, string> = {
+  name: "px-4 sm:pl-6",
+  email: "px-3",
+  totalInvoices: "px-3",
+  totalPending: "px-3",
+  totalPaid: "px-4",
+};
+
 function getHeaderCellClass(key: ColumnKey): string {
-  if (key === "name") {
-    return `px-4 ${HEADER_BASE_CLASS} sm:pl-6`;
-  }
-  if (key === "totalPaid") {
-    return `px-4 ${HEADER_BASE_CLASS}`;
-  }
-  return `px-3 ${HEADER_BASE_CLASS}`;
+  return `${HEADER_PADDING_MAP[key]} ${HEADER_BASE_CLASS}`;
 }
 
 /**
@@ -32,7 +35,7 @@ function getHeaderCellClass(key: ColumnKey): string {
  * @param customers - Array of formatted customer table rows.
  * @returns JSX.Element
  */
-export function DesktopTable({
+export function CustomersTableDesktop({
   customers,
 }: {
   customers: FormattedCustomersTableRow[];
@@ -50,7 +53,7 @@ export function DesktopTable({
       </thead>
       <tbody className="divide-y divide-bg-accent bg-bg-primary text-text-primary">
         {customers.map((customer) => (
-          <CustomerTableRow customer={customer} key={customer.id} />
+          <CustomersTableDesktopRow customer={customer} key={customer.id} />
         ))}
       </tbody>
     </table>
