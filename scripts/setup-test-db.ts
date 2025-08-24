@@ -2,6 +2,7 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 
+// biome-ignore lint/nursery/useExplicitType: <temp>
 const execAsync = promisify(exec);
 
 async function setupTestDatabase(): Promise<void> {

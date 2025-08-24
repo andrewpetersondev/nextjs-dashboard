@@ -15,6 +15,7 @@
  */
 
 import { reset } from "drizzle-seed";
+// biome-ignore lint/performance/noNamespaceImport: <temp>
 import * as schema from "@/server/db/schema";
 import { nodeEnvProdDb } from "./prod-database";
 
