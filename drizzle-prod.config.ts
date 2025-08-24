@@ -1,4 +1,4 @@
-import "../envConfig.ts";
+import "./envConfig.ts";
 import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle-prod.config.ts ...");
@@ -12,6 +12,6 @@ export default defineConfig({
     url: process.env.POSTGRES_URL_PRODDB!,
   },
   dialect: "postgresql",
-  out: "../drizzle/migrations/prod/",
-  schema: "../src/db/schema.ts",
+  out: "./drizzle/migrations/prod/",
+  schema: "./src/server/db/schema.ts",
 });

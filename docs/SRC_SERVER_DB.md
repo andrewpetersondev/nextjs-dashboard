@@ -5,8 +5,8 @@ This folder contains all database-related code used by the application and CLI t
 ## Structure (current)
 
 - connection.ts – Shared database connection factory for application runtime (uses env-configured URLs).
-- dev-database.ts – For Drizzle Kit development operations only (CLI tooling). Do not import in runtime code.
-- test-database.ts – For Drizzle Kit test operations only (CLI tooling). Do not import in runtime code.
+- db-dev.ts – For Drizzle Kit development operations only (CLI tooling). Do not import in runtime code.
+- db-test.ts – For Drizzle Kit test operations only (CLI tooling). Do not import in runtime code.
 - schema.ts – Database schema definitions using Drizzle ORM.
 - seeds/ – Seed and reset scripts for populating or clearing databases.
   - seeds/seed.ts – Main seed script for this project (targets the test database by default).
@@ -19,11 +19,11 @@ Note: Older references to folders like migrations/ or models/ are not applicable
 ## Current environment
 
 - Active database for seeding: test_db (configured via the POSTGRES_URL_TESTDB environment variable).
-- Main seed entrypoint: src/db/seeds/seed.ts (uses the test connection from test-database.ts).
+- Main seed entrypoint: src/db/seeds/seed.ts (uses the test connection from db-test.ts).
 
 ## Environment variables
 
-- POSTGRES_URL – Development database connection URL (used by dev-database.ts and connection.ts when type="dev").
+- POSTGRES_URL – Development database connection URL (used by db-dev.ts and connection.ts when type="dev").
 - POSTGRES_URL_TESTDB – Test database connection URL (used by seed.ts, reset-test.ts, and connection.ts when type="test").
 - SEED_RESET – When set to "true", seed.ts will TRUNCATE all tables and reseed even if data exists.
 
@@ -46,7 +46,7 @@ Force re-seed (truncate first):
 Behavior:
 
 - The script exits early if the database is not empty unless SEED_RESET=true is set.
-- The script writes to the test database only (via nodeEnvTestDb from test-database.ts).
+- The script writes to the test database only (via nodeEnvTestDb from db-test.ts).
 
 ## Resetting databases (CLI)
 
@@ -55,7 +55,7 @@ Behavior:
 
 ## Application runtime usage
 
-- Do not import dev-database.ts or test-database.ts from runtime code.
+- Do not import db-dev.ts or db-test.ts from runtime code.
 - Use getDB() from connection.ts to obtain a typed Drizzle instance. Default is type="test" to align with this project’s setup.
 
 ## Verification tips

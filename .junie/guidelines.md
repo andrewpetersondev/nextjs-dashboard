@@ -12,4 +12,4 @@ markdown
 - Do not use barrel files.
 - Do not create documentation in .md files.
 - Do not edit documentation in .md files.
-- Do not use import aliases in files that operate outside the Next.js runtime, such as `dev-database.ts`.
+- Do not use import aliases in files that operate outside the Next.js runtime, such as `db-dev.ts`.

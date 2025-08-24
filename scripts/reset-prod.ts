@@ -8,7 +8,7 @@
  * - Do **not** import "server-only" code.
  * - This file MAY need to include file extensions like .ts for compatibility with the CLI tools and Cypress.
  * - This file MAY need to use RELATIVE IMPORTS for compatibility with the CLI tools and Cypress.
- * - Uses the dev database connection from `dev-database.ts`.
+ * - Uses the dev database connection from `db-dev.ts`.
  * - All credentials are managed via environment variables and Hashicorp Vault.
  *
  * @see https://orm.drizzle.team/docs/seed
@@ -16,8 +16,8 @@
 
 import { reset } from "drizzle-seed";
 // biome-ignore lint/performance/noNamespaceImport: <temp>
-import * as schema from "@/server/db/schema";
-import { nodeEnvProdDb } from "./prod-database";
+import * as schema from "@/server/db/schema.ts";
+import { nodeEnvProdDb } from "./db-prod.ts";
 
 async function main(): Promise<void> {
   await reset(nodeEnvProdDb, schema);

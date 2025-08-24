@@ -1,9 +1,9 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
 // biome-ignore lint/performance/noNamespaceImport: <temporary>
-import * as schema from "../src/server/db/schema";
-import type { Period } from "../src/shared/brands/domain-brands";
-import { nodeEnvDb } from "./dev-database";
+import * as schema from "../src/server/db/schema.ts";
+import type { Period } from "../src/shared/brands/domain-brands.ts";
+import { nodeEnvDb } from "./db-dev.ts";
 
 /**
  * @file seeds/seed-dev-db.ts

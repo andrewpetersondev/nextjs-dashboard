@@ -1,5 +1,5 @@
 /**
- * @file prod-database.ts
+ * @file db-prod.ts
  * @description
  * This file is used **only** for Drizzle Kit production operations (e.g., generating migrations, seeding the prod database).
  *
@@ -16,7 +16,7 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 
-console.log("prod-database.ts ...");
+console.log("db-prod.ts ...");
 
 let url: string;
 

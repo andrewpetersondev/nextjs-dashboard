@@ -1,5 +1,5 @@
 /**
- * @file test-database.ts
+ * @file db-test.ts
  * @description
  * This file is used **only** for Drizzle Kit test operations (e.g., generating test migrations, seeding the test database).
  *
@@ -17,7 +17,7 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 
-console.log("test-database.ts ...");
+console.log("db-test.ts ...");
 
 let url: string;
 
