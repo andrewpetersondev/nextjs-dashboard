@@ -28,6 +28,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!scripts",
       "!.aiassistant",
       "!.github",
       "!.idea",
@@ -115,7 +116,7 @@
         "noMisusedPromises": "on",
         "recommended": true,
         "useExhaustiveSwitchCases": "on",
-        "useExplicitType": "on",
+        "useExplicitType": "off",
         "useMaxParams": "on",
         "useReactFunctionComponents": "on",
         "useSortedClasses": "on"

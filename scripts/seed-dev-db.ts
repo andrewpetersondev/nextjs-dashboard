@@ -1,10 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-// biome-ignore lint/performance/noNamespaceImport: <temporary>
-// @ts-ignore
 import * as schema from "../src/server/db/schema.ts";
 import type { Period } from "../src/shared/brands/domain-brands.ts";
-// @ts-ignore
 import { nodeEnvDb } from "./db-dev.ts";
 
 /**
@@ -126,8 +123,6 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
  * Predefined periods for revenue table seeding.
  * Covers 19 months starting from 2024-01-01.
  */
-
-// biome-ignore lint/nursery/useExplicitType: <temp>
 const periods = generateMonthlyPeriods(
   "2024-01-01",
   SEED_CONFIG.GENERATE_MONTHLY_PERIODS_COUNT,
@@ -135,7 +130,6 @@ const periods = generateMonthlyPeriods(
 
 // Convert to UTC Date objects for Drizzle DATE columns
 // biome-ignore lint/style/useTemplate: <there is no safe fix>
-// biome-ignore lint/nursery/useExplicitType: <temporary>
 const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
 
 /**

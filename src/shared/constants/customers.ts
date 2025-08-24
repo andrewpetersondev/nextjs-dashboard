@@ -11,11 +11,11 @@ export const CUSTOMER_LABELS = {
  * Shared header labels for the customers table.
  */
 export const CUSTOMER_TABLE_HEADERS = {
-  name: "Name",
   email: "Email",
+  name: "Name",
   totalInvoices: `Total ${CUSTOMER_LABELS.invoices}`,
-  totalPending: `Total ${CUSTOMER_LABELS.pending}`,
   totalPaid: `Total ${CUSTOMER_LABELS.paid}`,
+  totalPending: `Total ${CUSTOMER_LABELS.pending}`,
 } as const;
 
 export type CustomerTableHeaderKey = keyof typeof CUSTOMER_TABLE_HEADERS;

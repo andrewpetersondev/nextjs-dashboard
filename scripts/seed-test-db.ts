@@ -1,10 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-// biome-ignore lint/performance/noNamespaceImport: <temp>
-// @ts-ignore
 import * as schema from "../src/server/db/schema.ts";
 import type { Period } from "../src/shared/brands/domain-brands.ts";
-// @ts-ignore
 import { nodeEnvTestDb } from "./db-test.ts";
 
 /**
@@ -49,7 +46,6 @@ const SEED_CONFIG = {
  * @throws {Error} When period is not the first day of the month
  */
 function validatePeriod(period: string): void {
-  // biome-ignore lint/style/useTemplate: <there is no safe fix>
   const date = new Date(period + "T00:00:00.000Z");
   if (date.getUTCDate() !== 1) {
     throw new Error(`Generated period ${period} is not first day of month`);
@@ -91,9 +87,7 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
 
   const out: string[] = [];
   for (let i = 0; i < months; i++) {
-    // biome-ignore lint/style/noMagicNumbers: <temp>
     const currentYear = year + Math.floor((month - 1 + i) / 12);
-    // biome-ignore lint/style/noMagicNumbers: <temp>
     const currentMonth = ((month - 1 + i) % 12) + 1;
     const d = new Date(Date.UTC(currentYear, currentMonth - 1, 1));
     const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -106,13 +100,9 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
  * Predefined periods for revenue table seeding.
  * Covers 19 months starting from 2024-01-01.
  */
-// biome-ignore lint/nursery/useExplicitType: <temp>
-// biome-ignore lint/style/noMagicNumbers: <temp>
 const periods = generateMonthlyPeriods("2024-01-01", 19);
 
 // Convert to UTC Date objects for Drizzle DATE columns
-// biome-ignore lint/style/useTemplate: <there is no safe fix>
-// biome-ignore lint/nursery/useExplicitType: <temp>
 const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
 
 /**

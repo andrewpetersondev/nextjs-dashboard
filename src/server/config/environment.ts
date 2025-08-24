@@ -1,6 +1,6 @@
 import "server-only";
 
-import * as z from "zod";
+import { z } from "zod";
 
 /**
  * Environment configuration and validation.
@@ -22,9 +22,9 @@ import * as z from "zod";
  * - Update the README in this folder with documentation and usage.
  */
 
-const isTestEnv = process.env.NODE_ENV === "test";
+const isTestEnv: boolean = process.env.NODE_ENV === "test";
 
-const isProdEnv = process.env.NODE_ENV === "production";
+const isProdEnv: boolean = process.env.NODE_ENV === "production";
 
 const baseSchema = z.object({
   POSTGRES_URL: z.url(),

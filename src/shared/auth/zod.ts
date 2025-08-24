@@ -1,8 +1,8 @@
-import * as z from "zod";
+import { z } from "zod";
 import { AUTH_ROLES } from "@/shared/auth/roles";
 
-export const userIdSchema = z.uuid();
-export const expiresAtSchema = z.number();
+export const userIdSchema: z.ZodUUID = z.uuid();
+export const expiresAtSchema: z.ZodNumber = z.number();
 
 // User role validation schema.
 export const roleSchema = z.enum(AUTH_ROLES, {

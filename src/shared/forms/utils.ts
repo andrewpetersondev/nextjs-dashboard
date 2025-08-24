@@ -1,28 +1,44 @@
-import * as z from "zod";
-
+import type { z } from "zod";
 import type { FieldErrors, FormErrors } from "@/shared/forms/types";
 
-export function isZodObject(
-  schema: z.ZodTypeAny,
-): schema is z.ZodObject<z.ZodRawShape> {
-  return schema instanceof z.ZodObject;
-}
-
-// Helper: derive allowed field names from a Zod object schema
+/**
+ * Derive allowed string field names from a Zod schema.
+ *
+ * Extracts the string keys from the given Zod object schema and returns them
+ * as a readonly array.
+ *
+ * @typeParam S - A Zod object schema whose keys are to be extracted.
+ * @param schema - The Zod object schema to extract keys from.
+ * @returns Readonly array of string keys from the schema.
+ * @example
+ * ```typescript
+ * const userSchema = z.object({
+ *   name: z.string(),
+ *   age: z.number(),
+ * });
+ * const fields = deriveAllowedFieldsFromSchema(userSchema);
+ * // fields: readonly ["name", "age"]
+ * ```
+ */
 export function deriveAllowedFieldsFromSchema<
   S extends z.ZodObject<z.ZodRawShape>,
->(schema: S): ReadonlyArray<Extract<keyof z.infer<S>, string>> {
+>(schema: S): readonly Extract<keyof z.infer<S>, string>[] {
   type Keys = Extract<keyof z.infer<S>, string>;
   const keys = Object.keys(schema.shape) as Keys[];
-  return keys as ReadonlyArray<Keys>;
+  return keys as readonly Keys[];
 }
 
 /**
- * Maps Zod field errors to a domain-specific error map.
+ * Map field-specific errors to an allowed subset of fields.
  *
- * @template TFieldNames - String literal union of valid field names.
- * @param fieldErrors - Zod field errors object.
- * @param allowedFields - Array of allowed field names.
+ * Filters the given field errors based on the allowed field names and returns
+ * a structured object containing only the matched errors.
+ *
+ * @param fieldErrors - Record of all field errors keyed by field name, where
+ * each value is an array of error messages or undefined.
+ * @param allowedFields - Array of allowed field names to include in the result.
+ * @returns An object containing errors only for the allowed fields, with the
+ * same structure as the input but filtered.
  */
 export function mapFieldErrors<TFieldNames extends string>(
   fieldErrors: Record<string, string[] | undefined>,
@@ -38,7 +54,19 @@ export function mapFieldErrors<TFieldNames extends string>(
 }
 
 /**
- * Normalizes Zod fieldErrors to a consistent Record<string, string[]> shape.
+ * Normalize a record of field errors into a uniform structure.
+ *
+ * Ensures every field key maps to an array of errors, defaulting to an empty array if undefined.
+ *
+ * @param fieldErrors - A record where keys are field names and values are arrays of error messages or undefined.
+ * @returns A normalized record where each key maps to an array of strings (error messages).
+ *          Keys with undefined values are mapped to empty arrays.
+ * @example
+ * ```typescript
+ * const errors = { name: ["Required"], age: undefined };
+ * const normalized = normalizeFieldErrors(errors);
+ * console.log(normalized); // { name: ["Required"], age: [] }
+ * ```
  */
 export function normalizeFieldErrors(
   fieldErrors: Record<string, string[] | undefined>,

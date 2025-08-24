@@ -1,3 +1,20 @@
+/**
+ * Map field names to validation error messages.
+ *
+ * Represents validation errors where each field is associated with multiple error strings.
+ *
+ * @remarks
+ * Each key in the record corresponds to a field name, and the value is an array of error messages related to that field.
+ * This structure is often used in form validation or API responses to convey field-specific errors.
+ *
+ * @example
+ * ```typescript
+ * const errors: FieldErrors = {
+ *   username: ["Username is required", "Username must be at least 3 characters"],
+ *   email: ["Invalid email format"],
+ * };
+ * ```
+ */
 export type FieldErrors = Record<string, string[]>;
 
 /**

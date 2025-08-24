@@ -19,11 +19,11 @@ type ColumnKey = (typeof TABLE_COLUMNS)[number]["key"];
 const HEADER_BASE_CLASS = "py-5 font-medium";
 
 const HEADER_PADDING_MAP: Record<ColumnKey, string> = {
-  name: "px-4 sm:pl-6",
   email: "px-3",
+  name: "px-4 sm:pl-6",
   totalInvoices: "px-3",
-  totalPending: "px-3",
   totalPaid: "px-4",
+  totalPending: "px-3",
 };
 
 function getHeaderCellClass(key: ColumnKey): string {
