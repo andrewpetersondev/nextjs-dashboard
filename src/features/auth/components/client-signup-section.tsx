@@ -23,7 +23,7 @@ export const ClientSignupSection: FC = () => (
     </div>
     {/* Switch the link below the card, matching the signup page */}
     <AuthSwitchLink
-      href="/login"
+      href="/auth/login"
       linkText="Log in here"
       prompt="Already a member?"
     />

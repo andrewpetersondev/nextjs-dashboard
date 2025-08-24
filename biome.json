@@ -152,6 +152,7 @@
         "useEnumInitializers": "on",
         "useExplicitLengthCheck": "on",
         "useExportsLast": "on",
+        "useFilenamingConvention": "on",
         "useForOf": "on",
         "useFragmentSyntax": "on",
         "useGroupedAccessorPairs": "on",
