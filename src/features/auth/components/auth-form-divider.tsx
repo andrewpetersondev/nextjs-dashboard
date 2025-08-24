@@ -17,7 +17,7 @@ interface AuthFormDividerProps {
 export const AuthFormDivider: FC<AuthFormDividerProps> = ({
   label,
   className = "",
-}) => (
+}: AuthFormDividerProps) => (
   <div className={`relative my-5 ${className}`}>
     <div aria-hidden="true" className="absolute inset-0 flex items-center">
       <div className="w-full border-bg-accent border-t" />

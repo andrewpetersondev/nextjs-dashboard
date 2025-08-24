@@ -8,7 +8,7 @@ import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button"
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
 import { InputField } from "@/features/auth/components/input-field";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
-import { login } from "@/server/users/actions";
+import { login } from "@/server/auth/actions";
 import type { LoginFormFieldNames } from "@/server/users/types";
 import type { FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";

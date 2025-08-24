@@ -24,6 +24,7 @@ import { FormInputWrapper } from "@/ui/form-input-wrapper";
  *
  * @returns Rendered SignupForm component.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temporary>
 export const SignupForm: FC = (): JSX.Element => {
   const initialState: Extract<
     FormState<SignupFormFieldNames>,

@@ -9,3 +9,7 @@ export const DASHBOARD_TITLES = {
   GUEST: "Guest Dashboard",
   USER: "User Dashboard",
 };
+
+export const DEFAULT_ATTRIBUTES = {
+  IMAGE_SIZE: 40,
+};

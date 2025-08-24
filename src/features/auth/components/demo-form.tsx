@@ -18,7 +18,11 @@ interface DemoFormProps {
   userRole: AuthRole;
 }
 
-export const DemoForm: FC<DemoFormProps> = ({ text, userRole, label }) => (
+export const DemoForm: FC<DemoFormProps> = ({
+  text,
+  userRole,
+  label,
+}: DemoFormProps) => (
   <form
     action={async (): Promise<void> => {
       await demoUser(userRole);

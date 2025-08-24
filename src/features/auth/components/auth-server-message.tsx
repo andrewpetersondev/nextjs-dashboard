@@ -9,7 +9,7 @@ interface SignupFormErrorMessageProps {
  */
 export const AuthServerMessage: FC<SignupFormErrorMessageProps> = ({
   message,
-}) => (
+}: SignupFormErrorMessageProps) => (
   <div
     aria-atomic="true"
     aria-live="polite"

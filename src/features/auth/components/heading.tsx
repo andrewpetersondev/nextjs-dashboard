@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type React from "react";
 import type { JSX } from "react";
+import { DEFAULT_ATTRIBUTES } from "@/shared/constants/ui";
 
 /**
  * Props for Heading component.
@@ -29,10 +30,10 @@ export function Heading({
       <Image
         alt={logoAlt}
         className="mx-auto h-10 w-auto"
-        height={40}
+        height={DEFAULT_ATTRIBUTES.IMAGE_SIZE}
         priority={true}
         src={logoSrc}
-        width={40}
+        width={DEFAULT_ATTRIBUTES.IMAGE_SIZE}
       />
       <h2 className="mt-6 text-center font-bold text-2xl/9 tracking-tight">
         {text}

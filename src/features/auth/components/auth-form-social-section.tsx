@@ -26,7 +26,7 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
   demoUserText,
   demoAdminText,
   mode,
-}) => (
+}: AuthFormSocialSectionProps) => (
   <>
     {/* Demo user and admin buttons */}
     <DemoForm
