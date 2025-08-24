@@ -35,5 +35,5 @@ export async function readFilteredCustomersAction(
 export async function readTotalCustomersCountAction(): Promise<number> {
   const db = getDB();
   const repo = createCustomersRepository(db);
-  return repo.fetchTotalCount();
+  return await repo.fetchTotalCount();
 }

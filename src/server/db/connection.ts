@@ -24,11 +24,6 @@ import * as schema from "@/server/db/schema";
 // Supported database types
 type DbType = "development" | "test" | "production";
 
-// Database instance type with strongly-typed schema
-export type Database = NodePgDatabase<typeof schema> & {
-  $client: NodePgClient;
-};
-
 /**
  * Normalize NODE_ENV to our DbType domain.
  * - Accepts "development" | "production" | "test"
@@ -75,6 +70,11 @@ function getDatabaseUrl(type: DbType): string {
   }
   return POSTGRES_URL_TESTDB;
 }
+
+// Database instance type with strongly-typed schema
+export type Database = NodePgDatabase<typeof schema> & {
+  $client: NodePgClient;
+};
 
 /**
  * Returns a Drizzle database instance for the specified environment.

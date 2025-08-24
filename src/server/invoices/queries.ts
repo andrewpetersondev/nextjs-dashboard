@@ -31,5 +31,5 @@ export async function readLatestInvoices(
   db: Database,
   limit = 5,
 ): Promise<InvoiceListFilter[]> {
-  return fetchLatestInvoicesDal(db, limit);
+  return await fetchLatestInvoicesDal(db, limit);
 }

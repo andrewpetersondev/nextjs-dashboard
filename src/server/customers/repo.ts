@@ -43,7 +43,7 @@ export class CustomersRepository {
    * Returns total number of customers.
    */
   async fetchTotalCount(): Promise<number> {
-    return fetchTotalCustomersCountDal(this.db);
+    return await fetchTotalCustomersCountDal(this.db);
   }
 }
 

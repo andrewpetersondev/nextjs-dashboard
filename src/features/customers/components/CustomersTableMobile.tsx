@@ -1,6 +1,6 @@
 import type { JSX } from "react";
+import { CustomersTableMobileRow } from "@/features/customers/components/CustomersTableMobileRow";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { CustomersTableMobileRow } from "./CustomersTableMobileRow";
 
 /**
  * Renders a responsive mobile table for customer data.

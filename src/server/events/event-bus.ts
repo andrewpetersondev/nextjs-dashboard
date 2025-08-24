@@ -6,6 +6,10 @@
 import "server-only";
 import { logger } from "@/server/logging/logger";
 
+type EventName = Extract<keyof DomainEvents, string>;
+
+type EventPayload<K extends EventName> = DomainEvents[K];
+
 /**
  * Type for event handler functions.
  */
@@ -23,16 +27,11 @@ export type EventHandler<T> = (event: T) => void | Promise<void>;
  *   }
  * }
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DomainEvents {
   // By default allow any string event name with unknown payload.
   // Projects should augment this interface with specific events.
   [event: string]: unknown;
 }
-
-type EventName = Extract<keyof DomainEvents, string>;
-
-type EventPayload<K extends EventName> = DomainEvents[K];
 
 /**
  * EventBus for domain events. Supports subscribing and publishing events by event name.
