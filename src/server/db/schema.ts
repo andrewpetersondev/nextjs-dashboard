@@ -25,9 +25,12 @@ import {
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/features/invoices/types";
-import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
+} from "../../features/invoices/types";
+import {
+  REVENUE_SOURCES,
+  type RevenueSource,
+} from "../../features/revenues/types";
+import { AUTH_ROLES, type AuthRole } from "../../shared/auth/roles";
 import type {
   CustomerId,
   InvoiceId,
@@ -35,7 +38,7 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "@/shared/brands/domain-brands";
+} from "../../shared/brands/domain-brands";
 
 /**
  * Schema overview
