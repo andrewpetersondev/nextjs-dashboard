@@ -9,11 +9,11 @@ import { type JSX, useActionState, useEffect, useState } from "react";
 import { InputField } from "@/features/auth/components/input-field";
 import { SelectRole } from "@/features/users/components/select-role";
 import { ServerMessage } from "@/features/users/components/server-message";
-import { createUserAction } from "@/server/users/actions";
 import type {
   CreateUserFormFieldNames,
   CreateUserFormState,
-} from "@/server/users/types";
+} from "@/features/users/types";
+import { createUserAction } from "@/server/users/actions";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/components/form-action-row";

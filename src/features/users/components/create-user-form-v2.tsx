@@ -2,8 +2,8 @@
 
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
+import type { CreateUserFormFieldNames } from "@/features/users/types";
 import { createUserAction } from "@/server/users/actions";
-import type { CreateUserFormFieldNames } from "@/server/users/types";
 import type { FormState } from "@/shared/forms/types";
 
 export function CreateUserFormV2(): JSX.Element {

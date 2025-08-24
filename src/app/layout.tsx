@@ -1,6 +1,6 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
-import type { FC, ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 import { notoSans } from "@/ui/styles/fonts";
 
 /**
@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   },
 };
 
-interface RootLayoutProps {
-  readonly children: ReactNode;
-}
-
-const RootLayout: FC<RootLayoutProps> = ({ children }) => {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   return (
     <html className="scheme-light-dark h-full" lang="en">
       <body
@@ -32,6 +32,4 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
       </body>
     </html>
   );
-};
-
-export default RootLayout;
+}

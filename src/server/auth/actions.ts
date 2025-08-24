@@ -1,6 +1,12 @@
-import "server-only";
+"use server";
 
 import { redirect } from "next/navigation";
+import type {
+  LoginFormFieldNames,
+  LoginFormFields,
+  SignupFormFieldNames,
+  SignupFormFields,
+} from "@/features/auth/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import {
@@ -19,12 +25,6 @@ import {
   findUserForLogin,
 } from "@/server/users/dal";
 import type { UserDto } from "@/server/users/dto";
-import type {
-  LoginFormFieldNames,
-  LoginFormFields,
-  SignupFormFieldNames,
-  SignupFormFields,
-} from "@/server/users/types";
 import {
   type ActionResult,
   actionResult,

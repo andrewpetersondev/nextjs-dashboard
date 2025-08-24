@@ -11,6 +11,10 @@ import {
   CreateUserFormSchema,
   EditUserFormSchema,
 } from "@/features/users/schema.client";
+import type {
+  CreateUserFormFieldNames,
+  EditUserFormFieldNames,
+} from "@/features/users/types";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
 import { logger } from "@/server/logging/logger";
@@ -24,10 +28,6 @@ import {
   updateUserDal,
 } from "@/server/users/dal";
 import type { UserDto } from "@/server/users/dto";
-import type {
-  CreateUserFormFieldNames,
-  EditUserFormFieldNames,
-} from "@/server/users/types";
 import { getValidUserRole } from "@/server/users/utils";
 import {
   type ActionResult,

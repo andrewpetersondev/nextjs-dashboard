@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { AuthFormDivider } from "@/features/auth/components/auth-form-divider";
 import { AuthFormSocialSection } from "@/features/auth/components/auth-form-social-section";
@@ -7,7 +5,7 @@ import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { LoginForm } from "@/features/auth/components/login-form";
 
 /**
- * Client-only section for the login page.
+ * Presentational wrapper for client components on the login page.
  * Renders the login form, social login, and switch link.
  */
 export const ClientLoginSection: FC = () => (

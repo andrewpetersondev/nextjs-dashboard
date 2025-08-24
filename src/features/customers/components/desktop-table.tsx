@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { DEFAULT_ATTRIBUTES } from "@/shared/constants/ui";
 
 /**
  * Table column definitions for customer data.
@@ -32,10 +33,10 @@ function CustomerTableRow({ customer }: CustomerTableRowProps): JSX.Element {
           <Image
             alt={`${customer.name}'s profile picture`}
             className="rounded-full"
-            height={28}
-            priority
+            height={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
+            priority={false}
             src={customer.imageUrl}
-            width={28}
+            width={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
           />
           <p>{customer.name}</p>
         </div>
@@ -59,11 +60,11 @@ function CustomerTableRow({ customer }: CustomerTableRowProps): JSX.Element {
  * @param customers - Array of formatted customer table rows.
  * @returns JSX.Element
  */
-export async function DesktopTable({
+export function DesktopTable({
   customers,
 }: {
   customers: FormattedCustomersTableRow[];
-}): Promise<JSX.Element> {
+}): JSX.Element {
   return (
     <table className="hidden min-w-full rounded-md text-text-primary md:table">
       <thead className="rounded-md bg-bg-accent text-left font-normal text-sm">

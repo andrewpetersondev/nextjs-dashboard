@@ -12,4 +12,5 @@ export const DASHBOARD_TITLES = {
 
 export const DEFAULT_ATTRIBUTES = {
   IMAGE_SIZE: 40,
+  IMAGE_SIZE_SMALL: 28,
 };

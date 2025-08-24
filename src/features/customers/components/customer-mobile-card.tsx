@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { DEFAULT_ATTRIBUTES } from "@/shared/constants/ui";
 
 /**
  * Label constants for customer card fields.
@@ -40,10 +41,10 @@ export function CustomerMobileCard({
               <Image
                 alt={`${customer.name}'s profile picture`}
                 className="rounded-full"
-                height={28}
-                priority
+                height={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
+                priority={true}
                 src={customer.imageUrl}
-                width={28}
+                width={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
               />
               <p className="font-medium">{customer.name}</p>
             </div>
