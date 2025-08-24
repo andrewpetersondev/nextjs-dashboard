@@ -16,6 +16,7 @@ import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export const CreateInvoiceForm = ({
   customers,
 }: {
@@ -55,7 +56,15 @@ export const CreateInvoiceForm = ({
 
           <SensitiveData
             disabled={pending}
-            error={state.errors?.sensitiveData}
+            error={
+              state.errors?.sensitiveData &&
+              state.errors.sensitiveData.length > 0
+                ? (state.errors.sensitiveData as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
           />
 
           <div className="mb-4">
@@ -66,14 +75,28 @@ export const CreateInvoiceForm = ({
               dataCy="customer-select"
               defaultValue=""
               disabled={pending}
-              error={state.errors?.customerId}
+              error={
+                state.errors?.customerId && state.errors.customerId.length > 0
+                  ? (state.errors.customerId as unknown as readonly [
+                      string,
+                      ...string[],
+                    ])
+                  : undefined
+              }
             />
           </div>
 
           <InvoiceAmountInput
             dataCy="amount-input"
             disabled={pending}
-            error={state.errors?.amount}
+            error={
+              state.errors?.amount && state.errors.amount.length > 0
+                ? (state.errors.amount as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
             id="amount"
             label="Choose an amount"
             name="amount"
@@ -85,7 +108,14 @@ export const CreateInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
             disabled={pending}
-            error={state.errors?.status}
+            error={
+              state.errors?.status && state.errors.status.length > 0
+                ? (state.errors.status as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
             name="status"
             value="pending"
           />

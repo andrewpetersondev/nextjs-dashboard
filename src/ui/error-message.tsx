@@ -14,11 +14,12 @@ export const ErrorMessage: FC<ErrorMessageProps> = ({
   id,
   label,
 }) => {
-  if (!error || (Array.isArray(error) && error.length === 0)) {
+  // With FormFieldError being a non-empty array, if error is provided it must have items.
+  if (!error) {
     return null;
   }
 
-  const errors = Array.isArray(error) ? error : [error];
+  const errors = error;
 
   return (
     <div

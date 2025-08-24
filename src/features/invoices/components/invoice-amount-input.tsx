@@ -1,11 +1,12 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
+import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/error-message";
 
 interface InvoiceAmountInputProps
   extends InputHTMLAttributes<HTMLInputElement> {
   dataCy?: string;
-  error?: string | string[] | undefined;
+  error?: FormFieldError;
   label?: string;
 }
 
@@ -16,15 +17,7 @@ export const InvoiceAmountInput = ({
   error,
   ...props
 }: InvoiceAmountInputProps): JSX.Element => {
-  // Ensure errors is string[] for consistent mapping
-  const errors: string[] = [];
-  if (error) {
-    if (Array.isArray(error)) {
-      errors.push(...error);
-    } else {
-      errors.push(error);
-    }
-  }
+  const hasError = !!(error && error.length > 0);
 
   return (
     <div className="mb-4">
@@ -33,8 +26,8 @@ export const InvoiceAmountInput = ({
       </label>
       <div className="relative mt-2 rounded-md">
         <input
-          aria-describedby={errors.length > 0 ? `${id}-error` : undefined}
-          aria-invalid={errors.length > 0}
+          aria-describedby={hasError ? `${id}-error` : undefined}
+          aria-invalid={hasError}
           className="block w-full rounded-md border-0 px-8 py-2 text-text-primary outline-2 ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm"
           data-cy={dataCy}
           id={id}
@@ -48,7 +41,7 @@ export const InvoiceAmountInput = ({
       </div>
       <ErrorMessage
         dataCy="invoice-amount-error"
-        error={errors}
+        error={error}
         id="invoice-amount-error"
         label="Invoice amount error"
       />

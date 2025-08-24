@@ -4,13 +4,14 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
+import type { FormFieldError } from "@/shared/forms/types";
 import { InputField } from "@/ui/input-field";
 
 type ErrorType = {
-  username?: string[];
-  email?: string[];
-  role?: string[];
-  password?: string[];
+  username?: FormFieldError;
+  email?: FormFieldError;
+  role?: FormFieldError;
+  password?: FormFieldError;
 };
 
 type FieldsProps = {
@@ -26,6 +27,7 @@ type FieldsProps = {
   isEdit?: boolean;
 };
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export function UserFields({
   values = {},
   errors,

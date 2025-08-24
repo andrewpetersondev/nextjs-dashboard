@@ -46,8 +46,10 @@ export function mapFieldErrors<TFieldNames extends string>(
 ): FormErrors<TFieldNames> {
   const errors: FormErrors<TFieldNames> = {};
   for (const key of allowedFields) {
-    if (fieldErrors[key]) {
-      errors[key] = fieldErrors[key];
+    const maybeErrors = fieldErrors[key];
+    if (Array.isArray(maybeErrors) && maybeErrors.length > 0) {
+      // Assert non-empty readonly tuple to satisfy FormFieldError
+      errors[key] = maybeErrors as unknown as readonly [string, ...string[]];
     }
   }
   return errors;

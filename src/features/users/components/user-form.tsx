@@ -1,15 +1,16 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
+import type { FormFieldError } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { H1 } from "@/ui/headings";
 
 type ErrorType = {
-  username?: string[];
-  email?: string[];
-  role?: string[];
-  password?: string[];
+  username?: FormFieldError;
+  email?: FormFieldError;
+  role?: FormFieldError;
+  password?: FormFieldError;
 };
 
 type UserFormState = {

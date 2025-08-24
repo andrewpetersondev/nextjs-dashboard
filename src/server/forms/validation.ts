@@ -2,6 +2,7 @@ import "server-only";
 
 import type { z } from "zod";
 import { logger } from "@/server/logging/logger";
+import { isZodObject } from "@/shared/forms/guards";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
@@ -9,7 +10,6 @@ import {
 import type { FieldErrors, FormState } from "@/shared/forms/types";
 import {
   deriveAllowedFieldsFromSchema,
-  isZodObject,
   mapFieldErrors,
   normalizeFieldErrors,
 } from "@/shared/forms/utils";
@@ -52,7 +52,7 @@ export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
  *
  * @returns Promise resolving to either FormState or Result based on returnMode option
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function validateFormGeneric<
   TFieldNames extends string,
   TIn,
@@ -80,6 +80,9 @@ export async function validateFormGeneric<
       ? (deriveAllowedFieldsFromSchema(schema) as readonly TFieldNames[])
       : ([] as const));
 
+  let finalResult: FormState<TFieldNames, TOut> | Result<TOut, FieldErrors>;
+
+  // biome-ignore lint/style/noNegationElse: <temp>
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
     const normalized = mapFieldErrors(fieldErrors, fields);
@@ -88,44 +91,46 @@ export async function validateFormGeneric<
       const denseErrors = normalizeFieldErrors(
         normalized as Record<string, string[] | undefined>,
       );
-      return { error: denseErrors, success: false };
-    }
-
-    const values: Partial<Record<TFieldNames, string>> = {};
-    for (const key of fields) {
-      if (redactFields.includes(key)) {
-        continue;
+      finalResult = { error: denseErrors, success: false };
+    } else {
+      const values: Partial<Record<TFieldNames, string>> = {};
+      for (const key of fields) {
+        if (redactFields.includes(key)) {
+          continue;
+        }
+        const v = raw[key as string];
+        if (typeof v === "string") {
+          values[key] = v;
+        }
       }
-      const v = raw[key as string];
-      if (typeof v === "string") {
-        values[key] = v;
-      }
+
+      logger.error({
+        context: "validateFormGeneric",
+        error: parsed.error,
+        message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+      });
+
+      finalResult = {
+        errors: normalized,
+        message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+        success: false,
+        values,
+      };
     }
+  } else {
+    const dataIn = parsed.data as TIn;
+    const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
 
-    logger.error({
-      context: "validateFormGeneric",
-      error: parsed.error,
-      message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-    });
-
-    return {
-      errors: normalized,
-      message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-      success: false,
-      values,
-    };
+    if (returnMode === "result") {
+      finalResult = { data: dataOut, success: true };
+    } else {
+      finalResult = {
+        data: dataOut,
+        message: messages?.success ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
+        success: true,
+      };
+    }
   }
 
-  const dataIn = parsed.data as TIn;
-  const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
-
-  if (returnMode === "result") {
-    return { data: dataOut, success: true };
-  }
-
-  return {
-    data: dataOut,
-    message: messages?.success ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
-    success: true,
-  };
+  return finalResult;
 }

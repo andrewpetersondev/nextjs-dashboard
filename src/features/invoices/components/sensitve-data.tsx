@@ -1,4 +1,6 @@
 import type { JSX } from "react";
+import type { FormFieldError } from "@/shared/forms/types";
+import { ErrorMessage } from "@/ui/error-message";
 import { Label } from "@/ui/label";
 
 /**
@@ -6,7 +8,7 @@ import { Label } from "@/ui/label";
  */
 interface SensitiveDataProps {
   disabled?: boolean;
-  error?: string[];
+  error?: FormFieldError;
   value?: string;
 }
 
@@ -16,6 +18,8 @@ export function SensitiveData({
   value = "this is a secret",
   ...props
 }: SensitiveDataProps): JSX.Element {
+  const hasError = !!(error && error.length > 0);
+  const errorId = "sensitive-data-error";
   return (
     <div className="mb-4">
       <Label
@@ -25,6 +29,8 @@ export function SensitiveData({
       />
       <div className="relative mt-2 rounded-md">
         <input
+          aria-describedby={hasError ? errorId : undefined}
+          aria-invalid={hasError}
           aria-label="Sensitive Data"
           autoComplete="off"
           className="block w-full rounded-md border-0 px-4 py-2 text-text-primary outline-2 ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm"
@@ -38,10 +44,13 @@ export function SensitiveData({
           {...props}
         />
       </div>
-      {error && error.length > 0 && (
-        <div className="text-red-600" role="alert">
-          {error.join(", ")}
-        </div>
+      {hasError && (
+        <ErrorMessage
+          dataCy={errorId}
+          error={error}
+          id={errorId}
+          label="Sensitive data error"
+        />
       )}
     </div>
   );

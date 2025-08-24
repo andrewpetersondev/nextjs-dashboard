@@ -35,7 +35,10 @@ import {
 } from "@/shared/action-result/action-result";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
-import { normalizeFieldErrors } from "@/shared/forms/utils";
+import {
+  deriveAllowedFieldsFromSchema,
+  mapFieldErrors,
+} from "@/shared/forms/utils";
 import { stripProperties } from "@/shared/utils/general";
 
 // --- CRUD Actions for Users ---
@@ -56,8 +59,9 @@ export async function createUserAction(
       username: formData.get("username"),
     });
     if (!validated.success) {
+      const allowed = deriveAllowedFieldsFromSchema(CreateUserFormSchema);
       return {
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+        errors: mapFieldErrors(validated.error.flatten().fieldErrors, allowed),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       };
@@ -117,6 +121,8 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
 /**
  * Edits an existing user.
  */
+
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export async function updateUserAction(
   id: string,
   _prevState: FormState<EditUserFormFieldNames>,
@@ -129,8 +135,9 @@ export async function updateUserAction(
     const validated = EditUserFormSchema.safeParse(clean);
 
     if (!validated.success) {
+      const allowed = deriveAllowedFieldsFromSchema(EditUserFormSchema);
       return {
-        errors: normalizeFieldErrors(validated.error.flatten().fieldErrors),
+        errors: mapFieldErrors(validated.error.flatten().fieldErrors, allowed),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       };
@@ -262,7 +269,7 @@ export async function readUsersPagesAction(
   query: string = "",
 ): Promise<number> {
   const db = getDB();
-  return fetchUsersPages(db, query);
+  return await fetchUsersPages(db, query);
 }
 
 /**
@@ -273,5 +280,5 @@ export async function readFilteredUsersAction(
   currentPage: number = 1,
 ): Promise<UserDto[]> {
   const db = getDB();
-  return fetchFilteredUsers(db, query, currentPage);
+  return await fetchFilteredUsers(db, query, currentPage);
 }

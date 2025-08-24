@@ -70,7 +70,15 @@ export const EditInvoiceForm = ({
 
           <SensitiveData
             disabled={pending}
-            error={state.errors?.sensitiveData}
+            error={
+              state.errors?.sensitiveData &&
+              state.errors.sensitiveData.length > 0
+                ? (state.errors.sensitiveData as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
           />
 
           {/* Customer */}
@@ -81,6 +89,14 @@ export const EditInvoiceForm = ({
               dataCy="customer-select"
               defaultValue={currentInvoice.customerId}
               disabled={pending}
+              error={
+                state.errors?.customerId && state.errors.customerId.length > 0
+                  ? (state.errors.customerId as unknown as readonly [
+                      string,
+                      ...string[],
+                    ])
+                  : undefined
+              }
             />
           </div>
 
@@ -89,7 +105,14 @@ export const EditInvoiceForm = ({
             dataCy="amount-input"
             defaultValue={currentInvoice.amount / 100}
             disabled={pending}
-            error={state.errors?.amount}
+            error={
+              state.errors?.amount && state.errors.amount.length > 0
+                ? (state.errors.amount as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
             id="amount"
             label="Choose an amount"
             name="amount"
@@ -99,7 +122,14 @@ export const EditInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
             disabled={pending}
-            error={state.errors?.status}
+            error={
+              state.errors?.status && state.errors.status.length > 0
+                ? (state.errors.status as unknown as readonly [
+                    string,
+                    ...string[],
+                  ])
+                : undefined
+            }
             name="status"
             value={currentInvoice.status}
           />

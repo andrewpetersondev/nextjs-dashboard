@@ -1,6 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
 import type { InvoiceStatus } from "@/features/invoices/types";
+import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/error-message";
 
 /**
@@ -9,7 +10,7 @@ import { ErrorMessage } from "@/ui/error-message";
 interface InvoiceStatusRadioGroupProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
   value: InvoiceStatus;
-  error?: string | string[] | undefined;
+  error?: FormFieldError;
 }
 
 /**
@@ -28,16 +29,6 @@ export const InvoiceStatusRadioGroup = ({
   error,
   ...props
 }: InvoiceStatusRadioGroupProps): JSX.Element => {
-  // Normalize error to string[] for consistent handling
-  const errors: string[] = [];
-  if (error) {
-    if (Array.isArray(error)) {
-      errors.push(...error);
-    } else {
-      errors.push(error);
-    }
-  }
-
   const options = [
     {
       icon: <ClockIcon className="h-4 w-4" />,
@@ -51,6 +42,8 @@ export const InvoiceStatusRadioGroup = ({
     },
   ];
 
+  const hasError = !!(error && error.length > 0);
+
   return (
     <fieldset className="mb-4">
       <legend className="mb-2 block font-medium text-sm">
@@ -61,10 +54,7 @@ export const InvoiceStatusRadioGroup = ({
           {options.map((opt) => (
             <div className="flex items-center" key={opt.value}>
               <input
-                aria-describedby={
-                  errors.length > 0 ? `${name}-error` : undefined
-                }
-                // aria-invalid={errors.length > 0}
+                aria-describedby={hasError ? `${name}-error` : undefined}
                 className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
                 defaultChecked={value === opt.value}
                 disabled={disabled}
@@ -86,7 +76,7 @@ export const InvoiceStatusRadioGroup = ({
       </div>
       <ErrorMessage
         dataCy="invoice-status-error"
-        error={errors.length > 0 ? errors : undefined}
+        error={error}
         id="invoice-status-error"
         label="Invoice status error"
       />
