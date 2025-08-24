@@ -8,7 +8,10 @@ import {
 } from "@/server/invoices/queries";
 import { getValidUserRole } from "@/server/users/utils";
 import type { AuthRole } from "@/shared/auth/roles";
-import { DASHBOARD_TITLES } from "@/shared/constants/ui";
+import {
+  DASHBOARD_TITLES,
+  ITEMS_PER_PAGE_INVOICES,
+} from "@/shared/constants/ui";
 import { formatCurrency } from "@/shared/utils/general";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
@@ -26,7 +29,7 @@ export default async function Page(): Promise<JSX.Element> {
     await Promise.all([
       verifySessionOptimistic(),
       readInvoicesSummary(db),
-      readLatestInvoices(db, 5),
+      readLatestInvoices(db, ITEMS_PER_PAGE_INVOICES),
       readTotalCustomersCountAction(),
     ]);
 
@@ -42,21 +45,22 @@ export default async function Page(): Promise<JSX.Element> {
     latestInvoices,
   };
 
+  let title = "Dashboard";
+  if (role === "admin") {
+    title = DASHBOARD_TITLES.ADMIN;
+  } else if (role === "user") {
+    title = DASHBOARD_TITLES.USER;
+  } else if (role === "guest") {
+    title = DASHBOARD_TITLES.GUEST;
+  }
+
   const commonContent = (
     <main>
       <MiddlewareCard />
       <Dashboard
         dashboardCardData={dashboardData.cards}
         latestInvoices={dashboardData.latestInvoices}
-        title={
-          role === "admin"
-            ? DASHBOARD_TITLES.ADMIN
-            : role === "user"
-              ? DASHBOARD_TITLES.USER
-              : role === "guest"
-                ? DASHBOARD_TITLES.GUEST
-                : "Dashboard"
-        }
+        title={title}
       />
     </main>
   );

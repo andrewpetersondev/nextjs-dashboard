@@ -46,6 +46,7 @@ export async function signup(
   >(formData, SignupFormSchema, SignupAllowedFields, {
     returnMode: "form",
     // Example: normalize email; redact password is default
+    // biome-ignore lint/nursery/useExplicitType: <temporary>
     transform: (d) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
@@ -106,6 +107,7 @@ export async function login(
     LoginFormFields
   >(formData, LoginFormSchema, undefined, {
     returnMode: "form",
+    // biome-ignore lint/nursery/useExplicitType: <temporary>
     transform: (d) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
