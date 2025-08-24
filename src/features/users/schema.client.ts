@@ -55,3 +55,5 @@ export const EditUserFormSchema = z.object({
 });
 
 export const SignupAllowedFields = ["username", "email", "password"] as const;
+
+export const LoginAllowedFields = ["email", "password"] as const;

@@ -16,14 +16,6 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 import { InputField } from "@/ui/input-field";
 
-/**
- * SignupForm component for user registration.
- *
- * @remarks
- * Production-ready, accessible, and testable signup form for Next.js App Router.
- *
- * @returns Rendered SignupForm component.
- */
 export const SignupForm: FC = (): JSX.Element => {
   const initialState: Extract<
     FormState<SignupFormFieldNames>,

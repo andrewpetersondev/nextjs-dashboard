@@ -19,9 +19,6 @@ import { createUserDal } from "@/server/users/dal";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
 
-/**
- * Handles user signup.
- */
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
@@ -33,8 +30,7 @@ export async function signup(
   >(formData, SignupFormSchema, SignupAllowedFields, {
     returnMode: "form",
     // Example: normalize email; redact password is default
-    // biome-ignore lint/nursery/useExplicitType: <temporary>
-    transform: (d) => ({
+    transform: (d: SignupFormFields) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
       username: d.username.trim(),

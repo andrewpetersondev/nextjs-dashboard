@@ -5,11 +5,6 @@ import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
 
-/**
- * Signup page component.
- * Renders the signup form.
- * @returns The signup page.
- */
 export default function Page(): JSX.Element {
   return (
     <main className="h-full">
@@ -20,12 +15,11 @@ export default function Page(): JSX.Element {
             <SignupForm />
             <AuthFormDivider label="or continue with" />
             <AuthFormSocialSection
-              demoAdminText="Signup as Demo Admin"
-              demoUserText="Signup as Demo User"
+              demoAdminText="Sign Up as Demo Admin"
+              demoUserText="Sign Up as Demo User"
               mode="login"
             />
           </div>
-          {/* Switch the link below the card, matching the signup page */}
           <AuthSwitchLink
             href="/auth/login"
             linkText="Log in here"
