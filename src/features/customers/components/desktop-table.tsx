@@ -1,7 +1,6 @@
-import Image from "next/image";
 import type { JSX } from "react";
+import { CustomerTableRow } from "@/features/customers/components/desktop-row";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { DEFAULT_ATTRIBUTES } from "@/shared/constants/ui";
 
 /**
  * Table column definitions for customer data.
@@ -14,45 +13,18 @@ const TABLE_COLUMNS = [
   { key: "totalPaid", label: "Total Paid" },
 ] as const;
 
-/**
- * Props for the CustomerTableRow component.
- */
-interface CustomerTableRowProps {
-  customer: FormattedCustomersTableRow;
-}
+type ColumnKey = (typeof TABLE_COLUMNS)[number]["key"];
 
-/**
- * Renders a single customer row for the desktop table.
- * @param customer - The customer data to display.
- */
-function CustomerTableRow({ customer }: CustomerTableRowProps): JSX.Element {
-  return (
-    <tr className="group cursor-pointer hover:bg-bg-active" key={customer.id}>
-      <td className="whitespace-nowrap py-5 pr-3 pl-4 text-sm text-text-primary group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-        <div className="flex items-center gap-3">
-          <Image
-            alt={`${customer.name}'s profile picture`}
-            className="rounded-full"
-            height={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
-            priority={false}
-            src={customer.imageUrl}
-            width={DEFAULT_ATTRIBUTES.IMAGE_SIZE_SMALL}
-          />
-          <p>{customer.name}</p>
-        </div>
-      </td>
-      <td className="whitespace-nowrap px-4 py-5 text-sm">{customer.email}</td>
-      <td className="whitespace-nowrap px-4 py-5 text-sm">
-        {customer.totalInvoices}
-      </td>
-      <td className="whitespace-nowrap px-4 py-5 text-sm">
-        {customer.totalPending}
-      </td>
-      <td className="whitespace-nowrap px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-        {customer.totalPaid}
-      </td>
-    </tr>
-  );
+const HEADER_BASE_CLASS = "py-5 font-medium";
+
+function getHeaderCellClass(key: ColumnKey): string {
+  if (key === "name") {
+    return `px-4 ${HEADER_BASE_CLASS} sm:pl-6`;
+  }
+  if (key === "totalPaid") {
+    return `px-4 ${HEADER_BASE_CLASS}`;
+  }
+  return `px-3 ${HEADER_BASE_CLASS}`;
 }
 
 /**
@@ -70,17 +42,7 @@ export function DesktopTable({
       <thead className="rounded-md bg-bg-accent text-left font-normal text-sm">
         <tr>
           {TABLE_COLUMNS.map(({ key, label }) => (
-            <th
-              className={
-                key === "name"
-                  ? "px-4 py-5 font-medium sm:pl-6"
-                  : key === "totalPaid"
-                    ? "px-4 py-5 font-medium"
-                    : "px-3 py-5 font-medium"
-              }
-              key={key}
-              scope="col"
-            >
+            <th className={getHeaderCellClass(key)} key={key} scope="col">
               {label}
             </th>
           ))}

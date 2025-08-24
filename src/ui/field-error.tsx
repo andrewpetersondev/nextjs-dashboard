@@ -1,4 +1,4 @@
-import { type FC, type JSX, memo } from "react";
+import { type JSX, memo, type NamedExoticComponent } from "react";
 
 /**
  * Props for the FieldError component.
@@ -19,25 +19,27 @@ interface FieldErrorProps {
  * @param label - Optional label displayed above the error messages for context.
  * @returns Rendered error messages as a list, or null if no errors are present.
  */
-export const FieldError: FC = memo(function FieldError({
-  dataCy,
-  error,
-  id,
-  label,
-}: FieldErrorProps): JSX.Element | null {
-  const hasErrors = Array.isArray(error) && error.length > 0;
+export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
+  function FieldError({
+    dataCy,
+    error,
+    id,
+    label,
+  }: FieldErrorProps): JSX.Element | null {
+    const hasErrors = Array.isArray(error) && error.length > 0;
 
-  const content: JSX.Element | null = hasErrors ? (
-    <div className="text-text-error" data-cy={dataCy} id={id} role="alert">
-      {label && <p>{label}</p>}
-      <ul>
-        {error!.map((err: string, i: number) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: <the key is unique enough>
-          <li key={err + i}>- {err}</li>
-        ))}
-      </ul>
-    </div>
-  ) : null;
+    const content: JSX.Element | null = hasErrors ? (
+      <div className="text-text-error" data-cy={dataCy} id={id} role="alert">
+        {label && <p>{label}</p>}
+        <ul>
+          {error!.map((err: string, i: number) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: <the key is unique enough>
+            <li key={err + i}>- {err}</li>
+          ))}
+        </ul>
+      </div>
+    ) : null;
 
-  return content;
-});
+    return content;
+  },
+);
