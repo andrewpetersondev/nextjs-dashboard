@@ -12,12 +12,14 @@ export default defineConfig({
       on("task", {
         async "db:cleanup"() {
           // Clean up test data after tests
-          const { cleanupTestDatabase } = await import("./scripts/test-utils");
+          const { cleanupTestDatabase } = await import(
+            "./scripts/test-utils.ts"
+          );
           return cleanupTestDatabase();
         },
         async "db:seed"() {
           // Seed test database with minimal required data
-          const { seedTestDatabase } = await import("./scripts/test-utils");
+          const { seedTestDatabase } = await import("./scripts/test-utils.ts");
           return seedTestDatabase();
         },
       });

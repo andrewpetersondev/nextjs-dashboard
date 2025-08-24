@@ -22,8 +22,18 @@ import { nodeEnvProdDb } from "./db-prod.ts";
  * Extracted to improve maintainability and testability.
  */
 const SEED_CONFIG = {
+  DEMO_COUNTER_MAX: 100,
+  /** Demo user counters range (inclusive) */
+  DEMO_COUNTER_MIN: 1,
+  /** The first day of any month (1-based) */
+  FIRST_DAY_OF_MONTH: 1,
+  GENERATE_MONTHLY_PERIODS_COUNT: 19,
   /** Number of invoices to generate */
   INVOICE_COUNT: 70,
+  /** Threshold to decide between regular and large invoice amount generation */
+  INVOICE_REGULAR_THRESHOLD: 0.9,
+  /** Probability to generate "pending" invoice status */
+  INVOICE_STATUS_PENDING_PROBABILITY: 0.5,
   /** Threshold for large amounts in cents */
   LARGE_AMOUNT_THRESHOLD: 1_500_001,
   /** Maximum amount for regular invoices in cents ($15,000) */
@@ -32,8 +42,17 @@ const SEED_CONFIG = {
   MAX_LARGE_AMOUNT_CENTS: 5_000_000,
   /** Minimum amount for regular invoices in cents ($5.00) */
   MIN_AMOUNT_CENTS: 500,
+  /** Probability of generating exactly MIN_AMOUNT_CENTS (in addition to zero + single-cent probabilities) */
+  MIN_AMOUNT_PROBABILITY: 0.1,
+  /** Minimum valid month number */
+  MIN_MONTH: 1,
+  MONTHS_IN_YEAR: 12,
   /** Number of salt rounds for password hashing */
   SALT_ROUNDS: 10,
+  /** A single cent amount for explicit edge cases */
+  SINGLE_CENT_AMOUNT: 1,
+  /** Probability of generating single-cent amount (in addition to ZERO_AMOUNT_PROBABILITY) */
+  SINGLE_CENT_PROBABILITY: 0.05,
   /** Probability of generating zero amounts for edge case testing */
   ZERO_AMOUNT_PROBABILITY: 0.05,
 } as const;
@@ -46,9 +65,8 @@ const SEED_CONFIG = {
  * @throws {Error} When period is not the first day of the month
  */
 function validatePeriod(period: string): void {
-  // biome-ignore lint/style/useTemplate: <there is no safe fix>
-  const date = new Date(period + "T00:00:00.000Z");
-  if (date.getUTCDate() !== 1) {
+  const date = new Date(`${period}T00:00:00.000Z`);
+  if (date.getUTCDate() !== SEED_CONFIG.FIRST_DAY_OF_MONTH) {
     throw new Error(`Generated period ${period} is not first day of month`);
   }
 }
@@ -88,11 +106,12 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
 
   const out: string[] = [];
   for (let i = 0; i < months; i++) {
-    // biome-ignore lint/style/noMagicNumbers: <temp>
-    const currentYear = year + Math.floor((month - 1 + i) / 12);
-    // biome-ignore lint/style/noMagicNumbers: <temp>
-    const currentMonth = ((month - 1 + i) % 12) + 1;
-    const d = new Date(Date.UTC(currentYear, currentMonth - 1, 1));
+    const currentYear =
+      year + Math.floor((month - 1 + i) / SEED_CONFIG.MONTHS_IN_YEAR);
+    const currentMonth = ((month - 1 + i) % SEED_CONFIG.MONTHS_IN_YEAR) + 1;
+    const d = new Date(
+      Date.UTC(currentYear, currentMonth - 1, SEED_CONFIG.FIRST_DAY_OF_MONTH),
+    );
     const iso = d.toISOString().slice(0, 10); // YYYY-MM-DD
     out.push(iso);
   }
@@ -103,12 +122,13 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
  * Predefined periods for revenue table seeding.
  * Covers 19 months starting from 2024-01-01.
  */
-// biome-ignore lint/style/noMagicNumbers: <temp>
-const periods = generateMonthlyPeriods("2024-01-01", 19);
+const periods = generateMonthlyPeriods(
+  "2024-01-01",
+  SEED_CONFIG.GENERATE_MONTHLY_PERIODS_COUNT,
+);
 
 // Convert to UTC Date objects for Drizzle DATE columns
-// biome-ignore lint/style/useTemplate: <there is no safe fix>
-const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
+const periodDates = periods.map((p) => new Date(`${p}T00:00:00.000Z`));
 
 /**
  * Available user roles for demo user counters.
@@ -198,17 +218,22 @@ function generateInvoiceAmount(): number {
   if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) {
     return 0;
   }
-  // biome-ignore lint/style/noMagicNumbers: <temp>
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.05) {
-    return 1;
+  if (
+    r <
+    SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + SEED_CONFIG.SINGLE_CENT_PROBABILITY
+  ) {
+    return SEED_CONFIG.SINGLE_CENT_AMOUNT;
   }
-  // biome-ignore lint/style/noMagicNumbers: <temp>
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + 0.1) {
+  if (
+    r <
+    SEED_CONFIG.ZERO_AMOUNT_PROBABILITY +
+      SEED_CONFIG.SINGLE_CENT_PROBABILITY +
+      SEED_CONFIG.MIN_AMOUNT_PROBABILITY
+  ) {
     return SEED_CONFIG.MIN_AMOUNT_CENTS;
   }
 
-  // biome-ignore lint/style/noMagicNumbers: <temp>
-  if (r < 0.9) {
+  if (r < SEED_CONFIG.INVOICE_REGULAR_THRESHOLD) {
     return (
       Math.floor(
         Math.random() *
@@ -230,8 +255,9 @@ function generateInvoiceAmount(): number {
  * Randomly selects an invoice status.
  */
 function randomInvoiceStatus(): "pending" | "paid" {
-  // biome-ignore lint/style/noMagicNumbers: <temp>
-  return Math.random() < 0.5 ? "pending" : "paid";
+  return Math.random() < SEED_CONFIG.INVOICE_STATUS_PENDING_PROBABILITY
+    ? "pending"
+    : "paid";
 }
 
 /**
@@ -307,8 +333,7 @@ async function main(): Promise<void> {
       throw new Error("No customers found after seeding customers.");
     }
 
-    // biome-ignore lint/style/useConsistentArrayType: <temp>
-    const invoiceRows: Array<typeof schema.invoices.$inferInsert> = [];
+    const invoiceRows: (typeof schema.invoices.$inferInsert)[] = [];
 
     /**
      * Generates invoice records by iterating INVOICE_COUNT times.
@@ -334,21 +359,26 @@ async function main(): Promise<void> {
       validatePeriod(period);
 
       // Revenue period is always the first day of the month
-      // biome-ignore lint/style/useTemplate: <there is no safe fix>
-      const revenuePeriod = new Date(period + "T00:00:00.000Z");
+      const revenuePeriod = new Date(`${period}T00:00:00.000Z`);
 
       // Generate a random date within the same month as the period
       const [year, month] = period.split("-").map(Number);
 
-      // biome-ignore lint/style/noMagicNumbers: <temp>
-      if (!year || !month || month < 1 || month > 12) {
+      if (
+        !year ||
+        !month ||
+        month < SEED_CONFIG.MIN_MONTH ||
+        month > SEED_CONFIG.MONTHS_IN_YEAR
+      ) {
         throw new Error(
           `Invalid period format: ${period}. Expected YYYY-MM-DD`,
         );
       }
 
       const daysInMonth = new Date(year, month, 0).getDate();
-      const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
+      const randomDay =
+        Math.floor(Math.random() * daysInMonth) +
+        SEED_CONFIG.FIRST_DAY_OF_MONTH;
       const invoiceDate = new Date(Date.UTC(year, month - 1, randomDay));
 
       invoiceRows.push({
@@ -367,8 +397,11 @@ async function main(): Promise<void> {
     // 4) Seed demo user counters (one per role)
     await tx.insert(schema.demoUserCounters).values(
       roles.map((role) => ({
-        // biome-ignore lint/style/noMagicNumbers: <temp>
-        count: Math.floor(Math.random() * 100) + 1,
+        count:
+          Math.floor(
+            Math.random() *
+              (SEED_CONFIG.DEMO_COUNTER_MAX - SEED_CONFIG.DEMO_COUNTER_MIN + 1),
+          ) + SEED_CONFIG.DEMO_COUNTER_MIN,
         role,
       })),
     );

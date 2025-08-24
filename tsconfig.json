@@ -6,7 +6,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -16,7 +15,13 @@
     "jsx": "preserve",
     "incremental": true,
 
+    /* Relative Imports */
+    "allowImportingTsExtensions": true,
+
     /* Type Checking */
+    // strict = true: also sets strictBindCallApply, strictFunctionTypes, strictNullChecks, strictPropertyInitialization, useUnknownInCatchVariables
+    "strict": true,
+    "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": true,

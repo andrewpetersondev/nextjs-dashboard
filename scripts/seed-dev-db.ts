@@ -65,8 +65,7 @@ const SEED_CONFIG = {
  * @throws {Error} When period is not the first day of the month
  */
 function validatePeriod(period: string): void {
-  // biome-ignore lint/style/useTemplate: <there is no safe fix>
-  const date = new Date(period + "T00:00:00.000Z");
+  const date = new Date(`${period}T00:00:00.000Z`);
   if (date.getUTCDate() !== SEED_CONFIG.FIRST_DAY_OF_MONTH) {
     throw new Error(`Generated period ${period} is not first day of month`);
   }
@@ -129,8 +128,7 @@ const periods = generateMonthlyPeriods(
 );
 
 // Convert to UTC Date objects for Drizzle DATE columns
-// biome-ignore lint/style/useTemplate: <there is no safe fix>
-const periodDates = periods.map((p) => new Date(p + "T00:00:00.000Z"));
+const periodDates = periods.map((p) => new Date(`${p}T00:00:00.000Z`));
 
 /**
  * Available user roles for demo user counters.
@@ -335,8 +333,7 @@ async function main(): Promise<void> {
       throw new Error("No customers found after seeding customers.");
     }
 
-    // biome-ignore lint/style/useConsistentArrayType: <temp>
-    const invoiceRows: Array<typeof schema.invoices.$inferInsert> = [];
+    const invoiceRows: (typeof schema.invoices.$inferInsert)[] = [];
 
     /**
      * Generates invoice records by iterating INVOICE_COUNT times.
@@ -362,8 +359,7 @@ async function main(): Promise<void> {
       validatePeriod(period);
 
       // Revenue period is always the first day of the month
-      // biome-ignore lint/style/useTemplate: <there is no safe fix>
-      const revenuePeriod = new Date(period + "T00:00:00.000Z");
+      const revenuePeriod = new Date(`${period}T00:00:00.000Z`);
 
       // Generate a random date within the same month as the period
       const [year, month] = period.split("-").map(Number);
