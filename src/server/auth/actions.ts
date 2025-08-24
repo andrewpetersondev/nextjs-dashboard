@@ -2,15 +2,12 @@
 
 import { redirect } from "next/navigation";
 import type {
-  LoginFormFieldNames,
-  LoginFormFields,
   SignupFormFieldNames,
   SignupFormFields,
 } from "@/features/auth/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import {
-  LoginFormSchema,
   SignupAllowedFields,
   SignupFormSchema,
 } from "@/features/users/schema.client";
@@ -22,7 +19,6 @@ import {
   createDemoUser,
   createUserDal,
   demoUserCounter,
-  findUserForLogin,
 } from "@/server/users/dal";
 import type { UserDto } from "@/server/users/dto";
 import {
@@ -92,63 +88,6 @@ export async function signup(
       success: false,
     };
   }
-  redirect("/dashboard");
-}
-
-/**
- * Handles user login.
- */
-export async function login(
-  _prevState: FormState<LoginFormFieldNames>,
-  formData: FormData,
-): Promise<FormState<LoginFormFieldNames>> {
-  const validated = (await validateFormGeneric<
-    LoginFormFieldNames,
-    LoginFormFields
-  >(formData, LoginFormSchema, undefined, {
-    returnMode: "form",
-    // biome-ignore lint/nursery/useExplicitType: <temporary>
-    transform: (d) => ({
-      ...d,
-      email: d.email.toLowerCase().trim(),
-    }),
-  })) as FormState<LoginFormFieldNames, LoginFormFields>;
-
-  if (!validated.success || typeof validated.data === "undefined") {
-    return validated;
-  }
-
-  const { email, password } = validated.data;
-
-  const db = getDB();
-
-  try {
-    const user = await findUserForLogin(db, email, password);
-
-    if (!user) {
-      return {
-        errors: {},
-        message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-        success: false,
-      };
-    }
-
-    await setSessionToken(toUserId(user.id), toUserRole(user.role));
-  } catch (error) {
-    logger.error({
-      context: "login",
-      email: formData.get("email") as string,
-      error,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-    });
-
-    return {
-      errors: {},
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    };
-  }
-  // keep: why does redirect have to be here instead of after the session is created?
   redirect("/dashboard");
 }
 

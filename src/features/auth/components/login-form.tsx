@@ -9,7 +9,7 @@ import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-l
 import { InputField } from "@/features/auth/components/input-field";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import type { LoginFormFieldNames } from "@/features/auth/types";
-import { login } from "@/server/auth/actions";
+import { login } from "@/server/auth/actions/login";
 import type { FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
