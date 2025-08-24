@@ -28,9 +28,7 @@ interface CardWrapperProps {
   data: DashboardCardData;
 }
 
-export async function CardWrapper({
-  data,
-}: CardWrapperProps): Promise<JSX.Element> {
+export function CardWrapper({ data }: CardWrapperProps): JSX.Element {
   return (
     <>
       <Card title="Collected" type="collected" value={data.totalPaid} />

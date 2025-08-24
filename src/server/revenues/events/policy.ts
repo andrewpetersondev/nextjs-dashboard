@@ -7,6 +7,8 @@ import type { InvoiceDto } from "@/server/invoices/dto";
 import { logError, logInfo } from "@/server/revenues/events/logging";
 import { type Period, toPeriod } from "@/shared/brands/domain-brands";
 
+const matchingRegex = /^\d{4}-\d{2}$/;
+
 /**
  * Safely extracts the Period (first-of-month DATE) from an invoice date.
  */
@@ -22,7 +24,7 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
     if (isValid(parsedDate)) {
       return dateToPeriod(parsedDate);
     }
-    if (invoice.date.match(/^\d{4}-\d{2}$/)) {
+    if (invoice.date.match(matchingRegex)) {
       // Add a day to make it a complete date for validation
       const testDate = parseISO(`${invoice.date}-01`);
       if (isValid(testDate)) {

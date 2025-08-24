@@ -66,7 +66,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new ValidationError("Revenue data is required");
     }
     // Delegate to upsert to avoid duplication; upsert handles insert and conflict update.
-    return this.upsert(revenue);
+    return await this.upsert(revenue);
   }
 
   /**
@@ -332,7 +332,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async deleteById(id: RevenueId): Promise<void> {
     // Alias for delete(id); kept for backward compatibility
-    return this.delete(id);
+    return await this.delete(id);
   }
 
   /**
@@ -379,6 +379,6 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       updatedAt: now,
     };
 
-    return this.upsert(payload);
+    return await this.upsert(payload);
   }
 }

@@ -16,7 +16,6 @@ import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export const CreateInvoiceForm = ({
   customers,
 }: {

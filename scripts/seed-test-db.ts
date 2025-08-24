@@ -264,7 +264,6 @@ function randomInvoiceStatus(): "pending" | "paid" {
  * Main seeding function.
  */
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 async function main(): Promise<void> {
   const shouldReset = process.env.SEED_RESET === "true";
 
@@ -302,8 +301,6 @@ async function main(): Promise<void> {
     },
   ];
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <temp>
   await nodeEnvTestDb.transaction(async (tx) => {
     // 1) Seed revenues with Dates directly (no valuesFromArray)
     await tx.insert(schema.revenues).values(

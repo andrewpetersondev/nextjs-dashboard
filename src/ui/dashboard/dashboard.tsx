@@ -23,11 +23,11 @@ interface DashboardProps {
  * @param props - DashboardProps
  * @returns The dashboard JSX element.
  */
-export const Dashboard = async ({
+export const Dashboard = ({
   dashboardCardData,
   latestInvoices,
   title,
-}: DashboardProps): Promise<JSX.Element> => {
+}: DashboardProps): JSX.Element => {
   return (
     <section>
       <H1 className="mb-4">{title}</H1>

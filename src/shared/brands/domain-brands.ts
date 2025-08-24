@@ -216,7 +216,7 @@ export function toPeriod(input: Date | string): Period {
  * Generic factory to build UUID-based branded type guards.
  * Narrowing is based solely on UUID shape at runtime and brand at compile time.
  */
-const createUuidBrandGuard = <
+export const createUuidBrandGuard = <
   B extends symbol,
   T extends Brand<string, B>,
 >(): ((value: unknown) => value is T) => {

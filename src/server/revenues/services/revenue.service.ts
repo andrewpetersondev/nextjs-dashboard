@@ -113,7 +113,7 @@ export class RevenueService {
   ): Promise<RevenueEntity[]> {
     const startPeriod = formatDateToPeriod(startDate);
     const endPeriod = formatDateToPeriod(endDate);
-    return this.repository.findByDateRange(startPeriod, endPeriod);
+    return await this.repository.findByDateRange(startPeriod, endPeriod);
   }
 
   /**
@@ -126,7 +126,7 @@ export class RevenueService {
     if (!period) {
       throw new ValidationError("Period is required");
     }
-    return this.repository.findByPeriod(period);
+    return await this.repository.findByPeriod(period);
   }
 
   /**

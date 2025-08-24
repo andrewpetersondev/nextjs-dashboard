@@ -16,7 +16,6 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 import { InputField } from "@/ui/input-field";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <TEMP>
 export const SignupForm: FC = (): JSX.Element => {
   const initialState: Extract<
     FormState<SignupFormFieldNames>,

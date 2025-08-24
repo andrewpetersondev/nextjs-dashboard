@@ -118,7 +118,7 @@ export class InvoiceService {
     const formEntity = dtoToCreateInvoiceEntity(transformedDto);
     const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
 
-    return this.repo.createSafe(serviceEntity);
+    return await this.repo.createSafe(serviceEntity);
   }
 
   /**

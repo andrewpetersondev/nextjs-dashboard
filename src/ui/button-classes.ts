@@ -9,8 +9,8 @@ export const ANCHOR_BUTTON_FOCUS_RING_CLASSES =
   "ring-1 focus-visible:ring-2 ring-bg-accent focus-visible:ring-bg-focus";
 
 export const ANCHOR_BUTTON_PADDING_SIZES = {
-  sm: "px-3 py-2",
   md: "px-4 py-2.5",
+  sm: "px-3 py-2",
 } as const;
 
 /**

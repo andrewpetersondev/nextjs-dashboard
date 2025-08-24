@@ -52,7 +52,6 @@ export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
  *
  * @returns Promise resolving to either FormState or Result based on returnMode option
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function validateFormGeneric<
   TFieldNames extends string,
   TIn,
@@ -82,7 +81,6 @@ export async function validateFormGeneric<
 
   let finalResult: FormState<TFieldNames, TOut> | Result<TOut, FieldErrors>;
 
-  // biome-ignore lint/style/noNegationElse: <temp>
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
     const normalized = mapFieldErrors(fieldErrors, fields);

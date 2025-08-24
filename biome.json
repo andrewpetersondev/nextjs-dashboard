@@ -28,7 +28,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!scripts",
+      "!cypress",
       "!.aiassistant",
       "!.github",
       "!.idea",
@@ -49,6 +49,7 @@
       "!tsconfig.tsbuildinfo",
       "!out",
       "!.turbo",
+      "!dist",
       "!**/dist",
       "!build",
       "!coverage",
@@ -109,7 +110,8 @@
         "noNestedComponentDefinitions": "on",
         "noReactPropAssignments": "on",
         "noUndeclaredDependencies": "on",
-        "recommended": true
+        "recommended": true,
+        "useImportExtensions": "on"
       },
       "nursery": {
         "noImportCycles": "on",
@@ -181,6 +183,62 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": ["src/shared/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/src/server/**",
+                      "src/server/**",
+                      "@/server/**",
+                      "server/**"
+                    ],
+                    "message": "Shared code cannot import from server code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/features/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/src/server/**",
+                      "src/server/**",
+                      "@/server/**",
+                      "server/**",
+                      "!@/src/server/**/actions/**",
+                      "!src/server/**/actions/**",
+                      "!@/server/**/actions/**",
+                      "!server/**/actions/**"
+                    ],
+                    "message": "Feature code may only import server *actions*."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "root": true,
   "vcs": {
     "clientKind": "git",

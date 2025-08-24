@@ -121,8 +121,6 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
 /**
  * Edits an existing user.
  */
-
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export async function updateUserAction(
   id: string,
   _prevState: FormState<EditUserFormFieldNames>,

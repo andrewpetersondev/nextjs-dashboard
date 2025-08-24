@@ -483,7 +483,7 @@ export async function readFilteredInvoicesAction(
   currentPage: number = 1,
 ): Promise<InvoiceListFilter[]> {
   const db = getDB();
-  return fetchFilteredInvoicesDal(db, query, currentPage);
+  return await fetchFilteredInvoicesDal(db, query, currentPage);
 }
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {

@@ -21,7 +21,7 @@ const BREADCRUMB_SEPARATOR = "/";
 export const Breadcrumbs = ({
   breadcrumbs,
 }: {
-  breadcrumbs: ReadonlyArray<Breadcrumb>;
+  breadcrumbs: readonly Breadcrumb[];
 }): JSX.Element => (
   <nav aria-label="Breadcrumb" className="mb-6 block">
     <ol className={clsx("flex text-xl md:text-2xl")}>

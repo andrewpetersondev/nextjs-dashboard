@@ -27,7 +27,6 @@ type FieldsProps = {
   isEdit?: boolean;
 };
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export function UserFields({
   values = {},
   errors,

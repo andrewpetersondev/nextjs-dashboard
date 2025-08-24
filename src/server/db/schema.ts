@@ -25,12 +25,12 @@ import {
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "../../features/invoices/types";
+} from "../../features/invoices/types.ts";
 import {
   REVENUE_SOURCES,
   type RevenueSource,
-} from "../../features/revenues/types";
-import { AUTH_ROLES, type AuthRole } from "../../shared/auth/roles";
+} from "../../features/revenues/types.ts";
+import { AUTH_ROLES, type AuthRole } from "../../shared/auth/roles.ts";
 import type {
   CustomerId,
   InvoiceId,
@@ -38,7 +38,48 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "../../shared/brands/domain-brands";
+} from "../../shared/brands/domain-brands.ts";
+
+/**
+ * Common field builders for consistency.
+ */
+const commonFields = {
+  email: () => varchar(COLUMNS.EMAIL, { length: 255 }).notNull().unique(),
+
+  id: {
+    // Primary keys do not need unique() (PK implies uniqueness)
+    serial: () => serial(COLUMNS.ID).primaryKey(),
+
+    uuid: () => uuid(COLUMNS.ID).defaultRandom().primaryKey(),
+  },
+
+  name: () => varchar(COLUMNS.NAME, { length: 255 }).notNull(),
+
+  sensitiveData: () =>
+    varchar(COLUMNS.SENSITIVE_DATA, { length: 255 })
+      .notNull()
+      .default("cantTouchThis"),
+
+  timestamps: {
+    // Use timestamptz for safer cross-timezone handling
+    createdAt: () =>
+      timestamp(COLUMNS.CREATED_AT, { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
+
+    // Sessions set their own expiry; no default here on purpose
+    expiresAt: () =>
+      timestamp(COLUMNS.EXPIRES_AT, {
+        mode: "date",
+        withTimezone: true,
+      }).notNull(),
+
+    updatedAt: () =>
+      timestamp(COLUMNS.UPDATED_AT, { mode: "date", withTimezone: true })
+        .defaultNow()
+        .notNull(),
+  },
+} as const;
 
 /**
  * Schema overview
@@ -97,47 +138,6 @@ export const calculationSourceEnum = pgEnum(
   COLUMNS.CALCULATION_SOURCE,
   REVENUE_SOURCES,
 );
-
-/**
- * Common field builders for consistency.
- */
-const commonFields = {
-  email: () => varchar(COLUMNS.EMAIL, { length: 255 }).notNull().unique(),
-
-  id: {
-    // Primary keys do not need unique() (PK implies uniqueness)
-    serial: () => serial(COLUMNS.ID).primaryKey(),
-
-    uuid: () => uuid(COLUMNS.ID).defaultRandom().primaryKey(),
-  },
-
-  name: () => varchar(COLUMNS.NAME, { length: 255 }).notNull(),
-
-  sensitiveData: () =>
-    varchar(COLUMNS.SENSITIVE_DATA, { length: 255 })
-      .notNull()
-      .default("cantTouchThis"),
-
-  timestamps: {
-    // Use timestamptz for safer cross-timezone handling
-    createdAt: () =>
-      timestamp(COLUMNS.CREATED_AT, { mode: "date", withTimezone: true })
-        .defaultNow()
-        .notNull(),
-
-    // Sessions set their own expiry; no default here on purpose
-    expiresAt: () =>
-      timestamp(COLUMNS.EXPIRES_AT, {
-        mode: "date",
-        withTimezone: true,
-      }).notNull(),
-
-    updatedAt: () =>
-      timestamp(COLUMNS.UPDATED_AT, { mode: "date", withTimezone: true })
-        .defaultNow()
-        .notNull(),
-  },
-} as const;
 
 /**
  * Users: authentication and profile info.
