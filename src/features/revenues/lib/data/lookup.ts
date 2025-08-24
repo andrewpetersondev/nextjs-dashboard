@@ -1,3 +1,4 @@
+import { LOOKUP_LOG_KEYS_SAMPLE } from "@/features/revenues/lib/data/constants";
 import { normalizeToPeriod } from "@/features/revenues/lib/data/period-normalize";
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { logger } from "@/server/logging/logger";
@@ -38,7 +39,7 @@ export function createDataLookupMap(
     context: "createDataLookupMap",
     dataMapCount: dataMap.size,
     duplicates: [...new Set(duplicates)],
-    keysSample: Array.from(dataMap.keys()).slice(0, 6),
+    keysSample: Array.from(dataMap.keys()).slice(0, LOOKUP_LOG_KEYS_SAMPLE),
     message: "Created data lookup map",
   });
 

@@ -3,6 +3,11 @@ import type {
   IntervalDuration,
   RollingMonthData,
 } from "@/features/revenues/core/types";
+import {
+  MONTHS_IN_YEAR,
+  ROLLING_START_OFFSET_MONTHS,
+  SINGLE_MONTH_INTERVAL,
+} from "@/features/revenues/lib/date/constants";
 import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import { createMonthTemplateData } from "@/server/revenues/utils/template";
 import type { Period } from "@/shared/brands/domain-brands";
@@ -37,7 +42,7 @@ export function calculateDateRange(): {
   const now = new Date();
 
   // First day of the month 12 months ago using date-fns
-  const startDate = startOfMonth(addMonths(now, -11));
+  const startDate = startOfMonth(addMonths(now, -ROLLING_START_OFFSET_MONTHS));
 
   // Last day of the current month using date-fns
   const endDate = endOfMonth(now);
@@ -67,7 +72,7 @@ export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
   while (currentDate <= lastDate) {
     periods.push(dateToPeriod(currentDate));
     // Move to the next month using date-fns
-    currentDate = addMonths(currentDate, 1);
+    currentDate = addMonths(currentDate, SINGLE_MONTH_INTERVAL);
   }
 
   return periods;
@@ -82,11 +87,11 @@ export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
 export function getIntervalCount(period: IntervalDuration): number {
   switch (period) {
     case "year":
-      return 12;
+      return MONTHS_IN_YEAR;
     case "month":
-      return 1;
+      return SINGLE_MONTH_INTERVAL;
     default:
-      return 12; // Default to 12 months if the period is not recognized
+      return MONTHS_IN_YEAR; // Default to 12 months if the period is not recognized
   }
 }
 

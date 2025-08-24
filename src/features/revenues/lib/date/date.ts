@@ -1,4 +1,8 @@
 import { MONTH_ORDER, type MonthName } from "@/features/revenues/core/types";
+import {
+  MAX_MONTH_NUMBER,
+  MIN_MONTH_NUMBER,
+} from "@/features/revenues/lib/date/constants";
 import { ValidationError } from "@/server/errors/errors";
 
 /**
@@ -9,13 +13,17 @@ import { ValidationError } from "@/server/errors/errors";
  * @throws {ValidationError} When monthNumber is not between 1 and 12
  */
 export function getMonthName(monthNumber: number): MonthName {
-  if (!Number.isInteger(monthNumber) || monthNumber < 1 || monthNumber > 12) {
+  if (
+    !Number.isInteger(monthNumber) ||
+    monthNumber < MIN_MONTH_NUMBER ||
+    monthNumber > MAX_MONTH_NUMBER
+  ) {
     throw new ValidationError(
       `Invalid month number: ${monthNumber}. Expected an integer between 1 and 12.`,
     );
   }
 
-  const index = monthNumber - 1;
+  const index = monthNumber - MIN_MONTH_NUMBER; // convert to 0-based index
   // biome-ignore lint/style/noNonNullAssertion: <Safe due to validation above>
   return MONTH_ORDER[index]!;
 }
@@ -34,5 +42,5 @@ export function getMonthNumber(monthName: MonthName): number {
       `Invalid month name: "${monthName}". Expected one of: ${MONTH_ORDER.join(", ")}`,
     );
   }
-  return index + 1;
+  return index + MIN_MONTH_NUMBER;
 }
