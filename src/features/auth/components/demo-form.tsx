@@ -25,6 +25,7 @@ export const DemoForm: FC<DemoFormProps> = ({
 }: DemoFormProps) => (
   <form
     action={async (): Promise<void> => {
+      "use server";
       await demoUser(userRole);
     }}
     aria-label={label}

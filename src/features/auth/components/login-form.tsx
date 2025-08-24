@@ -9,7 +9,6 @@ import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-l
 import { InputField } from "@/features/auth/components/input-field";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import type { LoginFormFieldNames } from "@/features/auth/types";
-import { login } from "@/server/auth/actions/login";
 import type { FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 
@@ -20,21 +19,31 @@ const initialState: FormState<LoginFormFieldNames> = {
   success: false,
 };
 
+// Define the action type and component props
+type LoginAction = (
+  prevState: FormState<LoginFormFieldNames>,
+  formData: FormData,
+) => Promise<FormState<LoginFormFieldNames>>;
+
+interface LoginFormProps {
+  action: LoginAction;
+}
+
 /**
  * LoginForm component for user authentication.
  *
  * @returns {JSX.Element} Rendered LoginForm component.
  */
-export const LoginForm: FC = (): JSX.Element => {
-  // useActionState returns a tuple: [state, action, pending]
-  const [state, action, pending] = useActionState<
+export const LoginForm: FC<LoginFormProps> = ({ action }): JSX.Element => {
+  // useActionState returns a tuple: [state, boundAction, pending]
+  const [state, boundAction, pending] = useActionState<
     FormState<LoginFormFieldNames>,
     FormData
-  >(login, initialState);
+  >(action, initialState);
 
   return (
     <>
-      <form action={action} aria-label="Login form" className="space-y-6">
+      <form action={boundAction} aria-label="Login form" className="space-y-6">
         <InputField
           autoComplete="email"
           autoFocus
