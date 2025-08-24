@@ -1,17 +1,9 @@
-import type { core, ZodType } from "zod";
+import type { ZodType, z } from "zod";
 import { ValidationError_New } from "@/shared/errors/domain";
+import type { FieldErrors } from "@/shared/forms/types";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
-export type ZodIssue = core.$ZodIssue;
-
-/**
- * Zod adapters for validation.
- *
- * Documentation (conceptual, minimal code):
- * docs/lib/refactor-strategy/phase-1/1-3-validation-framework.md
- */
-
-export type FieldErrors = Record<string, string[]>;
+export type ZodIssue = z.core.$ZodIssue;
 
 export const zodToFieldErrors = (issues: ZodIssue[]): FieldErrors => {
   const errors: FieldErrors = {};
@@ -35,7 +27,7 @@ export class ZodValidator<T> {
     if (!parsed.success) {
       return Err(
         new ValidationError_New("Validation failed", {
-          issues: parsed.error.issues,
+          fieldErrors: zodToFieldErrors(parsed.error.issues),
         }),
       );
     }

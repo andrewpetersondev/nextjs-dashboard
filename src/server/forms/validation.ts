@@ -1,9 +1,7 @@
 import "server-only";
 
-import type * as z from "zod";
-
+import type { z } from "zod";
 import { logger } from "@/server/logging/logger";
-
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
@@ -54,6 +52,7 @@ export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
  *
  * @returns Promise resolving to either FormState or Result based on returnMode option
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temp>
 export async function validateFormGeneric<
   TFieldNames extends string,
   TIn,
@@ -78,11 +77,11 @@ export async function validateFormGeneric<
   const fields =
     allowedFields ??
     (isZodObject(schema)
-      ? (deriveAllowedFieldsFromSchema(schema) as ReadonlyArray<TFieldNames>)
+      ? (deriveAllowedFieldsFromSchema(schema) as readonly TFieldNames[])
       : ([] as const));
 
   if (!parsed.success) {
-    const { fieldErrors } = parsed.error.flatten();
+    const fieldErrors = parsed.error.flatten().fieldErrors;
     const normalized = mapFieldErrors(fieldErrors, fields);
 
     if (returnMode === "result") {

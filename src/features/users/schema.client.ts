@@ -1,23 +1,35 @@
-import * as z from "zod";
+import {
+  type ZodEmail,
+  type ZodObject,
+  type ZodOptional,
+  type ZodString,
+  z,
+} from "zod";
 import { roleSchema } from "@/shared/auth/zod";
+import { DEFAULT_USER_SCHEMA } from "@/shared/constants/schema-defaults";
 
-// Username validation schema.
-export const usernameSchema = z
+export const usernameSchema: ZodString = z
   .string()
-  .min(3, { error: "Username must be at least three characters long." })
-  .max(20, { error: "Username cannot exceed 20 characters." })
+  .min(DEFAULT_USER_SCHEMA.USERNAME_MIN_LENGTH, {
+    error: "Username must be at least three characters long.",
+  })
+  .max(DEFAULT_USER_SCHEMA.USERNAME_MAX_LENGTH, {
+    error: "Username cannot exceed 20 characters.",
+  })
   .trim();
 
-// Email validation schema.
-export const emailSchema = z
+export const emailSchema: ZodEmail = z
   .email({ error: "Please enter a valid email address." })
   .trim();
 
-// Password validation schema.
-export const passwordSchema = z
+export const passwordSchema: ZodString = z
   .string()
-  .min(5, { error: "Password must be at least 5 characters long." })
-  .max(32, { error: "Password cannot exceed 32 characters." })
+  .min(DEFAULT_USER_SCHEMA.PASSWORD_MIN_LENGTH, {
+    error: "Password must be at least 5 characters long.",
+  })
+  .max(DEFAULT_USER_SCHEMA.PASSWORD_MAX_LENGTH, {
+    error: "Password cannot exceed 32 characters.",
+  })
   .regex(/[a-zA-Z]/, { error: "Password must contain a letter." })
   .regex(/[0-9]/, { error: "Password must contain a number." })
   .regex(/[^a-zA-Z0-9]/, {
@@ -25,29 +37,42 @@ export const passwordSchema = z
   })
   .trim();
 
-// Validation schema for creating a user (admin).
-export const CreateUserFormSchema = z.object({
+export const CreateUserFormSchema: ZodObject<{
+  email: ZodEmail;
+  password: ZodString;
+  role: typeof roleSchema;
+  username: ZodString;
+}> = z.object({
   email: emailSchema,
   password: passwordSchema,
   role: roleSchema,
   username: usernameSchema,
 });
 
-// Validation schema for user signup.
-export const SignupFormSchema = z.object({
+export const SignupFormSchema: ZodObject<{
+  email: ZodEmail;
+  password: ZodString;
+  username: ZodString;
+}> = z.object({
   email: emailSchema,
   password: passwordSchema,
   username: usernameSchema,
 });
 
-// Validation schema for user login.
-export const LoginFormSchema = z.object({
+export const LoginFormSchema: ZodObject<{
+  email: ZodEmail;
+  password: ZodString;
+}> = z.object({
   email: emailSchema,
   password: passwordSchema,
 });
 
-// Validation schema for editing a user.
-export const EditUserFormSchema = z.object({
+export const EditUserFormSchema: ZodObject<{
+  email: ZodOptional<ZodEmail>;
+  password: ZodOptional<ZodString>;
+  role: ZodOptional<typeof roleSchema>;
+  username: ZodOptional<ZodString>;
+}> = z.object({
   email: emailSchema.optional(),
   password: passwordSchema.optional(),
   role: roleSchema.optional(),
@@ -55,5 +80,4 @@ export const EditUserFormSchema = z.object({
 });
 
 export const SignupAllowedFields = ["username", "email", "password"] as const;
-
 export const LoginAllowedFields = ["email", "password"] as const;
