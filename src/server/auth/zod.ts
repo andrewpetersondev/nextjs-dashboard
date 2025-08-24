@@ -1,13 +1,12 @@
 import "server-only";
 
-import * as z from "zod";
-
+import { type ZodNumber, type ZodObject, z } from "zod";
 import { EncryptPayloadSchema } from "@/shared/auth/zod";
 
-export const iatSchema = z.number();
-export const expSchema = z.number();
+export const iatSchema: ZodNumber = z.number();
+export const expSchema: ZodNumber = z.number();
 
-export const DecryptPayloadSchema = EncryptPayloadSchema.extend({
+export const DecryptPayloadSchema: ZodObject = EncryptPayloadSchema.extend({
   exp: expSchema,
   iat: iatSchema,
 });
