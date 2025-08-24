@@ -16,7 +16,9 @@
 
 import { reset } from "drizzle-seed";
 // biome-ignore lint/performance/noNamespaceImport: <temp>
-import * as schema from "@/server/db/schema.ts";
+// @ts-ignore
+import * as schema from "../src/server/db/schema.ts";
+// @ts-ignore
 import { nodeEnvDb } from "./db-dev.ts";
 
 async function main(): Promise<void> {

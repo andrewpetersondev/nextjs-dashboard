@@ -1,8 +1,10 @@
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
 // biome-ignore lint/performance/noNamespaceImport: <temporary>
+// @ts-ignore
 import * as schema from "../src/server/db/schema.ts";
 import type { Period } from "../src/shared/brands/domain-brands.ts";
+// @ts-ignore
 import { nodeEnvDb } from "./db-dev.ts";
 
 /**
