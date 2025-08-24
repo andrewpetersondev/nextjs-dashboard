@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "../__fixtures__/constants";
+
 describe.skip("File Upload Server Actions", () => {
   it("should upload file successfully", () => {
     cy.loginAsTestUser();
@@ -35,6 +37,6 @@ describe.skip("File Upload Server Actions", () => {
     });
 
     cy.get('[data-cy="upload-button"]').click();
-    cy.findByText(/Invalid file type/i).should("be.visible");
+    cy.findByText(ERROR_MESSAGES.INVALID_FILE_TYPE).should("be.visible");
   });
 });

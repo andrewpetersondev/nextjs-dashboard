@@ -1,3 +1,5 @@
+import { STATUS_CODES } from "../__fixtures__/constants";
+
 describe.skip("CRUD Server Actions", () => {
   beforeEach(() => {
     // Setup authenticated user
@@ -16,7 +18,7 @@ describe.skip("CRUD Server Actions", () => {
     cy.get('[data-cy="save-item-button"]').click();
 
     cy.wait("@createAction").then((interception) => {
-      expect(interception.response?.statusCode).to.eq(200);
+      expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
     });
 
     cy.findByText("Test Item").should("be.visible");

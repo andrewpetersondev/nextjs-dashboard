@@ -1,9 +1,11 @@
+import { UI_MATCHERS } from "../__fixtures__/constants";
+
 describe("Home smoke test", () => {
   it("loads homepage and navigates to login", () => {
     cy.visit("/");
 
     // Assert welcome text and course link exist
-    cy.findByText(/Welcome to Acme\./i).should("be.visible");
+    cy.findByText(UI_MATCHERS.WELCOME_HOME).should("be.visible");
     cy.get('[data-testid="nextjs-course-link"]').should(
       "have.attr",
       "href",
@@ -15,7 +17,7 @@ describe("Home smoke test", () => {
     cy.url().should("include", "/login");
 
     // Assert login page heading is visible
-    cy.findByRole("heading", { name: /Log in to your account/i }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS.LOGIN_HEADING }).should(
       "be.visible",
     );
 
@@ -28,15 +30,16 @@ describe("Home smoke test", () => {
       },
       (violations) => {
         // Log detailed violation information
-        violations.forEach((violation) => {
+        for (const violation of violations) {
           cy.log(`A11y violation: ${violation.id}`);
           cy.log(`Description: ${violation.description}`);
           cy.log(`Help: ${violation.helpUrl}`);
-          violation.nodes.forEach((node) => {
+
+          for (const node of violation.nodes) {
             cy.log(`Element: ${node.target.join(", ")}`);
             cy.log(`Summary: ${node.failureSummary}`);
-          });
-        });
+          }
+        }
       },
     );
   });

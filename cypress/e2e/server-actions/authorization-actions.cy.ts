@@ -1,3 +1,5 @@
+import { STATUS_CODES, SUCCESS_MESSAGES } from "../__fixtures__/constants";
+
 describe.skip("Server Action Authorization", () => {
   it("should prevent unauthorized access to admin actions", () => {
     cy.loginAsRegularUser();
@@ -9,7 +11,7 @@ describe.skip("Server Action Authorization", () => {
       method: "POST",
       url: "/admin/users",
     }).then((response) => {
-      expect(response.status).to.eq(403);
+      expect(response.status).to.eq(STATUS_CODES.FORBIDDEN);
     });
   });
 
@@ -28,9 +30,9 @@ describe.skip("Server Action Authorization", () => {
     cy.get('[data-cy="confirm-suspend-button"]').click();
 
     cy.wait("@adminAction").then((interception) => {
-      expect(interception.response?.statusCode).to.eq(200);
+      expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
     });
 
-    cy.findByText(/User suspended successfully/i).should("be.visible");
+    cy.findByText(SUCCESS_MESSAGES.USER_SUSPENDED).should("be.visible");
   });
 });

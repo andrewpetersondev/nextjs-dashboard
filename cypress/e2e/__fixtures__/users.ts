@@ -2,6 +2,7 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
+import { dividerOrModulus } from "./constants";
 
 export interface TestUser {
   readonly username: string;
@@ -16,7 +17,7 @@ export interface TestUser {
  * @returns TestUser object with unique username, email, and secure password
  */
 export function createTestUser(): TestUser {
-  const timestamp = Date.now() % 99999999;
+  const timestamp = Date.now() % dividerOrModulus;
 
   return {
     email: `e2e_${timestamp}@example.com`,
@@ -33,7 +34,7 @@ export function createTestUser(): TestUser {
  * @returns TestUser object with custom suffix
  */
 export function createTestUserWithSuffix(suffix: string): TestUser {
-  const timestamp = Date.now() % 99999999;
+  const timestamp = Date.now() % dividerOrModulus;
 
   return {
     email: `e2e_${timestamp}_${suffix}@example.com`,

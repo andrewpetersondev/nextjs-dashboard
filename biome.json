@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "assist": {
     "actions": {
       "recommended": true,
@@ -33,7 +33,8 @@
       "!.idea",
       "!.junie",
       "!.next",
-      "!cypress/*.{js,jsx}",
+      "!**/*.js",
+      "!**/*.jsx",
       "!docs",
       "!drizzle",
       "!node_modules",
@@ -47,7 +48,7 @@
       "!tsconfig.tsbuildinfo",
       "!out",
       "!.turbo",
-      "!dist",
+      "!**/dist",
       "!build",
       "!coverage",
       "!.nyc_output",
@@ -93,15 +94,95 @@
     },
     "enabled": true,
     "rules": {
-      "recommended": true
+      "a11y": {
+        "recommended": true
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "on",
+        "noExcessiveLinesPerFunction": "on",
+        "noExcessiveNestedTestSuites": "on",
+        "noForEach": "on",
+        "recommended": true
+      },
+      "correctness": {
+        "noNestedComponentDefinitions": "on",
+        "noReactPropAssignments": "on",
+        "noUndeclaredDependencies": "on",
+        "recommended": true
+      },
+      "nursery": {
+        "noImportCycles": "on",
+        "noMisusedPromises": "on",
+        "recommended": true,
+        "useExhaustiveSwitchCases": "on",
+        "useExplicitType": "on",
+        "useMaxParams": "on",
+        "useReactFunctionComponents": "on",
+        "useSortedClasses": "on"
+      },
+      "performance": {
+        "noAwaitInLoops": "on",
+        "noBarrelFile": "on",
+        "noImgElement": "on",
+        "noNamespaceImport": "on",
+        "noReExportAll": "on",
+        "recommended": true,
+        "useTopLevelRegex": "on"
+      },
+      "recommended": true,
+      "style": {
+        "noCommonJs": "on",
+        "noExportedImports": "on",
+        "noImplicitBoolean": "on",
+        "noMagicNumbers": "on",
+        "noNegationElse": "on",
+        "noNestedTernary": "on",
+        "noParameterAssign": "on",
+        "noUselessElse": "on",
+        "noYodaExpression": "on",
+        "recommended": true,
+        "useCollapsedElseIf": "on",
+        "useCollapsedIf": "on",
+        "useConsistentArrayType": "on",
+        "useConsistentCurlyBraces": "on",
+        "useConsistentMemberAccessibility": "on",
+        "useConsistentObjectDefinitions": "on",
+        "useDefaultParameterLast": "on",
+        "useDefaultSwitchClause": "on",
+        "useEnumInitializers": "on",
+        "useExplicitLengthCheck": "on",
+        "useExportsLast": "on",
+        "useForOf": "on",
+        "useFragmentSyntax": "on",
+        "useGroupedAccessorPairs": "on",
+        "useObjectSpread": "on",
+        "useReadonlyClassProperties": "on",
+        "useSelfClosingElements": "on",
+        "useShorthandAssign": "on",
+        "useSingleVarDeclarator": "on",
+        "useSymbolDescription": "on",
+        "useThrowNewError": "on",
+        "useThrowOnlyError": "on",
+        "useTrimStartEnd": "on",
+        "useUnifiedTypeSignatures": "on"
+      },
+      "suspicious": {
+        "noBitwiseOperators": "on",
+        "noDocumentImportInPage": "on",
+        "noEmptyBlockStatements": "on",
+        "noEvolvingTypes": "on",
+        "noUnassignedVariables": "on",
+        "recommended": true,
+        "useAwait": "on",
+        "useErrorMessage": "on",
+        "useGuardForIn": "on"
+      }
     }
   },
   "root": true,
   "vcs": {
     "clientKind": "git",
-    "defaultBranch": "main",
     "enabled": true,
-    "root": ".",
     "useIgnoreFile": true
   }
 }

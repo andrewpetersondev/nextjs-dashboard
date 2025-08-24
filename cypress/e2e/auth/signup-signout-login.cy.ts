@@ -1,3 +1,4 @@
+import { UI_MATCHERS } from "../__fixtures__/constants";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup → Sign out → Login flow", () => {
@@ -6,7 +7,7 @@ describe("Signup → Sign out → Login flow", () => {
 
     // 1) Sign up
     cy.visit("/signup");
-    cy.findByRole("heading", { name: /Sign up for an account/i }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
       "be.visible",
     );
 
@@ -18,15 +19,16 @@ describe("Signup → Sign out → Login flow", () => {
 
     // 2) Redirects to dashboard after signup
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
-    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
-      "be.visible",
-    );
+    cy.findByRole("heading", {
+      level: 1,
+      name: UI_MATCHERS.DASHBOARD_H1,
+    }).should("be.visible");
 
     // 3) Sign out from dashboard (Logout button has aria-label "Sign Out")
-    cy.findByRole("button", { name: /Sign Out/i }).click();
+    cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
 
     // 4) After logout, redirected to home
-    cy.findByText(/Welcome to Acme\./i, { timeout: 20000 }).should(
+    cy.findByText(UI_MATCHERS.WELCOME_HOME, { timeout: 20000 }).should(
       "be.visible",
     );
 
@@ -40,8 +42,9 @@ describe("Signup → Sign out → Login flow", () => {
 
     // 6) Back on dashboard after login
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
-    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
-      "be.visible",
-    );
+    cy.findByRole("heading", {
+      level: 1,
+      name: UI_MATCHERS.DASHBOARD_H1,
+    }).should("be.visible");
   });
 });

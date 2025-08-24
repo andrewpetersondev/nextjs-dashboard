@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES, STATUS_CODES } from "../__fixtures__/constants";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Authentication Server Actions", () => {
@@ -17,7 +18,7 @@ describe("Authentication Server Actions", () => {
     cy.get('[data-cy="signup-submit-button"]').click();
 
     cy.wait("@signupAction").then((interception) => {
-      expect(interception.response?.statusCode).to.eq(200);
+      expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
     });
 
     cy.url().should("include", "/dashboard");
@@ -33,7 +34,7 @@ describe("Authentication Server Actions", () => {
     cy.get('[data-cy="login-submit-button"]').click();
 
     cy.wait("@loginAction");
-    cy.findByText(/Invalid credentials/i).should("be.visible");
+    cy.findByText(ERROR_MESSAGES.INVALID_CREDENTIALS).should("be.visible");
     cy.url().should("include", "/login");
   });
 });

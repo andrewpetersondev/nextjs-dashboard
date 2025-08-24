@@ -1,3 +1,5 @@
+import { DURATION, ERROR_MESSAGES } from "../__fixtures__/constants";
+
 describe.skip("Server Action Performance", () => {
   it("should handle rate limiting gracefully", () => {
     cy.loginAsTestUser();
@@ -8,7 +10,7 @@ describe.skip("Server Action Performance", () => {
       cy.get('[data-cy="quick-action-button"]').click();
     }
 
-    cy.findByText(/Rate limit exceeded/i).should("be.visible");
+    cy.findByText(ERROR_MESSAGES.RATE_LIMIT_EXCEEDED).should("be.visible");
   });
 
   it("should complete actions within reasonable time", () => {
@@ -28,7 +30,7 @@ describe.skip("Server Action Performance", () => {
     cy.wait("@performanceAction").then(() => {
       const endTime = Date.now();
       const duration = endTime - startTime;
-      expect(duration).to.be.lessThan(5000); // 5 second max
+      expect(duration).to.be.lessThan(DURATION.FIVE_SECONDS); // 5 second max
     });
   });
 });

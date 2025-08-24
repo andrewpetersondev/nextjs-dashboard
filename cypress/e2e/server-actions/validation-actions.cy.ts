@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "../__fixtures__/constants";
+
 describe.skip("Server Action Validation", () => {
   it("should handle validation errors gracefully", () => {
     cy.loginAsTestUser();
@@ -34,6 +36,6 @@ describe.skip("Server Action Validation", () => {
     cy.get('[data-cy="save-item-button"]').click();
 
     cy.wait("@duplicateAction");
-    cy.findByText(/Item already exists/i).should("be.visible");
+    cy.findByText(ERROR_MESSAGES.ITEM_ALREADY_EXISTS).should("be.visible");
   });
 });

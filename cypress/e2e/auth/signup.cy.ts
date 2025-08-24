@@ -1,3 +1,4 @@
+import { UI_MATCHERS } from "../__fixtures__/constants";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup flow", () => {
@@ -7,7 +8,7 @@ describe("Signup flow", () => {
     cy.visit("/signup");
 
     // Assert signup page renders
-    cy.findByRole("heading", { name: /Sign up for an account/i }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
       "be.visible",
     );
 
@@ -27,9 +28,10 @@ describe("Signup flow", () => {
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
 
     // Verify dashboard heading for a regular user
-    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
-      "be.visible",
-    );
+    cy.findByRole("heading", {
+      level: 1,
+      name: UI_MATCHERS.DASHBOARD_H1,
+    }).should("be.visible");
   });
 });
 
@@ -50,7 +52,7 @@ describe.skip("Signup flow with Database Tasks", () => {
     const user = createTestUser();
 
     cy.visit("/signup");
-    cy.findByRole("heading", { name: /Sign up for an account/i }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
       "be.visible",
     );
 
@@ -61,8 +63,9 @@ describe.skip("Signup flow with Database Tasks", () => {
     cy.get('[data-cy="signup-submit-button"]').click();
     cy.url({ timeout: 20000 }).should("include", "/dashboard");
 
-    cy.findByRole("heading", { level: 1, name: /User Dashboard/i }).should(
-      "be.visible",
-    );
+    cy.findByRole("heading", {
+      level: 1,
+      name: UI_MATCHERS.DASHBOARD_H1,
+    }).should("be.visible");
   });
 });
