@@ -1,6 +1,6 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import { ErrorMessage } from "@/ui/components/error-message";
+import { ErrorMessage } from "@/ui/error-message";
 
 interface InvoiceAmountInputProps
   extends InputHTMLAttributes<HTMLInputElement> {

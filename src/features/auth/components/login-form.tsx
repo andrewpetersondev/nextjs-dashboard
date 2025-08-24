@@ -6,11 +6,11 @@ import { type FC, useActionState } from "react";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
-import { InputField } from "@/features/auth/components/input-field";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import type { LoginFormFieldNames } from "@/features/auth/types";
 import type { FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
+import { InputField } from "@/ui/input-field";
 
 // Define the initial state with strict typing
 const initialState: FormState<LoginFormFieldNames> = {
@@ -34,7 +34,9 @@ interface LoginFormProps {
  *
  * @returns {JSX.Element} Rendered LoginForm component.
  */
-export const LoginForm: FC<LoginFormProps> = ({ action }): JSX.Element => {
+export const LoginForm: FC<LoginFormProps> = ({
+  action,
+}: LoginFormProps): JSX.Element => {
   // useActionState returns a tuple: [state, boundAction, pending]
   const [state, boundAction, pending] = useActionState<
     FormState<LoginFormFieldNames>,
@@ -46,7 +48,7 @@ export const LoginForm: FC<LoginFormProps> = ({ action }): JSX.Element => {
       <form action={boundAction} aria-label="Login form" className="space-y-6">
         <InputField
           autoComplete="email"
-          autoFocus
+          autoFocus={true}
           dataCy="login-email-input"
           describedById="login-email-errors"
           error={state?.errors?.email}
@@ -60,7 +62,7 @@ export const LoginForm: FC<LoginFormProps> = ({ action }): JSX.Element => {
           label="Email address"
           name="email"
           placeholder="steve@jobs.com"
-          required
+          required={true}
           type="email"
         />
         <InputField
@@ -78,7 +80,7 @@ export const LoginForm: FC<LoginFormProps> = ({ action }): JSX.Element => {
           label="Password"
           name="password"
           placeholder="Enter your password"
-          required
+          required={true}
           type="password"
         />
 

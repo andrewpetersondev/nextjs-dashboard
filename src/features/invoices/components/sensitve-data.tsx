@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Label } from "@/ui/components/label";
+import { Label } from "@/ui/label";
 
 /**
  * Controlled component because it has a default value of ""

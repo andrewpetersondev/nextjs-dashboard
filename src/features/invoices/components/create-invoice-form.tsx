@@ -11,9 +11,9 @@ import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { createInvoiceAction } from "@/server/invoices/actions";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { getCurrentIsoDate } from "@/shared/utils/date";
-import { FormActionRow } from "@/ui/components/form-action-row";
-import { FormSubmitButton } from "@/ui/components/form-submit-button";
-import { Label } from "@/ui/components/label";
+import { FormActionRow } from "@/ui/form-action-row";
+import { FormSubmitButton } from "@/ui/form-submit-button";
+import { Label } from "@/ui/label";
 
 export const CreateInvoiceForm = ({
   customers,

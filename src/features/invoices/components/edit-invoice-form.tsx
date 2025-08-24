@@ -11,9 +11,9 @@ import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { FormActionRow } from "@/ui/components/form-action-row";
-import { FormSubmitButton } from "@/ui/components/form-submit-button";
-import { Label } from "@/ui/components/label";
+import { FormActionRow } from "@/ui/form-action-row";
+import { FormSubmitButton } from "@/ui/form-submit-button";
+import { Label } from "@/ui/label";
 
 export const EditInvoiceForm = ({
   invoice,

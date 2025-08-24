@@ -9,12 +9,12 @@ import { type FC, type JSX, useActionState } from "react";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
-import { InputField } from "@/features/auth/components/input-field";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import type { SignupFormFieldNames } from "@/features/auth/types";
 import { signup } from "@/server/auth/actions";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
+import { InputField } from "@/ui/input-field";
 
 /**
  * SignupForm component for user registration.
@@ -24,7 +24,6 @@ import { FormInputWrapper } from "@/ui/form-input-wrapper";
  *
  * @returns Rendered SignupForm component.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <temporary>
 export const SignupForm: FC = (): JSX.Element => {
   const initialState: Extract<
     FormState<SignupFormFieldNames>,

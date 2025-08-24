@@ -1,8 +1,8 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
-import { FormActionRow } from "@/ui/components/form-action-row";
-import { FormSubmitButton } from "@/ui/components/form-submit-button";
+import { FormActionRow } from "@/ui/form-action-row";
+import { FormSubmitButton } from "@/ui/form-submit-button";
 import { H1 } from "@/ui/headings";
 
 type ErrorType = {
