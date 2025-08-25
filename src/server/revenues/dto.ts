@@ -1,5 +1,5 @@
 import type { MonthName } from "@/features/revenues/core/types";
-import type { Dollars } from "@/features/revenues/types";
+import type { Dollars } from "@/shared/types/money";
 
 /**
  * Data Transfer Object for simplified revenue display data.

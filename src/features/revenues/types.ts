@@ -1,10 +1,4 @@
-/**
- * Money unit aliases to make dollars vs cents explicit at type level.
- * These are plain number aliases (non-branded) to keep the refactor minimal
- * while still documenting intent throughout the codebase.
- */
-export type Cents = number;
-export type Dollars = number;
+import type { Dollars } from "@/shared/types/money";
 
 // Standardized period durations used in revenue calculations.
 export const INTERVAL_DURATIONS = ["year", "month"] as const;

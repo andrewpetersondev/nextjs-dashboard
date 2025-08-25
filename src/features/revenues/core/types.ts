@@ -1,5 +1,6 @@
-import type { Cents, INTERVAL_DURATIONS } from "@/features/revenues/types";
+import type { INTERVAL_DURATIONS } from "@/features/revenues/types";
 import type { Period } from "@/shared/brands/domain-brands";
+import type { Cents } from "@/shared/types/money";
 
 export const MONTH_ORDER = [
   "Jan",

@@ -1,7 +1,11 @@
-import { z } from "zod";
+import { ZodError, ZodObject, type ZodRawShape, type ZodTypeAny } from "zod";
 
 export function isZodObject(
-  schema: z.ZodTypeAny,
-): schema is z.ZodObject<z.ZodRawShape> {
-  return schema instanceof z.ZodObject;
+  schema: ZodTypeAny,
+): schema is ZodObject<ZodRawShape> {
+  return schema instanceof ZodObject;
+}
+
+export function isZodError(err: unknown): err is ZodError {
+  return err instanceof ZodError;
 }
