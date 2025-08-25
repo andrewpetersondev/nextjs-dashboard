@@ -1,13 +1,10 @@
 "use server";
 
 import type { Database } from "@/server/db/connection";
-import {
-  fetchLatestInvoicesDal,
-  fetchTotalInvoicesCountDal,
-  fetchTotalPaidInvoicesDal,
-  fetchTotalPendingInvoicesDal,
-} from "@/server/invoices/dal";
-
+import { fetchLatestInvoicesDal } from "@/server/invoices/dal/fetch-latest";
+import { fetchTotalInvoicesCountDal } from "@/server/invoices/dal/fetch-total-count";
+import { fetchTotalPaidInvoicesDal } from "@/server/invoices/dal/fetch-total-paid";
+import { fetchTotalPendingInvoicesDal } from "@/server/invoices/dal/fetch-total-pending";
 import type { InvoiceListFilter } from "@/shared/types/invoices";
 
 export type InvoicesSummary = {

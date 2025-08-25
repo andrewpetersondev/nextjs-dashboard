@@ -2,12 +2,12 @@
 # .gitignore documentation: https://git-scm.com/docs/gitignore
 
 # Match by extension
-*.min.js
-*.map
-*.md
+# *.min.js
+# *.map
 
 
 # Temporary
+# *.md
 # src/app
 # src/ui
 # scripts
@@ -20,19 +20,19 @@
 # My Files (General)
 .github
 .idea
-docs
+# docs
 drizzle
 public
 storage
 .env
 .env.*
-.gitignore
-CONFIG.md
+# .gitignore
+# CONFIG.md
 eslint.config.mjs
 next-env.d.ts
 pnpm-lock.yaml
-pnpm-workspace.yaml
-README.md
+# pnpm-workspace.yaml
+# README.md
 
 
 

@@ -4,13 +4,11 @@ import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { DatabaseError_New } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
 import { fromDal } from "@/server/errors/wrappers";
-import {
-  createInvoiceDal,
-  deleteInvoiceDal,
-  fetchAllPaidInvoicesDal,
-  readInvoiceDal,
-  updateInvoiceDal,
-} from "@/server/invoices/dal";
+import { createInvoiceDal } from "@/server/invoices/dal/create";
+import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
+import { fetchAllPaidInvoicesDal } from "@/server/invoices/dal/fetch-all-paid";
+import { readInvoiceDal } from "@/server/invoices/dal/read";
+import { updateInvoiceDal } from "@/server/invoices/dal/update";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type {
   InvoiceEntity,

@@ -3,8 +3,8 @@
 import "@/server/revenues/events/revenue-events.bootstrap";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
-import { fetchInvoicesPagesDal } from "@/server/invoices/dal";
 import { logger } from "@/server/logging/logger";
+import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
 
 /**
  * Server action to fetch the total number of invoice pages for pagination.

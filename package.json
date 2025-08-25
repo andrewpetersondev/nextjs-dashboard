@@ -49,6 +49,7 @@
   "scripts": {
     "biome-check": "biome format --write && biome check",
     "biome-check-write": "biome check --write",
+    "biome-format": "biome format --write",
     "biome-lint": "biome lint",
     "biome-summary": "biome check --reporter=summary",
     "build": "next build --turbopack",
