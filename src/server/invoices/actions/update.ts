@@ -32,28 +32,12 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
  * @param formData - FormData from the client
  * @returns FormState with data, errors, message, and success
  */
-
 export async function updateInvoiceAction(
   prevState: FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
   id: string,
   formData: FormData,
 ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> {
   try {
-    // Validate parameters first
-    if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, {
-        formData,
-        id,
-      });
-    }
-
-    if (!formData) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_FORM_DATA, {
-        formData,
-        id,
-      });
-    }
-
     // Build the partial DTO immutably using object spread strategy
     const input = {
       ...(formData.has("amount") && {
@@ -107,7 +91,6 @@ export async function updateInvoiceAction(
     // Success result
     return {
       data: updatedInvoice,
-      errors: {},
       message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
       success: true,
     };
