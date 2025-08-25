@@ -11,20 +11,27 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
   ...compat.extends(
     "next",
     "next/core-web-vitals",
     "next/typescript",
     "prettier",
-  ),
-  // Cypress rules applied only to Cypress test files
+  ), // Cypress rules applied only to Cypress test files
   {
     files: ["cypress/**/*.{ts,tsx}", "**/*.cy.{ts,tsx}"],
     languageOptions: pluginCypress.configs.recommended.languageOptions,
     plugins: pluginCypress.configs.recommended.plugins,
     rules: pluginCypress.configs.recommended.rules,
-  },
-  // Disallow importing server code inside feature modules
+  }, // Disallow importing server code inside feature modules
   {
     files: ["src/features/**/*.{ts,tsx}"],
     rules: {
@@ -47,8 +54,7 @@ const eslintConfig = [
         },
       ],
     },
-  },
-  // Revenues: discourage raw YYYY-MM strings for period. Prefer toPeriod()/dateToPeriod().
+  }, // Revenues: discourage raw YYYY-MM strings for period. Prefer toPeriod()/dateToPeriod().
   {
     files: ["src/features/revenues/**/*.{ts,tsx}"],
     rules: {

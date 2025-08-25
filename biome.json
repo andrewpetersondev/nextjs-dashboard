@@ -194,13 +194,12 @@
               "options": {
                 "patterns": [
                   {
-                    "group": [
-                      "@/src/server/**",
-                      "src/server/**",
-                      "@/server/**",
-                      "server/**"
-                    ],
-                    "message": "Shared code cannot import from server code."
+                    "group": ["../**"],
+                    "message": "src/shared can only import within src/shared (or npm packages)."
+                  },
+                  {
+                    "group": ["@/features/**", "@/server/**"],
+                    "message": "src/shared cannot import from features or server."
                   }
                 ]
               }
@@ -219,20 +218,24 @@
               "options": {
                 "patterns": [
                   {
-                    "group": [
-                      "@/src/server/**",
-                      "src/server/**",
-                      "@/server/**",
-                      "server/**",
-                      "!@/src/server/**/actions/**",
-                      "!src/server/**/actions/**",
-                      "!@/server/**/actions/**",
-                      "!server/**/actions/**"
-                    ],
-                    "message": "Feature code may only import server *actions*."
+                    "group": ["@/server/**", "../server/**", "../**/server/**"],
+                    "message": "src/features can import from src/features and src/shared, but not from src/server."
                   }
                 ]
               }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/server/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "off",
+              "options": {}
             }
           }
         }
