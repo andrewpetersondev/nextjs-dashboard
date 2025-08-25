@@ -8,7 +8,7 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { ServerMessage } from "@/features/users/components/server-message";
-import { updateInvoiceAction } from "@/server/invoices/actions";
+import { updateInvoiceAction } from "@/server/invoices/actions/actions";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { TIMER } from "@/shared/constants/ui";

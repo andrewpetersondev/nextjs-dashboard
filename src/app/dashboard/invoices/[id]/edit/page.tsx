@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-form";
 import { readCustomersAction } from "@/server/customers/actions/actions";
-import { readInvoiceByIdAction } from "@/server/invoices/actions";
+import { readInvoiceByIdAction } from "@/server/invoices/actions/actions";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 import { H1 } from "@/ui/headings";
