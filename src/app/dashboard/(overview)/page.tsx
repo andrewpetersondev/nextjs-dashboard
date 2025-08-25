@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/server/auth/session";
-import { readTotalCustomersCountAction } from "@/server/customers/actions/actions";
+import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
 import { getDB } from "@/server/db/connection";
 import {
   readInvoicesSummary,

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-form";
-import { readCustomersAction } from "@/server/customers/actions/actions";
+import { readCustomersAction } from "@/server/customers/actions/read";
 import { readInvoiceByIdAction } from "@/server/invoices/actions/read-by-id";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
