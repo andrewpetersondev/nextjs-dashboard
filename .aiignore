@@ -37,8 +37,8 @@ README.md
 
 
 # Build
-tsconfig.tsbuildinfo
-.next/
+# tsconfig.tsbuildinfo
+# .next/
 dist/
 build/
 out/

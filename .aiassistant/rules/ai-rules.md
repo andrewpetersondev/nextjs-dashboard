@@ -41,7 +41,10 @@ apply: manually
 
 ## Software Architecture
 
-- Follow modular architecture with clear separation of concerns.
+- Follow modular architecture with a clear separation of concerns.
+- Files in `./src/shared/` are not allowed to import from outside of `./src/shared/`.
+- Files in `./src/features/` are allowed to import from `./src/features/` and `./src/shared/`.
+- Files in `./src/server/` are allowed to import from anywhere.
 - Use branded types for domain-specific logic.
 - Follow clean architecture: separate layers for database, data access, repositories, services, actions, and more.
 - Use dependency injection to improve testability and flexibility. If unfamiliar, provide a brief explanation in context.
