@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { CreateInvoiceForm } from "@/features/invoices/components/create-invoice-form";
-import { readCustomersAction } from "@/server/customers/actions";
+import { readCustomersAction } from "@/server/customers/actions/actions";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 
 export const metadata: Metadata = {
