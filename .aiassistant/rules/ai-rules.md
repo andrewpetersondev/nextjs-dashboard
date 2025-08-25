@@ -24,7 +24,6 @@ apply: manually
 - Write code as an expert Next.js senior developer.
 - Use TypeScript with strict typing and avoid deprecated APIs/patterns.
 - All code must satisfy the `tsconfig.json` (assume `"strict": true`, `"noImplicitAny": true`, `"noUncheckedIndexedAccess": true`).
-- Provide clear explanations for complex, non-obvious, or architectural logic.
 - Use visual aids (diagrams, flowcharts) for complex patterns when helpful.
 - Ensure compatibility with versions specified in `package.json`.
 
@@ -57,11 +56,8 @@ apply: manually
 
 ## AI Assistant Output Preferences
 
-- Generate code with only the minimal necessary scaffolding, focusing on core logic and correctness.
-- Use Markdown for code blocks, labeled with the appropriate language.
 - Precede complex or non-obvious code with a clear, concise explanation.
 - Never reference or make assumptions about secrets or credentials.
-- Prefer existing project conventions, especially imports from `src/lib/utils/logger.ts` and `src/errors/errors.ts`.
 
 ## Automation and Refactoring
 
@@ -73,11 +69,6 @@ apply: manually
 
 - Use error handling best practices for both server and client code.
 - Log errors with sufficient context for debugging, never exposing sensitive data.
-- Use built-in Next.js error handling mechanisms where appropriate.
-- Use exported error classes from `src/errors/errors.ts` for consistency.
-- Implement global error boundaries in React using ErrorBoundary components.
-- Use structured (JSON) logging in server and client code.
-- Use the `pino` logger as exported from `src/lib/utils/logger.ts`.
 
 ## Resolving Instruction Conflicts
 
@@ -101,4 +92,4 @@ apply: manually
 
 ## Fallback Instructions
 
-- Default to safest practices if uncertain.
+- Default to best practices if uncertain.

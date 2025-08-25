@@ -7,11 +7,15 @@ import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amoun
 import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
+import type {
+  BaseInvoiceFormFieldNames,
+  BaseInvoiceFormFields,
+  UpdateInvoiceFormFields,
+} from "@/features/invoices/types";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import type { InvoiceDto } from "@/server/invoices/dto";
-import type { InvoiceActionResult } from "@/server/invoices/types";
 import { TIMER } from "@/shared/constants/ui";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
@@ -20,32 +24,30 @@ export const EditInvoiceForm = ({
   invoice,
   customers,
 }: {
-  invoice: InvoiceDto;
+  invoice: UpdateInvoiceFormFields;
   customers: CustomerField[];
 }): JSX.Element => {
-  // Initial state matches Server Action's expected state
-  const initialState: InvoiceActionResult = {
-    data: invoice,
-    errors: {},
+  const INITIAL_STATE = {
+    errors: {} as Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>,
     message: "",
     success: false,
-  };
+  } satisfies Extract<FormState<BaseInvoiceFormFieldNames>, { success: false }>;
 
   // Create wrapper action that matches useActionState signature
   const wrappedUpdateAction = async (
-    prevState: InvoiceActionResult,
+    prevState: FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
     formData: FormData,
-  ): Promise<InvoiceActionResult> => {
+  ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> => {
     return await updateInvoiceAction(prevState, invoice.id, formData);
   };
 
   const [state, action, pending] = useActionState<
-    InvoiceActionResult,
+    FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
     FormData
-  >(wrappedUpdateAction, initialState);
+  >(wrappedUpdateAction, INITIAL_STATE);
 
   // Use the current state data or fall back to the initial invoice
-  const currentInvoice = state.data || invoice;
+  const currentInvoice = state.success ? state.data : invoice;
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -70,15 +72,7 @@ export const EditInvoiceForm = ({
 
           <SensitiveData
             disabled={pending}
-            error={
-              state.errors?.sensitiveData &&
-              state.errors.sensitiveData.length > 0
-                ? (state.errors.sensitiveData as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.sensitiveData as FormFieldError | undefined}
           />
 
           {/* Customer */}
@@ -89,14 +83,7 @@ export const EditInvoiceForm = ({
               dataCy="customer-select"
               defaultValue={currentInvoice.customerId}
               disabled={pending}
-              error={
-                state.errors?.customerId && state.errors.customerId.length > 0
-                  ? (state.errors.customerId as unknown as readonly [
-                      string,
-                      ...string[],
-                    ])
-                  : undefined
-              }
+              error={state.errors?.customerId as FormFieldError | undefined}
             />
           </div>
 
@@ -105,14 +92,7 @@ export const EditInvoiceForm = ({
             dataCy="amount-input"
             defaultValue={currentInvoice.amount / 100}
             disabled={pending}
-            error={
-              state.errors?.amount && state.errors.amount.length > 0
-                ? (state.errors.amount as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.amount as FormFieldError | undefined}
             id="amount"
             label="Choose an amount"
             name="amount"
@@ -122,14 +102,7 @@ export const EditInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
             disabled={pending}
-            error={
-              state.errors?.status && state.errors.status.length > 0
-                ? (state.errors.status as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.status as FormFieldError | undefined}
             name="status"
             value={currentInvoice.status}
           />
