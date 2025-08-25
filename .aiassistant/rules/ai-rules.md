@@ -21,9 +21,10 @@ apply: manually
 ## Code Response Guidelines
 
 - Keep explanations brief.
+- Keep functions to 50 lines or fewer. 
 - Write code as an expert Next.js senior developer.
 - Use TypeScript with strict typing and avoid deprecated APIs/patterns.
-- All code must satisfy the `tsconfig.json` (assume `"strict": true`, `"noImplicitAny": true`, `"noUncheckedIndexedAccess": true`).
+- All code must be strictly typed (assume `"strict": true`).
 - Use visual aids (diagrams, flowcharts) for complex patterns when helpful.
 - Ensure compatibility with versions specified in `package.json`.
 
@@ -93,3 +94,4 @@ apply: manually
 ## Fallback Instructions
 
 - Default to best practices if uncertain.
+- Default to compatibility with the most recent version of a package.

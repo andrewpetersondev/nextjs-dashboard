@@ -95,7 +95,6 @@ export function invoiceFormEntityToServiceEntity(
 
 /**
  * Maps a partial InvoiceFormDto to a partial branded InvoiceFormEntity.
- * Ensures exact optional property types for strict TypeScript settings.
  * @param dto - Partial DTO from service layer
  * @returns Partial form entity for DAL
  */
