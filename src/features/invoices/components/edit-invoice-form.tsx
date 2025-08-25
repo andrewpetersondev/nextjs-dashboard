@@ -61,6 +61,59 @@ function useAutoHideAlert(message: string): boolean {
   return showAlert;
 }
 
+// Presentational: invoice form fields
+function FormFields({
+  currentInvoice,
+  customers,
+  errors,
+  pending,
+}: {
+  currentInvoice: BaseInvoiceFormFields;
+  customers: CustomerField[];
+  errors: Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>;
+  pending: boolean;
+}): JSX.Element {
+  return (
+    <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+      <InvoiceDate defaultValue={currentInvoice.date} />
+
+      <SensitiveData
+        disabled={pending}
+        error={errors?.sensitiveData as FormFieldError | undefined}
+      />
+
+      <div className="mb-4">
+        <Label htmlFor="customer" text="Choose customer" />
+        <CustomerSelect
+          customers={customers}
+          dataCy="customer-select"
+          defaultValue={currentInvoice.customerId}
+          disabled={pending}
+          error={errors?.customerId as FormFieldError | undefined}
+        />
+      </div>
+
+      <InvoiceAmountInput
+        dataCy="amount-input"
+        defaultValue={currentInvoice.amount / 100}
+        disabled={pending}
+        error={errors?.amount as FormFieldError | undefined}
+        id="amount"
+        label="Choose an amount"
+        name="amount"
+      />
+
+      <InvoiceStatusRadioGroup
+        data-cy="status-radio"
+        disabled={pending}
+        error={errors?.status as FormFieldError | undefined}
+        name="status"
+        value={currentInvoice.status}
+      />
+    </div>
+  );
+}
+
 export const EditInvoiceForm = ({
   invoice,
   customers,
@@ -79,46 +132,12 @@ export const EditInvoiceForm = ({
   return (
     <div>
       <form action={action}>
-        <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-          <InvoiceDate defaultValue={currentInvoice.date} />
-
-          <SensitiveData
-            disabled={pending}
-            error={state.errors?.sensitiveData as FormFieldError | undefined}
-          />
-
-          {/* Customer */}
-          <div className="mb-4">
-            <Label htmlFor="customer" text="Choose customer" />
-            <CustomerSelect
-              customers={customers}
-              dataCy="customer-select"
-              defaultValue={currentInvoice.customerId}
-              disabled={pending}
-              error={state.errors?.customerId as FormFieldError | undefined}
-            />
-          </div>
-
-          {/* Amount */}
-          <InvoiceAmountInput
-            dataCy="amount-input"
-            defaultValue={currentInvoice.amount / 100}
-            disabled={pending}
-            error={state.errors?.amount as FormFieldError | undefined}
-            id="amount"
-            label="Choose an amount"
-            name="amount"
-          />
-
-          {/* Invoice Status */}
-          <InvoiceStatusRadioGroup
-            data-cy="status-radio"
-            disabled={pending}
-            error={state.errors?.status as FormFieldError | undefined}
-            name="status"
-            value={currentInvoice.status}
-          />
-        </div>
+        <FormFields
+          currentInvoice={currentInvoice}
+          customers={customers}
+          errors={state.errors ?? {}}
+          pending={pending}
+        />
 
         <FormActionRow cancelHref="/dashboard/invoices">
           <FormSubmitButton
