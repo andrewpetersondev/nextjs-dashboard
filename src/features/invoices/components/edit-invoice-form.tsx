@@ -20,6 +20,47 @@ import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
 
+// Helper: produce initial state (keeps component short)
+function getInitialState(): Extract<
+  FormState<BaseInvoiceFormFieldNames>,
+  { success: false }
+> {
+  return {
+    errors: {} as Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>,
+    message: "",
+    success: false,
+  };
+}
+
+// Helper: build the server action expected by useActionState
+function createWrappedUpdateAction(invoiceId: string) {
+  return async (
+    prevState: FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
+    formData: FormData,
+  ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> =>
+    await updateInvoiceAction(prevState, invoiceId, formData);
+}
+
+// Hook: auto-hide alert when message changes
+function useAutoHideAlert(message: string): boolean {
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (!message) {
+      setShowAlert(false);
+      return;
+    }
+    setShowAlert(true);
+    const timer = setTimeout(
+      () => setShowAlert(false),
+      TIMER.ALERT_AUTO_HIDE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [message]);
+
+  return showAlert;
+}
+
 export const EditInvoiceForm = ({
   invoice,
   customers,
@@ -27,42 +68,13 @@ export const EditInvoiceForm = ({
   invoice: UpdateInvoiceFormFields;
   customers: CustomerField[];
 }): JSX.Element => {
-  const INITIAL_STATE = {
-    errors: {} as Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>,
-    message: "",
-    success: false,
-  } satisfies Extract<FormState<BaseInvoiceFormFieldNames>, { success: false }>;
-
-  // Create wrapper action that matches useActionState signature
-  const wrappedUpdateAction = async (
-    prevState: FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
-    formData: FormData,
-  ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> => {
-    return await updateInvoiceAction(prevState, invoice.id, formData);
-  };
-
   const [state, action, pending] = useActionState<
     FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
     FormData
-  >(wrappedUpdateAction, INITIAL_STATE);
+  >(createWrappedUpdateAction(invoice.id), getInitialState());
 
-  // Use the current state data or fall back to the initial invoice
   const currentInvoice = state.success ? state.data : invoice;
-
-  const [showAlert, setShowAlert] = useState(false);
-
-  useEffect(() => {
-    if (state.message) {
-      setShowAlert(true);
-      const timer = setTimeout(
-        () => setShowAlert(false),
-        TIMER.ALERT_AUTO_HIDE_MS,
-      );
-      return () => clearTimeout(timer);
-    }
-    setShowAlert(false);
-    return undefined;
-  }, [state.message]);
+  const showAlert = useAutoHideAlert(state.message);
 
   return (
     <div>
