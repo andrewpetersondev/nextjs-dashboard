@@ -9,7 +9,7 @@ import { CreateUserFormSchema } from "@/features/users/schema.client";
 import type { CreateUserFormFieldNames } from "@/features/users/types";
 import { getDB } from "@/server/db/connection";
 import { logger } from "@/server/logging/logger";
-import { createUserDal } from "@/server/users/dal";
+import { createUserDal } from "@/server/users/dal/create";
 import { getValidUserRole } from "@/server/users/utils";
 import type { FormState } from "@/shared/forms/types";
 import {

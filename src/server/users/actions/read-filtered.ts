@@ -1,7 +1,7 @@
 "use server";
 
 import { getDB } from "@/server/db/connection";
-import { fetchFilteredUsers } from "@/server/users/dal";
+import { fetchFilteredUsers } from "@/server/users/dal/dal";
 import type { UserDto } from "@/server/users/dto";
 
 /**

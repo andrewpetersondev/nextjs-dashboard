@@ -1,187 +1,18 @@
 import "server-only";
 
 import { asc, count, eq, ilike, or } from "drizzle-orm";
-import { toUserRole } from "@/features/users/lib/to-user-role";
-import { comparePassword, hashPassword } from "@/server/auth/hashing";
+import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/errors";
 import { logger } from "@/server/logging/logger";
+import { createUserDal } from "@/server/users/dal/create";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import type { UserUpdatePatch } from "@/server/users/types";
 import { createRandomPassword } from "@/shared/auth/password";
 import type { AuthRole } from "@/shared/auth/roles";
 import type { UserId } from "@/shared/brands/domain-brands";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
-
-/**
- * Inserts a new user record into the database.
- * @param params - User creation parameters.
- * @returns The created user as UserDto, or null if creation failed.
- * @param db
- */
-export async function createUserDal(
-  db: Database,
-  {
-    username,
-    email,
-    password,
-    role = toUserRole("user"),
-  }: {
-    username: string;
-    email: string;
-    password: string;
-    role?: AuthRole;
-  },
-): Promise<UserDto | null> {
-  try {
-    const hashedPassword = await hashPassword(password);
-    const [userRow] = await db
-      .insert(users)
-      .values({ email, password: hashedPassword, role, username })
-      .returning();
-    // --- Map raw DB row to UserEntity before mapping to DTO ---
-    const user = userRow ? userDbRowToEntity(userRow) : null;
-    return user ? userEntityToDto(user) : null;
-  } catch (error) {
-    logger.error({
-      context: "createUserDal",
-      email,
-      error,
-      message: "Failed to create a user in the database.",
-      role,
-      username,
-    });
-    throw new DatabaseError("Failed to create a user in the database.", error);
-  }
-}
-
-/**
- * Retrieves a user from the database by branded UserId.
- * Maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - The database instance.
- * @param id - The user's branded UserId.
- * @returns The user as UserDto, or null if not found.
- */
-export async function readUserDal(
-  db: Database,
-  id: UserId, // Use branded UserId for strict typing
-): Promise<UserDto | null> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [userRow] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
-
-    if (!userRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity for type safety (brands id/role)
-    const userEntity = userDbRowToEntity(userRow);
-
-    // Map to DTO for safe return to client
-    return userEntityToDto(userEntity);
-  } catch (error) {
-    logger.error({
-      context: "readUserDal",
-      error,
-      id,
-      message: "Failed to read user by ID.",
-    });
-    throw new DatabaseError("Failed to read user by ID.", error);
-  }
-}
-
-/**
- * Updates a user in the database with the provided patch.
- * Always maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - The database instance.
- * @param id - The user's branded UserId.
- * @param patch - An object containing the fields to update.
- * @returns The updated user as UserDto, or null if no changes or update failed.
- */
-export async function updateUserDal(
-  db: Database,
-  id: UserId,
-  patch: UserUpdatePatch,
-): Promise<UserDto | null> {
-  // Defensive: No update if patch is empty
-  if (Object.keys(patch).length === 0) {
-    return null;
-  }
-  try {
-    // Always fetch raw DB row, then map to UserEntity for type safety
-    const [userRow] = await db
-      .update(users)
-      .set(patch)
-      .where(eq(users.id, id))
-      .returning();
-
-    if (!userRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity (brands id/role)
-    const userEntity = userDbRowToEntity(userRow);
-
-    // Map to DTO for safe return to client
-    return userEntityToDto(userEntity);
-  } catch (error) {
-    logger.error({
-      context: "updateUserDal",
-      error,
-      id,
-      message: "Failed to update user.",
-      patch,
-    });
-    throw new DatabaseError("Failed to update user.", error);
-  }
-}
-
-/**
- * Deletes a user by branded UserId.
- * Maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - Database instance (Drizzle)
- * @param userId - UserId (branded)
- * @returns UserDto if deleted, otherwise null
- */
-export async function deleteUserDal(
-  db: Database,
-  userId: UserId, // Use branded UserId for strict typing
-): Promise<UserDto | null> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [deletedRow] = await db
-      .delete(users)
-      .where(eq(users.id, userId))
-      .returning();
-
-    if (!deletedRow) {
-      return null;
-    }
-
-    // Map raw DB row to UserEntity for type safety
-    const deletedEntity = userDbRowToEntity(deletedRow);
-
-    // Map to DTO for safe return to client
-    return userEntityToDto(deletedEntity);
-  } catch (error) {
-    logger.error({
-      context: "deleteUserDal",
-      error,
-      message: "Failed to delete user.",
-      userId,
-    });
-    throw new DatabaseError(
-      "An unexpected error occurred. Please try again.",
-      error,
-    );
-  }
-}
 
 /**
  * Finds a user by email and verifies the password.

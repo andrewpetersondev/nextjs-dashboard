@@ -1,7 +1,7 @@
 "use server";
 
 import { getDB } from "@/server/db/connection";
-import { fetchUsersPages } from "@/server/users/dal";
+import { fetchUsersPages } from "@/server/users/dal/dal";
 
 /**
  * Server action to fetch the total number of user pages.

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
 import { logger } from "@/server/logging/logger";
-import { deleteUserDal } from "@/server/users/dal";
+import { deleteUserDal } from "@/server/users/dal/delete";
 import {
   type ActionResult,
   actionResult,

@@ -15,7 +15,7 @@ import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
-import { createUserDal } from "@/server/users/dal";
+import { createUserDal } from "@/server/users/dal/create";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
 
