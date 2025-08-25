@@ -28,6 +28,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!scripts",
       "!cypress",
       "!.aiassistant",
       "!.github",
@@ -220,6 +221,26 @@
                   {
                     "group": ["@/server/**", "../server/**", "../**/server/**"],
                     "message": "src/features can import from src/features and src/shared, but not from src/server."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/features/*/components/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/server/**", "!@/server/*/actions/**"],
+                    "message": "Components may import only server actions from their matching feature: @/server/<feature>/actions/**"
                   }
                 ]
               }
