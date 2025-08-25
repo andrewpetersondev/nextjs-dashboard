@@ -5,14 +5,15 @@ import {
   fetchFilteredCustomersDal,
   fetchTotalCustomersCountDal,
 } from "@/server/customers/dal";
-import type {
-  CustomerAggregatesServerDto,
-  CustomerSelectServerDto,
-} from "@/server/customers/dto";
+
 import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
 } from "@/server/customers/mappers";
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 
 /**

@@ -1,6 +1,6 @@
 import "server-only";
 
-import * as bcryptjs from "bcryptjs";
+import bcryptjs from "bcryptjs";
 
 import { SALT_ROUNDS } from "@/shared/auth/constants";
 

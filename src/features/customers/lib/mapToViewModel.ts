@@ -1,11 +1,11 @@
 import type {
-  CustomerAggregatesServerDto,
-  CustomerSelectServerDto,
-} from "@/features/customers/dto";
-import type {
   CustomerField,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/server/customers/types";
 import { formatCurrency } from "@/shared/utils/general";
 
 export const toCustomerField = (
