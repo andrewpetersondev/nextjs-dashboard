@@ -1,7 +1,16 @@
-// Allowed invoice statuses.
-export const INVOICE_STATUSES = ["pending", "paid"] as const;
+// Client-safe definitions. Do not import from server modules here.
 
-// Invoice status type
+export const INVOICE_STATUSES = ["pending", "paid"] as const;
 export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
-// UI-facing shapes (e.g., lightweight filter types if you filter on the client)
+export type BaseInvoiceFormFields = {
+  amount: number;
+  customerId: string;
+  date: string;
+  status: InvoiceStatus;
+};
+
+export type CreateInvoiceFormFields = keyof BaseInvoiceFormFields;
+export type UpdateInvoiceFormFields = keyof BaseInvoiceFormFields & {
+  id: string;
+};

@@ -16,20 +16,19 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/form-input-wrapper";
 import { InputField } from "@/ui/input-field";
 
-export const SignupForm: FC = (): JSX.Element => {
-  const initialState: Extract<
-    FormState<SignupFormFieldNames>,
-    { success: false }
-  > = {
-    errors: {} as Partial<Record<SignupFormFieldNames, FormFieldError>>,
-    message: "",
-    success: false, // literal false due to the annotation
-  };
+const INITIAL_STATE = {
+  errors: {} as Partial<Record<SignupFormFieldNames, FormFieldError>>,
+  message: "",
+  success: false,
+} satisfies Extract<FormState<SignupFormFieldNames>, { success: false }>;
 
+const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
+
+export const SignupForm: FC = (): JSX.Element => {
   const [state, action, pending] = useActionState<
     FormState<SignupFormFieldNames>,
     FormData
-  >(signup, initialState);
+  >(signup, INITIAL_STATE);
 
   return (
     <>
@@ -43,9 +42,7 @@ export const SignupForm: FC = (): JSX.Element => {
           autoComplete="username"
           dataCy="signup-username-input"
           error={state?.errors?.username}
-          icon={
-            <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
-          }
+          icon={<UserIcon className={iconClass} />}
           id="username"
           label="Username"
           name="username"
@@ -56,9 +53,7 @@ export const SignupForm: FC = (): JSX.Element => {
           autoComplete="email"
           dataCy="signup-email-input"
           error={state?.errors?.email}
-          icon={
-            <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
-          }
+          icon={<AtSymbolIcon className={iconClass} />}
           id="email"
           label="Email address"
           name="email"
@@ -71,9 +66,7 @@ export const SignupForm: FC = (): JSX.Element => {
           dataCy="signup-password-input"
           describedById="signup-password-errors"
           error={state?.errors?.password}
-          icon={
-            <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
-          }
+          icon={<LockClosedIcon className={iconClass} />}
           id="password"
           label="Password"
           name="password"

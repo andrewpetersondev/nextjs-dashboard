@@ -20,6 +20,7 @@ apply: manually
 
 ## Code Response Guidelines
 
+- Keep explanations brief.
 - Write code as an expert Next.js senior developer.
 - Use TypeScript with strict typing and avoid deprecated APIs/patterns.
 - All code must satisfy the `tsconfig.json` (assume `"strict": true`, `"noImplicitAny": true`, `"noUncheckedIndexedAccess": true`).

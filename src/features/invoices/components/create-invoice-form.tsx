@@ -16,21 +16,21 @@ import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
 
+const INITIAL_STATE: InvoiceActionResult = {
+  errors: {},
+  message: "",
+  success: false,
+};
+
 export const CreateInvoiceForm = ({
   customers,
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
-  const initialState: InvoiceActionResult = {
-    errors: {},
-    message: "",
-    success: false,
-  };
-
   const [state, action, pending] = useActionState<
     InvoiceActionResult,
     FormData
-  >(createInvoiceAction, initialState);
+  >(createInvoiceAction, INITIAL_STATE);
 
   const [showAlert, setShowAlert] = useState(false);
 
