@@ -8,7 +8,8 @@ import type {
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
-import { DatabaseError, ValidationError } from "@/server/errors/errors";
+import { DatabaseError } from "@/server/errors/errors";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Fetches all customers for select options.

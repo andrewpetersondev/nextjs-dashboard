@@ -1,6 +1,5 @@
 "use server";
 
-import { MONTH_ORDER } from "@/features/revenues/core/types";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/lib/date/period";
 import { convertCentsToDollars } from "@/features/revenues/lib/display/money";
 import { getDB } from "@/server/db/connection";
@@ -8,11 +7,11 @@ import { logger } from "@/server/logging/logger";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
-  SimpleRevenueDto,
 } from "@/server/revenues/dto";
 import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
+import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/types/revenue";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

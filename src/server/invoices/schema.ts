@@ -1,8 +1,8 @@
 import "server-only";
 
 import * as z from "zod";
-import { INVOICE_STATUSES } from "@/features/invoices/types";
 import { toCustomerId } from "@/shared/brands/domain-brands";
+import { INVOICE_STATUSES } from "@/shared/types/invoices";
 
 // const uuidSchema = z.uuid();
 const amountSchema = z.coerce.number().positive().max(10000);

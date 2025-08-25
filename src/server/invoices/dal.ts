@@ -11,12 +11,12 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import type { InvoiceListFilter } from "@/server/invoices/types";
 import { logger } from "@/server/logging/logger";
 import { type InvoiceId, toPeriod } from "@/shared/brands/domain-brands";
 import { DATA_ERROR_MESSAGES } from "@/shared/constants/errors-messages";
 import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
 import { ValidationError_New } from "@/shared/errors/domain";
+import type { InvoiceListFilter } from "@/shared/types/invoices";
 
 /**
  * Creates a new invoice in the database.

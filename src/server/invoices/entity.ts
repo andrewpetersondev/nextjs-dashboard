@@ -1,11 +1,11 @@
 import "server-only";
 
-import type { InvoiceStatus } from "@/features/invoices/types";
 import type {
   CustomerId,
   InvoiceId,
   Period,
 } from "@/shared/brands/domain-brands";
+import type { InvoiceStatus } from "@/shared/types/invoices";
 
 /**
  * Domain model for Invoice.

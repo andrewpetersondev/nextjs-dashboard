@@ -2,10 +2,11 @@
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
-import { DatabaseError, ValidationError } from "@/server/errors/errors";
+import { DatabaseError } from "@/server/errors/errors";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
+import { ValidationError } from "@/shared/errors/domain";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {

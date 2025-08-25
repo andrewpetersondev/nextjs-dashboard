@@ -2,7 +2,8 @@
 
 import { getDB } from "@/server/db/connection";
 import { fetchFilteredInvoicesDal } from "@/server/invoices/dal";
-import type { InvoiceListFilter } from "@/server/invoices/types";
+
+import type { InvoiceListFilter } from "@/shared/types/invoices";
 
 /**
  * Server action to fetch filtered invoices for the invoices table.

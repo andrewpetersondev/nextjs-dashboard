@@ -7,7 +7,8 @@ import {
   fetchTotalPaidInvoicesDal,
   fetchTotalPendingInvoicesDal,
 } from "@/server/invoices/dal";
-import type { InvoiceListFilter } from "@/server/invoices/types";
+
+import type { InvoiceListFilter } from "@/shared/types/invoices";
 
 export type InvoicesSummary = {
   totalInvoices: number;

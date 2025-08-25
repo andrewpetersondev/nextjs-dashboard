@@ -1,9 +1,9 @@
-import { MONTH_ORDER, type MonthName } from "@/features/revenues/core/types";
 import {
   MAX_MONTH_NUMBER,
   MIN_MONTH_NUMBER,
 } from "@/features/revenues/lib/date/constants";
-import { ValidationError } from "@/server/errors/errors";
+import { ValidationError } from "@/shared/errors/domain";
+import { MONTH_ORDER, type MonthName } from "@/shared/types/revenue";
 
 /**
  * Safely convert a calendar month number (1-12) to a MonthName.

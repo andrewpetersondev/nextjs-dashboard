@@ -22,10 +22,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "../../features/invoices/types.ts";
+import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/types/invoices";
 import {
   REVENUE_SOURCES,
   type RevenueSource,

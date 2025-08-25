@@ -1,25 +1,22 @@
 import "server-only";
 
-import {
-  type IntervalDuration,
-  MONTH_ORDER,
-  type MonthName,
-} from "@/features/revenues/core/types";
-import {
-  INTERVAL_DURATIONS,
-  REVENUE_SOURCES,
-  type RevenueSource,
-} from "@/features/revenues/types";
+import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
-  SimpleRevenueDto,
 } from "@/server/revenues/dto";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
 import { isPeriod, isRevenueId } from "@/shared/brands/domain-brands";
+import {
+  INTERVAL_DURATIONS,
+  type IntervalDuration,
+  MONTH_ORDER,
+  type MonthName,
+  type SimpleRevenueDto,
+} from "@/shared/types/revenue";
 import { isValidDate } from "@/shared/utils/date";
 import { validateEnum } from "@/shared/validation/enum";
 import {

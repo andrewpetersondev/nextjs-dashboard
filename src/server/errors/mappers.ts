@@ -1,9 +1,8 @@
 import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
-import { ValidationError } from "@/server/errors/errors";
 import { DatabaseError_New } from "@/server/errors/infrastructure";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError, ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**

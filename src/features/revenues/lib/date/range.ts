@@ -1,8 +1,5 @@
 import { addMonths, endOfMonth, getMonth, startOfMonth } from "date-fns";
-import type {
-  IntervalDuration,
-  RollingMonthData,
-} from "@/features/revenues/core/types";
+import type { RollingMonthData } from "@/features/revenues/core/types";
 import {
   MONTHS_IN_YEAR,
   ROLLING_START_OFFSET_MONTHS,
@@ -11,6 +8,7 @@ import {
 import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import { createMonthTemplateData } from "@/server/revenues/utils/template";
 import type { Period } from "@/shared/brands/domain-brands";
+import type { IntervalDuration } from "@/shared/types/revenue";
 
 /**
  * Calculates a specific month date from rolling start date with offset.

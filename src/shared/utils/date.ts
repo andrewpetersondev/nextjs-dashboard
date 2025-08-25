@@ -1,5 +1,6 @@
 import { format, isValid } from "date-fns";
-import { ValidationError } from "@/server/errors/errors";
+
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

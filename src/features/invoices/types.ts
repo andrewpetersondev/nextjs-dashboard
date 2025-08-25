@@ -1,5 +1,4 @@
-export const INVOICE_STATUSES = ["pending", "paid"] as const;
-export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
+import type { InvoiceStatus } from "@/shared/types/invoices";
 
 export type BaseInvoiceFormFields = {
   readonly amount: number;

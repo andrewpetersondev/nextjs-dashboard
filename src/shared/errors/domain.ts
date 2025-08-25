@@ -76,3 +76,30 @@ export class ConflictError_New extends BaseError {
   readonly code = "CONFLICT";
   readonly statusCode = 409;
 }
+
+/**
+ * Convert an arbitrary details value into a safe context object.
+ * Kept for backward-compatibility with legacy error constructors.
+ */
+export function toContext(details?: unknown): Record<string, unknown> {
+  if (details && typeof details === "object" && !Array.isArray(details)) {
+    return details as Record<string, unknown>;
+  }
+  return details === undefined ? {} : { details };
+}
+
+/**
+ * Deprecated shim for legacy ValidationError usage.
+ * - Server-only: depends on server infrastructure error model.
+ * - Prefer using `ValidationError_New` (from shared/errors/domain) directly.
+ */
+export class ValidationError extends ValidationError_New {
+  /** Back-compat: optional details bag */
+  public readonly details?: unknown;
+
+  constructor(message: string, details?: unknown) {
+    super(message, toContext(details));
+    this.details = details;
+    this.name = new.target.name;
+  }
+}

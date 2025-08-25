@@ -6,7 +6,7 @@ import {
   INVOICE_SUCCESS_MESSAGES,
 } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
-import { DatabaseError, ValidationError } from "@/server/errors/errors";
+import { DatabaseError } from "@/server/errors/errors";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -15,6 +15,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { logger } from "@/server/logging/logger";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Server action to delete an invoice by string ID.

@@ -1,8 +1,5 @@
 import type { Dollars } from "@/shared/types/money";
 
-// Standardized period durations used in revenue calculations.
-export const INTERVAL_DURATIONS = ["year", "month"] as const;
-
 // Standardized sources of revenue data.
 export const REVENUE_SOURCES = [
   "seed",

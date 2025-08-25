@@ -8,10 +8,8 @@ import {
 import type {
   BaseInvoiceFormFieldNames,
   BaseInvoiceFormFields,
-  InvoiceStatus,
 } from "@/features/invoices/types";
 import { getDB } from "@/server/db/connection";
-import { ValidationError } from "@/server/errors/errors";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -21,7 +19,9 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { UpdateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
 import { logger } from "@/server/logging/logger";
+import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { InvoiceStatus } from "@/shared/types/invoices";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

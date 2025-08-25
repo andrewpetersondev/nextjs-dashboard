@@ -1,7 +1,6 @@
 import { type JSX, Suspense } from "react";
 import { LatestInvoices } from "@/features/invoices/components/latest-invoices";
 import { RevenueChart } from "@/features/revenues/components/revenue-chart";
-import type { InvoiceListFilter } from "@/server/invoices/types";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import type { DashboardCardData } from "@/ui/dashboard/types";
 import { H1 } from "@/ui/headings";
@@ -10,6 +9,7 @@ import {
   LatestInvoicesSkeleton,
   RevenueChartSkeleton,
 } from "@/ui/skeletons";
+import type { InvoiceListFilter } from "@/shared/types/invoices";
 
 interface DashboardProps {
   readonly dashboardCardData: DashboardCardData;

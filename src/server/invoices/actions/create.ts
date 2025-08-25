@@ -8,7 +8,6 @@ import {
 import type {
   CreateInvoiceFormFieldNames,
   CreateInvoiceFormFields,
-  InvoiceStatus,
 } from "@/features/invoices/types";
 import { getDB } from "@/server/db/connection";
 import {
@@ -26,6 +25,7 @@ import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
+import type { InvoiceStatus } from "@/shared/types/invoices";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

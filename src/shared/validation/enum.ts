@@ -1,4 +1,4 @@
-import { ValidationError } from "@/server/errors/errors";
+import { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**

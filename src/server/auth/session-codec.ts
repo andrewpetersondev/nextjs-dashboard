@@ -4,7 +4,6 @@ import { jwtVerify, SignJWT } from "jose";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
 import { SESSION_SECRET } from "@/server/config/environment";
-import { ValidationError } from "@/server/errors/errors";
 import { logger } from "@/server/logging/logger";
 
 import {
@@ -13,6 +12,7 @@ import {
 } from "@/shared/auth/sessions/mapper";
 import type { EncryptPayload } from "@/shared/auth/types";
 import { EncryptPayloadSchema } from "@/shared/auth/zod";
+import { ValidationError } from "@/shared/errors/domain";
 
 let encodedKey: Uint8Array | undefined;
 

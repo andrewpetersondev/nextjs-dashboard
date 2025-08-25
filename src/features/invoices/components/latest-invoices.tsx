@@ -2,8 +2,8 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import type { InvoiceListFilter } from "@/server/invoices/types";
 import { IMAGE_SIZES } from "@/shared/constants/ui";
+import type { InvoiceListFilter } from "@/shared/types/invoices";
 import { formatCurrency } from "@/shared/utils/general";
 import { H2, H3 } from "@/ui/headings";
 

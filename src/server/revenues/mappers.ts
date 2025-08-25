@@ -3,13 +3,13 @@ import "server-only";
 import { getMonthName } from "@/features/revenues/lib/date/date";
 import { extractMonthNumberFromPeriod } from "@/features/revenues/lib/date/period";
 import type { RevenueRow } from "@/server/db/schema";
-import { ValidationError } from "@/server/errors/errors";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
 import { toRevenueSource } from "@/server/revenues/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
+import { ValidationError } from "@/shared/errors/domain";
 import { isValidDate } from "@/shared/utils/date";
 import {
   isNonNegativeInteger,

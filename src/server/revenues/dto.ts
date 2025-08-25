@@ -1,21 +1,5 @@
-import type { MonthName } from "@/features/revenues/core/types";
 import type { Dollars } from "@/shared/types/money";
-
-/**
- * Data Transfer Object for simplified revenue display data.
- *
- * Represents the minimal data required for revenue visualization
- * in charts and summaries, with values converted to user-friendly formats.
- *
- * @prop month - Three-letter month abbreviation (e.g., "Jan", "Feb", "Mar")
- * @prop totalAmount - Revenue amount in dollars (converted from database cents)
- * @prop monthNumber - Sequential month number for proper chronological ordering and scrolling logic
- */
-export interface SimpleRevenueDto {
-  readonly month: MonthName;
-  readonly totalAmount: Dollars;
-  readonly monthNumber: number;
-}
+import type { SimpleRevenueDto } from "@/shared/types/revenue";
 
 /**
  * Complete chart data transfer object with revenue data and statistical metrics.

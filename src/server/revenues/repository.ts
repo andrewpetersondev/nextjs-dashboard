@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { type RevenueRow, revenues } from "@/server/db/schema";
-import { DatabaseError, ValidationError } from "@/server/errors/errors";
+import { DatabaseError } from "@/server/errors/errors";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -19,6 +19,7 @@ import {
   type RevenueId,
   toPeriod,
 } from "@/shared/brands/domain-brands";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * RevenueRepository

@@ -1,10 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import {
-  MONTH_ORDER,
-  type RollingMonthData,
-} from "@/features/revenues/core/types";
+import { type RollingMonthData } from "@/features/revenues/core/types";
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { logger } from "@/server/logging/logger";
 import type {
@@ -17,6 +14,7 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/brands/domain-brands";
+import { MONTH_ORDER } from "@/shared/types/revenue";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

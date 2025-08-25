@@ -1,27 +1,6 @@
-import type { INTERVAL_DURATIONS } from "@/features/revenues/types";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { Cents } from "@/shared/types/money";
-
-export const MONTH_ORDER = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-] as const;
-
-// Type-safe union of valid month name abbreviations.
-export type MonthName = (typeof MONTH_ORDER)[number];
-
-// Type-safe union of valid interval durations.
-export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
+import type { MonthName } from "@/shared/types/revenue";
 
 /**
  * Metadata for a single month in a 12-month rolling period.

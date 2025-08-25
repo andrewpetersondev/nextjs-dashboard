@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceStatus } from "@/features/invoices/types";
+import type { InvoiceStatus } from "@/shared/types/invoices";
 
 /**
  * @file Invoice Data Transfer Objects (DTOs)

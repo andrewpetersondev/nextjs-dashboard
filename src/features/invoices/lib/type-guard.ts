@@ -1,7 +1,4 @@
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "@/features/invoices/types";
+import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/types/invoices";
 
 /**
  * Type guard to check if a value is a valid InvoiceStatus
