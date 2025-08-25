@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { demoUser } from "@/server/auth/actions";
+import { demoUser } from "@/server/auth/actions/demo-user";
 import type { AuthRole } from "@/shared/auth/roles";
 import { Button } from "@/ui/button";
 
