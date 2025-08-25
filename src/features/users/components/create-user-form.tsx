@@ -12,7 +12,7 @@ import type {
   CreateUserFormFieldNames,
   CreateUserFormState,
 } from "@/features/users/types";
-import { createUserAction } from "@/server/users/actions";
+import { createUserAction } from "@/server/users/actions/create";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/form-action-row";

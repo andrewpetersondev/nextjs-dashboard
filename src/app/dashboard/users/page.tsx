@@ -3,7 +3,7 @@ import { type JSX, Suspense } from "react";
 import { Pagination } from "@/features/invoices/components/pagination";
 import { CreateUser } from "@/features/users/components/buttons";
 import { UsersTable } from "@/features/users/components/users-table";
-import { readUsersPagesAction } from "@/server/users/actions";
+import { readUsersPagesAction } from "@/server/users/actions/actions";
 import { H1 } from "@/ui/headings";
 import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton } from "@/ui/skeletons";
