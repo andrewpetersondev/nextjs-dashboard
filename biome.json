@@ -199,8 +199,28 @@
                     "message": "src/shared can only import within src/shared (or npm packages)."
                   },
                   {
+                    "group": ["@/features/**", "@/server/**", "@/ui/**"],
+                    "message": "src/shared cannot import from features, server, or ui."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/ui/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
                     "group": ["@/features/**", "@/server/**"],
-                    "message": "src/shared cannot import from features or server."
+                    "message": "src/ui can import only from src/ui and src/shared (and npm packages)."
                   }
                 ]
               }

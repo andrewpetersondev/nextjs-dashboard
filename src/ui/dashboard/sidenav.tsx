@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { JSX } from "react";
+import { LogoutForm } from "@/features/auth/components/logout-form";
 import { AcmeLogo } from "@/ui/acme-logo";
 import { NavLinksWrapper } from "@/ui/dashboard/nav-links-wrapper";
-import { LogoutForm } from "@/ui/logout-form";
 
 /**
  * SideNav component for dashboard layout.
