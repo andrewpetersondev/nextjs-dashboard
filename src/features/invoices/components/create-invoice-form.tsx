@@ -8,19 +8,23 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceServerMessage } from "@/features/invoices/components/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
+import type {
+  CreateInvoiceFormFieldNames,
+  CreateInvoiceFormFields,
+} from "@/features/invoices/types";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { InvoiceActionResult } from "@/server/invoices/types";
 import { TIMER } from "@/shared/constants/ui";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";
 
-const INITIAL_STATE: InvoiceActionResult = {
-  errors: {},
+const INITIAL_STATE = {
+  errors: {} as Partial<Record<CreateInvoiceFormFieldNames, FormFieldError>>,
   message: "",
   success: false,
-};
+} satisfies Extract<FormState<CreateInvoiceFormFieldNames>, { success: false }>;
 
 export const CreateInvoiceForm = ({
   customers,
@@ -28,7 +32,7 @@ export const CreateInvoiceForm = ({
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    InvoiceActionResult,
+    FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 
@@ -43,6 +47,7 @@ export const CreateInvoiceForm = ({
       );
       return () => clearTimeout(timer);
     }
+
     setShowAlert(false);
     return undefined;
   }, [state.message]);
@@ -55,15 +60,7 @@ export const CreateInvoiceForm = ({
 
           <SensitiveData
             disabled={pending}
-            error={
-              state.errors?.sensitiveData &&
-              state.errors.sensitiveData.length > 0
-                ? (state.errors.sensitiveData as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.sensitiveData as FormFieldError | undefined}
           />
 
           <div className="mb-4">
@@ -74,28 +71,14 @@ export const CreateInvoiceForm = ({
               dataCy="customer-select"
               defaultValue=""
               disabled={pending}
-              error={
-                state.errors?.customerId && state.errors.customerId.length > 0
-                  ? (state.errors.customerId as unknown as readonly [
-                      string,
-                      ...string[],
-                    ])
-                  : undefined
-              }
+              error={state.errors?.customerId as FormFieldError | undefined}
             />
           </div>
 
           <InvoiceAmountInput
             dataCy="amount-input"
             disabled={pending}
-            error={
-              state.errors?.amount && state.errors.amount.length > 0
-                ? (state.errors.amount as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.amount as FormFieldError | undefined}
             id="amount"
             label="Choose an amount"
             name="amount"
@@ -107,14 +90,7 @@ export const CreateInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="status-radio"
             disabled={pending}
-            error={
-              state.errors?.status && state.errors.status.length > 0
-                ? (state.errors.status as unknown as readonly [
-                    string,
-                    ...string[],
-                  ])
-                : undefined
-            }
+            error={state.errors?.status as FormFieldError | undefined}
             name="status"
             value="pending"
           />
