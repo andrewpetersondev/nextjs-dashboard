@@ -2,16 +2,12 @@ import "server-only";
 
 import type { z } from "zod";
 import { buildRawFromFormData, deriveFields } from "@/server/forms/helpers";
+import type { ValidateFormOptions } from "@/server/forms/types";
 import { logger } from "@/server/logging/logger";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages";
 import type { DenseFormErrors } from "@/shared/forms/types";
 import { mapFieldErrors, toDenseFormErrors } from "@/shared/forms/utils";
 import type { Result } from "@/shared/result/result-base";
-
-// Core-only options: no messages/redaction/return mode
-type ValidateFormOptions<TIn, TOut = TIn> = {
-  transform?: (data: TIn) => TOut | Promise<TOut>;
-};
 
 // --- Core API: single Result return (normalized errors) ---
 export async function validateFormGeneric<
