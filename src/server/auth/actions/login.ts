@@ -13,6 +13,7 @@ import {
 } from "@/features/users/schema.client";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
+import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
 import { findUserForLogin } from "@/server/users/dal/dal";
@@ -24,24 +25,35 @@ export async function login(
   formData: FormData,
 ): Promise<FormState<LoginFormFieldNames>> {
   "use server";
-  const validated = (await validateFormGeneric<
+
+  // Prepare fields and raw values for adapter (values will be redacted inside adapter)
+  const fields = LoginAllowedFields as readonly LoginFormFieldNames[];
+  const raw = Object.fromEntries(formData.entries());
+
+  const result = await validateFormGeneric<
     LoginFormFieldNames,
     LoginFormFields
-  >(formData, LoginFormSchema, LoginAllowedFields, {
-    returnMode: "form",
-    // Example: normalize email; redact password is default
+  >(formData, LoginFormSchema, fields, {
+    // Normalize email; password redaction is handled by adapter defaults
     transform: (d: LoginFormFields) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
     }),
-  })) as FormState<LoginFormFieldNames, LoginFormFields>;
+  });
+
+  const validated = toFormState(result, {
+    fields,
+    raw,
+    // Optional: override messages if desired
+    // successMessage: AUTH_SUCCESS_MESSAGES.SIGNED_IN,
+    // failureMessage: AUTH_ERROR_MESSAGES.VALIDATION_FAILED,
+  });
 
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }
 
   const { email, password } = validated.data;
-
   const db = getDB();
 
   try {
@@ -70,5 +82,6 @@ export async function login(
       success: false,
     };
   }
+
   redirect("/dashboard");
 }

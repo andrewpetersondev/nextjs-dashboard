@@ -13,6 +13,7 @@ import {
 } from "@/features/users/schema.client";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
+import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { logger } from "@/server/logging/logger";
 import { createUserDal } from "@/server/users/dal/create";
@@ -24,19 +25,30 @@ export async function signup(
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
   "use server";
-  const validated = (await validateFormGeneric<
+
+  // Prepare fields and raw values for adapter (values will be redacted inside adapter)
+  const fields = SignupAllowedFields as readonly SignupFormFieldNames[];
+  const raw = Object.fromEntries(formData.entries());
+
+  const result = await validateFormGeneric<
     SignupFormFieldNames,
     SignupFormFields
-  >(formData, SignupFormSchema, SignupAllowedFields, {
-    returnMode: "form",
-    // Example: normalize email; redact password is default
+  >(formData, SignupFormSchema, fields, {
+    // Normalize email; Normalize username; password redaction is handled by adapter defaults
     transform: (d: SignupFormFields) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
       username: d.username.trim(),
     }),
-  })) as FormState<SignupFormFieldNames, SignupFormFields>;
+  });
 
+  const validated = toFormState(result, {
+    fields,
+    raw,
+    // Optional: override messages if desired
+    // successMessage: AUTH_SUCCESS_MESSAGES.SIGNED_UP,
+    // failureMessage: AUTH_ERROR_MESSAGES.SIGNUP_FAILED,
+  });
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }

@@ -95,6 +95,7 @@ function FormFields({
 
       <InvoiceAmountInput
         dataCy="amount-input"
+        // biome-ignore lint/style/noMagicNumbers: <basic math>
         defaultValue={currentInvoice.amount / 100}
         disabled={pending}
         error={errors?.amount as FormFieldError | undefined}

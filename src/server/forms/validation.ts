@@ -1,57 +1,19 @@
 import "server-only";
 
 import type { z } from "zod";
+import { buildRawFromFormData, deriveFields } from "@/server/forms/helpers";
 import { logger } from "@/server/logging/logger";
-import { isZodObject } from "@/shared/forms/guards";
-import {
-  FORM_ERROR_MESSAGES,
-  FORM_SUCCESS_MESSAGES,
-} from "@/shared/forms/messages";
-import type { FieldErrors, FormState } from "@/shared/forms/types";
-import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-  toDenseFormErrors,
-} from "@/shared/forms/utils";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages";
+import type { DenseFormErrors } from "@/shared/forms/types";
+import { mapFieldErrors, toDenseFormErrors } from "@/shared/forms/utils";
 import type { Result } from "@/shared/result/result-base";
 
-export type ValidateFormOptions<TFieldNames extends string, TIn, TOut = TIn> = {
+// Core-only options: no messages/redaction/return mode
+type ValidateFormOptions<TIn, TOut = TIn> = {
   transform?: (data: TIn) => TOut | Promise<TOut>;
-  returnMode?: "form" | "result";
-  messages?: {
-    success?: string;
-    failure?: string;
-  };
-  redactFields?: readonly TFieldNames[];
 };
 
-/**
- * Generic form validation function that supports data transformation and flexible return types.
- *
- * @typeParam TFieldNames - String literal union of valid form field names
- * @typeParam TIn - Input type the form data is parsed into
- * @typeParam TOut - Optional output type after transformation (defaults to TIn)
- *
- * @param formData - The FormData object to validate
- * @param schema - Zod schema to validate the form data against
- * @param allowedFields - Array of allowed field names
- * @param options - Optional configuration for validation behavior
- *
- * @remarks
- * - In "form" mode: returns FormState for easy use in server actions.
- * - In "result" mode: returns Result for pipelines or functional handlers.
- *
- * @example
- * ```typescript
- * // TypeScript
- * const res = await validateFormGeneric(formData, SignupSchema, ["email","password","username"], {
- *   transform: d => ({ ...d, email: d.email.toLowerCase().trim() }),
- *   returnMode: "result",
- * });
- * ```
- *
- * @returns Promise resolving to either FormState or Result based on returnMode option
- */
+// --- Core API: single Result return (normalized errors) ---
 export async function validateFormGeneric<
   TFieldNames extends string,
   TIn,
@@ -60,73 +22,41 @@ export async function validateFormGeneric<
   formData: FormData,
   schema: z.ZodSchema<TIn>,
   allowedFields?: readonly TFieldNames[],
-  options: ValidateFormOptions<TFieldNames, TIn, TOut> = {},
-): Promise<FormState<TFieldNames, TOut> | Result<TOut, FieldErrors>> {
-  const {
-    transform,
-    returnMode = "form",
-    messages,
-    redactFields = ["password" as TFieldNames],
-  } = options;
+  options: ValidateFormOptions<TIn, TOut> = {},
+): Promise<Result<TOut, DenseFormErrors<TFieldNames>>> {
+  const { transform } = options;
 
-  const raw = Object.fromEntries(formData.entries());
+  const fields = deriveFields(schema, allowedFields);
+  const raw = buildRawFromFormData(formData, fields);
   const parsed = schema.safeParse(raw);
-
-  // Derive fields if not provided, without using `any`
-  const fields =
-    allowedFields ??
-    (isZodObject(schema)
-      ? (deriveAllowedFieldsFromSchema(schema) as readonly TFieldNames[])
-      : ([] as const));
-
-  let finalResult: FormState<TFieldNames, TOut> | Result<TOut, FieldErrors>;
 
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
     const normalized = mapFieldErrors(fieldErrors, fields);
+    const dense = toDenseFormErrors(normalized, fields);
 
-    if (returnMode === "result") {
-      const denseErrors = toDenseFormErrors(normalized, fields);
-      finalResult = { error: denseErrors, success: false };
-    } else {
-      const values: Partial<Record<TFieldNames, string>> = {};
-      for (const key of fields) {
-        if (redactFields.includes(key)) {
-          continue;
-        }
-        const v = raw[key as string];
-        if (typeof v === "string") {
-          values[key] = v;
-        }
-      }
+    logger.error({
+      context: "validateFormGeneric",
+      error: parsed.error,
+      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+    });
 
-      logger.error({
-        context: "validateFormGeneric",
-        error: parsed.error,
-        message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-      });
-
-      finalResult = {
-        errors: normalized,
-        message: messages?.failure ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-        success: false,
-        values,
-      };
-    }
-  } else {
-    const dataIn = parsed.data as TIn;
-    const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
-
-    if (returnMode === "result") {
-      finalResult = { data: dataOut, success: true };
-    } else {
-      finalResult = {
-        data: dataOut,
-        message: messages?.success ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
-        success: true,
-      };
-    }
+    return { error: dense, success: false };
   }
 
-  return finalResult;
+  const dataIn = parsed.data as TIn;
+
+  try {
+    const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
+    return { data: dataOut, success: true };
+  } catch (e) {
+    logger.error({
+      context: "validateFormGeneric.transform",
+      error: e,
+      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+    });
+    // Transform error is non-field specific; return empty dense map for known fields
+    const emptyDense = toDenseFormErrors<TFieldNames>({}, fields);
+    return { error: emptyDense, success: false };
+  }
 }

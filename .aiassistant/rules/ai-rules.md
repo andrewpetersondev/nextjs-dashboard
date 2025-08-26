@@ -21,12 +21,17 @@ apply: manually
 ## Code Response Guidelines
 
 - Keep explanations brief.
-- Keep functions to 50 lines or fewer. 
 - Write code as an expert Next.js senior developer.
 - Use TypeScript with strict typing and avoid deprecated APIs/patterns.
 - All code must be strictly typed (assume `"strict": true`).
 - Use visual aids (diagrams, flowcharts) for complex patterns when helpful.
 - Ensure compatibility with versions specified in `package.json`.
+
+## Code Style Guidelines
+
+- Keep functions to 50 lines or fewer.
+- Keep functions to 4 parameters or fewer.
+- Functions should not have excessive complexity.
 
 ## TypeScript Guidelines
 
@@ -46,7 +51,6 @@ apply: manually
 - Files in `./src/shared/` are not allowed to import from outside of `./src/shared/`.
 - Files in `./src/features/` are allowed to import from `./src/features/` and `./src/shared/`.
 - Files in `./src/server/` are allowed to import from anywhere.
-- Use branded types for domain-specific logic.
 - Follow clean architecture: separate layers for database, data access, repositories, services, actions, and more.
 - Use dependency injection to improve testability and flexibility. If unfamiliar, provide a brief explanation in context.
 

@@ -55,7 +55,6 @@ export type FormFieldError = NonEmptyReadonlyArray<ErrorMessage>;
  * @template TFieldNames - String literal union of valid field names.
  *
  * Only fields with errors should be present for clarity and efficiency.
- * Compatible with `exactOptionalPropertyTypes: true`—omitted fields are truly optional.
  */
 export type FormErrors<TFieldNames extends FormFieldName> = Partial<
   Record<TFieldNames, FormFieldError>

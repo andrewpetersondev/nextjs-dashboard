@@ -32,7 +32,7 @@ export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
       <div className="text-text-error" data-cy={dataCy} id={id} role="alert">
         {label && <p>{label}</p>}
         <ul>
-          {(error as readonly string[])!.map((err: string, i: number) => (
+          {(error as readonly string[])?.map((err: string, i: number) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <the key is unique enough>
             <li key={err + i}>- {err}</li>
           ))}
