@@ -10,7 +10,7 @@ import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
 import { convertCentsToDollars } from "@/shared/money/convert";
-import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/revenues/revenue";
+import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/revenues/types";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

@@ -3,7 +3,7 @@ import {
   createMonthTemplateFromIndex,
   getIntervalCount,
 } from "@/features/revenues/lib/date/range";
-import type { IntervalDuration } from "@/shared/revenues/revenue";
+import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.

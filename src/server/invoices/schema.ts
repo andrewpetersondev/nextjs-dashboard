@@ -4,8 +4,10 @@ import { z } from "zod";
 import { toCustomerId } from "@/shared/brands/domain-brands";
 import { INVOICE_STATUSES } from "@/shared/invoices/invoices";
 
+const MAX_AMOUNT = 10000;
+
 // const uuidSchema = z.uuid();
-const amountSchema = z.coerce.number().positive().max(10000);
+const amountSchema = z.coerce.number().positive().max(MAX_AMOUNT);
 const isoDateSchema = z.iso.date();
 const sensitiveDataSchema = z.string().min(2);
 const statusSchema = z.enum(INVOICE_STATUSES);

@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { INVOICE_STATUSES } from "@/shared/invoices/invoices";
 
+const MAX_INVOICE_AMOUNT = 10000;
+
 // Client-side schema for invoice form validation
-const amountSchema = z.coerce.number().positive().max(10000);
+const amountSchema = z.coerce.number().positive().max(MAX_INVOICE_AMOUNT);
 const dateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/u, { error: "Date must be YYYY-MM-DD." });

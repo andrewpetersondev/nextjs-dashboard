@@ -8,7 +8,7 @@ import {
 import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
 import type { Period } from "@/shared/brands/domain-brands";
-import type { IntervalDuration } from "@/shared/revenues/revenue";
+import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**
  * Calculates a specific month date from rolling start date with offset.

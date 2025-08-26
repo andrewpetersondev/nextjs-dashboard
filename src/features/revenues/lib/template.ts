@@ -4,7 +4,7 @@ import type {
 } from "@/features/revenues/core/types";
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { toPeriod } from "@/shared/brands/domain-brands";
-import { MONTH_ORDER } from "@/shared/revenues/revenue";
+import { MONTH_ORDER } from "@/shared/revenues/types";
 
 /**
  * Retrieves existing revenue data for a month or creates default empty data.

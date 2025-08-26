@@ -8,7 +8,13 @@ import type {
 import { toRevenueSource } from "@/server/revenues/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
-import { MONTH_ORDER } from "@/shared/revenues/revenue";
+import {
+  MAX_REVENUE_MONTHS,
+  MAX_REVENUE_YEAR,
+  MIN_REVENUE_MONTHS,
+  MIN_REVENUE_YEAR,
+  MONTH_ORDER,
+} from "@/shared/revenues/types";
 import { isValidDate } from "@/shared/utils/date";
 import {
   isNonNegativeInteger,
@@ -125,10 +131,15 @@ export function mapRevenueEntityToDisplayEntity(
     const monthNumber = revenueEntity.period.getUTCMonth() + 1;
     const yearNumber = revenueEntity.period.getUTCFullYear();
 
-    if (Number.isNaN(yearNumber) || yearNumber < 1000 || yearNumber > 9999) {
+    if (
+      Number.isNaN(yearNumber) ||
+      yearNumber < MIN_REVENUE_YEAR ||
+      yearNumber > MAX_REVENUE_YEAR
+    ) {
       throw new ValidationError(`Invalid year extracted from period`);
     }
-    if (monthNumber < 1 || monthNumber > 12) {
+    // if (monthNumber < 1 || monthNumber > 12) {}
+    if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
       throw new ValidationError(`Invalid month number extracted from period`);
     }
     const monthName = MONTH_ORDER[monthNumber - 1];

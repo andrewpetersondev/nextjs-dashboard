@@ -32,6 +32,7 @@ export class InvoiceService {
    * Business rule: Convert dollars to cents
    */
   private dollarsToCents(dollars: number): number {
+    // biome-ignore lint/style/noMagicNumbers: <not needed>
     return Math.round(dollars * 100);
   }
 

@@ -14,10 +14,13 @@ export const MONTH_ORDER = [
   "Nov",
   "Dec",
 ] as const;
+
 // Type-safe union of valid month name abbreviations.
 export type MonthName = (typeof MONTH_ORDER)[number];
+
 // Standardized period durations used in revenue calculations.
 export const INTERVAL_DURATIONS = ["year", "month"] as const;
+
 // Type-safe union of valid interval durations.
 export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
 
@@ -36,3 +39,9 @@ export interface SimpleRevenueDto {
   readonly totalAmount: Dollars;
   readonly monthNumber: number;
 }
+
+export const MIN_REVENUE_MONTHS = 1;
+export const MAX_REVENUE_MONTHS = 12;
+
+export const MAX_REVENUE_YEAR = 2100;
+export const MIN_REVENUE_YEAR = 2000;

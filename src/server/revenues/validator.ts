@@ -13,10 +13,11 @@ import { isPeriod, isRevenueId } from "@/shared/brands/domain-brands";
 import {
   INTERVAL_DURATIONS,
   type IntervalDuration,
+  MAX_REVENUE_MONTHS,
   MONTH_ORDER,
   type MonthName,
   type SimpleRevenueDto,
-} from "@/shared/revenues/revenue";
+} from "@/shared/revenues/types";
 import { isValidDate } from "@/shared/utils/date";
 import { validateEnum } from "@/shared/validation/enum";
 import {
@@ -41,7 +42,7 @@ export function isSimpleRevenueDto(value: unknown): value is SimpleRevenueDto {
   return (
     typeof dto.month === "string" &&
     isNonNegativeNumber(dto.totalAmount) &&
-    isIntegerInRange(dto.monthNumber, 1, 12)
+    isIntegerInRange(dto.monthNumber, 1, MAX_REVENUE_MONTHS)
   );
 }
 
@@ -186,6 +187,6 @@ export function isRevenueDisplayEntity(
       Number.MIN_SAFE_INTEGER,
       Number.MAX_SAFE_INTEGER,
     ) &&
-    isIntegerInRange(displayEntity.monthNumber, 1, 12)
+    isIntegerInRange(displayEntity.monthNumber, 1, MAX_REVENUE_MONTHS)
   );
 }

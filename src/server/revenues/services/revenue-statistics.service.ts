@@ -11,8 +11,8 @@ import type {
 } from "@/server/revenues/entity";
 import { mapRevEntToRevDisplayEnt } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
-import { toIntervalDuration } from "@/server/revenues/validator";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
+import { toIntervalDuration } from "@/server/revenues/validator";
 
 /**
  * Service for calculating revenue statistics.

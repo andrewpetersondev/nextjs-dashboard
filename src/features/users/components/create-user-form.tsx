@@ -20,6 +20,8 @@ import { FormSubmitButton } from "@/ui/form-submit-button";
 import { H1 } from "@/ui/headings";
 import { InputField } from "@/ui/input-field";
 
+const TIMER_DELAY = 4000;
+
 export function CreateUserForm(): JSX.Element {
   const initialState: Extract<
     FormState<CreateUserFormFieldNames>,
@@ -45,7 +47,7 @@ export function CreateUserForm(): JSX.Element {
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), 4000); // 4 seconds
+      const timer = setTimeout(() => setShowAlert(false), TIMER_DELAY);
       return () => clearTimeout(timer);
     }
     setShowAlert(false);

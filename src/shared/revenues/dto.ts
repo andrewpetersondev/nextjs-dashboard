@@ -1,4 +1,4 @@
-import type { SimpleRevenueDto } from "@/shared/revenues/revenue";
+import type { SimpleRevenueDto } from "@/shared/revenues/types";
 import type { Dollars } from "@/shared/types/money";
 
 /**

@@ -1,4 +1,5 @@
 export const formatCurrency = (amount: number): string => {
+  // biome-ignore lint/style/noMagicNumbers: <math>
   return (amount / 100).toLocaleString("en-US", {
     currency: "USD",
     style: "currency",

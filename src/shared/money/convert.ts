@@ -8,5 +8,6 @@ import type { Cents, Dollars } from "@/shared/types/money";
  * @returns Monetary value in dollars, rounded to nearest whole dollar
  */
 export function convertCentsToDollars(cents: Cents): Dollars {
+  // biome-ignore lint/style/noMagicNumbers: <math>
   return Math.round(cents / 100);
 }

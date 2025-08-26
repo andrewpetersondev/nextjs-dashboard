@@ -26,6 +26,7 @@ import type { InvoiceStatus } from "@/shared/invoices/invoices";
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {
     ...(formData.has("amount") && {
+      // biome-ignore lint/style/noMagicNumbers: <good enough>
       amount: Math.round(Number(formData.get("amount")) * 100),
     }),
     ...(formData.has("customerId") && {

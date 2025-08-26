@@ -14,7 +14,7 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/brands/domain-brands";
-import { MONTH_ORDER } from "@/shared/revenues/revenue";
+import { MONTH_ORDER } from "@/shared/revenues/types";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.
