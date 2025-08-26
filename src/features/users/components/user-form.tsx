@@ -1,30 +1,19 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
+// ... existing code ...
 import { TIMER } from "@/shared/constants/ui";
-import type { FormFieldError } from "@/shared/forms/types";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { H1 } from "@/ui/headings";
 
-type ErrorType = {
-  username?: FormFieldError;
-  email?: FormFieldError;
-  role?: FormFieldError;
-  password?: FormFieldError;
-};
-
-type UserFormState = {
-  errors?: ErrorType;
-  message?: string;
-  success?: boolean;
-};
-
-type Props = {
+// Make the form generic over field names to support both create and edit flows
+type Props<TFieldNames extends string> = {
   title: string;
   description: string;
   action: (formData: FormData) => void;
-  state: UserFormState;
+  state: FormState<TFieldNames>;
   pending: boolean;
   initialValues?: Partial<{
     id: string;
@@ -39,7 +28,7 @@ type Props = {
   extraContent?: ReactNode;
 };
 
-export function UserForm({
+export function UserForm<TFieldNames extends string>({
   title,
   description,
   action,
@@ -51,7 +40,7 @@ export function UserForm({
   submitLabel,
   cancelHref,
   extraContent,
-}: Props): JSX.Element {
+}: Props<TFieldNames>): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
@@ -73,7 +62,10 @@ export function UserForm({
       {extraContent}
       <form action={action} autoComplete="off">
         <UserFields
-          errors={state.errors}
+          // Disable inputs while pending to prevent changes mid-submit
+          disabled={pending}
+          // Adapt generic state.errors to the concrete UserFields error shape
+          errors={state.errors as Record<string, FormFieldError> | undefined}
           isEdit={isEdit}
           showPassword={showPassword}
           values={initialValues}

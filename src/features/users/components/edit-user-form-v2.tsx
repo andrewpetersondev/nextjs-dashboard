@@ -3,32 +3,27 @@
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
+import type { EditUserFormFieldNames } from "@/features/users/types";
 import { updateUserAction } from "@/server/users/actions/update";
-import type { FormFieldError } from "@/shared/forms/types";
+import type { FormState } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
 
-type EditUserFormState = Readonly<{
-  errors?: {
-    username?: FormFieldError;
-    email?: FormFieldError;
-    role?: FormFieldError;
-    password?: FormFieldError;
-  };
-  message?: string;
-  success?: boolean;
-}>;
-
 export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
-  const initialState = { errors: {}, message: "", success: undefined };
-  const updateUserWithId = updateUserAction.bind(null, user.id) as (
-    prevState: EditUserFormState,
-    formData: FormData,
-  ) => Promise<EditUserFormState>;
+  const initialState: FormState<EditUserFormFieldNames> = {
+    errors: {},
+    message: "",
+    success: false,
+  };
 
-  const [state, action, pending] = useActionState(
-    updateUserWithId,
-    initialState,
-  );
+  const updateUserWithId = updateUserAction.bind(null, user.id) as (
+    prevState: FormState<EditUserFormFieldNames>,
+    formData: FormData,
+  ) => Promise<FormState<EditUserFormFieldNames>>;
+
+  const [state, action, pending] = useActionState<
+    FormState<EditUserFormFieldNames>,
+    FormData
+  >(updateUserWithId, initialState);
 
   return (
     <UserForm

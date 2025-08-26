@@ -18,7 +18,7 @@ type EditUserFormState = Readonly<{
   success?: boolean;
 }>;
 
-export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
+export function _EditUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState = { errors: {}, message: "", success: undefined };
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: EditUserFormState,
@@ -45,6 +45,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
       isEdit={true}
       pending={pending}
       showPassword={true}
+      // @ts-ignore - function is unused anyways
       state={state}
       submitLabel="Save Changes"
       title="Edit User"

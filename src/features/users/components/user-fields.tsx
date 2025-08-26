@@ -25,6 +25,8 @@ type FieldsProps = {
   errors?: ErrorType;
   showPassword?: boolean;
   isEdit?: boolean;
+  // Allow disabling fields while pending
+  disabled?: boolean;
 };
 
 export function UserFields({
@@ -32,6 +34,7 @@ export function UserFields({
   errors,
   showPassword = true,
   isEdit = false,
+  disabled = false,
 }: FieldsProps): JSX.Element {
   return (
     <>
@@ -42,6 +45,7 @@ export function UserFields({
         autoComplete="username"
         dataCy="user-username-input"
         defaultValue={values.username}
+        disabled={disabled}
         error={errors?.username}
         icon={
           <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
@@ -57,6 +61,7 @@ export function UserFields({
         autoComplete="email"
         dataCy="user-email-input"
         defaultValue={values.email}
+        disabled={disabled}
         error={errors?.email}
         icon={
           <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
@@ -74,6 +79,7 @@ export function UserFields({
           autoComplete={isEdit ? "new-password" : "new-password"}
           dataCy="user-password-input"
           describedById="user-password-errors"
+          disabled={disabled}
           error={errors?.password}
           icon={
             <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
@@ -96,6 +102,14 @@ export function UserFields({
           defaultValue={values.role}
           id="role"
           name="role"
+          disabled={disabled}
+          aria-invalid={Array.isArray(errors?.role) && errors!.role!.length > 0}
+          aria-describedby={
+            Array.isArray(errors?.role) && errors!.role!.length > 0
+              ? "user-role-error"
+              : undefined
+          }
+          data-cy="user-role-select"
         >
           <option value="admin">Admin</option>
           <option value="user">User</option>

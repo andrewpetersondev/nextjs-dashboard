@@ -10,7 +10,7 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   icon?: ReactNode;
-  error?: FormFieldError; // Use FormFieldError type for consistency
+  error?: FormFieldError;
   dataCy?: string;
   describedById?: string;
 }
@@ -48,10 +48,12 @@ export function InputField(props: InputFieldProps): JSX.Element {
             className="block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6"
             data-cy={dataCy}
             id={id}
-            name={id}
+            // Allow overriding name via props; default to id for convenience.
+            name={rest.name ?? id}
             {...rest}
           />
-          {icon}
+          {/* Mark icon decorative for screen readers */}
+          {icon ? <span aria-hidden="true">{icon}</span> : null}
         </div>
         {/* Only render FieldError if error is defined and non-empty */}
         {hasError && (
