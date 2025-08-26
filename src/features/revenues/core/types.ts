@@ -1,6 +1,6 @@
 import type { Period } from "@/shared/brands/domain-brands";
+import type { MonthName } from "@/shared/revenues/revenue";
 import type { Cents } from "@/shared/types/money";
-import type { MonthName } from "@/shared/types/revenue";
 
 /**
  * Metadata for a single month in a 12-month rolling period.
@@ -29,9 +29,23 @@ export interface RollingMonthData {
  * @prop monthsWithData - Count of months containing actual revenue data (non-zero values)
  */
 export interface RevenueStatistics {
+  readonly average: Cents;
   readonly maximum: Cents;
   readonly minimum: Cents;
-  readonly average: Cents;
-  readonly total: Cents;
   readonly monthsWithData: number;
+  readonly total: Cents;
+}
+
+/**
+ * Client-safe row used by revenues feature data utilities and charts.
+ * Represents a display-oriented revenue record without server-only concerns.
+ */
+export interface RevenueDisplayRow {
+  readonly calculationSource: import("@/features/revenues/types").RevenueSource;
+  readonly invoiceCount: number;
+  readonly month: MonthName;
+  readonly monthNumber: number;
+  readonly period: Period | string;
+  readonly totalAmount: Cents;
+  readonly year: number;
 }

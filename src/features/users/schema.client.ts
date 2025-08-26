@@ -20,7 +20,6 @@ export const usernameSchema: ZodString = z
 
 export const emailSchema: ZodEmail = z
   .email({ error: "Please enter a valid email address." })
-  .regex(/@dummy\.com$/i, { error: "Email must end with @mail.com." })
   .trim();
 
 export const passwordSchema: ZodString = z

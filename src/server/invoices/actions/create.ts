@@ -25,7 +25,7 @@ import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
-import type { InvoiceStatus } from "@/shared/types/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

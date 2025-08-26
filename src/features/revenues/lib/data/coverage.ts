@@ -1,5 +1,5 @@
+import type { RevenueDisplayRow } from "@/features/revenues/core/types";
 import { computeTemplatePeriods } from "@/features/revenues/lib/data/lookup";
-import type { RevenueDisplayEntity } from "@/server/revenues/entity";
 import { isPeriod, type Period, toPeriod } from "@/shared/brands/domain-brands";
 
 /**
@@ -8,7 +8,7 @@ import { isPeriod, type Period, toPeriod } from "@/shared/brands/domain-brands";
  */
 export function makeCoverageReport<
   T extends { year: number } & ({ monthNumber: number } | { month: number }),
->(actualData: RevenueDisplayEntity[], template: T[]) {
+>(actualData: RevenueDisplayRow[], template: T[]) {
   const periods: Period[] = actualData.map((d) => toPeriod(d.period));
   const templatePeriods: Period[] = computeTemplatePeriods(template);
 

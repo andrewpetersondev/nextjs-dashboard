@@ -5,7 +5,7 @@ import {
   UpdateInvoice,
 } from "@/features/invoices/components/buttons";
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
-import type { InvoiceListFilter } from "@/shared/types/invoices";
+import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 import { formatDateToLocal } from "@/shared/utils/date";
 import { formatCurrency } from "@/shared/utils/general";
 

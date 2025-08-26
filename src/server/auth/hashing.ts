@@ -1,8 +1,7 @@
 import "server-only";
 
 import bcryptjs from "bcryptjs";
-
-import { SALT_ROUNDS } from "@/shared/auth/constants";
+import { SALT_ROUNDS } from "@/server/auth/constants";
 
 export const hashPassword = async (password: string): Promise<string> => {
   const salt: string = await bcryptjs.genSalt(SALT_ROUNDS);

@@ -7,7 +7,7 @@ import { invoices } from "@/server/db/schema";
 import { DatabaseError_New } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import type { InvoiceListFilter } from "@/shared/types/invoices";
+import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 
 /**
  * Lists invoices with pagination and filtering.

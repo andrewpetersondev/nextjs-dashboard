@@ -1,12 +1,9 @@
 import "server-only";
 
 import type { RevenueStatistics } from "@/features/revenues/core/types";
-import { makeCoverageReport } from "@/features/revenues/lib/data/coverage";
-import { mergeDataWithTemplate } from "@/features/revenues/lib/data/merge";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.client";
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
-import { logCoverageReport } from "@/features/revenues/utils/coverage.logging";
 import { logger } from "@/server/logging/logger";
 import type {
   RevenueDisplayEntity,
@@ -15,6 +12,7 @@ import type {
 import { mapRevEntToRevDisplayEnt } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import { toIntervalDuration } from "@/server/revenues/validator";
+import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 
 /**
  * Service for calculating revenue statistics.
@@ -109,30 +107,24 @@ export class RevenueStatisticsService {
         message: "Transformed revenue entities to display entities",
       });
 
-      try {
-        // Merge the display entities with the template (template-driven order)
-        const result: RevenueDisplayEntity[] = mergeDataWithTemplate(
-          displayEntities,
-          template,
-        );
-        logger.info({
-          context: "RevenueStatisticsService.calculateForRollingYear",
-          message: "Successfully calculated rolling 12-month revenue data",
-          resultCount: result.length,
-          withDataCount: displayEntities.length,
-        });
-        return result;
-      } catch (e) {
-        const report = makeCoverageReport(displayEntities, template);
-        logCoverageReport(report);
-        logger.error({
-          context: "RevenueStatisticsService.calculateForRollingYear",
-          error: e,
-          message: "Merge failed; returning defaults from template",
-        });
-        // Fallback: return a safe template-filled dataset (all defaults)
-        return mergeDataWithTemplate([], template);
-      }
+      // Merge the display entities with the template (template-driven order)
+      const dataLookup = new Map<number, RevenueDisplayEntity>(
+        displayEntities.map((e) => [e.period.getTime(), e] as const),
+      );
+
+      const result: RevenueDisplayEntity[] = template.map(
+        (t) =>
+          dataLookup.get(t.period.getTime()) ??
+          createDefaultRevenueData(t.period),
+      );
+
+      logger.info({
+        context: "RevenueStatisticsService.calculateForRollingYear",
+        message: "Successfully calculated rolling 12-month revenue data",
+        resultCount: result.length,
+        withDataCount: displayEntities.length,
+      });
+      return result;
     } catch (error) {
       logger.error({
         context: "RevenueStatisticsService.calculateForRollingYear",
@@ -147,7 +139,7 @@ export class RevenueStatisticsService {
           startDate,
           toIntervalDuration(duration),
         );
-        return mergeDataWithTemplate([], template);
+        return template.map((t) => createDefaultRevenueData(t.period));
       } catch (fallbackError) {
         logger.error({
           context: "RevenueStatisticsService.calculateForRollingYear",

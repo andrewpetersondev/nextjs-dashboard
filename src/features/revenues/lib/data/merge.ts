@@ -1,8 +1,10 @@
-import type { RollingMonthData } from "@/features/revenues/core/types";
+import type {
+  RevenueDisplayRow,
+  RollingMonthData,
+} from "@/features/revenues/core/types";
 import { createDataLookupMap } from "@/features/revenues/lib/data/lookup";
-import { logger } from "@/server/logging/logger";
-import type { RevenueDisplayEntity } from "@/server/revenues/entity";
-import { getMonthDataOrDefault } from "@/server/revenues/utils/template";
+import { getMonthDataOrDefault } from "@/features/revenues/lib/template";
+import { logger } from "@/shared/logging/logger";
 
 /**
  * Merges actual revenue data with month template to ensure complete 12-month dataset.
@@ -15,9 +17,9 @@ import { getMonthDataOrDefault } from "@/server/revenues/utils/template";
  * @returns Array of 12 complete revenue display entities
  */
 export function mergeDataWithTemplate(
-  actualData: RevenueDisplayEntity[],
+  actualData: RevenueDisplayRow[],
   template: RollingMonthData[],
-): RevenueDisplayEntity[] {
+): RevenueDisplayRow[] {
   const dataLookup = createDataLookupMap(actualData);
 
   const mergedData = template.map((monthTemplate) =>

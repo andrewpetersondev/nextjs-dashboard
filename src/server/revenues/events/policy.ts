@@ -5,7 +5,7 @@ import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { logError, logInfo } from "@/server/revenues/events/logging";
 import { type Period, toPeriod } from "@/shared/brands/domain-brands";
-import type { InvoiceStatus } from "@/shared/types/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 const matchingRegex = /^\d{4}-\d{2}$/;
 

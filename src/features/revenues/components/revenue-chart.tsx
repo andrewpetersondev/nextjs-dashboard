@@ -2,7 +2,7 @@ import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import { generateYAxis } from "@/features/revenues/lib/display/y-axis";
 import { getRevenueChartAction } from "@/server/revenues/actions/actions";
-import type { SimpleRevenueDto } from "@/shared/types/revenue";
+import type { SimpleRevenueDto } from "@/shared/revenues/revenue";
 import { H2, H3 } from "@/ui/headings";
 
 export async function RevenueChart(): Promise<JSX.Element> {

@@ -1,7 +1,5 @@
 "use server";
 
-import { extractMonthNumberFromPeriod } from "@/features/revenues/lib/date/period";
-import { convertCentsToDollars } from "@/features/revenues/lib/display/money";
 import { getDB } from "@/server/db/connection";
 import { logger } from "@/server/logging/logger";
 import type {
@@ -11,7 +9,8 @@ import type {
 import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
-import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/types/revenue";
+import { convertCentsToDollars } from "@/shared/money/convert";
+import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/revenues/revenue";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
@@ -22,7 +21,6 @@ import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/types/revenue";
  * @throws {Error} When revenue calculation service encounters errors
  * @throws {Error} When data transformation fails
  *
-
  */
 export async function getRevenueChartAction(): Promise<
   RevenueActionResult<RevenueChartDto>
@@ -42,7 +40,7 @@ export async function getRevenueChartAction(): Promise<
 
     const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
       // Extract the month number from Period value (1-12)
-      const monthNumber = extractMonthNumberFromPeriod(entity.period);
+      const monthNumber = entity.period.getUTCMonth() + 1;
 
       // Validate month number is within the valid range (1-12)
       if (monthNumber < 1 || monthNumber > 12) {

@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/shared/types/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 export type BaseInvoiceFormFields = {
   readonly amount: number;

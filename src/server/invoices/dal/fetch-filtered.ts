@@ -6,7 +6,7 @@ import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { DatabaseError_New } from "@/server/errors/infrastructure";
 import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
-import type { InvoiceListFilter } from "@/shared/types/invoices";
+import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 
 /**
  * Fetches filtered invoices with pagination and customer information.

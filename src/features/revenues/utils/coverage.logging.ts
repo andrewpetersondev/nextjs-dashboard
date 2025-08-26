@@ -1,5 +1,5 @@
-import { logger } from "@/server/logging/logger";
 import type { Period } from "@/shared/brands/domain-brands";
+import { logger } from "@/shared/logging/logger";
 
 /**
  * Log a concise coverage report. Keep logs short and structured.

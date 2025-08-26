@@ -2,8 +2,8 @@ import "server-only";
 
 import type { RevenueSource } from "@/features/revenues/types";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import type { MonthName } from "@/shared/revenues/revenue";
 import type { Cents } from "@/shared/types/money";
-import type { MonthName } from "@/shared/types/revenue";
 
 /**
  * Represents a revenue entity in the database.
@@ -50,6 +50,6 @@ export type RevenueUpdatable = Pick<
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
   readonly month: MonthName;
-  readonly year: number;
   readonly monthNumber: number;
+  readonly year: number;
 }

@@ -4,8 +4,8 @@ import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
 import { updateUserAction } from "@/server/users/actions/update";
-import type { UserDto } from "@/server/users/dto";
 import type { FormFieldError } from "@/shared/forms/types";
+import type { UserDto } from "@/shared/users/dto";
 
 type EditUserFormState = Readonly<{
   errors?: {

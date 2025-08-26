@@ -16,7 +16,7 @@ import {
   MONTH_ORDER,
   type MonthName,
   type SimpleRevenueDto,
-} from "@/shared/types/revenue";
+} from "@/shared/revenues/revenue";
 import { isValidDate } from "@/shared/utils/date";
 import { validateEnum } from "@/shared/validation/enum";
 import {

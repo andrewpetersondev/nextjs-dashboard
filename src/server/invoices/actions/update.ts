@@ -21,7 +21,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import { logger } from "@/server/logging/logger";
 import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import type { InvoiceStatus } from "@/shared/types/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

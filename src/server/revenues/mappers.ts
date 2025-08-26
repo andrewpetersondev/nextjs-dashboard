@@ -1,7 +1,5 @@
 import "server-only";
 
-import { getMonthName } from "@/features/revenues/lib/date/date";
-import { extractMonthNumberFromPeriod } from "@/features/revenues/lib/date/period";
 import type { RevenueRow } from "@/server/db/schema";
 import type {
   RevenueDisplayEntity,
@@ -10,6 +8,7 @@ import type {
 import { toRevenueSource } from "@/server/revenues/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import { MONTH_ORDER } from "@/shared/revenues/revenue";
 import { isValidDate } from "@/shared/utils/date";
 import {
   isNonNegativeInteger,
@@ -123,16 +122,25 @@ export function mapRevenueEntityToDisplayEntity(
   }
 
   try {
-    const monthNumber = extractMonthNumberFromPeriod(revenueEntity.period);
+    const monthNumber = revenueEntity.period.getUTCMonth() + 1;
     const yearNumber = revenueEntity.period.getUTCFullYear();
 
     if (Number.isNaN(yearNumber) || yearNumber < 1000 || yearNumber > 9999) {
       throw new ValidationError(`Invalid year extracted from period`);
     }
+    if (monthNumber < 1 || monthNumber > 12) {
+      throw new ValidationError(`Invalid month number extracted from period`);
+    }
+    const monthName = MONTH_ORDER[monthNumber - 1];
+    if (!monthName) {
+      throw new ValidationError(
+        `Invalid month name computed from month number`,
+      );
+    }
 
     return {
       ...revenueEntity,
-      month: getMonthName(monthNumber),
+      month: monthName,
       monthNumber,
       year: yearNumber,
     };

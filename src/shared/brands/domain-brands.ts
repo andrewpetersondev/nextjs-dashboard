@@ -1,6 +1,9 @@
-import { mapNewToLegacyError } from "@/server/errors/mappers";
 import { type Brand, createBrand } from "@/shared/brands/brands";
-import { ValidationError, ValidationError_New } from "@/shared/errors/domain";
+import {
+  type ValidationError,
+  ValidationError_New,
+} from "@/shared/errors/domain";
+import { mapNewToLegacyError } from "@/shared/errors/mappers";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { validatePeriodResult } from "@/shared/validation/period";
 import { brandWith } from "@/shared/validation/types";

@@ -1,9 +1,9 @@
+import type { RevenueDisplayRow } from "@/features/revenues/core/types";
 import { LOOKUP_LOG_KEYS_SAMPLE } from "@/features/revenues/lib/data/constants";
 import { normalizeToPeriod } from "@/features/revenues/lib/data/period-normalize";
 import { periodKey } from "@/features/revenues/lib/date/period";
-import { logger } from "@/server/logging/logger";
-import type { RevenueDisplayEntity } from "@/server/revenues/entity";
 import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import { logger } from "@/shared/logging/logger";
 
 /**
  * Creates an efficient lookup map for revenue data indexed by Period month-key.
@@ -14,9 +14,9 @@ import { type Period, toPeriod } from "@/shared/brands/domain-brands";
  * TODO: would it make sense to simplify the function to use "yyyy-MM-dd"
  */
 export function createDataLookupMap(
-  actualData: RevenueDisplayEntity[],
-): Map<string, RevenueDisplayEntity> {
-  const dataMap = new Map<string, RevenueDisplayEntity>();
+  actualData: RevenueDisplayRow[],
+): Map<string, RevenueDisplayRow> {
+  const dataMap = new Map<string, RevenueDisplayRow>();
   const duplicates: string[] = [];
 
   for (const dataItem of actualData) {

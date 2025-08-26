@@ -3,18 +3,14 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-
+import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import {
   createSessionToken,
   readSessionToken,
 } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 import { logger } from "@/server/logging/logger";
-
-import {
-  SESSION_COOKIE_NAME,
-  SESSION_DURATION_MS,
-} from "@/shared/auth/constants";
+import { SESSION_DURATION_MS } from "@/shared/auth/constants";
 import type { AuthRole } from "@/shared/auth/roles";
 import type { SessionVerificationResult } from "@/shared/auth/types";
 

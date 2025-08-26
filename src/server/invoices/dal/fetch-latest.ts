@@ -5,7 +5,7 @@ import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { DatabaseError_New } from "@/server/errors/infrastructure";
-import type { InvoiceListFilter } from "@/shared/types/invoices";
+import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 
 /**
  * Fetches the latest invoices with customer information.

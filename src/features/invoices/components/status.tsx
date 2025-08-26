@@ -1,8 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { JSX } from "react";
-
-import type { InvoiceStatus } from "@/shared/types/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 export const InvoiceStatusComponent = ({
   status,
