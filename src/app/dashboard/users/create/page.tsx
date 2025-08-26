@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { CreateUserForm } from "@/features/users/components/create-user-form";
 import { CreateUserFormV2 } from "@/features/users/components/create-user-form-v2";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 
@@ -27,7 +26,6 @@ export default function Page(): JSX.Element {
           },
         ]}
       />
-      <CreateUserForm />
       <CreateUserFormV2 />
     </main>
   );

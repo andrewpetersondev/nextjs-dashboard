@@ -22,7 +22,8 @@ import { InputField } from "@/ui/input-field";
 
 const TIMER_DELAY = 4000;
 
-export function CreateUserForm(): JSX.Element {
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <unused function>
+export function _CreateUserForm(): JSX.Element {
   const initialState: Extract<
     FormState<CreateUserFormFieldNames>,
     { success: false }
