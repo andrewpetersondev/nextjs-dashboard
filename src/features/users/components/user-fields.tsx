@@ -4,43 +4,29 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
+import { SelectRole } from "@/features/users/components/select-role";
+import type { BaseUserFormFieldNames } from "@/features/users/types";
 import type { FormFieldError } from "@/shared/forms/types";
+import type { UserDto } from "@/shared/users/dto";
 import { InputField } from "@/ui/input-field";
+import { Label } from "@/ui/label";
 
-type ErrorType = {
-  username?: FormFieldError;
-  email?: FormFieldError;
-  role?: FormFieldError;
-  password?: FormFieldError;
-};
-
-type FieldsProps = {
-  values?: Partial<{
-    id: string;
-    username: string;
-    email: string;
-    password: string;
-    role: string;
-  }>;
-  errors?: ErrorType;
-  showPassword?: boolean;
-  isEdit?: boolean;
-  // Allow disabling fields while pending
-  disabled?: boolean;
-};
-
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <1 line over limit>
 export function UserFields({
   values = {},
   errors,
   showPassword = true,
   isEdit = false,
   disabled = false,
-}: FieldsProps): JSX.Element {
+}: {
+  values?: Partial<UserDto> & { password?: string };
+  errors?: Partial<Record<BaseUserFormFieldNames, FormFieldError>>;
+  showPassword?: boolean;
+  isEdit?: boolean;
+  disabled?: boolean;
+}): JSX.Element {
   return (
     <>
-      {isEdit && values.id && (
-        <input name="id" type="hidden" value={values.id} />
-      )}
       <InputField
         autoComplete="username"
         dataCy="user-username-input"
@@ -92,35 +78,14 @@ export function UserFields({
           type="password"
         />
       )}
-
       <div className="mb-4">
-        <label className="mb-2 block font-medium text-sm" htmlFor="role">
-          Role
-        </label>
-        <select
-          className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring focus:ring-primary"
+        <Label htmlFor="role" text="Role" />
+        <SelectRole
+          dataCy="user-role-select"
           defaultValue={values.role}
-          id="role"
-          name="role"
           disabled={disabled}
-          aria-invalid={Array.isArray(errors?.role) && errors!.role!.length > 0}
-          aria-describedby={
-            Array.isArray(errors?.role) && errors!.role!.length > 0
-              ? "user-role-error"
-              : undefined
-          }
-          data-cy="user-role-select"
-        >
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
-        <div aria-atomic="true" aria-live="polite" id="user-role-error">
-          {errors?.role?.map((error) => (
-            <p className="mt-2 text-sm text-text-error" key={error}>
-              {error}
-            </p>
-          ))}
-        </div>
+          error={errors?.role}
+        />
       </div>
     </>
   );

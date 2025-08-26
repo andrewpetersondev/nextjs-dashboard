@@ -1,12 +1,12 @@
 // TODO: should these be readonly?
-export type BaseUserFormFields = {
+export type BaseAuthFormFields = {
   email: string;
   password: string;
 };
 
-export type LoginFormFields = BaseUserFormFields;
+export type LoginFormFields = BaseAuthFormFields;
 // TODO: why is this not readonly?
-export type SignupFormFields = BaseUserFormFields & {
+export type SignupFormFields = BaseAuthFormFields & {
   username: string;
 };
 

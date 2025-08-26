@@ -1,9 +1,9 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
-// ... existing code ...
 import { TIMER } from "@/shared/constants/ui";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { UserDto } from "@/shared/users/dto";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { H1 } from "@/ui/headings";
@@ -15,12 +15,7 @@ type Props<TFieldNames extends string> = {
   action: (formData: FormData) => void;
   state: FormState<TFieldNames>;
   pending: boolean;
-  initialValues?: Partial<{
-    id: string;
-    username: string;
-    email: string;
-    role: string;
-  }>;
+  initialValues?: Partial<UserDto> & { password?: string };
   isEdit?: boolean;
   showPassword?: boolean;
   submitLabel: string;
