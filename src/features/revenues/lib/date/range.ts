@@ -5,9 +5,9 @@ import {
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
 } from "@/features/revenues/lib/date/constants";
-import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
 import type { Period } from "@/shared/brands/domain-brands";
+import { dateToPeriod } from "@/shared/revenues/period";
 import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**

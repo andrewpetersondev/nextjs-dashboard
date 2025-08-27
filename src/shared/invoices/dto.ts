@@ -1,15 +1,21 @@
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
+/** Transport aliases (unambiguous formats) */
+export type ISODateString = string; // YYYY-MM-DD
+export type PeriodFirstDayString = string; // YYYY-MM-01
+
 /**
  * Data Transfer Object for an invoice.
  * Plain, serializable shape for UI/API transport.
  */
 export interface InvoiceDto {
   readonly id: string;
-  readonly amount: number;
+  readonly amount: number; // integer cents
   readonly customerId: string;
-  readonly date: string; // ISO date string
-  readonly revenuePeriod: string; // derived yyyy-MM or yyyy-MM-dd
+  /** Transport date format: ISO date string = YYYY-MM-DD */
+  readonly date: ISODateString;
+  /** Transport period format: YYYY-MM-01 (first-of-month date) */
+  readonly revenuePeriod: PeriodFirstDayString;
   readonly sensitiveData: string;
   readonly status: InvoiceStatus;
 }

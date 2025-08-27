@@ -8,12 +8,12 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceServerMessage } from "@/features/invoices/components/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
-import type {
-  CreateInvoiceFormFieldNames,
-  CreateInvoiceFormFields,
-} from "@/features/invoices/types";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type {
+  UpdateInvoiceFieldNames,
+  UpdateInvoiceInput,
+} from "@/shared/invoices/schema.shared";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -21,10 +21,10 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";
 
 const INITIAL_STATE = {
-  errors: {} as Partial<Record<CreateInvoiceFormFieldNames, FormFieldError>>,
+  errors: {} as Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>,
   message: "",
   success: false,
-} satisfies Extract<FormState<CreateInvoiceFormFieldNames>, { success: false }>;
+} satisfies Extract<FormState<UpdateInvoiceFieldNames>, { success: false }>;
 
 export const CreateInvoiceForm = ({
   customers,
@@ -32,7 +32,7 @@ export const CreateInvoiceForm = ({
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>,
+    FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 

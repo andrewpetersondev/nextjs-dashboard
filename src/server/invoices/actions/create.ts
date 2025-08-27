@@ -5,17 +5,12 @@ import {
   INVOICE_ERROR_MESSAGES,
   INVOICE_SUCCESS_MESSAGES,
 } from "@/features/invoices/messages";
-import type {
-  CreateInvoiceFormFieldNames,
-  CreateInvoiceFormFields,
-} from "@/features/invoices/types";
 import { getDB } from "@/server/db/connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
-import { CreateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { isZodError } from "@/shared/forms/guards";
@@ -26,6 +21,11 @@ import {
 } from "@/shared/forms/utils";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
+import {
+  CreateInvoiceSchema,
+  type UpdateInvoiceFieldNames,
+  type UpdateInvoiceInput,
+} from "@/shared/invoices/schema.shared";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 
@@ -36,10 +36,10 @@ const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
  * @returns FormState with data, errors, message, and success
  */
 export async function createInvoiceAction(
-  prevState: FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>,
+  prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
   formData: FormData,
-): Promise<FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>> {
-  let result: FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>;
+): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>> {
+  let result: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>;
 
   try {
     const input: InvoiceFormDto = {

@@ -2,7 +2,6 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 import type { RollingMonthData } from "@/features/revenues/core/types";
-import { periodKey } from "@/features/revenues/lib/date/period";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
@@ -11,6 +10,7 @@ import type {
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
+import { periodKey } from "@/shared/revenues/period";
 import { MONTH_ORDER } from "@/shared/revenues/types";
 
 /**

@@ -93,7 +93,7 @@ const commonFields = {
 /**
  * Constants for DB table and column names to prevent typos and ease refactors.
  */
-export const TABLES = {
+const TABLES = {
   CUSTOMERS: "customers",
   DEMO_USER_COUNTERS: "demo_user_counters",
   INVOICES: "invoices",
@@ -102,7 +102,7 @@ export const TABLES = {
   USERS: "users",
 } as const;
 
-export const COLUMNS = {
+const COLUMNS = {
   AMOUNT: "amount",
   CALCULATION_SOURCE: "calculation_source",
   COUNT: "count",
@@ -130,11 +130,11 @@ export const COLUMNS = {
 } as const;
 
 // DB enums from domain constants to avoid duplication and drift
-export const roleEnum = pgEnum(COLUMNS.ROLE, AUTH_ROLES);
+const roleEnum = pgEnum(COLUMNS.ROLE, AUTH_ROLES);
 
-export const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
+const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
 
-export const calculationSourceEnum = pgEnum(
+const calculationSourceEnum = pgEnum(
   COLUMNS.CALCULATION_SOURCE,
   REVENUE_SOURCES,
 );

@@ -14,7 +14,7 @@ import type {
   InvoiceFormPartialEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
-import { entityToInvoiceDto } from "@/server/invoices/mapper";
+import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";

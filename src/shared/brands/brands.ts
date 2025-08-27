@@ -12,5 +12,10 @@ export const isBrand = <T, B extends symbol>(
   validator: (v: unknown) => v is T,
 ): value is Brand<T, B> => validator(value);
 
+/**
+ * How to use.
+ * - Use when inside server/domain layers: unbrand.
+ * - DO NOT use when emitting to DTOs/JSON/URLs/logs: convert intentionally (e.g., String(id), date.toISOString(), toPeriodFirstDayString(period)).
+ */
 export const unbrand = <T, B extends symbol>(brandedValue: Brand<T, B>): T =>
   brandedValue as T;

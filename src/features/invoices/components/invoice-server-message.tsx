@@ -1,16 +1,16 @@
 import type { JSX } from "react";
-import type {
-  CreateInvoiceFormFieldNames,
-  CreateInvoiceFormFields,
-} from "@/features/invoices/types";
 import type { FormState } from "@/shared/forms/types";
+import type {
+  UpdateInvoiceFieldNames,
+  UpdateInvoiceInput,
+} from "@/shared/invoices/schema.shared";
 
 /**
  * Props for InvoiceServerMessage component.
  */
 interface InvoiceServerMessageProps {
   showAlert: boolean;
-  state: FormState<CreateInvoiceFormFieldNames, CreateInvoiceFormFields>;
+  state: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>;
 }
 
 /**

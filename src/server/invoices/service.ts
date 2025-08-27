@@ -4,9 +4,9 @@ import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import {
   dtoToCreateInvoiceEntity,
-  invoiceFormEntityToServiceEntity,
   partialDtoToCreateInvoiceEntity,
-} from "@/server/invoices/mapper";
+} from "@/server/invoices/invoice-codecs.server";
+import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";

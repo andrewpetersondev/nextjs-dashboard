@@ -8,25 +8,25 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { useAutoHideAlert } from "@/features/invoices/hooks/useAutoHideAlert";
-import type {
-  BaseInvoiceFormFieldNames,
-  BaseInvoiceFormFields,
-  UpdateInvoiceFormFields,
-} from "@/features/invoices/types";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type {
+  EditInvoiceViewModel,
+  UpdateInvoiceFieldNames,
+  UpdateInvoiceInput,
+} from "@/shared/invoices/schema.shared";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";
 
 // Helper: produce initial state (keeps component short)
 function getInitialState(): Extract<
-  FormState<BaseInvoiceFormFieldNames>,
+  FormState<UpdateInvoiceFieldNames>,
   { success: false }
 > {
   return {
-    errors: {} as Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>,
+    errors: {} as Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>,
     message: "",
     success: false,
   };
@@ -35,9 +35,9 @@ function getInitialState(): Extract<
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
   return async (
-    prevState: FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
+    prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
     formData: FormData,
-  ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> =>
+  ): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
@@ -48,9 +48,9 @@ function FormFields({
   errors,
   pending,
 }: {
-  currentInvoice: BaseInvoiceFormFields;
+  currentInvoice: EditInvoiceViewModel;
   customers: CustomerField[];
-  errors: Partial<Record<BaseInvoiceFormFieldNames, FormFieldError>>;
+  errors: Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>;
   pending: boolean;
 }): JSX.Element {
   return (
@@ -99,15 +99,22 @@ export const EditInvoiceForm = ({
   invoice,
   customers,
 }: {
-  invoice: UpdateInvoiceFormFields;
+  invoice: EditInvoiceViewModel; // fully populated for UI defaults
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>,
+    FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
     FormData
   >(createWrappedUpdateAction(invoice.id), getInitialState());
 
-  const currentInvoice = state.success ? state.data : invoice;
+  // Build a view-model for the UI:
+  // - Before submit: use the provided invoice (required fields)
+  // - After successful submit: merge the server-validated patch into the existing view
+  const currentInvoice: EditInvoiceViewModel =
+    state.success && state.data
+      ? ({ ...invoice, ...state.data } as EditInvoiceViewModel)
+      : invoice;
+
   const showAlert = useAutoHideAlert(state.message);
 
   return (

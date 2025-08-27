@@ -45,6 +45,3 @@ export const MAX_REVENUE_MONTHS = 12;
 
 export const MAX_REVENUE_YEAR = 2100;
 export const MIN_REVENUE_YEAR = 2000;
-
-// Regular expression for validating ISO year-month strings.
-export const ISO_YEAR_MONTH_REGEX = /^\d{4}-\d{2}$/;
