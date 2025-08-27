@@ -1,7 +1,5 @@
 import { LOOKUP_LOG_KEYS_SAMPLE } from "@/features/revenues/lib/data/constants";
-import { normalizeToPeriod } from "@/features/revenues/lib/data/period-normalize";
 import type { RevenueDisplayRow } from "@/features/revenues/types";
-import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { logger } from "@/shared/logging/logger";
 import { periodKey } from "@/shared/revenues/period";
@@ -45,29 +43,4 @@ export function createDataLookupMap(
   });
 
   return dataMap;
-}
-
-/**
- * Compute an ordered list of template periods from a rolling-month template.
- * Each template item must contain { year: number, month: number } fields.
- */
-export function computeTemplatePeriods<
-  T extends { year?: number; period?: Period } & (
-    | { monthNumber?: number }
-    | { month?: number }
-  ),
->(template: T[]): Period[] {
-  return template.map((t) => {
-    // Prefer a direct period if present (e.g., RollingMonthData)
-    const maybePeriod = (t as { period?: Period }).period;
-    if (maybePeriod) {
-      return maybePeriod;
-    }
-
-    // Otherwise, normalize from year/month or monthNumber
-    const year = (t as { year?: number }).year;
-    const monthNumber = (t as { monthNumber?: number }).monthNumber;
-    const month = (t as { month?: number }).month;
-    return normalizeToPeriod({ month, monthNumber, year: year as number });
-  });
 }

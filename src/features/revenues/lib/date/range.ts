@@ -6,8 +6,6 @@ import {
 } from "@/features/revenues/lib/date/constants";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
 import type { RollingMonthData } from "@/features/revenues/types";
-import type { Period } from "@/shared/brands/domain-brands";
-import { dateToPeriod } from "@/shared/revenues/period";
 import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**
@@ -50,30 +48,6 @@ export function calculateDateRange(): {
     endDate,
     startDate,
   };
-}
-
-/**
- * Generates monthly periods between start and end dates.
- *
- * @param start
- * @param end
- * @returns Array of branded Period values (first-of-month Date)
- */
-export function generateMonthlyPeriods(start: Date, end: Date): Period[] {
-  const periods: Period[] = [];
-
-  // Start with the first day of the start month
-  let currentDate = startOfMonth(start);
-  const lastDate = endOfMonth(end);
-
-  // Generate periods until we reach or pass the end date
-  while (currentDate <= lastDate) {
-    periods.push(dateToPeriod(currentDate));
-    // Move to the next month using date-fns
-    currentDate = addMonths(currentDate, SINGLE_MONTH_INTERVAL);
-  }
-
-  return periods;
 }
 
 /**

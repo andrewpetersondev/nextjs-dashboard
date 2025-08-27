@@ -9,8 +9,7 @@ import {
 } from "next/navigation";
 import type { ChangeEvent, JSX } from "react";
 import { useDebouncedCallback } from "use-debounce";
-
-const DEBOUNCE_TIME = 3000;
+import { DEBOUNCE_MS } from "@/shared/ui/ui";
 
 /**
  * Search component for filtering data.
@@ -29,7 +28,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
       params.delete("query");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, DEBOUNCE_TIME);
+  }, DEBOUNCE_MS);
 
   return (
     <div className="relative flex flex-1 shrink-0">

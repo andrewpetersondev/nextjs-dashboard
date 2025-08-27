@@ -4,29 +4,11 @@ import type {
   CustomerAggregatesServerDto,
   CustomerSelectServerDto,
 } from "@/features/customers/types";
-import type { CustomerEntity } from "@/server/customers/entity";
 import type {
   CustomerAggregatesRowRaw,
   CustomerSelectRowRaw,
 } from "@/server/customers/types";
-import type { CustomerRow } from "@/server/db/schema";
 import { toCustomerId } from "@/shared/brands/mappers";
-
-/**
- * Maps raw DB customer row to branded CustomerEntity.
- * Use when a full row is loaded (not a projection).
- */
-export function mapCustomerDbRowToEntity(
-  customerRow: CustomerRow,
-): CustomerEntity {
-  return {
-    email: customerRow.email,
-    id: toCustomerId(customerRow.id),
-    imageUrl: customerRow.imageUrl,
-    name: customerRow.name,
-    sensitiveData: customerRow.sensitiveData,
-  };
-}
 
 /**
  * Maps a raw "select" projection row to a server DTO with branded ID.

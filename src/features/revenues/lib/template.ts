@@ -1,34 +1,6 @@
-import type {
-  RevenueDisplayRow,
-  RollingMonthData,
-} from "@/features/revenues/types";
+import type { RollingMonthData } from "@/features/revenues/types";
 import { toPeriod } from "@/shared/brands/mappers";
-import { periodKey } from "@/shared/revenues/period";
 import { MONTH_ORDER } from "@/shared/revenues/types";
-
-/**
- * Retrieves existing revenue data for a month or creates default empty data.
- * Feature-local, client-safe alternative to the server template helper.
- */
-export function getMonthDataOrDefault(
-  monthTemplate: RollingMonthData,
-  dataLookup: Map<string, RevenueDisplayRow>,
-): RevenueDisplayRow {
-  const key = periodKey(monthTemplate.period);
-  const existing = dataLookup.get(key);
-  if (existing) return existing;
-
-  // Default zeroed row for missing months
-  return {
-    calculationSource: "template",
-    invoiceCount: 0,
-    month: monthTemplate.month,
-    monthNumber: monthTemplate.monthNumber,
-    period: monthTemplate.period,
-    totalAmount: 0,
-    year: monthTemplate.year,
-  } as const;
-}
 
 /**
  * Creates month template data with validated month name lookup.

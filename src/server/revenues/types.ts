@@ -9,13 +9,3 @@
 export type RevenueActionResult<T> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: string };
-
-// Create a success result for RevenueActionResult.
-export function createSuccessResult<T>(data: T): RevenueActionResult<T> {
-  return { data, success: true } as const;
-}
-
-// Create an error result for RevenueActionResult.
-export function createErrorResult<T>(error: string): RevenueActionResult<T> {
-  return { error, success: false } as const;
-}
