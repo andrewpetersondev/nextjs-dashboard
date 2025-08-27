@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/shared/invoices/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/types";
 
 /** Transport aliases (unambiguous formats) */
 export type ISODateString = string; // YYYY-MM-DD

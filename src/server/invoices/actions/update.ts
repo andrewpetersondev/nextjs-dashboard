@@ -16,12 +16,12 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
-import type { InvoiceStatus } from "@/shared/invoices/invoices";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceInput,
   UpdateInvoiceSchema,
 } from "@/shared/invoices/schema.shared";
+import type { InvoiceStatus } from "@/shared/invoices/types";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

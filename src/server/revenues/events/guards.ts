@@ -7,7 +7,7 @@ import {
 } from "@/server/revenues/events/logging";
 import { validateInvoicePeriodForRevenue } from "@/server/revenues/events/policy";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import type { InvoiceStatus } from "@/shared/invoices/invoices";
+import type { InvoiceStatus } from "@/shared/invoices/types";
 
 /**
  * Checks if an invoice status is eligible for revenue

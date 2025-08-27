@@ -25,7 +25,7 @@ import {
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/shared/invoices/invoices.ts";
+} from "@/shared/invoices/types.ts";
 import {
   REVENUE_SOURCES,
   type RevenueSource,

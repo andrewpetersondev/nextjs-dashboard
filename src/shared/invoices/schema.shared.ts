@@ -4,7 +4,7 @@ import {
   MAX_SENSITIVE_DATA_LENGTH,
   MIN_SENSITIVE_DATA_LENGTH,
 } from "@/shared/invoices/constants";
-import { INVOICE_STATUSES } from "@/shared/invoices/invoices";
+import { INVOICE_STATUSES } from "@/shared/invoices/types";
 
 // Transport-safe primitives (no brands, no server-only)
 const amountSchema = z.coerce.number().positive().max(MAX_INVOICE_AMOUNT_USD);
@@ -32,8 +32,11 @@ export const CreateInvoiceSchema = InvoiceBaseSchema;
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
 
 // UI/view-model types derived from the shared schema
+export type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;
+export type CreateInvoiceFieldNames = keyof CreateInvoiceInput;
 export type UpdateInvoiceInput = z.input<typeof UpdateInvoiceSchema>;
 export type UpdateInvoiceFieldNames = keyof UpdateInvoiceInput;
+
 export type EditInvoiceViewModel = z.output<typeof CreateInvoiceSchema> & {
   id: string;
 };

@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { DesktopTable } from "@/features/invoices/components/desktop-table";
 import { MobileTable } from "@/features/invoices/components/mobile-table";
 import { readFilteredInvoicesAction } from "@/server/invoices/actions/read-filtered";
-import type { InvoiceListFilter } from "@/shared/invoices/invoices";
+import type { InvoiceListFilter } from "@/shared/invoices/types";
 
 /**
  * InvoicesTable component.

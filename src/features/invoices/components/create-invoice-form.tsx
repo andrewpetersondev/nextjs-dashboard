@@ -11,8 +11,8 @@ import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type {
-  UpdateInvoiceFieldNames,
-  UpdateInvoiceInput,
+  CreateInvoiceFieldNames,
+  CreateInvoiceInput,
 } from "@/shared/invoices/schema.shared";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
@@ -21,10 +21,10 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";
 
 const INITIAL_STATE = {
-  errors: {} as Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>,
+  errors: {} as Partial<Record<CreateInvoiceFieldNames, FormFieldError>>,
   message: "",
   success: false,
-} satisfies Extract<FormState<UpdateInvoiceFieldNames>, { success: false }>;
+} satisfies Extract<FormState<CreateInvoiceFieldNames>, { success: false }>;
 
 export const CreateInvoiceForm = ({
   customers,
@@ -32,7 +32,7 @@ export const CreateInvoiceForm = ({
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
+    FormState<CreateInvoiceFieldNames, CreateInvoiceInput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 

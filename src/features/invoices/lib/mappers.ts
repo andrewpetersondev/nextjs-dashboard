@@ -1,7 +1,4 @@
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "@/shared/invoices/invoices";
+import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/invoices/types";
 import { validateEnum } from "@/shared/validation/enum";
 
 /**

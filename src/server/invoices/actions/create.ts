@@ -20,12 +20,12 @@ import {
   mapFieldErrors,
 } from "@/shared/forms/utils";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
-import type { InvoiceStatus } from "@/shared/invoices/invoices";
 import {
+  type CreateInvoiceFieldNames,
+  type CreateInvoiceInput,
   CreateInvoiceSchema,
-  type UpdateInvoiceFieldNames,
-  type UpdateInvoiceInput,
 } from "@/shared/invoices/schema.shared";
+import type { InvoiceStatus } from "@/shared/invoices/types";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 
@@ -36,10 +36,10 @@ const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
  * @returns FormState with data, errors, message, and success
  */
 export async function createInvoiceAction(
-  prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
+  prevState: FormState<CreateInvoiceFieldNames, CreateInvoiceInput>,
   formData: FormData,
-): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>> {
-  let result: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>;
+): Promise<FormState<CreateInvoiceFieldNames, CreateInvoiceInput>> {
+  let result: FormState<CreateInvoiceFieldNames, CreateInvoiceInput>;
 
   try {
     const input: InvoiceFormDto = {
