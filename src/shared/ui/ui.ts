@@ -15,11 +15,6 @@ export const IMAGE_SIZES = {
   SMALL: 30,
 };
 
-export const TIMER = {
-  ALERT_AUTO_HIDE_MS: 5000,
-  TYPING_MS: 4000,
-};
-
 export const ALERT_AUTO_HIDE_MS = 5000;
 export const TYPING_MS = 4000;
 export const DEBOUNCE_MS = 500;
