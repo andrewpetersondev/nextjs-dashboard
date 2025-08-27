@@ -9,7 +9,8 @@ import {
   useSearchParams,
 } from "next/navigation";
 import type { JSX } from "react";
-import { generatePagination } from "@/shared/utils/general";
+
+import { generatePagination } from "@/shared/ui/pagination";
 
 const PaginationNumber = ({
   href,

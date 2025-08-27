@@ -6,7 +6,7 @@ import {
   z,
 } from "zod";
 import { roleSchema } from "@/shared/auth/zod";
-import { DEFAULT_USER_SCHEMA } from "@/shared/constants/schema-defaults";
+import { DEFAULT_USER_SCHEMA } from "@/shared/users/constants";
 
 export const usernameSchema: ZodString = z
   .string()

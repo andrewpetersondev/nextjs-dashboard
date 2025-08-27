@@ -2,9 +2,9 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import { IMAGE_SIZES } from "@/shared/constants/ui";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
-import { formatCurrency } from "@/shared/utils/general";
+import { formatCurrency } from "@/shared/money/convert";
+import { IMAGE_SIZES } from "@/shared/ui/ui";
 import { H2, H3 } from "@/ui/headings";
 
 interface LatestInvoicesProps {

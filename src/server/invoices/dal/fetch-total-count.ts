@@ -5,7 +5,7 @@ import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { DATA_ERROR_MESSAGES } from "@/shared/constants/errors-messages";
+import { DATA_ERROR_MESSAGES } from "@/shared/errors/errors-messages";
 
 /**
  * Fetches the total number of invoices.

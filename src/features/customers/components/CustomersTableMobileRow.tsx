@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { CUSTOMER_LABELS } from "@/shared/constants/customers";
-import { IMAGE_SIZES } from "@/shared/constants/ui";
+import { CUSTOMER_LABELS } from "@/shared/customers/customers";
+import { IMAGE_SIZES } from "@/shared/ui/ui";
 
 /**
  * Props for the CustomerMobileCard component.

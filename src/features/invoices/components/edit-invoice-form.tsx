@@ -14,8 +14,8 @@ import type {
 } from "@/features/invoices/types";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import { TIMER } from "@/shared/constants/ui";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import { TIMER } from "@/shared/ui/ui";
 import { FormActionRow } from "@/ui/form-action-row";
 import { FormSubmitButton } from "@/ui/form-submit-button";
 import { Label } from "@/ui/label";

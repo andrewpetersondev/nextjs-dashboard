@@ -12,7 +12,7 @@ import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import { createRandomPassword } from "@/shared/auth/password";
 import type { AuthRole } from "@/shared/auth/roles";
 import type { UserId } from "@/shared/brands/domain-brands";
-import { ITEMS_PER_PAGE_USERS } from "@/shared/constants/ui";
+import { ITEMS_PER_PAGE_USERS } from "@/shared/ui/ui";
 
 /**
  * Finds a user by email and verifies the password.

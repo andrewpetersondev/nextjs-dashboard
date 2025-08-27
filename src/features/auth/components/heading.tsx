@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type React from "react";
 import type { JSX } from "react";
-import { IMAGE_SIZES } from "@/shared/constants/ui";
+import { IMAGE_SIZES } from "@/shared/ui/ui";
 
 /**
  * Props for Heading component.

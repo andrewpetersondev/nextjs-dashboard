@@ -2,7 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 import { roleSchema } from "@/shared/auth/zod";
-import { DEFAULT_USER_SCHEMA } from "@/shared/constants/schema-defaults";
+import { DEFAULT_USER_SCHEMA } from "@/shared/users/constants";
 
 // Server-only zod schemas for user actions/entities
 

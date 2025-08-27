@@ -8,11 +8,8 @@ import {
 } from "@/server/invoices/queries";
 import { getValidUserRole } from "@/server/users/utils";
 import type { AuthRole } from "@/shared/auth/roles";
-import {
-  DASHBOARD_TITLES,
-  ITEMS_PER_PAGE_INVOICES,
-} from "@/shared/constants/ui";
-import { formatCurrency } from "@/shared/utils/general";
+import { formatCurrency } from "@/shared/money/convert";
+import { DASHBOARD_TITLES, ITEMS_PER_PAGE_INVOICES } from "@/shared/ui/ui";
 import { Dashboard } from "@/ui/dashboard/dashboard";
 import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 

@@ -7,7 +7,8 @@ import type {
   CustomerSelectServerDto,
   // biome-ignore lint/style/noRestrictedImports: <fix later>
 } from "@/server/customers/types";
-import { formatCurrency } from "@/shared/utils/general";
+
+import { formatCurrency } from "@/shared/money/convert";
 
 export const toCustomerField = (
   row: CustomerSelectServerDto,

@@ -6,8 +6,8 @@ import {
 } from "@/features/invoices/components/buttons";
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
+import { formatCurrency } from "@/shared/money/convert";
 import { formatDateToLocal } from "@/shared/utils/date";
-import { formatCurrency } from "@/shared/utils/general";
 
 /**
  * MobileTable component displays invoices in a mobile-friendly format.

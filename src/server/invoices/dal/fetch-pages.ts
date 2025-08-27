@@ -5,7 +5,7 @@ import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
+import { ITEMS_PER_PAGE } from "@/shared/ui/ui";
 
 /**
  * Fetches the total number of invoice pages for pagination.
