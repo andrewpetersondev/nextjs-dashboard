@@ -5,9 +5,9 @@ import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { UserId } from "@/shared/brands/domain-brands";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Retrieves a user from the database by branded UserId.

@@ -2,14 +2,14 @@ import "server-only";
 
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
 import type {
-  RevenueChartDto,
-  RevenueStatisticsDto,
-} from "@/server/revenues/dto";
-import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
 import { isPeriod, isRevenueId } from "@/shared/brands/domain-brands";
+import type {
+  RevenueChartDto,
+  RevenueStatisticsDto,
+} from "@/shared/revenues/dto";
 import {
   INTERVAL_DURATIONS,
   type IntervalDuration,

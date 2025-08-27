@@ -4,8 +4,8 @@ import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { fetchUserById } from "@/server/users/dal/dal";
-import type { UserDto } from "@/server/users/dto";
 import { toUserId } from "@/shared/brands/domain-brands";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Fetches a user by plain string id for UI consumption.

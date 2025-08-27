@@ -13,13 +13,13 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
-import type { UserDto } from "@/server/users/dto";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
 import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
+import type { UserDto } from "@/shared/users/dto";
 import { stripProperties } from "@/shared/utils/general";
 
 /**

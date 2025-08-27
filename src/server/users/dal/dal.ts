@@ -7,12 +7,12 @@ import { demoUserCounters, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import { createRandomPassword } from "@/shared/auth/password";
 import type { AuthRole } from "@/shared/auth/roles";
 import type { UserId } from "@/shared/brands/domain-brands";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/ui/ui";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Finds a user by email and verifies the password.

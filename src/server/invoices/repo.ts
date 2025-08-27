@@ -9,7 +9,6 @@ import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
 import { fetchAllPaidInvoicesDal } from "@/server/invoices/dal/fetch-all-paid";
 import { readInvoiceDal } from "@/server/invoices/dal/read";
 import { updateInvoiceDal } from "@/server/invoices/dal/update";
-import type { InvoiceDto } from "@/server/invoices/dto";
 import type {
   InvoiceEntity,
   InvoiceFormPartialEntity,
@@ -19,6 +18,7 @@ import { entityToInvoiceDto } from "@/server/invoices/mapper";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { map } from "@/shared/result/result-transform";
 

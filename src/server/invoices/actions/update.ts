@@ -14,13 +14,13 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { UpdateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {

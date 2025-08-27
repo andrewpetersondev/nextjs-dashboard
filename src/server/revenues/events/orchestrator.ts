@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import type { InvoiceDto } from "@/server/invoices/dto";
 import { handleEventError, logInfo } from "@/server/revenues/events/logging";
 import {
   extractAndValidatePeriod,
@@ -9,6 +8,7 @@ import {
 } from "@/server/revenues/events/policy";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
  * Processes an invoice event with standardized error handling

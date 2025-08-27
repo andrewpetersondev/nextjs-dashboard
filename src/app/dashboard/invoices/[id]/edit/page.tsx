@@ -5,7 +5,7 @@ import type { CustomerField } from "@/features/customers/types";
 import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-form";
 import { readCustomersAction } from "@/server/customers/actions/read";
 import { readInvoiceByIdAction } from "@/server/invoices/actions/read-by-id";
-import type { InvoiceDto } from "@/server/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
 import { H1 } from "@/ui/headings";
 

@@ -5,10 +5,10 @@ import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { UserUpdatePatch } from "@/server/users/types";
 import type { UserId } from "@/shared/brands/domain-brands";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Updates a user in the database with the provided patch.

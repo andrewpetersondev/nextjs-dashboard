@@ -6,14 +6,14 @@ import {
 } from "@/features/revenues/lib/date/constants";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type {
-  RevenueChartDto,
-  RevenueStatisticsDto,
-} from "@/server/revenues/dto";
 import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
 import { convertCentsToDollars } from "@/shared/money/convert";
+import type {
+  RevenueChartDto,
+  RevenueStatisticsDto,
+} from "@/shared/revenues/dto";
 import {
   MONTH_ORDER,
   type MonthName,

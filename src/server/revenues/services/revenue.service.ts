@@ -2,7 +2,6 @@ import "server-only";
 
 import { formatDateToPeriod } from "@/features/revenues/lib/date/format";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import type { InvoiceDto } from "@/server/invoices/dto";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -11,6 +10,7 @@ import type {
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
  * Business service for revenue processing and management.

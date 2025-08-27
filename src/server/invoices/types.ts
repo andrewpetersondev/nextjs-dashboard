@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/server/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
  * Result type for invoice actions (create, read, update, delete).

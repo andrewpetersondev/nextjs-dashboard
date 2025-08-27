@@ -7,13 +7,13 @@ import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser, demoUserCounter } from "@/server/users/dal/dal";
-import type { UserDto } from "@/server/users/dto";
 import {
   type ActionResult,
   actionResult,
 } from "@/shared/action-result/action-result";
 import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/domain-brands";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Creates a demo user and logs them in.

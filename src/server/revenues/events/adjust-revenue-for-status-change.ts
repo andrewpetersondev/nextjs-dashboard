@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/server/invoices/dto";
 import { withErrorHandling } from "@/server/revenues/events/error-handling";
 import { logInfo } from "@/server/revenues/events/logging";
 import {
@@ -10,6 +9,7 @@ import {
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
 import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
+import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
  * Adjusts revenue based on invoice status changes

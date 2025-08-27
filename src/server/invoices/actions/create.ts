@@ -14,7 +14,6 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { CreateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
@@ -25,6 +24,7 @@ import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
+import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);

@@ -6,9 +6,9 @@ import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { AuthRole } from "@/shared/auth/roles";
+import type { UserDto } from "@/shared/users/dto";
 
 /**
  * Inserts a new user record into the database.

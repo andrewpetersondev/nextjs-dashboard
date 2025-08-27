@@ -2,7 +2,6 @@ import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { DatabaseError } from "@/server/errors/infrastructure";
-import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import {
   dtoToCreateInvoiceEntity,
   invoiceFormEntityToServiceEntity,
@@ -11,6 +10,7 @@ import {
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import { Err, type Result } from "@/shared/result/result-base";
 
 /**
