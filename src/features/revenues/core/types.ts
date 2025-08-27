@@ -1,6 +1,6 @@
 import type { Period } from "@/shared/brands/domain-brands";
+import type { Cents } from "@/shared/money/money";
 import type { MonthName } from "@/shared/revenues/types";
-import type { Cents } from "@/shared/types/money";
 
 /**
  * Metadata for a single month in a 12-month rolling period.

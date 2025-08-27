@@ -1,4 +1,4 @@
-import type { Dollars } from "@/shared/types/money";
+import type { Dollars } from "@/shared/money/money";
 
 export const MONTH_ORDER = [
   "Jan",

@@ -2,8 +2,8 @@ import "server-only";
 
 import type { RevenueSource } from "@/features/revenues/types";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import type { Cents } from "@/shared/money/money";
 import type { MonthName } from "@/shared/revenues/types";
-import type { Cents } from "@/shared/types/money";
 
 /**
  * Represents a revenue entity in the database.

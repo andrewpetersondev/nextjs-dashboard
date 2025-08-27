@@ -1,5 +1,5 @@
+import type { Dollars } from "@/shared/money/money";
 import type { SimpleRevenueDto } from "@/shared/revenues/types";
-import type { Dollars } from "@/shared/types/money";
 
 /**
  * Statistical metrics data transfer object with dollar-converted values.

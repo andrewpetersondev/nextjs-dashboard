@@ -1,4 +1,4 @@
-import type { Dollars } from "@/shared/types/money";
+import type { Dollars } from "@/shared/money/money";
 
 // Standardized sources of revenue data.
 export const REVENUE_SOURCES = [

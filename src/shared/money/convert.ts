@@ -1,4 +1,4 @@
-import type { Cents, Dollars } from "@/shared/types/money";
+import type { Cents, Dollars } from "@/shared/money/money";
 
 /**
  * Converts monetary values from database cents to display dollars.
