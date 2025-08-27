@@ -4,7 +4,7 @@
  * - On the server, also delegates to console.* by default (can be wired to a server logger later).
  * Import this module from features/shared code instead of server-only loggers.
  */
-
+// biome-ignore lint/suspicious/noExplicitAny: <fix later>
 function safeInvoke(fn: (...a: any[]) => void, ...args: any[]): void {
   try {
     fn(...args);

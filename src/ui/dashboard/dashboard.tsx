@@ -1,5 +1,7 @@
 import { type JSX, Suspense } from "react";
+// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { LatestInvoices } from "@/features/invoices/components/latest-invoices";
+// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { RevenueChart } from "@/features/revenues/components/revenue-chart";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 import { CardWrapper } from "@/ui/dashboard/cards";

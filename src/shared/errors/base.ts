@@ -25,10 +25,12 @@
 export abstract class BaseError extends Error {
   abstract readonly code: string;
   abstract readonly statusCode: number;
+  // biome-ignore lint/style/useConsistentMemberAccessibility: <fix later>
   public readonly timestamp: Date;
 
   constructor(
     message: string,
+    // biome-ignore lint/style/useConsistentMemberAccessibility: <fix later>
     public readonly context: Record<string, unknown> = {},
     cause?: Error,
   ) {

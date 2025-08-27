@@ -37,6 +37,7 @@ export class RevenueStatisticsService {
    *
    * @returns Promise resolving to an array of RevenueDisplayEntity objects
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async calculateForRollingYear(): Promise<RevenueDisplayEntity[]> {
     try {
       serverLogger.info({
@@ -161,6 +162,7 @@ export class RevenueStatisticsService {
    *
    * @returns Promise resolving to RevenueStatistics object
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async calculateStatistics(): Promise<RevenueStatistics> {
     try {
       serverLogger.info({

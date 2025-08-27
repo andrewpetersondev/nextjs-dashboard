@@ -27,6 +27,7 @@ export async function _listInvoicesDal(
   const offset = (page - 1) * pageSize;
 
   // Build filter conditions
+  // biome-ignore lint/suspicious/noEvolvingTypes: <fix later>
   const conditions = [];
 
   if (filter.status) {

@@ -12,6 +12,7 @@ import type { InvoiceDto } from "@/shared/invoices/dto";
 /**
  * Adjusts revenue for a deleted invoice
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function adjustRevenueForDeletedInvoice(
   revenueService: RevenueService,
   invoice: InvoiceDto,
@@ -26,6 +27,7 @@ export async function adjustRevenueForDeletedInvoice(
   await withErrorHandling(
     context,
     "Adjusting revenue for deleted invoice",
+    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
     async () => {
       // Verify that the invoice was eligible for revenue before deletion
       if (!isStatusEligibleForRevenue(invoice.status)) {

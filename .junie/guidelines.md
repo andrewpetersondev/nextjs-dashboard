@@ -19,6 +19,10 @@
 - Prefer `readonly` and immutable types if they align with best practices.
 - Document all types, interfaces, and generics with TSDoc.
 
+## Project Structure
+
+- Do not use barrel files.
+
 ## Additional Tools
 
 - `pnpm biome-check` is a command line tool for errors, problems, and maintaining conventions.

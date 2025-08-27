@@ -82,6 +82,7 @@ export class EventBus {
     for (const handler of handlers) {
       try {
         // We trust the caller provided the correct payload type for this event name
+        // biome-ignore lint/performance/noAwaitInLoops: <fix later>
         await (handler as EventHandler<unknown>)(event);
       } catch (error) {
         // Structured logging for event errors

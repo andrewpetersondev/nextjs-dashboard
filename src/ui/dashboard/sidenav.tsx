@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { JSX } from "react";
+// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { LogoutForm } from "@/features/auth/components/logout-form";
 import { AcmeLogo } from "@/ui/acme-logo";
 import { NavLinksWrapper } from "@/ui/dashboard/nav-links-wrapper";

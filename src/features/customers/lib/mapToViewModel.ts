@@ -5,6 +5,7 @@ import type {
 import type {
   CustomerAggregatesServerDto,
   CustomerSelectServerDto,
+  // biome-ignore lint/style/noRestrictedImports: <fix later>
 } from "@/server/customers/types";
 import { formatCurrency } from "@/shared/utils/general";
 

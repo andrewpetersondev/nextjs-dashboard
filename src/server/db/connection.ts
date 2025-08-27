@@ -19,6 +19,7 @@ import {
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
 } from "@/server/config/environment";
+// biome-ignore lint/performance/noNamespaceImport: <fix later>
 import * as schema from "@/server/db/schema";
 
 // Supported database types

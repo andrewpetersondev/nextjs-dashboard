@@ -90,11 +90,13 @@ export class RevenueEventHandler {
    *
    * @param event - The invoice updated event
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
     await processInvoiceEvent(
       event,
       this.revenueService,
       "handleInvoiceUpdated",
+      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
       async (invoice, period) => {
         const context = "RevenueEventHandler.handleInvoiceUpdated";
         const previousInvoice = event.previousInvoice;

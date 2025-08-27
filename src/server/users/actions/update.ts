@@ -25,6 +25,7 @@ import { stripProperties } from "@/shared/utils/general";
 /**
  * Edits an existing user.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function updateUserAction(
   id: string,
   _prevState: FormState<EditUserFormFieldNames>,

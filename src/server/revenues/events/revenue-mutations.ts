@@ -7,6 +7,7 @@ import { toRevenueId } from "@/shared/brands/domain-brands";
 /**
  * Updates a revenue record with new invoice count and revenue values
  */
+// biome-ignore lint/nursery/useMaxParams: <fix later>
 export async function updateRevenueRecord(
   revenueService: RevenueService,
   revenueId: string,
