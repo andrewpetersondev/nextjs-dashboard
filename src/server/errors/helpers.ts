@@ -1,6 +1,6 @@
 import "server-only";
 
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { BaseError } from "@/shared/errors/base";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
@@ -17,9 +17,9 @@ export const asAppError = (e: unknown): BaseError => {
     return e;
   }
   if (e instanceof Error) {
-    return new DatabaseError_New(e.message, {}, e); // choose a safe default or map upstream
+    return new DatabaseError(e.message, {}, e); // choose a safe default or map upstream
   }
-  return new DatabaseError_New("Unknown error", { value: String(e) });
+  return new DatabaseError("Unknown error", { value: String(e) });
 };
 
 export const errorToResult = <T = never>(e: unknown): Result<T, BaseError> =>

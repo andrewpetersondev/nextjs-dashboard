@@ -1,7 +1,7 @@
 import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
-import type { DatabaseError_New } from "@/server/errors/infrastructure";
+import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import {
   dtoToCreateInvoiceEntity,
@@ -96,7 +96,7 @@ export class InvoiceService {
    */
   async createInvoiceSafe(
     dto: InvoiceFormDto,
-  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>> {
     if (!dto) {
       return Err(new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT));
     }

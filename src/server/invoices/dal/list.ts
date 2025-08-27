@@ -4,7 +4,7 @@ import { and, count, eq } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
@@ -16,7 +16,7 @@ import type { InvoiceListFilter } from "@/shared/invoices/invoices";
  * @param page - Current page number (1-based)
  * @param pageSize - Number of items per page
  * @returns Promise resolving to object with entities and total count
- * @throws DatabaseError_New if query fails
+ * @throws DatabaseError if query fails
  */
 export async function listInvoicesDal(
   db: Database,
@@ -63,7 +63,7 @@ export async function listInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!entities || entities.length === 0 || !total || total < 0) {
-    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
       filter,
       page,
       pageSize,

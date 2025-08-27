@@ -4,7 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { ValidationError_New } from "@/shared/errors/domain";
@@ -12,7 +12,7 @@ import { ValidationError_New } from "@/shared/errors/domain";
 /**
  * Fetches all paid invoices from the database.
  * @returns Promise resolving to an array of InvoiceEntity
- * @throws DatabaseError_New if fetching fails or no paid invoices found
+ * @throws DatabaseError if fetching fails or no paid invoices found
  * @throws ValidationError_New if db is not provided
  * @param db - Drizzle database instance
  */
@@ -33,7 +33,7 @@ export async function fetchAllPaidInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
   }
 
   // Convert raw database rows to InvoiceEntity

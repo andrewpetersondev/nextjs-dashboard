@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
@@ -20,7 +20,7 @@ import { ValidationError_New } from "@/shared/errors/domain";
  * @param updateData - Partial invoice data to update which omits `id`
  * @returns Promise resolving to updated InvoiceEntity
  * @throws ValidationError_New if input parameters are invalid
- * @throws DatabaseError_New if update fails or invoice not found
+ * @throws DatabaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
   db: Database,
@@ -44,7 +44,7 @@ export async function updateInvoiceDal(
 
   // Check if update was successful
   if (!updated) {
-    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
   }
 
   // Convert raw database row to InvoiceEntity

@@ -3,7 +3,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { logger } from "@/server/logging/logger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
@@ -44,7 +44,7 @@ export async function readUserDal(
       id,
       message: "Failed to read user by ID.",
     });
-    throw new DatabaseError_New(
+    throw new DatabaseError(
       "Failed to read user by ID.",
       {},
       error instanceof Error ? error : undefined,

@@ -3,7 +3,7 @@ import "server-only";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices, revenues } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   InvoiceEntity,
   InvoiceServiceEntity,
@@ -16,7 +16,7 @@ import { toPeriod } from "@/shared/brands/domain-brands";
  * @param db - Drizzle database instance
  * @param input - Invoice creation data (ORIGIN: dal <-- service <-- formEntity <-- Business Transformation <-- UI )
  * @returns Promise resolving to created InvoiceEntity
- * @throws DatabaseError_New if creation fails
+ * @throws DatabaseError if creation fails
  */
 export async function createInvoiceDal(
   db: Database,
@@ -41,7 +41,7 @@ export async function createInvoiceDal(
       .returning();
 
     if (!createdInvoice) {
-      throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
+      throw new DatabaseError(INVOICE_ERROR_MESSAGES.CREATE_FAILED, {
         input,
       });
     }

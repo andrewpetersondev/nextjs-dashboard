@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { type RevenueRow, revenues } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -91,13 +91,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .then((rows) => rows[0]);
 
     if (!data) {
-      throw new DatabaseError_New("Revenue record not found");
+      throw new DatabaseError("Revenue record not found");
     }
 
     const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
-      throw new DatabaseError_New("Failed to convert revenue record");
+      throw new DatabaseError("Failed to convert revenue record");
     }
 
     return result;
@@ -138,13 +138,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .returning();
 
     if (!data) {
-      throw new DatabaseError_New("Failed to update revenue record");
+      throw new DatabaseError("Failed to update revenue record");
     }
 
     const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
-      throw new DatabaseError_New("Failed to convert updated revenue record");
+      throw new DatabaseError("Failed to convert updated revenue record");
     }
 
     return result;
@@ -168,7 +168,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .returning();
 
     if (!result) {
-      throw new DatabaseError_New("Failed to delete revenue record");
+      throw new DatabaseError("Failed to delete revenue record");
     }
   }
 
@@ -206,7 +206,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       .orderBy(desc(revenues.period));
 
     if (!revenueRows) {
-      throw new DatabaseError_New("Failed to retrieve revenue records");
+      throw new DatabaseError("Failed to retrieve revenue records");
     }
 
     return mapRevenueRowsToEntities(revenueRows);
@@ -243,7 +243,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     const result: RevenueEntity = mapRevRowToRevEnt(data);
 
     if (!result) {
-      throw new DatabaseError_New("Failed to convert revenue record");
+      throw new DatabaseError("Failed to convert revenue record");
     }
 
     return result;
@@ -298,13 +298,13 @@ export class RevenueRepository implements RevenueRepositoryInterface {
         .returning();
 
       if (!data) {
-        throw new DatabaseError_New("Failed to upsert revenue record");
+        throw new DatabaseError("Failed to upsert revenue record");
       }
 
       const result: RevenueEntity = mapRevRowToRevEnt(data);
 
       if (!result) {
-        throw new DatabaseError_New("Failed to convert revenue record");
+        throw new DatabaseError("Failed to convert revenue record");
       }
 
       return result;

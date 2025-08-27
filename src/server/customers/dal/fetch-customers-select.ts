@@ -7,7 +7,7 @@ import {
 } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 
 /**
  * Fetches all customers for select options.
@@ -27,7 +27,7 @@ export async function fetchCustomersSelectDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Database Error:", error);
-    throw new DatabaseError_New(
+    throw new DatabaseError(
       CUSTOMER_SERVER_ERROR_MESSAGES.FETCH_ALL_FAILED,
       {},
       error instanceof Error ? error : undefined,

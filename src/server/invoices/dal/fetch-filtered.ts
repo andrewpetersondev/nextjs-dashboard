@@ -4,7 +4,7 @@ import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 
@@ -14,7 +14,7 @@ import type { InvoiceListFilter } from "@/shared/invoices/invoices";
  * @param query - Search query string
  * @param currentPage - Current page number
  * @returns Promise resolving to array of InvoiceListFilter
- * @throws DatabaseError_New if query fails
+ * @throws DatabaseError if query fails
  */
 export async function fetchFilteredInvoicesDal(
   db: Database,
@@ -65,7 +65,7 @@ export async function fetchFilteredInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED, {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FILTERED_FAILED, {
       currentPage,
       query,
     });

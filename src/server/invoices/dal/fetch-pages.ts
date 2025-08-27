@@ -4,7 +4,7 @@ import { count, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
 
 /**
@@ -12,7 +12,7 @@ import { ITEMS_PER_PAGE } from "@/shared/constants/ui";
  * @param db - Drizzle database instance
  * @param query - Search query string
  * @returns Promise resolving to total number of pages
- * @throws DatabaseError_New if query fails
+ * @throws DatabaseError if query fails
  */
 export async function fetchInvoicesPagesDal(
   db: Database,
@@ -49,7 +49,7 @@ export async function fetchInvoicesPagesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new DatabaseError_New(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
       query,
       total,
     });

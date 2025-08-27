@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 
 export async function fetchTotalPendingInvoicesDal(
   db: Database,
@@ -20,9 +20,7 @@ export async function fetchTotalPendingInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (pending === undefined) {
-    throw new DatabaseError_New(
-      INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PENDING_FAILED,
-    );
+    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PENDING_FAILED);
   }
 
   return pending;

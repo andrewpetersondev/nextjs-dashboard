@@ -31,7 +31,7 @@ export class ValidationError_New extends BaseError {
  * console.error(error.statusCode); // 404
  * ```
  */
-export class NotFoundError_New extends BaseError {
+export class NotFoundError extends BaseError {
   readonly code = "NOT_FOUND";
   readonly statusCode = 404;
 }
@@ -41,7 +41,7 @@ export class NotFoundError_New extends BaseError {
  *
  * Extends {@link BaseError} to provide standardized properties for HTTP 401 errors.
  */
-export class UnauthorizedError_New extends BaseError {
+export class UnauthorizedError extends BaseError {
   readonly code = "UNAUTHORIZED";
   readonly statusCode = 401;
 }
@@ -59,7 +59,7 @@ export class UnauthorizedError_New extends BaseError {
  * throw new ForbiddenError_New("Access denied to resource.");
  * ```
  */
-export class ForbiddenError_New extends BaseError {
+export class ForbiddenError extends BaseError {
   readonly code = "FORBIDDEN";
   readonly statusCode = 403;
 }
@@ -72,7 +72,7 @@ export class ForbiddenError_New extends BaseError {
  * @remarks
  * Extends {@link BaseError} and sets the HTTP status code to 409.
  */
-export class ConflictError_New extends BaseError {
+export class ConflictError extends BaseError {
   readonly code = "CONFLICT";
   readonly statusCode = 409;
 }

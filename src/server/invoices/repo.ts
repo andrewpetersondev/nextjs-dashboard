@@ -1,7 +1,7 @@
 import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
-import type { DatabaseError_New } from "@/server/errors/infrastructure";
+import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
 import { fromDal } from "@/server/errors/wrappers";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
@@ -36,11 +36,11 @@ export class InvoiceRepository extends BaseRepository<
    * Creates a safe invoice entity by validating the input and interacting with the database.
    *
    * @param {InvoiceServiceEntity} input - The invoice service entity containing the invoice details to be validated and saved.
-   * @return {Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>>} A promise that resolves to a Result object. On success, it contains the InvoiceDto. On error, it contains either a ValidationError_New or DatabaseError_New.
+   * @return {Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>>} A promise that resolves to a Result object. On success, it contains the InvoiceDto. On error, it contains either a ValidationError_New or DatabaseError_New.
    */
   async createSafe(
     input: InvoiceServiceEntity,
-  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>> {
     if (!input || typeof input !== "object") {
       return Err(
         new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED),
@@ -79,13 +79,13 @@ export class InvoiceRepository extends BaseRepository<
    * checks and correct error handling during the process.
    *
    * @param {InvoiceId} id - The unique identifier of the invoice to be read.
-   * @return {Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>>}
+   * @return {Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>>}
    *         A result object containing either the successfully retrieved invoice
    *         data or an error (validation or database-related).
    */
   async readSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>> {
     if (!id) {
       return Err(
         new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
@@ -129,7 +129,7 @@ export class InvoiceRepository extends BaseRepository<
   async updateSafe(
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
-  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>> {
     if (!data || !id || typeof data !== "object") {
       return Err(
         new ValidationError_New(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED),
@@ -174,7 +174,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async deleteSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceDto, ValidationError_New | DatabaseError>> {
     if (!id) {
       return Err(
         new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
@@ -211,7 +211,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async findByIdSafe(
     id: InvoiceId,
-  ): Promise<Result<InvoiceEntity, ValidationError_New | DatabaseError_New>> {
+  ): Promise<Result<InvoiceEntity, ValidationError_New | DatabaseError>> {
     if (!id) {
       return Err(
         new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
@@ -237,7 +237,7 @@ export class InvoiceRepository extends BaseRepository<
    * "Safe" findAll: returns Result instead of throwing.
    */
   async findAllSafe(): Promise<
-    Result<InvoiceEntity[], ValidationError_New | DatabaseError_New>
+    Result<InvoiceEntity[], ValidationError_New | DatabaseError>
   > {
     const res = await fromDal(fetchAllPaidInvoicesDal(this.db));
 

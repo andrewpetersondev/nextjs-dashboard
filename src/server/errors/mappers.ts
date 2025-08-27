@@ -1,7 +1,7 @@
 import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { ValidationError, ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
@@ -15,7 +15,7 @@ import { Err, Ok, type Result } from "@/shared/result/result-base";
  * @remarks
  * Discriminant keys and branch-specific shapes should be documented if needed.
  */
-export type RepoError = ValidationError_New | DatabaseError_New;
+export type RepoError = ValidationError_New | DatabaseError;
 
 /**
  * Map an unknown error to a repository-specific error.
@@ -29,12 +29,12 @@ export function mapToRepoError(e: unknown): RepoError {
   if (e instanceof ValidationError_New) {
     return e;
   }
-  if (e instanceof DatabaseError_New) {
+  if (e instanceof DatabaseError) {
     return e;
   }
 
   // Attach the original unknown error as cause in a typed context object
-  return new DatabaseError_New(INVOICE_ERROR_MESSAGES.DB_ERROR, { cause: e });
+  return new DatabaseError(INVOICE_ERROR_MESSAGES.DB_ERROR, { cause: e });
 }
 
 /**

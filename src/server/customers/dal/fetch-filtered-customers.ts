@@ -7,7 +7,7 @@ import {
 } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
-import { DatabaseError_New } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).
@@ -59,7 +59,7 @@ export async function fetchFilteredCustomersDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
-    throw new DatabaseError_New(
+    throw new DatabaseError(
       CUSTOMER_SERVER_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
       {},
       error instanceof Error ? error : undefined,

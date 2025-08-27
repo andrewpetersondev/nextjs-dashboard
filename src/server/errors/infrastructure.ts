@@ -17,7 +17,7 @@ import { BaseError } from "@/shared/errors/base";
  * throw new DatabaseError_New("Database connection failed.");
  * ```
  */
-export class DatabaseError_New extends BaseError {
+export class DatabaseError extends BaseError {
   readonly code = "DATABASE_ERROR";
   readonly statusCode = 500;
 }
@@ -29,7 +29,7 @@ export class DatabaseError_New extends BaseError {
  *
  * @extends BaseError
  */
-export class CacheError_New extends BaseError {
+export class CacheError extends BaseError {
   readonly code = "CACHE_ERROR";
   readonly statusCode = 500;
 }
@@ -49,7 +49,7 @@ export class CacheError_New extends BaseError {
  * throw new CryptoError_New("Encryption failed due to invalid key length.");
  * ```
  */
-export class CryptoError_New extends BaseError {
+export class CryptoError extends BaseError {
   readonly code = "CRYPTO_ERROR";
   readonly statusCode = 500;
 }
