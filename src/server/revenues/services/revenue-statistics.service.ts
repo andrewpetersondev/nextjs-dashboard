@@ -13,6 +13,8 @@ import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 import { toIntervalDuration } from "@/server/revenues/validator";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/domain-brands";
 
 /**
  * Service for calculating revenue statistics.
@@ -37,7 +39,6 @@ export class RevenueStatisticsService {
    *
    * @returns Promise resolving to an array of RevenueDisplayEntity objects
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async calculateForRollingYear(): Promise<RevenueDisplayEntity[]> {
     try {
       serverLogger.info({
@@ -45,79 +46,15 @@ export class RevenueStatisticsService {
         message: "Calculating rolling 12-month revenue data",
       });
 
-      // Calculate the date range for the rolling 12-month period.
-      const { startDate, endDate, duration } = calculateDateRange();
+      const { template, startPeriod, endPeriod } =
+        this.buildTemplateAndPeriods();
 
-      serverLogger.debug({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        duration,
-        endDate,
-        message: "Calculated date range for a rolling 12-month period",
-        startDate,
-      });
-
-      // Generate the template for the 12-month duration
-      const template = generateMonthsTemplate(
-        startDate,
-        toIntervalDuration(duration),
-      );
-
-      // Extract the start and end periods from the template
-      if (template.length === 0) {
-        throw new Error("Template generation failed: no months generated");
-      }
-
-      const firstMonth = template[0];
-      const lastMonth = template[template.length - 1];
-
-      if (!firstMonth || !lastMonth) {
-        throw new Error("Template generation failed: invalid month data");
-      }
-
-      const startPeriod = firstMonth.period;
-      const endPeriod = lastMonth.period;
-
-      serverLogger.debug({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        endPeriod,
-        message: "Prepared template for a 12-month period",
+      const displayEntities = await this.fetchDisplayEntities(
         startPeriod,
-        templateMonths: template.length,
-      });
-
-      // Fetch revenue data from the repository
-      const revenueEntities: RevenueEntity[] =
-        await this.repository.findByDateRange(startPeriod, endPeriod);
-
-      // 9 entities are returned
-      serverLogger.debug({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        entityCount: revenueEntities.length,
-        message: "Fetched revenue data from repository",
-      });
-
-      // Transform the revenue entities to display entities
-      const displayEntities: RevenueDisplayEntity[] = revenueEntities.map(
-        (entity: RevenueEntity): RevenueDisplayEntity =>
-          mapRevenueEntityToDisplayEntity(entity),
+        endPeriod,
       );
 
-      serverLogger.debug({
-        context: "RevenueStatisticsService.calculateForRollingYear",
-        displayEntityCount: displayEntities.length,
-        message: "Transformed revenue entities to display entities",
-      });
-
-      // Merge the display entities with the template (template-driven order)
-      const dataLookup = new Map<number, RevenueDisplayEntity>(
-        displayEntities.map((e) => [e.period.getTime(), e] as const),
-      );
-
-      const result: RevenueDisplayEntity[] = template.map(
-        (t) =>
-          dataLookup.get(t.period.getTime()) ??
-          createDefaultRevenueData(t.period),
-      );
+      const result = this.mergeWithTemplate(template, displayEntities);
 
       serverLogger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
@@ -133,14 +70,8 @@ export class RevenueStatisticsService {
         message:
           "Error calculating rolling 12-month revenue data; returning defaults",
       });
-      // Fallback path: attempt to build a fresh template and return defaults
       try {
-        const { startDate, duration } = calculateDateRange();
-        const template = generateMonthsTemplate(
-          startDate,
-          toIntervalDuration(duration),
-        );
-        return template.map((t) => createDefaultRevenueData(t.period));
+        return this.buildDefaultsFromFreshTemplate();
       } catch (fallbackError) {
         serverLogger.error({
           context: "RevenueStatisticsService.calculateForRollingYear",
@@ -148,10 +79,102 @@ export class RevenueStatisticsService {
           message:
             "Fallback template generation failed; returning empty dataset",
         });
-        // Final fallback: avoid throwing to prevent a UI error path
         return [];
       }
     }
+  }
+
+  private buildTemplateAndPeriods(): {
+    readonly template: readonly { readonly period: Period }[];
+    readonly startPeriod: Period;
+    readonly endPeriod: Period;
+  } {
+    const { startDate, endDate, duration } = calculateDateRange();
+    serverLogger.debug({
+      context: "RevenueStatisticsService.calculateForRollingYear",
+      duration,
+      endDate,
+      message: "Calculated date range for a rolling 12-month period",
+      startDate,
+    });
+
+    const template = generateMonthsTemplate(
+      startDate,
+      toIntervalDuration(duration),
+    );
+
+    if (template.length === 0) {
+      throw new Error("Template generation failed: no months generated");
+    }
+
+    const firstMonth = template[0];
+    const lastMonth = template[template.length - 1];
+    if (!firstMonth || !lastMonth) {
+      throw new Error("Template generation failed: invalid month data");
+    }
+
+    const startPeriod = firstMonth.period;
+    const endPeriod = lastMonth.period;
+
+    serverLogger.debug({
+      context: "RevenueStatisticsService.calculateForRollingYear",
+      endPeriod,
+      message: "Prepared template for a 12-month period",
+      startPeriod,
+      templateMonths: template.length,
+    });
+
+    return { endPeriod, startPeriod, template };
+  }
+
+  private async fetchDisplayEntities(
+    startPeriod: Period,
+    endPeriod: Period,
+  ): Promise<RevenueDisplayEntity[]> {
+    const revenueEntities: RevenueEntity[] =
+      await this.repository.findByDateRange(startPeriod, endPeriod);
+
+    serverLogger.debug({
+      context: "RevenueStatisticsService.calculateForRollingYear",
+      entityCount: revenueEntities.length,
+      message: "Fetched revenue data from repository",
+    });
+
+    const displayEntities = revenueEntities.map(
+      (entity: RevenueEntity): RevenueDisplayEntity =>
+        mapRevenueEntityToDisplayEntity(entity),
+    );
+
+    serverLogger.debug({
+      context: "RevenueStatisticsService.calculateForRollingYear",
+      displayEntityCount: displayEntities.length,
+      message: "Transformed revenue entities to display entities",
+    });
+
+    return displayEntities;
+  }
+
+  private mergeWithTemplate(
+    template: readonly { readonly period: Date }[],
+    displayEntities: readonly RevenueDisplayEntity[],
+  ): RevenueDisplayEntity[] {
+    const dataLookup = new Map<number, RevenueDisplayEntity>(
+      displayEntities.map((e) => [e.period.getTime(), e] as const),
+    );
+    return template.map(
+      (t) =>
+        dataLookup.get(t.period.getTime()) ??
+        createDefaultRevenueData(toPeriod(t.period)),
+    );
+  }
+
+  private buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
+    const { startDate, duration } = calculateDateRange();
+    const template = generateMonthsTemplate(
+      startDate,
+      toIntervalDuration(duration),
+    );
+    return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
   }
 
   /**
@@ -162,7 +185,6 @@ export class RevenueStatisticsService {
    *
    * @returns Promise resolving to RevenueStatistics object
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async calculateStatistics(): Promise<RevenueStatistics> {
     try {
       serverLogger.info({
@@ -170,7 +192,6 @@ export class RevenueStatisticsService {
         message: "Calculating revenue statistics",
       });
 
-      // Get the revenue data for the rolling 12-month period
       const revenueData = await this.calculateForRollingYear();
 
       serverLogger.debug({
@@ -179,55 +200,16 @@ export class RevenueStatisticsService {
         revenueDataCount: revenueData.length,
       });
 
-      // If there's no data, return empty statistics
-      if (!revenueData || revenueData.length === 0) {
-        serverLogger.debug({
-          context: "RevenueStatisticsService.calculateStatistics",
-          message: "No revenue data available, returning empty statistics",
-        });
-        return createEmptyStatistics();
-      }
-
-      // Filter out months with zero revenues for min/max/average calculations
-      const nonZeroRevenues = revenueData
-        .filter((entity) => entity.totalAmount > 0)
-        .map((entity) => entity.totalAmount);
-
-      // If there are no non-zero revenues, return empty statistics
-      if (nonZeroRevenues.length === 0) {
-        serverLogger.debug({
-          context: "RevenueStatisticsService.calculateStatistics",
-          message:
-            "No non-zero revenue data available, returning empty statistics",
-        });
-        return createEmptyStatistics();
-      }
-
-      // Calculate statistics
-      const maximum = Math.max(...nonZeroRevenues);
-      const minimum = Math.min(...nonZeroRevenues);
-      const total = revenueData.reduce(
-        (sum, value) => sum + value.totalAmount,
-        0,
-      );
-      const average = Math.round(total / nonZeroRevenues.length);
-
-      const statistics: RevenueStatistics = {
-        average,
-        maximum,
-        minimum,
-        monthsWithData: nonZeroRevenues.length,
-        total,
-      };
+      const stats = this.computeStatistics(revenueData);
 
       serverLogger.info({
         context: "RevenueStatisticsService.calculateStatistics",
         message: "Successfully calculated revenue statistics",
-        monthsWithData: statistics.monthsWithData,
-        totalRevenue: statistics.total,
+        monthsWithData: stats.monthsWithData,
+        totalRevenue: stats.total,
       });
 
-      return statistics;
+      return stats;
     } catch (error) {
       serverLogger.error({
         context: "RevenueStatisticsService.calculateStatistics",
@@ -237,5 +219,51 @@ export class RevenueStatisticsService {
       });
       return createEmptyStatistics();
     }
+  }
+
+  private computeStatistics(
+    revenueData: readonly RevenueDisplayEntity[],
+  ): RevenueStatistics {
+    if (!revenueData || revenueData.length === 0) {
+      serverLogger.debug({
+        context: "RevenueStatisticsService.calculateStatistics",
+        message: "No revenue data available, returning empty statistics",
+      });
+      return createEmptyStatistics();
+    }
+
+    const nonZeroRevenues = this.nonZeroAmounts(revenueData);
+    if (nonZeroRevenues.length === 0) {
+      serverLogger.debug({
+        context: "RevenueStatisticsService.calculateStatistics",
+        message:
+          "No non-zero revenue data available, returning empty statistics",
+      });
+      return createEmptyStatistics();
+    }
+
+    const maximum = Math.max(...nonZeroRevenues);
+    const minimum = Math.min(...nonZeroRevenues);
+    const total = revenueData.reduce(
+      (sum, value) => sum + value.totalAmount,
+      0,
+    );
+    const average = Math.round(total / nonZeroRevenues.length);
+
+    return {
+      average,
+      maximum,
+      minimum,
+      monthsWithData: nonZeroRevenues.length,
+      total,
+    } satisfies RevenueStatistics;
+  }
+
+  private nonZeroAmounts(
+    revenueData: readonly RevenueDisplayEntity[],
+  ): number[] {
+    return revenueData
+      .filter((entity) => entity.totalAmount > 0)
+      .map((entity) => entity.totalAmount);
   }
 }
