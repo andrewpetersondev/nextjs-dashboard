@@ -5,7 +5,8 @@ import { withErrorHandling } from "@/server/revenues/events/error-handling";
 import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
-import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 type ProcessOptions = Readonly<{

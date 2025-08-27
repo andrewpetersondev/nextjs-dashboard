@@ -2,7 +2,8 @@ import "server-only";
 
 import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
-import { toRevenueId } from "@/shared/brands/domain-brands";
+
+import { toRevenueId } from "@/shared/brands/mappers";
 
 /**
  * Arguments for updating a revenue record.

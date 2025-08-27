@@ -3,7 +3,8 @@ import "server-only";
 import { isValid, parseISO } from "date-fns";
 import { dateToPeriod } from "@/features/revenues/lib/date/period";
 import { logError } from "@/server/revenues/events/logging";
-import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { ISO_YEAR_MONTH_REGEX } from "@/shared/revenues/types";
 

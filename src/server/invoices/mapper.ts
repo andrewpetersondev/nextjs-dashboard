@@ -7,11 +7,7 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
-import {
-  toCustomerId,
-  toInvoiceId,
-  toPeriod,
-} from "@/shared/brands/domain-brands";
+import { toCustomerId, toInvoiceId, toPeriod } from "@/shared/brands/mappers";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import { isValidDate, toFirstOfMonth } from "@/shared/utils/date";
 

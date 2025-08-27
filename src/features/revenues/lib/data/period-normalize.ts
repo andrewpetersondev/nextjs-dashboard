@@ -1,4 +1,5 @@
-import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 
 export const normalizePeriod = (p: string): string => {
   const [y, m] = p.split("-");

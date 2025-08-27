@@ -1,6 +1,8 @@
 import type { RevenueDisplayRow } from "@/features/revenues/core/types";
 import { computeTemplatePeriods } from "@/features/revenues/lib/data/lookup";
-import { isPeriod, type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { isPeriod } from "@/shared/brands/guards";
+import { toPeriod } from "@/shared/brands/mappers";
 
 /**
  * Build a diagnostics report comparing actual data vs template periods.

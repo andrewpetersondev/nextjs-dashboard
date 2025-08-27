@@ -8,7 +8,8 @@ import type {
   CustomerSelectServerDto,
 } from "@/server/customers/types";
 import type { CustomerRow } from "@/server/db/schema";
-import { toCustomerId } from "@/shared/brands/domain-brands";
+
+import { toCustomerId } from "@/shared/brands/mappers";
 
 /**
  * Maps raw DB customer row to branded CustomerEntity.

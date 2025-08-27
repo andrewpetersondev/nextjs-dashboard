@@ -10,7 +10,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import type { AuthRole } from "@/shared/auth/roles";
-import { toUserId } from "@/shared/brands/domain-brands";
+import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
 

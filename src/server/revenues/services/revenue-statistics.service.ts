@@ -14,7 +14,8 @@ import type { RevenueRepositoryInterface } from "@/server/revenues/repository-in
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 import { toIntervalDuration } from "@/server/revenues/validator";
 import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/domain-brands";
+
+import { toPeriod } from "@/shared/brands/mappers";
 
 /**
  * Service for calculating revenue statistics.

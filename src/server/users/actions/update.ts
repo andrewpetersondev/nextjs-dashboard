@@ -13,7 +13,7 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
-import { toUserId } from "@/shared/brands/domain-brands";
+import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import {
   deriveAllowedFieldsFromSchema,

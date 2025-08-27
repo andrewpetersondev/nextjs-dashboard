@@ -6,7 +6,7 @@ import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
-import { toUserId } from "@/shared/brands/domain-brands";
+import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 
 /**

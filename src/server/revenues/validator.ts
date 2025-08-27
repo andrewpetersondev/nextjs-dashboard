@@ -5,7 +5,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
-import { isPeriod, isRevenueId } from "@/shared/brands/domain-brands";
+import { isPeriod, isRevenueId } from "@/shared/brands/guards";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,

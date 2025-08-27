@@ -14,11 +14,8 @@ import {
   mapRevenueRowToEntity,
 } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
-import {
-  type Period,
-  type RevenueId,
-  toPeriod,
-} from "@/shared/brands/domain-brands";
+import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 
 /**

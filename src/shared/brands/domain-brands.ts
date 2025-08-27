@@ -3,15 +3,15 @@ import { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { validatePeriodResult } from "@/shared/validation/period";
 import { brandWith } from "@/shared/validation/types";
-import { isUuid, validateUuidResult } from "@/shared/validation/uuid";
+import { validateUuidResult } from "@/shared/validation/uuid";
 
 // Unique symbols for each domain concept
-const CUSTOMER_ID_BRAND = Symbol("CustomerId");
-const USER_ID_BRAND = Symbol("UserId");
-const INVOICE_ID_BRAND = Symbol("InvoiceId");
-const REVENUE_ID_BRAND = Symbol("RevenueId");
-const SESSION_ID_BRAND = Symbol("SessionId");
-const PERIOD_BRAND = Symbol("Period");
+export const CUSTOMER_ID_BRAND = Symbol("CustomerId");
+export const USER_ID_BRAND = Symbol("UserId");
+export const INVOICE_ID_BRAND = Symbol("InvoiceId");
+export const REVENUE_ID_BRAND = Symbol("RevenueId");
+export const SESSION_ID_BRAND = Symbol("SessionId");
+export const PERIOD_BRAND = Symbol("Period");
 
 // Symbol-constrained branded types
 export type CustomerId = Brand<string, typeof CUSTOMER_ID_BRAND>;
@@ -110,138 +110,3 @@ export const createPeriod = createBrandedPeriodValidator<
   typeof PERIOD_BRAND,
   Period
 >(PERIOD_BRAND);
-
-// --- New: Result-returning converters (thin wrappers over factories) ---
-
-export const toCustomerIdResult = (
-  value: unknown,
-): Result<CustomerId, ValidationError> => createCustomerId(value);
-
-export const toUserIdResult = (
-  value: unknown,
-): Result<UserId, ValidationError> => createUserId(value);
-
-export const toInvoiceIdResult = (
-  value: unknown,
-): Result<InvoiceId, ValidationError> => createInvoiceId(value);
-
-export const toRevenueIdResult = (
-  value: unknown,
-): Result<RevenueId, ValidationError> => createRevenueId(value);
-
-export const toSessionIdResult = (
-  value: unknown,
-): Result<SessionId, ValidationError> => createSessionId(value);
-
-export const toPeriodResult = (
-  value: unknown,
-): Result<Period, ValidationError> => createPeriod(value);
-
-// --- Existing throw-based APIs preserved (now implemented via Result) ---
-
-/**
- * Validates and converts a string to a branded CustomerId (throws on error)
- */
-export const toCustomerId = (id: string): CustomerId => {
-  const r = toCustomerIdResult(id);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-};
-/**
- * Validates and converts a string to a branded UserId (throws on error)
- */
-export const toUserId = (id: string): UserId => {
-  const r = toUserIdResult(id);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-};
-
-/**
- * Validates and converts a string to a branded InvoiceId (throws on error)
- */
-export const toInvoiceId = (id: string): InvoiceId => {
-  const r = toInvoiceIdResult(id);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-};
-
-/**
- * Validates and converts a string to a branded RevenueId (throws on error)
- */
-export const toRevenueId = (id: string): RevenueId => {
-  const r = toRevenueIdResult(id);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-};
-
-/**
- * Validates and converts a string to a branded SessionId (throws on error)
- */
-export const toSessionId = (id: string): SessionId => {
-  const r = toSessionIdResult(id);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-};
-
-/**
- * Normalizes an input into a branded Period (throws on error)
- */
-export function toPeriod(input: Date | string): Period {
-  const r = toPeriodResult(input);
-  if (r.success) {
-    return r.data;
-  }
-  throw r.error;
-}
-
-// --- Type guards ---
-
-/**
- * Generic factory to build UUID-based branded type guards.
- * Narrowing is based solely on UUID shape at runtime and brand at compile time.
- */
-export const createUuidBrandGuard = <
-  B extends symbol,
-  T extends Brand<string, B>,
->(): ((value: unknown) => value is T) => {
-  return (value: unknown): value is T => isUuid(value);
-};
-
-export const isCustomerId = createUuidBrandGuard<
-  typeof CUSTOMER_ID_BRAND,
-  CustomerId
->();
-
-export const isUserId = createUuidBrandGuard<typeof USER_ID_BRAND, UserId>();
-
-export const isInvoiceId = createUuidBrandGuard<
-  typeof INVOICE_ID_BRAND,
-  InvoiceId
->();
-
-export const isRevenueId = createUuidBrandGuard<
-  typeof REVENUE_ID_BRAND,
-  RevenueId
->();
-
-export const isSessionId = createUuidBrandGuard<
-  typeof SESSION_ID_BRAND,
-  SessionId
->();
-
-export function isPeriod(value: unknown): value is Period {
-  return value instanceof Date && value.getUTCDate() === 1;
-}
-
-// Back-compat convenience guard retained
-export const isUserIdSafe = isUserId;

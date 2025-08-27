@@ -1,5 +1,6 @@
 import { addMonths, format } from "date-fns";
-import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 import { formatYearMonth } from "@/shared/utils/date";
 
 /**

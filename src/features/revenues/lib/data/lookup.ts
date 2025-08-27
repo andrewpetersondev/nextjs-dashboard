@@ -2,7 +2,8 @@ import type { RevenueDisplayRow } from "@/features/revenues/core/types";
 import { LOOKUP_LOG_KEYS_SAMPLE } from "@/features/revenues/lib/data/constants";
 import { normalizeToPeriod } from "@/features/revenues/lib/data/period-normalize";
 import { periodKey } from "@/features/revenues/lib/date/period";
-import { type Period, toPeriod } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod } from "@/shared/brands/mappers";
 import { logger } from "@/shared/logging/logger";
 
 /**

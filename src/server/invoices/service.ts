@@ -8,7 +8,7 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
-import { toInvoiceId } from "@/shared/brands/domain-brands";
+import { toInvoiceId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import { Err, type Result } from "@/shared/result/result-base";

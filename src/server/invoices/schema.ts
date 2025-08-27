@@ -1,7 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
-import { toCustomerId } from "@/shared/brands/domain-brands";
+import { toCustomerId } from "@/shared/brands/mappers";
 import {
   MAX_INVOICE_AMOUNT_USD,
   MAX_SENSITIVE_DATA_LENGTH,

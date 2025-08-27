@@ -9,11 +9,8 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/entity";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers";
-import {
-  type Period,
-  toPeriod,
-  toRevenueId,
-} from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 import { MONTH_ORDER } from "@/shared/revenues/types";
 
 /**

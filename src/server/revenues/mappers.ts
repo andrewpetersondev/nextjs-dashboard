@@ -10,7 +10,7 @@ import {
   validateMonthNumber,
 } from "@/server/revenues/helpers";
 import { toRevenueSource } from "@/server/revenues/validator";
-import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
+import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import { convertCentsToDollars } from "@/shared/money/convert";
 import type { RevenueStatisticsDto } from "@/shared/revenues/dto";

@@ -9,7 +9,8 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { toPeriod } from "@/shared/brands/domain-brands";
+
+import { toPeriod } from "@/shared/brands/mappers";
 
 /**
  * Creates a new invoice in the database.

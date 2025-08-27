@@ -17,7 +17,7 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
-import { toUserId } from "@/shared/brands/domain-brands";
+import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 
 export async function login(
