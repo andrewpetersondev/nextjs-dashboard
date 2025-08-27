@@ -79,20 +79,21 @@ export class EventBus {
   static async publish(eventName: string, event: unknown): Promise<void> {
     const handlers = (EventBus.handlers[eventName as EventName] ||
       []) as EventHandler<unknown>[];
-    for (const handler of handlers) {
-      try {
-        // We trust the caller provided the correct payload type for this event name
-        // biome-ignore lint/performance/noAwaitInLoops: <fix later>
-        await (handler as EventHandler<unknown>)(event);
-      } catch (error) {
-        // Structured logging for event errors
-        serverLogger.error({
-          context: "EventBus.publish",
-          error: error instanceof Error ? error.message : String(error),
-          eventName,
-          stack: error instanceof Error ? error.stack : undefined,
-        });
-      }
-    }
+
+    // Execute all handlers concurrently and handle errors per handler without awaiting in a loop
+    const tasks: readonly Promise<void>[] = handlers.map((handler) =>
+      Promise.resolve()
+        .then(() => (handler as EventHandler<unknown>)(event))
+        .catch((error: unknown) => {
+          serverLogger.error({
+            context: "EventBus.publish",
+            error: error instanceof Error ? error.message : String(error),
+            eventName,
+            stack: error instanceof Error ? error.stack : undefined,
+          });
+        }),
+    );
+
+    await Promise.allSettled(tasks);
   }
 }
