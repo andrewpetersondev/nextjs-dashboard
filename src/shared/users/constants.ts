@@ -11,3 +11,5 @@ export const DEFAULT_USER_SCHEMA = {
 } as const;
 
 export type DefaultUserSchema = typeof DEFAULT_USER_SCHEMA;
+
+export const TIMER_DELAY = 4000;

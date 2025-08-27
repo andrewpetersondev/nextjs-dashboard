@@ -11,6 +11,7 @@ import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import { CENTS_IN_DOLLAR } from "@/shared/money/money";
 import { Err, type Result } from "@/shared/result/result-base";
 
 /**
@@ -32,8 +33,7 @@ export class InvoiceService {
    * Business rule: Convert dollars to cents
    */
   private dollarsToCents(dollars: number): number {
-    // biome-ignore lint/style/noMagicNumbers: <not needed>
-    return Math.round(dollars * 100);
+    return Math.round(dollars * CENTS_IN_DOLLAR);
   }
 
   /**

@@ -16,6 +16,7 @@ import type {
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
 } from "@/shared/invoices/schema.shared";
+import { CENTS_IN_DOLLAR } from "@/shared/money/money";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";
@@ -75,8 +76,7 @@ function FormFields({
 
       <InvoiceAmountInput
         dataCy="amount-input"
-        // biome-ignore lint/style/noMagicNumbers: <basic math>
-        defaultValue={currentInvoice.amount / 100}
+        defaultValue={currentInvoice.amount / CENTS_IN_DOLLAR}
         disabled={pending}
         error={errors?.amount as FormFieldError | undefined}
         id="amount"

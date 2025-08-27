@@ -15,12 +15,11 @@ import type {
 import { createUserAction } from "@/server/users/actions/create";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
+import { TIMER_DELAY } from "@/shared/users/constants";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { InputField } from "@/ui/forms/input-field";
 import { H1 } from "@/ui/primitives/headings";
-
-const TIMER_DELAY = 4000;
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <unused function>
 export function _CreateUserForm(): JSX.Element {
