@@ -2,12 +2,10 @@ import "server-only";
 
 import { isValid, parseISO } from "date-fns";
 import { dateToPeriod } from "@/features/revenues/lib/date/period";
-import { logError, logInfo } from "@/server/revenues/events/logging";
+import { logError } from "@/server/revenues/events/logging";
 import { type Period, toPeriod } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import type { InvoiceStatus } from "@/shared/invoices/invoices";
-
-const matchingRegex = /^\d{4}-\d{2}$/;
+import { ISO_YEAR_MONTH_REGEX } from "@/shared/revenues/types";
 
 /**
  * Safely extracts the Period (first-of-month DATE) from an invoice date.
@@ -24,7 +22,7 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
     if (isValid(parsedDate)) {
       return dateToPeriod(parsedDate);
     }
-    if (invoice.date.match(matchingRegex)) {
+    if (invoice.date.match(ISO_YEAR_MONTH_REGEX)) {
       // Add a day to make it a complete date for validation
       const testDate = parseISO(`${invoice.date}-01`);
       if (isValid(testDate)) {
@@ -43,16 +41,11 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
 }
 
 /**
- * Checks if an invoice status is eligible for revenue
- */
-export function isStatusEligibleForRevenue(status: InvoiceStatus): boolean {
-  return status === "paid" || status === "pending";
-}
-
-/**
  * Validates an invoice for revenue calculations.
  */
-export function validateInvoiceForRevenue(invoice: InvoiceDto | undefined): {
+export function validateInvoicePeriodForRevenue(
+  invoice: InvoiceDto | undefined,
+): {
   valid: boolean;
   reason?: string;
 } {
@@ -81,61 +74,6 @@ export function validateInvoiceForRevenue(invoice: InvoiceDto | undefined): {
   }
 
   return { valid: true };
-}
-
-/**
- * Checks if an invoice is eligible for revenue calculation.
- */
-export function isInvoiceEligibleForRevenue(
-  invoice: InvoiceDto,
-  contextMethod: string,
-): boolean {
-  const context = `RevenueEventHandler.${contextMethod}`;
-
-  try {
-    // Validate the invoice
-    const validationResult = validateInvoiceForRevenue(invoice);
-
-    if (!validationResult.valid) {
-      logInfo(
-        context,
-        `Invoice not eligible for revenue: ${validationResult.reason}`,
-        {
-          invoice: invoice.id ?? null,
-          reason: validationResult.reason ?? null,
-        },
-      );
-      return false;
-    }
-
-    // Check if the invoice has a valid amount
-    if (!invoice.amount || invoice.amount <= 0) {
-      logInfo(context, "Invoice has zero or negative amount, skipping", {
-        invoice: invoice.id ?? null,
-      });
-      return false;
-    }
-
-    // Check if the invoice has a valid status
-    if (!isStatusEligibleForRevenue(invoice.status)) {
-      logInfo(
-        context,
-        `Invoice status ${invoice.status} not eligible for revenue`,
-        {
-          invoice: invoice.id,
-          status: invoice.status,
-        },
-      );
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    logError(context, "Error checking invoice eligibility for revenue", error, {
-      invoice: invoice.id ?? null,
-    });
-    return false;
-  }
 }
 
 /**

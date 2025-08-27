@@ -2,8 +2,8 @@ import "server-only";
 
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { withErrorHandling } from "@/server/revenues/events/error-handling";
+import { isStatusEligibleForRevenue } from "@/server/revenues/events/guards";
 import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
-import { isStatusEligibleForRevenue } from "@/server/revenues/events/policy";
 import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
