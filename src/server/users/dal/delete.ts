@@ -3,7 +3,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
-import { DatabaseError } from "@/server/errors/errors";
+import { DatabaseError_New } from "@/server/errors/infrastructure";
 import { logger } from "@/server/logging/logger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
@@ -43,9 +43,10 @@ export async function deleteUserDal(
       message: "Failed to delete user.",
       userId,
     });
-    throw new DatabaseError(
+    throw new DatabaseError_New(
       "An unexpected error occurred. Please try again.",
-      error,
+      {},
+      error instanceof Error ? error : undefined,
     );
   }
 }

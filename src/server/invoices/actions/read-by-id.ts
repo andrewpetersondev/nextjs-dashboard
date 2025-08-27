@@ -2,7 +2,7 @@
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
-import { DatabaseError } from "@/server/errors/errors";
+import { DatabaseError_New } from "@/server/errors/infrastructure";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
@@ -24,6 +24,10 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     }
     return invoice;
   } catch (error) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.DB_ERROR, error);
+    throw new DatabaseError_New(
+      INVOICE_ERROR_MESSAGES.DB_ERROR,
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }

@@ -4,7 +4,7 @@ import { asc, count, eq, ilike, or } from "drizzle-orm";
 import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
-import { DatabaseError } from "@/server/errors/errors";
+import { DatabaseError_New } from "@/server/errors/infrastructure";
 import { logger } from "@/server/logging/logger";
 import { createUserDal } from "@/server/users/dal/create";
 import type { UserDto } from "@/server/users/dto";
@@ -60,7 +60,11 @@ export async function findUserForLogin(
       error,
       message: "Failed to find user for login.",
     });
-    throw new DatabaseError("Failed to read user by email.", error);
+    throw new DatabaseError_New(
+      "Failed to read user by email.",
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }
 
@@ -95,7 +99,11 @@ export async function fetchUserById(
       id,
       message: "Failed to fetch user by id.",
     });
-    throw new DatabaseError("Failed to fetch user by id.", error);
+    throw new DatabaseError_New(
+      "Failed to fetch user by id.",
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }
 
@@ -137,9 +145,10 @@ export async function fetchUsersPages(
       query,
     });
 
-    throw new DatabaseError(
+    throw new DatabaseError_New(
       "Failed to fetch the total number of users.",
-      error,
+      {},
+      error instanceof Error ? error : undefined,
     );
   }
 }
@@ -184,7 +193,11 @@ export async function fetchFilteredUsers(
       message: "Failed to fetch filtered users.",
       query,
     });
-    throw new DatabaseError("Failed to fetch filtered users.", error);
+    throw new DatabaseError_New(
+      "Failed to fetch filtered users.",
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }
 
@@ -224,7 +237,11 @@ export async function demoUserCounter(
       message: "Failed to read the demo user counter.",
       role,
     });
-    throw new DatabaseError("Failed to read the demo user counter.", error);
+    throw new DatabaseError_New(
+      "Failed to read the demo user counter.",
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }
 

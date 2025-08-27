@@ -4,7 +4,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
-import { DatabaseError } from "@/server/errors/errors";
+import { DatabaseError_New } from "@/server/errors/infrastructure";
 import { logger } from "@/server/logging/logger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
@@ -48,6 +48,10 @@ export async function createUserDal(
       role,
       username,
     });
-    throw new DatabaseError("Failed to create a user in the database.", error);
+    throw new DatabaseError_New(
+      "Failed to create a user in the database.",
+      {},
+      error instanceof Error ? error : undefined,
+    );
   }
 }

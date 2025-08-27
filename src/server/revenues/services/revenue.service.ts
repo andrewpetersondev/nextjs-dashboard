@@ -1,7 +1,7 @@
 import "server-only";
 
 import { formatDateToPeriod } from "@/features/revenues/lib/date/format";
-import { DatabaseError } from "@/server/errors/errors";
+import { DatabaseError_New } from "@/server/errors/infrastructure";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import type {
   RevenueCreateEntity,
@@ -43,7 +43,7 @@ export class RevenueService {
     }
     const created = await this.repository.create(revenue);
     if (!created) {
-      throw new DatabaseError("Failed to create a revenue record");
+      throw new DatabaseError_New("Failed to create a revenue record");
     }
     return created;
   }
@@ -83,7 +83,7 @@ export class RevenueService {
     }
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
-      throw new DatabaseError(`Failed to update revenue with ID ${id}`);
+      throw new DatabaseError_New(`Failed to update revenue with ID ${id}`);
     }
     return updated;
   }
