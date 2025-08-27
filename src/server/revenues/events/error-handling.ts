@@ -1,6 +1,10 @@
 import "server-only";
 
-import { logError, logInfo } from "@/server/revenues/events/logging";
+import {
+  type LogMetadata,
+  logError,
+  logInfo,
+} from "@/server/revenues/events/logging";
 
 /**
  * Wraps a function with standardized error handling
@@ -9,7 +13,7 @@ export async function withErrorHandling<T>(
   context: string,
   operation: string,
   fn: () => Promise<T>,
-  metadata?: Record<string, unknown>,
+  metadata?: LogMetadata,
 ): Promise<T> {
   try {
     logInfo(context, `${operation} - started`, metadata);

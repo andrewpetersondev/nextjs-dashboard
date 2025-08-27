@@ -10,8 +10,6 @@ import type { InvoiceDto } from "@/shared/invoices/dto";
 /**
  * Processes an invoice for revenue calculation
  */
-// biome-ignore lint/nursery/useMaxParams: <fix later>
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function processInvoiceForRevenue(
   revenueService: RevenueService,
   invoice: InvoiceDto,

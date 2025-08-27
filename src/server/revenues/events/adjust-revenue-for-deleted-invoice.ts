@@ -2,7 +2,7 @@ import "server-only";
 
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { withErrorHandling } from "@/server/revenues/events/error-handling";
-import { logInfo } from "@/server/revenues/events/logging";
+import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import { isStatusEligibleForRevenue } from "@/server/revenues/events/policy";
 import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
@@ -10,92 +10,100 @@ import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
+ * Immutable metadata bag passed to logging and error handlers.
+ */
+type Metadata = LogMetadata;
+
+/**
+ * Options required to apply deletion effects to revenue records.
+ */
+type ApplyDeletionOptions = Readonly<{
+  revenueService: RevenueService;
+  invoice: InvoiceDto;
+  period: Period;
+  context: string;
+  metadata: Metadata;
+}>;
+
+function isEligibleDeletion(
+  invoice: InvoiceDto,
+  context: string,
+  metadata: Metadata,
+): boolean {
+  if (!isStatusEligibleForRevenue(invoice.status)) {
+    logInfo(
+      context,
+      "Deleted invoice was not eligible for revenue, no adjustment needed",
+      { ...metadata, status: invoice.status },
+    );
+    return false;
+  }
+  if (invoice.amount <= 0) {
+    logInfo(
+      context,
+      "Deleted invoice had an invalid amount, no adjustment needed",
+      { ...metadata, amount: invoice.amount },
+    );
+    return false;
+  }
+  return true;
+}
+
+async function applyDeletionEffects(
+  options: ApplyDeletionOptions,
+): Promise<void> {
+  const { revenueService, invoice, period, context, metadata } = options;
+  const existingRevenue = await revenueService.findByPeriod(period);
+  if (!existingRevenue) {
+    logInfo(
+      context,
+      "No existing revenue record was found for a period",
+      metadata,
+    );
+    return;
+  }
+  const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
+  const newRevenue = Math.max(0, existingRevenue.totalAmount - invoice.amount);
+  if (newInvoiceCount === 0) {
+    logInfo(context, "No more invoices for a period, deleting revenue record", {
+      ...metadata,
+      revenueId: existingRevenue.id,
+    });
+    await revenueService.delete(existingRevenue.id);
+    return;
+  }
+  await updateRevenueRecord(
+    revenueService,
+    existingRevenue.id,
+    newInvoiceCount,
+    newRevenue,
+    context,
+    metadata,
+  );
+}
+
+/**
  * Adjusts revenue for a deleted invoice
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function adjustRevenueForDeletedInvoice(
   revenueService: RevenueService,
   invoice: InvoiceDto,
   period: Period,
 ): Promise<void> {
   const context = "RevenueEventHandler.adjustRevenueForDeletedInvoice";
-  const metadata = {
-    invoice: invoice.id,
-    period: periodKey(period),
-  };
-
+  const metadata = { invoice: invoice.id, period: periodKey(period) } as const;
   await withErrorHandling(
     context,
     "Adjusting revenue for deleted invoice",
-    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
     async () => {
-      // Verify that the invoice was eligible for revenue before deletion
-      if (!isStatusEligibleForRevenue(invoice.status)) {
-        logInfo(
-          context,
-          "Deleted invoice was not eligible for revenue, no adjustment needed",
-          {
-            ...metadata,
-            status: invoice.status,
-          },
-        );
-        return;
-      }
-
-      if (invoice.amount <= 0) {
-        logInfo(
-          context,
-          "Deleted invoice had an invalid amount, no adjustment needed",
-          {
-            ...metadata,
-            amount: invoice.amount,
-          },
-        );
-        return;
-      }
-
-      // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(period);
-
-      if (!existingRevenue) {
-        logInfo(
-          context,
-          "No existing revenue record was found for a period",
-          metadata,
-        );
-        return;
-      }
-
-      // Calculate the new invoice count and revenue
-      const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
-      const newRevenue = Math.max(
-        0,
-        existingRevenue.totalAmount - invoice.amount,
-      );
-
-      // If there are no more invoices for this period, delete the revenue record
-      if (newInvoiceCount === 0) {
-        logInfo(
-          context,
-          "No more invoices for a period, deleting revenue record",
-          {
-            ...metadata,
-            revenueId: existingRevenue.id,
-          },
-        );
-
-        await revenueService.delete(existingRevenue.id);
-      } else {
-        // Otherwise, update the revenue record
-        await updateRevenueRecord(
-          revenueService,
-          existingRevenue.id,
-          newInvoiceCount,
-          newRevenue,
-          context,
-          metadata,
-        );
-      }
+      if (!isEligibleDeletion(invoice, context, metadata)) return;
+      await applyDeletionEffects({
+        context,
+        invoice,
+        metadata,
+        period,
+        revenueService,
+      });
     },
     metadata,
   );

@@ -6,15 +6,33 @@ import { serverLogger } from "@/server/logging/serverLogger";
 /**
  * Creates a standardized log entry
  */
+type JsonPrimitive = string | number | boolean | null;
+
+/**
+ * JSON-serializable value used for structured logs.
+ */
+export type LogValue =
+  | JsonPrimitive
+  | readonly LogValue[]
+  | { readonly [key: string]: LogValue };
+
+/**
+ * Bag of JSON-serializable metadata for logs.
+ */
+export type LogMetadata = { readonly [key: string]: LogValue };
+
+/**
+ * Creates a standardized log entry
+ */
 export function logInfo(
   context: string,
   message: string,
-  metadata?: Record<string, unknown>,
+  metadata?: LogMetadata,
 ): void {
   serverLogger.info({
     context,
     message,
-    ...metadata,
+    ...(metadata ?? {}),
   });
 }
 
@@ -25,13 +43,13 @@ export function logError(
   context: string,
   message: string,
   error?: unknown,
-  metadata?: Record<string, unknown>,
+  metadata?: LogMetadata,
 ): void {
   serverLogger.error({
     context,
     error,
     message,
-    ...metadata,
+    ...(metadata ?? {}),
   });
 }
 

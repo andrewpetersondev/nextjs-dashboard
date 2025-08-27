@@ -1,6 +1,6 @@
 import "server-only";
 
-import { logInfo } from "@/server/revenues/events/logging";
+import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import { toRevenueId } from "@/shared/brands/domain-brands";
 
@@ -14,7 +14,7 @@ export async function updateRevenueRecord(
   invoiceCount: number,
   totalAmount: number,
   context: string,
-  metadata?: Record<string, unknown>,
+  metadata?: LogMetadata,
 ): Promise<void> {
   logInfo(context, "Updating revenue record", {
     invoiceCount,

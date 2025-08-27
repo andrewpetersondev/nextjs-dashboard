@@ -101,8 +101,8 @@ export function isInvoiceEligibleForRevenue(
         context,
         `Invoice not eligible for revenue: ${validationResult.reason}`,
         {
-          invoice: invoice.id,
-          reason: validationResult.reason,
+          invoice: invoice.id ?? null,
+          reason: validationResult.reason ?? null,
         },
       );
       return false;
@@ -111,7 +111,7 @@ export function isInvoiceEligibleForRevenue(
     // Check if the invoice has a valid amount
     if (!invoice.amount || invoice.amount <= 0) {
       logInfo(context, "Invoice has zero or negative amount, skipping", {
-        invoice: invoice.id,
+        invoice: invoice.id ?? null,
       });
       return false;
     }
@@ -132,7 +132,7 @@ export function isInvoiceEligibleForRevenue(
     return true;
   } catch (error) {
     logError(context, "Error checking invoice eligibility for revenue", error, {
-      invoice: invoice.id,
+      invoice: invoice.id ?? null,
     });
     return false;
   }
@@ -154,9 +154,9 @@ export function extractAndValidatePeriod(
       "Failed to extract period from the invoice",
       new Error("Invalid invoice date"),
       {
-        eventId,
-        invoiceDate: invoice.date,
-        invoiceId: invoice.id,
+        eventId: eventId ?? null,
+        invoiceDate: invoice.date ?? null,
+        invoiceId: invoice.id ?? null,
       },
     );
     return null;

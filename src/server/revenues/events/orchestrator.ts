@@ -1,5 +1,6 @@
 import "server-only";
 
+import { periodKey } from "@/features/revenues/lib/date/period";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { withIdempotency } from "@/server/revenues/events/idempotency";
 import { handleEventError, logInfo } from "@/server/revenues/events/logging";
@@ -62,7 +63,7 @@ export async function processInvoiceEvent(
         {
           eventId: event.eventId,
           invoiceId: invoice.id,
-          period,
+          period: periodKey(period),
         },
       );
     });

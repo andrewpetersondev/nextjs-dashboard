@@ -1,7 +1,8 @@
 import "server-only";
 
+import { periodKey } from "@/features/revenues/lib/date/period";
 import { withErrorHandling } from "@/server/revenues/events/error-handling";
-import { logInfo } from "@/server/revenues/events/logging";
+import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import {
   extractAndValidatePeriod,
   isStatusEligibleForRevenue,
@@ -12,135 +13,275 @@ import type { RevenueService } from "@/server/revenues/services/revenue.service"
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
- * Adjusts revenue based on invoice status changes
+ * Adjusts revenue based on invoice status changes.
+ * Keeps orchestration under 50 lines by delegating to small helpers.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+
+// Core logic extracted to keep exported function concise
+interface CoreArgs {
+  readonly baseMeta: MetadataBase;
+  readonly context: string;
+  readonly currentInvoice: InvoiceDto;
+  readonly previousInvoice: InvoiceDto;
+  readonly revenueService: RevenueService;
+}
+
+function detectChange(
+  previousInvoice: InvoiceDto,
+  currentInvoice: InvoiceDto,
+):
+  | "eligible-to-ineligible"
+  | "ineligible-to-eligible"
+  | "eligible-amount-change"
+  | "none" {
+  const prevEligible = isStatusEligibleForRevenue(previousInvoice.status);
+  const currEligible = isStatusEligibleForRevenue(currentInvoice.status);
+  if (prevEligible && !currEligible) return "eligible-to-ineligible";
+  if (!prevEligible && currEligible) return "ineligible-to-eligible";
+  if (
+    prevEligible &&
+    currEligible &&
+    previousInvoice.amount !== currentInvoice.amount
+  )
+    return "eligible-amount-change";
+  return "none";
+}
+
+async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
+  const { revenueService, previousInvoice, currentInvoice, context, baseMeta } =
+    args;
+  const period = extractAndValidatePeriod(currentInvoice, context);
+  if (!period) return;
+  const meta: MetadataWithPeriod = { ...baseMeta, period: periodKey(period) };
+  const existingRevenue = await revenueService.findByPeriod(period);
+  if (!existingRevenue) {
+    await handleNoExistingRevenue({
+      context,
+      currentInvoice,
+      meta,
+      period,
+      revenueService,
+    });
+    return;
+  }
+  const change = detectChange(previousInvoice, currentInvoice);
+  if (change === "eligible-to-ineligible") {
+    await handleTransitionFromEligibleToIneligible({
+      context,
+      meta: {
+        ...meta,
+        existingCount: existingRevenue.invoiceCount,
+        existingTotal: existingRevenue.totalAmount,
+      },
+      previousAmount: previousInvoice.amount,
+      revenueId: existingRevenue.id,
+      revenueService,
+    });
+    return;
+  }
+  if (change === "ineligible-to-eligible") {
+    await handleTransitionFromIneligibleToEligible({
+      context,
+      currentAmount: currentInvoice.amount,
+      currentCount: existingRevenue.invoiceCount,
+      currentTotal: existingRevenue.totalAmount,
+      meta,
+      revenueId: existingRevenue.id,
+      revenueService,
+    });
+    return;
+  }
+  if (change === "eligible-amount-change") {
+    await handleEligibleAmountChange({
+      context,
+      currentAmount: currentInvoice.amount,
+      currentCount: existingRevenue.invoiceCount,
+      currentTotal: existingRevenue.totalAmount,
+      meta,
+      previousAmount: previousInvoice.amount,
+      revenueId: existingRevenue.id,
+      revenueService,
+    });
+    return;
+  }
+  logNoAffectingChanges(context, meta);
+}
+
+// ===== Internal helpers (file-local) =====
+
+interface MetadataBase extends LogMetadata {
+  readonly currentStatus: InvoiceDto["status"];
+  readonly invoice: InvoiceDto["id"];
+  readonly previousStatus: InvoiceDto["status"];
+}
+
+interface MetadataWithPeriod extends MetadataBase {
+  readonly period: string; // periodKey string
+}
+
+function buildBaseMetadata(prev: InvoiceDto, curr: InvoiceDto): MetadataBase {
+  return {
+    currentStatus: curr.status,
+    invoice: curr.id,
+    previousStatus: prev.status,
+  };
+}
+
+interface NoExistingArgs {
+  readonly revenueService: RevenueService;
+  readonly currentInvoice: InvoiceDto;
+  readonly period: Parameters<typeof processInvoiceForRevenue>[2];
+  readonly context: string;
+  readonly meta: MetadataWithPeriod;
+}
+
+async function handleNoExistingRevenue(args: NoExistingArgs): Promise<void> {
+  const { revenueService, currentInvoice, period, context, meta } = args;
+  logInfo(context, "No existing revenue record was found for a period", meta);
+  if (isStatusEligibleForRevenue(currentInvoice.status)) {
+    await processInvoiceForRevenue(
+      revenueService,
+      currentInvoice,
+      period,
+      context,
+    );
+  }
+}
+
+interface ToIneligibleArgs {
+  readonly revenueService: RevenueService;
+  readonly revenueId: string;
+  readonly previousAmount: number;
+  readonly context: string;
+  readonly meta: MetadataWithPeriod & {
+    readonly existingCount: number;
+    readonly existingTotal: number;
+  };
+}
+
+async function handleTransitionFromEligibleToIneligible(
+  args: ToIneligibleArgs,
+): Promise<void> {
+  const { revenueService, revenueId, previousAmount, context, meta } = args;
+  logInfo(
+    context,
+    "Invoice no longer eligible for revenue, removing from the total",
+    meta,
+  );
+  await updateRevenueRecord(
+    revenueService,
+    revenueId,
+    Math.max(0, meta.existingCount - 1),
+    Math.max(0, meta.existingTotal - previousAmount),
+    context,
+    meta,
+  );
+}
+
+interface ToEligibleArgs {
+  readonly revenueService: RevenueService;
+  readonly revenueId: string;
+  readonly currentCount: number;
+  readonly currentTotal: number;
+  readonly currentAmount: number;
+  readonly context: string;
+  readonly meta: MetadataWithPeriod;
+}
+
+async function handleTransitionFromIneligibleToEligible(
+  args: ToEligibleArgs,
+): Promise<void> {
+  const {
+    revenueService,
+    revenueId,
+    currentCount,
+    currentTotal,
+    currentAmount,
+    context,
+    meta,
+  } = args;
+  logInfo(
+    context,
+    "Invoice now eligible for revenue, adding to the total",
+    meta,
+  );
+  await updateRevenueRecord(
+    revenueService,
+    revenueId,
+    currentCount + 1,
+    currentTotal + currentAmount,
+    context,
+    meta,
+  );
+}
+
+interface EligibleAmountChangeArgs {
+  readonly revenueService: RevenueService;
+  readonly revenueId: string;
+  readonly currentCount: number;
+  readonly currentTotal: number;
+  readonly previousAmount: number;
+  readonly currentAmount: number;
+  readonly context: string;
+  readonly meta: MetadataWithPeriod;
+}
+
+async function handleEligibleAmountChange(
+  args: EligibleAmountChangeArgs,
+): Promise<void> {
+  const {
+    revenueService,
+    revenueId,
+    currentCount,
+    currentTotal,
+    previousAmount,
+    currentAmount,
+    context,
+    meta,
+  } = args;
+  const amountDifference = currentAmount - previousAmount;
+  logInfo(
+    context,
+    "Invoice amount changed while remaining eligible for revenue",
+    { ...meta, amountDifference, currentAmount, previousAmount },
+  );
+  await updateRevenueRecord(
+    revenueService,
+    revenueId,
+    currentCount,
+    currentTotal + amountDifference,
+    context,
+    meta,
+  );
+}
+
+function logNoAffectingChanges(
+  context: string,
+  meta: MetadataWithPeriod,
+): void {
+  logInfo(context, "No changes affecting revenue calculation", meta);
+}
+
 export async function adjustRevenueForStatusChange(
   revenueService: RevenueService,
   previousInvoice: InvoiceDto,
   currentInvoice: InvoiceDto,
 ): Promise<void> {
   const context = "RevenueEventHandler.adjustRevenueForStatusChange";
-  const metadata = {
-    currentStatus: currentInvoice.status,
-    invoice: currentInvoice.id,
-    previousStatus: previousInvoice.status,
-  };
+  const baseMeta = buildBaseMetadata(previousInvoice, currentInvoice);
 
   await withErrorHandling(
     context,
     "Adjusting revenue for status change",
-    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <fix later>
     async () => {
-      // Extract the period from the invoice
-      const period = extractAndValidatePeriod(currentInvoice, context);
-
-      if (!period) {
-        return;
-      }
-
-      // Add period to metadata for subsequent operations
-      const metadataWithPeriod = { ...metadata, period };
-
-      // Get the existing revenue record
-      const existingRevenue = await revenueService.findByPeriod(period);
-
-      if (!existingRevenue) {
-        logInfo(
-          context,
-          "No existing revenue record was found for a period",
-          metadataWithPeriod,
-        );
-
-        // If the current status is eligible for revenue, create a new record
-        if (isStatusEligibleForRevenue(currentInvoice.status)) {
-          await processInvoiceForRevenue(
-            revenueService,
-            currentInvoice,
-            period,
-            context,
-          );
-        }
-
-        return;
-      }
-
-      // Handle status changes
-      if (
-        isStatusEligibleForRevenue(previousInvoice.status) &&
-        !isStatusEligibleForRevenue(currentInvoice.status)
-      ) {
-        // Invoice is no longer eligible for revenue, remove it
-        logInfo(
-          context,
-          "Invoice no longer eligible for revenue, removing from the total",
-          metadataWithPeriod,
-        );
-
-        await updateRevenueRecord(
-          revenueService,
-          existingRevenue.id,
-          Math.max(0, existingRevenue.invoiceCount - 1),
-          Math.max(0, existingRevenue.totalAmount - previousInvoice.amount),
-          context,
-          metadataWithPeriod,
-        );
-      } else if (
-        !isStatusEligibleForRevenue(previousInvoice.status) &&
-        isStatusEligibleForRevenue(currentInvoice.status)
-      ) {
-        // Invoice is now eligible for revenue, add it
-        logInfo(
-          context,
-          "Invoice now eligible for revenue, adding to the total",
-          metadataWithPeriod,
-        );
-
-        await updateRevenueRecord(
-          revenueService,
-          existingRevenue.id,
-          existingRevenue.invoiceCount + 1,
-          existingRevenue.totalAmount + currentInvoice.amount,
-          context,
-          metadataWithPeriod,
-        );
-      } else if (
-        isStatusEligibleForRevenue(previousInvoice.status) &&
-        isStatusEligibleForRevenue(currentInvoice.status) &&
-        previousInvoice.amount !== currentInvoice.amount
-      ) {
-        // Both invoices are eligible for revenue, but the amount has changed
-        logInfo(
-          context,
-          "Invoice amount changed while remaining eligible for revenue",
-          {
-            ...metadataWithPeriod,
-            amountDifference: currentInvoice.amount - previousInvoice.amount,
-            currentAmount: currentInvoice.amount,
-            previousAmount: previousInvoice.amount,
-          },
-        );
-
-        // Calculate the amount difference
-        const amountDifference = currentInvoice.amount - previousInvoice.amount;
-
-        await updateRevenueRecord(
-          revenueService,
-          existingRevenue.id,
-          existingRevenue.invoiceCount,
-          existingRevenue.totalAmount + amountDifference,
-          context,
-          metadataWithPeriod,
-        );
-      } else {
-        logInfo(
-          context,
-          "No changes affecting revenue calculation",
-          metadataWithPeriod,
-        );
-      }
+      await adjustRevenueForStatusChangeCore({
+        baseMeta,
+        context,
+        currentInvoice,
+        previousInvoice,
+        revenueService,
+      });
     },
-    metadata,
+    baseMeta,
   );
 }
