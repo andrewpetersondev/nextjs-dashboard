@@ -1,6 +1,5 @@
 import "server-only";
 
-import { periodKey } from "@/features/revenues/lib/date/period";
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
@@ -10,7 +9,6 @@ import { adjustRevenueForStatusChange } from "@/server/revenues/events/adjust-re
 import { logError, logInfo } from "@/server/revenues/events/logging";
 import { processInvoiceEvent } from "@/server/revenues/events/orchestrator";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
-import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 
 /**
@@ -179,22 +177,6 @@ export class RevenueEventHandler {
     invoice: Parameters<typeof processInvoiceForRevenue>[1],
     period: Parameters<typeof processInvoiceForRevenue>[2],
   ): Promise<void> {
-    const existingRevenue = await this.revenueService.findByPeriod(period);
-    if (existingRevenue) {
-      const amountDifference = invoice.amount - previousAmount;
-      await updateRevenueRecord(this.revenueService, {
-        context,
-        invoiceCount: existingRevenue.invoiceCount,
-        metadata: {
-          amountDifference,
-          invoiceId: invoice.id,
-          period: periodKey(period),
-        },
-        revenueId: existingRevenue.id,
-        totalAmount: existingRevenue.totalAmount + amountDifference,
-      });
-      return;
-    }
     await processInvoiceForRevenue(this.revenueService, invoice, period, {
       context,
       isUpdate: true,

@@ -47,13 +47,49 @@ function detectChange(
   return "none";
 }
 
-async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
-  const { revenueService, previousInvoice, currentInvoice, context, baseMeta } =
-    args;
+function preparePeriodAndMeta(
+  currentInvoice: InvoiceDto,
+  context: string,
+  baseMeta: MetadataBase,
+): {
+  readonly period: Parameters<typeof processInvoiceForRevenue>[2];
+  readonly meta: MetadataWithPeriod;
+} | null {
   const period = extractAndValidatePeriod(currentInvoice, context);
-  if (!period) return;
+  if (!period) return null;
   const meta: MetadataWithPeriod = { ...baseMeta, period: periodKey(period) };
-  const existingRevenue = await revenueService.findByPeriod(period);
+  return { meta, period } as const;
+}
+
+async function dispatchChange(
+  change:
+    | "eligible-to-ineligible"
+    | "ineligible-to-eligible"
+    | "eligible-amount-change"
+    | "none",
+  context: string,
+  args: {
+    readonly previousInvoice: InvoiceDto;
+    readonly currentInvoice: InvoiceDto;
+    readonly existingRevenue?: {
+      readonly id: string;
+      readonly invoiceCount: number;
+      readonly totalAmount: number;
+    };
+    readonly revenueService: RevenueService;
+    readonly meta: MetadataWithPeriod;
+    readonly period: Parameters<typeof processInvoiceForRevenue>[2];
+  },
+): Promise<void> {
+  const {
+    previousInvoice,
+    currentInvoice,
+    existingRevenue,
+    revenueService,
+    meta,
+    period,
+  } = args;
+
   if (!existingRevenue) {
     await handleNoExistingRevenue({
       context,
@@ -64,7 +100,7 @@ async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
     });
     return;
   }
-  const change = detectChange(previousInvoice, currentInvoice);
+
   if (change === "eligible-to-ineligible") {
     await handleTransitionFromEligibleToIneligible({
       context,
@@ -105,6 +141,33 @@ async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
     return;
   }
   logNoAffectingChanges(context, meta);
+}
+
+async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
+  const { revenueService, previousInvoice, currentInvoice, context, baseMeta } =
+    args;
+
+  const prepared = preparePeriodAndMeta(currentInvoice, context, baseMeta);
+  if (!prepared) return;
+  const { period, meta } = prepared;
+
+  const existingRevenue = await revenueService.findByPeriod(period);
+  const change = detectChange(previousInvoice, currentInvoice);
+
+  await dispatchChange(change, context, {
+    currentInvoice,
+    existingRevenue: existingRevenue
+      ? {
+          id: existingRevenue.id,
+          invoiceCount: existingRevenue.invoiceCount,
+          totalAmount: existingRevenue.totalAmount,
+        }
+      : undefined,
+    meta,
+    period,
+    previousInvoice,
+    revenueService,
+  });
 }
 
 // ===== Internal helpers (file-local) =====

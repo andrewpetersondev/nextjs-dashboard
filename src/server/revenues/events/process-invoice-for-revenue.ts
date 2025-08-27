@@ -24,6 +24,98 @@ type UpsertArgs = Readonly<{
   previousAmount?: number;
 }>;
 
+function isDiffUpdate(
+  isUpdate: boolean,
+  previousAmount?: number,
+): previousAmount is number {
+  return Boolean(isUpdate && previousAmount !== undefined);
+}
+
+function buildExistingMeta(
+  metadata: LogMetadata,
+  revenueId: string,
+): LogMetadata {
+  return { ...metadata, existingRevenue: revenueId } as const;
+}
+
+type UpdateExistingOptions = Readonly<{
+  revenueService: RevenueService;
+  context: string;
+  existing: {
+    readonly id: string;
+    readonly invoiceCount: number;
+    readonly totalAmount: number;
+  };
+  invoice: InvoiceDto;
+  metadata: LogMetadata;
+  isUpdate: boolean;
+  previousAmount?: number;
+}>;
+
+async function updateExistingRevenue(
+  options: UpdateExistingOptions,
+): Promise<void> {
+  const {
+    revenueService,
+    context,
+    existing,
+    invoice,
+    metadata,
+    isUpdate,
+    previousAmount,
+  } = options;
+  const isDiff = isDiffUpdate(isUpdate, previousAmount);
+  const amountDelta = isDiff
+    ? invoice.amount - (previousAmount as number)
+    : invoice.amount;
+  const newCount = isDiff ? existing.invoiceCount : existing.invoiceCount + 1;
+
+  const baseMeta = buildExistingMeta(metadata, existing.id);
+  const detailMeta: LogMetadata = isDiff
+    ? {
+        amountDifference: amountDelta,
+        previousAmount: previousAmount as number,
+      }
+    : {};
+
+  logInfo(
+    context,
+    isDiff
+      ? "Updating existing revenue record for updated invoice"
+      : "Updating the existing revenue record for a new invoice",
+    { ...baseMeta, ...detailMeta },
+  );
+
+  await updateRevenueRecord(revenueService, {
+    context,
+    invoiceCount: newCount,
+    metadata: { ...metadata, ...detailMeta },
+    revenueId: existing.id,
+    totalAmount: existing.totalAmount + amountDelta,
+  });
+}
+
+type CreateNewOptions = Readonly<{
+  revenueService: RevenueService;
+  context: string;
+  metadata: LogMetadata;
+  period: Period;
+  totalAmount: number;
+}>;
+
+async function createNewRevenue(options: CreateNewOptions): Promise<void> {
+  const { revenueService, context, metadata, period, totalAmount } = options;
+  logInfo(context, "Creating a new revenue record", metadata);
+  await revenueService.create({
+    calculationSource: "invoice_event",
+    createdAt: new Date(),
+    invoiceCount: 1,
+    period: toPeriod(period),
+    totalAmount,
+    updatedAt: new Date(),
+  });
+}
+
 async function upsertRevenue(args: UpsertArgs): Promise<void> {
   const {
     revenueService,
@@ -34,49 +126,31 @@ async function upsertRevenue(args: UpsertArgs): Promise<void> {
     isUpdate,
     previousAmount,
   } = args;
+
   const existingRevenue = await revenueService.findByPeriod(period);
   if (existingRevenue) {
-    const isDiff = isUpdate && previousAmount !== undefined;
-    const amountDelta = isDiff
-      ? invoice.amount - (previousAmount as number)
-      : invoice.amount;
-    const newCount = isDiff
-      ? existingRevenue.invoiceCount
-      : existingRevenue.invoiceCount + 1;
-    const baseMeta: LogMetadata = {
-      ...metadata,
-      existingRevenue: existingRevenue.id,
-    };
-    const detailMeta: LogMetadata = isDiff
-      ? {
-          amountDifference: amountDelta,
-          previousAmount: previousAmount as number,
-        }
-      : {};
-    logInfo(
+    await updateExistingRevenue({
       context,
-      isDiff
-        ? "Updating existing revenue record for updated invoice"
-        : "Updating the existing revenue record for a new invoice",
-      { ...baseMeta, ...detailMeta },
-    );
-    await updateRevenueRecord(revenueService, {
-      context,
-      invoiceCount: newCount,
+      existing: {
+        id: existingRevenue.id,
+        invoiceCount: existingRevenue.invoiceCount,
+        totalAmount: existingRevenue.totalAmount,
+      },
+      invoice,
+      isUpdate,
       metadata,
-      revenueId: existingRevenue.id,
-      totalAmount: existingRevenue.totalAmount + amountDelta,
+      previousAmount,
+      revenueService,
     });
     return;
   }
-  logInfo(context, "Creating a new revenue record", metadata);
-  await revenueService.create({
-    calculationSource: "invoice_event",
-    createdAt: new Date(),
-    invoiceCount: 1,
-    period: toPeriod(period),
+
+  await createNewRevenue({
+    context,
+    metadata,
+    period,
+    revenueService,
     totalAmount: invoice.amount,
-    updatedAt: new Date(),
   });
 }
 
