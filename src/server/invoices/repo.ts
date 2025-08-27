@@ -23,14 +23,21 @@ import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { map } from "@/shared/result/result-transform";
 
 /**
- * Repository for Invoice domain operations.
- * It uses DAL functions for DB operations.
+ * Repository for managing invoice data.
+ *
+ * Provides methods to safely create, read, update, and delete invoices,
+ * with validation and database interaction utilities to standardize behavior.
+ *
+ * @typeParam TDto - The DTO type returned to the service layer.
+ * @typeParam TId - The branded ID type used for invoices.
+ * @typeParam TCreateInput - Input type for creating an invoice.
+ * @typeParam TUpdateInput - Input type for updating an invoice.
  */
 export class InvoiceRepository extends BaseRepository<
-  InvoiceDto, // TDto - what gets returned to service layer
-  InvoiceId, // TId - branded ID type
-  InvoiceServiceEntity, // TCreateInput - creation input type
-  InvoiceFormPartialEntity // TUpdateInput - update input type
+  InvoiceDto,
+  InvoiceId,
+  InvoiceServiceEntity,
+  InvoiceFormPartialEntity
 > {
   /**
    * Creates a safe invoice entity by validating the input and interacting with the database.

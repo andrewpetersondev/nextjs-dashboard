@@ -10,6 +10,7 @@ Deterministic, concise rules and templates for TSDoc across functions, types, Re
 
 ## 0) Formatting & Brevity
 
+- Aim for comments equal to or less than 5 lines.
 - Use triple backticks for code blocks; label with typescript/ts/tsx.
 - First line imperative and ≤ 80 chars.
 - Prefer the minimal tag set; include a single, compilable example when needed.
