@@ -72,14 +72,13 @@ async function applyDeletionEffects(
     await revenueService.delete(existingRevenue.id);
     return;
   }
-  await updateRevenueRecord(
-    revenueService,
-    existingRevenue.id,
-    newInvoiceCount,
-    newRevenue,
+  await updateRevenueRecord(revenueService, {
     context,
+    invoiceCount: newInvoiceCount,
     metadata,
-  );
+    revenueId: existingRevenue.id,
+    totalAmount: newRevenue,
+  });
 }
 
 /**

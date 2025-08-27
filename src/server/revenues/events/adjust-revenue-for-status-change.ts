@@ -165,14 +165,13 @@ async function handleTransitionFromEligibleToIneligible(
     "Invoice no longer eligible for revenue, removing from the total",
     meta,
   );
-  await updateRevenueRecord(
-    revenueService,
-    revenueId,
-    Math.max(0, meta.existingCount - 1),
-    Math.max(0, meta.existingTotal - previousAmount),
+  await updateRevenueRecord(revenueService, {
     context,
-    meta,
-  );
+    invoiceCount: Math.max(0, meta.existingCount - 1),
+    metadata: meta,
+    revenueId,
+    totalAmount: Math.max(0, meta.existingTotal - previousAmount),
+  });
 }
 
 interface ToEligibleArgs {
@@ -202,14 +201,13 @@ async function handleTransitionFromIneligibleToEligible(
     "Invoice now eligible for revenue, adding to the total",
     meta,
   );
-  await updateRevenueRecord(
-    revenueService,
-    revenueId,
-    currentCount + 1,
-    currentTotal + currentAmount,
+  await updateRevenueRecord(revenueService, {
     context,
-    meta,
-  );
+    invoiceCount: currentCount + 1,
+    metadata: meta,
+    revenueId,
+    totalAmount: currentTotal + currentAmount,
+  });
 }
 
 interface EligibleAmountChangeArgs {
@@ -242,14 +240,13 @@ async function handleEligibleAmountChange(
     "Invoice amount changed while remaining eligible for revenue",
     { ...meta, amountDifference, currentAmount, previousAmount },
   );
-  await updateRevenueRecord(
-    revenueService,
-    revenueId,
-    currentCount,
-    currentTotal + amountDifference,
+  await updateRevenueRecord(revenueService, {
     context,
-    meta,
-  );
+    invoiceCount: currentCount,
+    metadata: meta,
+    revenueId,
+    totalAmount: currentTotal + amountDifference,
+  });
 }
 
 function logNoAffectingChanges(

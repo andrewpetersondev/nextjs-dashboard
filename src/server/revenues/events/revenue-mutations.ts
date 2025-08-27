@@ -5,17 +5,33 @@ import type { RevenueService } from "@/server/revenues/services/revenue.service"
 import { toRevenueId } from "@/shared/brands/domain-brands";
 
 /**
+ * Arguments for updating a revenue record.
+ * @remarks
+ * Use this object to keep the public API within max-params constraints and
+ * ensure strict, self-documented typing.
+ */
+export type UpdateRevenueArgs = Readonly<{
+  /** Revenue id to update (string form) */
+  readonly revenueId: string;
+  /** New invoice count for the period */
+  readonly invoiceCount: number;
+  /** New total revenue amount for the period */
+  readonly totalAmount: number;
+  /** Logging context */
+  readonly context: string;
+  /** Optional structured metadata for logs */
+  readonly metadata?: LogMetadata;
+}>;
+
+/**
  * Updates a revenue record with new invoice count and revenue values
  */
-// biome-ignore lint/nursery/useMaxParams: <fix later>
 export async function updateRevenueRecord(
   revenueService: RevenueService,
-  revenueId: string,
-  invoiceCount: number,
-  totalAmount: number,
-  context: string,
-  metadata?: LogMetadata,
+  args: UpdateRevenueArgs,
 ): Promise<void> {
+  const { revenueId, invoiceCount, totalAmount, context, metadata } = args;
+
   logInfo(context, "Updating revenue record", {
     invoiceCount,
     revenueId,

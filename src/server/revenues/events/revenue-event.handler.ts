@@ -182,14 +182,17 @@ export class RevenueEventHandler {
     const existingRevenue = await this.revenueService.findByPeriod(period);
     if (existingRevenue) {
       const amountDifference = invoice.amount - previousAmount;
-      await updateRevenueRecord(
-        this.revenueService,
-        existingRevenue.id,
-        existingRevenue.invoiceCount,
-        existingRevenue.totalAmount + amountDifference,
+      await updateRevenueRecord(this.revenueService, {
         context,
-        { amountDifference, invoiceId: invoice.id, period: periodKey(period) },
-      );
+        invoiceCount: existingRevenue.invoiceCount,
+        metadata: {
+          amountDifference,
+          invoiceId: invoice.id,
+          period: periodKey(period),
+        },
+        revenueId: existingRevenue.id,
+        totalAmount: existingRevenue.totalAmount + amountDifference,
+      });
       return;
     }
     await processInvoiceForRevenue(this.revenueService, invoice, period, {

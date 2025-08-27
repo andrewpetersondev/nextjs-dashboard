@@ -60,14 +60,13 @@ async function upsertRevenue(args: UpsertArgs): Promise<void> {
         : "Updating the existing revenue record for a new invoice",
       { ...baseMeta, ...detailMeta },
     );
-    await updateRevenueRecord(
-      revenueService,
-      existingRevenue.id,
-      newCount,
-      existingRevenue.totalAmount + amountDelta,
+    await updateRevenueRecord(revenueService, {
       context,
+      invoiceCount: newCount,
       metadata,
-    );
+      revenueId: existingRevenue.id,
+      totalAmount: existingRevenue.totalAmount + amountDelta,
+    });
     return;
   }
   logInfo(context, "Creating a new revenue record", metadata);
