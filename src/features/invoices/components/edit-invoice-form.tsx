@@ -16,7 +16,7 @@ import type {
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
 } from "@/shared/invoices/schema.shared";
-import { CENTS_IN_DOLLAR } from "@/shared/money/money";
+import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";

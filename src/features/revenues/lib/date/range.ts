@@ -1,11 +1,11 @@
 import { addMonths, endOfMonth, getMonth, startOfMonth } from "date-fns";
-import type { RollingMonthData } from "@/features/revenues/core/types";
 import {
   MONTHS_IN_YEAR,
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
 } from "@/features/revenues/lib/date/constants";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
+import type { RollingMonthData } from "@/features/revenues/types";
 import type { Period } from "@/shared/brands/domain-brands";
 import { dateToPeriod } from "@/shared/revenues/period";
 import type { IntervalDuration } from "@/shared/revenues/types";

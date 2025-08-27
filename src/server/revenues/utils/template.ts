@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import type { RollingMonthData } from "@/features/revenues/core/types";
+import type { RollingMonthData } from "@/features/revenues/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,

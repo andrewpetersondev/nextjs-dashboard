@@ -1,5 +1,5 @@
-import type { RevenueDisplayRow } from "@/features/revenues/core/types";
 import { computeTemplatePeriods } from "@/features/revenues/lib/data/lookup";
+import type { RevenueDisplayRow } from "@/features/revenues/types";
 import type { Period } from "@/shared/brands/domain-brands";
 import { isPeriod } from "@/shared/brands/guards";
 import { toPeriod } from "@/shared/brands/mappers";

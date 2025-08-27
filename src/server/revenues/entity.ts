@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RevenueSource } from "@/features/revenues/types";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
-import type { Cents } from "@/shared/money/money";
+import type { Cents } from "@/shared/money/types";
 import type { MonthName } from "@/shared/revenues/types";
 
 /**

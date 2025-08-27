@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { RevenueStatistics } from "@/features/revenues/core/types";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.client";
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
+import type { RevenueStatistics } from "@/features/revenues/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
@@ -14,7 +14,6 @@ import type { RevenueRepositoryInterface } from "@/server/revenues/repository-in
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 import { toIntervalDuration } from "@/server/revenues/validator";
 import type { Period } from "@/shared/brands/domain-brands";
-
 import { toPeriod } from "@/shared/brands/mappers";
 
 /**

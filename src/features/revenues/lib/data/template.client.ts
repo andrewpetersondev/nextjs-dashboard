@@ -1,8 +1,8 @@
-import type { RollingMonthData } from "@/features/revenues/core/types";
 import {
   createMonthTemplateFromIndex,
   getIntervalCount,
 } from "@/features/revenues/lib/date/range";
+import type { RollingMonthData } from "@/features/revenues/types";
 import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**

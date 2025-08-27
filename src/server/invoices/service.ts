@@ -11,7 +11,7 @@ import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
-import { CENTS_IN_DOLLAR } from "@/shared/money/money";
+import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Err, type Result } from "@/shared/result/result-base";
 
 /**

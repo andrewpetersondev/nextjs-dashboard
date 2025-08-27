@@ -1,7 +1,7 @@
 import type {
   RevenueDisplayRow,
   RollingMonthData,
-} from "@/features/revenues/core/types";
+} from "@/features/revenues/types";
 import { toPeriod } from "@/shared/brands/mappers";
 import { periodKey } from "@/shared/revenues/period";
 import { MONTH_ORDER } from "@/shared/revenues/types";
