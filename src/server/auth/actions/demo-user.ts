@@ -5,7 +5,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser, demoUserCounter } from "@/server/users/dal/dal";
 import type { UserDto } from "@/server/users/dto";
 import {
@@ -26,7 +26,7 @@ export async function demoUser(
   try {
     const counter: number = await demoUserCounter(db, toUserRole(role));
     if (!counter) {
-      logger.error({
+      serverLogger.error({
         context: "demoUser",
         message: "Counter is zero or undefined",
         role,
@@ -36,7 +36,7 @@ export async function demoUser(
     }
     demoUser = await createDemoUser(db, counter, toUserRole(role));
     if (!demoUser) {
-      logger.error({
+      serverLogger.error({
         context: "demoUser",
         message: "Demo user creation failed",
         role,
@@ -45,7 +45,7 @@ export async function demoUser(
     }
     await setSessionToken(toUserId(demoUser.id), toUserRole(role));
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "demoUser",
       demoUser,
       error,

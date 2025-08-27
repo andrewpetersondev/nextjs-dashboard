@@ -3,7 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { RollingMonthData } from "@/features/revenues/core/types";
 import { periodKey } from "@/features/revenues/lib/date/period";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -55,7 +55,7 @@ function createDefaultMonthData(
 
   const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
-  logger.debug({
+  serverLogger.debug({
     context: "createDefaultMonthData",
     message: "Created default month data",
     period: periodStr,
@@ -80,7 +80,7 @@ export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
   // Transform to RevenueDisplayEntity using the factory method
   const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
-  logger.debug({
+  serverLogger.debug({
     context: "createDefaultRevenueData",
     message: "Created default revenue data",
     period,
@@ -112,7 +112,7 @@ export function getMonthDataOrDefault(
 
   const defaultData = createDefaultMonthData(month, monthNumber, year);
 
-  logger.debug({
+  serverLogger.debug({
     context: "getMonthDataOrDefault",
     message: "Created default data for missing month",
     monthNumber,
@@ -158,7 +158,7 @@ export function createMonthTemplateData(
     year,
   };
 
-  logger.debug({
+  serverLogger.debug({
     context: "createMonthTemplateData",
     displayOrder,
     message: "Created month template data",

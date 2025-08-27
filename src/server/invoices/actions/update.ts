@@ -18,7 +18,7 @@ import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { UpdateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
@@ -61,7 +61,7 @@ function handleActionError<
   N extends BaseInvoiceFormFieldNames,
   F extends BaseInvoiceFormFields,
 >(prevState: FormState<N, F>, id: string, error: unknown): FormState<N, F> {
-  logger.error({
+  serverLogger.error({
     context: "updateInvoiceAction",
     error,
     id,

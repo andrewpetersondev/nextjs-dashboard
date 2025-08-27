@@ -10,7 +10,7 @@ import { EditUserFormSchema } from "@/features/users/schema.client";
 import type { EditUserFormFieldNames } from "@/features/users/types";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserDto } from "@/server/users/dto";
@@ -104,7 +104,7 @@ export async function updateUserAction(
       success: true,
     };
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "updateUserAction",
       error,
       id,

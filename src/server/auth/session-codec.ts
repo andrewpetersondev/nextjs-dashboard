@@ -4,7 +4,7 @@ import { jwtVerify, SignJWT } from "jose";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
 import { SESSION_SECRET } from "@/server/config/environment";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 
 import {
   flattenEncryptPayload,
@@ -27,11 +27,14 @@ const getEncodedKey = (): Uint8Array => {
   }
   const secret = SESSION_SECRET;
   if (!secret) {
-    logger.error({ context: "getEncodedKey" }, "SESSION_SECRET is not defined");
+    serverLogger.error(
+      { context: "getEncodedKey" },
+      "SESSION_SECRET is not defined",
+    );
     throw new Error("SESSION_SECRET is not defined");
   }
   encodedKey = new TextEncoder().encode(secret);
-  logger.debug(
+  serverLogger.debug(
     { context: "getEncodedKey" },
     "Session secret key encoded and cached",
   );
@@ -52,7 +55,7 @@ export async function createSessionToken(
   const validatedFields = EncryptPayloadSchema.safeParse(payload);
 
   if (!validatedFields.success) {
-    logger.error(
+    serverLogger.error(
       {
         context: "createSessionToken",
         err: validatedFields.error.flatten().fieldErrors,
@@ -77,7 +80,7 @@ export async function createSessionToken(
       .setExpirationTime(new Date(validatedFields.data.user.expiresAt))
       .sign(key);
 
-    logger.info(
+    serverLogger.info(
       {
         context: "createSessionToken",
         role: jwtPayload.role,
@@ -87,7 +90,7 @@ export async function createSessionToken(
     );
     return token;
   } catch (error: unknown) {
-    logger.error(
+    serverLogger.error(
       { context: "createSessionToken", err: error },
       "Session encryption failed",
     );
@@ -104,7 +107,7 @@ export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
   if (!session) {
-    logger.warn(
+    serverLogger.warn(
       { context: "decrypt" },
       "No session token provided for decryption",
     );
@@ -129,7 +132,7 @@ export async function readSessionToken(
     const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
 
     if (!validatedFields.success) {
-      logger.error(
+      serverLogger.error(
         {
           context: "decrypt",
           err: validatedFields.error.flatten().fieldErrors,
@@ -141,13 +144,13 @@ export async function readSessionToken(
 
     const data = validatedFields.data as unknown as DecryptPayload;
 
-    logger.debug(
+    serverLogger.debug(
       { context: "decrypt", userId: data.user.userId },
       "Session decrypted successfully",
     );
     return data;
   } catch (error: unknown) {
-    logger.error(
+    serverLogger.error(
       { context: "decrypt", err: error },
       "Session decryption failed",
     );

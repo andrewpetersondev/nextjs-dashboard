@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { UserId } from "@/shared/brands/domain-brands";
@@ -38,7 +38,7 @@ export async function readUserDal(
     // Map to DTO for safe return to client
     return userEntityToDto(userEntity);
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "readUserDal",
       error,
       id,

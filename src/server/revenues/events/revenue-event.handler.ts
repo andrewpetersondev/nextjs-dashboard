@@ -3,7 +3,7 @@ import "server-only";
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { logError, logInfo } from "@/server/revenues/events/logging";
 import { processInvoiceEvent } from "@/server/revenues/events/orchestrator";
 import {
@@ -34,7 +34,7 @@ export class RevenueEventHandler {
    * @param revenueService - The service for managing revenue records
    */
   constructor(private readonly revenueService: RevenueService) {
-    logger.info({
+    serverLogger.info({
       context: "RevenueEventHandler.constructor",
       message: "Initializing revenue event handler",
     });
@@ -47,7 +47,7 @@ export class RevenueEventHandler {
    * Sets up subscriptions to invoice events.
    */
   private setupEventSubscriptions(): void {
-    logger.info({
+    serverLogger.info({
       context: "RevenueEventHandler.setupEventSubscriptions",
       message: "Setting up event subscriptions",
     });
@@ -66,7 +66,7 @@ export class RevenueEventHandler {
       this.handleInvoiceDeleted.bind(this),
     );
 
-    logger.info({
+    serverLogger.info({
       context: "RevenueEventHandler.setupEventSubscriptions",
       message: "Event subscriptions set up successfully",
     });

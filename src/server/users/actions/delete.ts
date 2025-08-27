@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import {
   type ActionResult,
@@ -29,7 +29,7 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
     revalidatePath("/dashboard/users");
     redirect("/dashboard/users");
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "deleteUserAction",
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,

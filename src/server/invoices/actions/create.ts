@@ -18,7 +18,7 @@ import type { InvoiceDto, InvoiceFormDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { CreateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { isZodError } from "@/shared/forms/guards";
 import type { FormState } from "@/shared/forms/types";
 import {
@@ -81,7 +81,7 @@ export async function createInvoiceAction(
       };
     }
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "createInvoiceAction",
       error,
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,

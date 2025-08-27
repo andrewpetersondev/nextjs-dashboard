@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { RevenueEventHandler } from "@/server/revenues/events/revenue-event.handler";
 import { RevenueRepository } from "@/server/revenues/repository";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
@@ -28,12 +28,12 @@ if (!globalForRevenueHandler.__revenueEventHandler) {
     globalForRevenueHandler.__revenueEventHandler = new RevenueEventHandler(
       service,
     );
-    logger.info({
+    serverLogger.info({
       context: "revenue-events.bootstrap",
       message: "RevenueEventHandler initialized",
     });
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "revenue-events.bootstrap",
       error,
       message: "Failed to initialize RevenueEventHandler",

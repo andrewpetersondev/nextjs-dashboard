@@ -5,7 +5,7 @@ import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { AuthRole } from "@/shared/auth/roles";
@@ -40,7 +40,7 @@ export async function createUserDal(
     const user = userRow ? userDbRowToEntity(userRow) : null;
     return user ? userEntityToDto(user) : null;
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "createUserDal",
       email,
       error,

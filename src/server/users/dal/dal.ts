@@ -5,7 +5,7 @@ import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import type { UserDto } from "@/server/users/dto";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
@@ -54,7 +54,7 @@ export async function findUserForLogin(
     // Map to DTO for safe return
     return userEntityToDto(userEntity);
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "findUserForLogin",
       email,
       error,
@@ -93,7 +93,7 @@ export async function fetchUserById(
     // Map to DTO for safe return to client
     return userEntityToDto(userEntity);
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "fetchUserById",
       error,
       id,
@@ -138,7 +138,7 @@ export async function fetchUsersPages(
 
     return Math.ceil(totalUsers / ITEMS_PER_PAGE_USERS);
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "fetchUsersPages",
       error,
       message: "Failed to fetch the total number of users.",
@@ -186,7 +186,7 @@ export async function fetchFilteredUsers(
     // Map each raw row to UserEntity, then to UserDto
     return userRows.map((row) => userEntityToDto(userDbRowToEntity(row)));
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "fetchFilteredUsers",
       currentPage,
       error,
@@ -231,7 +231,7 @@ export async function demoUserCounter(
 
     return counterRow.id;
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "demoUserCounter",
       error,
       message: "Failed to read the demo user counter.",
@@ -274,7 +274,7 @@ export async function createDemoUser(
       username: uniqueUsername,
     });
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "createDemoUser",
       error,
       id,

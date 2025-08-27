@@ -9,7 +9,7 @@ import {
   readSessionToken,
 } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { SESSION_DURATION_MS } from "@/shared/auth/constants";
 import type { AuthRole } from "@/shared/auth/roles";
 import type { SessionVerificationResult } from "@/shared/auth/types";
@@ -21,7 +21,7 @@ import type { SessionVerificationResult } from "@/shared/auth/types";
 export async function deleteSessionToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
-  logger.info({ context: "deleteSession" }, "Session cookie deleted");
+  serverLogger.info({ context: "deleteSession" }, "Session cookie deleted");
 }
 
 /**
@@ -50,7 +50,7 @@ export async function setSessionToken(
     secure: process.env.NODE_ENV === "production",
   });
 
-  logger.info(
+  serverLogger.info(
     { context: "createSession", expiresAt, role, userId },
     `Session created for user ${userId} with role ${role}`,
   );

@@ -4,7 +4,7 @@
  * @see src/features/revenues/event-driven-revenue-strategy.md
  */
 import "server-only";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 
 type EventName = Extract<keyof DomainEvents, string>;
 
@@ -85,7 +85,7 @@ export class EventBus {
         await (handler as EventHandler<unknown>)(event);
       } catch (error) {
         // Structured logging for event errors
-        logger.error({
+        serverLogger.error({
           context: "EventBus.publish",
           error: error instanceof Error ? error.message : String(error),
           eventName,

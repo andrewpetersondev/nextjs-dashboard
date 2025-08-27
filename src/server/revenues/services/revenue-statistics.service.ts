@@ -4,7 +4,7 @@ import type { RevenueStatistics } from "@/features/revenues/core/types";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.client";
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -39,7 +39,7 @@ export class RevenueStatisticsService {
    */
   async calculateForRollingYear(): Promise<RevenueDisplayEntity[]> {
     try {
-      logger.info({
+      serverLogger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         message: "Calculating rolling 12-month revenue data",
       });
@@ -47,7 +47,7 @@ export class RevenueStatisticsService {
       // Calculate the date range for the rolling 12-month period.
       const { startDate, endDate, duration } = calculateDateRange();
 
-      logger.debug({
+      serverLogger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         duration,
         endDate,
@@ -76,7 +76,7 @@ export class RevenueStatisticsService {
       const startPeriod = firstMonth.period;
       const endPeriod = lastMonth.period;
 
-      logger.debug({
+      serverLogger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         endPeriod,
         message: "Prepared template for a 12-month period",
@@ -89,7 +89,7 @@ export class RevenueStatisticsService {
         await this.repository.findByDateRange(startPeriod, endPeriod);
 
       // 9 entities are returned
-      logger.debug({
+      serverLogger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         entityCount: revenueEntities.length,
         message: "Fetched revenue data from repository",
@@ -101,7 +101,7 @@ export class RevenueStatisticsService {
           mapRevEntToRevDisplayEnt(entity),
       );
 
-      logger.debug({
+      serverLogger.debug({
         context: "RevenueStatisticsService.calculateForRollingYear",
         displayEntityCount: displayEntities.length,
         message: "Transformed revenue entities to display entities",
@@ -118,7 +118,7 @@ export class RevenueStatisticsService {
           createDefaultRevenueData(t.period),
       );
 
-      logger.info({
+      serverLogger.info({
         context: "RevenueStatisticsService.calculateForRollingYear",
         message: "Successfully calculated rolling 12-month revenue data",
         resultCount: result.length,
@@ -126,7 +126,7 @@ export class RevenueStatisticsService {
       });
       return result;
     } catch (error) {
-      logger.error({
+      serverLogger.error({
         context: "RevenueStatisticsService.calculateForRollingYear",
         error,
         message:
@@ -141,7 +141,7 @@ export class RevenueStatisticsService {
         );
         return template.map((t) => createDefaultRevenueData(t.period));
       } catch (fallbackError) {
-        logger.error({
+        serverLogger.error({
           context: "RevenueStatisticsService.calculateForRollingYear",
           error: fallbackError,
           message:
@@ -163,7 +163,7 @@ export class RevenueStatisticsService {
    */
   async calculateStatistics(): Promise<RevenueStatistics> {
     try {
-      logger.info({
+      serverLogger.info({
         context: "RevenueStatisticsService.calculateStatistics",
         message: "Calculating revenue statistics",
       });
@@ -171,7 +171,7 @@ export class RevenueStatisticsService {
       // Get the revenue data for the rolling 12-month period
       const revenueData = await this.calculateForRollingYear();
 
-      logger.debug({
+      serverLogger.debug({
         context: "RevenueStatisticsService.calculateStatistics",
         message: "Retrieved revenue data for statistics calculation",
         revenueDataCount: revenueData.length,
@@ -179,7 +179,7 @@ export class RevenueStatisticsService {
 
       // If there's no data, return empty statistics
       if (!revenueData || revenueData.length === 0) {
-        logger.debug({
+        serverLogger.debug({
           context: "RevenueStatisticsService.calculateStatistics",
           message: "No revenue data available, returning empty statistics",
         });
@@ -193,7 +193,7 @@ export class RevenueStatisticsService {
 
       // If there are no non-zero revenues, return empty statistics
       if (nonZeroRevenues.length === 0) {
-        logger.debug({
+        serverLogger.debug({
           context: "RevenueStatisticsService.calculateStatistics",
           message:
             "No non-zero revenue data available, returning empty statistics",
@@ -218,7 +218,7 @@ export class RevenueStatisticsService {
         total,
       };
 
-      logger.info({
+      serverLogger.info({
         context: "RevenueStatisticsService.calculateStatistics",
         message: "Successfully calculated revenue statistics",
         monthsWithData: statistics.monthsWithData,
@@ -227,7 +227,7 @@ export class RevenueStatisticsService {
 
       return statistics;
     } catch (error) {
-      logger.error({
+      serverLogger.error({
         context: "RevenueStatisticsService.calculateStatistics",
         error,
         message:

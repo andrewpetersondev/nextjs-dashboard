@@ -3,7 +3,7 @@ import "server-only";
 import type { z } from "zod";
 import { buildRawFromFormData, deriveFields } from "@/server/forms/helpers";
 import type { ValidateFormOptions } from "@/server/forms/types";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages";
 import type { DenseFormErrors } from "@/shared/forms/types";
 import { mapFieldErrors, toDenseFormErrors } from "@/shared/forms/utils";
@@ -31,7 +31,7 @@ export async function validateFormGeneric<
     const normalized = mapFieldErrors(fieldErrors, fields);
     const dense = toDenseFormErrors(normalized, fields);
 
-    logger.error({
+    serverLogger.error({
       context: "validateFormGeneric",
       error: parsed.error,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
@@ -46,7 +46,7 @@ export async function validateFormGeneric<
     const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
     return { data: dataOut, success: true };
   } catch (e) {
-    logger.error({
+    serverLogger.error({
       context: "validateFormGeneric.transform",
       error: e,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,

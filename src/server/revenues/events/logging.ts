@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
  * Creates a standardized log entry
@@ -11,7 +11,7 @@ export function logInfo(
   message: string,
   metadata?: Record<string, unknown>,
 ): void {
-  logger.info({
+  serverLogger.info({
     context,
     message,
     ...metadata,
@@ -27,7 +27,7 @@ export function logError(
   error?: unknown,
   metadata?: Record<string, unknown>,
 ): void {
-  logger.error({
+  serverLogger.error({
     context,
     error,
     message,

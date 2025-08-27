@@ -1,7 +1,7 @@
 "use server";
 
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueChartDto,
   RevenueStatisticsDto,
@@ -83,7 +83,7 @@ export async function getRevenueChartAction(): Promise<
 
     return { data: chartData, success: true };
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       error,
       message: "Get revenue chart action error (rolling 12 months)",
     });

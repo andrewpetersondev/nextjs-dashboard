@@ -14,7 +14,7 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 
 /**
@@ -60,7 +60,7 @@ export async function deleteInvoiceAction(
       success: true,
     };
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "deleteInvoiceAction",
       error,
       id,

@@ -2,7 +2,7 @@
 
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { fetchUserById } from "@/server/users/dal/dal";
 import type { UserDto } from "@/server/users/dto";
 import { toUserId } from "@/shared/brands/domain-brands";
@@ -15,7 +15,7 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
   try {
     return await fetchUserById(db, toUserId(id));
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "readUserAction",
       error,
       id,

@@ -7,7 +7,7 @@ import pino from "pino";
  *
  * - Configured for different log levels in production and development.
  */
-export const logger = pino({
+export const serverLogger = pino({
   level: process.env.NODE_ENV === "production" ? "info" : "debug",
   name: "auth",
 });

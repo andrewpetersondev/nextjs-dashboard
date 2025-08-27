@@ -15,7 +15,7 @@ import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
-import { logger } from "@/server/logging/logger";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/dal";
 import { toUserId } from "@/shared/brands/domain-brands";
 import type { FormState } from "@/shared/forms/types";
@@ -69,7 +69,7 @@ export async function login(
 
     await setSessionToken(toUserId(user.id), toUserRole(user.role));
   } catch (error) {
-    logger.error({
+    serverLogger.error({
       context: "login",
       email: formData.get("email") as string,
       error,
