@@ -14,7 +14,7 @@ import type {
 } from "@/features/invoices/types";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { TIMER } from "@/shared/ui/ui";
+import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
@@ -41,10 +41,7 @@ export const CreateInvoiceForm = ({
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(
-        () => setShowAlert(false),
-        TIMER.ALERT_AUTO_HIDE_MS,
-      );
+      const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
       return () => clearTimeout(timer);
     }
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { type JSX, useActionState, useEffect, useState } from "react";
+import { type JSX, useActionState } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { CustomerSelect } from "@/features/invoices/components/customer-select";
 import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amount-input";
 import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
+import { useAutoHideAlert } from "@/features/invoices/hooks/useAutoHideAlert";
 import type {
   BaseInvoiceFormFieldNames,
   BaseInvoiceFormFields,
@@ -15,7 +16,6 @@ import type {
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { TIMER } from "@/shared/ui/ui";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { Label } from "@/ui/primitives/label";
@@ -39,26 +39,6 @@ function createWrappedUpdateAction(invoiceId: string) {
     formData: FormData,
   ): Promise<FormState<BaseInvoiceFormFieldNames, BaseInvoiceFormFields>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
-}
-
-// Hook: auto-hide alert when message changes
-function useAutoHideAlert(message: string): boolean {
-  const [showAlert, setShowAlert] = useState(false);
-
-  useEffect(() => {
-    if (!message) {
-      setShowAlert(false);
-      return;
-    }
-    setShowAlert(true);
-    const timer = setTimeout(
-      () => setShowAlert(false),
-      TIMER.ALERT_AUTO_HIDE_MS,
-    );
-    return () => clearTimeout(timer);
-  }, [message]);
-
-  return showAlert;
 }
 
 // Presentational: invoice form fields

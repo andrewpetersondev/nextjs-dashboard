@@ -20,6 +20,10 @@ export const TIMER = {
   TYPING_MS: 4000,
 };
 
+export const ALERT_AUTO_HIDE_MS = 5000;
+export const TYPING_MS = 4000;
+export const DEBOUNCE_MS = 500;
+
 export const CHART_Y_AXIS = {
   CURRENCY_PREFIX: "$",
   LABEL_COUNT: 5,

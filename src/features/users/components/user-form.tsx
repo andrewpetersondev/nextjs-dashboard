@@ -2,7 +2,7 @@ import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { TIMER } from "@/shared/ui/ui";
+import { TYPING_MS } from "@/shared/ui/ui";
 import type { UserDto } from "@/shared/users/dto";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
@@ -41,7 +41,7 @@ export function UserForm<TFieldNames extends string>({
   useEffect(() => {
     if (state.message) {
       setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), TIMER.TYPING_MS);
+      const timer = setTimeout(() => setShowAlert(false), TYPING_MS);
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
