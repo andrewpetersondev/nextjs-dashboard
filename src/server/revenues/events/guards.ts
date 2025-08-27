@@ -1,6 +1,10 @@
 import "server-only";
 
-import { logError, logInfo } from "@/server/revenues/events/logging";
+import {
+  type LogMetadata,
+  logError,
+  logInfo,
+} from "@/server/revenues/events/logging";
 import { validateInvoicePeriodForRevenue } from "@/server/revenues/events/policy";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
@@ -65,4 +69,31 @@ export function isInvoiceEligibleForRevenue(
     });
     return false;
   }
+}
+
+/**
+ * Checks if an invoice is eligible for deletion.
+ */
+export function isEligibleDeletion(
+  invoice: InvoiceDto,
+  context: string,
+  metadata: LogMetadata,
+): boolean {
+  if (!isStatusEligibleForRevenue(invoice.status)) {
+    logInfo(
+      context,
+      "Deleted invoice was not eligible for revenue, no adjustment needed",
+      { ...metadata, status: invoice.status },
+    );
+    return false;
+  }
+  if (invoice.amount <= 0) {
+    logInfo(
+      context,
+      "Deleted invoice had an invalid amount, no adjustment needed",
+      { ...metadata, amount: invoice.amount },
+    );
+    return false;
+  }
+  return true;
 }

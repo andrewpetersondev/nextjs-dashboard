@@ -2,17 +2,12 @@ import "server-only";
 
 import { periodKey } from "@/features/revenues/lib/date/period";
 import { withErrorHandling } from "@/server/revenues/events/error-handling";
-import { isStatusEligibleForRevenue } from "@/server/revenues/events/guards";
+import { isEligibleDeletion } from "@/server/revenues/events/guards";
 import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
 import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-
-/**
- * Immutable metadata bag passed to logging and error handlers.
- */
-type Metadata = LogMetadata;
 
 /**
  * Options required to apply deletion effects to revenue records.
@@ -22,33 +17,15 @@ type ApplyDeletionOptions = Readonly<{
   invoice: InvoiceDto;
   period: Period;
   context: string;
-  metadata: Metadata;
+  metadata: LogMetadata;
 }>;
 
-function isEligibleDeletion(
-  invoice: InvoiceDto,
-  context: string,
-  metadata: Metadata,
-): boolean {
-  if (!isStatusEligibleForRevenue(invoice.status)) {
-    logInfo(
-      context,
-      "Deleted invoice was not eligible for revenue, no adjustment needed",
-      { ...metadata, status: invoice.status },
-    );
-    return false;
-  }
-  if (invoice.amount <= 0) {
-    logInfo(
-      context,
-      "Deleted invoice had an invalid amount, no adjustment needed",
-      { ...metadata, amount: invoice.amount },
-    );
-    return false;
-  }
-  return true;
-}
-
+/**
+ * Applies deletion effects to revenue records.
+ * This function handles the following scenarios:
+ * - If there is no existing revenue record for the period, it logs a message and returns.
+ * - If there is an existing revenue record, it updates the invoice count and revenue amount accordingly.
+ */
 async function applyDeletionEffects(
   options: ApplyDeletionOptions,
 ): Promise<void> {
