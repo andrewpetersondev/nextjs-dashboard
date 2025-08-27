@@ -139,12 +139,9 @@ async function handleNoExistingRevenue(args: NoExistingArgs): Promise<void> {
   const { revenueService, currentInvoice, period, context, meta } = args;
   logInfo(context, "No existing revenue record was found for a period", meta);
   if (isStatusEligibleForRevenue(currentInvoice.status)) {
-    await processInvoiceForRevenue(
-      revenueService,
-      currentInvoice,
-      period,
+    await processInvoiceForRevenue(revenueService, currentInvoice, period, {
       context,
-    );
+    });
   }
 }
 

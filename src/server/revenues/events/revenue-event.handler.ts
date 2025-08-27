@@ -192,14 +192,11 @@ export class RevenueEventHandler {
       );
       return;
     }
-    await processInvoiceForRevenue(
-      this.revenueService,
-      invoice,
-      period,
+    await processInvoiceForRevenue(this.revenueService, invoice, period, {
       context,
-      true,
+      isUpdate: true,
       previousAmount,
-    );
+    });
   }
 
   private logNoRelevantChange(
