@@ -7,10 +7,11 @@ import { deleteUserAction } from "@/server/users/actions/delete";
  */
 export async function deleteUserFormAction(formData: FormData): Promise<void> {
   "use server";
-  const userId = formData.get("userId");
-  if (typeof userId !== "string" || !userId) {
+  // TODO: WHEN DID ID GET IN THE FORM?
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) {
     // Invalid userId; nothing to do.
     return;
   }
-  await deleteUserAction(userId);
+  await deleteUserAction(id);
 }

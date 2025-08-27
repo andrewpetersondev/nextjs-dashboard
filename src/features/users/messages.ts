@@ -1,6 +1,7 @@
 export const USER_ERROR_MESSAGES = {
   CREATE_FAILED: "Failed to create an account. Please try again.",
   DELETE_FAILED: "User not found or could not be deleted.",
+  FETCH_COUNT: "Failed to fetch user count.",
   INVALID_CREDENTIALS: "Invalid email or password.",
   NO_CHANGES: "No changes to update.",
   NOT_FOUND: "User not found.",

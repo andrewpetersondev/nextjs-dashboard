@@ -5,15 +5,13 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
+import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
-import {
-  type ActionResult,
-  actionResult,
-} from "@/shared/action-result/action-result";
 import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/domain-brands";
+import type { FormState } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
 
 /**
@@ -21,29 +19,39 @@ import type { UserDto } from "@/shared/users/dto";
  */
 export async function demoUser(
   role: AuthRole = toUserRole("guest"),
-): Promise<ActionResult> {
+): Promise<FormState<"_root">> {
   let demoUser: UserDto | null = null;
-  const db = getDB();
+
+  let result: FormState<"_root"> = {
+    errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
+    message: USER_ERROR_MESSAGES.UNEXPECTED,
+    success: false,
+  };
+
   try {
+    const db = getDB();
     const counter: number = await demoUserCounter(db, toUserRole(role));
-    if (!counter) {
+
+    if (!counter || counter <= 0) {
       serverLogger.error({
         context: "demoUser",
-        message: "Counter is zero or undefined",
+        message: USER_ERROR_MESSAGES.FETCH_COUNT,
         role,
       });
-
-      throw new Error("Counter is zero or undefined");
+      throw new DatabaseError(USER_ERROR_MESSAGES.FETCH_COUNT);
     }
+
     demoUser = await createDemoUser(db, counter, toUserRole(role));
+
     if (!demoUser) {
       serverLogger.error({
         context: "demoUser",
-        message: "Demo user creation failed",
+        message: USER_ERROR_MESSAGES.CREATE_FAILED,
         role,
       });
-      throw new Error("Demo user creation failed");
+      throw new DatabaseError(USER_ERROR_MESSAGES.CREATE_FAILED);
     }
+
     await setSessionToken(toUserId(demoUser.id), toUserRole(role));
   } catch (error) {
     serverLogger.error({
@@ -53,11 +61,14 @@ export async function demoUser(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       role,
     });
-    return actionResult({
+
+    result = {
       errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
-    });
+    };
+
+    return result;
   }
   redirect("/dashboard");
 }
