@@ -1,13 +1,9 @@
 import type {
+  CustomerAggregatesServerDto,
   CustomerField,
+  CustomerSelectServerDto,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
-import type {
-  CustomerAggregatesServerDto,
-  CustomerSelectServerDto,
-  // biome-ignore lint/style/noRestrictedImports: <fix later>
-} from "@/server/customers/types";
-
 import { formatCurrency } from "@/shared/money/convert";
 
 export const toCustomerField = (

@@ -1,5 +1,9 @@
 import "server-only";
 
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/features/customers/types";
 import { fetchCustomersSelectDal } from "@/server/customers/dal/fetch-customers-select";
 import { fetchFilteredCustomersDal } from "@/server/customers/dal/fetch-filtered-customers";
 import { fetchTotalCustomersCountDal } from "@/server/customers/dal/fetch-total-count";
@@ -7,10 +11,6 @@ import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
 } from "@/server/customers/mappers";
-import type {
-  CustomerAggregatesServerDto,
-  CustomerSelectServerDto,
-} from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
 
 /**

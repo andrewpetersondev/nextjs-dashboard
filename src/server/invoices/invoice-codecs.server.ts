@@ -6,7 +6,7 @@
 
 import "server-only";
 
-import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
+import { toInvoiceStatus } from "@/features/invoices/mappers";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,

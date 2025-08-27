@@ -1,7 +1,7 @@
 import "server-only";
 
 import { count } from "drizzle-orm";
-import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/types";
+import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { Database } from "@/server/db/connection";
 import { customers } from "@/server/db/schema";
 import { ValidationError } from "@/shared/errors/domain";

@@ -1,14 +1,15 @@
 import "server-only";
 
+import type {
+  CustomerAggregatesServerDto,
+  CustomerSelectServerDto,
+} from "@/features/customers/types";
 import type { CustomerEntity } from "@/server/customers/entity";
 import type {
   CustomerAggregatesRowRaw,
-  CustomerAggregatesServerDto,
   CustomerSelectRowRaw,
-  CustomerSelectServerDto,
 } from "@/server/customers/types";
 import type { CustomerRow } from "@/server/db/schema";
-
 import { toCustomerId } from "@/shared/brands/mappers";
 
 /**
