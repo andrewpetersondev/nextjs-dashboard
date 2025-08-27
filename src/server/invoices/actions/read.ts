@@ -11,7 +11,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { logger } from "@/server/logging/logger";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 
 /**
  * Server action to fetch a single invoice by its ID.
@@ -60,7 +60,7 @@ export async function readInvoiceAction(
     result = {
       errors: {},
       message:
-        error instanceof ValidationError
+        error instanceof ValidationError_New
           ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
           : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
       success: false,

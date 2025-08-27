@@ -19,7 +19,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { UpdateInvoiceSchema } from "@/server/invoices/schema";
 import { InvoiceService } from "@/server/invoices/service";
 import { logger } from "@/server/logging/logger";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type { InvoiceStatus } from "@/shared/invoices/invoices";
 
@@ -72,7 +72,7 @@ function handleActionError<
     ...prevState,
     errors: {},
     message:
-      error instanceof ValidationError
+      error instanceof ValidationError_New
         ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
         : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     success: false,

@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 
 /**
  * Validation rule for parameters.
@@ -49,7 +49,7 @@ export function assertParams<
 >(params: T, validators: ParamValidators<T, K>): void {
   // Ensure at least one validator is provided
   if (Object.keys(validators).length === 0) {
-    throw new ValidationError("No validators provided", { params });
+    throw new ValidationError_New("No validators provided", { params });
   }
 
   // Iterate defined validators; no non-null assertion needed
@@ -59,7 +59,7 @@ export function assertParams<
   ][]) {
     const value = params[key];
     if (!rule.validate(value)) {
-      throw new ValidationError(rule.message, { param: key, value });
+      throw new ValidationError_New(rule.message, { param: key, value });
     }
   }
 }

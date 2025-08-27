@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
@@ -24,21 +24,21 @@ export const validateUuid = (id: string, brandName: string): void => {
 export const validateUuidResult = (
   value: unknown,
   label = "UserId",
-): Result<string, ValidationError> => {
+): Result<string, ValidationError_New> => {
   if (typeof value !== "string") {
     return Err(
-      new ValidationError(
+      new ValidationError_New(
         `Invalid ${label}: expected string, got ${typeof value}`,
       ),
     );
   }
   const v = value.trim();
   if (v.length === 0) {
-    return Err(new ValidationError(`${label} cannot be empty`));
+    return Err(new ValidationError_New(`${label} cannot be empty`));
   }
   if (!UUID_REGEX.test(v)) {
     return Err(
-      new ValidationError(
+      new ValidationError_New(
         `Invalid ${label}: "${value}". Must be a valid UUID format.`,
       ),
     );

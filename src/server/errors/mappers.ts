@@ -2,7 +2,7 @@ import "server-only";
 
 import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { ValidationError, ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
@@ -38,15 +38,11 @@ export function mapToRepoError(e: unknown): RepoError {
 }
 
 /**
- * Map a `ValidationError_New` to a `ValidationError`.
+ * Map a `ValidationError_New` to the same type within a Result.
  *
- * Transforms the error branch of a `Result` while preserving the success data.
- *
- * @typeParam T - Type of the success data.
- * @param r - Result containing either success data or `ValidationError_New`.
- * @returns `Result<T, ValidationError>` with mapped error on the error branch.
+ * Legacy `ValidationError` has been removed; this is now a no-op mapper that
+ * preserves the original error type.
  */
 export const mapNewToLegacyError = <T>(
   r: Result<T, ValidationError_New>,
-): Result<T, ValidationError> =>
-  r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
+): Result<T, ValidationError_New> => (r.success ? Ok(r.data) : Err(r.error));

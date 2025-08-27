@@ -2,7 +2,7 @@ import {
   MAX_MONTH_NUMBER,
   MIN_MONTH_NUMBER,
 } from "@/features/revenues/lib/date/constants";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { MONTH_ORDER, type MonthName } from "@/shared/revenues/types";
 
 /**
@@ -18,7 +18,7 @@ export function getMonthName(monthNumber: number): MonthName {
     monthNumber < MIN_MONTH_NUMBER ||
     monthNumber > MAX_MONTH_NUMBER
   ) {
-    throw new ValidationError(
+    throw new ValidationError_New(
       `Invalid month number: ${monthNumber}. Expected an integer between 1 and 12.`,
     );
   }
@@ -38,7 +38,7 @@ export function getMonthName(monthNumber: number): MonthName {
 export function getMonthNumber(monthName: MonthName): number {
   const index = MONTH_ORDER.indexOf(monthName);
   if (index === -1) {
-    throw new ValidationError(
+    throw new ValidationError_New(
       `Invalid month name: "${monthName}". Expected one of: ${MONTH_ORDER.join(", ")}`,
     );
   }

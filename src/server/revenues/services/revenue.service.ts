@@ -10,7 +10,7 @@ import type {
 } from "@/server/revenues/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 
 /**
  * Business service for revenue processing and management.
@@ -39,7 +39,7 @@ export class RevenueService {
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
-      throw new ValidationError("Invalid revenue data");
+      throw new ValidationError_New("Invalid revenue data");
     }
     const created = await this.repository.create(revenue);
     if (!created) {
@@ -56,11 +56,11 @@ export class RevenueService {
    */
   async read(id: RevenueId): Promise<RevenueEntity> {
     if (!id) {
-      throw new ValidationError("Revenue ID is required");
+      throw new ValidationError_New("Revenue ID is required");
     }
     const revenue = await this.repository.read(id);
     if (!revenue) {
-      throw new ValidationError(`Revenue with ID ${id} not found`);
+      throw new ValidationError_New(`Revenue with ID ${id} not found`);
     }
     return revenue;
   }
@@ -79,7 +79,7 @@ export class RevenueService {
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!id || !revenue) {
-      throw new ValidationError("Invalid revenue ID or data");
+      throw new ValidationError_New("Invalid revenue ID or data");
     }
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
@@ -96,7 +96,7 @@ export class RevenueService {
    */
   async delete(id: RevenueId): Promise<void> {
     if (!id) {
-      throw new ValidationError("Revenue ID is required");
+      throw new ValidationError_New("Revenue ID is required");
     }
     await this.repository.delete(id);
   }
@@ -125,7 +125,7 @@ export class RevenueService {
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
-      throw new ValidationError("Period is required");
+      throw new ValidationError_New("Period is required");
     }
     return await this.repository.findByPeriod(period);
   }
@@ -169,11 +169,11 @@ export class RevenueService {
     invoice: InvoiceDto,
   ): Promise<RevenueEntity> {
     if (!period) {
-      throw new ValidationError("Period is required");
+      throw new ValidationError_New("Period is required");
     }
 
     if (!invoice) {
-      throw new ValidationError("Invoice data is required");
+      throw new ValidationError_New("Invoice data is required");
     }
 
     // Check if a revenue record already exists for this period

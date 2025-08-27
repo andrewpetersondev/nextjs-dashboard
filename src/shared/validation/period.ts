@@ -1,5 +1,5 @@
 import { format, isValid, parse } from "date-fns";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { isValidDate, normalizeToFirstOfMonthUTC } from "@/shared/utils/date";
 
@@ -8,11 +8,11 @@ import { isValidDate, normalizeToFirstOfMonthUTC } from "@/shared/utils/date";
  */
 export function validatePeriodResult(
   input: unknown,
-): Result<Date, ValidationError> {
+): Result<Date, ValidationError_New> {
   if (input instanceof Date) {
     if (!isValidDate(input)) {
       return Err(
-        new ValidationError("Invalid Date provided for period conversion"),
+        new ValidationError_New("Invalid Date provided for period conversion"),
       );
     }
     return Ok(normalizeToFirstOfMonthUTC(input));
@@ -32,7 +32,7 @@ export function validatePeriodResult(
     if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === input) {
       if (parsedDay.getUTCDate() !== 1) {
         return Err(
-          new ValidationError(
+          new ValidationError_New(
             `Period date must be the first day of the month, got: "${input}"`,
           ),
         );
@@ -41,14 +41,14 @@ export function validatePeriodResult(
     }
 
     return Err(
-      new ValidationError(
+      new ValidationError_New(
         `Invalid period format: "${input}". Expected "yyyy-MM" or "yyyy-MM-01"`,
       ),
     );
   }
 
   return Err(
-    new ValidationError(
+    new ValidationError_New(
       `Unsupported period input type: ${typeof input}. Expected Date or string`,
     ),
   );

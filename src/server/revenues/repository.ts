@@ -19,7 +19,7 @@ import {
   type RevenueId,
   toPeriod,
 } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 
 /**
  * RevenueRepository
@@ -64,7 +64,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
-      throw new ValidationError("Revenue data is required");
+      throw new ValidationError_New("Revenue data is required");
     }
     // Delegate to upsert to avoid duplication; upsert handles insert and conflict update.
     return await this.upsert(revenue);
@@ -80,7 +80,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async read(id: RevenueId): Promise<RevenueEntity> {
     if (!id) {
-      throw new ValidationError("Revenue ID is required");
+      throw new ValidationError_New("Revenue ID is required");
     }
 
     const data: RevenueRow | undefined = await this.db
@@ -121,7 +121,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!id || !revenue) {
-      throw new ValidationError("Revenue ID and data are required");
+      throw new ValidationError_New("Revenue ID and data are required");
     }
 
     const now = new Date();
@@ -159,7 +159,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async delete(id: RevenueId): Promise<void> {
     if (!id) {
-      throw new ValidationError("Revenue ID is required");
+      throw new ValidationError_New("Revenue ID is required");
     }
 
     const result = await this.db
@@ -190,7 +190,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     endPeriod: Period,
   ): Promise<RevenueEntity[]> {
     if (!startPeriod || !endPeriod) {
-      throw new ValidationError("Start and end periods are required");
+      throw new ValidationError_New("Start and end periods are required");
     }
 
     // Query revenues within the specified date range
@@ -226,7 +226,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
-      throw new ValidationError("Period is required");
+      throw new ValidationError_New("Period is required");
     }
 
     const data: RevenueRow | undefined = await this.db
@@ -267,11 +267,11 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenueData) {
-      throw new ValidationError("Revenue data is required");
+      throw new ValidationError_New("Revenue data is required");
     }
 
     if (!revenueData.period) {
-      throw new ValidationError(
+      throw new ValidationError_New(
         "Revenue period (first-of-month DATE) is required and must be unique",
       );
     }
@@ -314,7 +314,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
         error instanceof Error &&
         error.message.includes("unique constraint")
       ) {
-        throw new ValidationError(
+        throw new ValidationError_New(
           `Revenue record with period ${revenueData.period} already exists and could not be updated`,
         );
       }
@@ -363,11 +363,11 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!period) {
-      throw new ValidationError("Period is required");
+      throw new ValidationError_New("Period is required");
     }
 
     if (!revenue) {
-      throw new ValidationError("Revenue data is required");
+      throw new ValidationError_New("Revenue data is required");
     }
 
     const now = new Date();

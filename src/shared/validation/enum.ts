@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
@@ -8,10 +8,10 @@ export const validateEnumResult = <T extends string>(
   value: unknown,
   enumValues: readonly T[],
   enumName: string,
-): Result<T, ValidationError> => {
+): Result<T, ValidationError_New> => {
   if (typeof value !== "string") {
     return Err(
-      new ValidationError(
+      new ValidationError_New(
         `Invalid ${enumName}: expected string, got ${typeof value}`,
       ),
     );
@@ -21,7 +21,7 @@ export const validateEnumResult = <T extends string>(
     return Ok(candidate);
   }
   return Err(
-    new ValidationError(
+    new ValidationError_New(
       `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
     ),
   );

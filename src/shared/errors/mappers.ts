@@ -1,19 +1,16 @@
-import {
-  ValidationError,
-  type ValidationError_New,
-} from "@/shared/errors/domain";
+import type { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
  * Map a `ValidationError_New` to a legacy `ValidationError` within a Result.
  *
- * Shared-only implementation to avoid shared→server dependencies.
+ * Deprecated: The legacy ValidationError has been removed. This mapper now
+ * simply returns the original Result, mapping the error branch to the new type.
  *
  * @typeParam T - Type of the success data contained in the Result
  * @param r - Result containing either success data or `ValidationError_New`
- * @returns `Result<T, ValidationError>` with the error branch mapped, or the original success data
+ * @returns `Result<T, ValidationError_New>` with the error branch mapped (no-op)
  */
 export const mapNewToLegacyError = <T>(
   r: Result<T, ValidationError_New>,
-): Result<T, ValidationError> =>
-  r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
+): Result<T, ValidationError_New> => (r.success ? Ok(r.data) : Err(r.error));

@@ -6,12 +6,12 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceDto } from "@/server/invoices/dto";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());

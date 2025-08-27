@@ -7,7 +7,7 @@ import type {
 } from "@/server/revenues/entity";
 import { toRevenueSource } from "@/server/revenues/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import {
   MAX_REVENUE_MONTHS,
   MAX_REVENUE_YEAR,
@@ -24,7 +24,7 @@ import {
 // Small internal assertion helper to keep validation DRY and readable
 const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
-    throw new ValidationError(message);
+    throw new ValidationError_New(message);
   }
 };
 
@@ -37,7 +37,7 @@ const ensure = (condition: unknown, message: string): void => {
  */
 export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   if (!revenueRow || typeof revenueRow !== "object") {
-    throw new ValidationError(
+    throw new ValidationError_New(
       "Invalid revenue row data: expected non-null object",
     );
   }
@@ -80,7 +80,7 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
       updatedAt: revenueRow.updatedAt,
     };
   } catch (error) {
-    throw new ValidationError(
+    throw new ValidationError_New(
       `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
@@ -97,14 +97,14 @@ export function mapRevenueRowsToEntities(
   revenueRows: RevenueRow[],
 ): RevenueEntity[] {
   if (!Array.isArray(revenueRows)) {
-    throw new ValidationError("Invalid revenue rows data: expected array");
+    throw new ValidationError_New("Invalid revenue rows data: expected array");
   }
 
   return revenueRows.map((revenueRow, index) => {
     try {
       return mapRevenueRowToEntity(revenueRow);
     } catch (error) {
-      throw new ValidationError(
+      throw new ValidationError_New(
         `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
@@ -122,7 +122,7 @@ export function mapRevenueEntityToDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
-    throw new ValidationError(
+    throw new ValidationError_New(
       "Invalid revenue entity: expected non-null object",
     );
   }
@@ -136,15 +136,17 @@ export function mapRevenueEntityToDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw new ValidationError(`Invalid year extracted from period`);
+      throw new ValidationError_New(`Invalid year extracted from period`);
     }
     // if (monthNumber < 1 || monthNumber > 12) {}
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw new ValidationError(`Invalid month number extracted from period`);
+      throw new ValidationError_New(
+        `Invalid month number extracted from period`,
+      );
     }
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
-      throw new ValidationError(
+      throw new ValidationError_New(
         `Invalid month name computed from month number`,
       );
     }
@@ -156,7 +158,7 @@ export function mapRevenueEntityToDisplayEntity(
       year: yearNumber,
     };
   } catch (error) {
-    throw new ValidationError(
+    throw new ValidationError_New(
       `Failed to map revenue entity to display entity: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
@@ -173,14 +175,16 @@ export function mapRevenueEntitiesToDisplayEntities(
   revenueEntities: RevenueEntity[],
 ): RevenueDisplayEntity[] {
   if (!Array.isArray(revenueEntities)) {
-    throw new ValidationError("Invalid revenue entities data: expected array");
+    throw new ValidationError_New(
+      "Invalid revenue entities data: expected array",
+    );
   }
 
   return revenueEntities.map((revenueEntity, index) => {
     try {
       return mapRevenueEntityToDisplayEntity(revenueEntity);
     } catch (error) {
-      throw new ValidationError(
+      throw new ValidationError_New(
         `Failed to map revenue entity at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }

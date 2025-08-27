@@ -1,9 +1,5 @@
 import { type Brand, createBrand } from "@/shared/brands/brands";
-import {
-  type ValidationError,
-  ValidationError_New,
-} from "@/shared/errors/domain";
-import { mapNewToLegacyError } from "@/shared/errors/mappers";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { validatePeriodResult } from "@/shared/validation/period";
 import { brandWith } from "@/shared/validation/types";
@@ -66,8 +62,8 @@ export const createBrandedIdValidator = <
     ((value: string) => brandFn(value) as T) as (value: string) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError> =>
-    mapNewToLegacyError(internalCreator(value));
+  return (value: unknown): Result<T, ValidationError_New> =>
+    internalCreator(value);
 };
 
 /**
@@ -85,8 +81,8 @@ export const createBrandedPeriodValidator = <
     ((value: Date) => brandFn(value) as T) as (value: Date) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError> =>
-    mapNewToLegacyError(internalCreator(value));
+  return (value: unknown): Result<T, ValidationError_New> =>
+    internalCreator(value);
 };
 
 export const createCustomerId = createBrandedIdValidator<
@@ -123,27 +119,27 @@ export const createPeriod = createBrandedPeriodValidator<
 
 export const toCustomerIdResult = (
   value: unknown,
-): Result<CustomerId, ValidationError> => createCustomerId(value);
+): Result<CustomerId, ValidationError_New> => createCustomerId(value);
 
 export const toUserIdResult = (
   value: unknown,
-): Result<UserId, ValidationError> => createUserId(value);
+): Result<UserId, ValidationError_New> => createUserId(value);
 
 export const toInvoiceIdResult = (
   value: unknown,
-): Result<InvoiceId, ValidationError> => createInvoiceId(value);
+): Result<InvoiceId, ValidationError_New> => createInvoiceId(value);
 
 export const toRevenueIdResult = (
   value: unknown,
-): Result<RevenueId, ValidationError> => createRevenueId(value);
+): Result<RevenueId, ValidationError_New> => createRevenueId(value);
 
 export const toSessionIdResult = (
   value: unknown,
-): Result<SessionId, ValidationError> => createSessionId(value);
+): Result<SessionId, ValidationError_New> => createSessionId(value);
 
 export const toPeriodResult = (
   value: unknown,
-): Result<Period, ValidationError> => createPeriod(value);
+): Result<Period, ValidationError_New> => createPeriod(value);
 
 // --- Existing throw-based APIs preserved (now implemented via Result) ---
 

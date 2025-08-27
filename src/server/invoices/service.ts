@@ -10,7 +10,7 @@ import {
 } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/domain-brands";
-import { ValidationError, ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError_New } from "@/shared/errors/domain";
 import { Err, type Result } from "@/shared/result/result-base";
 
 /**
@@ -42,7 +42,7 @@ export class InvoiceService {
   private validateAndFormatDate(date: string): string {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) {
-      throw new ValidationError("Invalid date format");
+      throw new ValidationError_New("Invalid date format");
     }
     return date; // Already in ISO format from form
   }
@@ -79,7 +79,7 @@ export class InvoiceService {
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
     if (!dto) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
     const transformedDto = this.applyBusinessRules(dto);
@@ -130,7 +130,7 @@ export class InvoiceService {
   async readInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
     // Transform plain string → branded ID and call repository
@@ -150,7 +150,7 @@ export class InvoiceService {
   ): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id || !dto) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
     }
 
     // What is this solution called? Object Spread Immutability.
@@ -182,7 +182,7 @@ export class InvoiceService {
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
     // Call repo with branded ID and return Dto to Actions layer
