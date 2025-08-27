@@ -29,7 +29,7 @@ import {
 } from "@/shared/validation/number";
 
 // Small internal assertion helper to keep validation DRY and readable
-const ensure = (condition: unknown, message: string): void => {
+export const ensure = (condition: unknown, message: string): void => {
   if (!condition) {
     throw new ValidationError(message);
   }
@@ -48,7 +48,6 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
       "Invalid revenue row data: expected non-null object",
     );
   }
-
   // Validate required fields presence and shapes early for clearer errors
   ensure(revenueRow.id, "Invalid revenue row: missing required field 'id'");
   ensure(
@@ -75,7 +74,6 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     isNonNegativeNumber(revenueRow.totalAmount),
     "Invalid revenue row: 'totalAmount' must be a non-negative number",
   );
-
   try {
     return {
       calculationSource: toRevenueSource(revenueRow.calculationSource),
@@ -106,7 +104,6 @@ export function mapRevenueRowsToEntities(
   if (!Array.isArray(revenueRows)) {
     throw new ValidationError("Invalid revenue rows data: expected array");
   }
-
   return revenueRows.map((revenueRow, index) => {
     try {
       return mapRevenueRowToEntity(revenueRow);
@@ -133,11 +130,9 @@ export function mapRevenueEntityToDisplayEntity(
       "Invalid revenue entity: expected non-null object",
     );
   }
-
   try {
     const monthNumber = revenueEntity.period.getUTCMonth() + 1;
     const yearNumber = revenueEntity.period.getUTCFullYear();
-
     if (
       Number.isNaN(yearNumber) ||
       yearNumber < MIN_REVENUE_YEAR ||
@@ -155,7 +150,6 @@ export function mapRevenueEntityToDisplayEntity(
         `Invalid month name computed from month number`,
       );
     }
-
     return {
       ...revenueEntity,
       month: monthName,
@@ -182,7 +176,6 @@ export function mapRevenueEntitiesToDisplayEntities(
   if (!Array.isArray(revenueEntities)) {
     throw new ValidationError("Invalid revenue entities data: expected array");
   }
-
   return revenueEntities.map((revenueEntity, index) => {
     try {
       return mapRevenueEntityToDisplayEntity(revenueEntity);
@@ -193,13 +186,6 @@ export function mapRevenueEntitiesToDisplayEntities(
     }
   });
 }
-
-// Backward compatibility aliases (deprecated - use new names)
-/** @deprecated Use mapRevenueRowToEntity instead */
-export const mapRevRowToRevEnt = mapRevenueRowToEntity;
-
-/** @deprecated Use mapRevenueEntityToDisplayEntity instead */
-export const mapRevEntToRevDisplayEnt = mapRevenueEntityToDisplayEntity;
 
 export function mapEntityToSimpleRevenueDto(
   entity: { period: Date; totalAmount: number },

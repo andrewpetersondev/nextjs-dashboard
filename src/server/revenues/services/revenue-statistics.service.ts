@@ -9,7 +9,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
-import { mapRevEntToRevDisplayEnt } from "@/server/revenues/mappers";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 import { toIntervalDuration } from "@/server/revenues/validator";
@@ -99,7 +99,7 @@ export class RevenueStatisticsService {
       // Transform the revenue entities to display entities
       const displayEntities: RevenueDisplayEntity[] = revenueEntities.map(
         (entity: RevenueEntity): RevenueDisplayEntity =>
-          mapRevEntToRevDisplayEnt(entity),
+          mapRevenueEntityToDisplayEntity(entity),
       );
 
       serverLogger.debug({

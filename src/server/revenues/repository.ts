@@ -11,7 +11,7 @@ import type {
 } from "@/server/revenues/entity";
 import {
   mapRevenueRowsToEntities,
-  mapRevRowToRevEnt,
+  mapRevenueRowToEntity,
 } from "@/server/revenues/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import {
@@ -94,7 +94,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Revenue record not found");
     }
 
-    const result: RevenueEntity = mapRevRowToRevEnt(data);
+    const result: RevenueEntity = mapRevenueRowToEntity(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert revenue record");
@@ -141,7 +141,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       throw new DatabaseError("Failed to update revenue record");
     }
 
-    const result: RevenueEntity = mapRevRowToRevEnt(data);
+    const result: RevenueEntity = mapRevenueRowToEntity(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert updated revenue record");
@@ -240,7 +240,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
       return null; // Return null when no record is found for the period
     }
 
-    const result: RevenueEntity = mapRevRowToRevEnt(data);
+    const result: RevenueEntity = mapRevenueRowToEntity(data);
 
     if (!result) {
       throw new DatabaseError("Failed to convert revenue record");
@@ -301,7 +301,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
         throw new DatabaseError("Failed to upsert revenue record");
       }
 
-      const result: RevenueEntity = mapRevRowToRevEnt(data);
+      const result: RevenueEntity = mapRevenueRowToEntity(data);
 
       if (!result) {
         throw new DatabaseError("Failed to convert revenue record");

@@ -5,11 +5,11 @@ import type { SimpleRevenueDto } from "@/shared/revenues/types";
  * Statistical metrics data transfer object with dollar-converted values.
  */
 export interface RevenueStatisticsDto {
+  readonly average: Dollars;
   readonly maximum: Dollars;
   readonly minimum: Dollars;
-  readonly average: Dollars;
-  readonly total: Dollars;
   readonly monthsWithData: number;
+  readonly total: Dollars;
 }
 
 /**
