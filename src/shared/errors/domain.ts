@@ -9,7 +9,7 @@ import { BaseError } from "@/shared/errors/base";
  * @remarks
  * Immutable; use to encapsulate validation errors in APIs or services.
  */
-export class ValidationError_New extends BaseError {
+export class ValidationError extends BaseError {
   readonly code = "VALIDATION_ERROR";
   readonly statusCode = 400;
 }

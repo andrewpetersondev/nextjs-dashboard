@@ -11,7 +11,7 @@ import type {
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Updates an invoice in the database.
@@ -19,7 +19,7 @@ import { ValidationError_New } from "@/shared/errors/domain";
  * @param id - Branded InvoiceId from url
  * @param updateData - Partial invoice data to update which omits `id`
  * @returns Promise resolving to updated InvoiceEntity
- * @throws ValidationError_New if input parameters are invalid
+ * @throws ValidationError if input parameters are invalid
  * @throws DatabaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
@@ -29,7 +29,7 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
   if (!db || !id || !updateData) {
-    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
       id,
       updateData,
     });

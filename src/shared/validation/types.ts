@@ -1,8 +1,8 @@
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 export interface Validator<T> {
-  validate(value: unknown): Result<T, ValidationError_New>;
+  validate(value: unknown): Result<T, ValidationError>;
 }
 
 export type ValidationRule<T> = {
@@ -12,9 +12,9 @@ export type ValidationRule<T> = {
 };
 
 export const compose = <T>(...validators: Validator<T>[]): Validator<T> => ({
-  validate(initial: unknown): Result<T, ValidationError_New> {
+  validate(initial: unknown): Result<T, ValidationError> {
     if (validators.length === 0) {
-      return Err(new ValidationError_New("No validators provided"));
+      return Err(new ValidationError("No validators provided"));
     }
     let value: unknown = initial;
     for (const v of validators) {
@@ -29,7 +29,7 @@ export const compose = <T>(...validators: Validator<T>[]): Validator<T> => ({
 });
 
 export const asValidator = <T>(
-  fn: (value: unknown) => Result<T, ValidationError_New>,
+  fn: (value: unknown) => Result<T, ValidationError>,
 ): Validator<T> => ({
   validate: fn,
 });
@@ -64,10 +64,10 @@ export const mapResult =
  */
 export const brandWith =
   <T, TBrand>(
-    validator: (value: unknown) => Result<T, ValidationError_New>,
+    validator: (value: unknown) => Result<T, ValidationError>,
     brandFn: (value: T) => TBrand,
   ) =>
-  (value: unknown): Result<TBrand, ValidationError_New> => {
+  (value: unknown): Result<TBrand, ValidationError> => {
     const r = validator(value);
     return r.success ? Ok(brandFn(r.data)) : r;
   };

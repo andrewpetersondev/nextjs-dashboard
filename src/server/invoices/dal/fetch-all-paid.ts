@@ -7,20 +7,20 @@ import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Fetches all paid invoices from the database.
  * @returns Promise resolving to an array of InvoiceEntity
  * @throws DatabaseError if fetching fails or no paid invoices found
- * @throws ValidationError_New if db is not provided
+ * @throws ValidationError if db is not provided
  * @param db - Drizzle database instance
  */
 export async function fetchAllPaidInvoicesDal(
   db: Database,
 ): Promise<InvoiceEntity[]> {
   if (!db) {
-    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
       db: "Database instance is required",
     });
   }

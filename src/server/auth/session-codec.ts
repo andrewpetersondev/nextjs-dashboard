@@ -12,7 +12,7 @@ import {
 } from "@/shared/auth/sessions/mapper";
 import type { EncryptPayload } from "@/shared/auth/types";
 import { EncryptPayloadSchema } from "@/shared/auth/zod";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 
 let encodedKey: Uint8Array | undefined;
 
@@ -59,7 +59,7 @@ export async function createSessionToken(
       },
       "Session encryption failed",
     );
-    throw new ValidationError_New(
+    throw new ValidationError(
       "Invalid session payload: Missing or invalid required fields",
       validatedFields.error.flatten().fieldErrors as unknown as Record<
         string,

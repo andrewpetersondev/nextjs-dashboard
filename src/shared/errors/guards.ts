@@ -3,11 +3,11 @@ import {
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
-  ValidationError_New,
+  ValidationError,
 } from "@/shared/errors/domain";
 
-export const isValidationError_New = (e: unknown): e is ValidationError_New =>
-  e instanceof ValidationError_New;
+export const isValidationError_New = (e: unknown): e is ValidationError =>
+  e instanceof ValidationError;
 
 export const isNotFoundError_New = (e: unknown): e is NotFoundError =>
   e instanceof NotFoundError;

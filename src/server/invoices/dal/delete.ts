@@ -8,7 +8,7 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Deletes an invoice by ID.
@@ -23,7 +23,7 @@ export async function deleteInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
   if (!db || !id) {
-    throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
   }
 
   // db operations

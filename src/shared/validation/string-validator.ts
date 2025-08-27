@@ -1,4 +1,4 @@
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import type { ValidationRule, Validator } from "@/shared/validation/types";
 
@@ -31,10 +31,10 @@ export class StringValidator implements Validator<string> {
     };
   }
 
-  validate(value: unknown): Result<string, ValidationError_New> {
+  validate(value: unknown): Result<string, ValidationError> {
     if (typeof value !== "string") {
       return Err(
-        new ValidationError_New("Value must be a string", {
+        new ValidationError("Value must be a string", {
           expected: "string",
           received: typeof value,
         }),
@@ -43,7 +43,7 @@ export class StringValidator implements Validator<string> {
     for (const rule of this.rules) {
       if (!rule.test(value)) {
         return Err(
-          new ValidationError_New(rule.message, { code: rule.code, value }),
+          new ValidationError(rule.message, { code: rule.code, value }),
         );
       }
     }

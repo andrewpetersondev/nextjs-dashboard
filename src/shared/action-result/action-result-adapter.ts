@@ -1,5 +1,5 @@
 import type { ActionResult } from "@/shared/action-result/action-result";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 import type { FieldErrors } from "@/shared/forms/types";
 import type { Result } from "@/shared/result/result-base";
 
@@ -35,7 +35,7 @@ export const toActionValidationResult = <T>(
   const err = r.error;
   let errors: FieldErrors;
 
-  if (err instanceof ValidationError_New) {
+  if (err instanceof ValidationError) {
     const fieldErrors = err.context?.fieldErrors as FieldErrors | undefined;
     errors =
       fieldErrors && Object.keys(fieldErrors).length > 0

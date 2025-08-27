@@ -15,7 +15,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { logger } from "@/server/logging/logger";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Server action to delete an invoice by string ID.
@@ -30,7 +30,7 @@ export async function deleteInvoiceAction(
   try {
     // Basic validation of input. Throw to catch block.
     if (!id) {
-      throw new ValidationError_New(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
     }
 
     // Dependency injection: pass repository to service
@@ -71,7 +71,7 @@ export async function deleteInvoiceAction(
     result = {
       errors: {},
       message:
-        error instanceof ValidationError_New
+        error instanceof ValidationError
           ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
           : error instanceof DatabaseError
             ? INVOICE_ERROR_MESSAGES.DB_ERROR

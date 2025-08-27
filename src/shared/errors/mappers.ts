@@ -1,4 +1,4 @@
-import type { ValidationError_New } from "@/shared/errors/domain";
+import type { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
 /**
@@ -12,5 +12,5 @@ import { Err, Ok, type Result } from "@/shared/result/result-base";
  * @returns `Result<T, ValidationError_New>` with the error branch mapped (no-op)
  */
 export const mapNewToLegacyError = <T>(
-  r: Result<T, ValidationError_New>,
-): Result<T, ValidationError_New> => (r.success ? Ok(r.data) : Err(r.error));
+  r: Result<T, ValidationError>,
+): Result<T, ValidationError> => (r.success ? Ok(r.data) : Err(r.error));

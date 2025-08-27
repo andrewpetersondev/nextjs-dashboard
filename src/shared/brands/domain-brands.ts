@@ -1,5 +1,5 @@
 import { type Brand, createBrand } from "@/shared/brands/brands";
-import { ValidationError_New } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/errors/domain";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { validatePeriodResult } from "@/shared/validation/period";
 import { brandWith } from "@/shared/validation/types";
@@ -26,11 +26,9 @@ export type Period = Brand<Date, typeof PERIOD_BRAND>;
  */
 export const uuidValidatorFor =
   (label: string) =>
-  (value: unknown): Result<string, ValidationError_New> => {
+  (value: unknown): Result<string, ValidationError> => {
     const r = validateUuidResult(value, label);
-    return r.success
-      ? Ok(r.data)
-      : Err(new ValidationError_New(r.error.message));
+    return r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
   };
 
 /**
@@ -38,9 +36,9 @@ export const uuidValidatorFor =
  */
 export const periodValidator = (
   value: unknown,
-): Result<Date, ValidationError_New> => {
+): Result<Date, ValidationError> => {
   const r = validatePeriodResult(value);
-  return r.success ? Ok(r.data) : Err(new ValidationError_New(r.error.message));
+  return r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
 };
 
 // --- Factories ---
@@ -62,8 +60,7 @@ export const createBrandedIdValidator = <
     ((value: string) => brandFn(value) as T) as (value: string) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError_New> =>
-    internalCreator(value);
+  return (value: unknown): Result<T, ValidationError> => internalCreator(value);
 };
 
 /**
@@ -81,8 +78,7 @@ export const createBrandedPeriodValidator = <
     ((value: Date) => brandFn(value) as T) as (value: Date) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError_New> =>
-    internalCreator(value);
+  return (value: unknown): Result<T, ValidationError> => internalCreator(value);
 };
 
 export const createCustomerId = createBrandedIdValidator<
@@ -119,27 +115,27 @@ export const createPeriod = createBrandedPeriodValidator<
 
 export const toCustomerIdResult = (
   value: unknown,
-): Result<CustomerId, ValidationError_New> => createCustomerId(value);
+): Result<CustomerId, ValidationError> => createCustomerId(value);
 
 export const toUserIdResult = (
   value: unknown,
-): Result<UserId, ValidationError_New> => createUserId(value);
+): Result<UserId, ValidationError> => createUserId(value);
 
 export const toInvoiceIdResult = (
   value: unknown,
-): Result<InvoiceId, ValidationError_New> => createInvoiceId(value);
+): Result<InvoiceId, ValidationError> => createInvoiceId(value);
 
 export const toRevenueIdResult = (
   value: unknown,
-): Result<RevenueId, ValidationError_New> => createRevenueId(value);
+): Result<RevenueId, ValidationError> => createRevenueId(value);
 
 export const toSessionIdResult = (
   value: unknown,
-): Result<SessionId, ValidationError_New> => createSessionId(value);
+): Result<SessionId, ValidationError> => createSessionId(value);
 
 export const toPeriodResult = (
   value: unknown,
-): Result<Period, ValidationError_New> => createPeriod(value);
+): Result<Period, ValidationError> => createPeriod(value);
 
 // --- Existing throw-based APIs preserved (now implemented via Result) ---
 
