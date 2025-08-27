@@ -1,5 +1,9 @@
 "use server";
 
+import {
+  MAX_MONTH_NUMBER,
+  MIN_MONTH_NUMBER,
+} from "@/features/revenues/lib/date/constants";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {
@@ -10,7 +14,58 @@ import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
 import { convertCentsToDollars } from "@/shared/money/convert";
-import { MONTH_ORDER, type SimpleRevenueDto } from "@/shared/revenues/types";
+import {
+  MONTH_ORDER,
+  type MonthName,
+  type SimpleRevenueDto,
+} from "@/shared/revenues/types";
+
+// Small helpers to keep getRevenueChartAction concise
+function validateMonthNumber(monthNumber: number, period: Date): void {
+  if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
+    throw new Error(`Invalid month number ${monthNumber} in period ${period}`);
+  }
+}
+
+function monthAbbreviationFromNumber(monthNumber: number): MonthName {
+  const abbr = MONTH_ORDER[monthNumber - 1];
+  if (!abbr) {
+    throw new Error(
+      `Failed to get month abbreviation for month number ${monthNumber}`,
+    );
+  }
+  return abbr;
+}
+
+function mapEntityToSimpleRevenueDto(
+  entity: { period: Date; totalAmount: number },
+  index: number,
+): SimpleRevenueDto {
+  const monthNumber = entity.period.getUTCMonth() + 1;
+  validateMonthNumber(monthNumber, entity.period);
+  const month = monthAbbreviationFromNumber(monthNumber);
+  return {
+    month,
+    monthNumber: index + 1,
+    totalAmount: convertCentsToDollars(entity.totalAmount),
+  };
+}
+
+function toStatisticsDto(raw: {
+  average: number;
+  maximum: number;
+  minimum: number;
+  monthsWithData: number;
+  total: number;
+}): RevenueStatisticsDto {
+  return {
+    average: convertCentsToDollars(raw.average),
+    maximum: convertCentsToDollars(raw.maximum),
+    minimum: convertCentsToDollars(raw.minimum),
+    monthsWithData: raw.monthsWithData,
+    total: convertCentsToDollars(raw.total),
+  };
+}
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
@@ -26,62 +81,25 @@ export async function getRevenueChartAction(): Promise<
   RevenueActionResult<RevenueChartDto>
 > {
   try {
-    // Create repository with database connection
-    const revenueRepository = new RevenueRepository(getDB());
+    const repository = new RevenueRepository(getDB());
+    const service = new RevenueStatisticsService(repository);
 
-    // Create a calculator service with repository dependency
-    const calculator = new RevenueStatisticsService(revenueRepository);
-
-    // Get pure database values for a rolling 12-month period
     const [entities, rawStatistics] = await Promise.all([
-      calculator.calculateForRollingYear(),
-      calculator.calculateStatistics(),
+      service.calculateForRollingYear(),
+      service.calculateStatistics(),
     ]);
 
-    const monthlyData: SimpleRevenueDto[] = entities.map((entity, index) => {
-      // Extract the month number from Period value (1-12)
-      const monthNumber = entity.period.getUTCMonth() + 1;
+    const monthlyData = entities.map(mapEntityToSimpleRevenueDto);
+    const statistics = toStatisticsDto(rawStatistics);
 
-      // Validate month number is within the valid range (1-12)
-      if (monthNumber < 1 || monthNumber > 12) {
-        throw new Error(
-          `Invalid month number ${monthNumber} in period ${entity.period}`,
-        );
-      }
-
-      // Get month abbreviation from MONTH_ORDER array (0-indexed, so subtract 1)
-      const monthAbbreviation = MONTH_ORDER[monthNumber - 1];
-
-      // Additional safety check to ensure we have a valid month name
-      if (!monthAbbreviation) {
-        throw new Error(
-          `Failed to get month abbreviation for month number ${monthNumber}`,
-        );
-      }
-
-      return {
-        month: monthAbbreviation,
-        monthNumber: index + 1, // 1-12 for scrolling logic (chronological order)
-        totalAmount: convertCentsToDollars(entity.totalAmount), // Convert to dollars
-      };
-    });
-
-    const statistics: RevenueStatisticsDto = {
-      average: convertCentsToDollars(rawStatistics.average),
-      maximum: convertCentsToDollars(rawStatistics.maximum),
-      minimum: convertCentsToDollars(rawStatistics.minimum),
-      monthsWithData: rawStatistics.monthsWithData,
-      total: convertCentsToDollars(rawStatistics.total),
+    return {
+      data: {
+        monthlyData,
+        statistics,
+        year: new Date().getFullYear(),
+      },
+      success: true,
     };
-
-    // Apply business logic conversions in the action layer
-    const chartData: RevenueChartDto = {
-      monthlyData,
-      statistics,
-      year: new Date().getFullYear(), // Current year for display
-    };
-
-    return { data: chartData, success: true };
   } catch (error) {
     serverLogger.error({
       error,

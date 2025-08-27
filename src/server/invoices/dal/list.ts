@@ -18,7 +18,7 @@ import type { InvoiceListFilter } from "@/shared/invoices/invoices";
  * @returns Promise resolving to object with entities and total count
  * @throws DatabaseError if query fails
  */
-export async function listInvoicesDal(
+export async function _listInvoicesDal(
   db: Database,
   filter: InvoiceListFilter,
   page: number = 1,
@@ -32,23 +32,20 @@ export async function listInvoicesDal(
   if (filter.status) {
     conditions.push(eq(invoices.status, filter.status));
   }
-
   if (filter.customerId) {
     conditions.push(eq(invoices.customerId, filter.customerId));
   }
-
   if (filter.date) {
     conditions.push(eq(invoices.date, new Date(filter.date)));
   }
   // Add more fields as needed
 
   // Combine conditions; avoid calling `.where(undefined).
-  const whereExpr =
-    conditions.length === 0
-      ? undefined
-      : conditions.length === 1
-        ? conditions[0]
-        : and(...conditions);
+  const whereExpr = (() => {
+    if (conditions.length === 0) return undefined;
+    if (conditions.length === 1) return conditions[0];
+    return and(...conditions);
+  })();
 
   const baseSelect = db.select().from(invoices).limit(pageSize).offset(offset);
   const baseCount = db.select({ count: count() }).from(invoices);

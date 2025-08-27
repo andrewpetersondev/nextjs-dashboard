@@ -1,0 +1,10 @@
+export const USD_LOCALE = "en-US";
+export const USD_CURRENCY = "USD";
+export const CENTS_IN_DOLLAR = 100;
+export const PAGINATION_SMALL_THRESHOLD = 7;
+export const PAGINATION_START_EDGE = 3;
+export const PAGINATION_END_EDGE_OFFSET = 2;
+export const FIRST_PAGE = 1;
+export const SECOND_PAGE = 2;
+export const THIRD_PAGE = 3;
+export const ELLIPSIS = "...";

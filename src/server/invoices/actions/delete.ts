@@ -6,7 +6,7 @@ import {
   INVOICE_SUCCESS_MESSAGES,
 } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -67,15 +67,11 @@ export async function deleteInvoiceAction(
       message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
     });
 
-    // Error result
+    const message = toInvoiceErrorMessage(error);
+
     result = {
       errors: {},
-      message:
-        error instanceof ValidationError
-          ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
-          : error instanceof DatabaseError
-            ? INVOICE_ERROR_MESSAGES.DB_ERROR
-            : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message,
       success: false,
     };
   }
