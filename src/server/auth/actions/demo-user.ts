@@ -6,7 +6,8 @@ import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { createDemoUser, demoUserCounter } from "@/server/users/dal/dal";
+import { createDemoUser } from "@/server/users/dal/create-demo-user";
+import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import {
   type ActionResult,
   actionResult,
