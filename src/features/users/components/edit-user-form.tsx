@@ -45,7 +45,7 @@ export function _EditUserForm({ user }: { user: UserDto }): JSX.Element {
       isEdit={true}
       pending={pending}
       showPassword={true}
-      // @ts-ignore - function is unused anyways
+      // @ts-expect-error - function is unused anyway
       state={state}
       submitLabel="Save Changes"
       title="Edit User"
