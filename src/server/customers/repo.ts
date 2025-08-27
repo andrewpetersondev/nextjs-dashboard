@@ -1,11 +1,8 @@
 import "server-only";
 
-import {
-  fetchCustomersSelectDal,
-  fetchFilteredCustomersDal,
-  fetchTotalCustomersCountDal,
-} from "@/server/customers/dal";
-
+import { fetchCustomersSelectDal } from "@/server/customers/dal/fetch-customers-select";
+import { fetchFilteredCustomersDal } from "@/server/customers/dal/fetch-filtered-customers";
+import { fetchTotalCustomersCountDal } from "@/server/customers/dal/fetch-total-count";
 import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
