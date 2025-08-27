@@ -1,71 +1,15 @@
 "use server";
 
-import {
-  MAX_MONTH_NUMBER,
-  MIN_MONTH_NUMBER,
-} from "@/features/revenues/lib/date/constants";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
+import {
+  mapEntityToSimpleRevenueDto,
+  mapToStatisticsDto,
+} from "@/server/revenues/mappers";
 import { RevenueRepository } from "@/server/revenues/repository";
 import { RevenueStatisticsService } from "@/server/revenues/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/types";
-import { convertCentsToDollars } from "@/shared/money/convert";
-import type {
-  RevenueChartDto,
-  RevenueStatisticsDto,
-} from "@/shared/revenues/dto";
-import {
-  MONTH_ORDER,
-  type MonthName,
-  type SimpleRevenueDto,
-} from "@/shared/revenues/types";
-
-// Small helpers to keep getRevenueChartAction concise
-function validateMonthNumber(monthNumber: number, period: Date): void {
-  if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
-    throw new Error(`Invalid month number ${monthNumber} in period ${period}`);
-  }
-}
-
-function monthAbbreviationFromNumber(monthNumber: number): MonthName {
-  const abbr = MONTH_ORDER[monthNumber - 1];
-  if (!abbr) {
-    throw new Error(
-      `Failed to get month abbreviation for month number ${monthNumber}`,
-    );
-  }
-  return abbr;
-}
-
-function mapEntityToSimpleRevenueDto(
-  entity: { period: Date; totalAmount: number },
-  index: number,
-): SimpleRevenueDto {
-  const monthNumber = entity.period.getUTCMonth() + 1;
-  validateMonthNumber(monthNumber, entity.period);
-  const month = monthAbbreviationFromNumber(monthNumber);
-  return {
-    month,
-    monthNumber: index + 1,
-    totalAmount: convertCentsToDollars(entity.totalAmount),
-  };
-}
-
-function toStatisticsDto(raw: {
-  average: number;
-  maximum: number;
-  minimum: number;
-  monthsWithData: number;
-  total: number;
-}): RevenueStatisticsDto {
-  return {
-    average: convertCentsToDollars(raw.average),
-    maximum: convertCentsToDollars(raw.maximum),
-    minimum: convertCentsToDollars(raw.minimum),
-    monthsWithData: raw.monthsWithData,
-    total: convertCentsToDollars(raw.total),
-  };
-}
+import type { RevenueChartDto } from "@/shared/revenues/dto";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
@@ -90,7 +34,7 @@ export async function getRevenueChartAction(): Promise<
     ]);
 
     const monthlyData = entities.map(mapEntityToSimpleRevenueDto);
-    const statistics = toStatisticsDto(rawStatistics);
+    const statistics = mapToStatisticsDto(rawStatistics);
 
     return {
       data: {
