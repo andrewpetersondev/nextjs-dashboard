@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { SessionVerificationResult } from "@/shared/auth/types";
-import { H6 } from "@/ui/headings";
+import { H6 } from "@/ui/primitives/headings";
 
 const allowedRoles: readonly AuthRole[] = AUTH_ROLES;
 

@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import type { FormFieldError } from "@/shared/forms/types";
-import { ErrorMessage } from "@/ui/error-message";
-import { Label } from "@/ui/label";
+import { ErrorMessage } from "@/ui/forms/error-message";
+import { Label } from "@/ui/primitives/label";
 
 /**
  * Controlled component because it has a default value of ""

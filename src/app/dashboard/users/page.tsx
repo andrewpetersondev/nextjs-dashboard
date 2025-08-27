@@ -4,7 +4,7 @@ import { Pagination } from "@/features/invoices/components/pagination";
 import { CreateUser } from "@/features/users/components/buttons";
 import { UsersTable } from "@/features/users/components/users-table";
 import { readUsersPagesAction } from "@/server/users/actions/read-pages";
-import { H1 } from "@/ui/headings";
+import { H1 } from "@/ui/primitives/headings";
 import { Search } from "@/ui/search";
 import { InvoicesSearchSkeleton } from "@/ui/skeletons";
 

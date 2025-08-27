@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { demoUser } from "@/server/auth/actions/demo-user";
 import type { AuthRole } from "@/shared/auth/roles";
-import { Button } from "@/ui/button";
+import { Button } from "@/ui/primitives/button";
 
 /**
  * DemoForm component for logging in as a demo user with a specific role.

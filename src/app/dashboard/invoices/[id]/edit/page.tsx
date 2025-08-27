@@ -7,7 +7,7 @@ import { readCustomersAction } from "@/server/customers/actions/read";
 import { readInvoiceByIdAction } from "@/server/invoices/actions/read-by-id";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
-import { H1 } from "@/ui/headings";
+import { H1 } from "@/ui/primitives/headings";
 
 interface EditInvoicePageParams {
   id: string;

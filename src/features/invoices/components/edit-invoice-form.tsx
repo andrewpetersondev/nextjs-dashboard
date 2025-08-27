@@ -16,9 +16,9 @@ import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { TIMER } from "@/shared/ui/ui";
-import { FormActionRow } from "@/ui/form-action-row";
-import { FormSubmitButton } from "@/ui/form-submit-button";
-import { Label } from "@/ui/label";
+import { FormActionRow } from "@/ui/forms/form-action-row";
+import { FormSubmitButton } from "@/ui/forms/form-submit-button";
+import { Label } from "@/ui/primitives/label";
 
 // Helper: produce initial state (keeps component short)
 function getInitialState(): Extract<

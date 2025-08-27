@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { CustomersTableDesktop } from "@/features/customers/components/CustomersTableDesktop";
 import { CustomersTableMobile } from "@/features/customers/components/CustomersTableMobile";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { H1 } from "@/ui/headings";
+import { H1 } from "@/ui/primitives/headings";
 import { Search } from "@/ui/search";
 
 interface CustomersTableProps {

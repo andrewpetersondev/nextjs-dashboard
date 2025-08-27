@@ -6,7 +6,7 @@
 
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
-import { ErrorMessage } from "@/ui/error-message";
+import { ErrorMessage } from "@/ui/forms/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/ui/select-menu";
 
 /**

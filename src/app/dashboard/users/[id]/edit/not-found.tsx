@@ -1,7 +1,7 @@
 import { FaceFrownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { H2 } from "@/ui/headings";
+import { H2 } from "@/ui/primitives/headings";
 
 export default function NotFound(): JSX.Element {
   return (

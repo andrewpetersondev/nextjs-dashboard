@@ -6,7 +6,7 @@ import { RevenueChart } from "@/features/revenues/components/revenue-chart";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 import { CardWrapper } from "@/ui/dashboard/cards";
 import type { DashboardCardData } from "@/ui/dashboard/types";
-import { H1 } from "@/ui/headings";
+import { H1 } from "@/ui/primitives/headings";
 import {
   CardsSkeleton,
   LatestInvoicesSkeleton,

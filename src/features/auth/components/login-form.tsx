@@ -9,8 +9,8 @@ import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-l
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import type { LoginFormFieldNames } from "@/features/auth/types";
 import type { FormState } from "@/shared/forms/types";
-import { FormInputWrapper } from "@/ui/form-input-wrapper";
-import { InputField } from "@/ui/input-field";
+import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
+import { InputField } from "@/ui/forms/input-field";
 
 // Define the initial state with strict typing
 const initialState: FormState<LoginFormFieldNames> = {

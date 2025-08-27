@@ -13,8 +13,8 @@ import { RememberMeCheckbox } from "@/features/auth/components/remember-me-check
 import type { SignupFormFieldNames } from "@/features/auth/types";
 import { signup } from "@/server/auth/actions/signup";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { FormInputWrapper } from "@/ui/form-input-wrapper";
-import { InputField } from "@/ui/input-field";
+import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
+import { InputField } from "@/ui/forms/input-field";
 
 const INITIAL_STATE = {
   errors: {} as Partial<Record<SignupFormFieldNames, FormFieldError>>,

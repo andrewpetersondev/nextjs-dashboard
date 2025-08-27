@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
-import { Button } from "@/ui/button";
+import { Button } from "@/ui/primitives/button";
 
 interface AuthSubmitButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {

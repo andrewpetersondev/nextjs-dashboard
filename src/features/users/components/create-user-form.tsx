@@ -15,10 +15,10 @@ import type {
 import { createUserAction } from "@/server/users/actions/create";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { FormActionRow } from "@/ui/form-action-row";
-import { FormSubmitButton } from "@/ui/form-submit-button";
-import { H1 } from "@/ui/headings";
-import { InputField } from "@/ui/input-field";
+import { FormActionRow } from "@/ui/forms/form-action-row";
+import { FormSubmitButton } from "@/ui/forms/form-submit-button";
+import { InputField } from "@/ui/forms/input-field";
+import { H1 } from "@/ui/primitives/headings";
 
 const TIMER_DELAY = 4000;
 

@@ -5,7 +5,7 @@ import { EditUserFormV2 } from "@/features/users/components/edit-user-form-v2";
 import { readUserAction } from "@/server/users/actions/read";
 import type { UserDto } from "@/shared/users/dto";
 import { Breadcrumbs } from "@/ui/breadcrumbs";
-import { H1 } from "@/ui/headings";
+import { H1 } from "@/ui/primitives/headings";
 
 interface EditUserPageParams {
   id: string;

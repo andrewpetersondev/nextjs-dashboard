@@ -5,7 +5,7 @@ import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/shared/invoices/invoices";
 import { formatCurrency } from "@/shared/money/convert";
 import { IMAGE_SIZES } from "@/shared/ui/ui";
-import { H2, H3 } from "@/ui/headings";
+import { H2, H3 } from "@/ui/primitives/headings";
 
 interface LatestInvoicesProps {
   readonly latestInvoices: readonly InvoiceListFilter[];

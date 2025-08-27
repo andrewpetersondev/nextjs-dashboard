@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useEffect } from "react";
-import { H2, H3 } from "@/ui/headings";
+import { H2, H3 } from "@/ui/primitives/headings";
 
 export default function SignupError({
   error,

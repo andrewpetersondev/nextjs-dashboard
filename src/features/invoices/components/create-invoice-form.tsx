@@ -16,9 +16,9 @@ import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { TIMER } from "@/shared/ui/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
-import { FormActionRow } from "@/ui/form-action-row";
-import { FormSubmitButton } from "@/ui/form-submit-button";
-import { Label } from "@/ui/label";
+import { FormActionRow } from "@/ui/forms/form-action-row";
+import { FormSubmitButton } from "@/ui/forms/form-submit-button";
+import { Label } from "@/ui/primitives/label";
 
 const INITIAL_STATE = {
   errors: {} as Partial<Record<CreateInvoiceFormFieldNames, FormFieldError>>,

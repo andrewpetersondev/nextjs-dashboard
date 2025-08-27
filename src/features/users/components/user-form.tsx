@@ -4,9 +4,9 @@ import { UserFields } from "@/features/users/components/user-fields";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { TIMER } from "@/shared/ui/ui";
 import type { UserDto } from "@/shared/users/dto";
-import { FormActionRow } from "@/ui/form-action-row";
-import { FormSubmitButton } from "@/ui/form-submit-button";
-import { H1 } from "@/ui/headings";
+import { FormActionRow } from "@/ui/forms/form-action-row";
+import { FormSubmitButton } from "@/ui/forms/form-submit-button";
+import { H1 } from "@/ui/primitives/headings";
 
 // Make the form generic over field names to support both create and edit flows
 type Props<TFieldNames extends string> = {
