@@ -90,16 +90,14 @@
   },
   "linter": {
     "domains": {
-      "next": "recommended",
-      "project": "recommended",
-      "react": "recommended",
-      "test": "recommended"
+      "next": "all",
+      "project": "all",
+      "react": "all",
+      "test": "all"
     },
     "enabled": true,
     "rules": {
-      "a11y": {
-        "recommended": true
-      },
+      "a11y": "on",
       "complexity": {
         "noExcessiveCognitiveComplexity": "on",
         "noExcessiveLinesPerFunction": "on",
@@ -112,7 +110,8 @@
         "noReactPropAssignments": "on",
         "noUndeclaredDependencies": "on",
         "recommended": true,
-        "useImportExtensions": "on"
+        "useImportExtensions": "on",
+        "useUniqueElementIds": "off"
       },
       "nursery": {
         "noImportCycles": "on",

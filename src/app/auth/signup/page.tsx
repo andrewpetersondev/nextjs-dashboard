@@ -4,12 +4,13 @@ import { AuthFormSocialSection } from "@/features/auth/components/auth-form-soci
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
+import { SIGNUP_HEADING } from "@/features/auth/text";
 
 export default function Page(): JSX.Element {
   return (
     <main className="h-full">
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <Heading text="Log in to your account" />
+        <Heading text={SIGNUP_HEADING} />
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
             <SignupForm />

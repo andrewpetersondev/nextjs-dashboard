@@ -5,7 +5,7 @@ import {
   LockClosedIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { type FC, type JSX, useActionState } from "react";
+import { type FC, type JSX, useActionState, useId } from "react";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
@@ -29,7 +29,11 @@ export const SignupForm: FC = (): JSX.Element => {
     FormState<SignupFormFieldNames>,
     FormData
   >(signup, INITIAL_STATE);
-
+  const baseId = useId();
+  const usernameId = `${baseId}-username`;
+  const emailId = `${baseId}-email`;
+  const passwordId = `${baseId}-password`;
+  const passwordErrorsId = `${baseId}-password-errors`;
   return (
     <>
       <form
@@ -43,7 +47,7 @@ export const SignupForm: FC = (): JSX.Element => {
           dataCy="signup-username-input"
           error={state?.errors?.username}
           icon={<UserIcon className={iconClass} />}
-          id="username"
+          id={usernameId}
           label="Username"
           name="username"
           required={true}
@@ -54,7 +58,7 @@ export const SignupForm: FC = (): JSX.Element => {
           dataCy="signup-email-input"
           error={state?.errors?.email}
           icon={<AtSymbolIcon className={iconClass} />}
-          id="email"
+          id={emailId}
           label="Email address"
           name="email"
           placeholder="steve@jobs.com"
@@ -64,29 +68,26 @@ export const SignupForm: FC = (): JSX.Element => {
         <InputField
           autoComplete="new-password"
           dataCy="signup-password-input"
-          describedById="signup-password-errors"
+          describedById={passwordErrorsId}
           error={state?.errors?.password}
           icon={<LockClosedIcon className={iconClass} />}
-          id="password"
+          id={passwordId}
           label="Password"
           name="password"
           placeholder="Enter your password"
           required={true}
           type="password"
         />
-
         <FormInputWrapper>
           <div className="flex items-center justify-between">
             <RememberMeCheckbox />
             <ForgotPasswordLink />
           </div>
         </FormInputWrapper>
-
         <AuthSubmitButton data-cy="signup-submit-button" pending={pending}>
           Sign Up
         </AuthSubmitButton>
       </form>
-
       {state.message && <AuthServerMessage message={state.message} />}
     </>
   );

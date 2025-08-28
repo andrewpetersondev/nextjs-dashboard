@@ -2,7 +2,7 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { type FC, useActionState } from "react";
+import { type FC, useActionState, useId } from "react";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
@@ -42,6 +42,8 @@ export const LoginForm: FC<LoginFormProps> = ({
     FormState<LoginFormFieldNames>,
     FormData
   >(action, initialState);
+  const emailId = useId();
+  const passwordId = useId();
 
   return (
     <>
@@ -50,7 +52,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           autoComplete="email"
           autoFocus={true}
           dataCy="login-email-input"
-          describedById="login-email-errors"
+          describedById={`${emailId}-errors`}
           error={state?.errors?.email}
           icon={
             <AtSymbolIcon
@@ -58,7 +60,7 @@ export const LoginForm: FC<LoginFormProps> = ({
               className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent"
             />
           }
-          id="email"
+          id={emailId}
           label="Email address"
           name="email"
           placeholder="steve@jobs.com"
@@ -68,7 +70,7 @@ export const LoginForm: FC<LoginFormProps> = ({
         <InputField
           autoComplete="current-password"
           dataCy="login-password-input"
-          describedById="login-password-errors"
+          describedById={`${passwordId}-errors`}
           error={state?.errors?.password}
           icon={
             <LockClosedIcon
@@ -76,7 +78,7 @@ export const LoginForm: FC<LoginFormProps> = ({
               className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent"
             />
           }
-          id="password"
+          id={passwordId}
           label="Password"
           name="password"
           placeholder="Enter your password"

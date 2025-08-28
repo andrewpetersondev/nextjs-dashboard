@@ -1,4 +1,6 @@
-import type { JSX } from "react";
+"use client";
+
+import { type JSX, useId } from "react";
 
 /**
  * RememberMeCheckbox component for persisting user session.
@@ -6,13 +8,14 @@ import type { JSX } from "react";
  * @returns {JSX.Element} Rendered RememberMeCheckbox component.
  */
 export function RememberMeCheckbox(): JSX.Element {
+  const id = useId();
   return (
     <div className="flex gap-3">
       <div className="flex h-6 shrink-0 items-center">
         <div className="group grid size-4 grid-cols-1">
           <input
             className="col-start-1 row-start-1 h-4 w-4 rounded border-bg-accent bg-bg-accent text-bg-active focus:ring-bg-focus"
-            id="remember-me"
+            id={id}
             name="remember-me"
             type="checkbox"
           />
@@ -31,10 +34,7 @@ export function RememberMeCheckbox(): JSX.Element {
           </svg>
         </div>
       </div>
-      <label
-        className="block text-sm/6 text-text-primary"
-        htmlFor="remember-me"
-      >
+      <label className="block text-sm/6 text-text-primary" htmlFor={id}>
         Remember me
       </label>
     </div>

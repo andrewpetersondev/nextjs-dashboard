@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
+import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../__fixtures__/paths";
 import { STATUS_CODES } from "../__fixtures__/status-codes";
 import { createTestUser } from "../__fixtures__/users";
 
@@ -6,7 +7,7 @@ describe("Authentication Server Actions", () => {
   it("should create user account via server action", () => {
     const user = createTestUser();
 
-    cy.visit("/signup");
+    cy.visit(SIGNUP_PATH);
 
     // todo: extract the signup form to custom command
     cy.get('[data-cy="signup-username-input"]').type(user.username);
@@ -22,11 +23,11 @@ describe("Authentication Server Actions", () => {
       expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
     });
 
-    cy.url().should("include", "/dashboard");
+    cy.url().should("include", DASHBOARD_PATH);
   });
 
   it("should handle login with invalid credentials", () => {
-    cy.visit("/login");
+    cy.visit(LOGIN_PATH);
     cy.get('[data-cy="login-email-input"]').type("invalid@example.com");
     cy.get('[data-cy="login-password-input"]').type("wrongpassword");
 
@@ -36,6 +37,6 @@ describe("Authentication Server Actions", () => {
 
     cy.wait("@loginAction");
     cy.findByText(ERROR_MESSAGES.INVALID_CREDENTIALS).should("be.visible");
-    cy.url().should("include", "/login");
+    cy.url().should("include", LOGIN_PATH);
   });
 });
