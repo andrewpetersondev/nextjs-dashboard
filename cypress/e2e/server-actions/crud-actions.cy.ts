@@ -1,4 +1,4 @@
-import { STATUS_CODES } from "../__fixtures__/constants";
+import { STATUS_CODES } from "../__fixtures__/status-codes";
 
 describe.skip("CRUD Server Actions", () => {
   beforeEach(() => {

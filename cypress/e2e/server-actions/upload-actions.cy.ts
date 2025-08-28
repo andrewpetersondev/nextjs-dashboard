@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from "../__fixtures__/constants";
+import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 
 describe.skip("File Upload Server Actions", () => {
   it("should upload file successfully", () => {

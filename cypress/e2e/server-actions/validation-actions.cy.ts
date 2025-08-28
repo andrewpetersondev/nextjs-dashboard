@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from "../__fixtures__/constants";
+import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 
 describe.skip("Server Action Validation", () => {
   it("should handle validation errors gracefully", () => {

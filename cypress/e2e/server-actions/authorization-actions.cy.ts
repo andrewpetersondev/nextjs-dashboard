@@ -1,4 +1,5 @@
-import { STATUS_CODES, SUCCESS_MESSAGES } from "../__fixtures__/constants";
+import { SUCCESS_MESSAGES } from "../__fixtures__/messages-success";
+import { STATUS_CODES } from "../__fixtures__/status-codes";
 
 describe.skip("Server Action Authorization", () => {
   it("should prevent unauthorized access to admin actions", () => {

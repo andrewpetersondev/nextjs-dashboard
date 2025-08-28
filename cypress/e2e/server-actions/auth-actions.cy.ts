@@ -1,4 +1,5 @@
-import { ERROR_MESSAGES, STATUS_CODES } from "../__fixtures__/constants";
+import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
+import { STATUS_CODES } from "../__fixtures__/status-codes";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Authentication Server Actions", () => {

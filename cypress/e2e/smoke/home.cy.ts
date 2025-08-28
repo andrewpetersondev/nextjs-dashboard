@@ -1,8 +1,9 @@
 import { UI_MATCHERS } from "../__fixtures__/constants";
+import { BASE_URL, LOGIN_PATH } from "../__fixtures__/paths";
 
 describe("Home smoke test", () => {
   it("loads homepage and navigates to login", () => {
-    cy.visit("/");
+    cy.visit(BASE_URL);
 
     // Assert welcome text and course link exist
     cy.findByText(UI_MATCHERS.WELCOME_HOME).should("be.visible");
@@ -12,14 +13,18 @@ describe("Home smoke test", () => {
       "https://nextjs.org/learn/",
     );
 
-    // Navigate to login page via the login button
+    // Navigate to the login page via the login button
     cy.get('[data-testid="login-button"]').click();
-    cy.url().should("include", "/login");
+    cy.url().should("include", LOGIN_PATH);
 
     // Assert login page heading is visible
     cy.findByRole("heading", { name: UI_MATCHERS.LOGIN_HEADING }).should(
       "be.visible",
     );
+  });
+
+  it("injects axe and checks for accessibility violations", () => {
+    cy.visit(BASE_URL);
 
     // Detailed accessibility check with violation logging
     cy.injectAxe();

@@ -5,7 +5,7 @@ describe("Signup flow", () => {
   it("allows a new user to sign up and redirects to dashboard", () => {
     const user = createTestUser();
 
-    cy.visit("/signup");
+    cy.visit("/auth/signup");
 
     // Assert signup page renders
     cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
