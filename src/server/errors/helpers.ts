@@ -4,14 +4,6 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { BaseError } from "@/shared/errors/base";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 
-export type HttpErrorBody = {
-  error: {
-    code: string;
-    message: string;
-    context?: Record<string, unknown>;
-  };
-};
-
 export const asAppError = (e: unknown): BaseError => {
   if (e instanceof BaseError) {
     return e;
@@ -41,16 +33,4 @@ export const safeFromPromise = async <T>(
   } catch (e) {
     return errorToResult<T>(e);
   }
-};
-
-export const errorToHttp = (
-  e: unknown,
-): { status: number; body: HttpErrorBody } => {
-  const err = asAppError(e);
-  return {
-    body: {
-      error: { code: err.code, context: err.context, message: err.message },
-    },
-    status: err.statusCode,
-  };
 };
