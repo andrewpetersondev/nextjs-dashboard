@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
 export const SignupForm: FC = (): JSX.Element => {
   const [state, action, pending] = useActionState<
     FormState<SignupFormFieldNames>,
