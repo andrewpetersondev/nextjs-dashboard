@@ -10,8 +10,8 @@ import { AuthServerMessage } from "@/features/auth/components/auth-server-messag
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
 import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
-import type { SignupFormFieldNames } from "@/features/auth/types";
 import { signup } from "@/server/auth/actions/signup";
+import type { SignupFormFieldNames } from "@/shared/auth/schema.shared";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
 import { InputField } from "@/ui/forms/input-field";

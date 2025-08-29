@@ -64,3 +64,17 @@ export type LoginFormInput = z.input<typeof LoginFormSchema>;
 export type LoginFormFieldNames = keyof LoginFormInput;
 export type SignupFormInput = z.input<typeof SignupFormSchema>;
 export type SignupFormFieldNames = keyof SignupFormInput;
+
+// Base Form Fields
+// export type BaseAuthFormFields = {
+//   readonly email: string;
+//   readonly password: string;
+// };
+// Form Fields
+// export type LoginFormInput = BaseAuthFormFields;
+// export type SignupFormInput = BaseAuthFormFields & {
+//   readonly username: string;
+// };
+// Form Field Names
+// export type SignupFormFieldNames = keyof SignupFormFields;
+// export type LoginFormFieldNames = keyof LoginFormFields;

@@ -1,9 +1,9 @@
 import {
-  z,
   type ZodEmail,
   type ZodObject,
   type ZodOptional,
   type ZodString,
+  z,
 } from "zod";
 import {
   emailSchema,

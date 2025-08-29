@@ -1,10 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import type {
-  LoginFormFieldNames,
-  LoginFormFields,
-} from "@/features/auth/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
@@ -12,7 +8,11 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
-import { LoginFormSchema } from "@/shared/auth/schema.shared";
+import {
+  type LoginFormFieldNames,
+  type LoginFormInput,
+  LoginFormSchema,
+} from "@/shared/auth/schema.shared";
 import { LoginAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
@@ -28,16 +28,18 @@ export async function login(
   const fields = LoginAllowedFields as readonly LoginFormFieldNames[];
   const raw = Object.fromEntries(formData.entries());
 
-  const result = await validateFormGeneric<
-    LoginFormFieldNames,
-    LoginFormFields
-  >(formData, LoginFormSchema, fields, {
-    // Normalize email; password redaction is handled by adapter defaults
-    transform: (d: LoginFormFields) => ({
-      ...d,
-      email: d.email.toLowerCase().trim(),
-    }),
-  });
+  const result = await validateFormGeneric<LoginFormFieldNames, LoginFormInput>(
+    formData,
+    LoginFormSchema,
+    fields,
+    {
+      // Normalize email; password redaction is handled by adapter defaults
+      transform: (d: LoginFormInput) => ({
+        ...d,
+        email: d.email.toLowerCase().trim(),
+      }),
+    },
+  );
 
   const validated = toFormState(result, {
     fields,

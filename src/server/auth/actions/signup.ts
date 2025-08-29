@@ -1,10 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import type {
-  SignupFormFieldNames,
-  SignupFormFields,
-} from "@/features/auth/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
@@ -12,7 +8,11 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { SignupFormSchema } from "@/shared/auth/schema.shared";
+import {
+  type SignupFormFieldNames,
+  type SignupFormInput,
+  SignupFormSchema,
+} from "@/shared/auth/schema.shared";
 import { SignupAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
@@ -30,10 +30,10 @@ export async function signup(
 
   const result = await validateFormGeneric<
     SignupFormFieldNames,
-    SignupFormFields
+    SignupFormInput
   >(formData, SignupFormSchema, fields, {
     // Normalize email; Normalize username; password redaction is handled by adapter defaults
-    transform: (d: SignupFormFields) => ({
+    transform: (d: SignupFormInput) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
       username: d.username.trim(),
