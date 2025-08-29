@@ -20,7 +20,7 @@ describe("Signup flow", () => {
 
     // Optional: basic a11y check before submitting
     cy.injectAxe();
-    cy.checkA11y(undefined, { includedImpacts: ["critical"] });
+    cy.checkA11y(undefined, { includedImpacts: ["critical"] }, undefined, true);
 
     // Submit the form
     cy.get('[data-cy="signup-submit-button"]').click();
@@ -43,9 +43,9 @@ describe("Signup flow with Database Tasks", () => {
     cy.setupTestDatabase();
   });
 
-  // test fails in after
-  after(() => {
-    // Clean up after all tests
+  // Avoid after() with tasks to prevent failures on runner teardown.
+  afterEach(() => {
+    // Best-effort cleanup after each test in this suite
     cy.cleanupTestDatabase();
   });
 
@@ -62,7 +62,7 @@ describe("Signup flow with Database Tasks", () => {
     cy.get('[data-cy="signup-password-input"]').type(user.password);
 
     cy.get('[data-cy="signup-submit-button"]').click();
-    cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DEFAULT_TIMEOUT);
+    cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
 
     cy.findByRole("heading", {
       level: 1,

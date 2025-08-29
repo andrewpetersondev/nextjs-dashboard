@@ -29,7 +29,6 @@
     "includes": [
       "**",
       "!scripts",
-      "!cypress",
       "!.aiassistant",
       "!.github",
       "!.idea",

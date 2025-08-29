@@ -12,6 +12,7 @@ import {
 } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { LOGIN_PATH } from "@/shared/auth/constants";
 import { SESSION_DURATION_MS } from "@/shared/auth/sessions/constants";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
@@ -73,12 +74,12 @@ export const verifySessionOptimistic = cache(
     )?.value;
     if (!cookie) {
       console.error("No session cookie found");
-      redirect("/login");
+      redirect(LOGIN_PATH);
     }
     const session: DecryptPayload | undefined = await readSessionToken(cookie);
     if (!session?.user?.userId) {
       console.error("Invalid session or missing user information");
-      redirect("/login");
+      redirect(LOGIN_PATH);
     }
     return {
       isAuthorized: true,

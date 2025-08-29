@@ -16,7 +16,7 @@
     "incremental": true,
 
     /* Relative Imports */
-    "allowImportingTsExtensions": true,
+    //    "allowImportingTsExtensions": true,
 
     /* Type Checking */
     // strict = true: also sets strictBindCallApply, strictFunctionTypes, strictNullChecks, strictPropertyInitialization, useUnknownInCatchVariables

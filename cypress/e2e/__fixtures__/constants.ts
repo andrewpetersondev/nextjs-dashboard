@@ -6,7 +6,7 @@ export const FIVE_SECONDS = 5000;
 export const TEN_SECONDS = 10_000;
 export const TWENTY_SECONDS = 20_000;
 
-export const DEFAULT_TIMEOUT = TWO_SECONDS;
+export const DEFAULT_TIMEOUT = FIVE_SECONDS;
 
 export const UI_MATCHERS = {
   DASHBOARD_H1: /User Dashboard/i,

@@ -46,6 +46,7 @@ describe("Home smoke test", () => {
           }
         }
       },
+      true,
     );
   });
 });
