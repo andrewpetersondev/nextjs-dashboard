@@ -1,17 +1,17 @@
 "use server";
 
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto } from "@/shared/invoices/dto";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getDB());
@@ -25,7 +25,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     return invoice;
   } catch (error) {
     throw new DatabaseError(
-      INVOICE_ERROR_MESSAGES.DB_ERROR,
+      INVOICE_MSG.DB_ERROR,
       {},
       error instanceof Error ? error : undefined,
     );

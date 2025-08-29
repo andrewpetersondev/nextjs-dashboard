@@ -1,10 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  INVOICE_ERROR_MESSAGES,
-  INVOICE_SUCCESS_MESSAGES,
-} from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
@@ -16,6 +12,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**
  * Server action to delete an invoice by string ID.
@@ -30,7 +27,7 @@ export async function deleteInvoiceAction(
   try {
     // Basic validation of input. Throw to catch block.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
 
     // Dependency injection: pass repository to service
@@ -56,7 +53,7 @@ export async function deleteInvoiceAction(
     result = {
       data: invoice,
       errors: {},
-      message: INVOICE_SUCCESS_MESSAGES.DELETE_SUCCESS,
+      message: INVOICE_MSG.DELETE_SUCCESS,
       success: true,
     };
   } catch (error) {
@@ -64,7 +61,7 @@ export async function deleteInvoiceAction(
       context: "deleteInvoiceAction",
       error,
       id,
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message: INVOICE_MSG.SERVICE_ERROR,
     });
 
     const message = toInvoiceErrorMessage(error);

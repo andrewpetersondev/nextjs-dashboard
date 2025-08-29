@@ -1,12 +1,12 @@
 import "server-only";
 
 import { and, count, eq } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import type { InvoiceListFilter } from "@/shared/invoices/types";
 
 /**
@@ -65,7 +65,7 @@ export async function _listInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!entities || entities.length === 0 || !total || total < 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.FETCH_FAILED, {
       filter,
       page,
       pageSize,

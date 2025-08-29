@@ -1,6 +1,5 @@
 import "server-only";
 
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import {
   dtoToCreateInvoiceEntity,
@@ -11,6 +10,7 @@ import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Err, type Result } from "@/shared/result/result-base";
 
@@ -79,7 +79,7 @@ export class InvoiceService {
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
     if (!dto) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 
     const transformedDto = this.applyBusinessRules(dto);
@@ -98,7 +98,7 @@ export class InvoiceService {
     dto: InvoiceFormDto,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!dto) {
-      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT));
+      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
     }
 
     let transformedDto: InvoiceFormDto;
@@ -110,7 +110,7 @@ export class InvoiceService {
       const message =
         e instanceof Error && e.message
           ? e.message
-          : INVOICE_ERROR_MESSAGES.VALIDATION_FAILED;
+          : INVOICE_MSG.VALIDATION_FAILED;
 
       return Err(new ValidationError(message));
     }
@@ -130,7 +130,7 @@ export class InvoiceService {
   async readInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
 
     // Transform plain string → branded ID and call repository
@@ -150,7 +150,7 @@ export class InvoiceService {
   ): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id || !dto) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 
     // What is this solution called? Object Spread Immutability.
@@ -182,7 +182,7 @@ export class InvoiceService {
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
 
     // Call repo with branded ID and return Dto to Actions layer

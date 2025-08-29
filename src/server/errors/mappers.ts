@@ -1,8 +1,8 @@
 import "server-only";
 
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { ValidationError } from "@/shared/errors/domain";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**
  * Union type representing repository errors.
@@ -33,5 +33,5 @@ export function mapToRepoError(e: unknown): RepoError {
   }
 
   // Attach the original unknown error as cause in a typed context object
-  return new DatabaseError(INVOICE_ERROR_MESSAGES.DB_ERROR, { cause: e });
+  return new DatabaseError(INVOICE_MSG.DB_ERROR, { cause: e });
 }

@@ -1,11 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  INVOICE_ERROR_MESSAGES,
-  INVOICE_SUCCESS_MESSAGES,
-} from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
+import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -20,6 +17,7 @@ import {
   mapFieldErrors,
 } from "@/shared/forms/utils";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceInput,
@@ -31,10 +29,8 @@ const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.
- * @param prevState - Previous form state
- * @param formData - FormData from the client
- * @returns FormState with data, errors, message, and success
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function createInvoiceAction(
   prevState: FormState<CreateInvoiceFieldNames, CreateInvoiceInput>,
   formData: FormData,
@@ -69,22 +65,27 @@ export async function createInvoiceAction(
 
       result = {
         data: parsed.data,
-        message: INVOICE_SUCCESS_MESSAGES.CREATE_SUCCESS,
+        message: INVOICE_MSG.CREATE_SUCCESS,
         success: true,
       };
     } else {
       result = {
         ...prevState,
         errors: mapFieldErrors(parsed.error.flatten().fieldErrors, allowed),
-        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+        message: INVOICE_MSG.VALIDATION_FAILED,
         success: false,
       };
     }
   } catch (error) {
+    // Decide the top-level message key based on error type
+    const baseMessage = isZodError(error)
+      ? INVOICE_MSG.VALIDATION_FAILED
+      : toInvoiceErrorMessage(error);
+
     serverLogger.error({
       context: "createInvoiceAction",
       error,
-      message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message: baseMessage,
     });
 
     result = {
@@ -92,9 +93,7 @@ export async function createInvoiceAction(
       errors: isZodError(error)
         ? mapFieldErrors(error.flatten().fieldErrors, allowed)
         : {},
-      message: isZodError(error)
-        ? INVOICE_ERROR_MESSAGES.VALIDATION_FAILED
-        : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+      message: baseMessage,
       success: false,
     };
   }

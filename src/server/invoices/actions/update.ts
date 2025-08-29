@@ -1,10 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  INVOICE_ERROR_MESSAGES,
-  INVOICE_SUCCESS_MESSAGES,
-} from "@/features/invoices/messages";
 import { getDB } from "@/server/db/connection";
 import {
   type BaseInvoiceEvent,
@@ -16,6 +12,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceInput,
@@ -65,7 +62,7 @@ function handleActionError<
     context: "updateInvoiceAction",
     error,
     id,
-    message: INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+    message: INVOICE_MSG.SERVICE_ERROR,
     prevState,
   });
   return {
@@ -73,8 +70,8 @@ function handleActionError<
     errors: {},
     message:
       error instanceof ValidationError
-        ? INVOICE_ERROR_MESSAGES.INVALID_INPUT
-        : INVOICE_ERROR_MESSAGES.SERVICE_ERROR,
+        ? INVOICE_MSG.INVALID_INPUT
+        : INVOICE_MSG.SERVICE_ERROR,
     success: false,
   };
 }
@@ -102,7 +99,7 @@ export async function updateInvoiceAction(
         errors: parsed.error.flatten().fieldErrors as Partial<
           Record<UpdateInvoiceFieldNames, FormFieldError>
         >,
-        message: INVOICE_ERROR_MESSAGES.VALIDATION_FAILED,
+        message: INVOICE_MSG.VALIDATION_FAILED,
         success: false,
       };
     }
@@ -116,7 +113,7 @@ export async function updateInvoiceAction(
 
     return {
       data: updatedInvoice,
-      message: INVOICE_SUCCESS_MESSAGES.UPDATE_SUCCESS,
+      message: INVOICE_MSG.UPDATE_SUCCESS,
       success: true,
     };
   } catch (error) {

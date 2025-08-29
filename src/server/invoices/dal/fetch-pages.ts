@@ -1,10 +1,10 @@
 import "server-only";
 
 import { count, eq, ilike, or, sql } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import { ITEMS_PER_PAGE } from "@/shared/ui/ui";
 
 /**
@@ -49,7 +49,7 @@ export async function fetchInvoicesPagesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_PAGES_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.FETCH_PAGES_FAILED, {
       query,
       total,
     });

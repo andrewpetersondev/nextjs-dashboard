@@ -1,7 +1,6 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -12,6 +11,7 @@ import type {
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**
  * Updates an invoice in the database.
@@ -29,7 +29,7 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
   if (!db || !id || !updateData) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, {
       id,
       updateData,
     });
@@ -44,7 +44,7 @@ export async function updateInvoiceDal(
 
   // Check if update was successful
   if (!updated) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.UPDATE_FAILED, { id });
+    throw new DatabaseError(INVOICE_MSG.UPDATE_FAILED, { id });
   }
 
   // Convert raw database row to InvoiceEntity

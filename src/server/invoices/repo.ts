@@ -1,6 +1,5 @@
 import "server-only";
 
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
 import { fromDal } from "@/server/errors/wrappers";
@@ -19,6 +18,7 @@ import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
 import type { InvoiceDto } from "@/shared/invoices/dto";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import { Err, Ok, type Result } from "@/shared/result/result-base";
 import { map } from "@/shared/result/result-transform";
 
@@ -49,7 +49,7 @@ export class InvoiceRepository extends BaseRepository<
     input: InvoiceServiceEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!input || typeof input !== "object") {
-      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+      return Err(new ValidationError(INVOICE_MSG.VALIDATION_FAILED));
     }
 
     const createdEntityRes = await fromDal(createInvoiceDal(this.db, input));
@@ -71,7 +71,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
+      throw new ValidationError(INVOICE_MSG.VALIDATION_FAILED);
     }
 
     const createdEntity = await createInvoiceDal(this.db, input);
@@ -92,9 +92,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
-      );
+      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
 
     const entityRes = await fromDal(readInvoiceDal(this.db, id));
@@ -113,7 +111,7 @@ export class InvoiceRepository extends BaseRepository<
   async read(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
 
     // Call DAL with branded ID
@@ -136,7 +134,7 @@ export class InvoiceRepository extends BaseRepository<
     data: InvoiceFormPartialEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!data || !id || typeof data !== "object") {
-      return Err(new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED));
+      return Err(new ValidationError(INVOICE_MSG.VALIDATION_FAILED));
     }
 
     const updatedEntityRes = await fromDal(updateInvoiceDal(this.db, id, data));
@@ -159,7 +157,7 @@ export class InvoiceRepository extends BaseRepository<
   ): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!data || !id || typeof data !== "object") {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.VALIDATION_FAILED);
+      throw new ValidationError(INVOICE_MSG.VALIDATION_FAILED);
     }
 
     // Call DAL with branded types
@@ -179,9 +177,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
-      );
+      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
 
     const deletedEntityRes = await fromDal(deleteInvoiceDal(this.db, id));
@@ -199,7 +195,7 @@ export class InvoiceRepository extends BaseRepository<
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
 
     // Call DAL with branded ID
@@ -216,9 +212,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceEntity, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(
-        new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id }),
-      );
+      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
     return await fromDal(readInvoiceDal(this.db, id));
   }
@@ -231,7 +225,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async findById(id: InvoiceId): Promise<InvoiceEntity> {
     if (!id) {
-      throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
     return await readInvoiceDal(this.db, id);
   }

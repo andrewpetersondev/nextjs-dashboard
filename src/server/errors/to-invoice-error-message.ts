@@ -1,14 +1,27 @@
-// server/errors/to-invoice-error-message.ts
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import { isDatabaseError } from "@/server/errors/guards";
 import { isValidationError } from "@/shared/errors/guards";
+import { isInvoiceMessageKey } from "@/shared/invoices/guards";
+import {
+  INVOICE_MSG,
+  type InvoiceMessageKey,
+} from "@/shared/invoices/messages";
 
-export function toInvoiceErrorMessage(error: unknown): string {
+export function toInvoiceErrorMessage(error: unknown): InvoiceMessageKey {
   if (isValidationError(error)) {
-    return INVOICE_ERROR_MESSAGES.INVALID_INPUT;
+    const message = (error as Error).message; // capture to enable TS narrowing
+    if (isInvoiceMessageKey(message)) {
+      return message;
+    }
+    return INVOICE_MSG.INVALID_INPUT;
   }
+
   if (isDatabaseError(error)) {
-    return INVOICE_ERROR_MESSAGES.DB_ERROR;
+    const message = (error as Error).message; // capture to enable TS narrowing
+    if (isInvoiceMessageKey(message)) {
+      return message;
+    }
+    return INVOICE_MSG.DB_ERROR;
   }
-  return INVOICE_ERROR_MESSAGES.SERVICE_ERROR;
+
+  return INVOICE_MSG.SERVICE_ERROR;
 }

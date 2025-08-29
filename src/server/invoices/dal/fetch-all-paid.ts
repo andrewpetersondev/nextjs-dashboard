@@ -1,13 +1,13 @@
 import "server-only";
 
 import { desc, eq } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { ValidationError } from "@/shared/errors/domain";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**
  * Fetches all paid invoices from the database.
@@ -20,7 +20,7 @@ export async function fetchAllPaidInvoicesDal(
   db: Database,
 ): Promise<InvoiceEntity[]> {
   if (!db) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, {
       db: "Database instance is required",
     });
   }
@@ -33,7 +33,7 @@ export async function fetchAllPaidInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_FAILED);
+    throw new DatabaseError(INVOICE_MSG.FETCH_FAILED);
   }
 
   // Convert raw database rows to InvoiceEntity

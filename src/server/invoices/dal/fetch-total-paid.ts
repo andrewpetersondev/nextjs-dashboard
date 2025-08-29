@@ -1,10 +1,10 @@
 import "server-only";
 
 import { eq, sql } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 export async function fetchTotalPaidInvoicesDal(db: Database): Promise<number> {
   const paid = await db
@@ -18,7 +18,7 @@ export async function fetchTotalPaidInvoicesDal(db: Database): Promise<number> {
     .then((rows) => rows[0]?.value ?? 0);
 
   if (paid === undefined) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_TOTAL_PAID_FAILED);
+    throw new DatabaseError(INVOICE_MSG.FETCH_TOTAL_PAID_FAILED);
   }
 
   return paid;

@@ -1,10 +1,10 @@
 import "server-only";
 
 import { desc, eq } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { customers, invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 import type { InvoiceListFilter } from "@/shared/invoices/types";
 
 /**
@@ -38,7 +38,7 @@ export async function fetchLatestInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.FETCH_LATEST_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.FETCH_LATEST_FAILED, {
       limit,
     });
   }

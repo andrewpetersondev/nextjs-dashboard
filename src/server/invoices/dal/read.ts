@@ -1,7 +1,6 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import { INVOICE_ERROR_MESSAGES } from "@/features/invoices/messages";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -9,6 +8,7 @@ import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
+import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**
  * Reads an invoice by ID.
@@ -24,7 +24,7 @@ export async function readInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Basic validation of parameters
   if (!db || !id) {
-    throw new ValidationError(INVOICE_ERROR_MESSAGES.INVALID_INPUT, { id });
+    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, { id });
   }
 
   // Fetch invoice by ID
@@ -32,7 +32,7 @@ export async function readInvoiceDal(
 
   // Check if invoice exists
   if (!data) {
-    throw new DatabaseError(INVOICE_ERROR_MESSAGES.NOT_FOUND, { id });
+    throw new DatabaseError(INVOICE_MSG.NOT_FOUND, { id });
   }
 
   // Convert raw database row to InvoiceEntity
