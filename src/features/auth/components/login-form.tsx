@@ -38,16 +38,26 @@ export const LoginForm: FC<LoginFormProps> = ({
     FormState<LoginFormFieldNames>,
     FormData
   >(action, INITIAL_STATE);
-  const emailId = useId();
-  const passwordId = useId();
+  const baseId = useId();
+  const emailId = `${baseId}-email`;
+  const passwordId = `${baseId}-password`;
+  // Narrow once: values only exist on failure states
+  const values = state.success ? undefined : state.values;
 
   return (
     <>
-      <form action={boundAction} aria-label="Login form" className="space-y-6">
+      <form
+        action={boundAction}
+        aria-label="Login form"
+        autoComplete="off"
+        className="space-y-6"
+        data-cy="login-form"
+      >
         <InputField
           autoComplete="email"
           autoFocus={true}
           dataCy="login-email-input"
+          defaultValue={values?.email}
           describedById={`${emailId}-errors`}
           error={state?.errors?.email}
           icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
@@ -71,11 +81,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           required={true}
           type="password"
         />
-
         <FormInputWrapper>
           <AuthActionsRow />
         </FormInputWrapper>
-
         <AuthSubmitButton data-cy="login-submit-button" pending={pending}>
           Log In
         </AuthSubmitButton>

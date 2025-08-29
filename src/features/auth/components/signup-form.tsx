@@ -43,13 +43,13 @@ export const SignupForm: FC<SignupFormProps> = ({
   const usernameId = `${baseId}-username`;
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
-  const passwordErrorsId = `${baseId}-password-errors`;
   const values = state.success ? undefined : state.values;
 
   return (
     <>
       <form
         action={boundAction}
+        aria-label="Signup form"
         autoComplete="off"
         className="space-y-6"
         data-cy="signup-form"
@@ -58,8 +58,9 @@ export const SignupForm: FC<SignupFormProps> = ({
           autoComplete="username"
           dataCy="signup-username-input"
           defaultValue={values?.username}
+          describedById={`${usernameId}-errors`}
           error={state?.errors?.username}
-          icon={<UserIcon className={iconClass} />}
+          icon={<UserIcon aria-hidden="true" className={iconClass} />}
           id={usernameId}
           label="Username"
           name="username"
@@ -70,8 +71,9 @@ export const SignupForm: FC<SignupFormProps> = ({
           autoComplete="email"
           dataCy="signup-email-input"
           defaultValue={values?.email}
+          describedById={`${emailId}-errors`}
           error={state?.errors?.email}
-          icon={<AtSymbolIcon className={iconClass} />}
+          icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
           id={emailId}
           label="Email address"
           name="email"
@@ -82,9 +84,9 @@ export const SignupForm: FC<SignupFormProps> = ({
         <InputField
           autoComplete="new-password"
           dataCy="signup-password-input"
-          describedById={passwordErrorsId}
+          describedById={`${passwordId}-errors`}
           error={state?.errors?.password}
-          icon={<LockClosedIcon className={iconClass} />}
+          icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
           id={passwordId}
           label="Password"
           name="password"
