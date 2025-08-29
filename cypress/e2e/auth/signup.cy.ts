@@ -1,11 +1,12 @@
-import { UI_MATCHERS } from "../__fixtures__/constants";
+import { DEFAULT_TIMEOUT, UI_MATCHERS } from "../__fixtures__/constants";
+import { DASHBOARD_PATH, SIGNUP_PATH } from "../__fixtures__/paths";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup flow", () => {
   it("allows a new user to sign up and redirects to dashboard", () => {
     const user = createTestUser();
 
-    cy.visit("/auth/signup");
+    cy.visit(SIGNUP_PATH);
 
     // Assert signup page renders
     cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
@@ -25,7 +26,7 @@ describe("Signup flow", () => {
     cy.get('[data-cy="signup-submit-button"]').click();
 
     // Expect redirect to dashboard
-    cy.url({ timeout: 20000 }).should("include", "/dashboard");
+    cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
 
     // Verify dashboard heading for a regular user
     cy.findByRole("heading", {
@@ -35,7 +36,7 @@ describe("Signup flow", () => {
   });
 });
 
-describe.skip("Signup flow with Database Tasks", () => {
+describe("Signup flow with Database Tasks", () => {
   beforeEach(() => {
     // Ensure clean test database state
     cy.cleanupTestDatabase();
@@ -51,7 +52,7 @@ describe.skip("Signup flow with Database Tasks", () => {
   it("allows a new user to sign up and redirects to dashboard", () => {
     const user = createTestUser();
 
-    cy.visit("/signup");
+    cy.visit(SIGNUP_PATH);
     cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
       "be.visible",
     );
@@ -61,7 +62,7 @@ describe.skip("Signup flow with Database Tasks", () => {
     cy.get('[data-cy="signup-password-input"]').type(user.password);
 
     cy.get('[data-cy="signup-submit-button"]').click();
-    cy.url({ timeout: 20000 }).should("include", "/dashboard");
+    cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DEFAULT_TIMEOUT);
 
     cy.findByRole("heading", {
       level: 1,

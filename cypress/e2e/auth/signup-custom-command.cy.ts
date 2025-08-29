@@ -1,5 +1,5 @@
 import { DEFAULT_TIMEOUT, UI_MATCHERS } from "../__fixtures__/constants";
-import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../__fixtures__/paths";
+import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup → Sign out → Login flow", () => {
@@ -8,9 +8,9 @@ describe("Signup → Sign out → Login flow", () => {
 
     // 1) Sign up
     cy.signup({
-      username: user.username,
       email: user.email,
       password: user.password,
+      username: user.username,
     });
 
     // 2) Redirects to dashboard after signup

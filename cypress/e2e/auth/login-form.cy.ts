@@ -2,9 +2,9 @@
 // E2E tests for the updated LoginForm that uses React useId for input ids.
 // Adjust the visited path (LOGIN_PATH) to match your application routing.
 
+import { DEFAULT_TIMEOUT } from "../__fixtures__/constants";
 import { LOGIN_PATH } from "../__fixtures__/paths";
-
-const LOGIN_REGEX = /login form/i;
+import { LOGIN_REGEX } from "../__fixtures__/regex";
 
 describe("Login Form (E2E) - useId integration", () => {
   beforeEach(() => {
@@ -67,11 +67,11 @@ describe("Login Form (E2E) - useId integration", () => {
 
     cy.get('[data-cy="login-submit-button"]').click();
 
-    cy.get('[data-cy="login-submit-button"]', { timeout: 2000 }).should(
-      ($btn) => {
-        const isDisabled = ($btn.attr("disabled") as unknown) !== undefined;
-        expect(isDisabled).to.be.oneOf([true, false]);
-      },
-    );
+    cy.get('[data-cy="login-submit-button"]', {
+      timeout: DEFAULT_TIMEOUT,
+    }).should(($btn) => {
+      const isDisabled = ($btn.attr("disabled") as unknown) !== undefined;
+      expect(isDisabled).to.be.oneOf([true, false]);
+    });
   });
 });
