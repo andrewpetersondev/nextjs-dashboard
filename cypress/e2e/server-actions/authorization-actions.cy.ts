@@ -1,7 +1,7 @@
 import { SUCCESS_MESSAGES } from "../__fixtures__/messages-success";
 import { STATUS_CODES } from "../__fixtures__/status-codes";
 
-describe.skip("Server Action Authorization", () => {
+describe("Server Action Authorization", () => {
   it("should prevent unauthorized access to admin actions", () => {
     cy.loginAsRegularUser();
 
@@ -18,7 +18,7 @@ describe.skip("Server Action Authorization", () => {
 
   it("should allow admin actions for authorized users", () => {
     cy.loginAsAdmin();
-    cy.visit("/admin/users");
+    cy.visit("/dashboard/users");
 
     cy.get('[data-cy="user-row"]')
       .first()

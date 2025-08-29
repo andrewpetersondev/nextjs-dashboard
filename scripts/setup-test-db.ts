@@ -1,3 +1,7 @@
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/correctness/noNodejsModules: <temp> */
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+
 // scripts/setup-test-db.ts
 import { exec } from "node:child_process";
 import { promisify } from "node:util";

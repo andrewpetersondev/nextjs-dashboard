@@ -9,6 +9,8 @@
  *
  * @see https://orm.drizzle.team/docs/overview
  */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
 
 import {
   drizzle,

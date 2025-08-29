@@ -1,9 +1,9 @@
 import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 
-describe.skip("Server Action Validation", () => {
+describe("Server Action Validation", () => {
   it("should handle validation errors gracefully", () => {
     cy.loginAsTestUser();
-    cy.visit("/dashboard/items");
+    cy.visit("/dashboard/users/create");
 
     cy.get('[data-cy="add-item-button"]').click();
     // Leave required fields empty
@@ -26,7 +26,7 @@ describe.skip("Server Action Validation", () => {
     cy.loginAsTestUser();
     cy.createTestItem("Duplicate Item");
 
-    cy.visit("/dashboard/items");
+    cy.visit("/dashboard/users/create");
     cy.get('[data-cy="add-item-button"]').click();
     cy.get('[data-cy="item-name-input"]').type("Duplicate Item");
     cy.get('[data-cy="item-description-input"]').type("Description");

@@ -65,8 +65,9 @@
     "db-reset-dev": "pnpm dlx tsx scripts/reset-dev.ts",
     "db-reset-prod": "pnpm dlx tsx scripts/reset-prod.ts",
     "db-reset-test": "pnpm dlx tsx scripts/reset-test.ts",
-    "db-truncate-helper": "SEED_RESET=true pnpm tsx scripts/seed-dev-db.ts",
-    "db-truncate-seed": "pnpm db-truncate-helper",
+    "db-truncate-dev": "SEED_RESET=true pnpm tsx scripts/seed-dev-db.ts",
+    "db-truncate-prod": "SEED_RESET=true pnpm tsx scripts/seed-prod-db.ts",
+    "db-truncate-test": "SEED_RESET=true pnpm tsx scripts/seed-test-db.ts",
     "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
     "dev": "next dev --turbopack",
     "dev-hcp": "hcp vault-secrets run -- pnpm dev",
@@ -102,7 +103,8 @@
     "test:e2e": "NODE_ENV=test cypress run",
     "test:e2e:headed": "NODE_ENV=test cypress run --headed",
     "test:e2e:open": "NODE_ENV=test cypress open",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "type-gen": "next typegen && tsc --noEmit"
   },
   "type": "module",
   "version": "0.1.0"

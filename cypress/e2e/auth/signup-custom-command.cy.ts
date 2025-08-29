@@ -3,7 +3,9 @@ import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup → Sign out → Login flow", () => {
-  const hasDb = typeof Cypress.env("POSTGRES_URL_TESTDB") === "string" && Cypress.env("POSTGRES_URL_TESTDB").length > 0;
+  const hasDb =
+    typeof Cypress.env("POSTGRES_URL_TESTDB") === "string" &&
+    Cypress.env("POSTGRES_URL_TESTDB").length > 0;
   const testFn = hasDb ? it : it.skip;
 
   testFn("allows a user to sign up, sign out, and then log back in", () => {

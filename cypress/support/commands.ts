@@ -21,6 +21,17 @@ export type SignupCreds = {
   password: string;
 };
 
+// Centralize data-cy selectors to avoid duplication/typos
+const SEL = {
+  loginEmail: '[data-cy="login-email-input"]',
+  loginPassword: '[data-cy="login-password-input"]',
+  loginSubmit: '[data-cy="login-submit-button"]',
+  signupUsername: '[data-cy="signup-username-input"]',
+  signupEmail: '[data-cy="signup-email-input"]',
+  signupPassword: '[data-cy="signup-password-input"]',
+  signupSubmit: '[data-cy="signup-submit-button"]',
+};
+
 declare global {
   // biome-ignore lint/style/noNamespace: <this is standard cypress>
   namespace Cypress {
@@ -57,13 +68,17 @@ Cypress.Commands.add("loginAsTestUser", () => {
       cy.setupTestDatabase();
 
       cy.visit(LOGIN_PATH);
-      cy.get('[data-cy="login-email-input"]').type(user.email);
-      cy.get('[data-cy="login-password-input"]').type(user.password);
-      cy.get('[data-cy="login-submit-button"]').click();
+      cy.get(SEL.loginEmail).clear().type(user.email);
+      cy.get(SEL.loginPassword).clear().type(user.password, { log: false });
+      cy.get(SEL.loginSubmit).click();
       cy.url().should("include", DASHBOARD_PATH);
     } else {
       // No DB seeding; ensure the user exists by signing up through the UI
-      cy.signup({ username: user.username, email: user.email, password: user.password });
+      cy.signup({
+        username: user.username,
+        email: user.email,
+        password: user.password,
+      });
       cy.url().should("include", DASHBOARD_PATH);
     }
   });
@@ -71,9 +86,9 @@ Cypress.Commands.add("loginAsTestUser", () => {
 
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.visit(LOGIN_PATH);
-  cy.get('[data-cy="login-email-input"]').clear().type(email);
-  cy.get('[data-cy="login-password-input"]').clear().type(password);
-  cy.get('[data-cy="login-submit-button"]').click();
+  cy.get(SEL.loginEmail).clear().type(email);
+  cy.get(SEL.loginPassword).clear().type(password, { log: false });
+  cy.get(SEL.loginSubmit).click();
 });
 
 Cypress.Commands.add("createTestItem", (name: string) => {
@@ -94,11 +109,11 @@ Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
     "be.visible",
   );
 
-  cy.get('[data-cy="signup-username-input"]').type(username);
-  cy.get('[data-cy="signup-email-input"]').type(email);
-  cy.get('[data-cy="signup-password-input"]').type(password);
+  cy.get(SEL.signupUsername).clear().type(username);
+  cy.get(SEL.signupEmail).clear().type(email);
+  cy.get(SEL.signupPassword).clear().type(password, { log: false });
 
   // Submit and wait for client-side navigation to dashboard
-  cy.get('[data-cy="signup-submit-button"]').click();
+  cy.get(SEL.signupSubmit).click();
   cy.location("pathname", { timeout: 20000 }).should("include", DASHBOARD_PATH);
 });

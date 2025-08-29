@@ -1,7 +1,7 @@
 import { FIVE_SECONDS } from "../__fixtures__/constants";
 import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 
-describe.skip("Server Action Performance", () => {
+describe("Server Action Performance", () => {
   it("should handle rate limiting gracefully", () => {
     cy.loginAsTestUser();
     cy.visit("/dashboard/items");

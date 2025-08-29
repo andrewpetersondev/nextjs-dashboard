@@ -28,7 +28,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!scripts",
+      "!cypress",
       "!.aiassistant",
       "!.github",
       "!.idea",

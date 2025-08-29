@@ -1,6 +1,6 @@
 import { STATUS_CODES } from "../__fixtures__/status-codes";
 
-describe.skip("CRUD Server Actions", () => {
+describe("CRUD Server Actions", () => {
   beforeEach(() => {
     // Setup authenticated user
     cy.loginAsTestUser();

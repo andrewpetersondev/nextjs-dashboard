@@ -1,8 +1,15 @@
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <temp> */
+/** biome-ignore-all lint/complexity/noExcessiveLinesPerFunction: <temp> */
+/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
+/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
+
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
-import * as schema from "../src/server/db/schema.ts";
-import type { Period } from "../src/shared/brands/domain-brands.ts";
-import { nodeEnvProdDb } from "./db-prod.ts";
+import * as schema from "../src/server/db/schema";
+import type { Period } from "../src/shared/brands/domain-brands";
+import { nodeEnvProdDb } from "./db-prod";
 
 /**
  * @file seeds/seed-prod-db.ts
@@ -98,8 +105,8 @@ function generateMonthlyPeriods(start: string, months: number): string[] {
   if (!yearStr || !monthStr) {
     throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
   }
-  const year = parseInt(yearStr, 10);
-  const month = parseInt(monthStr, 10);
+  const year = Number.parseInt(yearStr, 10);
+  const month = Number.parseInt(monthStr, 10);
   if (Number.isNaN(year) || Number.isNaN(month)) {
     throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
   }

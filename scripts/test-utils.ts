@@ -1,3 +1,7 @@
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/correctness/noNodejsModules: <temp> */
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+
 // src/lib/db/test-utils.ts
 import { Pool } from "pg";
 
@@ -20,7 +24,7 @@ const getTestDbPool = (): Pool => {
   return new Pool({
     connectionString: testDbUrl,
     connectionTimeoutMillis: 2000,
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 30_000,
     // Smaller pool for tests
     max: 5,
   });

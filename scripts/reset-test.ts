@@ -14,9 +14,12 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
+/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
+/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
+
 import { reset } from "drizzle-seed";
-import * as schema from "../src/server/db/schema.ts";
-import { nodeEnvTestDb } from "./db-test.ts";
+import * as schema from "../src/server/db/schema";
+import { nodeEnvTestDb } from "./db-test";
 
 async function main(): Promise<void> {
   await reset(nodeEnvTestDb, schema);

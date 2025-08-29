@@ -9,9 +9,9 @@ describe("Login success flow", () => {
     // Ensure the user exists through the signup path if needed
     // Attempt signup first for determinism in ephemeral DBs
     cy.signup({
-      username: user.username,
       email: user.email,
       password: user.password,
+      username: user.username,
     });
 
     // Now sign out to test the login success path
