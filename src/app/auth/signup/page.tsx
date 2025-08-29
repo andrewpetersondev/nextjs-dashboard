@@ -5,6 +5,7 @@ import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
 import { SIGNUP_HEADING } from "@/features/auth/text";
+import { signup } from "@/server/auth/actions/signup";
 
 export default function Page(): JSX.Element {
   return (
@@ -13,7 +14,7 @@ export default function Page(): JSX.Element {
         <Heading text={SIGNUP_HEADING} />
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-            <SignupForm />
+            <SignupForm action={signup} />
             <AuthFormDivider label="or continue with" />
             <AuthFormSocialSection
               demoAdminText="Sign Up as Demo Admin"

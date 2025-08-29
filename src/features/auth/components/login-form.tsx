@@ -11,14 +11,14 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
 import { InputField } from "@/ui/forms/input-field";
 
-// Define the initial state with strict typing
-const initialState: FormState<LoginFormFieldNames> = {
-  errors: {},
+const INITIAL_STATE = {
+  errors: {} as Partial<Record<LoginFormFieldNames, FormFieldError>>,
   message: "",
   success: false,
-};
+} satisfies Extract<FormState<LoginFormFieldNames>, { success: false }>;
 
-// Define the action type and component props
+const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
+
 type LoginAction = (
   prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
@@ -28,27 +28,16 @@ interface LoginFormProps {
   action: LoginAction;
 }
 
-const _INITIAL_STATE = {
-  errors: {} as Partial<Record<LoginFormFieldNames, FormFieldError>>,
-  message: "",
-  success: false,
-} satisfies Extract<FormState<LoginFormFieldNames>, { success: false }>;
-
-const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
-
 /**
  * LoginForm component for user authentication.
- *
- * @returns {JSX.Element} Rendered LoginForm component.
  */
 export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {
-  // useActionState returns a tuple: [state, boundAction, pending]
   const [state, boundAction, pending] = useActionState<
     FormState<LoginFormFieldNames>,
     FormData
-  >(action, initialState);
+  >(action, INITIAL_STATE);
   const emailId = useId();
   const passwordId = useId();
 

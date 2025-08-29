@@ -16,6 +16,7 @@ import {
 } from "@/shared/auth/schema.shared";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
+import { toDenseFormErrors } from "@/shared/forms/utils";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**
@@ -30,6 +31,7 @@ export async function login(
   // Prepare fields and raw values for adapter (values will be redacted inside adapter)
   const fields = LOGIN_FIELDS;
   const raw = Object.fromEntries(formData.entries());
+  const emptyDense = toDenseFormErrors<LoginFormFieldNames>({}, fields);
 
   const result = await validateFormGeneric<LoginFormFieldNames, LoginFormInput>(
     formData,
@@ -57,11 +59,14 @@ export async function login(
     const user = await findUserForLogin(db, email, password);
 
     if (!user) {
-      return {
-        errors: {},
-        message: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-        success: false,
-      };
+      return toFormState(
+        { error: emptyDense, success: false },
+        {
+          failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
+          fields,
+          raw,
+        },
+      );
     }
 
     await setSessionToken(toUserId(user.id), toUserRole(user.role));
@@ -73,11 +78,10 @@ export async function login(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return {
-      errors: {},
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    };
+    return toFormState(
+      { error: emptyDense, success: false },
+      { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
+    );
   }
 
   redirect("/dashboard");

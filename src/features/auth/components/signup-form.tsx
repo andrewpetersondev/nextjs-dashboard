@@ -9,7 +9,6 @@ import { type FC, type JSX, useActionState, useId } from "react";
 import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
-import { signup } from "@/server/auth/actions/signup";
 import type { SignupFormFieldNames } from "@/shared/auth/schema.shared";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
@@ -23,24 +22,34 @@ const INITIAL_STATE = {
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
+type SignupAction = (
+  prevState: FormState<SignupFormFieldNames>,
+  formData: FormData,
+) => Promise<FormState<SignupFormFieldNames>>;
+
+interface SignupFormProps {
+  action: SignupAction;
+}
+
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
-export const SignupForm: FC = (): JSX.Element => {
-  const [state, action, pending] = useActionState<
+export const SignupForm: FC<SignupFormProps> = ({
+  action,
+}: SignupFormProps): JSX.Element => {
+  const [state, boundAction, pending] = useActionState<
     FormState<SignupFormFieldNames>,
     FormData
-  >(signup, INITIAL_STATE);
+  >(action, INITIAL_STATE);
   const baseId = useId();
   const usernameId = `${baseId}-username`;
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
   const passwordErrorsId = `${baseId}-password-errors`;
-  // Narrow once: values only exist on failure states
   const values = state.success ? undefined : state.values;
 
   return (
     <>
       <form
-        action={action}
+        action={boundAction}
         autoComplete="off"
         className="space-y-6"
         data-cy="signup-form"
