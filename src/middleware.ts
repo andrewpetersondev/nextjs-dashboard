@@ -1,50 +1,70 @@
-import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 
-const protectedRoutes: string[] = ["/dashboard"];
-const publicRoutes: string[] = ["/login", "/signup", "/"];
-const adminRoutes: string[] = ["/dashboard/users"];
+const PROTECTED_PREFIX = "/dashboard" as const;
+const ADMIN_PREFIX = "/dashboard/users" as const;
+const PUBLIC_ROUTES = new Set(["/auth/login", "/auth/signup", "/"]);
 
+// Normalize path by removing trailing slash (except root)
+function normalizePath(p: string): string {
+  if (p.length > 1 && p.endsWith("/")) {
+    return p.slice(0, -1);
+  }
+  return p;
+}
+
+// Segment-aware prefix check: matches exact prefix or prefix + "/"
+function isPathUnder(path: string, prefix: string): boolean {
+  return path === prefix || path.startsWith(`${prefix}/`);
+}
+// ... existing code ...
 export default async function middleware(req: NextRequest) {
-  const path: string = req.nextUrl.pathname;
-  const isProtectedRoute: boolean = protectedRoutes.includes(path);
-  const isPublicRoute: boolean = publicRoutes.includes(path);
-  const isAdminRoute: boolean = adminRoutes.includes(path);
+  const path: string = normalizePath(req.nextUrl.pathname);
+  const isProtectedRoute: boolean = isPathUnder(path, PROTECTED_PREFIX);
+  const isAdminRoute: boolean = isPathUnder(path, ADMIN_PREFIX);
+  const isPublicRoute: boolean = PUBLIC_ROUTES.has(path);
 
-  // Retrieve the session cookie
-  const cookie: string | undefined = (await cookies()).get("session")?.value;
+  // If route is not relevant for auth, skip work early (avoid cookie/session reads)
+  if (!isProtectedRoute && !isAdminRoute && !isPublicRoute) {
+    return NextResponse.next();
+  }
 
-  // Decrypt the session cookie to get the session data
+  // Retrieve and decode session only when needed
+  const cookie: string | undefined = req.cookies.get("session")?.value;
   const session: DecryptPayload | undefined = await readSessionToken(cookie);
 
-  // If the route is protected and the user is not authenticated, redirect to the login page
+  // Admin-only routes
+  if (isAdminRoute) {
+    // Not authenticated: go straight to login (avoid double redirects)
+    if (!session?.user?.userId) {
+      return NextResponse.redirect(new URL("/auth/login", req.nextUrl));
+    }
+    // Authenticated but not admin
+    if (session.user.role !== "admin") {
+      return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    }
+  }
+
+  // Protected routes (folder-scoped)
   if (isProtectedRoute && !session?.user?.userId) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
+    return NextResponse.redirect(new URL("/auth/login", req.nextUrl));
   }
 
-  if (
-    isAdminRoute &&
-    (!session?.user?.userId || session.user.role !== "admin")
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-  }
-
-  // If the route is public and the user is authenticated, redirect to the dashboard
+  // Public routes: bounce authenticated users to dashboard
   if (
     isPublicRoute &&
     session?.user?.userId &&
-    !req.nextUrl.pathname.startsWith("/dashboard")
+    !isPathUnder(path, PROTECTED_PREFIX)
   ) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 
-  // Allow the request to proceed if no redirection is needed
   return NextResponse.next();
 }
 
 // Routes Middleware should not run on
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  // Exclude APIs, Next internals, data routes, and any path with a file extension
+  matcher: ["/((?!api|_next/static|_next/image|_next/data|.*\\..*$).*)"],
 };
