@@ -1,3 +1,4 @@
+// Central, type-safe message ID registry
 export const INVOICE_MSG = {
   AMOUNT_REQUIRED: "INVOICE.AMOUNT_REQUIRED",
   CREATE_FAILED: "INVOICE.CREATE_FAILED",
@@ -34,4 +35,5 @@ export const INVOICE_MSG = {
   VALIDATION_FAILED: "INVOICE.VALIDATION_FAILED",
 } as const;
 
-export type InvoiceMessageKey = (typeof INVOICE_MSG)[keyof typeof INVOICE_MSG];
+// The union of message ID string values
+export type InvoiceMessageId = (typeof INVOICE_MSG)[keyof typeof INVOICE_MSG];

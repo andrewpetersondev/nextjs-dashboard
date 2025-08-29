@@ -1,9 +1,7 @@
-import {
-  INVOICE_MSG,
-  type InvoiceMessageKey,
-} from "@/shared/invoices/messages";
+import { INVOICE_MSG, type InvoiceMessageId } from "@/shared/invoices/messages";
 
-export const enInvoices: Record<InvoiceMessageKey, string> = {
+// Single-locale dictionary (en) with compile-time completeness check
+export const enInvoices = {
   [INVOICE_MSG.AMOUNT_REQUIRED]: "Amount is required.",
   [INVOICE_MSG.CREATE_FAILED]: "Failed to create invoice.",
   [INVOICE_MSG.CREATE_SUCCESS]: "Invoice created successfully.",
@@ -44,4 +42,4 @@ export const enInvoices: Record<InvoiceMessageKey, string> = {
   [INVOICE_MSG.UPDATE_SUCCESS]: "Invoice updated successfully.",
   [INVOICE_MSG.VALIDATION_FAILED]:
     "Validation failed. Please check your input.",
-};
+} satisfies Record<InvoiceMessageId, string>;
