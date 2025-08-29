@@ -1,6 +1,6 @@
 import "server-only";
 
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
 
 /**
  * Validates and returns a user role, defaulting to "guest" if invalid.

@@ -13,19 +13,21 @@ import {
   type SignupFormInput,
   SignupFormSchema,
 } from "@/shared/auth/schema.shared";
-import { SignupAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
+
+// Derive the runtime field list once from the schema to avoid scattering literals/types
+const SIGNUP_FIELDS = Object.keys(
+  SignupFormSchema.shape,
+) as readonly SignupFormFieldNames[];
 
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
-  "use server";
-
   // Prepare fields and raw values for adapter (values will be redacted inside adapter)
-  const fields = SignupAllowedFields as readonly SignupFormFieldNames[];
+  const fields = SIGNUP_FIELDS;
   const raw = Object.fromEntries(formData.entries());
 
   const result = await validateFormGeneric<

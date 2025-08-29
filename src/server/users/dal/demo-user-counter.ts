@@ -4,7 +4,8 @@ import type { Database } from "@/server/db/connection";
 import { demoUserCounters } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { AuthRole } from "@/shared/auth/roles";
+
+import type { AuthRole } from "@/shared/auth/types";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

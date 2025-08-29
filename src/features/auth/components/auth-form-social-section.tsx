@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { DemoForm } from "@/features/auth/components/demo-form";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
-import type { AuthRole } from "@/shared/auth/roles";
+
+import type { AuthRole } from "@/shared/auth/types";
 
 /**
  * Props for AuthFormSocialSection.

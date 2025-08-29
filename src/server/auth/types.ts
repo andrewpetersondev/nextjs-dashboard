@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { EncryptPayload } from "@/shared/auth/types";
+import type { EncryptPayload } from "@/shared/auth/sessions/zod";
 
 // Payload after decrypting a session (includes JWT claims).
 export interface DecryptPayload extends EncryptPayload {

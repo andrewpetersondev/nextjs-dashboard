@@ -4,7 +4,7 @@ import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import { createRandomPassword } from "@/shared/auth/password";
-import type { AuthRole } from "@/shared/auth/roles";
+import type { AuthRole } from "@/shared/auth/types";
 import type { UserDto } from "@/shared/users/dto";
 
 /**

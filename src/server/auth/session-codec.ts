@@ -10,8 +10,10 @@ import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
 } from "@/shared/auth/sessions/mapper";
-import type { EncryptPayload } from "@/shared/auth/types";
-import { EncryptPayloadSchema } from "@/shared/auth/zod";
+import {
+  type EncryptPayload,
+  EncryptPayloadSchema,
+} from "@/shared/auth/sessions/zod";
 import { ValidationError } from "@/shared/errors/domain";
 
 let encodedKey: Uint8Array | undefined;

@@ -1,24 +1,11 @@
-import type { AuthRole } from "@/shared/auth/roles";
-
 /**
- * Payload for encrypting a session (JWT or similar).
+ * List of allowed user roles.
+ * @readonly
  */
-export interface EncryptPayload {
-  user: {
-    userId: string;
-    role: AuthRole;
-    expiresAt: number; // Unix timestamp (ms)
-  };
-}
-
+export const AUTH_ROLES = ["admin", "user", "guest"] as const;
 /**
- * Result returned when verifying a user session.
+ * Union type for user roles.
+ * @example
+ * const role: UserRole = "admin";
  */
-export interface SessionVerificationResult {
-  isAuthorized: true;
-  userId: string;
-  role: AuthRole;
-}
-
-export const SignupAllowedFields = ["username", "email", "password"] as const;
-export const LoginAllowedFields = ["email", "password"] as const;
+export type AuthRole = (typeof AUTH_ROLES)[number];

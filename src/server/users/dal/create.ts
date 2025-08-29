@@ -7,7 +7,7 @@ import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import type { AuthRole } from "@/shared/auth/roles";
+import type { AuthRole } from "@/shared/auth/types";
 import type { UserDto } from "@/shared/users/dto";
 
 /**

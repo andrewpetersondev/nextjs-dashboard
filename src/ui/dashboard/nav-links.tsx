@@ -10,7 +10,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
-import type { AuthRole } from "@/shared/auth/roles";
+
+import type { AuthRole } from "@/shared/auth/types";
 
 /** Navigation link paths */
 const NAV_LINKS = {

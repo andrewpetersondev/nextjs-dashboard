@@ -4,9 +4,14 @@ import {
   passwordSchema,
   usernameSchema,
 } from "@/shared/auth/schema.shared";
-import { roleSchema } from "@/shared/auth/zod";
+import { AUTH_ROLES } from "@/shared/auth/types";
 
-const UserFormBaseSchema = z.object({
+export const roleSchema = z.enum(AUTH_ROLES, {
+  error: (issue) =>
+    issue.input === undefined ? "Role is required." : "Invalid user role.",
+});
+
+export const UserFormBaseSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   role: roleSchema,
@@ -23,19 +28,4 @@ export type EditUserInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserInput;
 
 // for backwards compatibility
-export type BaseUserFormFields = CreateUserInput;
 export type BaseUserFormFieldNames = keyof CreateUserInput;
-
-// Form Fields
-// export type BaseUserFormFields = {
-//   readonly email: string;
-//   readonly password: string;
-//   readonly role: AuthRole;
-//   readonly username: string;
-// };
-// export type CreateUserFormFields = BaseUserFormFields;
-// export type EditUserFormFields = Partial<CreateUserFormFields>;
-// Form Field Names
-// export type BaseUserFormFieldNames = keyof BaseUserFormFields;
-// export type CreateUserFormFieldNames = keyof CreateUserFormFields;
-// export type EditUserFormFieldNames = keyof EditUserFormFields;

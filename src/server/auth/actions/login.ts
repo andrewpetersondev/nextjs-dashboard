@@ -9,11 +9,11 @@ import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import {
+  LoginAllowedFields,
   type LoginFormFieldNames,
   type LoginFormInput,
   LoginFormSchema,
 } from "@/shared/auth/schema.shared";
-import { LoginAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";

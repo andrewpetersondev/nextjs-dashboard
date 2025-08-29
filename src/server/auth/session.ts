@@ -12,9 +12,9 @@ import {
 } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { SESSION_DURATION_MS } from "@/shared/auth/constants";
-import type { AuthRole } from "@/shared/auth/roles";
-import type { SessionVerificationResult } from "@/shared/auth/types";
+import { SESSION_DURATION_MS } from "@/shared/auth/sessions/constants";
+import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
+import type { AuthRole } from "@/shared/auth/types";
 
 /**
  * Deletes the session cookie.

@@ -22,6 +22,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
@@ -30,7 +31,6 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "../../features/revenues/types.ts";
-import { AUTH_ROLES, type AuthRole } from "../../shared/auth/roles.ts";
 import type {
   CustomerId,
   InvoiceId,
