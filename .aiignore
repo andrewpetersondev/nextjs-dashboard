@@ -24,8 +24,8 @@
 drizzle
 public
 storage
-.env
-.env.*
+# .env
+# .env.*
 # .gitignore
 # CONFIG.md
 eslint.config.mjs

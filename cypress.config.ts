@@ -26,6 +26,21 @@ export default defineConfig({
           const { seedTestDatabase } = await import("./scripts/test-utils");
           return seedTestDatabase();
         },
+        async "db:setup"(
+          user?: {
+            email?: string;
+            username?: string;
+            password?: string;
+          } | null,
+        ) {
+          // Deterministic setup: cleanup then seed optional specific user
+          const { setupTestDatabase } = await import("./scripts/test-utils");
+          return setupTestDatabase(user ?? undefined);
+        },
+        async "db:userExists"(email: string) {
+          const { userExists } = await import("./scripts/test-utils");
+          return userExists(email);
+        },
       });
       return config;
     },

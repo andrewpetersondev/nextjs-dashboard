@@ -18,6 +18,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 console.log("db-test.ts ...");
 
@@ -31,6 +32,9 @@ if (process.env.POSTGRES_URL_TESTDB) {
   process.exit(1);
 }
 
+// Create a single shared Pool for node-postgres and pass it to drizzle
+const pool = new Pool({ connectionString: url });
+
 export const nodeEnvTestDb: NodePgDatabase & {
   $client: NodePgClient;
-} = drizzle({ casing: "snake_case", connection: url });
+} = drizzle(pool, { casing: "snake_case" });

@@ -6,31 +6,9 @@ import {
   LOGIN_PATH,
   SIGNUP_PATH,
 } from "../e2e/__fixtures__/paths";
+import { SEL } from "../e2e/__fixtures__/selectors";
+import type { SignupCreds } from "../e2e/__fixtures__/types";
 import { createTestUser } from "../e2e/__fixtures__/users";
-
-/**
- * Credentials for signing up a user in E2E tests.
- * @public
- */
-export type SignupCreds = {
-  /** Desired username (display name). */
-  username: string;
-  /** User email address. */
-  email: string;
-  /** Plain-text password for test signup. */
-  password: string;
-};
-
-// Centralize data-cy selectors to avoid duplication/typos
-const SEL = {
-  loginEmail: '[data-cy="login-email-input"]',
-  loginPassword: '[data-cy="login-password-input"]',
-  loginSubmit: '[data-cy="login-submit-button"]',
-  signupUsername: '[data-cy="signup-username-input"]',
-  signupEmail: '[data-cy="signup-email-input"]',
-  signupPassword: '[data-cy="signup-password-input"]',
-  signupSubmit: '[data-cy="signup-submit-button"]',
-};
 
 declare global {
   // biome-ignore lint/style/noNamespace: <this is standard cypress>
@@ -39,22 +17,24 @@ declare global {
       /** Logs in using the login form */
       login(email: string, password: string): Chainable<void>;
       loginAsTestUser(): Chainable<void>;
-      loginAsAdmin(): Chainable<void>;
-      loginAsRegularUser(): Chainable<void>;
+      // loginAsAdmin(): Chainable<void>;
+      // loginAsRegularUser(): Chainable<void>;
       createTestItem(name: string): Chainable<void>;
-      setupTestDatabase(): Chainable<void>;
+      setupTestDatabase(user?: SignupCreds): Chainable<void>;
       cleanupTestDatabase(): Chainable<void>;
       signup(creds: SignupCreds): Chainable<void>;
     }
   }
 }
 
-Cypress.Commands.add("setupTestDatabase", () => {
-  cy.task("db:seed");
+Cypress.Commands.add("setupTestDatabase", (user?: SignupCreds) => {
+  // Ensure Cypress waits for task completion
+  return cy.task("db:setup", user ?? null);
 });
 
 Cypress.Commands.add("cleanupTestDatabase", () => {
-  cy.task("db:cleanup");
+  // Ensure Cypress waits for task completion
+  return cy.task("db:cleanup");
 });
 
 Cypress.Commands.add("loginAsTestUser", () => {
@@ -65,7 +45,12 @@ Cypress.Commands.add("loginAsTestUser", () => {
     // If a test DB is available, seed and log in. Otherwise, create the user via signup.
     const testDbUrl = Cypress.env("POSTGRES_URL_TESTDB");
     if (typeof testDbUrl === "string" && testDbUrl.length > 0) {
-      cy.setupTestDatabase();
+      // Setup now cleans and seeds the exact user
+      cy.setupTestDatabase({
+        email: user.email,
+        password: user.password,
+        username: user.username,
+      });
 
       cy.visit(LOGIN_PATH);
       cy.get(SEL.loginEmail).clear().type(user.email);
@@ -75,9 +60,9 @@ Cypress.Commands.add("loginAsTestUser", () => {
     } else {
       // No DB seeding; ensure the user exists by signing up through the UI
       cy.signup({
-        username: user.username,
         email: user.email,
         password: user.password,
+        username: user.username,
       });
       cy.url().should("include", DASHBOARD_PATH);
     }
@@ -89,17 +74,6 @@ Cypress.Commands.add("login", (email: string, password: string) => {
   cy.get(SEL.loginEmail).clear().type(email);
   cy.get(SEL.loginPassword).clear().type(password, { log: false });
   cy.get(SEL.loginSubmit).click();
-});
-
-Cypress.Commands.add("createTestItem", (name: string) => {
-  cy.request({
-    body: {
-      description: `Description for ${name}`,
-      name,
-    },
-    method: "POST",
-    url: "/api/items",
-  });
 });
 
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
@@ -115,5 +89,8 @@ Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
 
   // Submit and wait for client-side navigation to dashboard
   cy.get(SEL.signupSubmit).click();
-  cy.location("pathname", { timeout: 20000 }).should("include", DASHBOARD_PATH);
+  cy.location("pathname", { timeout: 20_000 }).should(
+    "include",
+    DASHBOARD_PATH,
+  );
 });
