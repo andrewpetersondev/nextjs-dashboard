@@ -12,13 +12,11 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
+import { SignupFormSchema } from "@/shared/auth/schema.shared";
+import { SignupAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
-import {
-  SignupAllowedFields,
-  SignupFormSchema,
-} from "@/shared/users/schema.shared";
 
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,

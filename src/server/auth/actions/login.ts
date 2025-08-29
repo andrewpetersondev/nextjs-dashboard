@@ -12,13 +12,11 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
+import { LoginFormSchema } from "@/shared/auth/schema.shared";
+import { LoginAllowedFields } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
-import {
-  LoginAllowedFields,
-  LoginFormSchema,
-} from "@/shared/users/schema.shared";
 
 export async function login(
   _prevState: FormState<LoginFormFieldNames>,

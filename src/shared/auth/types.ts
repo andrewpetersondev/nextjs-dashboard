@@ -19,3 +19,6 @@ export interface SessionVerificationResult {
   userId: string;
   role: AuthRole;
 }
+
+export const SignupAllowedFields = ["username", "email", "password"] as const;
+export const LoginAllowedFields = ["email", "password"] as const;
