@@ -57,17 +57,3 @@ export interface RevenueStatistics {
   readonly monthsWithData: number;
   readonly total: Cents;
 }
-
-/**
- * Client-safe row used by revenues feature data utilities and charts.
- * Represents a display-oriented revenue record without server-only concerns.
- */
-export interface RevenueDisplayRow {
-  readonly calculationSource: import("@/features/revenues/types").RevenueSource;
-  readonly invoiceCount: number;
-  readonly month: MonthName;
-  readonly monthNumber: number;
-  readonly period: Period | string;
-  readonly totalAmount: Cents;
-  readonly year: number;
-}
