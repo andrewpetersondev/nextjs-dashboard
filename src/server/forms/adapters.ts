@@ -6,7 +6,6 @@ import {
 } from "@/shared/forms/messages";
 import type {
   DenseFormErrors,
-  FieldErrors,
   FormErrors,
   FormState,
 } from "@/shared/forms/types";
@@ -77,41 +76,5 @@ export function toFormState<TFieldNames extends string, TData>(
     message: failureMessage,
     success: false,
     values: buildValues(raw, fields, redactFields),
-  };
-}
-
-/**
- * Adapter: Result -> ActionResult
- *
- * Keeps existing action contract and maps errors into FieldErrors.
- */
-export function toActionResult<TFieldNames extends string, TData>(
-  r: Result<TData, DenseFormErrors<TFieldNames>>,
-  params?: { successMessage?: string; failureMessage?: string },
-):
-  | { success: true; message: string; data: TData }
-  | {
-      success: false;
-      message: string;
-      errors: FieldErrors;
-    } {
-  const successMessage =
-    params?.successMessage ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE;
-  const failureMessage =
-    params?.failureMessage ?? FORM_ERROR_MESSAGES.FAILED_VALIDATION;
-
-  if (r.success) {
-    return {
-      data: r.data,
-      message: successMessage,
-      success: true,
-    };
-  }
-
-  // Coerce dense keyed by field union into the non-generic FieldErrors
-  return {
-    errors: r.error as unknown as FieldErrors,
-    message: failureMessage,
-    success: false,
   };
 }

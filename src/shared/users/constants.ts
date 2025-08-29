@@ -9,5 +9,3 @@ export const DEFAULT_USER_SCHEMA = {
   USERNAME_MAX_LENGTH: 20,
   USERNAME_MIN_LENGTH: 3,
 } as const;
-
-export const TIMER_DELAY = 4000;

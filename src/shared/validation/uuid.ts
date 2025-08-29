@@ -8,17 +8,6 @@ export const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Validates that a string is a valid UUID format
- * (Throw-based for backward compatibility)
- */
-export const validateUuid = (id: string, brandName: string): void => {
-  const r = validateUuidResult(id, brandName);
-  if (!r.success) {
-    throw r.error;
-  }
-};
-
-/**
  * Validate if the input is a properly formatted UUID. (Result-based)
  */
 export const validateUuidResult = (

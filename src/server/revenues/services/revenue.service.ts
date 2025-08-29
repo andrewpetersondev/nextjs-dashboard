@@ -1,6 +1,5 @@
 import "server-only";
 
-import { formatDateToPeriod } from "@/features/revenues/lib/date/format";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,
@@ -10,7 +9,6 @@ import type {
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
-import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**
  * Business service for revenue processing and management.
@@ -52,23 +50,6 @@ export class RevenueService {
   }
 
   /**
-   * Retrieves a revenue record by its ID.
-   *
-   * @param id - Unique identifier of the revenue record
-   * @returns Promise resolving to the revenue entity
-   */
-  async read(id: RevenueId): Promise<RevenueEntity> {
-    if (!id) {
-      throw new ValidationError("Revenue ID is required");
-    }
-    const revenue = await this.repository.read(id);
-    if (!revenue) {
-      throw new ValidationError(`Revenue with ID ${id} not found`);
-    }
-    return revenue;
-  }
-
-  /**
    * Updates an existing revenue record.
    *
    * @concern NOTE: Method uses RevenuePartialEntity (which omits id) but the id is used in another parameter.
@@ -105,22 +86,6 @@ export class RevenueService {
   }
 
   /**
-   * Retrieves revenue records within a specific date range.
-   *
-   * @param startDate - Start of the date range (inclusive)
-   * @param endDate - End of the date range (inclusive)
-   * @returns Promise resolving to an array of revenue entities
-   */
-  async getRevenueByDateRange(
-    startDate: Date,
-    endDate: Date,
-  ): Promise<RevenueEntity[]> {
-    const startPeriod = formatDateToPeriod(startDate);
-    const endPeriod = formatDateToPeriod(endDate);
-    return await this.repository.findByDateRange(startPeriod, endPeriod);
-  }
-
-  /**
    * Retrieves a revenue record by its period.
    *
    * @param period - The period (first-of-month DATE)
@@ -131,84 +96,5 @@ export class RevenueService {
       throw new ValidationError("Period is required");
     }
     return await this.repository.findByPeriod(period);
-  }
-
-  /**
-   * Calculates revenue statistics for a given date range.
-   *
-   * @param startDate - Start of the analysis period
-   * @param endDate - End of the analysis period
-   * @returns Promise resolving to statistical summary
-   */
-  async getRevenueStatistics(
-    startDate: Date,
-    endDate: Date,
-  ): Promise<{
-    average: number;
-    count: number;
-    total: number;
-  }> {
-    const revenues = await this.getRevenueByDateRange(startDate, endDate);
-    const total = revenues.reduce(
-      (sum, revenue) => sum + revenue.totalAmount,
-      0,
-    );
-    const count = revenues.length;
-    const average = count > 0 ? Math.round(total / count) : 0;
-
-    return { average, count, total };
-  }
-
-  /**
-   * Creates or updates a revenue record for a specific month based on invoice data.
-   * This method is called by the event handler when invoices are created, updated, or deleted.
-   *
-   * @param period - The period (first-of-month DATE)
-   * @param invoice - The invoice data that triggered the update
-   * @returns Promise resolving to the created or updated revenue entity
-   */
-  async upsertMonthlyRevenue(
-    period: Period,
-    invoice: InvoiceDto,
-  ): Promise<RevenueEntity> {
-    if (!period) {
-      throw new ValidationError("Period is required");
-    }
-
-    if (!invoice) {
-      throw new ValidationError("Invoice data is required");
-    }
-
-    // Check if a revenue record already exists for this period
-    const existingRevenue = await this.repository.findByPeriod(period);
-
-    // If no existing revenue, create a new record or update with zero amounts
-    if (!existingRevenue) {
-      // Create a new revenue record
-      const newRevenue: RevenueUpdatable = {
-        calculationSource: "handler",
-        invoiceCount: invoice.status === "paid" ? 1 : 0,
-        totalAmount: invoice.status === "paid" ? invoice.amount : 0,
-      };
-
-      return this.repository.upsertByPeriod(period, newRevenue);
-    }
-
-    // Update existing revenue record
-    const updatedRevenue: RevenueUpdatable = {
-      calculationSource: "handler",
-      // If the invoice is paid, increment the count, otherwise keep it the same
-      invoiceCount:
-        invoice.status === "paid"
-          ? existingRevenue.invoiceCount + 1
-          : existingRevenue.invoiceCount,
-      // If the invoice is paid, add its amount, otherwise keep the same revenue
-      totalAmount:
-        invoice.status === "paid"
-          ? existingRevenue.totalAmount + invoice.amount
-          : existingRevenue.totalAmount,
-    };
-
-    return this.repository.upsertByPeriod(period, updatedRevenue);
   }
 }
