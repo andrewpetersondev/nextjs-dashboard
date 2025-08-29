@@ -16,6 +16,7 @@ import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
+import { t } from "@/shared/i18n/t";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {
@@ -65,21 +66,21 @@ export async function createInvoiceAction(
 
       result = {
         data: parsed.data,
-        message: INVOICE_MSG.CREATE_SUCCESS,
+        message: t(INVOICE_MSG.CREATE_SUCCESS),
         success: true,
       };
     } else {
       result = {
         ...prevState,
         errors: mapFieldErrors(parsed.error.flatten().fieldErrors, allowed),
-        message: INVOICE_MSG.VALIDATION_FAILED,
+        message: t(INVOICE_MSG.VALIDATION_FAILED),
         success: false,
       };
     }
   } catch (error) {
-    // Decide the top-level message key based on error type
+    // Decide the top-level user-facing message based on error type
     const baseMessage = isZodError(error)
-      ? INVOICE_MSG.VALIDATION_FAILED
+      ? t(INVOICE_MSG.VALIDATION_FAILED)
       : toInvoiceErrorMessage(error);
 
     serverLogger.error({

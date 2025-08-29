@@ -7,6 +7,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { t } from "@/shared/i18n/t";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 
@@ -38,22 +39,22 @@ export async function readInvoiceAction(
     result = {
       data: invoice,
       errors: {},
-      message: INVOICE_MSG.READ_SUCCESS,
+      message: t(INVOICE_MSG.READ_SUCCESS),
       success: true,
     };
   } catch (error) {
-    const messageKey = toInvoiceErrorMessage(error);
+    const message = toInvoiceErrorMessage(error);
 
     serverLogger.error({
       context: "readInvoiceAction",
       error,
       id,
-      message: messageKey,
+      message,
     });
 
     result = {
       errors: {},
-      message: messageKey,
+      message,
       success: false,
     };
   }

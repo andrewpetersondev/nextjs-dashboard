@@ -42,7 +42,8 @@ export class InvoiceService {
   private validateAndFormatDate(date: string): string {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) {
-      throw new ValidationError("Invalid date format");
+      // Use a known message ID so upper layers can translate consistently
+      throw new ValidationError(INVOICE_MSG.INVALID_FORM_DATA);
     }
     return date; // Already in ISO format from form
   }
@@ -55,9 +56,6 @@ export class InvoiceService {
    * @remarks
    * - Converts amount from dollars to cents
    * - Validates and formats date to ISO string
-   *
-   * @Business-Layer-Concepts:
-   * - Separates business logic from technical validation and entity conversions. Am I right?
    */
   private applyBusinessRules(dto: InvoiceFormDto): InvoiceFormDto {
     return {
@@ -73,9 +71,7 @@ export class InvoiceService {
    * Creates an invoice from validated DTO.
    * @param dto - Validated InvoiceFormDto
    * @returns Promise resolving to created InvoiceDto
-   * @throws ValidationError for invalid input to the Actions layer
-   * @throws
-   * - Error bubbles up through the repository layer to the Actions layer.
+   * @throws ValidationError with an InvoiceMessageId for invalid input
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
     if (!dto) {
@@ -106,7 +102,7 @@ export class InvoiceService {
     try {
       transformedDto = this.applyBusinessRules(dto);
     } catch (e) {
-      // Map legacy ValidationError -> new error type for Result branch
+      // Normalize to a known message ID when possible; otherwise default
       const message =
         e instanceof Error && e.message
           ? e.message
@@ -125,7 +121,7 @@ export class InvoiceService {
    * Reads an invoice by ID.
    * @param id - Invoice ID as string
    * @returns Promise resolving to InvoiceDto
-   * @throws ValidationError for invalid ID
+   * @throws ValidationError with an InvoiceMessageId for invalid ID
    */
   async readInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
@@ -142,7 +138,7 @@ export class InvoiceService {
    * @param id - Invoice ID as string
    * @param dto - Partial validated InvoiceFormDto
    * @returns Promise resolving to updated InvoiceDto
-   * @throws ValidationError for invalid input
+   * @throws ValidationError with an InvoiceMessageId for invalid input
    */
   async updateInvoice(
     id: string,
@@ -153,7 +149,7 @@ export class InvoiceService {
       throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 
-    // What is this solution called? Object Spread Immutability.
+    // Object Spread Immutability
     const updateDto: Partial<InvoiceFormDto> = {
       ...(dto.amount !== undefined && {
         amount: this.dollarsToCents(dto.amount),
@@ -177,7 +173,7 @@ export class InvoiceService {
    * Deletes an invoice by ID.
    * @param id - Invoice ID as string
    * @returns Promise resolving to deleted InvoiceDto
-   * @throws ValidationError for invalid ID
+   * @throws ValidationError with an InvoiceMessageId for invalid ID
    */
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of parameters. Throw error to Actions layer.

@@ -49,7 +49,7 @@ export class InvoiceRepository extends BaseRepository<
     input: InvoiceServiceEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!input || typeof input !== "object") {
-      return Err(new ValidationError(INVOICE_MSG.VALIDATION_FAILED));
+      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
     }
 
     const createdEntityRes = await fromDal(createInvoiceDal(this.db, input));
@@ -71,7 +71,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new ValidationError(INVOICE_MSG.VALIDATION_FAILED);
+      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 
     const createdEntity = await createInvoiceDal(this.db, input);
@@ -133,8 +133,11 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
-    if (!data || !id || typeof data !== "object") {
-      return Err(new ValidationError(INVOICE_MSG.VALIDATION_FAILED));
+    if (!id) {
+      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
+    }
+    if (!data || typeof data !== "object") {
+      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
     }
 
     const updatedEntityRes = await fromDal(updateInvoiceDal(this.db, id, data));
@@ -155,9 +158,11 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
-    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
-    if (!data || !id || typeof data !== "object") {
-      throw new ValidationError(INVOICE_MSG.VALIDATION_FAILED);
+    if (!id) {
+      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+    }
+    if (!data || typeof data !== "object") {
+      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 
     // Call DAL with branded types
