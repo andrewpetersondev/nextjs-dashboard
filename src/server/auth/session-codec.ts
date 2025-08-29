@@ -111,7 +111,7 @@ export async function readSessionToken(
       { context: "decrypt" },
       "No session token provided for decryption",
     );
-    return undefined;
+    return;
   }
 
   const key = getEncodedKey();
@@ -139,7 +139,7 @@ export async function readSessionToken(
         },
         "Session decryption failed",
       );
-      return undefined;
+      return;
     }
 
     const data = validatedFields.data as unknown as DecryptPayload;
@@ -154,6 +154,6 @@ export async function readSessionToken(
       { context: "decrypt", err: error },
       "Session decryption failed",
     );
-    return undefined;
+    return;
   }
 }

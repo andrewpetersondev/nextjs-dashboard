@@ -32,7 +32,12 @@ const providerIcons: Record<Provider, React.ReactNode> = {
  * @param props SocialLoginButtonProps
  */
 export const SocialLoginButton: React.NamedExoticComponent<SocialLoginButtonProps> =
-  memo(function SocialLoginButton({ provider, href, mode = "login", dataCy }) {
+  memo(function SocialLoginButtonInner({
+    provider,
+    href,
+    mode = "login",
+    dataCy,
+  }) {
     return (
       <a
         aria-label={`${mode === "signup" ? "Sign up" : "Sign in"} with ${provider}`}

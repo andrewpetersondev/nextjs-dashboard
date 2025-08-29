@@ -1,5 +1,7 @@
 import "server-only";
 
+// biome-ignore lint/correctness/noNodejsModules: <file is server only>
+import process from "node:process";
 import pino from "pino";
 
 /**

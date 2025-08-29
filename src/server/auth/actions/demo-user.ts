@@ -20,7 +20,7 @@ import type { UserDto } from "@/shared/users/dto";
 export async function demoUser(
   role: AuthRole = toUserRole("guest"),
 ): Promise<FormState<"_root">> {
-  let demoUser: UserDto | null = null;
+  let demoUserObject: UserDto | null = null;
 
   let result: FormState<"_root"> = {
     errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
@@ -34,29 +34,29 @@ export async function demoUser(
 
     if (!counter || counter <= 0) {
       serverLogger.error({
-        context: "demoUser",
+        context: "demoUserObject",
         message: USER_ERROR_MESSAGES.FETCH_COUNT,
         role,
       });
       throw new DatabaseError(USER_ERROR_MESSAGES.FETCH_COUNT);
     }
 
-    demoUser = await createDemoUser(db, counter, toUserRole(role));
+    demoUserObject = await createDemoUser(db, counter, toUserRole(role));
 
-    if (!demoUser) {
+    if (!demoUserObject) {
       serverLogger.error({
-        context: "demoUser",
+        context: "demoUserObject",
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         role,
       });
       throw new DatabaseError(USER_ERROR_MESSAGES.CREATE_FAILED);
     }
 
-    await setSessionToken(toUserId(demoUser.id), toUserRole(role));
+    await setSessionToken(toUserId(demoUserObject.id), toUserRole(role));
   } catch (error) {
     serverLogger.error({
-      context: "demoUser",
-      demoUser,
+      context: "demoUserObject",
+      demoUserObject,
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       role,

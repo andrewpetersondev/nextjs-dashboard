@@ -45,7 +45,7 @@ export function UserForm<TFieldNames extends string>({
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
-    return undefined;
+    return;
   }, [state.message]);
 
   return (

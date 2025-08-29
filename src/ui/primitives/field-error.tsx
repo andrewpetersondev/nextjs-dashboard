@@ -20,7 +20,7 @@ interface FieldErrorProps {
  * @returns Rendered error messages as a list, or null if no errors are present.
  */
 export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
-  function FieldError({
+  function FieldErrorInner({
     dataCy,
     error,
     id,

@@ -106,16 +106,18 @@
         "recommended": true
       },
       "correctness": {
-        "noNestedComponentDefinitions": "on",
-        "noReactPropAssignments": "on",
-        "noUndeclaredDependencies": "on",
+        "noGlobalDirnameFilename": "on",
+        "noNodejsModules": "on",
+        "noProcessGlobal": "on",
+        "noRestrictedElements": "off",
+        "noUndeclaredVariables": "on",
         "recommended": true,
-        "useImportExtensions": "on",
         "useUniqueElementIds": "off"
       },
       "nursery": {
-        "noImportCycles": "on",
-        "noMisusedPromises": "on",
+        "noNonNullAssertedOptionalChain": "on",
+        "noShadow": "on",
+        "noUselessUndefined": "on",
         "recommended": true,
         "useExhaustiveSwitchCases": "on",
         "useExplicitType": "off",

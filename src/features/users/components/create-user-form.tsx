@@ -51,7 +51,7 @@ export function _CreateUserForm(): JSX.Element {
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
-    return undefined;
+    return;
   }, [state.message]);
 
   return (

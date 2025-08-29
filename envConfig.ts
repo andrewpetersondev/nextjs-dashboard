@@ -1,3 +1,4 @@
+import process from "node:process";
 import { loadEnvConfig } from "@next/env";
 
 // biome-ignore lint/suspicious/useAwait: <not shown in nextjs docs>

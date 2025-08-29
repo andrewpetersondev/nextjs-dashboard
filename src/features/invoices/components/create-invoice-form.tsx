@@ -46,7 +46,7 @@ export const CreateInvoiceForm = ({
     }
 
     setShowAlert(false);
-    return undefined;
+    return;
   }, [state.message]);
 
   return (
