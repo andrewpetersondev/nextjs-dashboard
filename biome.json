@@ -174,7 +174,9 @@
         "useForOf": "on",
         "useFragmentSyntax": "on",
         "useGroupedAccessorPairs": "on",
-        "useNamingConvention": "on",
+        "useNamingConvention": "off",
+        "useNumberNamespace": "on",
+        "useNumericSeparators": "on",
         "useObjectSpread": "on",
         "useReadonlyClassProperties": "on",
         "useSelfClosingElements": "on",
@@ -187,15 +189,21 @@
         "useUnifiedTypeSignatures": "on"
       },
       "suspicious": {
+        "noAlert": "on",
         "noBitwiseOperators": "on",
-        "noDocumentImportInPage": "on",
+        "noConstantBinaryExpressions": "on",
         "noEmptyBlockStatements": "on",
         "noEvolvingTypes": "on",
+        "noMisplacedAssertion": "on",
+        "noSkippedTests": "on",
         "noUnassignedVariables": "on",
+        "noVar": "on",
         "recommended": true,
         "useAwait": "on",
         "useErrorMessage": "on",
-        "useGuardForIn": "on"
+        "useGuardForIn": "on",
+        "useNumberToFixedDigitsArgument": "on",
+        "useStaticResponseMethods": "on"
       }
     }
   },
