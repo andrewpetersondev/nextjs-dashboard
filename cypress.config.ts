@@ -1,5 +1,8 @@
 /** biome-ignore-all lint/style/noProcessEnv: <temp> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
+/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
+
 import { defineConfig } from "cypress";
 
 export default defineConfig({
