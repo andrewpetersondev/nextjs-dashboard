@@ -1,11 +1,6 @@
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from "@/features/users/messages";
-import { CreateUserFormSchema } from "@/features/users/schema.client";
 import type { CreateUserFormFieldNames } from "@/features/users/types";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -16,6 +11,11 @@ import {
   deriveAllowedFieldsFromSchema,
   mapFieldErrors,
 } from "@/shared/forms/utils";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/shared/users/messages";
+import { CreateUserFormSchema } from "@/shared/users/schema.shared";
 
 /**
  * Creates a new user (admin only).

@@ -6,11 +6,6 @@ import type {
   SignupFormFields,
 } from "@/features/auth/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
-import {
-  SignupAllowedFields,
-  SignupFormSchema,
-} from "@/features/users/schema.client";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { toFormState } from "@/server/forms/adapters";
@@ -19,6 +14,11 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
+import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
+import {
+  SignupAllowedFields,
+  SignupFormSchema,
+} from "@/shared/users/schema.shared";
 
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,

@@ -2,11 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from "@/features/users/messages";
-import { EditUserFormSchema } from "@/features/users/schema.client";
 import type { EditUserFormFieldNames } from "@/features/users/types";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
@@ -20,6 +15,11 @@ import {
   mapFieldErrors,
 } from "@/shared/forms/utils";
 import type { UserDto } from "@/shared/users/dto";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/shared/users/messages";
+import { EditUserFormSchema } from "@/shared/users/schema.shared";
 import { stripProperties } from "@/shared/utils/general";
 
 /**

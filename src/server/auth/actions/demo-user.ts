@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -13,6 +12,7 @@ import type { AuthRole } from "@/shared/auth/roles";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
+import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**
  * Creates a demo user and logs them in.
