@@ -7,16 +7,11 @@ describe("Signup → Sign out → Login flow", () => {
     const user = createTestUser();
 
     // 1) Sign up
-    cy.visit(SIGNUP_PATH);
-    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
-      "be.visible",
-    );
-
-    cy.get('[data-cy="signup-username-input"]').type(user.username);
-    cy.get('[data-cy="signup-email-input"]').type(user.email);
-    cy.get('[data-cy="signup-password-input"]').type(user.password);
-
-    cy.get('[data-cy="signup-submit-button"]').click();
+    cy.signup({
+      username: user.username,
+      email: user.email,
+      password: user.password,
+    });
 
     // 2) Redirects to dashboard after signup
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);

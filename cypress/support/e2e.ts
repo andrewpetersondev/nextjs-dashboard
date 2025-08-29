@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 import "@testing-library/cypress/add-commands";
 import "cypress-axe";
+import "./commands";
 
 // THIS IS THE E2E SUPPORT FILE
 

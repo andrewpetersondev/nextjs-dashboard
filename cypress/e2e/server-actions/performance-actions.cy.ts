@@ -1,4 +1,4 @@
-import { DURATION } from "../__fixtures__/constants";
+import { FIVE_SECONDS } from "../__fixtures__/constants";
 import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 
 describe.skip("Server Action Performance", () => {
@@ -31,7 +31,7 @@ describe.skip("Server Action Performance", () => {
     cy.wait("@performanceAction").then(() => {
       const endTime = Date.now();
       const duration = endTime - startTime;
-      expect(duration).to.be.lessThan(DURATION.FIVE_SECONDS); // 5 second max
+      expect(duration).to.be.lessThan(FIVE_SECONDS); // 5 second max
     });
   });
 });

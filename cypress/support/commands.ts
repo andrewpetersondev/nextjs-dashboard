@@ -1,7 +1,17 @@
-// cypress/support/commands.ts
+/// <reference types="cypress" />
+
+import { UI_MATCHERS } from "../e2e/__fixtures__/constants";
+import { SIGNUP_PATH } from "../e2e/__fixtures__/paths";
 import { createTestUser } from "../e2e/__fixtures__/users";
 
+type SignupCreds = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 declare global {
+  // biome-ignore lint/style/noNamespace: <this is standard cypress>
   namespace Cypress {
     interface Chainable {
       loginAsTestUser(): Chainable<void>;
@@ -10,6 +20,7 @@ declare global {
       createTestItem(name: string): Chainable<void>;
       setupTestDatabase(): Chainable<void>;
       cleanupTestDatabase(): Chainable<void>;
+      signup(creds: SignupCreds): Chainable<void>;
     }
   }
 }
@@ -46,4 +57,18 @@ Cypress.Commands.add("createTestItem", (name: string) => {
     method: "POST",
     url: "/api/items",
   });
+});
+
+Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
+  cy.visit(SIGNUP_PATH);
+
+  cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
+    "be.visible",
+  );
+
+  cy.get('[data-cy="signup-username-input"]').type(username);
+  cy.get('[data-cy="signup-email-input"]').type(email);
+  cy.get('[data-cy="signup-password-input"]').type(password);
+
+  cy.get('[data-cy="signup-submit-button"]').click();
 });
