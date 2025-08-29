@@ -9,7 +9,11 @@ import type { ValidationRule, Validator } from "@/shared/validation/types";
  * docs/lib/refactor-strategy/phase-1/1-3-validation-framework.md
  */
 export class StringValidator implements Validator<string> {
-  constructor(private readonly rules: ValidationRule<string>[] = []) {}
+  private readonly rules: ValidationRule<string>[];
+
+  constructor(rules: ValidationRule<string>[] = []) {
+    this.rules = rules;
+  }
 
   static required(message = "Field is required"): ValidationRule<string> {
     return { code: "required", message, test: (v) => v.trim().length > 0 };

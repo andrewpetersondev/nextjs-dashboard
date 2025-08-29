@@ -25,19 +25,19 @@
 export abstract class BaseError extends Error {
   abstract readonly code: string;
   abstract readonly statusCode: number;
-  // biome-ignore lint/style/useConsistentMemberAccessibility: <fix later>
-  public readonly timestamp: Date;
+  readonly timestamp: Date;
+  readonly context: Record<string, unknown>;
 
   constructor(
     message: string,
-    // biome-ignore lint/style/useConsistentMemberAccessibility: <fix later>
-    public readonly context: Record<string, unknown> = {},
+    context: Record<string, unknown> = {},
     cause?: Error,
   ) {
     // Use native cause when available
     super(message, { cause });
     this.name = new.target.name;
     this.timestamp = new Date();
+    this.context = context;
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, new.target);
     }

@@ -43,8 +43,12 @@ export async function _listInvoicesDal(
 
   // Combine conditions; avoid calling `.where(undefined).
   const whereExpr = (() => {
-    if (conditions.length === 0) return;
-    if (conditions.length === 1) return conditions[0];
+    if (conditions.length === 0) {
+      return;
+    }
+    if (conditions.length === 1) {
+      return conditions[0];
+    }
     return and(...conditions);
   })();
 

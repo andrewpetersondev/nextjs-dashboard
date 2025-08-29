@@ -72,7 +72,9 @@ export async function adjustRevenueForDeletedInvoice(
     context,
     "Adjusting revenue for deleted invoice",
     async () => {
-      if (!isEligibleDeletion(invoice, context, metadata)) return;
+      if (!isEligibleDeletion(invoice, context, metadata)) {
+        return;
+      }
       await applyDeletionEffects({
         context,
         invoice,

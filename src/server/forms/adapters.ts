@@ -21,7 +21,9 @@ function buildValues<TFieldNames extends string>(
 ): Partial<Record<TFieldNames, string>> {
   const values: Partial<Record<TFieldNames, string>> = {};
   for (const key of fields) {
-    if (redactFields.includes(key)) continue;
+    if (redactFields.includes(key)) {
+      continue;
+    }
     const v = raw[key as string];
     if (typeof v === "string") {
       values[key] = v;

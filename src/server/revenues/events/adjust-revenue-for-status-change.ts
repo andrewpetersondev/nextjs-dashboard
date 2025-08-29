@@ -34,14 +34,19 @@ function detectChange(
   | "none" {
   const prevEligible = isStatusEligibleForRevenue(previousInvoice.status);
   const currEligible = isStatusEligibleForRevenue(currentInvoice.status);
-  if (prevEligible && !currEligible) return "eligible-to-ineligible";
-  if (!prevEligible && currEligible) return "ineligible-to-eligible";
+  if (prevEligible && !currEligible) {
+    return "eligible-to-ineligible";
+  }
+  if (!prevEligible && currEligible) {
+    return "ineligible-to-eligible";
+  }
   if (
     prevEligible &&
     currEligible &&
     previousInvoice.amount !== currentInvoice.amount
-  )
+  ) {
     return "eligible-amount-change";
+  }
   return "none";
 }
 
@@ -54,7 +59,9 @@ function preparePeriodAndMeta(
   readonly meta: MetadataWithPeriod;
 } | null {
   const period = extractAndValidatePeriod(currentInvoice, context);
-  if (!period) return null;
+  if (!period) {
+    return null;
+  }
   const meta: MetadataWithPeriod = { ...baseMeta, period: periodKey(period) };
   return { meta, period } as const;
 }
@@ -146,7 +153,9 @@ async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
     args;
 
   const prepared = preparePeriodAndMeta(currentInvoice, context, baseMeta);
-  if (!prepared) return;
+  if (!prepared) {
+    return;
+  }
   const { period, meta } = prepared;
 
   const existingRevenue = await revenueService.findByPeriod(period);

@@ -138,16 +138,16 @@ export function mapRevenueEntityToDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw new ValidationError(`Invalid year extracted from period`);
+      throw new ValidationError("Invalid year extracted from period");
     }
     // if (monthNumber < 1 || monthNumber > 12) {}
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw new ValidationError(`Invalid month number extracted from period`);
+      throw new ValidationError("Invalid month number extracted from period");
     }
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
       throw new ValidationError(
-        `Invalid month name computed from month number`,
+        "Invalid month name computed from month number",
       );
     }
     return {
