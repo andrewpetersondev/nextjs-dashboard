@@ -5,9 +5,9 @@ import {
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { SelectRole } from "@/features/users/components/select-role";
-import type { BaseUserFormFieldNames } from "@/features/users/types";
 import type { FormFieldError } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
+import type { BaseUserFormFieldNames } from "@/shared/users/schema.shared";
 import { InputField } from "@/ui/forms/input-field";
 import { Label } from "@/ui/primitives/label";
 

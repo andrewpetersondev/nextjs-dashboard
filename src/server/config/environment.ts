@@ -22,8 +22,12 @@ import { z } from "zod";
  * - Update the README in this folder with documentation and usage.
  */
 
+// biome-ignore lint/style/noProcessEnv: <temp>
+// biome-ignore lint/correctness/noProcessGlobal: <temp>
 const isTestEnv: boolean = process.env.NODE_ENV === "test";
 
+// biome-ignore lint/style/noProcessEnv: <temp>
+// biome-ignore lint/correctness/noProcessGlobal: <temp>
 const isProdEnv: boolean = process.env.NODE_ENV === "production";
 
 const baseSchema = z.object({
@@ -41,6 +45,8 @@ const prodSchema = z.object({
 
 const envSchema = baseSchema.and(testSchema).and(prodSchema);
 
+// biome-ignore lint/style/noProcessEnv: <temp>
+// biome-ignore lint/correctness/noProcessGlobal: <temp>
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {

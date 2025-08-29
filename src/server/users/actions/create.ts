@@ -1,7 +1,6 @@
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { CreateUserFormFieldNames } from "@/features/users/types";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
@@ -15,7 +14,10 @@ import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/shared/users/messages";
-import { CreateUserFormSchema } from "@/shared/users/schema.shared";
+import {
+  type CreateUserFormFieldNames,
+  CreateUserFormSchema,
+} from "@/shared/users/schema.shared";
 
 /**
  * Creates a new user (admin only).

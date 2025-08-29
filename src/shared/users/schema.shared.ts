@@ -1,10 +1,4 @@
-import {
-  type ZodEmail,
-  type ZodObject,
-  type ZodOptional,
-  type ZodString,
-  z,
-} from "zod";
+import { z } from "zod";
 import {
   emailSchema,
   passwordSchema,
@@ -12,26 +6,36 @@ import {
 } from "@/shared/auth/schema.shared";
 import { roleSchema } from "@/shared/auth/zod";
 
-export const CreateUserFormSchema: ZodObject<{
-  email: ZodEmail;
-  password: ZodString;
-  role: typeof roleSchema;
-  username: ZodString;
-}> = z.object({
+const UserFormBaseSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   role: roleSchema,
   username: usernameSchema,
 });
 
-export const EditUserFormSchema: ZodObject<{
-  email: ZodOptional<ZodEmail>;
-  password: ZodOptional<ZodString>;
-  role: ZodOptional<typeof roleSchema>;
-  username: ZodOptional<ZodString>;
-}> = z.object({
-  email: emailSchema.optional(),
-  password: passwordSchema.optional(),
-  role: roleSchema.optional(),
-  username: usernameSchema.optional(),
-});
+export const CreateUserFormSchema = UserFormBaseSchema;
+export const EditUserFormSchema = CreateUserFormSchema.partial();
+
+// UI/view-model types derived from the shared schema
+export type CreateUserInput = z.input<typeof CreateUserFormSchema>;
+export type CreateUserFormFieldNames = keyof CreateUserInput;
+export type EditUserInput = z.input<typeof EditUserFormSchema>;
+export type EditUserFormFieldNames = keyof EditUserInput;
+
+// for backwards compatibility
+export type BaseUserFormFields = CreateUserInput;
+export type BaseUserFormFieldNames = keyof CreateUserInput;
+
+// Form Fields
+// export type BaseUserFormFields = {
+//   readonly email: string;
+//   readonly password: string;
+//   readonly role: AuthRole;
+//   readonly username: string;
+// };
+// export type CreateUserFormFields = BaseUserFormFields;
+// export type EditUserFormFields = Partial<CreateUserFormFields>;
+// Form Field Names
+// export type BaseUserFormFieldNames = keyof BaseUserFormFields;
+// export type CreateUserFormFieldNames = keyof CreateUserFormFields;
+// export type EditUserFormFieldNames = keyof EditUserFormFields;

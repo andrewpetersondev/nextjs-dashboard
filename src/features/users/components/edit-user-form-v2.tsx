@@ -3,10 +3,10 @@
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
-import type { EditUserFormFieldNames } from "@/features/users/types";
 import { updateUserAction } from "@/server/users/actions/update";
 import type { FormState } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto";
+import type { EditUserFormFieldNames } from "@/shared/users/schema.shared";
 
 export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
   const initialState: FormState<EditUserFormFieldNames> = {

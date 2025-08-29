@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { EditUserFormFieldNames } from "@/features/users/types";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -19,7 +18,10 @@ import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/shared/users/messages";
-import { EditUserFormSchema } from "@/shared/users/schema.shared";
+import {
+  type EditUserFormFieldNames,
+  EditUserFormSchema,
+} from "@/shared/users/schema.shared";
 import { stripProperties } from "@/shared/utils/general";
 
 /**

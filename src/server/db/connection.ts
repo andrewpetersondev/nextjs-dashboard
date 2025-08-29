@@ -85,6 +85,8 @@ export type Database = NodePgDatabase<typeof schema> & {
  * - "production"  -> prod DB (POSTGRES_URL_PRODDB)
  */
 export function getDB(
+  // biome-ignore lint/style/noProcessEnv: <temp>
+  // biome-ignore lint/correctness/noProcessGlobal: <temp>
   type: DbType = resolveDbTypeFromNodeEnv(process.env.NODE_ENV),
 ): Database {
   const url = getDatabaseUrl(type);
