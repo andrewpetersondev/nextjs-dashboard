@@ -36,7 +36,7 @@ export interface SelectMenuProps<
  */
 // biome-ignore lint/style/useExportsLast: <this is following convention>
 export const SelectMenu: SelectMenuComponent = React.memo(
-  function SelectMenuImpl<T extends { id: string; name: string }>({
+  function SelectMenuInner<T extends { id: string; name: string }>({
     options,
     value,
     defaultValue,

@@ -10,6 +10,4 @@ export const DEFAULT_USER_SCHEMA = {
   USERNAME_MIN_LENGTH: 3,
 } as const;
 
-export type DefaultUserSchema = typeof DEFAULT_USER_SCHEMA;
-
 export const TIMER_DELAY = 4000;

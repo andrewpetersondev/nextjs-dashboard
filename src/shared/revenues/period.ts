@@ -1,4 +1,3 @@
-import { addMonths, format } from "date-fns";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { formatYearMonth } from "@/shared/utils/date";
@@ -15,32 +14,6 @@ export function dateToPeriod(date: Date): Period {
  */
 export function periodToDate(period: Period): Date {
   return period as unknown as Date;
-}
-
-/**
- * Formats a branded Period for display (e.g., "August 2024").
- */
-export function formatPeriod(period: Period): string {
-  const d = periodToDate(period);
-  return format(d, "MMMM yyyy");
-}
-
-/**
- * Adds months to a Period and returns another Period (first-of-month Date)
- */
-export function addMonthsToPeriod(period: Period, months: number): Period {
-  const d = periodToDate(period);
-  const result = addMonths(d, months);
-  return dateToPeriod(result);
-}
-
-/**
- * Extracts the month number from a Period value.
- * @returns The month number (1-12)
- */
-export function extractMonthNumberFromPeriod(period: Period): number {
-  const d = periodToDate(period);
-  return d.getUTCMonth() + 1;
 }
 
 /**

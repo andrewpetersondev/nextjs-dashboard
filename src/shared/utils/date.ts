@@ -28,13 +28,6 @@ export function formatYearMonth(date: Date): string {
 }
 
 /**
- * Gets the UTC full year from a Date.
- */
-export function getUTCYear(date: Date): number {
-  return date.getUTCFullYear();
-}
-
-/**
  * Returns the current date in ISO format (YYYY-MM-DD).
  * This is useful for setting default values in forms or APIs.
  *

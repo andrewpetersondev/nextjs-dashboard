@@ -163,30 +163,6 @@ export function mapRevenueEntityToDisplayEntity(
   }
 }
 
-/**
- * Maps an array of RevenueEntity objects to RevenueDisplayEntity objects.
- *
- * @param revenueEntities - Array of revenue entities to transform
- * @returns Array of RevenueDisplayEntity objects
- * @throws {ValidationError} When entities is not an array or contains invalid data
- */
-export function mapRevenueEntitiesToDisplayEntities(
-  revenueEntities: RevenueEntity[],
-): RevenueDisplayEntity[] {
-  if (!Array.isArray(revenueEntities)) {
-    throw new ValidationError("Invalid revenue entities data: expected array");
-  }
-  return revenueEntities.map((revenueEntity, index) => {
-    try {
-      return mapRevenueEntityToDisplayEntity(revenueEntity);
-    } catch (error) {
-      throw new ValidationError(
-        `Failed to map revenue entity at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    }
-  });
-}
-
 export function mapEntityToSimpleRevenueDto(
   entity: { period: Date; totalAmount: number },
   index: number,
