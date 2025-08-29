@@ -29,7 +29,10 @@ export class RevenueService {
    *
    * @param repository - Repository interface for revenue data access
    */
-  constructor(private readonly repository: RevenueRepositoryInterface) {}
+  private readonly repository: RevenueRepositoryInterface;
+  constructor(repository: RevenueRepositoryInterface) {
+    this.repository = repository;
+  }
 
   /**
    * Creates a new revenue record.

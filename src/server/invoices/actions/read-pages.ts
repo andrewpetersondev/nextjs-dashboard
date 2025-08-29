@@ -11,9 +11,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * @param query - Search query string
  * @returns Promise<number> - Total number of pages
  */
-export async function readInvoicesPagesAction(
-  query: string = "",
-): Promise<number> {
+export async function readInvoicesPagesAction(query = ""): Promise<number> {
   try {
     const db = getDB();
     const sanitizedQuery = query.trim();

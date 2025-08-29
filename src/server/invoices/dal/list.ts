@@ -21,8 +21,8 @@ import type { InvoiceListFilter } from "@/shared/invoices/types";
 export async function _listInvoicesDal(
   db: Database,
   filter: InvoiceListFilter,
-  page: number = 1,
-  pageSize: number = 20,
+  page = 1,
+  pageSize = 20,
 ): Promise<{ entities: InvoiceEntity[]; total: number }> {
   const offset = (page - 1) * pageSize;
 

@@ -47,7 +47,11 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param db - Database connection instance
    */
-  constructor(private readonly db: Database) {}
+  private readonly db: Database;
+
+  constructor(db: Database) {
+    this.db = db;
+  }
 
   /**
    * Create a new revenue record.

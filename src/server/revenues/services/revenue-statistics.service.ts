@@ -31,7 +31,11 @@ export class RevenueStatisticsService {
    *
    * @param repository - The repository for accessing revenue data
    */
-  constructor(private readonly repository: RevenueRepositoryInterface) {}
+  private readonly repository: RevenueRepositoryInterface;
+
+  constructor(repository: RevenueRepositoryInterface) {
+    this.repository = repository;
+  }
 
   /**
    * Calculates revenue data for the rolling 12-month period.

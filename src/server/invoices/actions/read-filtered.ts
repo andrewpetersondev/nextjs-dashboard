@@ -11,8 +11,8 @@ import type { InvoiceListFilter } from "@/shared/invoices/types";
  * @returns Array of InvoiceListFilter
  */
 export async function readFilteredInvoicesAction(
-  query: string = "",
-  currentPage: number = 1,
+  query = "",
+  currentPage = 1,
 ): Promise<InvoiceListFilter[]> {
   const db = getDB();
   return await fetchFilteredInvoicesDal(db, query, currentPage);

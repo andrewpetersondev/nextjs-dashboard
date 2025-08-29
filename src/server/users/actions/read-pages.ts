@@ -7,9 +7,7 @@ import { fetchUsersPages } from "@/server/users/dal/fetch-users-pages";
 /**
  * Server action to fetch the total number of user pages.
  */
-export async function readUsersPagesAction(
-  query: string = "",
-): Promise<number> {
+export async function readUsersPagesAction(query = ""): Promise<number> {
   const db = getDB();
   return await fetchUsersPages(db, query);
 }

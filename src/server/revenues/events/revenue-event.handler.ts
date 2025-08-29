@@ -30,7 +30,11 @@ export class RevenueEventHandler {
    *
    * @param revenueService - The service for managing revenue records
    */
-  constructor(private readonly revenueService: RevenueService) {
+  private readonly revenueService: RevenueService;
+
+  constructor(revenueService: RevenueService) {
+    this.revenueService = revenueService;
+
     serverLogger.info({
       context: "RevenueEventHandler.constructor",
       message: "Initializing revenue event handler",

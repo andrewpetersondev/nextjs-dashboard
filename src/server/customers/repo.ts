@@ -19,7 +19,11 @@ import type { Database } from "@/server/db/connection";
  * - Repository maps to server DTOs (brands IDs, normalizes sums).
  */
 export class CustomersRepository {
-  constructor(private readonly db: Database) {}
+  private readonly db: Database;
+
+  constructor(db: Database) {
+    this.db = db;
+  }
 
   /**
    * Returns customers for select options (id + name) as server DTOs.
