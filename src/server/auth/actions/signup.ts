@@ -51,9 +51,8 @@ export async function signup(
 
   const { username, email, password } = validated.data;
 
-  const db = getDB();
-
   try {
+    const db = getDB();
     const user = await createUserDal(db, {
       email,
       password,

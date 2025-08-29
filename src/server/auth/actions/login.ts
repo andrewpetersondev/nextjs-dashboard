@@ -51,9 +51,9 @@ export async function login(
   }
 
   const { email, password } = validated.data;
-  const db = getDB();
 
   try {
+    const db = getDB();
     const user = await findUserForLogin(db, email, password);
 
     if (!user) {
