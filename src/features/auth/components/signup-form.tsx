@@ -24,6 +24,7 @@ const INITIAL_STATE = {
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export const SignupForm: FC = (): JSX.Element => {
   const [state, action, pending] = useActionState<
     FormState<SignupFormFieldNames>,
@@ -34,6 +35,9 @@ export const SignupForm: FC = (): JSX.Element => {
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
   const passwordErrorsId = `${baseId}-password-errors`;
+  // Narrow once: values only exist on failure states
+  const values = state.success ? undefined : state.values;
+
   return (
     <>
       <form
@@ -45,6 +49,7 @@ export const SignupForm: FC = (): JSX.Element => {
         <InputField
           autoComplete="username"
           dataCy="signup-username-input"
+          defaultValue={values?.username}
           error={state?.errors?.username}
           icon={<UserIcon className={iconClass} />}
           id={usernameId}
@@ -56,6 +61,7 @@ export const SignupForm: FC = (): JSX.Element => {
         <InputField
           autoComplete="email"
           dataCy="signup-email-input"
+          defaultValue={values?.email}
           error={state?.errors?.email}
           icon={<AtSymbolIcon className={iconClass} />}
           id={emailId}
