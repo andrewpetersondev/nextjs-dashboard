@@ -6,10 +6,9 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type FC, type JSX, useActionState, useId } from "react";
+import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
-import { ForgotPasswordLink } from "@/features/auth/components/forgot-password-link";
-import { RememberMeCheckbox } from "@/features/auth/components/remember-me-checkbox";
 import { signup } from "@/server/auth/actions/signup";
 import type { SignupFormFieldNames } from "@/shared/auth/schema.shared";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
@@ -85,10 +84,7 @@ export const SignupForm: FC = (): JSX.Element => {
           type="password"
         />
         <FormInputWrapper>
-          <div className="flex items-center justify-between">
-            <RememberMeCheckbox />
-            <ForgotPasswordLink />
-          </div>
+          <AuthActionsRow />
         </FormInputWrapper>
         <AuthSubmitButton data-cy="signup-submit-button" pending={pending}>
           Sign Up
