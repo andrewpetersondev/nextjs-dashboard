@@ -9,6 +9,7 @@ import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import {
+  SIGNUP_FIELDS,
   type SignupFormFieldNames,
   type SignupFormInput,
   SignupFormSchema,
@@ -17,11 +18,11 @@ import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
-// Derive the runtime field list once from the schema to avoid scattering literals/types
-const SIGNUP_FIELDS = Object.keys(
-  SignupFormSchema.shape,
-) as readonly SignupFormFieldNames[];
-
+/**
+ * Server action to handle signup form submission.
+ * Uses `validateFormGeneric` to validate the form data.
+ * Uses `toFormState` to convert the result to a form state.
+ */
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
@@ -42,13 +43,8 @@ export async function signup(
     }),
   });
 
-  const validated = toFormState(result, {
-    fields,
-    raw,
-    // Optional: override messages if desired
-    // successMessage: AUTH_SUCCESS_MESSAGES.SIGNED_UP,
-    // failureMessage: AUTH_ERROR_MESSAGES.SIGNUP_FAILED,
-  });
+  const validated = toFormState(result, { fields, raw });
+
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }

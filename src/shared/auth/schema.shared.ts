@@ -65,5 +65,12 @@ export type LoginFormFieldNames = keyof LoginFormInput;
 export type SignupFormInput = z.input<typeof SignupFormSchema>;
 export type SignupFormFieldNames = keyof SignupFormInput;
 
-// for backwards compatibility; remove in future
-export const LoginAllowedFields = ["email", "password"] as const;
+// Derive the runtime field list once from the schema to avoid scattering literals/types
+export const SIGNUP_FIELDS = Object.keys(
+  SignupFormSchema.shape,
+) as readonly SignupFormFieldNames[];
+
+// Derive the runtime field list once from the schema to avoid scattering literals/types
+export const LOGIN_FIELDS = Object.keys(
+  LoginFormSchema.shape,
+) as readonly LoginFormFieldNames[];

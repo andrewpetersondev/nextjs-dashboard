@@ -9,7 +9,7 @@ import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import {
-  LoginAllowedFields,
+  LOGIN_FIELDS,
   type LoginFormFieldNames,
   type LoginFormInput,
   LoginFormSchema,
@@ -18,14 +18,17 @@ import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
+/**
+ * Server action to handle login form submission.
+ * Uses `validateFormGeneric` to validate the form data.
+ * Uses `toFormState` to convert the result to a form state.
+ */
 export async function login(
   _prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<LoginFormFieldNames>> {
-  "use server";
-
   // Prepare fields and raw values for adapter (values will be redacted inside adapter)
-  const fields = LoginAllowedFields as readonly LoginFormFieldNames[];
+  const fields = LOGIN_FIELDS;
   const raw = Object.fromEntries(formData.entries());
 
   const result = await validateFormGeneric<LoginFormFieldNames, LoginFormInput>(
@@ -41,13 +44,7 @@ export async function login(
     },
   );
 
-  const validated = toFormState(result, {
-    fields,
-    raw,
-    // Optional: override messages if desired
-    // successMessage: AUTH_SUCCESS_MESSAGES.SIGNED_IN,
-    // failureMessage: AUTH_ERROR_MESSAGES.VALIDATION_FAILED,
-  });
+  const validated = toFormState(result, { fields, raw });
 
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
