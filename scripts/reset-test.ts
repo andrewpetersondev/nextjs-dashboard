@@ -1,3 +1,8 @@
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
+/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
+
 /**
  * @file reset-test.ts
  * @description
@@ -14,12 +19,29 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
-/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
-
+import {
+  drizzle,
+  type NodePgClient,
+  type NodePgDatabase,
+} from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
 import * as schema from "../src/server/db/schema";
-import { nodeEnvTestDb } from "./db-test";
+
+console.log("db-test.ts ...");
+
+let url: string;
+
+if (process.env.POSTGRES_URL_TESTDB) {
+  url = process.env.POSTGRES_URL_TESTDB;
+  console.log("Using POSTGRES_URL_TESTDB:", url);
+} else {
+  console.error("POSTGRES_URL_TESTDB is not set.");
+  process.exit(1);
+}
+
+const nodeEnvTestDb: NodePgDatabase & {
+  $client: NodePgClient;
+} = drizzle({ casing: "snake_case", connection: url });
 
 async function main(): Promise<void> {
   await reset(nodeEnvTestDb, schema);

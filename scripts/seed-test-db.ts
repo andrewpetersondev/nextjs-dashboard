@@ -7,9 +7,13 @@
 
 import bcryptjs from "bcryptjs";
 import { sql } from "drizzle-orm";
+import {
+  drizzle,
+  type NodePgClient,
+  type NodePgDatabase,
+} from "drizzle-orm/node-postgres";
 import * as schema from "../src/server/db/schema";
 import type { Period } from "../src/shared/brands/domain-brands";
-import { nodeEnvTestDb } from "./db-test";
 
 /**
  * @file seeds/seed-test-db.ts
@@ -23,6 +27,22 @@ import { nodeEnvTestDb } from "./db-test";
  *   POSTGRES_URL_TESTDB=postgres://... pnpm ts-node src/db/seeds/seed-test-db.ts
  *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-test-db.ts # force re-seed (TRUNCATE)
  */
+
+console.log("db-test.ts ...");
+
+let url: string;
+
+if (process.env.POSTGRES_URL_TESTDB) {
+  url = process.env.POSTGRES_URL_TESTDB;
+  console.log("Using POSTGRES_URL_TESTDB:", url);
+} else {
+  console.error("POSTGRES_URL_TESTDB is not set.");
+  process.exit(1);
+}
+
+const nodeEnvTestDb: NodePgDatabase & {
+  $client: NodePgClient;
+} = drizzle({ casing: "snake_case", connection: url });
 
 /**
  * Configuration constants for seeding operations.
