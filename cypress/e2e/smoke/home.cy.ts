@@ -1,5 +1,5 @@
-import { UI_MATCHERS } from "../__fixtures__/constants";
 import { BASE_URL, LOGIN_PATH } from "../__fixtures__/paths";
+import { UI_MATCHERS } from "../__fixtures__/regex";
 
 describe("Home smoke test", () => {
   it("loads homepage and navigates to login", () => {

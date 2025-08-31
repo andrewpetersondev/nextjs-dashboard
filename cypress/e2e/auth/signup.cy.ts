@@ -1,5 +1,7 @@
-import { DEFAULT_TIMEOUT, UI_MATCHERS } from "../__fixtures__/constants";
+import { DEFAULT_TIMEOUT } from "../__fixtures__/constants";
 import { DASHBOARD_PATH, SIGNUP_PATH } from "../__fixtures__/paths";
+import { UI_MATCHERS } from "../__fixtures__/regex";
+import { SEL } from "../__fixtures__/selectors";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup flow", () => {
@@ -14,16 +16,16 @@ describe("Signup flow", () => {
     );
 
     // Fill out the form
-    cy.get('[data-cy="signup-username-input"]').type(user.username);
-    cy.get('[data-cy="signup-email-input"]').type(user.email);
-    cy.get('[data-cy="signup-password-input"]').type(user.password);
+    cy.get(SEL.signupUsername).type(user.username);
+    cy.get(SEL.signupEmail).type(user.email);
+    cy.get(SEL.signupPassword).type(user.password);
 
     // Optional: basic a11y check before submitting
     cy.injectAxe();
     cy.checkA11y(undefined, { includedImpacts: ["critical"] }, undefined, true);
 
     // Submit the form
-    cy.get('[data-cy="signup-submit-button"]').click();
+    cy.get(SEL.signupSubmit).click();
 
     // Expect redirect to dashboard
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
@@ -37,17 +39,14 @@ describe("Signup flow", () => {
 });
 
 describe("Signup flow with Database Tasks", () => {
-  beforeEach(() => {
-    // Ensure clean test database state
-    cy.cleanupTestDatabase();
-    cy.setupTestDatabase();
-  });
+  // beforeEach(() => {
+  // Ensure clean test database state
+  // });
 
   // Avoid after() with tasks to prevent failures on runner teardown.
-  afterEach(() => {
-    // Best-effort cleanup after each test in this suite
-    cy.cleanupTestDatabase();
-  });
+  // afterEach(() => {
+  // Best-effort cleanup after each test in this suite
+  // });
 
   it("allows a new user to sign up and redirects to dashboard", () => {
     const user = createTestUser();
@@ -57,11 +56,11 @@ describe("Signup flow with Database Tasks", () => {
       "be.visible",
     );
 
-    cy.get('[data-cy="signup-username-input"]').type(user.username);
-    cy.get('[data-cy="signup-email-input"]').type(user.email);
-    cy.get('[data-cy="signup-password-input"]').type(user.password);
+    cy.get(SEL.signupUsername).type(user.username);
+    cy.get(SEL.signupEmail).type(user.email);
+    cy.get(SEL.signupPassword).type(user.password);
 
-    cy.get('[data-cy="signup-submit-button"]').click();
+    cy.get(SEL.signupSubmit).click();
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
 
     cy.findByRole("heading", {

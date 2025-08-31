@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+const DB_TIMEOUT = 20_000;
+
 describe("Database setup and cleanup tasks", () => {
   const testUser = {
     email: `e2e_dbtest_${Date.now()}@example.com`,
@@ -33,6 +35,9 @@ describe("Database setup and cleanup tasks", () => {
     cy.task("db:setup", testUser);
     // Using custom command if available, otherwise exercise login form:
     cy.login(testUser.email, testUser.password);
-    cy.location("pathname", { timeout: 20000 }).should("include", "/dashboard");
+    cy.location("pathname", { timeout: DB_TIMEOUT }).should(
+      "include",
+      "/dashboard",
+    );
   });
 });

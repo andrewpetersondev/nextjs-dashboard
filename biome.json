@@ -28,7 +28,6 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!cypress",
       "!.aiassistant",
       "!.github",
       "!.idea",
@@ -69,6 +68,7 @@
     "formatter": {
       "enabled": true
     },
+    "globals": ["cy", "Cypress"],
     "linter": {
       "enabled": true
     }
@@ -111,6 +111,7 @@
         "noRestrictedElements": "off",
         "noUndeclaredVariables": "on",
         "recommended": true,
+        "useImportExtensions": "off",
         "useUniqueElementIds": "off"
       },
       "nursery": {

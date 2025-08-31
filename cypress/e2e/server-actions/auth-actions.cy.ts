@@ -1,6 +1,5 @@
 import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
 import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
-import { STATUS_CODES } from "../__fixtures__/status-codes";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Authentication Server Actions", () => {

@@ -17,32 +17,12 @@ export default defineConfig({
 
       // Database setup/teardown tasks
       on("task", {
-        async "db:cleanup"() {
-          // Clean up test data after tests
-          const { cleanupTestDatabase } = await import("./scripts/test-utils");
-          return cleanupTestDatabase();
-        },
         async "db:seed"() {
-          // Seed test database with minimal required data
-          // successfully seeds the test database with 1 user
-          // const { seedTestDatabase } = await import("./scripts/test-utils");
-          // return seedTestDatabase();
           const { mainCypTestSeed } = await import(
             "./scripts/seed-test-db-cyp-script"
           );
           await mainCypTestSeed();
           return null;
-        },
-        async "db:setup"(
-          user?: {
-            email?: string;
-            username?: string;
-            password?: string;
-          } | null,
-        ) {
-          // Deterministic setup: cleanup then seed optional specific user
-          const { setupTestDatabase } = await import("./scripts/test-utils");
-          return setupTestDatabase(user ?? undefined);
         },
         async "db:truncate"() {
           const { mainCypTruncate } = await import(
@@ -50,10 +30,6 @@ export default defineConfig({
           );
           await mainCypTruncate();
           return null;
-        },
-        async "db:userExists"(email: string) {
-          const { userExists } = await import("./scripts/test-utils");
-          return userExists(email);
         },
       });
       return config;
