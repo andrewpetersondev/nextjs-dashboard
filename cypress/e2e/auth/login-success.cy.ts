@@ -1,5 +1,3 @@
-import { TWENTY_SECONDS } from "../__fixtures__/constants";
-import { DASHBOARD_PATH } from "../__fixtures__/paths";
 import { UI_MATCHERS } from "../__fixtures__/regex";
 import { createTestUser } from "../__fixtures__/users";
 
@@ -17,7 +15,8 @@ describe("Login success flow", () => {
 
     cy.login(user.email, user.password);
 
-    cy.url({ timeout: TWENTY_SECONDS }).should("include", DASHBOARD_PATH);
+    // With cy.login now waiting for navigation, the following is optional.
+    // Keeping the heading assertion as the main UI guard.
     cy.findByRole("heading", {
       level: 1,
       name: UI_MATCHERS.DASHBOARD_H1,

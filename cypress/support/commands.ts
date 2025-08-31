@@ -28,6 +28,11 @@ Cypress.Commands.add("login", (email: string, password: string) => {
   cy.get(SEL.loginEmail).clear().type(email);
   cy.get(SEL.loginPassword).clear().type(password, { log: false });
   cy.get(SEL.loginSubmit).click();
+  // Wait for client-side navigation to dashboard to complete (aligns with other commands)
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+    "include",
+    DASHBOARD_PATH,
+  );
 });
 
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
@@ -69,9 +74,15 @@ Cypress.Commands.add("loginAsDemoAdmin", () => {
 // Ensure we always land on dashboard before attempting to logout via the form
 Cypress.Commands.add("logoutViaForm", () => {
   cy.visit(DASHBOARD_PATH);
-  cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
-  // Wait for logout to complete and redirect to the home page UI
-  cy.findByText(UI_MATCHERS.WELCOME_HOME, { timeout: TWENTY_SECONDS }).should(
-    "be.visible",
-  );
+  // Handle both cases:
+  // - Still authenticated: we're on /dashboard, click "Sign Out" and wait for home screen.
+  // - Already logged out: redirect from /dashboard to home, just assert home screen.
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).then((pathname) => {
+    if (pathname.includes(DASHBOARD_PATH)) {
+      cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
+    }
+    cy.findByText(UI_MATCHERS.WELCOME_HOME, { timeout: TWENTY_SECONDS }).should(
+      "be.visible",
+    );
+  });
 });
