@@ -22,15 +22,8 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "@/shared/invoices/types.ts";
-import {
-  REVENUE_SOURCES,
-  type RevenueSource,
-} from "../../features/revenues/types.ts";
 import type {
   CustomerId,
   InvoiceId,
@@ -38,7 +31,8 @@ import type {
   RevenueId,
   SessionId,
   UserId,
-} from "../../shared/brands/domain-brands.ts";
+} from "@/shared/brands/domain-brands";
+import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/invoices/types";
 
 /**
  * Common field builders for consistency.

@@ -3,7 +3,6 @@
  * @description
  * `@next/env` ALLOWS YOU TO USE ENV VARIABLES OUTSIDE OF THE NEXT.JS RUNTIME (aka `src` directory).
  * When does this project need to use `env` variables outside of the `src` directory while in the runtime?
- * Why does this file import `dotenv/config`? It may be redundant, but it is part of the Drizzle Docs and (TBD)
  * - Drizzle
  *   - Who, what, when, why, where, and how does it use drizzle outside of the runtime?
  *   - Drizzle is located in the `scripts` directory and `src/server/db` directory.
@@ -15,7 +14,6 @@
  * - Cypress config
  */
 
-import "dotenv/config";
 import { loadEnvConfig } from "@next/env";
 
 // biome-ignore lint/suspicious/useAwait: <not shown in nextjs docs>
