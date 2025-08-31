@@ -3,6 +3,7 @@
 /** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
 /** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
 
+import "dotenv/config";
 import { defineConfig } from "cypress";
 
 export default defineConfig({
@@ -23,6 +24,7 @@ export default defineConfig({
         },
         async "db:seed"() {
           // Seed test database with minimal required data
+          // successfully seeds the test database with 1 user
           const { seedTestDatabase } = await import("./scripts/test-utils");
           return seedTestDatabase();
         },

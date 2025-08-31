@@ -1,3 +1,7 @@
+/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+
 /**
  * @file connection.ts
  * Shared application database connection factory using Drizzle ORM.
@@ -7,6 +11,7 @@
  * - Defaults DB selection from NODE_ENV: "test" -> test DB, "development" -> dev DB, "production" -> prod DB.
  * - See src/config/README.md and src/config/env.ts for environment variable details.
  */
+
 import "server-only";
 
 import {
@@ -19,7 +24,6 @@ import {
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
 } from "@/server/config/environment";
-// biome-ignore lint/performance/noNamespaceImport: <fix later>
 import * as schema from "@/server/db/schema";
 
 // Supported database types
@@ -85,8 +89,6 @@ export type Database = NodePgDatabase<typeof schema> & {
  * - "production"  -> prod DB (POSTGRES_URL_PRODDB)
  */
 export function getDB(
-  // biome-ignore lint/style/noProcessEnv: <temp>
-  // biome-ignore lint/correctness/noProcessGlobal: <temp>
   type: DbType = resolveDbTypeFromNodeEnv(process.env.NODE_ENV),
 ): Database {
   const url = getDatabaseUrl(type);

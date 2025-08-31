@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+
 import "server-only";
 
 import { z } from "zod";
@@ -22,13 +25,11 @@ import { z } from "zod";
  * - Update the README in this folder with documentation and usage.
  */
 
-// biome-ignore lint/style/noProcessEnv: <temp>
-// biome-ignore lint/correctness/noProcessGlobal: <temp>
-const isTestEnv: boolean = process.env.NODE_ENV === "test";
-
-// biome-ignore lint/style/noProcessEnv: <temp>
-// biome-ignore lint/correctness/noProcessGlobal: <temp>
-const isProdEnv: boolean = process.env.NODE_ENV === "production";
+// Prefer explicit DATABASE_ENV; fallback to NODE_ENV
+const dbEnvRaw =
+  process.env.DATABASE_ENV ?? process.env.NODE_ENV ?? "development";
+const isTestEnv: boolean = dbEnvRaw === "test";
+const isProdEnv: boolean = dbEnvRaw === "production";
 
 const baseSchema = z.object({
   POSTGRES_URL: z.url(),
@@ -45,8 +46,6 @@ const prodSchema = z.object({
 
 const envSchema = baseSchema.and(testSchema).and(prodSchema);
 
-// biome-ignore lint/style/noProcessEnv: <temp>
-// biome-ignore lint/correctness/noProcessGlobal: <temp>
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {

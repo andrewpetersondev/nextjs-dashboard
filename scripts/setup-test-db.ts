@@ -11,6 +11,8 @@ const execAsync = promisify(exec);
 async function setupTestDatabase(): Promise<void> {
   const testDbUrl = process.env.POSTGRES_URL_TESTDB;
 
+  // console.log("POSTGRES_URL_TESTDB:", testDbUrl); // works
+
   if (!testDbUrl) {
     throw new Error("POSTGRES_URL_TESTDB is required");
   }
@@ -19,7 +21,7 @@ async function setupTestDatabase(): Promise<void> {
     console.log("Setting up test database...");
 
     // Run migrations on test database
-    await execAsync("npx drizzle-kit migrate", {
+    await execAsync("pnpm drizzle-push-test", {
       env: { ...process.env, POSTGRES_URL: testDbUrl },
     });
 
@@ -30,6 +32,6 @@ async function setupTestDatabase(): Promise<void> {
   }
 }
 
-if (require.main === module) {
+if (module) {
   setupTestDatabase();
 }
