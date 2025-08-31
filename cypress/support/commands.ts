@@ -17,6 +17,7 @@ declare global {
       login(email: string, password: string): Chainable<void>;
       loginAsDemoAdmin(): Chainable<void>;
       loginAsDemoUser(): Chainable<void>;
+      logoutViaForm(): Chainable<void>;
       signup(creds: SignupCreds): Chainable<void>;
     }
   }
@@ -62,5 +63,15 @@ Cypress.Commands.add("loginAsDemoAdmin", () => {
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
     DASHBOARD_PATH,
+  );
+});
+
+// Ensure we always land on dashboard before attempting to logout via the form
+Cypress.Commands.add("logoutViaForm", () => {
+  cy.visit(DASHBOARD_PATH);
+  cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
+  // Wait for logout to complete and redirect to the home page UI
+  cy.findByText(UI_MATCHERS.WELCOME_HOME, { timeout: TWENTY_SECONDS }).should(
+    "be.visible",
   );
 });
