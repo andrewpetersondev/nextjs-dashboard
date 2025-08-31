@@ -12,8 +12,8 @@ describe("Access control", () => {
   });
 
   it("redirects authenticated user away from login to dashboard", () => {
-    // use existing helper to create a logged-in session
-    cy.loginAsTestUser();
+    // Use existing helper to create a logged-in session
+    cy.loginAsDemoUser();
 
     // Visiting login should bounce to dashboard
     cy.visit(LOGIN_PATH);
