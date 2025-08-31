@@ -26,7 +26,7 @@ declare global {
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.visit(LOGIN_PATH);
   cy.get(SEL.loginEmail).clear().type(email);
-  cy.get(SEL.loginPassword).clear().type(password, { log: false });
+  cy.get(SEL.loginPassword).clear().type(password);
   cy.get(SEL.loginSubmit).click();
   // Wait for client-side navigation to dashboard to complete (aligns with other commands)
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(

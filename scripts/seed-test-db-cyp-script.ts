@@ -457,39 +457,54 @@ export async function mainCypTestSeed(): Promise<void> {
 
 /**
  * Inserts or updates an E2E user. Clears sessions for that user to avoid test leakage.
- * Accepts minimal shape: { email, password, username?, role? }
+ * Username is always derived from the email to avoid inconsistencies.
+ * Accepts minimal shape: { email, password, role? }
  */
 export async function upsertE2EUser(user: {
   email: string;
   password: string;
-  username?: string;
   role?: "user" | "admin" | "guest";
 }): Promise<void> {
-  if (!user?.email || !user?.password) {
+  if (!user) {
+    throw new Error("upsertE2EUser requires user object");
+  }
+
+  if (!user.email || !user.password) {
     throw new Error("upsertE2EUser requires email and password");
   }
-  const username =
-    user.username ??
-    (user.email.includes("@") ? user.email.split("@")[0] : user.email).replace(
-      /[^a-zA-Z0-9_]/g,
-      "_",
-    );
+
+  // Normalize email like the app does
+  const normalizedEmail = user.email.trim().toLowerCase();
+
+  // Derive username from normalized email and sanitize
+  const username = (
+    normalizedEmail.includes("@")
+      ? normalizedEmail.split("@")[0]
+      : normalizedEmail
+  ).replace(/[^a-zA-Z0-9_]/g, "_");
+
   const role = user.role ?? "user";
+
+  // Hash password with the test script's hashing (aligned with app)
   const hashed = await hashPassword(user.password);
 
   await nodeEnvTestDb.transaction(async (tx) => {
-    // Check if user exists
+    // Check if user exists by normalized email
     const existing = await tx
       .select({ id: schema.users.id })
       .from(schema.users)
-      .where(eq(schema.users.email, user.email))
+      .where(eq(schema.users.email, normalizedEmail))
       .limit(1);
 
     if (existing.length > 0) {
       const userId = existing[0].id;
       await tx
         .update(schema.users)
-        .set({ password: hashed, role, username })
+        .set({
+          password: hashed,
+          role,
+          username, // always derived
+        })
         .where(eq(schema.users.id, userId));
 
       // Clear sessions for stability across specs
@@ -499,13 +514,22 @@ export async function upsertE2EUser(user: {
     } else {
       const inserted = await tx
         .insert(schema.users)
-        .values([{ email: user.email, password: hashed, role, username }])
+        .values([
+          {
+            email: normalizedEmail,
+            password: hashed,
+            role,
+            username, // always derived
+          },
+        ])
         .returning({ id: schema.users.id });
+
       const userId = inserted[0]?.id;
       if (!userId) {
         throw new Error("Failed to insert E2E user");
       }
-      // Ensure no stale sessions exist (defensive)
+
+      // Defensive: ensure no stale sessions exist
       await tx
         .delete(schema.sessions)
         .where(eq(schema.sessions.userId, userId));
