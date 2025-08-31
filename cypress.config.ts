@@ -17,11 +17,30 @@ export default defineConfig({
 
       // Database setup/teardown tasks
       on("task", {
+        async "db:cleanup"() {
+          const { cleanupE2EUsers } = await import(
+            "./scripts/seed-test-db-cyp-script"
+          );
+          await cleanupE2EUsers();
+          return null;
+        },
         async "db:seed"() {
           const { mainCypTestSeed } = await import(
             "./scripts/seed-test-db-cyp-script"
           );
           await mainCypTestSeed();
+          return null;
+        },
+        async "db:setup"(user: {
+          email: string;
+          password: string;
+          username?: string;
+          role?: "user" | "admin" | "guest";
+        }) {
+          const { upsertE2EUser } = await import(
+            "./scripts/seed-test-db-cyp-script"
+          );
+          await upsertE2EUser(user);
           return null;
         },
         async "db:truncate"() {
@@ -30,6 +49,12 @@ export default defineConfig({
           );
           await mainCypTruncate();
           return null;
+        },
+        async "db:userExists"(email: string) {
+          const { userExists } = await import(
+            "./scripts/seed-test-db-cyp-script"
+          );
+          return userExists(email);
         },
       });
       return config;

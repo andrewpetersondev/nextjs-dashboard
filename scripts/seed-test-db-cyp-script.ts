@@ -6,7 +6,7 @@
 /** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
 
 import bcryptjs from "bcryptjs";
-import { sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import {
   drizzle,
   type NodePgClient,
@@ -16,7 +16,7 @@ import * as schema from "../src/server/db/schema";
 import type { Period } from "../src/shared/brands/domain-brands";
 
 /**
- * @file seeds/seed-test-db.ts
+ * @file seeds/seed-test-db-cyp-script.ts
  * Seed script for initializing the test database with realistic sample data.
  *
  * - Target database: test_db (via POSTGRES_URL_TESTDB)
@@ -451,4 +451,102 @@ export async function mainCypTestSeed(): Promise<void> {
   });
 
   console.log("Database seeded successfully.");
+}
+
+// --- Cypress-specific helpers for per-spec setup/cleanup ---
+
+/**
+ * Inserts or updates an E2E user. Clears sessions for that user to avoid test leakage.
+ * Accepts minimal shape: { email, password, username?, role? }
+ */
+export async function upsertE2EUser(user: {
+  email: string;
+  password: string;
+  username?: string;
+  role?: "user" | "admin" | "guest";
+}): Promise<void> {
+  if (!user?.email || !user?.password) {
+    throw new Error("upsertE2EUser requires email and password");
+  }
+  const username =
+    user.username ??
+    (user.email.includes("@") ? user.email.split("@")[0] : user.email).replace(
+      /[^a-zA-Z0-9_]/g,
+      "_",
+    );
+  const role = user.role ?? "user";
+  const hashed = await hashPassword(user.password);
+
+  await nodeEnvTestDb.transaction(async (tx) => {
+    // Check if user exists
+    const existing = await tx
+      .select({ id: schema.users.id })
+      .from(schema.users)
+      .where(eq(schema.users.email, user.email))
+      .limit(1);
+
+    if (existing.length > 0) {
+      const userId = existing[0].id;
+      await tx
+        .update(schema.users)
+        .set({ password: hashed, role, username })
+        .where(eq(schema.users.id, userId));
+
+      // Clear sessions for stability across specs
+      await tx
+        .delete(schema.sessions)
+        .where(eq(schema.sessions.userId, userId));
+    } else {
+      const inserted = await tx
+        .insert(schema.users)
+        .values([{ email: user.email, password: hashed, role, username }])
+        .returning({ id: schema.users.id });
+      const userId = inserted[0]?.id;
+      if (!userId) {
+        throw new Error("Failed to insert E2E user");
+      }
+      // Ensure no stale sessions exist (defensive)
+      await tx
+        .delete(schema.sessions)
+        .where(eq(schema.sessions.userId, userId));
+    }
+  });
+}
+
+/**
+ * Returns true if a user with the given email exists.
+ */
+export async function userExists(email: string): Promise<boolean> {
+  if (!email) {
+    return false;
+  }
+  const res = await nodeEnvTestDb.execute(
+    sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} WHERE ${schema.users.email} = ${email}) AS v`,
+  );
+  return Boolean(res?.rows?.[0]?.v);
+}
+
+/**
+ * Deletes users that follow e2e_ convention and their sessions.
+ * Adjust pattern if your buildE2EUser uses a different prefix.
+ */
+export async function cleanupE2EUsers(): Promise<void> {
+  // Find all e2e users
+  const usersToDelete = await nodeEnvTestDb.execute(sql`
+    SELECT id FROM ${schema.users}
+    WHERE ${schema.users.email} LIKE 'e2e_%' OR ${schema.users.username} LIKE 'e2e_%'
+  `);
+  const ids: string[] =
+    usersToDelete.rows?.map((r: any) => r.id).filter(Boolean) ?? [];
+
+  if (ids.length === 0) {
+    return;
+  }
+
+  await nodeEnvTestDb.transaction(async (tx) => {
+    await tx
+      .delete(schema.sessions)
+      .where(inArray(schema.sessions.userId, ids));
+    await tx.delete(schema.users).where(inArray(schema.users.id, ids));
+  });
 }
