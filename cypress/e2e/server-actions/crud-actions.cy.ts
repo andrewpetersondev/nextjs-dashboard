@@ -1,64 +1,41 @@
 import { SEL } from "../__fixtures__/selectors";
-import {
-  DASHBOARD_ITEMS_PATH,
-  SERVER_ACTIONS_PATTERN,
-} from "../__fixtures__/server-actions";
-import { STATUS_CODES } from "../__fixtures__/status-codes";
+import { CREATE_INVOICE_PATH } from "../__fixtures__/server-actions";
 
-describe("CRUD Server Actions", () => {
+describe("Invoices - Create via Server Action Form", () => {
   beforeEach(() => {
-    // Setup authenticated user
-    cy.loginAsTestUser();
+    cy.loginAsDemoAdmin();
   });
 
-  it("should create new record via server action", () => {
-    cy.visit(DASHBOARD_ITEMS_PATH);
+  it("creates an invoice from the form", () => {
+    cy.visit(CREATE_INVOICE_PATH);
 
-    cy.get(SEL.addItemButton).click();
-    cy.get(SEL.itemNameInput).type("Test Item");
-    cy.get(SEL.itemDescriptionInput).type("Test Description");
+    // Choose a customer (first real option; index 0 is the placeholder)
+    cy.get(SEL.invoiceCustomerSelect).should("be.visible").select(1);
 
-    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("createAction");
+    // Fill sensitive data (has a default, but we’ll type to be explicit)
+    cy.get(SEL.invoiceSensitiveDataInput)
+      .should("be.enabled")
+      .clear()
+      .type("confidential info");
 
-    cy.get(SEL.saveItemButton).click();
+    // Enter amount
+    cy.get(SEL.invoiceAmountInput).should("be.visible").type("123.45");
 
-    cy.wait("@createAction").then((interception) => {
-      expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
-    });
+    // Pick status
+    cy.get(SEL.invoiceStatusPaid).should("exist").check({ force: true });
 
-    cy.findByText("Test Item").should("be.visible");
-  });
+    // Submit
+    cy.get(SEL.invoiceCreateButton).click();
 
-  it("should update existing record", () => {
-    // Create item first
-    cy.createTestItem("Original Item");
+    // Remain on create page (as currently expected in this flow)
+    cy.location("pathname", { timeout: 10_000 }).should(
+      "eq",
+      CREATE_INVOICE_PATH,
+    );
 
-    cy.visit(DASHBOARD_ITEMS_PATH);
-    cy.get(SEL.editItemButton).first().click();
-
-    cy.get(SEL.itemNameInput).clear().type("Updated Item");
-
-    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("updateAction");
-
-    cy.get(SEL.saveItemButton).click();
-
-    cy.wait("@updateAction");
-    cy.findByText("Updated Item").should("be.visible");
-    cy.findByText("Original Item").should("not.exist");
-  });
-
-  it("should delete record with confirmation", () => {
-    cy.createTestItem("Item to Delete");
-
-    cy.visit(DASHBOARD_ITEMS_PATH);
-    cy.get(SEL.deleteItemButton).first().click();
-
-    // Confirm deletion in modal
-    cy.get(SEL.confirmDeleteButton).click();
-
-    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("deleteAction");
-
-    cy.wait("@deleteAction");
-    cy.findByText("Item to Delete").should("not.exist");
+    // Assert the server message appears (success)
+    cy.get(SEL.createInvoiceSuccessMessage, { timeout: 10_000 }).should(
+      "be.visible",
+    );
   });
 });
