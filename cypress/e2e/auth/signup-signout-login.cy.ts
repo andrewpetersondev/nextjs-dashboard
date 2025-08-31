@@ -1,6 +1,7 @@
 import { DEFAULT_TIMEOUT } from "../__fixtures__/constants";
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../__fixtures__/paths";
 import { UI_MATCHERS } from "../__fixtures__/regex";
+import { SEL } from "../__fixtures__/selectors";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup → Sign out → Login flow", () => {
@@ -13,11 +14,11 @@ describe("Signup → Sign out → Login flow", () => {
       "be.visible",
     );
 
-    cy.get('[data-cy="signup-username-input"]').type(user.username);
-    cy.get('[data-cy="signup-email-input"]').type(user.email);
-    cy.get('[data-cy="signup-password-input"]').type(user.password);
+    cy.get(SEL.signupUsername).type(user.username);
+    cy.get(SEL.signupEmail).type(user.email);
+    cy.get(SEL.signupPassword).type(user.password);
 
-    cy.get('[data-cy="signup-submit-button"]').click();
+    cy.get(SEL.signupSubmit).click();
 
     // 2) Redirects to dashboard after signup
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
@@ -35,12 +36,12 @@ describe("Signup → Sign out → Login flow", () => {
     }).should("be.visible");
 
     // 5) Go to login and login with the same credentials
-    cy.get('[data-testid="login-button"]').click();
+    cy.get(SEL.toLoginButton).click();
     cy.url().should("include", LOGIN_PATH);
 
-    cy.get('[data-cy="login-email-input"]').type(user.email);
-    cy.get('[data-cy="login-password-input"]').type(user.password);
-    cy.get('[data-cy="login-submit-button"]').click();
+    cy.get(SEL.loginEmail).type(user.email);
+    cy.get(SEL.loginPassword).type(user.password);
+    cy.get(SEL.loginSubmit).click();
 
     // 6) Back on dashboard after login
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);

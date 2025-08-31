@@ -1,4 +1,10 @@
 import { SUCCESS_MESSAGES } from "../__fixtures__/messages-success";
+import { SEL } from "../__fixtures__/selectors";
+import {
+  ADMIN_USERS_PATH,
+  DASHBOARD_USERS_PATH,
+  SERVER_ACTIONS_PATTERN,
+} from "../__fixtures__/server-actions";
 import { STATUS_CODES } from "../__fixtures__/status-codes";
 
 describe("Server Action Authorization", () => {
@@ -10,7 +16,7 @@ describe("Server Action Authorization", () => {
       body: { action: "deleteUser", userId: "123" },
       failOnStatusCode: false,
       method: "POST",
-      url: "/admin/users",
+      url: ADMIN_USERS_PATH,
     }).then((response) => {
       expect(response.status).to.eq(STATUS_CODES.FORBIDDEN);
     });
@@ -18,17 +24,17 @@ describe("Server Action Authorization", () => {
 
   it("should allow admin actions for authorized users", () => {
     cy.loginAsAdmin();
-    cy.visit("/dashboard/users");
+    cy.visit(DASHBOARD_USERS_PATH);
 
-    cy.get('[data-cy="user-row"]')
+    cy.get(SEL.userRow)
       .first()
       .within(() => {
-        cy.get('[data-cy="suspend-user-button"]').click();
+        cy.get(SEL.suspendUserButton).click();
       });
 
-    cy.intercept("POST", "/_server-actions/**").as("adminAction");
+    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("adminAction");
 
-    cy.get('[data-cy="confirm-suspend-button"]').click();
+    cy.get(SEL.confirmSuspendButton).click();
 
     cy.wait("@adminAction").then((interception) => {
       expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);

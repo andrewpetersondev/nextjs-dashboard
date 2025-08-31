@@ -2,14 +2,8 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
-import { dividerOrModulus } from "./constants";
-
-export interface TestUser {
-  readonly username: string;
-  readonly email: string;
-  readonly password: string;
-  readonly timestamp: number;
-}
+import { E2E_ID_MODULUS } from "./constants";
+import type { TestUser } from "./types";
 
 /**
  * Generates a unique test user with timestamp-based identifiers.
@@ -17,12 +11,12 @@ export interface TestUser {
  * @returns TestUser object with unique username, email, and secure password
  */
 export function createTestUser(): TestUser {
-  const timestamp = Date.now() % dividerOrModulus;
+  const timestamp = Date.now() % E2E_ID_MODULUS;
 
   return {
     email: `e2e_${timestamp}@example.com`,
     password: "P@ssw0rd!123", // meets zod requirements: length, letter, number, special
     timestamp,
     username: `e2e_user_${timestamp}`,
-  } as const;
+  } as const as TestUser;
 }

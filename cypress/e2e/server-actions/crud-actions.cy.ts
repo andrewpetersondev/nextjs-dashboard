@@ -1,3 +1,8 @@
+import { SEL } from "../__fixtures__/selectors";
+import {
+  DASHBOARD_ITEMS_PATH,
+  SERVER_ACTIONS_PATTERN,
+} from "../__fixtures__/server-actions";
 import { STATUS_CODES } from "../__fixtures__/status-codes";
 
 describe("CRUD Server Actions", () => {
@@ -7,15 +12,15 @@ describe("CRUD Server Actions", () => {
   });
 
   it("should create new record via server action", () => {
-    cy.visit("/dashboard/items");
+    cy.visit(DASHBOARD_ITEMS_PATH);
 
-    cy.get('[data-cy="add-item-button"]').click();
-    cy.get('[data-cy="item-name-input"]').type("Test Item");
-    cy.get('[data-cy="item-description-input"]').type("Test Description");
+    cy.get(SEL.addItemButton).click();
+    cy.get(SEL.itemNameInput).type("Test Item");
+    cy.get(SEL.itemDescriptionInput).type("Test Description");
 
-    cy.intercept("POST", "/_server-actions/**").as("createAction");
+    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("createAction");
 
-    cy.get('[data-cy="save-item-button"]').click();
+    cy.get(SEL.saveItemButton).click();
 
     cy.wait("@createAction").then((interception) => {
       expect(interception.response?.statusCode).to.eq(STATUS_CODES.OK);
@@ -28,14 +33,14 @@ describe("CRUD Server Actions", () => {
     // Create item first
     cy.createTestItem("Original Item");
 
-    cy.visit("/dashboard/items");
-    cy.get('[data-cy="edit-item-button"]').first().click();
+    cy.visit(DASHBOARD_ITEMS_PATH);
+    cy.get(SEL.editItemButton).first().click();
 
-    cy.get('[data-cy="item-name-input"]').clear().type("Updated Item");
+    cy.get(SEL.itemNameInput).clear().type("Updated Item");
 
-    cy.intercept("POST", "/_server-actions/**").as("updateAction");
+    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("updateAction");
 
-    cy.get('[data-cy="save-item-button"]').click();
+    cy.get(SEL.saveItemButton).click();
 
     cy.wait("@updateAction");
     cy.findByText("Updated Item").should("be.visible");
@@ -45,13 +50,13 @@ describe("CRUD Server Actions", () => {
   it("should delete record with confirmation", () => {
     cy.createTestItem("Item to Delete");
 
-    cy.visit("/dashboard/items");
-    cy.get('[data-cy="delete-item-button"]').first().click();
+    cy.visit(DASHBOARD_ITEMS_PATH);
+    cy.get(SEL.deleteItemButton).first().click();
 
     // Confirm deletion in modal
-    cy.get('[data-cy="confirm-delete-button"]').click();
+    cy.get(SEL.confirmDeleteButton).click();
 
-    cy.intercept("POST", "/_server-actions/**").as("deleteAction");
+    cy.intercept("POST", SERVER_ACTIONS_PATTERN).as("deleteAction");
 
     cy.wait("@deleteAction");
     cy.findByText("Item to Delete").should("not.exist");

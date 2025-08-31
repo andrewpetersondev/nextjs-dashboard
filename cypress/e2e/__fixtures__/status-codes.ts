@@ -1,3 +1,6 @@
+/**
+ * HTTP status codes referenced in API-related tests.
+ */
 export const STATUS_CODES = {
   BAD_REQUEST: 400,
   CONFLICT: 409,
@@ -8,4 +11,4 @@ export const STATUS_CODES = {
   NOT_FOUND: 404,
   OK: 200,
   UNAUTHORIZED: 401,
-};
+} as const satisfies Readonly<Record<string, number>>;
