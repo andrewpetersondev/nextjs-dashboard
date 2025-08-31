@@ -12,8 +12,8 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import * as schema from "../src/server/db/schema";
-import type { Period } from "../src/shared/brands/domain-brands";
+import * as schema from "@/server/db/schema";
+import type { Period } from "@/shared/brands/domain-brands";
 
 /**
  * @file seeds/seed-test-db.ts

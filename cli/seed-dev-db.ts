@@ -12,34 +12,34 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import * as schema from "../src/server/db/schema";
-import type { Period } from "../src/shared/brands/domain-brands";
+import * as schema from "@/server/db/schema";
+import type { Period } from "@/shared/brands/domain-brands";
 
 /**
- * @file seeds/seed-prod-db.ts
- * Seed script for initializing the prod database with realistic sample data.
+ * @file seeds/seed-dev-db.ts
+ * Seed script for initializing the test database with realistic sample data.
  *
- * - Target database: prod_db (via POSTGRES_URL_PRODDB)
+ * - Target database: dev_db (via POSTGRES_URL)
  * - Entry point: run directly with ts-node
  * - Idempotency: refuses to seed if data exists unless SEED_RESET=true
  *
  * Quick start:
- *   POSTGRES_URL_PRODDB=postgres://... pnpm ts-node src/db/seeds/seed-prod-db.ts
- *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-prod-db.ts # force re-seed (TRUNCATE)
+ *   POSTGRES_URL=postgres://... pnpm ts-node src/db/seeds/seed-dev-db.ts
+ *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-dev-db.ts # force re-seed (TRUNCATE)
  */
 
-console.log("db-prod.ts ...");
+console.log("db-dev.ts ...");
 
 let url: string;
 
-if (process.env.POSTGRES_URL_PRODDB) {
-  url = process.env.POSTGRES_URL_PRODDB;
+if (process.env.POSTGRES_URL) {
+  url = process.env.POSTGRES_URL;
 } else {
-  console.error("POSTGRES_URL_PRODDB is not set.");
+  console.error("POSTGRES_URL is not set.");
   process.exit(1);
 }
 
-const nodeEnvProdDb: NodePgDatabase & {
+const nodeEnvDb: NodePgDatabase & {
   $client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });
 
@@ -203,19 +203,19 @@ const customersData: Array<{ name: string; email: string; imageUrl: string }> =
  */
 async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    nodeEnvProdDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
     ),
-    nodeEnvProdDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
     ),
-    nodeEnvProdDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
     ),
-    nodeEnvProdDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
     ),
-    nodeEnvProdDb.execute(
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
@@ -226,7 +226,7 @@ async function isEmpty(): Promise<boolean> {
  * Truncates all tables and resets identity sequences.
  */
 async function truncateAll(): Promise<void> {
-  await nodeEnvProdDb.execute(sql`TRUNCATE TABLE
+  await nodeEnvDb.execute(sql`TRUNCATE TABLE
         ${schema.sessions},
         ${schema.invoices},
         ${schema.customers},
@@ -327,7 +327,7 @@ async function main(): Promise<void> {
     },
   ];
 
-  await nodeEnvProdDb.transaction(async (tx) => {
+  await nodeEnvDb.transaction(async (tx) => {
     // 1) Seed revenues with Dates directly (no valuesFromArray)
     await tx.insert(schema.revenues).values(
       periodDates.map((periodDate) => ({

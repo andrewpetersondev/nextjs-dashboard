@@ -25,7 +25,7 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
-import * as schema from "../src/server/db/schema";
+import * as schema from "@/server/db/schema";
 
 console.log("db-prod.ts ...");
 

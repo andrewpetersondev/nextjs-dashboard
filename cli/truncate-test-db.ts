@@ -9,7 +9,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import * as schema from "../src/server/db/schema";
+import * as schema from "@/server/db/schema";
 
 let url: string;
 if (process.env.POSTGRES_URL_TESTDB) {
