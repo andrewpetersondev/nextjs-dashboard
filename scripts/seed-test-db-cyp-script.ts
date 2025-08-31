@@ -40,6 +40,7 @@ if (process.env.POSTGRES_URL_TESTDB) {
   process.exit(1);
 }
 
+// todo: this feels weird (cli vs scripts)
 const nodeEnvTestDb: NodePgDatabase & {
   $client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });
@@ -451,9 +452,3 @@ export async function mainCypTestSeed(): Promise<void> {
 
   console.log("Database seeded successfully.");
 }
-
-// Execute seeding with proper error handling and process exit
-mainCypTestSeed().catch((error) => {
-  console.error("Error seeding database:", error);
-  process.exit(1);
-});

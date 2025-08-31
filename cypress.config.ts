@@ -44,6 +44,13 @@ export default defineConfig({
           const { setupTestDatabase } = await import("./scripts/test-utils");
           return setupTestDatabase(user ?? undefined);
         },
+        async "db:truncate"() {
+          const { mainCypTruncate } = await import(
+            "./scripts/truncate-test-db-script"
+          );
+          await mainCypTruncate();
+          return null;
+        },
         async "db:userExists"(email: string) {
           const { userExists } = await import("./scripts/test-utils");
           return userExists(email);
