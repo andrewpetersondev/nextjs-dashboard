@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 /** biome-ignore-all lint/style/noNamespace: <temp> */
 
+import { TWENTY_SECONDS } from "../e2e/__fixtures__/constants";
 import {
   DASHBOARD_PATH,
   LOGIN_PATH,
@@ -14,8 +15,8 @@ declare global {
   namespace Cypress {
     interface Chainable {
       login(email: string, password: string): Chainable<void>;
-      loginAsTestUser(): Chainable<void>;
-      createTestItem(name: string): Chainable<void>;
+      loginAsDemoAdmin(): Chainable<void>;
+      loginAsDemoUser(): Chainable<void>;
       signup(creds: SignupCreds): Chainable<void>;
     }
   }
@@ -30,18 +31,35 @@ Cypress.Commands.add("login", (email: string, password: string) => {
 
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
   cy.visit(SIGNUP_PATH);
-
   cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
     "be.visible",
   );
-
   cy.get(SEL.signupUsername).clear().type(username);
   cy.get(SEL.signupEmail).clear().type(email);
   cy.get(SEL.signupPassword).clear().type(password, { log: false });
-
   // Submit and wait for client-side navigation to dashboard
   cy.get(SEL.signupSubmit).click();
-  cy.location("pathname", { timeout: 20_000 }).should(
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+    "include",
+    DASHBOARD_PATH,
+  );
+});
+
+Cypress.Commands.add("loginAsDemoUser", () => {
+  cy.visit(LOGIN_PATH);
+  cy.findByRole("button", { name: UI_MATCHERS.LOGIN_DEMO_USER_BUTTON }).click();
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+    "include",
+    DASHBOARD_PATH,
+  );
+});
+
+Cypress.Commands.add("loginAsDemoAdmin", () => {
+  cy.visit(LOGIN_PATH);
+  cy.findByRole("button", {
+    name: UI_MATCHERS.LOGIN_DEMO_ADMIN_BUTTON,
+  }).click();
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
     DASHBOARD_PATH,
   );
