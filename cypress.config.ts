@@ -25,8 +25,13 @@ export default defineConfig({
         async "db:seed"() {
           // Seed test database with minimal required data
           // successfully seeds the test database with 1 user
-          const { seedTestDatabase } = await import("./scripts/test-utils");
-          return seedTestDatabase();
+          // const { seedTestDatabase } = await import("./scripts/test-utils");
+          // return seedTestDatabase();
+          const { mainCypTestSeed } = await import(
+            "./scripts/seed-test-db-cyp-script"
+          );
+          await mainCypTestSeed();
+          return null;
         },
         async "db:setup"(
           user?: {

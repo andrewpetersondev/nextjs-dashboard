@@ -63,6 +63,7 @@
     "db-truncate-dev": "SEED_RESET=true pnpm tsx -r dotenv/config scripts/seed-dev-db.ts",
     "db-truncate-prod": "SEED_RESET=true pnpm tsx -r dotenv/config scripts/seed-prod-db.ts",
     "db-truncate-test": "SEED_RESET=true pnpm tsx -r dotenv/config scripts/seed-test-db.ts",
+    "db-truncate-test-only": "pnpm tsx -r dotenv/config scripts/truncate-test-db.ts",
     "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
     "dev": "next dev --turbopack",
     "drizzle-push-dev": "pnpm drizzle-kit push --config=configs/drizzle-dev.config.ts",
