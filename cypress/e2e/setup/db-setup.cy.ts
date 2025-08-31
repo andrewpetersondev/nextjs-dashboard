@@ -1,19 +1,13 @@
 /// <reference types="cypress" />
-
-const DB_TIMEOUT = 20_000;
+import { buildE2EUser, DB_TIMEOUT } from "../../support/db-test-constants";
 
 describe("Database setup and cleanup tasks", () => {
-  const testUser = {
-    email: `e2e_dbtest_${Date.now()}@example.com`,
-    password: "P@ssw0rd!123",
-    username: `e2e_user_${Date.now()}`,
-  };
+  const testUser = buildE2EUser();
 
   before(function () {
     // Skip if test DB is not configured
     const url = Cypress.env("POSTGRES_URL_TESTDB");
     if (!url) {
-      // eslint-disable-next-line no-console
       console.warn("Skipping DB tasks tests; POSTGRES_URL_TESTDB is not set");
       this.skip();
     }
