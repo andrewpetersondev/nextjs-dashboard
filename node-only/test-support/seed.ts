@@ -11,8 +11,8 @@ import {
   insertDemoCounters,
   insertRevenues,
 } from "../seed-support/inserts";
+import { ensureResetOrEmpty } from "../seed-support/maintenance";
 import { db } from "./config";
-import { ensureResetOrEmpty } from "./maintenance";
 
 export async function mainCypTestSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();

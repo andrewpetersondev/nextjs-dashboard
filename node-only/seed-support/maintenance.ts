@@ -7,7 +7,7 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { db } from "./config";
+import { db } from "../test-support/config";
 
 /**
  * Check if all relevant tables are empty.
