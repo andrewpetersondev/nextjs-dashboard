@@ -72,7 +72,6 @@
     "standalone": "rm -rf .next/ && pnpm build && pnpm start-standalone",
     "start": "node .next/standalone/server.js",
     "start-standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
-    "test-db-setup": "pnpm tsx test-support/setup-test-db.ts",
     "type-gen": "next typegen && tsc --noEmit"
   },
   "type": "module",

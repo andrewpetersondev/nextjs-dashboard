@@ -47,10 +47,8 @@ export default defineConfig({
           return null;
         },
         async "db:truncate"() {
-          const { mainCypTruncate } = await import(
-            "./test-support/truncate-test-db-script"
-          );
-          await mainCypTruncate();
+          const { resetCypressDb } = await import("./test-support/db/reset");
+          await resetCypressDb();
           return null;
         },
         async "db:userExists"(email: string) {
