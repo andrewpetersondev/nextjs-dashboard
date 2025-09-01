@@ -37,7 +37,8 @@ export const commonFields = {
     updatedAt: () =>
       timestamp(COLUMNS.UPDATED_AT, { mode: "date", withTimezone: true })
         .defaultNow()
-        .notNull(),
+        .notNull()
+        .$onUpdate(() => new Date()),
   },
 } as const;
 
