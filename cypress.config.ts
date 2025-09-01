@@ -20,7 +20,9 @@ export default defineConfig({
       // Database setup/teardown tasks
       on("task", {
         async "db:cleanup"() {
-          const { cleanupE2EUsers } = await import("./test-support/db/seed");
+          const { cleanupE2EUsers } = await import(
+            "./test-support/db/e2e-users"
+          );
           await cleanupE2EUsers();
           return null;
         },
@@ -40,7 +42,7 @@ export default defineConfig({
           username?: string;
           role?: "user" | "admin" | "guest";
         }) {
-          const { upsertE2EUser } = await import("./test-support/db/seed");
+          const { upsertE2EUser } = await import("./test-support/db/e2e-users");
           await upsertE2EUser(user);
           return null;
         },
@@ -52,7 +54,7 @@ export default defineConfig({
           return null;
         },
         async "db:userExists"(email: string) {
-          const { userExists } = await import("./test-support/db/seed");
+          const { userExists } = await import("./test-support/db/e2e-users");
           return userExists(email);
         },
       });

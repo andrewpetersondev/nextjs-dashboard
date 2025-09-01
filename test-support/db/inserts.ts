@@ -1,0 +1,69 @@
+import { sql } from "drizzle-orm";
+import * as schema from "../../src/server/db/schema";
+import { SEED_CONFIG } from "./constants";
+import { customersData, periodDates, roles, type Tx } from "./seed-shared";
+
+/** Insert revenues rows for each period. */
+export async function insertRevenues(tx: Tx): Promise<void> {
+  await tx.insert(schema.revenues).values(
+    periodDates.map((periodDate) => ({
+      calculationSource: "seed" as const,
+      invoiceCount: 0,
+      period: periodDate,
+      totalAmount: 0,
+    })),
+  );
+}
+
+/** Insert demo customers. */
+export async function insertCustomers(tx: Tx): Promise<void> {
+  await tx.insert(schema.customers).values(
+    customersData.map((c) => ({
+      email: c.email,
+      imageUrl: c.imageUrl,
+      name: c.name,
+    })),
+  );
+}
+
+/** Fetch all customer ids after insertion. */
+export async function fetchCustomerIds(
+  tx: Tx,
+): Promise<ReadonlyArray<{ readonly id: string }>> {
+  const rows = await tx
+    .select({ id: schema.customers.id })
+    .from(schema.customers);
+  if (rows.length === 0) {
+    throw new Error("No customers found after seeding customers.");
+  }
+  return rows as ReadonlyArray<{ readonly id: string }>;
+}
+
+/** Insert demo counters for each role. */
+export async function insertDemoCounters(tx: Tx): Promise<void> {
+  await tx.insert(schema.demoUserCounters).values(
+    roles.map((role) => ({
+      count:
+        Math.floor(
+          Math.random() *
+            (SEED_CONFIG.DEMO_COUNTER_MAX - SEED_CONFIG.DEMO_COUNTER_MIN + 1),
+        ) + SEED_CONFIG.DEMO_COUNTER_MIN,
+      role,
+    })),
+  );
+}
+
+/** Aggregate revenues from invoices into revenues table. */
+export async function aggregateRevenues(tx: Tx): Promise<void> {
+  await tx.execute(sql`
+      UPDATE revenues AS r
+      SET total_amount  = COALESCE(agg.total_amount, 0),
+          invoice_count = COALESCE(agg.invoice_count, 0),
+          updated_at    = NOW() FROM (
+        SELECT invoices.revenue_period AS period, SUM(invoices.amount) AS total_amount, COUNT(*) AS invoice_count
+        FROM invoices
+        GROUP BY invoices.revenue_period
+      ) AS agg
+      WHERE r.period = agg.period;
+    `);
+}
