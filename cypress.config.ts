@@ -52,9 +52,7 @@ export default defineConfig({
           return null;
         },
         async "db:userExists"(email: string) {
-          const { userExists } = await import(
-            "./test-support/seed-test-db-cyp-script"
-          );
+          const { userExists } = await import("./test-support/db/seed");
           return userExists(email);
         },
       });
