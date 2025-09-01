@@ -3,6 +3,9 @@
 /** biome-ignore-all lint/style/noProcessEnv: <temp> */
 /** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
 
+// I THINK THIS FILE NO LONGER SERVES ANY PURPOSE B/C PROPERLY USING DOTENV ALLOWED RESET SCRIPT TO PROPERLY TRUNCATE
+
+import dotenv from "dotenv";
 import { sql } from "drizzle-orm";
 import {
   drizzle,
@@ -11,7 +14,10 @@ import {
 } from "drizzle-orm/node-postgres";
 import * as schema from "@/server/db/schema";
 
+dotenv.config({ path: ".env.test" });
+
 let url: string;
+
 if (process.env.POSTGRES_URL_TESTDB) {
   url = process.env.POSTGRES_URL_TESTDB;
   console.log("Using POSTGRES_URL_TESTDB:", url);

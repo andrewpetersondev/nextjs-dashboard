@@ -5,16 +5,6 @@
 /** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
 /** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
 
-import bcryptjs from "bcryptjs";
-import { sql } from "drizzle-orm";
-import {
-  drizzle,
-  type NodePgClient,
-  type NodePgDatabase,
-} from "drizzle-orm/node-postgres";
-import * as schema from "@/server/db/schema";
-import type { Period } from "@/shared/brands/domain-brands";
-
 /**
  * @file seeds/seed-dev-db.ts
  * Seed script for initializing the test database with realistic sample data.
@@ -27,6 +17,19 @@ import type { Period } from "@/shared/brands/domain-brands";
  *   POSTGRES_URL=postgres://... pnpm ts-node src/db/seeds/seed-dev-db.ts
  *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-dev-db.ts # force re-seed (TRUNCATE)
  */
+
+import bcryptjs from "bcryptjs";
+import dotenv from "dotenv";
+import { sql } from "drizzle-orm";
+import {
+  drizzle,
+  type NodePgClient,
+  type NodePgDatabase,
+} from "drizzle-orm/node-postgres";
+import * as schema from "@/server/db/schema";
+import type { Period } from "@/shared/brands/domain-brands";
+
+dotenv.config({ path: ".env.development" });
 
 console.log("db-dev.ts ...");
 

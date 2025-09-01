@@ -12,8 +12,10 @@
  *
  */
 
-import "dotenv/config";
+import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
+
+dotenv.config({ path: ".env.test" });
 
 // WRONG inside Docker:
 // postgres://user:password@testDB:5433/database

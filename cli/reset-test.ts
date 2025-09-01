@@ -19,6 +19,7 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
+import dotenv from "dotenv";
 import {
   drizzle,
   type NodePgClient,
@@ -26,6 +27,8 @@ import {
 } from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
 import * as schema from "@/server/db/schema";
+
+dotenv.config({ path: ".env.test" });
 
 console.log("db-test.ts ...");
 

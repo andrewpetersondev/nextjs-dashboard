@@ -12,8 +12,10 @@
  *
  */
 
-import "dotenv/config";
+import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
+
+dotenv.config({ path: ".env.development" });
 
 console.log("drizzle-dev.config.ts ...");
 

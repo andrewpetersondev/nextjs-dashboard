@@ -6,6 +6,7 @@
 /** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
 
 import bcryptjs from "bcryptjs";
+import dotenv from "dotenv";
 import { sql } from "drizzle-orm";
 import {
   drizzle,
@@ -14,6 +15,8 @@ import {
 } from "drizzle-orm/node-postgres";
 import * as schema from "@/server/db/schema";
 import type { Period } from "@/shared/brands/domain-brands";
+
+dotenv.config({ path: ".env.test" });
 
 /**
  * @file seeds/seed-test-db.ts
