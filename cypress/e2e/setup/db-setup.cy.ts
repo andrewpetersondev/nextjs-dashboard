@@ -4,13 +4,15 @@ import { buildE2EUser } from "../../support/db-test-constants";
 describe("Database setup and cleanup tasks", () => {
   const testUser = buildE2EUser();
 
-  before(function () {
+  beforeEach(function () {
     // Skip if test DB is not configured
     const url = Cypress.env("POSTGRES_URL_TESTDB");
     if (!url) {
       console.warn("Skipping DB tasks tests; POSTGRES_URL_TESTDB is not set");
       this.skip();
     }
+    cy.log("POSTGRES_URL_TESTDB:", url);
+    cy.log("testUser:", testUser);
   });
 
   afterEach(() => {
@@ -32,13 +34,9 @@ describe("Database setup and cleanup tasks", () => {
 
   it("Happy path login works after db:setup", () => {
     cy.task("db:setup", testUser);
-    cy.log("Before cy.login");
-    cy.log("POSTGRES_URL_TESTDB:", Cypress.env("POSTGRES_URL_TESTDB"));
-    cy.log("testUser:", testUser);
     // Ensure the seeded user is present before attempting UI login:
     cy.task("db:userExists", testUser.email).should("be.true");
     // Using custom command which already asserts navigation to dashboard:
     cy.login(testUser.email, testUser.password);
-    cy.log("After cy.login");
   });
 });

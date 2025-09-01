@@ -5,6 +5,9 @@
 // scripts/setup-test-db.ts
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.test" });
 
 const execAsync = promisify(exec);
 

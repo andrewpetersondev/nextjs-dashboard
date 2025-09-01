@@ -3,6 +3,7 @@
 /** biome-ignore-all lint/style/noProcessEnv: <temp> */
 /** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
 
+import dotenv from "dotenv";
 import { sql } from "drizzle-orm";
 import {
   drizzle,
@@ -11,7 +12,10 @@ import {
 } from "drizzle-orm/node-postgres";
 import * as schema from "@/server/db/schema";
 
+dotenv.config({ path: ".env.test" });
+
 let url: string;
+
 if (process.env.POSTGRES_URL_TESTDB) {
   url = process.env.POSTGRES_URL_TESTDB;
   console.log("Using POSTGRES_URL_TESTDB:", url);
