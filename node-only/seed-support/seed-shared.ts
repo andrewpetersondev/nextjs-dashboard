@@ -1,6 +1,6 @@
 import type { Period } from "@/shared/brands/domain-brands";
 import type { invoices } from "../schema/invoices";
-import type { db } from "./config";
+import type { db } from "../test-support/config";
 import { SEED_CONFIG } from "./constants";
 import { generateMonthlyPeriods } from "./utils";
 

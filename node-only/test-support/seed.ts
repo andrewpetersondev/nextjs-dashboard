@@ -1,14 +1,17 @@
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
-import { buildRandomInvoiceRows, buildUserSeed } from "./builders";
-import { db } from "./config";
+import {
+  buildRandomInvoiceRows,
+  buildUserSeed,
+} from "../seed-support/builders";
 import {
   aggregateRevenues,
   fetchCustomerIds,
   insertCustomers,
   insertDemoCounters,
   insertRevenues,
-} from "./inserts";
+} from "../seed-support/inserts";
+import { db } from "./config";
 import { ensureResetOrEmpty } from "./maintenance";
 
 export async function mainCypTestSeed(): Promise<void> {

@@ -2,8 +2,8 @@ import { eq, inArray, sql } from "drizzle-orm";
 import { toUserId } from "@/shared/brands/mappers";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
+import { hashPassword } from "../seed-support/utils";
 import { db } from "./config";
-import { hashPassword } from "./utils";
 
 /** Upsert an E2E user and invalidate existing sessions. */
 export async function upsertE2EUser(user: {
