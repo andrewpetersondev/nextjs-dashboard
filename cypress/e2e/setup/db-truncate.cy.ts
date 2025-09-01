@@ -1,4 +1,4 @@
-const TRUNCATE_TIMEOUT = 60_000;
+const TRUNCATE_TIMEOUT = 20_000;
 
 describe("Truncate test database", () => {
   it("removes all data from tables", () => {

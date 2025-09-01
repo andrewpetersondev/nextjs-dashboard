@@ -1,35 +1,35 @@
 /** biome-ignore-all lint/style/noProcessEnv: <temp> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
 
+/**
+ * Environment configuration and validation.
+ * This module validates required environment variables at runtime using Zod
+ */
+
 import "server-only";
 
 import { z } from "zod";
+import type { DatabaseEnv } from "@/server/config/types";
 
-/**
- * Environment configuration and validation.
- *
- * This module validates required environment variables at runtime using Zod
- * and exports strongly-typed constants for use throughout the application.
- *
- * Why `server-only`?
- * - Ensures this module is only ever bundled/executed on the server. Secrets
- *   (like database URLs and session secrets) must never leak to the client.
- *
- * Usage example:
- *  import { POSTGRES_URL, SESSION_SECRET } from "@/src/config/env";
- *  // Use the validated values directly; do not access process.env elsewhere
- *
- * Adding new variables:
- * - Extend `envSchema` below with the new key and its Zod validator.
- * - Re-export the validated value at the bottom.
- * - Update the README in this folder with documentation and usage.
- */
+function normalizeDbEnv(value: string | undefined): DatabaseEnv {
+  switch (value) {
+    case "test":
+      return "test";
+    case "production":
+      return "production";
+    case "development":
+      return "development";
+    default:
+      return "development";
+  }
+}
 
-// Prefer explicit DATABASE_ENV; fallback to NODE_ENV
-const dbEnvRaw =
-  process.env.DATABASE_ENV ?? process.env.NODE_ENV ?? "development";
-const isTestEnv: boolean = dbEnvRaw === "test";
-const isProdEnv: boolean = dbEnvRaw === "production";
+const DATABASE_ENV_INTERNAL: DatabaseEnv = normalizeDbEnv(
+  process.env.DATABASE_ENV ?? process.env.NODE_ENV,
+);
+
+const isTestEnv: boolean = DATABASE_ENV_INTERNAL === "test";
+const isProdEnv: boolean = DATABASE_ENV_INTERNAL === "production";
 
 const baseSchema = z.object({
   POSTGRES_URL: z.url(),
@@ -76,3 +76,5 @@ export const POSTGRES_URL_TESTDB: Env["POSTGRES_URL_TESTDB"] =
  */
 export const POSTGRES_URL_PRODDB: Env["POSTGRES_URL_PRODDB"] =
   parsed.data.POSTGRES_URL_PRODDB;
+
+export const DATABASE_ENV: DatabaseEnv = DATABASE_ENV_INTERNAL;

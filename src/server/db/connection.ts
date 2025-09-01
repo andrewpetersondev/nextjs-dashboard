@@ -1,6 +1,4 @@
 /** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
 
 /**
  * @file connection.ts
@@ -20,6 +18,7 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import {
+  DATABASE_ENV,
   POSTGRES_URL,
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
@@ -89,7 +88,7 @@ export type Database = NodePgDatabase<typeof schema> & {
  * - "production"  -> prod DB (POSTGRES_URL_PRODDB)
  */
 export function getDB(
-  type: DbType = resolveDbTypeFromNodeEnv(process.env.NODE_ENV),
+  type: DbType = resolveDbTypeFromNodeEnv(DATABASE_ENV),
 ): Database {
   const url = getDatabaseUrl(type);
   return drizzle({ casing: "snake_case", connection: url, schema }) as Database;

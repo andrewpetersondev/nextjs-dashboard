@@ -3,7 +3,7 @@
 ## Guidelines
 
 - Implement or refactor the project's structure to align with professional best practices for Next.js version 15+ and Typescript version 5+.
-- Many of my Markdown files are severely outdated, so they cannot be trusted.
+
 
 ## Code Style Guidelines
 
@@ -25,4 +25,9 @@
 
 ## Additional Tools
 
-- `pnpm biome-check` is a command line tool for errors, problems, and maintaining conventions.
+- Do not use eslint.
+
+## Cypress Testing
+
+- Must use the Database specifically for testing. 
+- Testing Database has environment variable of POSTGRES_URL_TESTDB, whereas the development database is POSTGRES_URL_DEV
