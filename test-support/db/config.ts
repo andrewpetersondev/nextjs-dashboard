@@ -1,0 +1,17 @@
+import dotenv from "dotenv";
+import { drizzle, type NodePgClient, type NodePgDatabase } from "drizzle-orm/node-postgres";
+
+dotenv.config({ path: ".env.test" });
+
+let url: string;
+if (process.env.POSTGRES_URL_TESTDB) {
+  url = process.env.POSTGRES_URL_TESTDB;
+  // eslint-disable-next-line no-console
+  console.log("Using POSTGRES_URL_TESTDB:", url);
+} else {
+  // eslint-disable-next-line no-console
+  console.error("POSTGRES_URL_TESTDB is not set.");
+  process.exit(1);
+}
+
+export const db: (NodePgDatabase & { readonly $client: NodePgClient }) = drizzle({ casing: "snake_case", connection: url });
