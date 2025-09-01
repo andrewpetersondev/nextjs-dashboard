@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noNodejsModules: <remove rule>
+import process from "node:process";
 import { sql } from "drizzle-orm";
 import * as schema from "../../src/server/db/schema";
 import { db } from "./config";
