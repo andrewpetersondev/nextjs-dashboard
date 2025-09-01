@@ -1,6 +1,7 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import * as schema from "../../src/server/db/schema";
 import type { Period } from "../../src/shared/brands/domain-brands";
+import { toCustomerId } from "../../src/shared/brands/mappers";
 import { db } from "./config";
 import { SEED_CONFIG } from "./constants";
 import {
@@ -15,7 +16,9 @@ const periods = generateMonthlyPeriods(
   "2024-01-01",
   SEED_CONFIG.GENERATE_MONTHLY_PERIODS_COUNT,
 );
+
 const periodDates = periods.map((p) => new Date(`${p}T00:00:00.000Z`));
+
 const roles = ["guest", "admin", "user"] as const;
 
 const customersData: Array<{ name: string; email: string; imageUrl: string }> =
@@ -198,7 +201,7 @@ function buildRandomInvoiceRows(
 
     invoiceRows.push({
       amount: generateInvoiceAmount(),
-      customerId: customer.id,
+      customerId: toCustomerId(customer.id),
       date: invoiceDate,
       revenuePeriod: revenuePeriod as Period,
       status: randomInvoiceStatus(),

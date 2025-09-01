@@ -24,6 +24,11 @@ export default defineConfig({
           await cleanupE2EUsers();
           return null;
         },
+        async "db:reset"() {
+          const { resetCypressDb } = await import("./test-support/db/reset");
+          await resetCypressDb();
+          return null;
+        },
         async "db:seed"() {
           const { mainCypTestSeed } = await import("./test-support/db/seed");
           await mainCypTestSeed();
