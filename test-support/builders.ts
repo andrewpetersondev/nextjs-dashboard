@@ -1,6 +1,6 @@
-import type { invoices } from "../../node-only/schema/invoices";
-import type { Period } from "../../src/shared/brands/domain-brands";
-import { toCustomerId } from "../../src/shared/brands/mappers";
+import type { Period } from "@/shared/brands/domain-brands";
+import { toCustomerId } from "@/shared/brands/mappers";
+import type { invoices } from "../node-only/schema/invoices";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods, type roles } from "./seed-shared";
 import {

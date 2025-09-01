@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
-import { customers } from "../../node-only/schema/customers";
-import { demoUserCounters } from "../../node-only/schema/demo-users";
-import { revenues } from "../../node-only/schema/revenues";
+import { customers } from "../node-only/schema/customers";
+import { demoUserCounters } from "../node-only/schema/demo-users";
+import { revenues } from "../node-only/schema/revenues";
 import { SEED_CONFIG } from "./constants";
 import { customersData, periodDates, roles, type Tx } from "./seed-shared";
 

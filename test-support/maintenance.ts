@@ -1,12 +1,12 @@
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import { sql } from "drizzle-orm";
-import { customers } from "../../node-only/schema/customers";
-import { demoUserCounters } from "../../node-only/schema/demo-users";
-import { invoices } from "../../node-only/schema/invoices";
-import { revenues } from "../../node-only/schema/revenues";
-import { sessions } from "../../node-only/schema/sessions";
-import { users } from "../../node-only/schema/users";
+import { customers } from "../node-only/schema/customers";
+import { demoUserCounters } from "../node-only/schema/demo-users";
+import { invoices } from "../node-only/schema/invoices";
+import { revenues } from "../node-only/schema/revenues";
+import { sessions } from "../node-only/schema/sessions";
+import { users } from "../node-only/schema/users";
 import { db } from "./config";
 
 /**

@@ -1,5 +1,5 @@
-import { invoices } from "../../node-only/schema/invoices";
-import { users } from "../../node-only/schema/users";
+import { invoices } from "../node-only/schema/invoices";
+import { users } from "../node-only/schema/users";
 import { buildRandomInvoiceRows, buildUserSeed } from "./builders";
 import { db } from "./config";
 import {

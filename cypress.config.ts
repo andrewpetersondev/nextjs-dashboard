@@ -20,19 +20,17 @@ export default defineConfig({
       // Database setup/teardown tasks
       on("task", {
         async "db:cleanup"() {
-          const { cleanupE2EUsers } = await import(
-            "./test-support/db/e2e-users"
-          );
+          const { cleanupE2EUsers } = await import("./test-support/e2e-users");
           await cleanupE2EUsers();
           return null;
         },
         async "db:reset"() {
-          const { resetCypressDb } = await import("./test-support/db/reset");
+          const { resetCypressDb } = await import("./test-support/reset");
           await resetCypressDb();
           return null;
         },
         async "db:seed"() {
-          const { mainCypTestSeed } = await import("./test-support/db/seed");
+          const { mainCypTestSeed } = await import("./test-support/seed");
           await mainCypTestSeed();
           return null;
         },
@@ -42,17 +40,17 @@ export default defineConfig({
           username?: string;
           role?: "user" | "admin" | "guest";
         }) {
-          const { upsertE2EUser } = await import("./test-support/db/e2e-users");
+          const { upsertE2EUser } = await import("./test-support/e2e-users");
           await upsertE2EUser(user);
           return null;
         },
         async "db:truncate"() {
-          const { resetCypressDb } = await import("./test-support/db/reset");
+          const { resetCypressDb } = await import("./test-support/reset");
           await resetCypressDb();
           return null;
         },
         async "db:userExists"(email: string) {
-          const { userExists } = await import("./test-support/db/e2e-users");
+          const { userExists } = await import("./test-support/e2e-users");
           return userExists(email);
         },
       });
