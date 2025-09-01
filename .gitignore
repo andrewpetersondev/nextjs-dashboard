@@ -82,6 +82,7 @@ logs/
 .cache/
 .eslintcache
 .stylelintcache
+tsconfig.tsbuildinfo
 *.tsbuildinfo
 
 
