@@ -1,7 +1,7 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { toUserId } from "@/shared/brands/mappers";
-import { sessions } from "../node-only/schema/sessions";
-import { users } from "../node-only/schema/users";
+import { sessions } from "../schema/sessions";
+import { users } from "../schema/users";
 import { db } from "./config";
 import { hashPassword } from "./utils";
 
