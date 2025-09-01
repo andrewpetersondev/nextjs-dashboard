@@ -1,5 +1,5 @@
 import { eq, inArray, sql } from "drizzle-orm";
-import * as schema from "../../src/server/db/schema";
+import * as schema from "../../src/server/db/schema/schema";
 import { toUserId } from "../../src/shared/brands/mappers";
 import { db } from "./config";
 import { hashPassword } from "./utils";

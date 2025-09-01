@@ -1,7 +1,7 @@
 import "server-only";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { UserRow } from "@/server/db/schema";
+import type { UserRow } from "@/server/db/schema/schema";
 import type { UserEntity } from "@/server/users/entity";
 import { toUserId } from "@/shared/brands/mappers";
 import type { UserDto } from "@/shared/users/dto";

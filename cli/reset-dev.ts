@@ -26,7 +26,7 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
-import * as schema from "@/server/db/schema";
+import * as schema from "@/server/db/schema/schema";
 
 dotenv.config({ path: ".env.development" });
 

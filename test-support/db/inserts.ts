@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import * as schema from "../../src/server/db/schema";
+import * as schema from "../../src/server/db/schema/schema";
 import { SEED_CONFIG } from "./constants";
 import { customersData, periodDates, roles, type Tx } from "./seed-shared";
 

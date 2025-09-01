@@ -23,7 +23,7 @@ import {
   POSTGRES_URL_PRODDB,
   POSTGRES_URL_TESTDB,
 } from "@/server/config/environment";
-import * as schema from "@/server/db/schema";
+import * as schema from "@/server/db/schema/schema";
 
 // Supported database types
 type DbType = "development" | "test" | "production";

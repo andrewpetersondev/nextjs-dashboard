@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { type RevenueRow, revenues } from "@/server/db/schema";
+import { type RevenueRow, revenues } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,

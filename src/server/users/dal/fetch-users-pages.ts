@@ -2,7 +2,7 @@ import "server-only";
 
 import { count, ilike, or } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { users } from "@/server/db/schema";
+import { users } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/ui/ui";

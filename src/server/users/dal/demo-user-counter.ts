@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Database } from "@/server/db/connection";
-import { demoUserCounters } from "@/server/db/schema";
+import { demoUserCounters } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 

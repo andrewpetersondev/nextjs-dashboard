@@ -1,4 +1,4 @@
-import * as schema from "../../src/server/db/schema";
+import * as schema from "../../src/server/db/schema/schema";
 import { buildRandomInvoiceRows, buildUserSeed } from "./builders";
 import { db } from "./config";
 import {

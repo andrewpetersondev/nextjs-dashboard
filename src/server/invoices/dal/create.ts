@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Database } from "@/server/db/connection";
-import { invoices, revenues } from "@/server/db/schema";
+import { invoices, revenues } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   InvoiceEntity,

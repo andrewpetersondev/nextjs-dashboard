@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { invoices } from "@/server/db/schema";
+import { invoices } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   InvoiceEntity,

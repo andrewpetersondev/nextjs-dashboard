@@ -26,7 +26,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import * as schema from "@/server/db/schema";
+import * as schema from "@/server/db/schema/schema";
 import type { Period } from "@/shared/brands/domain-brands";
 
 dotenv.config({ path: ".env.development" });

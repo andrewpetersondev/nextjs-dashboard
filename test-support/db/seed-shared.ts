@@ -1,4 +1,4 @@
-import * as schema from "../../src/server/db/schema";
+import * as schema from "../../src/server/db/schema/schema";
 import type { Period } from "../../src/shared/brands/domain-brands";
 import type { db } from "./config";
 import { SEED_CONFIG } from "./constants";

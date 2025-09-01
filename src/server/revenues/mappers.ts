@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { RevenueRow } from "@/server/db/schema";
+import type { RevenueRow } from "@/server/db/schema/schema";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
