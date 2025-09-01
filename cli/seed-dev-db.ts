@@ -42,6 +42,7 @@ let url: string;
 
 if (process.env.POSTGRES_URL) {
   url = process.env.POSTGRES_URL;
+  console.log("Using POSTGRES_URL:", url);
 } else {
   console.error("POSTGRES_URL is not set.");
   process.exit(1);
