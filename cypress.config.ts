@@ -20,16 +20,12 @@ export default defineConfig({
       // Database setup/teardown tasks
       on("task", {
         async "db:cleanup"() {
-          const { cleanupE2EUsers } = await import(
-            "./test-support/seed-test-db-cyp-script"
-          );
+          const { cleanupE2EUsers } = await import("./test-support/db/seed");
           await cleanupE2EUsers();
           return null;
         },
         async "db:seed"() {
-          const { mainCypTestSeed } = await import(
-            "./test-support/seed-test-db-cyp-script"
-          );
+          const { mainCypTestSeed } = await import("./test-support/db/seed");
           await mainCypTestSeed();
           return null;
         },
@@ -39,9 +35,7 @@ export default defineConfig({
           username?: string;
           role?: "user" | "admin" | "guest";
         }) {
-          const { upsertE2EUser } = await import(
-            "./test-support/seed-test-db-cyp-script"
-          );
+          const { upsertE2EUser } = await import("./test-support/db/seed");
           await upsertE2EUser(user);
           return null;
         },
