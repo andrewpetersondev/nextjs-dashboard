@@ -1,7 +1,12 @@
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import { sql } from "drizzle-orm";
-import * as schema from "../../src/server/db/schema/schema";
+import { customers } from "../../node-only/schema/customers";
+import { demoUserCounters } from "../../node-only/schema/demo-users";
+import { invoices } from "../../node-only/schema/invoices";
+import { revenues } from "../../node-only/schema/revenues";
+import { sessions } from "../../node-only/schema/sessions";
+import { users } from "../../node-only/schema/users";
 import { db } from "./config";
 
 /**
@@ -9,18 +14,12 @@ import { db } from "./config";
  */
 export async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`),
+    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
+    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`),
+    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`),
+    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`),
     db.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
-    ),
-    db.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
-    ),
-    db.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
-    ),
-    db.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
   return checks.every((r) => (r as any).rows?.[0]?.v === false);
@@ -31,12 +30,12 @@ export async function isEmpty(): Promise<boolean> {
  */
 export async function truncateAll(): Promise<void> {
   await db.execute(sql`TRUNCATE TABLE
-    ${schema.sessions},
-    ${schema.invoices},
-    ${schema.customers},
-    ${schema.revenues},
-    ${schema.demoUserCounters},
-    ${schema.users}
+    ${sessions},
+    ${invoices},
+    ${customers},
+    ${revenues},
+    ${demoUserCounters},
+    ${users}
     RESTART IDENTITY CASCADE`);
 }
 

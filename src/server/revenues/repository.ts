@@ -2,7 +2,6 @@ import "server-only";
 
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { type RevenueRow, revenues } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,
@@ -17,6 +16,7 @@ import type { RevenueRepositoryInterface } from "@/server/revenues/repository-in
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
+import { type RevenueRow, revenues } from "../../../node-only/schema/revenues";
 
 /**
  * RevenueRepository

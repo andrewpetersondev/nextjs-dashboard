@@ -26,8 +26,13 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import * as schema from "@/server/db/schema/schema";
 import type { Period } from "@/shared/brands/domain-brands";
+import { customers } from "../node-only/schema/customers";
+import { demoUserCounters } from "../node-only/schema/demo-users";
+import { invoices } from "../node-only/schema/invoices";
+import { revenues } from "../node-only/schema/revenues";
+import { sessions } from "../node-only/schema/sessions";
+import { users } from "../node-only/schema/users";
 
 dotenv.config({ path: ".env.development" });
 
@@ -206,20 +211,18 @@ const customersData: Array<{ name: string; email: string; imageUrl: string }> =
  */
 async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
+    nodeEnvDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
     nodeEnvDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`,
     ),
     nodeEnvDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`,
     ),
     nodeEnvDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`,
     ),
     nodeEnvDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues} LIMIT 1) AS v`,
-    ),
-    nodeEnvDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
   return checks.every((r) => r.rows?.[0]?.v === false);
@@ -230,12 +233,12 @@ async function isEmpty(): Promise<boolean> {
  */
 async function truncateAll(): Promise<void> {
   await nodeEnvDb.execute(sql`TRUNCATE TABLE
-        ${schema.sessions},
-        ${schema.invoices},
-        ${schema.customers},
-        ${schema.revenues},
-        ${schema.demoUserCounters},
-        ${schema.users}
+        ${sessions},
+        ${invoices},
+        ${customers},
+        ${revenues},
+        ${demoUserCounters},
+        ${users}
         RESTART IDENTITY CASCADE`);
 }
 
@@ -332,7 +335,7 @@ async function main(): Promise<void> {
 
   await nodeEnvDb.transaction(async (tx) => {
     // 1) Seed revenues with Dates directly (no valuesFromArray)
-    await tx.insert(schema.revenues).values(
+    await tx.insert(revenues).values(
       periodDates.map((periodDate) => ({
         calculationSource: "seed" as const,
         invoiceCount: 0,
@@ -342,7 +345,7 @@ async function main(): Promise<void> {
     );
 
     // 2) Seed customers in a single batch
-    await tx.insert(schema.customers).values(
+    await tx.insert(customers).values(
       customersData.map((c) => ({
         email: c.email,
         imageUrl: c.imageUrl,
@@ -352,14 +355,14 @@ async function main(): Promise<void> {
 
     // 3) Seed invoices using Date objects for date/revenuePeriod
     const existingCustomers = await tx
-      .select({ id: schema.customers.id })
-      .from(schema.customers);
+      .select({ id: customers.id })
+      .from(customers);
 
     if (existingCustomers.length === 0) {
       throw new Error("No customers found after seeding customers.");
     }
 
-    const invoiceRows: (typeof schema.invoices.$inferInsert)[] = [];
+    const invoiceRows: (typeof invoices.$inferInsert)[] = [];
 
     /**
      * Generates invoice records by iterating INVOICE_COUNT times.
@@ -417,11 +420,11 @@ async function main(): Promise<void> {
     }
 
     if (invoiceRows.length > 0) {
-      await tx.insert(schema.invoices).values(invoiceRows);
+      await tx.insert(invoices).values(invoiceRows);
     }
 
     // 4) Seed demo user counters (one per role)
-    await tx.insert(schema.demoUserCounters).values(
+    await tx.insert(demoUserCounters).values(
       roles.map((role) => ({
         count:
           Math.floor(
@@ -433,7 +436,7 @@ async function main(): Promise<void> {
     );
 
     // 5) Seed users (pre-hashed passwords)
-    await tx.insert(schema.users).values(userSeed);
+    await tx.insert(users).values(userSeed);
 
     // 6) Recompute revenue aggregates from invoices
     await tx.execute(sql`

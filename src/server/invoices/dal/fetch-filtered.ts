@@ -2,11 +2,12 @@ import "server-only";
 
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { customers, invoices } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import type { InvoiceListFilter } from "@/shared/invoices/types";
 import { ITEMS_PER_PAGE } from "@/shared/ui/ui";
+import { customers } from "../../../../node-only/schema/customers";
+import { invoices } from "../../../../node-only/schema/invoices";
 
 /**
  * Fetches filtered invoices with pagination and customer information.

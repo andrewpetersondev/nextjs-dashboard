@@ -26,7 +26,21 @@ import {
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
-import * as schema from "@/server/db/schema/schema";
+import { customers } from "../node-only/schema/customers";
+import { demoUserCounters } from "../node-only/schema/demo-users";
+import { invoices } from "../node-only/schema/invoices";
+import { revenues } from "../node-only/schema/revenues";
+import { sessions } from "../node-only/schema/sessions";
+import { users } from "../node-only/schema/users";
+
+const schema = {
+  customers,
+  demoUserCounters,
+  invoices,
+  revenues,
+  sessions,
+  users,
+};
 
 dotenv.config({ path: ".env.test" });
 

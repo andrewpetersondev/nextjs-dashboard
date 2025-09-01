@@ -4,8 +4,8 @@ import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerSelectRowRaw } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
-import { customers } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { customers } from "../../../../node-only/schema/customers";
 
 /**
  * Fetches all customers for select options.

@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { RevenueRow } from "@/server/db/schema/schema";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
@@ -27,6 +26,7 @@ import {
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/shared/validation/number";
+import type { RevenueRow } from "../../../node-only/schema/revenues";
 
 // Small internal assertion helper to keep validation DRY and readable
 export const ensure = (condition: unknown, message: string): void => {

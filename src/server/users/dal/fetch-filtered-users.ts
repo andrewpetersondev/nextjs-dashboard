@@ -2,12 +2,12 @@ import "server-only";
 
 import { asc, ilike, or } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { users } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import { ITEMS_PER_PAGE_USERS } from "@/shared/ui/ui";
 import type { UserDto } from "@/shared/users/dto";
+import { users } from "../../../../node-only/schema/users";
 
 /**
  * Fetches filtered users for a specific page.

@@ -1,5 +1,6 @@
 import { eq, inArray, sql } from "drizzle-orm";
-import * as schema from "../../src/server/db/schema/schema";
+import { sessions } from "../../node-only/schema/sessions";
+import { users } from "../../node-only/schema/users";
 import { toUserId } from "../../src/shared/brands/mappers";
 import { db } from "./config";
 import { hashPassword } from "./utils";
@@ -26,32 +27,28 @@ export async function upsertE2EUser(user: {
 
   await db.transaction(async (tx) => {
     const existing = await tx
-      .select({ id: schema.users.id })
-      .from(schema.users)
-      .where(eq(schema.users.email, normalizedEmail))
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, normalizedEmail))
       .limit(1);
     if (existing.length > 0) {
       const row = existing[0]!;
       const userId = row.id;
       await tx
-        .update(schema.users)
+        .update(users)
         .set({ password: hashed, role, username })
-        .where(eq(schema.users.id, userId));
-      await tx
-        .delete(schema.sessions)
-        .where(eq(schema.sessions.userId, userId));
+        .where(eq(users.id, userId));
+      await tx.delete(sessions).where(eq(sessions.userId, userId));
     } else {
       const inserted = await tx
-        .insert(schema.users)
+        .insert(users)
         .values([{ email: normalizedEmail, password: hashed, role, username }])
-        .returning({ id: schema.users.id });
+        .returning({ id: users.id });
       if (inserted.length === 0 || !inserted[0]?.id) {
         throw new Error("Failed to insert E2E user");
       }
       const userId = inserted[0].id;
-      await tx
-        .delete(schema.sessions)
-        .where(eq(schema.sessions.userId, userId));
+      await tx.delete(sessions).where(eq(sessions.userId, userId));
     }
   });
 }
@@ -62,7 +59,7 @@ export async function userExists(email: string): Promise<boolean> {
     return false;
   }
   const res = await db.execute(
-    sql`SELECT EXISTS(SELECT 1 FROM ${schema.users} WHERE ${schema.users.email} = ${email}) AS v`,
+    sql`SELECT EXISTS(SELECT 1 FROM ${users} WHERE ${users.email} = ${email}) AS v`,
   );
   return Boolean((res as any)?.rows?.[0]?.v);
 }
@@ -70,8 +67,8 @@ export async function userExists(email: string): Promise<boolean> {
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
 export async function cleanupE2EUsers(): Promise<void> {
   const usersToDelete = await db.execute(sql`
-    SELECT id FROM ${schema.users}
-    WHERE ${schema.users.email} LIKE 'e2e_%' OR ${schema.users.username} LIKE 'e2e_%'
+    SELECT id FROM ${users}
+    WHERE ${users.email} LIKE 'e2e_%' OR ${users.username} LIKE 'e2e_%'
   `);
   const ids: string[] =
     (usersToDelete as any).rows?.map((r: any) => r.id).filter(Boolean) ?? [];
@@ -80,9 +77,7 @@ export async function cleanupE2EUsers(): Promise<void> {
   }
   const userIds = ids.map((id) => toUserId(id));
   await db.transaction(async (tx) => {
-    await tx
-      .delete(schema.sessions)
-      .where(inArray(schema.sessions.userId, userIds));
-    await tx.delete(schema.users).where(inArray(schema.users.id, userIds));
+    await tx.delete(sessions).where(inArray(sessions.userId, userIds));
+    await tx.delete(users).where(inArray(users.id, userIds));
   });
 }

@@ -1,4 +1,4 @@
-import * as schema from "../../src/server/db/schema/schema";
+import type { invoices } from "../../node-only/schema/invoices";
 import type { Period } from "../../src/shared/brands/domain-brands";
 import { toCustomerId } from "../../src/shared/brands/mappers";
 import { SEED_CONFIG } from "./constants";
@@ -82,7 +82,7 @@ export function buildRandomInvoiceRows(
       date: invoiceDate,
       revenuePeriod: revenuePeriod as Period,
       status: randomInvoiceStatus(),
-    } as typeof schema.invoices.$inferInsert);
+    } as typeof invoices.$inferInsert);
   }
   return invoiceRows;
 }

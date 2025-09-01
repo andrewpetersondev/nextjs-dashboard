@@ -1,4 +1,4 @@
-import * as schema from "../../src/server/db/schema/schema";
+import type { invoices } from "../../node-only/schema/invoices";
 import type { Period } from "../../src/shared/brands/domain-brands";
 import type { db } from "./config";
 import { SEED_CONFIG } from "./constants";
@@ -12,7 +12,7 @@ export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 /**
  * NewInvoice insert type from schema.
  */
-export type NewInvoice = typeof schema.invoices.$inferInsert;
+export type NewInvoice = typeof invoices.$inferInsert;
 
 /**
  * Seed roles used for demo users.

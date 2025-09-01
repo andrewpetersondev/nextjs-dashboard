@@ -3,11 +3,11 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
-import { users } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
 import type { UserDto } from "@/shared/users/dto";
+import { users } from "../../../../node-only/schema/users";
 
 /**
  * Finds a user by email and verifies the password.

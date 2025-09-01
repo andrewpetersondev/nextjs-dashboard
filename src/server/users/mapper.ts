@@ -1,10 +1,10 @@
 import "server-only";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { UserRow } from "@/server/db/schema/schema";
 import type { UserEntity } from "@/server/users/entity";
 import { toUserId } from "@/shared/brands/mappers";
 import type { UserDto } from "@/shared/users/dto";
+import type { UserRow } from "../../../node-only/schema/users";
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.

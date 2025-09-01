@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { Database } from "@/server/db/connection";
-import { invoices, revenues } from "@/server/db/schema/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   InvoiceEntity,
@@ -10,6 +9,8 @@ import type {
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { toPeriod } from "@/shared/brands/mappers";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { invoices } from "../../../../node-only/schema/invoices";
+import { revenues } from "../../../../node-only/schema/revenues";
 
 /**
  * Creates a new invoice in the database.

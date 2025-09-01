@@ -26,5 +26,5 @@ export default defineConfig({
   },
   dialect: "postgresql",
   out: "./drizzle/migrations/dev/",
-  schema: "./src/server/db/schema.ts",
+  schema: "./node-only/schema",
 });

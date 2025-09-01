@@ -1,4 +1,5 @@
-import * as schema from "../../src/server/db/schema/schema";
+import { invoices } from "../../node-only/schema/invoices";
+import { users } from "../../node-only/schema/users";
 import { buildRandomInvoiceRows, buildUserSeed } from "./builders";
 import { db } from "./config";
 import {
@@ -24,13 +25,13 @@ export async function mainCypTestSeed(): Promise<void> {
     const existingCustomers = await fetchCustomerIds(tx);
     const invoiceRows = buildRandomInvoiceRows(existingCustomers);
     if (invoiceRows.length > 0) {
-      await tx.insert(schema.invoices).values(invoiceRows);
+      await tx.insert(invoices).values(invoiceRows);
     }
     await insertDemoCounters(tx);
-    const userValues: (typeof schema.users.$inferInsert)[] = userSeed.map(
-      (u) => ({ ...u }),
-    );
-    await tx.insert(schema.users).values(userValues);
+    const userValues: (typeof users.$inferInsert)[] = userSeed.map((u) => ({
+      ...u,
+    }));
+    await tx.insert(users).values(userValues);
     await aggregateRevenues(tx);
   });
 
