@@ -1,14 +1,14 @@
 /**
- * @file seeds/seed-test-db.ts
+ * @file seeds/seed-dev-db.ts
  * Seed script for initializing the test database with realistic sample data.
  *
- * - Target database: test_db (via POSTGRES_URL_TESTDB)
+ * - Target database: dev_db (via POSTGRES_URL)
  * - Entry point: run directly with ts-node
  * - Idempotency: refuses to seed if data exists unless SEED_RESET=true
  *
  * Quick start:
- *   POSTGRES_URL_TESTDB=postgres://... pnpm ts-node src/db/seeds/seed-test-db.ts
- *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-test-db.ts # force re-seed (TRUNCATE)
+ *   POSTGRES_URL=postgres://... pnpm ts-node src/db/seeds/seed-dev-db.ts
+ *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-dev-db.ts # force re-seed (TRUNCATE)
  */
 
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
@@ -19,43 +19,43 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { invoices } from "../node-only/schema/invoices";
-import { users } from "../node-only/schema/users";
+import { invoices } from "../schema/invoices";
+import { users } from "../schema/users";
 import {
   buildRandomInvoiceRows,
   buildUserSeed,
-} from "../node-only/seed-support/builders";
+} from "../seed-support/builders";
 import {
   aggregateRevenues,
   fetchCustomerIds,
   insertCustomers,
   insertDemoCounters,
   insertRevenues,
-} from "../node-only/seed-support/inserts";
-import { ensureResetOrEmpty } from "../node-only/seed-support/maintenance";
+} from "../seed-support/inserts";
+import { ensureResetOrEmpty } from "../seed-support/maintenance";
 
-dotenv.config({ path: ".env.test" });
+dotenv.config({ path: ".env.development" });
 
-console.log("db-test.ts ...");
+console.log("db-dev.ts ...");
 
 let url: string;
 
-if (process.env.POSTGRES_URL_TESTDB) {
-  url = process.env.POSTGRES_URL_TESTDB;
-  console.log("Using POSTGRES_URL_TESTDB:", url);
+if (process.env.POSTGRES_URL) {
+  url = process.env.POSTGRES_URL;
+  console.log("Using POSTGRES_URL:", url);
 } else {
-  console.error("POSTGRES_URL_TESTDB is not set.");
+  console.error("POSTGRES_URL is not set.");
   process.exit(1);
 }
 
-const nodeEnvTestDb: NodePgDatabase & {
+const nodeEnvDb: NodePgDatabase & {
   $client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });
 
 /**
  * Main seeding function.
  */
-async function testSeed(): Promise<void> {
+async function devSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();
   if (!proceed) {
     return;
@@ -63,7 +63,7 @@ async function testSeed(): Promise<void> {
 
   const userSeed = await buildUserSeed();
 
-  await nodeEnvTestDb.transaction(async (tx) => {
+  await nodeEnvDb.transaction(async (tx) => {
     await insertRevenues(tx);
     await insertCustomers(tx);
     const existingCustomers = await fetchCustomerIds(tx);
@@ -83,7 +83,7 @@ async function testSeed(): Promise<void> {
 }
 
 // Execute seeding with proper error handling and process exit
-testSeed().catch((error) => {
+devSeed().catch((error) => {
   console.error("Error seeding database:", error);
   process.exit(1);
 });
