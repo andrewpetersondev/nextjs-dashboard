@@ -17,33 +17,29 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "../../src/shared/invoices/types";
-import { COLUMNS, commonFields, TABLES } from "./constants";
+import { commonFields } from "./constants";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 
-const statusEnum = pgEnum(COLUMNS.STATUS, INVOICE_STATUSES);
+const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
-/**
- * Invoices: links customers to their invoices.
- * - revenuePeriod is the first day of the month this invoice contributes to.
- */
 export const invoices = pgTable(
-  TABLES.INVOICES,
+  "invoices",
   {
     // bigint cents to avoid overflow on large invoice amounts
-    amount: bigint(COLUMNS.AMOUNT, { mode: "number" }).notNull(),
-    customerId: uuid(COLUMNS.CUSTOMER_ID)
+    amount: bigint("amount", { mode: "number" }).notNull(),
+    customerId: uuid("customer_id")
       .notNull()
       .references(() => customers.id, { onDelete: "cascade" })
       .$type<CustomerId>(),
-    date: date(COLUMNS.DATE, { mode: "date" }).notNull(),
+    date: date("date", { mode: "date" }).notNull(),
     id: commonFields.id.uuid().$type<InvoiceId>(),
-    revenuePeriod: date(COLUMNS.REVENUE_PERIOD, { mode: "date" })
+    revenuePeriod: date("revenue_period", { mode: "date" })
       .notNull()
       .references(() => revenues.period, { onDelete: "restrict" })
       .$type<Period>(),
     sensitiveData: commonFields.sensitiveData(),
-    status: statusEnum(COLUMNS.STATUS)
+    status: statusEnum("status")
       .default("pending")
       .notNull()
       .$type<InvoiceStatus>(),

@@ -12,13 +12,10 @@ import {
   type RevenueSource,
 } from "../../src/features/revenues/types";
 import type { Period, RevenueId } from "../../src/shared/brands/domain-brands";
-import { COLUMNS, commonFields, TABLES } from "./constants";
+import { commonFields } from "./constants";
 import { invoices } from "./invoices";
 
-const calculationSourceEnum = pgEnum(
-  COLUMNS.CALCULATION_SOURCE,
-  REVENUE_SOURCES,
-);
+const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);
 
 /**
  * Revenues: monthly aggregates for reporting/analytics.
@@ -28,21 +25,18 @@ const calculationSourceEnum = pgEnum(
  * Note: Defined before invoices to avoid forward-reference issues in pgTable column FKs.
  */
 export const revenues = pgTable(
-  TABLES.REVENUES,
+  "revenues",
   {
-    calculationSource: calculationSourceEnum(COLUMNS.CALCULATION_SOURCE)
+    calculationSource: calculationSourceEnum("calculation_source")
       .default("seed")
       .notNull()
       .$type<RevenueSource>(),
     createdAt: commonFields.timestamps.createdAt(),
     id: commonFields.id.uuid().$type<RevenueId>(),
-    invoiceCount: integer(COLUMNS.INVOICE_COUNT).notNull().default(0),
-    period: date(COLUMNS.PERIOD, { mode: "date" })
-      .notNull()
-      .unique()
-      .$type<Period>(),
+    invoiceCount: integer("invoice_count").notNull().default(0),
+    period: date("period", { mode: "date" }).notNull().unique().$type<Period>(),
     // bigint to avoid overflow for large aggregates
-    totalAmount: bigint(COLUMNS.TOTAL_AMOUNT, { mode: "number" })
+    totalAmount: bigint("total_amount", { mode: "number" })
       .notNull()
       .default(0),
     updatedAt: commonFields.timestamps.updatedAt(),

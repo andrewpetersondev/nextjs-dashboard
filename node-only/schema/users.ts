@@ -11,22 +11,22 @@ import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, varchar } from "drizzle-orm/pg-core";
 import { AUTH_ROLES, type AuthRole } from "../../src/shared/auth/types";
 import type { UserId } from "../../src/shared/brands/domain-brands";
-import { COLUMNS, commonFields, TABLES } from "./constants";
+import { commonFields } from "./constants";
 import { sessions } from "./sessions";
 
 // DB enums from domain constants to avoid duplication and drift
-export const roleEnum = pgEnum(COLUMNS.ROLE, AUTH_ROLES);
+export const roleEnum = pgEnum("role", AUTH_ROLES);
 
 /**
  * Users: authentication and profile info.
  */
-export const users = pgTable(TABLES.USERS, {
+export const users = pgTable("users", {
   email: commonFields.email(),
   id: commonFields.id.uuid().$type<UserId>(),
-  password: varchar(COLUMNS.PASSWORD, { length: 255 }).notNull(),
-  role: roleEnum(COLUMNS.ROLE).default("user").notNull().$type<AuthRole>(),
+  password: varchar("password", { length: 255 }).notNull(),
+  role: roleEnum("role").default("user").notNull().$type<AuthRole>(),
   sensitiveData: commonFields.sensitiveData(),
-  username: varchar(COLUMNS.USERNAME, { length: 50 }).notNull().unique(),
+  username: varchar("username", { length: 50 }).notNull().unique(),
 });
 
 /**

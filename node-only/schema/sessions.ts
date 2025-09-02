@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import type { SessionId, UserId } from "../../src/shared/brands/domain-brands";
-import { COLUMNS, commonFields, TABLES } from "./constants";
+import { commonFields } from "./constants";
 import { users } from "./users";
 
 /**
@@ -9,14 +9,14 @@ import { users } from "./users";
  * - expiresAt uses timestamptz and no default; application sets expiry.
  */
 export const sessions = pgTable(
-  TABLES.SESSIONS,
+  "sessions",
   {
     createdAt: commonFields.timestamps.createdAt(),
     expiresAt: commonFields.timestamps.expiresAt(),
     id: commonFields.id.uuid().$type<SessionId>(),
-    token: text(COLUMNS.TOKEN).notNull().unique(),
+    token: text("token").notNull().unique(),
     updatedAt: commonFields.timestamps.updatedAt(),
-    userId: uuid(COLUMNS.USER_ID)
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" })
       .$type<UserId>(),
