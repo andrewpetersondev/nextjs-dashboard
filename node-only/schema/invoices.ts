@@ -7,6 +7,7 @@ import {
   pgEnum,
   pgTable,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 import type {
   CustomerId,
@@ -17,7 +18,6 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "../../src/shared/invoices/types";
-import { commonFields } from "./constants";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 
@@ -33,12 +33,14 @@ export const invoices = pgTable(
       .references(() => customers.id, { onDelete: "cascade" })
       .$type<CustomerId>(),
     date: date("date", { mode: "date" }).notNull(),
-    id: commonFields.id.uuid().$type<InvoiceId>(),
+    id: uuid("id").defaultRandom().primaryKey().$type<InvoiceId>(),
     revenuePeriod: date("revenue_period", { mode: "date" })
       .notNull()
       .references(() => revenues.period, { onDelete: "restrict" })
       .$type<Period>(),
-    sensitiveData: commonFields.sensitiveData(),
+    sensitiveData: varchar("sensitive_data", { length: 255 })
+      .notNull()
+      .default("cantTouchThis"),
     status: statusEnum("status")
       .default("pending")
       .notNull()

@@ -1,21 +1,24 @@
 import { relations } from "drizzle-orm";
-import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { SessionId, UserId } from "../../src/shared/brands/domain-brands";
-import { commonFields } from "./constants";
 import { users } from "./users";
 
-/**
- * Sessions: manages user authentication sessions.
- * - expiresAt uses timestamptz and no default; application sets expiry.
- */
 export const sessions = pgTable(
   "sessions",
   {
-    createdAt: commonFields.timestamps.createdAt(),
-    expiresAt: commonFields.timestamps.expiresAt(),
-    id: commonFields.id.uuid().$type<SessionId>(),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    id: uuid("id").defaultRandom().primaryKey().$type<SessionId>(),
     token: text("token").notNull().unique(),
-    updatedAt: commonFields.timestamps.updatedAt(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" })
