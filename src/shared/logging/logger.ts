@@ -4,8 +4,11 @@
  * - On the server, also delegates to console.* by default (can be wired to a server logger later).
  * Import this module from features/shared code instead of server-only loggers.
  */
+
+import { getLogLevel, isLevelEnabled } from "@/shared/logging/log-level";
+
 // biome-ignore lint/suspicious/noExplicitAny: <fix later>
-function safeInvoke(fn: (...a: any[]) => void, ...args: any[]): void {
+export function safeInvoke(fn: (...a: any[]) => void, ...args: any[]): void {
   try {
     fn(...args);
   } catch {
@@ -15,17 +18,27 @@ function safeInvoke(fn: (...a: any[]) => void, ...args: any[]): void {
 
 export type LogPayload = unknown;
 
+export const currentLevel = getLogLevel();
+
 export const logger = {
   debug(payload: LogPayload): void {
-    safeInvoke(console.debug, payload);
+    if (isLevelEnabled(currentLevel, "debug")) {
+      safeInvoke(console.debug, payload);
+    }
   },
   error(payload: LogPayload): void {
-    safeInvoke(console.error, payload);
+    if (isLevelEnabled(currentLevel, "error")) {
+      safeInvoke(console.error, payload);
+    }
   },
   info(payload: LogPayload): void {
-    safeInvoke(console.info, payload);
+    if (isLevelEnabled(currentLevel, "info")) {
+      safeInvoke(console.info, payload);
+    }
   },
   warn(payload: LogPayload): void {
-    safeInvoke(console.warn, payload);
+    if (isLevelEnabled(currentLevel, "warn")) {
+      safeInvoke(console.warn, payload);
+    }
   },
 } as const;
