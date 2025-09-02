@@ -62,6 +62,7 @@
     "db-truncate-test": "SEED_RESET=true pnpm tsx node-only/cli/seed-test-db.ts",
     "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
     "dev": "next dev --turbopack",
+    "drizzle-migrate-generate-test": "pnpm drizzle-kit generate --config=node-only/cli/drizzle-test.config.ts && pnpm drizzle-kit migrate --config=node-only/cli/drizzle-test.config.ts",
     "drizzle-push-dev": "pnpm drizzle-kit push --config=node-only/cli/drizzle-dev.config.ts",
     "drizzle-push-test": "pnpm drizzle-kit push --config=node-only/cli/drizzle-test.config.ts",
     "seed-db-dev": "pnpm tsx node-only/cli/seed-dev-db.ts --config=node-only/cli/drizzle-dev.config.ts",
