@@ -3,10 +3,10 @@
 A practical, minimal checklist to ensure reliable, high-value end-to-end coverage.
 
 ## 1) Environment & Test Data
-- [ ] Dedicated test environment (stable URLs, seeded DB)
+- [x] Dedicated test environment (stable URLs, seeded DB)
 - [ ] Clear, deterministic test data (fixtures or API seeding)
 - [ ] Idempotent setup/teardown (can re-run without manual cleanup)
-- [ ] Environment variables managed via .env (no secrets in code)
+- [x] Environment variables managed via .env (no secrets in code)
 - [ ] Feature flags set to known states
 
 ## 2) Smoke Path (Happy Path)
