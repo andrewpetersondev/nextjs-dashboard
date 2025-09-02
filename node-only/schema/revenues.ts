@@ -7,8 +7,11 @@ import {
   pgEnum,
   pgTable,
 } from "drizzle-orm/pg-core";
-import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import {
+  REVENUE_SOURCES,
+  type RevenueSource,
+} from "../../src/features/revenues/types";
+import type { Period, RevenueId } from "../../src/shared/brands/domain-brands";
 import { COLUMNS, commonFields, TABLES } from "./constants";
 import { invoices } from "./invoices";
 

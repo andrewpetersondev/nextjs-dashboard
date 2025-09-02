@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, varchar } from "drizzle-orm/pg-core";
-import type { CustomerId } from "@/shared/brands/domain-brands";
+import type { CustomerId } from "../../src/shared/brands/domain-brands";
 import { COLUMNS, commonFields, TABLES } from "./constants";
 
 import { invoices } from "./invoices";

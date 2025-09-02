@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import type { SessionId, UserId } from "@/shared/brands/domain-brands";
+import type { SessionId, UserId } from "../../src/shared/brands/domain-brands";
 import { COLUMNS, commonFields, TABLES } from "./constants";
 import { users } from "./users";
 

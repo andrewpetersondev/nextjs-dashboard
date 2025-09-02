@@ -12,8 +12,11 @@ import type {
   CustomerId,
   InvoiceId,
   Period,
-} from "@/shared/brands/domain-brands";
-import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/invoices/types";
+} from "../../src/shared/brands/domain-brands";
+import {
+  INVOICE_STATUSES,
+  type InvoiceStatus,
+} from "../../src/shared/invoices/types";
 import { COLUMNS, commonFields, TABLES } from "./constants";
 import { customers } from "./customers";
 import { revenues } from "./revenues";

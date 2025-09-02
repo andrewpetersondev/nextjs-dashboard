@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable } from "drizzle-orm/pg-core";
-import type { AuthRole } from "@/shared/auth/types";
+import type { AuthRole } from "../../src/shared/auth/types";
 import { COLUMNS, commonFields, TABLES } from "./constants";
 import { roleEnum } from "./users";
 
