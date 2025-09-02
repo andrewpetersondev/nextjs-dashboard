@@ -1,5 +1,5 @@
-import { UI_MATCHERS } from "../__fixtures__/regex";
-import { createTestUser } from "../__fixtures__/users";
+import { UI_MATCHERS } from "../shared/regex";
+import { createTestUser } from "../shared/users";
 
 describe("Login success flow", () => {
   it("logs in and reaches dashboard UI", () => {

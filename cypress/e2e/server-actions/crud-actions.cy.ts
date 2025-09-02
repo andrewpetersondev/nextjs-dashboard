@@ -1,5 +1,5 @@
-import { SEL } from "../__fixtures__/selectors";
-import { CREATE_INVOICE_PATH } from "../__fixtures__/server-actions";
+import { CREATE_INVOICE_PATH } from "../shared/paths";
+import { SEL } from "../shared/selectors";
 
 describe("Invoices - Create via Server Action Form", () => {
   beforeEach(() => {

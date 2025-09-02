@@ -1,8 +1,11 @@
-import { INVALID_EMAIL, INVALID_PASSWORD } from "../__fixtures__/constants";
-import { ERROR_MESSAGES } from "../__fixtures__/messages-errors";
-import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
-import { SEL } from "../__fixtures__/selectors";
-import { createTestUser } from "../__fixtures__/users";
+import {
+  ERROR_MESSAGES,
+  INVALID_EMAIL,
+  INVALID_PASSWORD,
+} from "../shared/auth-forms";
+import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
+import { SEL } from "../shared/selectors";
+import { createTestUser } from "../shared/users";
 
 describe("Authentication Server Actions", () => {
   it("should create user account via server action", () => {

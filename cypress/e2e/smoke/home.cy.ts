@@ -1,7 +1,7 @@
-import { BASE_URL, LOGIN_PATH } from "../__fixtures__/paths";
-import { UI_MATCHERS } from "../__fixtures__/regex";
-import { SEL } from "../__fixtures__/selectors";
-import { EXTERNAL_URLS } from "../__fixtures__/urls";
+import { BASE_URL, LOGIN_PATH } from "../shared/paths";
+import { UI_MATCHERS } from "../shared/regex";
+import { SEL } from "../shared/selectors";
+import { EXTERNAL_URLS } from "../shared/urls";
 
 describe("Home smoke test", () => {
   it("loads homepage and navigates to login", () => {

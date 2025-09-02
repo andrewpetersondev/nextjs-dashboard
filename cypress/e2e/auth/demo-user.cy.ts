@@ -1,4 +1,4 @@
-import { ADMIN_DASHBOARD_H1, UI_MATCHERS } from "../__fixtures__/regex";
+import { ADMIN_DASHBOARD_H1, UI_MATCHERS } from "../shared/regex";
 
 describe("Demo users login", () => {
   it("logs in as demo user via custom command", () => {

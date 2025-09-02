@@ -1,7 +1,4 @@
-export const DB_TIMEOUT = 20_000;
-export const E2E_EMAIL_PREFIX = "e2e_dbtest_";
-export const E2E_USERNAME_PREFIX = "e2e_user_"; // kept for compatibility if referenced elsewhere
-export const DEFAULT_E2E_PASSWORD = "Password123!";
+import { DEFAULT_E2E_PASSWORD, E2E_EMAIL_PREFIX } from "./auth-forms";
 
 export function buildE2EUser(seed: number = Date.now()) {
   // Normalize and keep one source of truth: the email local-part

@@ -1,15 +1,11 @@
 /// <reference types="cypress" />
 /** biome-ignore-all lint/style/noNamespace: <temp> */
 
-import { TWENTY_SECONDS } from "../e2e/__fixtures__/constants";
-import {
-  DASHBOARD_PATH,
-  LOGIN_PATH,
-  SIGNUP_PATH,
-} from "../e2e/__fixtures__/paths";
-import { UI_MATCHERS } from "../e2e/__fixtures__/regex";
-import { SEL } from "../e2e/__fixtures__/selectors";
-import type { SignupCreds } from "../e2e/__fixtures__/types";
+import type { SignupCreds } from "../e2e/shared/auth-forms";
+import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";
+import { UI_MATCHERS } from "../e2e/shared/regex";
+import { SEL } from "../e2e/shared/selectors";
+import { TWENTY_SECONDS } from "../e2e/shared/times";
 
 declare global {
   namespace Cypress {

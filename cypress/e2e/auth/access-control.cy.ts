@@ -1,5 +1,5 @@
-import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
-import { UI_MATCHERS } from "../__fixtures__/regex";
+import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
+import { UI_MATCHERS } from "../shared/regex";
 
 describe("Access control", () => {
   it("redirects unauthenticated user from dashboard to login", () => {

@@ -1,8 +1,8 @@
-import { DEFAULT_TIMEOUT } from "../__fixtures__/constants";
-import { DASHBOARD_PATH, LOGIN_PATH } from "../__fixtures__/paths";
-import { UI_MATCHERS } from "../__fixtures__/regex";
-import { SEL } from "../__fixtures__/selectors";
-import { createTestUser } from "../__fixtures__/users";
+import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
+import { UI_MATCHERS } from "../shared/regex";
+import { SEL } from "../shared/selectors";
+import { DEFAULT_TIMEOUT } from "../shared/times";
+import { createTestUser } from "../shared/users";
 
 describe("Signup → Sign out → Login flow", () => {
   const user = createTestUser();

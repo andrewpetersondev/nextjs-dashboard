@@ -1,9 +1,6 @@
-import { UI_MATCHERS } from "../__fixtures__/regex";
-import {
-  ADMIN_USERS_PATH,
-  DASHBOARD_USERS_PATH,
-} from "../__fixtures__/server-actions";
-import { STATUS_CODES } from "../__fixtures__/status-codes";
+import { ADMIN_USERS_PATH, DASHBOARD_USERS_PATH } from "../shared/paths";
+import { UI_MATCHERS } from "../shared/regex";
+import { STATUS_CODES } from "../shared/status-codes";
 
 describe("Server Action Authorization", () => {
   it("should prevent unauthorized access to admin actions", () => {

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { buildE2EUser } from "../../support/db-test-constants";
+import { buildE2EUser } from "../shared/db-test-constants";
 
 describe("Database setup and cleanup tasks", () => {
   const testUser = buildE2EUser();

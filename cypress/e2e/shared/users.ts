@@ -2,8 +2,7 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
-import { E2E_ID_MODULUS } from "./constants";
-import type { TestUser } from "./types";
+import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
 /**
  * Generates a unique test user with timestamp-based identifiers.
