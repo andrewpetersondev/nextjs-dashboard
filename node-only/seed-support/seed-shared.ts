@@ -1,13 +1,7 @@
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "../../src/shared/brands/domain-brands";
 import type { invoices } from "../schema/invoices";
-import type { db } from "../test-support/config";
 import { SEED_CONFIG } from "./constants";
 import { generateMonthlyPeriods } from "./utils";
-
-/**
- * Transaction type derived from the db.transaction callback.
- */
-export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /**
  * NewInvoice insert type from schema.

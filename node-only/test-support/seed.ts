@@ -4,15 +4,15 @@ import {
   buildRandomInvoiceRows,
   buildUserSeed,
 } from "../seed-support/builders";
+import { db } from "./config";
 import {
   aggregateRevenues,
   fetchCustomerIds,
   insertCustomers,
   insertDemoCounters,
   insertRevenues,
-} from "../seed-support/inserts";
-import { ensureResetOrEmpty } from "../seed-support/maintenance";
-import { db } from "./config";
+} from "./inserts";
+import { ensureResetOrEmpty } from "./maintenance";
 
 export async function mainCypTestSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();

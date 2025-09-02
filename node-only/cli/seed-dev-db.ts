@@ -13,12 +13,6 @@
 
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
-import dotenv from "dotenv";
-import {
-  drizzle,
-  type NodePgClient,
-  type NodePgDatabase,
-} from "drizzle-orm/node-postgres";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {
@@ -31,26 +25,9 @@ import {
   insertCustomers,
   insertDemoCounters,
   insertRevenues,
-} from "../seed-support/inserts";
-import { ensureResetOrEmpty } from "../seed-support/maintenance";
-
-dotenv.config({ path: ".env.development" });
-
-console.log("db-dev.ts ...");
-
-let url: string;
-
-if (process.env.POSTGRES_URL) {
-  url = process.env.POSTGRES_URL;
-  console.log("Using POSTGRES_URL:", url);
-} else {
-  console.error("POSTGRES_URL is not set.");
-  process.exit(1);
-}
-
-const nodeEnvDb: NodePgDatabase & {
-  $client: NodePgClient;
-} = drizzle({ casing: "snake_case", connection: url });
+} from "../test-support/inserts";
+import { nodeEnvDb } from "./config-dev";
+import { ensureResetOrEmpty } from "./maintenance-dev";
 
 /**
  * Main seeding function.

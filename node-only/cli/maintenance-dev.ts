@@ -7,18 +7,24 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { db } from "../test-support/config";
+import { nodeEnvDb } from "./config-dev";
 
 /**
  * Check if all relevant tables are empty.
  */
 export async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
-    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`),
-    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`),
-    db.execute(sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`),
-    db.execute(
+    nodeEnvDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
+    nodeEnvDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`,
+    ),
+    nodeEnvDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`,
+    ),
+    nodeEnvDb.execute(
+      sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`,
+    ),
+    nodeEnvDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
@@ -29,7 +35,7 @@ export async function isEmpty(): Promise<boolean> {
  * Truncate all tables used by seeds, restart identities, cascade.
  */
 export async function truncateAll(): Promise<void> {
-  await db.execute(sql`TRUNCATE TABLE
+  await nodeEnvDb.execute(sql`TRUNCATE TABLE
     ${sessions},
     ${invoices},
     ${customers},

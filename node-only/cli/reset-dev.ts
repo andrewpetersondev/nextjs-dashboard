@@ -33,6 +33,10 @@ import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
 
+dotenv.config({ path: ".env.development" });
+
+console.log("db-dev.ts ...");
+
 const schema = {
   customers,
   demoUserCounters,
@@ -41,10 +45,6 @@ const schema = {
   sessions,
   users,
 };
-
-dotenv.config({ path: ".env.development" });
-
-console.log("db-dev.ts ...");
 
 let url: string;
 
