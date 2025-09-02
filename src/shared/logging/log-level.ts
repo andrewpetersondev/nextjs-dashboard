@@ -1,3 +1,5 @@
+import process from "node:process";
+
 export type LogLevel = "debug" | "info" | "warn" | "error" | "silent";
 
 export const levelOrder: LogLevel[] = [
@@ -12,13 +14,9 @@ export function getLogLevel(): LogLevel {
   const raw =
     (typeof window !== "undefined"
       ? (process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevel | undefined)
-      : undefined) ??
-    // biome-ignore lint/style/noProcessEnv: <temp>
-    (process.env.LOG_LEVEL as LogLevel | undefined);
+      : undefined) ?? (process.env.LOG_LEVEL as LogLevel | undefined);
 
-  const isProd =
-    // biome-ignore lint/style/noProcessEnv: <temp>
-    (process.env.NODE_ENV ?? "development") === "production";
+  const isProd = (process.env.NODE_ENV ?? "development") === "production";
 
   const defaultLevel: LogLevel = isProd ? "info" : "warn";
 

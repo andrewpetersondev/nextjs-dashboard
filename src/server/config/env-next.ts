@@ -1,29 +1,39 @@
 /**
- * Environment configuration and validation.
- * This module validates required environment variables at runtime using Zod
+ * File: env-next.ts
+ * Purpose: Next.js server runtime environment configuration and validation.
+ *
+ * Scope and boundaries:
+ * - Marked "server-only": must not be imported by client components.
+ * - Intended for server code only (route handlers, server actions, DB, etc.).
+ * - Reads process.env at runtime and validates required secrets.
+ *
+ * Behavior:
+ * - Resolves DATABASE_ENV via deriveDatabaseEnv(DATABASE_ENV, NODE_ENV).
+ * - Validates SESSION_SECRET and database URL inputs.
+ * - Database URL resolution precedence:
+ *   1) DATABASE_URL (preferred, strict-mode compatible)
+ *   2) POSTGRES_URL_TESTDB (when env is "test")
+ *   3) POSTGRES_URL_PRODDB (when env is "production")
+ *   4) POSTGRES_URL (legacy/dev)
+ *   Otherwise: throws with an environment-specific error message.
+ *
+ * Exports:
+ * - SESSION_SECRET, DATABASE_URL, DATABASE_ENV, STRICT_DATABASE_URL
+ * - Deprecated pass-throughs for POSTGRES_URL*, retained for compatibility.
  */
 
 import "server-only";
 
+import process from "node:process";
 import { z } from "zod";
+import {
+  type DatabaseEnv,
+  deriveDatabaseEnv,
+} from "../../shared/config/env-shared";
 
-type DatabaseEnv = "development" | "test" | "production";
-
-function normalizeDbEnv(value: string | undefined): DatabaseEnv {
-  switch (value) {
-    case "test":
-      return "test";
-    case "production":
-      return "production";
-    case "development":
-      return "development";
-    default:
-      return "development";
-  }
-}
-
-const DATABASE_ENV_INTERNAL: DatabaseEnv = normalizeDbEnv(
-  process.env.DATABASE_ENV ?? process.env.NODE_ENV,
+const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
+  process.env.DATABASE_ENV,
+  process.env.NODE_ENV,
 );
 
 // Prefer DATABASE_URL. Keep legacy vars optional for backward-compat resolution below.
@@ -40,8 +50,8 @@ const envSchema = z.object({
     .transform((v) => (v ?? "").toLowerCase() === "true"),
 });
 
+// Validate and fail fast with helpful errors
 const parsed = envSchema.safeParse(process.env);
-
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;
   throw new Error(

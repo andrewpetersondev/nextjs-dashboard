@@ -14,13 +14,13 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "@/server/config/environment";
 import { customers } from "../../../node-only/schema/customers";
 import { demoUserCounters } from "../../../node-only/schema/demo-users";
 import { invoices } from "../../../node-only/schema/invoices";
 import { revenues } from "../../../node-only/schema/revenues";
 import { sessions } from "../../../node-only/schema/sessions";
 import { users } from "../../../node-only/schema/users";
+import { DATABASE_URL } from "../config/env-next";
 
 const schema = {
   customers,

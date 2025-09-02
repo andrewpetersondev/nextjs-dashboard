@@ -3,9 +3,8 @@ import "server-only";
 import { jwtVerify, SignJWT } from "jose";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
-import { SESSION_SECRET } from "@/server/config/environment";
+import { SESSION_SECRET } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
