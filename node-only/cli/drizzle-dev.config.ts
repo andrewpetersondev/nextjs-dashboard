@@ -22,7 +22,7 @@ console.log("drizzle-dev.config.ts ...");
 export default defineConfig({
   casing: "snake_case",
   dbCredentials: {
-    url: process.env.POSTGRES_URL!,
+    url: process.env.DATABASE_URL!,
   },
   dialect: "postgresql",
   out: "./drizzle/migrations/dev/",

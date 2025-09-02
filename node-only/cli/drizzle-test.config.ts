@@ -22,7 +22,7 @@ console.log("drizzle-test.config.ts ...");
 export default defineConfig({
   casing: "snake_case",
   dbCredentials: {
-    url: process.env.POSTGRES_URL_TESTDB!,
+    url: process.env.DATABASE_URL!,
   },
   dialect: "postgresql",
   out: "./drizzle/migrations/test/",

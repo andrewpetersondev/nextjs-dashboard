@@ -54,13 +54,7 @@ export const invoices = pgTable(
     // Integrity: keep revenuePeriod aligned with date's month (first day)
     check(
       "invoices_revenue_period_matches_date",
-      sql`${table.revenuePeriod}
-            = date_trunc('month',
-            ${table.date}
-            )
-            :
-            :
-            date`,
+      sql`${table.revenuePeriod} = date_trunc('month', ${table.date})::date`,
     ),
     // Performance: efficient joins/filters
     index("invoices_customer_id_idx").on(table.customerId),
