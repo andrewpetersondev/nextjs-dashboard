@@ -20,11 +20,6 @@
  */
 
 import dotenv from "dotenv";
-import {
-  drizzle,
-  type NodePgClient,
-  type NodePgDatabase,
-} from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
@@ -32,6 +27,7 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
+import { nodeEnvDb } from "./config-dev";
 
 dotenv.config({ path: ".env.test" });
 
@@ -46,22 +42,8 @@ const schema = {
   users,
 };
 
-let url: string;
-
-if (process.env.POSTGRES_URL_TESTDB) {
-  url = process.env.POSTGRES_URL_TESTDB;
-  console.log("Using POSTGRES_URL_TESTDB:", url);
-} else {
-  console.error("POSTGRES_URL_TESTDB is not set.");
-  process.exit(1);
-}
-
-const nodeEnvTestDb: NodePgDatabase & {
-  $client: NodePgClient;
-} = drizzle({ casing: "snake_case", connection: url });
-
 async function main(): Promise<void> {
-  await reset(nodeEnvTestDb, schema);
+  await reset(nodeEnvDb, schema);
 }
 
 // Fix: Handle floating promise with .catch for error logging

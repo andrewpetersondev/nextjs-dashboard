@@ -21,6 +21,6 @@ if (process.env.POSTGRES_URL_TESTDB) {
   process.exit(1);
 }
 
-export const nodeEnvTestDb: NodePgDatabase & {
-  $client: NodePgClient;
+export const nodeTestDb: NodePgDatabase & {
+  readonly $client: NodePgClient;
 } = drizzle({ casing: "snake_case", connection: url });

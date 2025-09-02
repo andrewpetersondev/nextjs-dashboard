@@ -1,9 +1,9 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { toUserId } from "@/shared/brands/mappers";
+import { nodeTestDb } from "../cli/config-test";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
 import { hashPassword } from "../seed-support/utils";
-import { db } from "./config";
 
 /** Upsert an E2E user and invalidate existing sessions. */
 export async function upsertE2EUser(user: {
@@ -25,7 +25,7 @@ export async function upsertE2EUser(user: {
   const role = user.role ?? "user";
   const hashed = await hashPassword(user.password);
 
-  await db.transaction(async (tx) => {
+  await nodeTestDb.transaction(async (tx) => {
     const existing = await tx
       .select({ id: users.id })
       .from(users)
@@ -58,7 +58,7 @@ export async function userExists(email: string): Promise<boolean> {
   if (!email) {
     return false;
   }
-  const res = await db.execute(
+  const res = await nodeTestDb.execute(
     sql`SELECT EXISTS(SELECT 1 FROM ${users} WHERE ${users.email} = ${email}) AS v`,
   );
   return Boolean((res as any)?.rows?.[0]?.v);
@@ -66,7 +66,7 @@ export async function userExists(email: string): Promise<boolean> {
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
 export async function cleanupE2EUsers(): Promise<void> {
-  const usersToDelete = await db.execute(sql`
+  const usersToDelete = await nodeTestDb.execute(sql`
     SELECT id FROM ${users}
     WHERE ${users.email} LIKE 'e2e_%' OR ${users.username} LIKE 'e2e_%'
   `);
@@ -76,7 +76,7 @@ export async function cleanupE2EUsers(): Promise<void> {
     return;
   }
   const userIds = ids.map((id) => toUserId(id));
-  await db.transaction(async (tx) => {
+  await nodeTestDb.transaction(async (tx) => {
     await tx.delete(sessions).where(inArray(sessions.userId, userIds));
     await tx.delete(users).where(inArray(users.id, userIds));
   });

@@ -27,7 +27,7 @@ import {
   insertRevenues,
 } from "../test-support/inserts";
 import { ensureResetOrEmpty } from "../test-support/maintenance";
-import { nodeEnvTestDb } from "./config-test";
+import { nodeTestDb } from "./config-test";
 
 /**
  * Main seeding function.
@@ -40,7 +40,7 @@ async function testSeed(): Promise<void> {
 
   const userSeed = await buildUserSeed();
 
-  await nodeEnvTestDb.transaction(async (tx) => {
+  await nodeTestDb.transaction(async (tx) => {
     await insertRevenues(tx);
     await insertCustomers(tx);
     const existingCustomers = await fetchCustomerIds(tx);

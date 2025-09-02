@@ -1,13 +1,13 @@
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import { sql } from "drizzle-orm";
+import { nodeEnvDb } from "../cli/config-dev";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { nodeEnvDb } from "./config-dev";
 
 /**
  * Check if all relevant tables are empty.

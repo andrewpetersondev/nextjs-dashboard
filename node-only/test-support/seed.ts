@@ -1,10 +1,10 @@
+import { nodeTestDb } from "../cli/config-test";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {
   buildRandomInvoiceRows,
   buildUserSeed,
 } from "../seed-support/builders";
-import { db } from "./config";
 import {
   aggregateRevenues,
   fetchCustomerIds,
@@ -22,7 +22,7 @@ export async function mainCypTestSeed(): Promise<void> {
 
   const userSeed = await buildUserSeed();
 
-  await db.transaction(async (tx) => {
+  await nodeTestDb.transaction(async (tx) => {
     await insertRevenues(tx);
     await insertCustomers(tx);
     const existingCustomers = await fetchCustomerIds(tx);

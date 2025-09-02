@@ -13,6 +13,7 @@
 
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
+import { ensureResetOrEmpty } from "../dev-support/maintenance-dev";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {
@@ -27,7 +28,6 @@ import {
   insertRevenues,
 } from "../test-support/inserts";
 import { nodeEnvDb } from "./config-dev";
-import { ensureResetOrEmpty } from "./maintenance-dev";
 
 /**
  * Main seeding function.
