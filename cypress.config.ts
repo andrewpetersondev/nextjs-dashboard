@@ -10,7 +10,7 @@ dotenv.config({ path: ".env.test" });
 
 export default defineConfig({
   e2e: {
-    baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
+    baseUrl: "http://localhost:3100",
 
     setupNodeEvents(on, config) {
       config.env.DATABASE_ENV = process.env.DATABASE_ENV;
@@ -24,6 +24,13 @@ export default defineConfig({
             "./node-only/test-support/e2e-users"
           );
           await cleanupE2EUsers();
+          return null;
+        },
+        async "db:deleteUser"(email: string) {
+          const { deleteUser } = await import(
+            "./node-only/test-support/e2e-tasks"
+          );
+          await deleteUser(email);
           return null;
         },
         async "db:reset"() {

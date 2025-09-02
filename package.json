@@ -6,6 +6,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.1",
+    "dotenv-cli": "^10.0.0",
     "drizzle-orm": "^0.44.5",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",

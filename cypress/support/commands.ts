@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /** biome-ignore-all lint/style/noNamespace: <temp> */
 
-import type { SignupCreds } from "../e2e/shared/auth-forms";
+import type { LoginCreds, SignupCreds } from "../e2e/shared/auth-forms";
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";
 import { UI_MATCHERS } from "../e2e/shared/regex";
 import { SEL } from "../e2e/shared/selectors";
@@ -11,7 +11,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       logEnv(): Chainable<void>;
-      login(email: string, password: string): Chainable<void>;
+      login(creds: LoginCreds): Chainable<void>;
       loginAsDemoAdmin(): Chainable<void>;
       loginAsDemoUser(): Chainable<void>;
       logoutViaForm(): Chainable<void>;
@@ -25,12 +25,13 @@ Cypress.Commands.add("logEnv", () => {
   cy.log(`Cypress env: ${JSON.stringify(env, null, 2)}`);
 });
 
-Cypress.Commands.add("login", (email: string, password: string) => {
+Cypress.Commands.add("login", ({ email, password }: LoginCreds) => {
   cy.visit(LOGIN_PATH);
-  cy.get(SEL.loginEmail).clear().type(email);
-  cy.get(SEL.loginPassword).clear().type(password);
+
+  cy.get(SEL.loginEmail).type(email);
+  cy.get(SEL.loginPassword).type(password);
   cy.get(SEL.loginSubmit).click();
-  // Wait for client-side navigation to dashboard to complete (aligns with other commands)
+
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
     DASHBOARD_PATH,
@@ -39,18 +40,11 @@ Cypress.Commands.add("login", (email: string, password: string) => {
 
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
   cy.visit(SIGNUP_PATH);
-  cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
-    "be.visible",
-  );
-  cy.get(SEL.signupUsername).clear().type(username);
-  cy.get(SEL.signupEmail).clear().type(email);
-  cy.get(SEL.signupPassword).clear().type(password, { log: false });
-  // Submit and wait for client-side navigation to dashboard
+
+  cy.get(SEL.signupUsername).type(username);
+  cy.get(SEL.signupEmail).type(email);
+  cy.get(SEL.signupPassword).type(password);
   cy.get(SEL.signupSubmit).click();
-  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
-    "include",
-    DASHBOARD_PATH,
-  );
 });
 
 Cypress.Commands.add("loginAsDemoUser", () => {

@@ -21,7 +21,7 @@ import {
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 
-const statusEnum = pgEnum("status", INVOICE_STATUSES);
+export const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
 export const invoices = pgTable(
   "invoices",

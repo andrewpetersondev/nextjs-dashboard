@@ -4,6 +4,26 @@
  */
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
+export const DEMO_USER = {
+  email: "user@user.com",
+  password: "UserPassword123!",
+  role: "user",
+  username: "user",
+};
+
+export const DEMO_ADMIN = {
+  email: "admin@admin.com",
+  password: "AdminPassword123!",
+  role: "admin",
+  username: "admin",
+};
+export const DEMO_GUEST = {
+  email: "guest@guest.com",
+  password: "GuestPassword123!",
+  role: "guest",
+  username: "guest",
+};
+
 /**
  * Generates a unique test user with timestamp-based identifiers.
  *

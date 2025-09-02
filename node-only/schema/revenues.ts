@@ -16,7 +16,10 @@ import {
 import type { Period, RevenueId } from "../../src/shared/brands/domain-brands";
 import { invoices } from "./invoices";
 
-const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);
+export const calculationSourceEnum = pgEnum(
+  "calculation_source",
+  REVENUE_SOURCES,
+);
 
 export const revenues = pgTable(
   "revenues",
