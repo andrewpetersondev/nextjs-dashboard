@@ -1,3 +1,5 @@
+// biome-ignore-all assist/source/useSortedKeys: <explanation>
+
 {
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -36,7 +38,8 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.12",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "wait-on": "^8.0.4"
   },
   "engines": {
     "node": ">=24.0.0",
@@ -46,32 +49,46 @@
   "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67",
   "private": true,
   "scripts": {
+    // Biome & Type Checking
     "biome-check": "biome format --write && biome check --max-diagnostics=100",
     "biome-check-write": "biome check --write",
     "biome-format": "biome format --write",
     "biome-summary": "biome check --reporter=summary",
+    "type-gen": "next typegen && tsc --noEmit",
+    // Next.js
+    "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
+    "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "standalone": "rm -rf .next/ && pnpm build && pnpm start-standalone",
+    "start": "node .next/standalone/server.js",
+    "start-standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+    // Cypress
     "clean": "pnpm cyp-clean && rm -rf .next",
-    "create-auth-secret": "pnpm dlx auth secret",
     "cyp-e2e-headless": "pnpm cypress run --e2e",
     "cyp-open": "pnpm cypress open",
     "cyp-test-e2e": "pnpm drizzle-generate-test && pnpm drizzle-migrate-test && pnpm cyp-e2e-headless",
-    "db-create": "docker exec -it dashboard-postgres psql -U {your_postgres_user} -c \"CREATE DATABASE postgres_test;\"",
+    // Test-focused scripts using dotenv-cli + wait-on
+    "build:test": "dotenv -e .env.test -- next build --turbopack",
+    "serve:test": "dotenv -e .env.test -- pnpm run start-standalone",
+    "wait:health": "wait-on http://localhost:3100/",
+    "e2e:run": "dotenv -e .env.test -- cypress run --e2e",
+    // One-shot: build, start server in background, wait, run Cypress, then stop server
+    "e2e:ci": "sh -c 'pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health && pnpm e2e:run; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'",
+    // Interactive variant: opens Cypress UI, cleans up server on exit
+    "e2e:open": "sh -c 'pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health && dotenv -e .env.test -- cypress open --e2e; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'",
+    // Drizzle
     "db-reset-dev": "pnpm tsx node-only/cli/reset-dev.ts",
     "db-reset-test": "pnpm tsx node-only/cli/reset-test.ts",
     "db-truncate-dev": "SEED_RESET=true pnpm tsx node-only/cli/seed-dev-db.ts",
     "db-truncate-test": "SEED_RESET=true pnpm tsx node-only/cli/seed-test-db.ts",
-    "debug": "node --inspect=0.0.0.0:9229 node_modules/.bin/next dev",
-    "dev": "next dev --turbopack",
     "drizzle-migrate-generate-test": "pnpm drizzle-kit generate --config=node-only/cli/drizzle-test.config.ts && pnpm drizzle-kit migrate --config=node-only/cli/drizzle-test.config.ts",
     "drizzle-push-dev": "pnpm drizzle-kit push --config=node-only/cli/drizzle-dev.config.ts",
     "drizzle-push-test": "pnpm drizzle-kit push --config=node-only/cli/drizzle-test.config.ts",
     "seed-db-dev": "pnpm tsx node-only/cli/seed-dev-db.ts --config=node-only/cli/drizzle-dev.config.ts",
     "seed-db-test": "pnpm tsx node-only/cli/seed-test-db.ts --config=node-only/cli/drizzle-test.config.ts",
-    "standalone": "rm -rf .next/ && pnpm build && pnpm start-standalone",
-    "start": "node .next/standalone/server.js",
-    "start-standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
-    "type-gen": "next typegen && tsc --noEmit"
+    // Other
+    "db-create": "docker exec -it dashboard-postgres psql -U {your_postgres_user} -c \"CREATE DATABASE postgres_test;\"",
+    "create-auth-secret": "pnpm dlx auth secret"
   },
   "type": "module",
   "version": "0.1.0"

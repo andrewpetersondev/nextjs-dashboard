@@ -520,3 +520,63 @@ pnpm exec wait-on http://localhost:3100/ && \
 pnpm exec dotenv -e .env.test -- cypress run --e2e
 ```
 
+---
+
+## Appendix: One-shot scripts with wait-on (standalone + dotenv-cli)
+
+Goal: build the app with `.env.test`, start the standalone server, wait until it’s ready, run Cypress, and cleanly stop the server. Also provide an interactive “open” variant.
+
+Pre-reqs
+- Ensure `.env.test` contains:
+  - DATABASE_ENV=test
+  - DATABASE_URL=postgres://…/your_test_db
+  - SESSION_SECRET=…
+  - PORT=3100
+  - CYPRESS_BASE_URL=http://localhost:3100
+- Installed dev deps: dotenv-cli, wait-on
+
+Recommended package scripts
+
+```bash
+# Build with test env
+pnpm run build:test
+
+# Start standalone with test env (copies static assets as needed)
+pnpm run serve:test
+
+# Wait until server is reachable (use /api/health if available)
+pnpm run wait:health
+
+# Headless E2E run under test env
+pnpm run e2e:run
+
+# One-shot CI: build → start (bg) → wait → run → stop
+pnpm run e2e:ci
+
+# Interactive variant: opens Cypress UI; server stops on exit
+pnpm run e2e:open
+```
+
+Script definitions (POSIX/macOS/Linux)
+
+```bash
+# Add these to "scripts" in package.json
+
+"build:test": "dotenv -e .env.test -- next build --turbopack",
+"serve:test": "dotenv -e .env.test -- pnpm run start-standalone",
+"wait:health": "wait-on http://localhost:3100/",
+"e2e:run": "dotenv -e .env.test -- cypress run --e2e",
+
+# One-shot CI (headless)
+"e2e:ci": "sh -c 'pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health && pnpm e2e:run; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'",
+
+# Interactive (opens Cypress UI)
+"e2e:open": "sh -c 'pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health && dotenv -e .env.test -- cypress open --e2e; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'"
+```
+
+Notes
+- Standalone start: use the generated server directly (e.g., `node .next/standalone/server.js`). Do not use `next start` in standalone mode.
+- Asset paths: if assets 404, start via your `start-standalone` script that copies `public/` and `.next/static` next to `.next/standalone/`.
+- Readiness: prefer waiting on `/api/health` if you add it, for a stronger signal than `/`.
+- Cross-platform: for Windows shells, consider using a tool like `start-server-and-test` to manage the lifecycle with fewer POSIX assumptions.
+
