@@ -2,47 +2,32 @@
 # .gitignore documentation: https://git-scm.com/docs/gitignore
 
 # Match by extension
-# *.min.js
-# *.map
+*.js
+*.min.js
+*.map
 
-
-# Temporary
-# *.md
-# src/app
-# src/ui
-# scripts
-# envConfig.ts
-# cypress
-# cypress.config.ts
-# biome.json
-
-
-# My Files (General)
+# Project (General)
 .github
 .idea
-# docs
+.next
+docs
 drizzle
+node_modules
 public
+src/app
+src/shared
+src/ui
 storage
-# .env
-# .env.*
-# .gitignore
-# CONFIG.md
-eslint.config.mjs
 next-env.d.ts
 pnpm-lock.yaml
-# pnpm-workspace.yaml
-# README.md
 
 
 
 # Build
-# tsconfig.tsbuildinfo
-# .next/
+tsconfig.tsbuildinfo
 dist/
 build/
 out/
-node_modules/
 
 # System Files
 .DS_Store

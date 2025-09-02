@@ -16,6 +16,7 @@ export default defineConfig({
       // Override environment variables for test database (provide both keys for compatibility)
       config.env.POSTGRES_URL_TESTDB = process.env.POSTGRES_URL_TESTDB;
       config.env.POSTGRES_URL = process.env.POSTGRES_URL_TESTDB;
+      config.env.SESSION_SECRET = process.env.SESSION_SECRET;
 
       // Database setup/teardown tasks
       on("task", {
@@ -72,6 +73,7 @@ export default defineConfig({
   env: {
     POSTGRES_URL: process.env.POSTGRES_URL_TESTDB,
     POSTGRES_URL_TESTDB: process.env.POSTGRES_URL_TESTDB,
+    SESSION_SECRET: process.env.SESSION_SECRET,
   },
   video: false,
   watchForFileChanges: false,

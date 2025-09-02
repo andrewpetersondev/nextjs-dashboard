@@ -1,6 +1,3 @@
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-
 /**
  * Environment configuration and validation.
  * This module validates required environment variables at runtime using Zod

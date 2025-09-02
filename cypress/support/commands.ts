@@ -14,6 +14,7 @@ import type { SignupCreds } from "../e2e/__fixtures__/types";
 declare global {
   namespace Cypress {
     interface Chainable {
+      logEnv(): Chainable<void>;
       login(email: string, password: string): Chainable<void>;
       loginAsDemoAdmin(): Chainable<void>;
       loginAsDemoUser(): Chainable<void>;
@@ -22,6 +23,11 @@ declare global {
     }
   }
 }
+
+Cypress.Commands.add("logEnv", () => {
+  const env = Cypress.env();
+  cy.log(`Cypress env: ${JSON.stringify(env, null, 2)}`);
+});
 
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.visit(LOGIN_PATH);
