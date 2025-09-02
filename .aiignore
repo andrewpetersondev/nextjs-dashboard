@@ -14,7 +14,6 @@ docs
 # drizzle
 node_modules
 public
-src/ui
 storage
 next-env.d.ts
 pnpm-lock.yaml

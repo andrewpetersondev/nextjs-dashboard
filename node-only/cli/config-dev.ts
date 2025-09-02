@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import dotenv from "dotenv";
 import {

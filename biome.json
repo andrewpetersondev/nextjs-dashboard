@@ -107,7 +107,7 @@
       "correctness": {
         "noGlobalDirnameFilename": "on",
         "noNodejsModules": "on",
-        "noProcessGlobal": "on",
+        "noProcessGlobal": "off",
         "noRestrictedElements": "off",
         "noUndeclaredVariables": "on",
         "recommended": true,
@@ -150,6 +150,27 @@
         "noParameterAssign": "on",
         "noParameterProperties": "on",
         "noProcessEnv": "on",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [
+                  "@/shared/config/env-shared",
+                  "../shared/config/env-shared",
+                  "../../shared/config/env-shared",
+                  "../../../shared/config/env-shared",
+                  "src/shared/config/env-shared"
+                ],
+                "message": "env-shared.ts can only be imported from env-next.ts and env-node.ts."
+              },
+              {
+                "group": ["node:process"],
+                "message": "Do not import node:process. Use the global `process` instead."
+              }
+            ]
+          }
+        },
         "noShoutyConstants": "on",
         "noSubstr": "on",
         "noUnusedTemplateLiteral": "on",
@@ -209,6 +230,21 @@
   },
   "overrides": [
     {
+      "includes": [
+        "node-only/**/*.{ts,tsx,js,cjs,mjs}",
+        "cypress.config.*",
+        "scripts/**/*.{ts,tsx,js,cjs,mjs}",
+        "src/db/**/*.{ts,tsx,js,cjs,mjs}"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/shared/**/*.{ts,tsx}"],
       "linter": {
         "rules": {
@@ -228,6 +264,50 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/app/**/*.{ts,tsx}",
+        "src/features/**/*.{ts,tsx}",
+        "src/ui/**/*.{ts,tsx}",
+        "cypress/e2e/**/*.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/node-only/**",
+                      "../node-only/**",
+                      "../../node-only/**",
+                      "src/node-only/**"
+                    ],
+                    "message": "Client/browser code must not import from node-only/**."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/server/config/env-next.ts", "node-only/env-node.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noProcessGlobal": "off"
+          },
+          "style": {
+            "noProcessEnv": "off",
+            "noRestrictedImports": "off"
           }
         }
       }

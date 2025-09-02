@@ -11,7 +11,6 @@
  *   SEED_RESET=true pnpm ts-node src/db/seeds/seed-test-db.ts # force re-seed (TRUNCATE)
  */
 
-// biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";

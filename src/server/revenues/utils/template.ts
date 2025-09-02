@@ -1,6 +1,5 @@
 import "server-only";
 
-// biome-ignore lint/correctness/noNodejsModules: <this file is server-only>
 import { randomUUID } from "node:crypto";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {

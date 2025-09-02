@@ -1,7 +1,5 @@
 import "server-only";
 
-// biome-ignore lint/correctness/noNodejsModules: <file is server only>
-import process from "node:process";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
