@@ -1,13 +1,10 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-
 /**
  * @file connection.ts
  * Shared application database connection factory using Drizzle ORM.
  *
  * Notes:
  * - Prefer this module in runtime code. Do not import dev-/test-database helpers.
- * - Defaults DB selection from NODE_ENV: "test" -> test DB, "development" -> dev DB, "production" -> prod DB.
- * - See src/config/README.md and src/config/env.ts for environment variable details.
+ * - The database URL is resolved centrally in config/environment.ts.
  */
 
 import "server-only";
@@ -17,12 +14,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import {
-  DATABASE_ENV,
-  POSTGRES_URL,
-  POSTGRES_URL_PRODDB,
-  POSTGRES_URL_TESTDB,
-} from "@/server/config/environment";
+import { DATABASE_URL } from "@/server/config/environment";
 import { customers } from "../../../node-only/schema/customers";
 import { demoUserCounters } from "../../../node-only/schema/demo-users";
 import { invoices } from "../../../node-only/schema/invoices";
@@ -39,71 +31,20 @@ const schema = {
   users,
 };
 
-// Supported database types
-type DbType = "development" | "test" | "production";
-
-/**
- * Normalize NODE_ENV to our DbType domain.
- * - Accepts "development" | "production" | "test"
- * - Treats any other value as "development" for safety.
- */
-function resolveDbTypeFromNodeEnv(env: string): DbType {
-  switch (env) {
-    case "test":
-      return "test";
-    case "production":
-      return "production";
-    case "development":
-      return "development";
-    default:
-      return "development";
-  }
-}
-
-// Get the database URL from environment variables
-function getDatabaseUrl(type: DbType): string {
-  if (type !== "production" && type !== "development" && type !== "test") {
-    throw new Error(
-      `Invalid database type: ${type}. Must be one of "production", "development", or "test".`,
-    );
-  }
-
-  if (type === "production") {
-    if (!POSTGRES_URL_PRODDB) {
-      throw new Error(
-        'Database URL for "production" is not set. Ensure POSTGRES_URL_PRODDB is available when running in production.',
-      );
-    }
-    return POSTGRES_URL_PRODDB;
-  }
-
-  if (type === "development") {
-    return POSTGRES_URL;
-  }
-  // type === "test"
-  if (!POSTGRES_URL_TESTDB) {
-    throw new Error(
-      'Database URL for "test" is not set. Ensure POSTGRES_URL_TESTDB is available when running tests.',
-    );
-  }
-  return POSTGRES_URL_TESTDB;
-}
-
 // Database instance type with strongly-typed schema
 export type Database = NodePgDatabase<typeof schema> & {
   $client: NodePgClient;
 };
 
 /**
- * Returns a Drizzle database instance for the specified environment.
- * Defaults based on NODE_ENV:
- * - "test"        -> test DB (POSTGRES_URL_TESTDB)
- * - "development" -> dev DB (POSTGRES_URL)
- * - "production"  -> prod DB (POSTGRES_URL_PRODDB)
+ * Returns a Drizzle database instance using the resolved DATABASE_URL.
+ * The resolution logic prefers DATABASE_URL and falls back to legacy variables
+ * based on DATABASE_ENV inside the environment module.
  */
-export function getDB(
-  type: DbType = resolveDbTypeFromNodeEnv(DATABASE_ENV),
-): Database {
-  const url = getDatabaseUrl(type);
-  return drizzle({ casing: "snake_case", connection: url, schema }) as Database;
+export function getDB(): Database {
+  return drizzle({
+    casing: "snake_case",
+    connection: DATABASE_URL,
+    schema,
+  }) as Database;
 }

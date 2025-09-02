@@ -13,9 +13,8 @@ export default defineConfig({
     baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
 
     setupNodeEvents(on, config) {
-      // Override environment variables for test database (provide both keys for compatibility)
-      config.env.POSTGRES_URL_TESTDB = process.env.POSTGRES_URL_TESTDB;
-      config.env.POSTGRES_URL = process.env.POSTGRES_URL_TESTDB;
+      config.env.DATABASE_ENV = process.env.DATABASE_ENV;
+      config.env.DATABASE_URL = process.env.DATABASE_URL;
       config.env.SESSION_SECRET = process.env.SESSION_SECRET;
 
       // Database setup/teardown tasks
@@ -71,8 +70,8 @@ export default defineConfig({
     },
   },
   env: {
-    POSTGRES_URL: process.env.POSTGRES_URL_TESTDB,
-    POSTGRES_URL_TESTDB: process.env.POSTGRES_URL_TESTDB,
+    DATABASE_ENV: process.env.DATABASE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL,
     SESSION_SECRET: process.env.SESSION_SECRET,
   },
   video: false,

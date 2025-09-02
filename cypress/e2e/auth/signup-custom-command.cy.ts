@@ -5,14 +5,20 @@ import { SEL } from "../__fixtures__/selectors";
 import { createTestUser } from "../__fixtures__/users";
 
 describe("Signup → Sign out → Login flow", () => {
-  const hasDb =
-    typeof Cypress.env("POSTGRES_URL_TESTDB") === "string" &&
-    Cypress.env("POSTGRES_URL_TESTDB").length > 0;
-  const testFn = hasDb ? it : it.skip;
+  const user = createTestUser();
 
-  testFn("allows a user to sign up, sign out, and then log back in", () => {
-    const user = createTestUser();
+  beforeEach(function () {
+    const url = Cypress.env("DATABASE_URL");
+    if (!url) {
+      console.warn("Skipping DB tasks tests; DATABASE_URL is not set");
+      this.skip();
+    }
+    cy.logEnv();
+    cy.log("DATABASE_URL:", url);
+    cy.log("user:", user);
+  });
 
+  it("allows a user to sign up, sign out, and then log back in", () => {
     // 1) Sign up
     cy.signup({
       email: user.email,

@@ -13,11 +13,11 @@ console.log("db-test.ts ...");
 
 let url: string;
 
-if (process.env.POSTGRES_URL_TESTDB) {
-  url = process.env.POSTGRES_URL_TESTDB;
-  console.log("Using POSTGRES_URL_TESTDB:", url);
+if (process.env.DATABASE_URL) {
+  url = process.env.DATABASE_URL;
+  console.log("Using DATABASE_URL:", url);
 } else {
-  console.error("POSTGRES_URL_TESTDB is not set.");
+  console.error("DATABASE_URL is not set.");
   process.exit(1);
 }
 

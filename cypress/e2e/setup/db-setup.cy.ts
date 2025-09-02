@@ -5,13 +5,13 @@ describe("Database setup and cleanup tasks", () => {
   const testUser = buildE2EUser();
 
   beforeEach(function () {
-    const url = Cypress.env("POSTGRES_URL_TESTDB");
+    const url = Cypress.env("DATABASE_URL");
     if (!url) {
-      console.warn("Skipping DB tasks tests; POSTGRES_URL_TESTDB is not set");
+      console.warn("Skipping DB tasks tests; DATABASE_URL is not set");
       this.skip();
     }
     cy.logEnv();
-    cy.log("POSTGRES_URL_TESTDB:", url);
+    cy.log("DATABASE_URL:", url);
     cy.log("testUser:", testUser);
   });
 
