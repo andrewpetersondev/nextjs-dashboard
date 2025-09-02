@@ -1,3 +1,5 @@
+# Cypress Next.js Db Alignment
+
 ## Response 1
 
 Here’s a practical, battle‑tested strategy to ensure your Next.js app and Cypress tests work reliably, from local dev to CI.
@@ -336,24 +338,25 @@ Pick one of these ways to load .env.test globally
 Option A: Node preload (no extra deps)
 - Pros: ubiquitous, zero new packages
 - Commands:
-    - Build: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec next build
+    - Build: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec next build --turbopack
     - Start: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec next start -p 3100
-    - Dev: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec next dev --turbo -p 3100
+    - Dev: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec next dev --turbopack -p 3100
     - Cypress: DOTENV_CONFIG_PATH=.env.test node -r dotenv/config pnpm exec cypress run --e2e
 
 Option B: dotenv-cli (very popular, ergonomic)
 - Install: pnpm add -D dotenv-cli
 - Commands:
-    - Build: pnpm exec dotenv -e .env.test -- next build
-    - Start: pnpm exec dotenv -e .env.test -- next start -p 3100
-    - Dev: pnpm exec dotenv -e .env.test -- next dev --turbo -p 3100
-    - Cypress: pnpm exec dotenv -e .env.test -- cypress run --e2e
+    - Build: `pnpm exec dotenv -e .env.test -- next build --turbopack`
+    - Start: `pnpm exec dotenv -e .env.test -- next start -p 3100` (WARNING! "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead)
+    - Start (standalone): `pnpm exec dotenv -e .env.test -- node .next/standalone/server.js`
+    - Dev: `pnpm exec dotenv -e .env.test -- next dev --turbopack -p 3100`
+    - Cypress: `pnpm exec dotenv -e .env.test -- cypress run --e2e`
 
 Option C: cross-env + dotenv-cli (Windows-friendly, explicit env)
 - Install: pnpm add -D cross-env dotenv-cli
 - Commands:
-    - cross-env DATABASE_ENV=test pnpm exec dotenv -e .env.test -- next dev --turbo -p 3100
-    - cross-env DATABASE_ENV=test pnpm exec dotenv -e .env.test -- next build && pnpm exec dotenv -e .env.test -- next start -p 3100
+    - cross-env DATABASE_ENV=test pnpm exec dotenv -e .env.test -- next dev --turbopack -p 3100
+    - cross-env DATABASE_ENV=test pnpm exec dotenv -e .env.test -- next build --turbopack && pnpm exec dotenv -e .env.test -- next start -p 3100
     - cross-env DATABASE_ENV=test pnpm exec dotenv -e .env.test -- cypress run --e2e
 
 Option D: Launcher scripts (no flags in your terminal commands)
@@ -365,7 +368,7 @@ Running E2E in development mode (fast loop)
 - Tools: pick any option above; examples shown with dotenv-cli
 - Steps:
     - Terminal 1 (dev server on 3100):
-        - pnpm exec dotenv -e .env.test -- next dev --turbo -p 3100
+        - pnpm exec dotenv -e .env.test -- next dev --turbopack -p 3100
     - Terminal 2 (Cypress e2e):
         - pnpm exec dotenv -e .env.test -- cypress run --e2e
 
@@ -444,3 +447,76 @@ Summary
 - With this, both Next.js runtime and Cypress tasks will reliably share the same .env.test and therefore the same test database.
 
 If you’d like, I can draft pnpm scripts for your package.json using your preferred tool (dotenv-cli, start-server-and-test, or Node preload), so you can run everything with short, memorable commands. My name is AI Assistant.
+
+---
+
+## Appendix: Run E2E against a Standalone build with dotenv-cli
+
+Why: When Next.js is configured for a standalone output, `next start` is not used. You start the generated server file directly. Cypress works fine against this server as long as both processes load the same `.env.test`.
+
+1) Ensure `.env.test` has test-time vars
+- Required:
+  - DATABASE_ENV=test
+  - DATABASE_URL=postgres://…/your_test_db
+  - SESSION_SECRET=…
+- Recommended for alignment:
+  - PORT=3100
+  - CYPRESS_BASE_URL=http://localhost:3100
+
+2) Build with the test env loaded
+```
+bash
+# Uses dotenv-cli to preload .env.test for the build step
+pnpm exec dotenv -e .env.test -- next build --turbopack
+```
+3) Start the standalone server with the same env
+- If you have a script that copies static assets (recommended), use it:
+```
+bash
+pnpm exec dotenv -e .env.test -- pnpm run start-standalone
+```
+- Or start directly (ensure no stray space between “.” and “next”):
+```
+bash
+pnpm exec dotenv -e .env.test -- node .next/standalone/server.js
+```
+Notes:
+- Standalone expects `public/` and `.next/static/` available alongside `.next/standalone/`. If assets 404, start via your `start-standalone` script that copies them.
+
+4) Run Cypress against the server
+- Your `cypress.config.ts` already loads `.env.test`, and baseUrl is `http://localhost:3100`. You can simply:
+```
+bash
+pnpm exec dotenv -e .env.test -- cypress run --e2e
+```
+Tip: Add a health endpoint (e.g., `/api/health`) and use `wait-on http://localhost:3100/api/health` before the run to avoid race conditions.
+
+5) Common pitfalls and fixes
+- Error: “Cannot find module ‘…/nextjs-dashboard’”
+  - Cause: Typo like `node . next/standalone/server.js` (extra space after `.`)
+  - Fix: Use `node .next/standalone/server.js`
+- Server starts but assets 404
+  - Cause: Static assets not copied next to standalone server
+  - Fix: Use `pnpm run start-standalone` to copy `public/` and `.next/static/`
+- Cypress can’t reach the app
+  - Ensure `PORT` in `.env.test` matches Cypress baseUrl (3100)
+
+Quick flow summary
+```
+bash
+# Terminal 1
+pnpm exec dotenv -e .env.test -- next build --turbopack
+pnpm exec dotenv -e .env.test -- pnpm run start-standalone
+# Terminal 2 (after server is healthy)
+pnpm exec dotenv -e .env.test -- cypress run --e2e
+```
+Optional: single-command CI using wait-on
+```
+bash
+# Install once: pnpm add -D wait-on
+pnpm exec dotenv -e .env.test -- next build --turbopack
+pnpm exec dotenv -e .env.test -- pnpm run start-standalone & \
+pnpm exec wait-on http://localhost:3100/ && \
+pnpm exec dotenv -e .env.test -- cypress run --e2e
+```
+

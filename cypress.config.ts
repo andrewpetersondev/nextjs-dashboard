@@ -12,6 +12,7 @@ export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:3100",
 
+    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
     setupNodeEvents(on, config) {
       config.env.DATABASE_ENV = process.env.DATABASE_ENV;
       config.env.DATABASE_URL = process.env.DATABASE_URL;
@@ -26,6 +27,19 @@ export default defineConfig({
           await cleanupE2EUsers();
           return null;
         },
+        async "db:createUser"(user: {
+          email: string;
+          password: string;
+          username: string;
+          role?: "user" | "admin" | "guest";
+        }) {
+          const { createUser } = await import(
+            "./node-only/test-support/e2e-tasks"
+          );
+          await createUser(user);
+          return null;
+        },
+
         async "db:deleteUser"(email: string) {
           const { deleteUser } = await import(
             "./node-only/test-support/e2e-tasks"

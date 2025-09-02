@@ -8,10 +8,17 @@ describe("Login custom command", () => {
 
   beforeEach(() => {
     cy.logEnv();
+    cy.task("db:deleteUser", signupCreds.email); // will this work?
   });
 
   it("logs in with valid credentials and navigates to dashboard", () => {
     cy.signup(signupCreds);
+    cy.login(loginCreds);
+    cy.location("pathname").should("include", DASHBOARD_PATH);
+  });
+
+  it("logs in after task creates user in database", () => {
+    cy.task("db:createUser", { ...signupCreds, role: "user" });
     cy.login(loginCreds);
     cy.location("pathname").should("include", DASHBOARD_PATH);
   });
