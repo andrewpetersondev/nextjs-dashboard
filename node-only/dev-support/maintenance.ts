@@ -12,7 +12,7 @@ import { users } from "../schema/users";
 /**
  * Check if all relevant tables are empty.
  */
-export async function isEmpty(): Promise<boolean> {
+async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
     nodeDevDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
     nodeDevDb.execute(
@@ -34,7 +34,7 @@ export async function isEmpty(): Promise<boolean> {
 /**
  * Truncate all tables used by seeds, restart identities, cascade.
  */
-export async function truncateAll(): Promise<void> {
+async function truncateAll(): Promise<void> {
   await nodeDevDb.execute(sql`TRUNCATE TABLE
     ${sessions},
     ${invoices},

@@ -13,6 +13,13 @@
 
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
+import {
+  aggregateRevenues,
+  fetchCustomerIds,
+  insertCustomers,
+  insertDemoCounters,
+  insertRevenues,
+} from "../dev-support/inserts";
 import { ensureResetOrEmpty } from "../dev-support/maintenance";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
@@ -20,13 +27,6 @@ import {
   buildRandomInvoiceRows,
   buildUserSeed,
 } from "../seed-support/builders";
-import {
-  aggregateRevenues,
-  fetchCustomerIds,
-  insertCustomers,
-  insertDemoCounters,
-  insertRevenues,
-} from "../test-support/inserts";
 import { nodeDevDb } from "./config-dev";
 
 /**
