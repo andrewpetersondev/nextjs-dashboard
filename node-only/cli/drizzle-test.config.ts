@@ -17,11 +17,6 @@ import { defineConfig } from "drizzle-kit";
 
 dotenv.config({ path: ".env.test" });
 
-// WRONG inside Docker:
-// postgres://user:password@testDB:5433/database
-// CORRECT inside Docker:
-// postgres://user:password@testDB:5432/database
-
 console.log("drizzle-test.config.ts ...");
 
 export default defineConfig({

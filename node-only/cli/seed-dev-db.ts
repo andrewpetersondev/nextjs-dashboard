@@ -13,7 +13,7 @@
 
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
-import { ensureResetOrEmpty } from "../dev-support/maintenance-dev";
+import { ensureResetOrEmpty } from "../dev-support/maintenance";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {
@@ -27,7 +27,7 @@ import {
   insertDemoCounters,
   insertRevenues,
 } from "../test-support/inserts";
-import { nodeEnvDb } from "./config-dev";
+import { nodeDevDb } from "./config-dev";
 
 /**
  * Main seeding function.
@@ -40,7 +40,7 @@ async function devSeed(): Promise<void> {
 
   const userSeed = await buildUserSeed();
 
-  await nodeEnvDb.transaction(async (tx) => {
+  await nodeDevDb.transaction(async (tx) => {
     await insertRevenues(tx);
     await insertCustomers(tx);
     const existingCustomers = await fetchCustomerIds(tx);

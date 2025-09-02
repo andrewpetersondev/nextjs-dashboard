@@ -27,7 +27,7 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { nodeEnvDb } from "./config-dev";
+import { nodeTestDb } from "./config-test";
 
 dotenv.config({ path: ".env.test" });
 
@@ -43,7 +43,7 @@ const schema = {
 };
 
 async function main(): Promise<void> {
-  await reset(nodeEnvDb, schema);
+  await reset(nodeTestDb, schema);
 }
 
 // Fix: Handle floating promise with .catch for error logging

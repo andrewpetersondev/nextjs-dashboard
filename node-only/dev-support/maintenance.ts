@@ -1,7 +1,7 @@
 // biome-ignore lint/correctness/noNodejsModules: <remove rule>
 import process from "node:process";
 import { sql } from "drizzle-orm";
-import { nodeEnvDb } from "../cli/config-dev";
+import { nodeDevDb } from "../cli/config-dev";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";
@@ -14,17 +14,17 @@ import { users } from "../schema/users";
  */
 export async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    nodeEnvDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
-    nodeEnvDb.execute(
+    nodeDevDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
+    nodeDevDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeDevDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeDevDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`,
     ),
-    nodeEnvDb.execute(
+    nodeDevDb.execute(
       sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters} LIMIT 1) AS v`,
     ),
   ]);
@@ -35,7 +35,7 @@ export async function isEmpty(): Promise<boolean> {
  * Truncate all tables used by seeds, restart identities, cascade.
  */
 export async function truncateAll(): Promise<void> {
-  await nodeEnvDb.execute(sql`TRUNCATE TABLE
+  await nodeDevDb.execute(sql`TRUNCATE TABLE
     ${sessions},
     ${invoices},
     ${customers},
