@@ -3,6 +3,7 @@ import { buildE2EUser } from "../shared/db-test-constants";
 
 describe("Database setup and cleanup tasks", () => {
   const testUser = buildE2EUser();
+  const loginCreds = { email: testUser.email, password: testUser.password };
 
   beforeEach(function () {
     const url = Cypress.env("DATABASE_URL");
@@ -34,6 +35,6 @@ describe("Database setup and cleanup tasks", () => {
   it("Happy path login works after db:setup", () => {
     cy.task("db:setup", testUser);
     cy.task("db:userExists", testUser.email).should("be.true");
-    cy.login(testUser.email, testUser.password);
+    cy.login(loginCreds);
   });
 });
