@@ -25,6 +25,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 import {
   type DatabaseEnv,
   deriveDatabaseEnv,
@@ -39,12 +40,8 @@ const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
 const envSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
   // Optional server log level override
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "silent"]).optional(),
-  POSTGRES_URL: z.string().url().optional(),
-  POSTGRES_URL_PRODDB: z.string().url().optional(),
-  POSTGRES_URL_TESTDB: z.string().url().optional(),
+  LOG_LEVEL: LogLevelSchema.optional(),
   SESSION_SECRET: z.string().min(1, "SESSION_SECRET cannot be empty"),
-  // Optional opt-in flag to require DATABASE_URL strictly
   STRICT_DATABASE_URL: z
     .string()
     .optional()
@@ -80,19 +77,6 @@ function resolveDatabaseUrl(env: DatabaseEnv, data: Env): string {
     throw new Error(msgByEnv[env]);
   }
 
-  // 2) Back-compat: pick by environment
-  if (env === "test" && data.POSTGRES_URL_TESTDB) {
-    return data.POSTGRES_URL_TESTDB;
-  }
-  if (env === "production" && data.POSTGRES_URL_PRODDB) {
-    return data.POSTGRES_URL_PRODDB;
-  }
-
-  // 3) Legacy default/dev
-  if (data.POSTGRES_URL) {
-    return data.POSTGRES_URL;
-  }
-
   // 4) Helpful error per env
   const legacyMsgByEnv: Record<DatabaseEnv, string> = {
     development:
@@ -105,23 +89,10 @@ function resolveDatabaseUrl(env: DatabaseEnv, data: Env): string {
 }
 
 export const SESSION_SECRET: Env["SESSION_SECRET"] = parsed.data.SESSION_SECRET;
-
-// Single resolved URL the app should use everywhere
 export const DATABASE_URL: string = resolveDatabaseUrl(
   DATABASE_ENV_INTERNAL,
   parsed.data,
 );
-
-// Deprecated exports (kept for compatibility where still imported)
-export const POSTGRES_URL: Env["POSTGRES_URL"] = parsed.data.POSTGRES_URL;
-export const POSTGRES_URL_TESTDB: Env["POSTGRES_URL_TESTDB"] =
-  parsed.data.POSTGRES_URL_TESTDB;
-export const POSTGRES_URL_PRODDB: Env["POSTGRES_URL_PRODDB"] =
-  parsed.data.POSTGRES_URL_PRODDB;
-
 export const DATABASE_ENV: DatabaseEnv = DATABASE_ENV_INTERNAL;
-
-export const LOG_LEVEL: Env["LOG_LEVEL"] = parsed.data.LOG_LEVEL;
-
-// Export strict flag for observability if needed
+export const LOG_LEVEL: LogLevel | undefined = parsed.data.LOG_LEVEL;
 export const STRICT_DATABASE_URL: boolean = parsed.data.STRICT_DATABASE_URL;

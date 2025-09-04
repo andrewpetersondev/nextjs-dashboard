@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
 // Helper: coerce stringy env flags to boolean
 function toBool(v: unknown, fallback = false): boolean {
@@ -20,9 +21,7 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_ENABLE_EXPERIMENTS: z.string().optional(),
 
   // Public log level for browser bundles
-  NEXT_PUBLIC_LOG_LEVEL: z
-    .enum(["debug", "info", "warn", "error", "silent"])
-    .optional(),
+  NEXT_PUBLIC_LOG_LEVEL: LogLevelSchema.optional(),
 });
 
 const parsed = publicEnvSchema.safeParse(process.env);
@@ -45,7 +44,7 @@ export const PUBLIC_ENV = {
   API_BASE_URL: data.NEXT_PUBLIC_API_BASE_URL,
   APP_NAME: data.NEXT_PUBLIC_APP_NAME,
   ENABLE_EXPERIMENTS: toBool(data.NEXT_PUBLIC_ENABLE_EXPERIMENTS, false),
-  LOG_LEVEL: data.NEXT_PUBLIC_LOG_LEVEL,
+  LOG_LEVEL: data.NEXT_PUBLIC_LOG_LEVEL as LogLevel | undefined,
 } as const;
 
 // Optionally export individually:

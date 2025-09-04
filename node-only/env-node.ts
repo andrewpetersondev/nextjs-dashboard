@@ -89,11 +89,3 @@ export const PORT: number = PORT_INTERNAL;
 export const CYPRESS_BASE_URL: string = CYPRESS_BASE_URL_INTERNAL;
 export const SESSION_SECRET: typeof data.SESSION_SECRET = data.SESSION_SECRET;
 export const SEED_RESET: typeof data.SEED_RESET = data.SEED_RESET;
-
-// Backward-compatible aggregate export
-export const NODE_ENV_VARS = {
-  ...data,
-  CYPRESS_BASE_URL: CYPRESS_BASE_URL_INTERNAL,
-  DATABASE_ENV: DATABASE_ENV_INTERNAL,
-  PORT: PORT_INTERNAL,
-};
