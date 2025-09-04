@@ -143,6 +143,10 @@ export class RevenueEventHandler {
     this.logNoRelevantChange(context, event.eventId, invoice.id);
   }
 
+  /**
+   * Logs an error when an update event lacks the previous invoice state.
+   * @internal
+   */
   private logMissingPrevious(
     context: string,
     eventId: string,
@@ -156,6 +160,10 @@ export class RevenueEventHandler {
     );
   }
 
+  /**
+   * Handles a change in invoice status by delegating to revenue adjustment logic.
+   * @internal
+   */
   private async handleStatusChange(
     context: string,
     eventId: string,
@@ -175,6 +183,10 @@ export class RevenueEventHandler {
     );
   }
 
+  /**
+   * Handles a change in invoice amount by invoking processInvoiceForRevenue in update mode.
+   * @internal
+   */
   private async handleAmountChange(
     context: string,
     previousAmount: number,
@@ -188,6 +200,10 @@ export class RevenueEventHandler {
     });
   }
 
+  /**
+   * Logs when an update event doesn't impact revenue calculations.
+   * @internal
+   */
   private logNoRelevantChange(
     context: string,
     eventId: string,

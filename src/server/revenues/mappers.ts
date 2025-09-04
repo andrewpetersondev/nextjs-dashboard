@@ -26,14 +26,8 @@ import {
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/shared/validation/number";
+import { ensure } from "@/shared/validation/ensure";
 import type { RevenueRow } from "../../../node-only/schema/revenues";
-
-// Small internal assertion helper to keep validation DRY and readable
-export const ensure = (condition: unknown, message: string): void => {
-  if (!condition) {
-    throw new ValidationError(message);
-  }
-};
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.

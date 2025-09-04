@@ -15,6 +15,10 @@ import { periodKey } from "@/shared/revenues/period";
  * Keeps orchestration under 50 lines by delegating to small helpers.
  */
 
+/**
+ * Arguments for the core adjustRevenueForStatusChange workflow.
+ * @internal
+ */
 // Core logic extracted to keep exported function concise
 interface CoreArgs {
   readonly baseMeta: MetadataBase;
@@ -24,14 +28,20 @@ interface CoreArgs {
   readonly revenueService: RevenueService;
 }
 
-function detectChange(
-  previousInvoice: InvoiceDto,
-  currentInvoice: InvoiceDto,
-):
+type ChangeType =
   | "eligible-to-ineligible"
   | "ineligible-to-eligible"
   | "eligible-amount-change"
-  | "none" {
+  | "none";
+
+/**
+ * Detects how the invoice change affects revenue eligibility/amount.
+ * @internal
+ */
+function detectChange(
+  previousInvoice: InvoiceDto,
+  currentInvoice: InvoiceDto,
+): ChangeType {
   const prevEligible = isStatusEligibleForRevenue(previousInvoice.status);
   const currEligible = isStatusEligibleForRevenue(currentInvoice.status);
   if (prevEligible && !currEligible) {
@@ -50,6 +60,11 @@ function detectChange(
   return "none";
 }
 
+/**
+ * Extracts and validates the period and builds metadata with period string.
+ * Returns null when the period is not derivable (policy guard).
+ * @internal
+ */
 function preparePeriodAndMeta(
   currentInvoice: InvoiceDto,
   context: string,
@@ -66,12 +81,12 @@ function preparePeriodAndMeta(
   return { meta, period } as const;
 }
 
+/**
+ * Dispatches handling based on the detected change type.
+ * @internal
+ */
 async function dispatchChange(
-  change:
-    | "eligible-to-ineligible"
-    | "ineligible-to-eligible"
-    | "eligible-amount-change"
-    | "none",
+  change: ChangeType,
   context: string,
   args: {
     readonly previousInvoice: InvoiceDto;
@@ -326,6 +341,10 @@ function logNoAffectingChanges(
   logInfo(context, "No changes affecting revenue calculation", meta);
 }
 
+/**
+ * Adjusts revenue when an invoice's status or amount changes between two states.
+ * Does not modify behavior; orchestrates calls to revenue mutations based on change detection.
+ */
 export async function adjustRevenueForStatusChange(
   revenueService: RevenueService,
   previousInvoice: InvoiceDto,

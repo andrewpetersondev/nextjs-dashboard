@@ -11,7 +11,7 @@
 .idea
 .next
 docs
-# drizzle
+drizzle
 node_modules
 public
 storage

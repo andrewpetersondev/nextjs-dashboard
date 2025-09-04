@@ -9,12 +9,20 @@ import { toPeriod } from "@/shared/brands/mappers";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { periodKey } from "@/shared/revenues/period";
 
+/**
+ * Options for processing an invoice for revenue.
+ * - isUpdate: when true, indicates this call is for an updated invoice and may include previousAmount for diffing.
+ */
 type ProcessOptions = Readonly<{
   context?: string;
   isUpdate?: boolean;
   previousAmount?: number;
 }>;
 
+/**
+ * Arguments used when upserting a revenue record for a given period.
+ * @internal
+ */
 type UpsertArgs = Readonly<{
   revenueService: RevenueService;
   invoice: InvoiceDto;
@@ -25,6 +33,10 @@ type UpsertArgs = Readonly<{
   previousAmount?: number;
 }>;
 
+/**
+ * Type guard indicating whether we are updating an existing invoice amount (diff update).
+ * @internal
+ */
 function isDiffUpdate(
   isUpdate: boolean,
   previousAmount?: number,
@@ -32,6 +44,10 @@ function isDiffUpdate(
   return Boolean(isUpdate && previousAmount !== undefined);
 }
 
+/**
+ * Creates metadata pointing to an existing revenue record for logging/observability.
+ * @internal
+ */
 function buildExistingMeta(
   metadata: LogMetadata,
   revenueId: string,
@@ -39,6 +55,10 @@ function buildExistingMeta(
   return { ...metadata, existingRevenue: revenueId } as const;
 }
 
+/**
+ * Options for updating an existing revenue record when processing an invoice.
+ * @internal
+ */
 type UpdateExistingOptions = Readonly<{
   revenueService: RevenueService;
   context: string;
@@ -53,6 +73,10 @@ type UpdateExistingOptions = Readonly<{
   previousAmount?: number;
 }>;
 
+/**
+ * Updates an existing revenue record either by adding a new invoice or diffing an updated one.
+ * @internal
+ */
 async function updateExistingRevenue(
   options: UpdateExistingOptions,
 ): Promise<void> {
@@ -96,6 +120,10 @@ async function updateExistingRevenue(
   });
 }
 
+/**
+ * Options for creating a brand new revenue record for a period.
+ * @internal
+ */
 type CreateNewOptions = Readonly<{
   revenueService: RevenueService;
   context: string;
@@ -104,6 +132,10 @@ type CreateNewOptions = Readonly<{
   totalAmount: number;
 }>;
 
+/**
+ * Creates a new revenue record for the given period with the invoice amount.
+ * @internal
+ */
 async function createNewRevenue(options: CreateNewOptions): Promise<void> {
   const { revenueService, context, metadata, period, totalAmount } = options;
   logInfo(context, "Creating a new revenue record", metadata);
@@ -117,6 +149,10 @@ async function createNewRevenue(options: CreateNewOptions): Promise<void> {
   });
 }
 
+/**
+ * Upserts a revenue record for the invoice's period, updating if it exists or creating otherwise.
+ * @internal
+ */
 async function upsertRevenue(args: UpsertArgs): Promise<void> {
   const {
     revenueService,
