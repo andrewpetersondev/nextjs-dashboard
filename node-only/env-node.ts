@@ -51,6 +51,9 @@ const nodeToolingEnvSchema = z.object({
     .optional()
     .transform((v) => coercePort(v, COERCED_PORT)),
 
+  // Backwards compatibility for older seeding scripts
+  SEED_RESET: z.string().optional(),
+
   // Present in env files; not all tooling needs it, so keep optional
   SESSION_SECRET: z.string().optional(),
 });
@@ -85,6 +88,7 @@ export const DATABASE_URL: typeof data.DATABASE_URL = data.DATABASE_URL;
 export const PORT: number = PORT_INTERNAL;
 export const CYPRESS_BASE_URL: string = CYPRESS_BASE_URL_INTERNAL;
 export const SESSION_SECRET: typeof data.SESSION_SECRET = data.SESSION_SECRET;
+export const SEED_RESET: typeof data.SEED_RESET = data.SEED_RESET;
 
 // Backward-compatible aggregate export
 export const NODE_ENV_VARS = {

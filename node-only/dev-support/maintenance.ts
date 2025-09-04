@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { nodeDevDb } from "../cli/config-dev";
+import { SEED_RESET } from "../env-node";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";
@@ -48,7 +49,7 @@ async function truncateAll(): Promise<void> {
  * Returns true if it is safe to proceed with seeding.
  */
 export async function ensureResetOrEmpty(): Promise<boolean> {
-  const shouldReset = process.env.SEED_RESET === "true";
+  const shouldReset = SEED_RESET === "true";
   if (shouldReset) {
     await truncateAll();
     return true;
