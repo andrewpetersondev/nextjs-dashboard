@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { LogMetadata } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import type { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 export interface CoreArgs {

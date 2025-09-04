@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import type { LogMetadata } from "../../application/logging";

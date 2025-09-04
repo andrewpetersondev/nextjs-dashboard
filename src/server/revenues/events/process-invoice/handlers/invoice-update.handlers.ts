@@ -6,9 +6,9 @@ import {
   logMissingPrevious,
   logNoRelevantChange,
 } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import { adjustRevenueForStatusChange } from "@/server/revenues/events/status-change/adjust-revenue-for-status-change";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 

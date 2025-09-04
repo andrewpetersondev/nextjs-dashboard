@@ -4,17 +4,17 @@ import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueStatistics } from "@/features/revenues/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/display";
+import { mergeWithTemplate } from "@/server/revenues/application/services/revenue-statistics/merge";
+import { computeStatistics } from "@/server/revenues/application/services/revenue-statistics/stats";
+import {
+  buildDefaultsFromFreshTemplate,
+  buildTemplateAndPeriods,
+} from "@/server/revenues/application/services/revenue-statistics/templates";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { mergeWithTemplate } from "@/server/revenues/services/internal/revenue-statistics/merge";
-import { computeStatistics } from "@/server/revenues/services/internal/revenue-statistics/stats";
-import {
-  buildDefaultsFromFreshTemplate,
-  buildTemplateAndPeriods,
-} from "@/server/revenues/services/internal/revenue-statistics/templates";
 import type { Period } from "@/shared/brands/domain-brands";
 
 /**

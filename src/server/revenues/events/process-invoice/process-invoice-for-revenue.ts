@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { LogMetadata } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { upsertRevenue } from "@/server/revenues/events/process-invoice/upsert-revenue";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";

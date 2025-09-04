@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import type {
   ChangeType,
   MetadataWithPeriod,
@@ -10,7 +11,6 @@ import { handleNoExistingRevenue } from "@/server/revenues/events/status-change/
 import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-eligible-to-ineligible";
 import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-ineligible-to-eligible";
 import { logNoAffectingChanges } from "@/server/revenues/events/status-change/handlers/log-no-affecting-changes";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 export async function dispatchChange(

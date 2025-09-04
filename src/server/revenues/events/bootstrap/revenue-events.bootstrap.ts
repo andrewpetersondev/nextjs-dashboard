@@ -2,10 +2,10 @@ import "server-only";
 
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { RevenueEventHandler } from "@/server/revenues/events/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
-import { RevenueService } from "@/server/revenues/services/revenue.service";
 
 declare global {
   var __revenueEventHandler: RevenueEventHandler | undefined;

@@ -4,7 +4,7 @@ import {
   type LogMetadata,
   logInfo,
 } from "@/server/revenues/application/logging";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { toRevenueId } from "@/shared/brands/mappers";
 
 /**

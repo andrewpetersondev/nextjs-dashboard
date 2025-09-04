@@ -1,9 +1,9 @@
 import "server-only";
 
 import { logInfo } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 
 interface Args {
   readonly revenueService: RevenueService;

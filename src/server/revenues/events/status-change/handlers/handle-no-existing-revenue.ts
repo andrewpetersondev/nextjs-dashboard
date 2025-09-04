@@ -1,13 +1,13 @@
 import "server-only";
 
 import { logInfo } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { isStatusEligibleForRevenue } from "@/server/revenues/events/common/guards";
 import type {
   MetadataWithPeriod,
   PeriodArg,
 } from "@/server/revenues/events/common/types";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 interface Args {

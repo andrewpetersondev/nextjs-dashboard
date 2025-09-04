@@ -4,8 +4,8 @@ import {
   type LogMetadata,
   logInfo,
 } from "@/server/revenues/application/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import type { InvoiceDto } from "@/shared/invoices/dto";

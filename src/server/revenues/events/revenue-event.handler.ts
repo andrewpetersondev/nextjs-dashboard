@@ -5,10 +5,10 @@ import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.typ
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { processInvoiceEvent } from "@/server/revenues/application/orchestrator";
+import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceUpdated } from "@/server/revenues/events/process-invoice/handlers/invoice-update.handlers";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { RevenueService } from "@/server/revenues/services/revenue.service";
 
 /**
  * Handles invoice events and updates revenue records accordingly.
