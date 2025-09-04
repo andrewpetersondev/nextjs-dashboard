@@ -14,6 +14,7 @@ import { LOGIN_PATH } from "@/shared/auth/constants";
 import { SESSION_DURATION_MS } from "@/shared/auth/sessions/constants";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
+import { DATABASE_ENV } from "../config/env-next";
 
 /**
  * Deletes the session cookie.
@@ -48,7 +49,7 @@ export async function setSessionToken(
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: DATABASE_ENV === "production",
   });
 
   serverLogger.info(
