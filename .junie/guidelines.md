@@ -2,12 +2,17 @@
 
 ## Guidelines
 
-- Do not change functionality.
 - Do not make breaking changes.
 - Examine the project structure. 
-- Focus on code for Revenues and Event Driven Architecture.
 - Extract code to files, locations, and components to follow best practices. Create files and folders as needed.
 - Revenues and Event Driven Architecture is kind of messy, so organization will help me in so many ways. 
+
+## Focus
+
+- Revenues and Event Driven Architecture.
+- When an invoice is created, updated, or deleted, send an event to the event bus.
+- Revenue logic is supposed to track the total amount for a period ("YYYY-MM-01").
+- Revenue logic should be able to track the total amounts paid and pending for every period. 
 
 ## Code Style Guidelines
 
