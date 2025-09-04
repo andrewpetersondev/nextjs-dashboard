@@ -3,11 +3,11 @@ import "server-only";
 // biome-ignore lint/correctness/noNodejsModules: <allowed because the file does not run in edge runtime or client>
 import { randomUUID } from "node:crypto";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/display";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entity";
-import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/infrastructure/mappers/display";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 

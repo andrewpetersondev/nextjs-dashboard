@@ -3,11 +3,11 @@ import "server-only";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueStatistics } from "@/features/revenues/types";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/display";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entity";
-import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/infrastructure/mappers/display";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { mergeWithTemplate } from "@/server/revenues/services/internal/revenue-statistics/merge";
 import { computeStatistics } from "@/server/revenues/services/internal/revenue-statistics/stats";

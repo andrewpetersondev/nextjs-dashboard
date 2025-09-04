@@ -1,9 +1,9 @@
 import "server-only";
 
-import { withErrorHandling } from "@/server/revenues/application/error-handling";
 import { isEligibleDeletion } from "@/server/revenues/events/common/guards";
 import { applyDeletionEffects } from "@/server/revenues/events/deleted-invoice/apply-deletion-effects";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
+import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { periodKey } from "@/shared/revenues/period";

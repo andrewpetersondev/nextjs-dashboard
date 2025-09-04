@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entity";
-import { createDefaultRevenueData } from "@/server/revenues/utils/template";
+import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import { toPeriod } from "@/shared/brands/mappers";
 
 export function mergeWithTemplate(
