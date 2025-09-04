@@ -18,10 +18,18 @@ console.log("drizzle-test.config.ts ...");
 // Ensure env is loaded before reading from env-node
 const { DATABASE_URL } = await import("../config/env-node");
 
+let url: string;
+
+if (DATABASE_URL) {
+  url = DATABASE_URL;
+} else {
+  throw new Error("DATABASE_URL is not set.");
+}
+
 export default defineConfig({
   casing: "snake_case",
   dbCredentials: {
-    url: DATABASE_URL!,
+    url,
   },
   dialect: "postgresql",
   out: "./drizzle/migrations/test/",
