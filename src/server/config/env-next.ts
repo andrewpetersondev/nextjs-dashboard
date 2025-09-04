@@ -10,16 +10,10 @@
  * Behavior:
  * - Resolves DATABASE_ENV via deriveDatabaseEnv(DATABASE_ENV, NODE_ENV).
  * - Validates SESSION_SECRET and database URL inputs.
- * - Database URL resolution precedence:
- *   1) DATABASE_URL (preferred, strict-mode compatible)
- *   2) POSTGRES_URL_TESTDB (when env is "test")
- *   3) POSTGRES_URL_PRODDB (when env is "production")
- *   4) POSTGRES_URL (legacy/dev)
- *   Otherwise: throws with an environment-specific error message.
+ * - Database URL: requires DATABASE_URL. If STRICT_DATABASE_URL is true and DATABASE_URL is missing, throws an environment-specific error.
  *
  * Exports:
  * - SESSION_SECRET, DATABASE_URL, DATABASE_ENV, STRICT_DATABASE_URL
- * - Deprecated pass-throughs for POSTGRES_URL*, retained for compatibility.
  */
 
 import "server-only";
@@ -38,7 +32,7 @@ const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
   process.env.NODE_ENV,
 );
 
-// Prefer DATABASE_URL. Keep legacy vars optional for backward-compat resolution below.
+// Prefer DATABASE_URL exclusively.
 const envSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
   // Optional server log level override
@@ -81,15 +75,15 @@ function resolveDatabaseUrl(env: DatabaseEnv, data: Env): string {
     throw new Error(msgByEnv[env]);
   }
 
-  // 4) Helpful error per env
-  const legacyMsgByEnv: Record<DatabaseEnv, string> = {
+  // Helpful error per env when not strict: suggest defining DATABASE_URL
+  const msgByEnvNonStrict: Record<DatabaseEnv, string> = {
     development:
-      "Missing database URL. Define DATABASE_URL in .env.development, or set POSTGRES_URL.",
+      "Missing database URL. Define DATABASE_URL in .env.development.",
     production:
-      "Missing database URL. Define DATABASE_URL in production env, or set POSTGRES_URL_PRODDB.",
-    test: "Missing database URL. Define DATABASE_URL in .env.test, or set POSTGRES_URL_TESTDB.",
+      "Missing database URL. Define DATABASE_URL in the production environment.",
+    test: "Missing database URL. Define DATABASE_URL in .env.test.",
   };
-  throw new Error(legacyMsgByEnv[env]);
+  throw new Error(msgByEnvNonStrict[env]);
 }
 
 export const SESSION_SECRET: Env["SESSION_SECRET"] = parsed.data.SESSION_SECRET;

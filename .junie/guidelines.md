@@ -26,8 +26,3 @@
 ## Additional Tools
 
 - Do not use eslint.
-
-## Cypress Testing
-
-- Must use the Database specifically for testing. 
-- Testing Database has environment variable of POSTGRES_URL_TESTDB, whereas the development database is POSTGRES_URL_DEV
