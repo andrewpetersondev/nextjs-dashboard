@@ -3,15 +3,15 @@ import "server-only";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import {
-  mapRevenueRowsToEntities,
-  mapRevenueRowToEntity,
-} from "@/server/revenues/application/mappers/db";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
+import {
+  mapRevenueRowsToEntities,
+  mapRevenueRowToEntity,
+} from "@/server/revenues/infrastructure/persistence/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
