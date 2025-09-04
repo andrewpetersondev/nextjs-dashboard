@@ -11,7 +11,7 @@ import type {
 import {
   mapRevenueRowsToEntities,
   mapRevenueRowToEntity,
-} from "@/server/revenues/mappers";
+} from "@/server/revenues/mappers/db";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";

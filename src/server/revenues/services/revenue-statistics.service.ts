@@ -9,7 +9,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/entity";
-import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers/display";
 import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
 import { toIntervalDuration } from "@/server/revenues/validator";
