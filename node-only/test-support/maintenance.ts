@@ -7,27 +7,22 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
+import { firstRow } from "../shared/pg-utils";
 
 /**
  * Check if all relevant tables are empty.
  */
 async function isEmpty(): Promise<boolean> {
   const checks = await Promise.all([
-    nodeTestDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users} LIMIT 1) AS v`),
+    nodeTestDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users}) AS v`),
+    nodeTestDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${customers}) AS v`),
+    nodeTestDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${invoices}) AS v`),
+    nodeTestDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${revenues}) AS v`),
     nodeTestDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${customers} LIMIT 1) AS v`,
-    ),
-    nodeTestDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${invoices} LIMIT 1) AS v`,
-    ),
-    nodeTestDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${revenues} LIMIT 1) AS v`,
-    ),
-    nodeTestDb.execute(
-      sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters} LIMIT 1) AS v`,
+      sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters}) AS v`,
     ),
   ]);
-  return checks.every((r) => (r as any).rows?.[0]?.v === false);
+  return checks.every((r) => firstRow<{ v: boolean }>(r)?.v === false);
 }
 
 /**

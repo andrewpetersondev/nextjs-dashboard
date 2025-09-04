@@ -8,8 +8,10 @@
 import { getLogLevel } from "@/shared/logging/get-log-level.client";
 import { isLevelEnabled } from "@/shared/logging/log-level";
 
-// biome-ignore lint/suspicious/noExplicitAny: <fix later>
-export function safeInvoke(fn: (...a: any[]) => void, ...args: any[]): void {
+export function safeInvoke<TArgs extends readonly unknown[]>(
+  fn: (...a: TArgs) => void,
+  ...args: TArgs
+): void {
   try {
     fn(...args);
   } catch {
