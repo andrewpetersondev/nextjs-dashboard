@@ -502,8 +502,7 @@ Tip: Add a health endpoint (e.g., `/api/health`) and use `wait-on http://localho
   - Ensure `PORT` in `.env.test` matches Cypress baseUrl (3100)
 
 Quick flow summary
-```
-bash
+```bash
 # Terminal 1
 pnpm exec dotenv -e .env.test -- next build --turbopack
 pnpm exec dotenv -e .env.test -- pnpm run start-standalone
@@ -511,8 +510,7 @@ pnpm exec dotenv -e .env.test -- pnpm run start-standalone
 pnpm exec dotenv -e .env.test -- cypress run --e2e
 ```
 Optional: single-command CI using wait-on
-```
-bash
+```bash
 # Install once: pnpm add -D wait-on
 pnpm exec dotenv -e .env.test -- next build --turbopack
 pnpm exec dotenv -e .env.test -- pnpm run start-standalone & \
