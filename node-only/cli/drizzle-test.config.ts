@@ -14,6 +14,7 @@
 
 import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
+import { DATABASE_URL } from "../env-node";
 
 dotenv.config({ path: ".env.test" });
 
@@ -22,7 +23,7 @@ console.log("drizzle-test.config.ts ...");
 export default defineConfig({
   casing: "snake_case",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: DATABASE_URL!,
   },
   dialect: "postgresql",
   out: "./drizzle/migrations/test/",
