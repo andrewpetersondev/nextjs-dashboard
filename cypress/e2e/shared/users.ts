@@ -34,7 +34,7 @@ export function createTestUser(): TestUser {
 
   return {
     email: `e2e_${timestamp}@example.com`,
-    password: "P@ssw0rd!123", // meets zod requirements: length, letter, number, special
+    password: "Password123!", // meets zod requirements: length, letter, number, special
     timestamp,
     username: `e2e_user_${timestamp}`,
   } as const as TestUser;

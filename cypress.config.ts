@@ -71,13 +71,6 @@ export default defineConfig({
           await upsertE2EUser(user);
           return null;
         },
-        async "db:truncate"() {
-          const { resetCypressDb } = await import(
-            "./node-only/test-support/reset"
-          );
-          await resetCypressDb();
-          return null;
-        },
         async "db:userExists"(email: string) {
           const { userExists } = await import(
             "./node-only/test-support/tasks/user-exists"
