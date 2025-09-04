@@ -4,8 +4,8 @@ import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.cl
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entity";
+import { toIntervalDuration } from "@/server/revenues/infrastructure/validation/validator";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
-import { toIntervalDuration } from "@/server/revenues/validation/validator";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 

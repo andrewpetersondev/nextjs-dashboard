@@ -24,7 +24,7 @@
 
 ## Project Structure
 
-- Do not use barrel files.
+- Do not use barrel files or barrel modules. 
 
 ## Additional Tools
 

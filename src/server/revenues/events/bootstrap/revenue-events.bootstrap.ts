@@ -3,8 +3,8 @@ import "server-only";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { RevenueEventHandler } from "@/server/revenues/events/revenue-event.handler";
-import type { RevenueRepositoryInterface } from "@/server/revenues/repository/interface";
-import { RevenueRepository } from "@/server/revenues/repository/repository";
+import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
+import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
 import { RevenueService } from "@/server/revenues/services/revenue.service";
 
 declare global {

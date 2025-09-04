@@ -7,7 +7,7 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entity";
-import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers/display";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/infrastructure/mappers/display";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 

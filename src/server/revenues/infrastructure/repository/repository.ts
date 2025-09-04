@@ -11,15 +11,15 @@ import type {
 import {
   mapRevenueRowsToEntities,
   mapRevenueRowToEntity,
-} from "@/server/revenues/mappers/db";
-import type { RevenueRepositoryInterface } from "@/server/revenues/repository/interface";
+} from "@/server/revenues/infrastructure/mappers/db";
+import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import {
   type RevenueRow,
   revenues,
-} from "../../../../node-only/schema/revenues";
+} from "../../../../../node-only/schema/revenues";
 
 /**
  * RevenueRepository
