@@ -26,6 +26,7 @@ const publicEnvSchema = z.object({
 });
 
 const parsed = publicEnvSchema.safeParse(process.env);
+
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;
   // This will surface during build for client bundles as well.
@@ -35,6 +36,10 @@ if (!parsed.success) {
 }
 
 const data = parsed.data;
+
+const NODE_ENV = (process.env.NODE_ENV ?? "development").toLowerCase();
+
+export const IS_PROD: boolean = NODE_ENV === "production";
 
 export const PUBLIC_ENV = {
   API_BASE_URL: data.NEXT_PUBLIC_API_BASE_URL,

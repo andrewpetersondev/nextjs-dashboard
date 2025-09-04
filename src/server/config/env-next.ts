@@ -38,6 +38,8 @@ const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
 // Prefer DATABASE_URL. Keep legacy vars optional for backward-compat resolution below.
 const envSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
+  // Optional server log level override
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error", "silent"]).optional(),
   POSTGRES_URL: z.string().url().optional(),
   POSTGRES_URL_PRODDB: z.string().url().optional(),
   POSTGRES_URL_TESTDB: z.string().url().optional(),
@@ -118,6 +120,8 @@ export const POSTGRES_URL_PRODDB: Env["POSTGRES_URL_PRODDB"] =
   parsed.data.POSTGRES_URL_PRODDB;
 
 export const DATABASE_ENV: DatabaseEnv = DATABASE_ENV_INTERNAL;
+
+export const LOG_LEVEL: Env["LOG_LEVEL"] = parsed.data.LOG_LEVEL;
 
 // Export strict flag for observability if needed
 export const STRICT_DATABASE_URL: boolean = parsed.data.STRICT_DATABASE_URL;
