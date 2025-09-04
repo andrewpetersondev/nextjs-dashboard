@@ -27,9 +27,6 @@ import {
 } from "../seed-support/builders";
 import { nodeDevDb } from "./config-dev";
 
-/**
- * Main seeding function.
- */
 async function devSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();
   if (!proceed) {

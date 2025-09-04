@@ -1,8 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
-
 /**
  * @file reset-dev.ts
  * @description
@@ -19,7 +14,6 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
-import dotenv from "dotenv";
 import { reset } from "drizzle-seed";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
@@ -29,9 +23,7 @@ import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
 import { nodeDevDb } from "./config-dev";
 
-dotenv.config({ path: ".env.development" });
-
-console.log("db-dev.ts ...");
+console.log("reset-dev.ts ...");
 
 const schema = {
   customers,

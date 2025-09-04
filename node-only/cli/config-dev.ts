@@ -4,11 +4,13 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../env-node";
 
 dotenv.config({ path: ".env.development" });
 
-console.log("db-dev.ts ...");
+console.log("config-dev.ts ...");
+
+// Ensure env is loaded before reading from env-node
+const { DATABASE_URL } = await import("../env-node");
 
 let url: string;
 

@@ -1,7 +1,3 @@
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/style/noNonNullAssertion: <temp> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-
 /**
  *
  * @file drizzle-dev.config.ts
@@ -14,11 +10,13 @@
 
 import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import { DATABASE_URL } from "../env-node";
 
 dotenv.config({ path: ".env.development" });
 
 console.log("drizzle-dev.config.ts ...");
+
+// Ensure env is loaded before reading from env-node
+const { DATABASE_URL } = await import("../env-node");
 
 export default defineConfig({
   casing: "snake_case",
