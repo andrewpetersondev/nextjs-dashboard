@@ -6,17 +6,20 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.test" });
-
 export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:3100",
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-    setupNodeEvents(on, config) {
-      config.env.DATABASE_ENV = process.env.DATABASE_ENV;
-      config.env.DATABASE_URL = process.env.DATABASE_URL;
-      config.env.SESSION_SECRET = process.env.SESSION_SECRET;
+    async setupNodeEvents(on, config) {
+      // Ensure .env.test is loaded before reading env
+      dotenv.config({ path: ".env.test" });
+      const env = await import("./node-only/env-node");
+
+      config.baseUrl = env.CYPRESS_BASE_URL;
+      config.env.DATABASE_ENV = env.DATABASE_ENV;
+      config.env.DATABASE_URL = env.DATABASE_URL;
+      config.env.SESSION_SECRET = env.SESSION_SECRET;
 
       // Database setup/teardown tasks
       on("task", {
@@ -90,11 +93,7 @@ export default defineConfig({
       return config;
     },
   },
-  env: {
-    DATABASE_ENV: process.env.DATABASE_ENV,
-    DATABASE_URL: process.env.DATABASE_URL,
-    SESSION_SECRET: process.env.SESSION_SECRET,
-  },
+  env: {},
   video: false,
   watchForFileChanges: false,
 });
