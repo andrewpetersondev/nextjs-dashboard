@@ -1,4 +1,4 @@
-import type { nodeTestDb } from "../cli/config-test";
+import type { nodeTestDb } from "../cli/node-test-db";
 
 /**
  * Transaction type derived from the db.transaction callback.

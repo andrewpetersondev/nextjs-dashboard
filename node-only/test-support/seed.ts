@@ -1,4 +1,4 @@
-import { nodeTestDb } from "../cli/config-test";
+import { nodeTestDb } from "../cli/node-test-db";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {

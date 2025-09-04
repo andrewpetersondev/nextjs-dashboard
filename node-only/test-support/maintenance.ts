@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { nodeTestDb } from "../cli/config-test";
+import { nodeTestDb } from "../cli/node-test-db";
 import { SEED_RESET } from "../env-node";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";

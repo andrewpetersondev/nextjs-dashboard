@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { nodeTestDb } from "../cli/config-test";
+import { nodeTestDb } from "../cli/node-test-db";
 import { users } from "../schema/users";
 import { hashPassword } from "../seed-support/utils";
 

@@ -1,6 +1,6 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { toUserId } from "@/shared/brands/mappers";
-import { nodeTestDb } from "../cli/config-test";
+import { nodeTestDb } from "../cli/node-test-db";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
 import { hashPassword } from "../seed-support/utils";

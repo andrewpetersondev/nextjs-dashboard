@@ -1,8 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
-
 /**
  * @file reset-test.ts
  * @description
@@ -19,7 +14,6 @@
  * @see https://orm.drizzle.team/docs/seed
  */
 
-import dotenv from "dotenv";
 import { reset } from "drizzle-seed";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
@@ -27,11 +21,9 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { nodeTestDb } from "./config-test";
+import { nodeTestDb } from "./node-test-db";
 
-dotenv.config({ path: ".env.test" });
-
-console.log("db-test.ts ...");
+console.log("reset-test.ts ...");
 
 const schema = {
   customers,

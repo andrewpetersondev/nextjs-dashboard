@@ -1,5 +1,5 @@
 import { reset } from "drizzle-seed";
-import { nodeTestDb } from "../cli/config-test";
+import { nodeTestDb } from "../cli/node-test-db";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";

@@ -25,7 +25,7 @@ import {
   insertRevenues,
 } from "../test-support/inserts";
 import { ensureResetOrEmpty } from "../test-support/maintenance";
-import { nodeTestDb } from "./config-test";
+import { nodeTestDb } from "./node-test-db";
 
 /**
  * Main seeding function.
