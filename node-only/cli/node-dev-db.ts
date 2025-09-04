@@ -7,7 +7,7 @@ import {
 
 dotenv.config({ path: ".env.development" });
 
-console.log("config-dev.ts ...");
+console.log("node-dev-db.ts ...");
 
 // Ensure env is loaded before reading from env-node
 const { DATABASE_URL } = await import("../env-node");

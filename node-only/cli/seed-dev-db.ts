@@ -25,7 +25,7 @@ import {
   buildRandomInvoiceRows,
   buildUserSeed,
 } from "../seed-support/builders";
-import { nodeDevDb } from "./config-dev";
+import { nodeDevDb } from "./node-dev-db";
 
 async function devSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();

@@ -1,4 +1,4 @@
-import type { nodeDevDb } from "../cli/config-dev";
+import type { nodeDevDb } from "../cli/node-dev-db";
 
 /**
  * Transaction type derived from the db.transaction callback.

@@ -21,7 +21,7 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { nodeDevDb } from "./config-dev";
+import { nodeDevDb } from "./node-dev-db";
 
 console.log("reset-dev.ts ...");
 
