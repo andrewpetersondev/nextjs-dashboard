@@ -11,7 +11,7 @@
  * Behavior:
  * - Validates and exposes minimal variables needed by tooling.
  * - DATABASE_ENV is derived with deriveDatabaseEnv(DATABASE_ENV, NODE_ENV).
- * - PORT coerced with a default (3100).
+ * - PORT coerced with a default (from shared DEFAULT_PORT).
  * - CYPRESS_BASE_URL falls back to http://localhost:${PORT} if not provided.
  *
  * Exports:
@@ -25,10 +25,10 @@ import {
   coercePort,
   type DatabaseEnv,
   DatabaseEnvSchema,
+  DEFAULT_PORT,
   deriveDatabaseEnv,
   ENVIRONMENTS,
 } from "../src/shared/config/env-shared";
-import { COERCED_PORT } from "./constants";
 
 // Minimal shape for build/tooling needs. Extend as necessary.
 const nodeToolingEnvSchema = z.object({
@@ -49,7 +49,7 @@ const nodeToolingEnvSchema = z.object({
   PORT: z
     .union([z.string(), z.number()])
     .optional()
-    .transform((v) => coercePort(v, COERCED_PORT)),
+    .transform((v) => coercePort(v, DEFAULT_PORT)),
 
   // Backwards compatibility for older seeding scripts
   SEED_RESET: z.string().optional(),

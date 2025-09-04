@@ -24,6 +24,8 @@
 import { z } from "zod";
 
 export const MAX_PORT = 65_535;
+export const MIN_PORT = 1;
+export const DEFAULT_PORT = 3100;
 
 export const ENVIRONMENTS = ["development", "test", "production"] as const;
 export type DatabaseEnv = (typeof ENVIRONMENTS)[number];
@@ -48,9 +50,9 @@ export function deriveDatabaseEnv(
 /**
  * Coerce a port value to a valid number with a fallback.
  */
-export function coercePort(value: unknown, fallback = 3100): number {
+export function coercePort(value: unknown, fallback = DEFAULT_PORT): number {
   const n = Number(value);
-  if (Number.isInteger(n) && n >= 1 && n <= MAX_PORT) {
+  if (Number.isInteger(n) && n >= MIN_PORT && n <= MAX_PORT) {
     return n;
   }
   return fallback;

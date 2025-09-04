@@ -31,6 +31,8 @@ import {
   deriveDatabaseEnv,
 } from "../../shared/config/env-shared";
 
+const NON_EMPTY_STRING_MIN_LENGTH = 1 as const;
+
 const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
   process.env.DATABASE_ENV,
   process.env.NODE_ENV,
@@ -41,7 +43,9 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
   // Optional server log level override
   LOG_LEVEL: LogLevelSchema.optional(),
-  SESSION_SECRET: z.string().min(1, "SESSION_SECRET cannot be empty"),
+  SESSION_SECRET: z
+    .string()
+    .min(NON_EMPTY_STRING_MIN_LENGTH, "SESSION_SECRET cannot be empty"),
   STRICT_DATABASE_URL: z
     .string()
     .optional()
