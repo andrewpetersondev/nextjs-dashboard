@@ -1,7 +1,7 @@
 import "server-only";
 
+import { isEligibleDeletion } from "@/server/revenues/application/guards/invoice-eligibility.guard";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { isEligibleDeletion } from "@/server/revenues/events/common/guards";
 import { applyDeletionEffects } from "@/server/revenues/events/deleted-invoice/apply-deletion-effects";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 import type { Period } from "@/shared/brands/domain-brands";

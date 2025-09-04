@@ -22,7 +22,7 @@ Event Flow (high level)
 - Invoice Created/Updated/Deleted -> EventBus -> RevenueEventHandler
 - Handler uses application/orchestrator to enforce:
     - idempotency (application/idempotency)
-    - policy/eligibility (application/policy + events/common/guards)
+    - policy/eligibility (application/policy + application/guards)
     - error/logging concerns (application/logging)
 - Handler delegates to event-specific core and mutations/upsert logic to persist via repository.
 

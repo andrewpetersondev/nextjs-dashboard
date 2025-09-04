@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
+import { isInvoiceEligibleForRevenue } from "@/server/revenues/application/guards/invoice-eligibility.guard";
 import { withIdempotency } from "@/server/revenues/application/idempotency";
 import { extractAndValidatePeriod } from "@/server/revenues/application/invoice-period.policy";
 import {
@@ -8,7 +9,6 @@ import {
   logInfo,
 } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { isInvoiceEligibleForRevenue } from "@/server/revenues/events/common/guards";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { periodKey } from "@/shared/revenues/period";
