@@ -1,45 +1,22 @@
 import "server-only";
 
-import { and, desc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
-import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
-import {
-  mapRevenueRowsToEntities,
-  mapRevenueRowToEntity,
-} from "@/server/revenues/infrastructure/persistence/mappers";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
-import { ValidationError } from "@/shared/errors/domain";
-import {
-  type RevenueRow,
-  revenues,
-} from "../../../../../node-only/schema/revenues";
+import { createRevenue } from "./operations/create";
+import { readRevenue } from "./operations/read";
+import { updateRevenue } from "./operations/update";
+import { deleteRevenue } from "./operations/delete";
+import { findRevenuesByDateRange } from "./operations/find-by-date-range";
+import { findRevenueByPeriod } from "./operations/find-by-period";
+import { upsertRevenue } from "./operations/upsert";
+import { upsertRevenueByPeriod } from "./operations/upsert-by-period";
 
-/**
- * RevenueRepository
- *
- * Concrete repository implementation backed by Drizzle ORM.
- * Encapsulates all persistence operations for revenue records and enforces
- * core invariants:
- * - Period is the uniqueness key (one row per month; period is a DATE = first day of the month).
- * - Timestamps: createdAt is set on insert, updatedAt is refreshed on every write.
- * - All inputs are validated; API throws domain-centric errors (ValidationError/DatabaseError).
- *
- * Notes on consistency and conflicts
- * - All writes go through upsert(), which uses the period uniqueness constraint and
- *   applies conflict resolution (insert or update in a single round-trip).
- * - Timestamps are assigned server-side to avoid trust in caller-provided clocks.
- *
- * Error model
- * - ValidationError: missing/invalid inputs, constraint violations surfaced as user-facing validation errors.
- * - DatabaseError: unexpected persistence failures or mapping errors (conversion from raw rows).
- */
 export class RevenueRepository implements RevenueRepositoryInterface {
   /**
    * Construct the repository with an injected Database connection.
@@ -67,11 +44,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @throws DatabaseError On persistence/mapping failures
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
-    if (!revenue) {
-      throw new ValidationError("Revenue data is required");
-    }
-    // Delegate to upsert to avoid duplication; upsert handles insert and conflict update.
-    return await this.upsert(revenue);
+    return await createRevenue(this.db, revenue);
   }
 
   /**
@@ -83,28 +56,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @throws DatabaseError If record not found or mapping fails
    */
   async read(id: RevenueId): Promise<RevenueEntity> {
-    if (!id) {
-      throw new ValidationError("Revenue ID is required");
-    }
-
-    const data: RevenueRow | undefined = await this.db
-      .select()
-      .from(revenues)
-      .where(eq(revenues.id, id))
-      .limit(1)
-      .then((rows) => rows[0]);
-
-    if (!data) {
-      throw new DatabaseError("Revenue record not found");
-    }
-
-    const result: RevenueEntity = mapRevenueRowToEntity(data);
-
-    if (!result) {
-      throw new DatabaseError("Failed to convert revenue record");
-    }
-
-    return result;
+    return await readRevenue(this.db, id);
   }
 
   /**
@@ -124,34 +76,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     id: RevenueId,
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
-    if (!id || !revenue) {
-      throw new ValidationError("Revenue ID and data are required");
-    }
-
-    const now = new Date();
-
-    const [data]: RevenueRow[] = await this.db
-      .update(revenues)
-      .set({
-        calculationSource: revenue.calculationSource,
-        invoiceCount: revenue.invoiceCount,
-        totalAmount: revenue.totalAmount,
-        updatedAt: now,
-      })
-      .where(eq(revenues.id, id))
-      .returning();
-
-    if (!data) {
-      throw new DatabaseError("Failed to update revenue record");
-    }
-
-    const result: RevenueEntity = mapRevenueRowToEntity(data);
-
-    if (!result) {
-      throw new DatabaseError("Failed to convert updated revenue record");
-    }
-
-    return result;
+    return await updateRevenue(this.db, id, revenue);
   }
 
   /**
@@ -162,18 +87,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @throws DatabaseError If deletion fails
    */
   async delete(id: RevenueId): Promise<void> {
-    if (!id) {
-      throw new ValidationError("Revenue ID is required");
-    }
-
-    const result = await this.db
-      .delete(revenues)
-      .where(eq(revenues.id, id))
-      .returning();
-
-    if (!result) {
-      throw new DatabaseError("Failed to delete revenue record");
-    }
+    await deleteRevenue(this.db, id);
   }
 
   /**
@@ -193,27 +107,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     startPeriod: Period,
     endPeriod: Period,
   ): Promise<RevenueEntity[]> {
-    if (!startPeriod || !endPeriod) {
-      throw new ValidationError("Start and end periods are required");
-    }
-
-    // Query revenues within the specified date range
-    const revenueRows: RevenueRow[] = await this.db
-      .select()
-      .from(revenues)
-      .where(
-        and(
-          gte(revenues.period, toPeriod(startPeriod)),
-          lte(revenues.period, toPeriod(endPeriod)),
-        ),
-      )
-      .orderBy(desc(revenues.period));
-
-    if (!revenueRows) {
-      throw new DatabaseError("Failed to retrieve revenue records");
-    }
-
-    return mapRevenueRowsToEntities(revenueRows);
+    return await findRevenuesByDateRange(this.db, startPeriod, endPeriod);
   }
 
   /**
@@ -229,28 +123,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @throws DatabaseError On mapping failures
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
-    if (!period) {
-      throw new ValidationError("Period is required");
-    }
-
-    const data: RevenueRow | undefined = await this.db
-      .select()
-      .from(revenues)
-      .where(eq(revenues.period, toPeriod(period)))
-      .limit(1)
-      .then((rows) => rows[0]);
-
-    if (!data) {
-      return null; // Return null when no record is found for the period
-    }
-
-    const result: RevenueEntity = mapRevenueRowToEntity(data);
-
-    if (!result) {
-      throw new DatabaseError("Failed to convert revenue record");
-    }
-
-    return result;
+    return await findRevenueByPeriod(this.db, period);
   }
 
   /**
@@ -270,60 +143,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @throws DatabaseError On persistence/mapping failures
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
-    if (!revenueData) {
-      throw new ValidationError("Revenue data is required");
-    }
-
-    if (!revenueData.period) {
-      throw new ValidationError(
-        "Revenue period (first-of-month DATE) is required and must be unique",
-      );
-    }
-
-    const now = new Date();
-
-    try {
-      const [data] = await this.db
-        .insert(revenues)
-        .values({
-          ...revenueData,
-          createdAt: revenueData.createdAt || now,
-          updatedAt: now,
-        })
-        .onConflictDoUpdate({
-          set: {
-            calculationSource: revenueData.calculationSource,
-            invoiceCount: revenueData.invoiceCount,
-            totalAmount: revenueData.totalAmount,
-            updatedAt: now,
-          },
-          target: revenues.period, // Period is a unique constraint in the database
-        })
-        .returning();
-
-      if (!data) {
-        throw new DatabaseError("Failed to upsert revenue record");
-      }
-
-      const result: RevenueEntity = mapRevenueRowToEntity(data);
-
-      if (!result) {
-        throw new DatabaseError("Failed to convert revenue record");
-      }
-
-      return result;
-    } catch (error) {
-      // Convert uniqueness-related errors into a domain-level ValidationError
-      if (
-        error instanceof Error &&
-        error.message.includes("unique constraint")
-      ) {
-        throw new ValidationError(
-          `Revenue record with period ${revenueData.period} already exists and could not be updated`,
-        );
-      }
-      throw error;
-    }
+    return await upsertRevenue(this.db, revenueData);
   }
 
   /**
@@ -366,24 +186,6 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     period: Period,
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
-    if (!period) {
-      throw new ValidationError("Period is required");
-    }
-
-    if (!revenue) {
-      throw new ValidationError("Revenue data is required");
-    }
-
-    const now = new Date();
-    const payload: RevenueCreateEntity = {
-      calculationSource: revenue.calculationSource,
-      createdAt: now,
-      invoiceCount: revenue.invoiceCount,
-      period: toPeriod(period),
-      totalAmount: revenue.totalAmount,
-      updatedAt: now,
-    };
-
-    return await this.upsert(payload);
+    return await upsertRevenueByPeriod(this.db, period, revenue);
   }
 }

@@ -1,0 +1,19 @@
+import "server-only";
+
+import type { Database } from "@/server/db/connection";
+import type {
+  RevenueCreateEntity,
+  RevenueEntity,
+} from "@/server/revenues/domain/entities/entity";
+import { ValidationError } from "@/shared/errors/domain";
+import { upsertRevenue } from "./upsert";
+
+export async function createRevenue(
+  db: Database,
+  revenue: RevenueCreateEntity,
+): Promise<RevenueEntity> {
+  if (!revenue) {
+    throw new ValidationError("Revenue data is required");
+  }
+  return await upsertRevenue(db, revenue);
+}
