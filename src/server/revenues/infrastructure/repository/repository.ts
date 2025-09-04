@@ -11,7 +11,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/server/revenues/domain/entity";
+} from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";

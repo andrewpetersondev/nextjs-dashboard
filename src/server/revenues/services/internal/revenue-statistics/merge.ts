@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { RevenueDisplayEntity } from "@/server/revenues/domain/entity";
+import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity";
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import { toPeriod } from "@/shared/brands/mappers";
 

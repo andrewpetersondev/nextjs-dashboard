@@ -1,6 +1,6 @@
 import "server-only";
 
-import { extractAndValidatePeriod } from "@/server/revenues/application/policy";
+import { extractAndValidatePeriod } from "@/server/revenues/application/invoice-period.policy";
 import type {
   MetadataBase,
   MetadataWithPeriod,

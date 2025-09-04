@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { RevenueEntity } from "@/server/revenues/domain/entity";
+import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";

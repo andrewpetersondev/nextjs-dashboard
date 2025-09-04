@@ -3,7 +3,7 @@ import "server-only";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueStatistics } from "@/features/revenues/types";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { RevenueDisplayEntity } from "@/server/revenues/domain/entity";
+import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity";
 
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,

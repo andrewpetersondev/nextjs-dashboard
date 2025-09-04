@@ -1,11 +1,11 @@
 import "server-only";
 
+import { validateInvoicePeriodForRevenue } from "@/server/revenues/application/invoice-period.policy";
 import {
   type LogMetadata,
   logError,
   logInfo,
 } from "@/server/revenues/application/logging";
-import { validateInvoicePeriodForRevenue } from "@/server/revenues/application/policy";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import type { InvoiceStatus } from "@/shared/invoices/types";
 

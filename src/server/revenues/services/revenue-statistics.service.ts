@@ -7,7 +7,7 @@ import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/m
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
-} from "@/server/revenues/domain/entity";
+} from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { mergeWithTemplate } from "@/server/revenues/services/internal/revenue-statistics/merge";
 import { computeStatistics } from "@/server/revenues/services/internal/revenue-statistics/stats";
