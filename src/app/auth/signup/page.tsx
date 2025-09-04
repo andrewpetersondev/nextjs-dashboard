@@ -19,7 +19,7 @@ export default function Page(): JSX.Element {
             <AuthFormSocialSection
               demoAdminText="Sign Up as Demo Admin"
               demoUserText="Sign Up as Demo User"
-              mode="login"
+              mode="signup"
             />
           </div>
           <AuthSwitchLink

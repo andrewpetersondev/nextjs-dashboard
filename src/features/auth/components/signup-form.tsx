@@ -56,6 +56,7 @@ export const SignupForm: FC<SignupFormProps> = ({
       >
         <InputField
           autoComplete="username"
+          autoFocus={true}
           dataCy="signup-username-input"
           defaultValue={values?.username}
           describedById={`${usernameId}-errors`}
