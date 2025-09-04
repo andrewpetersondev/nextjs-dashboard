@@ -1,4 +1,3 @@
-import process from "node:process";
 import { sql } from "drizzle-orm";
 import { nodeDevDb } from "../cli/config-dev";
 import { customers } from "../schema/customers";

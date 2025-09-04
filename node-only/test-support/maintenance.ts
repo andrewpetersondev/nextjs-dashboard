@@ -1,4 +1,3 @@
-import process from "node:process";
 import { sql } from "drizzle-orm";
 import { nodeTestDb } from "../cli/config-test";
 import { customers } from "../schema/customers";
@@ -56,7 +55,6 @@ export async function ensureResetOrEmpty(): Promise<boolean> {
   }
   const empty = await isEmpty();
   if (!empty) {
-    // eslint-disable-next-line no-console
     console.error(
       "Database is not empty. Set SEED_RESET=true to force reseed. Exiting...",
     );

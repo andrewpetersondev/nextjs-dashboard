@@ -28,6 +28,7 @@ import {
   deriveDatabaseEnv,
   ENVIRONMENTS,
 } from "../src/shared/config/env-shared";
+import { COERCED_PORT } from "./constants";
 
 // Minimal shape for build/tooling needs. Extend as necessary.
 const nodeToolingEnvSchema = z.object({
@@ -48,7 +49,7 @@ const nodeToolingEnvSchema = z.object({
   PORT: z
     .union([z.string(), z.number()])
     .optional()
-    .transform((v) => coercePort(v, 3100)),
+    .transform((v) => coercePort(v, COERCED_PORT)),
 
   // Present in env files; not all tooling needs it, so keep optional
   SESSION_SECRET: z.string().optional(),

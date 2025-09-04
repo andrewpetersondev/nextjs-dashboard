@@ -1,10 +1,10 @@
-import process from "node:process";
 import dotenv from "dotenv";
 import {
   drizzle,
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import { DATABASE_URL } from "../env-node";
 
 dotenv.config({ path: ".env.development" });
 
@@ -12,8 +12,8 @@ console.log("db-dev.ts ...");
 
 let url: string;
 
-if (process.env.DATABASE_URL) {
-  url = process.env.DATABASE_URL;
+if (DATABASE_URL) {
+  url = DATABASE_URL;
   console.log("Using DATABASE_URL:", url);
 } else {
   console.error("DATABASE_URL is not set.");
