@@ -8,7 +8,7 @@ import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
  * Centralizes known event names and payload types for strong typing.
  */
 declare module "@/server/events/event-bus" {
-  type InvoiceEventNames = typeof INVOICE_EVENTS[keyof typeof INVOICE_EVENTS];
+  type InvoiceEventNames = (typeof INVOICE_EVENTS)[keyof typeof INVOICE_EVENTS];
 
   type InvoiceEventsMap = {
     readonly [K in InvoiceEventNames]: BaseInvoiceEvent;
