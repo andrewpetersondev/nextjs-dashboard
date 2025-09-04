@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { RevenueEntity } from "@/server/revenues/entity";
-import { toRevenueSource } from "@/server/revenues/validator";
+import type { RevenueEntity } from "@/server/revenues/domain/entity";
+import { toRevenueSource } from "@/server/revenues/validation/validator";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
 import { isValidDate } from "@/shared/utils/date";

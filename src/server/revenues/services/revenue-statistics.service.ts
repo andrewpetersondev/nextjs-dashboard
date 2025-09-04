@@ -8,11 +8,11 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
-} from "@/server/revenues/entity";
+} from "@/server/revenues/domain/entity";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers/display";
-import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
+import type { RevenueRepositoryInterface } from "@/server/revenues/repository/interface";
 import { createDefaultRevenueData } from "@/server/revenues/utils/template";
-import { toIntervalDuration } from "@/server/revenues/validator";
+import { toIntervalDuration } from "@/server/revenues/validation/validator";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 

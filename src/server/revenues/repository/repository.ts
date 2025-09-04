@@ -7,16 +7,19 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/server/revenues/entity";
+} from "@/server/revenues/domain/entity";
 import {
   mapRevenueRowsToEntities,
   mapRevenueRowToEntity,
 } from "@/server/revenues/mappers/db";
-import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
+import type { RevenueRepositoryInterface } from "@/server/revenues/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { ValidationError } from "@/shared/errors/domain";
-import { type RevenueRow, revenues } from "../../../node-only/schema/revenues";
+import {
+  type RevenueRow,
+  revenues,
+} from "../../../../node-only/schema/revenues";
 
 /**
  * RevenueRepository

@@ -5,8 +5,8 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/server/revenues/entity";
-import type { RevenueRepositoryInterface } from "@/server/revenues/repository-interface";
+} from "@/server/revenues/domain/entity";
+import type { RevenueRepositoryInterface } from "@/server/revenues/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { ValidationError } from "@/shared/errors/domain";
 

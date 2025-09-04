@@ -3,7 +3,7 @@ import "server-only";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
-} from "@/server/revenues/entity";
+} from "@/server/revenues/domain/entity";
 import { ValidationError } from "@/shared/errors/domain";
 import {
   MAX_REVENUE_MONTHS,

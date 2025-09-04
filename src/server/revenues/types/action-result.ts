@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * Standard discriminated union type for revenue operation results.
  *

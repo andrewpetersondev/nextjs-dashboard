@@ -6,7 +6,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import type {
   RevenueDisplayEntity,
   RevenueEntity,
-} from "@/server/revenues/entity";
+} from "@/server/revenues/domain/entity";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/mappers/display";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/brands/mappers";

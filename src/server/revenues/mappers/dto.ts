@@ -3,7 +3,7 @@ import "server-only";
 import {
   monthAbbreviationFromNumber,
   validateMonthNumber,
-} from "@/server/revenues/helpers";
+} from "@/server/revenues/domain/helpers";
 import { convertCentsToDollars } from "@/shared/money/convert";
 import type { RevenueStatisticsDto } from "@/shared/revenues/dto";
 import type { SimpleRevenueDto } from "@/shared/revenues/types";
