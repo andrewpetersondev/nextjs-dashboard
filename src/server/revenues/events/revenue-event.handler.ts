@@ -5,8 +5,7 @@ import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.typ
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/adjust-revenue-for-deleted-invoice";
-import { adjustRevenueForStatusChange } from "@/server/revenues/events/adjust-revenue-for-status-change";
-import { logError, logInfo } from "@/server/revenues/events/logging";
+import { processInvoiceUpdated } from "@/server/revenues/events/handlers/invoice-update.handlers";
 import { processInvoiceEvent } from "@/server/revenues/events/orchestrator";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
@@ -99,120 +98,8 @@ export class RevenueEventHandler {
       this.revenueService,
       "handleInvoiceUpdated",
       async (invoice, period) =>
-        this.processInvoiceUpdated(event, invoice, period),
+        processInvoiceUpdated(event, invoice, period, this.revenueService),
     );
-  }
-
-  /**
-   * Core logic for processing an invoice update within processInvoiceEvent callback.
-   * Extracted to keep handleInvoiceUpdated concise and under 50 lines.
-   */
-  private async processInvoiceUpdated(
-    event: BaseInvoiceEvent,
-    invoice: Parameters<typeof processInvoiceForRevenue>[1],
-    period: Parameters<typeof processInvoiceForRevenue>[2],
-  ): Promise<void> {
-    const context = "RevenueEventHandler.handleInvoiceUpdated";
-    const previousInvoice = event.previousInvoice;
-
-    if (!previousInvoice) {
-      this.logMissingPrevious(context, event.eventId, invoice.id);
-      return;
-    }
-
-    if (previousInvoice.status !== invoice.status) {
-      await this.handleStatusChange(
-        context,
-        event.eventId,
-        previousInvoice,
-        invoice,
-      );
-      return;
-    }
-
-    if (previousInvoice.amount !== invoice.amount) {
-      await this.handleAmountChange(
-        context,
-        previousInvoice.amount,
-        invoice,
-        period,
-      );
-      return;
-    }
-
-    this.logNoRelevantChange(context, event.eventId, invoice.id);
-  }
-
-  /**
-   * Logs an error when an update event lacks the previous invoice state.
-   * @internal
-   */
-  private logMissingPrevious(
-    context: string,
-    eventId: string,
-    invoiceId: string,
-  ): void {
-    logError(
-      context,
-      "Missing previous invoice state",
-      new Error("Invalid invoice update event"),
-      { eventId, invoiceId },
-    );
-  }
-
-  /**
-   * Handles a change in invoice status by delegating to revenue adjustment logic.
-   * @internal
-   */
-  private async handleStatusChange(
-    context: string,
-    eventId: string,
-    previousInvoice: Parameters<typeof adjustRevenueForStatusChange>[1],
-    currentInvoice: Parameters<typeof adjustRevenueForStatusChange>[2],
-  ): Promise<void> {
-    logInfo(context, "Invoice status changed, adjusting revenue", {
-      currentStatus: currentInvoice.status,
-      eventId,
-      invoiceId: currentInvoice.id,
-      previousStatus: previousInvoice.status,
-    });
-    await adjustRevenueForStatusChange(
-      this.revenueService,
-      previousInvoice,
-      currentInvoice,
-    );
-  }
-
-  /**
-   * Handles a change in invoice amount by invoking processInvoiceForRevenue in update mode.
-   * @internal
-   */
-  private async handleAmountChange(
-    context: string,
-    previousAmount: number,
-    invoice: Parameters<typeof processInvoiceForRevenue>[1],
-    period: Parameters<typeof processInvoiceForRevenue>[2],
-  ): Promise<void> {
-    await processInvoiceForRevenue(this.revenueService, invoice, period, {
-      context,
-      isUpdate: true,
-      previousAmount,
-    });
-  }
-
-  /**
-   * Logs when an update event doesn't impact revenue calculations.
-   * @internal
-   */
-  private logNoRelevantChange(
-    context: string,
-    eventId: string,
-    invoiceId: string,
-  ): void {
-    logInfo(context, "No relevant changes for revenue calculation", {
-      eventId,
-      invoiceId,
-    });
   }
 
   /**

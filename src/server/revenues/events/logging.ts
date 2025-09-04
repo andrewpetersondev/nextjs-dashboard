@@ -54,6 +54,36 @@ export function logError(
 }
 
 /**
+ * Logs an error when an update event lacks the previous invoice state.
+ */
+export function logMissingPrevious(
+  context: string,
+  eventId: string,
+  invoiceId: string,
+): void {
+  logError(
+    context,
+    "Missing previous invoice state",
+    new Error("Invalid invoice update event"),
+    { eventId, invoiceId },
+  );
+}
+
+/**
+ * Logs when an update event doesn't impact revenue calculations.
+ */
+export function logNoRelevantChange(
+  context: string,
+  eventId: string,
+  invoiceId: string,
+): void {
+  logInfo(context, "No relevant changes for revenue calculation", {
+    eventId,
+    invoiceId,
+  });
+}
+
+/**
  * Safely handles errors in event handlers without throwing exceptions
  * that would disrupt the event bus.
  */
