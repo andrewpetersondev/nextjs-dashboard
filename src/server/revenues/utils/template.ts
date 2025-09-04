@@ -1,5 +1,6 @@
 import "server-only";
 
+// biome-ignore lint/correctness/noNodejsModules: <allowed because the file does not run in edge runtime or client>
 import { randomUUID } from "node:crypto";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type {
