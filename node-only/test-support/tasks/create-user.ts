@@ -1,12 +1,6 @@
-import { eq } from "drizzle-orm";
-import { nodeTestDb } from "../cli/node-test-db";
-import { users } from "../schema/users";
-import { hashPassword } from "../seed-support/utils";
-
-export async function deleteUser(email: string): Promise<void> {
-  console.log("deleteUser", email);
-  await nodeTestDb.delete(users).where(eq(users.email, email));
-}
+import { nodeTestDb } from "../../cli/node-test-db";
+import { users } from "../../schema/users";
+import { hashPassword } from "../../seed-support/utils";
 
 export async function createUser(user: {
   email: string;

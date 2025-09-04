@@ -1,8 +1,3 @@
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-/** biome-ignore-all lint/performance/noNamespaceImport: <temp> */
-/** biome-ignore-all lint/correctness/useImportExtensions: <temp> */
-
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 
@@ -25,7 +20,7 @@ export default defineConfig({
       on("task", {
         async "db:cleanup"() {
           const { cleanupE2EUsers } = await import(
-            "./node-only/test-support/e2e-users"
+            "./node-only/test-support/tasks/cleanup-e2e-users"
           );
           await cleanupE2EUsers();
           return null;
@@ -37,7 +32,7 @@ export default defineConfig({
           role?: "user" | "admin" | "guest";
         }) {
           const { createUser } = await import(
-            "./node-only/test-support/e2e-tasks"
+            "./node-only/test-support/tasks/create-user"
           );
           await createUser(user);
           return null;
@@ -45,7 +40,7 @@ export default defineConfig({
 
         async "db:deleteUser"(email: string) {
           const { deleteUser } = await import(
-            "./node-only/test-support/e2e-tasks"
+            "./node-only/test-support/tasks/delete-user"
           );
           await deleteUser(email);
           return null;
@@ -71,7 +66,7 @@ export default defineConfig({
           role?: "user" | "admin" | "guest";
         }) {
           const { upsertE2EUser } = await import(
-            "./node-only/test-support/e2e-users"
+            "./node-only/test-support/tasks/upsert-e2e-users"
           );
           await upsertE2EUser(user);
           return null;
@@ -85,7 +80,7 @@ export default defineConfig({
         },
         async "db:userExists"(email: string) {
           const { userExists } = await import(
-            "./node-only/test-support/e2e-users"
+            "./node-only/test-support/tasks/user-exists"
           );
           return userExists(email);
         },
