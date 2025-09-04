@@ -37,10 +37,10 @@ const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
 
 // Prefer DATABASE_URL. Keep legacy vars optional for backward-compat resolution below.
 const envSchema = z.object({
-  DATABASE_URL: z.url().optional(),
-  POSTGRES_URL: z.url().optional(),
-  POSTGRES_URL_PRODDB: z.url().optional(),
-  POSTGRES_URL_TESTDB: z.url().optional(),
+  DATABASE_URL: z.string().url().optional(),
+  POSTGRES_URL: z.string().url().optional(),
+  POSTGRES_URL_PRODDB: z.string().url().optional(),
+  POSTGRES_URL_TESTDB: z.string().url().optional(),
   SESSION_SECRET: z.string().min(1, "SESSION_SECRET cannot be empty"),
   // Optional opt-in flag to require DATABASE_URL strictly
   STRICT_DATABASE_URL: z

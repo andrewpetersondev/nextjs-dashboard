@@ -33,13 +33,13 @@ import { COERCED_PORT } from "./constants";
 // Minimal shape for build/tooling needs. Extend as necessary.
 const nodeToolingEnvSchema = z.object({
   // Base URL for Cypress; if not provided, we derive from PORT
-  CYPRESS_BASE_URL: z.url().optional(),
+  CYPRESS_BASE_URL: z.string().url().optional(),
 
   // Prefer using the shared tuple to keep runtime and schema aligned
   DATABASE_ENV: DatabaseEnvSchema.optional(),
 
   // DB URL used by CI/tests and tooling (optional here; some tools may not need it)
-  DATABASE_URL: z.url().optional(),
+  DATABASE_URL: z.string().url().optional(),
   // Common build/tooling values
   NODE_ENV: z
     .enum(ENVIRONMENTS)

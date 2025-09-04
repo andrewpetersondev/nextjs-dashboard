@@ -38,6 +38,7 @@ export function deriveDatabaseEnv(
   databaseEnv?: string,
   nodeEnv?: string,
 ): DatabaseEnv {
+  // defaulting to "development" may mask errors in production
   const normalized = (databaseEnv ?? nodeEnv ?? "development").toLowerCase();
   return ENVIRONMENTS.includes(normalized as DatabaseEnv)
     ? (normalized as DatabaseEnv)
