@@ -14,7 +14,7 @@ export default defineConfig({
     async setupNodeEvents(on, config) {
       // Ensure .env.test is loaded before reading env
       dotenv.config({ path: ".env.test" });
-      const env = await import("./node-only/env-node");
+      const env = await import("./node-only/config/env-node");
 
       config.baseUrl = env.CYPRESS_BASE_URL;
       config.env.DATABASE_ENV = env.DATABASE_ENV;

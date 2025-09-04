@@ -28,7 +28,7 @@ import {
   DEFAULT_PORT,
   deriveDatabaseEnv,
   ENVIRONMENTS,
-} from "../src/shared/config/env-shared";
+} from "../../src/shared/config/env-shared";
 
 // Minimal shape for build/tooling needs. Extend as necessary.
 const nodeToolingEnvSchema = z.object({

@@ -10,7 +10,7 @@ dotenv.config({ path: ".env.test" });
 console.log("node-test-db.ts ...");
 
 // Ensure env is loaded before reading from env-node
-const { DATABASE_URL } = await import("../env-node");
+const { DATABASE_URL } = await import("../config/env-node");
 
 let url: string;
 
@@ -19,7 +19,7 @@ if (DATABASE_URL) {
   console.log("Using DATABASE_URL:", url);
 } else {
   console.error("DATABASE_URL is not set.");
-  process.exit(1);
+  throw new Error("DATABASE_URL is not set.");
 }
 
 export const nodeTestDb: NodePgDatabase & {

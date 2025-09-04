@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { nodeDevDb } from "../cli/node-dev-db";
-import { SEED_RESET } from "../env-node";
+import { SEED_RESET } from "../config/env-node";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";

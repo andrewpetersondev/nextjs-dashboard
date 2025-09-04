@@ -16,7 +16,7 @@ dotenv.config({ path: ".env.development" });
 console.log("drizzle-dev.config.ts ...");
 
 // Ensure env is loaded before reading from env-node
-const { DATABASE_URL } = await import("../env-node");
+const { DATABASE_URL } = await import("../config/env-node");
 
 export default defineConfig({
   casing: "snake_case",

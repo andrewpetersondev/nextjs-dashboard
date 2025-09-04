@@ -107,7 +107,7 @@
       "correctness": {
         "noGlobalDirnameFilename": "on",
         "noNodejsModules": "on",
-        "noProcessGlobal": "off",
+        "noProcessGlobal": "on",
         "noRestrictedElements": "off",
         "noUndeclaredVariables": "on",
         "recommended": true,
@@ -299,7 +299,12 @@
       }
     },
     {
-      "includes": ["src/server/config/env-next.ts", "node-only/env-node.ts"],
+      "includes": [
+        "node-only/config/env-node.ts",
+        "src/shared/config/env-public.ts",
+        "src/shared/config/env-shared.ts",
+        "src/server/config/env-next.ts"
+      ],
       "linter": {
         "rules": {
           "correctness": {

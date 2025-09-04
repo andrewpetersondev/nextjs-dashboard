@@ -57,5 +57,5 @@ async function devSeed(): Promise<void> {
 // Execute seeding with proper error handling and process exit
 devSeed().catch((error) => {
   console.error("Error seeding database:", error);
-  process.exit(1);
+  throw new Error("Error seeding database:", { cause: error });
 });
