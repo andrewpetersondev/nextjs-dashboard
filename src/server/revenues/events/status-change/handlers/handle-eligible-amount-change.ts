@@ -2,6 +2,7 @@ import "server-only";
 
 import { logInfo } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { computeAggregateAfterAmountChange } from "@/server/revenues/domain/revenue-aggregate";
 import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 
@@ -33,11 +34,17 @@ export async function handleEligibleAmountChange(args: Args): Promise<void> {
     "Invoice amount changed while remaining eligible for revenue",
     { ...meta, amountDifference, currentAmount, previousAmount },
   );
+  const aggregate = computeAggregateAfterAmountChange(
+    currentCount,
+    currentTotal,
+    previousAmount,
+    currentAmount,
+  );
   await updateRevenueRecord(revenueService, {
     context,
-    invoiceCount: currentCount,
+    invoiceCount: aggregate.invoiceCount,
     metadata: meta,
     revenueId,
-    totalAmount: currentTotal + amountDifference,
+    totalAmount: aggregate.totalAmount,
   });
 }

@@ -6,6 +6,12 @@
 *.min.js
 *.map
 
+# Temporary
+cypress
+node-only
+src/app
+src/ui
+
 # Project (General)
 .github
 .idea
@@ -17,6 +23,7 @@ public
 storage
 next-env.d.ts
 pnpm-lock.yaml
+postcss.config.mjs
 
 
 

@@ -2,6 +2,7 @@ import "server-only";
 
 import { logInfo } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { computeAggregateAfterAdd } from "@/server/revenues/domain/revenue-aggregate";
 import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 
@@ -32,11 +33,16 @@ export async function handleTransitionFromIneligibleToEligible(
     "Invoice now eligible for revenue, adding to the total",
     meta,
   );
+  const aggregate = computeAggregateAfterAdd(
+    currentCount,
+    currentTotal,
+    currentAmount,
+  );
   await updateRevenueRecord(revenueService, {
     context,
-    invoiceCount: currentCount + 1,
+    invoiceCount: aggregate.invoiceCount,
     metadata: meta,
     revenueId,
-    totalAmount: currentTotal + currentAmount,
+    totalAmount: aggregate.totalAmount,
   });
 }

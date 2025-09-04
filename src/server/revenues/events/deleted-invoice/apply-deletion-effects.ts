@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { computeAggregateAfterRemoval } from "@/server/revenues/domain/revenue-aggregate";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
@@ -36,9 +37,12 @@ export async function applyDeletionEffects(
     );
     return;
   }
-  const newInvoiceCount = Math.max(0, existingRevenue.invoiceCount - 1);
-  const newRevenue = Math.max(0, existingRevenue.totalAmount - invoice.amount);
-  if (newInvoiceCount === 0) {
+  const aggregate = computeAggregateAfterRemoval(
+    existingRevenue.invoiceCount,
+    existingRevenue.totalAmount,
+    invoice.amount,
+  );
+  if (aggregate.invoiceCount === 0) {
     logInfo(context, "No more invoices for a period, deleting revenue record", {
       ...metadata,
       revenueId: existingRevenue.id,
@@ -48,9 +52,9 @@ export async function applyDeletionEffects(
   }
   await updateRevenueRecord(revenueService, {
     context,
-    invoiceCount: newInvoiceCount,
+    invoiceCount: aggregate.invoiceCount,
     metadata,
     revenueId: existingRevenue.id,
-    totalAmount: newRevenue,
+    totalAmount: aggregate.totalAmount,
   });
 }

@@ -2,6 +2,7 @@ import "server-only";
 
 import { logInfo } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { computeAggregateAfterRemoval } from "@/server/revenues/domain/revenue-aggregate";
 import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 
@@ -25,11 +26,16 @@ export async function handleTransitionFromEligibleToIneligible(
     "Invoice no longer eligible for revenue, removing from the total",
     meta,
   );
+  const aggregate = computeAggregateAfterRemoval(
+    meta.existingCount,
+    meta.existingTotal,
+    previousAmount,
+  );
   await updateRevenueRecord(revenueService, {
     context,
-    invoiceCount: Math.max(0, meta.existingCount - 1),
+    invoiceCount: aggregate.invoiceCount,
     metadata: meta,
     revenueId,
-    totalAmount: Math.max(0, meta.existingTotal - previousAmount),
+    totalAmount: aggregate.totalAmount,
   });
 }
