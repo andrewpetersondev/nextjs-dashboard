@@ -1,13 +1,17 @@
 import "server-only";
 
+import type {
+  ChangeType,
+  MetadataWithPeriod,
+  PeriodArg,
+} from "@/server/revenues/events/common/types";
+import { handleEligibleAmountChange } from "@/server/revenues/events/status-change/handlers/handle-eligible-amount-change";
+import { handleNoExistingRevenue } from "@/server/revenues/events/status-change/handlers/handle-no-existing-revenue";
+import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-eligible-to-ineligible";
+import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-ineligible-to-eligible";
+import { logNoAffectingChanges } from "@/server/revenues/events/status-change/handlers/log-no-affecting-changes";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { handleEligibleAmountChange } from "./handlers/handle-eligible-amount-change";
-import { handleNoExistingRevenue } from "./handlers/handle-no-existing-revenue";
-import { handleTransitionFromEligibleToIneligible } from "./handlers/handle-transition-from-eligible-to-ineligible";
-import { handleTransitionFromIneligibleToEligible } from "./handlers/handle-transition-from-ineligible-to-eligible";
-import { logNoAffectingChanges } from "./handlers/log-no-affecting-changes";
-import type { ChangeType, MetadataWithPeriod, PeriodArg } from "./types";
 
 export async function dispatchChange(
   change: ChangeType,

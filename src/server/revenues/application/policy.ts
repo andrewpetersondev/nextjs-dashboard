@@ -1,7 +1,7 @@
 import "server-only";
 
 import { isValid, parseISO } from "date-fns";
-import { logError } from "@/server/revenues/events/logging";
+import { logError } from "@/server/revenues/application/logging";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
 import { ISO_YEAR_MONTH_REGEX } from "@/shared/invoices/constants";

@@ -1,6 +1,6 @@
 "use server";
 
-import "@/server/revenues/events/revenue-events.bootstrap";
+import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
 import { getDB } from "@/server/db/connection";
 import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
 import { serverLogger } from "@/server/logging/serverLogger";

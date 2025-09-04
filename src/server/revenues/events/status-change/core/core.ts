@@ -1,9 +1,9 @@
 import "server-only";
 
-import { detectChange } from "./detect-change";
-import { dispatchChange } from "./dispatch-change";
-import { preparePeriodAndMeta } from "./prepare-period-and-meta";
-import type { CoreArgs } from "./types";
+import type { CoreArgs } from "@/server/revenues/events/common/types";
+import { detectChange } from "@/server/revenues/events/status-change/core/detect-change";
+import { dispatchChange } from "@/server/revenues/events/status-change/core/dispatch-change";
+import { preparePeriodAndMeta } from "@/server/revenues/events/status-change/core/prepare-period-and-meta";
 
 export async function adjustRevenueForStatusChangeCore(
   args: CoreArgs,

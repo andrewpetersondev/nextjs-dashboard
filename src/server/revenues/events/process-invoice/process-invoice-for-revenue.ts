@@ -1,7 +1,7 @@
 import "server-only";
 
-import { withErrorHandling } from "@/server/revenues/events/error-handling";
-import type { LogMetadata } from "@/server/revenues/events/logging";
+import { withErrorHandling } from "@/server/revenues/application/error-handling";
+import type { LogMetadata } from "@/server/revenues/application/logging";
 import { upsertRevenue } from "@/server/revenues/events/process-invoice/upsert-revenue";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";

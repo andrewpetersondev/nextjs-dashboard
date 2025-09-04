@@ -1,7 +1,7 @@
 import "server-only";
 
-import { logInfo } from "@/server/revenues/events/logging";
-import type { MetadataWithPeriod } from "../types";
+import { logInfo } from "@/server/revenues/application/logging";
+import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 
 export function logNoAffectingChanges(
   context: string,

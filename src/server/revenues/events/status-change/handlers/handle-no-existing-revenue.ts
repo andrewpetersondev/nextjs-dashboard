@@ -1,11 +1,14 @@
 import "server-only";
 
-import { isStatusEligibleForRevenue } from "@/server/revenues/events/guards";
-import { logInfo } from "@/server/revenues/events/logging";
-import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
+import { logInfo } from "@/server/revenues/application/logging";
+import { isStatusEligibleForRevenue } from "@/server/revenues/events/common/guards";
+import type {
+  MetadataWithPeriod,
+  PeriodArg,
+} from "@/server/revenues/events/common/types";
+import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import type { MetadataWithPeriod, PeriodArg } from "../types";
 
 interface Args {
   readonly revenueService: RevenueService;

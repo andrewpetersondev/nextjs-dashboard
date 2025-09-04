@@ -4,10 +4,10 @@ import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/adjust-revenue-for-deleted-invoice";
-import { processInvoiceUpdated } from "@/server/revenues/events/handlers/invoice-update.handlers";
-import { processInvoiceEvent } from "@/server/revenues/events/orchestrator";
-import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
+import { processInvoiceEvent } from "@/server/revenues/application/orchestrator";
+import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
+import { processInvoiceUpdated } from "@/server/revenues/events/process-invoice/handlers/invoice-update.handlers";
+import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 
 /**

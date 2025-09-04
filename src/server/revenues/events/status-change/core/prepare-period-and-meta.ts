@@ -1,9 +1,13 @@
 import "server-only";
 
-import { extractAndValidatePeriod } from "@/server/revenues/events/policy";
+import { extractAndValidatePeriod } from "@/server/revenues/application/policy";
+import type {
+  MetadataBase,
+  MetadataWithPeriod,
+  PeriodArg,
+} from "@/server/revenues/events/common/types";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { periodKey } from "@/shared/revenues/period";
-import type { MetadataBase, MetadataWithPeriod, PeriodArg } from "./types";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

@@ -1,11 +1,11 @@
 import "server-only";
 
-import type { LogMetadata } from "@/server/revenues/events/logging";
-import { logInfo } from "@/server/revenues/events/logging";
-import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
+import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { LogMetadata } from "../../application/logging";
+import { logInfo } from "../../application/logging";
 
 /**
  * Options required to apply deletion effects to revenue records.

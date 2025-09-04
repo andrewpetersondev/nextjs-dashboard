@@ -1,6 +1,9 @@
 import "server-only";
 
-import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
+import {
+  type LogMetadata,
+  logInfo,
+} from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import { toRevenueId } from "@/shared/brands/mappers";
 

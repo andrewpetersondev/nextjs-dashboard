@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { LogMetadata } from "@/server/revenues/events/logging";
-import type { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
+import type { LogMetadata } from "@/server/revenues/application/logging";
+import type { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 

@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { adjustRevenueForStatusChange } from "@/server/revenues/events/adjust-revenue-for-status-change";
 import {
   logInfo,
   logMissingPrevious,
   logNoRelevantChange,
-} from "@/server/revenues/events/logging";
-import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice-for-revenue";
+} from "@/server/revenues/application/logging";
+import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
+import { adjustRevenueForStatusChange } from "@/server/revenues/events/status-change/adjust-revenue-for-status-change";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";

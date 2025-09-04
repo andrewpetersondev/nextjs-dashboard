@@ -1,8 +1,8 @@
 import "server-only";
 
-import { withErrorHandling } from "@/server/revenues/events/error-handling";
-import { adjustRevenueForStatusChangeCore } from "@/server/revenues/events/status-change/core";
-import type { MetadataBase } from "@/server/revenues/events/status-change/types";
+import { withErrorHandling } from "@/server/revenues/application/error-handling";
+import type { MetadataBase } from "@/server/revenues/events/common/types";
+import { adjustRevenueForStatusChangeCore } from "@/server/revenues/events/status-change/core/core";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 

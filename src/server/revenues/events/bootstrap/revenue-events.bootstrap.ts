@@ -8,8 +8,6 @@ import { RevenueRepository } from "@/server/revenues/repository/repository";
 import { RevenueService } from "@/server/revenues/services/revenue.service";
 
 declare global {
-  // Use var for global augmentation compatibility
-  // eslint-disable-next-line no-var
   var __revenueEventHandler: RevenueEventHandler | undefined;
 }
 

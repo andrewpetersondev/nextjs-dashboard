@@ -1,7 +1,10 @@
 import "server-only";
 
-import { type LogMetadata, logInfo } from "@/server/revenues/events/logging";
-import { updateRevenueRecord } from "@/server/revenues/events/revenue-mutations";
+import {
+  type LogMetadata,
+  logInfo,
+} from "@/server/revenues/application/logging";
+import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { RevenueService } from "@/server/revenues/services/revenue.service";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
