@@ -9,11 +9,11 @@ import type {
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
 import { createRevenue } from "./operations/create";
-import { readRevenue } from "./operations/read";
-import { updateRevenue } from "./operations/update";
 import { deleteRevenue } from "./operations/delete";
 import { findRevenuesByDateRange } from "./operations/find-by-date-range";
 import { findRevenueByPeriod } from "./operations/find-by-period";
+import { readRevenue } from "./operations/read";
+import { updateRevenue } from "./operations/update";
 import { upsertRevenue } from "./operations/upsert";
 import { upsertRevenueByPeriod } from "./operations/upsert-by-period";
 
