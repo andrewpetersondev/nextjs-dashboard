@@ -41,7 +41,10 @@ export async function upsertE2EUser(user: {
       .limit(1);
 
     if (existing.length > 0) {
-      const row = existing[0]!;
+      const row = existing[0];
+      if (!row) {
+        throw new Error("Invariant: expected an existing user row");
+      }
       const userId = row.id;
 
       await tx
