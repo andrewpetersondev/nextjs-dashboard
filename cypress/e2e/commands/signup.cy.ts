@@ -2,17 +2,17 @@ import { DASHBOARD_PATH } from "../shared/paths";
 import { TEN_SECONDS } from "../shared/times";
 import { DEMO_USER } from "../shared/users";
 
-describe("Signup custom command", () => {
+describe("Signup custom command via Auth Form", () => {
   const { username, email, password } = DEMO_USER;
-  const creds = { email, password, username };
+  const signupCreds = { email, password, username };
 
   beforeEach(() => {
     cy.logEnv();
-    cy.task("db:deleteUser", null, { timeout: TEN_SECONDS });
+    cy.task("db:deleteUser", signupCreds.email, { timeout: TEN_SECONDS });
   });
 
-  it("signs up a new user and navigates to dashboard", () => {
-    cy.signup(creds);
+  it("signs up a new user with Signup Form", () => {
+    cy.signup(signupCreds);
     cy.location("pathname", { timeout: TEN_SECONDS }).should(
       "include",
       DASHBOARD_PATH,

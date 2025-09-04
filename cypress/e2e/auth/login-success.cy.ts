@@ -4,16 +4,18 @@ import { createTestUser } from "../shared/users";
 describe("Login success flow", () => {
   it("logs in and reaches dashboard UI", () => {
     const user = createTestUser();
-
-    cy.signup({
+    const signupCreds = {
       email: user.email,
       password: user.password,
       username: user.username,
-    });
+    };
+    const loginCreds = { email: user.email, password: user.password };
+
+    cy.signup(signupCreds);
 
     cy.logoutViaForm();
 
-    cy.login(user.email, user.password);
+    cy.login(loginCreds);
 
     // With cy.login now waiting for navigation, the following is optional.
     // Keeping the heading assertion as the main UI guard.

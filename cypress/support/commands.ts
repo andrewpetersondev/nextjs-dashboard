@@ -45,6 +45,11 @@ Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
   cy.get(SEL.signupEmail).type(email);
   cy.get(SEL.signupPassword).type(password);
   cy.get(SEL.signupSubmit).click();
+
+  cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+    "include",
+    DASHBOARD_PATH,
+  );
 });
 
 Cypress.Commands.add("loginAsDemoUser", () => {

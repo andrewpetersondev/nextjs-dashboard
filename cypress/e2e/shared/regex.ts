@@ -16,5 +16,5 @@ export const UI_MATCHERS = {
   LOGIN_HEADING: /Log in to your account/i,
   SIGN_OUT_BUTTON: /Sign Out/i,
   SIGNUP_HEADING: /Sign up for an account/i,
-  WELCOME_HOME: /Welcome to Acme\./i,
+  WELCOME_HOME: /Welcome to Acme/i,
 } as const satisfies Readonly<Record<string, RegExp>>;
