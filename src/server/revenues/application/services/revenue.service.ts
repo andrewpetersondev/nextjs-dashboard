@@ -1,6 +1,9 @@
 import "server-only";
 
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { CreateRevenueUseCase } from "@/server/revenues/application/use-cases/create-revenue.use-case";
+import { DeleteRevenueUseCase } from "@/server/revenues/application/use-cases/delete-revenue.use-case";
+import { FindRevenueByPeriodUseCase } from "@/server/revenues/application/use-cases/find-revenue-by-period.use-case";
+import { UpdateRevenueUseCase } from "@/server/revenues/application/use-cases/update-revenue.use-case";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -8,7 +11,6 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
 
 /**
  * Business service for revenue processing and management.
@@ -39,14 +41,8 @@ export class RevenueService {
    * @returns Promise resolving to created revenue entity
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
-    if (!revenue) {
-      throw new ValidationError("Invalid revenue data");
-    }
-    const created = await this.repository.create(revenue);
-    if (!created) {
-      throw new DatabaseError("Failed to create a revenue record");
-    }
-    return created;
+    const useCase = new CreateRevenueUseCase(this.repository);
+    return await useCase.execute(revenue);
   }
 
   /**
@@ -62,14 +58,8 @@ export class RevenueService {
     id: RevenueId,
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
-    if (!id || !revenue) {
-      throw new ValidationError("Invalid revenue ID or data");
-    }
-    const updated = await this.repository.update(id, revenue);
-    if (!updated) {
-      throw new DatabaseError(`Failed to update revenue with ID ${id}`);
-    }
-    return updated;
+    const useCase = new UpdateRevenueUseCase(this.repository);
+    return await useCase.execute(id, revenue);
   }
 
   /**
@@ -79,10 +69,8 @@ export class RevenueService {
    * @returns Promise resolving to void
    */
   async delete(id: RevenueId): Promise<void> {
-    if (!id) {
-      throw new ValidationError("Revenue ID is required");
-    }
-    await this.repository.delete(id);
+    const useCase = new DeleteRevenueUseCase(this.repository);
+    await useCase.execute(id);
   }
 
   /**
@@ -92,9 +80,7 @@ export class RevenueService {
    * @returns Promise resolving to the revenue entity or null if not found
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
-    if (!period) {
-      throw new ValidationError("Period is required");
-    }
-    return await this.repository.findByPeriod(period);
+    const useCase = new FindRevenueByPeriodUseCase(this.repository);
+    return await useCase.execute(period);
   }
 }
