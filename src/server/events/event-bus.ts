@@ -3,6 +3,7 @@
  * @description In-memory event bus for decoupling event publishers and subscribers.
  * @see src/features/revenues/event-driven-revenue-strategy.md
  */
+/// <reference path="./types/domain-events.d.ts" />
 import "server-only";
 import { serverLogger } from "@/server/logging/serverLogger";
 
@@ -21,7 +22,7 @@ export type EventHandler<T> = (event: T) => void | Promise<void>;
  * Projects can augment this interface via declaration merging to add their own
  * event names and payloads:
  *
- * declare module "@/lib/events/eventBus" {
+ * declare module "@/server/events/event-bus" {
  *   interface DomainEvents {
  *     InvoicePaidEvent: { invoiceId: string; amount: number };
  *   }
