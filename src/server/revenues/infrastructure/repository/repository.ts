@@ -67,7 +67,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * - createdAt is never changed by updates.
    *
    * @param id - RevenueId of the row to update
-   * @param revenue - Updatable fields (invoiceCount, revenue, calculationSource)
+   * @param revenue - Updatable fields (invoiceCount, totalAmount, calculationSource)
    * @returns The updated RevenueEntity
    * @throws ValidationError If inputs are missing
    * @throws DatabaseError If update or mapping fails
