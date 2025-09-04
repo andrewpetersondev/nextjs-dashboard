@@ -1,41 +1,23 @@
 import "server-only";
 
-import { isValid, parseISO } from "date-fns";
 import { logError } from "@/server/revenues/application/logging";
+import {
+  extractPeriodFromInvoice as extractPeriodFromInvoiceDomain,
+  validateInvoicePeriodForRevenue as validateInvoicePeriodForRevenueDomain,
+} from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
-import { ISO_YEAR_MONTH_REGEX } from "@/shared/invoices/constants";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { dateToPeriod } from "@/shared/revenues/period";
 
 /**
  * Safely extracts the Period (first-of-month DATE) from an invoice date.
  */
 export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
-  if (!invoice || !invoice.date) {
-    return null;
-  }
-
   try {
-    // Handle different date formats
-    // Try to parse as ISO date
-    const parsedDate = parseISO(invoice.date);
-    if (isValid(parsedDate)) {
-      return dateToPeriod(parsedDate);
-    }
-    if (invoice.date.match(ISO_YEAR_MONTH_REGEX)) {
-      // Add a day to make it a complete date for validation
-      const testDate = parseISO(`${invoice.date}-01`);
-      if (isValid(testDate)) {
-        return toPeriod(invoice.date);
-      }
-    }
-
-    return null;
+    return extractPeriodFromInvoiceDomain(invoice);
   } catch (error) {
     logError("extractPeriodFromInvoice", "Failed to extract period", error, {
-      invoiceDate: invoice.date,
-      invoiceId: invoice.id,
+      invoiceDate: invoice?.date ?? null,
+      invoiceId: invoice?.id ?? null,
     });
     return null;
   }
@@ -46,35 +28,13 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
  */
 export function validateInvoicePeriodForRevenue(
   invoice: InvoiceDto | undefined,
-): {
-  valid: boolean;
-  reason?: string;
-} {
-  if (!invoice) {
-    return { reason: "Invoice is undefined", valid: false };
+): { valid: boolean; reason?: string } {
+  try {
+    return validateInvoicePeriodForRevenueDomain(invoice);
+  } catch {
+    // Should not throw, but if it does, surface a stable invalid result
+    return { reason: "Validation error", valid: false };
   }
-
-  if (!invoice.id) {
-    return { reason: "Invoice ID is missing", valid: false };
-  }
-
-  if (!invoice.date) {
-    return { reason: "Invoice date is missing", valid: false };
-  }
-
-  if (!invoice.status) {
-    return { reason: "Invoice status is missing", valid: false };
-  }
-
-  const period = extractPeriodFromInvoice(invoice);
-  if (!period) {
-    return {
-      reason: "Could not extract a valid period from the invoice date",
-      valid: false,
-    };
-  }
-
-  return { valid: true };
 }
 
 /**

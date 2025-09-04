@@ -1,6 +1,6 @@
 import "server-only";
 
-import { isStatusEligibleForRevenue } from "@/server/revenues/events/common/guards";
+import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import type { ChangeType } from "@/server/revenues/events/common/types";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 

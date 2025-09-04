@@ -1,20 +1,13 @@
 import "server-only";
 
-import { validateInvoicePeriodForRevenue } from "@/server/revenues/application/invoice-period.policy";
 import {
   type LogMetadata,
   logError,
   logInfo,
 } from "@/server/revenues/application/logging";
+import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
+import { validateInvoicePeriodForRevenue } from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import type { InvoiceStatus } from "@/shared/invoices/types";
-
-/**
- * Checks if an invoice status is eligible for revenue
- */
-export function isStatusEligibleForRevenue(status: InvoiceStatus): boolean {
-  return status === "paid" || status === "pending";
-}
 
 /**
  * Checks if an invoice is eligible for revenue calculation.
