@@ -12,13 +12,21 @@ import type { RevenueService } from "@/server/revenues/services/revenue.service"
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
-async function handleStatusChange(
-  context: string,
-  eventId: string,
-  previousInvoice: InvoiceDto,
-  currentInvoice: InvoiceDto,
-  revenueService: RevenueService,
-): Promise<void> {
+type HandleStatusChangeParams = Readonly<{
+  context: string;
+  eventId: string;
+  previousInvoice: InvoiceDto;
+  currentInvoice: InvoiceDto;
+  revenueService: RevenueService;
+}>;
+
+async function handleStatusChange({
+  context,
+  eventId,
+  previousInvoice,
+  currentInvoice,
+  revenueService,
+}: HandleStatusChangeParams): Promise<void> {
   logInfo(context, "Invoice status changed, adjusting revenue", {
     currentStatus: currentInvoice.status,
     eventId,
@@ -32,13 +40,21 @@ async function handleStatusChange(
   );
 }
 
-async function handleAmountChange(
-  context: string,
-  previousAmount: number,
-  invoice: InvoiceDto,
-  period: Period,
-  revenueService: RevenueService,
-): Promise<void> {
+type HandleAmountChangeParams = Readonly<{
+  context: string;
+  previousAmount: number;
+  invoice: InvoiceDto;
+  period: Period;
+  revenueService: RevenueService;
+}>;
+
+async function handleAmountChange({
+  context,
+  previousAmount,
+  invoice,
+  period,
+  revenueService,
+}: HandleAmountChangeParams): Promise<void> {
   await processInvoiceForRevenue(revenueService, invoice, period, {
     context,
     isUpdate: true,
@@ -65,24 +81,24 @@ export async function processInvoiceUpdated(
   }
 
   if (previousInvoice.status !== invoice.status) {
-    await handleStatusChange(
+    await handleStatusChange({
       context,
-      event.eventId,
+      currentInvoice: invoice,
+      eventId: event.eventId,
       previousInvoice,
-      invoice,
       revenueService,
-    );
+    });
     return;
   }
 
   if (previousInvoice.amount !== invoice.amount) {
-    await handleAmountChange(
+    await handleAmountChange({
       context,
-      previousInvoice.amount,
       invoice,
       period,
+      previousAmount: previousInvoice.amount,
       revenueService,
-    );
+    });
     return;
   }
 
