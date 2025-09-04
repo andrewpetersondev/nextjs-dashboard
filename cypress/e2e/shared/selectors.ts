@@ -30,7 +30,7 @@ export const SEL = {
   suspendUserButton: '[data-cy="suspend-user-button"]',
   toLoginButton: '[data-testid="login-button"]',
   userRow: '[data-cy="user-row"]',
-} as const;
+} as const satisfies Readonly<Record<string, string>>;
 
 /**
  * Union type of available selector keys.

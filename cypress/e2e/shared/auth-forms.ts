@@ -9,10 +9,6 @@ export const E2E_ID_MODULUS = 99_999_999 as const;
 export const INVALID_EMAIL: string = "invalid@example.com";
 export const INVALID_PASSWORD: string = "wrongpassword";
 
-export const E2E_EMAIL_PREFIX = "e2e_dbtest_";
-export const E2E_USERNAME_PREFIX = "e2e_user_"; // kept for compatibility if referenced elsewhere
-export const DEFAULT_E2E_PASSWORD = "Password123!";
-
 /**
  * Common error message patterns asserted in E2E tests.
  */
@@ -20,19 +16,29 @@ export const ERROR_MESSAGES = {
   FAILED_AUTH_FORM: /Failed to validate form data/i,
   INVALID_CREDENTIALS: /Invalid email or password/i,
 } as const satisfies Readonly<Record<string, RegExp>>;
+
 /**
  * Credentials for signing up a user in E2E tests.
  * @public
  */
 export type SignupCreds = {
-  username: string;
-  email: string;
-  password: string;
+  /** Username to create for the new account. */
+  readonly username: string;
+  /** Email address for the account. */
+  readonly email: string;
+  /** Plain-text password meeting the app's validation rules. */
+  readonly password: string;
 };
 
+/**
+ * Credentials for logging into an existing user account.
+ * @public
+ */
 export type LoginCreds = {
-  email: string;
-  password: string;
+  /** Email address for login. */
+  readonly email: string;
+  /** Plain-text password for login. */
+  readonly password: string;
 };
 
 /**
@@ -43,5 +49,6 @@ export interface TestUser {
   readonly username: string;
   readonly email: string;
   readonly password: string;
+  /** Timestamp used to correlate entities created during a single E2E run. */
   readonly timestamp: number;
 }

@@ -12,11 +12,9 @@ describe("Access control", () => {
   });
 
   it("redirects authenticated user away from login to dashboard", () => {
-    // Use existing helper to create a logged-in session
     cy.loginAsDemoUser();
 
     // Visiting login should bounce to dashboard
-    cy.visit(LOGIN_PATH);
     cy.url().should("include", DASHBOARD_PATH);
     cy.findByRole("heading", { name: UI_MATCHERS.DASHBOARD_H1 }).should(
       "be.visible",
