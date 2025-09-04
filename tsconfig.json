@@ -14,10 +14,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-
     /* Relative Imports */
     //    "allowImportingTsExtensions": true,
-
     /* Type Checking */
     // strict = true: also sets strictBindCallApply, strictFunctionTypes, strictNullChecks, strictPropertyInitialization, useUnknownInCatchVariables
     "strict": true,
@@ -27,13 +25,11 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-
     /* Path Mapping */
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"]
     },
-
     /* Next.js specific */
     "plugins": [
       {
