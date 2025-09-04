@@ -136,25 +136,17 @@ Database migrations, seeding, and resets for dev/test.
   Truncate test DB tables (fast reset), then seed minimal data.
     - Use: `pnpm db-truncate-test`
 
-- drizzle-migrate-generate-test  
+- db-migrate-generate-test  
   Generate migrations and apply them for the test DB.
-    - Use: `pnpm drizzle-migrate-generate-test`
+    - Use: `pnpm db-migrate-generate-test`
 
-- drizzle-push-dev  
-  Push schema changes to the dev DB.
-    - Use: `pnpm drizzle-push-dev`
-
-- drizzle-push-test  
-  Push schema changes to the test DB.
-    - Use: `pnpm drizzle-push-test`
-
-- seed-db-dev  
+- db-seed-dev  
   Seed the development DB.
-    - Use: `pnpm seed-db-dev`
+    - Use: `pnpm db-seed-dev`
 
-- seed-db-test  
+- db-seed-test  
   Seed the test DB.
-    - Use: `pnpm seed-db-test`
+    - Use: `pnpm db-seed-test`
 
 ---
 
