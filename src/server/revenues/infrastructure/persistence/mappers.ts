@@ -19,6 +19,7 @@ import type { RevenueRow } from "../../../../../node-only/schema/revenues";
  * @returns Validated RevenueEntity
  * @throws {ValidationError} When row data is invalid or missing required fields
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <clean enough>
 export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   if (!revenueRow || typeof revenueRow !== "object") {
     throw new ValidationError(
@@ -51,6 +52,14 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     isNonNegativeNumber(revenueRow.totalAmount),
     "Invalid revenue row: 'totalAmount' must be a non-negative number",
   );
+  ensure(
+    isNonNegativeNumber(revenueRow.totalPaidAmount as number),
+    "Invalid revenue row: 'totalPaidAmount' must be a non-negative number",
+  );
+  ensure(
+    isNonNegativeNumber(revenueRow.totalPendingAmount as number),
+    "Invalid revenue row: 'totalPendingAmount' must be a non-negative number",
+  );
   try {
     return {
       calculationSource: toRevenueSource(revenueRow.calculationSource),
@@ -59,6 +68,8 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
       invoiceCount: revenueRow.invoiceCount,
       period: toPeriod(revenueRow.period),
       totalAmount: revenueRow.totalAmount,
+      totalPaidAmount: revenueRow.totalPaidAmount as number,
+      totalPendingAmount: revenueRow.totalPendingAmount as number,
       updatedAt: revenueRow.updatedAt,
     };
   } catch (error) {

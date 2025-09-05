@@ -32,6 +32,8 @@ export async function updateRevenue(
       calculationSource: revenue.calculationSource,
       invoiceCount: revenue.invoiceCount,
       totalAmount: revenue.totalAmount,
+      totalPaidAmount: revenue.totalPaidAmount,
+      totalPendingAmount: revenue.totalPendingAmount,
       updatedAt: now,
     })
     .where(eq(revenues.id, id))

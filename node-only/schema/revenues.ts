@@ -37,6 +37,12 @@ export const revenues = pgTable(
     totalAmount: bigint("total_amount", { mode: "number" })
       .notNull()
       .default(0),
+    totalPaidAmount: bigint("total_paid_amount", { mode: "number" })
+      .notNull()
+      .default(0),
+    totalPendingAmount: bigint("total_pending_amount", { mode: "number" })
+      .notNull()
+      .default(0),
     updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
       .defaultNow()
       .notNull()

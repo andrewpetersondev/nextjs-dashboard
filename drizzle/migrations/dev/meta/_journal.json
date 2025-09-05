@@ -8,6 +8,13 @@
       "when": 1756848709270,
       "tag": "0000_sharp_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757060967971,
+      "tag": "0001_adorable_albert_cleary",
+      "breakpoints": true
     }
   ]
 }

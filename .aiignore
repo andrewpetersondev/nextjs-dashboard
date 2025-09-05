@@ -11,11 +11,11 @@
 # Testing & CLI
 cypress.config.ts
 cypress
-node-only/cli
-node-only/dev-support
-node-only/seed-support
-node-only/shared
-node-only/test-support
+# node-only/cli
+# node-only/dev-support
+# node-only/seed-support
+# node-only/shared
+# node-only/test-support
 
 # Src
 src/app

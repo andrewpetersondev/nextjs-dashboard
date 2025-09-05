@@ -2,6 +2,7 @@ import "server-only";
 
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { computeAggregateAfterRemoval } from "@/server/revenues/domain/revenue-aggregate";
+import { applyDeltaToBucket } from "@/server/revenues/domain/revenue-buckets";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/brands/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
@@ -50,11 +51,21 @@ export async function applyDeletionEffects(
     await revenueService.delete(existingRevenue.id);
     return;
   }
+  const nextBuckets = applyDeltaToBucket(
+    {
+      totalPaidAmount: existingRevenue.totalPaidAmount,
+      totalPendingAmount: existingRevenue.totalPendingAmount,
+    },
+    invoice.status,
+    -invoice.amount,
+  );
   await updateRevenueRecord(revenueService, {
     context,
     invoiceCount: aggregate.invoiceCount,
     metadata,
     revenueId: existingRevenue.id,
     totalAmount: aggregate.totalAmount,
+    totalPaidAmount: nextBuckets.totalPaidAmount,
+    totalPendingAmount: nextBuckets.totalPendingAmount,
   });
 }

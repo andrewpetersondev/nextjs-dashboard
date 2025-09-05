@@ -5,6 +5,11 @@ import {
   logInfo,
 } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
+import {
+  applyDeltaToBucket,
+  type BucketTotals,
+} from "@/server/revenues/domain/revenue-buckets";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/brands/domain-brands";
 import { toPeriod } from "@/shared/brands/mappers";
@@ -43,6 +48,8 @@ type UpdateExistingOptions = Readonly<{
     readonly id: string;
     readonly invoiceCount: number;
     readonly totalAmount: number;
+    readonly totalPaidAmount: number;
+    readonly totalPendingAmount: number;
   };
   invoice: InvoiceDto;
   metadata: LogMetadata;
@@ -54,6 +61,7 @@ type UpdateExistingOptions = Readonly<{
  * Updates an existing revenue record either by adding a new invoice or diffing an updated one.
  * @internal
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
 async function updateExistingRevenue(
   options: UpdateExistingOptions,
 ): Promise<void> {
@@ -66,11 +74,33 @@ async function updateExistingRevenue(
     isUpdate,
     previousAmount,
   } = options;
+
   const isDiff = isDiffUpdate(isUpdate, previousAmount);
-  const amountDelta = isDiff
-    ? invoice.amount - (previousAmount as number)
-    : invoice.amount;
-  const newCount = isDiff ? existing.invoiceCount : existing.invoiceCount + 1;
+  const eligible = isStatusEligibleForRevenue(invoice.status);
+
+  let amountDelta: number;
+  switch (true) {
+    case eligible && isDiff:
+      amountDelta = invoice.amount - (previousAmount as number);
+      break;
+    case eligible && !isDiff:
+      amountDelta = invoice.amount;
+      break;
+    default:
+      amountDelta = 0;
+  }
+
+  let newCount: number;
+  switch (true) {
+    case isDiff:
+      newCount = existing.invoiceCount;
+      break;
+    case !isDiff && eligible:
+      newCount = existing.invoiceCount + 1;
+      break;
+    default:
+      newCount = existing.invoiceCount;
+  }
 
   const baseMeta = buildExistingMeta(metadata, existing.id);
   const detailMeta: LogMetadata = isDiff
@@ -88,12 +118,23 @@ async function updateExistingRevenue(
     { ...baseMeta, ...detailMeta },
   );
 
+  const currentBuckets: BucketTotals = {
+    totalPaidAmount: existing.totalPaidAmount,
+    totalPendingAmount: existing.totalPendingAmount,
+  };
+
+  const nextBuckets = isStatusEligibleForRevenue(invoice.status)
+    ? applyDeltaToBucket(currentBuckets, invoice.status, amountDelta)
+    : currentBuckets;
+
   await updateRevenueRecord(revenueService, {
     context,
     invoiceCount: newCount,
     metadata: { ...metadata, ...detailMeta },
     revenueId: existing.id,
     totalAmount: existing.totalAmount + amountDelta,
+    totalPaidAmount: nextBuckets.totalPaidAmount,
+    totalPendingAmount: nextBuckets.totalPendingAmount,
   });
 }
 
@@ -106,7 +147,10 @@ type CreateNewOptions = Readonly<{
   context: string;
   metadata: LogMetadata;
   period: Period;
+  invoiceCount: number;
   totalAmount: number;
+  totalPaidAmount: number;
+  totalPendingAmount: number;
 }>;
 
 /**
@@ -114,14 +158,25 @@ type CreateNewOptions = Readonly<{
  * @internal
  */
 async function createNewRevenue(options: CreateNewOptions): Promise<void> {
-  const { revenueService, context, metadata, period, totalAmount } = options;
+  const {
+    revenueService,
+    context,
+    metadata,
+    period,
+    invoiceCount,
+    totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
+  } = options;
   logInfo(context, "Creating a new revenue record", metadata);
   await revenueService.create({
     calculationSource: "invoice_event",
     createdAt: new Date(),
-    invoiceCount: 1,
+    invoiceCount,
     period: toPeriod(period),
     totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
     updatedAt: new Date(),
   });
 }
@@ -163,6 +218,8 @@ export async function upsertRevenue(args: UpsertArgs): Promise<void> {
         id: existingRevenue.id,
         invoiceCount: existingRevenue.invoiceCount,
         totalAmount: existingRevenue.totalAmount,
+        totalPaidAmount: existingRevenue.totalPaidAmount,
+        totalPendingAmount: existingRevenue.totalPendingAmount,
       },
       invoice,
       isUpdate,
@@ -173,11 +230,29 @@ export async function upsertRevenue(args: UpsertArgs): Promise<void> {
     return;
   }
 
+  // No existing revenue record for the period. Only create if invoice is eligible.
+  if (!isStatusEligibleForRevenue(invoice.status)) {
+    logInfo(
+      context,
+      "Invoice status not eligible for revenue; skipping create",
+      metadata,
+    );
+    return;
+  }
+
+  const initialBuckets: BucketTotals = applyDeltaToBucket(
+    { totalPaidAmount: 0, totalPendingAmount: 0 },
+    invoice.status,
+    invoice.amount,
+  );
   await createNewRevenue({
     context,
+    invoiceCount: 1,
     metadata,
     period,
     revenueService,
     totalAmount: invoice.amount,
+    totalPaidAmount: initialBuckets.totalPaidAmount,
+    totalPendingAmount: initialBuckets.totalPendingAmount,
   });
 }

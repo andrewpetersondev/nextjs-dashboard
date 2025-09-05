@@ -23,6 +23,8 @@ function makeDefaultRevenueEntity(p: Period): RevenueEntity {
     invoiceCount: 0,
     period: toPeriod(p),
     totalAmount: 0,
+    totalPaidAmount: 0,
+    totalPendingAmount: 0,
     updatedAt: new Date(),
   };
 }

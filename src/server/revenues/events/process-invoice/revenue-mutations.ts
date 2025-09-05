@@ -20,6 +20,10 @@ export type UpdateRevenueArgs = Readonly<{
   readonly invoiceCount: number;
   /** New total revenue amount for the period */
   readonly totalAmount: number;
+  /** New total paid amount for the period */
+  readonly totalPaidAmount: number;
+  /** New total pending amount for the period */
+  readonly totalPendingAmount: number;
   /** Logging context */
   readonly context: string;
   /** Optional structured metadata for logs */
@@ -33,12 +37,22 @@ export async function updateRevenueRecord(
   revenueService: RevenueService,
   args: UpdateRevenueArgs,
 ): Promise<void> {
-  const { revenueId, invoiceCount, totalAmount, context, metadata } = args;
+  const {
+    revenueId,
+    invoiceCount,
+    totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
+    context,
+    metadata,
+  } = args;
 
   logInfo(context, "Updating revenue record", {
     invoiceCount,
     revenueId,
     totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
     ...metadata,
   });
 
@@ -46,5 +60,7 @@ export async function updateRevenueRecord(
     calculationSource: "invoice_event",
     invoiceCount,
     totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
   });
 }

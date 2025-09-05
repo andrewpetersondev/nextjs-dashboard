@@ -8,6 +8,13 @@
       "when": 1756825700505,
       "tag": "0000_sour_chamber",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757060978198,
+      "tag": "0001_optimal_captain_cross",
+      "breakpoints": true
     }
   ]
 }

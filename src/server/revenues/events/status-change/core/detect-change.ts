@@ -19,6 +19,15 @@ export function detectChange(
   if (!prevEligible && currEligible) {
     return "ineligible-to-eligible";
   }
+  // Status switched between eligible states (paid <-> pending)
+  if (
+    prevEligible &&
+    currEligible &&
+    previousInvoice.status !== currentInvoice.status
+  ) {
+    return "eligible-status-change";
+  }
+  // Same eligible status but amount changed
   if (
     prevEligible &&
     currEligible &&

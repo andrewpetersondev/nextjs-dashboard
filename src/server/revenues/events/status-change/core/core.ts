@@ -27,6 +27,8 @@ export async function adjustRevenueForStatusChangeCore(
           id: existingRevenue.id,
           invoiceCount: existingRevenue.invoiceCount,
           totalAmount: existingRevenue.totalAmount,
+          totalPaidAmount: existingRevenue.totalPaidAmount,
+          totalPendingAmount: existingRevenue.totalPendingAmount,
         }
       : undefined,
     meta,

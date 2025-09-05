@@ -16,6 +16,7 @@ export interface CoreArgs {
 export type ChangeType =
   | "eligible-to-ineligible"
   | "ineligible-to-eligible"
+  | "eligible-status-change"
   | "eligible-amount-change"
   | "none";
 

@@ -7,12 +7,14 @@ import type {
   PeriodArg,
 } from "@/server/revenues/events/common/types";
 import { handleEligibleAmountChange } from "@/server/revenues/events/status-change/handlers/handle-eligible-amount-change";
+import { handleEligibleStatusChange } from "@/server/revenues/events/status-change/handlers/handle-eligible-status-change";
 import { handleNoExistingRevenue } from "@/server/revenues/events/status-change/handlers/handle-no-existing-revenue";
 import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-eligible-to-ineligible";
 import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-ineligible-to-eligible";
 import { logNoAffectingChanges } from "@/server/revenues/events/status-change/handlers/log-no-affecting-changes";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
 export async function dispatchChange(
   change: ChangeType,
   context: string,
@@ -23,6 +25,8 @@ export async function dispatchChange(
       readonly id: string;
       readonly invoiceCount: number;
       readonly totalAmount: number;
+      readonly totalPaidAmount: number;
+      readonly totalPendingAmount: number;
     };
     readonly revenueService: RevenueService;
     readonly meta: MetadataWithPeriod;
@@ -52,12 +56,15 @@ export async function dispatchChange(
   if (change === "eligible-to-ineligible") {
     await handleTransitionFromEligibleToIneligible({
       context,
+      currentPaidTotal: existingRevenue.totalPaidAmount,
+      currentPendingTotal: existingRevenue.totalPendingAmount,
       meta: {
         ...meta,
         existingCount: existingRevenue.invoiceCount,
         existingTotal: existingRevenue.totalAmount,
       },
       previousAmount: previousInvoice.amount,
+      previousStatus: previousInvoice.status,
       revenueId: existingRevenue.id,
       revenueService,
     });
@@ -68,6 +75,9 @@ export async function dispatchChange(
       context,
       currentAmount: currentInvoice.amount,
       currentCount: existingRevenue.invoiceCount,
+      currentPaidTotal: existingRevenue.totalPaidAmount,
+      currentPendingTotal: existingRevenue.totalPendingAmount,
+      currentStatus: currentInvoice.status,
       currentTotal: existingRevenue.totalAmount,
       meta,
       revenueId: existingRevenue.id,
@@ -80,9 +90,29 @@ export async function dispatchChange(
       context,
       currentAmount: currentInvoice.amount,
       currentCount: existingRevenue.invoiceCount,
+      currentPaidTotal: existingRevenue.totalPaidAmount,
+      currentPendingTotal: existingRevenue.totalPendingAmount,
+      currentStatus: currentInvoice.status,
       currentTotal: existingRevenue.totalAmount,
       meta,
       previousAmount: previousInvoice.amount,
+      revenueId: existingRevenue.id,
+      revenueService,
+    });
+    return;
+  }
+  if (change === "eligible-status-change") {
+    await handleEligibleStatusChange({
+      context,
+      currentAmount: currentInvoice.amount,
+      currentCount: existingRevenue.invoiceCount,
+      currentPaidTotal: existingRevenue.totalPaidAmount,
+      currentPendingTotal: existingRevenue.totalPendingAmount,
+      currentStatus: currentInvoice.status,
+      currentTotal: existingRevenue.totalAmount,
+      meta,
+      previousAmount: previousInvoice.amount,
+      previousStatus: previousInvoice.status,
       revenueId: existingRevenue.id,
       revenueService,
     });

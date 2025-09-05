@@ -18,6 +18,8 @@ export interface RevenueEntity {
   readonly invoiceCount: number;
   readonly period: Period;
   readonly totalAmount: Cents;
+  readonly totalPaidAmount: Cents;
+  readonly totalPendingAmount: Cents;
   readonly updatedAt: Date;
 }
 
@@ -35,7 +37,11 @@ export type RevenueCreateEntity = Omit<RevenueEntity, "id">;
  */
 export type RevenueUpdatable = Pick<
   RevenueEntity,
-  "invoiceCount" | "totalAmount" | "calculationSource"
+  | "invoiceCount"
+  | "totalAmount"
+  | "totalPaidAmount"
+  | "totalPendingAmount"
+  | "calculationSource"
 >;
 
 /**

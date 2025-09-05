@@ -58,10 +58,18 @@ export async function insertDemoCounters(tx: Tx): Promise<void> {
 export async function aggregateRevenues(tx: Tx): Promise<void> {
   await tx.execute(sql`
       UPDATE revenues AS r
-      SET total_amount  = COALESCE(agg.total_amount, 0),
-          invoice_count = COALESCE(agg.invoice_count, 0),
-          updated_at    = NOW() FROM (
-        SELECT invoices.revenue_period AS period, SUM(invoices.amount) AS total_amount, COUNT(*) AS invoice_count
+      SET total_amount         = COALESCE(agg.total_amount, 0),
+          total_paid_amount    = COALESCE(agg.total_paid_amount, 0),
+          total_pending_amount = COALESCE(agg.total_pending_amount, 0),
+          invoice_count        = COALESCE(agg.invoice_count, 0),
+          updated_at           = NOW()
+      FROM (
+        SELECT
+          invoices.revenue_period AS period,
+          SUM(invoices.amount) AS total_amount,
+          SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid_amount,
+          SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending_amount,
+          COUNT(*) AS invoice_count
         FROM invoices
         GROUP BY invoices.revenue_period
       ) AS agg

@@ -41,6 +41,8 @@ export async function upsertRevenue(
           calculationSource: revenueData.calculationSource,
           invoiceCount: revenueData.invoiceCount,
           totalAmount: revenueData.totalAmount,
+          totalPaidAmount: revenueData.totalPaidAmount,
+          totalPendingAmount: revenueData.totalPendingAmount,
           updatedAt: now,
         },
         target: revenues.period,

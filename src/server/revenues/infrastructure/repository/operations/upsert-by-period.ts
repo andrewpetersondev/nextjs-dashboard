@@ -30,6 +30,8 @@ export async function upsertRevenueByPeriod(
     invoiceCount: revenue.invoiceCount,
     period: toPeriod(period),
     totalAmount: revenue.totalAmount,
+    totalPaidAmount: revenue.totalPaidAmount,
+    totalPendingAmount: revenue.totalPendingAmount,
     updatedAt: now,
   };
 

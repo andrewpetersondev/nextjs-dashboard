@@ -16,13 +16,17 @@ dotenv.config({ path: ".env.test" });
 console.log("drizzle-test.config.ts ...");
 
 // Ensure env is loaded before reading from env-node
-const { DATABASE_URL } = await import("../config/env-node");
+// const { DATABASE_URL } = await import("../config/env-node"); // this line broke cli because drizzle-kit does not allow top level await. but it worked before??
 
-let url: string;
+// let url: string;
+// if (DATABASE_URL) {
+//   url = DATABASE_URL;
+// } else {
+//   throw new Error("DATABASE_URL is not set.");
+// }
 
-if (DATABASE_URL) {
-  url = DATABASE_URL;
-} else {
+const url = process.env.DATABASE_URL;
+if (!url) {
   throw new Error("DATABASE_URL is not set.");
 }
 
