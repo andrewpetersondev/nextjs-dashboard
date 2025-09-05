@@ -25,6 +25,8 @@ console.log("drizzle-dev.config.ts ...");
 //   throw new Error("DATABASE_URL is not set.");
 // }
 
+// biome-ignore lint/style/noProcessEnv: <inevitable>
+// biome-ignore lint/correctness/noProcessGlobal: <inevitable>
 const url = process.env.DATABASE_URL;
 if (!url) {
   throw new Error("DATABASE_URL is not set.");
