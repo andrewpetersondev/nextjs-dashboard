@@ -13,7 +13,11 @@ export function CustomersTable({
   customers,
 }: CustomersTableProps): JSX.Element {
   return (
-    <section aria-labelledby="customers-heading" className="w-full">
+    <section
+      aria-labelledby="customers-heading"
+      className="w-full"
+      data-cy="customers-section"
+    >
       <H1 className="mb-8" id="customers-heading">
         Customers
       </H1>

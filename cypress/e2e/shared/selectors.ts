@@ -49,7 +49,11 @@ export type InvoicesSelKey = keyof typeof INVOICES_SEL;
 
 // Customers feature selectors
 export const CUSTOMERS_SEL = {
+  customerMobileCard: '[data-cy="customer-mobile-card"]',
+  customerRow: '[data-cy="customer-row"]',
   customerSelect: '[data-cy="customer-select"]',
+  customersMobileTable: '[data-cy="customers-table-mobile"]',
+  customersTable: '[data-cy="customers-table"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 export type CustomersSelKey = keyof typeof CUSTOMERS_SEL;
@@ -57,8 +61,15 @@ export type CustomersSelKey = keyof typeof CUSTOMERS_SEL;
 // Users feature selectors
 export const USERS_SEL = {
   confirmSuspendButton: '[data-cy="confirm-suspend-button"]',
+  createUserErrorMessage: '[data-cy="create-user-error-message"]',
+  createUserSuccessMessage: '[data-cy="create-user-success-message"]',
   suspendUserButton: '[data-cy="suspend-user-button"]',
+  userEmailInput: '[data-cy="user-email-input"]',
+  userPasswordInput: '[data-cy="user-password-input"]',
+  userRoleSelect: '[data-cy="user-role-select"]',
   userRow: '[data-cy="user-row"]',
+  usersTable: '[data-cy="users-table"]',
+  userUsernameInput: '[data-cy="user-username-input"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 export type UsersSelKey = keyof typeof USERS_SEL;
@@ -67,6 +78,18 @@ export type UsersSelKey = keyof typeof USERS_SEL;
 export const REVENUES_SEL = {
   latestInvoices: '[data-cy="latest-invoices"]',
   latestInvoicesItem: '[data-cy="latest-invoices-item"]',
+  revenueChart: '[data-cy="revenue-chart"]',
+  revenueChartBar: '[data-cy="revenue-chart-bar"]',
+  revenueChartBarPaid: '[data-cy="revenue-chart-bar-paid"]',
+  revenueChartBarPending: '[data-cy="revenue-chart-bar-pending"]',
+  revenueChartBarStack: '[data-cy="revenue-chart-bar-stack"]',
+  revenueChartErrorMessage: '[data-cy="revenue-chart-error-message"]',
+  revenueChartLegend: '[data-cy="revenue-chart-legend"]',
+  revenueChartMonthLabel: '[data-cy="revenue-chart-month-label"]',
+  revenueChartNoDataMessage: '[data-cy="revenue-chart-no-data-message"]',
+  revenueChartSection: '[data-cy="revenue-chart-section"]',
+  revenueChartYAxis: '[data-cy="revenue-chart-y-axis"]',
+  revenueChartYAxisLabel: '[data-cy="revenue-chart-y-axis-label"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 export type RevenuesSelKey = keyof typeof REVENUES_SEL;

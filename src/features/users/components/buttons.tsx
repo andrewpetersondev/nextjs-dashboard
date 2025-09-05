@@ -14,6 +14,7 @@ export function CreateUser(): JSX.Element {
   return (
     <Link
       className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+      data-cy="add-item-button"
       href="/dashboard/users/create"
     >
       <span className="hidden md:block">Create User</span>{" "}
@@ -32,6 +33,7 @@ export function UpdateUser({ id }: { id: string }): JSX.Element {
   return (
     <Link
       className="rounded-md border p-2 hover:bg-bg-hover"
+      data-cy="edit-item-button"
       href={`/dashboard/users/${id}/edit`}
     >
       <span className="sr-only">Update</span>
@@ -51,7 +53,11 @@ export function DeleteUser({ id }: { id: string }): JSX.Element {
     <form action={deleteUserFormAction}>
       {/* Hidden input for userId */}
       <input name="userId" type="hidden" value={id} />
-      <button className="rounded-md border p-2 hover:bg-bg-hover" type="submit">
+      <button
+        className="rounded-md border p-2 hover:bg-bg-hover"
+        data-cy="delete-item-button"
+        type="submit"
+      >
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
       </button>

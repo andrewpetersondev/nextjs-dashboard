@@ -22,7 +22,8 @@ export function CustomersTableMobileRow({
     // Use role="region" and aria-label for accessibility on a non-interactive card
     <div
       className="mb-2 w-full rounded-md bg-bg-primary p-4"
-      data-testid={`customer-mobile-card-${customer.id}`} // For Cypress/component testing
+      data-cy="customer-mobile-card"
+      data-testid={`customer-mobile-card-${customer.id}`}
     >
       {/* Customer info: name, profile picture, and email */}
       <div className="flex items-center justify-between border-b pb-4">

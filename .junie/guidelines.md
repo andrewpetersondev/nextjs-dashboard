@@ -1,16 +1,11 @@
 # Junie Guidelines for Next.js + TypeScript Project
 
-## Guidelines
-
-- Do not make breaking changes.
-- Examine the project structure. 
-- Extract code to files, locations, and components to follow best practices. Create files and folders as needed.
-
 ## Focus
 
+- src/ui/**, src/features/<feature>/components/*
 - Align cypress/e2e/shared/ with best practices. 
 - Decompose SEL in selectors.ts so each feature (auth, invoices, customers, users, revenues) has its own object. 
-- Refactor data-cy names throughout codebase.
+- Refactor data-cy names throughout the codebase.
 
 ## Code Style Guidelines
 

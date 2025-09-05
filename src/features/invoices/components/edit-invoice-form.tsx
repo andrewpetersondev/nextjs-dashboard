@@ -56,7 +56,7 @@ function FormFields({
 }): JSX.Element {
   return (
     <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-      <InvoiceDate defaultValue={currentInvoice.date} />
+      <InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
 
       <SensitiveData
         disabled={pending}
@@ -85,7 +85,7 @@ function FormFields({
       />
 
       <InvoiceStatusRadioGroup
-        data-cy="status-radio"
+        data-cy="invoice-status-radio-group"
         disabled={pending}
         error={errors?.status as FormFieldError | undefined}
         name="status"

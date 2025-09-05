@@ -18,7 +18,10 @@ export function CustomersTableDesktopRow({
   customer,
 }: CustomerTableRowProps): JSX.Element {
   return (
-    <tr className="group cursor-pointer hover:bg-bg-active">
+    <tr
+      className="group cursor-pointer hover:bg-bg-active"
+      data-cy="customer-row"
+    >
       <td className="whitespace-nowrap py-5 pr-3 pl-4 text-sm text-text-primary group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
         <div className="flex items-center gap-3">
           <Image

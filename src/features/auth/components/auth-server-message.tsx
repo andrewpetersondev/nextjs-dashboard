@@ -16,7 +16,7 @@ export const AuthServerMessage: FC<SignupFormErrorMessageProps> = ({
     className="flex h-8 items-end space-x-1"
   >
     {message && (
-      <p className="text-text-error" data-cy="signup-message-errors">
+      <p className="text-text-error" data-cy="auth-server-message">
         {message}
       </p>
     )}

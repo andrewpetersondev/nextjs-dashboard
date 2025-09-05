@@ -17,11 +17,12 @@ export async function UsersTable({
   const users: UserDto[] = await readFilteredUsersAction(query, currentPage);
 
   return (
-    <div>
+    <div data-cy="users-table">
       {users?.map(
         (user: UserDto): JSX.Element => (
           <div
             className="mb-2 w-full rounded-md bg-bg-primary p-4"
+            data-cy="user-row"
             key={user.id}
           >
             <div className="flex items-center justify-between border-b pb-4">

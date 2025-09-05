@@ -41,7 +41,10 @@ export function CustomersTableDesktop({
   customers: FormattedCustomersTableRow[];
 }): JSX.Element {
   return (
-    <table className="hidden min-w-full rounded-md text-text-primary md:table">
+    <table
+      className="hidden min-w-full rounded-md text-text-primary md:table"
+      data-cy="customers-table"
+    >
       <thead className="rounded-md bg-bg-accent text-left font-normal text-sm">
         <tr>
           {TABLE_COLUMNS.map(({ key, label }) => (

@@ -13,7 +13,11 @@ export function CustomersTableMobile({
   customers: FormattedCustomersTableRow[];
 }): JSX.Element {
   return (
-    <div className="md:hidden" data-testid="mobile-table">
+    <div
+      className="md:hidden"
+      data-cy="customers-table-mobile"
+      data-testid="mobile-table"
+    >
       {customers.map((customer) => (
         <CustomersTableMobileRow customer={customer} key={customer.id} />
       ))}

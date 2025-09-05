@@ -20,6 +20,7 @@ export const CreateInvoice = (): JSX.Element => (
   <Link
     aria-label="Create Invoice"
     className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+    data-cy="add-item-button"
     href={CREATE_INVOICE_ROUTE}
   >
     <span className="hidden md:block">Create Invoice</span>
@@ -37,6 +38,7 @@ export const UpdateInvoice = ({
   <Link
     aria-label="Update Invoice"
     className="rounded-md border p-2 hover:bg-bg-hover"
+    data-cy="edit-item-button"
     href={`/dashboard/invoices/${encodeURIComponent(id)}/edit`}
   >
     <span className="sr-only">Update</span>
@@ -56,6 +58,7 @@ export const DeleteInvoice = ({
     <button
       aria-label="Delete Invoice"
       className="rounded-md border p-2 hover:bg-bg-hover"
+      data-cy="delete-item-button"
       type="submit"
     >
       <span className="sr-only">Delete</span>

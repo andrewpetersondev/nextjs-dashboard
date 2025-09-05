@@ -44,13 +44,13 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
     {/* Social login buttons */}
     <div className="mt-6 grid grid-cols-2 gap-4">
       <SocialLoginButton
-        data-cy={`${mode}-google`}
+        data-cy="auth-social-google-button"
         href="/api/auth/google"
         mode={mode}
         provider="Google"
       />
       <SocialLoginButton
-        data-cy={`${mode}-github`}
+        data-cy="auth-social-github-button"
         href="/api/auth/github"
         mode={mode}
         provider="GitHub"
