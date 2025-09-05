@@ -5,14 +5,12 @@
 - Do not make breaking changes.
 - Examine the project structure. 
 - Extract code to files, locations, and components to follow best practices. Create files and folders as needed.
-- Revenues and Event Driven Architecture is kind of messy, so organization will help me in so many ways. 
 
 ## Focus
 
-- Revenues and Event Driven Architecture.
-- When an invoice is created, updated, or deleted, send an event to the event bus.
-- Revenue logic is supposed to track the total amount for a period ("YYYY-MM-01").
-- Revenue logic should be able to track the total amounts paid and pending for every period. 
+- Align cypress/e2e/shared/ with best practices. 
+- Decompose SEL in selectors.ts so each feature (auth, invoices, customers, users, revenues) has its own object. 
+- Refactor data-cy names throughout codebase.
 
 ## Code Style Guidelines
 

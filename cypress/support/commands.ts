@@ -4,7 +4,7 @@
 import type { LoginCreds, SignupCreds } from "../e2e/shared/auth-forms";
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";
 import { UI_MATCHERS } from "../e2e/shared/regex";
-import { SEL } from "../e2e/shared/selectors";
+import { AUTH_SEL } from "../e2e/shared/selectors";
 import { TWENTY_SECONDS } from "../e2e/shared/times";
 
 declare global {
@@ -28,9 +28,9 @@ Cypress.Commands.add("logEnv", () => {
 Cypress.Commands.add("login", ({ email, password }: LoginCreds) => {
   cy.visit(LOGIN_PATH);
 
-  cy.get(SEL.loginEmail).type(email);
-  cy.get(SEL.loginPassword).type(password);
-  cy.get(SEL.loginSubmit).click();
+  cy.get(AUTH_SEL.loginEmail).type(email);
+  cy.get(AUTH_SEL.loginPassword).type(password);
+  cy.get(AUTH_SEL.loginSubmit).click();
 
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
@@ -41,10 +41,10 @@ Cypress.Commands.add("login", ({ email, password }: LoginCreds) => {
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
   cy.visit(SIGNUP_PATH);
 
-  cy.get(SEL.signupUsername).type(username);
-  cy.get(SEL.signupEmail).type(email);
-  cy.get(SEL.signupPassword).type(password);
-  cy.get(SEL.signupSubmit).click();
+  cy.get(AUTH_SEL.signupUsername).type(username);
+  cy.get(AUTH_SEL.signupEmail).type(email);
+  cy.get(AUTH_SEL.signupPassword).type(password);
+  cy.get(AUTH_SEL.signupSubmit).click();
 
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",

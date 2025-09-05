@@ -1,6 +1,6 @@
 import { BASE_URL, LOGIN_PATH } from "../shared/paths";
 import { UI_MATCHERS } from "../shared/regex";
-import { SEL } from "../shared/selectors";
+import { AUTH_SEL } from "../shared/selectors";
 import { EXTERNAL_URLS } from "../shared/urls";
 
 describe("Home smoke test", () => {
@@ -9,14 +9,14 @@ describe("Home smoke test", () => {
 
     // Assert welcome text and course link exist
     cy.findByText(UI_MATCHERS.WELCOME_HOME).should("be.visible");
-    cy.get(SEL.nextjsCourseLink).should(
+    cy.get(AUTH_SEL.nextjsCourseLink).should(
       "have.attr",
       "href",
       EXTERNAL_URLS.NEXTJS_COURSE,
     );
 
     // Navigate to the login page via the login button
-    cy.get(SEL.toLoginButton).click();
+    cy.get(AUTH_SEL.toLoginButton).click();
     cy.url().should("include", LOGIN_PATH);
 
     // Assert login page heading is visible

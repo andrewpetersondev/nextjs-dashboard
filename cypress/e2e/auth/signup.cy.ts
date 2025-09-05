@@ -1,6 +1,6 @@
 import { DASHBOARD_PATH, SIGNUP_PATH } from "../shared/paths";
 import { UI_MATCHERS } from "../shared/regex";
-import { SEL } from "../shared/selectors";
+import { AUTH_SEL } from "../shared/selectors";
 import { DEFAULT_TIMEOUT } from "../shared/times";
 import { createTestUser } from "../shared/users";
 
@@ -16,16 +16,16 @@ describe("Signup flow", () => {
     );
 
     // Fill out the form
-    cy.get(SEL.signupUsername).type(user.username);
-    cy.get(SEL.signupEmail).type(user.email);
-    cy.get(SEL.signupPassword).type(user.password);
+    cy.get(AUTH_SEL.signupUsername).type(user.username);
+    cy.get(AUTH_SEL.signupEmail).type(user.email);
+    cy.get(AUTH_SEL.signupPassword).type(user.password);
 
     // Optional: basic a11y check before submitting
     cy.injectAxe();
     cy.checkA11y(undefined, { includedImpacts: ["critical"] }, undefined, true);
 
     // Submit the form
-    cy.get(SEL.signupSubmit).click();
+    cy.get(AUTH_SEL.signupSubmit).click();
 
     // Expect redirect to dashboard
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
@@ -56,11 +56,11 @@ describe("Signup flow with Database Tasks", () => {
       "be.visible",
     );
 
-    cy.get(SEL.signupUsername).type(user.username);
-    cy.get(SEL.signupEmail).type(user.email);
-    cy.get(SEL.signupPassword).type(user.password);
+    cy.get(AUTH_SEL.signupUsername).type(user.username);
+    cy.get(AUTH_SEL.signupEmail).type(user.email);
+    cy.get(AUTH_SEL.signupPassword).type(user.password);
 
-    cy.get(SEL.signupSubmit).click();
+    cy.get(AUTH_SEL.signupSubmit).click();
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
 
     cy.findByRole("heading", {

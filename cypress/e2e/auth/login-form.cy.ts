@@ -1,6 +1,6 @@
 import { LOGIN_PATH } from "../shared/paths";
 import { LOGIN_REGEX } from "../shared/regex";
-import { SEL } from "../shared/selectors";
+import { AUTH_SEL } from "../shared/selectors";
 import { DEFAULT_TIMEOUT } from "../shared/times";
 
 describe("Login Form (E2E) - useId integration", () => {
@@ -11,7 +11,7 @@ describe("Login Form (E2E) - useId integration", () => {
 
   it("renders inputs with unique, non-static ids and proper label associations", () => {
     // Email input
-    cy.get(SEL.loginEmail)
+    cy.get(AUTH_SEL.loginEmail)
       .should("have.length", 1)
       .should("have.attr", "id")
       .then((emailId) => {
@@ -21,7 +21,7 @@ describe("Login Form (E2E) - useId integration", () => {
       });
 
     // Password input
-    cy.get(SEL.loginPassword)
+    cy.get(AUTH_SEL.loginPassword)
       .should("have.length", 1)
       .should("have.attr", "id")
       .then((passwordId) => {
@@ -31,14 +31,14 @@ describe("Login Form (E2E) - useId integration", () => {
       });
 
     // Also verify aria-describedby references exist (if present)
-    cy.get(SEL.loginEmail).then(($el) => {
+    cy.get(AUTH_SEL.loginEmail).then(($el) => {
       const describedBy = $el.attr("aria-describedby");
       if (describedBy) {
         cy.get(`#${describedBy}`).should("exist");
       }
     });
 
-    cy.get(SEL.loginPassword).then(($el) => {
+    cy.get(AUTH_SEL.loginPassword).then(($el) => {
       const describedBy = $el.attr("aria-describedby");
       if (describedBy) {
         cy.get(`#${describedBy}`).should("exist");
@@ -55,17 +55,19 @@ describe("Login Form (E2E) - useId integration - Part 2", () => {
 
   it("keeps stable field names and submits without relying on static ids", () => {
     // Names should remain stable for server action submission
-    cy.get(SEL.loginEmail).should("have.attr", "name", "email");
-    cy.get(SEL.loginPassword).should("have.attr", "name", "password");
+    cy.get(AUTH_SEL.loginEmail).should("have.attr", "name", "email");
+    cy.get(AUTH_SEL.loginPassword).should("have.attr", "name", "password");
 
-    cy.get(SEL.loginEmail).clear().type("steve@jobs.com");
-    cy.get(SEL.loginPassword).clear().type("hunter2");
+    cy.get(AUTH_SEL.loginEmail).clear().type("steve@jobs.com");
+    cy.get(AUTH_SEL.loginPassword).clear().type("hunter2");
 
-    cy.get(SEL.loginSubmit).click();
+    cy.get(AUTH_SEL.loginSubmit).click();
 
-    cy.get(SEL.loginSubmit, { timeout: DEFAULT_TIMEOUT }).should(($btn) => {
-      const isDisabled = ($btn.attr("disabled") as unknown) !== undefined;
-      expect(isDisabled).to.be.oneOf([true, false]);
-    });
+    cy.get(AUTH_SEL.loginSubmit, { timeout: DEFAULT_TIMEOUT }).should(
+      ($btn) => {
+        const isDisabled = ($btn.attr("disabled") as unknown) !== undefined;
+        expect(isDisabled).to.be.oneOf([true, false]);
+      },
+    );
   });
 });

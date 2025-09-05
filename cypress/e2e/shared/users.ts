@@ -24,20 +24,6 @@ export const DEMO_USER = {
   username: "user",
 } as const satisfies DemoAccount;
 
-export const DEMO_ADMIN = {
-  email: "admin@admin.com",
-  password: "AdminPassword123!",
-  role: "admin",
-  username: "admin",
-} as const satisfies DemoAccount;
-
-export const DEMO_GUEST = {
-  email: "guest@guest.com",
-  password: "GuestPassword123!",
-  role: "guest",
-  username: "guest",
-} as const satisfies DemoAccount;
-
 /**
  * Generates a unique test user with timestamp-based identifiers.
  */

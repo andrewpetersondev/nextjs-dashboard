@@ -1,18 +1,39 @@
-/**
- * Centralize data-cy and test id selectors to avoid duplication/typos across tests.
- * Prefer using these constants rather than inline strings in test code.
- */
-export const SEL = {
+// Common, reusable selectors across features
+export const COMMON_SEL = {
   addItemButton: '[data-cy="add-item-button"]',
   confirmDeleteButton: '[data-cy="confirm-delete-button"]',
-  confirmSuspendButton: '[data-cy="confirm-suspend-button"]',
-  createInvoiceErrorMessage: '[data-cy="create-invoice-error-message"]',
-  createInvoiceSubmitButton: '[data-cy="create-invoice-submit-button"]',
-  createInvoiceSuccessMessage: '[data-cy="create-invoice-success-message"]',
-  customerSelect: '[data-cy="customer-select"]',
   dateInput: '[data-cy="date-input"]',
   deleteItemButton: '[data-cy="delete-item-button"]',
   editItemButton: '[data-cy="edit-item-button"]',
+  itemDescriptionInput: '[data-cy="item-description-input"]',
+  itemNameInput: '[data-cy="item-name-input"]',
+  saveItemButton: '[data-cy="save-item-button"]',
+  sensitiveDataInput: '[data-cy="sensitive-data-input"]',
+} as const satisfies Readonly<Record<string, string>>;
+
+export type CommonSelKey = keyof typeof COMMON_SEL;
+
+// Auth-related selectors (login/signup)
+export const AUTH_SEL = {
+  loginEmail: '[data-cy="login-email-input"]',
+  loginPassword: '[data-cy="login-password-input"]',
+  loginSubmit: '[data-cy="login-submit-button"]',
+  nextjsCourseLink: '[data-testid="nextjs-course-link"]',
+  signupEmail: '[data-cy="signup-email-input"]',
+  signupPassword: '[data-cy="signup-password-input"]',
+  signupSubmit: '[data-cy="signup-submit-button"]',
+  signupUsername: '[data-cy="signup-username-input"]',
+  toLoginButton: '[data-testid="login-button"]',
+} as const satisfies Readonly<Record<string, string>>;
+
+export type AuthSelKey = keyof typeof AUTH_SEL;
+
+// Invoice feature selectors
+export const INVOICES_SEL = {
+  createInvoiceErrorMessage: '[data-cy="create-invoice-error-message"]',
+  createInvoiceSubmitButton: '[data-cy="create-invoice-submit-button"]',
+  createInvoiceSuccessMessage: '[data-cy="create-invoice-success-message"]',
+  editInvoiceSubmitButton: '[data-cy="edit-invoice-submit-button"]',
   invoiceAmountInput: '[data-cy="amount-input"]',
   invoiceCreateButton: '[data-cy="create-invoice-submit-button"]',
   invoiceCustomerSelect: '[data-cy="customer-select"]',
@@ -22,34 +43,30 @@ export const SEL = {
   invoiceStatusPending: "#pending",
   invoiceStatusRadioGroup: '[data-cy="invoice-status-radio-group"]',
   invoicesTable: '[data-cy="invoices-table"]',
-  itemDescriptionInput: '[data-cy="item-description-input"]',
-  itemNameInput: '[data-cy="item-name-input"]',
-  latestInvoices: '[data-cy="latest-invoices"]',
-  latestInvoicesItem: '[data-cy="latest-invoices-item"]',
-  loginEmail: '[data-cy="login-email-input"]',
-  loginPassword: '[data-cy="login-password-input"]',
-  loginSubmit: '[data-cy="login-submit-button"]',
-  nextjsCourseLink: '[data-testid="nextjs-course-link"]',
-  saveItemButton: '[data-cy="save-item-button"]',
-  sensitiveDataInput: '[data-cy="sensitive-data-input"]',
-  signupEmail: '[data-cy="signup-email-input"]',
-  signupPassword: '[data-cy="signup-password-input"]',
-  signupSubmit: '[data-cy="signup-submit-button"]',
-  signupUsername: '[data-cy="signup-username-input"]',
+} as const satisfies Readonly<Record<string, string>>;
+
+export type InvoicesSelKey = keyof typeof INVOICES_SEL;
+
+// Customers feature selectors
+export const CUSTOMERS_SEL = {
+  customerSelect: '[data-cy="customer-select"]',
+} as const satisfies Readonly<Record<string, string>>;
+
+export type CustomersSelKey = keyof typeof CUSTOMERS_SEL;
+
+// Users feature selectors
+export const USERS_SEL = {
+  confirmSuspendButton: '[data-cy="confirm-suspend-button"]',
   suspendUserButton: '[data-cy="suspend-user-button"]',
-  toLoginButton: '[data-testid="login-button"]',
   userRow: '[data-cy="user-row"]',
 } as const satisfies Readonly<Record<string, string>>;
 
-/**
- * Union type of available selector keys.
- * @example type LoginSelectors = Pick<typeof SEL, 'loginEmail' | 'loginPassword'>
- */
-export type SelKey = keyof typeof SEL;
+export type UsersSelKey = keyof typeof USERS_SEL;
 
-export const INV_SEL = {
-  createInvoiceSubmitButton: '[data-cy="create-invoice-submit-button"]',
-  editInvoiceSubmitButton: '[data-cy="edit-invoice-submit-button"]',
+// Revenues/ Dashboard-related selectors
+export const REVENUES_SEL = {
+  latestInvoices: '[data-cy="latest-invoices"]',
+  latestInvoicesItem: '[data-cy="latest-invoices-item"]',
 } as const satisfies Readonly<Record<string, string>>;
 
-export type InvSelKey = keyof typeof INV_SEL;
+export type RevenuesSelKey = keyof typeof REVENUES_SEL;
