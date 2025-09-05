@@ -23,7 +23,10 @@ export const InvoicesTable = async ({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-bg-accent p-2 md:pt-0">
+        <div
+          className="rounded-lg bg-bg-accent p-2 md:pt-0"
+          data-cy="invoices-table"
+        >
           <MobileTable invoices={invoices} />
           <DesktopTable invoices={invoices} />
         </div>

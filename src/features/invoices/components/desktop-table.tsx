@@ -43,6 +43,7 @@ export const DesktopTable = ({
           (invoice): JSX.Element => (
             <tr
               className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+              data-cy="invoice-row"
               key={invoice.id}
             >
               <td className="whitespace-nowrap py-3 pr-3 pl-6">

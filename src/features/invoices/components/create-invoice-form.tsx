@@ -26,6 +26,7 @@ const INITIAL_STATE = {
   success: false,
 } satisfies Extract<FormState<CreateInvoiceFieldNames>, { success: false }>;
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <its clean>
 export const CreateInvoiceForm = ({
   customers,
 }: {
@@ -53,9 +54,13 @@ export const CreateInvoiceForm = ({
     <section>
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-          <InvoiceDate defaultValue={getCurrentIsoDate()} />
+          <InvoiceDate
+            data-cy="date-input"
+            defaultValue={getCurrentIsoDate()}
+          />
 
           <SensitiveData
+            data-cy="sensitive-data-input"
             disabled={pending}
             error={state.errors?.sensitiveData as FormFieldError | undefined}
           />
@@ -85,7 +90,7 @@ export const CreateInvoiceForm = ({
           />
 
           <InvoiceStatusRadioGroup
-            data-cy="status-radio"
+            data-cy="invoice-status-radio-group"
             disabled={pending}
             error={state.errors?.status as FormFieldError | undefined}
             name="status"

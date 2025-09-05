@@ -30,6 +30,7 @@ export const MobileTable = ({
         (invoice): JSX.Element => (
           <div
             className="mb-2 w-full rounded-md bg-bg-primary p-4"
+            data-cy="invoice-row"
             key={invoice.id}
           >
             {/* Customer information and status section */}

@@ -20,9 +20,9 @@
 # Src
 # src/app
 # src/ui
-src/features/auth
-src/server/auth
-src/shared/auth
+# src/features/auth
+# src/server/auth
+# src/shared/auth
 
 # Project (General)
 .github
