@@ -1,9 +1,5 @@
-/**
- * Regex used to identify the login form via accessible name.
- */
 export const LOGIN_REGEX: RegExp = /login form/i;
 
-// ADMIN
 export const ADMIN_DASHBOARD_H1 = /Admin Dashboard/i;
 
 /**

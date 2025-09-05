@@ -1,6 +1,3 @@
-/**
- * HTTP status codes referenced in API-related tests.
- */
 export const STATUS_CODES = {
   BAD_REQUEST: 400,
   CONFLICT: 409,

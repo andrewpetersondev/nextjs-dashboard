@@ -46,3 +46,10 @@ export const SEL = {
  * @example type LoginSelectors = Pick<typeof SEL, 'loginEmail' | 'loginPassword'>
  */
 export type SelKey = keyof typeof SEL;
+
+export const INV_SEL = {
+  createInvoiceSubmitButton: '[data-cy="create-invoice-submit-button"]',
+  editInvoiceSubmitButton: '[data-cy="edit-invoice-submit-button"]',
+} as const satisfies Readonly<Record<string, string>>;
+
+export type InvSelKey = keyof typeof INV_SEL;

@@ -4,9 +4,6 @@
  */
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
-/**
- * Role of demo accounts that exist in seed data.
- */
 export type DemoRole = "admin" | "user" | "guest";
 
 /**
@@ -16,8 +13,8 @@ export type DemoRole = "admin" | "user" | "guest";
 export interface DemoAccount {
   readonly email: string;
   readonly password: string;
-  readonly username: string;
   readonly role: DemoRole;
+  readonly username: string;
 }
 
 export const DEMO_USER = {
@@ -43,15 +40,13 @@ export const DEMO_GUEST = {
 
 /**
  * Generates a unique test user with timestamp-based identifiers.
- *
- * @returns TestUser object with unique username, email, and secure password
  */
 export function createTestUser(): TestUser {
   const timestamp = Date.now() % E2E_ID_MODULUS;
 
   return {
     email: `e2e_${timestamp}@example.com`,
-    password: "Password123!", // meets zod requirements: length, letter, number, special
+    password: "Password123!",
     timestamp,
     username: `e2e_user_${timestamp}`,
   } as const as TestUser;
