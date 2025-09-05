@@ -9,6 +9,7 @@
 # Temporary
 
 # Testing & CLI
+cypress.config.ts
 cypress
 node-only/cli
 node-only/dev-support

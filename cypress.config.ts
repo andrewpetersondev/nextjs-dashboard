@@ -5,7 +5,7 @@ export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:3100",
 
-    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+    // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {
       // Ensure .env.test is loaded before reading env
       dotenv.config({ path: ".env.test" });
