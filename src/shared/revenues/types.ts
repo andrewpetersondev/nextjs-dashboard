@@ -37,6 +37,8 @@ export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];
 export interface SimpleRevenueDto {
   readonly month: MonthName;
   readonly totalAmount: Dollars;
+  readonly totalPaidAmount: Dollars;
+  readonly totalPendingAmount: Dollars;
   readonly monthNumber: number;
 }
 

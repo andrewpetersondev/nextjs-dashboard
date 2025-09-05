@@ -9,7 +9,12 @@ import type { RevenueStatisticsDto } from "@/shared/revenues/dto";
 import type { SimpleRevenueDto } from "@/shared/revenues/types";
 
 export function mapEntityToSimpleRevenueDto(
-  entity: { period: Date; totalAmount: number },
+  entity: {
+    period: Date;
+    totalAmount: number;
+    totalPaidAmount: number;
+    totalPendingAmount: number;
+  },
   index: number,
 ): SimpleRevenueDto {
   const monthNumber = entity.period.getUTCMonth() + 1;
@@ -19,6 +24,8 @@ export function mapEntityToSimpleRevenueDto(
     month,
     monthNumber: index + 1,
     totalAmount: convertCentsToDollars(entity.totalAmount),
+    totalPaidAmount: convertCentsToDollars(entity.totalPaidAmount),
+    totalPendingAmount: convertCentsToDollars(entity.totalPendingAmount),
   };
 }
 

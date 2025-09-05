@@ -9,8 +9,8 @@
 # Temporary
 
 # Testing & CLI
-cypress.config.ts
-cypress
+# cypress.config.ts
+# cypress
 # node-only/cli
 # node-only/dev-support
 # node-only/seed-support
@@ -18,8 +18,8 @@ cypress
 # node-only/test-support
 
 # Src
-src/app
-src/ui
+# src/app
+# src/ui
 src/features/auth
 src/server/auth
 src/shared/auth
