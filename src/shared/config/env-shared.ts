@@ -27,24 +27,43 @@ export const MAX_PORT = 65_535;
 export const MIN_PORT = 1;
 export const DEFAULT_PORT = 3100;
 
+// Standardized list of valid environment names.
 export const ENVIRONMENTS = ["development", "test", "production"] as const;
+
+// Type-safe union of valid environment names.
 export type DatabaseEnv = (typeof ENVIRONMENTS)[number];
 
-export const DatabaseEnvSchema = z.enum(ENVIRONMENTS);
+export const DatabaseEnvEnum = z.enum(ENVIRONMENTS);
 
 /**
- * Prefer DATABASE_ENV; otherwise fall back to NODE_ENV.
- * Defaults to "development" when unknown or undefined.
+ * Prefer DATABASE_ENV; otherwise use NODE_ENV.
+ * Throws when neither is provided nor when the value is not valid.
  */
 export function deriveDatabaseEnv(
   databaseEnv?: string,
   nodeEnv?: string,
 ): DatabaseEnv {
-  // defaulting to "development" may mask errors in production
-  const normalized = (databaseEnv ?? nodeEnv ?? "development").toLowerCase();
-  return ENVIRONMENTS.includes(normalized as DatabaseEnv)
-    ? (normalized as DatabaseEnv)
-    : "development";
+  const candidate = databaseEnv ?? nodeEnv;
+
+  if (!candidate) {
+    throw new Error(
+      `deriveDatabaseEnv: missing environment. Set DATABASE_ENV or NODE_ENV to one of: ${ENVIRONMENTS.join(
+        ", ",
+      )}`,
+    );
+  }
+
+  const normalized = candidate.toLowerCase();
+
+  if (ENVIRONMENTS.includes(normalized as DatabaseEnv)) {
+    return normalized as DatabaseEnv;
+  }
+
+  throw new Error(
+    `deriveDatabaseEnv: invalid environment "${candidate}". Allowed values: ${ENVIRONMENTS.join(
+      ", ",
+    )}`,
+  );
 }
 
 /**

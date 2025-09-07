@@ -24,41 +24,26 @@ import { z } from "zod";
 import {
   coercePort,
   type DatabaseEnv,
-  DatabaseEnvSchema,
+  DatabaseEnvEnum,
   DEFAULT_PORT,
   deriveDatabaseEnv,
   ENVIRONMENTS,
 } from "../../src/shared/config/env-shared";
 
-// Minimal shape for build/tooling needs. Extend as necessary.
 const nodeToolingEnvSchema = z.object({
-  // Base URL for Cypress; if not provided, we derive from PORT
-  CYPRESS_BASE_URL: z.string().url().optional(),
-
-  // Prefer using the shared tuple to keep runtime and schema aligned
-  DATABASE_ENV: DatabaseEnvSchema.optional(),
-
-  // DB URL used by CI/tests and tooling (optional here; some tools may not need it)
-  DATABASE_URL: z.string().url().optional(),
-  // Common build/tooling values
-  NODE_ENV: z
-    .enum(ENVIRONMENTS)
-    .default(process.env.NODE_ENV === "test" ? "test" : "development"),
-
-  // Port commonly used in CI runs; allow overriding
+  CYPRESS_BASE_URL: z.url().optional(),
+  DATABASE_ENV: DatabaseEnvEnum.optional(),
+  DATABASE_URL: z.url().optional(),
+  NODE_ENV: z.enum(ENVIRONMENTS).optional(),
   PORT: z
     .union([z.string(), z.number()])
     .optional()
     .transform((v) => coercePort(v, DEFAULT_PORT)),
-
-  // Backwards compatibility for older seeding scripts
-  SEED_RESET: z.string().optional(),
-
-  // Present in env files; not all tooling needs it, so keep optional
   SESSION_SECRET: z.string().optional(),
 });
 
 const parsed = nodeToolingEnvSchema.safeParse(process.env);
+
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;
   throw new Error(
@@ -74,10 +59,8 @@ const DATABASE_ENV_INTERNAL: DatabaseEnv = deriveDatabaseEnv(
   data.NODE_ENV,
 );
 
-// Resolve PORT (already coerced in transform with default)
 const PORT_INTERNAL = data.PORT;
 
-// Resolve Cypress base URL (fallback to localhost:PORT)
 const CYPRESS_BASE_URL_INTERNAL =
   data.CYPRESS_BASE_URL ?? `http://localhost:${PORT_INTERNAL}`;
 
@@ -88,4 +71,3 @@ export const DATABASE_URL: typeof data.DATABASE_URL = data.DATABASE_URL;
 export const PORT: number = PORT_INTERNAL;
 export const CYPRESS_BASE_URL: string = CYPRESS_BASE_URL_INTERNAL;
 export const SESSION_SECRET: typeof data.SESSION_SECRET = data.SESSION_SECRET;
-export const SEED_RESET: typeof data.SEED_RESET = data.SEED_RESET;
