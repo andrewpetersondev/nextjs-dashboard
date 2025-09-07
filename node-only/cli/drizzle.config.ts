@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/style/noProcessEnv: <temp> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
+
 import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle.config.ts ...");
@@ -18,6 +21,7 @@ const env = (
 ).toLowerCase();
 console.log("env:", env);
 
+// biome-ignore lint/style/noNestedTernary: <easy to follow>
 const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
 console.log("scope:", scope);
 

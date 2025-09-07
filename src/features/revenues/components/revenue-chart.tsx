@@ -5,7 +5,7 @@ import { getRevenueChartAction } from "@/server/revenues/actions/actions";
 import type { SimpleRevenueDto } from "@/shared/revenues/types";
 import { H2, H3 } from "@/ui/primitives/headings";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not to long>
 export async function RevenueChart(): Promise<JSX.Element> {
   const result = await getRevenueChartAction();
 
