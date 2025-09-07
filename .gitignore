@@ -62,8 +62,8 @@ vault/*.env
 vault/*.json
 .env
 .env.local
-.env.development
-.env.test
+.env.development.local
+.env.test.local
 .env.production
 .env*
 .envrc

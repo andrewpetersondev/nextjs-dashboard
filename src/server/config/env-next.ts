@@ -66,10 +66,10 @@ function resolveDatabaseUrl(env: DatabaseEnv, data: Env): string {
   // If strict mode is on, fail fast when DATABASE_URL is missing
   const msgByEnv: Record<DatabaseEnv, string> = {
     development:
-      "Missing DATABASE_URL. Define it in .env.development (recommended) to enable strict mode.",
+      "Missing DATABASE_URL. Define it in .env.development.local (recommended) to enable strict mode.",
     production:
       "Missing DATABASE_URL. Define it in the production environment (recommended) to enable strict mode.",
-    test: "Missing DATABASE_URL. Define it in .env.test (recommended) to enable strict mode.",
+    test: "Missing DATABASE_URL. Define it in .env.test.local (recommended) to enable strict mode.",
   };
   if (data.STRICT_DATABASE_URL) {
     throw new Error(msgByEnv[env]);
@@ -78,10 +78,10 @@ function resolveDatabaseUrl(env: DatabaseEnv, data: Env): string {
   // Helpful error per env when not strict: suggest defining DATABASE_URL
   const msgByEnvNonStrict: Record<DatabaseEnv, string> = {
     development:
-      "Missing database URL. Define DATABASE_URL in .env.development.",
+      "Missing database URL. Define DATABASE_URL in .env.development.local.",
     production:
       "Missing database URL. Define DATABASE_URL in the production environment.",
-    test: "Missing database URL. Define DATABASE_URL in .env.test.",
+    test: "Missing database URL. Define DATABASE_URL in .env.test.local.",
   };
   throw new Error(msgByEnvNonStrict[env]);
 }

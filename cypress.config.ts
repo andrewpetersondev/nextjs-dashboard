@@ -7,8 +7,8 @@ export default defineConfig({
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {
-      // Ensure .env.test is loaded before reading env
-      dotenv.config({ path: ".env.test" });
+      // Ensure .env.test.local is loaded before reading env
+      dotenv.config({ path: ".env.test.local" });
       const env = await import("./node-only/config/env-node");
 
       config.baseUrl = env.CYPRESS_BASE_URL;
