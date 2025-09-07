@@ -10,9 +10,9 @@
     "drizzle-orm": "^0.44.5",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",
-    "next": "15.5.1-canary.26",
+    "next": "15.5.1-canary.31",
     "pg": "^8.16.3",
-    "pino": "^9.9.1",
+    "pino": "^9.9.4",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "server-only": "^0.0.1",
@@ -20,8 +20,8 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
-    "@tailwindcss/postcss": "^4.1.12",
+    "@biomejs/biome": "2.2.3",
+    "@tailwindcss/postcss": "^4.1.13",
     "@testing-library/cypress": "^10.1.0",
     "@types/node": "^24.3.1",
     "@types/pg": "^8.15.5",
@@ -34,7 +34,7 @@
     "drizzle-kit": "^0.31.4",
     "drizzle-seed": "^0.3.1",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^4.1.13",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "wait-on": "^8.0.4"

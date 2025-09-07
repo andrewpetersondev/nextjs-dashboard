@@ -9,20 +9,23 @@
 # Temporary
 
 # Testing & CLI
-# cypress.config.ts
-# cypress
-# node-only/cli
-# node-only/dev-support
-# node-only/seed-support
-# node-only/shared
-# node-only/test-support
+cypress.config.ts
+cypress
+node-only/cli
+node-only/dev-support
+node-only/seed-support
+node-only/shared
+node-only/test-support
 
 # Src
 # src/app
-# src/ui
+src/ui
 # src/features/auth
 # src/server/auth
 # src/shared/auth
+
+# Root
+biome.json
 
 # Project (General)
 .github
