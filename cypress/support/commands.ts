@@ -10,6 +10,9 @@ import { TWENTY_SECONDS } from "../e2e/shared/times";
 declare global {
   namespace Cypress {
     interface Chainable {
+      dbSeed(): Chainable<null>;
+      dbReset(): Chainable<null>;
+      dbResetAndSeed(): Chainable<null>;
       logEnv(): Chainable<void>;
       login(creds: LoginCreds): Chainable<void>;
       loginAsDemoAdmin(): Chainable<void>;
@@ -19,6 +22,20 @@ declare global {
     }
   }
 }
+
+Cypress.Commands.add("dbReset", () => {
+  return cy.task("db:reset") as Cypress.Chainable<null>;
+});
+
+Cypress.Commands.add("dbSeed", () => {
+  return cy.task("db:seed") as Cypress.Chainable<null>;
+});
+
+Cypress.Commands.add("dbResetAndSeed", () => {
+  return cy
+    .task("db:reset")
+    .then(() => cy.task("db:seed")) as Cypress.Chainable<null>;
+});
 
 Cypress.Commands.add("logEnv", () => {
   const env = Cypress.env();

@@ -3,18 +3,41 @@ import dotenv from "dotenv";
 
 export default defineConfig({
   e2e: {
+    // process.env variables are different from Cypress config/env.
+    // In tests, prefer using Cypress.env() and Cypress config values.
+    // .env.test.local is loaded in setupNodeEvents to override defaults.
+    // The baseUrl below is a fallback; set CYPRESS_BASE_URL in .env.test.local to override it.
     baseUrl: "http://localhost:3100",
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {
       // Ensure .env.test.local is loaded before reading env
       dotenv.config({ path: ".env.test.local" });
+
       const env = await import("./node-only/config/env-node");
 
+      // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
+      // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
       config.baseUrl = env.CYPRESS_BASE_URL;
       config.env.DATABASE_ENV = env.DATABASE_ENV;
       config.env.DATABASE_URL = env.DATABASE_URL;
       config.env.SESSION_SECRET = env.SESSION_SECRET;
+
+      // Small helper to DRY api-calls-based tasks
+      const callOkJson = async (path: string) => {
+        const url = new URL(path, config.baseUrl!).toString();
+        const res = await fetch(url, { method: "GET" });
+        const body = await res.json().catch(() => ({}));
+        if (
+          !res.ok ||
+          (body && typeof body === "object" && body.ok === false)
+        ) {
+          throw new Error(
+            `${path} failed: status=${res.status} body=${JSON.stringify(body)}`,
+          );
+        }
+        return null as null;
+      };
 
       // Database setup/teardown tasks
       on("task", {
@@ -42,18 +65,10 @@ export default defineConfig({
           return null;
         },
         async "db:reset"() {
-          const { resetCypressDb } = await import(
-            "./node-only/seed-support/reset"
-          );
-          await resetCypressDb();
-          return null;
+          return await callOkJson("/api/db/reset");
         },
         async "db:seed"() {
-          const { mainCypTestSeed } = await import(
-            "./node-only/seed-support/seed"
-          );
-          await mainCypTestSeed();
-          return null;
+          return await callOkJson("/api/db/seed");
         },
         async "db:setup"(user: {
           email: string;
