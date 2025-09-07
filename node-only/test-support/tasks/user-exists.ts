@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { nodeTestDb } from "../../cli/node-test-db";
 import { users } from "../../schema/users";
-import { firstRow } from "../../shared/pg-utils";
+import { firstRow } from "../../seed-support/pg-utils";
 
 /** Check if a user exists by email. */
 export async function userExists(email: string): Promise<boolean> {

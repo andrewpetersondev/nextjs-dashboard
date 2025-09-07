@@ -3,7 +3,7 @@ import { toUserId } from "@/shared/brands/mappers";
 import { nodeTestDb } from "../../cli/node-test-db";
 import { sessions } from "../../schema/sessions";
 import { users } from "../../schema/users";
-import { rowsOf } from "../../shared/pg-utils";
+import { rowsOf } from "../../seed-support/pg-utils";
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
 export async function cleanupE2EUsers(): Promise<void> {

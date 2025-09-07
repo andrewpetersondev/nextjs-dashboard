@@ -12,14 +12,20 @@
   --font-experiment: "Doto", sans-serif;
 
   /* === BASE COLORS === */
-  --color-text-primary: light-dark(var(--color-gray-800), var(--color-gray-100));
+  --color-text-primary: light-dark(
+    var(--color-gray-800),
+    var(--color-gray-100)
+  );
   --color-bg-primary: light-dark(var(--color-gray-100), var(--color-gray-950));
 
   --color-text-secondary: light-dark(
     var(--color-gray-600),
     var(--color-gray-400)
   );
-  --color-bg-secondary: light-dark(var(--color-gray-200), var(--color-gray-800));
+  --color-bg-secondary: light-dark(
+    var(--color-gray-200),
+    var(--color-gray-800)
+  );
 
   --color-text-accent: light-dark(var(--color-sky-700), var(--color-sky-300));
   --color-bg-accent: light-dark(var(--color-sky-200), var(--color-sky-800));

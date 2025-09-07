@@ -7,7 +7,7 @@ import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { sessions } from "../schema/sessions";
 import { users } from "../schema/users";
-import { firstRow } from "../shared/pg-utils";
+import { firstRow } from "../seed-support/pg-utils";
 
 /**
  * Check if all relevant tables are empty.
