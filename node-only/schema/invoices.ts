@@ -46,20 +46,25 @@ export const invoices = pgTable(
       .notNull()
       .$type<InvoiceStatus>(),
   },
-  (table) => [
-    // Integrity: amount must be non-negative
-    check("invoices_amount_non_negative", sql`${table.amount} >= 0`),
-    // Integrity: keep revenuePeriod aligned with date's month (first day)
-    check(
-      "invoices_revenue_period_matches_date",
-      sql`${table.revenuePeriod} = date_trunc('month', ${table.date})::date`,
-    ),
-    // Performance: efficient joins/filters
-    index("invoices_customer_id_idx").on(table.customerId),
-    index("invoices_revenue_period_idx").on(table.revenuePeriod),
-    // Helpful filter: by customer + status
-    index("invoices_customer_id_status_idx").on(table.customerId, table.status),
-  ],
+  (table) => {
+    return [
+      // Integrity: amount must be non-negative
+      check("invoices_amount_non_negative", sql`${table.amount} >= 0`),
+      // Integrity: keep revenuePeriod aligned with date's month (first day)
+      check(
+        "invoices_revenue_period_matches_date",
+        sql`${table.revenuePeriod} = date_trunc('month',${table.date})::date`,
+      ),
+      // Performance: efficient joins/filters
+      index("invoices_customer_id_idx").on(table.customerId),
+      index("invoices_revenue_period_idx").on(table.revenuePeriod),
+      // Helpful filter: by customer + status
+      index("invoices_customer_id_status_idx").on(
+        table.customerId,
+        table.status,
+      ),
+    ];
+  },
 );
 
 export const invoicesRelations = relations(invoices, ({ one }) => ({

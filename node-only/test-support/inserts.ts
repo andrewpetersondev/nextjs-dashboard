@@ -13,15 +13,14 @@ export async function insertRevenues(tx: Tx): Promise<void> {
     .values(
       periodDates.map((periodDate) => ({
         calculationSource: "seed" as const,
-        period: periodDate,
         invoiceCount: 0,
+        period: periodDate,
         totalAmount: 0,
         totalPaidAmount: 0,
         totalPendingAmount: 0,
       })),
     )
     .onConflictDoUpdate({
-      target: revenues.period,
       set: {
         calculationSource: "seed",
         invoiceCount: 0,
@@ -30,6 +29,7 @@ export async function insertRevenues(tx: Tx): Promise<void> {
         totalPendingAmount: 0,
         updatedAt: new Date(),
       },
+      target: revenues.period,
     });
 }
 
