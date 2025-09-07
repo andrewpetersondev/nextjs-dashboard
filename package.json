@@ -56,7 +56,7 @@
     "clean": "rimraf .next",
     "clean:all": "biome clean && rimraf .next node_modules",
     "cyp:e2e:headless": "pnpm e2e:run",
-    "cyp:open": "pnpm e2e:open",
+    "cyp:open": "pnpm env:test cypress open --e2e",
     "db:generate:migrate:dev": "pnpm env:dev drizzle-kit generate --config=node-only/cli/drizzle.config.ts && pnpm env:dev drizzle-kit migrate --config=node-only/cli/drizzle.config.ts",
     "db:generate:migrate:prod": "pnpm env:prod drizzle-kit generate --config=node-only/cli/drizzle.config.ts && pnpm env:prod drizzle-kit migrate --config=node-only/cli/drizzle.config.ts",
     "db:generate:migrate:test": "pnpm env:test drizzle-kit generate --config=node-only/cli/drizzle.config.ts && pnpm env:test drizzle-kit migrate --config=node-only/cli/drizzle.config.ts",
@@ -67,8 +67,6 @@
     "db:seed:prod": "pnpm env:prod tsx node-only/cli/seed-db.ts --config=node-only/cli/drizzle.config.ts",
     "db:seed:test": "pnpm env:test tsx node-only/cli/seed-db.ts --config=node-only/cli/drizzle.config.ts",
     "dev": "next dev --turbopack",
-    "e2e:ci": "sh -c 'pnpm clean && pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health:test && pnpm e2e:run; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'",
-    "e2e:open": "sh -c 'pnpm clean && pnpm build:test && (pnpm serve:test & echo $! > .server.pid) && pnpm wait:health:test && pnpm env:test cypress open --e2e; code=$?; if [ -f .server.pid ]; then kill $(cat .server.pid) 2>/dev/null || true; rm -f .server.pid; fi; exit $code'",
     "e2e:run": "pnpm env:test cypress run --e2e",
     "env:dev": "dotenv -e .env.development.local --",
     "env:prod": "dotenv -e .env.production.local --",
@@ -78,9 +76,7 @@
     "standalone": "pnpm clean && pnpm build && pnpm start:standalone",
     "start": "node .next/standalone/server.js",
     "start:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
-    "type:gen": "next typegen && tsc --noEmit",
-    "wait:health": "wait-on -t 120000 http://localhost:3100/",
-    "wait:health:test": "pnpm env:test wait-on -t 120000 http://localhost:$PORT/"
+    "type:gen": "next typegen && tsc --noEmit"
   },
   "type": "module",
   "version": "0.1.0"
