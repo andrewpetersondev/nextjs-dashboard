@@ -27,7 +27,8 @@ export async function RevenueChart(): Promise<JSX.Element> {
   const chartHeight = 350;
 
   const { yAxisLabels, topLabel } = generateYAxis(revenue);
-  const _scaleTop = topLabel || 1;
+  // Avoid division by zero when all data points are zero
+  const scaleTop = topLabel > 0 ? topLabel : 1;
 
   if (!revenue || revenue.length === 0) {
     return (
@@ -79,21 +80,21 @@ export async function RevenueChart(): Promise<JSX.Element> {
                     className="flex w-full flex-col justify-end overflow-hidden rounded-md"
                     data-cy="revenue-chart-bar-stack"
                     style={{
-                      height: `${(chartHeight / topLabel) * month.totalAmount}px`,
+                      height: `${(chartHeight / scaleTop) * month.totalAmount}px`,
                     }}
                   >
                     <div
                       className="w-full bg-bg-error"
                       data-cy="revenue-chart-bar-pending"
                       style={{
-                        height: `${(chartHeight / topLabel) * month.totalPendingAmount}px`,
+                        height: `${(chartHeight / scaleTop) * month.totalPendingAmount}px`,
                       }}
                     />
                     <div
                       className="w-full bg-bg-accent"
                       data-cy="revenue-chart-bar-paid"
                       style={{
-                        height: `${(chartHeight / topLabel) * month.totalPaidAmount}px`,
+                        height: `${(chartHeight / scaleTop) * month.totalPaidAmount}px`,
                       }}
                     />
                   </div>

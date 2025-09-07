@@ -1,0 +1,3 @@
+ALTER TABLE "revenues" ADD CONSTRAINT "revenues_total_paid_non_negative" CHECK ("revenues"."total_paid_amount" >= 0);--> statement-breakpoint
+ALTER TABLE "revenues" ADD CONSTRAINT "revenues_total_pending_non_negative" CHECK ("revenues"."total_pending_amount" >= 0);--> statement-breakpoint
+ALTER TABLE "revenues" ADD CONSTRAINT "revenues_paid_plus_pending_lte_total" CHECK ("revenues"."total_paid_amount" + "revenues"."total_pending_amount" <= "revenues"."total_amount");

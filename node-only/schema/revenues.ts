@@ -60,6 +60,19 @@ export const revenues = pgTable(
       "revenues_invoice_count_non_negative",
       sql`${table.invoiceCount} >= 0`,
     ),
+    check(
+      "revenues_total_paid_non_negative",
+      sql`${table.totalPaidAmount} >= 0`,
+    ),
+    check(
+      "revenues_total_pending_non_negative",
+      sql`${table.totalPendingAmount} >= 0`,
+    ),
+    // Paid + Pending must not exceed Total
+    check(
+      "revenues_paid_plus_pending_lte_total",
+      sql`${table.totalPaidAmount} + ${table.totalPendingAmount} <= ${table.totalAmount}`,
+    ),
   ],
 );
 
