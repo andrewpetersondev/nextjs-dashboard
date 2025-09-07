@@ -35,11 +35,16 @@ CREATE TABLE "revenues" (
 	"invoice_count" integer DEFAULT 0 NOT NULL,
 	"period" date NOT NULL,
 	"total_amount" bigint DEFAULT 0 NOT NULL,
+	"total_paid_amount" bigint DEFAULT 0 NOT NULL,
+	"total_pending_amount" bigint DEFAULT 0 NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "revenues_period_unique" UNIQUE("period"),
 	CONSTRAINT "revenues_period_is_first_of_month" CHECK (extract(day from "revenues"."period") = 1),
 	CONSTRAINT "revenues_total_amount_non_negative" CHECK ("revenues"."total_amount" >= 0),
-	CONSTRAINT "revenues_invoice_count_non_negative" CHECK ("revenues"."invoice_count" >= 0)
+	CONSTRAINT "revenues_invoice_count_non_negative" CHECK ("revenues"."invoice_count" >= 0),
+	CONSTRAINT "revenues_total_paid_non_negative" CHECK ("revenues"."total_paid_amount" >= 0),
+	CONSTRAINT "revenues_total_pending_non_negative" CHECK ("revenues"."total_pending_amount" >= 0),
+	CONSTRAINT "revenues_paid_plus_pending_lte_total" CHECK ("revenues"."total_paid_amount" + "revenues"."total_pending_amount" <= "revenues"."total_amount")
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (

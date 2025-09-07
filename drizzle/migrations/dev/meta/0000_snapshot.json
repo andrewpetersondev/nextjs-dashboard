@@ -1,5 +1,5 @@
 {
-  "id": "92f74cc3-7b5a-4c6b-aa43-9efb66e18d8a",
+  "id": "a31cf506-429d-46d3-9c05-3cf3b2cf1f22",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -284,6 +284,20 @@
           "notNull": true,
           "default": 0
         },
+        "total_paid_amount": {
+          "name": "total_paid_amount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "total_pending_amount": {
+          "name": "total_pending_amount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp with time zone",
@@ -317,6 +331,18 @@
         "revenues_invoice_count_non_negative": {
           "name": "revenues_invoice_count_non_negative",
           "value": "\"revenues\".\"invoice_count\" >= 0"
+        },
+        "revenues_total_paid_non_negative": {
+          "name": "revenues_total_paid_non_negative",
+          "value": "\"revenues\".\"total_paid_amount\" >= 0"
+        },
+        "revenues_total_pending_non_negative": {
+          "name": "revenues_total_pending_non_negative",
+          "value": "\"revenues\".\"total_pending_amount\" >= 0"
+        },
+        "revenues_paid_plus_pending_lte_total": {
+          "name": "revenues_paid_plus_pending_lte_total",
+          "value": "\"revenues\".\"total_paid_amount\" + \"revenues\".\"total_pending_amount\" <= \"revenues\".\"total_amount\""
         }
       },
       "isRLSEnabled": false
