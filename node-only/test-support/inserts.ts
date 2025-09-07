@@ -8,14 +8,29 @@ import type { Tx } from "./types";
 
 /** Insert revenues rows for each period. */
 export async function insertRevenues(tx: Tx): Promise<void> {
-  await tx.insert(revenues).values(
-    periodDates.map((periodDate) => ({
-      calculationSource: "seed" as const,
-      invoiceCount: 0,
-      period: periodDate,
-      totalAmount: 0,
-    })),
-  );
+  await tx
+    .insert(revenues)
+    .values(
+      periodDates.map((periodDate) => ({
+        calculationSource: "seed" as const,
+        period: periodDate,
+        invoiceCount: 0,
+        totalAmount: 0,
+        totalPaidAmount: 0,
+        totalPendingAmount: 0,
+      })),
+    )
+    .onConflictDoUpdate({
+      target: revenues.period,
+      set: {
+        calculationSource: "seed",
+        invoiceCount: 0,
+        totalAmount: 0,
+        totalPaidAmount: 0,
+        totalPendingAmount: 0,
+        updatedAt: new Date(),
+      },
+    });
 }
 
 /** Insert demo customers. */
