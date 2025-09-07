@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { nodeTestDb } from "../../cli/node-test-db";
+import { nodeDb } from "../../cli/node-db";
 import { sessions } from "../../schema/sessions";
 import { users } from "../../schema/users";
 import { hashPassword } from "../../seed-support/utils";
@@ -31,7 +31,7 @@ export async function upsertE2EUser(user: {
 
   const hashed = await hashPassword(user.password);
 
-  await nodeTestDb.transaction(async (tx) => {
+  await nodeDb.transaction(async (tx) => {
     const existing = await tx
       .select({ id: users.id })
       .from(users)

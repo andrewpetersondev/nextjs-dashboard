@@ -1,11 +1,11 @@
 import "server-only";
 
 import { NextResponse } from "next/server";
-import { devSeed } from "../../../../../node-only/cli/seed-dev-db";
+import { databaseSeed } from "../../../../../node-only/cli/seed-db";
 
 export async function GET() {
   try {
-    await devSeed();
+    await databaseSeed();
     return NextResponse.json({ action: "seed", ok: true });
   } catch (error) {
     console.error("Error seeding database:", error);

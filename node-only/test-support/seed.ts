@@ -1,4 +1,4 @@
-import { nodeTestDb } from "../cli/node-test-db";
+import { nodeDb } from "../cli/node-db";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
 import {
@@ -22,7 +22,7 @@ export async function mainCypTestSeed(): Promise<void> {
 
   const userSeed = await buildUserSeed();
 
-  await nodeTestDb.transaction(async (tx) => {
+  await nodeDb.transaction(async (tx) => {
     await insertRevenues(tx);
     await insertCustomers(tx);
     const existingCustomers = await fetchCustomerIds(tx);

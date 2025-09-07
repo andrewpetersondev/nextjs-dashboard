@@ -1,13 +1,13 @@
 import { inArray, sql } from "drizzle-orm";
 import { toUserId } from "@/shared/brands/mappers";
-import { nodeTestDb } from "../../cli/node-test-db";
+import { nodeDb } from "../../cli/node-db";
 import { sessions } from "../../schema/sessions";
 import { users } from "../../schema/users";
 import { rowsOf } from "../../seed-support/pg-utils";
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
 export async function cleanupE2EUsers(): Promise<void> {
-  const usersToDelete = await nodeTestDb.execute(sql`
+  const usersToDelete = await nodeDb.execute(sql`
     SELECT id FROM ${users}
     WHERE ${users.email} LIKE 'e2e_%' OR ${users.username} LIKE 'e2e_%'
   `);
@@ -22,7 +22,7 @@ export async function cleanupE2EUsers(): Promise<void> {
 
   const userIds = ids.map((id) => toUserId(id));
 
-  await nodeTestDb.transaction(async (tx) => {
+  await nodeDb.transaction(async (tx) => {
     await tx.delete(sessions).where(inArray(sessions.userId, userIds));
     await tx.delete(users).where(inArray(users.id, userIds));
   });

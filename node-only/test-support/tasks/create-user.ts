@@ -1,4 +1,4 @@
-import { nodeTestDb } from "../../cli/node-test-db";
+import { nodeDb } from "../../cli/node-db";
 import { users } from "../../schema/users";
 import { hashPassword } from "../../seed-support/utils";
 
@@ -21,5 +21,5 @@ export async function createUser(user: {
   const password = await hashPassword(user.password);
 
   console.log("createUser", { email, role, username });
-  await nodeTestDb.insert(users).values({ email, password, role, username });
+  await nodeDb.insert(users).values({ email, password, role, username });
 }

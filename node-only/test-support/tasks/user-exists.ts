@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { nodeTestDb } from "../../cli/node-test-db";
+import { nodeDb } from "../../cli/node-db";
 import { users } from "../../schema/users";
 import { firstRow } from "../../seed-support/pg-utils";
 
@@ -9,7 +9,7 @@ export async function userExists(email: string): Promise<boolean> {
     return false;
   }
 
-  const res = await nodeTestDb.execute(
+  const res = await nodeDb.execute(
     sql`SELECT EXISTS(SELECT 1 FROM ${users} WHERE ${users.email} = ${email}) AS v`,
   );
 
