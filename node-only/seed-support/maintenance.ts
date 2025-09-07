@@ -5,7 +5,7 @@ import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";
 import { revenues } from "../schema/revenues";
 import { users } from "../schema/users";
-import { firstRow } from "../seed-support/pg-utils";
+import { firstRow } from "./pg-utils";
 
 /**
  * Check if all relevant tables are empty.

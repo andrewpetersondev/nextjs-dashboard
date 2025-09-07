@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import { nodeDb } from "../../cli/node-db";
-import { sessions } from "../../schema/sessions";
-import { users } from "../../schema/users";
-import { hashPassword } from "../../seed-support/utils";
+import { nodeDb } from "../cli/node-db";
+import { sessions } from "../schema/sessions";
+import { users } from "../schema/users";
+import { hashPassword } from "../seed-support/utils";
 
 /** Upsert an E2E user and invalidate existing sessions. */
 export async function upsertE2EUser(user: {

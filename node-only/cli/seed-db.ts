@@ -10,8 +10,8 @@ import {
   insertCustomers,
   insertDemoCounters,
   insertRevenues,
-} from "../test-support/inserts";
-import { ensureResetOrEmpty } from "../test-support/maintenance";
+} from "../seed-support/inserts";
+import { ensureResetOrEmpty } from "../seed-support/maintenance";
 import { nodeDb } from "./node-db";
 
 /**

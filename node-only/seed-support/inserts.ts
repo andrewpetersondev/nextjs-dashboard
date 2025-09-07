@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { revenues } from "../schema/revenues";
-import { SEED_CONFIG } from "../seed-support/constants";
-import { customersData, periodDates, roles } from "../seed-support/seed-shared";
+import { SEED_CONFIG } from "./constants";
+import { customersData, periodDates, roles } from "./seed-shared";
 import type { Tx } from "./types";
 
 /** Insert revenues rows for each period. */

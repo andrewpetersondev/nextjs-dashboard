@@ -20,7 +20,7 @@ export default defineConfig({
       on("task", {
         async "db:cleanup"() {
           const { cleanupE2EUsers } = await import(
-            "./node-only/test-support/tasks/cleanup-e2e-users"
+            "./node-only/tasks/cleanup-e2e-users"
           );
           await cleanupE2EUsers();
           return null;
@@ -31,30 +31,26 @@ export default defineConfig({
           username: string;
           role?: "user" | "admin" | "guest";
         }) {
-          const { createUser } = await import(
-            "./node-only/test-support/tasks/create-user"
-          );
+          const { createUser } = await import("./node-only/tasks/create-user");
           await createUser(user);
           return null;
         },
 
         async "db:deleteUser"(email: string) {
-          const { deleteUser } = await import(
-            "./node-only/test-support/tasks/delete-user"
-          );
+          const { deleteUser } = await import("./node-only/tasks/delete-user");
           await deleteUser(email);
           return null;
         },
         async "db:reset"() {
           const { resetCypressDb } = await import(
-            "./node-only/test-support/reset"
+            "./node-only/seed-support/reset"
           );
           await resetCypressDb();
           return null;
         },
         async "db:seed"() {
           const { mainCypTestSeed } = await import(
-            "./node-only/test-support/seed"
+            "./node-only/seed-support/seed"
           );
           await mainCypTestSeed();
           return null;
@@ -66,15 +62,13 @@ export default defineConfig({
           role?: "user" | "admin" | "guest";
         }) {
           const { upsertE2EUser } = await import(
-            "./node-only/test-support/tasks/upsert-e2e-users"
+            "./node-only/tasks/upsert-e2e-users"
           );
           await upsertE2EUser(user);
           return null;
         },
         async "db:userExists"(email: string) {
-          const { userExists } = await import(
-            "./node-only/test-support/tasks/user-exists"
-          );
+          const { userExists } = await import("./node-only/tasks/user-exists");
           return userExists(email);
         },
       });

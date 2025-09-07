@@ -1,10 +1,7 @@
 import { nodeDb } from "../cli/node-db";
 import { invoices } from "../schema/invoices";
 import { users } from "../schema/users";
-import {
-  buildRandomInvoiceRows,
-  buildUserSeed,
-} from "../seed-support/builders";
+import { buildRandomInvoiceRows, buildUserSeed } from "./builders";
 import {
   aggregateRevenues,
   fetchCustomerIds,
