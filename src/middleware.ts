@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 
@@ -18,7 +19,7 @@ function normalizePath(p: string): string {
 function isPathUnder(path: string, prefix: string): boolean {
   return path === prefix || path.startsWith(`${prefix}/`);
 }
-// ... existing code ...
+
 export default async function middleware(req: NextRequest) {
   const path: string = normalizePath(req.nextUrl.pathname);
   const isProtectedRoute: boolean = isPathUnder(path, PROTECTED_PREFIX);
@@ -31,7 +32,8 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Retrieve and decode session only when needed
-  const cookie: string | undefined = req.cookies.get("session")?.value;
+  const cookie: string | undefined =
+    req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const session: DecryptPayload | undefined = await readSessionToken(cookie);
 
   // Admin-only routes
