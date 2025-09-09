@@ -1,64 +1,146 @@
-Here is a simple, production-ready `README.md` for your project root, following senior-level Next.js and TypeScript best practices. It documents the project purpose, structure, tech stack, and key conventions.
-
 # Next.js Dashboard
 
-A modern, production-ready dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS.
+A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
 
-## Features
+Last updated: 2025-09-08
 
-- Next.js v15+ (App Router, Server Components)
-- TypeScript v5+ with strict typing
-- Drizzle ORM v0.4+ and PostgreSQL v17+
-- Tailwind CSS v4+ for styling
-- Cypress v14.5+ for E2E and component testing
-- Hashicorp Vault for secrets management
-- Biome, ESLint, and Prettier for code quality
-- Turbopack for builds
-- GitHub Actions for CI/CD
+## Tech Stack
+
+- Next.js 15 (App Router, Server/Client Components)
+- React 19 + TypeScript 5 (strict)
+- Drizzle ORM (PostgreSQL)
+- Tailwind CSS v4
+- Cypress for E2E testing (with @testing-library/cypress and cypress-axe)
+- Biome and Prettier for formatting and checks
+- Turbopack for dev/build
+
+Note: ESLint is not used in this project, by design.
 
 ## Project Structure
 
 ```
 nextjs-dashboard/
-├── src/
+├── cypress/                # E2E specs and support
+├── docs/                   # Additional documentation
+├── drizzle/                # Generated SQL, migrations, meta
+├── node-only/cli/          # Drizzle config, CLI scripts for DB
+├── public/                 # Static assets
+├── src/                    # Application source
+│   ├── features/           # Feature-based components/screens
+│   ├── middleware.ts       # Route protection
+│   └── server/auth/        # Auth (session, hashing, constants)
 └── ...
 ```
 
+## Requirements
+
+- Node >= 24
+- PNPM >= 10.12
+- PostgreSQL (local or remote)
+
 ## Getting Started
 
-1. **Install dependencies:**
+1. Install dependencies
 
    ```sh
    pnpm install
    ```
 
-2. **Set up environment variables:**
-   - Copy `.env.example` to `.env.local` and configure as needed.
-   - Secrets are managed via Hashicorp Vault and injected as environment variables.
+2. Configure environment
 
-3. **Run the development server:**
+   Create environment files as needed (these are referenced by scripts):
+   - .env.development.local
+   - .env.test.local
+   - .env.production.local
 
-   ```sh
-   pnpm dev
-   ```
+   Typical variables (adapt to your setup):
+   - DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
+   - SESSION_SECRET=change-me
+   - NODE_ENV=development
 
-4. **Run tests:**
-   - Unit/Integration: `pnpm test`
-   - Cypress: `pnpm cypress open`
+3. Database: generate, migrate, seed
+
+   Run against your desired environment using dotenv-powered helpers:
+
+   - Development
+     ```sh
+     pnpm db:generate:migrate:dev
+     pnpm db:seed:dev
+     ```
+   - Test
+     ```sh
+     pnpm db:generate:migrate:test
+     pnpm db:seed:test
+     ```
+   - Production (ensure variables are set correctly)
+     ```sh
+     pnpm db:generate:migrate:prod
+     pnpm db:seed:prod
+     ```
+
+4. Start the app
+
+   - Development server (Turbopack):
+     ```sh
+     pnpm dev
+     ```
+   - Build + start (standalone):
+     ```sh
+     pnpm standalone
+     # or, if already built
+     pnpm start:standalone
+     ```
+
+## Testing
+
+- Build App:
+  ```sh
+  pnpm build:test
+  ```
+- Start App:
+  ```sh
+  pnpm serve:test
+  ```
+
+- Open Cypress (E2E):
+  ```sh
+  pnpm cyp:open
+  ```
+- Run Cypress headless (CI-friendly):
+  ```sh
+  pnpm cyp:e2e:headless
+  ```
+
+Accessibility checks via cypress-axe are integrated in tests where applicable.
+
+## Useful Scripts
+
+- Formatting and checks (Biome):
+  - "pnpm biome:format" — format code
+  - "pnpm biome:check" — run checks
+  - "pnpm biome:summary" — summary reporter
+- Clean builds:
+  - "pnpm clean" — remove .next
+  - "pnpm clean:all" — clean + node_modules (will require reinstall)
+- Env helpers (wrap commands with specific env files):
+  - env:dev, env:test, env:prod
+
+See package.json for the full list of scripts.
 
 ## Conventions
 
-- **TypeScript:** Use strict typing everywhere.
-- **Components:** Prefer server components; use client components only when necessary.
-- **Testing:** Use Cypress for E2E/component tests, Jest/Vitest for unit/integration.
-- **Secrets:** Never commit secrets. Use environment variables and Vault.
-- **Linting/Formatting:** Enforced via Biome, ESLint, and Prettier.
+- TypeScript: strict types everywhere; prefer inference but annotate boundaries.
+- Components: prefer Server Components; use Client Components when necessary (hooks, interactivity).
+- File/function sizing (project guidelines):
+  - Files ≤ 200 lines where practical.
+  - Functions ≤ 50 lines, ≤ 4 parameters, avoid excessive complexity.
+- Secrets: never commit; use environment variables. Vault is not required.
 
-## Documentation
+## Troubleshooting
 
-- See `src/README.md` and subfolder `README.md` files for detailed structure and conventions.
-- All public APIs and components are documented with TSDoc.
-
-## License
-
-MIT
+- Build uses Turbopack. If you hit unexpected behavior, try a clean build:
+  ```sh
+  pnpm clean && pnpm build
+  ```
+- Database issues: confirm DATABASE_URL and that migrations have run.
+- Auth issues: ensure SESSION_SECRET is set and consistent across processes.
