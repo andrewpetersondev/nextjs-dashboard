@@ -21,7 +21,7 @@ Note: ESLint is not used in this project, by design.
 ```
 nextjs-dashboard/
 ├── cypress/                # E2E specs and support
-├── docs/                   # Additional documentation
+├── docs/                   # Additional documentation (see docs/auth.md for auth flow)
 ├── drizzle/                # Generated SQL, migrations, meta
 ├── node-only/cli/          # Drizzle config, CLI scripts for DB
 ├── public/                 # Static assets
