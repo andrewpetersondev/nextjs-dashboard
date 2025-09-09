@@ -20,7 +20,6 @@ let encodedKey: Uint8Array | undefined;
 /**
  * Lazily retrieves and caches the session secret key as a Uint8Array.
  * @returns {<Uint8Array>} The encoded session secret key.
- * @throws If SESSION_SECRET is not defined.
  */
 const getEncodedKey = (): Uint8Array => {
   if (encodedKey) {
@@ -44,17 +43,12 @@ const getEncodedKey = (): Uint8Array => {
 
 /**
  * Encrypts a session payload into a JWT.
- * @param payload - The session payload to createSessionToken.
- * @returns {Promise<string>} The signed JWT.
- * @throws {ValidationError} If the payload is invalid.
  */
 export async function createSessionToken(
   payload: EncryptPayload,
 ): Promise<string> {
   const key = getEncodedKey();
-
   const validatedFields = EncryptPayloadSchema.safeParse(payload);
-
   if (!validatedFields.success) {
     serverLogger.error(
       {
@@ -71,16 +65,13 @@ export async function createSessionToken(
       >,
     );
   }
-
   const jwtPayload = flattenEncryptPayload(validatedFields.data);
-
   try {
     const token = await new SignJWT(jwtPayload)
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime(new Date(validatedFields.data.user.expiresAt))
       .sign(key);
-
     serverLogger.info(
       {
         context: "createSessionToken",
@@ -101,8 +92,6 @@ export async function createSessionToken(
 
 /**
  * Decrypts and validates a session JWT.
- * @param session - The JWT string to readSessionToken.
- * @returns {Promise<DecryptPayload | undefined>} The decrypted payload, or undefined if invalid.
  */
 export async function readSessionToken(
   session?: string,
@@ -114,24 +103,18 @@ export async function readSessionToken(
     );
     return;
   }
-
   const key = getEncodedKey();
-
   try {
     const { payload } = await jwtVerify(session, key, {
       algorithms: ["HS256"],
     });
-
     const reconstructed = unflattenEncryptPayload(payload);
-
     const withClaims = {
       ...reconstructed,
       exp: (payload.exp as number) ?? 0,
       iat: (payload.iat as number) ?? 0,
     };
-
     const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
-
     if (!validatedFields.success) {
       serverLogger.error(
         {
@@ -142,9 +125,7 @@ export async function readSessionToken(
       );
       return;
     }
-
     const data = validatedFields.data as unknown as DecryptPayload;
-
     serverLogger.debug(
       { context: "decrypt", userId: data.user.userId },
       "Session decrypted successfully",

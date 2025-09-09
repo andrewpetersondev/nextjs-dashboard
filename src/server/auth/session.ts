@@ -17,7 +17,6 @@ import type { AuthRole } from "@/shared/auth/types";
 
 /**
  * Deletes the session cookie.
- * @returns {Promise<void>}
  */
 export async function deleteSessionToken(): Promise<void> {
   const cookieStore = await cookies();
@@ -27,22 +26,16 @@ export async function deleteSessionToken(): Promise<void> {
 
 /**
  * Creates a new session cookie for the user.
- * @param userId - The user's unique identifier.
- * @param role - The user's role.
- * @returns {Promise<void>}
  */
 export async function setSessionToken(
   userId: string,
   role: AuthRole = "user",
 ): Promise<void> {
   const expiresAt: number = Date.now() + SESSION_DURATION_MS;
-
   const session: string = await createSessionToken({
     user: { expiresAt, role, userId },
   });
-
   const cookieStore = await cookies();
-
   cookieStore.set(SESSION_COOKIE_NAME, session, {
     expires: new Date(expiresAt),
     httpOnly: true,
@@ -50,7 +43,6 @@ export async function setSessionToken(
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });
-
   serverLogger.info(
     { context: "createSession", expiresAt, role, userId },
     `Session created for user ${userId} with role ${role}`,
@@ -59,11 +51,6 @@ export async function setSessionToken(
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
- *
- * - Reads the session cookie and attempts to readSessionToken it.
- * - Validates the presence of user information in the session.
- * - Redirects to `/login` if the session is missing or invalid.
- * - Returns an object containing authorization status, user ID, and role.
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
@@ -71,12 +58,18 @@ export const verifySessionOptimistic = cache(
       SESSION_COOKIE_NAME,
     )?.value;
     if (!cookie) {
-      console.error("No session cookie found");
+      serverLogger.warn(
+        { context: "verifySessionOptimistic" },
+        "No session cookie found",
+      );
       redirect(LOGIN_PATH);
     }
     const session: DecryptPayload | undefined = await readSessionToken(cookie);
     if (!session?.user?.userId) {
-      console.error("Invalid session or missing user information");
+      serverLogger.warn(
+        { context: "verifySessionOptimistic" },
+        "Invalid session or missing user information",
+      );
       redirect(LOGIN_PATH);
     }
     return {
@@ -87,50 +80,42 @@ export const verifySessionOptimistic = cache(
   },
 );
 
+export async function _updateSession(): Promise<void> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!session) {
+    return;
+  }
+  const payload = await readSessionToken(session);
+  if (!payload) {
+    return;
+  }
+  const expiresAt = Date.now() + SESSION_DURATION_MS;
+  cookieStore.set(SESSION_COOKIE_NAME, session, {
+    expires: new Date(expiresAt),
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+}
+
 // /**
 //  * Updates the session cookie's expiration if valid.
 //  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
 //  */
 // async function _updateSessionToken(): Promise<null | void> {
 //   const cookieStore = await cookies();
-//
 //   const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
-//
 //   const session = getCookieValue(rawCookie?.value);
-//
-//   if (!session) {
-//     logger.warn(
-//       { context: "updateSession" },
-//       "No session cookie found to update",
-//     );
-//     return null;
-//   }
-//
+//   if (!session) { return null; }
 //   const payload = await readSessionToken(session);
-//
-//   if (!payload?.user) {
-//     logger.warn(
-//       { context: "updateSession" },
-//       "Session payload invalid or missing user",
-//     );
-//     return null;
-//   }
-//
+//   if (!payload?.user) { return null; }
 //   const now = Date.now();
-//
 //   const expiration = new Date(payload.user.expiresAt).getTime();
-//
-//   if (now > expiration) {
-//     logger.info(
-//       { context: "updateSession", userId: payload.user.userId },
-//       "Session expired, not updating",
-//     );
-//     return null;
-//   }
-//
+//   if (now > expiration) { return null; }
 //   const { user } = payload;
 //   const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
-//
 //   const minimalPayload: EncryptPayload = {
 //     user: {
 //       expiresAt: newExpiration,
@@ -138,9 +123,7 @@ export const verifySessionOptimistic = cache(
 //       userId: user.userId,
 //     },
 //   };
-//
 //   const updatedToken = await createSessionToken(minimalPayload);
-//
 //   cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
 //     expires: new Date(newExpiration),
 //     httpOnly: true,
@@ -148,9 +131,4 @@ export const verifySessionOptimistic = cache(
 //     sameSite: "lax",
 //     secure: process.env.NODE_ENV === "production",
 //   });
-//
-//   logger.info(
-//     { context: "updateSession", newExpiration, userId: user.userId },
-//     "Session updated with new expiration",
-//   );
 // }
