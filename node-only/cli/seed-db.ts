@@ -1,5 +1,5 @@
 import { invoices } from "../schema/invoices";
-import { users } from "../schema/users";
+import { type NewUserRow, users } from "../schema/users";
 import {
   buildRandomInvoiceRows,
   buildUserSeed,
@@ -14,9 +14,9 @@ import {
 import { ensureResetOrEmpty } from "../seed-support/maintenance";
 import { nodeDb } from "./node-db";
 
-/**
- * Main seeding function.
- */
+console.log("seed-db.ts ...");
+
+/** Main seeding function */
 export async function databaseSeed(): Promise<void> {
   const proceed = await ensureResetOrEmpty();
   if (!proceed) {
@@ -34,18 +34,10 @@ export async function databaseSeed(): Promise<void> {
       await tx.insert(invoices).values(invoiceRows);
     }
     await insertDemoCounters(tx);
-    const userValues: (typeof users.$inferInsert)[] = userSeed.map((u) => ({
+    const userValues: NewUserRow[] = userSeed.map((u) => ({
       ...u,
     }));
     await tx.insert(users).values(userValues);
     await aggregateRevenues(tx);
   });
-
-  console.log("Database seeded successfully.");
 }
-
-// Execute seeding with proper error handling and process exit
-databaseSeed().catch((error) => {
-  console.error("Error seeding database:", error);
-  throw new Error("Error seeding database:", { cause: error });
-});

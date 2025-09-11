@@ -1,4 +1,5 @@
 import { reset } from "drizzle-seed";
+import { accounts } from "../schema/accounts";
 import { customers } from "../schema/customers";
 import { demoUserCounters } from "../schema/demo-users";
 import { invoices } from "../schema/invoices";
@@ -10,6 +11,7 @@ import { nodeDb } from "./node-db";
 console.log("reset-db.ts ...");
 
 const schema = {
+  accounts,
   customers,
   demoUserCounters,
   invoices,
@@ -18,15 +20,6 @@ const schema = {
   users,
 };
 
-async function main(): Promise<void> {
+export async function resetDatabase(): Promise<void> {
   await reset(nodeDb, schema);
 }
-
-// Fix: Handle floating promise with .catch for error logging
-main()
-  .then((): void => {
-    console.log("drizzle reset complete, tables remain, but values are gone");
-  })
-  .catch((error) => {
-    console.error("Error resetting Dev Database:", error);
-  });

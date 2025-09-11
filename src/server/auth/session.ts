@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/noProcessEnv: <fix later> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
 import "server-only";
 
 import { cookies } from "next/headers";

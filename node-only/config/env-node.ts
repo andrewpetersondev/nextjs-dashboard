@@ -7,7 +7,7 @@ import {
 const MIN_LENGTH = 20;
 
 const nodeToolingEnvSchema = z.object({
-  CYPRESS_BASE_URL: z.url(),
+  CYPRESS_BASE_URL: z.url().optional(),
   DATABASE_ENV: DatabaseEnvEnum,
   DATABASE_URL: z.url(),
   SESSION_SECRET: z

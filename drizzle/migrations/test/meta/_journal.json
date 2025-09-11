@@ -8,6 +8,13 @@
       "when": 1757249906262,
       "tag": "0000_glamorous_deathbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757580607413,
+      "tag": "0001_mighty_firelord",
+      "breakpoints": true
     }
   ]
 }

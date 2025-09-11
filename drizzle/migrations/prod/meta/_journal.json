@@ -8,6 +8,13 @@
       "when": 1757249851978,
       "tag": "0000_volatile_cloak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757580570062,
+      "tag": "0001_gorgeous_marvex",
+      "breakpoints": true
     }
   ]
 }

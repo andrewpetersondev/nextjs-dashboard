@@ -2,7 +2,7 @@ import { COMMON_SEL, INVOICES_SEL } from "../shared/selectors";
 
 const error = /invalid|must be/i;
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 describe("Update Invoice", () => {
   // You can replace this with your actual data factory or task
   // Prefer fast, deterministic seeds via cy.task to keep tests stable.

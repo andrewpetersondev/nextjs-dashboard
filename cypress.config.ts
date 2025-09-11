@@ -8,7 +8,7 @@ export default defineConfig({
     // In tests, prefer using Cypress.env() and Cypress config values.
     // .env.test.local is loaded in setupNodeEvents to override defaults.
     // The baseUrl below is a fallback; set CYPRESS_BASE_URL in .env.test.local to override it.
-    baseUrl: CYPRESS_BASE_URL,
+    baseUrl: CYPRESS_BASE_URL ?? "http://localhost:3000",
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {
@@ -19,14 +19,20 @@ export default defineConfig({
 
       // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
       // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
-      config.baseUrl = env.CYPRESS_BASE_URL;
+      config.baseUrl =
+        env.CYPRESS_BASE_URL ?? config.baseUrl ?? "http://localhost:3000";
       config.env.DATABASE_ENV = env.DATABASE_ENV;
       config.env.DATABASE_URL = env.DATABASE_URL;
       config.env.SESSION_SECRET = env.SESSION_SECRET;
 
       // Small helper to DRY api-calls-based tasks
       const callOkJson = async (path: string) => {
-        const url = new URL(path, config.baseUrl!).toString();
+        if (!config.baseUrl) {
+          throw new Error(
+            "Cypress baseUrl is not set. Provide CYPRESS_BASE_URL in .env.test.local (e.g., http://localhost:3000).",
+          );
+        }
+        const url = new URL(path, config.baseUrl).toString();
         const res = await fetch(url, { method: "GET" });
         const body = await res.json().catch(() => ({}));
         if (
