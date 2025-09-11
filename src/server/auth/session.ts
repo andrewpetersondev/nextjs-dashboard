@@ -13,9 +13,30 @@ import {
 import type { DecryptPayload } from "@/server/auth/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { LOGIN_PATH } from "@/shared/auth/constants";
-import { SESSION_DURATION_MS } from "@/shared/auth/sessions/constants";
+import {
+  ONE_SECOND_MS,
+  SESSION_DURATION_MS,
+  SESSION_REFRESH_THRESHOLD_MS,
+  THIRTY_DAYS_MS,
+} from "@/shared/auth/sessions/constants";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
+
+// Absolute max lifetime for a session regardless of rolling refreshes (default: 30 days)
+const MAX_ABSOLUTE_SESSION_MS = THIRTY_DAYS_MS; // 30d
+const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
+  SESSION_DURATION_MS / ONE_SECOND_MS,
+);
+
+// Build standard cookie options to avoid duplication
+const buildSessionCookieOptions = (expiresAtMs: number) => ({
+  expires: new Date(expiresAtMs),
+  httpOnly: true,
+  maxAge: ROLLING_COOKIE_MAX_AGE_S,
+  path: "/",
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+});
 
 /**
  * Deletes the session cookie.
@@ -23,7 +44,10 @@ import type { AuthRole } from "@/shared/auth/types";
 export async function deleteSessionToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
-  serverLogger.info({ context: "deleteSession" }, "Session cookie deleted");
+  serverLogger.info(
+    { context: "deleteSessionToken" },
+    "Session cookie deleted",
+  );
 }
 
 /**
@@ -38,15 +62,13 @@ export async function setSessionToken(
     user: { expiresAt, role, userId },
   });
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, session, {
-    expires: new Date(expiresAt),
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  cookieStore.set(
+    SESSION_COOKIE_NAME,
+    session,
+    buildSessionCookieOptions(expiresAt),
+  );
   serverLogger.info(
-    { context: "createSession", expiresAt, role, userId },
+    { context: "setSessionToken", expiresAt, role, userId },
     `Session created for user ${userId} with role ${role}`,
   );
 }
@@ -98,20 +120,46 @@ export async function updateSessionToken(): Promise<void> {
   if (!user?.userId) {
     return;
   }
+  const issuedAtSec: number = payload?.iat ?? 0;
+  const ageMs = issuedAtSec
+    ? Date.now() - issuedAtSec * ONE_SECOND_MS
+    : Number.POSITIVE_INFINITY;
+  if (!issuedAtSec || ageMs > MAX_ABSOLUTE_SESSION_MS) {
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    serverLogger.info(
+      {
+        ageMs,
+        context: "updateSessionToken",
+        maxMs: MAX_ABSOLUTE_SESSION_MS,
+        reason: "absolute_lifetime_exceeded",
+        userId: user.userId,
+      },
+      "Session not re-issued due to absolute lifetime limit; cookie deleted",
+    );
+    return;
+  }
+  // Skip refresh if there is sufficient time left before expiration
+  const expSec: number = payload?.exp ?? 0;
+  const timeLeftMs = expSec ? expSec * ONE_SECOND_MS - Date.now() : 0;
+  if (timeLeftMs > SESSION_REFRESH_THRESHOLD_MS) {
+    serverLogger.debug(
+      { context: "updateSessionToken", reason: "not_needed", timeLeftMs },
+      "Session re-issue skipped; sufficient time remaining",
+    );
+    return;
+  }
   const expiresAt: number = Date.now() + SESSION_DURATION_MS;
   const newToken: string = await createSessionToken({
     user: { expiresAt, role: user.role, userId: user.userId },
   });
-  cookieStore.set(SESSION_COOKIE_NAME, newToken, {
-    expires: new Date(expiresAt),
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  cookieStore.set(
+    SESSION_COOKIE_NAME,
+    newToken,
+    buildSessionCookieOptions(expiresAt),
+  );
   serverLogger.info(
     {
-      context: "updateSession",
+      context: "updateSessionToken",
       expiresAt,
       role: user.role,
       userId: user.userId,
