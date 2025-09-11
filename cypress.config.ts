@@ -1,5 +1,6 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
+import { CYPRESS_BASE_URL } from "./node-only/config/env-node";
 
 export default defineConfig({
   e2e: {
@@ -7,7 +8,7 @@ export default defineConfig({
     // In tests, prefer using Cypress.env() and Cypress config values.
     // .env.test.local is loaded in setupNodeEvents to override defaults.
     // The baseUrl below is a fallback; set CYPRESS_BASE_URL in .env.test.local to override it.
-    baseUrl: "http://localhost:3100",
+    baseUrl: CYPRESS_BASE_URL,
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {
