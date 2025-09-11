@@ -1,7 +1,5 @@
 import "server-only";
 
-// biome-ignore lint/correctness/noNodejsModules: <allowed because the file does not run in edge runtime or client>
-import { randomUUID } from "node:crypto";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/display";
 import type {
@@ -19,7 +17,7 @@ function makeDefaultRevenueEntity(p: Period): RevenueEntity {
   return {
     calculationSource: "template",
     createdAt: new Date(),
-    id: toRevenueId(randomUUID()),
+    id: toRevenueId(crypto.randomUUID()),
     invoiceCount: 0,
     period: toPeriod(p),
     totalAmount: 0,
