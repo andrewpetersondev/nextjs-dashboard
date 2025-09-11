@@ -23,7 +23,7 @@ let dbSingleton:
 /**
  * Explicit factory if you want to override the connection string at call time.
  */
-export function createNodeDb(connectionString: string) {
+function createNodeDb(connectionString: string) {
   if (!connectionString) {
     throw new Error("createNodeDb: empty connection string");
   }
@@ -36,7 +36,7 @@ export function createNodeDb(connectionString: string) {
 /**
  * Lazy singleton based on DATABASE_URL from env-node.
  */
-export function getNodeDb() {
+function getNodeDb() {
   if (!DATABASE_URL) {
     throw new Error("DATABASE_URL is not set.");
   }
