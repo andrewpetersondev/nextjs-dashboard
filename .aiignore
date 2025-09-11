@@ -8,12 +8,10 @@
 
 # Testing & CLI
 # cypress.config.ts
-# cypress
-# node-only/cli
-# node-only/dev-support
-# node-only/seed-support
-# node-only/shared
-# node-only/test-support
+cypress
+node-only/cli
+node-only/seed-support
+node-only/tasks
 
 # Src
 # src/app

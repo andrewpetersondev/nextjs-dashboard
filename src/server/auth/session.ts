@@ -57,9 +57,10 @@ export async function setSessionToken(
   userId: string,
   role: AuthRole = "user",
 ): Promise<void> {
-  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
+  const now = Date.now();
+  const expiresAt: number = now + SESSION_DURATION_MS;
   const session: string = await createSessionToken({
-    user: { expiresAt, role, userId },
+    user: { expiresAt, role, sessionStart: now, userId },
   });
   const cookieStore = await cookies();
   cookieStore.set(
@@ -109,9 +110,8 @@ export const verifySessionOptimistic = cache(
  * Must be called from server actions or route handlers.
  */
 export async function updateSessionToken(): Promise<void> {
-  const cookieStore = await cookies();
-  const current: string | undefined =
-    cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  const store = await cookies();
+  const current = store.get(SESSION_COOKIE_NAME)?.value;
   if (!current) {
     return;
   }
@@ -120,15 +120,15 @@ export async function updateSessionToken(): Promise<void> {
   if (!user?.userId) {
     return;
   }
-  const issuedAtSec: number = payload?.iat ?? 0;
-  const ageMs = issuedAtSec
-    ? Date.now() - issuedAtSec * ONE_SECOND_MS
-    : Number.POSITIVE_INFINITY;
-  if (!issuedAtSec || ageMs > MAX_ABSOLUTE_SESSION_MS) {
-    cookieStore.delete(SESSION_COOKIE_NAME);
+
+  const start = user.sessionStart;
+  const age =
+    typeof start === "number" ? Date.now() - start : Number.POSITIVE_INFINITY;
+  if (!start || age > MAX_ABSOLUTE_SESSION_MS) {
+    store.delete(SESSION_COOKIE_NAME);
     serverLogger.info(
       {
-        ageMs,
+        ageMs: age,
         context: "updateSessionToken",
         maxMs: MAX_ABSOLUTE_SESSION_MS,
         reason: "absolute_lifetime_exceeded",
@@ -138,9 +138,9 @@ export async function updateSessionToken(): Promise<void> {
     );
     return;
   }
-  // Skip refresh if there is sufficient time left before expiration
-  const expSec: number = payload?.exp ?? 0;
-  const timeLeftMs = expSec ? expSec * ONE_SECOND_MS - Date.now() : 0;
+
+  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
+  const timeLeftMs = expMs - Date.now();
   if (timeLeftMs > SESSION_REFRESH_THRESHOLD_MS) {
     serverLogger.debug(
       { context: "updateSessionToken", reason: "not_needed", timeLeftMs },
@@ -148,15 +148,17 @@ export async function updateSessionToken(): Promise<void> {
     );
     return;
   }
-  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
-  const newToken: string = await createSessionToken({
-    user: { expiresAt, role: user.role, userId: user.userId },
+
+  const expiresAt = Date.now() + SESSION_DURATION_MS;
+  const token = await createSessionToken({
+    user: {
+      expiresAt,
+      role: user.role,
+      sessionStart: start,
+      userId: user.userId,
+    },
   });
-  cookieStore.set(
-    SESSION_COOKIE_NAME,
-    newToken,
-    buildSessionCookieOptions(expiresAt),
-  );
+  store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
   serverLogger.info(
     {
       context: "updateSessionToken",

@@ -9,7 +9,10 @@ import {
   SESSION_SECRET,
 } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { MIN_HS256_KEY_LENGTH } from "@/shared/auth/sessions/constants";
+import {
+  CLOCK_TOLERANCE_SEC,
+  MIN_HS256_KEY_LENGTH,
+} from "@/shared/auth/sessions/constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
@@ -56,31 +59,26 @@ const getEncodedKey = (): Uint8Array => {
 };
 
 /**
- * Encrypts a session payload into a JWT.
+ * Signs a session payload into a JWT.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function createSessionToken(
   payload: EncryptPayload,
 ): Promise<string> {
   const key = getEncodedKey();
-  const validatedFields = EncryptPayloadSchema.safeParse(payload);
-  if (!validatedFields.success) {
+  const parsed = EncryptPayloadSchema.safeParse(payload);
+  if (!parsed.success) {
+    const errs = parsed.error.flatten().fieldErrors;
     serverLogger.error(
-      {
-        context: "createSessionToken",
-        err: validatedFields.error.flatten().fieldErrors,
-      },
+      { context: "createSessionToken", err: errs },
       "JWT signing failed: invalid session payload",
     );
     throw new ValidationError(
       "Invalid session payload: Missing or invalid required fields",
-      validatedFields.error.flatten().fieldErrors as unknown as Record<
-        string,
-        unknown
-      >,
+      errs as unknown as Record<string, unknown>,
     );
   }
-  // Defensive: do not issue tokens that are already expired or expiring immediately.
-  const expMs = validatedFields.data.user.expiresAt;
+  const { expiresAt: expMs, sessionStart: startMs } = parsed.data.user;
   if (expMs <= Date.now()) {
     serverLogger.error(
       { context: "createSessionToken", expiresAt: expMs },
@@ -88,17 +86,34 @@ export async function createSessionToken(
     );
     throw new ValidationError(
       "Invalid session payload: expiresAt must be in the future",
+      { expiresAt: ["must be in the future"] } as unknown as Record<
+        string,
+        unknown
+      >,
+    );
+  }
+  if (startMs <= 0 || startMs > expMs) {
+    serverLogger.error(
       {
-        expiresAt: ["must be in the future"],
+        context: "createSessionToken",
+        expiresAt: expMs,
+        sessionStart: startMs,
+      },
+      "JWT signing blocked: sessionStart must be positive and not exceed expiresAt",
+    );
+    throw new ValidationError(
+      "Invalid session payload: sessionStart must be positive and not exceed expiresAt",
+      {
+        sessionStart: ["must be positive and less than or equal to expiresAt"],
       } as unknown as Record<string, unknown>,
     );
   }
-  const jwtPayload = flattenEncryptPayload(validatedFields.data);
+  const claims = flattenEncryptPayload(parsed.data);
   try {
-    let signer = new SignJWT(jwtPayload)
+    let signer = new SignJWT(claims)
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setIssuedAt()
-      .setExpirationTime(new Date(validatedFields.data.user.expiresAt));
+      .setExpirationTime(new Date(expMs));
     if (SESSION_ISSUER) {
       signer = signer.setIssuer(SESSION_ISSUER);
     }
@@ -109,15 +124,15 @@ export async function createSessionToken(
     serverLogger.info(
       {
         context: "createSessionToken",
-        role: jwtPayload.role,
-        userId: jwtPayload.userId,
+        role: claims.role,
+        userId: claims.userId,
       },
       "Session JWT created",
     );
     return token;
-  } catch (error: unknown) {
+  } catch (err: unknown) {
     serverLogger.error(
-      { context: "createSessionToken", err: error },
+      { context: "createSessionToken", err },
       "JWT signing failed",
     );
     throw new Error("Failed to sign session token");
@@ -125,7 +140,7 @@ export async function createSessionToken(
 }
 
 /**
- * Decrypts and validates a session JWT.
+ * Verifies and validates a session JWT.
  */
 export async function readSessionToken(
   session?: string,
@@ -142,7 +157,7 @@ export async function readSessionToken(
     const verifyOptions: Parameters<typeof jwtVerify>[2] = {
       algorithms: ["HS256"],
       audience: SESSION_AUDIENCE,
-      clockTolerance: "5s",
+      clockTolerance: CLOCK_TOLERANCE_SEC,
       issuer: SESSION_ISSUER,
     };
     const { payload } = await jwtVerify(session, key, verifyOptions);

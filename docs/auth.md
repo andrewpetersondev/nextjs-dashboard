@@ -2,7 +2,7 @@
 
 This document describes how auth works in this project: session creation, cookie settings, route protection, roles, and redirects.
 
-Last updated: 2025-09-08
+Last updated: 2025-09-11
 
 ## Overview
 
@@ -27,7 +27,8 @@ Last updated: 2025-09-08
     user: {
       userId: string,
       role: "user" | "admin",
-      expiresAt: number // epoch ms
+      expiresAt: number, // epoch ms (maps to JWT exp)
+      sessionStart: number, // epoch ms (immutable; set at login)
     }
   }
   ```
@@ -36,7 +37,7 @@ Last updated: 2025-09-08
   - `httpOnly: true`
   - `path: "/"`
   - `sameSite: "lax"`
-  - `secure: DATABASE_ENV === "production"`
+  - `secure: NODE_ENV === "production"`
 - Deletion: `deleteSessionToken()` removes the cookie.
 
 ## Login Flow
@@ -96,7 +97,9 @@ File: `src/middleware.ts`
   - `DATABASE_ENV` influences `secure` flag for cookies in `setSessionToken`.
   - `NODE_ENV` is used across build/runtime; Turbopack for dev/build.
 - Session lifetime
-  - `SESSION_DURATION_MS` controls absolute expiration.
+  - `SESSION_DURATION_MS` controls token time-to-live (TTL).
+  - Tokens are re-issued (rolling) when time-to-expiration is at or below 5 minutes.
+  - An absolute session lifetime of 30 days is enforced via an immutable `sessionStart` claim; once exceeded, the cookie is deleted and the user must re-authenticate.
 
 ## Security Notes
 

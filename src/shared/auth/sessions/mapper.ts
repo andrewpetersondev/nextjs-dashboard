@@ -10,6 +10,7 @@ export function flattenEncryptPayload(
   return {
     expiresAt: payload.user.expiresAt,
     role: payload.user.role,
+    sessionStart: payload.user.sessionStart,
     userId: payload.user.userId,
   };
 }
@@ -24,6 +25,7 @@ export function unflattenEncryptPayload(
     user: {
       expiresAt: payload.expiresAt as number,
       role: payload.role as AuthRole,
+      sessionStart: payload.sessionStart as number,
       userId: payload.userId as string,
     },
   };

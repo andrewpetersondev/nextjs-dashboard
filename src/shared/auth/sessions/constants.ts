@@ -20,6 +20,7 @@ export const SESSION_REFRESH_THRESHOLD_MS = FIVE_MINUTES_MS;
 
 // Minimum length of a HS256 key.
 export const MIN_HS256_KEY_LENGTH = 32 as const;
+export const CLOCK_TOLERANCE_SEC = 5 as const;
 
 // 30 days.
 export const THIRTY_DAYS = 30 as const;
