@@ -4,7 +4,7 @@
  * - Defaults to "info" in production builds, "warn" otherwise.
  */
 
-import { IS_PROD, PUBLIC_ENV } from "@/shared/config/env-public";
+import { IS_PROD, NEXT_PUBLIC_LOG_LEVEL } from "@/shared/config/env-public";
 import type { LogLevel } from "./log-level";
 
 /**
@@ -12,5 +12,5 @@ import type { LogLevel } from "./log-level";
  */
 export function getLogLevel(): LogLevel {
   const defaultLevel: LogLevel = IS_PROD ? "info" : "warn";
-  return (PUBLIC_ENV.LOG_LEVEL as LogLevel | undefined) ?? defaultLevel;
+  return (NEXT_PUBLIC_LOG_LEVEL as LogLevel | undefined) ?? defaultLevel;
 }
