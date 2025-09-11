@@ -80,55 +80,40 @@ export const verifySessionOptimistic = cache(
   },
 );
 
-export async function _updateSession(): Promise<void> {
+/**
+ * Re-issues the session JWT and updates the cookie if the current token is valid.
+ * Must be called from server actions or route handlers.
+ */
+export async function updateSessionToken(): Promise<void> {
   const cookieStore = await cookies();
-  const session = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!session) {
+  const current: string | undefined =
+    cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  if (!current) {
     return;
   }
-  const payload = await readSessionToken(session);
-  if (!payload) {
+  const payload: DecryptPayload | undefined = await readSessionToken(current);
+  const user = payload?.user;
+  if (!user?.userId) {
     return;
   }
-  const expiresAt = Date.now() + SESSION_DURATION_MS;
-  cookieStore.set(SESSION_COOKIE_NAME, session, {
+  const expiresAt: number = Date.now() + SESSION_DURATION_MS;
+  const newToken: string = await createSessionToken({
+    user: { expiresAt, role: user.role, userId: user.userId },
+  });
+  cookieStore.set(SESSION_COOKIE_NAME, newToken, {
     expires: new Date(expiresAt),
     httpOnly: true,
     path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });
+  serverLogger.info(
+    {
+      context: "updateSession",
+      expiresAt,
+      role: user.role,
+      userId: user.userId,
+    },
+    "Session token re-issued",
+  );
 }
-
-// /**
-//  * Updates the session cookie's expiration if valid.
-//  * @returns {Promise<null | void>} Null if session is missing/expired, otherwise void.
-//  */
-// async function _updateSessionToken(): Promise<null | void> {
-//   const cookieStore = await cookies();
-//   const rawCookie = cookieStore.get(SESSION_COOKIE_NAME);
-//   const session = getCookieValue(rawCookie?.value);
-//   if (!session) { return null; }
-//   const payload = await readSessionToken(session);
-//   if (!payload?.user) { return null; }
-//   const now = Date.now();
-//   const expiration = new Date(payload.user.expiresAt).getTime();
-//   if (now > expiration) { return null; }
-//   const { user } = payload;
-//   const newExpiration = new Date(expiration + ONE_DAY_MS).getTime();
-//   const minimalPayload: EncryptPayload = {
-//     user: {
-//       expiresAt: newExpiration,
-//       role: user.role,
-//       userId: user.userId,
-//     },
-//   };
-//   const updatedToken = await createSessionToken(minimalPayload);
-//   cookieStore.set(SESSION_COOKIE_NAME, updatedToken, {
-//     expires: new Date(newExpiration),
-//     httpOnly: true,
-//     path: "/",
-//     sameSite: "lax",
-//     secure: process.env.NODE_ENV === "production",
-//   });
-// }
