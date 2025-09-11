@@ -35,7 +35,7 @@ const schema = {
 
 // Database instance type with strongly-typed schema
 export type Database = NodePgDatabase<typeof schema> & {
-  $client: NodePgClient;
+  readonly $client: NodePgClient;
 };
 
 /**
