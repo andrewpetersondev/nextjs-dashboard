@@ -14,6 +14,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import { accounts } from "../../../node-only/schema/accounts";
 import { customers } from "../../../node-only/schema/customers";
 import { demoUserCounters } from "../../../node-only/schema/demo-users";
 import { invoices } from "../../../node-only/schema/invoices";
@@ -23,6 +24,7 @@ import { users } from "../../../node-only/schema/users";
 import { DATABASE_URL } from "../config/env-next";
 
 const schema = {
+  accounts,
   customers,
   demoUserCounters,
   invoices,
