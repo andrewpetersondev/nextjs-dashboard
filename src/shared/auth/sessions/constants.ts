@@ -10,12 +10,14 @@ export const ONE_MINUTE_MS = SECONDS_PER_MINUTE * ONE_SECOND_MS;
 export const ONE_HOUR_MS = MINUTES_PER_HOUR * ONE_MINUTE_MS;
 export const ONE_DAY_MS = HOURS_PER_DAY * ONE_HOUR_MS;
 
-// Session duration in milliseconds (1 hour).
-export const SESSION_DURATION_MS = ONE_HOUR_MS;
+// Session duration tuned for ~20s rolling refresh cadence.
+// We set duration to 25s and refresh when <= 5s remain; the refresher pings every ~20s.
+export const SESSION_DURATION_MS = 25 * ONE_SECOND_MS;
 
-// Re-issue token only if time-to-expiration is at or below this threshold (5 minutes)
+// Re-issue token only if time-to-expiration is at or below this threshold (5 seconds)
 export const FIVE_MINUTES = 5 as const;
 export const FIVE_MINUTES_MS = FIVE_MINUTES * ONE_MINUTE_MS;
+// For 20s cadence, lower the refresh threshold to 5 seconds.
 export const SESSION_REFRESH_THRESHOLD_MS = FIVE_MINUTES_MS;
 
 // Minimum length of a HS256 key.
@@ -27,5 +29,16 @@ export const THIRTY_DAYS = 30 as const;
 // 30 days in milliseconds.
 export const THIRTY_DAYS_MS = THIRTY_DAYS * ONE_DAY_MS;
 
-// Refresh token duration in milliseconds (5 minutes).
-export const REFRESH_TOKEN_DURATION_MS = FIVE_MINUTES_MS;
+// Client refresher cadence and timing controls (centralized here for easy tuning)
+export const SESSION_REFRESH_PING_MS = 20 * ONE_SECOND_MS; // base interval for client pings
+export const SESSION_KICKOFF_TIMEOUT_MS = 1500; // initial delay before first ping
+export const SESSION_REFRESH_JITTER_MS = 1000; // random jitter to avoid lockstep across tabs
+
+// Absolute max lifetime for a session regardless of rolling refreshes (default: 30 days)
+export const MAX_ABSOLUTE_SESSION_MS = THIRTY_DAYS_MS;
+
+// Rolling cookie maxAge in seconds, derived from session duration.
+// Many frameworks expect cookie maxAge in seconds.
+export const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
+  SESSION_DURATION_MS / ONE_SECOND_MS,
+);

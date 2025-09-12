@@ -1,15 +1,38 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { FIVE_MINUTES_MS } from "@/shared/auth/sessions/constants";
+import {
+  SESSION_KICKOFF_TIMEOUT_MS,
+  SESSION_REFRESH_JITTER_MS,
+  SESSION_REFRESH_PING_MS,
+} from "@/shared/auth/sessions/constants";
 
 const ENDPOINT = "/api/auth/refresh";
-// Base cadence to check for refresh opportunities.
-const INTERVAL_MS = FIVE_MINUTES_MS;
+// Base cadence to check for refresh opportunities (20 seconds).
+const INTERVAL_MS = SESSION_REFRESH_PING_MS;
 // Small startup delay to avoid racing the initial page load.
-const kickoffTimeout = 1500;
+const kickoffTimeout = SESSION_KICKOFF_TIMEOUT_MS;
 // Add a small random jitter so multiple tabs don’t sync up perfectly.
-const JITTER_MS = 1000;
+const JITTER_MS = SESSION_REFRESH_JITTER_MS;
+
+type RefreshOutcome =
+  | { refreshed: false; reason: "no_cookie" }
+  | { refreshed: false; reason: "invalid_or_missing_user" }
+  | {
+      refreshed: false;
+      reason: "absolute_lifetime_exceeded";
+      ageMs: number;
+      maxMs: number;
+      userId?: string;
+    }
+  | { refreshed: false; reason: "not_needed"; timeLeftMs: number }
+  | {
+      refreshed: true;
+      reason: "rotated";
+      expiresAt: number;
+      userId: string;
+      role: string;
+    };
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export function SessionRefresh(): null {
@@ -30,7 +53,6 @@ export function SessionRefresh(): null {
       }
       if (
         typeof navigator !== "undefined" &&
-        navigator &&
         "onLine" in navigator &&
         !navigator.onLine
       ) {
@@ -39,11 +61,24 @@ export function SessionRefresh(): null {
 
       inFlightRef.current = true;
       try {
-        await fetch(ENDPOINT, {
+        const res = await fetch(ENDPOINT, {
           cache: "no-store",
           credentials: "include",
           method: "POST",
         });
+
+        // Backward-compat: older servers may still send 204.
+        if (res.status === 204) {
+          return;
+        }
+
+        const ct = res.headers.get("content-type") ?? "";
+        if (res.ok && ct.includes("application/json")) {
+          const outcome = (await res.json()) as RefreshOutcome;
+          if (process.env.NODE_ENV === "development") {
+            console.debug("[session-refresh] outcome:", outcome);
+          }
+        }
       } catch {
         // Ignore transient network errors
       } finally {
@@ -68,7 +103,6 @@ export function SessionRefresh(): null {
     );
 
     const onFocus = (): void => {
-      // Only attempt on focus when page is visible and no request is active.
       if (!document.hidden && !inFlightRef.current) {
         void ping();
       }
