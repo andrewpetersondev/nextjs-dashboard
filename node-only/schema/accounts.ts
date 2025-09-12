@@ -32,7 +32,6 @@ export const accounts = pgTable(
         columns: [account.provider, account.providerAccountId],
       }),
     },
-    // ... existing code ...
     index("account_user_id_idx").on(account.userId),
   ],
 );

@@ -69,6 +69,7 @@
     "db:seed:dev": "pnpm env:dev tsx node-only/cli/seed-cli.ts --config=node-only/cli/drizzle.config.ts",
     "db:seed:prod": "pnpm env:prod tsx node-only/cli/seed-cli.ts --config=node-only/cli/drizzle.config.ts",
     "db:seed:test": "pnpm env:test tsx node-only/cli/seed-cli.ts --config=node-only/cli/drizzle.config.ts",
+    "db:studio:dev": "pnpm env:dev drizzle-kit studio --config=node-only/cli/drizzle.config.ts",
     "dev": "next dev --turbopack",
     "e2e:run": "pnpm env:test cypress run --e2e",
     "env:dev": "dotenv -e .env.development.local --",
