@@ -27,7 +27,7 @@ let encodedKey: Uint8Array | undefined;
 
 /**
  * Lazily retrieves and caches the session secret key as a Uint8Array.
- * @returns {<Uint8Array>} The encoded session secret key.
+ * @returns {Uint8Array} The encoded session secret key.
  */
 const getEncodedKey = (): Uint8Array => {
   if (encodedKey) {
@@ -59,13 +59,9 @@ const getEncodedKey = (): Uint8Array => {
 };
 
 /**
- * Signs a session payload into a JWT.
+ * Parses and validates the session payload against schema or throws.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-export async function createSessionToken(
-  payload: EncryptPayload,
-): Promise<string> {
-  const key = getEncodedKey();
+const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);
   if (!parsed.success) {
     const errs = parsed.error.flatten().fieldErrors;
@@ -78,8 +74,12 @@ export async function createSessionToken(
       errs as unknown as Record<string, unknown>,
     );
   }
-  const { expiresAt: expMs, sessionStart: startMs } = parsed.data.user;
-  if (expMs <= Date.now()) {
+  return parsed.data;
+};
+
+const validateTemporalFields = (expMs: number, startMs: number): void => {
+  const now = Date.now();
+  if (expMs <= now) {
     serverLogger.error(
       { context: "createSessionToken", expiresAt: expMs },
       "JWT signing blocked: expiresAt must be in the future",
@@ -108,7 +108,13 @@ export async function createSessionToken(
       } as unknown as Record<string, unknown>,
     );
   }
-  const claims = flattenEncryptPayload(parsed.data);
+};
+
+const signClaims = async (
+  claims: Record<string, unknown>,
+  key: Uint8Array,
+  expMs: number,
+): Promise<string> => {
   try {
     let signer = new SignJWT(claims)
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
@@ -124,8 +130,8 @@ export async function createSessionToken(
     serverLogger.info(
       {
         context: "createSessionToken",
-        role: claims.role,
-        userId: claims.userId,
+        role: (claims as Record<string, unknown>).role,
+        userId: (claims as Record<string, unknown>).userId,
       },
       "Session JWT created",
     );
@@ -137,11 +143,31 @@ export async function createSessionToken(
     );
     throw new Error("Failed to sign session token");
   }
-}
+};
 
 /**
- * Verifies and validates a session JWT.
+ * Build verification options for jwtVerify with minimal precise typing.
  */
+const buildVerifyOptions = (): Parameters<typeof jwtVerify>[2] => {
+  return {
+    algorithms: ["HS256"],
+    clockTolerance: CLOCK_TOLERANCE_SEC,
+    ...(SESSION_AUDIENCE ? { audience: SESSION_AUDIENCE } : {}),
+    ...(SESSION_ISSUER ? { issuer: SESSION_ISSUER } : {}),
+  } satisfies Parameters<typeof jwtVerify>[2];
+};
+
+export async function createSessionToken(
+  payload: EncryptPayload,
+): Promise<string> {
+  const key = getEncodedKey();
+  const data = parsePayloadOrThrow(payload);
+  const { expiresAt: expMs, sessionStart: startMs } = data.user;
+  validateTemporalFields(expMs, startMs);
+  const claims = flattenEncryptPayload(data);
+  return await signClaims(claims, key, expMs);
+}
+
 export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
@@ -154,12 +180,7 @@ export async function readSessionToken(
   }
   const key = getEncodedKey();
   try {
-    const verifyOptions: Parameters<typeof jwtVerify>[2] = {
-      algorithms: ["HS256"],
-      audience: SESSION_AUDIENCE,
-      clockTolerance: CLOCK_TOLERANCE_SEC,
-      issuer: SESSION_ISSUER,
-    };
+    const verifyOptions = buildVerifyOptions();
     const { payload } = await jwtVerify(session, key, verifyOptions);
     const reconstructed = unflattenEncryptPayload(payload);
     const withClaims = {

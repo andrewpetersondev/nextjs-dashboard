@@ -26,3 +26,6 @@ export const CLOCK_TOLERANCE_SEC = 5 as const;
 export const THIRTY_DAYS = 30 as const;
 // 30 days in milliseconds.
 export const THIRTY_DAYS_MS = THIRTY_DAYS * ONE_DAY_MS;
+
+// Refresh token duration in milliseconds (5 minutes).
+export const REFRESH_TOKEN_DURATION_MS = FIVE_MINUTES_MS;
