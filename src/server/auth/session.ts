@@ -23,8 +23,6 @@ import {
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
 
-// ... existing code ...
-
 // Build standard cookie options to avoid duplication
 const buildSessionCookieOptions = (expiresAtMs: number) => ({
   expires: new Date(expiresAtMs),
