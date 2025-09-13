@@ -4,31 +4,18 @@ import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
 import { ROLES } from "@/shared/auth/domain/roles";
 import {
-  ADMIN_PREFIX,
-  EXCLUDED_PATHS_MATCHER,
-  PROTECTED_PREFIX,
-  PUBLIC_ROUTES,
+  isAdminRoute as isAdminRouteHelper,
+  isProtectedRoute as isProtectedRouteHelper,
+  isPublicRoute as isPublicRouteHelper,
+  normalizePath,
   ROUTES,
 } from "@/shared/constants/routes";
 
-// Normalize path by removing trailing slash (except root)
-function normalizePath(p: string): string {
-  if (p.length > 1 && p.endsWith("/")) {
-    return p.slice(0, -1);
-  }
-  return p;
-}
-
-// Segment-aware prefix check: matches exact prefix or prefix + "/"
-function isPathUnder(path: string, prefix: string): boolean {
-  return path === prefix || path.startsWith(`${prefix}/`);
-}
-
 export default async function middleware(req: NextRequest) {
   const path: string = normalizePath(req.nextUrl.pathname);
-  const isProtectedRoute: boolean = isPathUnder(path, PROTECTED_PREFIX);
-  const isAdminRoute: boolean = isPathUnder(path, ADMIN_PREFIX);
-  const isPublicRoute: boolean = PUBLIC_ROUTES.has(path);
+  const isProtectedRoute: boolean = isProtectedRouteHelper(path);
+  const isAdminRoute: boolean = isAdminRouteHelper(path);
+  const isPublicRoute: boolean = isPublicRouteHelper(path);
 
   // If route is not relevant for auth, skip work early (avoid cookie/session reads)
   if (!isProtectedRoute && !isAdminRoute && !isPublicRoute) {
@@ -58,11 +45,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Public routes: bounce authenticated users to dashboard
-  if (
-    isPublicRoute &&
-    session?.user?.userId &&
-    !isPathUnder(path, PROTECTED_PREFIX)
-  ) {
+  if (isPublicRoute && session?.user?.userId && !isProtectedRouteHelper(path)) {
     return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
   }
 
@@ -71,6 +54,7 @@ export default async function middleware(req: NextRequest) {
 
 // Routes Middleware should not run on
 export const config = {
-  // Exclude APIs, Next internals, data routes, and any path with a file extension
-  matcher: [EXCLUDED_PATHS_MATCHER],
+  // Exclude APIs, Next internals, data routes, and any path with a file extension.
+  // Must be a static literal for Next.js to statically analyze.
+  matcher: ["/((?!api|_next/static|_next/image|_next/data|.*\\..*$).*)"],
 };
