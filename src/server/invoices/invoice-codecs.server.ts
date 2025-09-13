@@ -11,7 +11,7 @@ import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
-import { toCustomerId } from "@/shared/brands/mappers";
+import { toCustomerId } from "@/shared/domain/id-converters";
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -20,7 +20,7 @@ import type {
 import {
   toISODateString,
   toPeriodFirstDayString,
-} from "@/shared/invoices/invoice-codecs.transport";
+} from "@/shared/invoices/transport/codecs";
 
 /**
  * Maps branded Entity to plain DTO.

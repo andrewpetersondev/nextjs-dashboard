@@ -5,7 +5,7 @@ import {
   MONTHS_IN_YEAR,
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
-} from "@/shared/revenues/revenues-date.constants";
+} from "@/shared/revenues/constants/date";
 import type { IntervalDuration } from "@/shared/revenues/types";
 
 /**

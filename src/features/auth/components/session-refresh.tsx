@@ -11,7 +11,7 @@ import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
-} from "@/shared/auth/sessions/http";
+} from "@/shared/auth/sessions/transport/http-headers";
 import { IS_PROD } from "@/shared/config/env-public";
 
 // Base cadence to check for refresh opportunities (20 seconds).

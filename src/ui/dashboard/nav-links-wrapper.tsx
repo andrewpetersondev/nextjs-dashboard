@@ -3,8 +3,8 @@ import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/server/auth/session";
 // biome-ignore lint/style/noRestrictedImports: <fix later>
 import { getValidUserRole } from "@/server/users/utils";
-import type { AuthRole } from "@/shared/auth/roles";
-import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
+import type { AuthRole } from "@/shared/auth/domain/roles";
+import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";
 import { NavLinks } from "@/ui/dashboard/nav-links";
 
 export async function NavLinksWrapper(): Promise<JSX.Element> {

@@ -6,9 +6,9 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
-import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import type { Period } from "@/shared/domain/domain-brands";
+import { toPeriod } from "@/shared/domain/id-converters";
 import { upsertRevenue } from "./upsert";
 
 export async function upsertRevenueByPeriod(

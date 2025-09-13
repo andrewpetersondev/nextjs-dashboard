@@ -4,14 +4,14 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
 import {
   MAX_REVENUE_MONTHS,
   MAX_REVENUE_YEAR,
   MIN_REVENUE_MONTHS,
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
-} from "@/shared/revenues/constants";
+} from "@/shared/revenues/constants/date";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.

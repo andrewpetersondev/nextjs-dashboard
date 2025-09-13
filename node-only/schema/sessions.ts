@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import type { UserId } from "../../src/shared/brands/domain-brands";
+import type { UserId } from "@/shared/domain/domain-brands";
 import { users } from "./users";
 
 export const sessions = pgTable(

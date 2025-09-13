@@ -3,7 +3,7 @@ import type { FormState } from "@/shared/forms/types";
 import type {
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
-} from "@/shared/invoices/schema.shared";
+} from "@/shared/invoices/schema/shared";
 
 /**
  * Props for InvoiceServerMessage component.

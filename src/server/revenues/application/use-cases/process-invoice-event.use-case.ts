@@ -9,9 +9,9 @@ import {
   logInfo,
 } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { periodKey } from "@/shared/revenues/period";
+import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Use case that standardizes processing of invoice-related events.

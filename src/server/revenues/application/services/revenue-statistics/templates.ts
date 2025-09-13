@@ -6,8 +6,8 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity";
 import { toIntervalDuration } from "@/server/revenues/infrastructure/validation/validator";
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
-import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
+import type { Period } from "@/shared/domain/domain-brands";
+import { toPeriod } from "@/shared/domain/id-converters";
 
 export interface TemplateAndPeriods {
   readonly template: readonly { readonly period: Date }[];

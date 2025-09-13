@@ -2,14 +2,14 @@ import "server-only";
 
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
-import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
-import { ValidationError } from "@/shared/errors/domain";
-import { isValidDate } from "@/shared/utils/date";
-import { ensure } from "@/shared/validation/ensure";
+import { ValidationError } from "@/shared/core/errors/domain";
+import { ensure } from "@/shared/core/validation/ensure";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/shared/validation/number";
+} from "@/shared/core/validation/number";
+import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
+import { isValidDate } from "@/shared/utils/date";
 import type { RevenueRow } from "../../../../../node-only/schema/revenues";
 
 /**

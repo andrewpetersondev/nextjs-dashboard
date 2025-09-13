@@ -7,12 +7,12 @@ import {
 } from "@/server/invoices/invoice-codecs.server";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
-import { toInvoiceId } from "@/shared/brands/mappers";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import { Err, type Result } from "@/shared/core/result/result-base";
+import { toInvoiceId } from "@/shared/domain/id-converters";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
-import { Err, type Result } from "@/shared/result/result-base";
 
 /**
  * Service for invoice business logic and transformation.

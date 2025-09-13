@@ -1,5 +1,8 @@
-import { INVOICE_STATUSES, type InvoiceStatus } from "@/shared/invoices/types";
-import { validateEnum } from "@/shared/validation/enum";
+import { validateEnum } from "@/shared/core/validation/enum";
+import {
+  INVOICE_STATUSES,
+  type InvoiceStatus,
+} from "@/shared/invoices/dto/types";
 
 /**
  * Validates and converts a value to an InvoiceStatus

@@ -3,8 +3,8 @@ import "server-only";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { createRandomPassword } from "@/shared/auth/password";
-import type { AuthRole } from "@/shared/auth/roles";
+import { createRandomPassword } from "@/shared/auth/domain/password";
+import type { AuthRole } from "@/shared/auth/domain/roles";
 
 import type { UserDto } from "@/shared/users/dto";
 

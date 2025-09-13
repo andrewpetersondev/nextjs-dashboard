@@ -1,6 +1,6 @@
 import "server-only";
 
-import { BaseError } from "@/shared/errors/base";
+import { BaseError } from "@/shared/core/errors/base";
 
 /**
  * Represents a database error with a fixed code and status.

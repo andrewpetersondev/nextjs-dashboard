@@ -10,16 +10,16 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import type { InvoiceStatus } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceInput,
   UpdateInvoiceSchema,
-} from "@/shared/invoices/schema.shared";
-import type { InvoiceStatus } from "@/shared/invoices/types";
+} from "@/shared/invoices/schema/shared";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

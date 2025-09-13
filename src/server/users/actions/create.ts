@@ -7,10 +7,6 @@ import { createUserDal } from "@/server/users/dal/create";
 import { getValidUserRole } from "@/server/users/utils";
 import type { FormState } from "@/shared/forms/types";
 import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-} from "@/shared/forms/utils";
-import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/shared/users/messages";
@@ -18,6 +14,10 @@ import {
   type CreateUserFormFieldNames,
   CreateUserFormSchema,
 } from "@/shared/users/schema.shared";
+import {
+  deriveAllowedFieldsFromSchema,
+  mapFieldErrors,
+} from "@/shared/utils/utils";
 
 /**
  * Creates a new user (admin only).

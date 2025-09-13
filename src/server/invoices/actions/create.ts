@@ -13,19 +13,19 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
 import { isZodError } from "@/shared/forms/guards";
 import type { FormState } from "@/shared/forms/types";
-import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-} from "@/shared/forms/utils";
-import { t } from "@/shared/i18n/t";
+import { translator } from "@/shared/i18n/translator";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import type { InvoiceStatus } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceInput,
   CreateInvoiceSchema,
-} from "@/shared/invoices/schema.shared";
-import type { InvoiceStatus } from "@/shared/invoices/types";
+} from "@/shared/invoices/schema/shared";
+import {
+  deriveAllowedFieldsFromSchema,
+  mapFieldErrors,
+} from "@/shared/utils/utils";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 
@@ -67,21 +67,21 @@ export async function createInvoiceAction(
 
       result = {
         data: parsed.data,
-        message: t(INVOICE_MSG.CREATE_SUCCESS),
+        message: translator(INVOICE_MSG.CREATE_SUCCESS),
         success: true,
       };
     } else {
       result = {
         ...prevState,
         errors: mapFieldErrors(parsed.error.flatten().fieldErrors, allowed),
-        message: t(INVOICE_MSG.VALIDATION_FAILED),
+        message: translator(INVOICE_MSG.VALIDATION_FAILED),
         success: false,
       };
     }
   } catch (error) {
     // Decide the top-level user-facing message based on error type
     const baseMessage = isZodError(error)
-      ? t(INVOICE_MSG.VALIDATION_FAILED)
+      ? translator(INVOICE_MSG.VALIDATION_FAILED)
       : toInvoiceErrorMessage(error);
 
     serverLogger.error({

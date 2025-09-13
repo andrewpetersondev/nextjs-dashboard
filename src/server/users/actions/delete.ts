@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
-import { toUserId } from "@/shared/brands/mappers";
+import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 

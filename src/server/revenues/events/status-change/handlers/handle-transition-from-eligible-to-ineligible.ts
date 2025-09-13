@@ -6,7 +6,7 @@ import { computeAggregateAfterRemoval } from "@/server/revenues/domain/revenue-a
 import { applyDeltaToBucket } from "@/server/revenues/domain/revenue-buckets";
 import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { InvoiceStatus } from "@/shared/invoices/types";
+import type { InvoiceStatus } from "@/shared/invoices/dto/types";
 
 interface Args {
   readonly revenueService: RevenueService;

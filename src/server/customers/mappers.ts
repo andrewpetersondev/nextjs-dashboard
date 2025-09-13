@@ -8,7 +8,7 @@ import type {
   CustomerAggregatesRowRaw,
   CustomerSelectRowRaw,
 } from "@/server/customers/types";
-import { toCustomerId } from "@/shared/brands/mappers";
+import { toCustomerId } from "@/shared/domain/id-converters";
 
 /**
  * Maps a raw "select" projection row to a server DTO with branded ID.

@@ -5,7 +5,7 @@ import {
   logInfo,
 } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { toRevenueId } from "@/shared/brands/mappers";
+import { toRevenueId } from "@/shared/domain/id-converters";
 
 /**
  * Arguments for updating a revenue record.

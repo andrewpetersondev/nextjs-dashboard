@@ -5,9 +5,9 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowsToEntities } from "@/server/revenues/infrastructure/persistence/mappers";
-import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import type { Period } from "@/shared/domain/domain-brands";
+import { toPeriod } from "@/shared/domain/id-converters";
 import {
   type RevenueRow,
   revenues,

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
-import type { InvoiceListFilter } from "@/shared/invoices/types";
+import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
 import { formatCurrency } from "@/shared/money/convert";
 import { IMAGE_SIZES } from "@/shared/ui/ui";
 

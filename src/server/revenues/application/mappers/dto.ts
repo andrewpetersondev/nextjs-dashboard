@@ -8,7 +8,7 @@ import { convertCentsToDollars } from "@/shared/money/convert";
 import type {
   RevenueStatisticsDto,
   SimpleRevenueDto,
-} from "@/shared/revenues/dto";
+} from "@/shared/revenues/dto/types";
 
 export function mapEntityToSimpleRevenueDto(
   entity: {

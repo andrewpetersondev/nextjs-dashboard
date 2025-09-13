@@ -11,8 +11,8 @@ import {
   type BucketTotals,
 } from "@/server/revenues/domain/revenue-buckets";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod } from "@/shared/brands/mappers";
+import type { Period } from "@/shared/domain/domain-brands";
+import { toPeriod } from "@/shared/domain/id-converters";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**

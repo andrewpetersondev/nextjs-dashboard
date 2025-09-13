@@ -13,12 +13,12 @@ import {
   type SignupFormFieldNames,
   type SignupFormInput,
   SignupFormSchema,
-} from "@/shared/auth/schema.shared";
-import { toUserId } from "@/shared/brands/mappers";
+} from "@/shared/auth/domain/schema.shared";
 import { ROUTES } from "@/shared/constants/routes";
+import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
-import { toDenseFormErrors } from "@/shared/forms/utils";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
+import { toDenseFormErrors } from "@/shared/utils/utils";
 
 /**
  * Server action to handle signup form submission.

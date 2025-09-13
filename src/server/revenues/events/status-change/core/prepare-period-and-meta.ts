@@ -7,7 +7,7 @@ import type {
   PeriodArg,
 } from "@/server/revenues/events/common/types";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { periodKey } from "@/shared/revenues/period";
+import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

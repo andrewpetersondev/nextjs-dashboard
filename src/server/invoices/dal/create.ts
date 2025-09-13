@@ -7,7 +7,7 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { toPeriod } from "@/shared/brands/mappers";
+import { toPeriod } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 import { revenues } from "../../../../node-only/schema/revenues";

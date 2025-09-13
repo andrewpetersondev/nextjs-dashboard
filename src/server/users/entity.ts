@@ -1,7 +1,7 @@
 import "server-only";
-import type { AuthRole } from "@/shared/auth/roles";
+import type { AuthRole } from "@/shared/auth/domain/roles";
 
-import type { UserId } from "@/shared/brands/domain-brands";
+import type { UserId } from "@/shared/domain/domain-brands";
 
 /**
  * Represents a user entity in the database, defining the structure and properties of a user record.

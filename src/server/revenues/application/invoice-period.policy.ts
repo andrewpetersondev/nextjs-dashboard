@@ -5,7 +5,7 @@ import {
   extractPeriodFromInvoice as extractPeriodFromInvoiceDomain,
   validateInvoicePeriodForRevenue as validateInvoicePeriodForRevenueDomain,
 } from "@/server/revenues/domain/policies/invoice-period.policy";
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**

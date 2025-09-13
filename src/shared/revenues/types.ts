@@ -1,7 +1,7 @@
 import type {
   INTERVAL_DURATIONS,
   MONTH_ORDER,
-} from "@/shared/revenues/constants";
+} from "@/shared/revenues/constants/date";
 
 // Type-safe union of valid month name abbreviations.
 export type MonthName = (typeof MONTH_ORDER)[number];

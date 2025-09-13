@@ -1,5 +1,5 @@
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/roles";
-import { validateEnum } from "@/shared/validation/enum";
+import { AUTH_ROLES, type AuthRole } from "@/shared/auth/domain/roles";
+import { validateEnum } from "@/shared/core/validation/enum";
 
 /**
  * Validates and converts a value to a UserRole

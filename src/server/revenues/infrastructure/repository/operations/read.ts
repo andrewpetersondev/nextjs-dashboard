@@ -5,8 +5,8 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/persistence/mappers";
-import type { RevenueId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import type { RevenueId } from "@/shared/domain/domain-brands";
 import {
   type RevenueRow,
   revenues,

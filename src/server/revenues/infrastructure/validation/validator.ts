@@ -1,9 +1,10 @@
 import "server-only";
 
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import { INTERVAL_DURATIONS } from "@/shared/revenues/constants";
+import { validateEnum } from "@/shared/core/validation/enum";
+
+import { INTERVAL_DURATIONS } from "@/shared/revenues/constants/date";
 import type { IntervalDuration } from "@/shared/revenues/types";
-import { validateEnum } from "@/shared/validation/enum";
 
 /**
  * Validates and converts a value to an IntervalDuration

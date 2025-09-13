@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
-import { ROLES } from "@/shared/auth/roles";
+import { ROLES } from "@/shared/auth/domain/roles";
 import {
   ADMIN_PREFIX,
   EXCLUDED_PATHS_MATCHER,

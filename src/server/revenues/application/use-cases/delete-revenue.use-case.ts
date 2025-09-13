@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { RevenueId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class DeleteRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;

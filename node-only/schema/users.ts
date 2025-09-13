@@ -9,8 +9,8 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { AUTH_ROLES, type AuthRole, ROLES } from "../../src/shared/auth/roles";
-import type { UserId } from "../../src/shared/brands/domain-brands";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
+import type { UserId } from "@/shared/domain/domain-brands";
 import { sessions } from "./sessions";
 
 export const roleEnum = pgEnum("role", AUTH_ROLES as [AuthRole, ...AuthRole[]]);

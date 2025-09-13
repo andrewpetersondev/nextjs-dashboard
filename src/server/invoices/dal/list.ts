@@ -5,8 +5,8 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
+import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
-import type { InvoiceListFilter } from "@/shared/invoices/types";
 import { invoices } from "../../../../node-only/schema/invoices";
 
 /**

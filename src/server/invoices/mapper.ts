@@ -6,7 +6,11 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
-import { toCustomerId, toInvoiceId, toPeriod } from "@/shared/brands/mappers";
+import {
+  toCustomerId,
+  toInvoiceId,
+  toPeriod,
+} from "@/shared/domain/id-converters";
 import { isValidDate, toFirstOfMonth } from "@/shared/utils/date";
 import type { InvoiceRow } from "../../../node-only/schema/invoices";
 

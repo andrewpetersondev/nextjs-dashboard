@@ -3,8 +3,8 @@ import "server-only";
 import { desc, eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
-import type { InvoiceListFilter } from "@/shared/invoices/types";
 import { customers } from "../../../../node-only/schema/customers";
 import { invoices } from "../../../../node-only/schema/invoices";
 

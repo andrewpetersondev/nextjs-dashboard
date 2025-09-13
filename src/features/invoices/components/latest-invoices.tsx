@@ -1,7 +1,7 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { LatestInvoiceItem } from "@/features/invoices/components/latest-invoice-item";
-import type { InvoiceListFilter } from "@/shared/invoices/types";
+import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
 import { H2, H3 } from "@/ui/primitives/headings";
 
 interface LatestInvoicesProps {

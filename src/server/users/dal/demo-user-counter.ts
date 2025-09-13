@@ -3,7 +3,7 @@ import "server-only";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { AuthRole } from "@/shared/auth/roles";
+import type { AuthRole } from "@/shared/auth/domain/roles";
 
 import { demoUserCounters } from "../../../../node-only/schema/demo-users";
 

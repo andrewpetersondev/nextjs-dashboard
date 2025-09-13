@@ -5,7 +5,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
 import { upsertRevenue } from "./upsert";
 
 export async function createRevenue(

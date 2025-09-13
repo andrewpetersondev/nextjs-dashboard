@@ -1,5 +1,5 @@
 import { inArray, like, or } from "drizzle-orm";
-import { toUserId } from "../../src/shared/brands/mappers";
+import { toUserId } from "@/shared/domain/id-converters";
 import { nodeDb } from "../cli/node-db";
 import { users } from "../schema/users";
 

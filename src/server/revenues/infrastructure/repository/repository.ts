@@ -7,7 +7,7 @@ import type {
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import type { Period, RevenueId } from "@/shared/domain/domain-brands";
 import { createRevenue } from "./operations/create";
 import { deleteRevenue } from "./operations/delete";
 import { findRevenuesByDateRange } from "./operations/find-by-date-range";

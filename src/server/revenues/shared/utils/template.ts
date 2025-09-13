@@ -6,8 +6,8 @@ import type {
   RevenueDisplayEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import type { Period } from "@/shared/brands/domain-brands";
-import { toPeriod, toRevenueId } from "@/shared/brands/mappers";
+import type { Period } from "@/shared/domain/domain-brands";
+import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

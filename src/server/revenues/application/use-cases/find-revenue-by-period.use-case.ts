@@ -2,8 +2,8 @@ import "server-only";
 
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { Period } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import type { Period } from "@/shared/domain/domain-brands";
 
 export class FindRevenueByPeriodUseCase {
   private readonly repository: RevenueRepositoryInterface;

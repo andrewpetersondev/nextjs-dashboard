@@ -3,7 +3,7 @@ import "server-only";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { ProcessInvoiceEventUseCase } from "@/server/revenues/application/use-cases/process-invoice-event.use-case";
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 
 /**

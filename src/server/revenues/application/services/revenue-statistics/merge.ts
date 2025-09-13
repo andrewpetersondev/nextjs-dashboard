@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity";
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
-import { toPeriod } from "@/shared/brands/mappers";
+import { toPeriod } from "@/shared/domain/id-converters";
 
 export function mergeWithTemplate(
   template: readonly { readonly period: Date }[],

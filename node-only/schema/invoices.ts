@@ -13,11 +13,11 @@ import type {
   CustomerId,
   InvoiceId,
   Period,
-} from "../../src/shared/brands/domain-brands";
+} from "@/shared/domain/domain-brands";
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "../../src/shared/invoices/types";
+} from "@/shared/invoices/dto/types";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 

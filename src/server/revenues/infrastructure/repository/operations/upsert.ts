@@ -7,7 +7,7 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/persistence/mappers";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
 import {
   type RevenueRow,
   revenues,

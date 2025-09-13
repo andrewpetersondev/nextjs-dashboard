@@ -9,7 +9,7 @@ import { type FC, type JSX, useActionState, useId } from "react";
 import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
-import type { SignupFormFieldNames } from "@/shared/auth/schema.shared";
+import type { SignupFormFieldNames } from "@/shared/auth/domain/schema.shared";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
 import { InputField } from "@/ui/forms/input-field";

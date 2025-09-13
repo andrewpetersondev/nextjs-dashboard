@@ -13,7 +13,7 @@ import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type {
   CreateInvoiceFieldNames,
   CreateInvoiceInput,
-} from "@/shared/invoices/schema.shared";
+} from "@/shared/invoices/schema/shared";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/ui";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/forms/form-action-row";

@@ -10,7 +10,7 @@ import type {
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { Period, RevenueId } from "@/shared/brands/domain-brands";
+import type { Period, RevenueId } from "@/shared/domain/domain-brands";
 
 /**
  * Business service for revenue processing and management.

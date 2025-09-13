@@ -4,9 +4,9 @@ import { isEligibleDeletion } from "@/server/revenues/application/guards/invoice
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
 import { applyDeletionEffects } from "@/server/revenues/events/deleted-invoice/apply-deletion-effects";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { periodKey } from "@/shared/revenues/period";
+import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Adjusts revenue for a deleted invoice

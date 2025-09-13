@@ -4,7 +4,7 @@ import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 

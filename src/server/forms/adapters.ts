@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Result } from "@/shared/core/result/result-base";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
@@ -9,7 +10,6 @@ import type {
   FormErrors,
   FormState,
 } from "@/shared/forms/types";
-import type { Result } from "@/shared/result/result-base";
 
 // --- Adapters (presentation concerns live here) ---
 

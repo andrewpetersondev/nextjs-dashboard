@@ -1,4 +1,4 @@
-import type { Period } from "@/shared/brands/domain-brands";
+import type { Period } from "@/shared/domain/domain-brands";
 import type { Cents, Dollars } from "@/shared/money/types";
 import type { MonthName } from "@/shared/revenues/types";
 

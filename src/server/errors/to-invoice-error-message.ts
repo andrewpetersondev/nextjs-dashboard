@@ -1,6 +1,6 @@
 import { isDatabaseError } from "@/server/errors/guards";
-import { isValidationError } from "@/shared/errors/guards";
-import { t } from "@/shared/i18n/t";
+import { isValidationError } from "@/shared/core/errors/guards";
+import { translator } from "@/shared/i18n/translator";
 import { INVOICE_MSG, type InvoiceMessageId } from "@/shared/invoices/messages";
 
 // Local guard for known invoice message IDs (single-locale setup)
@@ -15,7 +15,7 @@ export function toInvoiceErrorMessage(error: unknown): string {
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message
       : INVOICE_MSG.INVALID_INPUT;
-    return t(id);
+    return translator(id);
   }
 
   if (isDatabaseError(error)) {
@@ -23,8 +23,8 @@ export function toInvoiceErrorMessage(error: unknown): string {
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message
       : INVOICE_MSG.DB_ERROR;
-    return t(id);
+    return translator(id);
   }
 
-  return t(INVOICE_MSG.SERVICE_ERROR);
+  return translator(INVOICE_MSG.SERVICE_ERROR);
 }

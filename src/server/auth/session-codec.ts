@@ -15,15 +15,13 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/shared/auth/sessions/constants";
+import type { EncryptPayload } from "@/shared/auth/sessions/dto/types";
+import { EncryptPayloadSchema } from "@/shared/auth/sessions/dto/zod";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/shared/auth/sessions/mapper";
-import {
-  type EncryptPayload,
-  EncryptPayloadSchema,
-} from "@/shared/auth/sessions/zod";
-import { ValidationError } from "@/shared/errors/domain";
+} from "@/shared/auth/sessions/mappers/jwt-mapper";
+import { ValidationError } from "@/shared/core/errors/domain";
 
 let encodedKey: Uint8Array | undefined;
 

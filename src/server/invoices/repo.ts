@@ -15,12 +15,12 @@ import type {
 } from "@/server/invoices/entity";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
-import type { InvoiceId } from "@/shared/brands/domain-brands";
-import { ValidationError } from "@/shared/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain";
+import { Err, Ok, type Result } from "@/shared/core/result/result-base";
+import { map } from "@/shared/core/result/result-transform";
+import type { InvoiceId } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
-import { Err, Ok, type Result } from "@/shared/result/result-base";
-import { map } from "@/shared/result/result-transform";
 
 /**
  * Repository for managing invoice data.

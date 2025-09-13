@@ -7,12 +7,8 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
-import { toUserId } from "@/shared/brands/mappers";
+import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
-import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-} from "@/shared/forms/utils";
 import type { UserDto } from "@/shared/users/dto";
 import {
   USER_ERROR_MESSAGES,
@@ -23,6 +19,10 @@ import {
   EditUserFormSchema,
 } from "@/shared/users/schema.shared";
 import { stripProperties } from "@/shared/utils/general";
+import {
+  deriveAllowedFieldsFromSchema,
+  mapFieldErrors,
+} from "@/shared/utils/utils";
 
 /**
  * Edits an existing user.
