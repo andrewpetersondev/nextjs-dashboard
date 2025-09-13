@@ -20,7 +20,7 @@ import { ValidationError } from "@/shared/core/errors/domain";
 import { Err, Ok, type Result } from "@/shared/core/result/result-base";
 import { map } from "@/shared/core/result/result-transform";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
-import { INVOICE_MSG } from "@/shared/messages";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
  * Repository for managing invoice data.

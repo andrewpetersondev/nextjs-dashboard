@@ -4,7 +4,7 @@ import { count } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { DATA_ERROR_MESSAGES } from "@/shared/core/errors/errors-messages";
+import { DATA_ERROR_MESSAGES } from "@/shared/core/errors/error-messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 
 /**

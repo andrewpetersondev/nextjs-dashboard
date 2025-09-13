@@ -22,8 +22,8 @@ import { mapFieldErrors } from "@/shared/forms/errors";
 import { isZodError } from "@/shared/forms/guards";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
-import { INVOICE_MSG } from "@/shared/messages";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

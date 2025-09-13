@@ -4,7 +4,7 @@
  * - Defaults to "info" in production builds, "warn" otherwise.
  */
 
-import { IS_PROD, NEXT_PUBLIC_LOG_LEVEL } from "@/shared/config/env-public";
+import { IS_PROD, NEXT_PUBLIC_LOG_LEVEL } from "@/shared/env/public-env.client";
 import type { LogLevel } from "./log-level";
 
 /**

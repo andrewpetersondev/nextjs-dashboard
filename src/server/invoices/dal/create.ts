@@ -8,7 +8,7 @@ import type {
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { toPeriod } from "@/shared/domain/id-converters";
-import { INVOICE_MSG } from "@/shared/messages";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 import { revenues } from "../../../../node-only/schema/revenues";
 

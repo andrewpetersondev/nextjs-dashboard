@@ -6,7 +6,7 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { INVOICE_MSG } from "@/shared/messages";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 
 /**

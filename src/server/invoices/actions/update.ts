@@ -19,7 +19,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { INVOICE_MSG } from "@/shared/messages";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

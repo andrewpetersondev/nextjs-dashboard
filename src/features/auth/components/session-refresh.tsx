@@ -12,7 +12,7 @@ import {
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
 } from "@/features/auth/sessions/transport/http-headers";
-import { IS_PROD } from "@/shared/config/env-public";
+import { IS_PROD } from "@/shared/env/public-env.client";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;

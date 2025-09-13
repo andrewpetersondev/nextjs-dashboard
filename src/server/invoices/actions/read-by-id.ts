@@ -6,7 +6,7 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { INVOICE_MSG } from "@/shared/messages";
+import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
