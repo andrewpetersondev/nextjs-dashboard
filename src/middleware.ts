@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
-import { LOGIN_PATH } from "@/shared/auth/constants";
 import { ROLES } from "@/shared/auth/roles";
 import {
   ADMIN_PREFIX,
@@ -45,7 +44,7 @@ export default async function middleware(req: NextRequest) {
   if (isAdminRoute) {
     // Not authenticated: go straight to login (avoid double redirects)
     if (!session?.user?.userId) {
-      return NextResponse.redirect(new URL(LOGIN_PATH, req.nextUrl));
+      return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.nextUrl));
     }
     // Authenticated but not admin
     if (session.user.role !== ROLES.ADMIN) {
@@ -55,7 +54,7 @@ export default async function middleware(req: NextRequest) {
 
   // Protected routes (folder-scoped)
   if (isProtectedRoute && !session?.user?.userId) {
-    return NextResponse.redirect(new URL(LOGIN_PATH, req.nextUrl));
+    return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.nextUrl));
   }
 
   // Public routes: bounce authenticated users to dashboard

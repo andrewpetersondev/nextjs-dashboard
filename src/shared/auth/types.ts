@@ -1,11 +1,12 @@
+import { ROLES } from "./roles";
+
 /**
- * List of allowed user roles.
+ * Union type for user roles derived from centralized ROLES.
+ */
+export type AuthRole = (typeof ROLES)[keyof typeof ROLES];
+
+/**
+ * List of allowed user roles derived from centralized ROLES.
  * @readonly
  */
-export const AUTH_ROLES = ["admin", "user", "guest"] as const;
-/**
- * Union type for user roles.
- * @example
- * const role: UserRole = "admin";
- */
-export type AuthRole = (typeof AUTH_ROLES)[number];
+export const AUTH_ROLES = Object.values(ROLES) as readonly AuthRole[];

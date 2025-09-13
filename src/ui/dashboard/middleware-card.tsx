@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 // biome-ignore lint/style/noRestrictedImports: <fix later>
 import { verifySessionOptimistic } from "@/server/auth/session";
+import { ROLES } from "@/shared/auth/roles";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
 import { H6 } from "@/ui/primitives/headings";
@@ -12,7 +13,7 @@ export async function MiddlewareCard(): Promise<JSX.Element> {
 
   const role: AuthRole = allowedRoles.includes(session.role as AuthRole)
     ? (session.role as AuthRole)
-    : "guest"; // fallback to 'guest' if invalid
+    : ROLES.GUEST; // fallback to 'guest' if invalid
 
   const userId: string = String(session.userId);
   const authy: boolean = Boolean(session.isAuthorized);

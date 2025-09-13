@@ -7,7 +7,9 @@ import {
   readLatestInvoices,
 } from "@/server/invoices/queries";
 import { getValidUserRole } from "@/server/users/utils";
+import { ROLES } from "@/shared/auth/roles";
 import type { AuthRole } from "@/shared/auth/types";
+import { AUTH_ROLES } from "@/shared/auth/types";
 import { formatCurrency } from "@/shared/money/convert";
 import { DASHBOARD_TITLES, ITEMS_PER_PAGE_INVOICES } from "@/shared/ui/ui";
 import { Dashboard } from "@/ui/dashboard/dashboard";
@@ -43,11 +45,11 @@ export default async function Page(): Promise<JSX.Element> {
   };
 
   let title = "Dashboard";
-  if (role === "admin") {
+  if (role === ROLES.ADMIN) {
     title = DASHBOARD_TITLES.ADMIN;
-  } else if (role === "user") {
+  } else if (role === ROLES.USER) {
     title = DASHBOARD_TITLES.USER;
-  } else if (role === "guest") {
+  } else if (role === ROLES.GUEST) {
     title = DASHBOARD_TITLES.GUEST;
   }
 
@@ -62,7 +64,7 @@ export default async function Page(): Promise<JSX.Element> {
     </main>
   );
 
-  if (["admin", "user", "guest"].includes(role)) {
+  if (AUTH_ROLES.includes(role)) {
     return commonContent;
   }
 

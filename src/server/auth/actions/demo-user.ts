@@ -8,6 +8,7 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
+import { ROLES } from "@/shared/auth/roles";
 import type { AuthRole } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
@@ -19,7 +20,7 @@ import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
  * Creates a demo user and logs them in.
  */
 export async function demoUser(
-  role: AuthRole = toUserRole("guest"),
+  role: AuthRole = ROLES.GUEST as AuthRole,
 ): Promise<FormState<"_root">> {
   let demoUserObject: UserDto | null = null;
 

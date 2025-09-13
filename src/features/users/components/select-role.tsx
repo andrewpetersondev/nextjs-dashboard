@@ -1,4 +1,5 @@
 import type React from "react";
+import { ROLES } from "@/shared/auth/roles";
 import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
 import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/forms/error-message";
@@ -15,7 +16,7 @@ interface RoleOption {
 // --- Define ROLE_OPTIONS constant ---
 // Filters out "guest" and maps roles to { id, name } objects with capitalized names.
 const ROLE_OPTIONS: RoleOption[] = AUTH_ROLES.filter(
-  (role) => role !== "guest",
+  (role) => role !== ROLES.GUEST,
 ).map((role) => ({
   id: role,
   name: role.charAt(0).toUpperCase() + role.slice(1),
