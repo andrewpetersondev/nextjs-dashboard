@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/style/noProcessEnv: <fix later> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
+
 import "server-only";
 
 import { cookies } from "next/headers";
@@ -37,6 +38,55 @@ const buildSessionCookieOptions = (expiresAtMs: number) => ({
   sameSite: SESSION_COOKIE_SAMESITE,
   secure: IS_PRODUCTION,
 });
+
+/** Internal: compute absolute lifetime status. */
+function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
+  exceeded: boolean;
+  age: number;
+} {
+  const start = user?.sessionStart ?? 0;
+  const age = Date.now() - start;
+  return { age, exceeded: !start || age > MAX_ABSOLUTE_SESSION_MS };
+}
+
+/** Internal: compute remaining time before token expiry in ms. */
+function timeLeftMs(payload?: DecryptPayload): number {
+  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
+  return expMs - Date.now();
+}
+
+/** Internal: rotate session and persist cookie. */
+async function rotateSession(
+  store: Awaited<ReturnType<typeof cookies>>,
+  user: { userId: string; role: AuthRole; sessionStart: number },
+): Promise<UpdateSessionResult> {
+  const expiresAt = Date.now() + SESSION_DURATION_MS;
+  const token = await createSessionToken({
+    user: {
+      expiresAt,
+      role: user.role,
+      sessionStart: user.sessionStart,
+      userId: user.userId,
+    },
+  });
+  store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
+  serverLogger.info(
+    {
+      context: "updateSessionToken",
+      expiresAt,
+      role: user.role,
+      userId: user.userId,
+    },
+    "Session token re-issued",
+  );
+  return {
+    expiresAt,
+    reason: "rotated",
+    refreshed: true,
+    role: String(user.role),
+    userId: user.userId,
+  };
+}
 
 /**
  * Deletes the session cookie.
@@ -137,23 +187,21 @@ export type UpdateSessionResult =
  * Re-issues the session JWT and updates the cookie if the current token is valid.
  * Must be called from server actions or route handlers.
  */
-
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function updateSessionToken(): Promise<UpdateSessionResult> {
   const store = await cookies();
   const current = store.get(SESSION_COOKIE_NAME)?.value;
   if (!current) {
     return { reason: "no_cookie", refreshed: false };
   }
+
   const payload: DecryptPayload | undefined = await readSessionToken(current);
   const user = payload?.user;
   if (!user?.userId) {
     return { reason: "invalid_or_missing_user", refreshed: false };
   }
 
-  const start = user.sessionStart;
-  const age = Date.now() - start;
-  if (!start || age > MAX_ABSOLUTE_SESSION_MS) {
+  const { exceeded, age } = absoluteLifetime(user);
+  if (exceeded) {
     store.delete(SESSION_COOKIE_NAME);
     serverLogger.info(
       {
@@ -174,40 +222,22 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
     };
   }
 
-  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
-  const timeLeftMs = expMs - Date.now();
-  if (timeLeftMs > SESSION_REFRESH_THRESHOLD_MS) {
+  const remaining = timeLeftMs(payload);
+  if (remaining > SESSION_REFRESH_THRESHOLD_MS) {
     serverLogger.debug(
-      { context: "updateSessionToken", reason: "not_needed", timeLeftMs },
+      {
+        context: "updateSessionToken",
+        reason: "not_needed",
+        timeLeftMs: remaining,
+      },
       "Session re-issue skipped; sufficient time remaining",
     );
-    return { reason: "not_needed", refreshed: false, timeLeftMs };
+    return { reason: "not_needed", refreshed: false, timeLeftMs: remaining };
   }
 
-  const expiresAt = Date.now() + SESSION_DURATION_MS;
-  const token = await createSessionToken({
-    user: {
-      expiresAt,
-      role: user.role,
-      sessionStart: start,
-      userId: user.userId,
-    },
-  });
-  store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
-  serverLogger.info(
-    {
-      context: "updateSessionToken",
-      expiresAt,
-      role: user.role,
-      userId: user.userId,
-    },
-    "Session token re-issued",
-  );
-  return {
-    expiresAt,
-    reason: "rotated",
-    refreshed: true,
-    role: String(user.role),
+  return rotateSession(store, {
+    role: user.role,
+    sessionStart: user.sessionStart,
     userId: user.userId,
-  };
+  });
 }

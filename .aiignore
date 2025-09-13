@@ -20,14 +20,13 @@ node-only/tasks
 # src/server/auth
 # src/shared/auth
 
-# Root
-biome.json
 
-# Project (General)
+# Root
 .github
 .idea
 .next
 # docs
+# biome.json
 drizzle
 node_modules
 public

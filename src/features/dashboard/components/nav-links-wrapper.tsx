@@ -1,8 +1,6 @@
 import type { JSX } from "react";
 import { NavLinks } from "@/features/dashboard/components/nav-links";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { verifySessionOptimistic } from "@/server/auth/session";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { getValidUserRole } from "@/server/users/utils";
 import type { AuthRole } from "@/shared/auth/domain/roles";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";

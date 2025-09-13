@@ -1,5 +1,4 @@
 import type { JSX } from "react";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";

@@ -19,14 +19,7 @@ import type { RevenueRow } from "../../../../../node-only/schema/revenues";
  * @returns Validated RevenueEntity
  * @throws {ValidationError} When row data is invalid or missing required fields
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <clean enough>
-export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
-  if (!revenueRow || typeof revenueRow !== "object") {
-    throw new ValidationError(
-      "Invalid revenue row data: expected non-null object",
-    );
-  }
-  // Validate required fields presence and shapes early for clearer errors
+function validateRevenueRow(revenueRow: RevenueRow): void {
   ensure(revenueRow.id, "Invalid revenue row: missing required field 'id'");
   ensure(
     revenueRow.period,
@@ -60,7 +53,16 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     isNonNegativeNumber(revenueRow.totalPendingAmount as number),
     "Invalid revenue row: 'totalPendingAmount' must be a non-negative number",
   );
+}
+
+export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
+  if (!revenueRow || typeof revenueRow !== "object") {
+    throw new ValidationError(
+      "Invalid revenue row data: expected non-null object",
+    );
+  }
   try {
+    validateRevenueRow(revenueRow);
     return {
       calculationSource: toRevenueSource(revenueRow.calculationSource),
       createdAt: revenueRow.createdAt,
