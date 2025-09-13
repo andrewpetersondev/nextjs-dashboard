@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { updateSessionToken } from "@/server/auth/session";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,
@@ -8,8 +9,7 @@ import {
   HEADER_VARY,
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
-} from "@/constants/http";
-import { updateSessionToken } from "@/server/auth/session";
+} from "@/shared/constants/http";
 
 // Route handler to roll (refresh) the session token if it's near expiry.
 // Safe to call repeatedly; it only re-issues when needed and respects absolute lifetime.

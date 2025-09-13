@@ -1,10 +1,6 @@
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
-import {
-  CLOCK_TOLERANCE_SEC,
-  MIN_HS256_KEY_LENGTH,
-} from "@/constants/auth-sessions";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
 import {
@@ -21,6 +17,12 @@ import {
   type EncryptPayload,
   EncryptPayloadSchema,
 } from "@/shared/auth/sessions/zod";
+import {
+  CLOCK_TOLERANCE_SEC,
+  JWT_ALG_HS256,
+  JWT_TYP_JWT,
+  MIN_HS256_KEY_LENGTH,
+} from "@/shared/constants/auth-sessions";
 import { ValidationError } from "@/shared/errors/domain";
 
 let encodedKey: Uint8Array | undefined;
@@ -117,7 +119,7 @@ const signClaims = async (
 ): Promise<string> => {
   try {
     let signer = new SignJWT(claims)
-      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+      .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
       .setIssuedAt()
       .setExpirationTime(new Date(expMs));
     if (SESSION_ISSUER) {
@@ -150,7 +152,7 @@ const signClaims = async (
  */
 const buildVerifyOptions = (): Parameters<typeof jwtVerify>[2] => {
   return {
-    algorithms: ["HS256"],
+    algorithms: [JWT_ALG_HS256],
     clockTolerance: CLOCK_TOLERANCE_SEC,
     ...(SESSION_AUDIENCE ? { audience: SESSION_AUDIENCE } : {}),
     ...(SESSION_ISSUER ? { issuer: SESSION_ISSUER } : {}),

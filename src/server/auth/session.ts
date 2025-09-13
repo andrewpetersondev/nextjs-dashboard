@@ -5,15 +5,12 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { LOGIN_PATH } from "@/constants/auth";
 import {
-  MAX_ABSOLUTE_SESSION_MS,
-  ONE_SECOND_MS,
-  ROLLING_COOKIE_MAX_AGE_S,
-  SESSION_DURATION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
-} from "@/constants/auth-sessions";
-import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
+  IS_PRODUCTION,
+  SESSION_COOKIE_NAME,
+  SESSION_COOKIE_PATH,
+  SESSION_COOKIE_SAMESITE,
+} from "@/server/auth/constants";
 import {
   createSessionToken,
   readSessionToken,
@@ -22,15 +19,23 @@ import type { DecryptPayload } from "@/server/auth/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
+import { LOGIN_PATH } from "@/shared/constants/auth";
+import {
+  MAX_ABSOLUTE_SESSION_MS,
+  ONE_SECOND_MS,
+  ROLLING_COOKIE_MAX_AGE_S,
+  SESSION_DURATION_MS,
+  SESSION_REFRESH_THRESHOLD_MS,
+} from "@/shared/constants/auth-sessions";
 
 // Build standard cookie options to avoid duplication
 const buildSessionCookieOptions = (expiresAtMs: number) => ({
   expires: new Date(expiresAtMs),
   httpOnly: true,
   maxAge: ROLLING_COOKIE_MAX_AGE_S,
-  path: "/",
-  sameSite: "lax" as const,
-  secure: process.env.NODE_ENV === "production",
+  path: SESSION_COOKIE_PATH,
+  sameSite: SESSION_COOKIE_SAMESITE,
+  secure: IS_PRODUCTION,
 });
 
 /**

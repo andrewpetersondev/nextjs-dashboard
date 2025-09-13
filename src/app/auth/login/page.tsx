@@ -1,11 +1,11 @@
 import type { JSX } from "react";
-import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/constants/auth-ui";
 import { AuthFormDivider } from "@/features/auth/components/auth-form-divider";
 import { AuthFormSocialSection } from "@/features/auth/components/auth-form-social-section";
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { login } from "@/server/auth/actions/login";
+import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/shared/constants/auth-ui";
 import { ROUTES } from "@/shared/routes";
 
 export default function Page(): JSX.Element {

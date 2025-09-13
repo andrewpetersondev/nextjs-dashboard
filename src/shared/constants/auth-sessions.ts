@@ -34,6 +34,10 @@ export const SESSION_REFRESH_PING_MS = 20 * ONE_SECOND_MS; // base interval for 
 export const SESSION_KICKOFF_TIMEOUT_MS = 1500; // initial delay before first ping
 export const SESSION_REFRESH_JITTER_MS = 1000; // random jitter to avoid lockstep across tabs
 
+// JWT specifics (centralized to avoid magic strings)
+export const JWT_ALG_HS256 = "HS256" as const;
+export const JWT_TYP_JWT = "JWT" as const;
+
 // Absolute max lifetime for a session regardless of rolling refreshes (default: 30 days)
 export const MAX_ABSOLUTE_SESSION_MS = THIRTY_DAYS_MS;
 

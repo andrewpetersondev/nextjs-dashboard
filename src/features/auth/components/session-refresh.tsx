@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AUTH_REFRESH_ENDPOINT } from "@/constants/auth";
+import { IS_PROD } from "@/shared/config/env-public";
+import { AUTH_REFRESH_ENDPOINT } from "@/shared/constants/auth";
 import {
   SESSION_KICKOFF_TIMEOUT_MS,
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
-} from "@/constants/auth-sessions";
-import { CONTENT_TYPE_JSON, HEADER_CONTENT_TYPE } from "@/constants/http";
+} from "@/shared/constants/auth-sessions";
+import {
+  CONTENT_TYPE_JSON,
+  HEADER_CONTENT_TYPE,
+} from "@/shared/constants/http";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;
@@ -76,7 +80,7 @@ export function SessionRefresh(): null {
         const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
         if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
           const outcome = (await res.json()) as RefreshOutcome;
-          if (process.env.NODE_ENV === "development") {
+          if (!IS_PROD) {
             console.debug("[session-refresh] outcome:", outcome);
           }
         }

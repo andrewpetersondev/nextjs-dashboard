@@ -3,7 +3,7 @@ import {
   MAX_INVOICE_AMOUNT_USD,
   MAX_SENSITIVE_DATA_LENGTH,
   MIN_SENSITIVE_DATA_LENGTH,
-} from "@/constants/invoices";
+} from "@/shared/constants/invoices";
 import { INVOICE_STATUSES } from "@/shared/invoices/types";
 
 // Transport-safe primitives (no brands, no server-only)
