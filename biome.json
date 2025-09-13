@@ -231,7 +231,7 @@
   "overrides": [
     {
       "includes": [
-        "node-only/**/*.{ts,tsx,js,cjs,mjs}",
+        "devtools/**/*.{ts,tsx,js,cjs,mjs}",
         "cypress.config.*",
         "scripts/**/*.{ts,tsx,js,cjs,mjs}",
         "src/db/**/*.{ts,tsx,js,cjs,mjs}"
@@ -284,12 +284,12 @@
                 "patterns": [
                   {
                     "group": [
-                      "@/node-only/**",
-                      "../node-only/**",
-                      "../../node-only/**",
-                      "src/node-only/**"
+                      "@/devtools/**",
+                      "../devtools/**",
+                      "../../devtools/**",
+                      "src/devtools/**"
                     ],
-                    "message": "Client/browser code must not import from node-only/**."
+                    "message": "Client/browser code must not import from devtools/**."
                   }
                 ]
               }
@@ -300,10 +300,10 @@
     },
     {
       "includes": [
-        "node-only/config/env-node.ts",
-        "src/shared/config/public-env.client.ts",
-        "src/shared/config/env-shared.ts",
-        "src/server/config/env-next.ts"
+        "src/shared/config/env/public-env.client.ts",
+        "src/shared/config/env/env-shared.ts",
+        "src/server/config/env-next.ts",
+        "devtools/config/env-node.ts"
       ],
       "linter": {
         "rules": {
