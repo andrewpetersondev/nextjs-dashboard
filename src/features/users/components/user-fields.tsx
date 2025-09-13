@@ -8,8 +8,8 @@ import { SelectRole } from "@/features/users/components/select-role";
 import type { FormFieldError } from "@/shared/forms/types";
 import type { UserDto } from "@/shared/users/dto/types";
 import type { BaseUserFormFieldNames } from "@/shared/users/schema/schema.shared";
-import { InputField } from "@/ui/forms/input-field";
-import { Label } from "@/ui/primitives/label";
+import { Label } from "@/ui/atoms/label";
+import { InputField } from "@/ui/molecules/input-field";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <1 line over limit>
 export function UserFields({

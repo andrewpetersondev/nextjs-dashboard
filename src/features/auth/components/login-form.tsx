@@ -8,8 +8,8 @@ import { AuthServerMessage } from "@/features/auth/components/auth-server-messag
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import type { LoginFormFieldNames } from "@/shared/auth/domain/schema.shared";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import { FormInputWrapper } from "@/ui/forms/form-input-wrapper";
-import { InputField } from "@/ui/forms/input-field";
+import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
+import { InputField } from "@/ui/molecules/input-field";
 
 const INITIAL_STATE = {
   errors: {} as Partial<Record<LoginFormFieldNames, FormFieldError>>,

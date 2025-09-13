@@ -6,8 +6,8 @@ import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-for
 import { readCustomersAction } from "@/server/customers/actions/read";
 import { readInvoiceByIdAction } from "@/server/invoices/actions/read-by-id";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import { Breadcrumbs } from "@/ui/breadcrumbs";
-import { H1 } from "@/ui/primitives/headings";
+import { H1 } from "@/ui/atoms/typography/headings";
+import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditInvoicePageParams {
   id: string;

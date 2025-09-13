@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { JSX } from "react";
 import { ROUTES } from "@/shared/constants/routes";
-import { AcmeLogo } from "@/ui/acme-logo";
+import { AcmeLogo } from "@/ui/brand/acme-logo";
 
 export default function Page(): JSX.Element {
   return (

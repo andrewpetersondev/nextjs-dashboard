@@ -4,12 +4,12 @@ import type { DashboardCardData } from "@/features/dashboard/types";
 import { LatestInvoices } from "@/features/invoices/components/latest-invoices";
 import { RevenueChart } from "@/features/revenues/components/revenue-chart";
 import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
-import { H1 } from "@/ui/primitives/headings";
+import { H1 } from "@/ui/atoms/typography/headings";
 import {
   CardsSkeleton,
   LatestInvoicesSkeleton,
   RevenueChartSkeleton,
-} from "@/ui/skeletons";
+} from "@/ui/feedback/skeleton/skeletons";
 
 interface DashboardProps {
   readonly dashboardCardData: DashboardCardData;

@@ -17,9 +17,9 @@ import type {
   UpdateInvoiceInput,
 } from "@/shared/invoices/schema/shared";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
+import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
-import { Label } from "@/ui/primitives/label";
 
 // Helper: produce initial state (keeps component short)
 function getInitialState(): Extract<

@@ -16,9 +16,9 @@ import type {
 } from "@/shared/invoices/schema/shared";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
+import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
-import { Label } from "@/ui/primitives/label";
 
 const INITIAL_STATE = {
   errors: {} as Partial<Record<CreateInvoiceFieldNames, FormFieldError>>,

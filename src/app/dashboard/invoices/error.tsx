@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useEffect } from "react";
-import { H2 } from "@/ui/primitives/headings";
+import { H2 } from "@/ui/atoms/typography/headings";
 
 export default function InvoicesError({
   error,

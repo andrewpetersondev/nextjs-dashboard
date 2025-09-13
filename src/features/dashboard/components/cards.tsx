@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import type { DashboardCardData } from "@/features/dashboard/types";
-import { H3 } from "@/ui/primitives/headings";
+import { H3 } from "@/ui/atoms/typography/headings";
 
 /**
  * Card types for dashboard.

@@ -4,9 +4,12 @@ import { CreateInvoice } from "@/features/invoices/components/buttons";
 import { Pagination } from "@/features/invoices/components/pagination";
 import { InvoicesTable } from "@/features/invoices/components/table";
 import { readInvoicesPagesAction } from "@/server/invoices/actions/read-pages";
-import { H1 } from "@/ui/primitives/headings";
-import { Search } from "@/ui/search";
-import { InvoicesSearchSkeleton, InvoicesTableSkeleton } from "@/ui/skeletons";
+import { H1 } from "@/ui/atoms/typography/headings";
+import {
+  InvoicesSearchSkeleton,
+  InvoicesTableSkeleton,
+} from "@/ui/feedback/skeleton/skeletons";
+import { Search } from "@/ui/molecules/search-box";
 
 interface InvoicesSearchParams {
   query?: string;

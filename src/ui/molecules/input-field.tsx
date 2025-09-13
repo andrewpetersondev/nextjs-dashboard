@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
 import type { FormFieldError } from "@/shared/forms/types";
-import { InputFieldCard } from "@/ui/forms/input-field-card";
-import { FieldError } from "@/ui/primitives/field-error";
+import { FieldError } from "@/ui/forms/field-error";
+import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 /**
  * Props for the InputField component.

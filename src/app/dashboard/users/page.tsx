@@ -4,9 +4,9 @@ import { Pagination } from "@/features/invoices/components/pagination";
 import { CreateUser } from "@/features/users/components/buttons";
 import { UsersTable } from "@/features/users/components/users-table";
 import { readUsersPagesAction } from "@/server/users/actions/read-pages";
-import { H1 } from "@/ui/primitives/headings";
-import { Search } from "@/ui/search";
-import { InvoicesSearchSkeleton } from "@/ui/skeletons";
+import { H1 } from "@/ui/atoms/typography/headings";
+import { InvoicesSearchSkeleton } from "@/ui/feedback/skeleton/skeletons";
+import { Search } from "@/ui/molecules/search-box";
 
 interface UsersSearchParams {
   query?: string;

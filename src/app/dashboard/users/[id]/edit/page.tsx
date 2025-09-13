@@ -4,8 +4,8 @@ import type { JSX } from "react";
 import { EditUserFormV2 } from "@/features/users/components/edit-user-form-v2";
 import { readUserAction } from "@/server/users/actions/read";
 import type { UserDto } from "@/shared/users/dto/types";
-import { Breadcrumbs } from "@/ui/breadcrumbs";
-import { H1 } from "@/ui/primitives/headings";
+import { H1 } from "@/ui/atoms/typography/headings";
+import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditUserPageParams {
   id: string;

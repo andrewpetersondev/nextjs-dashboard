@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import { generateYAxis } from "@/features/revenues/lib/display/y-axis";
 import { getRevenueChartAction } from "@/server/revenues/actions/actions";
 import type { SimpleRevenueDto } from "@/shared/revenues/dto/types";
-import { H2, H3 } from "@/ui/primitives/headings";
+import { H2, H3 } from "@/ui/atoms/typography/headings";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not to long>
 export async function RevenueChart(): Promise<JSX.Element> {
