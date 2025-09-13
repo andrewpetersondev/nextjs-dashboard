@@ -1,5 +1,5 @@
 import { isDatabaseError } from "@/server/errors/guards";
-import { isValidationError } from "@/shared/core/errors/guards";
+import { isValidationError } from "@/shared/core/errors/error-guards";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,

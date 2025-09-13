@@ -19,7 +19,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
 import { mapFieldErrors } from "@/shared/forms/errors";
-import { isZodError } from "@/shared/forms/guards";
+import { isZodError } from "@/shared/forms/form-guards";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";

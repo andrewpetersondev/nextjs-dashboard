@@ -301,7 +301,7 @@
     {
       "includes": [
         "node-only/config/env-node.ts",
-        "src/shared/config/env-public.ts",
+        "src/shared/config/public-env.client.ts",
         "src/shared/config/env-shared.ts",
         "src/server/config/env-next.ts"
       ],
