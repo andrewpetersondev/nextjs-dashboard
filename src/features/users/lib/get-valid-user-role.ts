@@ -1,5 +1,3 @@
-import "server-only";
-
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 
 /**

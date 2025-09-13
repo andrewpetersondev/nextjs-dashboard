@@ -3,6 +3,7 @@ import { Dashboard } from "@/features/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/features/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/features/dashboard/constants";
 import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/constants";
+import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
 import { getDB } from "@/server/db/connection";
@@ -10,7 +11,6 @@ import {
   readInvoicesSummary,
   readLatestInvoices,
 } from "@/server/invoices/queries";
-import { getValidUserRole } from "@/server/users/utils";
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import { formatCurrency } from "@/shared/money/convert";
 

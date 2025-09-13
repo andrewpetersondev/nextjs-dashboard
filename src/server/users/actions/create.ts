@@ -1,10 +1,10 @@
 "use server";
 
+import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { getValidUserRole } from "@/server/users/utils";
 import { mapFieldErrors } from "@/shared/forms/errors";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";

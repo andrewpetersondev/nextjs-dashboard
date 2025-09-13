@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/server/auth/session";
+import { verifySessionOptimistic } from "@/server/auth/actions/verify-session";
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";
 import { H6 } from "@/ui/atoms/typography/headings";
