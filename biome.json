@@ -367,8 +367,28 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/server/**", "!@/server/*/actions/**"],
+                    "group": ["@/server/**", "@/server/*/actions/**"],
                     "message": "Components may import only server actions from their matching feature: @/server/<feature>/actions/**"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/shell/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**"],
+                    "message": "src/shell must not import from src/app."
                   }
                 ]
               }
