@@ -7,9 +7,7 @@ import {
   readLatestInvoices,
 } from "@/server/invoices/queries";
 import { getValidUserRole } from "@/server/users/utils";
-import { ROLES } from "@/shared/auth/roles";
-import type { AuthRole } from "@/shared/auth/types";
-import { AUTH_ROLES } from "@/shared/auth/types";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/roles";
 import { formatCurrency } from "@/shared/money/convert";
 import { DASHBOARD_TITLES, ITEMS_PER_PAGE_INVOICES } from "@/shared/ui/ui";
 import { Dashboard } from "@/ui/dashboard/dashboard";

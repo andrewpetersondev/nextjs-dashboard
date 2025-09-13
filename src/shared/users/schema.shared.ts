@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { AUTH_ROLES } from "@/shared/auth/roles";
 import {
   emailSchema,
   passwordSchema,
   usernameSchema,
 } from "@/shared/auth/schema.shared";
-import { AUTH_ROLES } from "@/shared/auth/types";
 
 export const roleSchema = z.enum(AUTH_ROLES, {
   error: (issue) =>

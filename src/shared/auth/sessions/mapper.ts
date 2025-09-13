@@ -1,5 +1,5 @@
+import type { AuthRole } from "@/shared/auth/roles";
 import type { EncryptPayload } from "@/shared/auth/sessions/zod";
-import type { AuthRole } from "@/shared/auth/types";
 
 /**
  * Flattens EncryptPayload for JWT compatibility.

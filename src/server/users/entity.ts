@@ -1,6 +1,6 @@
 import "server-only";
+import type { AuthRole } from "@/shared/auth/roles";
 
-import type { AuthRole } from "@/shared/auth/types";
 import type { UserId } from "@/shared/brands/domain-brands";
 
 /**

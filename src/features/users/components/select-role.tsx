@@ -1,6 +1,5 @@
 import type React from "react";
-import { ROLES } from "@/shared/auth/roles";
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/roles";
 import type { FormFieldError } from "@/shared/forms/types";
 import { ErrorMessage } from "@/ui/forms/error-message";
 import { SelectMenu, type SelectMenuProps } from "@/ui/select-menu";

@@ -4,6 +4,7 @@ export const ROLES = {
   USER: "user",
 } as const;
 
-export type AuthRole = (typeof ROLES)[keyof typeof ROLES];
-
 export const ADMIN_ROLE = ROLES.ADMIN;
+
+export type AuthRole = (typeof ROLES)[keyof typeof ROLES];
+export const AUTH_ROLES = Object.values(ROLES) as readonly AuthRole[];

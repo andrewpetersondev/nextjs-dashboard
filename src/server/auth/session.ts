@@ -18,6 +18,7 @@ import type { DecryptPayload } from "@/server/auth/types";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { LOGIN_PATH } from "@/shared/auth/constants";
+import type { AuthRole } from "@/shared/auth/roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
@@ -26,7 +27,6 @@ import {
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/shared/auth/sessions/constants";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
-import type { AuthRole } from "@/shared/auth/types";
 
 // Build standard cookie options to avoid duplication
 const buildSessionCookieOptions = (expiresAtMs: number) => ({

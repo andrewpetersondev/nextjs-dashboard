@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { AuthRole } from "@/shared/auth/types";
+import type { AuthRole } from "@/shared/auth/roles";
 import { roleSchema } from "@/shared/users/schema.shared";
 
 export const userIdSchema = z.uuid();

@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, serial } from "drizzle-orm/pg-core";
-import type { AuthRole } from "../../src/shared/auth/types";
+import type { AuthRole } from "@/shared/auth/roles";
 import { roleEnum } from "./users";
 
 export const demoUserCounters = pgTable("demo_user_counters", {

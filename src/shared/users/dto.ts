@@ -1,4 +1,4 @@
-import type { AuthRole } from "@/shared/auth/types";
+import type { AuthRole } from "@/shared/auth/roles";
 
 /**
  * Data Transfer Object (DTO) representing a user entity for client/server transport.

@@ -1,9 +1,8 @@
 import type { JSX } from "react";
 // biome-ignore lint/style/noRestrictedImports: <fix later>
 import { verifySessionOptimistic } from "@/server/auth/session";
-import { ROLES } from "@/shared/auth/roles";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/roles";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/types";
 import { H6 } from "@/ui/primitives/headings";
 
 const allowedRoles: readonly AuthRole[] = AUTH_ROLES;

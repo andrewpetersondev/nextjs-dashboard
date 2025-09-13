@@ -9,8 +9,7 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { ROLES } from "../../src/shared/auth/roles";
-import { AUTH_ROLES, type AuthRole } from "../../src/shared/auth/types";
+import { AUTH_ROLES, type AuthRole, ROLES } from "../../src/shared/auth/roles";
 import type { UserId } from "../../src/shared/brands/domain-brands";
 import { sessions } from "./sessions";
 
