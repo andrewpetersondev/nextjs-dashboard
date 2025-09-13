@@ -4,8 +4,8 @@ import { AuthFormSocialSection } from "@/features/auth/components/auth-form-soci
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { LoginForm } from "@/features/auth/components/login-form";
+import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/features/auth/constants";
 import { login } from "@/server/auth/actions/login";
-import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/shared/constants/auth-ui";
 import { ROUTES } from "@/shared/constants/routes";
 
 export default function Page(): JSX.Element {

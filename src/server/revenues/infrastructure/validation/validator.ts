@@ -1,10 +1,8 @@
 import "server-only";
 
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import {
-  INTERVAL_DURATIONS,
-  type IntervalDuration,
-} from "@/shared/revenues/types";
+import { INTERVAL_DURATIONS } from "@/shared/revenues/constants";
+import type { IntervalDuration } from "@/shared/revenues/types";
 import { validateEnum } from "@/shared/validation/enum";
 
 /**

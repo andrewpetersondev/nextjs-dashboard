@@ -9,7 +9,7 @@ import {
   HEADER_VARY,
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
-} from "@/shared/constants/http";
+} from "@/shared/auth/sessions/http";
 
 // Route handler to roll (refresh) the session token if it's near expiry.
 // Safe to call repeatedly; it only re-issues when needed and respects absolute lifetime.

@@ -17,16 +17,16 @@ import {
 import type { DecryptPayload } from "@/server/auth/types";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
-import type { AuthRole } from "@/shared/auth/types";
-import { LOGIN_PATH } from "@/shared/constants/auth";
+import { LOGIN_PATH } from "@/shared/auth/constants";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
   ROLLING_COOKIE_MAX_AGE_S,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/shared/constants/auth-sessions";
+} from "@/shared/auth/sessions/constants";
+import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
+import type { AuthRole } from "@/shared/auth/types";
 
 // Build standard cookie options to avoid duplication
 const buildSessionCookieOptions = (expiresAtMs: number) => ({

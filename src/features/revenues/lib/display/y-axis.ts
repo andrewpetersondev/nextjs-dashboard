@@ -1,5 +1,5 @@
 import type { YAxisResult } from "@/features/revenues/types";
-import type { SimpleRevenueDto } from "@/shared/revenues/types";
+import type { SimpleRevenueDto } from "@/shared/revenues/dto";
 import { CHART_Y_AXIS } from "@/shared/ui/ui";
 
 /**

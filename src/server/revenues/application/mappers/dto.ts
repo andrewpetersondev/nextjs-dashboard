@@ -5,8 +5,10 @@ import {
   validateMonthNumber,
 } from "@/server/revenues/domain/helpers";
 import { convertCentsToDollars } from "@/shared/money/convert";
-import type { RevenueStatisticsDto } from "@/shared/revenues/dto";
-import type { SimpleRevenueDto } from "@/shared/revenues/types";
+import type {
+  RevenueStatisticsDto,
+  SimpleRevenueDto,
+} from "@/shared/revenues/dto";
 
 export function mapEntityToSimpleRevenueDto(
   entity: {

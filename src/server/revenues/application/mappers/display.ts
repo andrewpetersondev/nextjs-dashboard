@@ -11,7 +11,7 @@ import {
   MIN_REVENUE_MONTHS,
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
-} from "@/shared/revenues/types";
+} from "@/shared/revenues/constants";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.

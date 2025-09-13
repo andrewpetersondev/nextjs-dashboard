@@ -10,6 +10,12 @@ import {
 } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
+  CLOCK_TOLERANCE_SEC,
+  JWT_ALG_HS256,
+  JWT_TYP_JWT,
+  MIN_HS256_KEY_LENGTH,
+} from "@/shared/auth/sessions/constants";
+import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
 } from "@/shared/auth/sessions/mapper";
@@ -17,12 +23,6 @@ import {
   type EncryptPayload,
   EncryptPayloadSchema,
 } from "@/shared/auth/sessions/zod";
-import {
-  CLOCK_TOLERANCE_SEC,
-  JWT_ALG_HS256,
-  JWT_TYP_JWT,
-  MIN_HS256_KEY_LENGTH,
-} from "@/shared/constants/auth-sessions";
 import { ValidationError } from "@/shared/errors/domain";
 
 let encodedKey: Uint8Array | undefined;

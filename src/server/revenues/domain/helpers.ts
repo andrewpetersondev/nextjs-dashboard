@@ -1,10 +1,11 @@
 import "server-only";
 
+import { MONTH_ORDER } from "@/shared/revenues/constants";
 import {
   MAX_MONTH_NUMBER,
   MIN_MONTH_NUMBER,
-} from "@/shared/constants/revenues-date";
-import { MONTH_ORDER, type MonthName } from "@/shared/revenues/types";
+} from "@/shared/revenues/revenues-date.constants";
+import type { MonthName } from "@/shared/revenues/types";
 
 export function validateMonthNumber(monthNumber: number, period: Date): void {
   if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
