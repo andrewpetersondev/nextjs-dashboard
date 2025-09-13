@@ -1,9 +1,8 @@
 import Link from "next/link";
 import type { JSX } from "react";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { LogoutForm } from "@/features/auth/components/logout-form";
+import { NavLinksWrapper } from "@/features/dashboard/components/nav-links-wrapper";
 import { AcmeLogo } from "@/ui/acme-logo";
-import { NavLinksWrapper } from "@/ui/dashboard/nav-links-wrapper";
 
 /**
  * SideNav component for dashboard layout.
@@ -20,7 +19,7 @@ export const SideNav = (): JSX.Element => {
       <Link
         aria-label="Go to homepage"
         className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary md:h-40"
-        href="/"
+        href="/public"
         tabIndex={0}
       >
         <AcmeLogo />

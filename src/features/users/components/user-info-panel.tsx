@@ -1,4 +1,4 @@
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 
 export function UserInfoPanel({ user }: { user: UserDto }) {
   return (

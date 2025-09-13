@@ -8,8 +8,10 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import { toUserId } from "@/shared/domain/id-converters";
+import { mapFieldErrors } from "@/shared/forms/errors";
+import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
@@ -17,12 +19,8 @@ import {
 import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
-} from "@/shared/users/schema.shared";
-import { stripProperties } from "@/shared/utils/general";
-import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-} from "@/shared/utils/utils";
+} from "@/shared/users/schema/schema.shared";
+import { stripProperties } from "@/shared/utils/object";
 
 /**
  * Edits an existing user.

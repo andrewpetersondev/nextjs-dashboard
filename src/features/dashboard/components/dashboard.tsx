@@ -1,11 +1,9 @@
 import { type JSX, Suspense } from "react";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
+import { CardWrapper } from "@/features/dashboard/components/cards";
+import type { DashboardCardData } from "@/features/dashboard/types";
 import { LatestInvoices } from "@/features/invoices/components/latest-invoices";
-// biome-ignore lint/style/noRestrictedImports: <fix later>
 import { RevenueChart } from "@/features/revenues/components/revenue-chart";
 import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
-import type { DashboardCardData } from "@/shared/ui/types";
-import { CardWrapper } from "@/ui/dashboard/cards";
 import { H1 } from "@/ui/primitives/headings";
 import {
   CardsSkeleton,

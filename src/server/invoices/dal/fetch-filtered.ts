@@ -5,7 +5,7 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
-import { ITEMS_PER_PAGE } from "@/shared/ui/ui";
+import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
 import { customers } from "../../../../node-only/schema/customers";
 import { invoices } from "../../../../node-only/schema/invoices";
 

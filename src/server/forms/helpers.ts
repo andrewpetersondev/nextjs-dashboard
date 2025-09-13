@@ -2,7 +2,7 @@ import "server-only";
 
 import type { z } from "zod";
 import { isZodObject } from "@/shared/forms/guards";
-import { deriveAllowedFieldsFromSchema } from "@/shared/utils/utils";
+import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 
 // --- helpers (core) ---
 

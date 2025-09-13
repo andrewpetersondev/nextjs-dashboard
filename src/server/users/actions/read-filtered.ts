@@ -2,7 +2,7 @@
 
 import { getDB } from "@/server/db/connection";
 import { fetchFilteredUsers } from "@/server/users/dal/fetch-filtered-users";
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 
 /**
  * Server action to fetch filtered users for the users table.

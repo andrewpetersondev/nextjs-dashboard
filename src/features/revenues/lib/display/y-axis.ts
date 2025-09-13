@@ -1,6 +1,6 @@
+import { CHART_Y_AXIS } from "@/features/revenues/constants";
 import type { YAxisResult } from "@/features/revenues/types";
 import type { SimpleRevenueDto } from "@/shared/revenues/dto/types";
-import { CHART_Y_AXIS } from "@/shared/ui/ui";
 
 /**
  * Generates formatted Y-axis labels and scaling information for revenue charts.

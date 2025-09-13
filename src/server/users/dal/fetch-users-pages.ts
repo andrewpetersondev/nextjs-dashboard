@@ -1,10 +1,10 @@
 import "server-only";
 
 import { count, ilike, or } from "drizzle-orm";
+import { ITEMS_PER_PAGE_USERS } from "@/features/users/constants";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { ITEMS_PER_PAGE_USERS } from "@/shared/ui/ui";
 import { users } from "../../../../node-only/schema/users";
 
 /**

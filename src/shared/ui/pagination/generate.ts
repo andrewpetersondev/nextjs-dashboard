@@ -1,10 +1,12 @@
-export const PAGINATION_SMALL_THRESHOLD = 7;
-export const PAGINATION_START_EDGE = 3;
-export const PAGINATION_END_EDGE_OFFSET = 2;
-export const FIRST_PAGE = 1;
-export const SECOND_PAGE = 2;
-export const THIRD_PAGE = 3;
-export const ELLIPSIS = "...";
+import {
+  ELLIPSIS,
+  FIRST_PAGE,
+  PAGINATION_END_EDGE_OFFSET,
+  PAGINATION_SMALL_THRESHOLD,
+  PAGINATION_START_EDGE,
+  SECOND_PAGE,
+  THIRD_PAGE,
+} from "@/shared/ui/pagination/constants";
 
 export const generatePagination = (
   currentPage: number,

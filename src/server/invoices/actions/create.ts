@@ -11,7 +11,9 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
+import { mapFieldErrors } from "@/shared/forms/errors";
 import { isZodError } from "@/shared/forms/guards";
+import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
 import { translator } from "@/shared/i18n/translator";
 import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
@@ -22,10 +24,6 @@ import {
   type CreateInvoiceInput,
   CreateInvoiceSchema,
 } from "@/shared/invoices/schema/shared";
-import {
-  deriveAllowedFieldsFromSchema,
-  mapFieldErrors,
-} from "@/shared/utils/utils";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

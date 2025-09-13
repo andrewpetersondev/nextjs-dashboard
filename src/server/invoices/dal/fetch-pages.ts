@@ -4,7 +4,7 @@ import { count, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
-import { ITEMS_PER_PAGE } from "@/shared/ui/ui";
+import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
 import { customers } from "../../../../node-only/schema/customers";
 import { invoices } from "../../../../node-only/schema/invoices";
 

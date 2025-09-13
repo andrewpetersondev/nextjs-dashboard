@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
-import { IMAGE_SIZES } from "@/shared/ui/ui";
+import { IMAGE_SIZES } from "@/shared/ui/tokens/images";
 
 /**
  * Props for the CustomerTableRow component.

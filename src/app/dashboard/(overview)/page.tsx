@@ -1,4 +1,8 @@
 import type { JSX } from "react";
+import { Dashboard } from "@/features/dashboard/components/dashboard";
+import { MiddlewareCard } from "@/features/dashboard/components/middleware-card";
+import { DASHBOARD_TITLES } from "@/features/dashboard/constants";
+import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/constants";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
 import { getDB } from "@/server/db/connection";
@@ -9,9 +13,6 @@ import {
 import { getValidUserRole } from "@/server/users/utils";
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import { formatCurrency } from "@/shared/money/convert";
-import { DASHBOARD_TITLES, ITEMS_PER_PAGE_INVOICES } from "@/shared/ui/ui";
-import { Dashboard } from "@/ui/dashboard/dashboard";
-import { MiddlewareCard } from "@/ui/dashboard/middleware-card";
 
 export const dynamic = "force-dynamic";
 

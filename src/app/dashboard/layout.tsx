@@ -1,5 +1,5 @@
 import type { FC, JSX, ReactNode } from "react";
-import { SideNav } from "@/ui/dashboard/sidenav";
+import { SideNav } from "@/features/dashboard/components/sidenav";
 
 // Tailwind class constants for maintainability
 const ROOT_LAYOUT_CLASS =

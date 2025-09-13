@@ -12,7 +12,7 @@ import { type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import { ROUTES } from "@/shared/constants/routes";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**

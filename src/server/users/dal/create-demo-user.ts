@@ -6,7 +6,7 @@ import { createUserDal } from "@/server/users/dal/create";
 import { createRandomPassword } from "@/shared/auth/domain/password";
 import type { AuthRole } from "@/shared/auth/domain/roles";
 
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 
 /**
  * Creates a demo user with a unique username and email for the given role.

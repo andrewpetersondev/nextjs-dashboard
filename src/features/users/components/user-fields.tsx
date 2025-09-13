@@ -6,8 +6,8 @@ import {
 import type { JSX } from "react";
 import { SelectRole } from "@/features/users/components/select-role";
 import type { FormFieldError } from "@/shared/forms/types";
-import type { UserDto } from "@/shared/users/dto";
-import type { BaseUserFormFieldNames } from "@/shared/users/schema.shared";
+import type { UserDto } from "@/shared/users/dto/types";
+import type { BaseUserFormFieldNames } from "@/shared/users/schema/schema.shared";
 import { InputField } from "@/ui/forms/input-field";
 import { Label } from "@/ui/primitives/label";
 

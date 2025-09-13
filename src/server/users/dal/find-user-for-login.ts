@@ -6,7 +6,7 @@ import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import type { UserDto } from "@/shared/users/dto";
+import type { UserDto } from "@/shared/users/dto/types";
 import { users } from "../../../../node-only/schema/users";
 
 /**

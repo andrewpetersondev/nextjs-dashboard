@@ -1,7 +1,7 @@
 import type React from "react";
 import { memo } from "react";
 import { GitHubIcon, GoogleIcon } from "@/features/auth/components/icons";
-import { SOCIAL_ANCHOR_BUTTON_CLASSES } from "@/shared/ui/button-classes";
+import { SOCIAL_ANCHOR_BUTTON_CLASSES } from "@/shared/ui/classes/button";
 
 /**
  * Supported social login providers.

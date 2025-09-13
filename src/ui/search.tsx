@@ -9,7 +9,7 @@ import {
 } from "next/navigation";
 import type { ChangeEvent, JSX } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { DEBOUNCE_MS } from "@/shared/ui/ui";
+import { DEBOUNCE_MS } from "@/shared/ui/tokens/timings";
 
 /**
  * Search component for filtering data.

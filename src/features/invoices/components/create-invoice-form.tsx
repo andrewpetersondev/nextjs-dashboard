@@ -14,7 +14,7 @@ import type {
   CreateInvoiceFieldNames,
   CreateInvoiceInput,
 } from "@/shared/invoices/schema/shared";
-import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/ui";
+import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
