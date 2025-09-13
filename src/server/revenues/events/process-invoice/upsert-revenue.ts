@@ -5,11 +5,11 @@ import {
   logInfo,
 } from "@/server/revenues/application/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import {
   applyDeltaToBucket,
   type BucketTotals,
-} from "@/server/revenues/domain/revenue-buckets";
+} from "@/server/revenues/domain/calculations/buckets";
+import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";

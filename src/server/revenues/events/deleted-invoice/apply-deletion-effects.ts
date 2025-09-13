@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { computeAggregateAfterRemoval } from "@/server/revenues/domain/revenue-aggregate";
-import { applyDeltaToBucket } from "@/server/revenues/domain/revenue-buckets";
+import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/aggregate";
+import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/buckets";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
