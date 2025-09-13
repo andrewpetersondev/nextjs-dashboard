@@ -11,9 +11,9 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
-import { ROUTES } from "@/shared/constants/routes";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
+import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Creates a demo user and logs them in.

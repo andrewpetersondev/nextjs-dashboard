@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
 import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
-import { ROUTES } from "@/shared/constants/routes";
+import { ROUTES } from "@/shared/routes/routes";
 
 /** Navigation link paths */
 const NAV_LINKS = {

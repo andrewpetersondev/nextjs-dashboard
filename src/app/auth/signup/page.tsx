@@ -6,7 +6,7 @@ import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
 import { AUTH_DIVIDER_LABEL, SIGNUP_HEADING } from "@/features/auth/constants";
 import { signup } from "@/server/auth/actions/signup";
-import { ROUTES } from "@/shared/constants/routes";
+import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {
   return (

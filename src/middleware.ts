@@ -9,7 +9,7 @@ import {
   isPublicRoute as isPublicRouteHelper,
   normalizePath,
   ROUTES,
-} from "@/shared/constants/routes";
+} from "@/shared/routes/routes";
 
 export default async function middleware(req: NextRequest) {
   const path: string = normalizePath(req.nextUrl.pathname);

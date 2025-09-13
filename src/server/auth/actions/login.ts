@@ -15,10 +15,10 @@ import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
-import { ROUTES } from "@/shared/constants/routes";
 import { toUserId } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/errors";
 import type { FormState } from "@/shared/forms/types";
+import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Server action to handle login form submission.

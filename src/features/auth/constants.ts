@@ -1,4 +1,4 @@
-import { ROUTES } from "@/shared/constants/routes";
+import { ROUTES } from "@/shared/routes/routes";
 
 // Auth Form Fields
 export const USERNAME_MIN_LENGTH = 3;
