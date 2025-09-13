@@ -1,8 +1,5 @@
 import type { JSX } from "react";
 import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
-import { Dashboard } from "@/features/dashboard/components/dashboard";
-import { MiddlewareCard } from "@/features/dashboard/components/middleware-card";
-import { DASHBOARD_TITLES } from "@/features/dashboard/constants";
 import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/session";
@@ -13,6 +10,9 @@ import {
   readLatestInvoices,
 } from "@/server/invoices/queries";
 import { formatCurrency } from "@/shared/money/convert";
+import { Dashboard } from "@/shell/dashboard/components/dashboard";
+import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
+import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";
 
 export const dynamic = "force-dynamic";
 
