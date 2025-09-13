@@ -1,7 +1,12 @@
 import type { FC } from "react";
 import { DemoForm } from "@/features/auth/components/demo-form";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
-
+import {
+  AUTH_GITHUB_ENDPOINT,
+  AUTH_GOOGLE_ENDPOINT,
+  DEMO_ADMIN_LABEL,
+  DEMO_USER_LABEL,
+} from "@/features/auth/constants";
 import type { AuthRole } from "@/shared/auth/types";
 
 /**
@@ -31,12 +36,12 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
   <>
     {/* Demo user and admin buttons */}
     <DemoForm
-      label="demo-user"
+      label={DEMO_USER_LABEL}
       text={demoUserText}
       userRole={"user" as AuthRole}
     />
     <DemoForm
-      label="demo-admin-user"
+      label={DEMO_ADMIN_LABEL}
       text={demoAdminText}
       userRole={"admin" as AuthRole}
     />
@@ -45,13 +50,13 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
     <div className="mt-6 grid grid-cols-2 gap-4">
       <SocialLoginButton
         data-cy="auth-social-google-button"
-        href="/api/auth/google"
+        href={AUTH_GOOGLE_ENDPOINT}
         mode={mode}
         provider="Google"
       />
       <SocialLoginButton
         data-cy="auth-social-github-button"
-        href="/api/auth/github"
+        href={AUTH_GITHUB_ENDPOINT}
         mode={mode}
         provider="GitHub"
       />

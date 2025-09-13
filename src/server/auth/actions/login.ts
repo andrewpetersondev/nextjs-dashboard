@@ -17,6 +17,7 @@ import {
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
 import { toDenseFormErrors } from "@/shared/forms/utils";
+import { ROUTES } from "@/shared/routes";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**
@@ -84,5 +85,5 @@ export async function login(
     );
   }
 
-  redirect("/dashboard");
+  redirect(ROUTES.DASHBOARD.ROOT);
 }

@@ -25,6 +25,7 @@ import {
   CreateInvoiceSchema,
 } from "@/shared/invoices/schema.shared";
 import type { InvoiceStatus } from "@/shared/invoices/types";
+import { ROUTES } from "@/shared/routes";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 
@@ -62,7 +63,7 @@ export async function createInvoiceAction(
         operation: "invoice_created",
       });
 
-      revalidatePath("/dashboard");
+      revalidatePath(ROUTES.DASHBOARD.ROOT);
 
       result = {
         data: parsed.data,

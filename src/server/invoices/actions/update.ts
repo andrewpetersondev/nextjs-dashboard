@@ -19,6 +19,7 @@ import {
   UpdateInvoiceSchema,
 } from "@/shared/invoices/schema.shared";
 import type { InvoiceStatus } from "@/shared/invoices/types";
+import { ROUTES } from "@/shared/routes";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {
@@ -109,7 +110,7 @@ export async function updateInvoiceAction(
     const updatedInvoice = await service.updateInvoice(id, parsed.data);
 
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
-    revalidatePath("/dashboard");
+    revalidatePath(ROUTES.DASHBOARD.ROOT);
 
     return {
       data: updatedInvoice,

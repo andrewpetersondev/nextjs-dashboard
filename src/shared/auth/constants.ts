@@ -31,3 +31,6 @@ export const PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER =
 export const EMAIL_ERROR = "Email had some sort of error. Please try again.";
 
 export const LOGIN_PATH = "/auth/login";
+
+// API Endpoints
+export const AUTH_REFRESH_ENDPOINT = "/api/auth/refresh" as const;

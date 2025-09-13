@@ -2,10 +2,15 @@ import { type NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
-
-const PROTECTED_PREFIX = "/dashboard" as const;
-const ADMIN_PREFIX = "/dashboard/users" as const;
-const PUBLIC_ROUTES = new Set(["/auth/login", "/auth/signup", "/"]);
+import { LOGIN_PATH } from "@/shared/auth/constants";
+import { ROLES } from "@/shared/auth/roles";
+import {
+  ADMIN_PREFIX,
+  EXCLUDED_PATHS_MATCHER,
+  PROTECTED_PREFIX,
+  PUBLIC_ROUTES,
+  ROUTES,
+} from "@/shared/routes";
 
 // Normalize path by removing trailing slash (except root)
 function normalizePath(p: string): string {
@@ -40,17 +45,17 @@ export default async function middleware(req: NextRequest) {
   if (isAdminRoute) {
     // Not authenticated: go straight to login (avoid double redirects)
     if (!session?.user?.userId) {
-      return NextResponse.redirect(new URL("/auth/login", req.nextUrl));
+      return NextResponse.redirect(new URL(LOGIN_PATH, req.nextUrl));
     }
     // Authenticated but not admin
-    if (session.user.role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    if (session.user.role !== ROLES.ADMIN) {
+      return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
     }
   }
 
   // Protected routes (folder-scoped)
   if (isProtectedRoute && !session?.user?.userId) {
-    return NextResponse.redirect(new URL("/auth/login", req.nextUrl));
+    return NextResponse.redirect(new URL(LOGIN_PATH, req.nextUrl));
   }
 
   // Public routes: bounce authenticated users to dashboard
@@ -59,7 +64,7 @@ export default async function middleware(req: NextRequest) {
     session?.user?.userId &&
     !isPathUnder(path, PROTECTED_PREFIX)
   ) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
   }
 
   return NextResponse.next();
@@ -68,5 +73,5 @@ export default async function middleware(req: NextRequest) {
 // Routes Middleware should not run on
 export const config = {
   // Exclude APIs, Next internals, data routes, and any path with a file extension
-  matcher: ["/((?!api|_next/static|_next/image|_next/data|.*\\..*$).*)"],
+  matcher: [EXCLUDED_PATHS_MATCHER],
 };

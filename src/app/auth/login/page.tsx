@@ -4,7 +4,7 @@ import { AuthFormSocialSection } from "@/features/auth/components/auth-form-soci
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { LoginForm } from "@/features/auth/components/login-form";
-import { LOGIN_HEADING } from "@/features/auth/text";
+import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/features/auth/constants";
 import { login } from "@/server/auth/actions/login";
 
 export default function Page(): JSX.Element {
@@ -15,7 +15,7 @@ export default function Page(): JSX.Element {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
             <LoginForm action={login} />
-            <AuthFormDivider label="or continue with" />
+            <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
             <AuthFormSocialSection
               demoAdminText="Login as Demo Admin"
               demoUserText="Login as Demo User"

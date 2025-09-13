@@ -10,18 +10,19 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
-
+import { ROLES } from "@/shared/auth/roles";
 import type { AuthRole } from "@/shared/auth/types";
+import { ROUTES } from "@/shared/routes";
 
 /** Navigation link paths */
 const NAV_LINKS = {
   CUSTOMERS: "/dashboard/customers",
-  HOME: "/dashboard",
-  INVOICES: "/dashboard/invoices",
-  USERS: "/dashboard/users",
+  HOME: ROUTES.DASHBOARD.ROOT,
+  INVOICES: ROUTES.DASHBOARD.INVOICES,
+  USERS: ROUTES.DASHBOARD.USERS,
 } as const;
 
-const ADMIN_ROLE = "admin" as AuthRole;
+const ADMIN_ROLE = ROLES.ADMIN as AuthRole;
 
 type NavLinksProps = {
   /** User role for conditional links*/

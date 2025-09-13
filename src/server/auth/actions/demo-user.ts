@@ -11,6 +11,7 @@ import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import type { AuthRole } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
 import type { FormState } from "@/shared/forms/types";
+import { ROUTES } from "@/shared/routes";
 import type { UserDto } from "@/shared/users/dto";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
@@ -70,5 +71,5 @@ export async function demoUser(
 
     return result;
   }
-  redirect("/dashboard");
+  redirect(ROUTES.DASHBOARD.ROOT);
 }

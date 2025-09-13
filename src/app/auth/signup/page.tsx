@@ -4,8 +4,9 @@ import { AuthFormSocialSection } from "@/features/auth/components/auth-form-soci
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
-import { SIGNUP_HEADING } from "@/features/auth/text";
+import { AUTH_DIVIDER_LABEL, SIGNUP_HEADING } from "@/features/auth/constants";
 import { signup } from "@/server/auth/actions/signup";
+import { ROUTES } from "@/shared/routes";
 
 export default function Page(): JSX.Element {
   return (
@@ -15,7 +16,7 @@ export default function Page(): JSX.Element {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
             <SignupForm action={signup} />
-            <AuthFormDivider label="or continue with" />
+            <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
             <AuthFormSocialSection
               demoAdminText="Sign Up as Demo Admin"
               demoUserText="Sign Up as Demo User"
@@ -23,7 +24,7 @@ export default function Page(): JSX.Element {
             />
           </div>
           <AuthSwitchLink
-            href="/auth/login"
+            href={ROUTES.AUTH.LOGIN}
             linkText="Log in here"
             prompt="Already a member?"
           />
