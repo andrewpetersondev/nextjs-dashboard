@@ -1,7 +1,7 @@
 import "server-only";
 
-import { logInfo } from "@/server/revenues/application/logging";
-import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import type {
   MetadataWithPeriod,

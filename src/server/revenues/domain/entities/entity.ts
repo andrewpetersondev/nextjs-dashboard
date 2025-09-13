@@ -3,7 +3,6 @@ import "server-only";
 import type { RevenueSource } from "@/features/revenues/types";
 import type { Period, RevenueId } from "@/shared/domain/domain-brands";
 import type { Cents } from "@/shared/money/types";
-import type { MonthName } from "@/shared/revenues/types";
 
 /**
  * Represents a revenue entity in the database.
@@ -43,19 +42,3 @@ export type RevenueUpdatable = Pick<
   | "totalPendingAmount"
   | "calculationSource"
 >;
-
-/**
- * Display-oriented entity extending RevenueEntity with UI-specific fields.
- *
- * This entity adds computed display fields while maintaining all the
- * original entity data for complete context in UI components.
- *
- * @prop month - Three-letter month abbreviation (e.g., "Jan", "Feb")
- * @prop year - The year in YYYY format
- * @prop monthNumber - Calendar month number (1-12)
- */
-export interface RevenueDisplayEntity extends RevenueEntity {
-  readonly month: MonthName;
-  readonly monthNumber: number;
-  readonly year: number;
-}

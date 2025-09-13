@@ -3,8 +3,8 @@ import "server-only";
 import {
   type LogMetadata,
   logInfo,
-} from "@/server/revenues/application/logging";
-import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+} from "@/server/revenues/application/cross-cutting/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { toRevenueId } from "@/shared/domain/id-converters";
 
 /**

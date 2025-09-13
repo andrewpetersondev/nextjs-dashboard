@@ -5,8 +5,8 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import {
   mapEntityToSimpleRevenueDto,
   mapToStatisticsDto,
-} from "@/server/revenues/application/mappers/dto";
-import { RevenueStatisticsService } from "@/server/revenues/application/services/revenue-statistics.service";
+} from "@/server/revenues/application/mappers/revenue-dto.mapper";
+import { RevenueStatisticsService } from "@/server/revenues/application/services/statistics/statistics.service";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
 import type { RevenueActionResult } from "@/server/revenues/shared/types/action-result";
 import type { RevenueChartDto } from "@/shared/revenues/dto/types";

@@ -1,11 +1,9 @@
 import "server-only";
 
 import { serverLogger } from "@/server/logging/serverLogger";
-import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/display";
-import type {
-  RevenueDisplayEntity,
-  RevenueEntity,
-} from "@/server/revenues/domain/entities/entity";
+import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/revenue-display.mapper";
+import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
+import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
 

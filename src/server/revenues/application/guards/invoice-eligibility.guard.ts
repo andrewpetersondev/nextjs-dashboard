@@ -4,7 +4,7 @@ import {
   type LogMetadata,
   logError,
   logInfo,
-} from "@/server/revenues/application/logging";
+} from "@/server/revenues/application/cross-cutting/logging";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import { validateInvoicePeriodForRevenue } from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { InvoiceDto } from "@/shared/invoices/dto";

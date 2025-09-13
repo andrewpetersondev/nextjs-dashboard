@@ -1,13 +1,13 @@
 import "server-only";
 
-import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/aggregate";
-import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/buckets";
+import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
+import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
+import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
-import type { LogMetadata } from "../../application/logging";
-import { logInfo } from "../../application/logging";
+import type { LogMetadata } from "../../application/cross-cutting/logging";
+import { logInfo } from "../../application/cross-cutting/logging";
 
 /**
  * Options required to apply deletion effects to revenue records.

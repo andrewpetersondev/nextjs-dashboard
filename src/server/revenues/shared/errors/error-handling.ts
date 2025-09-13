@@ -4,7 +4,7 @@ import {
   type LogMetadata,
   logError,
   logInfo,
-} from "@/server/revenues/application/logging";
+} from "@/server/revenues/application/cross-cutting/logging";
 
 /**
  * Wraps a function with standardized error handling

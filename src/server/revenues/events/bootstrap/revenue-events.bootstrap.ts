@@ -2,8 +2,8 @@ import "server-only";
 
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { RevenueService } from "@/server/revenues/application/services/revenue.service";
-import { RevenueEventHandler } from "@/server/revenues/events/revenue-event.handler";
+import { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
+import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
 

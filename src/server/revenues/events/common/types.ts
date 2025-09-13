@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { LogMetadata } from "@/server/revenues/application/logging";
-import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";
+import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type { Period } from "@/shared/domain/domain-brands";
 import type { InvoiceDto } from "@/shared/invoices/dto";
 

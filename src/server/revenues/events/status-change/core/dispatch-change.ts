@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { RevenueService } from "@/server/revenues/application/services/revenue.service";
+import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type {
   ChangeType,
   MetadataWithPeriod,
