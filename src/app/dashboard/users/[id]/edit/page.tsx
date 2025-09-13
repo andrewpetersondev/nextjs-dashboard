@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import { EditUserFormV2 } from "@/features/users/components/edit-user-form-v2";
+import type { UserDto } from "@/features/users/dto/types";
 import { readUserAction } from "@/server/users/actions/read";
-import type { UserDto } from "@/shared/users/dto/types";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 

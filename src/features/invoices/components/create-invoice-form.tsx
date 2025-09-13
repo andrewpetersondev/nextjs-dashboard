@@ -8,12 +8,12 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceServerMessage } from "@/features/invoices/components/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
-import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type {
   CreateInvoiceFieldNames,
   CreateInvoiceInput,
-} from "@/shared/invoices/schema/shared";
+} from "@/features/invoices/schema/shared";
+import { createInvoiceAction } from "@/server/invoices/actions/create";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { Label } from "@/ui/atoms/label";

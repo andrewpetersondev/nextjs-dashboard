@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
 import { fromDal } from "@/server/errors/wrappers";
@@ -19,8 +20,7 @@ import { ValidationError } from "@/shared/core/errors/domain";
 import { Err, Ok, type Result } from "@/shared/core/result/result-base";
 import { map } from "@/shared/core/result/result-transform";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 
 /**
  * Repository for managing invoice data.

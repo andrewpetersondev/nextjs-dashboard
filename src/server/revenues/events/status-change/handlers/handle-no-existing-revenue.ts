@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
@@ -8,7 +9,6 @@ import type {
   PeriodArg,
 } from "@/server/revenues/events/common/types";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 interface Args {
   readonly revenueService: RevenueService;

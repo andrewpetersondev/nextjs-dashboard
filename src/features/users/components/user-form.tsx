@@ -1,9 +1,9 @@
 import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
+import type { UserDto } from "@/features/users/dto/types";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { TYPING_MS } from "@/shared/ui/tokens/timings";
-import type { UserDto } from "@/shared/users/dto/types";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";

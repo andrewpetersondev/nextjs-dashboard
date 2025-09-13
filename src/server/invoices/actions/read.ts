@@ -1,5 +1,6 @@
 "use server";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import { getDB } from "@/server/db/connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import { assertParams } from "@/server/invoices/helpers";
@@ -8,8 +9,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { translator } from "@/shared/i18n/translator";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 
 /**
  * Server action to fetch a single invoice by its ID.

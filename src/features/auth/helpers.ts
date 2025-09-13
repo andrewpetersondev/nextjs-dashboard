@@ -1,4 +1,4 @@
-import { AUTH_ENDPOINTS, type OAuthProvider } from "@/shared/auth/constants";
+import { AUTH_ENDPOINTS, type OAuthProvider } from "@/features/auth/constants";
 
 /**
  * Returns the API endpoint for a given OAuth provider.

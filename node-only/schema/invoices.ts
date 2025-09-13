@@ -9,15 +9,15 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import {
+  INVOICE_STATUSES,
+  type InvoiceStatus,
+} from "@/features/invoices/dto/types";
 import type {
   CustomerId,
   InvoiceId,
   Period,
 } from "@/shared/domain/domain-brands";
-import {
-  INVOICE_STATUSES,
-  type InvoiceStatus,
-} from "@/shared/invoices/dto/types";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 

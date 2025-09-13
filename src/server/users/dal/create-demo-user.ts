@@ -1,12 +1,11 @@
 import "server-only";
 
+import { createRandomPassword } from "@/features/auth/domain/password";
+import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserDto } from "@/features/users/dto/types";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { createRandomPassword } from "@/shared/auth/domain/password";
-import type { AuthRole } from "@/shared/auth/domain/roles";
-
-import type { UserDto } from "@/shared/users/dto/types";
 
 /**
  * Creates a demo user with a unique username and email for the given role.

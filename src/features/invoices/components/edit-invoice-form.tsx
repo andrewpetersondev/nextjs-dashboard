@@ -8,14 +8,14 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { useAutoHideAlert } from "@/features/invoices/hooks/useAutoHideAlert";
-import { ServerMessage } from "@/features/users/components/server-message";
-import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import type { FormFieldError, FormState } from "@/shared/forms/types";
 import type {
   EditInvoiceViewModel,
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
-} from "@/shared/invoices/schema/shared";
+} from "@/features/invoices/schema/shared";
+import { ServerMessage } from "@/features/users/components/server-message";
+import { updateInvoiceAction } from "@/server/invoices/actions/update";
+import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

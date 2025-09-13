@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/dto/dto";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import {
   dtoToCreateInvoiceEntity,
@@ -10,8 +11,7 @@ import type { InvoiceRepository } from "@/server/invoices/repo";
 import { ValidationError } from "@/shared/core/errors/domain";
 import { Err, type Result } from "@/shared/core/result/result-base";
 import { toInvoiceId } from "@/shared/domain/id-converters";
-import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto/dto";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 
 /**

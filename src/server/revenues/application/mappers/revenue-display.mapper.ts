@@ -1,15 +1,15 @@
 import "server-only";
 
-import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
-import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { ValidationError } from "@/shared/core/errors/domain";
 import {
   MAX_REVENUE_MONTHS,
   MAX_REVENUE_YEAR,
   MIN_REVENUE_MONTHS,
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
-} from "@/shared/revenues/constants/date";
+} from "@/features/revenues/constants/date";
+import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
+import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
+import { ValidationError } from "@/shared/core/errors/domain";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.

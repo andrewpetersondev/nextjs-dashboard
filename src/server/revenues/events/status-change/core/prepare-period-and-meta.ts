@@ -1,13 +1,13 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import { periodKey } from "@/features/revenues/domain/period";
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type {
   MetadataBase,
   MetadataWithPeriod,
   PeriodArg,
 } from "@/server/revenues/events/common/types";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

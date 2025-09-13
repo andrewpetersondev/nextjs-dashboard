@@ -1,19 +1,19 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
-import { type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import { ROUTES } from "@/shared/constants/routes";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/types";
-import type { UserDto } from "@/shared/users/dto/types";
-import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**
  * Creates a demo user and logs them in.

@@ -1,7 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/features/users/messages";
+import {
+  type EditUserFormFieldNames,
+  EditUserFormSchema,
+} from "@/features/users/schema/schema.shared";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -11,15 +20,6 @@ import { toUserId } from "@/shared/domain/id-converters";
 import { mapFieldErrors } from "@/shared/forms/errors";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
-import type { UserDto } from "@/shared/users/dto/types";
-import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from "@/shared/users/messages";
-import {
-  type EditUserFormFieldNames,
-  EditUserFormSchema,
-} from "@/shared/users/schema/schema.shared";
 import { stripProperties } from "@/shared/utils/object";
 
 /**

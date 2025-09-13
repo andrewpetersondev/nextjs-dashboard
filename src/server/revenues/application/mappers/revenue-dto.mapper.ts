@@ -1,14 +1,14 @@
 import "server-only";
 
+import type {
+  RevenueStatisticsDto,
+  SimpleRevenueDto,
+} from "@/features/revenues/dto/types";
 import {
   monthAbbreviationFromNumber,
   validateMonthNumber,
 } from "@/server/revenues/domain/utils/months";
 import { convertCentsToDollars } from "@/shared/money/convert";
-import type {
-  RevenueStatisticsDto,
-  SimpleRevenueDto,
-} from "@/shared/revenues/dto/types";
 
 export function mapEntityToSimpleRevenueDto(
   entity: {

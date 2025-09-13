@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import {
   logInfo,
@@ -10,7 +11,6 @@ import type { RevenueService } from "@/server/revenues/application/services/reve
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import { adjustRevenueForStatusChange } from "@/server/revenues/events/status-change/adjust-revenue-for-status-change";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 type HandleStatusChangeParams = Readonly<{
   context: string;

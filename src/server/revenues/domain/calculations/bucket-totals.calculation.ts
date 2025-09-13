@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceStatus } from "@/shared/invoices/dto/types";
+import type { InvoiceStatus } from "@/features/invoices/dto/types";
 
 export type BucketTotals = Readonly<{
   readonly totalPaidAmount: number;

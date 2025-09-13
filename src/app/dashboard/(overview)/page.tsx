@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
 import { Dashboard } from "@/features/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/features/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/features/dashboard/constants";
@@ -11,7 +12,6 @@ import {
   readInvoicesSummary,
   readLatestInvoices,
 } from "@/server/invoices/queries";
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
 import { formatCurrency } from "@/shared/money/convert";
 
 export const dynamic = "force-dynamic";

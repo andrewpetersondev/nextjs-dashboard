@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import { periodKey } from "@/features/revenues/domain/period";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { withIdempotency } from "@/server/revenues/application/cross-cutting/idempotency";
 import {
@@ -10,8 +12,6 @@ import { isInvoiceEligibleForRevenue } from "@/server/revenues/application/guard
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Use case that standardizes processing of invoice-related events.

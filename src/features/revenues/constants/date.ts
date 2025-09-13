@@ -27,3 +27,8 @@ export const MIN_REVENUE_MONTHS = 1;
 export const MAX_REVENUE_MONTHS = 12;
 export const MAX_REVENUE_YEAR = 2100;
 export const MIN_REVENUE_YEAR = 2000;
+
+// Type-safe union of valid month name abbreviations.
+export type MonthName = (typeof MONTH_ORDER)[number];
+// Type-safe union of valid interval durations.
+export type IntervalDuration = (typeof INTERVAL_DURATIONS)[number];

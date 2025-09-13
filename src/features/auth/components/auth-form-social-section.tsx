@@ -1,12 +1,13 @@
 import type { FC } from "react";
 import { DemoForm } from "@/features/auth/components/demo-form";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
-import { DEMO_ADMIN_LABEL, DEMO_USER_LABEL } from "@/features/auth/constants";
 import {
   AUTH_GITHUB_ENDPOINT,
   AUTH_GOOGLE_ENDPOINT,
-} from "@/shared/auth/constants";
-import { type AuthRole, ROLES } from "@/shared/auth/domain/roles";
+  DEMO_ADMIN_LABEL,
+  DEMO_USER_LABEL,
+} from "@/features/auth/constants";
+import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
 
 /**
  * Props for AuthFormSocialSection.

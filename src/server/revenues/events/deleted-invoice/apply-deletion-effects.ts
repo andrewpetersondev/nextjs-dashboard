@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import type { LogMetadata } from "../../application/cross-cutting/logging";
 import { logInfo } from "../../application/cross-cutting/logging";
 

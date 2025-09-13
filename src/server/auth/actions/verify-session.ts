@@ -1,7 +1,7 @@
 "use server";
 
+import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
 import { verifySessionOptimistic as verify } from "@/server/auth/session";
-import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";
 
 /**
  * Server action wrapper delegating to the server-only session verification.

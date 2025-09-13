@@ -1,6 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/dto/dto";
+import type { InvoiceStatus } from "@/features/invoices/dto/types";
+import {
+  type UpdateInvoiceFieldNames,
+  type UpdateInvoiceInput,
+  UpdateInvoiceSchema,
+} from "@/features/invoices/schema/shared";
 import { getDB } from "@/server/db/connection";
 import {
   type BaseInvoiceEvent,
@@ -12,14 +19,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
-import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto/dto";
-import type { InvoiceStatus } from "@/shared/invoices/dto/types";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
-import {
-  type UpdateInvoiceFieldNames,
-  type UpdateInvoiceInput,
-  UpdateInvoiceSchema,
-} from "@/shared/invoices/schema/shared";
+import { INVOICE_MSG } from "@/shared/messages";
 
 function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
   return {

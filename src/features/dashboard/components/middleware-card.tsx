@@ -1,7 +1,7 @@
 import type { JSX } from "react";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
 import { verifySessionOptimistic } from "@/server/auth/actions/verify-session";
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
-import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";
 import { H6 } from "@/ui/atoms/typography/headings";
 
 const allowedRoles: readonly AuthRole[] = AUTH_ROLES;

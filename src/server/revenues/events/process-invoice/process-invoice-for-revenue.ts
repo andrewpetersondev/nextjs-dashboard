@@ -1,12 +1,12 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import { periodKey } from "@/features/revenues/domain/period";
 import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { upsertRevenue } from "@/server/revenues/events/process-invoice/upsert-revenue";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { periodKey } from "@/shared/revenues/domain/period";
 
 /**
  * Options for processing an invoice for revenue.

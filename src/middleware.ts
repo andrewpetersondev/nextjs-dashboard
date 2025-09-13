@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { ROLES } from "@/features/auth/domain/roles";
 import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
-import { ROLES } from "@/shared/auth/domain/roles";
 import {
   isAdminRoute as isAdminRouteHelper,
   isProtectedRoute as isProtectedRouteHelper,

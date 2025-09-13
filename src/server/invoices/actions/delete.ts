@@ -13,7 +13,7 @@ import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ROUTES } from "@/shared/constants/routes";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 
 /**
  * Server action to delete an invoice by string ID.

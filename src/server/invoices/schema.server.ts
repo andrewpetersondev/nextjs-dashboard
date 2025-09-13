@@ -1,8 +1,8 @@
 import "server-only";
 
 import { z } from "zod";
+import { InvoiceBaseSchema as TransportInvoiceBaseSchema } from "@/features/invoices/schema/shared";
 import { toCustomerId } from "@/shared/domain/id-converters";
-import { InvoiceBaseSchema as TransportInvoiceBaseSchema } from "@/shared/invoices/schema/shared";
 
 // Server-only schema: compose the shared transport schema and apply server transforms/brands.
 export const ServerInvoiceBaseSchema = TransportInvoiceBaseSchema.extend({

@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import {
   type LogMetadata,
   logError,
@@ -7,7 +8,6 @@ import {
 } from "@/server/revenues/application/cross-cutting/logging";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import { validateInvoicePeriodForRevenue } from "@/server/revenues/domain/policies/invoice-period.policy";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Checks if an invoice is eligible for revenue calculation.

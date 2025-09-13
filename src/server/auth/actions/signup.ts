@@ -1,24 +1,24 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import {
+  SIGNUP_FIELDS,
+  type SignupFormFieldNames,
+  type SignupFormInput,
+  SignupFormSchema,
+} from "@/features/auth/domain/schema.shared";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { toFormState } from "@/server/forms/adapters";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import {
-  SIGNUP_FIELDS,
-  type SignupFormFieldNames,
-  type SignupFormInput,
-  SignupFormSchema,
-} from "@/shared/auth/domain/schema.shared";
 import { ROUTES } from "@/shared/constants/routes";
 import { toUserId } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/errors";
 import type { FormState } from "@/shared/forms/types";
-import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**
  * Server action to handle signup form submission.

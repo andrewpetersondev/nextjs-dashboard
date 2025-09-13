@@ -2,7 +2,7 @@ import "server-only";
 
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 
 /**
  * Union type representing repository errors.

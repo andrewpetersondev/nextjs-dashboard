@@ -3,8 +3,8 @@ import {
   MAX_INVOICE_AMOUNT_USD,
   MAX_SENSITIVE_DATA_LENGTH,
   MIN_SENSITIVE_DATA_LENGTH,
-} from "@/shared/invoices/constants";
-import { INVOICE_STATUSES } from "@/shared/invoices/dto/types";
+} from "@/features/invoices/constants";
+import { INVOICE_STATUSES } from "@/features/invoices/dto/types";
 
 // Transport-safe primitives (no brands, no server-only)
 const amountSchema = z.coerce.number().positive().max(MAX_INVOICE_AMOUNT_USD);

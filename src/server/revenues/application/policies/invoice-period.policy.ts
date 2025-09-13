@@ -1,12 +1,12 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import { logError } from "@/server/revenues/application/cross-cutting/logging";
 import {
   extractPeriodFromInvoice as extractPeriodFromInvoiceDomain,
   validateInvoicePeriodForRevenue as validateInvoicePeriodForRevenueDomain,
 } from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Safely extracts the Period (first-of-month DATE) from an invoice date.

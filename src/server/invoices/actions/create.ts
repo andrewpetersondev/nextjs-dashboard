@@ -1,6 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/dto/dto";
+import type { InvoiceStatus } from "@/features/invoices/dto/types";
+import {
+  type CreateInvoiceFieldNames,
+  type CreateInvoiceInput,
+  CreateInvoiceSchema,
+} from "@/features/invoices/schema/shared";
 import { getDB } from "@/server/db/connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
@@ -16,14 +23,7 @@ import { isZodError } from "@/shared/forms/guards";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
 import { translator } from "@/shared/i18n/translator";
-import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto/dto";
-import type { InvoiceStatus } from "@/shared/invoices/dto/types";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
-import {
-  type CreateInvoiceFieldNames,
-  type CreateInvoiceInput,
-  CreateInvoiceSchema,
-} from "@/shared/invoices/schema/shared";
+import { INVOICE_MSG } from "@/shared/messages";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

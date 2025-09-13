@@ -1,6 +1,18 @@
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
+import {
+  CLOCK_TOLERANCE_SEC,
+  JWT_ALG_HS256,
+  JWT_TYP_JWT,
+  MIN_HS256_KEY_LENGTH,
+} from "@/features/auth/sessions/constants";
+import type { EncryptPayload } from "@/features/auth/sessions/dto/types";
+import { EncryptPayloadSchema } from "@/features/auth/sessions/dto/zod";
+import {
+  flattenEncryptPayload,
+  unflattenEncryptPayload,
+} from "@/features/auth/sessions/mappers/jwt-mapper";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
 import {
@@ -9,18 +21,6 @@ import {
   SESSION_SECRET,
 } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-import {
-  CLOCK_TOLERANCE_SEC,
-  JWT_ALG_HS256,
-  JWT_TYP_JWT,
-  MIN_HS256_KEY_LENGTH,
-} from "@/shared/auth/sessions/constants";
-import type { EncryptPayload } from "@/shared/auth/sessions/dto/types";
-import { EncryptPayloadSchema } from "@/shared/auth/sessions/dto/zod";
-import {
-  flattenEncryptPayload,
-  unflattenEncryptPayload,
-} from "@/shared/auth/sessions/mappers/jwt-mapper";
 import { ValidationError } from "@/shared/core/errors/domain";
 
 let encodedKey: Uint8Array | undefined;

@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import {
   type LogMetadata,
   logInfo,
@@ -13,7 +14,6 @@ import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/reve
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Type guard indicating whether we are updating an existing invoice amount (diff update).

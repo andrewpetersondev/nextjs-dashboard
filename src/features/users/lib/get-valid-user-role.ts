@@ -1,4 +1,4 @@
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/shared/auth/domain/roles";
+import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
 
 /**
  * Validates and returns a user role, defaulting to guest if invalid.

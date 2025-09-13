@@ -1,4 +1,4 @@
-import type { AuthRole } from "@/shared/auth/domain/roles";
+import type { AuthRole } from "@/features/auth/domain/roles";
 
 /**
  * Payload for encrypting a session (JWT or similar).

@@ -1,4 +1,4 @@
-import { AUTH_ROLES, type AuthRole } from "@/shared/auth/domain/roles";
+import { AUTH_ROLES, type AuthRole } from "@/features/auth/domain/roles";
 import { validateEnum } from "@/shared/core/validation/enum";
 
 /**

@@ -1,11 +1,11 @@
 import "server-only";
 
 import { isValid, parseISO } from "date-fns";
+import { ISO_YEAR_MONTH_REGEX } from "@/features/invoices/constants";
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import { dateToPeriod } from "@/features/revenues/domain/period";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
-import { ISO_YEAR_MONTH_REGEX } from "@/shared/invoices/constants";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
-import { dateToPeriod } from "@/shared/revenues/domain/period";
 
 /**
  * Domain policy: safely extract the Period (first-of-month DATE) from an invoice date.

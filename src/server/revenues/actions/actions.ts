@@ -1,5 +1,6 @@
 "use server";
 
+import type { RevenueChartDto } from "@/features/revenues/dto/types";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
@@ -9,7 +10,6 @@ import {
 import { RevenueStatisticsService } from "@/server/revenues/application/services/statistics/statistics.service";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
 import type { RevenueActionResult } from "@/server/revenues/shared/types/action-result";
-import type { RevenueChartDto } from "@/shared/revenues/dto/types";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

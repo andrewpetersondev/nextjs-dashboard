@@ -1,7 +1,6 @@
+import { MONTH_ORDER } from "@/features/revenues/constants/date";
 import type { RollingMonthData } from "@/features/revenues/types";
 import { toPeriod } from "@/shared/domain/id-converters";
-
-import { MONTH_ORDER } from "@/shared/revenues/constants/date";
 
 /**
  * Creates month template data with validated month name lookup.

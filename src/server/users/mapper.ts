@@ -1,9 +1,9 @@
 import "server-only";
 
+import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { UserEntity } from "@/server/users/entity";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { UserDto } from "@/shared/users/dto/types";
 import type { UserRow } from "../../../node-only/schema/users";
 
 /**

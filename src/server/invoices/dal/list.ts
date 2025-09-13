@@ -1,12 +1,12 @@
 import "server-only";
 
 import { and, count, eq } from "drizzle-orm";
+import type { InvoiceListFilter } from "@/features/invoices/dto/types";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import type { InvoiceListFilter } from "@/shared/invoices/dto/types";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 
 /**

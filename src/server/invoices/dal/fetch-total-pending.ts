@@ -3,7 +3,7 @@ import "server-only";
 import { eq, sql } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { INVOICE_MSG } from "@/shared/messages";
 import { invoices } from "../../../../node-only/schema/invoices";
 
 export async function fetchTotalPendingInvoicesDal(

@@ -1,4 +1,4 @@
-import { INVOICE_MSG, type InvoiceMessageId } from "@/shared/invoices/messages";
+import { INVOICE_MSG, type InvoiceMessageId } from "@/shared/messages";
 
 // Single-locale dictionary (en) with compile-time completeness check
 export const enInvoices = {

@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { InvoiceDto } from "@/features/invoices/dto/dto";
 import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";
 import {
   isEligibleDeletion as appIsEligibleDeletion,
   isInvoiceEligibleForRevenue as appIsInvoiceEligibleForRevenue,
 } from "@/server/revenues/application/guards/invoice-eligibility.guard";
-import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Compatibility shim preserved under events/common to avoid breaking changes.

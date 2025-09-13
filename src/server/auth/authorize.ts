@@ -1,11 +1,11 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
+import { LOGIN_PATH } from "@/features/auth/constants";
+import type { AuthRole } from "@/features/auth/domain/roles";
+import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { LOGIN_PATH } from "@/shared/auth/constants";
-import type { AuthRole } from "@/shared/auth/domain/roles";
-import type { SessionVerificationResult } from "@/shared/auth/sessions/dto/types";
 
 /**
  * Returns true if the user's role is included in the allowed roles list.

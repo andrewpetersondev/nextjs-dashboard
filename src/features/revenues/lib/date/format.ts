@@ -1,7 +1,7 @@
 import { isValid } from "date-fns";
+import { dateToPeriod } from "@/features/revenues/domain/period";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { Period } from "@/shared/domain/domain-brands";
-import { dateToPeriod } from "@/shared/revenues/domain/period";
 
 /**
  * Formats a Date object to a branded Period (first-of-month Date).

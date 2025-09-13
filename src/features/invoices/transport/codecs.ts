@@ -1,8 +1,8 @@
 // shared/invoices/transport-codecs.ts
 // What is a codec? A function that converts a value to a different format for transport
 
+import { periodKey } from "@/features/revenues/domain/period";
 import type { Period } from "@/shared/domain/domain-brands";
-import { periodKey } from "@/shared/revenues/domain/period";
 
 /** Formats a Date to YYYY-MM-DD for transport. */
 export function toISODateString(d: Date): string {
