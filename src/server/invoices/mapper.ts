@@ -1,6 +1,7 @@
 import "server-only";
 
 import { toInvoiceStatus } from "@/features/invoices/mappers";
+import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
@@ -12,7 +13,6 @@ import {
   toPeriod,
 } from "@/shared/domain/id-converters";
 import { isValidDate, toFirstOfMonth } from "@/shared/utils/date";
-import type { InvoiceRow } from "../../../node-only/schema/invoices";
 
 /**
  * Maps raw database row to branded Entity.

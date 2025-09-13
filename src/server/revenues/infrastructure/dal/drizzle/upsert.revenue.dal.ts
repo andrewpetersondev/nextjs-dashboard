@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Database } from "@/server/db/connection";
+import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueCreateEntity,
@@ -8,10 +9,6 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import { ValidationError } from "@/shared/core/errors/domain";
-import {
-  type RevenueRow,
-  revenues,
-} from "../../../../../../node-only/schema/revenues";
 
 export async function upsertRevenue(
   db: Database,

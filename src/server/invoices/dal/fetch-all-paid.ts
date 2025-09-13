@@ -2,12 +2,12 @@ import "server-only";
 
 import { desc, eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
+import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { ValidationError } from "@/shared/core/errors/domain";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { invoices } from "../../../../node-only/schema/invoices";
 
 /**
  * Fetches all paid invoices from the database.

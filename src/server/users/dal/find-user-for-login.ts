@@ -4,10 +4,10 @@ import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/dto/types";
 import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
+import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import { users } from "../../../../node-only/schema/users";
 
 /**
  * Finds a user by email and verifies the password.

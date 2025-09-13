@@ -3,8 +3,8 @@ import "server-only";
 import { count } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { Database } from "@/server/db/connection";
+import { customers } from "@/server/db/schema/customers";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { customers } from "../../../../node-only/schema/customers";
 
 /**
  * Fetches the total number of customers.

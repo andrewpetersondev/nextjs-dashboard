@@ -1,6 +1,6 @@
+import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toCustomerId } from "@/shared/domain/id-converters";
-import type { invoices } from "../schema/invoices";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods, type roles } from "./seed-shared";
 import {

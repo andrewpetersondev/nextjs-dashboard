@@ -1,6 +1,6 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
-import { CYPRESS_BASE_URL } from "./node-only/config/env-node";
+import { CYPRESS_BASE_URL } from "./devtools/config/env-node";
 
 export default defineConfig({
   e2e: {
@@ -15,7 +15,7 @@ export default defineConfig({
       // Ensure .env.test.local is loaded before reading env
       dotenv.config({ path: ".env.test.local" });
 
-      const env = await import("./node-only/config/env-node");
+      const env = await import("./devtools/config/env-node");
 
       // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
       // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
@@ -50,7 +50,7 @@ export default defineConfig({
       on("task", {
         async "db:cleanup"() {
           const { cleanupE2EUsers } = await import(
-            "./node-only/tasks/cleanup-e2e-users"
+            "./devtools/tasks/cleanup-e2e-users"
           );
           await cleanupE2EUsers();
           return null;
@@ -61,13 +61,13 @@ export default defineConfig({
           username: string;
           role?: "user" | "admin" | "guest";
         }) {
-          const { createUser } = await import("./node-only/tasks/create-user");
+          const { createUser } = await import("./devtools/tasks/create-user");
           await createUser(user);
           return null;
         },
 
         async "db:deleteUser"(email: string) {
-          const { deleteUser } = await import("./node-only/tasks/delete-user");
+          const { deleteUser } = await import("./devtools/tasks/delete-user");
           await deleteUser(email);
           return null;
         },
@@ -84,13 +84,13 @@ export default defineConfig({
           role?: "user" | "admin" | "guest";
         }) {
           const { upsertE2EUser } = await import(
-            "./node-only/tasks/upsert-e2e-users"
+            "./devtools/tasks/upsert-e2e-users"
           );
           await upsertE2EUser(user);
           return null;
         },
         async "db:userExists"(email: string) {
-          const { userExists } = await import("./node-only/tasks/user-exists");
+          const { userExists } = await import("./devtools/tasks/user-exists");
           return userExists(email);
         },
       });

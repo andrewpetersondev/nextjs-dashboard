@@ -5,10 +5,10 @@ import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
+import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import { users } from "../../../../node-only/schema/users";
 
 /**
  * Inserts a new user record into the database.

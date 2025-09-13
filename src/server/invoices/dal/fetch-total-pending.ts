@@ -2,9 +2,9 @@ import "server-only";
 
 import { eq, sql } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
+import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { invoices } from "../../../../node-only/schema/invoices";
 
 export async function fetchTotalPendingInvoicesDal(
   db: Database,

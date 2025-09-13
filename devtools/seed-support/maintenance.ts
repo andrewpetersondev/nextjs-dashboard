@@ -1,10 +1,10 @@
 import { sql } from "drizzle-orm";
+import { customers } from "@/server/db/schema/customers";
+import { demoUserCounters } from "@/server/db/schema/demo-users";
+import { invoices } from "@/server/db/schema/invoices";
+import { revenues } from "@/server/db/schema/revenues";
+import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
-import { customers } from "../schema/customers";
-import { demoUserCounters } from "../schema/demo-users";
-import { invoices } from "../schema/invoices";
-import { revenues } from "../schema/revenues";
-import { users } from "../schema/users";
 import { firstRow } from "./pg-utils";
 
 /**

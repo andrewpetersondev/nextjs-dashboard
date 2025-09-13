@@ -1,5 +1,5 @@
+import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { invoices } from "../schema/invoices";
 import { SEED_CONFIG } from "./constants";
 import { generateMonthlyPeriods } from "./utils";
 

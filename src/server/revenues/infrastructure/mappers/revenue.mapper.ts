@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { ValidationError } from "@/shared/core/errors/domain";
@@ -10,7 +11,6 @@ import {
 } from "@/shared/core/validation/number";
 import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
 import { isValidDate } from "@/shared/utils/date";
-import type { RevenueRow } from "../../../../../node-only/schema/revenues";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.

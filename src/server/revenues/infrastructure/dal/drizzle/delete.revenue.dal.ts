@@ -2,10 +2,10 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
+import { revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { RevenueId } from "@/shared/domain/domain-brands";
-import { revenues } from "../../../../../../node-only/schema/revenues";
 
 export async function deleteRevenue(
   db: Database,

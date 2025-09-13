@@ -2,6 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
+import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
   RevenueEntity,
@@ -10,10 +11,6 @@ import type {
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { RevenueId } from "@/shared/domain/domain-brands";
-import {
-  type RevenueRow,
-  revenues,
-} from "../../../../../../node-only/schema/revenues";
 
 export async function updateRevenue(
   db: Database,

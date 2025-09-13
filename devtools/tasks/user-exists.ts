@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
+import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
-import { users } from "../schema/users";
 import { firstRow } from "../seed-support/pg-utils";
 
 /** Check if a user exists by email. */

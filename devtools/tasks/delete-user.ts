@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
+import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
-import { users } from "../schema/users";
 
 export async function deleteUser(email: string): Promise<void> {
   console.log("deleteUser", email);

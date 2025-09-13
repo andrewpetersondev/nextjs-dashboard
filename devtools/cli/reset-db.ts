@@ -1,5 +1,5 @@
 import { reset } from "drizzle-seed";
-import { schema } from "../schema";
+import { schema } from "@/server/db/schema";
 import { nodeDb } from "./node-db";
 
 console.log("reset-db.ts ...");

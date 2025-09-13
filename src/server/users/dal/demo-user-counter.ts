@@ -2,10 +2,9 @@ import "server-only";
 
 import type { AuthRole } from "@/features/auth/domain/roles";
 import type { Database } from "@/server/db/connection";
+import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-
-import { demoUserCounters } from "../../../../node-only/schema/demo-users";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

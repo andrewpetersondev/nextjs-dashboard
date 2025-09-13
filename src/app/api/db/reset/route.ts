@@ -3,7 +3,7 @@ import "server-only";
 import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
 import { getDB } from "@/server/db/connection";
-import { schema } from "../../../../../node-only/schema";
+import { schema } from "@/server/db/schema";
 
 export async function GET() {
   try {

@@ -2,11 +2,11 @@ import "server-only";
 
 import { count, eq, ilike, or, sql } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
+import { customers } from "@/server/db/schema/customers";
+import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
-import { customers } from "../../../../node-only/schema/customers";
-import { invoices } from "../../../../node-only/schema/invoices";
 
 /**
  * Fetches the total number of invoice pages for pagination.

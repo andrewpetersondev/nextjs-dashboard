@@ -1,7 +1,7 @@
 import "server-only";
 
 import { NextResponse } from "next/server";
-import { databaseSeed } from "../../../../../node-only/cli/seed-db";
+import { databaseSeed } from "../../../../../devtools/cli/seed-db";
 
 export async function GET() {
   try {

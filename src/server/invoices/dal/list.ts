@@ -3,11 +3,11 @@ import "server-only";
 import { and, count, eq } from "drizzle-orm";
 import type { InvoiceListFilter } from "@/features/invoices/dto/types";
 import type { Database } from "@/server/db/connection";
+import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { invoices } from "../../../../node-only/schema/invoices";
 
 /**
  * Lists invoices with pagination and filtering.

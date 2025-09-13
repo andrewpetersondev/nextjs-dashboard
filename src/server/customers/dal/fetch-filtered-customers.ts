@@ -4,9 +4,9 @@ import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerAggregatesRowRaw } from "@/server/customers/types";
 import type { Database } from "@/server/db/connection";
+import { customers } from "@/server/db/schema/customers";
+import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { customers } from "../../../../node-only/schema/customers";
-import { invoices } from "../../../../node-only/schema/invoices";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).

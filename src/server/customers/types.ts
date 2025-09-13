@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CustomerRow } from "../../../node-only/schema/customers";
+import type { CustomerRow } from "@/server/db/schema/customers";
 
 /**
  * Raw DB shape for "select" options. Reflects the query selection in DAL.

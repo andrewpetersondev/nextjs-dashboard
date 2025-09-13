@@ -14,8 +14,8 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import type { schema } from "../../../node-only/schema";
 import { DATABASE_URL } from "../config/env-next";
+import type { schema } from "./schema";
 
 // Database instance type with strongly-typed schema
 export type Database = NodePgDatabase<typeof schema> & {

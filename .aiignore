@@ -9,9 +9,9 @@
 # Testing & CLI
 # cypress.config.ts
 cypress
-node-only/cli
-node-only/seed-support
-node-only/tasks
+# devtools/cli
+# devtools/seed-support
+# devtools/tasks
 
 # Src
 # src/app
