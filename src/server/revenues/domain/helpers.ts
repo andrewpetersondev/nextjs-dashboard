@@ -1,9 +1,6 @@
 import "server-only";
 
-import {
-  MAX_MONTH_NUMBER,
-  MIN_MONTH_NUMBER,
-} from "@/features/revenues/lib/date/constants";
+import { MAX_MONTH_NUMBER, MIN_MONTH_NUMBER } from "@/constants/revenues-date";
 import { MONTH_ORDER, type MonthName } from "@/shared/revenues/types";
 
 export function validateMonthNumber(monthNumber: number, period: Date): void {

@@ -1,6 +1,10 @@
 import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
+import {
+  CLOCK_TOLERANCE_SEC,
+  MIN_HS256_KEY_LENGTH,
+} from "@/constants/auth-sessions";
 import type { DecryptPayload } from "@/server/auth/types";
 import { DecryptPayloadSchema } from "@/server/auth/zod";
 import {
@@ -9,10 +13,6 @@ import {
   SESSION_SECRET,
 } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-import {
-  CLOCK_TOLERANCE_SEC,
-  MIN_HS256_KEY_LENGTH,
-} from "@/shared/auth/sessions/constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,

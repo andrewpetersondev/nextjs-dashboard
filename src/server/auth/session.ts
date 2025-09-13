@@ -13,7 +13,7 @@ import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/constants/auth-sessions";
-import { SESSION_COOKIE_NAME } from "@/constants/server-auth";
+import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import {
   createSessionToken,
   readSessionToken,

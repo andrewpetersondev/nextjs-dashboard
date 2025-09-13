@@ -3,7 +3,7 @@ import {
   MONTHS_IN_YEAR,
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
-} from "@/features/revenues/lib/date/constants";
+} from "@/constants/revenues-date";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
 import type { RollingMonthData } from "@/features/revenues/types";
 import type { IntervalDuration } from "@/shared/revenues/types";
