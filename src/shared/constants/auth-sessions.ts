@@ -12,6 +12,7 @@ export const ONE_DAY_MS = HOURS_PER_DAY * ONE_HOUR_MS;
 
 // Session duration tuned for ~20s rolling refresh cadence.
 // We set duration to 25s and refresh when <= 5s remain; the refresher pings every ~20s.
+// biome-ignore lint/style/noMagicNumbers: <fix later>
 export const SESSION_DURATION_MS = 25 * ONE_SECOND_MS;
 
 // Re-issue token only if time-to-expiration is at or below this threshold (5 seconds)
@@ -30,6 +31,7 @@ export const THIRTY_DAYS = 30 as const;
 export const THIRTY_DAYS_MS = THIRTY_DAYS * ONE_DAY_MS;
 
 // Client refresher cadence and timing controls (centralized here for easy tuning)
+// biome-ignore lint/style/noMagicNumbers: <fix later>
 export const SESSION_REFRESH_PING_MS = 20 * ONE_SECOND_MS; // base interval for client pings
 export const SESSION_KICKOFF_TIMEOUT_MS = 1500; // initial delay before first ping
 export const SESSION_REFRESH_JITTER_MS = 1000; // random jitter to avoid lockstep across tabs

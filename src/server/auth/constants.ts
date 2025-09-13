@@ -17,8 +17,3 @@ export const SESSION_COOKIE_NAME = "session" as const;
  */
 export const SESSION_COOKIE_PATH = "/" as const;
 export const SESSION_COOKIE_SAMESITE = "lax" as const;
-
-/**
- * Environment-derived flags
- */
-export const IS_PRODUCTION = process.env.NODE_ENV === "production";

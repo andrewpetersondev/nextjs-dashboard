@@ -11,8 +11,8 @@ import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import { ROLES } from "@/shared/auth/roles";
 import type { AuthRole } from "@/shared/auth/types";
 import { toUserId } from "@/shared/brands/mappers";
+import { ROUTES } from "@/shared/constants/routes";
 import type { FormState } from "@/shared/forms/types";
-import { ROUTES } from "@/shared/routes";
 import type { UserDto } from "@/shared/users/dto";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 

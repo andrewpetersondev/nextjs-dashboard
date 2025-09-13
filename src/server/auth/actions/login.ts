@@ -15,9 +15,9 @@ import {
   LoginFormSchema,
 } from "@/shared/auth/schema.shared";
 import { toUserId } from "@/shared/brands/mappers";
+import { ROUTES } from "@/shared/constants/routes";
 import type { FormState } from "@/shared/forms/types";
 import { toDenseFormErrors } from "@/shared/forms/utils";
-import { ROUTES } from "@/shared/routes";
 import { USER_ERROR_MESSAGES } from "@/shared/users/messages";
 
 /**

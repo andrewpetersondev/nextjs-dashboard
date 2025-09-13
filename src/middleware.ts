@@ -9,7 +9,7 @@ import {
   PROTECTED_PREFIX,
   PUBLIC_ROUTES,
   ROUTES,
-} from "@/shared/routes";
+} from "@/shared/constants/routes";
 
 // Normalize path by removing trailing slash (except root)
 function normalizePath(p: string): string {

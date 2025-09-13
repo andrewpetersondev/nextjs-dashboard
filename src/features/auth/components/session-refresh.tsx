@@ -11,6 +11,7 @@ import {
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
+  HTTP_STATUS_NO_CONTENT,
 } from "@/shared/constants/http";
 
 // Base cadence to check for refresh opportunities (20 seconds).
@@ -39,16 +40,17 @@ type RefreshOutcome =
       role: string;
     };
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export function SessionRefresh(): null {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickoffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inFlightRef = useRef(false);
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   useEffect(() => {
     let aborted = false;
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <fix later>
     const ping = async (): Promise<void> => {
       if (aborted || inFlightRef.current) {
         return;
@@ -73,7 +75,7 @@ export function SessionRefresh(): null {
         });
 
         // Backward-compat: older servers may still send 204.
-        if (res.status === 204) {
+        if (res.status === HTTP_STATUS_NO_CONTENT) {
           return;
         }
 

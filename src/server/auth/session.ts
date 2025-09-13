@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import {
-  IS_PRODUCTION,
   SESSION_COOKIE_NAME,
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
@@ -16,6 +15,7 @@ import {
   readSessionToken,
 } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
+import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
@@ -138,7 +138,7 @@ export type UpdateSessionResult =
  * Must be called from server actions or route handlers.
  */
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function updateSessionToken(): Promise<UpdateSessionResult> {
   const store = await cookies();
   const current = store.get(SESSION_COOKIE_NAME)?.value;

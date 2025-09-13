@@ -10,6 +10,7 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { ROUTES } from "@/shared/constants/routes";
 import { isZodError } from "@/shared/forms/guards";
 import type { FormState } from "@/shared/forms/types";
 import {
@@ -25,7 +26,6 @@ import {
   CreateInvoiceSchema,
 } from "@/shared/invoices/schema.shared";
 import type { InvoiceStatus } from "@/shared/invoices/types";
-import { ROUTES } from "@/shared/routes";
 
 const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
 

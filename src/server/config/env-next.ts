@@ -33,3 +33,6 @@ export const SESSION_AUDIENCE: string | undefined =
 export const DATABASE_URL = parsed.data.DATABASE_URL;
 export const DATABASE_ENV: DatabaseEnv = parsed.data.DATABASE_ENV;
 export const LOG_LEVEL: LogLevel | undefined = parsed.data.LOG_LEVEL;
+
+//Environment-derived flags
+export const IS_PRODUCTION = process.env.NODE_ENV === "production";

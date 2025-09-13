@@ -12,3 +12,6 @@ export const PRAGMA_NO_CACHE = "no-cache" as const;
 export const EXPIRES_IMMEDIATELY = "0" as const;
 export const VARY_COOKIE = "Cookie" as const;
 export const CONTENT_TYPE_JSON = "application/json" as const;
+
+// Canonical status codes used across client and server.
+export const HTTP_STATUS_NO_CONTENT = 204;
