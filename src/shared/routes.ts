@@ -7,6 +7,7 @@ export const ROUTES = {
     SIGNUP: "/auth/signup" as const,
   },
   DASHBOARD: {
+    CUSTOMERS: "/dashboard/customers" as const,
     createInvoice: () => "/dashboard/invoices/create" as const,
     createUser: () => "/dashboard/users/create" as const,
     INVOICES: "/dashboard/invoices" as const,

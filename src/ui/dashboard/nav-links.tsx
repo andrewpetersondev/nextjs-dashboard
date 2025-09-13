@@ -16,7 +16,7 @@ import { ROUTES } from "@/shared/routes";
 
 /** Navigation link paths */
 const NAV_LINKS = {
-  CUSTOMERS: "/dashboard/customers",
+  CUSTOMERS: ROUTES.DASHBOARD.CUSTOMERS,
   HOME: ROUTES.DASHBOARD.ROOT,
   INVOICES: ROUTES.DASHBOARD.INVOICES,
   USERS: ROUTES.DASHBOARD.USERS,

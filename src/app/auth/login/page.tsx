@@ -6,6 +6,7 @@ import { Heading } from "@/features/auth/components/heading";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/features/auth/constants";
 import { login } from "@/server/auth/actions/login";
+import { ROUTES } from "@/shared/routes";
 
 export default function Page(): JSX.Element {
   return (
@@ -24,7 +25,7 @@ export default function Page(): JSX.Element {
           </div>
           {/* Switch the link below the card, matching the signup page */}
           <AuthSwitchLink
-            href="/auth/signup"
+            href={ROUTES.AUTH.SIGNUP}
             linkText="Sign up here"
             prompt="Not a member?"
           />

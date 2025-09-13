@@ -13,6 +13,7 @@ import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/errors/domain";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
+import { ROUTES } from "@/shared/routes";
 
 /**
  * Server action to delete an invoice by string ID.
@@ -47,7 +48,7 @@ export async function deleteInvoiceAction(
     });
 
     // Invalidate dashboard cache so revenue chart updates
-    revalidatePath("/dashboard");
+    revalidatePath(ROUTES.DASHBOARD.ROOT);
 
     // Success result
     result = {
