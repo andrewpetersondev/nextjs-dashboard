@@ -1,26 +1,39 @@
 import { z } from "zod";
+import { getDatabaseEnv, getNodeEnv } from "@/shared/config/env-shared";
 import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
-const publicEnvSchema = z.object({
+const PublicEnvSchema = z.object({
   NEXT_PUBLIC_LOG_LEVEL: LogLevelSchema.optional(),
 });
 
-const parsed = publicEnvSchema.safeParse(process.env);
-
-if (!parsed.success) {
-  const details = parsed.error.flatten().fieldErrors;
-  throw new Error(
-    `Invalid public environment variables. See details:\n${JSON.stringify(details, null, 2)}`,
-  );
+/**
+ * Parse and validate public (browser-exposed) environment variables.
+ * Throws early with a readable error if invalid.
+ */
+function parsePublicEnv() {
+  const parsed = PublicEnvSchema.safeParse(process.env);
+  if (!parsed.success) {
+    const details = parsed.error.flatten().fieldErrors;
+    throw new Error(
+      `Invalid public environment variables. See details:\n${JSON.stringify(details, null, 2)}`,
+    );
+  }
+  return parsed.data;
 }
 
-const data = parsed.data;
+const PUBLIC_ENV = parsePublicEnv();
 
-const NODE_ENV = (process.env.NODE_ENV ?? "development").toLowerCase();
+/** Effective Node and Database environments derived once and reused. */
+const NODE_ENV = getNodeEnv();
+const DATABASE_ENV = getDatabaseEnv();
 
-const PUBLIC_ENV = {
-  LOG_LEVEL: data.NEXT_PUBLIC_LOG_LEVEL as LogLevel | undefined,
-} as const;
+/** Exported, browser-safe values */
+export const NEXT_PUBLIC_LOG_LEVEL = PUBLIC_ENV.NEXT_PUBLIC_LOG_LEVEL as
+  | LogLevel
+  | undefined;
 
 export const IS_PROD: boolean = NODE_ENV === "production";
-export const NEXT_PUBLIC_LOG_LEVEL = PUBLIC_ENV.LOG_LEVEL;
+
+// If you need to branch client behavior by database environment (non-secret), expose a boolean.
+// Keep it minimal to avoid leaking unnecessary config.
+export const IS_DB_PROD: boolean = DATABASE_ENV === "production";

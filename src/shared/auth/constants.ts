@@ -35,4 +35,29 @@ export const EMAIL_ERROR = "Email had some sort of error. Please try again.";
 export const LOGIN_PATH = ROUTES.AUTH.LOGIN;
 
 // API Endpoints
+
 export const AUTH_REFRESH_ENDPOINT = "/api/auth/refresh" as const;
+
+// OAuth provider identifiers
+export type OAuthProvider = "google" | "github";
+
+// OAuth endpoints by provider
+export const AUTH_ENDPOINTS = {
+  github: "/api/auth/github",
+  google: "/api/auth/google",
+} as const satisfies Record<OAuthProvider, `/${string}`>;
+
+// Backwards-compatible named constants (preserved)
+export const AUTH_GOOGLE_ENDPOINT = AUTH_ENDPOINTS.google;
+export const AUTH_GITHUB_ENDPOINT = AUTH_ENDPOINTS.github;
+
+// Optional UI strings (central place for simple, shared copy)
+export const AUTH_UI = {
+  buttons: {
+    signInWithGitHub: "Sign in with GitHub",
+    signInWithGoogle: "Sign in with Google",
+  },
+  messages: {
+    orContinueWith: "Or continue with",
+  },
+} as const;

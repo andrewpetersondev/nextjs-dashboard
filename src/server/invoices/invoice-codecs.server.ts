@@ -16,7 +16,7 @@ import type {
   InvoiceDto,
   InvoiceFormDto,
   ISODateString,
-} from "@/shared/invoices/dto";
+} from "@/shared/invoices/dto/dto";
 import {
   toISODateString,
   toPeriodFirstDayString,

@@ -5,7 +5,7 @@ import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket
 import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import type { LogMetadata } from "../../application/cross-cutting/logging";
 import { logInfo } from "../../application/cross-cutting/logging";
 

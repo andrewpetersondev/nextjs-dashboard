@@ -5,7 +5,7 @@ import {
   isEligibleDeletion as appIsEligibleDeletion,
   isInvoiceEligibleForRevenue as appIsInvoiceEligibleForRevenue,
 } from "@/server/revenues/application/guards/invoice-eligibility.guard";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Compatibility shim preserved under events/common to avoid breaking changes.

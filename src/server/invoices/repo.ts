@@ -19,7 +19,7 @@ import { ValidationError } from "@/shared/core/errors/domain";
 import { Err, Ok, type Result } from "@/shared/core/result/result-base";
 import { map } from "@/shared/core/result/result-transform";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**

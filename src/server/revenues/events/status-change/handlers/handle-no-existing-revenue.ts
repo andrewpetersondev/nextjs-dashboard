@@ -8,7 +8,7 @@ import type {
   PeriodArg,
 } from "@/server/revenues/events/common/types";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 interface Args {
   readonly revenueService: RevenueService;

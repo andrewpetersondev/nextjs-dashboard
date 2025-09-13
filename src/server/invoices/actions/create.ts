@@ -16,7 +16,7 @@ import { isZodError } from "@/shared/forms/guards";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
 import { translator } from "@/shared/i18n/translator";
-import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto";
+import type { InvoiceDto, InvoiceFormDto } from "@/shared/invoices/dto/dto";
 import type { InvoiceStatus } from "@/shared/invoices/dto/types";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 import {

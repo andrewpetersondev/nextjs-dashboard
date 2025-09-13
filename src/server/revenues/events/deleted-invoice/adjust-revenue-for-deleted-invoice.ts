@@ -5,7 +5,7 @@ import type { RevenueService } from "@/server/revenues/application/services/reve
 import { applyDeletionEffects } from "@/server/revenues/events/deleted-invoice/apply-deletion-effects";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import { periodKey } from "@/shared/revenues/domain/period";
 
 /**

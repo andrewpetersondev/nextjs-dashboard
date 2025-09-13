@@ -8,7 +8,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { translator } from "@/shared/i18n/translator";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import { INVOICE_MSG } from "@/shared/invoices/messages";
 
 /**

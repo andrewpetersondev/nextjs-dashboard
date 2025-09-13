@@ -10,7 +10,7 @@ import { isInvoiceEligibleForRevenue } from "@/server/revenues/application/guard
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import { periodKey } from "@/shared/revenues/domain/period";
 
 /**

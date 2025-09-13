@@ -4,7 +4,7 @@ import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.typ
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { ProcessInvoiceEventUseCase } from "@/server/revenues/application/use-cases/events/process-invoice-event.use-case";
 import type { Period } from "@/shared/domain/domain-brands";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Processes an invoice event by delegating to the ProcessInvoiceEventUseCase.

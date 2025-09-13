@@ -2,7 +2,7 @@ import "server-only";
 
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import type { ChangeType } from "@/server/revenues/events/common/types";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 /**
  * Detects how the invoice change affects revenue eligibility/amount.

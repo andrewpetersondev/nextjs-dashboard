@@ -6,7 +6,7 @@ import type {
   MetadataWithPeriod,
   PeriodArg,
 } from "@/server/revenues/events/common/types";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 import { periodKey } from "@/shared/revenues/domain/period";
 
 /**

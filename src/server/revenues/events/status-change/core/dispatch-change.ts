@@ -12,7 +12,7 @@ import { handleNoExistingRevenue } from "@/server/revenues/events/status-change/
 import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-eligible-to-ineligible";
 import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-ineligible-to-eligible";
 import { logNoAffectingChanges } from "@/server/revenues/events/status-change/handlers/log-no-affecting-changes";
-import type { InvoiceDto } from "@/shared/invoices/dto";
+import type { InvoiceDto } from "@/shared/invoices/dto/dto";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
 export async function dispatchChange(
