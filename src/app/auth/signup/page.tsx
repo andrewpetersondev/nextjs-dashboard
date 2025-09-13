@@ -1,10 +1,10 @@
 import type { JSX } from "react";
+import { AUTH_DIVIDER_LABEL, SIGNUP_HEADING } from "@/constants/auth-ui";
 import { AuthFormDivider } from "@/features/auth/components/auth-form-divider";
 import { AuthFormSocialSection } from "@/features/auth/components/auth-form-social-section";
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { SignupForm } from "@/features/auth/components/signup-form";
-import { AUTH_DIVIDER_LABEL, SIGNUP_HEADING } from "@/features/auth/constants";
 import { signup } from "@/server/auth/actions/signup";
 import { ROUTES } from "@/shared/routes";
 

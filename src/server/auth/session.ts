@@ -5,21 +5,21 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
-import {
-  createSessionToken,
-  readSessionToken,
-} from "@/server/auth/session-codec";
-import type { DecryptPayload } from "@/server/auth/types";
-import { serverLogger } from "@/server/logging/serverLogger";
-import { LOGIN_PATH } from "@/shared/auth/constants";
+import { LOGIN_PATH } from "@/constants/auth";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
   ROLLING_COOKIE_MAX_AGE_S,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/shared/auth/sessions/constants";
+} from "@/constants/auth-sessions";
+import { SESSION_COOKIE_NAME } from "@/constants/server-auth";
+import {
+  createSessionToken,
+  readSessionToken,
+} from "@/server/auth/session-codec";
+import type { DecryptPayload } from "@/server/auth/types";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type { SessionVerificationResult } from "@/shared/auth/sessions/zod";
 import type { AuthRole } from "@/shared/auth/types";
 

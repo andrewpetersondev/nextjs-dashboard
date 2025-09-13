@@ -1,12 +1,12 @@
 import type { FC } from "react";
-import { DemoForm } from "@/features/auth/components/demo-form";
-import { SocialLoginButton } from "@/features/auth/components/social-login-button";
 import {
   AUTH_GITHUB_ENDPOINT,
   AUTH_GOOGLE_ENDPOINT,
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
-} from "@/features/auth/constants";
+} from "@/constants/auth-ui";
+import { DemoForm } from "@/features/auth/components/demo-form";
+import { SocialLoginButton } from "@/features/auth/components/social-login-button";
 import { ROLES } from "@/shared/auth/roles";
 import type { AuthRole } from "@/shared/auth/types";
 

@@ -15,7 +15,7 @@ import {
   USERNAME_MAX_LENGTH_ERROR,
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
-} from "@/shared/auth/constants";
+} from "@/constants/auth";
 
 export const usernameSchema: ZodString = z
   .string()

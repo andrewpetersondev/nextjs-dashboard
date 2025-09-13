@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AUTH_REFRESH_ENDPOINT } from "@/shared/auth/constants";
+import { AUTH_REFRESH_ENDPOINT } from "@/constants/auth";
 import {
   SESSION_KICKOFF_TIMEOUT_MS,
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
-} from "@/shared/auth/sessions/constants";
-import {
-  CONTENT_TYPE_JSON,
-  HEADER_CONTENT_TYPE,
-} from "@/shared/http/constants";
+} from "@/constants/auth-sessions";
+import { CONTENT_TYPE_JSON, HEADER_CONTENT_TYPE } from "@/constants/http";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;
