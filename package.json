@@ -12,7 +12,7 @@
     "drizzle-orm": "^0.44.5",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",
-    "next": "15.6.0-canary.6",
+    "next": "15.6.0-canary.9",
     "next-auth": "5.0.0-beta.29",
     "pg": "^8.16.3",
     "pino": "^9.9.5",
@@ -26,7 +26,7 @@
     "@biomejs/biome": "2.2.4",
     "@tailwindcss/postcss": "^4.1.13",
     "@testing-library/cypress": "^10.1.0",
-    "@types/node": "^24.4.0",
+    "@types/node": "^24.5.0",
     "@types/pg": "^8.15.5",
     "@types/react": "19.1.13",
     "@types/react-dom": "19.1.9",
@@ -41,7 +41,7 @@
     "tailwindcss": "^4.1.13",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "wait-on": "^8.0.5"
+    "wait-on": "^9.0.0"
   },
   "engines": {
     "node": ">=24.0.0",
