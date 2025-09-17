@@ -12,21 +12,21 @@
     "drizzle-orm": "^0.44.5",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",
-    "next": "15.6.0-canary.9",
+    "next": "15.6.0-canary.11",
     "next-auth": "5.0.0-beta.29",
     "pg": "^8.16.3",
-    "pino": "^9.9.5",
+    "pino": "^9.10.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "server-only": "^0.0.1",
     "use-debounce": "^10.0.6",
-    "zod": "^4.1.8"
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@tailwindcss/postcss": "^4.1.13",
     "@testing-library/cypress": "^10.1.0",
-    "@types/node": "^24.5.0",
+    "@types/node": "^24.5.1",
     "@types/pg": "^8.15.5",
     "@types/react": "19.1.13",
     "@types/react-dom": "19.1.9",
@@ -48,7 +48,7 @@
     "pnpm": ">=10.12.1"
   },
   "name": "nextjs-dashboard",
-  "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+  "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef",
   "private": true,
   "scripts": {
     "biome:check": "biome check --max-diagnostics=100",
