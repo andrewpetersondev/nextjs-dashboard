@@ -8,7 +8,7 @@ import type { EditUserFormFieldNames } from "@/features/users/schema/schema.shar
 import { updateUserAction } from "@/server/users/actions/update";
 import type { FormState } from "@/shared/forms/types";
 
-export function EditUserFormV2({ user }: { user: UserDto }): JSX.Element {
+export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState: FormState<EditUserFormFieldNames> = {
     errors: {},
     message: "",

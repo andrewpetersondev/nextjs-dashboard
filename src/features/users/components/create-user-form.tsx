@@ -6,7 +6,7 @@ import type { CreateUserFormFieldNames } from "@/features/users/schema/schema.sh
 import { createUserAction } from "@/server/users/actions/create";
 import type { FormState } from "@/shared/forms/types";
 
-export function CreateUserFormV2(): JSX.Element {
+export function CreateUserForm(): JSX.Element {
   const initialState: FormState<CreateUserFormFieldNames> = {
     errors: {},
     message: "",

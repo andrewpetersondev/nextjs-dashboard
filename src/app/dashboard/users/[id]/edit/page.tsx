@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import { EditUserFormV2 } from "@/features/users/components/edit-user-form-v2";
+import { EditUserForm } from "@/features/users/components/edit-user-form";
 import type { UserDto } from "@/features/users/dto/types";
 import { readUserAction } from "@/server/users/actions/read";
 import { H1 } from "@/ui/atoms/typography/headings";
@@ -53,7 +53,7 @@ export default async function Page(
         <p>Admins can edit any profile.</p>
       </section>
 
-      <EditUserFormV2 user={user} />
+      <EditUserForm user={user} />
     </main>
   );
 }

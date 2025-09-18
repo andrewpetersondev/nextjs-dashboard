@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { CreateUserFormV2 } from "@/features/users/components/create-user-form-v2";
+import { CreateUserForm } from "@/features/users/components/create-user-form";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function Page(): JSX.Element {
           },
         ]}
       />
-      <CreateUserFormV2 />
+      <CreateUserForm />
     </main>
   );
 }
