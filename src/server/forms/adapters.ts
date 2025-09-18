@@ -13,7 +13,7 @@ import type {
 
 // --- Adapters (presentation concerns live here) ---
 
-function buildValues<TFieldNames extends string>(
+export function buildValues<TFieldNames extends string>(
   raw: Record<string, unknown>,
   fields: readonly TFieldNames[],
   redactFields: readonly TFieldNames[],

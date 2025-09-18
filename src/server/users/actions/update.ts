@@ -14,17 +14,22 @@ import {
 } from "@/features/users/schema/schema.shared";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
+import { toFormState } from "@/server/forms/adapters";
+import { buildRawFromFormData } from "@/server/forms/helpers";
+import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
-import { toUserId } from "@/shared/domain/id-converters";
-import { mapFieldErrors } from "@/shared/forms/errors";
+import { toUserIdResult } from "@/shared/domain/id-converters";
+import { toDenseFormErrors } from "@/shared/forms/errors";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
-import { stripProperties } from "@/shared/utils/object";
+import { shallowDiff } from "@/shared/utils/patch";
 
 /**
  * Edits an existing user.
+ * Uses `validateFormGeneric` to validate the form data.
+ * Uses `toFormState` to convert the result to a form state.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function updateUserAction(
@@ -32,50 +37,98 @@ export async function updateUserAction(
   _prevState: FormState<EditUserFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<EditUserFormFieldNames>> {
-  const db = getDB();
+  // Prepare fields list and raw values for consistency with other actions
+  const fields = deriveAllowedFieldsFromSchema(EditUserFormSchema);
+  const raw = buildRawFromFormData(formData, fields);
+  const emptyDense = toDenseFormErrors<EditUserFormFieldNames>({}, fields);
+
+  // Early id validation using Result-based converter to avoid throw/UNEXPECTED
+  const idResult = toUserIdResult(id);
+  if (!idResult.success) {
+    return toFormState(
+      { error: emptyDense, success: false },
+      { failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED, fields, raw },
+    );
+  }
+  const userIdSafe = idResult.data;
+
+  // Add normalization via transform to ensure consistent data shape (email/username/role)
+  const result = await validateFormGeneric(
+    formData,
+    EditUserFormSchema,
+    fields,
+    {
+      transform: async (data) => ({
+        ...data,
+        email:
+          typeof data.email === "string"
+            ? data.email.trim().toLowerCase()
+            : data.email,
+        role:
+          typeof data.role === "string"
+            ? data.role.trim().toLowerCase()
+            : data.role,
+        username:
+          typeof data.username === "string"
+            ? data.username.trim()
+            : data.username,
+      }),
+    },
+  );
+
+  const validated = toFormState(result, {
+    failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+    fields,
+    raw,
+  });
+
+  if (!validated.success || typeof validated.data === "undefined") {
+    return validated;
+  }
+
   try {
-    const payload = { ...Object.fromEntries(formData.entries()) };
-    const clean = stripProperties(payload);
-    const validated = EditUserFormSchema.safeParse(clean);
+    const db = getDB();
 
-    if (!validated.success) {
-      const allowed = deriveAllowedFieldsFromSchema(EditUserFormSchema);
-      return {
-        errors: mapFieldErrors(validated.error.flatten().fieldErrors, allowed),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
-      };
-    }
-
-    const existingUser: UserDto | null = await readUserDal(db, toUserId(id));
+    const existingUser: UserDto | null = await readUserDal(db, userIdSafe);
     if (!existingUser) {
-      return {
-        errors: {},
-        message: USER_ERROR_MESSAGES.NOT_FOUND,
-        success: false,
-      };
+      return toFormState(
+        { error: emptyDense, success: false },
+        { failureMessage: USER_ERROR_MESSAGES.NOT_FOUND, fields, raw },
+      );
     }
 
-    const patch: Record<string, unknown> = {};
+    // Prepare strongly-typed base for shallow diff (only fields we compare)
+    type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
+    const baseForDiff: DiffableUserFields = {
+      email: existingUser.email,
+      role: existingUser.role,
+      username: existingUser.username,
+    };
 
-    if (
-      validated.data.username &&
-      validated.data.username !== existingUser.username
-    ) {
-      patch.username = validated.data.username;
+    // Build candidate patch using normalized, validated data
+    const candidatePatch: Partial<DiffableUserFields> = {
+      ...(validated.data.username ? { username: validated.data.username } : {}),
+      ...(validated.data.email ? { email: validated.data.email } : {}),
+      ...(validated.data.role ? { role: toUserRole(validated.data.role) } : {}),
+    };
+
+    // Optional password (normalized to undefined when empty)
+    let hashedPassword: string | undefined;
+    if (validated.data.password) {
+      hashedPassword = await hashPassword(validated.data.password);
     }
 
-    if (validated.data.email && validated.data.email !== existingUser.email) {
-      patch.email = validated.data.email;
-    }
+    // Keep only fields that actually differ from existingUser
+    const diffPatch = shallowDiff<DiffableUserFields>(
+      baseForDiff,
+      candidatePatch,
+    );
 
-    if (validated.data.role && validated.data.role !== existingUser.role) {
-      patch.role = toUserRole(validated.data.role);
-    }
-
-    if (validated.data.password && validated.data.password.length > 0) {
-      patch.password = await hashPassword(validated.data.password);
-    }
+    // Compose final patch including password if provided
+    const patch: Record<string, unknown> = {
+      ...diffPatch,
+      ...(hashedPassword ? { password: hashedPassword } : {}),
+    };
 
     // If no fields have changed, return early
     if (Object.keys(patch).length === 0) {
@@ -88,7 +141,7 @@ export async function updateUserAction(
 
     const updatedUser: UserDto | null = await updateUserDal(
       db,
-      toUserId(id),
+      userIdSafe,
       patch,
     );
 
@@ -114,7 +167,7 @@ export async function updateUserAction(
     });
     return {
       errors: {}, // TODO: return a more specific error message
-      message: USER_ERROR_MESSAGES.UPDATE_FAILED,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     };
   }

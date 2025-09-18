@@ -6,10 +6,21 @@ import {
   usernameSchema,
 } from "@/features/auth/domain/schema.shared";
 
-export const roleSchema = z.enum(AUTH_ROLES, {
-  error: (issue) =>
-    issue.input === undefined ? "Role is required." : "Invalid user role.",
-});
+//export const roleSchema = z.enum(AUTH_ROLES, {
+//  error: (issue) =>
+//    issue.input === undefined ? "Role is required." : "Invalid user role.",
+//});
+
+export const roleSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .pipe(
+    z.enum(AUTH_ROLES, {
+      error: (issue) =>
+        issue.input === undefined ? "Role is required." : "Invalid user role.",
+    }),
+  );
 
 export const UserFormBaseSchema = z.object({
   email: emailSchema,

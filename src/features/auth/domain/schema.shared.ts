@@ -1,4 +1,4 @@
-import { type ZodEmail, type ZodString, z } from "zod";
+import { type ZodString, z } from "zod";
 import {
   EMAIL_ERROR,
   PASSWORD_MAX_LENGTH,
@@ -17,7 +17,7 @@ import {
   USERNAME_MIN_LENGTH_ERROR,
 } from "@/features/auth/constants";
 
-export const usernameSchema: ZodString = z
+export const usernameSchema = z
   .string()
   .min(USERNAME_MIN_LENGTH, {
     error: USERNAME_MIN_LENGTH_ERROR,
@@ -25,9 +25,13 @@ export const usernameSchema: ZodString = z
   .max(USERNAME_MAX_LENGTH, {
     error: USERNAME_MAX_LENGTH_ERROR,
   })
-  .trim();
+  .trim()
+  .toLowerCase();
 
-export const emailSchema: ZodEmail = z.email({ error: EMAIL_ERROR }).trim();
+export const emailSchema = z
+  .string()
+  .trim()
+  .pipe(z.email({ error: EMAIL_ERROR }).toLowerCase());
 
 export const passwordSchema: ZodString = z
   .string()
