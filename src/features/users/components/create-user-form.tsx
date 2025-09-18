@@ -2,6 +2,7 @@
 
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
+import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { CreateUserFormFieldNames } from "@/features/users/schema/schema.shared";
 import { createUserAction } from "@/server/users/actions/create";
 import type { FormState } from "@/shared/forms/types";
@@ -20,7 +21,7 @@ export function CreateUserForm(): JSX.Element {
   return (
     <UserForm
       action={action}
-      cancelHref="/dashboard/users"
+      cancelHref={USERS_DASHBOARD_PATH}
       description="Admins can create users."
       isEdit={false}
       pending={pending}

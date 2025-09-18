@@ -28,7 +28,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
   return (
     <UserForm
       action={action}
-      cancelHref="/dashboard/users"
+      cancelHref={USERS_DASHBOARD_PATH}
       description="Admins can edit any profile."
       extraContent={<UserInfoPanel user={user} />}
       initialValues={{
