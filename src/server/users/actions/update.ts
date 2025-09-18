@@ -63,6 +63,8 @@ export async function updateUserAction(
       raw,
       transform: async (data) => ({
         ...data,
+        // With schema preprocessing, empty strings are already undefined.
+        // Keep light normalization when actual strings are provided.
         email:
           typeof data.email === "string"
             ? data.email.trim().toLowerCase()
@@ -115,7 +117,7 @@ export async function updateUserAction(
       ...(validated.data.role ? { role: toUserRole(validated.data.role) } : {}),
     };
 
-    // Optional password (normalized to undefined when empty)
+    // Optional password (will be undefined if empty due to preprocessing)
     let hashedPassword: string | undefined;
     if (validated.data.password) {
       hashedPassword = await hashPassword(validated.data.password);

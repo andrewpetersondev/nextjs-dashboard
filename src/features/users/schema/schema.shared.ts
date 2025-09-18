@@ -30,7 +30,30 @@ export const UserFormBaseSchema = z.object({
 });
 
 export const CreateUserFormSchema = UserFormBaseSchema;
-export const EditUserFormSchema = CreateUserFormSchema.partial();
+
+// For edit: treat empty strings as "not provided" so partial updates work.
+// Helper: convert "" (or whitespace-only) to undefined
+export const emptyToUndefined = (v: unknown) =>
+  typeof v === "string" && v.trim() === "" ? undefined : v;
+
+// Optional, preprocessed fields for edit
+export const emailEdit = z.preprocess(emptyToUndefined, emailSchema.optional());
+export const passwordEdit = z.preprocess(
+  emptyToUndefined,
+  passwordSchema.optional(),
+);
+export const roleEdit = z.preprocess(emptyToUndefined, roleSchema.optional());
+export const usernameEdit = z.preprocess(
+  emptyToUndefined,
+  usernameSchema.optional(),
+);
+
+export const EditUserFormSchema = z.object({
+  email: emailEdit,
+  password: passwordEdit,
+  role: roleEdit,
+  username: usernameEdit,
+});
 
 // UI/view-model types derived from the shared schema
 export type CreateUserInput = z.input<typeof CreateUserFormSchema>;
