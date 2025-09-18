@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import {
@@ -98,7 +99,7 @@ export async function updateUserAction(
         success: false,
       };
     }
-    revalidatePath("/dashboard/users");
+    revalidatePath(USERS_DASHBOARD_PATH);
     return {
       data: updatedUser,
       message: USER_SUCCESS_MESSAGES.UPDATE_SUCCESS,
