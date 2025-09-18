@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { Result } from "@/shared/core/result/result-base";
 import {
   FORM_ERROR_MESSAGES,
@@ -10,8 +8,6 @@ import type {
   FormErrors,
   FormState,
 } from "@/shared/forms/types";
-
-// --- Adapters (presentation concerns live here) ---
 
 export function buildValues<TFieldNames extends string>(
   raw: Record<string, unknown>,

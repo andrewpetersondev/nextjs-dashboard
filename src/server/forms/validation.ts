@@ -1,19 +1,25 @@
 import "server-only";
 
 import type { z } from "zod";
-import { buildRawFromFormData, deriveFields } from "@/server/forms/helpers";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
 import { mapFieldErrors, toDenseFormErrors } from "@/shared/forms/errors";
+import { buildRawFromFormData, deriveFields } from "@/shared/forms/helpers";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages";
 import type { DenseFormErrors } from "@/shared/forms/types";
 
 /**
  * Options for `validateFormGeneric`.
  * - `transform`: Optional function to transform the input data before returning.
+ * - `fields`: Optional precomputed list of allowed fields (skips derive).
+ * - `raw`: Optional prebuilt raw map from FormData (skips build).
+ * - `loggerContext`: Optional logger context override.
  */
 export type ValidateFormOptions<TIn, TOut = TIn> = {
   transform?: (data: TIn) => TOut | Promise<TOut>;
+  fields?: readonly string[];
+  raw?: Record<string, unknown>;
+  loggerContext?: string;
 };
 
 /**
@@ -35,10 +41,21 @@ export async function validateFormGeneric<
   allowedFields?: readonly TFieldNames[],
   options: ValidateFormOptions<TIn, TOut> = {},
 ): Promise<Result<TOut, DenseFormErrors<TFieldNames>>> {
-  const { transform } = options;
+  const {
+    transform,
+    fields: precomputedFields,
+    raw: precomputedRaw,
+    loggerContext = "validateFormGeneric",
+  } = options;
 
-  const fields = deriveFields(schema, allowedFields);
-  const raw = buildRawFromFormData(formData, fields);
+  // Reuse precomputed fields/raw when provided to avoid duplicate work in callers
+  const fields =
+    (precomputedFields as readonly TFieldNames[] | undefined) ??
+    deriveFields<TFieldNames, TIn>(schema, allowedFields);
+
+  const raw =
+    precomputedRaw ?? buildRawFromFormData<TFieldNames>(formData, fields);
+
   const parsed = schema.safeParse(raw);
 
   if (!parsed.success) {
@@ -47,7 +64,7 @@ export async function validateFormGeneric<
     const dense = toDenseFormErrors(normalized, fields);
 
     serverLogger.error({
-      context: "validateFormGeneric",
+      context: loggerContext,
       error: parsed.error,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
@@ -62,7 +79,7 @@ export async function validateFormGeneric<
     return { data: dataOut, success: true };
   } catch (e) {
     serverLogger.error({
-      context: "validateFormGeneric.transform",
+      context: `${loggerContext}.transform`,
       error: e,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });

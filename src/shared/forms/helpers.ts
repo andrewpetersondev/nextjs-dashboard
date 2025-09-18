@@ -1,10 +1,6 @@
-import "server-only";
-
 import type { z } from "zod";
 import { isZodObject } from "@/shared/forms/form-guards";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
-
-// --- helpers (core) ---
 
 export function deriveFields<TFieldNames extends string, TIn>(
   schema: z.ZodSchema<TIn>,

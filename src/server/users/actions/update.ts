@@ -14,14 +14,14 @@ import {
 } from "@/features/users/schema/schema.shared";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
-import { toFormState } from "@/server/forms/adapters";
-import { buildRawFromFormData } from "@/server/forms/helpers";
 import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import { toUserIdResult } from "@/shared/domain/id-converters";
+import { toFormState } from "@/shared/forms/adapters";
 import { toDenseFormErrors } from "@/shared/forms/errors";
+import { buildRawFromFormData } from "@/shared/forms/helpers";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
 import type { FormState } from "@/shared/forms/types";
 import { shallowDiff } from "@/shared/utils/patch";
@@ -58,6 +58,9 @@ export async function updateUserAction(
     EditUserFormSchema,
     fields,
     {
+      // Reuse precomputed context to avoid duplicate work and guarantee consistency
+      fields,
+      raw,
       transform: async (data) => ({
         ...data,
         email:
@@ -146,11 +149,11 @@ export async function updateUserAction(
     );
 
     if (!updatedUser) {
-      return {
-        errors: {},
-        message: USER_ERROR_MESSAGES.UPDATE_FAILED,
-        success: false,
-      };
+      // Use toFormState so UI gets consistent values/redaction on failure
+      return toFormState(
+        { error: emptyDense, success: false },
+        { failureMessage: USER_ERROR_MESSAGES.UPDATE_FAILED, fields, raw },
+      );
     }
     revalidatePath(USERS_DASHBOARD_PATH);
     return {
@@ -165,10 +168,10 @@ export async function updateUserAction(
       id,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-    return {
-      errors: {}, // TODO: return a more specific error message
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    };
+    // Use toFormState for unexpected failures as well
+    return toFormState(
+      { error: emptyDense, success: false },
+      { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
+    );
   }
 }
