@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { AUTH_ROLES } from "@/features/auth/domain/roles";
 import {
   emailSchema,
   passwordSchema,
   usernameSchema,
-} from "@/features/auth/domain/schema.shared";
+} from "@/features/auth/domain/auth.schema";
+import { AUTH_ROLES } from "@/features/auth/domain/roles";
 import { emptyToUndefined } from "@/shared/utils/string";
 
 export const roleSchema = z

@@ -6,7 +6,7 @@ import {
   type SignupFormFieldNames,
   type SignupFormInput,
   SignupFormSchema,
-} from "@/features/auth/domain/schema.shared";
+} from "@/features/auth/domain/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
