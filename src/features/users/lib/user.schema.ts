@@ -7,6 +7,16 @@ import {
 import { USER_ROLES } from "@/features/auth/domain/roles";
 import { emptyToUndefined } from "@/shared/utils/string";
 
+/**
+ * Utility to create optional, preprocessed edit fields.
+ */
+function optionalEdit<T extends z.ZodTypeAny>(schema: T) {
+  return z.preprocess(emptyToUndefined, schema.optional());
+}
+
+/**
+ * Role schema: trims, uppercases, and validates against allowed roles.
+ */
 export const roleSchema = z
   .string()
   .trim()
@@ -18,6 +28,9 @@ export const roleSchema = z
     }),
   );
 
+/**
+ * Base schema for user forms (create).
+ */
 export const UserFormBaseSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -28,17 +41,14 @@ export const UserFormBaseSchema = z.object({
 export const CreateUserFormSchema = UserFormBaseSchema;
 
 // Optional, preprocessed fields for edit
-export const emailEdit = z.preprocess(emptyToUndefined, emailSchema.optional());
-export const passwordEdit = z.preprocess(
-  emptyToUndefined,
-  passwordSchema.optional(),
-);
-export const roleEdit = z.preprocess(emptyToUndefined, roleSchema.optional());
-export const usernameEdit = z.preprocess(
-  emptyToUndefined,
-  usernameSchema.optional(),
-);
+export const emailEdit = optionalEdit(emailSchema);
+export const passwordEdit = optionalEdit(passwordSchema);
+export const roleEdit = optionalEdit(roleSchema);
+export const usernameEdit = optionalEdit(usernameSchema);
 
+/**
+ * Edit schema with all fields optional after preprocessing.
+ */
 export const EditUserFormSchema = z.object({
   email: emailEdit,
   password: passwordEdit,
@@ -47,18 +57,15 @@ export const EditUserFormSchema = z.object({
 });
 
 // UI/view-model types derived from the shared schema
-// Zod Input
-// z.input extracts the input type expected by the schema,
-// which can differ from the output type if the schema transforms the data.
+
+// Zod Input (pre-parse)
 export type CreateUserInput = z.input<typeof CreateUserFormSchema>;
 export type CreateUserFormFieldNames = keyof CreateUserInput;
 export type EditUserInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserInput;
 
-// Zod Infer
-// z.infer is a utility type that extracts the output type of a Zod schema,
-// reflecting the type you get after parsing data with the schema.
+// Zod Infer (post-parse)
 export type EditUserFormValues = z.infer<typeof EditUserFormSchema>;
 
-// for backwards compatibility
+// Backwards compatibility
 export type BaseUserFormFieldNames = keyof CreateUserInput;
