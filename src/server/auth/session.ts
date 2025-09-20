@@ -105,7 +105,7 @@ export async function deleteSessionToken(): Promise<void> {
  */
 export async function setSessionToken(
   userId: string,
-  role: AuthRole = "user",
+  role: AuthRole,
 ): Promise<void> {
   const now = Date.now();
   const expiresAt: number = now + SESSION_DURATION_MS;

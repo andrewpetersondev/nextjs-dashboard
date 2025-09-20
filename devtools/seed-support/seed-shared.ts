@@ -11,7 +11,7 @@ export type NewInvoice = typeof invoices.$inferInsert;
 /**
  * Seed roles used for demo users.
  */
-export const roles = ["guest", "admin", "user"] as const;
+export const roles = ["ADMIN", "GUEST", "USER"] as const;
 
 /**
  * Demo customers data used during seeding.

@@ -1,8 +1,9 @@
-import type { invoices } from "@/server/db/schema/invoices";
-import type { Period } from "@/shared/domain/domain-brands";
-import { toCustomerId } from "@/shared/domain/id-converters";
+import type { UserRole } from "../../src/features/auth/domain/roles";
+import type { invoices } from "../../src/server/db/schema/invoices";
+import type { Period } from "../../src/shared/domain/domain-brands";
+import { toCustomerId } from "../../src/shared/domain/id-converters";
 import { SEED_CONFIG } from "./constants";
-import { type NewInvoice, periods, type roles } from "./seed-shared";
+import { type NewInvoice, periods } from "./seed-shared";
 import {
   generateInvoiceAmount,
   hashPassword,
@@ -17,7 +18,7 @@ export async function buildUserSeed(): Promise<
   ReadonlyArray<{
     readonly email: string;
     readonly password: string;
-    readonly role: (typeof roles)[number];
+    readonly role: UserRole;
     readonly username: string;
   }>
 > {
@@ -25,19 +26,19 @@ export async function buildUserSeed(): Promise<
     {
       email: "user@user.com",
       password: await hashPassword("UserPassword123!"),
-      role: "user",
+      role: "USER",
       username: "user",
     },
     {
       email: "admin@admin.com",
       password: await hashPassword("AdminPassword123!"),
-      role: "admin",
+      role: "ADMIN",
       username: "admin",
     },
     {
       email: "guest@guest.com",
       password: await hashPassword("GuestPassword123!"),
-      role: "guest",
+      role: "GUEST",
       username: "guest",
     },
   ] as const;

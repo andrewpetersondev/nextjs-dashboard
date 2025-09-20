@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { sessions } from "@/server/db/schema/sessions";
 import { users } from "@/server/db/schema/users";
+import type { UserRole } from "../../src/features/auth/domain/roles";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 
@@ -8,7 +9,7 @@ import { hashPassword } from "../seed-support/utils";
 export async function upsertE2EUser(user: {
   email: string;
   password: string;
-  role?: "user" | "admin" | "guest";
+  role?: UserRole;
 }): Promise<void> {
   if (!user) {
     throw new Error("upsertE2EUser requires user object");
@@ -27,7 +28,7 @@ export async function upsertE2EUser(user: {
 
   const username = baseName.replace(/[^a-zA-Z0-9_]/g, "_");
 
-  const role = user.role ?? "user";
+  const role = user.role ?? "USER";
 
   const hashed = await hashPassword(user.password);
 

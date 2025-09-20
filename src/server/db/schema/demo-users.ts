@@ -6,7 +6,7 @@ import { roleEnum } from "./users";
 export const demoUserCounters = pgTable("demo_user_counters", {
   count: integer("count").notNull().default(0),
   id: serial("id").primaryKey(),
-  role: roleEnum("role").notNull().default("guest").$type<AuthRole>(),
+  role: roleEnum("role").notNull().default("GUEST").$type<AuthRole>(),
 });
 
 export const demoUserCountersRelations = relations(

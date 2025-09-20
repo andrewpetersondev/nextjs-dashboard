@@ -1,6 +1,7 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-node";
+import type { UserRole } from "./src/features/auth/domain/roles";
 
 export default defineConfig({
   e2e: {
@@ -59,7 +60,7 @@ export default defineConfig({
           email: string;
           password: string;
           username: string;
-          role?: "user" | "admin" | "guest";
+          role?: UserRole;
         }) {
           const { createUser } = await import("./devtools/tasks/create-user");
           await createUser(user);
@@ -81,7 +82,7 @@ export default defineConfig({
           email: string;
           password: string;
           username?: string;
-          role?: "user" | "admin" | "guest";
+          role?: UserRole;
         }) {
           const { upsertE2EUser } = await import(
             "./devtools/tasks/upsert-e2e-users"
