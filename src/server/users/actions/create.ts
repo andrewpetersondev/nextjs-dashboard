@@ -3,13 +3,13 @@
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import {
+  type CreateUserFormFieldNames,
+  CreateUserFormSchema,
+} from "@/features/users/lib/user.schema";
+import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/features/users/messages";
-import {
-  type CreateUserFormFieldNames,
-  CreateUserFormSchema,
-} from "@/features/users/schema/schema.shared";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";

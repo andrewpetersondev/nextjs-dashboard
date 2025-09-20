@@ -5,7 +5,7 @@ import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
 import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { UserDto } from "@/features/users/dto/types";
-import type { EditUserFormFieldNames } from "@/features/users/schema/schema.shared";
+import type { EditUserFormFieldNames } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
 import type { FormState } from "@/shared/forms/types";
 

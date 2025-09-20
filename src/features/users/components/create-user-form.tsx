@@ -3,7 +3,7 @@
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
-import type { CreateUserFormFieldNames } from "@/features/users/schema/schema.shared";
+import type { CreateUserFormFieldNames } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
 import type { FormState } from "@/shared/forms/types";
 

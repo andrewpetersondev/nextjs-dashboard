@@ -9,14 +9,14 @@ import { revalidatePath } from "next/cache";
 import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { UserDto } from "@/features/users/dto/types";
 import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from "@/features/users/messages";
-import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
   type EditUserFormValues,
-} from "@/features/users/schema/schema.shared";
+} from "@/features/users/lib/user.schema";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/features/users/messages";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validation";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { roleSchema } from "@/features/users/schema/schema.shared";
+import { roleSchema } from "@/features/users/lib/user.schema";
 
 export const userIdSchema = z.uuid();
 export const expiresAtSchema = z.number().int().positive();
