@@ -1,5 +1,10 @@
 import type { JSX } from "react";
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import {
+  ADMIN_ROLE,
+  GUEST_ROLE,
+  USER_ROLE,
+  type UserRole,
+} from "@/features/auth/domain/roles";
 import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/session";
@@ -31,7 +36,7 @@ export default async function Page(): Promise<JSX.Element> {
       readTotalCustomersCountAction(),
     ]);
 
-  const role: AuthRole = getValidUserRole(session?.role);
+  const role: UserRole = getValidUserRole(session?.role);
 
   const dashboardData = {
     cards: {
@@ -44,11 +49,11 @@ export default async function Page(): Promise<JSX.Element> {
   };
 
   let title = "Dashboard";
-  if (role === ROLES.ADMIN) {
+  if (role === ADMIN_ROLE) {
     title = DASHBOARD_TITLES.ADMIN;
-  } else if (role === ROLES.USER) {
+  } else if (role === USER_ROLE) {
     title = DASHBOARD_TITLES.USER;
-  } else if (role === ROLES.GUEST) {
+  } else if (role === GUEST_ROLE) {
     title = DASHBOARD_TITLES.GUEST;
   }
 
@@ -63,16 +68,6 @@ export default async function Page(): Promise<JSX.Element> {
     </main>
   );
 
-  if (AUTH_ROLES.includes(role)) {
-    return commonContent;
-  }
-
-  return (
-    <main>
-      <MiddlewareCard />
-      <section aria-live="polite" className="text-red-600">
-        Access denied: Unknown user role.
-      </section>
-    </main>
-  );
+  // getValidUserRole already enforces allowed roles; this condition will always be true.
+  return commonContent;
 }

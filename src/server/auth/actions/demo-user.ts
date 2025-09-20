@@ -1,7 +1,6 @@
 "use server";
-
 import { redirect } from "next/navigation";
-import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import { GUEST_ROLE, type UserRole } from "@/features/auth/domain/roles";
 import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
@@ -19,7 +18,7 @@ import { ROUTES } from "@/shared/routes/routes";
  * Creates a demo user and logs them in.
  */
 export async function demoUser(
-  role: AuthRole = ROLES.GUEST as AuthRole,
+  role: UserRole = GUEST_ROLE,
 ): Promise<FormState<"_root">> {
   let demoUserObject: UserDto | null = null;
 

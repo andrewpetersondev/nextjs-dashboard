@@ -1,17 +1,21 @@
 import type { JSX } from "react";
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import {
+  GUEST_ROLE,
+  USER_ROLES,
+  type UserRole,
+} from "@/features/auth/domain/roles";
 import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
 import { verifySessionOptimistic } from "@/server/auth/actions/verify-session";
 import { H6 } from "@/ui/atoms/typography/headings";
 
-const allowedRoles: readonly AuthRole[] = AUTH_ROLES;
+const allowedRoles: readonly UserRole[] = USER_ROLES;
 
 export async function MiddlewareCard(): Promise<JSX.Element> {
   const session: SessionVerificationResult = await verifySessionOptimistic();
 
-  const role: AuthRole = allowedRoles.includes(session.role as AuthRole)
-    ? (session.role as AuthRole)
-    : ROLES.GUEST; // fallback to 'guest' if invalid
+  const role: UserRole = allowedRoles.includes(session.role as UserRole)
+    ? (session.role as UserRole)
+    : (GUEST_ROLE as UserRole); // fallback to 'guest' if invalid
 
   const userId: string = String(session.userId);
   const authy: boolean = Boolean(session.isAuthorized);

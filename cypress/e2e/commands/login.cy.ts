@@ -1,3 +1,4 @@
+import { USER_ROLE } from "../../../src/features/auth/domain/roles";
 import { DASHBOARD_PATH } from "../shared/paths";
 import { TEN_SECONDS } from "../shared/times";
 import { DEMO_USER } from "../shared/users";
@@ -20,7 +21,7 @@ describe("Login custom command via Auth Form", () => {
   });
 
   it("logs in after task creates user in database", () => {
-    cy.task("db:createUser", { ...signupCreds, role: "USER" });
+    cy.task("db:createUser", { ...signupCreds, role: USER_ROLE });
     cy.login(loginCreds);
     cy.location("pathname").should("include", DASHBOARD_PATH);
   });

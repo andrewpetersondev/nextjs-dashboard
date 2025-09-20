@@ -1,4 +1,4 @@
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 
 /**
  * Data Transfer Object (DTO) representing a user entity for client/server transport.
@@ -9,6 +9,6 @@ import type { AuthRole } from "@/features/auth/domain/roles";
 export interface UserDto {
   readonly email: string;
   readonly id: string;
-  readonly role: AuthRole;
+  readonly role: UserRole;
   readonly username: string;
 }

@@ -1,4 +1,4 @@
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import type { EncryptPayload } from "@/features/auth/sessions/dto/types";
 
 /**
@@ -24,7 +24,7 @@ export function unflattenEncryptPayload(
   return {
     user: {
       expiresAt: payload.expiresAt as number,
-      role: payload.role as AuthRole,
+      role: payload.role as UserRole,
       sessionStart: payload.sessionStart as number,
       userId: payload.userId as string,
     },

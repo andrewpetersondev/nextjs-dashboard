@@ -1,12 +1,7 @@
-export const ROLES = {
-  ADMIN: "ADMIN",
-  GUEST: "GUEST",
-  USER: "USER",
-} as const;
+export const USER_ROLES = ["ADMIN", "GUEST", "USER"] as const;
 
-export type AuthRole = (typeof ROLES)[keyof typeof ROLES];
-
-export const AUTH_ROLES = Object.values(ROLES) as readonly AuthRole[];
-
-export const USER_ROLES = Object.freeze(["ADMIN", "GUEST", "USER"] as const);
 export type UserRole = (typeof USER_ROLES)[number];
+
+export const ADMIN_ROLE: UserRole = "ADMIN";
+export const GUEST_ROLE: UserRole = "GUEST";
+export const USER_ROLE: UserRole = "USER";

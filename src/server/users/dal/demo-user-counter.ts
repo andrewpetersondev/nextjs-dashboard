@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -15,7 +14,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  */
 export async function demoUserCounter(
   db: Database,
-  role: AuthRole,
+  role: UserRole,
 ): Promise<number> {
   try {
     // Insert a new counter-row for the given role and return the new id

@@ -1,4 +1,9 @@
-import type { UserRole } from "../../src/features/auth/domain/roles";
+import {
+  ADMIN_ROLE,
+  GUEST_ROLE,
+  USER_ROLE,
+  type UserRole,
+} from "../../src/features/auth/domain/roles";
 import type { invoices } from "../../src/server/db/schema/invoices";
 import type { Period } from "../../src/shared/domain/domain-brands";
 import { toCustomerId } from "../../src/shared/domain/id-converters";
@@ -26,19 +31,19 @@ export async function buildUserSeed(): Promise<
     {
       email: "user@user.com",
       password: await hashPassword("UserPassword123!"),
-      role: "USER",
+      role: USER_ROLE,
       username: "user",
     },
     {
       email: "admin@admin.com",
       password: await hashPassword("AdminPassword123!"),
-      role: "ADMIN",
+      role: ADMIN_ROLE,
       username: "admin",
     },
     {
       email: "guest@guest.com",
       password: await hashPassword("GuestPassword123!"),
-      role: "GUEST",
+      role: GUEST_ROLE,
       username: "guest",
     },
   ] as const;

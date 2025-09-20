@@ -1,5 +1,4 @@
 "use client";
-
 import {
   DocumentDuplicateIcon,
   HomeIcon,
@@ -10,7 +9,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
-import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import { ADMIN_ROLE, type UserRole } from "@/features/auth/domain/roles";
 import { ROUTES } from "@/shared/routes/routes";
 
 /** Navigation link paths */
@@ -21,11 +20,9 @@ const NAV_LINKS = {
   USERS: ROUTES.DASHBOARD.USERS,
 } as const;
 
-const ADMIN_ROLE = ROLES.ADMIN as AuthRole;
-
 type NavLinksProps = {
   /** User role for conditional links*/
-  role?: AuthRole;
+  role?: UserRole;
 };
 
 type NavLink = {

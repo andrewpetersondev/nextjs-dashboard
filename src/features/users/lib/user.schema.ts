@@ -4,7 +4,7 @@ import {
   passwordSchema,
   usernameSchema,
 } from "@/features/auth/domain/auth.schema";
-import { AUTH_ROLES } from "@/features/auth/domain/roles";
+import { USER_ROLES } from "@/features/auth/domain/roles";
 import { emptyToUndefined } from "@/shared/utils/string";
 
 export const roleSchema = z
@@ -12,7 +12,7 @@ export const roleSchema = z
   .trim()
   .toUpperCase()
   .pipe(
-    z.enum(AUTH_ROLES, {
+    z.enum(USER_ROLES, {
       error: (issue) =>
         issue.input === undefined ? "Role is required." : "Invalid user role.",
     }),

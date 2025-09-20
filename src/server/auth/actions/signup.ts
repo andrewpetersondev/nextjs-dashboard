@@ -7,6 +7,7 @@ import {
   type SignupFormInput,
   SignupFormSchema,
 } from "@/features/auth/domain/auth.schema";
+import { USER_ROLE } from "@/features/auth/domain/roles";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
@@ -59,7 +60,7 @@ export async function signup(
     const user = await createUserDal(db, {
       email,
       password,
-      role: toUserRole("USER"),
+      role: toUserRole(USER_ROLE),
       username,
     });
 
@@ -69,7 +70,7 @@ export async function signup(
         { failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED, fields, raw },
       );
     }
-    await setSessionToken(toUserId(user.id), toUserRole("USER"));
+    await setSessionToken(toUserId(user.id), toUserRole(USER_ROLE));
   } catch (error) {
     serverLogger.error({
       context: "signup",

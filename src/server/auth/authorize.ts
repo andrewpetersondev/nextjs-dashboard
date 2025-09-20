@@ -1,8 +1,7 @@
 import "server-only";
-
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "@/features/auth/constants";
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -11,8 +10,8 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * Returns true if the user's role is included in the allowed roles list.
  */
 export const hasAllowedRole = (
-  userRole: AuthRole | undefined,
-  allowed: readonly AuthRole[],
+  userRole: UserRole | undefined,
+  allowed: readonly UserRole[],
 ): boolean => {
   if (!userRole) {
     return false;
@@ -26,7 +25,7 @@ export const hasAllowedRole = (
  * Returns the session verification result on success for further use.
  */
 export async function ensureRolesOrRedirect(
-  allowed: readonly AuthRole[],
+  allowed: readonly UserRole[],
 ): Promise<SessionVerificationResult> {
   const session = await verifySessionOptimistic();
   if (!hasAllowedRole(session.role, allowed)) {

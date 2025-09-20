@@ -4,7 +4,6 @@
  */
 
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { UserDto } from "@/features/users/dto/types";
@@ -123,7 +122,7 @@ async function buildPatch(
   const candidate: Partial<DiffableUserFields> = {
     ...(data.username ? { username: data.username } : {}),
     ...(data.email ? { email: data.email } : {}),
-    // role is already AuthRole | undefined thanks to schema; no need to reconvert/throw
+    // role is already UserRole | undefined thanks to schema; no need to reconvert/throw
     ...(data.role ? { role: data.role } : {}),
   };
   const diff = shallowDiff<DiffableUserFields>(base, candidate);

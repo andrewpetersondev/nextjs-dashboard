@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import { demoUser } from "@/server/auth/actions/demo-user";
 import { Button } from "@/ui/atoms/button";
 
@@ -15,7 +15,7 @@ interface DemoFormProps {
   /** Button text */
   text: string;
   /** User role for demo login */
-  userRole: AuthRole;
+  userRole: UserRole;
 }
 
 export const DemoForm: FC<DemoFormProps> = ({

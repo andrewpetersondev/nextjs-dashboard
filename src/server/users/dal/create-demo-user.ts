@@ -1,7 +1,6 @@
 import "server-only";
-
 import { createRandomPassword } from "@/features/auth/domain/password";
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import type { UserDto } from "@/features/users/dto/types";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -18,7 +17,7 @@ import { createUserDal } from "@/server/users/dal/create";
 export async function createDemoUser(
   db: Database,
   id: number,
-  role: AuthRole,
+  role: UserRole,
 ): Promise<UserDto | null> {
   try {
     // Generate a secure random password for the demo user

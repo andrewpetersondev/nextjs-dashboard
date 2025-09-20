@@ -7,7 +7,11 @@ import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
 } from "@/features/auth/constants";
-import { type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import {
+  ADMIN_ROLE,
+  USER_ROLE,
+  type UserRole,
+} from "@/features/auth/domain/roles";
 
 /**
  * Props for AuthFormSocialSection.
@@ -38,12 +42,12 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
     <DemoForm
       label={DEMO_USER_LABEL}
       text={demoUserText}
-      userRole={ROLES.USER as AuthRole}
+      userRole={USER_ROLE as UserRole}
     />
     <DemoForm
       label={DEMO_ADMIN_LABEL}
       text={demoAdminText}
-      userRole={ROLES.ADMIN as AuthRole}
+      userRole={ADMIN_ROLE as UserRole}
     />
 
     {/* Social login buttons */}

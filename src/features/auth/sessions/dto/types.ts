@@ -1,4 +1,4 @@
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 
 /**
  * Payload for encrypting a session (JWT or similar).
@@ -6,7 +6,7 @@ import type { AuthRole } from "@/features/auth/domain/roles";
 export interface EncryptPayload {
   user: {
     userId: string;
-    role: AuthRole;
+    role: UserRole;
     expiresAt: number; // Unix timestamp (ms)
     sessionStart: number; // Unix timestamp (ms) - immutable session start
   };
@@ -18,5 +18,5 @@ export interface EncryptPayload {
 export interface SessionVerificationResult {
   isAuthorized: true;
   userId: string;
-  role: AuthRole;
+  role: UserRole;
 }

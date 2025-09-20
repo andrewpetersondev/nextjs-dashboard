@@ -2,7 +2,10 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
-import type { UserRole } from "../../../src/features/auth/domain/roles";
+import {
+  USER_ROLE,
+  type UserRole,
+} from "../../../src/features/auth/domain/roles";
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
 /**
@@ -19,7 +22,7 @@ export interface DemoAccount {
 export const DEMO_USER = {
   email: "user@user.com",
   password: "UserPassword123!",
-  role: "USER",
+  role: USER_ROLE,
   username: "user",
 } as const satisfies DemoAccount;
 

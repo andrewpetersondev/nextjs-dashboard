@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { AuthRole } from "@/features/auth/domain/roles";
+import { USER_ROLE, type UserRole } from "@/features/auth/domain/roles";
 import type { UserDto } from "@/features/users/dto/types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
@@ -22,12 +21,12 @@ export async function createUserDal(
     username,
     email,
     password,
-    role = toUserRole("USER"),
+    role = toUserRole(USER_ROLE),
   }: {
     username: string;
     email: string;
     password: string;
-    role?: AuthRole;
+    role?: UserRole;
   },
 ): Promise<UserDto | null> {
   try {

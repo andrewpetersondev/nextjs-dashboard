@@ -9,18 +9,22 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import {
+  USER_ROLE,
+  USER_ROLES,
+  type UserRole,
+} from "@/features/auth/domain/roles";
 import type { UserId } from "@/shared/domain/domain-brands";
 import { sessions } from "./sessions";
 
-export const roleEnum = pgEnum("role", AUTH_ROLES as [AuthRole, ...AuthRole[]]);
+export const roleEnum = pgEnum("role", USER_ROLES);
 
 export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
   password: varchar("password", { length: 255 }).notNull(),
-  role: roleEnum("role").default(ROLES.USER).notNull().$type<AuthRole>(),
+  role: roleEnum("role").default(USER_ROLE).notNull().$type<UserRole>(),
   sensitiveData: varchar("sensitive_data", { length: 255 })
     .notNull()
     .default("cantTouchThis"),

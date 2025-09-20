@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { ROLES } from "@/features/auth/domain/roles";
+import { ADMIN_ROLE } from "@/features/auth/domain/roles";
 import { SESSION_COOKIE_NAME } from "@/server/auth/constants";
 import { readSessionToken } from "@/server/auth/session-codec";
 import type { DecryptPayload } from "@/server/auth/types";
@@ -34,7 +34,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.nextUrl));
     }
     // Authenticated but not admin
-    if (session.user.role !== ROLES.ADMIN) {
+    if (session.user.role !== ADMIN_ROLE) {
       return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
     }
   }

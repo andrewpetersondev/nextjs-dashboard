@@ -1,10 +1,16 @@
-import { AUTH_ROLES, type AuthRole, ROLES } from "@/features/auth/domain/roles";
+import {
+  GUEST_ROLE,
+  USER_ROLES,
+  type UserRole,
+} from "@/features/auth/domain/roles";
 
 /**
  * Validates and returns a user role, defaulting to guest if invalid.
  *
  * @param role - The role to validate.
- * @returns {AuthRole} - A valid user role.
+ * @returns {UserRole} - A valid user role.
  */
-export const getValidUserRole = (role: unknown): AuthRole =>
-  AUTH_ROLES.includes(role as AuthRole) ? (role as AuthRole) : ROLES.GUEST;
+export const getValidUserRole = (role: unknown): UserRole =>
+  USER_ROLES.includes(role as UserRole)
+    ? (role as UserRole)
+    : (GUEST_ROLE as UserRole);

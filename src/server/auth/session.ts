@@ -2,12 +2,11 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
 
 import "server-only";
-
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { cache } from "react";
+import { cache } from "react"; // todo: why is this imported from react?
 import { LOGIN_PATH } from "@/features/auth/constants";
-import type { AuthRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/domain/roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
@@ -58,7 +57,7 @@ function timeLeftMs(payload?: DecryptPayload): number {
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(
   store: Awaited<ReturnType<typeof cookies>>,
-  user: { userId: string; role: AuthRole; sessionStart: number },
+  user: { userId: string; role: UserRole; sessionStart: number },
 ): Promise<UpdateSessionResult> {
   const expiresAt = Date.now() + SESSION_DURATION_MS;
   const token = await createSessionToken({
@@ -105,7 +104,7 @@ export async function deleteSessionToken(): Promise<void> {
  */
 export async function setSessionToken(
   userId: string,
-  role: AuthRole,
+  role: UserRole,
 ): Promise<void> {
   const now = Date.now();
   const expiresAt: number = now + SESSION_DURATION_MS;

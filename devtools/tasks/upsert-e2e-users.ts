@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { sessions } from "@/server/db/schema/sessions";
 import { users } from "@/server/db/schema/users";
-import type { UserRole } from "../../src/features/auth/domain/roles";
+import { USER_ROLE, type UserRole } from "../../src/features/auth/domain/roles";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 
@@ -28,7 +28,7 @@ export async function upsertE2EUser(user: {
 
   const username = baseName.replace(/[^a-zA-Z0-9_]/g, "_");
 
-  const role = user.role ?? "USER";
+  const role = user.role ?? USER_ROLE;
 
   const hashed = await hashPassword(user.password);
 

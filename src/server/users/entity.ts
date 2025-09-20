@@ -1,6 +1,5 @@
 import "server-only";
-import type { AuthRole } from "@/features/auth/domain/roles";
-
+import type { UserRole } from "@/features/auth/domain/roles";
 import type { UserId } from "@/shared/domain/domain-brands";
 
 /**
@@ -14,7 +13,7 @@ export interface UserEntity {
   readonly id: UserId; // Ensure UserId is a UUID string type
   readonly username: string;
   readonly email: string;
-  readonly role: AuthRole;
+  readonly role: UserRole;
   readonly password: string;
   readonly sensitiveData: string;
 }
