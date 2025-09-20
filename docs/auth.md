@@ -26,7 +26,7 @@ Last updated: 2025-09-11
   {
     user: {
       userId: string,
-      role: "user" | "admin",
+      role: "USER" | "ADMIN",
       expiresAt: number, // epoch ms (maps to JWT exp)
       sessionStart: number, // epoch ms (immutable; set at login)
     }
@@ -80,7 +80,7 @@ File: `src/middleware.ts`
 
 ## Roles & Authorization
 
-- `AuthRole`: `"user" | "admin"`.
+- `AuthRole`: `"USER" | "ADMIN"`.
 - Role is embedded in the session token payload and evaluated in middleware.
 - Admin-only paths live under `/dashboard/users`.
 

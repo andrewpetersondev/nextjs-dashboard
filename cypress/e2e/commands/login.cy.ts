@@ -20,7 +20,7 @@ describe("Login custom command via Auth Form", () => {
   });
 
   it("logs in after task creates user in database", () => {
-    cy.task("db:createUser", { ...signupCreds, role: "user" });
+    cy.task("db:createUser", { ...signupCreds, role: "USER" });
     cy.login(loginCreds);
     cy.location("pathname").should("include", DASHBOARD_PATH);
   });

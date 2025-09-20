@@ -2,9 +2,8 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
+import type { UserRole } from "../../../src/features/auth/domain/roles";
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
-
-export type DemoRole = "admin" | "user" | "guest";
 
 /**
  * Readonly credentials for a pre-seeded demo account (used in certain tests or docs).
@@ -13,14 +12,14 @@ export type DemoRole = "admin" | "user" | "guest";
 export interface DemoAccount {
   readonly email: string;
   readonly password: string;
-  readonly role: DemoRole;
+  readonly role: UserRole;
   readonly username: string;
 }
 
 export const DEMO_USER = {
   email: "user@user.com",
   password: "UserPassword123!",
-  role: "user",
+  role: "USER",
   username: "user",
 } as const satisfies DemoAccount;
 

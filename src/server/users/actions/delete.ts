@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -26,8 +27,8 @@ export async function deleteUserAction(
     const deletedUser = await deleteUserDal(db, toUserId(id));
 
     if (deletedUser) {
-      revalidatePath("/dashboard/users");
-      redirect("/dashboard/users");
+      revalidatePath(USERS_DASHBOARD_PATH);
+      redirect(USERS_DASHBOARD_PATH);
     } else {
       result = {
         errors: { _root: [USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED] },

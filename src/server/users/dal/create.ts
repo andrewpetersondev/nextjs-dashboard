@@ -22,7 +22,7 @@ export async function createUserDal(
     username,
     email,
     password,
-    role = toUserRole("user"),
+    role = toUserRole("USER"),
   }: {
     username: string;
     email: string;

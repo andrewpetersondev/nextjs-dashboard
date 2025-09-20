@@ -10,7 +10,7 @@ import { emptyToUndefined } from "@/shared/utils/string";
 export const roleSchema = z
   .string()
   .trim()
-  .toLowerCase()
+  .toUpperCase()
   .pipe(
     z.enum(AUTH_ROLES, {
       error: (issue) =>

@@ -59,7 +59,7 @@ export async function signup(
     const user = await createUserDal(db, {
       email,
       password,
-      role: toUserRole("user"),
+      role: toUserRole("USER"),
       username,
     });
 
@@ -69,7 +69,7 @@ export async function signup(
         { failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED, fields, raw },
       );
     }
-    await setSessionToken(toUserId(user.id), toUserRole("user"));
+    await setSessionToken(toUserId(user.id), toUserRole("USER"));
   } catch (error) {
     serverLogger.error({
       context: "signup",
