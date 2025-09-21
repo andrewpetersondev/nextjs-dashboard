@@ -2,6 +2,7 @@
  * @file Helpers for extracting user-displayable field values from a raw payload.
  * Values are filtered to strings and optionally redacted by field name.
  */
+import type { FormValues } from "@/shared/forms/form-types";
 
 /**
  * Builds a partial record of user-displayable string values from a raw payload.
@@ -28,7 +29,7 @@ export function buildDisplayValues<TFieldNames extends string>(
   raw: Record<string, unknown>,
   fields: readonly TFieldNames[],
   redactFields: readonly TFieldNames[],
-): Partial<Record<TFieldNames, string>> {
+): FormValues<TFieldNames> {
   // Result is partial because not every field will have a string value present.
   const values: Partial<Record<TFieldNames, string>> = {};
 

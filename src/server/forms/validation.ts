@@ -7,7 +7,7 @@ import {
   mapFieldErrors,
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
-import { buildRawFromFormData } from "@/shared/forms/form-data";
+import { formDataToRawMap } from "@/shared/forms/form-data";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseFormErrors } from "@/shared/forms/form-types";
 import { deriveFields } from "@/shared/forms/schema-helpers";
@@ -57,8 +57,7 @@ export async function validateFormGeneric<
     (precomputedFields as readonly TFieldNames[] | undefined) ??
     deriveFields<TFieldNames, TIn>(schema, allowedFields);
 
-  const raw =
-    precomputedRaw ?? buildRawFromFormData<TFieldNames>(formData, fields);
+  const raw = precomputedRaw ?? formDataToRawMap<TFieldNames>(formData, fields);
 
   const parsed = schema.safeParse(raw);
 
