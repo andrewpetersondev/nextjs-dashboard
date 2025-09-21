@@ -6,16 +6,16 @@
 
 import "server-only";
 
+import {
+  toISODateString,
+  toPeriodFirstDayString,
+} from "@/features/invoices/lib/codecs";
 import type {
   InvoiceDto,
   InvoiceFormDto,
   ISODateString,
-} from "@/features/invoices/dto/dto";
-import { toInvoiceStatus } from "@/features/invoices/mappers";
-import {
-  toISODateString,
-  toPeriodFirstDayString,
-} from "@/features/invoices/transport/codecs";
+} from "@/features/invoices/lib/dto";
+import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,

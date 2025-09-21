@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";

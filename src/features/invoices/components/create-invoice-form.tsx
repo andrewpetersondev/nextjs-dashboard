@@ -11,7 +11,7 @@ import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import type {
   CreateInvoiceFieldNames,
   CreateInvoiceInput,
-} from "@/features/invoices/schema/shared";
+} from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FormFieldError, FormState } from "@/shared/forms/types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";

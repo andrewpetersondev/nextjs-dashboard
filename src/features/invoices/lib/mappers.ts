@@ -1,7 +1,7 @@
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/features/invoices/dto/types";
+} from "@/features/invoices/lib/types";
 import { validateEnum } from "@/shared/core/validation/enum";
 
 /**

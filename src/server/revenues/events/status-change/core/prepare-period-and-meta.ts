@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { periodKey } from "@/features/revenues/domain/period";
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type {

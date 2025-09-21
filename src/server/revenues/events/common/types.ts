@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type { Period } from "@/shared/domain/domain-brands";

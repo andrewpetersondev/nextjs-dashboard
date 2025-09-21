@@ -12,7 +12,7 @@ import type {
   EditInvoiceViewModel,
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
-} from "@/features/invoices/schema/shared";
+} from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import type { FormFieldError, FormState } from "@/shared/forms/types";

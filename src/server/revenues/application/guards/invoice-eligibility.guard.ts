@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import {
   type LogMetadata,
   logError,

@@ -1,6 +1,6 @@
 "use server";
 
-import type { InvoiceListFilter } from "@/features/invoices/dto/types";
+import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { getDB } from "@/server/db/connection";
 import { fetchFilteredInvoicesDal } from "@/server/invoices/dal/fetch-filtered";
 

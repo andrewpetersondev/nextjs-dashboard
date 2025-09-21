@@ -1,7 +1,7 @@
 import "server-only";
 
 import { and, count, eq } from "drizzle-orm";
-import type { InvoiceListFilter } from "@/features/invoices/dto/types";
+import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import type { Database } from "@/server/db/connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";

@@ -5,7 +5,7 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/features/auth/domain/roles";
-import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/constants";
+import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/lib/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";

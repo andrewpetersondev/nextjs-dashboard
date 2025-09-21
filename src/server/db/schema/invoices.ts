@@ -12,7 +12,7 @@ import {
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/features/invoices/dto/types";
+} from "@/features/invoices/lib/types";
 import type {
   CustomerId,
   InvoiceId,

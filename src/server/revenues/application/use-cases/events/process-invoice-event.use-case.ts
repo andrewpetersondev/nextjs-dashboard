@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { periodKey } from "@/features/revenues/domain/period";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { withIdempotency } from "@/server/revenues/application/cross-cutting/idempotency";

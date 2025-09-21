@@ -1,6 +1,6 @@
 "use server";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { InvoiceRepository } from "@/server/invoices/repo";

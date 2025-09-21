@@ -1,6 +1,6 @@
 import "server-only";
 
-import { toInvoiceStatus } from "@/features/invoices/mappers";
+import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
 import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type {
   InvoiceEntity,

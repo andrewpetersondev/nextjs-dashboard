@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
 import { fromDal } from "@/server/errors/wrappers";

@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import type {
   UpdateInvoiceFieldNames,
   UpdateInvoiceInput,
-} from "@/features/invoices/schema/shared";
+} from "@/features/invoices/lib/invoice.schema";
 import type { FormState } from "@/shared/forms/types";
 
 /**

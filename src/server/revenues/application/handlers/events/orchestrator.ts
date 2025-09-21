@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { ProcessInvoiceEventUseCase } from "@/server/revenues/application/use-cases/events/process-invoice-event.use-case";

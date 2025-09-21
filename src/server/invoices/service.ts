@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import {
   dtoToCreateInvoiceEntity,

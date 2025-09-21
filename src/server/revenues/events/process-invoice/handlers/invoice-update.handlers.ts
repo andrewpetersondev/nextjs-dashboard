@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/features/invoices/dto/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import {
   logInfo,
