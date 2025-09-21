@@ -1,9 +1,9 @@
 "use server";
 import { redirect } from "next/navigation";
 import { GUEST_ROLE, type UserRole } from "@/features/auth/domain/roles";
-import type { UserDto } from "@/features/users/dto/types";
+import type { UserDto } from "@/features/users/lib/dto";
+import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";

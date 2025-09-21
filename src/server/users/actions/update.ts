@@ -5,17 +5,17 @@
 
 "use server";
 import { revalidatePath } from "next/cache";
-import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
-import type { UserDto } from "@/features/users/dto/types";
+import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
+import type { UserDto } from "@/features/users/lib/dto";
+import {
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
+} from "@/features/users/lib/messages";
 import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/features/users/lib/user.schema";
-import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
-} from "@/features/users/messages";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validation";

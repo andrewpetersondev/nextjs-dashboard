@@ -1,7 +1,7 @@
 "use server";
 
-import type { UserDto } from "@/features/users/dto/types";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
+import type { UserDto } from "@/features/users/lib/dto";
+import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { fetchUserById } from "@/server/users/dal/fetch-user-by-id";

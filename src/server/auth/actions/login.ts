@@ -7,8 +7,8 @@ import {
   type LoginFormInput,
   LoginFormSchema,
 } from "@/features/auth/domain/auth.schema";
+import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validation";

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { UserDto } from "@/features/users/dto/types";
+import type { UserDto } from "@/features/users/lib/dto";
 import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema/users";

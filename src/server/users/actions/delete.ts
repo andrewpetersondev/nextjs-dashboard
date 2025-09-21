@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
-import { USER_ERROR_MESSAGES } from "@/features/users/messages";
+import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
+import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";

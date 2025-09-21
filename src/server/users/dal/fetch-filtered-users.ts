@@ -1,8 +1,8 @@
 import "server-only";
 
 import { asc, ilike, or } from "drizzle-orm";
-import { ITEMS_PER_PAGE_USERS } from "@/features/users/constants";
-import type { UserDto } from "@/features/users/dto/types";
+import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
+import type { UserDto } from "@/features/users/lib/dto";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";

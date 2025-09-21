@@ -10,7 +10,7 @@ export const USER_ERROR_MESSAGES = {
   UNEXPECTED: "An unexpected error occurred. Please try again.",
   UPDATE_FAILED: "Failed to update user. Please try again.",
   VALIDATION_FAILED: "Validation failed. Please check your input.",
-};
+} as const;
 
 export const USER_SUCCESS_MESSAGES = {
   CREATE_SUCCESS: "User created successfully.",
@@ -18,4 +18,4 @@ export const USER_SUCCESS_MESSAGES = {
   NO_CHANGES: "No changes detected.",
   PARSE_SUCCESS: "User data parsed successfully.",
   UPDATE_SUCCESS: "User updated successfully.",
-};
+} as const;
