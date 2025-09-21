@@ -20,13 +20,10 @@ cypress
 # src/server/auth
 # src/shared/auth
 
-
 # Root
 .github
 .idea
 .next
-# docs
-# biome.json
 drizzle
 node_modules
 public
@@ -34,8 +31,6 @@ storage
 next-env.d.ts
 pnpm-lock.yaml
 postcss.config.mjs
-
-
 
 # Build
 tsconfig.tsbuildinfo
@@ -47,6 +42,3 @@ out/
 .DS_Store
 *.log
 *.tmp
-
-
-

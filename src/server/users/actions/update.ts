@@ -26,9 +26,9 @@ import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import { buildRawFromFormData } from "@/shared/forms/form-data";
-import { deriveFields } from "@/shared/forms/form-fields";
 import type { FormState } from "@/shared/forms/form-types";
 import { toFormState } from "@/shared/forms/result-to-form-state";
+import { deriveFields } from "@/shared/forms/schema-helpers";
 import { shallowDiff } from "@/shared/utils/patch";
 
 // Helpers for brevity and strict typing

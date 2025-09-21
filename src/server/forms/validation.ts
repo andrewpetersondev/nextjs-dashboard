@@ -8,9 +8,9 @@ import {
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
 import { buildRawFromFormData } from "@/shared/forms/form-data";
-import { deriveFields } from "@/shared/forms/form-fields";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseFormErrors } from "@/shared/forms/form-types";
+import { deriveFields } from "@/shared/forms/schema-helpers";
 
 /**
  * Options for `validateFormGeneric`.
