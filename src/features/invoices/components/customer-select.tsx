@@ -18,7 +18,7 @@ import { ErrorMessage } from "@/ui/forms/error-message";
 export interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "options" | "id" | "name"> {
   readonly customers: readonly CustomerField[];
-  readonly error?: import("@/shared/forms/types").FormFieldError;
+  readonly error?: import("@/shared/forms/form-types").FormFieldError;
 }
 
 /**

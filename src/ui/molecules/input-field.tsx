@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
-import type { FormFieldError } from "@/shared/forms/types";
+import type { FormFieldError } from "@/shared/forms/form-types";
 import { FieldError } from "@/ui/forms/field-error";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 

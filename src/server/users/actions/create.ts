@@ -13,9 +13,9 @@ import {
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { mapFieldErrors } from "@/shared/forms/errors";
-import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema";
-import type { FormState } from "@/shared/forms/types";
+import { mapFieldErrors } from "@/shared/forms/error-mapping";
+import type { FormState } from "@/shared/forms/form-types";
+import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-helpers";
 
 /**
  * Creates a new user (admin only).

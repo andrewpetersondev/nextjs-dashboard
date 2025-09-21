@@ -13,7 +13,7 @@ import type {
   CreateInvoiceInput,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { FormFieldError, FormState } from "@/shared/forms/form-types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { Label } from "@/ui/atoms/label";

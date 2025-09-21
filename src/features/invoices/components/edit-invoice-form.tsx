@@ -15,7 +15,7 @@ import type {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { FormFieldError, FormState } from "@/shared/forms/form-types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

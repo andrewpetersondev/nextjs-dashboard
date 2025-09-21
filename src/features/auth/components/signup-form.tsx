@@ -10,7 +10,7 @@ import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import type { SignupFormFieldNames } from "@/features/auth/domain/auth.schema";
-import type { FormFieldError, FormState } from "@/shared/forms/types";
+import type { FormFieldError, FormState } from "@/shared/forms/form-types";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 

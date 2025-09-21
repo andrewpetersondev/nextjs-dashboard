@@ -24,10 +24,11 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { toFormState } from "@/shared/forms/adapters";
-import { toDenseFormErrors } from "@/shared/forms/errors";
-import { buildRawFromFormData, deriveFields } from "@/shared/forms/helpers";
-import type { FormState } from "@/shared/forms/types";
+import { toDenseFormErrors } from "@/shared/forms/error-mapping";
+import { buildRawFromFormData } from "@/shared/forms/form-data";
+import { deriveFields } from "@/shared/forms/form-fields";
+import type { FormState } from "@/shared/forms/form-types";
+import { toFormState } from "@/shared/forms/result-to-form-state";
 import { shallowDiff } from "@/shared/utils/patch";
 
 // Helpers for brevity and strict typing

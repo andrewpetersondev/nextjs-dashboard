@@ -15,9 +15,9 @@ import { validateFormGeneric } from "@/server/forms/validation";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
-import { toFormState } from "@/shared/forms/adapters";
-import { toDenseFormErrors } from "@/shared/forms/errors";
-import type { FormState } from "@/shared/forms/types";
+import { toDenseFormErrors } from "@/shared/forms/error-mapping";
+import type { FormState } from "@/shared/forms/form-types";
+import { toFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

@@ -3,10 +3,14 @@ import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
-import { mapFieldErrors, toDenseFormErrors } from "@/shared/forms/errors";
-import { buildRawFromFormData, deriveFields } from "@/shared/forms/helpers";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages";
-import type { DenseFormErrors } from "@/shared/forms/types";
+import {
+  mapFieldErrors,
+  toDenseFormErrors,
+} from "@/shared/forms/error-mapping";
+import { buildRawFromFormData } from "@/shared/forms/form-data";
+import { deriveFields } from "@/shared/forms/form-fields";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
+import type { DenseFormErrors } from "@/shared/forms/form-types";
 
 /**
  * Options for `validateFormGeneric`.

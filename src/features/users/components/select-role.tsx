@@ -4,7 +4,7 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/auth/domain/roles";
-import type { FormFieldError } from "@/shared/forms/types";
+import type { FormFieldError } from "@/shared/forms/form-types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 import { ErrorMessage } from "@/ui/forms/error-message";
 

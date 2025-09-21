@@ -7,7 +7,7 @@ import { USERS_DASHBOARD_PATH } from "@/features/users/constants";
 import type { UserDto } from "@/features/users/dto/types";
 import type { EditUserFormFieldNames } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
-import type { FormState } from "@/shared/forms/types";
+import type { FormState } from "@/shared/forms/form-types";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState: FormState<EditUserFormFieldNames> = {
