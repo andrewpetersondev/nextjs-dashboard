@@ -46,7 +46,7 @@ import type {
  * });
  * ```
  */
-export function toFormState<TFieldNames extends string, TData>(
+export function resultToFormState<TFieldNames extends string, TData>(
   r: Result<TData, DenseFormErrors<TFieldNames>>,
   params: {
     successMessage?: string;

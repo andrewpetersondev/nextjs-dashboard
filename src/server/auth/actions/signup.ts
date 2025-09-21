@@ -18,7 +18,7 @@ import { createUserDal } from "@/server/users/dal/create";
 import { toUserId } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { toFormState } from "@/shared/forms/result-to-form-state";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -59,7 +59,7 @@ export async function signup(
   });
 
   // Convert to a serializable form state for UI consumption.
-  const validated = toFormState(result, { fields, raw });
+  const validated = resultToFormState(result, { fields, raw });
 
   // Early return on validation failure; UI will render field errors/messages.
   if (!validated.success || typeof validated.data === "undefined") {
@@ -80,7 +80,7 @@ export async function signup(
 
     if (!user) {
       // Creation failed (e.g., constraint violation handled upstream): return failure state.
-      return toFormState(
+      return resultToFormState(
         { error: emptyDense, success: false },
         { failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED, fields, raw },
       );
@@ -97,7 +97,7 @@ export async function signup(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return toFormState(
+    return resultToFormState(
       { error: emptyDense, success: false },
       { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
     );

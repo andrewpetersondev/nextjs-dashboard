@@ -14,7 +14,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import { formDataToRawMap } from "@/shared/forms/form-data";
 import type { FormState } from "@/shared/forms/form-types";
-import { toFormState } from "@/shared/forms/result-to-form-state";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 
 /**
@@ -89,7 +89,7 @@ export async function prepareFormAction<
   );
 
   // Convert to FormState structure expected by UI
-  const validated = toFormState(result, { fields, raw });
+  const validated = resultToFormState(result, { fields, raw });
 
   return {
     emptyDense,

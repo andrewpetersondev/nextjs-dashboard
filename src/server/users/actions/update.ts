@@ -27,7 +27,7 @@ import { toUserIdResult } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import { formDataToRawMap } from "@/shared/forms/form-data";
 import type { FormState } from "@/shared/forms/form-types";
-import { toFormState } from "@/shared/forms/result-to-form-state";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 import { shallowDiff } from "@/shared/utils/patch";
 
@@ -62,7 +62,7 @@ function initCtx(formData: FormData): Ctx {
  * @param ctx - Context carrying fields, raw, and empty errors.
  */
 function fail(message: string, ctx: Ctx): FormState<EditUserFormFieldNames> {
-  return toFormState(
+  return resultToFormState(
     { error: ctx.emptyDense, success: false },
     { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
   );
@@ -98,7 +98,7 @@ async function validateForm(
       }),
     },
   );
-  return toFormState(result, {
+  return resultToFormState(result, {
     failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED,
     fields: ctx.fields,
     raw: ctx.raw,

@@ -17,7 +17,7 @@ import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { toFormState } from "@/shared/forms/result-to-form-state";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -59,7 +59,7 @@ export async function login(
   );
 
   // Convert to a serializable form state for UI consumption.
-  const validated = toFormState(result, { fields, raw });
+  const validated = resultToFormState(result, { fields, raw });
 
   // Early return if validation failed; UI will render field errors and messages.
   if (!validated.success || typeof validated.data === "undefined") {
@@ -75,7 +75,7 @@ export async function login(
 
     if (!user) {
       // Invalid credentials: return failure state without leaking specifics.
-      return toFormState(
+      return resultToFormState(
         { error: emptyDense, success: false },
         {
           failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
@@ -96,7 +96,7 @@ export async function login(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return toFormState(
+    return resultToFormState(
       { error: emptyDense, success: false },
       { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
     );

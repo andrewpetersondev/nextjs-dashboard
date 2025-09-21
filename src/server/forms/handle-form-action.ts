@@ -8,7 +8,7 @@ import type { z } from "zod";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { toFormState } from "@/shared/forms/result-to-form-state";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 
 type HandlerDeps<TFieldNames extends string, TIn, TOut> = {
@@ -49,7 +49,7 @@ export async function handleFormAction<TFieldNames extends string, TIn, TOut>(
     transform ? { transform } : undefined,
   );
 
-  const validated = toFormState(result, { fields, raw });
+  const validated = resultToFormState(result, { fields, raw });
 
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
@@ -58,7 +58,7 @@ export async function handleFormAction<TFieldNames extends string, TIn, TOut>(
   try {
     const out = await onSuccess(validated.data);
     if (!out) {
-      return toFormState(
+      return resultToFormState(
         { error: emptyDense, success: false },
         { failureMessage, fields, raw },
       );
@@ -69,7 +69,7 @@ export async function handleFormAction<TFieldNames extends string, TIn, TOut>(
       error,
       message: unexpectedMessage,
     });
-    return toFormState(
+    return resultToFormState(
       { error: emptyDense, success: false },
       { failureMessage: unexpectedMessage, fields, raw },
     );
@@ -79,5 +79,5 @@ export async function handleFormAction<TFieldNames extends string, TIn, TOut>(
     redirect(redirectTo);
   }
 
-  return toFormState(result, { fields, raw });
+  return resultToFormState(result, { fields, raw });
 }
