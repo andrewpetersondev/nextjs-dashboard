@@ -1,6 +1,3 @@
-import type { z } from "zod";
-import { isZodObject } from "@/shared/forms/zod-guards";
-
 /**
  * @module schema-helpers
  *
@@ -11,6 +8,8 @@ import { isZodObject } from "@/shared/forms/zod-guards";
  * - Provide canonical field lists to build raw form-data maps and dense error maps.
  * - Reduce over-posting risk by supporting explicit whitelists.
  */
+import type { z } from "zod";
+import { isZodObject } from "@/shared/forms/zod-guards";
 
 /**
  * Derive allowed string field names from a Zod object schema.

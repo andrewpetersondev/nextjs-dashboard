@@ -1,4 +1,9 @@
 /**
+ * @file Shared TypeScript types describing form values, errors, and state.
+ * These types are consumed by server actions and UI adapters.
+ */
+
+/**
  * A union helper representing a string-literal union for field names.
  * This is just an alias for documentation/readability.
  */

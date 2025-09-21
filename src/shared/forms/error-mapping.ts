@@ -1,3 +1,7 @@
+/**
+ * @file Error mapping helpers for transforming Zod/validation outputs into UI-friendly shapes.
+ * Provides sparse <-> dense conversions scoped to allowed field names.
+ */
 import type { DenseFormErrors, FormErrors } from "@/shared/forms/form-types";
 
 /**
