@@ -1,13 +1,13 @@
 /**
- * @module schema-helpers
+ * @file Utilities for deriving field-name lists from Zod schemas.
  *
- * Utilities for deriving field-name lists from Zod schemas.
- *
+ * @remarks
  * Primary goals:
  * - Centralize allowed form field names per schema.
  * - Provide canonical field lists to build raw form-data maps and dense error maps.
  * - Reduce over-posting risk by supporting explicit whitelists.
  */
+
 import type { z } from "zod";
 import { isZodObject } from "@/shared/forms/zod-guards";
 
@@ -17,17 +17,19 @@ import { isZodObject } from "@/shared/forms/zod-guards";
  * Extracts the string keys from the provided Zod object schema and returns them
  * as an immutable (readonly) array.
  *
- * Notes:
- * - Only object schemas are supported; callers should pass a `ZodObject`.
- * - Keys are narrowed to `string` (symbol keys are excluded).
- *
  * @typeParam S - A Zod object schema whose keys are to be extracted.
  * @param schema - The Zod object schema to extract keys from.
  * @returns Readonly array of string keys from the schema.
  *
+ * @remarks
+ * - Only object schemas are supported; callers should pass a `ZodObject`.
+ * - Keys are narrowed to `string` (symbol keys are excluded).
+ *
  * @example
+ * ```ts
  * const keys = deriveAllowedFieldsFromSchema(UserSchema);
- * // -> ["id", "email", "name"] as readonly string[]
+ * // -> ["id", "email", "name"] as const
+ * ```
  */
 export function deriveAllowedFieldsFromSchema<
   S extends z.ZodObject<z.ZodRawShape>,
@@ -43,34 +45,32 @@ export function deriveAllowedFieldsFromSchema<
 /**
  * Derive a readonly list of form field names for a given Zod schema.
  *
- * Behavior:
- * - If `allowedFields` is provided and non-empty, it is returned as-is (explicit whitelist).
- * - Otherwise, if `schema` is a Zod object, field names are derived from the schema shape.
- * - If `schema` is not a Zod object (e.g., union/array/primitive), an empty readonly array is returned.
- *
- * Use cases:
- * - Centralize the set of allowed form fields per schema.
- * - Provide a canonical field list to build raw form data maps and dense error maps.
- * - Avoid recomputing field lists by precomputing and passing `allowedFields` from call sites.
- *
- * Type parameters:
- * - TFieldNames: String literal union of field names (e.g., keyof Input).
- * - TIn: Input type expected by the Zod schema.
+ * @typeParam TFieldNames - String literal union of field names (e.g., keyof Input).
+ * @typeParam TIn - Input type expected by the Zod schema.
  *
  * @param schema - Zod schema describing the form payload.
  * @param allowedFields - Optional explicit whitelist of fields to use instead of deriving.
  * @returns Readonly array of field names.
  *
- * @example
- * // Derive from schema (Zod object):
- * const fields = deriveFields<LoginFieldNames, LoginInput>(LoginSchema);
+ * @remarks
+ * - If {@link allowedFields} is provided and non-empty, it is returned as-is (explicit whitelist).
+ * - Otherwise, if {@link schema} is a Zod object, field names are derived from the schema shape.
+ * - If {@link schema} is not a Zod object (e.g., union/array/primitive), an empty readonly array is returned.
  *
  * @example
+ * ```ts
+ * // Derive from schema (Zod object):
+ * const fields = deriveFields<LoginFieldNames, LoginInput>(LoginSchema);
+ * ```
+ *
+ * @example
+ * ```ts
  * // Use an explicit whitelist (skips derivation):
  * const fields = deriveFields<EditUserFieldNames, EditUserInput>(
  *   EditUserSchema,
  *   ["email", "username"] as const
  * );
+ * ```
  */
 export function deriveFields<TFieldNames extends string, TIn>(
   schema: z.ZodSchema<TIn>,

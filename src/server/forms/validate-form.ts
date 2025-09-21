@@ -1,3 +1,13 @@
+/**
+ * @file Generic server-side form validation utilities.
+ *
+ * Provides a typed, reusable validator that:
+ * - Derives or accepts allowed field names for a schema.
+ * - Projects `FormData` into a plain raw map limited to allowed fields.
+ * - Validates using Zod and returns a dense error map on failure.
+ * - Optionally transforms validated data.
+ * - Logs failures with contextual information.
+ */
 import "server-only";
 
 import type { z } from "zod";
@@ -14,10 +24,14 @@ import { deriveFields } from "@/shared/forms/schema-helpers";
 
 /**
  * Options for `validateFormGeneric`.
- * - `transform`: Optional function to transform the input data before returning.
- * - `fields`: Optional precomputed list of allowed fields (skips derive).
- * - `raw`: Optional prebuilt raw map from FormData (skips build).
- * - `loggerContext`: Optional logger context override.
+ *
+ * @typeParam TIn - Input type of the schema.
+ * @typeParam TOut - Output type after optional transform (defaults to `TIn`).
+ *
+ * @property transform - Optional function to transform validated input prior to returning.
+ * @property fields - Optional precomputed field list (skips derivation).
+ * @property raw - Optional prebuilt raw map from `FormData` (skips building).
+ * @property loggerContext - Optional logger context label.
  */
 export type ValidateFormOptions<TIn, TOut = TIn> = {
   transform?: (data: TIn) => TOut | Promise<TOut>;
@@ -27,13 +41,30 @@ export type ValidateFormOptions<TIn, TOut = TIn> = {
 };
 
 /**
- * Generic form validation function. Validates form data against a Zod schema. Handles field-specific errors and returns a dense error map. Logs validation errors.
- * - If validation fails: Produces a dense error map keyed by field name. Returns a Result with success: false and error: denseErrors.
- * - If validation succeeds: Applies the provided transform (normalizes email to lowercase/trim; trims username). Returns a Result with success: true and data: transformedData.
- * @typeParam TFieldNames - The type of the field names.
- * @typeParam TIn - The type of the input data.
- * @typeParam TOut - The type of the transformed output data.
- * @returns A Result object containing the validated data or an error map.
+ * Validate `FormData` against a Zod schema and return a `Result`.
+ *
+ * Behavior:
+ * - Builds or reuses a canonical `fields` list and corresponding `raw` payload.
+ * - `schema.safeParse(raw)` drives validation; on failure, returns dense errors keyed by known fields.
+ * - On success, applies an optional `transform` to the validated data and returns it.
+ * - Errors are logged with `serverLogger` using `loggerContext`.
+ *
+ * Safety:
+ * - Dense error map ensures consumers can render per-field errors deterministically.
+ * - When `transform` throws, returns an empty dense map (no field-specific errors).
+ *
+ * @typeParam TFieldNames - Union of field-name literals.
+ * @typeParam TIn - Input shape expected by `schema`.
+ * @typeParam TOut - Output shape after `transform` (defaults to `TIn`).
+ *
+ * @param formData - Incoming form data to validate.
+ * @param schema - Zod schema used for validation.
+ * @param allowedFields - Optional explicit whitelist of field names; merged with `deriveFields` fallback.
+ * @param options - Advanced options (precomputed `fields`/`raw`, transform, logging).
+ *
+ * @returns Result containing either:
+ * - `{ success: true, data }` on success (post-transform if provided), or
+ * - `{ success: false, error: DenseFormErrors }` on failure.
  */
 export async function validateFormGeneric<
   TFieldNames extends string,

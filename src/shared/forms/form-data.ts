@@ -1,28 +1,36 @@
 /**
  * @file Utilities for converting FormData into a plain object suitable for validation and UI echoing.
+ *
  * The helpers intentionally preserve original values (including File) without coercion.
+ *
+ * @remarks
+ * Use when you need a simple key-value map from a FormData payload while
+ * retaining the original types returned by the underlying FormData API.
  */
 
 /**
  * Builds a plain "raw" record from a FormData instance limited to a known set of field names.
  *
- * Behavior:
- * - If `fields` is non-empty, only those keys are read from `formData` (order preserved by a shallow copy).
- * - If `fields` is empty, all unique keys present in `formData` are used.
- * - Only keys with non-null values are included (skips absent/missing entries).
+ * @typeParam TFieldNames - String literal union of allowed field names to improve downstream type safety.
+ *
+ * @param formData - Source FormData to read from.
+ * @param fields - If non-empty, only these keys are read (order preserved by a shallow copy).
+ * If empty, all unique keys present in {@link formData} are used.
+ *
+ * @returns A record of present keys and their values from {@link formData}.
+ *
+ * @remarks
+ * - Only keys with non-null values are included (skips absent entries).
  * - Values are preserved as-is (could be string, File, or other FormData-supported types).
+ * - No parsing or normalization is performed.
+ * - For multi-valued fields, `FormData.get` returns only the first value. Use `FormData.getAll`
+ *   upstream if you need all values and adapt this helper accordingly.
  *
- * Type parameters:
- * - TFieldNames: string literal union of allowed field names to improve downstream type-safety in callers.
- *
- * Notes:
- * - This function does not perform any parsing or normalization; it only mirrors the raw payload.
- * - For multi-valued fields (e.g., checkboxes with same name), FormData.get returns the first value.
- *   If you need all values, use FormData.getAll upstream and adapt this helper accordingly.
- *
- * Example:
+ * @example
+ * ```ts
  * const raw = formDataToRawMap(formData, ["email", "username"] as const);
  * // -> { email: "a@b.com", username: "alice" }
+ * ```
  */
 export function formDataToRawMap<TFieldNames extends string>(
   formData: FormData,

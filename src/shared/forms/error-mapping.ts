@@ -1,20 +1,36 @@
 /**
- * @file Error mapping helpers for transforming Zod/validation outputs into UI-friendly shapes.
- * Provides sparse <-> dense conversions scoped to allowed field names.
+ * @file Error mapping helpers for transforming validation outputs into UI-friendly shapes.
+ *
+ * Provides sparse-to-dense conversions scoped to allowed field names.
+ *
+ * @remarks
+ * Typical use cases:
+ * - Filter a broad set of validation errors to a specific subset of form fields.
+ * - Produce a dense error map suitable for UI rendering where each field always has an array
+ *   (possibly empty) of user-facing error messages.
  */
+
 import type { DenseFormErrors, FormErrors } from "@/shared/forms/form-types";
 
 /**
- * Map field-specific errors to an allowed subset of fields.
+ * Creates a sparse error map restricted to a set of allowed field names.
  *
- * Filters the given field errors based on the allowed field names and returns
- * a structured object containing only the matched errors.
+ * @typeParam TFieldNames - Union of allowed field name string literals.
  *
- * @param fieldErrors - Record of all field errors keyed by field name, where
- * each value is an array of error messages or undefined.
- * @param allowedFields - Array of allowed field names to include in the result.
- * @returns An object containing errors only for the allowed fields, with the
- * same structure as the input but filtered.
+ * @param fieldErrors - A record of potential field errors keyed by field name, where each value
+ * can be an array of error messages or undefined.
+ * @param allowedFields - List of field names that should be included in the result.
+ *
+ * @returns A sparse error object containing only fields from {@link allowedFields} that
+ * have at least one error message.
+ *
+ * @example
+ * ```ts
+ * const allErrors = { email: ["Invalid email"], password: undefined, unexpected: ["x"] };
+ * const allowed = ["email", "password"] as const;
+ * const filtered = mapFieldErrors(allErrors, allowed);
+ * // filtered -> { email: ["Invalid email"] }
+ * ```
  */
 export function mapFieldErrors<TFieldNames extends string>(
   fieldErrors: Record<string, string[] | undefined>,
@@ -32,10 +48,23 @@ export function mapFieldErrors<TFieldNames extends string>(
 }
 
 /**
- * Convert sparse FormErrors into a dense, per-field error map.
+ * Converts a sparse {@link FormErrors} map into a dense, per-field error map.
  *
- * - For fields without errors, an empty readonly array is provided.
- * - Keeps the type narrowed to the allowed field names.
+ * @typeParam TFieldNames - Union of allowed field name string literals.
+ *
+ * @param errors - Sparse error map where only fields with errors are present.
+ * @param allowedFields - All field names that should be represented in the dense output.
+ *
+ * @returns A dense error map including every field from {@link allowedFields}, where fields
+ * with no errors are represented by an empty readonly array.
+ *
+ * @example
+ * ```ts
+ * const sparse = { email: ["Invalid email"] } as const;
+ * const fields = ["email", "password"] as const;
+ * const dense = toDenseFormErrors(sparse, fields);
+ * // dense -> { email: ["Invalid email"], password: [] }
+ * ```
  */
 export function toDenseFormErrors<TFieldNames extends string>(
   errors: FormErrors<TFieldNames>,

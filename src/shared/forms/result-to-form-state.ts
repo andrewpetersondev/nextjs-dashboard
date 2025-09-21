@@ -2,6 +2,7 @@
  * @file Adapter utilities for converting domain-level Result objects into UI-facing FormState.
  * Ensures friendly messages, sparse error shape, and safe value echoing with optional redaction.
  */
+
 import type { Result } from "@/shared/core/result/result-base";
 import { buildDisplayValues } from "@/shared/forms/field-values";
 import {
@@ -15,14 +16,14 @@ import type {
 } from "@/shared/forms/form-types";
 
 /**
- * Converts a domain Result into a UI FormState with messages and (optionally redacted) values.
+ * Converts a domain {@link Result} into a UI {@link FormState} with messages and (optionally redacted) values.
  *
  * Responsibilities:
  * - On success: returns data with a success message.
  * - On failure: converts dense errors to a sparse map and echoes back non-sensitive string values.
  *
  * Safety:
- * - Values are produced via `buildDisplayValues` to exclude non-strings and redact sensitive fields (defaults to "password").
+ * - Values are produced via {@link buildDisplayValues} to exclude non-strings and redact sensitive fields (defaults to "password").
  *
  * @typeParam TFieldNames - Union of field name literals.
  * @typeParam TData - Validated data type on success.
@@ -34,7 +35,16 @@ import type {
  * @param params.raw - Raw payload used to repopulate values on failure.
  * @param params.fields - Ordered list of form fields to include in errors/values.
  * @param params.redactFields - Field names to omit from echoed values (defaults to ["password"]).
- * @returns A FormState suitable for UI consumption.
+ * @returns A {@link FormState} suitable for UI consumption.
+ *
+ * @example
+ * ```ts
+ * const formState = toFormState(result, {
+ *   raw,
+ *   fields: ["email", "password"] as const,
+ *   redactFields: ["password"] as const,
+ * });
+ * ```
  */
 export function toFormState<TFieldNames extends string, TData>(
   r: Result<TData, DenseFormErrors<TFieldNames>>,
