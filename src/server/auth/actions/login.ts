@@ -20,88 +20,101 @@ import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
+// Small helpers to keep main flow concise
+const fields = LOGIN_FIELDS;
+
+function emptyErrors(): ReturnType<
+  typeof toDenseFormErrors<LoginFormFieldNames>
+> {
+  return toDenseFormErrors<LoginFormFieldNames>({}, fields);
+}
+
+function invalidCredentialsState(
+  raw: Record<string, FormDataEntryValue>,
+): FormState<LoginFormFieldNames> {
+  return resultToFormState(
+    { error: emptyErrors(), success: false },
+    {
+      failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
+      fields,
+      raw,
+    },
+  );
+}
+
+function unexpectedErrorState(
+  raw: Record<string, FormDataEntryValue>,
+): FormState<LoginFormFieldNames> {
+  return resultToFormState(
+    { error: emptyErrors(), success: false },
+    {
+      failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
+      fields,
+      raw,
+    },
+  );
+}
+
 /**
  * Server Action: login
  *
  * Validates login input, authenticates the user, starts a session, and redirects.
  *
- * Flow:
- * 1) Validate and normalize form data with `validateFormGeneric`.
- * 2) Convert validation result to `FormState` for UI consumption.
- * 3) On success, verify credentials via DAL and set a session.
- * 4) Redirect to the dashboard or return a failure state.
- *
  * @param _prevState - Previous form state (ignored by this action)
  * @param formData - FormData containing login fields
  * @returns FormState for UI; on success this action redirects
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function login(
   _prevState: FormState<LoginFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<LoginFormFieldNames>> {
-  // Capture field meta and raw values for consistent error mapping and UX.
-  const fields = LOGIN_FIELDS;
   const raw = Object.fromEntries(formData.entries());
-  const emptyDense = toDenseFormErrors<LoginFormFieldNames>({}, fields);
 
-  // Validate and normalize inputs (email is lowercased/trimmed).
-  const result = await validateFormGeneric<LoginFormFieldNames, LoginFormInput>(
-    formData,
-    LoginFormSchema,
+  // 1) Validate + normalize (email lowercased/trimmed)
+  const validated = await validateFormGeneric<
+    LoginFormInput,
+    LoginFormFieldNames
+  >(formData, LoginFormSchema, fields, {
     fields,
-    {
-      transform: (d: LoginFormInput) => ({
-        ...d,
-        email: d.email.toLowerCase().trim(),
-      }),
-    },
-  );
+    loggerContext: "login.validate",
+    raw,
+    transform: (d: LoginFormInput) => ({
+      ...d,
+      email: d.email.toLowerCase().trim(),
+    }),
+  });
 
-  // Convert to a serializable form state for UI consumption.
-  const validated = resultToFormState(result, { fields, raw });
-
-  // Early return if validation failed; UI will render field errors and messages.
-  if (!validated.success || typeof validated.data === "undefined") {
+  if (!validated.success || !validated.data) {
     return validated;
   }
 
   const { email, password } = validated.data;
 
   try {
-    // Authenticate via DAL; returns a safe DTO or null.
+    // 2) Authenticate
     const db = getDB();
     const user = await findUserForLogin(db, email, password);
-
     if (!user) {
-      // Invalid credentials: return failure state without leaking specifics.
-      return resultToFormState(
-        { error: emptyDense, success: false },
-        {
-          failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-          fields,
-          raw,
-        },
-      );
+      return invalidCredentialsState(raw);
     }
 
-    // Establish session using branded identifiers and role mapping.
+    // 3) Establish session
     await setSessionToken(toUserId(user.id), toUserRole(user.role));
-  } catch (error) {
-    // Log with context; return generic failure to avoid exposing internals.
+  } catch (err) {
+    // Narrow error and avoid leaking sensitive data
+    const error =
+      err instanceof Error
+        ? { message: err.message, name: err.name }
+        : { message: "Unknown error" };
     serverLogger.error({
       context: "login",
-      email: formData.get("email") as string,
+      email, // already normalized, avoids reading from raw form
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-
-    return resultToFormState(
-      { error: emptyDense, success: false },
-      { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
-    );
+    return unexpectedErrorState(raw);
   }
 
-  // On success, redirect to a post-login landing page.
+  // 4) Redirect on success
   redirect(ROUTES.DASHBOARD.ROOT);
 }

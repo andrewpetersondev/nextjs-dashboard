@@ -1,12 +1,12 @@
 /**
- * @file Generic server-side form validation utilities.
+ * @file Server-only, generic form validation utilities.
  *
- * Provides a typed, reusable validator that:
- * - Derives or accepts allowed field names for a schema.
- * - Projects `FormData` into a plain raw map limited to allowed fields.
- * - Validates using Zod and returns a dense error map on failure.
+ * Validates FormData with a Zod schema and returns a typed FormState:
+ * - Resolves the allowed field names for a schema.
+ * - Projects FormData to a raw map limited to those fields.
+ * - Produces dense, then UI-suitable errors on failure.
  * - Optionally transforms validated data.
- * - Logs failures with contextual information.
+ * - Logs failures with minimal, safe context.
  */
 import "server-only";
 
@@ -19,106 +19,228 @@ import {
 } from "@/shared/forms/error-mapping";
 import { formDataToRawMap } from "@/shared/forms/form-data";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
-import type { DenseFormErrors } from "@/shared/forms/form-types";
+import type { DenseFormErrors, FormState } from "@/shared/forms/form-types";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 
 /**
- * Options for `validateFormGeneric`.
+ * Options for validateFormGeneric.
  *
- * @typeParam TIn - Input type of the schema.
- * @typeParam TOut - Output type after optional transform (defaults to `TIn`).
- *
- * @property transform - Optional function to transform validated input prior to returning.
- * @property fields - Optional precomputed field list (skips derivation).
- * @property raw - Optional prebuilt raw map from `FormData` (skips building).
- * @property loggerContext - Optional logger context label.
+ * @typeParam TIn - Parsed shape produced by the Zod schema.
+ * @typeParam TOut - Output shape after optional transform (defaults to TIn).
+ * @typeParam TFieldNames - Union of allowed field-name literals.
  */
-export type ValidateFormOptions<TIn, TOut = TIn> = {
-  transform?: (data: TIn) => TOut | Promise<TOut>;
-  fields?: readonly string[];
-  raw?: Record<string, unknown>;
-  loggerContext?: string;
+type ValidateFormOptions<
+  TIn,
+  TOut = TIn,
+  TFieldNames extends string = keyof TIn & string,
+> = {
+  /** Optional post-parse transform. Can be async. */
+  readonly transform?: (data: TIn) => TOut | Promise<TOut>;
+  /** Optional explicit field list; skips derivation. */
+  readonly fields?: readonly TFieldNames[];
+  /** Optional explicit raw map; skips building from FormData. */
+  readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
+  /** Optional label used in error logs. */
+  readonly loggerContext?: string;
 };
 
+/** Type guard: minimally checks for a ZodError-like object. */
+function isZodErrorLike(err: unknown): err is {
+  name?: string;
+  issues?: unknown[];
+  flatten?: () => { fieldErrors: Record<string, string[]> };
+} {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    ("issues" in err || "flatten" in err)
+  );
+}
+
 /**
- * Validate `FormData` against a Zod schema and return a `Result`.
+ * Resolve the canonical list of field names.
  *
- * Behavior:
- * - Builds or reuses a canonical `fields` list and corresponding `raw` payload.
- * - `schema.safeParse(raw)` drives validation; on failure, returns dense errors keyed by known fields.
- * - On success, applies an optional `transform` to the validated data and returns it.
- * - Errors are logged with `serverLogger` using `loggerContext`.
+ * Prefers an explicit list; otherwise derives from the schema and allowed subset.
+ */
+function resolveFieldList<TIn, TFieldNames extends keyof TIn & string>(
+  schema: z.ZodType<TIn>,
+  allowedSubset?: readonly TFieldNames[],
+  explicitFields?: readonly TFieldNames[],
+): readonly TFieldNames[] {
+  if (explicitFields && explicitFields.length > 0) {
+    return explicitFields;
+  }
+  return deriveFields<TFieldNames, TIn>(schema, allowedSubset);
+}
+
+/**
+ * Project an arbitrary raw map to the exact allowed field set.
  *
- * Safety:
- * - Dense error map ensures consumers can render per-field errors deterministically.
- * - When `transform` throws, returns an empty dense map (no field-specific errors).
+ * Ensures deterministic shape and ignores extraneous keys.
+ */
+function projectRawToFields<TFieldNames extends string>(
+  raw: Readonly<Partial<Record<TFieldNames, unknown>>> | undefined,
+  fields: readonly TFieldNames[],
+): Record<TFieldNames, unknown> {
+  if (!raw) {
+    return {} as Record<TFieldNames, unknown>;
+  }
+  const out: Partial<Record<TFieldNames, unknown>> = {};
+  for (const f of fields) {
+    if (Object.hasOwn(raw, f)) {
+      out[f] = raw[f];
+    }
+  }
+  return out as Record<TFieldNames, unknown>;
+}
+
+/**
+ * Resolve the raw payload:
+ * - If an explicit raw map is provided and non-empty, project it.
+ * - Otherwise, build from FormData.
+ */
+function resolveRawPayload<TFieldNames extends string>(
+  formData: FormData,
+  fields: readonly TFieldNames[],
+  explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
+): Record<TFieldNames, unknown> {
+  if (explicitRaw && Object.keys(explicitRaw).length > 0) {
+    return projectRawToFields(explicitRaw, fields);
+  }
+  return formDataToRawMap<TFieldNames>(formData, fields);
+}
+
+/** Log validation failures with minimal, non-sensitive context. */
+function logValidationFailure(context: string, error: unknown): void {
+  const name = isZodErrorLike(error) ? error.name : undefined;
+  const issues =
+    isZodErrorLike(error) && Array.isArray(error.issues)
+      ? error.issues.length
+      : undefined;
+  serverLogger.error({
+    context,
+    issues,
+    message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+    name,
+  });
+}
+
+/**
+ * Convert a Zod error to dense, per-field errors aligned with known fields.
  *
- * @typeParam TFieldNames - Union of field-name literals.
- * @typeParam TIn - Input shape expected by `schema`.
- * @typeParam TOut - Output shape after `transform` (defaults to `TIn`).
+ * Falls back to an empty dense map when the error shape is not Zod-like.
+ */
+function toDenseErrors<TFieldNames extends string>(
+  schemaError: unknown,
+  fields: readonly TFieldNames[],
+): DenseFormErrors<TFieldNames> {
+  if (
+    isZodErrorLike(schemaError) &&
+    typeof schemaError.flatten === "function"
+  ) {
+    const flattened = schemaError.flatten();
+    const normalized = mapFieldErrors(flattened.fieldErrors, fields);
+    return toDenseFormErrors(normalized, fields);
+  }
+  return toDenseFormErrors<TFieldNames>({}, fields);
+}
+
+/** Normalize an optional transform to an async function. */
+function normalizeTransform<TIn, TOut>(
+  transform: ((data: TIn) => TOut | Promise<TOut>) | undefined,
+): (data: TIn) => Promise<TOut> {
+  if (!transform) {
+    return async (d: TIn) => d as unknown as TOut;
+  }
+  return async (d: TIn) => transform(d);
+}
+
+/**
+ * Validate FormData with a Zod schema and return a FormState.
  *
- * @param formData - Incoming form data to validate.
+ * Flow:
+ * 1) Resolve canonical fields.
+ * 2) Resolve a raw payload limited to those fields.
+ * 3) Safe-parse with Zod; on failure, return field errors via FormState.
+ * 4) On success, optionally run a transform and return success FormState.
+ * 5) Log failures with the provided logger context.
+ *
+ * Guarantees:
+ * - Dense error maps provide deterministic per-field arrays internally, then converted for UI.
+ * - If transform throws, returns a failure FormState with empty per-field arrays.
+ *
+ * @typeParam TIn - Parsed input shape from the schema.
+ * @typeParam TFieldNames - Allowed field-name union (string keys of TIn).
+ * @typeParam TOut - Final output shape after transform (defaults to TIn).
+ *
+ * @param formData - Incoming FormData.
  * @param schema - Zod schema used for validation.
- * @param allowedFields - Optional explicit whitelist of field names; merged with `deriveFields` fallback.
- * @param options - Advanced options (precomputed `fields`/`raw`, transform, logging).
+ * @param allowedFields - Optional subset of field names to accept.
+ * @param options - Optional transform, fields/raw overrides, and logger context.
  *
- * @returns Result containing either:
- * - `{ success: true, data }` on success (post-transform if provided), or
- * - `{ success: false, error: DenseFormErrors }` on failure.
+ * @returns FormState with data on success or field errors on failure.
  */
 export async function validateFormGeneric<
-  TFieldNames extends string,
   TIn,
+  TFieldNames extends keyof TIn & string,
   TOut = TIn,
 >(
   formData: FormData,
-  schema: z.ZodSchema<TIn>,
+  schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
-  options: ValidateFormOptions<TIn, TOut> = {},
-): Promise<Result<TOut, DenseFormErrors<TFieldNames>>> {
+  options: ValidateFormOptions<TIn, TOut, TFieldNames> = {},
+): Promise<FormState<TFieldNames, TOut>> {
   const {
     transform,
-    fields: precomputedFields,
-    raw: precomputedRaw,
+    fields: explicitFields,
+    raw: explicitRaw,
     loggerContext = "validateFormGeneric",
   } = options;
 
-  // Reuse precomputed fields/raw when provided to avoid duplicate work in callers
-  const fields =
-    (precomputedFields as readonly TFieldNames[] | undefined) ??
-    deriveFields<TFieldNames, TIn>(schema, allowedFields);
+  // get canonical field list
+  const fields = resolveFieldList<TIn, TFieldNames>(
+    schema,
+    allowedFields,
+    explicitFields,
+  );
 
-  const raw = precomputedRaw ?? formDataToRawMap<TFieldNames>(formData, fields);
+  // get raw payload limited to allowed fields
+  const raw = resolveRawPayload(formData, fields, explicitRaw);
 
+  // parse and validate
   const parsed = schema.safeParse(raw);
 
   if (!parsed.success) {
-    const fieldErrors = parsed.error.flatten().fieldErrors;
-    const normalized = mapFieldErrors(fieldErrors, fields);
-    const dense = toDenseFormErrors(normalized, fields);
+    logValidationFailure(loggerContext, parsed.error);
+    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+      error: toDenseErrors<TFieldNames>(parsed.error, fields),
+      success: false,
+    };
 
-    serverLogger.error({
-      context: loggerContext,
-      error: parsed.error,
-      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-    });
-
-    return { error: dense, success: false };
+    return resultToFormState(result, { fields, raw });
   }
 
   const dataIn = parsed.data as TIn;
+  const runTransform = normalizeTransform<TIn, TOut>(transform);
 
   try {
-    const dataOut = (await (transform ? transform(dataIn) : dataIn)) as TOut;
-    return { data: dataOut, success: true };
+    const dataOut = await runTransform(dataIn);
+    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+      data: dataOut,
+      success: true,
+    };
+    return resultToFormState(result, { fields, raw });
   } catch (e) {
     serverLogger.error({
       context: `${loggerContext}.transform`,
-      error: e,
+      errorName: e instanceof Error ? e.name : undefined,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
-    // Transform error is non-field specific; return empty dense map for known fields
-    const emptyDense = toDenseFormErrors<TFieldNames>({}, fields);
-    return { error: emptyDense, success: false };
+    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+      error: toDenseFormErrors<TFieldNames>({}, fields),
+      success: false,
+    };
+    return resultToFormState(result, { fields, raw });
   }
 }

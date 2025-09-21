@@ -21,36 +21,64 @@ import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
+// Small helpers to keep main flow concise
+const fields = SIGNUP_FIELDS;
+
+function emptyErrors(): ReturnType<
+  typeof toDenseFormErrors<SignupFormFieldNames>
+> {
+  return toDenseFormErrors<SignupFormFieldNames>({}, fields);
+}
+
+function creationFailedState(
+  raw: Record<string, FormDataEntryValue>,
+): FormState<SignupFormFieldNames> {
+  return resultToFormState(
+    { error: emptyErrors(), success: false },
+    {
+      failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED,
+      fields,
+      raw,
+    },
+  );
+}
+
+function unexpectedErrorState(
+  raw: Record<string, FormDataEntryValue>,
+): FormState<SignupFormFieldNames> {
+  return resultToFormState(
+    { error: emptyErrors(), success: false },
+    {
+      failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
+      fields,
+      raw,
+    },
+  );
+}
+
 /**
  * Server Action: signup
  *
  * Validates signup input, creates a new user, initializes a session, and redirects.
  *
- * Flow:
- * 1) Validate and normalize form data with `validateFormGeneric`.
- * 2) Convert validation result to `FormState` for UI.
- * 3) On success, create user via DAL and set session.
- * 4) Redirect to the dashboard or return a failure state.
- *
  * @param _prevState - Previous form state (ignored by this action)
  * @param formData - FormData containing signup fields
  * @returns FormState for UI; on success this action redirects
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
-  // Capture field meta and raw values for consistent error mapping and UX.
-  const fields = SIGNUP_FIELDS;
   const raw = Object.fromEntries(formData.entries());
-  const emptyDense = toDenseFormErrors<SignupFormFieldNames>({}, fields);
 
-  // Validate and normalize inputs (email lowercased/trimmed, username trimmed).
-  const result = await validateFormGeneric<
-    SignupFormFieldNames,
-    SignupFormInput
+  // 1) Validate + normalize (email lowercased/trimmed, username trimmed)
+  const validated = await validateFormGeneric<
+    SignupFormInput,
+    SignupFormFieldNames
   >(formData, SignupFormSchema, fields, {
+    fields,
+    loggerContext: "signup.validate",
+    raw,
     transform: (d: SignupFormInput) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
@@ -58,18 +86,14 @@ export async function signup(
     }),
   });
 
-  // Convert to a serializable form state for UI consumption.
-  const validated = resultToFormState(result, { fields, raw });
-
-  // Early return on validation failure; UI will render field errors/messages.
-  if (!validated.success || typeof validated.data === "undefined") {
+  if (!validated.success || !validated.data) {
     return validated;
   }
 
   const { username, email, password } = validated.data;
 
   try {
-    // Create user through DAL with default role mapping.
+    // 2) Create user (default role)
     const db = getDB();
     const user = await createUserDal(db, {
       email,
@@ -79,30 +103,25 @@ export async function signup(
     });
 
     if (!user) {
-      // Creation failed (e.g., constraint violation handled upstream): return failure state.
-      return resultToFormState(
-        { error: emptyDense, success: false },
-        { failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED, fields, raw },
-      );
+      return creationFailedState(raw);
     }
 
-    // Establish session for the newly created user.
+    // 3) Establish session
     await setSessionToken(toUserId(user.id), toUserRole(USER_ROLE));
-  } catch (error) {
-    // Log with context; return generic failure without leaking details.
+  } catch (err) {
+    const error =
+      err instanceof Error
+        ? { message: err.message, name: err.name }
+        : { message: "Unknown error" };
     serverLogger.error({
       context: "signup",
-      email: formData.get("email") as string,
+      email, // normalized
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-
-    return resultToFormState(
-      { error: emptyDense, success: false },
-      { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
-    );
+    return unexpectedErrorState(raw);
   }
 
-  // On success, redirect to the post-signup landing page.
+  // 4) Redirect on success
   redirect(ROUTES.DASHBOARD.ROOT);
 }
