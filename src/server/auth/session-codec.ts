@@ -13,8 +13,8 @@ import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
 } from "@/features/auth/sessions/mappers/jwt-mapper";
-import type { DecryptPayload } from "@/server/auth/types";
-import { DecryptPayloadSchema } from "@/server/auth/zod";
+import { DecryptPayloadSchema } from "@/server/auth/session-payload.schema";
+import type { DecryptPayload } from "@/server/auth/session-payload.types";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

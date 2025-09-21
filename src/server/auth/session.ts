@@ -24,7 +24,7 @@ import {
   createSessionToken,
   readSessionToken,
 } from "@/server/auth/session-codec";
-import type { DecryptPayload } from "@/server/auth/types";
+import type { DecryptPayload } from "@/server/auth/session-payload.types";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 
