@@ -22,24 +22,35 @@ import { toFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
- * Server action to handle signup form submission.
- * Uses `validateFormGeneric` to validate the form data.
- * Uses `toFormState` to convert the result to a form state.
+ * Server Action: signup
+ *
+ * Validates signup input, creates a new user, initializes a session, and redirects.
+ *
+ * Flow:
+ * 1) Validate and normalize form data with `validateFormGeneric`.
+ * 2) Convert validation result to `FormState` for UI.
+ * 3) On success, create user via DAL and set session.
+ * 4) Redirect to the dashboard or return a failure state.
+ *
+ * @param _prevState - Previous form state (ignored by this action)
+ * @param formData - FormData containing signup fields
+ * @returns FormState for UI; on success this action redirects
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signup(
   _prevState: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
-  // Prepare fields and raw values for adapter (values will be redacted inside adapter)
+  // Capture field meta and raw values for consistent error mapping and UX.
   const fields = SIGNUP_FIELDS;
   const raw = Object.fromEntries(formData.entries());
   const emptyDense = toDenseFormErrors<SignupFormFieldNames>({}, fields);
 
+  // Validate and normalize inputs (email lowercased/trimmed, username trimmed).
   const result = await validateFormGeneric<
     SignupFormFieldNames,
     SignupFormInput
   >(formData, SignupFormSchema, fields, {
-    // Normalize email; Normalize username; password redaction is handled by adapter defaults
     transform: (d: SignupFormInput) => ({
       ...d,
       email: d.email.toLowerCase().trim(),
@@ -47,8 +58,10 @@ export async function signup(
     }),
   });
 
+  // Convert to a serializable form state for UI consumption.
   const validated = toFormState(result, { fields, raw });
 
+  // Early return on validation failure; UI will render field errors/messages.
   if (!validated.success || typeof validated.data === "undefined") {
     return validated;
   }
@@ -56,6 +69,7 @@ export async function signup(
   const { username, email, password } = validated.data;
 
   try {
+    // Create user through DAL with default role mapping.
     const db = getDB();
     const user = await createUserDal(db, {
       email,
@@ -65,13 +79,17 @@ export async function signup(
     });
 
     if (!user) {
+      // Creation failed (e.g., constraint violation handled upstream): return failure state.
       return toFormState(
         { error: emptyDense, success: false },
         { failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED, fields, raw },
       );
     }
+
+    // Establish session for the newly created user.
     await setSessionToken(toUserId(user.id), toUserRole(USER_ROLE));
   } catch (error) {
+    // Log with context; return generic failure without leaking details.
     serverLogger.error({
       context: "signup",
       email: formData.get("email") as string,
@@ -84,5 +102,7 @@ export async function signup(
       { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
     );
   }
+
+  // On success, redirect to the post-signup landing page.
   redirect(ROUTES.DASHBOARD.ROOT);
 }
