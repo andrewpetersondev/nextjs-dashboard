@@ -1,5 +1,5 @@
 import "server-only";
-import { USER_ROLE, type UserRole } from "@/features/auth/domain/roles";
+import { USER_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";

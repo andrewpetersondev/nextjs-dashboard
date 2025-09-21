@@ -1,6 +1,6 @@
 "use server";
 
-import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import { verifySessionOptimistic as verify } from "@/server/auth/session";
 
 /**

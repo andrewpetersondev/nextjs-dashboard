@@ -6,12 +6,12 @@ import {
   AUTH_GOOGLE_ENDPOINT,
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
-} from "@/features/auth/constants";
+} from "@/features/auth/lib/auth.constants";
 import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.roles";
 
 /**
  * Props for AuthFormSocialSection.

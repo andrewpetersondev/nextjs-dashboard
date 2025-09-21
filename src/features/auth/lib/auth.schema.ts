@@ -15,7 +15,7 @@ import {
   USERNAME_MAX_LENGTH_ERROR,
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
-} from "@/features/auth/constants";
+} from "@/features/auth/lib/auth.constants";
 
 export const usernameSchema = z
   .string()

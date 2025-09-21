@@ -1,20 +1,21 @@
 /** biome-ignore-all lint/style/noProcessEnv: <fix later> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
-
+// todo: why is cache imported from react?
 import "server-only";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { cache } from "react"; // todo: why is this imported from react?
-import { LOGIN_PATH } from "@/features/auth/constants";
-import type { UserRole } from "@/features/auth/domain/roles";
+import { cache } from "react";
+import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
   ROLLING_COOKIE_MAX_AGE_S,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/features/auth/sessions/constants";
-import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
+} from "@/features/auth/sessions/session.constants";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import {
   SESSION_COOKIE_NAME,
   SESSION_COOKIE_PATH,

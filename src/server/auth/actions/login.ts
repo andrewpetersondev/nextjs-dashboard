@@ -6,7 +6,7 @@ import {
   type LoginFormFieldNames,
   type LoginFormInput,
   LoginFormSchema,
-} from "@/features/auth/domain/auth.schema";
+} from "@/features/auth/lib/auth.schema";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";

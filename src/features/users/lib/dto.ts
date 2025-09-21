@@ -1,4 +1,4 @@
-import type { UserRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 
 /**
  * Data Transfer Object (DTO) representing a user entity for client/server transport.

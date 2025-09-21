@@ -1,5 +1,5 @@
-import type { UserRole } from "@/features/auth/domain/roles";
-import { USER_ROLES } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
+import { USER_ROLES } from "@/features/auth/lib/auth.roles";
 import { ValidationError } from "@/shared/core/errors/domain";
 import type { Result } from "@/shared/core/result/result-base";
 

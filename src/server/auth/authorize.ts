@@ -1,8 +1,8 @@
 import "server-only";
 import { redirect } from "next/navigation";
-import { LOGIN_PATH } from "@/features/auth/constants";
-import type { UserRole } from "@/features/auth/domain/roles";
-import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
+import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { serverLogger } from "@/server/logging/serverLogger";
 

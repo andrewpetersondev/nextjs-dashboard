@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { USER_ROLES } from "@/features/auth/lib/auth.roles";
 import {
   emailSchema,
   passwordSchema,
   usernameSchema,
-} from "@/features/auth/domain/auth.schema";
-import { USER_ROLES } from "@/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.schema";
 import { emptyToUndefined } from "@/shared/utils/string";
 
 /**

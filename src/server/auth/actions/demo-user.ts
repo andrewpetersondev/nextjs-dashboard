@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { GUEST_ROLE, type UserRole } from "@/features/auth/domain/roles";
+import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";

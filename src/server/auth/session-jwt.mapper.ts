@@ -1,5 +1,6 @@
-import type { UserRole } from "@/features/auth/domain/roles";
-import type { EncryptPayload } from "@/features/auth/sessions/dto/types";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
+
+import type { EncryptPayload } from "@/server/auth/session-payload.types";
 
 /**
  * Flattens EncryptPayload for JWT compatibility.

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
-import { EncryptPayloadSchema } from "@/features/auth/sessions/dto/zod";
+import { roleSchema } from "@/features/users/lib/user.schema";
 
 /**
  * Issued At (iat) claim schema.
@@ -15,6 +15,23 @@ export const iatSchema = z.number().int().nonnegative();
  */
 export const expSchema = z.number().int().positive();
 
+export const userIdSchema = z.uuid();
+export const expiresAtSchema = z.number().int().positive();
+export const sessionStartSchema = z.number().int().nonnegative();
+
+export const EncryptPayloadSchema = z
+  .object({
+    user: z.object({
+      expiresAt: expiresAtSchema,
+      role: roleSchema,
+      sessionStart: sessionStartSchema,
+      userId: userIdSchema,
+    }),
+  })
+  .refine((val) => val.user.sessionStart <= val.user.expiresAt, {
+    message: "sessionStart must be less than or equal to expiresAt",
+    path: ["user", "sessionStart"],
+  });
 /**
  * DecryptPayloadSchema
  *

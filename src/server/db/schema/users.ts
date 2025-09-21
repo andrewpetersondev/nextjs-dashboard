@@ -13,7 +13,7 @@ import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.roles";
 import type { UserId } from "@/shared/domain/domain-brands";
 import { sessions } from "./sessions";
 

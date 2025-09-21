@@ -1,7 +1,7 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-node";
-import type { UserRole } from "./src/features/auth/domain/roles";
 
 export default defineConfig({
   e2e: {

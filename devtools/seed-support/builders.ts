@@ -3,7 +3,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "../../src/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.roles";
 import type { invoices } from "../../src/server/db/schema/invoices";
 import type { Period } from "../../src/shared/domain/domain-brands";
 import { toCustomerId } from "../../src/shared/domain/id-converters";

@@ -3,8 +3,8 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/domain/roles";
-import type { SessionVerificationResult } from "@/features/auth/sessions/dto/types";
+} from "@/features/auth/lib/auth.roles";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import { verifySessionOptimistic } from "@/server/auth/actions/verify-session";
 import { H6 } from "@/ui/atoms/typography/headings";
 

@@ -6,15 +6,19 @@ import {
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/features/auth/sessions/constants";
-import type { EncryptPayload } from "@/features/auth/sessions/dto/types";
-import { EncryptPayloadSchema } from "@/features/auth/sessions/dto/zod";
+} from "@/features/auth/sessions/session.constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/features/auth/sessions/mappers/jwt-mapper";
-import { DecryptPayloadSchema } from "@/server/auth/session-payload.schema";
-import type { DecryptPayload } from "@/server/auth/session-payload.types";
+} from "@/server/auth/session-jwt.mapper";
+import {
+  DecryptPayloadSchema,
+  EncryptPayloadSchema,
+} from "@/server/auth/session-payload.schema";
+import type {
+  DecryptPayload,
+  EncryptPayload,
+} from "@/server/auth/session-payload.types";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

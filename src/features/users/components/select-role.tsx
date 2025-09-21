@@ -3,7 +3,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.roles";
 import type { FormFieldError } from "@/shared/forms/form-types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 import { ErrorMessage } from "@/ui/forms/error-message";

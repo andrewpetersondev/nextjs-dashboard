@@ -1,13 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import {
   SIGNUP_FIELDS,
   type SignupFormFieldNames,
   type SignupFormInput,
   SignupFormSchema,
-} from "@/features/auth/domain/auth.schema";
-import { USER_ROLE } from "@/features/auth/domain/roles";
+} from "@/features/auth/lib/auth.schema";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";

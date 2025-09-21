@@ -4,7 +4,10 @@ import { AuthFormSocialSection } from "@/features/auth/components/auth-form-soci
 import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
 import { Heading } from "@/features/auth/components/heading";
 import { LoginForm } from "@/features/auth/components/login-form";
-import { AUTH_DIVIDER_LABEL, LOGIN_HEADING } from "@/features/auth/constants";
+import {
+  AUTH_DIVIDER_LABEL,
+  LOGIN_HEADING,
+} from "@/features/auth/lib/auth.constants";
 import { login } from "@/server/auth/actions/login";
 import { ROUTES } from "@/shared/routes/routes";
 

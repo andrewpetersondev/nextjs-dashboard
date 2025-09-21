@@ -1,6 +1,6 @@
 import "server-only";
-import { createRandomPassword } from "@/features/auth/domain/password";
-import type { UserRole } from "@/features/auth/domain/roles";
+import { createRandomPassword } from "@/features/auth/lib/auth.password";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";

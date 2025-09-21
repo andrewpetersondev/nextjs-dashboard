@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/features/auth/domain/roles";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { Database } from "@/server/db/connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure";

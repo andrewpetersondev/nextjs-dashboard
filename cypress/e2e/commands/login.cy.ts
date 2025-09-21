@@ -1,4 +1,4 @@
-import { USER_ROLE } from "../../../src/features/auth/domain/roles";
+import { USER_ROLE } from "../../../src/features/auth/lib/auth.roles";
 import { DASHBOARD_PATH } from "../shared/paths";
 import { TEN_SECONDS } from "../shared/times";
 import { DEMO_USER } from "../shared/users";

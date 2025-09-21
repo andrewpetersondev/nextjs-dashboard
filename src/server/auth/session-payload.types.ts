@@ -6,7 +6,19 @@
  * session payload including standard temporal claims.
  */
 import "server-only";
-import type { EncryptPayload } from "@/features/auth/sessions/dto/types";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
+
+/**
+ * Payload for encrypting a session (JWT or similar).
+ */
+export interface EncryptPayload {
+  user: {
+    userId: string;
+    role: UserRole;
+    expiresAt: number; // Unix timestamp (ms)
+    sessionStart: number; // Unix timestamp (ms) - immutable session start
+  };
+}
 
 /**
  * Decrypted session payload including temporal claims.
