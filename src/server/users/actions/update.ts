@@ -18,14 +18,14 @@ import {
 } from "@/features/users/lib/user.schema";
 import { hashPassword } from "@/server/auth/hashing";
 import { getDB } from "@/server/db/connection";
-import { validateFormGeneric } from "@/server/forms/validation";
+import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
-import { buildRawFromFormData } from "@/shared/forms/form-data";
+import { formDataToRawMap } from "@/shared/forms/form-data";
 import type { FormState } from "@/shared/forms/form-types";
 import { toFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
@@ -51,7 +51,7 @@ function initCtx(formData: FormData): Ctx {
   const fields = deriveFields<EditUserFormFieldNames, EditUserFormValues>(
     EditUserFormSchema,
   );
-  const raw = buildRawFromFormData(formData, fields);
+  const raw = formDataToRawMap(formData, fields);
   const emptyDense = toDenseFormErrors<EditUserFormFieldNames>({}, fields);
   return { emptyDense, fields, raw };
 }

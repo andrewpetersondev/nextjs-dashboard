@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { validateFormGeneric } from "@/server/forms/validation";
+import { validateFormGeneric } from "@/server/forms/validate-form";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import { formDataToRawMap } from "@/shared/forms/form-data";
 import type { FormState } from "@/shared/forms/form-types";
