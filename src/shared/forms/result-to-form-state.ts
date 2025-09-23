@@ -1,6 +1,5 @@
 /**
- * @file Adapter utilities for converting domain-level Result objects into UI-facing FormState.
- * Ensures friendly messages, sparse error shape, and safe value echoing with optional redaction.
+ * @file Adapter: convert a domain Result with dense form errors into a UI FormState (dense).
  */
 
 import type { Result } from "@/shared/core/result/result-base";
@@ -9,45 +8,10 @@ import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages";
-import type {
-  DenseFormErrors,
-  FormErrors,
-  FormState,
-} from "@/shared/forms/form-types";
+import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 
-/**
- * Converts a domain {@link Result} into a UI {@link FormState} with messages and (optionally redacted) values.
- *
- * Responsibilities:
- * - On success: returns data with a success message.
- * - On failure: converts dense errors to a sparse map and echoes back non-sensitive string values.
- *
- * Safety:
- * - Values are produced via {@link buildDisplayValues} to exclude non-strings and redact sensitive fields (defaults to "password").
- *
- * @typeParam TFieldNames - Union of field name literals.
- * @typeParam TData - Validated data type on success.
- *
- * @param r - Domain result with success/data or dense field errors.
- * @param params - Adapter configuration.
- * @param params.successMessage - Message on success (defaults to a generic success message).
- * @param params.failureMessage - Message on failure (defaults to validation failed).
- * @param params.raw - Raw payload used to repopulate values on failure.
- * @param params.fields - Ordered list of form fields to include in errors/values.
- * @param params.redactFields - Field names to omit from echoed values (defaults to ["password"]).
- * @returns A {@link FormState} suitable for UI consumption.
- *
- * @example
- * ```ts
- * const formState = toFormState(result, {
- *   raw,
- *   fields: ["email", "password"] as const,
- *   redactFields: ["password"] as const,
- * });
- * ```
- */
 export function resultToFormState<TFieldNames extends string, TData>(
-  r: Result<TData, DenseFormErrors<TFieldNames>>,
+  r: Result<TData, DenseErrorMap<TFieldNames>>,
   params: {
     successMessage?: string;
     failureMessage?: string;
@@ -74,19 +38,8 @@ export function resultToFormState<TFieldNames extends string, TData>(
     };
   }
 
-  // Convert dense error arrays to a sparse map keyed only by fields that have errors.
-  const sparse: FormErrors<TFieldNames> = {};
-  for (const key of fields) {
-    const arr = r.error[key];
-    if (arr && arr.length > 0) {
-      // Cast to non-empty readonly tuple for UI expectations.
-      sparse[key] = arr as unknown as readonly [string, ...string[]];
-    }
-  }
-
-  // On failure, return sparse errors and echo safe string values for repopulating the form.
   return {
-    errors: sparse,
+    errors: r.error,
     message: failureMessage,
     success: false,
     values: buildDisplayValues(raw, fields, redactFields),

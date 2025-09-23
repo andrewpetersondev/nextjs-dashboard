@@ -1,8 +1,7 @@
 import "server-only";
-import { USER_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
+
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
-import { toUserRole } from "@/features/users/lib/to-user-role";
-import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -21,19 +20,18 @@ export async function createUserDal(
     username,
     email,
     password,
-    role = toUserRole(USER_ROLE),
+    role,
   }: {
     username: string;
     email: string;
     password: string;
-    role?: UserRole;
+    role: UserRole;
   },
 ): Promise<UserDto | null> {
   try {
-    const hashedPassword = await hashPassword(password);
     const [userRow] = await db
       .insert(users)
-      .values({ email, password: hashedPassword, role, username })
+      .values({ email, password, role, username })
       .returning();
     // --- Map raw DB row to UserEntity before mapping to DTO ---
     const user = userRow ? userDbRowToEntity(userRow) : null;

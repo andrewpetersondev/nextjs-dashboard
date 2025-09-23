@@ -1,127 +1,94 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import {
   SIGNUP_FIELDS,
   type SignupFormFieldNames,
-  type SignupFormInput,
   SignupFormSchema,
 } from "@/features/auth/lib/auth.schema";
-import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
-import { validateFormGeneric } from "@/server/forms/validate-form";
-import { serverLogger } from "@/server/logging/serverLogger";
-import { createUserDal } from "@/server/users/dal/create";
+import { UsersRepository } from "@/server/users/repo";
+import { UsersService } from "@/server/users/service";
 import { toUserId } from "@/shared/domain/id-converters";
-import { toDenseFormErrors } from "@/shared/forms/error-mapping";
-import type { FormState } from "@/shared/forms/form-types";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
+import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
-// Small helpers to keep main flow concise
-const fields = SIGNUP_FIELDS;
+type SignupSuccess = {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+};
 
-function emptyErrors(): ReturnType<
-  typeof toDenseFormErrors<SignupFormFieldNames>
-> {
-  return toDenseFormErrors<SignupFormFieldNames>({}, fields);
+// Helper to create a dense error map with empty arrays for each field
+function makeEmptyDense<TField extends string>(
+  fields: readonly TField[],
+): DenseErrorMap<TField> {
+  const acc = {} as Record<TField, readonly string[]>;
+  for (const f of fields) {
+    acc[f] = [];
+  }
+  return acc;
 }
 
-function creationFailedState(
-  raw: Record<string, FormDataEntryValue>,
-): FormState<SignupFormFieldNames> {
-  return resultToFormState(
-    { error: emptyErrors(), success: false },
-    {
-      failureMessage: USER_ERROR_MESSAGES.CREATE_FAILED,
-      fields,
-      raw,
-    },
-  );
+function repoErrorToDense<TField extends SignupFormFieldNames>(
+  e: { kind: "DatabaseError" | "CreateFailed"; message: string },
+  fields: readonly TField[],
+): DenseErrorMap<TField> {
+  // Build a dense map with empty readonly arrays (typed safely)
+  const empty = makeEmptyDense(fields);
+  // Attach the error message to the first field as a generic/root message
+  const target = (fields[0] ?? ("username" as TField)) as TField;
+  return { ...empty, [target]: [e.message] as const };
 }
 
-function unexpectedErrorState(
-  raw: Record<string, FormDataEntryValue>,
-): FormState<SignupFormFieldNames> {
-  return resultToFormState(
-    { error: emptyErrors(), success: false },
-    {
-      failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
-      fields,
-      raw,
-    },
-  );
-}
-
-/**
- * Server Action: signup
- *
- * Validates signup input, creates a new user, initializes a session, and redirects.
- *
- * @param _prevState - Previous form state (ignored by this action)
- * @param formData - FormData containing signup fields
- * @returns FormState for UI; on success this action redirects
- */
+// Keep the returned state consistent and never throw before redirect.
 export async function signup(
-  _prevState: FormState<SignupFormFieldNames>,
+  _prev: FormState<SignupFormFieldNames>,
   formData: FormData,
 ): Promise<FormState<SignupFormFieldNames>> {
-  const raw = Object.fromEntries(formData.entries());
+  const fields = SIGNUP_FIELDS;
 
-  // 1) Validate + normalize (email lowercased/trimmed, username trimmed)
-  const validated = await validateFormGeneric<
-    SignupFormInput,
-    SignupFormFieldNames
-  >(formData, SignupFormSchema, fields, {
-    fields,
-    loggerContext: "signup.validate",
-    raw,
-    transform: (d: SignupFormInput) => ({
-      ...d,
-      email: d.email.toLowerCase().trim(),
-      username: d.username.trim(),
-    }),
+  // Ensure we only pick known fields to avoid unsafe extras from FormData
+  const raw = {
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
+    username: String(formData.get("username") ?? ""),
+  };
+
+  const parsed = SignupFormSchema.safeParse(raw);
+  if (!parsed.success) {
+    const dense = makeEmptyDense<SignupFormFieldNames>(fields);
+    return {
+      errors: dense,
+      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+      success: false,
+    };
+  }
+
+  const service = new UsersService(new UsersRepository(getDB()));
+  const res = await service.signup({
+    email: parsed.data.email,
+    password: parsed.data.password,
+    username: parsed.data.username,
   });
 
-  if (!validated.success || !validated.data) {
-    return validated;
+  if (!res.success) {
+    const denseErrors = repoErrorToDense(res.error, fields);
+    return resultToFormState<SignupFormFieldNames, SignupSuccess>(
+      { error: denseErrors, success: false },
+      {
+        failureMessage: FORM_ERROR_MESSAGES.SUBMIT_FAILED,
+        fields,
+        raw,
+      },
+    );
   }
 
-  const { username, email, password } = validated.data;
-
-  try {
-    // 2) Create user (default role)
-    const db = getDB();
-    const user = await createUserDal(db, {
-      email,
-      password,
-      role: toUserRole(USER_ROLE),
-      username,
-    });
-
-    if (!user) {
-      return creationFailedState(raw);
-    }
-
-    // 3) Establish session
-    await setSessionToken(toUserId(user.id), toUserRole(USER_ROLE));
-  } catch (err) {
-    const error =
-      err instanceof Error
-        ? { message: err.message, name: err.name }
-        : { message: "Unknown error" };
-    serverLogger.error({
-      context: "signup",
-      email, // normalized
-      error,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-    });
-    return unexpectedErrorState(raw);
-  }
-
-  // 4) Redirect on success
+  await setSessionToken(toUserId(res.data.id), toUserRole(res.data.role));
   redirect(ROUTES.DASHBOARD.ROOT);
 }

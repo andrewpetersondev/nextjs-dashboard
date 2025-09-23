@@ -10,7 +10,12 @@
  *   (possibly empty) of user-facing error messages.
  */
 
-import type { DenseFormErrors, FormErrors } from "@/shared/forms/form-types";
+import type {
+  DenseErrorMap,
+  FieldError,
+  FormMessage,
+  SparseErrorMap,
+} from "@/shared/forms/form-types";
 
 /**
  * Creates a sparse error map restricted to a set of allowed field names.
@@ -35,8 +40,8 @@ import type { DenseFormErrors, FormErrors } from "@/shared/forms/form-types";
 export function mapFieldErrors<TFieldNames extends string>(
   fieldErrors: Record<string, string[] | undefined>,
   allowedFields: readonly TFieldNames[],
-): FormErrors<TFieldNames> {
-  const errors: FormErrors<TFieldNames> = {};
+): SparseErrorMap<TFieldNames> {
+  const errors: SparseErrorMap<TFieldNames> = {};
   for (const key of allowedFields) {
     const maybeErrors = fieldErrors[key];
     if (Array.isArray(maybeErrors) && maybeErrors.length > 0) {
@@ -47,8 +52,48 @@ export function mapFieldErrors<TFieldNames extends string>(
   return errors;
 }
 
+export function makeEmptyDenseErrors<TField extends string, TMsg = FormMessage>(
+  fields: readonly TField[],
+): DenseErrorMap<TField, TMsg> {
+  const acc = {} as Record<TField, readonly TMsg[]>;
+  for (const f of fields) {
+    acc[f] = [];
+  }
+  return acc;
+}
+
+export function fromSparseToDenseErrors<
+  TField extends string,
+  TMsg = FormMessage,
+>(
+  sparse: SparseErrorMap<TField, TMsg>,
+  fields: readonly TField[],
+): DenseErrorMap<TField, TMsg> {
+  const acc = {} as Record<TField, readonly TMsg[]>;
+  for (const f of fields) {
+    const errs = sparse[f];
+    acc[f] = errs ? (errs as readonly TMsg[]) : [];
+  }
+  return acc;
+}
+
+export function denseToSparseErrors<TField extends string, TMsg = FormMessage>(
+  dense: DenseErrorMap<TField, TMsg>,
+): SparseErrorMap<TField, TMsg> {
+  const out: Partial<Record<TField, FieldError<TMsg>>> = {};
+  for (const [k, v] of Object.entries(dense) as [TField, readonly TMsg[]][]) {
+    if (v.length > 0) {
+      out[k] = v as FieldError<TMsg>;
+    }
+  }
+  return out;
+}
+
 /**
- * Converts a sparse {@link FormErrors} map into a dense, per-field error map.
+ * Converts a sparse {@link SparseErrorMap} map into a dense, per-field error map.
+ *
+ * @remarks
+ * - Preferred name: `sparseToDenseFormErrors`.
  *
  * @typeParam TFieldNames - Union of allowed field name string literals.
  *
@@ -66,14 +111,12 @@ export function mapFieldErrors<TFieldNames extends string>(
  * // dense -> { email: ["Invalid email"], password: [] }
  * ```
  */
-export function toDenseFormErrors<TFieldNames extends string>(
-  errors: FormErrors<TFieldNames>,
+export function sparseToDenseFormErrors<TFieldNames extends string>(
+  errors: SparseErrorMap<TFieldNames>,
   allowedFields: readonly TFieldNames[],
-): DenseFormErrors<TFieldNames> {
-  const dense: Partial<Record<TFieldNames, readonly string[]>> = {};
-  for (const key of allowedFields) {
-    const e = errors[key];
-    dense[key] = e ? (e as readonly string[]) : [];
-  }
-  return dense as DenseFormErrors<TFieldNames>;
+): DenseErrorMap<TFieldNames> {
+  return fromSparseToDenseErrors(errors, allowedFields);
 }
+
+/** Backward-compatible alias. */
+export const toDenseFormErrors = sparseToDenseFormErrors;
