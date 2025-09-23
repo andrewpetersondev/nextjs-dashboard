@@ -51,13 +51,13 @@ function toFailureState<TFieldNames extends string, TOut>(
 
 /** Wrap optional transform into a Promise. */
 async function maybeTransform<TIn>(
-  data: TIn,
-  transform?: (data: TIn) => TIn | Promise<TIn>,
+  value: TIn,
+  transform?: (input: TIn) => TIn | Promise<TIn>,
 ): Promise<TIn> {
   if (!transform) {
-    return data;
+    return value;
   }
-  return await transform(data);
+  return await transform(value);
 }
 
 export type ErrorsFromError<TFieldNames extends string> = (
@@ -68,7 +68,7 @@ export type ErrorsFromError<TFieldNames extends string> = (
 export type HandleFormActionOptions<
   TIn,
   TFieldNames extends keyof TIn & string,
-  TOut,
+  _TOut,
 > = {
   readonly schema: z.ZodType<TIn>;
   /** Optional explicit whitelist of fields; defaults to schema keys. */

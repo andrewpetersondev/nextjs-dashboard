@@ -98,11 +98,7 @@ async function validateForm(
       }),
     },
   );
-  return resultToFormState(result, {
-    failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-    fields: ctx.fields,
-    raw: ctx.raw,
-  });
+  return result;
 }
 
 /**
