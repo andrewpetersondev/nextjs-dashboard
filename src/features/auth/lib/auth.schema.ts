@@ -91,6 +91,8 @@ export const passwordSchema = z
 /**
  * Base schema for authentication forms that include email and password.
  * Extend this for flows that require additional fields (e.g., username).
+ *
+ * TODO: refactor to use z.strictObject() because it throws an error if there are extra fields
  */
 export const AuthFormBaseSchema = z.object({
   email: emailSchema, // validated + normalized email

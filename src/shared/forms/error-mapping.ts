@@ -72,7 +72,8 @@ export function fromSparseToDenseErrors<
   const acc = {} as Record<TField, readonly TMsg[]>;
   for (const f of fields) {
     const errs = sparse[f];
-    acc[f] = errs ? (errs as readonly TMsg[]) : [];
+    // Ensure we always return a readonly array; copy to avoid sharing references.
+    acc[f] = errs && errs.length > 0 ? (errs.slice() as readonly TMsg[]) : [];
   }
   return acc;
 }
@@ -115,6 +116,7 @@ export function sparseToDenseFormErrors<TFieldNames extends string>(
   errors: SparseErrorMap<TFieldNames>,
   allowedFields: readonly TFieldNames[],
 ): DenseErrorMap<TFieldNames> {
+  // Delegate to the canonical implementation.
   return fromSparseToDenseErrors(errors, allowedFields);
 }
 
