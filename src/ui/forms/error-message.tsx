@@ -1,9 +1,9 @@
 import type { FC } from "react";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 
 interface ErrorMessageProps {
   dataCy?: string;
-  error?: FormFieldError;
+  error?: FieldError;
   id?: string;
   label?: string;
 }

@@ -5,6 +5,7 @@ import { type JSX, memo, type NamedExoticComponent } from "react";
  */
 interface FieldErrorProps {
   dataCy?: string | undefined;
+  /** Dense errors: always an array (possibly empty). */
   error?: readonly string[] | undefined;
   id?: string;
   label?: string;
@@ -13,13 +14,15 @@ interface FieldErrorProps {
 /**
  * FieldError displays field-level validation errors in a consistent, accessible format.
  *
+ * Renders nothing when the provided dense error array is empty or undefined.
+ *
  * @param dataCy - Optional data attribute for testing (e.g., for Cypress).
  * @param error - Optional array of error messages to display. If empty or undefined, nothing is rendered.
  * @param id - Optional ID for the error container, used for accessibility (e.g., aria-describedby).
  * @param label - Optional label displayed above the error messages for context.
  * @returns Rendered error messages as a list, or null if no errors are present.
  */
-export const FieldError: NamedExoticComponent<FieldErrorProps> = memo(
+export const FieldErrorComponent: NamedExoticComponent<FieldErrorProps> = memo(
   function FieldErrorInner({
     dataCy,
     error,

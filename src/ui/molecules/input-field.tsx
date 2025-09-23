@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
-import type { FormFieldError } from "@/shared/forms/form-types";
-import { FieldError } from "@/ui/forms/field-error";
+import type { FieldError } from "@/shared/forms/form-types";
+import { FieldErrorComponent } from "@/ui/forms/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 /**
@@ -10,7 +10,7 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   icon?: ReactNode;
-  error?: FormFieldError;
+  error?: FieldError;
   dataCy?: string;
   describedById?: string;
 }
@@ -57,7 +57,7 @@ export function InputField(props: InputFieldProps): JSX.Element {
         </div>
         {/* Only render FieldError if error is defined and non-empty */}
         {hasError && (
-          <FieldError
+          <FieldErrorComponent
             dataCy={dataCy ? `${dataCy}-errors` : undefined}
             error={error}
             id={describedById ?? `${id}-errors`}
