@@ -13,7 +13,7 @@
 /**
  * A helper type representing the string-literal union for form field names.
  */
-export type FormFieldName = string;
+export type FormFieldName = string & { readonly __brand: unique symbol };
 
 /**
  * A type alias representing a human-readable message shown by forms
@@ -26,7 +26,7 @@ export type FormMessage = string;
  *
  * @typeParam T - The element type of the array.
  */
-export type NonEmptyReadonlyArray<T> = readonly [T, ...T[]];
+export type NonEmptyReadonlyArray<T> = readonly [T, ...(readonly T[])];
 
 /* -------------------------------------------------------------------------- */
 /* Form values                                                                */
@@ -41,7 +41,7 @@ export type NonEmptyReadonlyArray<T> = readonly [T, ...T[]];
 export type FormValueMap<
   TField extends string = FormFieldName,
   TValue = string,
-> = Partial<Record<TField, TValue>>;
+> = Partial<Readonly<Record<TField, TValue>>>;
 
 /* -------------------------------------------------------------------------- */
 /* Error maps                                                                 */
@@ -50,8 +50,8 @@ export type FormValueMap<
 /**
  * A readonly record helper for dense maps keyed by all form fields.
  *
- * @remarks
- * Use to build maps like errors per field where every field key is present.
+ * @typeParam TKey - The key type (string-literal union).
+ * @typeParam TValue - The value type.
  */
 export type DenseRecordReadonly<TKey extends string, TValue> = Readonly<
   Record<TKey, TValue>
@@ -83,12 +83,11 @@ export type FieldError<TMsg = FormMessage> = NonEmptyReadonlyArray<TMsg>;
  *
  * @typeParam TField - A string-literal union of valid form field names.
  * @typeParam TMsg - The message type (defaults to FormMessage).
- *
  */
 export type SparseErrorMap<
   TField extends string = FormFieldName,
   TMsg = FormMessage,
-> = Partial<Record<TField, FieldError<TMsg>>>;
+> = Partial<Readonly<Record<TField, FieldError<TMsg>>>>;
 
 /* -------------------------------------------------------------------------- */
 /* Form state                                                                 */
@@ -105,13 +104,13 @@ export type SparseErrorMap<
  *
  * @remarks - `errors` and `values` are not present in the successful state. set to `never` for ide type safety.
  */
-export type FormStateSuccess<TData = unknown> = {
-  data: TData;
-  errors?: never;
-  message: string;
-  success: true;
-  values?: never;
-};
+export interface FormStateSuccess<TData = unknown> {
+  readonly data: TData;
+  readonly errors?: never;
+  readonly message: string;
+  readonly success: true;
+  readonly values?: never;
+}
 
 /**
  * Represents the failed state of a form submission with validation errors.
@@ -125,16 +124,16 @@ export type FormStateSuccess<TData = unknown> = {
  * @property success - A flag indicating the form submission failure (`false`).
  * @property values - Optional raw form values for repopulation, typically excluding sensitive fields like passwords.
  */
-export type FormStateFailure<
+export interface FormStateFailure<
   TField extends string = FormFieldName,
   TValue = string,
   TMsg = FormMessage,
-> = {
-  errors: DenseErrorMap<TField, TMsg>;
-  message: string;
-  success: false;
-  values?: FormValueMap<TField, TValue>;
-};
+> {
+  readonly errors: DenseErrorMap<TField, TMsg>;
+  readonly message: string;
+  readonly success: false;
+  readonly values?: FormValueMap<TField, TValue>;
+}
 
 /**
  * The complete state of a form, encompassing errors, success status, messages, and validated or raw data.
@@ -154,3 +153,50 @@ export type FormState<
   TValue = string,
   TMsg = FormMessage,
 > = FormStateSuccess<TData> | FormStateFailure<TField, TValue, TMsg>;
+
+/* -------------------------------------------------------------------------- */
+/* Type Guards                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Type guard for FormStateSuccess.
+ * @param state - The form state to check.
+ * @returns True if state is FormStateSuccess.
+ */
+export function isFormStateSuccess<
+  TField extends string = FormFieldName,
+  TData = unknown,
+  TValue = string,
+  TMsg = FormMessage,
+>(
+  state: FormState<TField, TData, TValue, TMsg>,
+): state is FormStateSuccess<TData> {
+  return state.success === true;
+}
+
+/**
+ * Type guard for FormStateFailure.
+ * @param state - The form state to check.
+ * @returns True if state is FormStateFailure.
+ */
+export function isFormStateFailure<
+  TField extends string = FormFieldName,
+  TData = unknown,
+  TValue = string,
+  TMsg = FormMessage,
+>(
+  state: FormState<TField, TData, TValue, TMsg>,
+): state is FormStateFailure<TField, TValue, TMsg> {
+  return state.success === false;
+}
+
+/**
+ * Type guard for FieldError (non-empty readonly array).
+ * @param value - The value to check.
+ * @returns True if value is a non-empty readonly array.
+ */
+export function isFieldError<TMsg = FormMessage>(
+  value: readonly TMsg[] | undefined,
+): value is NonEmptyReadonlyArray<TMsg> {
+  return Array.isArray(value) && value.length > 0;
+}
