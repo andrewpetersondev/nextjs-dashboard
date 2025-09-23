@@ -17,9 +17,9 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { mapFieldErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-helpers";
+import { zodToDenseErrors } from "@/shared/forms/zod-error-adapter";
 import { isZodError } from "@/shared/forms/zod-guards";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
@@ -71,7 +71,7 @@ export async function createInvoiceAction(
     } else {
       result = {
         ...prevState,
-        errors: mapFieldErrors(parsed.error.flatten().fieldErrors, allowed),
+        errors: zodToDenseErrors(parsed.error, allowed),
         message: translator(INVOICE_MSG.VALIDATION_FAILED),
         success: false,
       };
@@ -90,9 +90,10 @@ export async function createInvoiceAction(
 
     result = {
       ...prevState,
+      // Ensure errors always match the dense map type expected by FormState
       errors: isZodError(error)
-        ? mapFieldErrors(error.flatten().fieldErrors, allowed)
-        : {},
+        ? zodToDenseErrors(error, allowed)
+        : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       message: baseMessage,
       success: false,
     };

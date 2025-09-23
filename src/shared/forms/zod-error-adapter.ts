@@ -8,7 +8,7 @@
  * Keep: dense internally for determinism, sparse for UI.
  */
 
-import type { z } from "zod";
+import { z } from "zod";
 import {
   mapFieldErrors,
   toDenseFormErrors,
@@ -26,7 +26,7 @@ export function flattenZodError(error: z.ZodError): {
   fieldErrors: ZodFieldErrors;
   formErrors: readonly string[];
 } {
-  const flattened = error.flatten();
+  const flattened = z.flattenError(error);
   return {
     fieldErrors: flattened.fieldErrors as ZodFieldErrors,
     formErrors: flattened.formErrors ?? [],
