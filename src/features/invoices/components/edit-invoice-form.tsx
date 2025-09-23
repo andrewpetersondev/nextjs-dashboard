@@ -8,30 +8,20 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import { useAutoHideAlert } from "@/features/invoices/hooks/useAutoHideAlert";
-import type {
-  EditInvoiceViewModel,
-  UpdateInvoiceFieldNames,
-  UpdateInvoiceInput,
+import {
+  type EditInvoiceViewModel,
+  type UpdateInvoiceFieldNames,
+  type UpdateInvoiceInput,
+  UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
+import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
 import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
-
-// Helper: produce initial state (keeps component short)
-function getInitialState(): Extract<
-  FormState<UpdateInvoiceFieldNames>,
-  { success: false }
-> {
-  return {
-    errors: {} as Partial<Record<UpdateInvoiceFieldNames, FieldError>>,
-    message: "",
-    success: false,
-  };
-}
 
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
@@ -102,10 +92,12 @@ export const EditInvoiceForm = ({
   invoice: EditInvoiceViewModel; // fully populated for UI defaults
   customers: CustomerField[];
 }): JSX.Element => {
+  const initialState = createInitialFailureStateFromSchema(UpdateInvoiceSchema);
+
   const [state, action, pending] = useActionState<
     FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
     FormData
-  >(createWrappedUpdateAction(invoice.id), getInitialState());
+  >(createWrappedUpdateAction(invoice.id), initialState);
 
   // Build a view-model for the UI:
   // - Before submit: use the provided invoice (required fields)

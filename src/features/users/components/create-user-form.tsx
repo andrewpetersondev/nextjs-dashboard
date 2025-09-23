@@ -3,16 +3,17 @@
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
-import type { CreateUserFormFieldNames } from "@/features/users/lib/user.schema";
+import {
+  type CreateUserFormFieldNames,
+  CreateUserFormSchema,
+} from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
+import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 
 export function CreateUserForm(): JSX.Element {
-  const initialState: FormState<CreateUserFormFieldNames> = {
-    errors: {},
-    message: "",
-    success: false,
-  };
+  const initialState =
+    createInitialFailureStateFromSchema(CreateUserFormSchema);
   const [state, action, pending] = useActionState<
     FormState<CreateUserFormFieldNames>,
     FormData

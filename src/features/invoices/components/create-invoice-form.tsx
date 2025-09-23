@@ -8,11 +8,13 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceServerMessage } from "@/features/invoices/components/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
-import type {
-  CreateInvoiceFieldNames,
-  CreateInvoiceInput,
+import {
+  type CreateInvoiceFieldNames,
+  type CreateInvoiceInput,
+  CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
+import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
 import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
@@ -20,11 +22,7 @@ import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
-const INITIAL_STATE = {
-  errors: {} as Partial<Record<CreateInvoiceFieldNames, FieldError>>,
-  message: "",
-  success: false,
-} satisfies Extract<FormState<CreateInvoiceFieldNames>, { success: false }>;
+const INITIAL_STATE = createInitialFailureStateFromSchema(CreateInvoiceSchema);
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <its clean>
 export const CreateInvoiceForm = ({
