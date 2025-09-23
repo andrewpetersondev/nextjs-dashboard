@@ -13,9 +13,9 @@ devtools
 
 # Src
 src/app
-src/features
+# src/features
 src/shell
-src/ui
+# src/ui
 
 # Root
 .github
