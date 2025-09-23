@@ -1,26 +1,23 @@
 /**
  * @file Shared TypeScript types describing form values, errors, and state.
- * These types are consumed by server actions and UI adapters.
  *
  * @remarks
  * - Prefer string-literal unions for field-name definitions for type safety.
  * - Keep sensitive values out of failure states when echoing form values.
  */
 
+/* -------------------------------------------------------------------------- */
+/* Basic building blocks                                                      */
+/* -------------------------------------------------------------------------- */
+
 /**
  * A helper type representing the string-literal union for form field names.
- *
- * @example
- * type LoginField = "email" | "password"
  */
 export type FormFieldName = string;
 
 /**
  * A type alias representing a human-readable message shown by forms
  * (typically validation errors, but can be adapted).
- *
- * @example
- * "Email is required"
  */
 export type FormMessage = string;
 
@@ -31,20 +28,24 @@ export type FormMessage = string;
  */
 export type NonEmptyReadonlyArray<T> = readonly [T, ...T[]];
 
+/* -------------------------------------------------------------------------- */
+/* Form values                                                                */
+/* -------------------------------------------------------------------------- */
+
 /**
  * Sparse form values mapped as a partial record of field names to their raw values.
  *
  * @typeParam TField - A string-literal union of the form's field names.
  * @typeParam TValue - The raw value type for fields (defaults to string).
- *
- * @example
- * type LoginField = "email" | "password"
- * type LoginValues = FormValueMap<LoginField, string>
  */
 export type FormValueMap<
   TField extends string = FormFieldName,
   TValue = string,
 > = Partial<Record<TField, TValue>>;
+
+/* -------------------------------------------------------------------------- */
+/* Error maps                                                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * A readonly record helper for dense maps keyed by all form fields.
@@ -52,7 +53,7 @@ export type FormValueMap<
  * @remarks
  * Use to build maps like errors per field where every field key is present.
  */
-export type ReadonlyDenseRecord<TKey extends string, TValue> = Readonly<
+export type DenseRecordReadonly<TKey extends string, TValue> = Readonly<
   Record<TKey, TValue>
 >;
 
@@ -62,51 +63,18 @@ export type ReadonlyDenseRecord<TKey extends string, TValue> = Readonly<
  * @typeParam TField - A string-literal union of the form's field names.
  * @typeParam TMsg - The message type (defaults to FormMessage).
  *
- * @example
- * type LoginErrors = DenseErrorMap<"email" | "password">
- *
  * @remarks
  * - This is the canonical UI shape: all fields present; fields without errors have [].
  */
 export type DenseErrorMap<
   TField extends string = FormFieldName,
   TMsg = FormMessage,
-> = ReadonlyDenseRecord<TField, readonly TMsg[]>;
-
-/**
- * Dense form errors that allow you to statically guarantee non-empty arrays where present.
- *
- * @remarks
- * Useful when you want to enforce non-empty arrays for fields that have messages,
- * while still permitting an empty array to represent "no errors" for a field.
- *
- * NOTE: This is a looser helper; prefer DenseErrorMap for most flows.
- *
- * @typeParam TField - A string-literal union of the form's field names.
- * @typeParam TMsg - The message type (defaults to FormMessage).
- */
-export type DenseNonEmptyErrorMap<
-  TField extends string = FormFieldName,
-  TMsg = FormMessage,
-> = ReadonlyDenseRecord<TField, readonly TMsg[] | NonEmptyReadonlyArray<TMsg>>;
-
-/**
- * An alias for dense error maps keyed by field name.
- *
- * @deprecated Prefer DenseErrorMap for clarity.
- */
-export type ErrorMap<
-  TField extends string = FormFieldName,
-  TMsg = FormMessage,
-> = DenseErrorMap<TField, TMsg>;
+> = DenseRecordReadonly<TField, readonly TMsg[]>;
 
 /**
  * Validation errors for a single form field as a non-empty readonly array of messages.
  *
  * @typeParam TMsg - The message type (defaults to FormMessage).
- *
- * @example
- * type EmailError = FieldError
  */
 export type FieldError<TMsg = FormMessage> = NonEmptyReadonlyArray<TMsg>;
 
@@ -116,13 +84,15 @@ export type FieldError<TMsg = FormMessage> = NonEmptyReadonlyArray<TMsg>;
  * @typeParam TField - A string-literal union of valid form field names.
  * @typeParam TMsg - The message type (defaults to FormMessage).
  *
- * @example
- * type LoginErrors = SparseErrorMap<"email" | "password">
  */
 export type SparseErrorMap<
   TField extends string = FormFieldName,
   TMsg = FormMessage,
 > = Partial<Record<TField, FieldError<TMsg>>>;
+
+/* -------------------------------------------------------------------------- */
+/* Form state                                                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Represents the successful state of a form submission with validated data.
@@ -132,6 +102,8 @@ export type SparseErrorMap<
  * @property data - The validated payload that passed validation.
  * @property message - A human-readable success message, often used for UI feedback.
  * @property success - A flag indicating the successful submission of the form (`true`).
+ *
+ * @remarks - `errors` and `values` are not present in the successful state. set to `never` for ide type safety.
  */
 export type FormStateSuccess<TData = unknown> = {
   data: TData;

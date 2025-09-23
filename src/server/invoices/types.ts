@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-import type { ErrorMap } from "@/shared/forms/form-types";
+import type { DenseErrorMap } from "@/shared/forms/form-types";
 
 /**
  * Result type for invoice actions (create, read, update, delete).
@@ -9,7 +9,7 @@ import type { ErrorMap } from "@/shared/forms/form-types";
  */
 export type InvoiceActionResult = {
   data?: InvoiceDto;
-  errors?: ErrorMap;
+  errors?: DenseErrorMap;
   message?: string;
   success: boolean;
 };
