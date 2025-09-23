@@ -1,5 +1,4 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
-import type { FieldError } from "@/shared/forms/form-types";
 import { FieldErrorComponent } from "@/ui/forms/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
@@ -10,7 +9,8 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   icon?: ReactNode;
-  error?: FieldError;
+  // Accept dense errors (readonly string[]) to match FormState failure shape
+  error?: readonly string[] | undefined;
   dataCy?: string;
   describedById?: string;
 }

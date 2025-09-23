@@ -9,16 +9,17 @@ import { type FC, type JSX, useActionState, useId } from "react";
 import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
-import type { SignupFormFieldNames } from "@/features/auth/lib/auth.schema";
-import type { FieldError, FormState } from "@/shared/forms/form-types";
+import {
+  SIGNUP_FIELDS,
+  type SignupFormFieldNames,
+} from "@/features/auth/lib/auth.schema";
+import { createInitialFailureState } from "@/shared/forms/error-mapping";
+import type { FormState } from "@/shared/forms/form-types";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = {
-  errors: {} as Partial<Record<SignupFormFieldNames, FieldError>>,
-  message: "",
-  success: false,
-} satisfies Extract<FormState<SignupFormFieldNames>, { success: false }>;
+const INITIAL_STATE =
+  createInitialFailureState<SignupFormFieldNames>(SIGNUP_FIELDS);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 

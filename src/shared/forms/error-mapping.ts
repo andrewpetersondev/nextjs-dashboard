@@ -4,10 +4,12 @@
  * Transforms sparse/dense error maps scoped to allowed field names.
  */
 
+import type { z } from "zod";
 import type {
   DenseErrorMap,
   FieldError,
   FormMessage,
+  FormState,
   SparseErrorMap,
 } from "@/shared/forms/form-types";
 
@@ -55,18 +57,11 @@ export function toSparseErrors<TFieldNames extends string, TMsg = FormMessage>(
   return errors;
 }
 
-/**
- * Create a dense error map with empty arrays for all fields.
- *
- * @typeParam TField - String-literal union of field names.
- * @typeParam TMsg - Message type (defaults to FormMessage).
- * @param fields - All field names to initialize.
- * @returns Dense map where each field has [].
- */
-export function makeEmptyDenseErrors<TField extends string, TMsg = FormMessage>(
+// Type-safe dense map factory
+export function makeEmptyDenseErrors<TField extends string>(
   fields: readonly TField[],
-): DenseErrorMap<TField, TMsg> {
-  const acc = {} as Record<TField, readonly TMsg[]>;
+): Readonly<Record<TField, readonly string[]>> {
+  const acc = {} as Record<TField, readonly string[]>;
   for (const f of fields) {
     acc[f] = [];
   }
@@ -149,3 +144,31 @@ export function toDenseErrors<TFieldNames extends string, TMsg = FormMessage>(
  */
 export const mapFieldErrors = toSparseErrors;
 export const toDenseFormErrors = toDenseErrors;
+
+/**
+ * Creates an initial failure state for a given set of form fields.
+ */
+export function createInitialFailureState<TFieldNames extends string>(
+  fieldNames: readonly TFieldNames[],
+) {
+  return {
+    errors: makeEmptyDenseErrors(fieldNames),
+    message: "",
+    success: false,
+  } satisfies Extract<FormState<TFieldNames>, { success: false }>;
+}
+
+/**
+ * Creates an initial failure state for a given Zod object schema.
+ */
+export function createInitialFailureStateFromSchema<
+  S extends z.ZodObject<z.ZodRawShape>,
+>(schema: S) {
+  // Derive the field names directly from the schema
+  type FieldNames = keyof S["shape"] & string;
+
+  // Object.keys always returns string[], but narrowing it to FieldNames is safe here
+  const fields = Object.keys(schema.shape) as readonly FieldNames[];
+
+  return createInitialFailureState<FieldNames>(fields);
+}
