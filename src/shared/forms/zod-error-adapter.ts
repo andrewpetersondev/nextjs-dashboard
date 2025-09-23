@@ -13,7 +13,7 @@ import {
   mapFieldErrors,
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
-import type { DenseFormErrors, FormErrors } from "@/shared/forms/form-types";
+import type { DenseErrorMap, SparseErrorMap } from "@/shared/forms/form-types";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
 export type ZodFieldErrors = Record<string, string[] | undefined>;
@@ -40,7 +40,7 @@ export function flattenZodError(error: z.ZodError): {
 export function zodToSparseErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
-): FormErrors<TFieldNames> {
+): SparseErrorMap<TFieldNames> {
   const { fieldErrors } = flattenZodError(error);
   return mapFieldErrors(fieldErrors, allowedFields);
 }
@@ -52,7 +52,7 @@ export function zodToSparseErrors<TFieldNames extends string>(
 export function zodToDenseErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
-): DenseFormErrors<TFieldNames> {
+): DenseErrorMap<TFieldNames> {
   const sparse = zodToSparseErrors(error, allowedFields);
   return toDenseFormErrors(sparse, allowedFields);
 }

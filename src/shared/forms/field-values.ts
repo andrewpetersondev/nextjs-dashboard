@@ -8,7 +8,7 @@
  * and avoiding unsafe type coercion.
  */
 
-import type { FormValues } from "@/shared/forms/form-types";
+import type { FormValueMap } from "@/shared/forms/form-types";
 
 /**
  * Builds a partial record of user-displayable string values from a raw payload.
@@ -39,7 +39,7 @@ export function buildDisplayValues<TFieldNames extends string>(
   raw: Record<string, unknown>,
   fields: readonly TFieldNames[],
   redactFields: readonly TFieldNames[],
-): FormValues<TFieldNames> {
+): FormValueMap<TFieldNames> {
   // Result is partial because not every field will have a string value present.
   const values: Partial<Record<TFieldNames, string>> = {};
 
