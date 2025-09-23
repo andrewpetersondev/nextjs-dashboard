@@ -13,7 +13,7 @@ import type {
   CreateInvoiceInput,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { FormFieldError, FormState } from "@/shared/forms/form-types";
+import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getCurrentIsoDate } from "@/shared/utils/date";
 import { Label } from "@/ui/atoms/label";
@@ -21,7 +21,7 @@ import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
 const INITIAL_STATE = {
-  errors: {} as Partial<Record<CreateInvoiceFieldNames, FormFieldError>>,
+  errors: {} as Partial<Record<CreateInvoiceFieldNames, FieldError>>,
   message: "",
   success: false,
 } satisfies Extract<FormState<CreateInvoiceFieldNames>, { success: false }>;
@@ -62,7 +62,7 @@ export const CreateInvoiceForm = ({
           <SensitiveData
             data-cy="sensitive-data-input"
             disabled={pending}
-            error={state.errors?.sensitiveData as FormFieldError | undefined}
+            error={state.errors?.sensitiveData as FieldError | undefined}
           />
 
           <div className="mb-4">
@@ -73,14 +73,14 @@ export const CreateInvoiceForm = ({
               dataCy="customer-select"
               defaultValue=""
               disabled={pending}
-              error={state.errors?.customerId as FormFieldError | undefined}
+              error={state.errors?.customerId as FieldError | undefined}
             />
           </div>
 
           <InvoiceAmountInput
             dataCy="amount-input"
             disabled={pending}
-            error={state.errors?.amount as FormFieldError | undefined}
+            error={state.errors?.amount as FieldError | undefined}
             id="amount"
             label="Choose an amount"
             name="amount"
@@ -92,7 +92,7 @@ export const CreateInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="invoice-status-radio-group"
             disabled={pending}
-            error={state.errors?.status as FormFieldError | undefined}
+            error={state.errors?.status as FieldError | undefined}
             name="status"
             value="pending"
           />

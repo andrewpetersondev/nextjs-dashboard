@@ -19,7 +19,7 @@ import {
 } from "@/shared/forms/error-mapping";
 import { formDataToRawMap } from "@/shared/forms/form-data";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
-import type { DenseFormErrors, FormState } from "@/shared/forms/form-types";
+import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 
@@ -134,7 +134,7 @@ function logValidationFailure(context: string, error: unknown): void {
 function toDenseErrors<TFieldNames extends string>(
   schemaError: unknown,
   fields: readonly TFieldNames[],
-): DenseFormErrors<TFieldNames> {
+): DenseErrorMap<TFieldNames> {
   if (
     isZodErrorLike(schemaError) &&
     typeof schemaError.flatten === "function"
@@ -213,7 +213,7 @@ export async function validateFormGeneric<
 
   if (!parsed.success) {
     logValidationFailure(loggerContext, parsed.error);
-    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
       error: toDenseErrors<TFieldNames>(parsed.error, fields),
       success: false,
     };
@@ -226,7 +226,7 @@ export async function validateFormGeneric<
 
   try {
     const dataOut = await runTransform(dataIn);
-    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
       data: dataOut,
       success: true,
     };
@@ -237,7 +237,7 @@ export async function validateFormGeneric<
       errorName: e instanceof Error ? e.name : undefined,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
-    const result: Result<TOut, DenseFormErrors<TFieldNames>> = {
+    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
       error: toDenseFormErrors<TFieldNames>({}, fields),
       success: false,
     };

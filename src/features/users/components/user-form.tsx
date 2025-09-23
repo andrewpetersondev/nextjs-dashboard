@@ -2,7 +2,7 @@ import { type JSX, type ReactNode, useEffect, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { FormFieldError, FormState } from "@/shared/forms/form-types";
+import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { TYPING_MS } from "@/shared/ui/tokens/timings";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -60,7 +60,7 @@ export function UserForm<TFieldNames extends string>({
           // Disable inputs while pending to prevent changes mid-submit
           disabled={pending}
           // Adapt generic state.errors to the concrete UserFields error shape
-          errors={state.errors as Record<string, FormFieldError> | undefined}
+          errors={state.errors as Record<string, FieldError> | undefined}
           isEdit={isEdit}
           showPassword={showPassword}
           values={initialValues}

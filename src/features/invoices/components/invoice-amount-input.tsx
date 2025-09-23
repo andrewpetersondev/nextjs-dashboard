@@ -1,12 +1,12 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
 interface InvoiceAmountInputProps
   extends InputHTMLAttributes<HTMLInputElement> {
   dataCy?: string;
-  error?: FormFieldError;
+  error?: FieldError;
   label?: string;
 }
 

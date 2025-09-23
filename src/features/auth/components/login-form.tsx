@@ -7,12 +7,12 @@ import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import type { LoginFormFieldNames } from "@/features/auth/lib/auth.schema";
-import type { FormFieldError, FormState } from "@/shared/forms/form-types";
+import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
 const INITIAL_STATE = {
-  errors: {} as Partial<Record<LoginFormFieldNames, FormFieldError>>,
+  errors: {} as Partial<Record<LoginFormFieldNames, FieldError>>,
   message: "",
   success: false,
 } satisfies Extract<FormState<LoginFormFieldNames>, { success: false }>;

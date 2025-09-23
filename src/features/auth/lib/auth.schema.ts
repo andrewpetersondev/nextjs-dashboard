@@ -121,6 +121,14 @@ export type LoginFormFieldNames = keyof LoginFormInput;
 export type SignupFormInput = z.input<typeof SignupFormSchema>;
 /** Union of valid signup form field names. */
 export type SignupFormFieldNames = keyof SignupFormInput;
+/**
+ * Output type for login forms (post-parse).
+ */
+export type LoginFormOutput = z.output<typeof LoginFormSchema>;
+/**
+ * Output type for signup forms (post-parse).
+ */
+export type SignupFormOutput = z.output<typeof SignupFormSchema>;
 
 /**
  * Runtime list of signup field names derived from schema shape.

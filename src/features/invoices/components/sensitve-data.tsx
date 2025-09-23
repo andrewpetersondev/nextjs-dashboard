@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 import { Label } from "@/ui/atoms/label";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
@@ -8,7 +8,7 @@ import { ErrorMessage } from "@/ui/forms/error-message";
  */
 interface SensitiveDataProps {
   disabled?: boolean;
-  error?: FormFieldError;
+  error?: FieldError;
   value?: string;
 }
 

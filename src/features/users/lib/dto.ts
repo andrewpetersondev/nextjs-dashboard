@@ -1,10 +1,9 @@
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 
 /**
- * Data Transfer Object (DTO) representing a user entity for client/server transport.
- *
- * - Plain, serializable types only
- * - Safe for UI consumption
+ * API/UI
+ * Used for data transfer with plain types for serialization and transport.
+ * Does not contain all properties on purpose.
  */
 export interface UserDto {
   readonly email: string;

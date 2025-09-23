@@ -7,7 +7,7 @@ import type { JSX } from "react";
 import { SelectRole } from "@/features/users/components/select-role";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { BaseUserFormFieldNames } from "@/features/users/lib/user.schema";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 import { Label } from "@/ui/atoms/label";
 import { InputField } from "@/ui/molecules/input-field";
 
@@ -20,7 +20,7 @@ export function UserFields({
   disabled = false,
 }: {
   values?: Partial<UserDto> & { password?: string };
-  errors?: Partial<Record<BaseUserFormFieldNames, FormFieldError>>;
+  errors?: Partial<Record<BaseUserFormFieldNames, FieldError>>;
   showPassword?: boolean;
   isEdit?: boolean;
   disabled?: boolean;

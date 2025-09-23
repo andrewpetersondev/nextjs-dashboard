@@ -17,7 +17,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/core/errors/domain";
-import type { FormFieldError, FormState } from "@/shared/forms/form-types";
+import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -98,7 +98,7 @@ export async function updateInvoiceAction(
       return {
         ...prevState,
         errors: parsed.error.flatten().fieldErrors as Partial<
-          Record<UpdateInvoiceFieldNames, FormFieldError>
+          Record<UpdateInvoiceFieldNames, FieldError>
         >,
         message: INVOICE_MSG.VALIDATION_FAILED,
         success: false,

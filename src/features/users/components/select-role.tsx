@@ -4,7 +4,7 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
@@ -31,7 +31,7 @@ interface SelectRoleProps
     SelectMenuProps<RoleOption>,
     "options" | "id" | "name" | "value"
   > {
-  error?: FormFieldError;
+  error?: FieldError;
   value?: UserRole;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }

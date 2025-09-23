@@ -15,7 +15,7 @@ import type {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import type { FormFieldError, FormState } from "@/shared/forms/form-types";
+import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -27,7 +27,7 @@ function getInitialState(): Extract<
   { success: false }
 > {
   return {
-    errors: {} as Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>,
+    errors: {} as Partial<Record<UpdateInvoiceFieldNames, FieldError>>,
     message: "",
     success: false,
   };
@@ -51,7 +51,7 @@ function FormFields({
 }: {
   currentInvoice: EditInvoiceViewModel;
   customers: CustomerField[];
-  errors: Partial<Record<UpdateInvoiceFieldNames, FormFieldError>>;
+  errors: Partial<Record<UpdateInvoiceFieldNames, FieldError>>;
   pending: boolean;
 }): JSX.Element {
   return (
@@ -60,7 +60,7 @@ function FormFields({
 
       <SensitiveData
         disabled={pending}
-        error={errors?.sensitiveData as FormFieldError | undefined}
+        error={errors?.sensitiveData as FieldError | undefined}
       />
 
       <div className="mb-4">
@@ -70,7 +70,7 @@ function FormFields({
           dataCy="customer-select"
           defaultValue={currentInvoice.customerId}
           disabled={pending}
-          error={errors?.customerId as FormFieldError | undefined}
+          error={errors?.customerId as FieldError | undefined}
         />
       </div>
 
@@ -78,7 +78,7 @@ function FormFields({
         dataCy="amount-input"
         defaultValue={currentInvoice.amount / CENTS_IN_DOLLAR}
         disabled={pending}
-        error={errors?.amount as FormFieldError | undefined}
+        error={errors?.amount as FieldError | undefined}
         id="amount"
         label="Choose an amount"
         name="amount"
@@ -87,7 +87,7 @@ function FormFields({
       <InvoiceStatusRadioGroup
         data-cy="invoice-status-radio-group"
         disabled={pending}
-        error={errors?.status as FormFieldError | undefined}
+        error={errors?.status as FieldError | undefined}
         name="status"
         value={currentInvoice.status}
       />

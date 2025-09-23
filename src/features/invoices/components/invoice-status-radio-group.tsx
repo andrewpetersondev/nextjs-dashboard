@@ -1,7 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
-import type { FormFieldError } from "@/shared/forms/form-types";
+import type { FieldError } from "@/shared/forms/form-types";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
 /**
@@ -10,7 +10,7 @@ import { ErrorMessage } from "@/ui/forms/error-message";
 interface InvoiceStatusRadioGroupProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
   value: InvoiceStatus;
-  error?: FormFieldError;
+  error?: FieldError;
 }
 
 /**

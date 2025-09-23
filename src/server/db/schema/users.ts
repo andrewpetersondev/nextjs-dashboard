@@ -35,5 +35,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
 }));
 
+/**
+ * Type representing a row returned from the users table when performing a select query.
+ * Use this for reading or updating existing users.
+ */
 export type UserRow = typeof users.$inferSelect;
+
+/**
+ * Type representing the shape of data required to insert a new user into the users table.
+ * Use this when creating or inserting new users.
+ */
 export type NewUserRow = typeof users.$inferInsert;

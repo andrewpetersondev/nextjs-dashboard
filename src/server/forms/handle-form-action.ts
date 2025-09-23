@@ -17,7 +17,7 @@ import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages";
-import type { DenseFormErrors, FormState } from "@/shared/forms/form-types";
+import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-helpers";
 import { zodToDenseErrors } from "@/shared/forms/zod-error-adapter";
@@ -30,7 +30,7 @@ type FailureArgs<TFieldNames extends string> = {
   readonly fields: readonly TFieldNames[];
   readonly redactFields?: readonly TFieldNames[];
   readonly raw: Record<string, unknown>;
-  readonly dense?: DenseFormErrors<TFieldNames>;
+  readonly dense?: DenseErrorMap<TFieldNames>;
   readonly loggerContext?: string;
 };
 
@@ -63,7 +63,7 @@ async function maybeTransform<TIn>(
 export type ErrorsFromError<TFieldNames extends string> = (
   error: unknown,
   fields: readonly TFieldNames[],
-) => DenseFormErrors<TFieldNames>;
+) => DenseErrorMap<TFieldNames>;
 
 export type HandleFormActionOptions<
   TIn,
