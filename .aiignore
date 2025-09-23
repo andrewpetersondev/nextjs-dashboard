@@ -6,26 +6,22 @@
 *.min.js
 *.map
 
-# Testing & CLI
-# cypress.config.ts
+# Testing & DevTools
+cypress.config.ts
 cypress
-# devtools/cli
-# devtools/seed-support
-# devtools/tasks
+devtools
 
 # Src
-# src/app
-# src/ui
-# src/features/auth
-# src/server/auth
-# src/shared/auth
+src/app
+src/features
+src/shell
+src/ui
 
 # Root
 .github
 .idea
-.next
+docs
 drizzle
-node_modules
 public
 storage
 next-env.d.ts
@@ -33,6 +29,8 @@ pnpm-lock.yaml
 postcss.config.mjs
 
 # Build
+.next
+node_modules
 tsconfig.tsbuildinfo
 dist/
 build/
