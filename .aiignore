@@ -12,9 +12,9 @@ cypress
 devtools
 
 # Src
-src/app
+# src/app
 # src/features
-src/shell
+# src/shell
 # src/ui
 
 # Root
