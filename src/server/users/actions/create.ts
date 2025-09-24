@@ -13,9 +13,31 @@ import {
 import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { mapFieldErrors } from "@/shared/forms/error-mapping";
+import {
+  mapFieldErrors,
+  toDenseFormErrors,
+} from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-helpers";
+
+type CreateUserFormData = {
+  readonly email: string | undefined;
+  readonly password: string | undefined;
+  readonly role: string | undefined;
+  readonly username: string | undefined;
+};
+
+const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
+  typeof v === "string" ? v : undefined;
+
+function pickCreateUserFormData(formData: FormData): CreateUserFormData {
+  return {
+    email: toOptionalString(formData.get("email")),
+    password: toOptionalString(formData.get("password")),
+    role: toOptionalString(formData.get("role")),
+    username: toOptionalString(formData.get("username")),
+  };
+}
 
 /**
  * Creates a new user (admin only).
@@ -25,35 +47,49 @@ export async function createUserAction(
   formData: FormData,
 ): Promise<FormState<CreateUserFormFieldNames>> {
   const db = getDB();
+  const allowed = deriveAllowedFieldsFromSchema(CreateUserFormSchema);
+
   try {
-    const validated = CreateUserFormSchema.safeParse({
-      email: formData.get("email"),
-      password: formData.get("password"),
-      role: getValidUserRole(formData.get("role")),
-      username: formData.get("username"),
+    const raw = pickCreateUserFormData(formData);
+    const parsed = CreateUserFormSchema.safeParse({
+      email: raw.email,
+      password: raw.password,
+      role: getValidUserRole(raw.role),
+      username: raw.username,
     });
-    if (!validated.success) {
-      const allowed = deriveAllowedFieldsFromSchema(CreateUserFormSchema);
+
+    if (!parsed.success) {
       return {
-        errors: mapFieldErrors(validated.error.flatten().fieldErrors, allowed),
+        errors: toDenseFormErrors(
+          mapFieldErrors(parsed.error.flatten().fieldErrors, allowed),
+          allowed,
+        ),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         success: false,
       };
     }
-    const { username, email, password, role } = validated.data;
+
+    const { username, email, password, role } = parsed.data;
     const user = await createUserDal(db, {
       email,
       password,
       role: toUserRole(role),
       username,
     });
+
     if (!user) {
+      serverLogger.warn({
+        context: "createUserAction",
+        message: "User creation returned empty result",
+        safeMeta: { email, username },
+      });
       return {
-        errors: {}, // todo: the error message should be more specific
+        errors: toDenseFormErrors({}, allowed),
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
     }
+
     return {
       data: user,
       message: USER_SUCCESS_MESSAGES.CREATE_SUCCESS,
@@ -65,9 +101,8 @@ export async function createUserAction(
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-
     return {
-      errors: {},
+      errors: toDenseFormErrors({}, allowed),
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     };

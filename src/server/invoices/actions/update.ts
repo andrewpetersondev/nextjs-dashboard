@@ -17,7 +17,8 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/core/errors/domain";
-import type { FieldError, FormState } from "@/shared/forms/form-types";
+import { toDenseErrors, toSparseErrors } from "@/shared/forms/error-mapping";
+import type { FormState } from "@/shared/forms/form-types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -68,7 +69,7 @@ function handleActionError<
   });
   return {
     ...prevState,
-    errors: {},
+    errors: toDenseErrors({}, [] as unknown as readonly N[]),
     message:
       error instanceof ValidationError
         ? INVOICE_MSG.INVALID_INPUT
@@ -95,13 +96,32 @@ export async function updateInvoiceAction(
     const parsed = UpdateInvoiceSchema.safeParse(input);
 
     if (!parsed.success) {
+      // Build dense error map aligned with the schema's fields
+      const schemaFields = Object.keys(
+        UpdateInvoiceSchema.shape,
+      ) as readonly UpdateInvoiceFieldNames[];
+
+      const zFieldErrors = parsed.error.flatten().fieldErrors as Record<
+        string,
+        readonly string[] | undefined
+      >;
+
+      const sparse = toSparseErrors<UpdateInvoiceFieldNames, string>(
+        zFieldErrors,
+        schemaFields,
+      );
+      const dense = toDenseErrors<UpdateInvoiceFieldNames, string>(
+        sparse,
+        schemaFields,
+      );
+
       return {
         ...prevState,
-        errors: parsed.error.flatten().fieldErrors as Partial<
-          Record<UpdateInvoiceFieldNames, FieldError>
-        >,
+        errors: dense,
         message: INVOICE_MSG.VALIDATION_FAILED,
         success: false,
+        // Optionally echo raw values (avoid sensitive fields if present)
+        values: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
       };
     }
 

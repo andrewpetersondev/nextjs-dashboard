@@ -17,7 +17,11 @@ import {
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
-import type { FieldError, FormState } from "@/shared/forms/form-types";
+import type {
+  DenseErrorMap,
+  FieldError,
+  FormState,
+} from "@/shared/forms/form-types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -41,16 +45,17 @@ function FormFields({
 }: {
   currentInvoice: EditInvoiceViewModel;
   customers: CustomerField[];
-  errors: Partial<Record<UpdateInvoiceFieldNames, FieldError>>;
+  errors: DenseErrorMap<UpdateInvoiceFieldNames>;
   pending: boolean;
 }): JSX.Element {
   return (
     <div className="rounded-md bg-bg-secondary p-4 md:p-6">
       <InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
 
+      {/*  TODO: Can I safely remove undefined from the error? */}
       <SensitiveData
         disabled={pending}
-        error={errors?.sensitiveData as FieldError | undefined}
+        error={errors.sensitiveData as FieldError | undefined}
       />
 
       <div className="mb-4">
@@ -60,7 +65,7 @@ function FormFields({
           dataCy="customer-select"
           defaultValue={currentInvoice.customerId}
           disabled={pending}
-          error={errors?.customerId as FieldError | undefined}
+          error={errors.customerId as FieldError | undefined}
         />
       </div>
 
@@ -68,7 +73,7 @@ function FormFields({
         dataCy="amount-input"
         defaultValue={currentInvoice.amount / CENTS_IN_DOLLAR}
         disabled={pending}
-        error={errors?.amount as FieldError | undefined}
+        error={errors.amount as FieldError | undefined}
         id="amount"
         label="Choose an amount"
         name="amount"
@@ -77,7 +82,7 @@ function FormFields({
       <InvoiceStatusRadioGroup
         data-cy="invoice-status-radio-group"
         disabled={pending}
-        error={errors?.status as FieldError | undefined}
+        error={errors.status as FieldError | undefined}
         name="status"
         value={currentInvoice.status}
       />
@@ -88,9 +93,11 @@ function FormFields({
 export const EditInvoiceForm = ({
   invoice,
   customers,
+  errors: externalErrors,
 }: {
   invoice: EditInvoiceViewModel; // fully populated for UI defaults
   customers: CustomerField[];
+  errors?: DenseErrorMap<UpdateInvoiceFieldNames>;
 }): JSX.Element => {
   const initialState = createInitialFailureStateFromSchema(UpdateInvoiceSchema);
 
@@ -109,13 +116,20 @@ export const EditInvoiceForm = ({
 
   const showAlert = useAutoHideAlert(state.message);
 
+  // Prefer externally provided dense errors; fall back to state (failure) errors or empty dense errors from initial state
+  const denseErrors: DenseErrorMap<UpdateInvoiceFieldNames> =
+    externalErrors ??
+    (state.success
+      ? initialState.errors
+      : (state.errors ?? initialState.errors));
+
   return (
     <div>
       <form action={action}>
         <FormFields
           currentInvoice={currentInvoice}
           customers={customers}
-          errors={state.errors ?? {}}
+          errors={denseErrors}
           pending={pending}
         />
 
