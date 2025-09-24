@@ -1,42 +1,150 @@
-# An .aiignore file follows the same syntax as a .gitignore file.
-# .gitignore documentation: https://git-scm.com/docs/gitignore
+# -----------------------------------------
+# Node modules and package managers
+# -----------------------------------------
+node_modules/
+.pnp/
+.pnp.js
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
 
-# Match by extension
+# Dependency directories
+/.turbo
+/.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# -----------------------------------------
+# Build artifacts and caches
+# -----------------------------------------
+.next/
+.next/cache/
+.next/static/
+.out/
+dist/
+build/
+.vercel/
+.cache/
+.tmp/
+temp/
+tmp/
+.rpt2_cache/
+.cache-loader/
+.parcel-cache/
+.postcss-cache/
+.eslintcache
+.stylelintcache
+.tsbuildinfo
+tsconfig.tsbuildinfo
+.biome-cache/
+drizzle/migrations/.cache/
+drizzle/.cache/
+
+# -----------------------------------------
+# Environment and secrets
+# -----------------------------------------
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+!.env.local.example
+!.env.sample
+*.local.*
+*.dev.local
+*.prod.local
+
+# -----------------------------------------
+# Logs and diagnostics
+# -----------------------------------------
+*.log
+*.log.*
+logs/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.pid
+*.seed
+eslint-report.*
+prettier-report.*
+
+# -----------------------------------------
+# OS / Editor junk
+# -----------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+
+# -----------------------------------------
+# Testing / QA
+# -----------------------------------------
+coverage/
+cypress/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+.playwright/
+test-results/
+reports/
+cypress.config.ts
+devtools/
+
+# -----------------------------------------
+# Database / ORM
+# -----------------------------------------
+*.sqlite
+*.db
+*.db-journal
+pgdata/
+postgres-data/
+drizzle/*.sqlite
+drizzle/*.db
+drizzle/*.db-journal
+
+# -----------------------------------------
+# Generated files / public
+# -----------------------------------------
+public/generated/
+public/_next/
+public/.cache/
+
+# -----------------------------------------
+# Misc / Build tools
+# -----------------------------------------
+*.cache
+*.tmp
+.rimraf*
+.biome/
 *.js
 *.min.js
 *.map
 
-# Testing & DevTools
-cypress.config.ts
-cypress
-devtools
-
-# Src
-# src/app
-# src/features
-# src/shell
-# src/ui
-
-# Root
-.github
-.idea
-docs
-drizzle
-public
-storage
+# -----------------------------------------
+# Project-specific / root files
+# -----------------------------------------
+.github/
+docs/
+drizzle/
+public/
+storage/
 next-env.d.ts
-pnpm-lock.yaml
 postcss.config.mjs
 
-# Build
-.next
-node_modules
-tsconfig.tsbuildinfo
-dist/
-build/
-out/
-
-# System Files
-.DS_Store
-*.log
-*.tmp
+# -----------------------------------------
+# Optional: source code directories
+# Uncomment if you want AI to ignore them
+# -----------------------------------------
+# src/app/
+# src/features/
+# src/shell/
+# src/ui/
