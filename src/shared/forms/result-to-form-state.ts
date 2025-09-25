@@ -6,7 +6,7 @@ import {
 import type {
   DenseErrorMap,
   FormState,
-  FormValueMap,
+  SparseFormValueMap,
 } from "@/shared/forms/form-types";
 
 /**
@@ -29,7 +29,7 @@ export function buildDisplayValues<TFieldNames extends string>(
   raw: Record<string, unknown>,
   fields: readonly TFieldNames[],
   redactFields: readonly TFieldNames[],
-): FormValueMap<TFieldNames> {
+): SparseFormValueMap<TFieldNames> {
   // Result is partial because not every field will have a string value present.
   const values: Partial<Record<TFieldNames, string>> = {};
 
