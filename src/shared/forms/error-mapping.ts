@@ -12,6 +12,7 @@ import type {
   FormState,
   SparseErrorMap,
 } from "@/shared/forms/form-types";
+import { isZodErrorLike } from "@/shared/forms/zod-error";
 
 /**
  * Type guard to assert a readonly array is non-empty.
@@ -171,4 +172,24 @@ export function createInitialFailureStateFromSchema<
   const fields = Object.keys(schema.shape) as readonly FieldNames[];
 
   return createInitialFailureState<FieldNames>(fields);
+}
+
+/**
+ * Convert a Zod error to dense, per-field errors aligned with known fields.
+ *
+ * Falls back to an empty dense map when the error shape is not Zod-like.
+ */
+export function toDenseErrors_ValidateForm<TFieldNames extends string>(
+  schemaError: unknown,
+  fields: readonly TFieldNames[],
+): DenseErrorMap<TFieldNames> {
+  if (
+    isZodErrorLike(schemaError) &&
+    typeof schemaError.flatten === "function"
+  ) {
+    const flattened = schemaError.flatten();
+    const normalized = mapFieldErrors(flattened.fieldErrors, fields);
+    return toDenseFormErrors(normalized, fields);
+  }
+  return toDenseFormErrors<TFieldNames>({}, fields);
 }

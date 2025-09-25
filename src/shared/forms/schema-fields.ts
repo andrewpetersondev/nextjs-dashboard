@@ -9,6 +9,7 @@
  */
 
 import type { z } from "zod";
+import { formDataToRawMap } from "@/shared/forms/result-to-form-state";
 import { isZodObject } from "@/shared/forms/zod-error";
 
 /**
@@ -84,4 +85,57 @@ export function deriveFields<TFieldNames extends string, TIn>(
   return isZodObject(schema)
     ? (deriveAllowedFieldsFromSchema(schema) as readonly TFieldNames[])
     : ([] as const);
+}
+
+/**
+ * Resolve the canonical list of field names.
+ *
+ * Prefers an explicit list; otherwise derives from the schema and allowed subset.
+ */
+export function resolveFieldList<TIn, TFieldNames extends keyof TIn & string>(
+  schema: z.ZodType<TIn>,
+  allowedSubset?: readonly TFieldNames[],
+  explicitFields?: readonly TFieldNames[],
+): readonly TFieldNames[] {
+  if (explicitFields && explicitFields.length > 0) {
+    return explicitFields;
+  }
+  return deriveFields<TFieldNames, TIn>(schema, allowedSubset);
+}
+
+/**
+ * Project an arbitrary raw map to the exact allowed field set.
+ *
+ * Ensures deterministic shape and ignores extraneous keys.
+ */
+export function projectRawToFields<TFieldNames extends string>(
+  raw: Readonly<Partial<Record<TFieldNames, unknown>>> | undefined,
+  fields: readonly TFieldNames[],
+): Record<TFieldNames, unknown> {
+  if (!raw) {
+    return {} as Record<TFieldNames, unknown>;
+  }
+  const out: Partial<Record<TFieldNames, unknown>> = {};
+  for (const f of fields) {
+    if (Object.hasOwn(raw, f)) {
+      out[f] = raw[f];
+    }
+  }
+  return out as Record<TFieldNames, unknown>;
+}
+
+/**
+ * Resolve the raw payload:
+ * - If an explicit raw map is provided and non-empty, project it.
+ * - Otherwise, build from FormData.
+ */
+export function resolveRawPayload<TFieldNames extends string>(
+  formData: FormData,
+  fields: readonly TFieldNames[],
+  explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
+): Record<TFieldNames, unknown> {
+  if (explicitRaw && Object.keys(explicitRaw).length > 0) {
+    return projectRawToFields(explicitRaw, fields);
+  }
+  return formDataToRawMap<TFieldNames>(formData, fields);
 }

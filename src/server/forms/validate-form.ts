@@ -14,16 +14,17 @@ import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
 import {
-  mapFieldErrors,
+  toDenseErrors_ValidateForm,
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
+import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import {
-  formDataToRawMap,
-  resultToFormState,
-} from "@/shared/forms/result-to-form-state";
-import { deriveFields } from "@/shared/forms/schema-fields";
+  resolveFieldList,
+  resolveRawPayload,
+} from "@/shared/forms/schema-fields";
+import { isZodErrorLike } from "@/shared/forms/zod-error";
 
 /**
  * Options for validateFormGeneric.
@@ -47,72 +48,6 @@ type ValidateFormOptions<
   readonly loggerContext?: string;
 };
 
-/** Type guard: minimally checks for a ZodError-like object. */
-function isZodErrorLike(err: unknown): err is {
-  name?: string;
-  issues?: unknown[];
-  flatten?: () => { fieldErrors: Record<string, string[]> };
-} {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    ("issues" in err || "flatten" in err)
-  );
-}
-
-/**
- * Resolve the canonical list of field names.
- *
- * Prefers an explicit list; otherwise derives from the schema and allowed subset.
- */
-function resolveFieldList<TIn, TFieldNames extends keyof TIn & string>(
-  schema: z.ZodType<TIn>,
-  allowedSubset?: readonly TFieldNames[],
-  explicitFields?: readonly TFieldNames[],
-): readonly TFieldNames[] {
-  if (explicitFields && explicitFields.length > 0) {
-    return explicitFields;
-  }
-  return deriveFields<TFieldNames, TIn>(schema, allowedSubset);
-}
-
-/**
- * Project an arbitrary raw map to the exact allowed field set.
- *
- * Ensures deterministic shape and ignores extraneous keys.
- */
-function projectRawToFields<TFieldNames extends string>(
-  raw: Readonly<Partial<Record<TFieldNames, unknown>>> | undefined,
-  fields: readonly TFieldNames[],
-): Record<TFieldNames, unknown> {
-  if (!raw) {
-    return {} as Record<TFieldNames, unknown>;
-  }
-  const out: Partial<Record<TFieldNames, unknown>> = {};
-  for (const f of fields) {
-    if (Object.hasOwn(raw, f)) {
-      out[f] = raw[f];
-    }
-  }
-  return out as Record<TFieldNames, unknown>;
-}
-
-/**
- * Resolve the raw payload:
- * - If an explicit raw map is provided and non-empty, project it.
- * - Otherwise, build from FormData.
- */
-function resolveRawPayload<TFieldNames extends string>(
-  formData: FormData,
-  fields: readonly TFieldNames[],
-  explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
-): Record<TFieldNames, unknown> {
-  if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    return projectRawToFields(explicitRaw, fields);
-  }
-  return formDataToRawMap<TFieldNames>(formData, fields);
-}
-
 /** Log validation failures with minimal, non-sensitive context. */
 function logValidationFailure(context: string, error: unknown): void {
   const name = isZodErrorLike(error) ? error.name : undefined;
@@ -126,26 +61,6 @@ function logValidationFailure(context: string, error: unknown): void {
     message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     name,
   });
-}
-
-/**
- * Convert a Zod error to dense, per-field errors aligned with known fields.
- *
- * Falls back to an empty dense map when the error shape is not Zod-like.
- */
-function toDenseErrors<TFieldNames extends string>(
-  schemaError: unknown,
-  fields: readonly TFieldNames[],
-): DenseErrorMap<TFieldNames> {
-  if (
-    isZodErrorLike(schemaError) &&
-    typeof schemaError.flatten === "function"
-  ) {
-    const flattened = schemaError.flatten();
-    const normalized = mapFieldErrors(flattened.fieldErrors, fields);
-    return toDenseFormErrors(normalized, fields);
-  }
-  return toDenseFormErrors<TFieldNames>({}, fields);
 }
 
 /** Normalize an optional transform to an async function. */
@@ -216,7 +131,7 @@ export async function validateFormGeneric<
   if (!parsed.success) {
     logValidationFailure(loggerContext, parsed.error);
     const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
-      error: toDenseErrors<TFieldNames>(parsed.error, fields),
+      error: toDenseErrors_ValidateForm<TFieldNames>(parsed.error, fields),
       success: false,
     };
 

@@ -98,3 +98,16 @@ export function isZodObject(
 export function isZodError(err: unknown): err is ZodError {
   return err instanceof ZodError;
 }
+
+/** Type guard: minimally checks for a ZodError-like object. */
+export function isZodErrorLike(err: unknown): err is {
+  name?: string;
+  issues?: unknown[];
+  flatten?: () => { fieldErrors: Record<string, string[]> };
+} {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    ("issues" in err || "flatten" in err)
+  );
+}
