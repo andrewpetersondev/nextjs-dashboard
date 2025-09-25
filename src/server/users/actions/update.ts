@@ -27,8 +27,10 @@ import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { formDataToRawMap } from "@/shared/forms/form-values";
-import { resultToFormState } from "@/shared/forms/result-to-form-state";
+import {
+  formDataToRawMap,
+  resultToFormState,
+} from "@/shared/forms/result-to-form-state";
 import { deriveFields } from "@/shared/forms/schema-fields";
 import { shallowDiff } from "@/shared/utils/patch";
 
