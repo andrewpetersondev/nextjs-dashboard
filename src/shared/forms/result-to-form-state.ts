@@ -3,12 +3,12 @@
  */
 
 import type { Result } from "@/shared/core/result/result-base";
-import { buildDisplayValues } from "@/shared/forms/field-values";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
+import { buildDisplayValues } from "@/shared/forms/form-values";
 
 export function resultToFormState<TFieldNames extends string, TData>(
   r: Result<TData, DenseErrorMap<TFieldNames>>,

@@ -18,7 +18,7 @@ import {
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-helpers";
+import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-fields";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

@@ -12,16 +12,15 @@ import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toDenseFormErrors } from "@/shared/forms/error-mapping";
-import { formDataToRawMap } from "@/shared/forms/form-data";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
+import { formDataToRawMap } from "@/shared/forms/form-values";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
-import { deriveFields } from "@/shared/forms/schema-helpers";
-import { zodToDenseErrors } from "@/shared/forms/zod-error-adapter";
-import { isZodError } from "@/shared/forms/zod-guards";
+import { deriveFields } from "@/shared/forms/schema-fields";
+import { isZodError, zodToDenseErrors } from "@/shared/forms/zod-error";
 
 type MessageFromError = (error: unknown) => string;
 

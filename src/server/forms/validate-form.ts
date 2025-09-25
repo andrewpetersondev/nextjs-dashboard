@@ -17,11 +17,11 @@ import {
   mapFieldErrors,
   toDenseFormErrors,
 } from "@/shared/forms/error-mapping";
-import { formDataToRawMap } from "@/shared/forms/form-data";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
+import { formDataToRawMap } from "@/shared/forms/form-values";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
-import { deriveFields } from "@/shared/forms/schema-helpers";
+import { deriveFields } from "@/shared/forms/schema-fields";
 
 /**
  * Options for validateFormGeneric.

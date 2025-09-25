@@ -9,7 +9,7 @@
  */
 
 import type { z } from "zod";
-import { isZodObject } from "@/shared/forms/zod-guards";
+import { isZodObject } from "@/shared/forms/zod-error";
 
 /**
  * Derive allowed string field names from a Zod object schema.
