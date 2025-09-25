@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { JSX } from "react";
 import { LogoutForm } from "@/features/auth/components/logout-form";
+import { ROUTES } from "@/shared/routes/routes";
 import { NavLinksWrapper } from "@/shell/dashboard/components/nav-links-wrapper";
 import { AcmeLogo } from "@/ui/brand/acme-logo";
 
@@ -19,7 +20,7 @@ export const SideNav = (): JSX.Element => {
       <Link
         aria-label="Go to homepage"
         className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary md:h-40"
-        href="/public"
+        href={ROUTES.DASHBOARD.ROOT}
         tabIndex={0}
       >
         <AcmeLogo />
