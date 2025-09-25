@@ -59,12 +59,12 @@ async function maybeTransform<TIn>(
   return await transform(value);
 }
 
-export type ErrorsFromError<TFieldNames extends string> = (
+type ErrorsFromError<TFieldNames extends string> = (
   error: unknown,
   fields: readonly TFieldNames[],
 ) => DenseErrorMap<TFieldNames>;
 
-export type HandleFormActionOptions<
+type HandleFormActionOptions<
   TIn,
   TFieldNames extends keyof TIn & string,
   _TOut,
@@ -91,7 +91,7 @@ export type HandleFormActionOptions<
 };
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: centralized flow by design
-export async function handleFormAction<
+async function _handleFormAction<
   TIn,
   TFieldNames extends keyof TIn & string,
   TOut = unknown,
