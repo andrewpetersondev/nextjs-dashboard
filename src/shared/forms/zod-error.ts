@@ -78,19 +78,22 @@ export function isZodObject(
 }
 
 /**
- * Determine whether a value is a {@link ZodError}.
+ * Type guard: checks whether the provided value is a real {@link ZodError}.
  *
- * @param err - Unknown value to test.
- * @returns True if the value is a ZodError; otherwise, false.
+ * @param err - The value to test.
+ * @returns `true` if `err` is an instance of {@link ZodError}; otherwise `false`.
+ *
+ * @remarks
+ * - Use this when you know the error comes from Zod parsing within your own codebase.
+ * - Narrowing with this guard gives you full type safety and access to the `ZodError` API.
  *
  * @example
  * ```ts
  * try {
- *   schema.parse(input);
- * } catch (e) {
- *   if (isZodError(e)) {
- *     // Access Zod-specific error formatting
- *     const issues = e.issues;
+ *   schema.parse(data);
+ * } catch (err) {
+ *   if (isZodError(err)) {
+ *     console.error("Validation failed:", err.issues);
  *   }
  * }
  * ```
@@ -99,7 +102,28 @@ export function isZodError(err: unknown): err is ZodError {
   return err instanceof ZodError;
 }
 
-/** Type guard: minimally checks for a ZodError-like object. */
+/**
+ * Type guard: loosely checks whether the provided value has a shape similar to {@link ZodError}.
+ *
+ * @param err - The value to test.
+ * @returns `true` if `err` is a non-null object with ZodError-like properties
+ * (`issues` or `flatten`); otherwise `false`.
+ *
+ * @remarks
+ * - Use this at system boundaries (e.g., logging, API layers) where the error may have been
+ *   serialized, come from a different runtime, or otherwise not be a real `ZodError` instance.
+ * - This guard performs a "duck typing" check: it only verifies that the object has
+ *   recognizable ZodError properties, not that it is an actual `ZodError`.
+ *
+ * @example
+ * ```ts
+ * catch (err) {
+ *   if (isZodErrorLike(err)) {
+ *     console.error("Validation failed:", err.flatten?.().fieldErrors);
+ *   }
+ * }
+ * ```
+ */
 export function isZodErrorLike(err: unknown): err is {
   name?: string;
   issues?: unknown[];
