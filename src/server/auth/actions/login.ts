@@ -15,7 +15,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
-import { sparseToDense } from "@/shared/forms/error-mapping";
+import { makeEmptyDenseErrors } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
@@ -23,15 +23,13 @@ import { ROUTES } from "@/shared/routes/routes";
 // Small helpers to keep main flow concise
 const fields = LOGIN_FIELDS;
 
-function emptyErrors(): ReturnType<typeof sparseToDense<LoginFormFieldNames>> {
-  return sparseToDense<LoginFormFieldNames>({}, fields);
-}
+const dense = makeEmptyDenseErrors<LoginFormFieldNames>(fields);
 
 function invalidCredentialsState(
   raw: Record<string, FormDataEntryValue>,
 ): FormState<LoginFormFieldNames> {
   return resultToFormState(
-    { error: emptyErrors(), success: false },
+    { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
       fields,
@@ -44,7 +42,7 @@ function unexpectedErrorState(
   raw: Record<string, FormDataEntryValue>,
 ): FormState<LoginFormFieldNames> {
   return resultToFormState(
-    { error: emptyErrors(), success: false },
+    { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
       fields,
