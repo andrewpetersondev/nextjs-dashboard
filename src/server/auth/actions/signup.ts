@@ -4,16 +4,17 @@ import { redirect } from "next/navigation";
 import {
   SIGNUP_FIELDS,
   type SignupFormFieldNames,
+  type SignupFormInput,
   SignupFormSchema,
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
+import { validateFormGeneric } from "@/server/forms/validate-form";
 import { UsersRepository } from "@/server/users/repo";
 import { UsersService } from "@/server/users/service";
 import { toUserId } from "@/shared/domain/id-converters";
 import { createEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
@@ -43,42 +44,45 @@ export async function signup(
 ): Promise<FormState<SignupFormFieldNames>> {
   const fields = SIGNUP_FIELDS;
 
-  // Ensure we only pick known fields to avoid unsafe extras from FormData
-  const raw = {
-    email: String(formData.get("email") ?? ""),
-    password: String(formData.get("password") ?? ""),
-    username: String(formData.get("username") ?? ""),
-  };
-
-  const parsed = SignupFormSchema.safeParse(raw);
-  if (!parsed.success) {
-    const dense = createEmptyDenseErrorMap<SignupFormFieldNames>(fields);
-    return {
-      errors: dense,
-      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
-      success: false,
-    };
-  }
-
-  const service = new UsersService(new UsersRepository(getDB()));
-  const res = await service.signup({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    username: parsed.data.username,
+  // Validate + normalize using generic helper (schema already trims/normalizes).
+  const validated = await validateFormGeneric<
+    SignupFormInput,
+    SignupFormFieldNames
+  >(formData, SignupFormSchema, fields, {
+    fields, // explicit fields to keep consistent with UI
+    loggerContext: "signup.validate",
+    // No extra transform needed: schema already normalizes email/username and trims password.
   });
 
+  // Early return on validation failure (includes dense field errors and redacted values)
+  if (!validated.success) {
+    return validated;
+  }
+
+  // Execute domain logic
+  const service = new UsersService(new UsersRepository(getDB()));
+  const res = await service.signup({
+    email: validated.data.email,
+    password: validated.data.password,
+    username: validated.data.username,
+  });
+
+  // Map repository/service failure to a dense error map and consistent failure state
   if (!res.success) {
     const denseErrors = repoErrorToDense(res.error, fields);
     return resultToFormState<SignupFormFieldNames, SignupSuccess>(
       { error: denseErrors, success: false },
       {
-        failureMessage: FORM_ERROR_MESSAGES.SUBMIT_FAILED,
         fields,
-        raw,
+        // values are derived from the original formData that validateFormGeneric used internally.
+        // We don’t have raw here; echoing nothing keeps sensitive data safe. If needed,
+        // pass an explicit raw via validateFormGeneric options and reuse it here.
+        raw: {},
       },
     );
   }
 
+  // Success: set session and redirect
   await setSessionToken(toUserId(res.data.id), toUserRole(res.data.role));
   redirect(ROUTES.DASHBOARD.ROOT);
 }
