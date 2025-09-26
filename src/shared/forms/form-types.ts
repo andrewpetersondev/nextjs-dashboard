@@ -1,5 +1,10 @@
 /**
- * @file Shared TypeScript types describing form values, errors, and state.
+ * @file Shared TypeScript types describing form values, errors, and form state.
+ *
+ * Key design rules
+ * - Dense maps: every field key is present (fields without errors → `[]`).
+ * - Sparse maps: only keys with errors are present; values are guaranteed non-empty arrays.
+ * - Do not rely on runtime checks to enforce compile-time readonlyness.
  *
  * @remarks
  * - Prefer string-literal unions for field-name definitions for type safety.
@@ -7,196 +12,142 @@
  */
 
 /* -------------------------------------------------------------------------- */
-/* Basic building blocks                                                      */
+/* Core Types                                                                 */
 /* -------------------------------------------------------------------------- */
 
 /**
- * A helper type representing the string-literal union for form field names.
- */
-export type FormFieldName = string & { readonly __brand: unique symbol };
-
-/**
- * A type alias representing a human-readable message shown by forms
- * (typically validation errors, but can be adapted).
- */
-export type FormMessage = string;
-
-/**
- * A reusable helper type for defining non-empty readonly arrays.
+ * Non-empty readonly array.
  *
- * @typeParam T - The element type of the array.
+ * Use this when you want a compile-time guarantee that an array has at least one element.
+ *
+ * @typeParam T - element type
  */
 export type NonEmptyReadonlyArray<T> = readonly [T, ...(readonly T[])];
 
+/**
+ * Field-level error: non-empty readonly array of messages.
+ *
+ * Use this type for sparse maps where existence implies at least one error.
+ *
+ * @typeParam TMsg - message type (default: string).
+ */
+export type FieldError<TMsg = string> = NonEmptyReadonlyArray<TMsg>;
+
+/**
+ * Runtime check for a non-empty array (FieldError).
+ *
+ * @remarks
+ * - This only verifies "non-empty" at runtime. It **does not** (and cannot) verify
+ *   readonlyness or tuple shape. Mutable arrays that happen to be non-empty will pass.
+ */
+export function isFieldError<TMsg = string>(
+  value: readonly TMsg[] | undefined | null,
+): value is NonEmptyReadonlyArray<TMsg> {
+  return Array.isArray(value) && value.length > 0;
+}
+
 /* -------------------------------------------------------------------------- */
-/* Form values                                                                */
+/* Maps                                                                       */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Sparse form values mapped as a partial record of field names to their raw values.
+ * Sparse map of form values: keys may be omitted (fields that were not submitted/are not present).
  *
- * @typeParam TField - A string-literal union of the form's field names.
- * @typeParam TValue - The raw value type for fields (defaults to string).
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TValue - raw value type for fields (default: string).
  */
-export type FormValueMap<
-  TField extends string = FormFieldName,
+export type SparseFormValueMap<
+  TField extends string,
   TValue = string,
-> = Partial<Readonly<Record<TField, TValue>>>;
-
-/* -------------------------------------------------------------------------- */
-/* Error maps                                                                 */
-/* -------------------------------------------------------------------------- */
+> = Partial<Record<TField, TValue>>;
 
 /**
- * A readonly record helper for dense maps keyed by all form fields.
+ * Sparse error map.
  *
- * @typeParam TKey - The key type (string-literal union).
- * @typeParam TValue - The value type.
+ * - Only includes fields that have at least one error.
+ * - Each present key maps to a non-empty readonly array (`FieldError`).
+ *
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TMsg - message type (default: string).
  */
-export type DenseRecordReadonly<TKey extends string, TValue> = Readonly<
-  Record<TKey, TValue>
+export type SparseErrorMap<TField extends string, TMsg = string> = Partial<
+  Readonly<Record<TField, FieldError<TMsg>>>
 >;
 
 /**
- * Dense form errors where every form field is present and mapped to a readonly array of messages.
+ * Helper: readonly record keyed by the full set of fields.
  *
- * @typeParam TField - A string-literal union of the form's field names.
- * @typeParam TMsg - The message type (defaults to FormMessage).
+ * @typeParam K - string-literal union of keys
+ * @typeParam V - value type
+ */
+export type DenseRecordReadonly<K extends string, V> = Readonly<Record<K, V>>;
+
+/**
+ * Dense error map.
  *
- * @remarks
- * - This is the canonical UI shape: all fields present; fields without errors have [].
+ * - Every key from `TField` must be present.
+ * - If a field has no errors, its value must be the (possibly empty) readonly array `[]`.
+ *
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TMsg - message type (default: string).
  */
 export type DenseErrorMap<
-  TField extends string = FormFieldName,
-  TMsg = FormMessage,
+  TField extends string,
+  TMsg = string,
 > = DenseRecordReadonly<TField, readonly TMsg[]>;
-
-/**
- * Validation errors for a single form field as a non-empty readonly array of messages.
- *
- * @typeParam TMsg - The message type (defaults to FormMessage).
- */
-export type FieldError<TMsg = FormMessage> = NonEmptyReadonlyArray<TMsg>;
-
-/**
- * Sparse form errors where only fields with errors are present.
- *
- * @typeParam TField - A string-literal union of valid form field names.
- * @typeParam TMsg - The message type (defaults to FormMessage).
- */
-export type SparseErrorMap<
-  TField extends string = FormFieldName,
-  TMsg = FormMessage,
-> = Partial<Readonly<Record<TField, FieldError<TMsg>>>>;
 
 /* -------------------------------------------------------------------------- */
 /* Form state                                                                 */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Represents the successful state of a form submission with validated data.
+ * Successful form state.
  *
- * @typeParam TData - The type of validated form data in the successful state.
+ * - `errors` and `values` are omitted (set to `never` to aid IDE autocomplete and safety).
+ * - `message` is optional (success may not always carry a friendly message).
  *
- * @property data - The validated payload that passed validation.
- * @property message - A human-readable success message, often used for UI feedback.
- * @property success - A flag indicating the successful submission of the form (`true`).
- *
- * @remarks - `errors` and `values` are not present in the successful state. set to `never` for ide type safety.
+ * @typeParam TData - validated form data shape (required).
  */
 export interface FormStateSuccess<TData = unknown> {
   readonly data: TData;
   readonly errors?: never;
-  readonly message: string;
+  readonly message?: string;
   readonly success: true;
   readonly values?: never;
 }
 
 /**
- * Represents the failed state of a form submission with validation errors.
+ * Failed form state.
  *
- * @typeParam TField - A string-literal union of valid form field names.
- * @typeParam TValue - The raw value type for fields (defaults to string).
- * @typeParam TMsg - The message type (defaults to FormMessage).
+ * - `errors` here is the **dense** error map (every field present).
+ * - `values` is sparse: present only for fields the caller wants to echo back (avoid sensitive fields).
  *
- * @property errors - A dense error map containing all fields and their associated validation errors.
- * @property message - A human-readable failure message, often used for UI feedback.
- * @property success - A flag indicating the form submission failure (`false`).
- * @property values - Optional raw form values for repopulation, typically excluding sensitive fields like passwords.
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TValue - raw form value type (default: string).
+ * @typeParam TMsg - message type (default: string).
  */
 export interface FormStateFailure<
-  TField extends string = FormFieldName,
+  TField extends string,
   TValue = string,
-  TMsg = FormMessage,
+  TMsg = string,
 > {
   readonly errors: DenseErrorMap<TField, TMsg>;
   readonly message: string;
   readonly success: false;
-  readonly values?: FormValueMap<TField, TValue>;
+  readonly values?: SparseFormValueMap<TField, TValue>;
 }
 
 /**
- * The complete state of a form, encompassing errors, success status, messages, and validated or raw data.
+ * Complete form state union.
  *
- * @remarks
- * - On failure, supplement the state with raw form values {@link FormStateFailure.values} for populating the form.
- * - Avoid exposing sensitive fields (e.g., passwords) in {@link FormStateFailure.values}.
- *
- * @typeParam TField - A string-literal union of valid form field names.
- * @typeParam TData - The type of validated form data on success.
- * @typeParam TValue - The raw value type for fields (defaults to string).
- * @typeParam TMsg - The message type (defaults to FormMessage).
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TData - validated data on success (default: unknown).
+ * @typeParam TValue - raw value type (default: string).
+ * @typeParam TMsg - message type for field errors (default: string).
  */
 export type FormState<
-  TField extends string = FormFieldName,
+  TField extends string,
   TData = unknown,
   TValue = string,
-  TMsg = FormMessage,
+  TMsg = string,
 > = FormStateSuccess<TData> | FormStateFailure<TField, TValue, TMsg>;
-
-/* -------------------------------------------------------------------------- */
-/* Type Guards                                                                */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Type guard for FormStateSuccess.
- * @param state - The form state to check.
- * @returns True if state is FormStateSuccess.
- */
-export function isFormStateSuccess<
-  TField extends string = FormFieldName,
-  TData = unknown,
-  TValue = string,
-  TMsg = FormMessage,
->(
-  state: FormState<TField, TData, TValue, TMsg>,
-): state is FormStateSuccess<TData> {
-  return state.success === true;
-}
-
-/**
- * Type guard for FormStateFailure.
- * @param state - The form state to check.
- * @returns True if state is FormStateFailure.
- */
-export function isFormStateFailure<
-  TField extends string = FormFieldName,
-  TData = unknown,
-  TValue = string,
-  TMsg = FormMessage,
->(
-  state: FormState<TField, TData, TValue, TMsg>,
-): state is FormStateFailure<TField, TValue, TMsg> {
-  return state.success === false;
-}
-
-/**
- * Type guard for FieldError (non-empty readonly array).
- * @param value - The value to check.
- * @returns True if value is a non-empty readonly array.
- */
-export function isFieldError<TMsg = FormMessage>(
-  value: readonly TMsg[] | undefined,
-): value is NonEmptyReadonlyArray<TMsg> {
-  return Array.isArray(value) && value.length > 0;
-}

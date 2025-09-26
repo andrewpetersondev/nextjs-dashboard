@@ -9,7 +9,7 @@ import type { DenseErrorMap } from "@/shared/forms/form-types";
  */
 export type InvoiceActionResult = {
   data?: InvoiceDto;
-  errors?: DenseErrorMap;
+  errors?: DenseErrorMap<any>;
   message?: string;
   success: boolean;
 };

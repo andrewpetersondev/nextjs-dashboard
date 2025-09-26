@@ -114,7 +114,9 @@ export const EditInvoiceForm = ({
       ? ({ ...invoice, ...state.data } as EditInvoiceViewModel)
       : invoice;
 
-  const showAlert = useAutoHideAlert(state.message);
+  const showAlert = useAutoHideAlert(
+    state.message ? "do not keep this" : "this needs to be replace",
+  );
 
   // Prefer externally provided dense errors; fall back to state (failure) errors or empty dense errors from initial state
   const denseErrors: DenseErrorMap<UpdateInvoiceFieldNames> =

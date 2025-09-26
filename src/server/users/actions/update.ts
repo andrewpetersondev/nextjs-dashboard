@@ -25,7 +25,7 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { toDenseFormErrors } from "@/shared/forms/error-mapping";
+import { sparseToDense } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import {
   formDataToRawMap,
@@ -41,9 +41,7 @@ type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 type Ctx = {
   readonly fields: readonly EditUserFormFieldNames[];
   readonly raw: Record<string, unknown>;
-  readonly emptyDense: ReturnType<
-    typeof toDenseFormErrors<EditUserFormFieldNames>
-  >;
+  readonly emptyDense: ReturnType<typeof sparseToDense<EditUserFormFieldNames>>;
 };
 
 /**
@@ -55,7 +53,7 @@ function initCtx(formData: FormData): Ctx {
     EditUserFormSchema,
   );
   const raw = formDataToRawMap(formData, fields);
-  const emptyDense = toDenseFormErrors<EditUserFormFieldNames>({}, fields);
+  const emptyDense = sparseToDense<EditUserFormFieldNames>({}, fields);
   return { emptyDense, fields, raw };
 }
 

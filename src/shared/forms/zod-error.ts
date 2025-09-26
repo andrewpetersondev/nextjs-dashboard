@@ -8,15 +8,12 @@
  * Keep: dense internally for determinism, sparse for UI.
  */
 
-import { ZodError, ZodObject, type ZodRawShape, type ZodTypeAny, z } from "zod";
-import {
-  mapFieldErrors,
-  toDenseFormErrors,
-} from "@/shared/forms/error-mapping";
+import { type ZodRawShape, type ZodTypeAny, z } from "zod";
+import { sparseToDense, toSparseErrors } from "@/shared/forms/error-mapping";
 import type { DenseErrorMap, SparseErrorMap } from "@/shared/forms/form-types";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
-export type ZodFieldErrors = Record<string, string[] | undefined>;
+export type ZodFieldErrors = Record<string, readonly string[] | undefined>;
 
 /**
  * Flatten a ZodError using Zod's built-in API, normalizing optional properties.
@@ -42,7 +39,7 @@ export function zodToSparseErrors<TFieldNames extends string>(
   allowedFields: readonly TFieldNames[],
 ): SparseErrorMap<TFieldNames> {
   const { fieldErrors } = flattenZodError(error);
-  return mapFieldErrors(fieldErrors, allowedFields);
+  return toSparseErrors<TFieldNames, string>(fieldErrors, allowedFields);
 }
 
 /**
@@ -54,11 +51,11 @@ export function zodToDenseErrors<TFieldNames extends string>(
   allowedFields: readonly TFieldNames[],
 ): DenseErrorMap<TFieldNames> {
   const sparse = zodToSparseErrors(error, allowedFields);
-  return toDenseFormErrors(sparse, allowedFields);
+  return sparseToDense(sparse, allowedFields);
 }
 
 /**
- * Determine whether a given Zod schema is a {@link ZodObject}.
+ * Determine whether a given Zod schema is a {@link z.ZodObject}.
  *
  * @param schema - Any Zod schema instance.
  * @returns True if the schema is an object schema; otherwise, false.
@@ -66,22 +63,22 @@ export function zodToDenseErrors<TFieldNames extends string>(
  * @example
  * ```ts
  * if (isZodObject(schema)) {
- *   // schema is narrowed to ZodObject<ZodRawShape>
+ *   // schema is narrowed to z.ZodObject<ZodRawShape>
  *   const keys = Object.keys(schema.shape);
  * }
  * ```
  */
 export function isZodObject(
   schema: ZodTypeAny,
-): schema is ZodObject<ZodRawShape> {
-  return schema instanceof ZodObject;
+): schema is z.ZodObject<ZodRawShape> {
+  return schema instanceof z.ZodObject;
 }
 
 /**
- * Type guard: checks whether the provided value is a real {@link ZodError}.
+ * Type guard: checks whether the provided value is a real {@link z.ZodError}.
  *
  * @param err - The value to test.
- * @returns `true` if `err` is an instance of {@link ZodError}; otherwise `false`.
+ * @returns `true` if `err` is an instance of {@link z.ZodError}; otherwise `false`.
  *
  * @remarks
  * - Use this when you know the error comes from Zod parsing within your own codebase.
@@ -98,12 +95,12 @@ export function isZodObject(
  * }
  * ```
  */
-export function isZodError(err: unknown): err is ZodError {
-  return err instanceof ZodError;
+export function isZodError(err: unknown): err is z.ZodError {
+  return err instanceof z.ZodError;
 }
 
 /**
- * Type guard: loosely checks whether the provided value has a shape similar to {@link ZodError}.
+ * Type guard: loosely checks whether the provided value has a shape similar to {@link z.ZodError}.
  *
  * @param err - The value to test.
  * @returns `true` if `err` is a non-null object with ZodError-like properties
@@ -127,11 +124,26 @@ export function isZodError(err: unknown): err is ZodError {
 export function isZodErrorLike(err: unknown): err is {
   name?: string;
   issues?: unknown[];
-  flatten?: () => { fieldErrors: Record<string, string[]> };
+  flatten?: () => {
+    fieldErrors: Record<string, readonly string[] | undefined>;
+  };
 } {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    ("issues" in err || "flatten" in err)
-  );
+  if (typeof err !== "object" || err === null) {
+    return false;
+  }
+
+  const anyErr = err as {
+    name?: unknown;
+    issues?: unknown;
+    flatten?: unknown;
+  };
+
+  const nameLooksRight =
+    typeof anyErr.name === "string" && anyErr.name === "ZodError";
+
+  const issuesLooksRight = Array.isArray(anyErr.issues);
+
+  const flattenLooksRight = typeof anyErr.flatten === "function";
+
+  return nameLooksRight || issuesLooksRight || flattenLooksRight;
 }

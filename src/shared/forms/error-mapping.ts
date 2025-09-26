@@ -8,11 +8,14 @@ import type { z } from "zod";
 import type {
   DenseErrorMap,
   FieldError,
-  FormMessage,
   FormState,
   SparseErrorMap,
 } from "@/shared/forms/form-types";
 import { isZodErrorLike } from "@/shared/forms/zod-error";
+
+/* -------------------------------------------------------------------------- */
+/* Predicates                                                                  */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Type guard to assert a readonly array is non-empty.
@@ -22,6 +25,10 @@ export function isNonEmpty<T>(
 ): arr is readonly [T, ...T[]] {
   return Array.isArray(arr) && arr.length > 0;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Sparse / Dense conversions                                                  */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Build a sparse error map restricted to allowed fields.
@@ -40,7 +47,7 @@ export function isNonEmpty<T>(
  * const sparse = toSparseErrors(all, allowed); // { email: ["Invalid"] }
  * ```
  */
-export function toSparseErrors<TFieldNames extends string, TMsg = FormMessage>(
+export function toSparseErrors<TFieldNames extends string, TMsg = string>(
   fieldErrors:
     | Partial<Record<TFieldNames, readonly TMsg[] | undefined>>
     | Record<string, readonly TMsg[] | undefined>,
@@ -58,93 +65,75 @@ export function toSparseErrors<TFieldNames extends string, TMsg = FormMessage>(
   return errors;
 }
 
-// Type-safe dense map factory
-export function makeEmptyDenseErrors<TField extends string>(
-  fields: readonly TField[],
-): Readonly<Record<TField, readonly string[]>> {
-  const acc = {} as Record<TField, readonly string[]>;
-  for (const f of fields) {
-    acc[f] = [];
-  }
-  return acc;
-}
-
 /**
- * Convert sparse errors to a dense per-field map.
+ * Create an *empty* dense error map for the given fields (every key present, all `[]` and frozen).
  *
- * Copies arrays to avoid sharing references; empty arrays for missing fields.
+ * Useful when you need a canonical dense shape (e.g., initial UI state).
  *
- * @typeParam TField - String-literal union of field names.
- * @typeParam TMsg - Message type (defaults to FormMessage).
- * @param sparse - Sparse error map (only fields with errors).
- * @param fields - All field names to represent.
- * @returns Dense map with every field present.
+ * @example
+ * ```ts
+ * const empty = makeEmptyDenseErrors(["email", "password"]);
+ * // { email: [], password: [] }
+ * ```
  */
-export function sparseToDense<TField extends string, TMsg = FormMessage>(
-  sparse: SparseErrorMap<TField, TMsg>,
+export function makeEmptyDenseErrors<TField extends string, TMsg = string>(
   fields: readonly TField[],
 ): DenseErrorMap<TField, TMsg> {
-  const acc = {} as Record<TField, readonly TMsg[]>;
+  const result: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
-    const errs = sparse[f];
-    // Ensure we always return a readonly array; copy to avoid sharing references.
-    acc[f] = isNonEmpty(errs) ? (errs.slice() as readonly TMsg[]) : [];
+    result[f] = Object.freeze([]) as readonly TMsg[];
   }
-  return acc;
+  return Object.freeze(result) as DenseErrorMap<TField, TMsg>;
 }
 
 /**
- * Convert dense errors to sparse by removing empty entries.
+ * Convert a sparse error map (only errored keys present) into a dense error map.
  *
- * @typeParam TField - String-literal union of field names.
- * @typeParam TMsg - Message type (defaults to FormMessage).
- * @param dense - Dense error map with all fields.
- * @returns Sparse map with only fields that have errors.
+ * - Keys missing from `sparse` will be set to `[]` (frozen copies).
+ * - Preserves the order of `fields` passed in.
  */
-export function denseToSparse<TField extends string, TMsg = FormMessage>(
+export function sparseToDense<TField extends string, TMsg = string>(
+  sparse: SparseErrorMap<TField, TMsg> | undefined,
+  fields: readonly TField[],
+): DenseErrorMap<TField, TMsg> {
+  const out: Partial<Record<TField, readonly TMsg[]>> = {};
+  for (const f of fields) {
+    const v = sparse?.[f];
+    out[f] = Array.isArray(v)
+      ? (Object.freeze([...v]) as readonly TMsg[])
+      : (Object.freeze([]) as readonly TMsg[]);
+  }
+  return Object.freeze(out) as DenseErrorMap<TField, TMsg>;
+}
+
+/**
+ * Convert a dense error map into a sparse error map (only keys whose array length > 0 are kept).
+ *
+ * - Fields whose array is `[]` are omitted from the result.
+ * - Result uses `FieldError` (non-empty readonly arrays) for values.
+ */
+export function denseToSparse<TField extends string, TMsg = string>(
   dense: DenseErrorMap<TField, TMsg>,
 ): SparseErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, FieldError<TMsg>>> = {};
-  for (const [k, v] of Object.entries(dense) as [TField, readonly TMsg[]][]) {
-    if (isNonEmpty(v)) {
-      out[k] = v as FieldError<TMsg>;
+
+  // Iterate over all keys in the dense map
+  for (const k in dense) {
+    const arr = dense[k];
+
+    // Only assign to out if the array exists and has elements
+    if (arr && arr.length > 0) {
+      // At runtime we just check length; casting to FieldError<TMsg> for TS type
+      out[k as TField] = arr as FieldError<TMsg>;
     }
   }
-  return out;
+
+  return out as SparseErrorMap<TField, TMsg>;
 }
 
-/**
- * Convert sparse errors to dense for allowed fields.
- *
- * Alias-friendly wrapper around {@link sparseToDense}.
- *
- * @typeParam TFieldNames - String-literal union of allowed field names.
- * @typeParam TMsg - Message type (defaults to FormMessage).
- * @param errors - Sparse error map.
- * @param allowedFields - All fields to include in the output.
- * @returns Dense error map with empty arrays for fields without errors.
- * @example
- * ```typescript
- * const sparse = { email: ["Invalid"] } as const;
- * const fields = ["email", "password"] as const;
- * const dense = toDenseErrors(sparse, fields); // { email: ["Invalid"], password: [] }
- * ```
- */
-export function toDenseErrors<TFieldNames extends string, TMsg = FormMessage>(
-  errors: SparseErrorMap<TFieldNames, TMsg>,
-  allowedFields: readonly TFieldNames[],
-): DenseErrorMap<TFieldNames, TMsg> {
-  // Delegate to the canonical implementation.
-  return sparseToDense(errors, allowedFields);
-}
-
-/**
- * Backward-compatible aliases (deprecated).
- *
- * Prefer: toSparseErrors, makeEmptyDenseErrors, sparseToDense, denseToSparse, toDenseErrors.
- */
-export const mapFieldErrors = toSparseErrors;
-export const toDenseFormErrors = toDenseErrors;
+/* -------------------------------------------------------------------------- */
+/* Builders                                                                    */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Creates an initial failure state for a given set of form fields.
@@ -170,13 +159,15 @@ export function createInitialFailureStateFromSchema<
 
   // Object.keys always returns string[], but narrowing it to FieldNames is safe here
   const fields = Object.keys(schema.shape) as readonly FieldNames[];
-
   return createInitialFailureState<FieldNames>(fields);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Zod integration                                                             */
+/* -------------------------------------------------------------------------- */
+
 /**
- * Convert a Zod error to dense, per-field errors aligned with known fields.
- *
+ * Convert a Zod-like error to dense, per-field errors aligned with known fields.
  * Falls back to an empty dense map when the error shape is not Zod-like.
  */
 export function toDenseErrors_ValidateForm<TFieldNames extends string>(
@@ -188,8 +179,37 @@ export function toDenseErrors_ValidateForm<TFieldNames extends string>(
     typeof schemaError.flatten === "function"
   ) {
     const flattened = schemaError.flatten();
-    const normalized = mapFieldErrors(flattened.fieldErrors, fields);
-    return toDenseFormErrors(normalized, fields);
+    const sparse = toSparseErrors<TFieldNames, string>(
+      flattened.fieldErrors,
+      fields,
+    );
+    return sparseToDense(sparse, fields);
   }
-  return toDenseFormErrors<TFieldNames>({}, fields);
+  return makeEmptyDenseErrors(fields);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Validation                                                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Validate & freeze a dense error map.
+ */
+export function validateDenseErrorMap<TField extends string, TMsg>(
+  fields: readonly TField[],
+  dense: Record<TField, readonly TMsg[]>,
+): DenseErrorMap<TField, TMsg> {
+  for (const f of fields) {
+    if (!(f in dense)) {
+      throw new Error(`Missing field in dense error map: ${f}`);
+    }
+    if (!Array.isArray(dense[f])) {
+      throw new Error(`Invalid value for field ${f}`);
+    }
+  }
+  // Freeze inner arrays (copy) and then freeze the object to prevent mutation leakage
+  const normalized = Object.fromEntries(
+    fields.map((f) => [f, Object.freeze([...(dense[f] as readonly TMsg[])])]),
+  ) as Record<TField, readonly TMsg[]>;
+  return Object.freeze(normalized) as DenseErrorMap<TField, TMsg>;
 }

@@ -15,7 +15,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
-import { toDenseFormErrors } from "@/shared/forms/error-mapping";
+import { sparseToDense } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
@@ -23,10 +23,8 @@ import { ROUTES } from "@/shared/routes/routes";
 // Small helpers to keep main flow concise
 const fields = LOGIN_FIELDS;
 
-function emptyErrors(): ReturnType<
-  typeof toDenseFormErrors<LoginFormFieldNames>
-> {
-  return toDenseFormErrors<LoginFormFieldNames>({}, fields);
+function emptyErrors(): ReturnType<typeof sparseToDense<LoginFormFieldNames>> {
+  return sparseToDense<LoginFormFieldNames>({}, fields);
 }
 
 function invalidCredentialsState(
