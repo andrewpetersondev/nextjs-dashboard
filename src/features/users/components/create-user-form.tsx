@@ -8,12 +8,12 @@ import {
   CreateUserFormSchema,
 } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
-import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
+import { buildInitialFailureFormStateFromZodSchema } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 
 export function CreateUserForm(): JSX.Element {
   const initialState =
-    createInitialFailureStateFromSchema(CreateUserFormSchema);
+    buildInitialFailureFormStateFromZodSchema(CreateUserFormSchema);
   const [state, action, pending] = useActionState<
     FormState<CreateUserFormFieldNames>,
     FormData

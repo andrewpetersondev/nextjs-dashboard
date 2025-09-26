@@ -10,12 +10,13 @@ import {
   type LoginFormFieldNames,
   LoginFormSchema,
 } from "@/features/auth/lib/auth.schema";
-import { createInitialFailureStateFromSchema } from "@/shared/forms/error-mapping";
+import { buildInitialFailureFormStateFromZodSchema } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = createInitialFailureStateFromSchema(LoginFormSchema);
+const INITIAL_STATE =
+  buildInitialFailureFormStateFromZodSchema(LoginFormSchema);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 

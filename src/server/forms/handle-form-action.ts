@@ -11,7 +11,7 @@ import "server-only";
 
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { sparseToDense } from "@/shared/forms/error-mapping";
+import { expandSparseToDenseErrors } from "@/shared/forms/error-mapping";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
@@ -43,7 +43,7 @@ function toFailureState<TFieldNames extends string, TOut>(
   args: FailureArgs<TFieldNames>,
 ): FormState<TFieldNames, TOut> {
   const { failureMessage, fields, redactFields, raw, dense } = args;
-  const errs = dense ?? sparseToDense<TFieldNames>({}, fields);
+  const errs = dense ?? expandSparseToDenseErrors<TFieldNames>({}, fields);
   return resultToFormState<TFieldNames, TOut>(
     { error: errs, success: false },
     { failureMessage, fields, raw, redactFields },
@@ -143,7 +143,7 @@ async function _handleFormAction<
     });
     const dense = isZodError(parsed.error)
       ? zodToDenseErrors(parsed.error, fields)
-      : sparseToDense<TFieldNames>({}, fields);
+      : expandSparseToDenseErrors<TFieldNames>({}, fields);
     return toFailureState<TFieldNames, TOut>({
       dense,
       failureMessage,
@@ -186,7 +186,7 @@ async function _handleFormAction<
     const dense =
       typeof errorsFromError === "function"
         ? errorsFromError(error, fields)
-        : sparseToDense<TFieldNames>({}, fields);
+        : expandSparseToDenseErrors<TFieldNames>({}, fields);
     const message =
       typeof messageFromError === "function"
         ? messageFromError(error)

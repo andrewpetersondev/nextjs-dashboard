@@ -12,7 +12,7 @@ import { getDB } from "@/server/db/connection";
 import { UsersRepository } from "@/server/users/repo";
 import { UsersService } from "@/server/users/service";
 import { toUserId } from "@/shared/domain/id-converters";
-import { makeEmptyDenseErrors } from "@/shared/forms/error-mapping";
+import { createEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
@@ -30,7 +30,7 @@ function repoErrorToDense<TField extends SignupFormFieldNames>(
   fields: readonly TField[],
 ): DenseErrorMap<TField> {
   // Build a dense map with empty readonly arrays (typed safely)
-  const empty = makeEmptyDenseErrors(fields);
+  const empty = createEmptyDenseErrorMap(fields);
   // Attach the error message to the first field as a generic/root message
   const target = (fields[0] ?? ("username" as TField)) as TField;
   return { ...empty, [target]: [e.message] as const };
@@ -52,7 +52,7 @@ export async function signup(
 
   const parsed = SignupFormSchema.safeParse(raw);
   if (!parsed.success) {
-    const dense = makeEmptyDenseErrors<SignupFormFieldNames>(fields);
+    const dense = createEmptyDenseErrorMap<SignupFormFieldNames>(fields);
     return {
       errors: dense,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,

@@ -14,8 +14,8 @@ import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
 import {
-  sparseToDense,
-  toDenseErrors_ValidateForm,
+  expandSparseToDenseErrors,
+  toDenseFieldErrorsFromZodError,
 } from "@/shared/forms/error-mapping";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
@@ -131,7 +131,7 @@ export async function validateFormGeneric<
   if (!parsed.success) {
     logValidationFailure(loggerContext, parsed.error);
     const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
-      error: toDenseErrors_ValidateForm<TFieldNames>(parsed.error, fields),
+      error: toDenseFieldErrorsFromZodError<TFieldNames>(parsed.error, fields),
       success: false,
     };
 
@@ -155,7 +155,7 @@ export async function validateFormGeneric<
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
     const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
-      error: sparseToDense<TFieldNames>({}, fields),
+      error: expandSparseToDenseErrors<TFieldNames>({}, fields),
       success: false,
     };
     return resultToFormState(result, { fields, raw });
