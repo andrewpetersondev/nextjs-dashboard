@@ -9,13 +9,17 @@ import { emptyToUndefined } from "@/shared/utils/string";
 
 /**
  * Utility to create optional, preprocessed edit fields.
+ *
+ * - Converts empty strings to undefined (so optional() works for HTML forms).
+ * - Wraps with .optional() at the end to preserve inner transforms.
  */
-function optionalEdit<T extends z.ZodTypeAny>(schema: T) {
-  return z.preprocess(emptyToUndefined, schema.optional());
+function optionalEdit<T extends z.ZodType>(schema: T) {
+  return z.preprocess(emptyToUndefined, schema).optional();
 }
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.
+ * Uses pipe to ensure validation runs on the normalized value.
  */
 export const roleSchema = z
   .string()
@@ -30,17 +34,21 @@ export const roleSchema = z
 
 /**
  * Base schema for user forms (create).
+ * Use strictObject to reject unknown keys early.
  */
-export const UserFormBaseSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-  role: roleSchema,
-  username: usernameSchema,
+export const UserFormBaseSchema = z.strictObject({
+  email: emailSchema, // already trims + lowercases via pipe
+  password: passwordSchema, // trims with strength rules
+  role: roleSchema, // normalized + validated
+  username: usernameSchema, // trims + lowercases
 });
 
 export const CreateUserFormSchema = UserFormBaseSchema;
 
-// Optional, preprocessed fields for edit
+/**
+ * Optional, preprocessed fields for edit.
+ * Each field accepts empty string as "unset" and otherwise applies full normalization.
+ */
 export const emailEdit = optionalEdit(emailSchema);
 export const passwordEdit = optionalEdit(passwordSchema);
 export const roleEdit = optionalEdit(roleSchema);
@@ -48,8 +56,9 @@ export const usernameEdit = optionalEdit(usernameSchema);
 
 /**
  * Edit schema with all fields optional after preprocessing.
+ * strictObject ensures unknown keys are rejected.
  */
-export const EditUserFormSchema = z.object({
+export const EditUserFormSchema = z.strictObject({
   email: emailEdit,
   password: passwordEdit,
   role: roleEdit,
@@ -64,8 +73,6 @@ export type CreateUserFormFieldNames = keyof CreateUserInput;
 export type EditUserInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserInput;
 
-// Zod Infer (post-parse)
-export type EditUserFormValues = z.infer<typeof EditUserFormSchema>;
-
-// Backwards compatibility
-export type BaseUserFormFieldNames = keyof CreateUserInput;
+// Zod Output (post-parse)
+export type CreateUserValues = z.output<typeof CreateUserFormSchema>;
+export type EditUserFormValues = z.output<typeof EditUserFormSchema>;

@@ -90,18 +90,6 @@ async function validateForm(
     {
       fields: ctx.fields,
       raw: ctx.raw,
-      transform: async (data: EditUserFormValues) => ({
-        ...data,
-        email:
-          typeof data.email === "string"
-            ? data.email.trim().toLowerCase()
-            : data.email,
-        // role is already normalized and validated by the schema, don't widen it
-        username:
-          typeof data.username === "string"
-            ? data.username.trim()
-            : data.username,
-      }),
     },
   );
   return result;
@@ -141,6 +129,8 @@ async function buildPatch(
  * @param id - Target user ID.
  * @param _prevState - Previous form state (unused).
  * @param formData - Submitted form payload.
+ *
+ * @remarks - TODO: THIS FORM OR FORM-ACTION NO LONGER ACCEPTS PARTIAL INPUTS
  */
 export async function updateUserAction(
   id: string,
