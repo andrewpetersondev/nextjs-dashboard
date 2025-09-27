@@ -8,7 +8,7 @@
  * Keep: dense internally for determinism, sparse for UI.
  */
 
-import { type ZodRawShape, type ZodTypeAny, z } from "zod";
+import { type ZodRawShape, z } from "zod";
 import {
   expandSparseToDenseErrors,
   pickSparseErrorsFromAllowedFields,
@@ -17,6 +17,16 @@ import type { DenseErrorMap, SparseErrorMap } from "@/shared/forms/form-types";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
 export type ZodFieldErrors = Record<string, readonly string[] | undefined>;
+
+/**
+ * Infers and returns the provided schema.
+ *
+ * @param schema - The Zod schema of type T to be inferred.
+ * @return The inferred schema of type T.
+ */
+export function inferSchema<T extends z.ZodType>(schema: T): T {
+  return schema;
+}
 
 /**
  * Flatten a ZodError using Zod's built-in API, normalizing optional properties.
@@ -75,7 +85,7 @@ export function zodToDenseErrors<TFieldNames extends string>(
  * ```
  */
 export function isZodObject(
-  schema: ZodTypeAny,
+  schema: z.ZodType,
 ): schema is z.ZodObject<ZodRawShape> {
   return schema instanceof z.ZodObject;
 }
