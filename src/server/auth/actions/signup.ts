@@ -7,6 +7,7 @@ import {
   type SignupFormInput,
   SignupFormSchema,
 } from "@/features/auth/lib/auth.schema";
+import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
@@ -18,13 +19,6 @@ import { createEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
 import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
-
-type SignupSuccess = {
-  id: string;
-  email: string;
-  username: string;
-  role: string;
-};
 
 function repoErrorToDense<TField extends SignupFormFieldNames>(
   e: { kind: "DatabaseError" | "CreateFailed"; message: string },
@@ -70,7 +64,7 @@ export async function signup(
   // Map repository/service failure to a dense error map and consistent failure state
   if (!res.success) {
     const denseErrors = repoErrorToDense(res.error, fields);
-    return resultToFormState<SignupFormFieldNames, SignupSuccess>(
+    return resultToFormState<SignupFormFieldNames, UserDto>(
       { error: denseErrors, success: false },
       {
         fields,
