@@ -10,8 +10,8 @@
 
 import { type ZodRawShape, z } from "zod";
 import {
-  expandSparseToDenseErrors,
-  pickSparseErrorsFromAllowedFields,
+  expandSparseErrorsToDense,
+  pickAllowedSparseFieldErrors,
 } from "@/shared/forms/error-mapping";
 import type { DenseErrorMap, SparseErrorMap } from "@/shared/forms/form-types";
 
@@ -52,7 +52,7 @@ export function zodToSparseErrors<TFieldNames extends string>(
   allowedFields: readonly TFieldNames[],
 ): SparseErrorMap<TFieldNames> {
   const { fieldErrors } = flattenZodError(error);
-  return pickSparseErrorsFromAllowedFields<TFieldNames, string>(
+  return pickAllowedSparseFieldErrors<TFieldNames, string>(
     fieldErrors,
     allowedFields,
   );
@@ -67,7 +67,7 @@ export function zodToDenseErrors<TFieldNames extends string>(
   allowedFields: readonly TFieldNames[],
 ): DenseErrorMap<TFieldNames> {
   const sparse = zodToSparseErrors(error, allowedFields);
-  return expandSparseToDenseErrors(sparse, allowedFields);
+  return expandSparseErrorsToDense(sparse, allowedFields);
 }
 
 /**

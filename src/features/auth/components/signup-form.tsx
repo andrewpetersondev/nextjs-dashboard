@@ -13,13 +13,13 @@ import {
   SIGNUP_FIELDS,
   type SignupFormFieldNames,
 } from "@/features/auth/lib/auth.schema";
-import { buildInitialFailureFormState } from "@/shared/forms/error-mapping";
+import { buildInitialFailedFormState } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
 const INITIAL_STATE =
-  buildInitialFailureFormState<SignupFormFieldNames>(SIGNUP_FIELDS);
+  buildInitialFailedFormState<SignupFormFieldNames>(SIGNUP_FIELDS);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 

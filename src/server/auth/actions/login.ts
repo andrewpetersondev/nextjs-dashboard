@@ -15,7 +15,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
-import { createEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
+import { buildEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
@@ -23,7 +23,7 @@ import { ROUTES } from "@/shared/routes/routes";
 // Small helpers to keep main flow concise
 const fields = LOGIN_FIELDS;
 
-const dense = createEmptyDenseErrorMap<LoginFormFieldNames>(fields);
+const dense = buildEmptyDenseErrorMap<LoginFormFieldNames>(fields);
 
 function invalidCredentialsState(
   raw: Record<string, FormDataEntryValue>,

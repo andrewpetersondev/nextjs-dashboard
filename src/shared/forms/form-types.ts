@@ -80,7 +80,7 @@ export type SparseErrorMap<TField extends string, TMsg = string> = Partial<
  * @typeParam K - string-literal union of keys
  * @typeParam V - value type
  */
-export type DenseRecordReadonly<K extends string, V> = Readonly<Record<K, V>>;
+export type DenseReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;
 
 /**
  * Dense error map.
@@ -94,7 +94,7 @@ export type DenseRecordReadonly<K extends string, V> = Readonly<Record<K, V>>;
 export type DenseErrorMap<
   TField extends string,
   TMsg = string,
-> = DenseRecordReadonly<TField, readonly TMsg[]>;
+> = DenseReadonlyRecord<TField, readonly TMsg[]>;
 
 /* -------------------------------------------------------------------------- */
 /* Form state                                                                 */

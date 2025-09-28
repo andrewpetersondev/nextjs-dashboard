@@ -10,12 +10,12 @@ import {
   EditUserFormSchema,
 } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
-import { buildInitialFailureFormStateFromZodSchema } from "@/shared/forms/error-mapping";
+import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =
-    buildInitialFailureFormStateFromZodSchema(EditUserFormSchema);
+    buildInitialFailedFormStateFromSchema(EditUserFormSchema);
 
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: FormState<EditUserFormFieldNames>,

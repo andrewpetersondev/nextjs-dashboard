@@ -20,7 +20,7 @@ import { isZodErrorLike } from "@/shared/forms/zod-error";
 /**
  * Type guard to assert a readonly array is non-empty.
  */
-export function isNonEmpty<T>(
+export function hasItems<T>(
   arr: readonly T[] | undefined | null,
 ): arr is readonly [T, ...T[]] {
   return Array.isArray(arr) && arr.length > 0;
@@ -47,7 +47,7 @@ export function isNonEmpty<T>(
  * const sparse = toSparseErrors(all, allowed); // { email: ["Invalid"] }
  * ```
  */
-export function pickSparseErrorsFromAllowedFields<
+export function pickAllowedSparseFieldErrors<
   TFieldNames extends string,
   TMsg = string,
 >(
@@ -61,7 +61,7 @@ export function pickSparseErrorsFromAllowedFields<
     const maybeErrors = (
       fieldErrors as Record<string, readonly TMsg[] | undefined>
     )[key];
-    if (isNonEmpty(maybeErrors)) {
+    if (hasItems(maybeErrors)) {
       errors[key] = maybeErrors as FieldError<TMsg>;
     }
   }
@@ -79,7 +79,7 @@ export function pickSparseErrorsFromAllowedFields<
  * // { email: [], password: [] }
  * ```
  */
-export function createEmptyDenseErrorMap<TField extends string, TMsg = string>(
+export function buildEmptyDenseErrorMap<TField extends string, TMsg = string>(
   fields: readonly TField[],
 ): DenseErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
@@ -95,7 +95,7 @@ export function createEmptyDenseErrorMap<TField extends string, TMsg = string>(
  * - Keys missing from `sparse` will be set to `[]` (frozen copies).
  * - Preserves the order of `fields` passed in.
  */
-export function expandSparseToDenseErrors<TField extends string, TMsg = string>(
+export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
   sparse: SparseErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
 ): DenseErrorMap<TField, TMsg> {
@@ -115,7 +115,7 @@ export function expandSparseToDenseErrors<TField extends string, TMsg = string>(
  * - Fields whose array is `[]` are omitted from the result.
  * - Result uses `FieldError` (non-empty readonly arrays) for values.
  */
-export function compactDenseToSparseErrors<
+export function compactDenseErrorsToSparse<
   TField extends string,
   TMsg = string,
 >(dense: DenseErrorMap<TField, TMsg>): SparseErrorMap<TField, TMsg> {
@@ -142,11 +142,11 @@ export function compactDenseToSparseErrors<
 /**
  * Creates an initial failure state for a given set of form fields.
  */
-export function buildInitialFailureFormState<TFieldNames extends string>(
+export function buildInitialFailedFormState<TFieldNames extends string>(
   fieldNames: readonly TFieldNames[],
 ) {
   return {
-    errors: createEmptyDenseErrorMap(fieldNames),
+    errors: buildEmptyDenseErrorMap(fieldNames),
     message: "",
     success: false,
   } satisfies Extract<FormState<TFieldNames>, { success: false }>;
@@ -155,7 +155,7 @@ export function buildInitialFailureFormState<TFieldNames extends string>(
 /**
  * Creates an initial failure state for a given Zod object schema.
  */
-export function buildInitialFailureFormStateFromZodSchema<
+export function buildInitialFailedFormStateFromSchema<
   S extends z.ZodObject<z.ZodRawShape>,
 >(schema: S) {
   // Derive the field names directly from the schema
@@ -163,7 +163,7 @@ export function buildInitialFailureFormStateFromZodSchema<
 
   // Object.keys always returns string[], but narrowing it to FieldNames is safe here
   const fields = Object.keys(schema.shape) as readonly FieldNames[];
-  return buildInitialFailureFormState<FieldNames>(fields);
+  return buildInitialFailedFormState<FieldNames>(fields);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -174,7 +174,7 @@ export function buildInitialFailureFormStateFromZodSchema<
  * Convert a Zod-like error to dense, per-field errors aligned with known fields.
  * Falls back to an empty dense map when the error shape is not Zod-like.
  */
-export function toDenseFieldErrorsFromZodError<TFieldNames extends string>(
+export function toDenseFieldErrorsFromZod<TFieldNames extends string>(
   schemaError: unknown,
   fields: readonly TFieldNames[],
 ): DenseErrorMap<TFieldNames> {
@@ -183,13 +183,13 @@ export function toDenseFieldErrorsFromZodError<TFieldNames extends string>(
     typeof schemaError.flatten === "function"
   ) {
     const flattened = schemaError.flatten();
-    const sparse = pickSparseErrorsFromAllowedFields<TFieldNames, string>(
+    const sparse = pickAllowedSparseFieldErrors<TFieldNames, string>(
       flattened.fieldErrors,
       fields,
     );
-    return expandSparseToDenseErrors(sparse, fields);
+    return expandSparseErrorsToDense(sparse, fields);
   }
-  return createEmptyDenseErrorMap(fields);
+  return buildEmptyDenseErrorMap(fields);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -199,7 +199,7 @@ export function toDenseFieldErrorsFromZodError<TFieldNames extends string>(
 /**
  * Validate & freeze a dense error map.
  */
-export function assertValidDenseErrorMap<TField extends string, TMsg>(
+export function assertAndFreezeDenseErrorMap<TField extends string, TMsg>(
   fields: readonly TField[],
   dense: Record<TField, readonly TMsg[]>,
 ): DenseErrorMap<TField, TMsg> {
@@ -229,19 +229,22 @@ export function assertValidDenseErrorMap<TField extends string, TMsg>(
  * @example
  * toRootDenseMessage(["email","password"], "Something failed") // puts message on "email"
  */
-export function toRootDenseMessage<TField extends string, TMsg = string>(
+export function attachRootDenseMessageToField<
+  TField extends string,
+  TMsg = string,
+>(
   fields: readonly TField[],
   message: TMsg,
   opts?: { field?: TField },
 ): DenseErrorMap<TField, TMsg> {
-  const dense = createEmptyDenseErrorMap<TField, TMsg>(fields);
+  const dense = buildEmptyDenseErrorMap<TField, TMsg>(fields);
   const target =
     opts?.field ?? (fields[0] as TField | undefined) ?? ("" as TField);
   // If fields list might be empty, fall back to returning the empty dense map.
   if (!target || !fields.includes(target)) {
     return dense;
   }
-  return assertValidDenseErrorMap(fields, {
+  return assertAndFreezeDenseErrorMap(fields, {
     ...dense,
     [target]: Object.freeze([message]) as readonly TMsg[],
   } as Record<TField, readonly TMsg[]>);
@@ -255,7 +258,7 @@ export function toRootDenseMessage<TField extends string, TMsg = string>(
  * - Fall back to a generic message.
  * - Attach to the first field (or provided field) to keep UI wiring simple.
  */
-export function repoErrorToDenseGeneric<TField extends string>(
+export function mapRepoErrorToDenseFieldErrors<TField extends string>(
   error: unknown,
   fields: readonly TField[],
   opts?: {
@@ -287,5 +290,5 @@ export function repoErrorToDenseGeneric<TField extends string>(
     });
 
   const msg = extract(error) ?? defaultMsg;
-  return toRootDenseMessage(fields, msg, { field: opts?.field });
+  return attachRootDenseMessageToField(fields, msg, { field: opts?.field });
 }

@@ -14,8 +14,8 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import {
-  expandSparseToDenseErrors,
-  pickSparseErrorsFromAllowedFields,
+  expandSparseErrorsToDense,
+  pickAllowedSparseFieldErrors,
 } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-fields";
@@ -60,8 +60,8 @@ export async function createUserAction(
 
     if (!parsed.success) {
       return {
-        errors: expandSparseToDenseErrors(
-          pickSparseErrorsFromAllowedFields(
+        errors: expandSparseErrorsToDense(
+          pickAllowedSparseFieldErrors(
             parsed.error.flatten().fieldErrors,
             allowed,
           ),
@@ -87,7 +87,7 @@ export async function createUserAction(
         safeMeta: { email, username },
       });
       return {
-        errors: expandSparseToDenseErrors({}, allowed),
+        errors: expandSparseErrorsToDense({}, allowed),
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
@@ -105,7 +105,7 @@ export async function createUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
     return {
-      errors: expandSparseToDenseErrors({}, allowed),
+      errors: expandSparseErrorsToDense({}, allowed),
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     };
