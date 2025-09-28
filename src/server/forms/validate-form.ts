@@ -38,7 +38,14 @@ type ValidateFormOptions<
   TOut = TIn,
   TFieldNames extends string = keyof TIn & string,
 > = {
-  /** Optional post-parse transform. Can be async. */
+  /**
+   * @deprecated
+   *
+   * Optional post-parse transform. Can be async.
+   * @remarks:
+   * - TODO: MOVE ALL TRANSFORMATIONS TO ZOD SCHEMAS.
+   * - DO NOT USE.
+   */
   readonly transform?: (data: TIn) => TOut | Promise<TOut>;
   /** Optional explicit field list; skips derivation. */
   readonly fields?: readonly TFieldNames[];
