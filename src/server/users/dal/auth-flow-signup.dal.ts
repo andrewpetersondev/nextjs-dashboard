@@ -10,9 +10,9 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { ConflictError } from "@/server/users/auth-flow-repo.user";
 import type { UserEntity } from "@/server/users/entity";
 import { userDbRowToEntity } from "@/server/users/mapper";
+import { ConflictError } from "@/shared/core/errors/domain";
 
 /**
  * Input for the auth-signup DAL: strictly what the public signup form provides.

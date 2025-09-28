@@ -6,14 +6,14 @@ import type { UserDto } from "@/features/users/lib/dto";
 import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import {
-  AuthUserRepo,
-  ConflictError,
-  ValidationError,
-} from "@/server/users/auth-flow-repo.user";
+import { AuthUserRepo } from "@/server/users/auth-flow-repo.user";
 import type { AuthSignupDalInput } from "@/server/users/dal/auth-flow-signup.dal";
 import { userEntityToDto } from "@/server/users/mapper";
-import { UnauthorizedError } from "@/shared/core/errors/domain";
+import {
+  ConflictError,
+  UnauthorizedError,
+  ValidationError,
+} from "@/shared/core/errors/domain";
 import type { Result } from "@/shared/core/result/result-base";
 import { Err, Ok } from "@/shared/core/result/result-base";
 import type { DenseErrorMap } from "@/shared/forms/form-types";
