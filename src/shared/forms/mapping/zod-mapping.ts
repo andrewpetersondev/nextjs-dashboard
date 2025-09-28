@@ -10,9 +10,10 @@
 
 import { type ZodRawShape, z } from "zod";
 import {
+  buildEmptyDenseErrorMap,
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
-} from "@/shared/forms/mapping/error-mapping";
+} from "@/shared/forms/mapping/error-utils";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
@@ -138,4 +139,26 @@ export function isZodErrorLikeShape(err: unknown): err is {
   const flattenLooksRight = typeof anyErr.flatten === "function";
 
   return nameLooksRight || issuesLooksRight || flattenLooksRight;
+}
+
+/**
+ * Convert a Zod-like error to dense, per-field errors aligned with known fields.
+ * Falls back to an empty dense map when the error shape is not Zod-like.
+ */
+export function mapToDenseFieldErrorsFromZod<TFieldNames extends string>(
+  schemaError: unknown,
+  fields: readonly TFieldNames[],
+): DenseFieldErrorMap<TFieldNames> {
+  if (
+    isZodErrorLikeShape(schemaError) &&
+    typeof schemaError.flatten === "function"
+  ) {
+    const flattened = schemaError.flatten();
+    const sparse = pickAllowedSparseFieldErrors<TFieldNames, string>(
+      flattened.fieldErrors,
+      fields,
+    );
+    return expandSparseErrorsToDense(sparse, fields);
+  }
+  return buildEmptyDenseErrorMap(fields);
 }

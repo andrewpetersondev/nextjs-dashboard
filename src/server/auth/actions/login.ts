@@ -15,7 +15,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
-import { buildEmptyDenseErrorMap } from "@/shared/forms/mapping/error-mapping";
+import { buildEmptyDenseErrorMap } from "@/shared/forms/mapping/error-utils";
 import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
 import type { FormState } from "@/shared/forms/types/form-state";
 import { ROUTES } from "@/shared/routes/routes";

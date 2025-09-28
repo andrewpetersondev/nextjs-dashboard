@@ -13,11 +13,11 @@ import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
+import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-utils";
 import {
-  expandSparseErrorsToDense,
-  toDenseFieldErrorsFromZod,
-} from "@/shared/forms/mapping/error-mapping";
-import { isZodErrorLikeShape } from "@/shared/forms/mapping/zod-mapping";
+  isZodErrorLikeShape,
+  mapToDenseFieldErrorsFromZod,
+} from "@/shared/forms/mapping/zod-mapping";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages/form-messages";
 import {
   resolveCanonicalFieldNames,
@@ -139,7 +139,7 @@ export async function validateFormGeneric<
   if (!parsed.success) {
     logValidationFailure(loggerContext, parsed.error);
     const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
-      error: toDenseFieldErrorsFromZod<TFieldNames>(parsed.error, fields),
+      error: mapToDenseFieldErrorsFromZod<TFieldNames>(parsed.error, fields),
       success: false,
     };
 

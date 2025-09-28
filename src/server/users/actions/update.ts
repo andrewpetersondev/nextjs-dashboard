@@ -25,7 +25,7 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-mapping";
+import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-utils";
 import { resolveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
 import {
   extractRawFromFormData,
