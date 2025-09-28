@@ -11,7 +11,7 @@ import { useAutoHideAlert } from "@/features/invoices/hooks/useAutoHideAlert";
 import {
   type EditInvoiceViewModel,
   type UpdateInvoiceFieldNames,
-  type UpdateInvoiceInput,
+  type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
@@ -30,9 +30,9 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
   return async (
-    prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
+    prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
     formData: FormData,
-  ): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>> =>
+  ): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
@@ -103,7 +103,7 @@ export const EditInvoiceForm = ({
     buildInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
 
   const [state, action, pending] = useActionState<
-    FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
+    FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
     FormData
   >(createWrappedUpdateAction(invoice.id), initialState);
 

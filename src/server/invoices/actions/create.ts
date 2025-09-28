@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
 import {
   type CreateInvoiceFieldNames,
-  type CreateInvoiceInput,
+  type CreateInvoiceOutput,
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
@@ -34,10 +34,10 @@ const allowed = deriveSchemaFieldNames(CreateInvoiceSchema);
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function createInvoiceAction(
-  prevState: FormState<CreateInvoiceFieldNames, CreateInvoiceInput>,
+  prevState: FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
   formData: FormData,
-): Promise<FormState<CreateInvoiceFieldNames, CreateInvoiceInput>> {
-  let result: FormState<CreateInvoiceFieldNames, CreateInvoiceInput>;
+): Promise<FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> {
+  let result: FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
 
   try {
     const input: InvoiceFormDto = {

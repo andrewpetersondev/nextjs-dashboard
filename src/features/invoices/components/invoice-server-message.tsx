@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import type {
   UpdateInvoiceFieldNames,
-  UpdateInvoiceInput,
+  UpdateInvoiceOutput,
 } from "@/features/invoices/lib/invoice.schema";
 import type { FormState } from "@/shared/forms/types/form-state";
 
@@ -10,7 +10,7 @@ import type { FormState } from "@/shared/forms/types/form-state";
  */
 interface InvoiceServerMessageProps {
   showAlert: boolean;
-  state: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>;
+  state: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>;
 }
 
 /**

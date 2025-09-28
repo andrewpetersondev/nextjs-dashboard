@@ -115,20 +115,18 @@ export const SignupFormSchema = AuthFormBaseSchema.safeExtend({
 
 /** Input type for login forms (pre-parse). */
 export type LoginFormInput = z.input<typeof LoginFormSchema>;
-/** Union of valid login form field names. */
-export type LoginFormFieldNames = keyof LoginFormInput;
 /** Input type for signup forms (pre-parse). */
 export type SignupFormInput = z.input<typeof SignupFormSchema>;
+
+/** Output type for login forms (post-parse). */
+export type LoginFormOutput = z.output<typeof LoginFormSchema>;
+/** Output type for signup forms (post-parse). */
+export type SignupFormOutput = z.output<typeof SignupFormSchema>;
+
+/** Union of valid login form field names. */
+export type LoginFormFieldNames = keyof LoginFormInput;
 /** Union of valid signup form field names. */
 export type SignupFormFieldNames = keyof SignupFormInput;
-/**
- * Output type for login forms (post-parse).
- */
-export type LoginFormOutput = z.output<typeof LoginFormSchema>;
-/**
- * Output type for signup forms (post-parse).
- */
-export type SignupFormOutput = z.output<typeof SignupFormSchema>;
 
 /**
  * Runtime list of signup field names derived from schema shape.

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
 import {
   type UpdateInvoiceFieldNames,
-  type UpdateInvoiceInput,
+  type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
@@ -25,25 +25,6 @@ import type { FormState } from "@/shared/forms/types/form-state";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 
-function buildUpdateInput(formData: FormData): Partial<InvoiceFormDto> {
-  return {
-    ...(formData.has("amount") && {
-      // Amount comes from the form in USD; schema transforms to integer cents
-      amount: Number(formData.get("amount")),
-    }),
-    ...(formData.has("customerId") && {
-      customerId: String(formData.get("customerId")),
-    }),
-    ...(formData.has("date") && { date: String(formData.get("date")) }),
-    ...(formData.has("sensitiveData") && {
-      sensitiveData: String(formData.get("sensitiveData")),
-    }),
-    ...(formData.has("status") && {
-      status: String(formData.get("status")) as InvoiceStatus,
-    }),
-  };
-}
-
 // Publish "invoice updated" domain event
 async function publishUpdatedEvent(
   previousInvoice: InvoiceDto,
@@ -61,7 +42,7 @@ async function publishUpdatedEvent(
 
 function handleActionError<
   N extends UpdateInvoiceFieldNames,
-  F extends UpdateInvoiceInput,
+  F extends UpdateInvoiceOutput,
 >(prevState: FormState<N, F>, id: string, error: unknown): FormState<N, F> {
   serverLogger.error({
     context: "updateInvoiceAction",
@@ -90,12 +71,18 @@ function handleActionError<
  * @returns FormState with data, errors, message, and success
  */
 export async function updateInvoiceAction(
-  prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>,
+  prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
   id: string,
   formData: FormData,
-): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceInput>> {
+): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> {
   try {
-    const input = buildUpdateInput(formData);
+    const input = {
+      amount: formData.get("amount"),
+      customerId: formData.get("customerId"),
+      date: formData.get("date"),
+      sensitiveData: formData.get("sensitiveData"),
+      status: formData.get("status"),
+    };
     const parsed = UpdateInvoiceSchema.safeParse(input);
 
     if (!parsed.success) {

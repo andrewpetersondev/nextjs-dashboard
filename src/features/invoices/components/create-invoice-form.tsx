@@ -10,7 +10,7 @@ import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
 import {
   type CreateInvoiceFieldNames,
-  type CreateInvoiceInput,
+  type CreateInvoiceOutput,
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
@@ -26,14 +26,13 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 const INITIAL_STATE =
   buildInitialFailedFormStateFromSchema(CreateInvoiceSchema);
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <its clean>
 export const CreateInvoiceForm = ({
   customers,
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    FormState<CreateInvoiceFieldNames, CreateInvoiceInput>,
+    FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 

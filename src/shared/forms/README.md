@@ -21,10 +21,11 @@ UI → Action → Service → Repository → DAL
 
 UI ← Action ← Service ← Repository ← DAL
 
-## Common Schema Patterns
+## Zod Schema Alignment
 
-Use Zod to transform/parse/validate/normalize as much code from the form as possible. This will make it easier to
-maintain and test. Zod
+- schema for input DOES NOT ALWAYS match schema for output.
+- refactor schemas for strictness
+- refactor zod schemas to preprocess/transform/parse/validate/normalize as much code from the form as possible.
 
 ## Create Flow
 
