@@ -27,11 +27,9 @@ import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-utils";
 import { resolveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
-import {
-  extractRawFromFormData,
-  mapResultToFormState,
-} from "@/shared/forms/state/result-to-form-state";
+import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
 import type { FormState } from "@/shared/forms/types/form-state";
+import { extractRawFromFormData } from "@/shared/forms/utils/formdata";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 // Helpers for brevity and strict typing

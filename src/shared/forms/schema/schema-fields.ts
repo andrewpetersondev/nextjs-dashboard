@@ -10,7 +10,7 @@
 
 import type { z } from "zod";
 import { isZodObjectSchema } from "@/shared/forms/mapping/zod-mapping";
-import { extractRawFromFormData } from "@/shared/forms/state/result-to-form-state";
+import { extractRawFromFormData } from "@/shared/forms/utils/formdata";
 
 /**
  * Derive allowed string field names from a Zod object schema.
