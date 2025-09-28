@@ -25,16 +25,6 @@ export type ZodFlattenedFieldErrors = Record<
 >;
 
 /**
- * Infers and returns the provided schema.
- *
- * @param schema - The Zod schema of type T to be inferred.
- * @return The inferred schema of type T.
- */
-export function inferZodSchema<T extends z.ZodType>(schema: T): T {
-  return schema;
-}
-
-/**
  * Flatten a ZodError using Zod's built-in API, normalizing optional properties.
  * Always returns arrays for formErrors and preserves fieldErrors sparsity.
  */

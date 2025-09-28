@@ -36,3 +36,13 @@ export type DenseFieldErrorMap<
   TField extends string,
   TMsg = string,
 > = DenseReadonlyRecord<TField, readonly TMsg[]>;
+/**
+ * Sparse map of form values: keys may be omitted (fields that were not submitted/are not present).
+ *
+ * @typeParam TField - string-literal union of field names (required).
+ * @typeParam TValue - raw value type for fields (default: string).
+ */
+export type SparseFieldValueMap<
+  TField extends string,
+  TValue = string,
+> = Partial<Record<TField, TValue>>;

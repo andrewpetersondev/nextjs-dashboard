@@ -12,23 +12,7 @@ import type {
   SparseFieldErrorMap,
 } from "@/shared/forms/types/field-errors";
 import type { FormState } from "@/shared/forms/types/form-state";
-
-/* -------------------------------------------------------------------------- */
-/* Predicates                                                                  */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Type guard to assert a readonly array is non-empty.
- */
-export function hasItems<T>(
-  arr: readonly T[] | undefined | null,
-): arr is readonly [T, ...T[]] {
-  return Array.isArray(arr) && arr.length > 0;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Sparse / Dense conversions                                                  */
-/* -------------------------------------------------------------------------- */
+import { hasItems } from "@/shared/forms/types/form-types";
 
 /**
  * Build a sparse error map restricted to allowed fields.

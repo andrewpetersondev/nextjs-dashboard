@@ -3,9 +3,11 @@ import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/messages/form-messages";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
+import type {
+  DenseFieldErrorMap,
+  SparseFieldValueMap,
+} from "@/shared/forms/types/field-errors";
 import type { FormState } from "@/shared/forms/types/form-state";
-import type { SparseFieldValueMap } from "@/shared/forms/types/form-types";
 
 /**
  * Builds a partial record of user-displayable string values from a raw payload.

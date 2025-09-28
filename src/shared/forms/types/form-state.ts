@@ -1,5 +1,7 @@
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
-import type { SparseFieldValueMap } from "@/shared/forms/types/form-types";
+import type {
+  DenseFieldErrorMap,
+  SparseFieldValueMap,
+} from "@/shared/forms/types/field-errors";
 
 /**
  * Successful form state.
