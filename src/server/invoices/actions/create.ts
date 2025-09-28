@@ -17,12 +17,12 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { FormState } from "@/shared/forms/form-types";
-import { deriveSchemaFieldNames } from "@/shared/forms/schema-fields";
 import {
   isZodErrorInstance,
   mapZodErrorToDenseFieldErrors,
-} from "@/shared/forms/zod-error";
+} from "@/shared/forms/mapping/zod-mapping";
+import { deriveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
+import type { FormState } from "@/shared/forms/types/form-state";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";

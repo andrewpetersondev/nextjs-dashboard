@@ -1,5 +1,5 @@
 import type { Brand } from "@/shared/core/branding/brand";
-import { isUuid } from "@/shared/core/validation/uuid";
+import { isUuid } from "@/shared/core/validation/primitives/uuid";
 import type {
   CUSTOMER_ID_BRAND,
   CustomerId,

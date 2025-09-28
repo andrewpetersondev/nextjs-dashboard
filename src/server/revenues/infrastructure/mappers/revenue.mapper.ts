@@ -4,13 +4,14 @@ import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { ensure } from "@/shared/core/validation/ensure";
+import { ensure } from "@/shared/core/validation/primitives/ensure";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/shared/core/validation/number";
+} from "@/shared/core/validation/primitives/number";
 import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
-import { isDateValid } from "@/shared/utils/date";
+
+import { isDateValid } from "@/shared/utils/date/guards";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.

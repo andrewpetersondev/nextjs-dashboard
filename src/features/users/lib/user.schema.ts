@@ -5,7 +5,7 @@ import {
   passwordSchema,
   usernameSchema,
 } from "@/features/auth/lib/auth.schema";
-import { toUndefinedIfEmptyString } from "@/shared/utils/string";
+import { toUndefinedIfEmptyString } from "@/shared/utils/string/normalize";
 
 /**
  * Utility to create optional, preprocessed edit fields.

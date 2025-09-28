@@ -8,8 +8,8 @@ import {
   CreateUserFormSchema,
 } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/error-mapping";
-import type { FormState } from "@/shared/forms/form-types";
+import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/mapping/error-mapping";
+import type { FormState } from "@/shared/forms/types/form-state";
 
 export function CreateUserForm(): JSX.Element {
   const initialState =

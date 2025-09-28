@@ -8,7 +8,7 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { FormState } from "@/shared/forms/form-types";
+import type { FormState } from "@/shared/forms/types/form-state";
 
 /**
  * Deletes a user by ID, revalidates and redirects.

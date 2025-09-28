@@ -1,23 +1,4 @@
-import { format, isValid } from "date-fns";
-import { ValidationError } from "@/shared/core/errors/domain";
-
-/**
- * Normalizes a Date to the first day of its month in UTC.
- * Throws ValidationError if the provided date is invalid.
- */
-export function toFirstDayOfMonthUTC(date: Date): Date {
-  if (!isValid(date)) {
-    throw new ValidationError("Invalid Date");
-  }
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
-}
-
-/**
- * Safe Date validator combining instanceof check with date-fns isValid.
- */
-export function isDateValid(value: unknown): value is Date {
-  return value instanceof Date && isValid(value);
-}
+import { format } from "date-fns";
 
 /**
  * Formats a Date as yyyy-MM (UTC-based string useful for keys).
@@ -66,12 +47,3 @@ export const formatDateLocalized = (
   );
   return formatter.format(date);
 };
-
-/**
- * Converts a date to the first day of the same month.
- * @param date - The input date
- * @returns A new Date object representing the first day of the month
- */
-export function toFirstDayOfMonthLocal(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}

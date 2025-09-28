@@ -12,11 +12,11 @@ import { type ZodRawShape, z } from "zod";
 import {
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
-} from "@/shared/forms/error-mapping";
+} from "@/shared/forms/mapping/error-mapping";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/form-types";
+} from "@/shared/forms/types/field-errors";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
 export type ZodFlattenedFieldErrors = Record<

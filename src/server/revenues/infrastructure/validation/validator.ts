@@ -5,7 +5,7 @@ import {
   type IntervalDuration,
 } from "@/features/revenues/constants/date";
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import { validateEnum } from "@/shared/core/validation/enum";
+import { validateEnum } from "@/shared/core/validation/domain/enum";
 
 /**
  * Validates and converts a value to an IntervalDuration

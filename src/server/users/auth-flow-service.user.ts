@@ -16,7 +16,8 @@ import {
 } from "@/shared/core/errors/domain";
 import type { Result } from "@/shared/core/result/result-base";
 import { Err, Ok } from "@/shared/core/result/result-base";
-import type { DenseFieldErrorMap } from "@/shared/forms/form-types";
+
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
 
 // Helper to build a dense error map for signup fields
 function denseSignupErrors(

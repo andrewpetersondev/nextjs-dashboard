@@ -12,7 +12,9 @@ import {
   toInvoiceId,
   toPeriod,
 } from "@/shared/domain/id-converters";
-import { isDateValid, toFirstDayOfMonthLocal } from "@/shared/utils/date";
+
+import { isDateValid } from "@/shared/utils/date/guards";
+import { toFirstDayOfMonthLocal } from "@/shared/utils/date/normalize";
 
 /**
  * Maps raw database row to branded Entity.

@@ -16,9 +16,9 @@ import { createUserDal } from "@/server/users/dal/create";
 import {
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
-} from "@/shared/forms/error-mapping";
-import type { FormState } from "@/shared/forms/form-types";
-import { deriveSchemaFieldNames } from "@/shared/forms/schema-fields";
+} from "@/shared/forms/mapping/error-mapping";
+import { deriveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
+import type { FormState } from "@/shared/forms/types/form-state";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

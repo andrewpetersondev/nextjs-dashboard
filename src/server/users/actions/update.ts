@@ -25,14 +25,14 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { expandSparseErrorsToDense } from "@/shared/forms/error-mapping";
-import type { FormState } from "@/shared/forms/form-types";
+import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-mapping";
+import { resolveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
 import {
   extractRawFromFormData,
   mapResultToFormState,
-} from "@/shared/forms/result-to-form-state";
-import { resolveSchemaFieldNames } from "@/shared/forms/schema-fields";
-import { diffShallowPatch } from "@/shared/utils/patch";
+} from "@/shared/forms/state/result-to-form-state";
+import type { FormState } from "@/shared/forms/types/form-state";
+import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 // Helpers for brevity and strict typing
 /** Selectable user fields used for diffing. */

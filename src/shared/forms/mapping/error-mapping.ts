@@ -5,13 +5,13 @@
  */
 
 import type { z } from "zod";
+import { isZodErrorLikeShape } from "@/shared/forms/mapping/zod-mapping";
 import type {
   DenseFieldErrorMap,
   FieldError,
-  FormState,
   SparseFieldErrorMap,
-} from "@/shared/forms/form-types";
-import { isZodErrorLikeShape } from "@/shared/forms/zod-error";
+} from "@/shared/forms/types/field-errors";
+import type { FormState } from "@/shared/forms/types/form-state";
 
 /* -------------------------------------------------------------------------- */
 /* Predicates                                                                  */

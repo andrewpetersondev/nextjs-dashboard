@@ -16,15 +16,16 @@ import type { Result } from "@/shared/core/result/result-base";
 import {
   expandSparseErrorsToDense,
   toDenseFieldErrorsFromZod,
-} from "@/shared/forms/error-mapping";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
-import type { DenseFieldErrorMap, FormState } from "@/shared/forms/form-types";
-import { mapResultToFormState } from "@/shared/forms/result-to-form-state";
+} from "@/shared/forms/mapping/error-mapping";
+import { isZodErrorLikeShape } from "@/shared/forms/mapping/zod-mapping";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages/form-messages";
 import {
   resolveCanonicalFieldNames,
   resolveRawFieldPayload,
-} from "@/shared/forms/schema-fields";
-import { isZodErrorLikeShape } from "@/shared/forms/zod-error";
+} from "@/shared/forms/schema/schema-fields";
+import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
+import type { FormState } from "@/shared/forms/types/form-state";
 
 /**
  * Options for validateFormGeneric.

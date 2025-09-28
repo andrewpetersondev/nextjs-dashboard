@@ -1,6 +1,6 @@
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
-import { formatYearMonthUTC } from "@/shared/utils/date";
+import { formatYearMonthUTC } from "@/shared/utils/date/format";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).

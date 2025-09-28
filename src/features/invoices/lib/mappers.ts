@@ -2,7 +2,7 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "@/features/invoices/lib/types";
-import { validateEnum } from "@/shared/core/validation/enum";
+import { validateEnum } from "@/shared/core/validation/domain/enum";
 
 /**
  * Validates and converts a value to an InvoiceStatus

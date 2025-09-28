@@ -7,7 +7,7 @@ import {
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { formatCurrency } from "@/shared/money/convert";
-import { formatDateLocalized } from "@/shared/utils/date";
+import { formatDateLocalized } from "@/shared/utils/date/format";
 
 /**
  * MobileTable component displays invoices in a mobile-friendly format.

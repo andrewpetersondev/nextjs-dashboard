@@ -16,12 +16,12 @@ import {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/error-mapping";
+import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/mapping/error-mapping";
 import type {
   DenseFieldErrorMap,
   FieldError,
-  FormState,
-} from "@/shared/forms/form-types";
+} from "@/shared/forms/types/field-errors";
+import type { FormState } from "@/shared/forms/types/form-state";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

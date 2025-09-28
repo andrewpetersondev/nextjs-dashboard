@@ -10,8 +10,8 @@ import {
   type LoginFormFieldNames,
   LoginFormSchema,
 } from "@/features/auth/lib/auth.schema";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/error-mapping";
-import type { FormState } from "@/shared/forms/form-types";
+import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/mapping/error-mapping";
+import type { FormState } from "@/shared/forms/types/form-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
