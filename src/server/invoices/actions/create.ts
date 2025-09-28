@@ -18,13 +18,16 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { FormState } from "@/shared/forms/form-types";
-import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-fields";
-import { isZodError, zodToDenseErrors } from "@/shared/forms/zod-error";
+import { deriveSchemaFieldNames } from "@/shared/forms/schema-fields";
+import {
+  isZodErrorInstance,
+  mapZodErrorToDenseFieldErrors,
+} from "@/shared/forms/zod-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";
 
-const allowed = deriveAllowedFieldsFromSchema(CreateInvoiceSchema);
+const allowed = deriveSchemaFieldNames(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.
@@ -70,14 +73,14 @@ export async function createInvoiceAction(
     } else {
       result = {
         ...prevState,
-        errors: zodToDenseErrors(parsed.error, allowed),
+        errors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
         message: translator(INVOICE_MSG.VALIDATION_FAILED),
         success: false,
       };
     }
   } catch (error) {
     // Decide the top-level user-facing message based on error type
-    const baseMessage = isZodError(error)
+    const baseMessage = isZodErrorInstance(error)
       ? translator(INVOICE_MSG.VALIDATION_FAILED)
       : toInvoiceErrorMessage(error);
 
@@ -90,8 +93,8 @@ export async function createInvoiceAction(
     result = {
       ...prevState,
       // Ensure errors always match the dense map type expected by FormState
-      errors: isZodError(error)
-        ? zodToDenseErrors(error, allowed)
+      errors: isZodErrorInstance(error)
+        ? mapZodErrorToDenseFieldErrors(error, allowed)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       message: baseMessage,
       success: false,

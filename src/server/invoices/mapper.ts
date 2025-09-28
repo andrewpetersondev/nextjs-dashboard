@@ -12,7 +12,7 @@ import {
   toInvoiceId,
   toPeriod,
 } from "@/shared/domain/id-converters";
-import { isValidDate, toFirstOfMonth } from "@/shared/utils/date";
+import { isDateValid, toFirstDayOfMonthLocal } from "@/shared/utils/date";
 
 /**
  * Maps raw database row to branded Entity.
@@ -40,12 +40,12 @@ export function invoiceFormEntityToServiceEntity(
   formEntity: InvoiceFormEntity,
 ): InvoiceServiceEntity {
   // Validate the existing Date object
-  if (!isValidDate(formEntity.date)) {
+  if (!isDateValid(formEntity.date)) {
     throw new Error(`Invalid date in form entity: ${formEntity.date}`);
   }
 
   // Derive revenue period from the validated date
-  const derivedRevenuePeriod = toFirstOfMonth(formEntity.date);
+  const derivedRevenuePeriod = toFirstDayOfMonthLocal(formEntity.date);
 
   return {
     ...formEntity,

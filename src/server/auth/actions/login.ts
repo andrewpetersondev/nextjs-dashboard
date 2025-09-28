@@ -17,7 +17,7 @@ import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import { toUserId } from "@/shared/domain/id-converters";
 import { buildEmptyDenseErrorMap } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { resultToFormState } from "@/shared/forms/result-to-form-state";
+import { mapResultToFormState } from "@/shared/forms/result-to-form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Small helpers to keep main flow concise
@@ -28,7 +28,7 @@ const dense = buildEmptyDenseErrorMap<LoginFormFieldNames>(fields);
 function invalidCredentialsState(
   raw: Record<string, FormDataEntryValue>,
 ): FormState<LoginFormFieldNames> {
-  return resultToFormState(
+  return mapResultToFormState(
     { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
@@ -41,7 +41,7 @@ function invalidCredentialsState(
 function unexpectedErrorState(
   raw: Record<string, FormDataEntryValue>,
 ): FormState<LoginFormFieldNames> {
-  return resultToFormState(
+  return mapResultToFormState(
     { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,

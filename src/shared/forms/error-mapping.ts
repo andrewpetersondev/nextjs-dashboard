@@ -6,12 +6,12 @@
 
 import type { z } from "zod";
 import type {
-  DenseErrorMap,
+  DenseFieldErrorMap,
   FieldError,
   FormState,
-  SparseErrorMap,
+  SparseFieldErrorMap,
 } from "@/shared/forms/form-types";
-import { isZodErrorLike } from "@/shared/forms/zod-error";
+import { isZodErrorLikeShape } from "@/shared/forms/zod-error";
 
 /* -------------------------------------------------------------------------- */
 /* Predicates                                                                  */
@@ -55,8 +55,8 @@ export function pickAllowedSparseFieldErrors<
     | Partial<Record<TFieldNames, readonly TMsg[] | undefined>>
     | Record<string, readonly TMsg[] | undefined>,
   allowedFields: readonly TFieldNames[],
-): SparseErrorMap<TFieldNames, TMsg> {
-  const errors: SparseErrorMap<TFieldNames, TMsg> = {};
+): SparseFieldErrorMap<TFieldNames, TMsg> {
+  const errors: SparseFieldErrorMap<TFieldNames, TMsg> = {};
   for (const key of allowedFields) {
     const maybeErrors = (
       fieldErrors as Record<string, readonly TMsg[] | undefined>
@@ -81,12 +81,12 @@ export function pickAllowedSparseFieldErrors<
  */
 export function buildEmptyDenseErrorMap<TField extends string, TMsg = string>(
   fields: readonly TField[],
-): DenseErrorMap<TField, TMsg> {
+): DenseFieldErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
     result[f] = Object.freeze([]) as readonly TMsg[];
   }
-  return Object.freeze(result) as DenseErrorMap<TField, TMsg>;
+  return Object.freeze(result) as DenseFieldErrorMap<TField, TMsg>;
 }
 
 /**
@@ -96,9 +96,9 @@ export function buildEmptyDenseErrorMap<TField extends string, TMsg = string>(
  * - Preserves the order of `fields` passed in.
  */
 export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
-  sparse: SparseErrorMap<TField, TMsg> | undefined,
+  sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
-): DenseErrorMap<TField, TMsg> {
+): DenseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
     const v = sparse?.[f];
@@ -106,7 +106,7 @@ export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
       ? (Object.freeze([...v]) as readonly TMsg[])
       : (Object.freeze([]) as readonly TMsg[]);
   }
-  return Object.freeze(out) as DenseErrorMap<TField, TMsg>;
+  return Object.freeze(out) as DenseFieldErrorMap<TField, TMsg>;
 }
 
 /**
@@ -118,7 +118,7 @@ export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
 export function compactDenseErrorsToSparse<
   TField extends string,
   TMsg = string,
->(dense: DenseErrorMap<TField, TMsg>): SparseErrorMap<TField, TMsg> {
+>(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, FieldError<TMsg>>> = {};
 
   // Iterate over all keys in the dense map
@@ -132,7 +132,7 @@ export function compactDenseErrorsToSparse<
     }
   }
 
-  return out as SparseErrorMap<TField, TMsg>;
+  return out as SparseFieldErrorMap<TField, TMsg>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -177,9 +177,9 @@ export function buildInitialFailedFormStateFromSchema<
 export function toDenseFieldErrorsFromZod<TFieldNames extends string>(
   schemaError: unknown,
   fields: readonly TFieldNames[],
-): DenseErrorMap<TFieldNames> {
+): DenseFieldErrorMap<TFieldNames> {
   if (
-    isZodErrorLike(schemaError) &&
+    isZodErrorLikeShape(schemaError) &&
     typeof schemaError.flatten === "function"
   ) {
     const flattened = schemaError.flatten();
@@ -202,7 +202,7 @@ export function toDenseFieldErrorsFromZod<TFieldNames extends string>(
 export function assertAndFreezeDenseErrorMap<TField extends string, TMsg>(
   fields: readonly TField[],
   dense: Record<TField, readonly TMsg[]>,
-): DenseErrorMap<TField, TMsg> {
+): DenseFieldErrorMap<TField, TMsg> {
   for (const f of fields) {
     if (!(f in dense)) {
       throw new Error(`Missing field in dense error map: ${f}`);
@@ -215,7 +215,7 @@ export function assertAndFreezeDenseErrorMap<TField extends string, TMsg>(
   const normalized = Object.fromEntries(
     fields.map((f) => [f, Object.freeze([...(dense[f] as readonly TMsg[])])]),
   ) as Record<TField, readonly TMsg[]>;
-  return Object.freeze(normalized) as DenseErrorMap<TField, TMsg>;
+  return Object.freeze(normalized) as DenseFieldErrorMap<TField, TMsg>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -236,7 +236,7 @@ export function attachRootDenseMessageToField<
   fields: readonly TField[],
   message: TMsg,
   opts?: { field?: TField },
-): DenseErrorMap<TField, TMsg> {
+): DenseFieldErrorMap<TField, TMsg> {
   const dense = buildEmptyDenseErrorMap<TField, TMsg>(fields);
   const target =
     opts?.field ?? (fields[0] as TField | undefined) ?? ("" as TField);
@@ -271,7 +271,7 @@ export function mapRepoErrorToDenseFieldErrors<TField extends string>(
     /** Fallback message if nothing can be extracted. */
     defaultMessage?: string;
   },
-): DenseErrorMap<TField> {
+): DenseFieldErrorMap<TField> {
   const defaultMsg =
     opts?.defaultMessage ?? "Operation failed. Please try again.";
   const extract =

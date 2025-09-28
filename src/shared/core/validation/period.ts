@@ -1,7 +1,7 @@
 import { format, isValid, parse } from "date-fns";
 import { ValidationError } from "@/shared/core/errors/domain";
 import { Err, Ok, type Result } from "@/shared/core/result/result-base";
-import { isValidDate, normalizeToFirstOfMonthUTC } from "@/shared/utils/date";
+import { isDateValid, toFirstDayOfMonthUTC } from "@/shared/utils/date";
 
 /**
  * Result-based normalization into a first-of-month UTC Date.
@@ -10,12 +10,12 @@ export function validatePeriodResult(
   input: unknown,
 ): Result<Date, ValidationError> {
   if (input instanceof Date) {
-    if (!isValidDate(input)) {
+    if (!isDateValid(input)) {
       return Err(
         new ValidationError("Invalid Date provided for period conversion"),
       );
     }
-    return Ok(normalizeToFirstOfMonthUTC(input));
+    return Ok(toFirstDayOfMonthUTC(input));
   }
 
   if (typeof input === "string") {
@@ -23,7 +23,7 @@ export function validatePeriodResult(
     const parsedMonth = parse(input, "yyyy-MM", new Date());
 
     if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === input) {
-      return Ok(normalizeToFirstOfMonthUTC(parsedMonth));
+      return Ok(toFirstDayOfMonthUTC(parsedMonth));
     }
 
     // Try yyyy-MM-dd format (must be first day of month)
@@ -37,7 +37,7 @@ export function validatePeriodResult(
           ),
         );
       }
-      return Ok(normalizeToFirstOfMonthUTC(parsedDay));
+      return Ok(toFirstDayOfMonthUTC(parsedDay));
     }
 
     return Err(

@@ -5,7 +5,7 @@ import {
   passwordSchema,
   usernameSchema,
 } from "@/features/auth/lib/auth.schema";
-import { emptyToUndefined } from "@/shared/utils/string";
+import { toUndefinedIfEmptyString } from "@/shared/utils/string";
 
 /**
  * Utility to create optional, preprocessed edit fields.
@@ -14,7 +14,7 @@ import { emptyToUndefined } from "@/shared/utils/string";
  * - Wraps with .optional() at the end to preserve inner transforms.
  */
 function optionalEdit<T extends z.ZodType>(schema: T) {
-  return z.preprocess(emptyToUndefined, schema).optional();
+  return z.preprocess(toUndefinedIfEmptyString, schema).optional();
 }
 
 /**

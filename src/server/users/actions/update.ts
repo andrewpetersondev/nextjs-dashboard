@@ -28,11 +28,11 @@ import { toUserIdResult } from "@/shared/domain/id-converters";
 import { expandSparseErrorsToDense } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
 import {
-  formDataToRawMap,
-  resultToFormState,
+  extractRawFromFormData,
+  mapResultToFormState,
 } from "@/shared/forms/result-to-form-state";
-import { deriveFields } from "@/shared/forms/schema-fields";
-import { shallowDiff } from "@/shared/utils/patch";
+import { resolveSchemaFieldNames } from "@/shared/forms/schema-fields";
+import { diffShallowPatch } from "@/shared/utils/patch";
 
 // Helpers for brevity and strict typing
 /** Selectable user fields used for diffing. */
@@ -51,10 +51,11 @@ type Ctx = {
  * @param formData - Incoming FormData from the client.
  */
 function initCtx(formData: FormData): Ctx {
-  const fields = deriveFields<EditUserFormFieldNames, EditUserFormValues>(
-    EditUserFormSchema,
-  );
-  const raw = formDataToRawMap(formData, fields);
+  const fields = resolveSchemaFieldNames<
+    EditUserFormFieldNames,
+    EditUserFormValues
+  >(EditUserFormSchema);
+  const raw = extractRawFromFormData(formData, fields);
   const emptyDense = expandSparseErrorsToDense<EditUserFormFieldNames>(
     {},
     fields,
@@ -68,7 +69,7 @@ function initCtx(formData: FormData): Ctx {
  * @param ctx - Context carrying fields, raw, and empty errors.
  */
 function fail(message: string, ctx: Ctx): FormState<EditUserFormFieldNames> {
-  return resultToFormState(
+  return mapResultToFormState(
     { error: ctx.emptyDense, success: false },
     { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
   );
@@ -116,7 +117,7 @@ async function buildPatch(
     // role is already UserRole | undefined thanks to schema; no need to reconvert/throw
     ...(data.role ? { role: data.role } : {}),
   };
-  const diff = shallowDiff<DiffableUserFields>(base, candidate);
+  const diff = diffShallowPatch<DiffableUserFields>(base, candidate);
   const password =
     data.password && data.password.length > 0
       ? await hashPassword(data.password)

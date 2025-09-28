@@ -40,7 +40,7 @@ export type FieldError<TMsg = string> = NonEmptyReadonlyArray<TMsg>;
  * - This only verifies "non-empty" at runtime. It **does not** (and cannot) verify
  *   readonlyness or tuple shape. Mutable arrays that happen to be non-empty will pass.
  */
-export function isFieldError<TMsg = string>(
+export function isNonEmptyFieldError<TMsg = string>(
   value: readonly TMsg[] | undefined | null,
 ): value is NonEmptyReadonlyArray<TMsg> {
   return Array.isArray(value) && value.length > 0;
@@ -56,7 +56,7 @@ export function isFieldError<TMsg = string>(
  * @typeParam TField - string-literal union of field names (required).
  * @typeParam TValue - raw value type for fields (default: string).
  */
-export type SparseFormValueMap<
+export type SparseFieldValueMap<
   TField extends string,
   TValue = string,
 > = Partial<Record<TField, TValue>>;
@@ -70,7 +70,7 @@ export type SparseFormValueMap<
  * @typeParam TField - string-literal union of field names (required).
  * @typeParam TMsg - message type (default: string).
  */
-export type SparseErrorMap<TField extends string, TMsg = string> = Partial<
+export type SparseFieldErrorMap<TField extends string, TMsg = string> = Partial<
   Readonly<Record<TField, FieldError<TMsg>>>
 >;
 
@@ -91,7 +91,7 @@ export type DenseReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;
  * @typeParam TField - string-literal union of field names (required).
  * @typeParam TMsg - message type (default: string).
  */
-export type DenseErrorMap<
+export type DenseFieldErrorMap<
   TField extends string,
   TMsg = string,
 > = DenseReadonlyRecord<TField, readonly TMsg[]>;
@@ -108,7 +108,7 @@ export type DenseErrorMap<
  *
  * @typeParam TData - validated form data shape (required).
  */
-export interface FormStateSuccess<TData = unknown> {
+export interface SuccessFormState<TData = unknown> {
   readonly data: TData;
   readonly errors?: never;
   readonly message?: string;
@@ -126,15 +126,15 @@ export interface FormStateSuccess<TData = unknown> {
  * @typeParam TValue - raw form value type (default: string).
  * @typeParam TMsg - message type (default: string).
  */
-export interface FormStateFailure<
+export interface FailedFormState<
   TField extends string,
   TValue = string,
   TMsg = string,
 > {
-  readonly errors: DenseErrorMap<TField, TMsg>;
+  readonly errors: DenseFieldErrorMap<TField, TMsg>;
   readonly message: string;
   readonly success: false;
-  readonly values?: SparseFormValueMap<TField, TValue>;
+  readonly values?: SparseFieldValueMap<TField, TValue>;
 }
 
 /**
@@ -150,4 +150,4 @@ export type FormState<
   TData = unknown,
   TValue = string,
   TMsg = string,
-> = FormStateSuccess<TData> | FormStateFailure<TField, TValue, TMsg>;
+> = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;

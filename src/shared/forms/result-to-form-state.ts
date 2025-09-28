@@ -4,9 +4,9 @@ import {
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages";
 import type {
-  DenseErrorMap,
+  DenseFieldErrorMap,
   FormState,
-  SparseFormValueMap,
+  SparseFieldValueMap,
 } from "@/shared/forms/form-types";
 
 /**
@@ -25,11 +25,11 @@ import type {
  * - Fields listed in {@link redactFields} are skipped.
  * - Non-string values (e.g., File, number) are ignored to prevent unsafe coercion.
  */
-export function buildDisplayValues<TFieldNames extends string>(
+export function buildDisplayFieldValues<TFieldNames extends string>(
   raw: Record<string, unknown>,
   fields: readonly TFieldNames[],
   redactFields: readonly TFieldNames[],
-): SparseFormValueMap<TFieldNames> {
+): SparseFieldValueMap<TFieldNames> {
   // Result is partial because not every field will have a string value present.
   const values: Partial<Record<TFieldNames, string>> = {};
 
@@ -70,7 +70,7 @@ export function buildDisplayValues<TFieldNames extends string>(
  * - For multi-valued fields, `FormData.get` returns only the first value. Use `FormData.getAll`
  *   upstream if you need all values and adapt this helper accordingly.
  */
-export function formDataToRawMap<TFieldNames extends string>(
+export function extractRawFromFormData<TFieldNames extends string>(
   formData: FormData,
   fields: readonly TFieldNames[],
 ): Record<string, unknown> {
@@ -91,8 +91,8 @@ export function formDataToRawMap<TFieldNames extends string>(
   return raw;
 }
 
-export function resultToFormState<TFieldNames extends string, TData>(
-  r: Result<TData, DenseErrorMap<TFieldNames>>,
+export function mapResultToFormState<TFieldNames extends string, TData>(
+  r: Result<TData, DenseFieldErrorMap<TFieldNames>>,
   params: {
     successMessage?: string;
     failureMessage?: string;
@@ -123,6 +123,6 @@ export function resultToFormState<TFieldNames extends string, TData>(
     errors: r.error,
     message: failureMessage,
     success: false,
-    values: buildDisplayValues(raw, fields, redactFields),
+    values: buildDisplayFieldValues(raw, fields, redactFields),
   };
 }

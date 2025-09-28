@@ -18,7 +18,7 @@ import {
   pickAllowedSparseFieldErrors,
 } from "@/shared/forms/error-mapping";
 import type { FormState } from "@/shared/forms/form-types";
-import { deriveAllowedFieldsFromSchema } from "@/shared/forms/schema-fields";
+import { deriveSchemaFieldNames } from "@/shared/forms/schema-fields";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -47,7 +47,7 @@ export async function createUserAction(
   formData: FormData,
 ): Promise<FormState<CreateUserFormFieldNames>> {
   const db = getDB();
-  const allowed = deriveAllowedFieldsFromSchema(CreateUserFormSchema);
+  const allowed = deriveSchemaFieldNames(CreateUserFormSchema);
 
   try {
     const raw = pickCreateUserFormData(formData);

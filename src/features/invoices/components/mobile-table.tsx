@@ -7,7 +7,7 @@ import {
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { formatCurrency } from "@/shared/money/convert";
-import { formatDateToLocal } from "@/shared/utils/date";
+import { formatDateLocalized } from "@/shared/utils/date";
 
 /**
  * MobileTable component displays invoices in a mobile-friendly format.
@@ -56,7 +56,7 @@ export const MobileTable = ({
                 <p className="font-medium text-xl">
                   {formatCurrency(invoice.amount)}
                 </p>
-                <p>{formatDateToLocal(invoice.date.toISOString())}</p>
+                <p>{formatDateLocalized(invoice.date.toISOString())}</p>
               </div>
               <div className="flex justify-end gap-2">
                 <UpdateInvoice id={invoice.id} />

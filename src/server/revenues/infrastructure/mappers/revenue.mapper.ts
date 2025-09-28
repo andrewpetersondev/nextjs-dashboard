@@ -10,7 +10,7 @@ import {
   isNonNegativeNumber,
 } from "@/shared/core/validation/number";
 import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
-import { isValidDate } from "@/shared/utils/date";
+import { isDateValid } from "@/shared/utils/date";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -30,11 +30,11 @@ function validateRevenueRow(revenueRow: RevenueRow): void {
     "Invalid revenue row: missing required field 'calculationSource'",
   );
   ensure(
-    isValidDate(revenueRow.createdAt),
+    isDateValid(revenueRow.createdAt),
     "Invalid revenue row: 'createdAt' must be a Date",
   );
   ensure(
-    isValidDate(revenueRow.updatedAt),
+    isDateValid(revenueRow.updatedAt),
     "Invalid revenue row: 'updatedAt' must be a Date",
   );
   ensure(

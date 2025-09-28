@@ -7,7 +7,7 @@ import {
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { formatCurrency } from "@/shared/money/convert";
-import { formatDateToLocal } from "@/shared/utils/date";
+import { formatDateLocalized } from "@/shared/utils/date";
 
 export const DesktopTable = ({
   invoices,
@@ -63,7 +63,7 @@ export const DesktopTable = ({
                 {formatCurrency(invoice.amount)}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
-                {formatDateToLocal(invoice.date.toISOString())}
+                {formatDateLocalized(invoice.date.toISOString())}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
                 <InvoiceStatusComponent status={invoice.status} />

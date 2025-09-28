@@ -19,7 +19,7 @@
  * @returns A partial object containing only keys whose values differ from `base`.
  */
 // Shallow patch helper: returns only keys whose values differ from base
-export function shallowDiff<T extends Record<string, unknown>>(
+export function diffShallowPatch<T extends Record<string, unknown>>(
   base: T,
   patch: Partial<T>,
 ): Partial<T> {

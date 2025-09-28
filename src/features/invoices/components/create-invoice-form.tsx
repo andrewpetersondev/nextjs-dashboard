@@ -17,7 +17,7 @@ import { createInvoiceAction } from "@/server/invoices/actions/create";
 import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/error-mapping";
 import type { FieldError, FormState } from "@/shared/forms/form-types";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
-import { getCurrentIsoDate } from "@/shared/utils/date";
+import { getTodayIsoDate } from "@/shared/utils/date";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
@@ -53,10 +53,7 @@ export const CreateInvoiceForm = ({
     <section>
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-          <InvoiceDate
-            data-cy="date-input"
-            defaultValue={getCurrentIsoDate()}
-          />
+          <InvoiceDate data-cy="date-input" defaultValue={getTodayIsoDate()} />
 
           <SensitiveData
             data-cy="sensitive-data-input"

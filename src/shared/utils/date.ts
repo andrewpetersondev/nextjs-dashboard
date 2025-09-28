@@ -5,7 +5,7 @@ import { ValidationError } from "@/shared/core/errors/domain";
  * Normalizes a Date to the first day of its month in UTC.
  * Throws ValidationError if the provided date is invalid.
  */
-export function normalizeToFirstOfMonthUTC(date: Date): Date {
+export function toFirstDayOfMonthUTC(date: Date): Date {
   if (!isValid(date)) {
     throw new ValidationError("Invalid Date");
   }
@@ -15,14 +15,14 @@ export function normalizeToFirstOfMonthUTC(date: Date): Date {
 /**
  * Safe Date validator combining instanceof check with date-fns isValid.
  */
-export function isValidDate(value: unknown): value is Date {
+export function isDateValid(value: unknown): value is Date {
   return value instanceof Date && isValid(value);
 }
 
 /**
  * Formats a Date as yyyy-MM (UTC-based string useful for keys).
  */
-export function formatYearMonth(date: Date): string {
+export function formatYearMonthUTC(date: Date): string {
   return format(date, "yyyy-MM");
 }
 
@@ -32,7 +32,7 @@ export function formatYearMonth(date: Date): string {
  *
  * @returns {string} The current date as a string in ISO format.
  */
-export function getCurrentIsoDate(): string {
+export function getTodayIsoDate(): string {
   return new Date().toISOString().split("T")[0] as string;
 }
 
@@ -50,7 +50,7 @@ export function getCurrentIsoDate(): string {
  * formatDateToLocal("2025-08-12", "de-DE") // Returns "12. Aug. 2025" for German locale
  * ```
  */
-export const formatDateToLocal = (
+export const formatDateLocalized = (
   dateStr: string,
   locale = "en-US",
 ): string => {
@@ -72,6 +72,6 @@ export const formatDateToLocal = (
  * @param date - The input date
  * @returns A new Date object representing the first day of the month
  */
-export function toFirstOfMonth(date: Date): Date {
+export function toFirstDayOfMonthLocal(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }

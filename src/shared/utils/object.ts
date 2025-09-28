@@ -1,5 +1,5 @@
 // Delete properties whose values match ANY of the given conditions
-export const stripProperties = (
+export const stripFalsyProperties = (
   obj: { [s: string]: unknown } | ArrayLike<unknown>,
 ) => {
   return Object.fromEntries(

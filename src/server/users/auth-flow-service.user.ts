@@ -16,18 +16,18 @@ import {
 } from "@/shared/core/errors/domain";
 import type { Result } from "@/shared/core/result/result-base";
 import { Err, Ok } from "@/shared/core/result/result-base";
-import type { DenseErrorMap } from "@/shared/forms/form-types";
+import type { DenseFieldErrorMap } from "@/shared/forms/form-types";
 
 // Helper to build a dense error map for signup fields
 function denseSignupErrors(
   partial: Partial<Record<SignupFormFieldNames, readonly string[]>>,
-): DenseErrorMap<SignupFormFieldNames> {
+): DenseFieldErrorMap<SignupFormFieldNames> {
   const all: SignupFormFieldNames[] = ["email", "username", "password"];
   const out = {} as Record<SignupFormFieldNames, readonly string[]>;
   for (const k of all) {
     out[k] = partial[k] ?? [];
   }
-  return out as DenseErrorMap<SignupFormFieldNames>;
+  return out as DenseFieldErrorMap<SignupFormFieldNames>;
 }
 
 export class UserAuthFlowService {
@@ -40,7 +40,7 @@ export class UserAuthFlowService {
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async authFlowSignupService(
     input: SignupFormOutput,
-  ): Promise<Result<UserDto, DenseErrorMap<SignupFormFieldNames>>> {
+  ): Promise<Result<UserDto, DenseFieldErrorMap<SignupFormFieldNames>>> {
     const repo = new AuthUserRepo(this.db);
 
     // Normalize minimal fields here if desired

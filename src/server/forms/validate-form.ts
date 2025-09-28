@@ -18,13 +18,13 @@ import {
   toDenseFieldErrorsFromZod,
 } from "@/shared/forms/error-mapping";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages";
-import type { DenseErrorMap, FormState } from "@/shared/forms/form-types";
-import { resultToFormState } from "@/shared/forms/result-to-form-state";
+import type { DenseFieldErrorMap, FormState } from "@/shared/forms/form-types";
+import { mapResultToFormState } from "@/shared/forms/result-to-form-state";
 import {
-  resolveFieldList,
-  resolveRawPayload,
+  resolveCanonicalFieldNames,
+  resolveRawFieldPayload,
 } from "@/shared/forms/schema-fields";
-import { isZodErrorLike } from "@/shared/forms/zod-error";
+import { isZodErrorLikeShape } from "@/shared/forms/zod-error";
 
 /**
  * Options for validateFormGeneric.
@@ -57,9 +57,9 @@ type ValidateFormOptions<
 
 /** Log validation failures with minimal, non-sensitive context. */
 function logValidationFailure(context: string, error: unknown): void {
-  const name = isZodErrorLike(error) ? error.name : undefined;
+  const name = isZodErrorLikeShape(error) ? error.name : undefined;
   const issues =
-    isZodErrorLike(error) && Array.isArray(error.issues)
+    isZodErrorLikeShape(error) && Array.isArray(error.issues)
       ? error.issues.length
       : undefined;
   serverLogger.error({
@@ -123,26 +123,26 @@ export async function validateFormGeneric<
   } = options;
 
   // get canonical field list
-  const fields = resolveFieldList<TIn, TFieldNames>(
+  const fields = resolveCanonicalFieldNames<TIn, TFieldNames>(
     schema,
     allowedFields,
     explicitFields,
   );
 
   // get raw payload limited to allowed fields
-  const raw = resolveRawPayload(formData, fields, explicitRaw);
+  const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
 
   // parse and validate
   const parsed = schema.safeParse(raw);
 
   if (!parsed.success) {
     logValidationFailure(loggerContext, parsed.error);
-    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
+    const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
       error: toDenseFieldErrorsFromZod<TFieldNames>(parsed.error, fields),
       success: false,
     };
 
-    return resultToFormState(result, { fields, raw });
+    return mapResultToFormState(result, { fields, raw });
   }
 
   const dataIn = parsed.data as TIn;
@@ -150,21 +150,21 @@ export async function validateFormGeneric<
 
   try {
     const dataOut = await runTransform(dataIn);
-    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
+    const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
       data: dataOut,
       success: true,
     };
-    return resultToFormState(result, { fields, raw });
+    return mapResultToFormState(result, { fields, raw });
   } catch (e) {
     serverLogger.error({
       context: `${loggerContext}.transform`,
       errorName: e instanceof Error ? e.name : undefined,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
-    const result: Result<TOut, DenseErrorMap<TFieldNames>> = {
+    const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
       error: expandSparseErrorsToDense<TFieldNames>({}, fields),
       success: false,
     };
-    return resultToFormState(result, { fields, raw });
+    return mapResultToFormState(result, { fields, raw });
   }
 }
