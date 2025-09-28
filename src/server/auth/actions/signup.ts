@@ -12,8 +12,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
-import { UserRepository } from "@/server/users/repo";
-import { UsersService } from "@/server/users/service";
+import { UserAuthFlowService } from "@/server/users/auth-flow-service.user";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { FormState } from "@/shared/forms/form-types";
 import { resultToFormState } from "@/shared/forms/result-to-form-state";
@@ -39,8 +38,9 @@ export async function signup(
     return validated;
   }
 
-  const service = new UsersService(new UserRepository(getDB()));
-  const res = await service.signup(validated.data);
+  // Use auth-flow service -> repo -> DAL pipeline
+  const service = new UserAuthFlowService(getDB());
+  const res = await service.authFlowSignupService(validated.data);
 
   if (!res.success) {
     return resultToFormState<SignupFormFieldNames, UserDto>(

@@ -1,6 +1,7 @@
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { AuthSignupDalInput } from "@/server/users/dal/auth-flow-signup.dal";
+import { dalAuthFlowSignup } from "@/server/users/dal/auth-flow-signup.dal";
 import { UnauthorizedError } from "@/shared/core/errors/domain";
 
 /**
@@ -64,19 +65,12 @@ export class AuthUserRepo {
     input: AuthSignupDalInput,
   ): Promise<AuthRepoSignupOutput> {
     try {
-      // Delegate to DAL that throws on failure.
-      // Example: const entity = await authSignupDal(this.db, input);
-      // Map to output DTO here; for now assume DAL returns an entity-like shape.
-      // Placeholder mapping (replace with your actual DAL call + mapping):
-      const entity = await (async () => {
-        // ... call DAL that throws ConflictError / DatabaseError, etc.
-        return {
-          email: input.email,
-          id: "temp-id",
-          role: "user" as const,
-          username: input.username,
-        };
-      })();
+      // Optional repo-level guards; e.g., block signup in certain modes:
+      // if (process.env.SIGNUP_DISABLED === "true") {
+      //   throw new UnauthorizedError("Signups are currently disabled.");
+      // }
+
+      const entity = await dalAuthFlowSignup(this.db, input);
 
       return {
         email: entity.email,
@@ -85,21 +79,14 @@ export class AuthUserRepo {
         username: entity.username,
       };
     } catch (err) {
-      // Preserve known, typed errors
-      if (err instanceof ConflictError) {
+      if (
+        err instanceof ConflictError ||
+        err instanceof UnauthorizedError ||
+        err instanceof ValidationError ||
+        err instanceof DatabaseError
+      ) {
         throw err;
       }
-      if (err instanceof UnauthorizedError) {
-        throw err;
-      }
-      if (err instanceof ValidationError) {
-        throw err;
-      }
-      if (err instanceof DatabaseError) {
-        throw err;
-      }
-
-      // Unknown -> wrap as DatabaseError to keep infra contract consistent
       throw new DatabaseError(
         "Database operation failed during signup.",
         {},

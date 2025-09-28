@@ -6,35 +6,65 @@
  */
 
 import type { SignupFormOutput } from "@/features/auth/lib/auth.schema";
+import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
+import { DatabaseError } from "@/server/errors/infrastructure";
+import { ConflictError } from "@/server/users/auth-flow-repo.user";
 import type { UserEntity } from "@/server/users/entity";
 import { userDbRowToEntity } from "@/server/users/mapper";
 
 /**
  * Input for the auth-signup DAL: strictly what the public signup form provides.
+ * NOTE: DAL expects a pre-hashed password (passwordHash), not a raw password.
  */
 export type AuthSignupDalInput = Pick<
   SignupFormOutput,
-  "email" | "password" | "username"
+  "email" | "username" | "password"
 >;
 
 /**
  * Creates a user record for the auth/signup flow.
  * - Ensures email/username uniqueness at the DB level
- * - Hashes password before persisting
+ * - Expects passwordHash to be computed by the service layer
  * - Returns a normalized UserEntity
  */
 export async function dalAuthFlowSignup(
   db: Database,
   input: AuthSignupDalInput,
 ): Promise<UserEntity> {
-  const [userRow] = await db.insert(users).values(input).returning();
+  try {
+    const [userRow] = await db
+      .insert(users)
+      .values({
+        email: input.email,
+        password: input.password,
+        role: toUserRole("user"),
+        username: input.username,
+      })
+      .returning();
 
-  if (!userRow) {
-    throw new Error(
-      "fix this later. add another check because !userRow does not cover all cases",
-    );
+    if (!userRow) {
+      throw new DatabaseError("Failed to create user (no row returned).");
+    }
+
+    return userDbRowToEntity(userRow);
+  } catch (err: any) {
+    const isUniqueViolation =
+      err?.code === "23505" ||
+      err?.name === "UniqueConstraintError" ||
+      /unique/i.test(String(err?.message));
+
+    if (isUniqueViolation) {
+      throw new ConflictError(
+        "A user with that email or username already exists.",
+        { cause: err },
+      );
+    }
+
+    if (err instanceof DatabaseError) {
+      throw err;
+    }
+    throw new DatabaseError("Database error during auth signup.", {}, err);
   }
-  return userDbRowToEntity(userRow);
 }
