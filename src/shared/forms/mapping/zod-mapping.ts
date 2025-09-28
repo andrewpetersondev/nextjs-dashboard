@@ -95,17 +95,6 @@ export function isZodObjectSchema(
  * @remarks
  * - Use this when you know the error comes from Zod parsing within your own codebase.
  * - Narrowing with this guard gives you full type safety and access to the `ZodError` API.
- *
- * @example
- * ```ts
- * try {
- *   schema.parse(data);
- * } catch (err) {
- *   if (isZodError(err)) {
- *     console.error("Validation failed:", err.issues);
- *   }
- * }
- * ```
  */
 export function isZodErrorInstance(err: unknown): err is z.ZodError {
   return err instanceof z.ZodError;
@@ -123,15 +112,6 @@ export function isZodErrorInstance(err: unknown): err is z.ZodError {
  *   serialized, come from a different runtime, or otherwise not be a real `ZodError` instance.
  * - This guard performs a "duck typing" check: it only verifies that the object has
  *   recognizable ZodError properties, not that it is an actual `ZodError`.
- *
- * @example
- * ```ts
- * catch (err) {
- *   if (isZodErrorLike(err)) {
- *     console.error("Validation failed:", err.flatten?.().fieldErrors);
- *   }
- * }
- * ```
  */
 export function isZodErrorLikeShape(err: unknown): err is {
   name?: string;

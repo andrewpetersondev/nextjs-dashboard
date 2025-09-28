@@ -25,12 +25,6 @@ import { extractRawFromFormData } from "@/shared/forms/state/result-to-form-stat
  * @remarks
  * - Only object schemas are supported; callers should pass a `ZodObject`.
  * - Keys are narrowed to `string` (symbol keys are excluded).
- *
- * @example
- * ```ts
- * const keys = deriveAllowedFieldsFromSchema(UserSchema);
- * // -> ["id", "email", "name"] as const
- * ```
  */
 export function deriveSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
   schema: S,
@@ -57,21 +51,6 @@ export function deriveSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
  * - If {@link allowedFields} is provided and non-empty, it is returned as-is (explicit whitelist).
  * - Otherwise, if {@link schema} is a Zod object, field names are derived from the schema shape.
  * - If {@link schema} is not a Zod object (e.g., union/array/primitive), an empty readonly array is returned.
- *
- * @example
- * ```ts
- * // Derive from schema (Zod object):
- * const fields = deriveFields<LoginFieldNames, LoginInput>(LoginSchema);
- * ```
- *
- * @example
- * ```ts
- * // Use an explicit whitelist (skips derivation):
- * const fields = deriveFields<EditUserFieldNames, EditUserInput>(
- *   EditUserSchema,
- *   ["email", "username"] as const
- * );
- * ```
  */
 export function resolveSchemaFieldNames<TFieldNames extends string, TIn>(
   schema: z.ZodSchema<TIn>,

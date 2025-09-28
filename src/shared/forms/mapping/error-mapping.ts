@@ -24,12 +24,6 @@ import { hasItems } from "@/shared/forms/types/form-types";
  * @param fieldErrors - Source errors keyed by field; values may be undefined.
  * @param allowedFields - Field names to include.
  * @returns Sparse error map with only allowed fields that have errors.
- * @example
- * ```typescript
- * const all = { email: ["Invalid"], password: undefined, other: ["x"] };
- * const allowed = ["email", "password"] as const;
- * const sparse = toSparseErrors(all, allowed); // { email: ["Invalid"] }
- * ```
  */
 export function pickAllowedSparseFieldErrors<
   TFieldNames extends string,
@@ -56,12 +50,6 @@ export function pickAllowedSparseFieldErrors<
  * Create an *empty* dense error map for the given fields (every key present, all `[]` and frozen).
  *
  * Useful when you need a canonical dense shape (e.g., initial UI state).
- *
- * @example
- * ```ts
- * const empty = makeEmptyDenseErrors(["email", "password"]);
- * // { email: [], password: [] }
- * ```
  */
 export function buildEmptyDenseErrorMap<TField extends string, TMsg = string>(
   fields: readonly TField[],
@@ -209,9 +197,6 @@ export function assertAndFreezeDenseErrorMap<TField extends string, TMsg>(
 /**
  * Attach a single message to a chosen field (defaults to the first field),
  * returning a fully dense error map.
- *
- * @example
- * toRootDenseMessage(["email","password"], "Something failed") // puts message on "email"
  */
 export function attachRootDenseMessageToField<
   TField extends string,
