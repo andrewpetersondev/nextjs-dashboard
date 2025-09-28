@@ -1,13 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
+import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
-import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import { getDB } from "@/server/db/connection";
 import {
   type BaseInvoiceEvent,
