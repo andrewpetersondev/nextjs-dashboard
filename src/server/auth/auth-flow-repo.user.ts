@@ -1,9 +1,9 @@
 import "server-only";
 
+import { dalAuthFlowSignup } from "@/server/auth/dal/auth-flow-signup.dal";
+import { findUserForLogin } from "@/server/auth/dal/find-user-for-login";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { dalAuthFlowSignup } from "@/server/users/dal/auth-flow-signup.dal";
-import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import type { UserEntity } from "@/server/users/entity";
 import type {
   AuthLoginDalInput,

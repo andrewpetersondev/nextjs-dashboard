@@ -8,10 +8,10 @@ import type {
 } from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import { AuthUserRepo } from "@/server/auth/auth-flow-repo.user";
 import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { AuthUserRepo } from "@/server/users/auth-flow-repo.user";
 import { userEntityToDto } from "@/server/users/mapper";
 import {
   ConflictError,

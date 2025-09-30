@@ -8,11 +8,11 @@ import {
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
+import { UserAuthFlowService } from "@/server/auth/auth-flow-service.user";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { UserAuthFlowService } from "@/server/users/auth-flow-service.user";
 import { toUserId } from "@/shared/domain/id-converters";
 import { attachRootDenseMessageToField } from "@/shared/forms/mapping/error-repo";
 import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
