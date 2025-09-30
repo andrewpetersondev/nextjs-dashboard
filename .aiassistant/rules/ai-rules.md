@@ -1,10 +1,11 @@
 ---
-apply: manually
+apply: always
 ---
 
 # JetBrains AI Assistant Guidelines
 
 ## Usage Patterns
+
 - Start complex responses with a concise checklist (3–7 bullets).
 - Add a one-line preamble before non-obvious code explaining purpose/context.
 - After major outputs, validate outcomes in 1–2 lines and suggest next steps.
@@ -13,6 +14,7 @@ apply: manually
 ---
 
 ## Table of Contents
+
 - Code Response Guidelines
 - Code Style Guidelines
 - TypeScript Guidelines
@@ -31,6 +33,7 @@ apply: manually
 ---
 
 ## Code Response Guidelines
+
 - Write to the standard of a senior Next.js/TypeScript developer.
 - Target strict TypeScript; avoid deprecated APIs/patterns.
 - Keep explanations minimal and focused; include rationale for design choices when not obvious.
@@ -40,6 +43,7 @@ apply: manually
 ---
 
 ## Code Style Guidelines
+
 - Functions ≤50 lines; ≤4 parameters. Prefer objects for optional params.
 - Avoid excessive branching; extract predicates/utilities.
 - Prefer immutable data and pure functions where practical.
@@ -49,6 +53,7 @@ apply: manually
 ## TypeScript Guidelines
 
 ### Core Principles
+
 - Enable strict mode and strict compiler flags.
 - Let the compiler infer local variable types; explicitly annotate:
     - Function parameters and return types
@@ -59,6 +64,7 @@ apply: manually
 - Favor immutability: readonly, as const, persistent patterns.
 
 ### Functions, Async, and Errors
+
 - Single-purpose functions; split validation/transformation/side-effects.
 - Prefer unions/generics over many overloads.
 - In async code:
@@ -67,6 +73,7 @@ apply: manually
     - Use void return in callbacks if return value is ignored.
 
 ### Generics and Utilities
+
 - Leverage generics for reusable utilities, components, and hooks.
 - Use exhaustiveness checks with never in switch statements for discriminated unions.
 - Prefer built-in utility types (Partial, Pick, Omit, Readonly, Record).
@@ -74,15 +81,18 @@ apply: manually
 - Use primitive types (number, string, boolean), not wrapper objects (Number, String, Boolean).
 
 ### Null/Undefined Safety
+
 - Treat null and undefined distinctly; use ?. and ??.
 - Guard before property access; avoid non-null assertions (!) unless isolated and justified.
 
 ### Module Hygiene
+
 - Organize by feature/domain/responsibility.
 - Use type-only imports/exports to improve tree-shaking.
 - Avoid TypeScript namespaces (prefer ES modules).
 
 ### Documentation & Type Validation
+
 - Document public types/APIs with TSDoc (@param, @returns, @template).
 - Use @ts-expect-error for intentional type-fail tests and regression guards.
 - Consider type-level tests (e.g., tsd) or assertion functions.
@@ -90,6 +100,7 @@ apply: manually
 ---
 
 ## Software Architecture
+
 - Modular, layered, and DI-friendly:
     - src/shared/: may import only from src/shared/.
     - src/features/: may import from src/features/ and src/shared/.
@@ -101,6 +112,7 @@ apply: manually
 ---
 
 ## UI (Next.js App Router)
+
 - Prefer server components for data fetching and heavy logic.
 - Use client components only for interactive stateful UI or browser-only APIs.
 - Co-locate minimal server actions; validate inputs and enforce auth/ACL server-side.
@@ -109,6 +121,7 @@ apply: manually
 ---
 
 ## Automation & Refactoring
+
 - Use automation to remove repetition and improve maintainability.
 - Ensure refactors preserve behavior; include tests or type-level guarantees.
 - Identify deprecated patterns and propose modern alternatives with brief justification.
@@ -116,6 +129,7 @@ apply: manually
 ---
 
 ## Error Handling & Logging
+
 - Add context to errors (operation, identifiers, safe metadata); avoid leaking secrets/PII.
 - Normalize error shapes for APIs; map internal errors to safe client messages.
 - Log at appropriate levels; prefer structured logs.
@@ -123,6 +137,7 @@ apply: manually
 ---
 
 ## Security & Environment Variables
+
 - Never commit secrets. Load via environment with validation.
 - Sanitize and validate all user inputs; encode outputs appropriately.
 - Follow OWASP best practices; minimize attack surface (e.g., narrow CORS, rate limit sensitive endpoints).
@@ -130,6 +145,7 @@ apply: manually
 ---
 
 ## Documentation
+
 - Keep README/usage docs current.
 - TSDoc for components, utilities, hooks, and public APIs.
 - Document architectural decisions when non-obvious (ADR-lite notes).
@@ -137,6 +153,7 @@ apply: manually
 ---
 
 ## Version & Tooling Constraints
+
 - Ensure compatibility with declared package versions.
 - Prefer stable APIs; note canary/experimental usage and provide alternatives where possible.
 - Adhere to project linters/formatters; propose configuration updates when needed.
@@ -144,6 +161,7 @@ apply: manually
 ---
 
 ## JetBrains-Specific Tips
+
 - Provide intent-revealing code that enables accurate navigation and refactors:
     - Explicit exports, minimal re-exports, stable symbol names.
     - Avoid magic strings; use enums or const objects as sources of truth.
@@ -155,18 +173,21 @@ apply: manually
 ---
 
 ## Conflict Resolution
+
 - If instructions conflict, ask the maintainer for clarification.
 - Default to stricter typing and safer operations until clarified.
 
 ---
 
 ## Fallback Instructions
+
 - Default to current best practices if uncertain.
 - Target latest stable versions when version is unclear, while noting potential differences.
 
 ---
 
 ## Review Checklist
+
 1. Strict TypeScript enabled; no relaxed flags without rationale.
 2. Public APIs annotated; no any except isolated transitional cases.
 3. Functions are single-purpose; parameters ≤4 or parameter object.
