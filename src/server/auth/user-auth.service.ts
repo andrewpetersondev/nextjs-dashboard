@@ -11,7 +11,6 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { Database } from "@/server/db/connection";
-import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userEntityToDto } from "@/server/users/mapper";
 import {
@@ -47,6 +46,10 @@ function denseLoginErrors(
   return out as DenseFieldErrorMap<LoginField>;
 }
 
+/**
+ * Auth service: orchestrates business logic, returns discriminated Result.
+ * Never throws; always returns Result union for UI.
+ */
 export class UserAuthFlowService {
   protected readonly db: Database;
 
@@ -55,43 +58,30 @@ export class UserAuthFlowService {
   }
 
   /**
-   * Signup flow: hashes password, delegates to repo, returns UserDto in Result.
-   * Error mapping is dense field oriented for UI consumption.
+   * Signup: hashes password, delegates to repo, returns Result<UserDto, DenseErrorMap>.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async signup(
     input: SignupData,
   ): Promise<Result<UserDto, DenseFieldErrorMap<SignupField>>> {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      // Hash in service layer
       const passwordHash = await hashPassword(input.password);
-
       const repoInput = {
         ...input,
         password: passwordHash,
         role: toUserRole("USER"),
       };
-
       const created = await repo.signup(repoInput);
       const dto = userEntityToDto(created);
       return Ok(dto);
     } catch (err) {
-      // Known domain/infrastructure mappings -> field errors
+      // Map known errors to dense error map
       if (err instanceof ConflictError) {
-        // Provide both field hints to cover either unique constraint
         return Err(
           denseSignupErrors({
             email: ["Email already in use"],
             username: ["Username already in use"],
-          }),
-        );
-      }
-      if (err instanceof UnauthorizedError) {
-        return Err(
-          denseSignupErrors({
-            email: ["Signups are currently disabled"],
           }),
         );
       }
@@ -102,28 +92,15 @@ export class UserAuthFlowService {
           }),
         );
       }
-      if (err instanceof DatabaseError) {
-        serverLogger.error({
-          context: "UserAuthFlowService.signup",
-          error: err,
-          message: "Database error during signup.",
-        });
-        return Err(
-          denseSignupErrors({
-            email: ["Unexpected database error"],
-          }),
-        );
-      }
-
-      // Unknown error
+      // Unexpected errors: log and return generic error
       serverLogger.error({
         context: "UserAuthFlowService.signup",
         error: err,
-        message: "Unknown error during signup.",
+        message: "Unexpected error during signup.",
       });
       return Err(
         denseSignupErrors({
-          email: ["Unknown error occurred"],
+          email: ["Unexpected error occurred"],
         }),
       );
     }
@@ -131,6 +108,7 @@ export class UserAuthFlowService {
 
   /**
    * Login flow: delegates to repo, returns UserDto in Result.
+   * Never throws; always returns Result union for UI.
    */
   async login(
     input: LoginData,
@@ -138,14 +116,18 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      const user = await repo.login({
-        email: input.email,
+      // Pass raw password to repo; repo/DAL will handle verification
+      const repoInput = {
+        ...input,
         password: input.password,
-      });
+      };
+
+      const user = await repo.login(repoInput);
 
       const dto = userEntityToDto(user);
       return Ok(dto);
     } catch (err) {
+      // Map known domain errors to dense error map
       if (err instanceof UnauthorizedError) {
         return Err(
           denseLoginErrors({
@@ -161,29 +143,16 @@ export class UserAuthFlowService {
           }),
         );
       }
-      if (err instanceof DatabaseError) {
-        serverLogger.error({
-          context: "UserAuthFlowService.login",
-          email: input?.email,
-          error: err,
-          message: "Database error during login.",
-        });
-        return Err(
-          denseLoginErrors({
-            email: ["Unexpected database error"],
-          }),
-        );
-      }
-
+      // Unexpected infra errors: log and return generic error
       serverLogger.error({
         context: "UserAuthFlowService.login",
         email: input?.email,
         error: err,
-        message: "Unknown error during login.",
+        message: "Unexpected error during login.",
       });
       return Err(
         denseLoginErrors({
-          email: ["Unknown error occurred"],
+          email: ["Unexpected error occurred"],
         }),
       );
     }
