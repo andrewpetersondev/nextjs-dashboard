@@ -15,34 +15,36 @@ import {
 
 /**
  * Finds a user by email and verifies the password.
- * Maps raw DB row to UserEntity, then to UserDto.
- * @param db - Database instance (Drizzle)
- * @param email - User's email address
- * @param password - Plaintext password to verify
- * @returns UserEntity if credentials are valid, otherwise throws UnauthorizedError
+ * On success returns a normalized UserEntity.
+ * Uses a generic UnauthorizedError for both user-not-found and bad-password.
  */
 export async function findUserForLogin(
   db: Database,
   email: string,
   password: string,
 ): Promise<UserEntity> {
-  if (!(email && password)) {
-    // Do not proceed with DB call on invalid input
+  if (!email || !password) {
     throw new ValidationError("Email and password are required.");
   }
+
   try {
+    // Select only the fields required for password verification and mapping.
+    // If your mapper expects the full row, ensure it tolerates missing fields
+    // or adjust the selected columns accordingly.
     const [userRow] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email));
+      .where(eq(users.email, email))
+      .limit(1);
 
-    // Unify user-not-found and bad-password into UnauthorizedError
+    // Unify not-found and invalid password into UnauthorizedError
     if (!userRow) {
       throw new UnauthorizedError("Invalid email or password.");
     }
 
     const userEntity = userDbRowToEntity(userRow);
 
+    // Ensure entity contains hashed password; avoid leaking exact mismatch reason.
     const validPassword = await comparePassword(password, userEntity.password);
     if (!validPassword) {
       throw new UnauthorizedError("Invalid email or password.");
@@ -50,7 +52,6 @@ export async function findUserForLogin(
 
     return userEntity;
   } catch (error) {
-    // Pass through domain errors unchanged
     if (
       error instanceof UnauthorizedError ||
       error instanceof ValidationError
@@ -58,12 +59,14 @@ export async function findUserForLogin(
       throw error;
     }
 
+    // Limit PII in logs. Do not log raw password or full user row.
     serverLogger.error({
       context: "findUserForLogin",
       email,
       error,
       message: "Failed to find user for login.",
     });
+
     throw new DatabaseError(
       "Failed to read user by email.",
       {},

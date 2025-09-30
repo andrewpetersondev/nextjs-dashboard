@@ -20,12 +20,8 @@ import type { FormState } from "@/shared/forms/types/form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
- * Signup Server Action for Signup Form
- *
- * Redirecting auth action: returns FormState on failure; redirects on success.
- *
- * @param _prev
- * @param formData
+ * Signup Server Action
+ * Validates, creates user, starts session, then redirects.
  */
 export async function signup(
   _prev: FormState<SignupField, unknown>,
@@ -50,7 +46,7 @@ export async function signup(
   try {
     // Use auth-flow service -> repo -> DAL pipeline
     const service = new UserAuthFlowService(getDB());
-    const res = await service.authFlowSignupService(validated.data);
+    const res = await service.signup(validated.data);
 
     if (!res.success || !res.data) {
       // Map domain/service error into dense field errors for consistent UI handling.
@@ -69,14 +65,12 @@ export async function signup(
   } catch (err) {
     // Unexpected error path: log safely and return a consistent failure state.
     serverLogger.error({
-      context: "signup.persist",
-      // do not include sensitive data; structure the log minimally
+      context: "signup.action",
       error:
-        // TODO: Other layers should return more specific errors so create strategy that is more specific
         err instanceof Error
           ? { message: err.message, name: err.name }
           : { message: "Unknown error" },
-      message: "Unexpected error during signup",
+      message: "Unexpected error during signup action",
     });
 
     const dense = attachRootDenseMessageToField(

@@ -1,9 +1,10 @@
 import "server-only";
 
 import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
-import { dalAuthFlowSignup } from "@/server/auth/dal/user-auth-signup.dal";
+import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserEntity } from "@/server/users/entity";
 import type {
   AuthLoginDalInput,
@@ -15,6 +16,20 @@ import {
   ValidationError,
 } from "@/shared/core/errors/domain";
 
+// Centralized error passthrough check to keep methods concise.
+function isKnownAuthError(err: unknown): boolean {
+  return (
+    err instanceof ConflictError ||
+    err instanceof UnauthorizedError ||
+    err instanceof ValidationError ||
+    err instanceof DatabaseError
+  );
+}
+
+/**
+ * Repository for user authentication flows (signup/login).
+ * Encapsulates DAL usage and provides a single point for cross-cutting policies.
+ */
 export class AuthUserRepo {
   protected readonly db: Database;
 
@@ -23,44 +38,35 @@ export class AuthUserRepo {
   }
 
   /**
-   * Creates a user for the auth/signup flow.
-   *
-   * Throws BaseError-derived classes:
-   * - ConflictError (409) when unique constraints fail (email/username).
-   * - UnauthorizedError (401) if preconditions deny signup.
-   * - ValidationError (400) for additional invariants beyond form schema.
-   * - DatabaseError (500) for infrastructure/DB failures.
+   * Creates a new user for the auth/signup flow.
+   * May throw ConflictError, UnauthorizedError, ValidationError, DatabaseError.
    */
-  async authRepoSignup(input: AuthSignupDalInput): Promise<UserEntity> {
+  async signup(input: AuthSignupDalInput): Promise<UserEntity> {
     try {
-      // Optional repo-level guards; e.g., block signup in certain modes:
-      // if (process.env.SIGNUP_DISABLED === "true") {
-      //   throw new UnauthorizedError("Signups are currently disabled.");
-      // }
-
-      const entity = await dalAuthFlowSignup(this.db, input);
-
+      const entity = await createUserForSignup(this.db, input);
       return entity;
     } catch (err) {
-      // Pass through known BaseError subclasses
-      if (
-        err instanceof ConflictError ||
-        err instanceof UnauthorizedError ||
-        err instanceof ValidationError ||
-        err instanceof DatabaseError
-      ) {
+      if (isKnownAuthError(err)) {
         throw err;
       }
-      // Wrap unknown errors as DatabaseError (BaseError-compatible)
+      serverLogger.error({
+        context: "AuthUserRepo.signup",
+        error: err,
+        message: "Unexpected error during signup repository operation.",
+      });
       throw new DatabaseError(
         "Database operation failed during signup.",
         {},
-        err as Error,
+        err instanceof Error ? err : undefined,
       );
     }
   }
 
-  async authRepoLogin(input: AuthLoginDalInput): Promise<UserEntity> {
+  /**
+   * Authenticates a user by email/password.
+   * May throw UnauthorizedError, ValidationError, DatabaseError.
+   */
+  async login(input: AuthLoginDalInput): Promise<UserEntity> {
     try {
       const entity = await findUserForLogin(
         this.db,
@@ -69,20 +75,19 @@ export class AuthUserRepo {
       );
       return entity;
     } catch (err) {
-      // Pass through known BaseError subclasses
-      if (
-        err instanceof ConflictError ||
-        err instanceof UnauthorizedError ||
-        err instanceof ValidationError ||
-        err instanceof DatabaseError
-      ) {
+      if (isKnownAuthError(err)) {
         throw err;
       }
-      // Wrap unknown errors as DatabaseError (BaseError-compatible)
+      serverLogger.error({
+        context: "AuthUserRepo.login",
+        email: input?.email,
+        error: err,
+        message: "Unexpected error during login repository operation.",
+      });
       throw new DatabaseError(
         "Database operation failed during login.",
         {},
-        err as Error,
+        err instanceof Error ? err : undefined,
       );
     }
   }

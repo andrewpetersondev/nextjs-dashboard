@@ -12,6 +12,7 @@ import { hashPassword } from "@/server/auth/hashing";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
+import { serverLogger } from "@/server/logging/serverLogger";
 import { userEntityToDto } from "@/server/users/mapper";
 import {
   ConflictError,
@@ -23,8 +24,6 @@ import { Err, Ok } from "@/shared/core/result/result-base";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
 
 // Helper to build a dense error map for signup fields
-// Dense Errors probably do not add value here. Dense errors are good UI.
-// Errors here should be like "username taken" or "email already exists"
 function denseSignupErrors(
   partial: Partial<Record<SignupField, readonly string[]>>,
 ): DenseFieldErrorMap<SignupField> {
@@ -37,7 +36,6 @@ function denseSignupErrors(
 }
 
 // Helper to build a dense error map for login fields
-// Dense Errors probably do not add value here. Dense errors are good UI.
 function denseLoginErrors(
   partial: Partial<Record<LoginField, readonly string[]>>,
 ): DenseFieldErrorMap<LoginField> {
@@ -56,30 +54,33 @@ export class UserAuthFlowService {
     this.db = db;
   }
 
-  async authFlowSignupService(
+  /**
+   * Signup flow: hashes password, delegates to repo, returns UserDto in Result.
+   * Error mapping is dense field oriented for UI consumption.
+   */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  async signup(
     input: SignupData,
   ): Promise<Result<UserDto, DenseFieldErrorMap<SignupField>>> {
     const repo = new AuthUserRepo(this.db);
 
-    // Hash in the service
-    const passwordHash = await hashPassword(input.password);
-
-    const repoInput = {
-      ...input,
-      password: passwordHash,
-      role: toUserRole("USER"),
-    };
-
     try {
-      const created = await repo.authRepoSignup(repoInput);
+      // Hash in service layer
+      const passwordHash = await hashPassword(input.password);
 
-      // The service returns a DTO for the client; map minimally and safely
+      const repoInput = {
+        ...input,
+        password: passwordHash,
+        role: toUserRole("USER"),
+      };
+
+      const created = await repo.signup(repoInput);
       const dto = userEntityToDto(created);
-
       return Ok(dto);
     } catch (err) {
-      // Map infrastructure/domain errors to dense field errors
+      // Known domain/infrastructure mappings -> field errors
       if (err instanceof ConflictError) {
+        // Provide both field hints to cover either unique constraint
         return Err(
           denseSignupErrors({
             email: ["Email already in use"],
@@ -90,7 +91,6 @@ export class UserAuthFlowService {
       if (err instanceof UnauthorizedError) {
         return Err(
           denseSignupErrors({
-            // No field-specific blame; attach a form-level message to a safe field
             email: ["Signups are currently disabled"],
           }),
         );
@@ -98,18 +98,29 @@ export class UserAuthFlowService {
       if (err instanceof ValidationError) {
         return Err(
           denseSignupErrors({
-            // Example: push a generic validation message (adjust as needed)
             email: ["Invalid data"],
           }),
         );
       }
       if (err instanceof DatabaseError) {
+        serverLogger.error({
+          context: "UserAuthFlowService.signup",
+          error: err,
+          message: "Database error during signup.",
+        });
         return Err(
           denseSignupErrors({
             email: ["Unexpected database error"],
           }),
         );
       }
+
+      // Unknown error
+      serverLogger.error({
+        context: "UserAuthFlowService.signup",
+        error: err,
+        message: "Unknown error during signup.",
+      });
       return Err(
         denseSignupErrors({
           email: ["Unknown error occurred"],
@@ -118,28 +129,26 @@ export class UserAuthFlowService {
     }
   }
 
-  async authFlowLoginService(
+  /**
+   * Login flow: delegates to repo, returns UserDto in Result.
+   */
+  async login(
     input: LoginData,
   ): Promise<Result<UserDto, DenseFieldErrorMap<LoginField>>> {
     const repo = new AuthUserRepo(this.db);
 
-    // Do NOT hash here; DAL compares raw password to stored hash
-    const repoInput = {
-      ...input,
-      password: input.password,
-    };
-
     try {
-      const user = await repo.authRepoLogin(repoInput);
+      const user = await repo.login({
+        email: input.email,
+        password: input.password,
+      });
 
       const dto = userEntityToDto(user);
       return Ok(dto);
     } catch (err) {
-      // Map infrastructure/domain errors to dense field errors
       if (err instanceof UnauthorizedError) {
         return Err(
           denseLoginErrors({
-            // Unified message for invalid credentials
             email: ["Invalid email or password"],
             password: ["Invalid email or password"],
           }),
@@ -153,12 +162,25 @@ export class UserAuthFlowService {
         );
       }
       if (err instanceof DatabaseError) {
+        serverLogger.error({
+          context: "UserAuthFlowService.login",
+          email: input?.email,
+          error: err,
+          message: "Database error during login.",
+        });
         return Err(
           denseLoginErrors({
             email: ["Unexpected database error"],
           }),
         );
       }
+
+      serverLogger.error({
+        context: "UserAuthFlowService.login",
+        email: input?.email,
+        error: err,
+        message: "Unknown error during login.",
+      });
       return Err(
         denseLoginErrors({
           email: ["Unknown error occurred"],

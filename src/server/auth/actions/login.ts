@@ -20,13 +20,8 @@ import type { FormState } from "@/shared/forms/types/form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
- * Server Action: login
- *
- * Validates login input, authenticates the user, starts a session, and redirects.
- *
- * @param _prevState - Previous form state (ignored by this action)
- * @param formData - FormData containing login fields
- * @returns FormState for UI; on success this action redirects
+ * Login Server Action
+ * Validates, authenticates user, starts session, then redirects.
  */
 export async function login(
   _prevState: FormState<LoginField, unknown>,
@@ -38,10 +33,7 @@ export async function login(
     formData,
     LoginSchema,
     fields,
-    {
-      fields,
-      loggerContext: "login.validate",
-    },
+    { fields, loggerContext: "login.validate" },
   );
 
   // If validation failed, return the FormState produced by validateFormGeneric
@@ -52,7 +44,7 @@ export async function login(
   try {
     // Use auth-flow service -> repo -> DAL pipeline
     const service = new UserAuthFlowService(getDB());
-    const res = await service.authFlowLoginService(validated.data);
+    const res = await service.login(validated.data);
 
     if (!res.success || !res.data) {
       // Map domain/service error into dense field errors for consistent UI handling.
@@ -71,14 +63,12 @@ export async function login(
   } catch (err) {
     // Unexpected error path: log safely and return a consistent failure state.
     serverLogger.error({
-      context: "login.persist",
-      // do not include sensitive data; structure the log minimally
+      context: "login.action",
       error:
-        // TODO: Other layers should return more specific errors so create strategy that is more specific
         err instanceof Error
           ? { message: err.message, name: err.name }
           : { message: "Unknown error" },
-      message: "Unexpected error during login",
+      message: "Unexpected error during login action",
     });
 
     const dense = attachRootDenseMessageToField(
