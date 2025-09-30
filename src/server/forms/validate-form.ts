@@ -38,7 +38,7 @@ function logValidationFailure(context: string, error: unknown): void {
   serverLogger.error({
     context,
     issues,
-    message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+    message: FORM_ERROR_MESSAGES.VALIDATION_FAILED,
     name,
   });
 }
@@ -163,7 +163,7 @@ export async function validateFormGeneric<
     serverLogger.error({
       context: `${loggerContext}.transform`,
       errorName: err instanceof Error ? err.name : undefined,
-      message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+      message: FORM_ERROR_MESSAGES.VALIDATION_FAILED,
     });
     const failure = toFailureResult<TFieldNames, TOut>(
       err,
