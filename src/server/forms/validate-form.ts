@@ -130,7 +130,7 @@ export async function validateFormGeneric<
   const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
 
   // parse and validate
-  const parsed = schema.safeParse(raw);
+  const parsed = await schema.safeParseAsync(raw);
   if (!parsed.success) {
     const failure = toFailureResult<TFieldNames, TOut>(
       parsed.error,
