@@ -14,11 +14,39 @@ import { ConflictError, ValidationError } from "@/shared/core/errors/domain";
 const UNIQUE_VIOLATION_CODE = "23505";
 const uniqueConstraintRegex = /unique/i;
 
+// Local, narrow helpers to safely read from unknown errors without losing type safety.
+function hasKey<T extends string>(
+  value: unknown,
+  key: T,
+): value is Record<T, unknown> {
+  return typeof value === "object" && value !== null && key in value;
+}
+
+function readStringProp(
+  err: unknown,
+  key: "message" | "code" | "name",
+): string {
+  return hasKey(err, key) ? String(err[key] ?? "") : "";
+}
+
+function isUniqueViolation(err: unknown): boolean {
+  const code = readStringProp(err, "code");
+  const name = readStringProp(err, "name");
+  const message = readStringProp(err, "message");
+  return (
+    code === UNIQUE_VIOLATION_CODE ||
+    name === "UniqueConstraintError" ||
+    uniqueConstraintRegex.test(message)
+  );
+}
+
 /**
  * Inserts a new user for the auth/signup flow.
  * - Expects password to already be a hash (service responsibility).
  * - Enforces uniqueness via DB constraint handling.
  * - Returns a normalized UserEntity.
+ * Validates minimal inputs, maps DB uniqueness to ConflictError, and normalizes infra errors.
+ * @throws ValidationError | ConflictError | DatabaseError
  */
 export async function createUserForSignup(
   db: Database,
@@ -40,18 +68,9 @@ export async function createUserForSignup(
     }
 
     return userDbRowToEntity(userRow);
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Normalize unique-constraint conflicts into domain ConflictError
-    const message = String(err?.message ?? "");
-    const code = String(err?.code ?? "");
-    const name = String(err?.name ?? "");
-
-    const isUniqueViolation =
-      code === UNIQUE_VIOLATION_CODE ||
-      name === "UniqueConstraintError" ||
-      uniqueConstraintRegex.test(message);
-
-    if (isUniqueViolation) {
+    if (isUniqueViolation(err)) {
       throw new ConflictError(
         "A user with that email or username already exists.",
         { cause: err },
@@ -72,6 +91,13 @@ export async function createUserForSignup(
     if (err instanceof DatabaseError) {
       throw err;
     }
-    throw new DatabaseError("Database error during auth signup.", {}, err);
+
+    // Ensure the cause is an Error (or undefined) to satisfy DatabaseError ctor typing
+    const cause: Error | undefined =
+      err instanceof Error
+        ? err
+        : new Error(readStringProp(err, "message") || "Unknown error");
+
+    throw new DatabaseError("Database error during auth signup.", {}, cause);
   }
 }
