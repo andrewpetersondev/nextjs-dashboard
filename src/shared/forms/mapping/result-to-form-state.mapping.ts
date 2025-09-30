@@ -8,39 +8,23 @@ import type { FormState } from "@/shared/forms/types/form-state.type";
 import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
 /**
- * Map a Result into a UI-friendly FormState.
+ * Map a Result into a FormState for UI consumption.
  *
- * Produces a success payload when r.success is true; otherwise returns errors and
- * the raw values with optional field redaction (defaults to ["password"]).
+ * Returns success with data/message or failure with dense errors and redacted values.
  *
- * @typeParam TFieldNames - Union of form field names (string literals).
- * @typeParam TData - Success payload type carried by the Result.
- * @param r - Result from a form operation with success or dense field errors.
- * @param params - Messages, raw input, field list, and optional redactFields.
- * @returns FormState with message, success flag, data or errors plus safe values.
- * @example
- * ```typescript
- * type Fields = "email" | "password";
- * const rOk: Result<number, DenseFieldErrorMap<Fields>> = { success: true, data: 123 };
- * const stateOk = mapResultToFormState<Fields, number>(rOk, {
- *   raw: { email: "a@x.com", password: "secret" },
- *   fields: ["email", "password"] as const,
- * });
- * // stateOk.success === true
- *
- * const rErr: Result<number, DenseFieldErrorMap<Fields>> = {
- *   success: false,
- *   error: { email: ["Invalid"], password: [] },
- * };
- * const stateErr = mapResultToFormState<Fields, number>(rErr, {
- *   raw: { email: "bad", password: "secret" },
- *   fields: ["email", "password"] as const,
- * });
- * // stateErr.success === false
- * ```
+ * @typeParam TFieldNames - Allowed field-name union for the form.
+ * @typeParam TData - Payload on the success branch.
+ * @param result - Result containing success data or dense field errors.
+ * @param params - Mapping options.
+ * @param params.fields - Readonly list of included field names.
+ * @param params.raw - Raw input values keyed by field.
+ * @param params.failureMessage - Failure message (default: validation failed).
+ * @param params.redactFields - Fields to redact in values (default: ["password"]).
+ * @param params.successMessage - Success message (default: generic success).
+ * @returns FormState<TFieldNames, TData> describing success or failure.
  */
 export function mapResultToFormState<TFieldNames extends string, TData>(
-  r: Result<TData, DenseFieldErrorMap<TFieldNames>>,
+  result: Result<TData, DenseFieldErrorMap<TFieldNames>>,
   params: {
     successMessage?: string;
     failureMessage?: string;
@@ -59,16 +43,16 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
   } = params;
 
   // Fast-path: success payload for UI.
-  if (r.success) {
+  if (result.success) {
     return {
-      data: r.data,
+      data: result.data,
       message: successMessage,
       success: true,
     };
   }
 
   return {
-    errors: r.error,
+    errors: result.error,
     message: failureMessage,
     success: false,
     values: buildDisplayFieldValues(raw, fields, redactFields),
