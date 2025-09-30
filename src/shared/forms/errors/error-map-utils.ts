@@ -78,13 +78,14 @@ export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
  * - Fields whose array is `[]` are omitted from the result.
  * - Result uses `FieldError` (non-empty readonly arrays) for values.
  */
-export function compactDenseErrorsToSparse<
+export function _compactDenseErrorsToSparse<
   TField extends string,
   TMsg = string,
 >(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, FieldError<TMsg>>> = {};
 
   // Iterate over all keys in the dense map
+  // biome-ignore lint/suspicious/useGuardForIn: <unused function>
   for (const k in dense) {
     const arr = dense[k];
 
