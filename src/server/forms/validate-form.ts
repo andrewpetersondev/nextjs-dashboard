@@ -34,7 +34,7 @@ import type { FormState } from "@/shared/forms/types/form-state";
  * @typeParam TOut - Output shape after optional transform (defaults to TIn).
  * @typeParam TFieldNames - Union of allowed field-name literals.
  */
-type ValidateFormOptions<
+type _ValidateFormOptions<
   TIn,
   TOut = TIn,
   TFieldNames extends string = keyof TIn & string,
