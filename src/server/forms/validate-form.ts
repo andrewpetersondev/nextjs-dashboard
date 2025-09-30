@@ -114,7 +114,23 @@ export async function validateFormGeneric<
   formData: FormData,
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
-  options: ValidateFormOptions<TIn, TOut, TFieldNames> = {},
+  options: {
+    /**
+     * @deprecated
+     *
+     * Optional post-parse transform. Can be async.
+     * @remarks:
+     * - TODO: MOVE ALL TRANSFORMATIONS TO ZOD SCHEMAS.
+     * - DO NOT USE.
+     */
+    readonly transform?: (data: TIn) => TOut | Promise<TOut>;
+    /** Optional explicit field list; skips derivation. */
+    readonly fields?: readonly TFieldNames[];
+    /** Optional explicit raw map; skips building from FormData. */
+    readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
+    /** Optional label used in error logs. */
+    readonly loggerContext?: string;
+  } = {},
 ): Promise<FormState<TFieldNames, TOut>> {
   const {
     transform,
