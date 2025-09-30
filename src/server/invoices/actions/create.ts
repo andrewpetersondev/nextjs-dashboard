@@ -20,9 +20,9 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import {
   isZodErrorInstance,
   mapZodErrorToDenseFieldErrors,
-} from "@/shared/forms/mapping/zod-mapping";
-import { deriveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
-import type { FormState } from "@/shared/forms/types/form-state";
+} from "@/shared/forms/errors/zod-error-mapping";
+import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";

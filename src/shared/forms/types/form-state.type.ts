@@ -1,7 +1,7 @@
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/types/field-errors";
+} from "@/shared/forms/types/field-errors.type";
 
 /**
  * Successful form state.

@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { buildEmptyDenseErrorMap } from "@/shared/forms/mapping/error-utils";
-import type { FormState } from "@/shared/forms/types/form-state";
+import { buildEmptyDenseErrorMap } from "@/shared/forms/errors/error-map-utils";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 
 /**
  * Creates an initial failure state for a given set of form fields.
@@ -19,10 +19,10 @@ export function buildInitialFailedFormState<TFieldNames extends string>(
  * Creates an initial failure state for a given Zod object schema.
  */
 export function buildInitialFailedFormStateFromSchema<
-  S extends z.ZodObject<z.ZodRawShape>,
->(schema: S) {
+  TSchema extends z.ZodObject<z.ZodRawShape>,
+>(schema: TSchema) {
   // Derive the field names directly from the schema
-  type FieldNames = keyof S["shape"] & string;
+  type FieldNames = keyof TSchema["shape"] & string;
 
   // Object.keys always returns string[], but narrowing it to FieldNames is safe here
   const fields = Object.keys(schema.shape) as readonly FieldNames[];

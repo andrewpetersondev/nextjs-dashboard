@@ -1,9 +1,9 @@
+import { hasItems } from "@/shared/forms/types/core-types.util";
 import type {
   DenseFieldErrorMap,
   FieldError,
   SparseFieldErrorMap,
-} from "@/shared/forms/types/field-errors";
-import { hasItems } from "@/shared/forms/types/form-types";
+} from "@/shared/forms/types/field-errors.type";
 
 /**
  * Build a sparse error map restricted to allowed fields.

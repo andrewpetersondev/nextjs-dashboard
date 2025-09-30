@@ -1,7 +1,7 @@
 import type {
   DenseReadonlyRecord,
   NonEmptyReadonlyArray,
-} from "@/shared/forms/types/form-types";
+} from "@/shared/forms/types/core-types.util";
 
 /**
  * Field-level error: non-empty readonly array of messages.

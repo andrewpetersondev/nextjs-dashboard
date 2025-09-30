@@ -19,8 +19,8 @@ import { ValidationError } from "@/shared/core/errors/domain";
 import {
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
-} from "@/shared/forms/mapping/error-utils";
-import type { FormState } from "@/shared/forms/types/form-state";
+} from "@/shared/forms/errors/error-map-utils";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 

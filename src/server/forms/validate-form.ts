@@ -1,60 +1,32 @@
-/**
- * @file Server-only, generic form validation utilities.
- *
- * Validates FormData with a Zod schema and returns a typed FormState:
- * - Resolves the allowed field names for a schema.
- * - Projects FormData to a raw map limited to those fields.
- * - Produces dense, then UI-suitable errors on failure.
- * - Optionally transforms validated data.
- * - Logs failures with minimal, safe context.
- */
 import "server-only";
 
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
-import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-utils";
+import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import {
   isZodErrorLikeShape,
   mapToDenseFieldErrorsFromZod,
-} from "@/shared/forms/mapping/zod-mapping";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/messages/form-messages";
+} from "@/shared/forms/errors/zod-error-mapping";
 import {
   resolveCanonicalFieldNames,
   resolveRawFieldPayload,
-} from "@/shared/forms/schema/schema-fields";
-import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
-import type { FormState } from "@/shared/forms/types/form-state";
+} from "@/shared/forms/fields/field-name-resolution";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
+import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 
 /**
- * Options for validateFormGeneric.
- *
- * @typeParam TIn - Parsed shape produced by the Zod schema.
- * @typeParam TOut - Output shape after optional transform (defaults to TIn).
- * @typeParam TFieldNames - Union of allowed field-name literals.
+ * Normalize an optional transform to an async function.
+ * Prefer explicit async wrapper to preserve type inference and avoid re-checks.
  */
-type _ValidateFormOptions<
-  TIn,
-  TOut = TIn,
-  TFieldNames extends string = keyof TIn & string,
-> = {
-  /**
-   * @deprecated
-   *
-   * Optional post-parse transform. Can be async.
-   * @remarks:
-   * - TODO: MOVE ALL TRANSFORMATIONS TO ZOD SCHEMAS.
-   * - DO NOT USE.
-   */
-  readonly transform?: (data: TIn) => TOut | Promise<TOut>;
-  /** Optional explicit field list; skips derivation. */
-  readonly fields?: readonly TFieldNames[];
-  /** Optional explicit raw map; skips building from FormData. */
-  readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
-  /** Optional label used in error logs. */
-  readonly loggerContext?: string;
-};
+function toAsync<TIn, TOut>(
+  transform: ((data: TIn) => TOut | Promise<TOut>) | undefined,
+): (data: TIn) => Promise<TOut> {
+  return async (d: TIn) =>
+    (transform ? transform(d) : (d as unknown as TOut)) as Awaited<TOut>;
+}
 
 /** Log validation failures with minimal, non-sensitive context. */
 function logValidationFailure(context: string, error: unknown): void {
@@ -71,25 +43,47 @@ function logValidationFailure(context: string, error: unknown): void {
   });
 }
 
-/** Normalize an optional transform to an async function. */
-function normalizeTransform<TIn, TOut>(
-  transform: ((data: TIn) => TOut | Promise<TOut>) | undefined,
-): (data: TIn) => Promise<TOut> {
-  if (!transform) {
-    return async (d: TIn) => d as unknown as TOut;
+/**
+ * Internal helper that maps a zod failure into a FormState result with dense errors.
+ */
+function toFailureResult<TFieldNames extends string, TOut>(
+  error: unknown,
+  fields: readonly TFieldNames[],
+  loggerContext: string,
+): Result<TOut, DenseFieldErrorMap<TFieldNames>> {
+  if (isZodErrorLikeShape(error)) {
+    logValidationFailure(loggerContext, error);
+    return {
+      error: mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
+      success: false,
+    };
   }
-  return async (d: TIn) => transform(d);
+  logValidationFailure(loggerContext, error);
+  return {
+    error: expandSparseErrorsToDense<TFieldNames>({}, fields),
+    success: false,
+  };
 }
+
+/** Options for validateFormGeneric, factored for reuse and clarity. */
+type ValidateOptions<TIn, TFieldNames extends keyof TIn & string, TOut> = {
+  /** @deprecated Prefer running post-parse work in your action after calling validateFormGeneric. */
+  readonly transform?: (data: TIn) => TOut | Promise<TOut>;
+  /** Optional explicit field list; skips derivation. */
+  readonly fields?: readonly TFieldNames[];
+  /** Optional explicit raw map; skips building from FormData. */
+  readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
+  /** Optional label used in error logs. */
+  readonly loggerContext?: string;
+  /** Optional success/failure message overrides for FormState mapping. */
+  readonly messages?: {
+    readonly successMessage?: string;
+    readonly failureMessage?: string;
+  };
+};
 
 /**
  * Validate FormData with a Zod schema and return a FormState.
- *
- * Flow:
- * 1) Resolve canonical fields.
- * 2) Resolve a raw payload limited to those fields.
- * 3) Safe-parse with Zod; on failure, return field errors via FormState.
- * 4) On success, optionally run a transform and return success FormState.
- * 5) Log failures with the provided logger context.
  *
  * Guarantees:
  * - Dense error maps provide deterministic per-field arrays internally, then converted for UI.
@@ -106,6 +100,7 @@ function normalizeTransform<TIn, TOut>(
  *
  * @returns FormState with data on success or field errors on failure.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function validateFormGeneric<
   TIn,
   TFieldNames extends keyof TIn & string,
@@ -114,32 +109,17 @@ export async function validateFormGeneric<
   formData: FormData,
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
-  options: {
-    /**
-     * @deprecated
-     *
-     * Optional post-parse transform. Can be async.
-     * @remarks:
-     * - TODO: MOVE ALL TRANSFORMATIONS TO ZOD SCHEMAS.
-     * - DO NOT USE.
-     */
-    readonly transform?: (data: TIn) => TOut | Promise<TOut>;
-    /** Optional explicit field list; skips derivation. */
-    readonly fields?: readonly TFieldNames[];
-    /** Optional explicit raw map; skips building from FormData. */
-    readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
-    /** Optional label used in error logs. */
-    readonly loggerContext?: string;
-  } = {},
+  options: ValidateOptions<TIn, TFieldNames, TOut> = {},
 ): Promise<FormState<TFieldNames, TOut>> {
   const {
     transform,
     fields: explicitFields,
     raw: explicitRaw,
     loggerContext = "validateFormGeneric",
+    messages,
   } = options;
 
-  // get canonical field list
+  // get canonical field list (stable order to ensure deterministic error maps)
   const fields = resolveCanonicalFieldNames<TIn, TFieldNames>(
     schema,
     allowedFields,
@@ -151,37 +131,68 @@ export async function validateFormGeneric<
 
   // parse and validate
   const parsed = schema.safeParse(raw);
-
   if (!parsed.success) {
-    logValidationFailure(loggerContext, parsed.error);
-    const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
-      error: mapToDenseFieldErrorsFromZod<TFieldNames>(parsed.error, fields),
-      success: false,
-    };
-
-    return mapResultToFormState(result, { fields, raw });
+    const failure = toFailureResult<TFieldNames, TOut>(
+      parsed.error,
+      fields,
+      loggerContext,
+    );
+    return mapResultToFormState(failure, {
+      failureMessage: messages?.failureMessage,
+      fields,
+      raw,
+      successMessage: messages?.successMessage,
+    });
   }
 
-  const dataIn = parsed.data as TIn;
-  const runTransform = normalizeTransform<TIn, TOut>(transform);
-
+  // optionally transform
+  const runTransform = toAsync<TIn, TOut>(transform);
   try {
-    const dataOut = await runTransform(dataIn);
+    const dataOut = await runTransform(parsed.data as TIn);
     const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
       data: dataOut,
       success: true,
     };
-    return mapResultToFormState(result, { fields, raw });
-  } catch (e) {
+    return mapResultToFormState(result, {
+      failureMessage: messages?.failureMessage,
+      fields,
+      raw,
+      successMessage: messages?.successMessage,
+    });
+  } catch (err) {
     serverLogger.error({
       context: `${loggerContext}.transform`,
-      errorName: e instanceof Error ? e.name : undefined,
+      errorName: err instanceof Error ? err.name : undefined,
       message: FORM_ERROR_MESSAGES.FAILED_VALIDATION,
     });
-    const result: Result<TOut, DenseFieldErrorMap<TFieldNames>> = {
-      error: expandSparseErrorsToDense<TFieldNames>({}, fields),
-      success: false,
-    };
-    return mapResultToFormState(result, { fields, raw });
+    const failure = toFailureResult<TFieldNames, TOut>(
+      err,
+      fields,
+      `${loggerContext}.transform`,
+    );
+    return mapResultToFormState(failure, {
+      failureMessage: messages?.failureMessage,
+      fields,
+      raw,
+      successMessage: messages?.successMessage,
+    });
   }
+}
+
+/**
+ * Convenience wrapper when no transform/output change is needed.
+ * Keeps call-sites succinct while preserving types.
+ */
+export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
+  formData: FormData,
+  schema: z.ZodType<TIn>,
+  allowedFields?: readonly TFieldNames[],
+  options: Omit<ValidateOptions<TIn, TFieldNames, TIn>, "transform"> = {},
+): Promise<FormState<TFieldNames, TIn>> {
+  return await validateFormGeneric<TIn, TFieldNames, TIn>(
+    formData,
+    schema,
+    allowedFields,
+    options,
+  );
 }

@@ -2,10 +2,10 @@ import type { Result } from "@/shared/core/result/result-base";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
-} from "@/shared/forms/messages/form-messages";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
-import type { FormState } from "@/shared/forms/types/form-state";
-import { buildDisplayFieldValues } from "@/shared/forms/utils/values";
+} from "@/shared/forms/i18n/form-messages.const";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+import type { FormState } from "@/shared/forms/types/form-state.type";
+import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
 /**
  * Map a Result into a UI-friendly FormState.

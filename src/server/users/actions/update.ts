@@ -25,11 +25,11 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { expandSparseErrorsToDense } from "@/shared/forms/mapping/error-utils";
-import { resolveSchemaFieldNames } from "@/shared/forms/schema/schema-fields";
-import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
-import type { FormState } from "@/shared/forms/types/form-state";
-import { extractRawFromFormData } from "@/shared/forms/utils/formdata";
+import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
+import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
+import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import type { FormState } from "@/shared/forms/types/form-state.type";
+import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 // Helpers for brevity and strict typing

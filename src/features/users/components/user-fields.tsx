@@ -7,7 +7,7 @@ import type { JSX } from "react";
 import { SelectRole } from "@/features/users/components/select-role";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { CreateUserFormFieldNames } from "@/features/users/lib/user.schema";
-import type { FieldError } from "@/shared/forms/types/field-errors";
+import type { FieldError } from "@/shared/forms/types/field-errors.type";
 import { Label } from "@/ui/atoms/label";
 import { InputField } from "@/ui/molecules/input-field";
 

@@ -10,8 +10,8 @@ import {
   EditUserFormSchema,
 } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/mapping/error-mapping";
-import type { FormState } from "@/shared/forms/types/form-state";
+import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =

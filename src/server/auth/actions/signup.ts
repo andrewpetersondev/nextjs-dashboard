@@ -14,9 +14,9 @@ import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
-import { attachRootDenseMessageToField } from "@/shared/forms/mapping/error-repo";
-import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
-import type { FormState } from "@/shared/forms/types/form-state";
+import { attachRootDenseMessageToField } from "@/shared/forms/errors/error-map-helpers";
+import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import type { FormState } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

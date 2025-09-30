@@ -3,11 +3,11 @@ import {
   buildEmptyDenseErrorMap,
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
-} from "@/shared/forms/mapping/error-utils";
+} from "@/shared/forms/errors/error-map-utils";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/types/field-errors";
+} from "@/shared/forms/types/field-errors.type";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
 export type ZodFlattenedFieldErrors = Record<
