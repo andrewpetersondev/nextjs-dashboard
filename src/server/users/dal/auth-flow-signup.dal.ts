@@ -5,25 +5,17 @@
  * leak admin-only capabilities (e.g., arbitrary roles, system flags).
  */
 
-import type { SignupFormOutput } from "@/features/auth/lib/auth.schema";
-import { toUserRole } from "@/features/users/lib/to-user-role";
+import "server-only";
+
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { UserEntity } from "@/server/users/entity";
 import { userDbRowToEntity } from "@/server/users/mapper";
+import type { AuthSignupDalInput } from "@/server/users/types";
 import { ConflictError } from "@/shared/core/errors/domain";
 
 const uniqueConstraintRegex = /unique/i;
-
-/**
- * Input for the auth-signup DAL: strictly what the public signup form provides.
- * NOTE: DAL expects a pre-hashed password (passwordHash), not a raw password.
- */
-export type AuthSignupDalInput = Pick<
-  SignupFormOutput,
-  "email" | "username" | "password"
->;
 
 /**
  * Creates a user record for the auth/signup flow.
@@ -36,15 +28,7 @@ export async function dalAuthFlowSignup(
   input: AuthSignupDalInput,
 ): Promise<UserEntity> {
   try {
-    const [userRow] = await db
-      .insert(users)
-      .values({
-        email: input.email,
-        password: input.password,
-        role: toUserRole("user"),
-        username: input.username,
-      })
-      .returning();
+    const [userRow] = await db.insert(users).values(input).returning();
 
     if (!userRow) {
       throw new DatabaseError("Failed to create user (no row returned).");

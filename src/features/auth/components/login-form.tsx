@@ -6,23 +6,20 @@ import { type FC, useActionState, useId } from "react";
 import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
-import {
-  type LoginFormFieldNames,
-  LoginFormSchema,
-} from "@/features/auth/lib/auth.schema";
+import { type LoginField, LoginSchema } from "@/features/auth/lib/auth.schema";
 import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/mapping/error-mapping";
 import type { FormState } from "@/shared/forms/types/form-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = buildInitialFailedFormStateFromSchema(LoginFormSchema);
+const INITIAL_STATE = buildInitialFailedFormStateFromSchema(LoginSchema);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 type LoginAction = (
-  prevState: FormState<LoginFormFieldNames>,
+  prevState: FormState<LoginField>,
   formData: FormData,
-) => Promise<FormState<LoginFormFieldNames>>;
+) => Promise<FormState<LoginField>>;
 
 interface LoginFormProps {
   action: LoginAction;
@@ -35,7 +32,7 @@ export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormState<LoginFormFieldNames>,
+    FormState<LoginField>,
     FormData
   >(action, INITIAL_STATE);
   const baseId = useId();

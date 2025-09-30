@@ -10,8 +10,8 @@ import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import {
-  SIGNUP_FIELDS,
-  type SignupFormFieldNames,
+  SIGNUP_FIELDS_LIST,
+  type SignupField,
 } from "@/features/auth/lib/auth.schema";
 import { buildInitialFailedFormState } from "@/shared/forms/mapping/error-mapping";
 import type { FormState } from "@/shared/forms/types/form-state";
@@ -19,14 +19,14 @@ import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
 const INITIAL_STATE =
-  buildInitialFailedFormState<SignupFormFieldNames>(SIGNUP_FIELDS);
+  buildInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 type SignupAction = (
-  prevState: FormState<SignupFormFieldNames>,
+  prevState: FormState<SignupField>,
   formData: FormData,
-) => Promise<FormState<SignupFormFieldNames>>;
+) => Promise<FormState<SignupField>>;
 
 interface SignupFormProps {
   action: SignupAction;
@@ -37,7 +37,7 @@ export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormState<SignupFormFieldNames>,
+    FormState<SignupField>,
     FormData
   >(action, INITIAL_STATE);
   const baseId = useId();

@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { USER_ROLES } from "@/features/auth/lib/auth.roles";
 import {
-  emailSchema,
-  passwordSchema,
-  usernameSchema,
+  EmailSchema,
+  PasswordSchema,
+  UsernameSchema,
 } from "@/features/auth/lib/auth.schema";
 import { toUndefinedIfEmptyString } from "@/shared/utils/string/normalize";
 
@@ -37,10 +37,10 @@ export const roleSchema = z
  * Use strictObject to reject unknown keys early.
  */
 export const UserFormBaseSchema = z.strictObject({
-  email: emailSchema, // already trims + lowercases via pipe
-  password: passwordSchema, // trims with strength rules
+  email: EmailSchema, // already trims + lowercases via pipe
+  password: PasswordSchema, // trims with strength rules
   role: roleSchema, // normalized + validated
-  username: usernameSchema, // trims + lowercases
+  username: UsernameSchema, // trims + lowercases
 });
 
 export const CreateUserFormSchema = UserFormBaseSchema;
@@ -49,10 +49,10 @@ export const CreateUserFormSchema = UserFormBaseSchema;
  * Optional, preprocessed fields for edit.
  * Each field accepts empty string as "unset" and otherwise applies full normalization.
  */
-export const emailEdit = optionalEdit(emailSchema);
-export const passwordEdit = optionalEdit(passwordSchema);
+export const emailEdit = optionalEdit(EmailSchema);
+export const passwordEdit = optionalEdit(PasswordSchema);
 export const roleEdit = optionalEdit(roleSchema);
-export const usernameEdit = optionalEdit(usernameSchema);
+export const usernameEdit = optionalEdit(UsernameSchema);
 
 /**
  * Edit schema with all fields optional after preprocessing.

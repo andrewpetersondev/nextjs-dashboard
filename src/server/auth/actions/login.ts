@@ -2,10 +2,10 @@
 
 import { redirect } from "next/navigation";
 import {
-  LOGIN_FIELDS,
-  type LoginFormFieldNames,
-  type LoginFormInput,
-  LoginFormSchema,
+  LOGIN_FIELDS_LIST,
+  type LoginData,
+  type LoginField,
+  LoginSchema,
 } from "@/features/auth/lib/auth.schema";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
@@ -20,19 +20,16 @@ import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state"
 import type { FormState } from "@/shared/forms/types/form-state";
 import { ROUTES } from "@/shared/routes/routes";
 
-// Small helpers to keep main flow concise
-const fields = LOGIN_FIELDS;
-
-const dense = buildEmptyDenseErrorMap<LoginFormFieldNames>(fields);
+const dense = buildEmptyDenseErrorMap<LoginField>(LOGIN_FIELDS_LIST);
 
 function invalidCredentialsState(
   raw: Record<string, FormDataEntryValue>,
-): FormState<LoginFormFieldNames> {
+): FormState<LoginField> {
   return mapResultToFormState(
     { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-      fields,
+      fields: LOGIN_FIELDS_LIST,
       raw,
     },
   );
@@ -40,12 +37,12 @@ function invalidCredentialsState(
 
 function unexpectedErrorState(
   raw: Record<string, FormDataEntryValue>,
-): FormState<LoginFormFieldNames> {
+): FormState<LoginField> {
   return mapResultToFormState(
     { error: dense, success: false },
     {
       failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
-      fields,
+      fields: LOGIN_FIELDS_LIST,
       raw,
     },
   );
@@ -61,24 +58,22 @@ function unexpectedErrorState(
  * @returns FormState for UI; on success this action redirects
  */
 export async function login(
-  _prevState: FormState<LoginFormFieldNames>,
+  _prevState: FormState<LoginField>,
   formData: FormData,
-): Promise<FormState<LoginFormFieldNames>> {
+): Promise<FormState<LoginField>> {
   const raw = Object.fromEntries(formData.entries());
 
-  // 1) Validate + normalize (email lowercased/trimmed)
-  const validated = await validateFormGeneric<
-    LoginFormInput,
-    LoginFormFieldNames
-  >(formData, LoginFormSchema, fields, {
-    fields,
-    loggerContext: "login.validate",
-    raw,
-    transform: (d: LoginFormInput) => ({
-      ...d,
-      email: d.email.toLowerCase().trim(),
-    }),
-  });
+  // 1) Validate
+  const validated = await validateFormGeneric<LoginData, LoginField>(
+    formData,
+    LoginSchema,
+    LOGIN_FIELDS_LIST,
+    {
+      fields: LOGIN_FIELDS_LIST,
+      loggerContext: "login.validate",
+      raw,
+    },
+  );
 
   if (!validated.success || !validated.data) {
     return validated;

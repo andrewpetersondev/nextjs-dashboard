@@ -1,13 +1,12 @@
-import type {
-  SignupFormFieldNames,
-  SignupFormOutput,
-} from "@/features/auth/lib/auth.schema";
+import "server-only";
+
+import type { SignupData, SignupField } from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
+import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { AuthUserRepo } from "@/server/users/auth-flow-repo.user";
-import type { AuthSignupDalInput } from "@/server/users/dal/auth-flow-signup.dal";
 import { userEntityToDto } from "@/server/users/mapper";
 import {
   ConflictError,
@@ -20,15 +19,17 @@ import { Err, Ok } from "@/shared/core/result/result-base";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors";
 
 // Helper to build a dense error map for signup fields
+// Dense Errors probably do not add value here. Dense errors are good UI.
+// Errors here should be like "username taken" or "email already exists"
 function denseSignupErrors(
-  partial: Partial<Record<SignupFormFieldNames, readonly string[]>>,
-): DenseFieldErrorMap<SignupFormFieldNames> {
-  const all: SignupFormFieldNames[] = ["email", "username", "password"];
-  const out = {} as Record<SignupFormFieldNames, readonly string[]>;
+  partial: Partial<Record<SignupField, readonly string[]>>,
+): DenseFieldErrorMap<SignupField> {
+  const all: SignupField[] = ["email", "username", "password"];
+  const out = {} as Record<SignupField, readonly string[]>;
   for (const k of all) {
     out[k] = partial[k] ?? [];
   }
-  return out as DenseFieldErrorMap<SignupFormFieldNames>;
+  return out as DenseFieldErrorMap<SignupField>;
 }
 
 export class UserAuthFlowService {
@@ -38,36 +39,25 @@ export class UserAuthFlowService {
     this.db = db;
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async authFlowSignupService(
-    input: SignupFormOutput,
-  ): Promise<Result<UserDto, DenseFieldErrorMap<SignupFormFieldNames>>> {
+    input: SignupData,
+  ): Promise<Result<UserDto, DenseFieldErrorMap<SignupField>>> {
     const repo = new AuthUserRepo(this.db);
-
-    // Normalize minimal fields here if desired
-    // all normalization should be included in zod schema making this unnecessary
-    const normalizedEmail = input.email.toLowerCase().trim();
-    const normalizedUsername = input.username.trim();
 
     // Hash in the service
     const passwordHash = await hashPassword(input.password);
 
-    const repoInput: AuthSignupDalInput = {
-      email: normalizedEmail,
+    const repoInput = {
+      ...input,
       password: passwordHash,
-      username: normalizedUsername,
+      role: toUserRole("USER"),
     };
 
     try {
       const created = await repo.authRepoSignup(repoInput);
 
       // The service returns a DTO for the client; map minimally and safely
-      const dto: UserDto = userEntityToDto({
-        email: created.email,
-        id: created.id,
-        role: created.role,
-        username: created.username,
-      } as any);
+      const dto = userEntityToDto(created);
 
       return Ok(dto);
     } catch (err) {
