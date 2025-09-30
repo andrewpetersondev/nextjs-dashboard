@@ -1,7 +1,3 @@
-/**
- * @file Canonical form-level success and error messages for consistent UX.
- * Prefer using these constants over hard-coded strings in actions/components.
- */
 export const FORM_ERROR_MESSAGES = {
   FAILED_VALIDATION: "Failed to validate form data.",
   INVALID_FORM_DATA: "Invalid form data. Please check your input.",

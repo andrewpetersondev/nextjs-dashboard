@@ -1,9 +1,3 @@
-/**
- * @file Map validation errors to UI-friendly shapes.
- *
- * Transforms sparse/dense error maps scoped to allowed field names.
- */
-
 import type { z } from "zod";
 import { buildEmptyDenseErrorMap } from "@/shared/forms/mapping/error-utils";
 import type { FormState } from "@/shared/forms/types/form-state";

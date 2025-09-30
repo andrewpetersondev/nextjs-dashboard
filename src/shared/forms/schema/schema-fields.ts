@@ -1,13 +1,3 @@
-/**
- * @file Utilities for deriving field-name lists from Zod schemas.
- *
- * @remarks
- * Primary goals:
- * - Centralize allowed form field names per schema.
- * - Provide canonical field lists to build raw form-data maps and dense error maps.
- * - Reduce over-posting risk by supporting explicit whitelists.
- */
-
 import type { z } from "zod";
 import { isZodObjectSchema } from "@/shared/forms/mapping/zod-mapping";
 import { extractRawFromFormData } from "@/shared/forms/utils/formdata";

@@ -1,13 +1,3 @@
-/**
- * @file Zod error adapters: normalize ZodError into project error shapes.
- *
- * Responsibilities:
- * - Flatten Zod errors to fieldErrors/formErrors via Zod's API.
- * - Map flattened fieldErrors to sparse and dense shapes scoped to allowed fields.
- *
- * Keep: dense internally for determinism, sparse for UI.
- */
-
 import { type ZodRawShape, z } from "zod";
 import {
   buildEmptyDenseErrorMap,
