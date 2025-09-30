@@ -29,14 +29,15 @@ export async function signup(
 ): Promise<FormState<SignupField, unknown>> {
   const fields = SIGNUP_FIELDS_LIST;
 
-  const validated = await validateFormGeneric<
-    SignupData,
-    SignupField,
-    SignupData
-  >(formData, SignupSchema, fields, {
+  const validated = await validateFormGeneric<SignupData, SignupField>(
+    formData,
+    SignupSchema,
     fields,
-    loggerContext: "signup.validate",
-  });
+    {
+      fields,
+      loggerContext: "signup.validate",
+    },
+  );
 
   // If validation failed, return the FormState produced by validateFormGeneric
   if (!validated.success || !validated.data) {

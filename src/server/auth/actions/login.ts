@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import {
   LOGIN_FIELDS_LIST,
-  type LoginData,
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
@@ -29,12 +28,8 @@ export async function login(
 ): Promise<FormState<LoginField, unknown>> {
   const fields = LOGIN_FIELDS_LIST;
 
-  const validated = await validateFormGeneric<LoginData, LoginField, LoginData>(
-    formData,
-    LoginSchema,
-    fields,
-    { fields, loggerContext: "login.validate" },
-  );
+  // NOTE: Login Action is minimal to explore how it is different from Signup Action; Signup Action is maximal.
+  const validated = await validateFormGeneric(formData, LoginSchema);
 
   // If validation failed, return the FormState produced by validateFormGeneric
   if (!validated.success || !validated.data) {
