@@ -8,8 +8,8 @@ import {
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { UserAuthFlowService } from "@/server/auth/auth-flow-service.user";
 import { setSessionToken } from "@/server/auth/session";
+import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
