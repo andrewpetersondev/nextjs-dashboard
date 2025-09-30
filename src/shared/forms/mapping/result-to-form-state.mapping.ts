@@ -51,7 +51,7 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
 ): FormState<TFieldNames, TData> {
   const {
     successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
-    failureMessage = FORM_ERROR_MESSAGES.FAILED_VALIDATION,
+    failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
     raw,
     fields,
     // Default redaction protects common sensitive fields.

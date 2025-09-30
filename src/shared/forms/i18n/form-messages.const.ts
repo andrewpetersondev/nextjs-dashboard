@@ -1,5 +1,4 @@
 export const FORM_ERROR_MESSAGES = {
-  FAILED_VALIDATION: "Failed to validate form data.",
   INVALID_FORM_DATA: "Invalid form data. Please check your input.",
   MISSING_REQUIRED_FIELDS: "Please fill out all required fields.",
   SUBMIT_FAILED: "Form submission failed. Please try again.",
