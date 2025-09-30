@@ -1,6 +1,11 @@
 import "server-only";
 
-import type { SignupData, SignupField } from "@/features/auth/lib/auth.schema";
+import type {
+  LoginData,
+  LoginField,
+  SignupData,
+  SignupField,
+} from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
@@ -29,6 +34,19 @@ function denseSignupErrors(
     out[k] = partial[k] ?? [];
   }
   return out as DenseFieldErrorMap<SignupField>;
+}
+
+// Helper to build a dense error map for login fields
+// Dense Errors probably do not add value here. Dense errors are good UI.
+function denseLoginErrors(
+  partial: Partial<Record<LoginField, readonly string[]>>,
+): DenseFieldErrorMap<LoginField> {
+  const all: LoginField[] = ["email", "password"];
+  const out = {} as Record<LoginField, readonly string[]>;
+  for (const k of all) {
+    out[k] = partial[k] ?? [];
+  }
+  return out as DenseFieldErrorMap<LoginField>;
 }
 
 export class UserAuthFlowService {
@@ -94,6 +112,55 @@ export class UserAuthFlowService {
       }
       return Err(
         denseSignupErrors({
+          email: ["Unknown error occurred"],
+        }),
+      );
+    }
+  }
+
+  async authFlowLoginService(
+    input: LoginData,
+  ): Promise<Result<UserDto, DenseFieldErrorMap<LoginField>>> {
+    const repo = new AuthUserRepo(this.db);
+
+    // Do NOT hash here; DAL compares raw password to stored hash
+    const repoInput = {
+      ...input,
+      password: input.password,
+    };
+
+    try {
+      const user = await repo.authRepoLogin(repoInput);
+
+      const dto = userEntityToDto(user);
+      return Ok(dto);
+    } catch (err) {
+      // Map infrastructure/domain errors to dense field errors
+      if (err instanceof UnauthorizedError) {
+        return Err(
+          denseLoginErrors({
+            // Unified message for invalid credentials
+            email: ["Invalid email or password"],
+            password: ["Invalid email or password"],
+          }),
+        );
+      }
+      if (err instanceof ValidationError) {
+        return Err(
+          denseLoginErrors({
+            email: ["Invalid data"],
+          }),
+        );
+      }
+      if (err instanceof DatabaseError) {
+        return Err(
+          denseLoginErrors({
+            email: ["Unexpected database error"],
+          }),
+        );
+      }
+      return Err(
+        denseLoginErrors({
           email: ["Unknown error occurred"],
         }),
       );

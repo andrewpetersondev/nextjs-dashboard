@@ -7,46 +7,17 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
+import { UserAuthFlowService } from "@/server/users/auth-flow-service.user";
 import { toUserId } from "@/shared/domain/id-converters";
-import { buildEmptyDenseErrorMap } from "@/shared/forms/mapping/error-utils";
+import { attachRootDenseMessageToField } from "@/shared/forms/mapping/error-repo";
 import { mapResultToFormState } from "@/shared/forms/state/result-to-form-state";
 import type { FormState } from "@/shared/forms/types/form-state";
 import { ROUTES } from "@/shared/routes/routes";
-
-const dense = buildEmptyDenseErrorMap<LoginField>(LOGIN_FIELDS_LIST);
-
-function invalidCredentialsState(
-  raw: Record<string, FormDataEntryValue>,
-): FormState<LoginField> {
-  return mapResultToFormState(
-    { error: dense, success: false },
-    {
-      failureMessage: USER_ERROR_MESSAGES.INVALID_CREDENTIALS,
-      fields: LOGIN_FIELDS_LIST,
-      raw,
-    },
-  );
-}
-
-function unexpectedErrorState(
-  raw: Record<string, FormDataEntryValue>,
-): FormState<LoginField> {
-  return mapResultToFormState(
-    { error: dense, success: false },
-    {
-      failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
-      fields: LOGIN_FIELDS_LIST,
-      raw,
-    },
-  );
-}
 
 /**
  * Server Action: login
@@ -58,54 +29,68 @@ function unexpectedErrorState(
  * @returns FormState for UI; on success this action redirects
  */
 export async function login(
-  _prevState: FormState<LoginField>,
+  _prevState: FormState<LoginField, unknown>,
   formData: FormData,
-): Promise<FormState<LoginField>> {
-  const raw = Object.fromEntries(formData.entries());
+): Promise<FormState<LoginField, unknown>> {
+  const fields = LOGIN_FIELDS_LIST;
 
-  // 1) Validate
-  const validated = await validateFormGeneric<LoginData, LoginField>(
+  const validated = await validateFormGeneric<LoginData, LoginField, LoginData>(
     formData,
     LoginSchema,
-    LOGIN_FIELDS_LIST,
+    fields,
     {
-      fields: LOGIN_FIELDS_LIST,
+      fields,
       loggerContext: "login.validate",
-      raw,
     },
   );
 
+  // If validation failed, return the FormState produced by validateFormGeneric
   if (!validated.success || !validated.data) {
     return validated;
   }
 
-  const { email, password } = validated.data;
-
   try {
-    // 2) Authenticate
-    const db = getDB();
-    const user = await findUserForLogin(db, email, password);
-    if (!user) {
-      return invalidCredentialsState(raw);
+    // Use auth-flow service -> repo -> DAL pipeline
+    const service = new UserAuthFlowService(getDB());
+    const res = await service.authFlowLoginService(validated.data);
+
+    if (!res.success || !res.data) {
+      // Map domain/service error into dense field errors for consistent UI handling.
+      const dense = attachRootDenseMessageToField(
+        fields,
+        "Login failed. Please try again.",
+      );
+      return mapResultToFormState<LoginField, unknown>(
+        { error: dense, success: false },
+        { fields, raw: {} },
+      );
     }
 
-    // 3) Establish session
-    await setSessionToken(toUserId(user.id), toUserRole(user.role));
+    // Establish session only after successful login
+    await setSessionToken(toUserId(res.data.id), toUserRole(res.data.role));
   } catch (err) {
-    // Narrow error and avoid leaking sensitive data
-    const error =
-      err instanceof Error
-        ? { message: err.message, name: err.name }
-        : { message: "Unknown error" };
+    // Unexpected error path: log safely and return a consistent failure state.
     serverLogger.error({
-      context: "login",
-      email, // already normalized, avoids reading from raw form
-      error,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      context: "login.persist",
+      // do not include sensitive data; structure the log minimally
+      error:
+        // TODO: Other layers should return more specific errors so create strategy that is more specific
+        err instanceof Error
+          ? { message: err.message, name: err.name }
+          : { message: "Unknown error" },
+      message: "Unexpected error during login",
     });
-    return unexpectedErrorState(raw);
+
+    const dense = attachRootDenseMessageToField(
+      fields,
+      "Unexpected error. Please try again.",
+    );
+    return mapResultToFormState<LoginField, unknown>(
+      { error: dense, success: false },
+      { fields, raw: {} },
+    );
   }
 
-  // 4) Redirect on success
+  // Redirect on success; never return a value after redirect.
   redirect(ROUTES.DASHBOARD.ROOT);
 }

@@ -3,8 +3,12 @@ import "server-only";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { dalAuthFlowSignup } from "@/server/users/dal/auth-flow-signup.dal";
+import { findUserForLogin } from "@/server/users/dal/find-user-for-login";
 import type { UserEntity } from "@/server/users/entity";
-import type { AuthSignupDalInput } from "@/server/users/types";
+import type {
+  AuthLoginDalInput,
+  AuthSignupDalInput,
+} from "@/server/users/types";
 import {
   ConflictError,
   UnauthorizedError,
@@ -50,6 +54,33 @@ export class AuthUserRepo {
       // Wrap unknown errors as DatabaseError (BaseError-compatible)
       throw new DatabaseError(
         "Database operation failed during signup.",
+        {},
+        err as Error,
+      );
+    }
+  }
+
+  async authRepoLogin(input: AuthLoginDalInput): Promise<UserEntity> {
+    try {
+      const entity = await findUserForLogin(
+        this.db,
+        input.email,
+        input.password,
+      );
+      return entity;
+    } catch (err) {
+      // Pass through known BaseError subclasses
+      if (
+        err instanceof ConflictError ||
+        err instanceof UnauthorizedError ||
+        err instanceof ValidationError ||
+        err instanceof DatabaseError
+      ) {
+        throw err;
+      }
+      // Wrap unknown errors as DatabaseError (BaseError-compatible)
+      throw new DatabaseError(
+        "Database operation failed during login.",
         {},
         err as Error,
       );

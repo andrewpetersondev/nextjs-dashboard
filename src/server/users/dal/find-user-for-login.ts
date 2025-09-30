@@ -1,13 +1,17 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { UserDto } from "@/features/users/lib/dto";
 import { comparePassword } from "@/server/auth/hashing";
 import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
+import type { UserEntity } from "@/server/users/entity";
+import { userDbRowToEntity } from "@/server/users/mapper";
+import {
+  UnauthorizedError,
+  ValidationError,
+} from "@/shared/core/errors/domain";
 
 /**
  * Finds a user by email and verifies the password.
@@ -15,40 +19,45 @@ import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
  * @param db - Database instance (Drizzle)
  * @param email - User's email address
  * @param password - Plaintext password to verify
- * @returns UserDto if credentials are valid, otherwise null
+ * @returns UserEntity if credentials are valid, otherwise throws UnauthorizedError
  */
 export async function findUserForLogin(
   db: Database,
   email: string,
   password: string,
-): Promise<UserDto | null> {
+): Promise<UserEntity> {
   if (!(email && password)) {
-    return null;
+    // Do not proceed with DB call on invalid input
+    throw new ValidationError("Email and password are required.");
   }
-
   try {
-    // Always fetch raw row, then map to UserEntity for type safety
     const [userRow] = await db
       .select()
       .from(users)
       .where(eq(users.email, email));
 
+    // Unify user-not-found and bad-password into UnauthorizedError
     if (!userRow) {
-      return null;
+      throw new UnauthorizedError("Invalid email or password.");
     }
 
-    // Map raw DB row to UserEntity (brands id/role)
     const userEntity = userDbRowToEntity(userRow);
 
-    // Securely compare password
     const validPassword = await comparePassword(password, userEntity.password);
     if (!validPassword) {
-      return null;
+      throw new UnauthorizedError("Invalid email or password.");
     }
 
-    // Map to DTO for safe return
-    return userEntityToDto(userEntity);
+    return userEntity;
   } catch (error) {
+    // Pass through domain errors unchanged
+    if (
+      error instanceof UnauthorizedError ||
+      error instanceof ValidationError
+    ) {
+      throw error;
+    }
+
     serverLogger.error({
       context: "findUserForLogin",
       email,
