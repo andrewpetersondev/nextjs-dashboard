@@ -14,6 +14,8 @@ import type { UserEntity } from "@/server/users/entity";
 import { userDbRowToEntity } from "@/server/users/mapper";
 import { ConflictError } from "@/shared/core/errors/domain";
 
+const uniqueConstraintRegex = /unique/i;
+
 /**
  * Input for the auth-signup DAL: strictly what the public signup form provides.
  * NOTE: DAL expects a pre-hashed password (passwordHash), not a raw password.
@@ -53,7 +55,7 @@ export async function dalAuthFlowSignup(
     const isUniqueViolation =
       err?.code === "23505" ||
       err?.name === "UniqueConstraintError" ||
-      /unique/i.test(String(err?.message));
+      uniqueConstraintRegex.test(String(err?.message));
 
     if (isUniqueViolation) {
       throw new ConflictError(
