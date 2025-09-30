@@ -9,17 +9,8 @@ import type {
   RepoError,
   UsersRepository,
 } from "@/server/users/repo";
+import type { AuthSignupDalInput } from "@/server/users/types";
 import type { Result } from "@/shared/core/result/result-base";
-
-/**
- * Input expected by the service after the server action validated the form.
- */
-export type SignupServiceInput = {
-  readonly email: string;
-  readonly password: string;
-  readonly username: string;
-  readonly role?: string;
-};
 
 /**
  * UsersService: business rules for users domain.
@@ -34,7 +25,7 @@ export class UsersService {
     this.repo = repo;
   }
 
-  private normalize(input: SignupServiceInput): SignupServiceInput {
+  private normalize(input: AuthSignupDalInput): AuthSignupDalInput {
     return {
       email: input.email.toLowerCase().trim(),
       password: input.password,
@@ -44,7 +35,7 @@ export class UsersService {
   }
 
   private toRepoInput(
-    input: SignupServiceInput,
+    input: AuthSignupDalInput,
     password: string,
   ): CreateUserRepoInput {
     return {
@@ -62,7 +53,7 @@ export class UsersService {
    * - Returns Result with created user or infrastructure error.
    */
   async signup(
-    raw: SignupServiceInput,
+    raw: AuthSignupDalInput,
   ): Promise<Result<CreateUserRepoOutput, RepoError>> {
     const input = this.normalize(raw);
     const passwordHash = await hashPassword(input.password);

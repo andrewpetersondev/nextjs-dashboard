@@ -2,7 +2,7 @@ import "server-only";
 
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import type { NewUserRow, UserRow } from "@/server/db/schema/users";
+import type { UserRow } from "@/server/db/schema/users";
 import type { UserEntity } from "@/server/users/entity";
 import { toUserId } from "@/shared/domain/id-converters";
 
@@ -43,21 +43,5 @@ export function userDbRowToEntity(row: UserRow): UserEntity {
     role: toUserRole(row.role),
     sensitiveData: row.sensitiveData,
     username: row.username,
-  };
-}
-
-/**
- * Maps a UserEntity to a NewUserRow for DB insertion.
- * Omits DB-generated fields (e.g., id, createdAt).
- * @param entity - The UserEntity to convert.
- * @returns {NewUserRow} - The DB insert row.
- */
-export function userEntityToNewUserRow(entity: UserEntity): NewUserRow {
-  return {
-    email: entity.email,
-    password: entity.password,
-    role: entity.role,
-    username: entity.username,
-    // Omit id, createdAt, etc. if DB generates them
   };
 }
