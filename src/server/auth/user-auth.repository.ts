@@ -2,7 +2,7 @@ import "server-only";
 
 import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
 import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
-import type { AuthLoginDalInput } from "@/server/auth/types/legacy.types";
+import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -40,7 +40,7 @@ export class AuthUserRepo {
       const row = await createUserForSignup(this.db, input);
 
       if (!row) {
-        throw new ValidationError("Email and password are required.");
+        throw new ValidationError("Email, username and password are required.");
       }
 
       return newUserDbRowToEntity(row);

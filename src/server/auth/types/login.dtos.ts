@@ -1,9 +1,5 @@
 import "server-only";
-import type {
-  PasswordHash,
-  PasswordRaw,
-} from "@/server/auth/types/password.types";
-import type { UserEntity } from "@/server/users/types/entity";
+import type { PasswordRaw } from "@/server/auth/types/password.types";
 
 /**
  * Public form input for login: raw password.
@@ -27,7 +23,5 @@ export interface AuthLoginServiceInput {
  */
 export interface AuthLoginDalInput {
   readonly email: string;
-  readonly username: string;
-  readonly passwordHash: PasswordHash;
-  readonly role: UserEntity["role"];
+  readonly password: string;
 }

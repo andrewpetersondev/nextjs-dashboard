@@ -37,7 +37,7 @@ function isUniqueViolation(err: unknown): boolean {
 
 /**
  * Inserts a new user for signup.
- * Expects pre-hashed password.
+ * Expects pre-hashed password via AuthSignupDalInput.passwordHash.
  * @param db - Database connection
  * @param input - AuthSignupDalInput
  * @returns NewUserRow if created, otherwise null
@@ -47,12 +47,26 @@ export async function createUserForSignup(
   db: Database,
   input: AuthSignupDalInput,
 ): Promise<NewUserRow | null> {
-  if (!input?.email || !input?.password) {
+  // Basic guard: required fields
+  if (
+    !input?.email ||
+    !input?.username ||
+    !input?.passwordHash ||
+    !input?.role
+  ) {
     return null;
   }
 
   try {
-    const [userRow] = await db.insert(users).values(input).returning();
+    // Map DTO to DB schema shape if needed; assumes users table has password column
+    const values = {
+      email: input.email,
+      password: input.passwordHash,
+      role: input.role,
+      username: input.username,
+    } as const;
+
+    const [userRow] = await db.insert(users).values(values).returning();
     return userRow ?? null;
   } catch (error: unknown) {
     if (isUniqueViolation(error)) {

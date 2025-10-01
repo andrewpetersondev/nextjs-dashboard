@@ -9,6 +9,7 @@ import type {
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
+import { asPasswordHash } from "@/server/auth/types/password.types";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -66,12 +67,19 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      const passwordHash = await hashPassword(input.password);
+      // Hash raw password then brand as PasswordHash before persistence boundary
+      const hashed: string = await hashPassword(
+        input.password as unknown as string,
+      );
+      const passwordHash = asPasswordHash(hashed);
+
       const repoInput = {
-        ...input,
-        password: passwordHash,
+        email: input.email,
+        passwordHash,
         role: toUserRole("USER"),
+        username: input.username,
       };
+
       const created = await repo.signup(repoInput);
       const dto = userEntityToDto(created);
       return Ok(dto);
@@ -81,6 +89,7 @@ export class UserAuthFlowService {
         return Err(
           denseSignupErrors({
             email: ["Email already in use"],
+            password: [],
             username: ["Username already in use"],
           }),
         );
@@ -89,6 +98,8 @@ export class UserAuthFlowService {
         return Err(
           denseSignupErrors({
             email: ["Invalid data"],
+            password: [],
+            username: [],
           }),
         );
       }
@@ -101,6 +112,8 @@ export class UserAuthFlowService {
       return Err(
         denseSignupErrors({
           email: ["Unexpected error occurred"],
+          password: [],
+          username: [],
         }),
       );
     }
@@ -119,7 +132,7 @@ export class UserAuthFlowService {
       // Pass raw password to repo; repo/DAL will handle verification
       const repoInput = {
         ...input,
-        password: input.password,
+        passwordHash: input.password,
       };
 
       const user = await repo.login(repoInput);

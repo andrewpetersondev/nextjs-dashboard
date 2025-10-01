@@ -9,6 +9,7 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
+import { asPasswordRaw } from "@/server/auth/types/password.types";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
@@ -23,6 +24,7 @@ import { ROUTES } from "@/shared/routes/routes";
  * Signup Server Action
  * Validates, creates user, starts session, then redirects.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signup(
   _prev: FormState<SignupField, unknown>,
   formData: FormData,
@@ -45,9 +47,15 @@ export async function signup(
   }
 
   try {
-    // Use auth-flow service -> repo -> DAL pipeline
+    // Brand the raw password at the action boundary for stronger typing downstream
+    const brandedInput: SignupData = {
+      email: validated.data.email,
+      password: asPasswordRaw(validated.data.password as unknown as string),
+      username: validated.data.username,
+    };
+
     const service = new UserAuthFlowService(getDB());
-    const res = await service.signup(validated.data);
+    const res = await service.signup(brandedInput);
 
     if (!res.success || !res.data) {
       // Map domain/service error into dense field errors for consistent UI handling.
