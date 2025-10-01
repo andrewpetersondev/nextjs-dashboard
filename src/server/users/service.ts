@@ -9,7 +9,7 @@ import type {
   RepoError,
   UsersRepository,
 } from "@/server/users/repo";
-import type { AuthSignupDalInput } from "@/server/users/types";
+import type { AuthSignupDalInput } from "@/server/users/types/types";
 import type { Result } from "@/shared/core/result/result-base";
 
 /**

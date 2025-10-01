@@ -12,7 +12,7 @@ import { hashPassword } from "@/server/auth/hashing";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { Database } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { userEntityToDto } from "@/server/users/mapper";
+import { userEntityToDto } from "@/server/users/mapping/user.mappers";
 import {
   ConflictError,
   UnauthorizedError,

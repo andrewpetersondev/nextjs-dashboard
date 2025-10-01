@@ -23,7 +23,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
-import type { UserUpdatePatch } from "@/server/users/types";
+import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";

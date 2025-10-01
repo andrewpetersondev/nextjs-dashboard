@@ -6,8 +6,11 @@ import type { Database } from "@/server/db/connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { userDbRowToEntity, userEntityToDto } from "@/server/users/mapper";
-import type { UserUpdatePatch } from "@/server/users/types";
+import {
+  userDbRowToEntity,
+  userEntityToDto,
+} from "@/server/users/mapping/user.mappers";
+import type { UserUpdatePatch } from "@/server/users/types/types";
 import type { UserId } from "@/shared/domain/domain-brands";
 
 /**
