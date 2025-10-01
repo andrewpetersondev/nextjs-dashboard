@@ -1,10 +1,10 @@
 import "server-only";
+import type { AuthSignupDalInput } from "@/server/auth/types/types";
 
 import type { Database } from "@/server/db/connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { AuthSignupDalInput } from "@/server/users/types/types";
 import { ConflictError } from "@/shared/core/errors/domain";
 
 const UNIQUE_VIOLATION_CODE = "23505";

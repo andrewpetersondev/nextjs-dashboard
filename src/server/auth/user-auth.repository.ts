@@ -2,6 +2,10 @@ import "server-only";
 
 import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
 import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
+import type {
+  AuthLoginDalInput,
+  AuthSignupDalInput,
+} from "@/server/auth/types/types";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -10,10 +14,6 @@ import {
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
 import type { UserEntity } from "@/server/users/types/entity";
-import type {
-  AuthLoginDalInput,
-  AuthSignupDalInput,
-} from "@/server/users/types/types";
 import {
   ConflictError,
   UnauthorizedError,
