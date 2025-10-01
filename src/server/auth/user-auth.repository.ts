@@ -2,10 +2,8 @@ import "server-only";
 
 import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
 import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
-import type {
-  AuthLoginDalInput,
-  AuthSignupDalInput,
-} from "@/server/auth/types/types";
+import type { AuthLoginDalInput } from "@/server/auth/types/legacy.types";
+import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { Database } from "@/server/db/connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";

@@ -1,5 +1,5 @@
 import "server-only";
-import type { AuthSignupDalInput } from "@/server/auth/types/types";
+import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 
 import type { Database } from "@/server/db/connection";
 import { type NewUserRow, users } from "@/server/db/schema";

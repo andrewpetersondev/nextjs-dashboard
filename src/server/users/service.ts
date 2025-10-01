@@ -3,7 +3,7 @@ import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashPassword } from "@/server/auth/hashing";
-import type { AuthSignupDalInput } from "@/server/auth/types/types";
+import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type {
   CreateUserRepoInput,
   CreateUserRepoOutput,
