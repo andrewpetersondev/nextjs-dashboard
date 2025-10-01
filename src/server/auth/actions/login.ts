@@ -8,6 +8,7 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
+import { asPasswordRaw } from "@/server/auth/types/password.types";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
@@ -37,9 +38,14 @@ export async function login(
   }
 
   try {
-    // Use auth-flow service -> repo -> DAL pipeline
+    // Brand raw password at action boundary
+    const input = {
+      email: validated.data.email,
+      password: asPasswordRaw(validated.data.password as unknown as string),
+    };
+
     const service = new UserAuthFlowService(getDB());
-    const res = await service.login(validated.data);
+    const res = await service.login(input);
 
     if (!res.success || !res.data) {
       // Map domain/service error into dense field errors for consistent UI handling.

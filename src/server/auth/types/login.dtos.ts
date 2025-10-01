@@ -18,8 +18,8 @@ export interface AuthLoginServiceInput {
 }
 
 /**
- * Input for the auth-login DAL: expects pre-hashed password.
- * Decouples DAL from public shapes and prevents raw password reaching persistence.
+ * Repository/DAL input for login: raw password is verified against stored hash.
+ * We do NOT pass hashes around for login.
  */
 export interface AuthLoginDalInput {
   readonly email: string;

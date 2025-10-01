@@ -121,6 +121,7 @@ export class UserAuthFlowService {
 
   /**
    * Login flow: delegates to repo, returns UserDto in Result.
+   * Accepts raw password; repo/DAL verify against stored hash.
    * Never throws; always returns Result union for UI.
    */
   async login(
@@ -129,13 +130,10 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      // Pass raw password to repo; repo/DAL will handle verification
-      const repoInput = {
-        ...input,
-        passwordHash: input.password,
-      };
-
-      const user = await repo.login(repoInput);
+      const user = await repo.login({
+        email: input.email,
+        password: input.password as unknown as string,
+      });
 
       const dto = userEntityToDto(user);
       return Ok(dto);
@@ -153,6 +151,7 @@ export class UserAuthFlowService {
         return Err(
           denseLoginErrors({
             email: ["Invalid data"],
+            password: [],
           }),
         );
       }
@@ -166,6 +165,7 @@ export class UserAuthFlowService {
       return Err(
         denseLoginErrors({
           email: ["Unexpected error occurred"],
+          password: [],
         }),
       );
     }

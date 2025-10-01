@@ -66,7 +66,7 @@ export class AuthUserRepo {
   }
 
   /**
-   * Authenticates a user by email/password.
+   * Authenticates a user by email/password (raw).
    * @param input - AuthLoginDalInput
    * @returns UserEntity
    * @throws UnauthorizedError | ValidationError | DatabaseError

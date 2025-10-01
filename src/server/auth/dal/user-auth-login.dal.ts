@@ -7,20 +7,15 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
- * Finds a user by email for login.
- * Verifies password, returns DB row or null.
- * @param db - Database connection
- * @param email - User email
- * @param password - Raw password to verify
- * @returns UserRow if found and password matches, otherwise null
- * @throws DatabaseError (infra errors only)
+ * Finds a user by email for login and verifies the provided raw password
+ * against the stored password hash.
  */
 export async function findUserForLogin(
   db: Database,
   email: string,
-  password: string,
+  passwordRaw: string,
 ): Promise<UserRow | null> {
-  if (!email || !password) {
+  if (!email || !passwordRaw) {
     return null;
   }
 
@@ -36,7 +31,7 @@ export async function findUserForLogin(
     }
 
     const validPassword = await import("@/server/auth/hashing").then((mod) =>
-      mod.comparePassword(password, userRow.password),
+      mod.comparePassword(passwordRaw, userRow.password),
     );
     if (!validPassword) {
       return null;
