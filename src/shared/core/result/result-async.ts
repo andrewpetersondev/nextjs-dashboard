@@ -1,36 +1,71 @@
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
-/** Try/catch an async thunk into Result. */
-export const tryCatchAsync = async <T, E = Error>(
-  fn: () => Promise<T>,
-  mapError?: (e: unknown) => E,
-): Promise<Result<T, E>> => {
+export type AsyncFn<T> = () => Promise<T>;
+
+export interface TryAsyncOptions<TError> {
+  readonly mapError?: (e: unknown) => TError;
+}
+
+/**
+ * Execute an async thunk and wrap outcome in a Result.
+ * @template T Success type.
+ * @template TError Constrained error type (Error-like); defaults to Error.
+ * @param fn Async function producing a value.
+ * @param options Optional mapError to normalize unknown failures.
+ */
+export const tryCatchAsync = async <
+  T,
+  TError extends Error | { message: string } = Error,
+>(
+  fn: AsyncFn<T>,
+  options?: TryAsyncOptions<TError>,
+): Promise<Result<T, TError>> => {
   try {
     const value = await fn();
-    return Ok(value);
-  } catch (e) {
-    return Err(mapError ? mapError(e) : (e as E));
+    return Ok<T, TError>(value);
+  } catch (e: unknown) {
+    const mapped = options?.mapError ? options.mapError(e) : (e as TError);
+    return Err<T, TError>(mapped);
   }
 };
 
-/** Wrap a Promise into Result. */
-export const fromPromise = async <T, E = Error>(
-  p: Promise<T>,
-  mapError?: (e: unknown) => E,
-): Promise<Result<T, E>> => {
+/**
+ * Wrap an existing Promise into a Result.
+ * @template T Success type.
+ * @template TError Error type (Error-like).
+ * @param promise The promise to observe.
+ * @param mapError Optional mapper for rejection reason.
+ */
+export const fromPromise = async <
+  T,
+  TError extends Error | { message: string } = Error,
+>(
+  promise: Promise<T>,
+  mapError?: (e: unknown) => TError,
+): Promise<Result<T, TError>> => {
   try {
-    return Ok(await p);
-  } catch (e) {
-    return Err(mapError ? mapError(e) : (e as E));
+    return Ok(await promise);
+  } catch (e: unknown) {
+    return Err(mapError ? mapError(e) : (e as TError));
   }
 };
 
-/** Wrap async function (alias of tryCatchAsync). */
-export const fromPromiseFn = <T, E = Error>(
-  fn: () => Promise<T>,
-  mapError?: (e: unknown) => E,
-): Promise<Result<T, E>> => tryCatchAsync(fn, mapError);
-
-/** Convert Result to Promise (reject on Err). */
-export const toPromise = <T, E>(r: Result<T, E>): Promise<T> =>
+/**
+ * Convert a Result to a Promise, rejecting with the error on Err.
+ * @template T Success type.
+ * @template TError Error type.
+ */
+export const toPromise = <T, TError>(r: Result<T, TError>): Promise<T> =>
   r.ok ? Promise.resolve(r.value) : Promise.reject(r.error);
+
+/**
+ * @deprecated Use tryCatchAsync(fn, { mapError }) instead.
+ */
+export const fromPromiseFn = <
+  T,
+  TError extends Error | { message: string } = Error,
+>(
+  fn: AsyncFn<T>,
+  mapError?: (e: unknown) => TError,
+): Promise<Result<T, TError>> =>
+  tryCatchAsync(fn, mapError ? { mapError } : undefined);

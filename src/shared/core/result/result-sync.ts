@@ -29,7 +29,7 @@ export const tryCatch = <T, TError extends Error | { message: string } = Error>(
  * @param onNull Factory producing error when `v` is null/undefined.
  * @returns Result<T, TError>
  */
-export const fromNullable = <T, TError>(
+export const fromNullable = <T, TError extends Error | { message: string }>(
   v: T | null | undefined,
   onNull: () => TError,
 ): Result<T, TError> => (v == null ? Err(onNull()) : Ok(v));
@@ -44,7 +44,7 @@ export const fromNullable = <T, TError>(
  * @param onFail Error factory when predicate fails.
  * @returns Result<T, TError>
  */
-export const fromPredicate = <T, TError>(
+export const fromPredicate = <T, TError extends Error | { message: string }>(
   value: T,
   predicate: (v: T) => boolean,
   onFail: (v: T) => TError,

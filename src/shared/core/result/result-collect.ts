@@ -3,7 +3,11 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 export type OkType<R> = R extends Result<infer U, unknown> ? U : never;
 export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
 
-/** Collect all Ok values or short-circuit with first Err. */
+/**
+ * Collect all Ok values or short-circuit with the first Err.
+ * @template T Success type.
+ * @template E Error type (propagated, not constructed).
+ */
 export const collectAll = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
   const acc: T[] = [];
   for (const r of results) {
@@ -15,7 +19,11 @@ export const collectAll = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
   return Ok(acc);
 };
 
-/** Collect tuple (variadic) or short-circuit on first Err. */
+/**
+ * Collect a tuple of Results or short-circuit on first Err.
+ * @template T Tuple of Result types.
+ * @returns Result of unpacked Ok values preserving order or first Err.
+ */
 export function collectTuple<T extends readonly Result<unknown, unknown>[]>(
   ...results: T
 ): Result<{ [K in keyof T]: OkType<T[K]> }, ErrType<T[number]>> {
@@ -30,21 +38,35 @@ export function collectTuple<T extends readonly Result<unknown, unknown>[]>(
 }
 
 /**
- * @deprecated Prefer firstOkOrElse; legacy helper using default error on empty.
+ * Deprecated: Prefer `firstOkOrElse`.
+ * Returns the first Ok or a fabricated Error when the list is empty.
+ * @template T Success type.
+ * @template TError Error-like type.
+ * @deprecated Use `firstOkOrElse(() => new Error(...))`.
  */
-export const anyOk = <T, E>(results: Result<T, E>[]): Result<T, E> =>
-  firstOkOrElse<T, E>(() => new Error("No results provided") as E)(results);
+export const anyOk = <T, TError extends Error | { message: string } = Error>(
+  results: Result<T, TError>[],
+): Result<T, TError> =>
+  firstOkOrElse<T, TError>(() => new Error("No results provided") as TError)(
+    results,
+  );
 
-/** First Ok or fallback error (produced if empty). */
+/**
+ * First Ok or an error produced when the collection is empty.
+ * Propagates last Err if none are Ok.
+ * @template T Success type.
+ * @template TError Error-like type.
+ * @param onEmpty Factory for error when input array is empty.
+ */
 export const firstOkOrElse =
-  <T, E>(onEmpty: () => E) =>
-  (results: Result<T, E>[]): Result<T, E> => {
-    let lastErr: Result<never, E> | null = null;
+  <T, TError extends Error | { message: string }>(onEmpty: () => TError) =>
+  (results: Result<T, TError>[]): Result<T, TError> => {
+    let lastErr: Result<never, TError> | null = null;
     for (const r of results) {
       if (r.ok) {
         return r;
       }
-      lastErr = r as Result<never, E>;
+      lastErr = r as Result<never, TError>;
     }
     return lastErr ?? Err(onEmpty());
   };
