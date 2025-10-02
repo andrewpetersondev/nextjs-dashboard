@@ -1,5 +1,6 @@
 ---
-apply: manually
+applyTo: '**'
+description: 'description'
 ---
 
 # Coding Style

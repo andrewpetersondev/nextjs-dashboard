@@ -1,10 +1,6 @@
 ---
-apply: manually
----
-
----
-tags: [tsdoc, docs, api]
-scope: Exported APIs/components/hooks
+applyTo: '**'
+description: 'description'
 ---
 
 # TSDoc Rules

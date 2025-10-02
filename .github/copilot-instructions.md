@@ -1,8 +1,6 @@
----
-apply: always
----
+# Copilot Instructions
 
-# JetBrains AI Assistant Rules (Core + Index)
+## JetBrains AI Assistant Rules (Core + Index)
 
 Preamble: Concise, enforceable rules to guide code, docs, and reviews for a Next.js + TypeScript project. Optimized for
 JetBrains AI Assistant usage.
@@ -11,7 +9,7 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-## Quick Checklist (use at start of complex tasks)
+### Quick Checklist (use at start of complex tasks)
 
 - Confirm intent, constraints, and risks.
 - Identify files to change and impacted modules.
@@ -21,7 +19,7 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-## Response & Safety Patterns
+### Response & Safety Patterns
 
 - Start with a 3–7 bullet checklist for complex changes.
 - Add a one-line preamble explaining code purpose/context.
@@ -30,7 +28,7 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-## Logging & Error Policy (Core)
+### Logging & Error Policy (Core)
 
 - Add context (operation, identifiers) without secrets.
 - Normalize API error shapes; map internal errors to safe client messages.
@@ -40,7 +38,7 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 
 ---
 
-## Version & Tooling Constraints
+### Version & Tooling Constraints
 
 - Adhere to declared package versions; prefer stable APIs.
 - Note canary/experimental usage and provide alternatives where possible.
@@ -48,14 +46,14 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 
 ---
 
-## Conflict Resolution & Fallbacks
+### Conflict Resolution & Fallbacks
 
 - If instructions conflict, ask for clarification; default to stricter typing and safer operations.
 - When uncertain, default to current best practices and stable APIs.
 
 ---
 
-## Review Checklist
+### Review Checklist
 
 1. Strict TypeScript; no relaxed flags without rationale. See @rule:TYPESCRIPT.md.
 2. Public APIs annotated; no any except isolated transitional cases.
@@ -70,34 +68,25 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 11. Version/tooling compatibility; avoid deprecated APIs.
 12. Logs structured/safe; errors contextualized and sanitized.
 
----
+## README Maintenance Rules
 
-## Module Index (Toggle)
+### Edit Rules:
 
-- Language:
-    - @rule:rules/lang/TYPESCRIPT.md
-    - @rule:rules/lang/TSDOC.md
-- Frameworks:
-    - @rule:rules/frameworks/NEXTJS.md
-- Documentation:
-    - @rule:rules/docs/MARKDOWN.md
-    - @rule:rules/core/README_RULES.md
-- Testing:
-    - @rule:rules/testing/E2E_CYPRESS.md
-- Security:
-    - @rule:rules/security/SECURITY_ENV.md
-- Project:
-    - @rule:rules/project/ARCHITECTURE.md
-    - @rule:rules/project/CODING_STYLE.md
-- JetBrains:
-    - @rule:rules/jetbrains/JETBRAINS_ASSISTANT.md
+- Commands must be copy-paste runnable; prefer pnpm.
+- List only required env vars; no secrets; use clear placeholders.
+- Keep Tech Stack, Requirements, Getting Started, Testing, Useful Scripts, Troubleshooting in sync.
+- Validate links and referenced paths exist.
+- Keep content brief; link to docs/ for depth.
+- JetBrains: surface runnable commands and key scripts first; keep headings stable.
+- Date Policy: Update “Last updated: YYYY-MM-DD” only when README content changes.
 
----
+### PR Gate:
 
-## Bundles
+- PRs changing scripts, env, tooling, structure, or tests must update README.
+- Reviewer checks: commands run locally; sections reflect reality; date updated.
 
-See @rule:rules/INDEX.md for curated bundles:
+### Automation (recommended):
 
-- web-app: core + TypeScript + Next.js + TSDoc + Security + Architecture + Coding Style
-- docs-only: core + Markdown + README rules
-- test-rig: core + Cypress + Security
+- CI smoke: install → build → list scripts (pnpm -s run) to detect drift.
+- Dead-link check on README.
+- Optional: validate env var placeholders across docs and sample envs.

@@ -1,13 +1,9 @@
 ---
-apply: manually
+applyTo: '**'
+description: 'description'
 ---
 
----
-tags: [typescript, language, errors, async]
-scope: TypeScript usage across app, server, tests
----
-
-# TypeScript Best Practices
+# TypeScript Instructions
 
 Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Always on.
 
