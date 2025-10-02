@@ -1,13 +1,8 @@
 import { BaseError } from "@/shared/core/errors/base";
 
 /**
- * Validation error representation with code and status.
- *
- * Extends {@link BaseError} to provide a standardized validation error with
- * HTTP status code 400.
- *
- * @remarks
- * Immutable; use to encapsulate validation errors in APIs or services.
+ * Input validation failed (HTTP 422 by metadata).
+ * Use for schema / semantic validation failures.
  */
 export class ValidationError extends BaseError {
   constructor(
@@ -47,42 +42,40 @@ export class NotFoundError extends BaseError {
 }
 
 /**
- * Represents an unauthorized error.
- *
- * Extends {@link BaseError} to provide standardized properties for HTTP 401 errors.
+ * Authentication required or failed (HTTP 401).
  */
 export class UnauthorizedError extends BaseError {
-  readonly code = "UNAUTHORIZED";
-  readonly statusCode = 401;
+  constructor(
+    message?: string,
+    context: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    super("UNAUTHORIZED", message, context, cause);
+  }
 }
 
 /**
- * Represents a "Forbidden" error with HTTP status code 403.
- *
- * Extends the {@link BaseError} class to standardize forbidden access errors.
- *
- * @remarks
- * This error is used when a user attempts an action they are unauthorized to perform.
- *
- * @example
- * ```typescript
- * throw new ForbiddenError_New("Access denied to resource.");
- * ```
+ * Authenticated but lacking permission (HTTP 403).
  */
 export class ForbiddenError extends BaseError {
-  readonly code = "FORBIDDEN";
-  readonly statusCode = 403;
+  constructor(
+    message?: string,
+    context: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    super("FORBIDDEN", message, context, cause);
+  }
 }
 
 /**
- * Conflict error for HTTP 409 responses.
- *
- * Represents a resource conflict scenario, such as duplicate data submission.
- *
- * @remarks
- * Extends {@link BaseError} and sets the HTTP status code to 409.
+ * Resource state conflict (HTTP 409).
  */
 export class ConflictError extends BaseError {
-  readonly code = "CONFLICT";
-  readonly statusCode = 409;
+  constructor(
+    message?: string,
+    context: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    super("CONFLICT", message, context, cause);
+  }
 }

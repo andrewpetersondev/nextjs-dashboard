@@ -8,22 +8,25 @@ export interface BaseErrorContext {
 }
 
 export interface BaseErrorJSON {
-  code: ErrorCode;
-  message: string;
-  statusCode: number;
-  severity: string;
-  retryable: boolean;
-  category: string;
-  description: string;
-  context?: Record<string, unknown>;
+  readonly code: ErrorCode;
+  readonly message: string;
+  readonly statusCode: number;
+  readonly severity: string;
+  readonly retryable: boolean;
+  readonly category: string;
+  readonly description: string;
+  readonly context?: Record<string, unknown>;
 }
 
 /**
- * Standardized application error with rich metadata.
+ * Canonical application error with stable metadata derived from `ERROR_CODES`.
  *
- * All custom errors should extend this class (directly or indirectly).
- * Changed from abstract to this. what does that mean?
+ * All domain / infrastructure error types extend this class to ensure:
+ * - Consistent `code`, `statusCode`, `retryable`, `severity`, `category`.
+ * - Safe, shallow-serializable `context`.
+ * - Optional `cause` preserved (appended to stack trace for diagnostics).
  *
+ * Never mutate an instance; treat as immutable value object.
  */
 export class BaseError extends Error {
   readonly code: ErrorCode;
@@ -35,6 +38,12 @@ export class BaseError extends Error {
   readonly context: BaseErrorContext;
   readonly cause?: unknown;
 
+  /**
+   * @param code Error code (must exist in `ERROR_CODES`).
+   * @param message Optional override; defaults to code description.
+   * @param context Additional non-sensitive diagnostic data (redacted upstream if needed).
+   * @param cause Underlying error or value; not exposed in `toJSON`, but its stack is appended.
+   */
   constructor(
     code: ErrorCode,
     message?: string,
@@ -52,7 +61,6 @@ export class BaseError extends Error {
     this.description = meta.description;
     this.context = context;
     this.cause = cause;
-    // Optional: capture stack without leaking cause stack externally
     if (cause instanceof Error && cause.stack) {
       this.stack += `\nCaused By: ${cause.stack}`;
     }

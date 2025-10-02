@@ -1,11 +1,8 @@
 import { BaseError } from "@/shared/core/errors/base";
 
 /**
- * Fallback error for unexpected / unmapped failures.
- *
- * Used when an unknown value or a native Error that is not already a BaseError
- * is encountered. Wraps the original cause (if any) without leaking stack traces
- * across boundaries (callers can use toJSON()).
+ * Wrapper for unexpected / unmapped thrown values.
+ * Always uses code `UNKNOWN` to allow safe, generic client messaging.
  */
 export class UnknownError extends BaseError {
   constructor(
