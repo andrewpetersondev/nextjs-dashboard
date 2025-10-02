@@ -36,6 +36,7 @@ export type DenseFieldErrorMap<
   TField extends string,
   TMsg = string,
 > = DenseReadonlyRecord<TField, readonly TMsg[]>;
+
 /**
  * Sparse map of form values: keys may be omitted (fields that were not submitted/are not present).
  *
@@ -46,3 +47,34 @@ export type SparseFieldValueMap<
   TField extends string,
   TValue = string,
 > = Partial<Record<TField, TValue>>;
+
+// Enriched error messages with codes for i18n/UX consistency.
+export interface ErrorMessage {
+  readonly code: string;
+  readonly message: string;
+}
+
+/**
+ * Dense map variant with coded messages.
+ * Use this in Actions/UI; Services may construct the same shape via `expected(...)`.
+ */
+export type DenseFieldErrorMapCoded<TField extends string> = DenseFieldErrorMap<
+  TField,
+  ErrorMessage
+>;
+
+/**
+ * Form-level error (non-field-specific) with code.
+ */
+export interface FormErrorCoded {
+  readonly code: string;
+  readonly message: string;
+}
+
+/**
+ * Combined dense error payload for forms.
+ */
+export interface DenseErrorMapCoded<TField extends string> {
+  readonly form?: FormErrorCoded;
+  readonly fields?: Partial<Record<TField, ErrorMessage>>;
+}

@@ -115,7 +115,7 @@ export async function validateFormGeneric<
       loggerContext,
     );
     return mapResultToFormState(failure, {
-      failureMessage: messages?.failureMessage,
+      failureMessage: messages?.failureMessage ?? "Validation failed",
       fields,
       raw,
       successMessage: messages?.successMessage,

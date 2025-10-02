@@ -57,6 +57,28 @@ export type ResultPublic<T, E = { code: string; message: string }> = Result<
   E
 >;
 
+// Service-level helpers to prevent shape drift and enforce redaction.
+/**
+ * Success constructor (service boundary).
+ */
+export const ok = <T>(value: T): Result<T, never> => Ok(value);
+
+/**
+ * Expected error constructor (service boundary).
+ * Use for validation/business rule failures. Provide serializable `errors`.
+ */
+export const expected = <TError>(errors: TError): Result<never, TError> =>
+  ErrValidation(errors);
+
+/**
+ * Unexpected error constructor (service boundary).
+ * Redacts internal details; callers should log server-side separately.
+ */
+export const unexpected = (
+  message = "Unexpected error",
+): Result<never, { code: "UNEXPECTED"; message: string }> =>
+  Err({ code: "UNEXPECTED", message } as const);
+
 // Type guards
 
 /**

@@ -49,7 +49,8 @@ export type ServiceError =
 
 export type RepositoryError =
   | { layer: "repository"; kind: "Database"; message: string }
-  | { layer: "repository"; kind: "CreateFailed"; message: string };
+  | { layer: "repository"; kind: "CreateFailed"; message: string }
+  | { layer: "repository"; kind: "Infrastructure"; message: "REDACTED" };
 
 export type DalError =
   | { layer: "dal"; kind: "Database"; message: string }
