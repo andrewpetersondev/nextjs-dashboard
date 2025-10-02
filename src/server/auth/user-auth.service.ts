@@ -8,7 +8,7 @@ import type {
 } from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { hashPassword } from "@/server/auth/hashing";
+import { comparePassword, hashPassword } from "@/server/auth/hashing";
 import { asPasswordHash } from "@/server/auth/types/password.types";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { Database } from "@/server/db/connection";
@@ -120,9 +120,7 @@ export class UserAuthFlowService {
   }
 
   /**
-   * Login flow: delegates to repo, returns UserDto in Result.
-   * Accepts raw password; repo/DAL verify against stored hash.
-   * Never throws; always returns Result union for UI.
+   * Login: fetch user by email, compare raw vs stored hash in Service.
    */
   async login(
     input: LoginData,
@@ -130,10 +128,26 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      const user = await repo.login({
-        email: input.email,
-        password: input.password as unknown as string,
-      });
+      // Fetch user by email; Repo/DAL must include stored password hash on entity.
+      const user = await repo.login({ email: input.email });
+
+      // Defensive: ensure hashed password exists before comparing
+      if (!user.password || typeof user.password !== "string") {
+        serverLogger.error(
+          { context: "UserAuthFlowService.login", email: input.email },
+          "Missing hashed password on user entity; cannot authenticate",
+        );
+        throw new UnauthorizedError("Invalid email or password.");
+      }
+
+      // Compare in Service layer
+      const ok = await comparePassword(
+        input.password as unknown as string,
+        user.password as unknown as string,
+      );
+      if (!ok) {
+        throw new UnauthorizedError("Invalid email or password.");
+      }
 
       const dto = userEntityToDto(user);
       return Ok(dto);

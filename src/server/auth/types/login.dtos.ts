@@ -23,5 +23,4 @@ export interface AuthLoginServiceInput {
  */
 export interface AuthLoginDalInput {
   readonly email: string;
-  readonly password: string;
 }

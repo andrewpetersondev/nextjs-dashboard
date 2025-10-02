@@ -66,16 +66,26 @@ export class AuthUserRepo {
   }
 
   /**
-   * Authenticates a user by email/password (raw).
+   * Fetches a user by email for login; Service will verify password against stored hash.
    * @param input - AuthLoginDalInput
    * @returns UserEntity
    * @throws UnauthorizedError | ValidationError | DatabaseError
    */
   async login(input: AuthLoginDalInput): Promise<UserEntity> {
     try {
-      const row = await findUserForLogin(this.db, input.email, input.password);
+      // DAL returns the user row by email; no password comparison here.
+      const row = await findUserForLogin(this.db, input.email);
 
       if (!row) {
+        throw new UnauthorizedError("Invalid email or password.");
+      }
+
+      // Defensive: ensure hashed password exists on the row before mapping
+      if (!row.password || typeof row.password !== "string") {
+        serverLogger.error(
+          { context: "AuthUserRepo.login", email: input.email },
+          "User row missing hashed password; cannot authenticate",
+        );
         throw new UnauthorizedError("Invalid email or password.");
       }
 

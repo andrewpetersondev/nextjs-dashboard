@@ -7,15 +7,14 @@ import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
- * Finds a user by email for login and verifies the provided raw password
- * against the stored password hash.
+ * Finds a user by email for login.
+ * No password verification here; Service layer compares raw vs stored hash.
  */
 export async function findUserForLogin(
   db: Database,
   email: string,
-  passwordRaw: string,
 ): Promise<UserRow | null> {
-  if (!email || !passwordRaw) {
+  if (!email) {
     return null;
   }
 
@@ -26,18 +25,19 @@ export async function findUserForLogin(
       .where(eq(users.email, email))
       .limit(1);
 
+    // Ensure the hashed password is present; without it Service cannot compare.
     if (!userRow) {
       return null;
     }
-
-    const validPassword = await import("@/server/auth/hashing").then((mod) =>
-      mod.comparePassword(passwordRaw, userRow.password),
-    );
-    if (!validPassword) {
+    if (!userRow.password || typeof userRow.password !== "string") {
+      serverLogger.error(
+        { context: "findUserForLogin", email },
+        "User row missing hashed password; cannot authenticate",
+      );
       return null;
     }
 
-    return userRow;
+    return userRow ?? null;
   } catch (error: unknown) {
     // Narrow error type using guards
     const errorMessage =
@@ -48,7 +48,7 @@ export async function findUserForLogin(
       context: "findUserForLogin",
       email,
       error,
-      message: "Failed to find user for login.",
+      message: "Failed to read user by email.",
     });
     throw new DatabaseError(
       "Failed to read user by email.",
