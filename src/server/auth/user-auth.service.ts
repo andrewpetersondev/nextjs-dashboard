@@ -35,6 +35,7 @@ export class UserAuthFlowService {
 
   /**
    * Signup: hashes password, delegates to repo, returns Result<UserDto, DenseErrorMap>.
+   * Orchestration and cross-entity invariants (if any) remain here; uses repo.withTransaction when atomicity is required.
    */
   async signup(
     input: SignupData,
@@ -56,11 +57,15 @@ export class UserAuthFlowService {
       const hashed = await hashPassword(input.password as unknown as string);
       const passwordHash = asPasswordHash(hashed);
 
-      const created = await repo.signup({
-        email,
-        passwordHash,
-        role: toUserRole("USER"),
-        username,
+      // Example transaction boundary for future multi-write invariants (e.g., audit log, welcome email outbox)
+      const created = await repo.withTransaction(async (tx) => {
+        // Single write today; keep pattern ready for multi-entity invariants
+        return await tx.signup({
+          email,
+          passwordHash,
+          role: toUserRole("USER"),
+          username,
+        });
       });
 
       const dto = userEntityToDto(created);

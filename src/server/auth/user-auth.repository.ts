@@ -29,6 +29,34 @@ export class AuthUserRepo {
   }
 
   /**
+   * Run a sequence of repository operations inside a transaction.
+   * Orchestration remains in Service; txRepo mirrors this repository API but is bound to the tx connection.
+   */
+  async withTransaction<T>(
+    fn: (txRepo: AuthUserRepo) => Promise<T>,
+  ): Promise<T> {
+    // Assume Database has a transaction API: db.transaction(async (tx) => { ... })
+    // If your Database typing differs, adapt the call shape here.
+    try {
+      // @ts-expect-error: adapt to your Database transaction signature if needed
+      return await this.db.transaction(async (tx: Database) => {
+        const txRepo = new AuthUserRepo(tx);
+        return await fn(txRepo);
+      });
+    } catch (err: unknown) {
+      serverLogger.error(
+        {
+          context: "repo.AuthUserRepo.withTransaction",
+          err,
+          kind: "unexpected",
+        },
+        "Transaction failed in AuthUserRepo",
+      );
+      throw new DatabaseError("Transaction failed");
+    }
+  }
+
+  /**
    * Creates a new user for the auth/signup flow.
    * @throws ConflictError | ValidationError | DatabaseError
    */
