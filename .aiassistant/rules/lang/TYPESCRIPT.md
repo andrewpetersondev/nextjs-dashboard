@@ -90,7 +90,7 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 
 ## Zod Integration
 
-- Derive types with z.infer<typeof Schema>; do not duplicate type definitions.
+- Derive types with z.output<typeof Schema>; do not duplicate type definitions.
 - Prefer safeParse; return discriminated unions with parse details removed or summarized.
 - Do not expose raw ZodError to clients; map to a safe error shape.
 

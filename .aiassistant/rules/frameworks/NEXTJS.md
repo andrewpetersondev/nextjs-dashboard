@@ -11,4 +11,4 @@ apply: manually
     - Validate inputs in Server Actions; enforce auth/ACL server-side.
     - Don’t fetch on client when server can pre-render.
 - Zod/Validation:
-    - Use z.infer<typeof schema>, prefer safeParse; return client-safe unions, not raw ZodError.
+    - Use z.output<typeof schema>, prefer safeParse; return client-safe unions, not raw ZodError.

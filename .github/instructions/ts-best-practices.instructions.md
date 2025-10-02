@@ -57,7 +57,7 @@ Preamble: Compact, deterministic rules for strict, maintainable TypeScript in Ne
 
 ## Zod Integration
 
-- Use z.infer<typeof schema> for derived types.
+- Use z.output<typeof schema> for derived types.
 - Prefer safeParse and return unions with mapped messages.
 - Don’t expose raw ZodError to clients.
 

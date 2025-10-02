@@ -18,9 +18,9 @@ import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
  */
 export function deriveSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
   schema: S,
-): readonly Extract<keyof z.infer<S>, string>[] {
+): readonly Extract<keyof z.output<S>, string>[] {
   // Narrow the keys of the inferred object to strings only.
-  type Keys = Extract<keyof z.infer<S>, string>;
+  type Keys = Extract<keyof z.output<S>, string>;
   // Read the schema's shape keys (object property names).
   const keys = Object.keys(schema.shape) as Keys[];
   // Return as a readonly array to signal immutability to callers.

@@ -9,7 +9,7 @@ Flow: DAL ↔ Repository ↔ Service ↔ Action ↔ UI (RSC/Client)
 - DB Row: persistence shape only.
 - Domain Entity (UserEntity): business-safe, branded ids, invariants enforced.
 - DTO (UserDto): UI-safe projection (no secrets/PII).
-- Input Schemas: Zod at Action boundary; derive types via z.infer.
+- Input Schemas: Zod at Action boundary; derive types via z.output.
 - Result union:
     - { ok: true, data: T }
     - { ok: false, kind: "expected", errors: DenseErrorMap }
