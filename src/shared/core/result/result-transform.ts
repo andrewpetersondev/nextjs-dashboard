@@ -19,6 +19,3 @@ export const flatMap =
     }
     return r as Result<U, E1>; // safe: preserving original error branch
   };
-
-/** Alias of flatMap. */
-export const andThen = flatMap;

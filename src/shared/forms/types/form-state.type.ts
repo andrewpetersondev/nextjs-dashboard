@@ -41,16 +41,19 @@ export interface FailedFormState<
 }
 
 /**
- * Complete form state union.
- *
- * @typeParam TField - string-literal union of field names (required).
- * @typeParam TData - validated data on success (default: unknown).
- * @typeParam TValue - raw value type (default: string).
- * @typeParam TMsg - message type for field errors (default: string).
+ * Canonical FormState discriminated union for UI consumption.
+ * @template TFieldNames Field name union.
+ * @template TData Successful parsed payload.
  */
-export type FormState<
-  TField extends string,
-  TData = unknown,
-  TValue = string,
-  TMsg = string,
-> = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
+export type FormState<TFieldNames extends string, TData> =
+  | {
+      readonly ok: true;
+      readonly data: TData;
+      readonly message: string;
+    }
+  | {
+      readonly ok: false;
+      readonly errors: DenseFieldErrorMap<TFieldNames>;
+      readonly values: Record<TFieldNames, string | undefined>;
+      readonly message: string;
+    };
