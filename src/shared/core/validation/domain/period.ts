@@ -13,7 +13,7 @@ export function validatePeriodResult(
   if (input instanceof Date) {
     if (!isDateValid(input)) {
       return Err(
-        new ValidationError("Invalid Date provided for period conversion"),
+        new ValidationError("Invalid period: Date instance is not valid"),
       );
     }
     return Ok(toFirstDayOfMonthUTC(input));
@@ -34,7 +34,7 @@ export function validatePeriodResult(
       if (parsedDay.getUTCDate() !== 1) {
         return Err(
           new ValidationError(
-            `Period date must be the first day of the month, got: "${input}"`,
+            `Invalid period: date must be the first day of the month, got "${input}"`,
           ),
         );
       }
@@ -43,14 +43,25 @@ export function validatePeriodResult(
 
     return Err(
       new ValidationError(
-        `Invalid period format: "${input}". Expected "yyyy-MM" or "yyyy-MM-01"`,
+        `Invalid period: "${input}". Expected "yyyy-MM" or "yyyy-MM-01"`,
       ),
     );
   }
 
   return Err(
     new ValidationError(
-      `Unsupported period input type: ${typeof input}. Expected Date or string`,
+      `Invalid period: unsupported input type ${typeof input} (expected Date or string)`,
     ),
   );
+}
+
+/**
+ * Throwing wrapper for period validation (for ergonomic/legacy use).
+ */
+export function validatePeriod(input: unknown): Date {
+  const r = validatePeriodResult(input);
+  if (r.success) {
+    return r.data;
+  }
+  throw r.error;
 }

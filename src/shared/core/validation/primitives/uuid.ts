@@ -12,7 +12,7 @@ export const UUID_REGEX =
  */
 export const validateUuidResult = (
   value: unknown,
-  label = "UserId",
+  label = "id",
 ): Result<string, ValidationError> => {
   if (typeof value !== "string") {
     return Err(
@@ -28,7 +28,7 @@ export const validateUuidResult = (
   if (!UUID_REGEX.test(v)) {
     return Err(
       new ValidationError(
-        `Invalid ${label}: "${value}". Must be a valid UUID format.`,
+        `Invalid ${label}: "${value}". Must be a valid UUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).`,
       ),
     );
   }
@@ -40,4 +40,16 @@ export const validateUuidResult = (
  */
 export function isUuid(value: unknown): value is string {
   return typeof value === "string" && UUID_REGEX.test(value);
+}
+
+/**
+ * Throwing wrapper for UUID validation (for legacy/ergonomic use).
+ * Prefers Result-based validateUuidResult for composability.
+ */
+export function validateUuid(value: unknown, label = "id"): string {
+  const r = validateUuidResult(value, label);
+  if (r.success) {
+    return r.data;
+  }
+  throw r.error;
 }

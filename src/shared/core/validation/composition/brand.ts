@@ -8,20 +8,9 @@ import { Ok, type Result } from "@/shared/core/result/result-base";
  *
  * @typeParam T - The type of the value being validated.
  * @typeParam TBrand - The branded type applied to the validated value.
- * @param validator - A function to validate the input value; returns a `Result<T, ValidationError_New>`.
+ * @param validator - A function to validate the input value; returns a `Result<T, ValidationError>`.
  * @param brandFn - A function to apply the brand to the validated value.
- * @returns A `Result<TBrand, ValidationError_New>` representing the branded value or validation failure.
- * @example
- * ```typescript
- * const validateNumber = (value: unknown): Result<number, ValidationError_New> =>
- *   typeof value === "number" ? Ok(value) : Err(new ValidationError_New("Not a number"));
- *
- * const brandAsPositive = (value: number) => value as PositiveNumber;
- *
- * const brandWithPositive = brandWith(validateNumber, brandAsPositive);
- *
- * const result = brandWithPositive(42); // Ok with branded value
- * ```
+ * @returns A `Result<TBrand, ValidationError>` representing the branded value or validation failure.
  */
 export const brandWith =
   <T, TBrand>(
@@ -31,4 +20,18 @@ export const brandWith =
   (value: unknown): Result<TBrand, ValidationError> => {
     const r = validator(value);
     return r.success ? Ok(brandFn(r.data)) : r;
+  };
+
+/**
+ * Compose validators left-to-right.
+ * Stops on first error; passes success value to the next.
+ */
+export const compose =
+  <A, B>(
+    v1: (x: unknown) => Result<A, ValidationError>,
+    v2: (x: A) => Result<B, ValidationError>,
+  ) =>
+  (x: unknown): Result<B, ValidationError> => {
+    const r1 = v1(x);
+    return r1.success ? v2(r1.data) : r1;
   };
