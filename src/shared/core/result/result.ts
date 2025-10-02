@@ -1,99 +1,48 @@
 /**
- * Discriminated union for success or failure.
- *
- * Use a domain-appropriate, serializable error type for `E` at module boundaries
- * (e.g., form validation errors or error DTOs). Reserve `Error` for internal/server flows
- * and prefer mapping to a transport-friendly shape before returning to UI.
- *
- * Prefer constructing results via {@link Ok} and {@link Err} to preserve literal discriminants
- * and avoid boolean widening from ad-hoc object literals.
- *
- * @typeParam T - Success data.
- * @typeParam E - Error value. Defaults to `Error`.
+ * Canonical Result discriminated union.
+ * Use `ok` flag only for branching; never rely on presence checks.
  */
-export type Result<T, E = Error> =
+export type Result<T, E> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly error: E };
+
+/** Construct a successful Result. */
+export const Ok = <T, E = never>(value: T): Result<T, E> => ({
+  ok: true,
+  value,
+});
+
+/** Construct a failed Result. */
+export const Err = <T = never, E = unknown>(error: E): Result<T, E> => ({
+  error,
+  ok: false,
+});
+
+/**
+ * Legacy (pre-refactor) shape kept for transitional compatibility.
+ * @deprecated Use `Result<T,E>` (`ok/value`) instead of `success/data`.
+ */
+export type LegacyResult<T, E> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
 
 /**
- * Success constructor.
- * @typeParam T - Success data type.
- * @param data - Value to wrap.
- * @returns Ok result.
+ * Adapter: canonical → legacy.
+ * @deprecated Prefer using canonical shape directly.
  */
-export const Ok = <T>(data: T): Result<T, never> =>
-  ({ data, success: true }) as const;
+export const toLegacy = <T, E>(r: Result<T, E>): LegacyResult<T, E> =>
+  r.ok ? { data: r.value, success: true } : { error: r.error, success: false };
 
 /**
- * Error constructor.
- * @typeParam E - Error type.
- * @param error - Error to wrap.
- * @returns Err result.
+ * Adapter: legacy → canonical.
+ * @deprecated Migrate callers to produce canonical directly.
  */
-export const Err = <E>(error: E): Result<never, E> =>
-  ({ error, success: false }) as const;
+export const fromLegacy = <T, E>(r: LegacyResult<T, E>): Result<T, E> =>
+  r.success ? { ok: true, value: r.data } : { error: r.error, ok: false };
 
-/**
- * Error constructor for validation scenarios producing field-error maps or similar serializable shapes.
- * @typeParam TError - Validation error map shape.
- * @param errors - Validation error payload.
- * @returns Err result with validation error payload.
- */
-export const ErrValidation = <TError>(errors: TError): Result<never, TError> =>
-  ({ error: errors, success: false }) as const;
-
-/**
- * Public-facing Result preset with a serializable error default.
- *
- * Use this at API/UI boundaries to default E away from `Error`.
- * Keep `Result<T, E>` for internal/server flows, or override E explicitly.
- */
-export type ResultPublic<T, E = { code: string; message: string }> = Result<
-  T,
-  E
->;
-
-// Service-level helpers to prevent shape drift and enforce redaction.
-/**
- * Success constructor (service boundary).
- */
-export const ok = <T>(value: T): Result<T, never> => Ok(value);
-
-/**
- * Expected error constructor (service boundary).
- * Use for validation/business rule failures. Provide serializable `errors`.
- */
-export const expected = <TError>(errors: TError): Result<never, TError> =>
-  ErrValidation(errors);
-
-/**
- * Unexpected error constructor (service boundary).
- * Redacts internal details; callers should log server-side separately.
- */
-export const unexpected = (
-  message = "Unexpected error",
-): Result<never, { code: "UNEXPECTED"; message: string }> =>
-  Err({ code: "UNEXPECTED", message } as const);
-
-// Type guards
-
-/**
- * Type guard for success branch.
- * @typeParam T - Success data type.
- * @typeParam E - Error type.
- * @param r - Result to test.
- * @returns True if success.
- */
-export const isOk = <T, E>(r: Result<T, E>): r is { success: true; data: T } =>
-  r.success;
-
-/**
- * Type guard for error branch.
- * @typeParam T - Success data type.
- * @typeParam E - Error type.
- * @param r - Result to test.
- * @returns True if error.
- */
-export const isErr = <T, E>(
-  r: Result<T, E>,
-): r is { success: false; error: E } => !r.success;
+/** Type guard: Ok branch. */
+export const isOk = <T, E>(r: Result<T, E>): r is { ok: true; value: T } =>
+  r.ok;
+/** Type guard: Err branch. */
+export const isErr = <T, E>(r: Result<T, E>): r is { ok: false; error: E } =>
+  !r.ok;
