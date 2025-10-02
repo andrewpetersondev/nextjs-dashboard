@@ -1,5 +1,4 @@
 import "server-only";
-
 import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
 import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
@@ -31,20 +30,32 @@ export class AuthUserRepo {
 
   /**
    * Creates a new user for the auth/signup flow.
-   * @param input - AuthSignupDalInput
-   * @returns UserEntity
    * @throws ConflictError | ValidationError | DatabaseError
    */
   async signup(input: AuthSignupDalInput): Promise<UserEntity> {
     try {
-      const row = await createUserForSignup(this.db, input);
+      if (
+        !input.email ||
+        !input.passwordHash ||
+        !input.username ||
+        !input.role
+      ) {
+        throw new ValidationError("Missing required fields for signup.");
+      }
+
+      const row = await createUserForSignup(this.db, {
+        email: String(input.email).trim().toLowerCase(),
+        passwordHash: input.passwordHash,
+        role: input.role,
+        username: String(input.username).trim(),
+      });
 
       if (!row) {
         throw new ValidationError("Email, username and password are required.");
       }
 
       return newUserDbRowToEntity(row);
-    } catch (err) {
+    } catch (err: unknown) {
       if (
         err instanceof ConflictError ||
         err instanceof ValidationError ||
@@ -52,45 +63,39 @@ export class AuthUserRepo {
       ) {
         throw err;
       }
-      serverLogger.error({
-        context: "AuthUserRepo.signup",
-        error: err,
-        message: "Unexpected error during signup repository operation.",
-      });
-      throw new DatabaseError(
-        "Database operation failed during signup.",
-        {},
-        err instanceof Error ? err : undefined,
+      serverLogger.error(
+        {
+          context: "repo.AuthUserRepo.signup",
+          kind: "unexpected",
+        },
+        "Unexpected error during signup repository operation",
       );
+      throw new DatabaseError("Database operation failed during signup.");
     }
   }
 
   /**
    * Fetches a user by email for login; Service will verify password against stored hash.
-   * @param input - AuthLoginDalInput
-   * @returns UserEntity
    * @throws UnauthorizedError | ValidationError | DatabaseError
    */
   async login(input: AuthLoginDalInput): Promise<UserEntity> {
     try {
-      // DAL returns the user row by email; no password comparison here.
       const row = await findUserForLogin(this.db, input.email);
 
       if (!row) {
         throw new UnauthorizedError("Invalid email or password.");
       }
 
-      // Defensive: ensure hashed password exists on the row before mapping
       if (!row.password || typeof row.password !== "string") {
         serverLogger.error(
-          { context: "AuthUserRepo.login", email: input.email },
+          { context: "repo.AuthUserRepo.login" },
           "User row missing hashed password; cannot authenticate",
         );
         throw new UnauthorizedError("Invalid email or password.");
       }
 
       return userDbRowToEntity(row);
-    } catch (err) {
+    } catch (err: unknown) {
       if (
         err instanceof UnauthorizedError ||
         err instanceof ValidationError ||
@@ -98,17 +103,11 @@ export class AuthUserRepo {
       ) {
         throw err;
       }
-      serverLogger.error({
-        context: "AuthUserRepo.login",
-        email: input?.email,
-        error: err,
-        message: "Unexpected error during login repository operation.",
-      });
-      throw new DatabaseError(
-        "Database operation failed during login.",
-        {},
-        err instanceof Error ? err : undefined,
+      serverLogger.error(
+        { context: "repo.AuthUserRepo.login", kind: "unexpected" },
+        "Unexpected error during login repository operation",
       );
+      throw new DatabaseError("Database operation failed during login.");
     }
   }
 }

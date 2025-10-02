@@ -1,7 +1,6 @@
 import "server-only";
-
+import { mapDrizzleToDalError } from "@/server/errors/drizzle";
 import { mapToRepoError, type RepoError } from "@/server/errors/mappers";
-
 import { fromPromise } from "@/shared/core/result/result-async";
 import type { Result } from "@/shared/core/result/result-base";
 
@@ -13,4 +12,17 @@ import type { Result } from "@/shared/core/result/result-base";
  */
 export function fromDal<T>(p: Promise<T>): Promise<Result<T, RepoError>> {
   return fromPromise<T, RepoError>(p, mapToRepoError);
+}
+
+/**
+ * Execute a DAL operation and rethrow mapped errors (throwing style).
+ * - Maps Drizzle/unknown errors to domain-safe errors via mapDrizzleToDalError.
+ * - Keeps throwing semantics for services/actions that don't use Result<T, E>.
+ */
+export async function dalTry<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    throw mapDrizzleToDalError(e);
+  }
 }

@@ -1,9 +1,8 @@
 import "server-only";
-
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { dalTry } from "@/server/errors/wrappers";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
@@ -18,7 +17,7 @@ export async function findUserForLogin(
     return null;
   }
 
-  try {
+  return await dalTry(async () => {
     const [userRow] = await db
       .select()
       .from(users)
@@ -38,22 +37,5 @@ export async function findUserForLogin(
     }
 
     return userRow ?? null;
-  } catch (error: unknown) {
-    // Narrow error type using guards
-    const errorMessage =
-      typeof error === "object" && error !== null && "message" in error
-        ? String((error as { message?: unknown }).message)
-        : "Unknown error";
-    serverLogger.error({
-      context: "findUserForLogin",
-      email,
-      error,
-      message: "Failed to read user by email.",
-    });
-    throw new DatabaseError(
-      "Failed to read user by email.",
-      {},
-      error instanceof Error ? error : new Error(errorMessage),
-    );
-  }
+  });
 }

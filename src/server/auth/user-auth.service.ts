@@ -1,5 +1,4 @@
 import "server-only";
-
 import type {
   LoginData,
   LoginField,
@@ -23,30 +22,6 @@ import type { Result } from "@/shared/core/result/result-base";
 import { Err, Ok } from "@/shared/core/result/result-base";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 
-// Helper to build a dense error map for signup fields
-function denseSignupErrors(
-  partial: Partial<Record<SignupField, readonly string[]>>,
-): DenseFieldErrorMap<SignupField> {
-  const all: SignupField[] = ["email", "username", "password"];
-  const out = {} as Record<SignupField, readonly string[]>;
-  for (const k of all) {
-    out[k] = partial[k] ?? [];
-  }
-  return out as DenseFieldErrorMap<SignupField>;
-}
-
-// Helper to build a dense error map for login fields
-function denseLoginErrors(
-  partial: Partial<Record<LoginField, readonly string[]>>,
-): DenseFieldErrorMap<LoginField> {
-  const all: LoginField[] = ["email", "password"];
-  const out = {} as Record<LoginField, readonly string[]>;
-  for (const k of all) {
-    out[k] = partial[k] ?? [];
-  }
-  return out as DenseFieldErrorMap<LoginField>;
-}
-
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
  * Never throws; always returns Result union for UI.
@@ -64,58 +39,56 @@ export class UserAuthFlowService {
   async signup(
     input: SignupData,
   ): Promise<Result<UserDto, DenseFieldErrorMap<SignupField>>> {
+    if (!input.email || !input.password || !input.username) {
+      return Err({
+        email: ["Missing required fields"],
+        password: ["Missing required fields"],
+        username: ["Missing required fields"],
+      } as DenseFieldErrorMap<SignupField>);
+    }
+
     const repo = new AuthUserRepo(this.db);
 
     try {
-      // Hash raw password then brand as PasswordHash before persistence boundary
-      const hashed: string = await hashPassword(
-        input.password as unknown as string,
-      );
+      const email = input.email.trim().toLowerCase();
+      const username = input.username.trim();
+
+      const hashed = await hashPassword(input.password as unknown as string);
       const passwordHash = asPasswordHash(hashed);
 
-      const repoInput = {
-        email: input.email,
+      const created = await repo.signup({
+        email,
         passwordHash,
         role: toUserRole("USER"),
-        username: input.username,
-      };
+        username,
+      });
 
-      const created = await repo.signup(repoInput);
       const dto = userEntityToDto(created);
       return Ok(dto);
-    } catch (err) {
-      // Map known errors to dense error map
+    } catch (err: unknown) {
       if (err instanceof ConflictError) {
-        return Err(
-          denseSignupErrors({
-            email: ["Email already in use"],
-            password: [],
-            username: ["Username already in use"],
-          }),
-        );
+        return Err({
+          email: ["Email already in use"],
+          password: [],
+          username: ["Username already in use"],
+        } as DenseFieldErrorMap<SignupField>);
       }
       if (err instanceof ValidationError) {
-        return Err(
-          denseSignupErrors({
-            email: ["Invalid data"],
-            password: [],
-            username: [],
-          }),
-        );
-      }
-      // Unexpected errors: log and return generic error
-      serverLogger.error({
-        context: "UserAuthFlowService.signup",
-        error: err,
-        message: "Unexpected error during signup.",
-      });
-      return Err(
-        denseSignupErrors({
-          email: ["Unexpected error occurred"],
+        return Err({
+          email: ["Invalid data"],
           password: [],
           username: [],
-        }),
+        } as DenseFieldErrorMap<SignupField>);
+      }
+      serverLogger.error(
+        { context: "service.UserAuthFlowService.signup", kind: "unexpected" },
+        "Unexpected error during signup",
       );
+      return Err({
+        email: ["Unexpected error occurred"],
+        password: [],
+        username: [],
+      } as DenseFieldErrorMap<SignupField>);
     }
   }
 
@@ -128,19 +101,16 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      // Fetch user by email; Repo/DAL must include stored password hash on entity.
       const user = await repo.login({ email: input.email });
 
-      // Defensive: ensure hashed password exists before comparing
       if (!user.password || typeof user.password !== "string") {
         serverLogger.error(
-          { context: "UserAuthFlowService.login", email: input.email },
+          { context: "service.UserAuthFlowService.login" },
           "Missing hashed password on user entity; cannot authenticate",
         );
         throw new UnauthorizedError("Invalid email or password.");
       }
 
-      // Compare in Service layer
       const ok = await comparePassword(
         input.password as unknown as string,
         user.password as unknown as string,
@@ -151,37 +121,27 @@ export class UserAuthFlowService {
 
       const dto = userEntityToDto(user);
       return Ok(dto);
-    } catch (err) {
-      // Map known domain errors to dense error map
+    } catch (err: unknown) {
       if (err instanceof UnauthorizedError) {
-        return Err(
-          denseLoginErrors({
-            email: ["Invalid email or password"],
-            password: ["Invalid email or password"],
-          }),
-        );
+        return Err({
+          email: ["Invalid email or password"],
+          password: ["Invalid email or password"],
+        } as DenseFieldErrorMap<LoginField>);
       }
       if (err instanceof ValidationError) {
-        return Err(
-          denseLoginErrors({
-            email: ["Invalid data"],
-            password: [],
-          }),
-        );
-      }
-      // Unexpected infra errors: log and return generic error
-      serverLogger.error({
-        context: "UserAuthFlowService.login",
-        email: input?.email,
-        error: err,
-        message: "Unexpected error during login.",
-      });
-      return Err(
-        denseLoginErrors({
-          email: ["Unexpected error occurred"],
+        return Err({
+          email: ["Invalid data"],
           password: [],
-        }),
+        } as DenseFieldErrorMap<LoginField>);
+      }
+      serverLogger.error(
+        { context: "service.UserAuthFlowService.login", kind: "unexpected" },
+        "Unexpected error during login",
       );
+      return Err({
+        email: ["Unexpected error occurred"],
+        password: [],
+      } as DenseFieldErrorMap<LoginField>);
     }
   }
 }
