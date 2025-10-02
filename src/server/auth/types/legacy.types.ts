@@ -9,4 +9,3 @@ export type AuthSignupDalInput = Pick<
   UserEntity,
   "email" | "username" | "password" | "role"
 >;
-export type AuthLoginDalInput = Pick<UserEntity, "email" | "password">;
