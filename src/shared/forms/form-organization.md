@@ -1,7 +1,3 @@
----
-apply: manually
----
-
 Below are focused, enforceable rules for @shared/forms: naming, structure, and discoverability. Apply consistently and
 back with lint rules and small refactors.
 
