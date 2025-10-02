@@ -2,7 +2,12 @@
 apply: manually
 ---
 
-# AI Agent TSDoc Rules (Brevity-First)
+---
+tags: [tsdoc, docs, api]
+scope: Exported APIs/components/hooks
+---
+
+# TSDoc Rules
 
 Deterministic, concise rules and templates for TSDoc across functions, types, React/Next.js components, and platform
 APIs.
