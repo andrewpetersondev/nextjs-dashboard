@@ -1,26 +1,8 @@
-import { Err, Ok, type Result } from "@/shared/core/result/result-base";
-
-/**
- * Run fn and wrap result or thrown error in Result.
- * @typeParam T - Success type.
- * @typeParam E - Error type (default `Error`).
- * @param fn - Synchronous function to execute.
- * @param mapError - Optional mapper for unknown error.
- * @returns Ok(fn()) or Err(mapped error).
- */
-export const tryCatch = <T, E = Error>(
-  fn: () => T,
-  mapError?: (e: unknown) => E,
-): Result<T, E> => {
-  try {
-    return Ok(fn());
-  } catch (e) {
-    return Err(mapError ? mapError(e) : (e as E));
-  }
-};
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Run async fn and wrap resolve/reject in Result.
+ * Branch semantics: If fn resolves, returns Ok(value). If fn rejects/throws, returns Err(mapped or cast error).
  * @typeParam T - Success type.
  * @typeParam E - Error type (default `Error`).
  * @param fn - Function returning Promise<T>.
@@ -41,6 +23,8 @@ export const tryCatchAsync = async <T, E = Error>(
 
 /**
  * Converts a `Promise` into a `Result`-like structure, capturing successes and errors.
+ *
+ * Branch semantics: If promise resolves, returns Ok(value). If it rejects, returns Err(mapped or cast error).
  *
  * @typeParam T - The type of the successful value resolved by the `Promise`.
  * @typeParam E - The type of the error value. Defaults to `Error`.
@@ -65,6 +49,8 @@ export const fromPromise = async <T, E = Error>(
 
 /**
  * Executes an asynchronous function and wraps its result in a `Result` type.
+ *
+ * Branch semantics: Same as tryCatchAsync for a provided async function.
  *
  * This utility captures both success and failure outcomes of a promise, allowing for structured
  * error handling. By default, errors are cast to `Error`, but you can provide a custom error mapper
@@ -106,6 +92,8 @@ export const fromPromiseFn = <T, E = Error>(
 
 /**
  * Converts a `Result` object into a `Promise`.
+ *
+ * Branch semantics: If Ok, resolves with data. If Err, rejects with error.
  *
  * @typeParam T - The type of the successful result value.
  * @typeParam E - The type of the error value.

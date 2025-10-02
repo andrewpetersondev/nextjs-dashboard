@@ -1,4 +1,4 @@
-import type { Result } from "@/shared/core/result/result-base";
+import type { Result } from "@/shared/core/result/result";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,

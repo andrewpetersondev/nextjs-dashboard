@@ -17,8 +17,8 @@ import type {
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
 import { ValidationError } from "@/shared/core/errors/domain";
-import { Err, Ok, type Result } from "@/shared/core/result/result-base";
-import { map } from "@/shared/core/result/result-transform";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { mapOk } from "@/shared/core/result/result-map";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
@@ -54,7 +54,7 @@ export class InvoiceRepository extends BaseRepository<
 
     const createdEntityRes = await fromDal(createInvoiceDal(this.db, input));
 
-    return map<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
+    return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       createdEntityRes,
     );
   }
@@ -97,7 +97,7 @@ export class InvoiceRepository extends BaseRepository<
 
     const entityRes = await fromDal(readInvoiceDal(this.db, id));
 
-    return map<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
+    return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       entityRes,
     );
   }
@@ -142,7 +142,7 @@ export class InvoiceRepository extends BaseRepository<
 
     const updatedEntityRes = await fromDal(updateInvoiceDal(this.db, id, data));
 
-    return map<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
+    return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       updatedEntityRes,
     );
   }
@@ -186,7 +186,7 @@ export class InvoiceRepository extends BaseRepository<
     }
 
     const deletedEntityRes = await fromDal(deleteInvoiceDal(this.db, id));
-    return map<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
+    return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       deletedEntityRes,
     );
   }

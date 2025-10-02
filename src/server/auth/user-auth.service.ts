@@ -18,8 +18,8 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain";
-import type { Result } from "@/shared/core/result/result-base";
-import { Err, Ok } from "@/shared/core/result/result-base";
+import type { Result } from "@/shared/core/result/result";
+import { Err, Ok } from "@/shared/core/result/result";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 
 /**

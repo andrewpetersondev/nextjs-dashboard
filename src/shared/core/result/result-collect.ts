@@ -1,70 +1,28 @@
-import { Err, Ok, type Result } from "@/shared/core/result/result-base";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Success type of a Result.
  * @typeParam R - Result-like type.
  */
-type OkType<R> = R extends Result<infer U, unknown> ? U : never;
+export type OkType<R> = R extends Result<infer U, unknown> ? U : never;
 
 /**
  * Error type of a Result.
  * @typeParam R - Result-like type.
  */
-type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
-
-/**
- * Side-effect on success; returns the original result.
- * @typeParam T - Success type.
- * @typeParam E - Error type.
- * @param fn - Callback invoked with success value.
- * @returns Unmodified input result.
- */
-export const tap =
-  <T, E>(fn: (v: T) => void) =>
-  (r: Result<T, E>): Result<T, E> => {
-    if (r.success) {
-      fn(r.data);
-    }
-    return r;
-  };
-
-/**
- * Side-effect on error; returns the original result.
- * @typeParam T - Success type.
- * @typeParam E - Error type.
- * @param fn - Callback invoked with error value.
- * @returns Unmodified input result.
- */
-export const tapError =
-  <T, E>(fn: (e: E) => void) =>
-  (r: Result<T, E>): Result<T, E> => {
-    if (!r.success) {
-      fn(r.error);
-    }
-    return r;
-  };
-
-/**
- * Wrap nullable value into Result.
- * @typeParam T - Success type.
- * @typeParam E - Error type.
- * @param v - Value that may be null/undefined.
- * @param onNull - Error factory when value is nullish.
- * @returns Ok(v) if defined; otherwise Err(onNull()).
- */
-export const fromNullable = <T, E>(
-  v: T | null | undefined,
-  onNull: () => E,
-): Result<T, E> => (v == null ? Err(onNull()) : Ok(v));
+export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
 
 /**
  * Collect successes or short-circuit on first error.
+ *
+ * Branch semantics: Iterates left-to-right; accumulates data from Ok items. On first Err, returns that Err immediately.
+ *
  * @typeParam T - Success type.
  * @typeParam E - Error type.
  * @param results - Array of results.
  * @returns Ok of all data if all succeed; otherwise the first Err.
  */
-export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
+export const collectAll = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
   const acc: T[] = [];
   for (const r of results) {
     if (!r.success) {
@@ -77,11 +35,14 @@ export const all = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
 
 /**
  * Combine results into a tuple; short-circuit on first error.
+ *
+ * Branch semantics: Processes arguments left-to-right; returns Ok(tuple of data) if all are Ok. On first Err, returns that Err.
+ *
  * @typeParam T - Tuple of Result values.
  * @param results - Results to combine.
  * @returns Ok of tuple of data if all succeed; otherwise the first Err.
  */
-export function allTuple<T extends readonly Result<unknown, unknown>[]>(
+export function collectTuple<T extends readonly Result<unknown, unknown>[]>(
   ...results: T
 ): Result<{ [K in keyof T]: OkType<T[K]> }, ErrType<T[number]>> {
   const acc: unknown[] = [];
@@ -94,10 +55,9 @@ export function allTuple<T extends readonly Result<unknown, unknown>[]>(
   return Ok(acc as { [K in keyof T]: OkType<T[K]> });
 }
 
-// Return the first Ok, or the last Err if none succeeded
 /**
  * First Ok or last Err.
- *
+ * Branch semantics: Same as firstOkOrElse with a default onEmpty Error. Prefer firstOkOrElse.
  * @deprecated Prefer anyOkOrElse to avoid unsafe default error construction when input is empty.
  * @typeParam T - Success type.
  * @typeParam E - Error type.
@@ -105,19 +65,19 @@ export function allTuple<T extends readonly Result<unknown, unknown>[]>(
  * @returns First Ok found; otherwise last Err (or an Err with generic error if none provided).
  */
 export const anyOk = <T, E>(results: Result<T, E>[]): Result<T, E> => {
-  return anyOkOrElse<T, E>(() => new Error("No results provided") as E)(
+  return firstOkOrElse<T, E>(() => new Error("No results provided") as E)(
     results,
   );
 };
-
 /**
  * First Ok or fallback Err produced by onEmpty.
+ * Branch semantics: Returns the first Ok if found. If none, returns the last Err seen or Err(onEmpty()) if input is empty.
  * @typeParam T - Success type.
  * @typeParam E - Error type.
  * @param onEmpty - Error factory when none succeed.
  * @returns First Ok if present; otherwise Err(onEmpty()).
  */
-export const anyOkOrElse =
+export const firstOkOrElse =
   <T, E>(onEmpty: () => E) =>
   (results: Result<T, E>[]): Result<T, E> => {
     let lastErr: Result<never, E> | null = null;

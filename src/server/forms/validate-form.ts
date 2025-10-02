@@ -1,8 +1,8 @@
 import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { Result } from "@/shared/core/result/result-base";
-import { ErrValidation, Ok } from "@/shared/core/result/result-base";
+import type { Result } from "@/shared/core/result/result";
+import { ErrValidation, Ok } from "@/shared/core/result/result";
 import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import {
   isZodErrorLikeShape,

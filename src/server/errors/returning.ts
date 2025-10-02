@@ -7,7 +7,7 @@ import type {
   ServiceError,
   UiError,
 } from "@/server/errors/types";
-import { Err, Ok, type Result } from "@/shared/core/result/result-base";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Return-style helpers using Result<T, E>.

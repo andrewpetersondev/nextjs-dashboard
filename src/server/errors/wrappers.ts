@@ -1,8 +1,8 @@
 import "server-only";
 import { mapDrizzleToDalError } from "@/server/errors/drizzle";
 import { mapToRepoError, type RepoError } from "@/server/errors/mappers";
+import type { Result } from "@/shared/core/result/result";
 import { fromPromise } from "@/shared/core/result/result-async";
-import type { Result } from "@/shared/core/result/result-base";
 
 /**
  * Typed wrapper around fromPromise to infer E via mapToRepoError,

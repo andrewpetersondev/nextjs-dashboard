@@ -1,7 +1,9 @@
-import type { Result } from "@/shared/core/result/result-base";
+import type { Result } from "@/shared/core/result/result";
 
 /**
  * Extract the success value from a {@link Result}, or throw on error.
+ *
+ * Branch semantics: On Ok, returns data. On Err, throws error.
  *
  * If the result contains a success, the contained value is returned. Otherwise,
  * the function throws the associated error.
@@ -12,7 +14,7 @@ import type { Result } from "@/shared/core/result/result-base";
  * @returns The success value of the result.
  * @throws Throws the error value if the result is an error.
  */
-export const unwrap = <T, E>(r: Result<T, E>): T => {
+export const unwrapOrThrow = <T, E>(r: Result<T, E>): T => {
   if (r.success) {
     return r.data;
   }
@@ -21,6 +23,8 @@ export const unwrap = <T, E>(r: Result<T, E>): T => {
 
 /**
  * Provide a fallback value for an error result.
+ *
+ * Branch semantics: On Ok, returns data. On Err, returns fallback.
  *
  * @typeParam T - The type of the value contained in the success branch.
  * @typeParam E - The type of the value contained in the error branch.
@@ -34,6 +38,8 @@ export const unwrapOr =
 
 /**
  * Provide a fallback value for a failed result.
+ *
+ * Branch semantics: On Ok, returns data. On Err, returns fallback(error).
  *
  * Returns the successful value if present, otherwise applies the fallback.
  *
@@ -50,6 +56,8 @@ export const unwrapOrElse =
 /**
  * Pattern-match on a Result<T, E>.
  *
+ * Branch semantics: On Ok, returns onOk(data). On Err, returns onErr(error).
+ *
  * Calls `onOk` if the result is a success or `onErr` if it's an error.
  *
  * @typeParam T - The success value type.
@@ -60,7 +68,7 @@ export const unwrapOrElse =
  * @param onErr - Callback invoked with the error value if `r` is an error.
  * @returns The return value of either `onOk` or `onErr`.
  */
-export const match = <T, E, U>(
+export const matchResult = <T, E, U>(
   r: Result<T, E>,
   onOk: (v: T) => U,
   onErr: (e: E) => U,

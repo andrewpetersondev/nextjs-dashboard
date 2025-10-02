@@ -2,7 +2,7 @@ import "server-only";
 
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { BaseError } from "@/shared/core/errors/base";
-import { Err, Ok, type Result } from "@/shared/core/result/result-base";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 export const asAppError = (e: unknown): BaseError => {
   if (e instanceof BaseError) {
