@@ -1,62 +1,73 @@
+import {
+  type ErrorCode,
+  getErrorCodeMeta,
+} from "@/shared/core/errors/error-codes";
+
+export interface BaseErrorContext {
+  readonly [key: string]: unknown;
+}
+
+export interface BaseErrorJSON {
+  code: ErrorCode;
+  message: string;
+  statusCode: number;
+  severity: string;
+  retryable: boolean;
+  category: string;
+  description: string;
+  context?: Record<string, unknown>;
+}
+
 /**
- * Abstract base class for custom errors with structured metadata.
+ * Standardized application error with rich metadata.
  *
- * Provides a consistent interface for error handling with additional context,
- * status codes, timestamps, and JSON serialization.
+ * All custom errors should extend this class (directly or indirectly).
+ * Changed from abstract to this. what does that mean?
  *
- * @abstract
- * @property code - Unique error identifier.
- * @property statusCode - HTTP-like status code for the error.
- * @property timestamp - Date when the error was instantiated.
- * @param message - Error message description.
- * @param context - Additional metadata to provide context (default: empty object).
- * @param cause - Optional root cause error.
- * @example
- * ```typescript
- * class NotFoundError extends BaseError {
- *   readonly code = "NOT_FOUND";
- *   readonly statusCode = 404;
- * }
- *
- * const error = new NotFoundError("Resource not found", { resourceId: 123 });
- * console.error(error.toJSON());
- * ```
  */
-export abstract class BaseError extends Error {
-  abstract readonly code: string;
-  abstract readonly statusCode: number;
-  readonly timestamp: Date;
-  readonly context: Record<string, unknown>;
+export class BaseError extends Error {
+  readonly code: ErrorCode;
+  readonly statusCode: number;
+  readonly severity: string;
+  readonly retryable: boolean;
+  readonly category: string;
+  readonly description: string;
+  readonly context: BaseErrorContext;
+  readonly cause?: unknown;
 
   constructor(
-    message: string,
-    context: Record<string, unknown> = {},
-    cause?: Error,
+    code: ErrorCode,
+    message?: string,
+    context: BaseErrorContext = {},
+    cause?: unknown,
   ) {
-    // Use native cause when available
-    super(message, { cause });
-    this.name = new.target.name;
-    this.timestamp = new Date();
+    const meta = getErrorCodeMeta(code);
+    super(message || meta.description);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.statusCode = meta.httpStatus;
+    this.severity = meta.severity;
+    this.retryable = meta.retryable;
+    this.category = meta.category;
+    this.description = meta.description;
     this.context = context;
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, new.target);
+    this.cause = cause;
+    // Optional: capture stack without leaking cause stack externally
+    if (cause instanceof Error && cause.stack) {
+      this.stack += `\nCaused By: ${cause.stack}`;
     }
   }
 
-  toJSON(): Record<string, unknown> {
-    const causeMsg =
-      (this as unknown as { cause?: unknown })?.cause instanceof Error
-        ? (this as unknown as { cause: Error }).cause.message
-        : undefined;
-
+  toJSON(): BaseErrorJSON {
     return {
+      category: this.category,
       code: this.code,
-      context: this.context,
+      description: this.description,
       message: this.message,
-      name: this.name,
+      retryable: this.retryable,
+      severity: this.severity,
       statusCode: this.statusCode,
-      timestamp: this.timestamp.toISOString(),
-      ...(causeMsg && { cause: causeMsg }),
+      ...(Object.keys(this.context).length ? { context: this.context } : {}),
     };
   }
 }

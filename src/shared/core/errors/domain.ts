@@ -10,8 +10,13 @@ import { BaseError } from "@/shared/core/errors/base";
  * Immutable; use to encapsulate validation errors in APIs or services.
  */
 export class ValidationError extends BaseError {
-  readonly code = "VALIDATION_ERROR";
-  readonly statusCode = 400;
+  constructor(
+    message?: string,
+    context: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    super("VALIDATION", message, context, cause);
+  }
 }
 
 /**
@@ -32,8 +37,13 @@ export class ValidationError extends BaseError {
  * ```
  */
 export class NotFoundError extends BaseError {
-  readonly code = "NOT_FOUND";
-  readonly statusCode = 404;
+  constructor(
+    message?: string,
+    context: Record<string, unknown> = {},
+    cause?: unknown,
+  ) {
+    super("NOT_FOUND", message, context, cause);
+  }
 }
 
 /**
