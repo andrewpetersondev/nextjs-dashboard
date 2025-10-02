@@ -160,7 +160,7 @@ export function tryGetErrorCodeMeta(code: string): ErrorCodeMeta | undefined {
  * Narrow an arbitrary string to ErrorCode if present.
  */
 export function isErrorCode(code: string): code is ErrorCode {
-  return Object.prototype.hasOwnProperty.call(ERROR_CODES, code);
+  return Object.hasOwn(ERROR_CODES, code);
 }
 
 /**

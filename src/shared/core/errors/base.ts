@@ -67,7 +67,9 @@ export class BaseError extends Error {
       retryable: this.retryable,
       severity: this.severity,
       statusCode: this.statusCode,
-      ...(Object.keys(this.context).length ? { context: this.context } : {}),
+      ...(Object.keys(this.context).length > 0
+        ? { context: this.context }
+        : {}),
     };
   }
 }
