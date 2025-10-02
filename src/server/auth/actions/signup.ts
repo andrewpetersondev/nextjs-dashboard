@@ -103,8 +103,7 @@ export async function signup(
     const service = new UserAuthFlowService(getDB());
     const res = await service.signup(brandedInput);
 
-    // BUGFIX: Do not spread res.error into an object; res.error is already dense field map.
-    // Also, provide a root message for UX while preserving field errors.
+    // If service returned field errors, merge with a friendly root message.
     if (!res.success) {
       const merged = withRootMessage(
         fields,
