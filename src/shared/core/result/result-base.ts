@@ -47,10 +47,6 @@ export const ErrValidation = <TError>(errors: TError): Result<never, TError> =>
  *
  * Use this at API/UI boundaries to default E away from `Error`.
  * Keep `Result<T, E>` for internal/server flows, or override E explicitly.
- *
- * @example
- * type ApiRes = ResultPublic<UserDto>; // error defaults to { code; message }
- * type ApiResWithUnion = ResultPublic<UserDto, ValidationError | DatabaseError>;
  */
 export type ResultPublic<T, E = { code: string; message: string }> = Result<
   T,

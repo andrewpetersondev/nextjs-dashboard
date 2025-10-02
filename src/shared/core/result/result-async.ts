@@ -51,15 +51,6 @@ export const tryCatchAsync = async <T, E = Error>(
  *          or to `Err<E>` if the input `Promise` rejects or throws.
  * @remarks This function allows you to handle asynchronous operations in a `Result`-like manner
  *          while optionally normalizing error types through the `mapError` callback.
- *
- * @example
- * ```ts
- * const result = await fromPromise<number, string>(
- *   Promise.resolve(42),
- *   (e) => `Error occurred: ${String(e)}`
- * );
- * // result is Ok(42)
- * ```
  */
 export const fromPromise = async <T, E = Error>(
   p: Promise<T>,
