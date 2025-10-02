@@ -10,7 +10,7 @@ import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.uti
 /**
  * Map a Result into a FormState for UI consumption.
  *
- * Returns success with data/message or failure with dense errors and redacted values.
+ * One-way: Result<TData, DenseFieldErrorMap> -> FormState<TFieldNames, TData>
  *
  * @typeParam TFieldNames - Allowed field-name union for the form.
  * @typeParam TData - Payload on the success branch.

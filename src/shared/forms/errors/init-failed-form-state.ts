@@ -3,7 +3,8 @@ import { buildEmptyDenseErrorMap } from "@/shared/forms/errors/error-map-utils";
 import type { FormState } from "@/shared/forms/types/form-state.type";
 
 /**
- * Creates an initial failure state for a given set of form fields.
+ * Creates an initial failure FormState (UI-only) for a given set of fields.
+ * Domain logic should use Result; actions map Result -> FormState at the boundary.
  */
 export function buildInitialFailedFormState<TFieldNames extends string>(
   fieldNames: readonly TFieldNames[],

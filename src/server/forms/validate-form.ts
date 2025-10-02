@@ -1,8 +1,8 @@
 import "server-only";
-
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result-base";
+import { ErrValidation, Ok } from "@/shared/core/result/result-base";
 import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import {
   isZodErrorLikeShape,
@@ -33,7 +33,7 @@ function logValidationFailure(context: string, error: unknown): void {
 }
 
 /**
- * Internal helper that maps a zod failure into a FormState result with dense errors.
+ * Internal helper that maps a zod failure into a domain Result with dense errors.
  */
 function toFailureResult<TFieldNames extends string, TOut>(
   error: unknown,
@@ -42,16 +42,12 @@ function toFailureResult<TFieldNames extends string, TOut>(
 ): Result<TOut, DenseFieldErrorMap<TFieldNames>> {
   if (isZodErrorLikeShape(error)) {
     logValidationFailure(loggerContext, error);
-    return {
-      error: mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
-      success: false,
-    };
+    return ErrValidation(
+      mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
+    );
   }
   logValidationFailure(loggerContext, error);
-  return {
-    error: expandSparseErrorsToDense<TFieldNames>({}, fields),
-    success: false,
-  };
+  return ErrValidation(expandSparseErrorsToDense<TFieldNames>({}, fields));
 }
 
 /** Options for validateFormGeneric, factored for reuse and clarity. */
@@ -70,15 +66,13 @@ type ValidateOptions<TIn, TFieldNames extends keyof TIn & string> = {
 };
 
 /**
- * Validate FormData with a Zod schema and return a FormState.
+ * Validate FormData with a Zod schema and return a FormState (UI boundary).
  *
  * @typeParam TIn - Parsed input shape from the schema.
  * @typeParam TFieldNames - Allowed field-name union (string keys of TIn).
  *
- * @param formData - Incoming FormData.
- * @param schema - Zod schema used for validation.
- * @param allowedFields - Optional subset of field names to accept.
- * @param options - Optional fields/raw overrides, and logger context.
+ * Domain: Result<TIn, DenseFieldErrorMap> is produced internally.
+ * UI: mapResultToFormState performs the one-way mapping to FormState.
  */
 export async function validateFormGeneric<
   TIn,
@@ -123,10 +117,9 @@ export async function validateFormGeneric<
   }
 
   // success without additional transformation (handled in zod schemas)
-  const result: Result<TIn, DenseFieldErrorMap<TFieldNames>> = {
-    data: parsed.data as TIn,
-    success: true,
-  };
+  const result: Result<TIn, DenseFieldErrorMap<TFieldNames>> = Ok(
+    parsed.data as TIn,
+  );
   return mapResultToFormState(result, {
     failureMessage: messages?.failureMessage,
     fields,
