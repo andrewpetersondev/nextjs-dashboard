@@ -1,3 +1,4 @@
+import type { BaseErrorJSON } from "@/shared/core/errors/base";
 import { BaseError } from "@/shared/core/errors/base";
 import { UnknownError } from "@/shared/core/errors/unknown-error";
 
@@ -36,14 +37,15 @@ export function mapToBaseError(
 }
 
 /**
- * Convenience helper to get a plain JSON-safe structure from any thrown value.
+ * Get a stable, JSON-safe canonical error shape for any thrown value.
  *
  * @param err - unknown thrown value
- * @param context - optional additional context
+ * @param context - optional additional context merged if wrapping occurs
+ * @returns BaseErrorJSON
  */
 export function normalizeErrorJSON(
   err: unknown,
   context: Record<string, unknown> = {},
-): Record<string, unknown> {
+): BaseErrorJSON {
   return mapToBaseError(err, context).toJSON();
 }
