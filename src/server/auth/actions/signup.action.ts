@@ -39,10 +39,10 @@ export async function signupAction(
     const result = await service.signup(validation.data);
 
     // 3) Map Service Result → FormState
-    if (result.success) {
+    if (result.ok) {
       await setSessionToken(
-        toUserId(result.data.id),
-        toUserRole(result.data.role),
+        toUserId(result.value.id),
+        toUserRole(result.value.role),
       );
     }
   } catch (error) {

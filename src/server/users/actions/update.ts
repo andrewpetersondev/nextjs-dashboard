@@ -71,7 +71,7 @@ function fail(
   ctx: Ctx,
 ): LegacyFormState<EditUserFormFieldNames> {
   return mapResultToFormState(
-    { error: ctx.emptyDense, success: false },
+    { error: ctx.emptyDense, ok: false },
     { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
   );
 }
@@ -141,7 +141,7 @@ export async function updateUserAction(
 ): Promise<LegacyFormState<EditUserFormFieldNames>> {
   const ctx = initCtx(formData);
   const idRes = toUserIdResult(id);
-  if (!idRes.success) {
+  if (!idRes.ok) {
     return fail(USER_ERROR_MESSAGES.VALIDATION_FAILED, ctx);
   }
 
@@ -152,7 +152,7 @@ export async function updateUserAction(
 
   try {
     const db = getDB();
-    const existing = await readUserDal(db, idRes.data);
+    const existing = await readUserDal(db, idRes.value);
     if (!existing) {
       return fail(USER_ERROR_MESSAGES.NOT_FOUND, ctx);
     }
@@ -166,7 +166,7 @@ export async function updateUserAction(
       };
     }
 
-    const updated = await updateUserDal(db, idRes.data, patch);
+    const updated = await updateUserDal(db, idRes.value, patch);
     if (!updated) {
       return fail(USER_ERROR_MESSAGES.UPDATE_FAILED, ctx);
     }

@@ -47,20 +47,20 @@ export async function login(
     const service = new UserAuthFlowService(getDB());
     const res = await service.login(input);
 
-    if (!res.success || !res.data) {
+    if (!res.ok || !res.value) {
       // Map domain/service error into dense field errors for consistent UI handling.
       const dense = attachRootDenseMessageToField(
         fields,
         "Login failed. Please try again.",
       );
       return mapResultToFormState<LoginField, unknown>(
-        { error: dense, success: false },
+        { error: dense, ok: false },
         { fields, raw: {} },
       );
     }
 
     // Establish session only after successful login
-    await setSessionToken(toUserId(res.data.id), toUserRole(res.data.role));
+    await setSessionToken(toUserId(res.value.id), toUserRole(res.value.role));
   } catch (err) {
     // Unexpected error path: log safely and return a consistent failure state.
     serverLogger.error({
@@ -77,7 +77,7 @@ export async function login(
       "Unexpected error. Please try again.",
     );
     return mapResultToFormState<LoginField, unknown>(
-      { error: dense, success: false },
+      { error: dense, ok: false },
       { fields, raw: {} },
     );
   }

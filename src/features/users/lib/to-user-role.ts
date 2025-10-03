@@ -12,11 +12,11 @@ export function toUserRoleResult(
 ): Result<UserRole, ValidationError> {
   const value = typeof role === "string" ? role.trim().toUpperCase() : role;
   if (USER_ROLES.includes(value as UserRole)) {
-    return { data: value as UserRole, success: true };
+    return { ok: true, value: value as UserRole };
   }
   return {
     error: new ValidationError("Invalid user role", { role }),
-    success: false,
+    ok: false,
   };
 }
 
@@ -25,8 +25,8 @@ export function toUserRoleResult(
  */
 export function toUserRole(role: unknown): UserRole {
   const r = toUserRoleResult(role);
-  if (r.success) {
-    return r.data;
+  if (r.ok) {
+    return r.value;
   }
   throw r.error;
 }
