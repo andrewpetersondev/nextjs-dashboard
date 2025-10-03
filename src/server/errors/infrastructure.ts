@@ -1,78 +1,58 @@
 import "server-only";
 import { BaseError } from "@/shared/core/errors/base";
 
-// Keep InfrastructureError opaque and non-serializable beyond code.
+/**
+ * Generic infrastructure failure (storage, network, system).
+ * Code: INFRASTRUCTURE (HTTP/status/severity derived from metadata).
+ */
 export class InfrastructureError extends BaseError {
-  // Make code a string literal type, but allow subclasses to override with their own literals.
-  // Use a widened readonly string (not a literal) to avoid locking subclasses to "INFRASTRUCTURE_ERROR".
-  readonly code: string = "INFRASTRUCTURE_ERROR";
-  readonly statusCode = 500;
-
-  // Use a private brand field to avoid "used before its declaration".
-  private static readonly brand: unique symbol = Symbol("InfrastructureError");
-  private readonly __brand: typeof InfrastructureError.brand =
-    InfrastructureError.brand;
-
   constructor(
-    message = "Infrastructure failure",
+    message?: string,
     context: Record<string, unknown> = {},
-    cause?: Error,
+    cause?: unknown,
   ) {
-    super(message, context, cause);
-  }
-
-  // Redact sensitive details; only expose code.
-  toJSON(): Record<string, unknown> {
-    return { code: this.code };
+    super("INFRASTRUCTURE", message, context, cause);
   }
 }
 
 /**
- * Represents a database error with a fixed code and status.
- *
- * Extends InfrastructureError to keep a single infra hierarchy.
+ * Database operation failure (query/connection/transaction).
+ * Code: DATABASE.
  */
-export class DatabaseError extends InfrastructureError {
-  readonly code = "DATABASE_ERROR";
-  readonly statusCode = 500;
-
+export class DatabaseError extends BaseError {
   constructor(
-    message = "Database operation failed",
+    message?: string,
     context: Record<string, unknown> = {},
-    cause?: Error,
+    cause?: unknown,
   ) {
-    super(message, context, cause);
+    super("DATABASE", message, context, cause);
   }
 }
 
 /**
- * Represents an error specific to cache operations.
+ * Cache layer failure (read/write/serialization/connectivity).
+ * Code: CACHE.
  */
-export class CacheError extends InfrastructureError {
-  readonly code = "CACHE_ERROR";
-  readonly statusCode = 500;
-
+export class CacheError extends BaseError {
   constructor(
-    message = "Cache operation failed",
+    message?: string,
     context: Record<string, unknown> = {},
-    cause?: Error,
+    cause?: unknown,
   ) {
-    super(message, context, cause);
+    super("CACHE", message, context, cause);
   }
 }
 
 /**
- * Represents a cryptographic operation error.
+ * Cryptographic operation failure (hash/encrypt/decrypt/key mgmt).
+ * Code: CRYPTO.
  */
-export class CryptoError extends InfrastructureError {
-  readonly code = "CRYPTO_ERROR";
-  readonly statusCode = 500;
-
+export class CryptoError extends BaseError {
   constructor(
-    message = "Cryptographic operation failed",
+    message?: string,
     context: Record<string, unknown> = {},
-    cause?: Error,
+    cause?: unknown,
   ) {
-    super(message, context, cause);
+    super("CRYPTO", message, context, cause);
   }
 }

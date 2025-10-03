@@ -17,6 +17,13 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
+  CACHE: {
+    category: "infrastructure",
+    description: "Cache operation failed",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
+  },
   CONFIG: {
     category: "server",
     description: "Server configuration error",
@@ -31,6 +38,20 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
+  CRYPTO: {
+    category: "infrastructure",
+    description: "Cryptographic operation failed",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
+  },
+  DATABASE: {
+    category: "infrastructure",
+    description: "Database operation failed",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
+  },
   DEPENDENCY_FAILURE: {
     category: "dependency",
     description: "Upstream dependency failed",
@@ -44,6 +65,13 @@ export const ERROR_CODES = {
     httpStatus: 403,
     retryable: false,
     severity: "warn",
+  },
+  INFRASTRUCTURE: {
+    category: "infrastructure",
+    description: "Infrastructure failure",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
   },
   INTEGRITY: {
     category: "server",
