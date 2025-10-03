@@ -123,7 +123,7 @@ export interface FailedFormState<
  */
 export type LegacyFormState<
   TField extends string,
-  TData,
+  TData = unknown,
   TValue = string,
   TMsg = string,
 > = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
@@ -137,7 +137,7 @@ export type LegacyFormState<
  */
 export const fromLegacyFormState = <
   TField extends string,
-  TData,
+  TData = unknown,
   TValue = string,
   TMsg = string,
 >(
