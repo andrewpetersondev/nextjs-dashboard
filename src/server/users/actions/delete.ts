@@ -8,15 +8,15 @@ import { getDB } from "@/server/db/connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /**
  * Deletes a user by ID, revalidates and redirects.
  */
 export async function deleteUserAction(
   id: string,
-): Promise<FormState<"_root">> {
-  let result: FormState<"_root"> = {
+): Promise<LegacyFormState<"_root">> {
+  let result: LegacyFormState<"_root"> = {
     errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
     message: USER_ERROR_MESSAGES.UNEXPECTED,
     success: false,

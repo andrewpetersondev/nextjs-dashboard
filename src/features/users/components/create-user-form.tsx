@@ -9,13 +9,13 @@ import {
 } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
 import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 export function CreateUserForm(): JSX.Element {
   const initialState =
     buildInitialFailedFormStateFromSchema(CreateUserFormSchema);
   const [state, action, pending] = useActionState<
-    FormState<CreateUserFormFieldNames>,
+    LegacyFormState<CreateUserFormFieldNames>,
     FormData
   >(createUserAction, initialState);
 

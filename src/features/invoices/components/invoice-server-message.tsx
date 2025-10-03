@@ -3,14 +3,14 @@ import type {
   UpdateInvoiceFieldNames,
   UpdateInvoiceOutput,
 } from "@/features/invoices/lib/invoice.schema";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /**
  * Props for InvoiceServerMessage component.
  */
 interface InvoiceServerMessageProps {
   showAlert: boolean;
-  state: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>;
+  state: LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>;
 }
 
 /**

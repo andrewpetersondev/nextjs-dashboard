@@ -28,6 +28,14 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
+### Folder Access Rule
+
+- When a folder is attached, the assistant may view and edit any file within that folder, subject to all other
+  instruction file rules.
+- Access outside attached folders is not permitted.
+
+---
+
 ### Logging & Error Policy (Core)
 
 - Add context (operation, identifiers) without secrets.
@@ -68,25 +76,3 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 11. Version/tooling compatibility; avoid deprecated APIs.
 12. Logs structured/safe; errors contextualized and sanitized.
 
-## README Maintenance Rules
-
-### Edit Rules:
-
-- Commands must be copy-paste runnable; prefer pnpm.
-- List only required env vars; no secrets; use clear placeholders.
-- Keep Tech Stack, Requirements, Getting Started, Testing, Useful Scripts, Troubleshooting in sync.
-- Validate links and referenced paths exist.
-- Keep content brief; link to docs/ for depth.
-- JetBrains: surface runnable commands and key scripts first; keep headings stable.
-- Date Policy: Update “Last updated: YYYY-MM-DD” only when README content changes.
-
-### PR Gate:
-
-- PRs changing scripts, env, tooling, structure, or tests must update README.
-- Reviewer checks: commands run locally; sections reflect reality; date updated.
-
-### Automation (recommended):
-
-- CI smoke: install → build → list scripts (pnpm -s run) to detect drift.
-- Dead-link check on README.
-- Optional: validate env var placeholders across docs and sample envs.

@@ -4,7 +4,7 @@ import {
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/i18n/form-messages.const";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
 /**
@@ -21,7 +21,7 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
     fields: readonly TFieldNames[];
     redactFields?: readonly TFieldNames[];
   },
-): FormState<TFieldNames, TData> {
+): LegacyFormState<TFieldNames, TData> {
   const {
     successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,

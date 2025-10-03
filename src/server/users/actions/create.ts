@@ -18,7 +18,7 @@ import {
   pickAllowedSparseFieldErrors,
 } from "@/shared/forms/errors/error-map-utils";
 import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -43,9 +43,9 @@ function pickCreateUserFormData(formData: FormData): CreateUserFormData {
  * Creates a new user (admin only).
  */
 export async function createUserAction(
-  _prevState: FormState<CreateUserFormFieldNames>,
+  _prevState: LegacyFormState<CreateUserFormFieldNames>,
   formData: FormData,
-): Promise<FormState<CreateUserFormFieldNames>> {
+): Promise<LegacyFormState<CreateUserFormFieldNames>> {
   const db = getDB();
   const allowed = deriveSchemaFieldNames(CreateUserFormSchema);
 

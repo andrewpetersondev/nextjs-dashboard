@@ -10,7 +10,7 @@ import { getDB } from "@/server/db/connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /**
  * Server Action for signup.
@@ -18,9 +18,9 @@ import type { FormState } from "@/shared/forms/types/form-state.type";
  * Shows progressive enhancement pattern: client can optimistically reflect input, server re-validates and returns authoritative state.
  */
 export async function signupAction(
-  _prevState: FormState<SignupField, unknown>,
+  _prevState: LegacyFormState<SignupField, unknown>,
   formData: FormData,
-): Promise<FormState<SignupField, unknown>> {
+): Promise<LegacyFormState<SignupField, unknown>> {
   try {
     // 1) Boundary validation via shared helper (reduces complexity)
     const validation = await validateFormGeneric(

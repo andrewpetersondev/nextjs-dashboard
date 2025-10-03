@@ -16,7 +16,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
 import { attachRootDenseMessageToField } from "@/shared/forms/errors/error-map-helpers";
 import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -24,9 +24,9 @@ import { ROUTES } from "@/shared/routes/routes";
  * Validates, authenticates user, starts session, then redirects.
  */
 export async function login(
-  _prevState: FormState<LoginField, unknown>,
+  _prevState: LegacyFormState<LoginField, unknown>,
   formData: FormData,
-): Promise<FormState<LoginField, unknown>> {
+): Promise<LegacyFormState<LoginField, unknown>> {
   const fields = LOGIN_FIELDS_LIST;
 
   // NOTE: Login Action is minimal to explore how it is different from Signup Action; Signup Action is maximal.

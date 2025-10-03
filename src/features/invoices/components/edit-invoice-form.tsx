@@ -21,7 +21,7 @@ import type {
   DenseFieldErrorMap,
   FieldError,
 } from "@/shared/forms/types/field-errors.type";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -30,9 +30,9 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
   return async (
-    prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+    prevState: LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
     formData: FormData,
-  ): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> =>
+  ): Promise<LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
@@ -103,7 +103,7 @@ export const EditInvoiceForm = ({
     buildInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
 
   const [state, action, pending] = useActionState<
-    FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+    LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
     FormData
   >(createWrappedUpdateAction(invoice.id), initialState);
 

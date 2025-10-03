@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import { buildEmptyDenseErrorMap } from "@/shared/forms/errors/error-map-utils";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /**
  * Creates an initial failure FormState (UI-only) for a given set of fields.
@@ -13,7 +13,7 @@ export function buildInitialFailedFormState<TFieldNames extends string>(
     errors: buildEmptyDenseErrorMap(fieldNames),
     message: "",
     success: false,
-  } satisfies Extract<FormState<TFieldNames>, { success: false }>;
+  } satisfies Extract<LegacyFormState<TFieldNames>, { success: false }>;
 }
 
 /**

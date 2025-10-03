@@ -20,7 +20,7 @@ import {
   expandSparseErrorsToDense,
   pickAllowedSparseFieldErrors,
 } from "@/shared/forms/errors/error-map-utils";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -42,7 +42,11 @@ async function publishUpdatedEvent(
 function handleActionError<
   N extends UpdateInvoiceFieldNames,
   F extends UpdateInvoiceOutput,
->(prevState: FormState<N, F>, id: string, error: unknown): FormState<N, F> {
+>(
+  prevState: LegacyFormState<N, F>,
+  id: string,
+  error: unknown,
+): LegacyFormState<N, F> {
   serverLogger.error({
     context: "updateInvoiceAction",
     error,
@@ -70,10 +74,10 @@ function handleActionError<
  * @returns FormState with data, errors, message, and success
  */
 export async function updateInvoiceAction(
-  prevState: FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+  prevState: LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
   id: string,
   formData: FormData,
-): Promise<FormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> {
+): Promise<LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> {
   try {
     const input = {
       amount: formData.get("amount"),

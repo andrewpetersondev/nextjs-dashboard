@@ -28,7 +28,7 @@ import { toUserIdResult } from "@/shared/domain/id-converters";
 import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
 import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
@@ -66,7 +66,10 @@ function initCtx(formData: FormData): Ctx {
  * @param message - Human-friendly failure message.
  * @param ctx - Context carrying fields, raw, and empty errors.
  */
-function fail(message: string, ctx: Ctx): FormState<EditUserFormFieldNames> {
+function fail(
+  message: string,
+  ctx: Ctx,
+): LegacyFormState<EditUserFormFieldNames> {
   return mapResultToFormState(
     { error: ctx.emptyDense, success: false },
     { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
@@ -81,7 +84,7 @@ function fail(message: string, ctx: Ctx): FormState<EditUserFormFieldNames> {
 async function validateForm(
   formData: FormData,
   ctx: Ctx,
-): Promise<FormState<EditUserFormFieldNames, EditUserFormValues>> {
+): Promise<LegacyFormState<EditUserFormFieldNames, EditUserFormValues>> {
   const result = await validateFormGeneric(
     formData,
     EditUserFormSchema,
@@ -133,9 +136,9 @@ async function buildPatch(
  */
 export async function updateUserAction(
   id: string,
-  _prevState: FormState<EditUserFormFieldNames>,
+  _prevState: LegacyFormState<EditUserFormFieldNames>,
   formData: FormData,
-): Promise<FormState<EditUserFormFieldNames>> {
+): Promise<LegacyFormState<EditUserFormFieldNames>> {
   const ctx = initCtx(formData);
   const idRes = toUserIdResult(id);
   if (!idRes.success) {

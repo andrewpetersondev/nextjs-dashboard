@@ -15,7 +15,7 @@ import {
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /** Log validation failures with minimal, non-sensitive context. */
 function logValidationFailure(context: string, error: unknown): void {
@@ -95,7 +95,7 @@ export async function validateFormGeneric<
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<FormState<TFieldNames, TIn>> {
+): Promise<LegacyFormState<TFieldNames, TIn>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,

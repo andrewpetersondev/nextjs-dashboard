@@ -48,7 +48,7 @@ export interface FailedFormState<
  * @typeParam TValue - raw value type (default: string).
  * @typeParam TMsg - message type for field errors (default: string).
  */
-export type FormState<
+export type LegacyFormState<
   TField extends string,
   TData = unknown,
   TValue = string,

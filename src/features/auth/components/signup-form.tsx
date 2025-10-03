@@ -14,7 +14,7 @@ import {
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
 import { buildInitialFailedFormState } from "@/shared/forms/errors/init-failed-form-state";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
@@ -24,9 +24,9 @@ const INITIAL_STATE =
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 type SignupAction = (
-  prevState: FormState<SignupField>,
+  prevState: LegacyFormState<SignupField>,
   formData: FormData,
-) => Promise<FormState<SignupField>>;
+) => Promise<LegacyFormState<SignupField>>;
 
 interface SignupFormProps {
   action: SignupAction;
@@ -37,7 +37,7 @@ export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormState<SignupField>,
+    LegacyFormState<SignupField>,
     FormData
   >(action, INITIAL_STATE);
   const baseId = useId();

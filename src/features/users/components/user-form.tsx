@@ -3,7 +3,7 @@ import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { FieldError } from "@/shared/forms/types/field-errors.type";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { TYPING_MS } from "@/shared/ui/tokens/timings";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -14,7 +14,7 @@ type Props<TFieldNames extends string> = {
   title: string;
   description: string;
   action: (formData: FormData) => void;
-  state: FormState<TFieldNames>;
+  state: LegacyFormState<TFieldNames>;
   pending: boolean;
   initialValues?: Partial<UserDto> & { password?: string };
   isEdit?: boolean;

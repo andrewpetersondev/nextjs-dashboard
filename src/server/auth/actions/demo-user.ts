@@ -12,7 +12,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -20,10 +20,10 @@ import { ROUTES } from "@/shared/routes/routes";
  */
 export async function demoUser(
   role: UserRole = GUEST_ROLE,
-): Promise<FormState<"_root">> {
+): Promise<LegacyFormState<"_root">> {
   let demoUserObject: UserDto | null = null;
 
-  let result: FormState<"_root"> = {
+  let result: LegacyFormState<"_root"> = {
     errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
     message: USER_ERROR_MESSAGES.UNEXPECTED,
     success: false,

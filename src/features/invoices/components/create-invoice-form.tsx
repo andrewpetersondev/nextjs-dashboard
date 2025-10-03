@@ -16,7 +16,7 @@ import {
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type { FieldError } from "@/shared/forms/types/field-errors.type";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";
@@ -32,7 +32,7 @@ export const CreateInvoiceForm = ({
   customers: CustomerField[];
 }): JSX.Element => {
   const [state, action, pending] = useActionState<
-    FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
+    LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 

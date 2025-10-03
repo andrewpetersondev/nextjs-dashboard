@@ -22,7 +22,7 @@ import {
   mapZodErrorToDenseFieldErrors,
 } from "@/shared/forms/errors/zod-error-mapping";
 import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
-import type { FormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";
@@ -34,10 +34,10 @@ const allowed = deriveSchemaFieldNames(CreateInvoiceSchema);
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function createInvoiceAction(
-  prevState: FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
+  prevState: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
   formData: FormData,
-): Promise<FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> {
-  let result: FormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
+): Promise<LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> {
+  let result: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
 
   try {
     const input: InvoiceFormDto = {
