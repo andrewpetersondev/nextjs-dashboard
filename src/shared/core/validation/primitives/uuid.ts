@@ -48,8 +48,8 @@ export function isUuid(value: unknown): value is string {
  */
 export function validateUuid(value: unknown, label = "id"): string {
   const r = validateUuidResult(value, label);
-  if (r.success) {
-    return r.data;
+  if (r.ok) {
+    return r.value;
   }
   throw r.error;
 }

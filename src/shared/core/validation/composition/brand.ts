@@ -19,7 +19,7 @@ export const brandWith =
   ) =>
   (value: unknown): Result<TBrand, ValidationError> => {
     const r = validator(value);
-    return r.success ? Ok(brandFn(r.data)) : r;
+    return r.ok ? Ok(brandFn(r.value)) : r;
   };
 
 /**
@@ -33,5 +33,5 @@ export const compose =
   ) =>
   (x: unknown): Result<B, ValidationError> => {
     const r1 = v1(x);
-    return r1.success ? v2(r1.data) : r1;
+    return r1.ok ? v2(r1.value) : r1;
   };

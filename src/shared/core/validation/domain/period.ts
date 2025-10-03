@@ -60,8 +60,8 @@ export function validatePeriodResult(
  */
 export function validatePeriod(input: unknown): Date {
   const r = validatePeriodResult(input);
-  if (r.success) {
-    return r.data;
+  if (r.ok) {
+    return r.value;
   }
   throw r.error;
 }

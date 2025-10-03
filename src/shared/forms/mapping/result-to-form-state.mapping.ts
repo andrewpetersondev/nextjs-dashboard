@@ -34,13 +34,13 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
     return {
       data: result.value,
       message: successMessage,
-      ok: true,
+      success: true,
     };
   }
   return {
     errors: result.error,
     message: failureMessage,
-    ok: false,
+    success: false,
     values: buildDisplayFieldValues(raw, fields, redactFields),
   };
 }

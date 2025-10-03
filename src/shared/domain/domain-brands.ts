@@ -28,7 +28,7 @@ export const uuidValidatorFor =
   (label: string) =>
   (value: unknown): Result<string, ValidationError> => {
     const r = validateUuidResult(value, label);
-    return r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
+    return r.ok ? Ok(r.value) : Err(new ValidationError(r.error.message));
   };
 
 /**
@@ -38,7 +38,7 @@ export const periodValidator = (
   value: unknown,
 ): Result<Date, ValidationError> => {
   const r = validatePeriodResult(value);
-  return r.success ? Ok(r.data) : Err(new ValidationError(r.error.message));
+  return r.ok ? Ok(r.value) : Err(new ValidationError(r.error.message));
 };
 
 // --- Factories ---
