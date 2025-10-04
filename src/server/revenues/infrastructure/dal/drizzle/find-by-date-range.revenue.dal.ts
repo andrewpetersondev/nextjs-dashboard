@@ -6,7 +6,7 @@ import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowsToEntities } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
 

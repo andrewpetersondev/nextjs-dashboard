@@ -6,7 +6,7 @@ import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 

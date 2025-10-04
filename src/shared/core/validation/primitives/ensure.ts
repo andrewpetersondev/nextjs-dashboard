@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 
 /**
  * Asserts that a condition holds true, otherwise throws a ValidationError.

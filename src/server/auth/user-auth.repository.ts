@@ -15,7 +15,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 
 /**
  * Repository for user authentication flows (signup/login).

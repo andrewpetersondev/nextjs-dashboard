@@ -5,12 +5,12 @@ import type {
   CryptoError,
   DatabaseError,
 } from "@/server/errors/infrastructure";
-import { BaseError } from "@/shared/core/errors/base";
+import { BaseError } from "@/shared/core/errors/base-error";
 import type {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 
 /**
  * Layer identifiers for diagnostics.

@@ -3,7 +3,7 @@ import "server-only";
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import { ensure } from "@/shared/core/validation/primitives/ensure";
 import {
   isNonNegativeInteger,

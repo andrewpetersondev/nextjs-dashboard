@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/core/errors/base";
+import type { BaseError } from "@/shared/core/errors/base-error";
 import {
   GENERIC_ERROR_CODE,
   GENERIC_ERROR_STATUS,

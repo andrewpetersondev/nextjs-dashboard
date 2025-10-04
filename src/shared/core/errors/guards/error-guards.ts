@@ -1,11 +1,11 @@
-import { BaseError } from "@/shared/core/errors/base";
+import { BaseError } from "@/shared/core/errors/base-error";
 import {
   type ConflictError,
   type ForbiddenError,
   type NotFoundError,
   type UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 import type { ErrorCode } from "@/shared/core/errors/error-codes";
 
 /**

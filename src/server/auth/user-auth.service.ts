@@ -17,7 +17,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";

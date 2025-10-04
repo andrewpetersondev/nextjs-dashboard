@@ -8,7 +8,7 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 
 export async function upsertRevenue(
   db: Database,

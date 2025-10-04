@@ -2,7 +2,7 @@ import "server-only";
 import type { DrizzleError } from "drizzle-orm";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { ConflictError } from "@/shared/core/errors/domain";
+import { ConflictError } from "@/shared/core/errors/domain-error";
 
 const UNIQUE_VIOLATION_CODE = "23505";
 const uniqueConstraintRegex = /unique/i;

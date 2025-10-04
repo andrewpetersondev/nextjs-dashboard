@@ -5,7 +5,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 
 /**
  * Throwing-style helpers per layer.

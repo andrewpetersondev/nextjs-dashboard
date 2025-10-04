@@ -12,7 +12,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain";
+} from "@/shared/core/errors/domain-error";
 
 /**
  * Map thrown errors to return-style per layer.

@@ -1,4 +1,4 @@
-import { BaseError } from "@/shared/core/errors/base";
+import { BaseError } from "@/shared/core/errors/base-error";
 import { type ErrorCode, isErrorCode } from "@/shared/core/errors/error-codes";
 
 export interface CreateErrorParams {

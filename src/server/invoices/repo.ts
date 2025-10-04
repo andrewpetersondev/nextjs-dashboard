@@ -16,7 +16,7 @@ import type {
 } from "@/server/invoices/entity";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/result-map";
 import type { InvoiceId } from "@/shared/domain/domain-brands";

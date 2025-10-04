@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/core/errors/base";
+import type { BaseError } from "@/shared/core/errors/base-error";
 
 /**
  * Discriminated union for operation results.

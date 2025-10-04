@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export async function deleteRevenue(

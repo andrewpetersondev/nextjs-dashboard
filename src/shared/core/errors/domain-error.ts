@@ -1,4 +1,4 @@
-import { BaseError } from "@/shared/core/errors/base";
+import { BaseError } from "@/shared/core/errors/base-error";
 
 /**
  * Input validation failed (HTTP 422 by metadata).

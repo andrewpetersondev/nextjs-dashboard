@@ -6,7 +6,7 @@ import type {
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { ValidationError } from "@/shared/core/errors/domain";
+import { ValidationError } from "@/shared/core/errors/domain-error";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class UpdateRevenueUseCase {

@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/core/errors/base";
+import type { BaseError } from "@/shared/core/errors/base-error";
 import { isBaseError } from "@/shared/core/errors/guards/error-guards";
 
 /**
