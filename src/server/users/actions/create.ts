@@ -42,6 +42,7 @@ function pickCreateUserFormData(formData: FormData): CreateUserFormData {
 /**
  * Creates a new user (admin only).
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <52 of 50>
 export async function createUserAction(
   _prevState: LegacyFormState<CreateUserFormFieldNames>,
   formData: FormData,
