@@ -4,7 +4,8 @@ import {
   GENERIC_ERROR_STATUS,
 } from "@/shared/core/errors/error-codes";
 import { GENERIC_ERROR_MESSAGE } from "@/shared/core/errors/error-messages";
-import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/error-redaction";
+
+import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/error-redaction.constants";
 import type { ApiError } from "@/shared/core/errors/error-types";
 import { isBaseError } from "@/shared/core/errors/guards/error-guards";
 import { isErrorDetailPrimitive } from "@/shared/core/errors/guards/is-error-detail-primitive.guard";
