@@ -247,4 +247,5 @@ export const getValidationError = <
 >(
   res: FormResult<TField, TData, TValue, TMsg>,
 ): FormValidationError<TField, TValue, TMsg> | undefined =>
+  // biome-ignore lint/style/noNestedTernary: <fix when implementing>
   res.ok ? undefined : isValidationError(res.error) ? res.error : undefined;
