@@ -28,11 +28,12 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-### Folder Access Rule
+### Folder & Attachment Access Rule
 
-- When a folder is attached, the assistant may view and edit any file within that folder, subject to all other
-  instruction file rules.
-- Access outside attached folders is not permitted.
+- When a folder or file is attached, the assistant must inspect its contents before answering questions or making code
+  changes.
+- All answers and modifications must use the latest state of the attached files, following all instruction file rules.
+- Access outside attached folders/files is not permitted.
 
 ---
 

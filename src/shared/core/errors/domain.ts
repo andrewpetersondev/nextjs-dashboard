@@ -15,21 +15,8 @@ export class ValidationError extends BaseError {
 }
 
 /**
- * Represents a "Not Found" error.
- *
  * Encapsulates HTTP 404 status with a specific error code.
  * Extends the {@link BaseError} class for standardized error handling.
- *
- * @remarks
- * - This error type is immutable and contains a readonly `code` and `statusCode`.
- * - Use this class to represent missing resources or invalid endpoints.
- *
- * @example
- * ```typescript
- * const error = new NotFoundError_New("Resource not found.");
- * console.error(error.code); // "NOT_FOUND"
- * console.error(error.statusCode); // 404
- * ```
  */
 export class NotFoundError extends BaseError {
   constructor(

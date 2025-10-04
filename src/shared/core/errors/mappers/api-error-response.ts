@@ -53,7 +53,7 @@ export interface ApiError {
  * - For non-Base errors returns a generic message and 500 status
  * - Never includes stack/cause/raw context; only whitelisted shallow details
  */
-export function toApiError(e: unknown): ApiError {
+export function mapUnknownToApiError(e: unknown): ApiError {
   if (isBaseError(e)) {
     const base = e as BaseError;
     const code = base.code ?? GENERIC_ERROR_CODE;
