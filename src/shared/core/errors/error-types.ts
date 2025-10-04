@@ -1,6 +1,11 @@
 import type { BaseError } from "./base";
 
-// Optional Result pattern (if not already defined elsewhere)
+/**
+ * Discriminated union for operation results.
+ * - `ok: true` for success, with readonly value.
+ * - `ok: false` for failure, with readonly error.
+ * @template T - Success value type
+ */
 export type ErrorResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: BaseError };
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly error: BaseError };

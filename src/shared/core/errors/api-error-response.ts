@@ -36,6 +36,10 @@ function extractSafeDetails(ctx: unknown): Record<string, unknown> | undefined {
   return Object.keys(out).length > 0 ? out : undefined;
 }
 
+export const GENERIC_ERROR_CODE = "UNKNOWN" as const;
+export const GENERIC_ERROR_MESSAGE = "Internal server error" as const;
+export const GENERIC_ERROR_STATUS = 500 as const;
+
 export interface ApiError {
   readonly code: string;
   readonly message: string;
@@ -52,11 +56,11 @@ export interface ApiError {
 export function toApiError(e: unknown): ApiError {
   if (isBaseError(e)) {
     const base = e as BaseError;
-    const code = base.code ?? "UNKNOWN";
+    const code = base.code ?? GENERIC_ERROR_CODE;
     const status =
       typeof (base as { statusCode?: unknown }).statusCode === "number"
         ? (base as { statusCode: number }).statusCode
-        : 500;
+        : GENERIC_ERROR_STATUS;
     // Domain BaseError messages are considered the intended client-facing message.
     const message = base.message ?? "Internal server error";
     // Safely surface only non-sensitive primitive details if available.
@@ -69,9 +73,9 @@ export function toApiError(e: unknown): ApiError {
 
   // Non-domain errors: do not reveal internal messages/stacks.
   const generic: ApiError = {
-    code: "UNKNOWN",
-    message: "Internal server error",
-    status: 500,
+    code: GENERIC_ERROR_CODE,
+    message: GENERIC_ERROR_MESSAGE,
+    status: GENERIC_ERROR_STATUS,
   };
   return generic;
 }

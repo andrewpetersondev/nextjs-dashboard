@@ -17,3 +17,5 @@ description: 'description'
 - Mark constants with as const for literal types.
 - Avoid barrel files; prefer explicit imports.
 - Use biome for formatting and linting; sort objects by keys.
+- Extract magic numbers/strings to named constants.
+- Use descriptive names; avoid abbreviations.

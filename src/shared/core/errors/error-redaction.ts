@@ -1,5 +1,15 @@
 // src/shared/core/errors/error-redaction.ts
 
+// Extracted constants for magic numbers and regex
+const DEFAULT_MASK = "***REDACTED***" as const;
+const DEFAULT_MAX_DEPTH = 4 as const;
+const PARTIAL_MASK_VISIBLE_EMAIL_CHARS = 1 as const;
+const PARTIAL_MASK_MIN_LENGTH = 16 as const;
+const PARTIAL_MASK_VISIBLE_START_CHARS = 4 as const;
+const PARTIAL_MASK_VISIBLE_END_CHARS = 4 as const;
+const CIRCULAR_REF_PLACEHOLDER = "[Circular]" as const;
+const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
 interface InternalConfig {
   readonly mask: string;
   readonly maxDepth: number;
@@ -44,16 +54,14 @@ function applyMask(
     if (!user || !domain) {
       return mask;
     }
-    const visible = user.slice(0, 1);
+    const visible = user.slice(0, PARTIAL_MASK_VISIBLE_EMAIL_CHARS);
     return `${visible}***@${domain}`;
   }
-  if (value.length > 16) {
-    return `${value.slice(0, 4)}***${value.slice(-4)}`;
+  if (value.length > PARTIAL_MASK_MIN_LENGTH) {
+    return `${value.slice(0, PARTIAL_MASK_VISIBLE_START_CHARS)}***${value.slice(-PARTIAL_MASK_VISIBLE_END_CHARS)}`;
   }
   return mask;
 }
-
-const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 /**
  * Checks if a string is a valid email address.
@@ -101,7 +109,7 @@ function handleArray(
   walker: (value: unknown, depth: number, keyHint?: string) => unknown,
 ): unknown {
   if (seen.has(arr)) {
-    return "[Circular]";
+    return CIRCULAR_REF_PLACEHOLDER;
   }
   seen.add(arr);
   let mutated = false;
@@ -128,7 +136,7 @@ function handleObject(
   walker: (value: unknown, depth: number, keyHint?: string) => unknown,
 ): unknown {
   if (seen.has(obj)) {
-    return "[Circular]";
+    return CIRCULAR_REF_PLACEHOLDER;
   }
   seen.add(obj);
   let mutated = false;
@@ -239,8 +247,8 @@ export function createErrorContextRedactor(
 ) => Record<string, unknown> | undefined {
   const {
     extraKeys = [],
-    mask = "***REDACTED***",
-    maxDepth = 4,
+    mask = DEFAULT_MASK,
+    maxDepth = DEFAULT_MAX_DEPTH,
     partialMask = true,
   } = options ?? {};
 
