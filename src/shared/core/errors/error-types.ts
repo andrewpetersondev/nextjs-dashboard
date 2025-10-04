@@ -1,4 +1,4 @@
-import type { BaseError } from "./base";
+import type { BaseError } from "@/shared/core/errors/base";
 
 /**
  * Discriminated union for operation results.
@@ -9,3 +9,10 @@ import type { BaseError } from "./base";
 export type ErrorResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly error: BaseError };
+
+export interface ApiError {
+  readonly code: string;
+  readonly message: string;
+  readonly status: number;
+  readonly details?: Record<string, unknown>;
+}

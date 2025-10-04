@@ -1,5 +1,5 @@
 import type { BaseError } from "@/shared/core/errors/base";
-import { isBaseError } from "@/shared/core/errors/error-guards";
+import { isBaseError } from "@/shared/core/errors/guards/error-guards";
 
 /**
  * Attempt to extract a BaseError-like shape from unknown without throwing.

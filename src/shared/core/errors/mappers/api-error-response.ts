@@ -1,15 +1,13 @@
 import type { BaseError } from "@/shared/core/errors/base";
-import { isBaseError } from "@/shared/core/errors/error-guards";
+import {
+  GENERIC_ERROR_CODE,
+  GENERIC_ERROR_STATUS,
+} from "@/shared/core/errors/error-codes";
+import { GENERIC_ERROR_MESSAGE } from "@/shared/core/errors/error-messages";
 import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/error-redaction";
-
-/**
- * Small type guard for primitives we allow in details.
- */
-function isAllowedPrimitive(v: unknown): v is string | number | boolean {
-  return (
-    typeof v === "string" || typeof v === "number" || typeof v === "boolean"
-  );
-}
+import type { ApiError } from "@/shared/core/errors/error-types";
+import { isBaseError } from "@/shared/core/errors/guards/error-guards";
+import { isErrorDetailPrimitive } from "@/shared/core/errors/guards/is-error-detail-primitive.guard";
 
 /**
  * Extract a shallow, safe details object from an unknown context.
@@ -29,22 +27,11 @@ function extractSafeDetails(ctx: unknown): Record<string, unknown> | undefined {
     if (sensitive.has(k.toLowerCase())) {
       continue;
     }
-    if (isAllowedPrimitive(v)) {
+    if (isErrorDetailPrimitive(v)) {
       out[k] = v;
     }
   }
   return Object.keys(out).length > 0 ? out : undefined;
-}
-
-export const GENERIC_ERROR_CODE = "UNKNOWN" as const;
-export const GENERIC_ERROR_MESSAGE = "Internal server error" as const;
-export const GENERIC_ERROR_STATUS = 500 as const;
-
-export interface ApiError {
-  readonly code: string;
-  readonly message: string;
-  readonly status: number;
-  readonly details?: Record<string, unknown>;
 }
 
 /**

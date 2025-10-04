@@ -18,3 +18,5 @@ export const FRIENDLY_ERROR_MESSAGES: Partial<Record<ErrorCode, string>> = {
   INTERNAL: "Something went wrong. Please try again.",
   UNKNOWN: "An unexpected error occurred.",
 };
+
+export const GENERIC_ERROR_MESSAGE = "Internal server error" as const;
