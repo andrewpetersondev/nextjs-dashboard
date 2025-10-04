@@ -97,17 +97,19 @@ function handlePrimitive(
   return value;
 }
 
+interface ArrayRedactOptions {
+  arr: unknown[];
+  depth: number;
+  cfg: InternalConfig;
+  seen: WeakSet<object>;
+  walker: (value: unknown, depth: number, keyHint?: string) => unknown;
+}
+
 /**
  * Redact arrays (structure preserved, elements visited).
  */
-// biome-ignore lint/nursery/useMaxParams: <good enough>
-function handleArray(
-  arr: unknown[],
-  depth: number,
-  _cfg: InternalConfig,
-  seen: WeakSet<object>,
-  walker: (value: unknown, depth: number, keyHint?: string) => unknown,
-): unknown {
+function handleArray(options: ArrayRedactOptions): unknown {
+  const { arr, depth, seen, walker } = options;
   if (seen.has(arr)) {
     return CIRCULAR_REF_PLACEHOLDER;
   }
@@ -115,26 +117,28 @@ function handleArray(
   let mutated = false;
   const out: unknown[] = [];
   for (const original of arr) {
-    const next = walker(original, depth + 1);
-    out.push(next);
-    if (next !== original) {
+    const masked = walker(original, depth + 1);
+    out.push(masked);
+    if (masked !== original) {
       mutated = true;
     }
   }
   return mutated ? out : arr;
 }
 
+interface ObjectRedactOptions {
+  obj: Record<string, unknown>;
+  depth: number;
+  cfg: InternalConfig;
+  seen: WeakSet<object>;
+  walker: (value: unknown, depth: number, keyHint?: string) => unknown;
+}
+
 /**
  * Redact plain objects (keys evaluated for sensitivity).
  */
-// biome-ignore lint/nursery/useMaxParams: <good enough>
-function handleObject(
-  obj: Record<string, unknown>,
-  depth: number,
-  cfg: InternalConfig,
-  seen: WeakSet<object>,
-  walker: (value: unknown, depth: number, keyHint?: string) => unknown,
-): unknown {
+function handleObject(options: ObjectRedactOptions): unknown {
+  const { obj, depth, cfg, seen, walker } = options;
   if (seen.has(obj)) {
     return CIRCULAR_REF_PLACEHOLDER;
   }
@@ -142,17 +146,17 @@ function handleObject(
   let mutated = false;
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(obj)) {
-    let next: unknown;
+    let maskedValue: unknown;
     if (isSensitiveKey(cfg.sensitive, k)) {
-      next =
+      maskedValue =
         typeof v === "string"
           ? applyMask(v, cfg.mask, cfg.partialMask, k)
           : cfg.mask;
     } else {
-      next = walker(v, depth + 1, k);
+      maskedValue = walker(v, depth + 1, k);
     }
-    out[k] = next;
-    if (next !== v) {
+    out[k] = maskedValue;
+    if (maskedValue !== v) {
       mutated = true;
     }
   }
@@ -194,16 +198,22 @@ function createVisit(
       return value;
     }
     if (Array.isArray(value)) {
-      return handleArray(value, depth, cfg, seen, visit);
+      return handleArray({
+        arr: value,
+        cfg,
+        depth,
+        seen,
+        walker: visit,
+      });
     }
     if (typeof value === "object") {
-      return handleObject(
-        value as Record<string, unknown>,
-        depth,
+      return handleObject({
         cfg,
+        depth,
+        obj: value as Record<string, unknown>,
         seen,
-        visit,
-      );
+        walker: visit,
+      });
     }
     return value;
   };

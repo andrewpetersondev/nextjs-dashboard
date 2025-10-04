@@ -1,11 +1,16 @@
 import "server-only";
 import { z } from "zod";
 
+// Magic numbers for validation constraints
+const PASSWORD_MIN_LENGTH = 8 as const;
+const USERNAME_MIN_LENGTH = 3 as const;
+const USERNAME_MAX_LENGTH = 50 as const;
+
 // Narrow command schemas per action to prevent over-posting.
 export const loginCommandSchema = z
   .object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z.string().min(PASSWORD_MIN_LENGTH),
   })
   .strict();
 
@@ -28,8 +33,8 @@ export const safeParseAsyncLoginCommand = (
 export const signupCommandSchema = z
   .object({
     email: z.string().email(),
-    password: z.string().min(8),
-    username: z.string().min(3).max(50),
+    password: z.string().min(PASSWORD_MIN_LENGTH),
+    username: z.string().min(USERNAME_MIN_LENGTH).max(USERNAME_MAX_LENGTH),
   })
   .strict();
 
