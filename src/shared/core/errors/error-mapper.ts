@@ -1,6 +1,6 @@
 import type { BaseErrorJSON } from "@/shared/core/errors/base";
 import { BaseError } from "@/shared/core/errors/base";
-import { UnknownError } from "@/shared/core/errors/unknown-error";
+import {UnknownError} from "@/shared/core/errors/domain";
 
 /**
  * Normalize any thrown value to a BaseError instance.
