@@ -3,9 +3,10 @@ import {
   getErrorCodeMeta,
 } from "@/shared/core/errors/error-codes";
 
-export interface BaseErrorContext {
-  readonly [key: string]: unknown;
-}
+/**
+ * Immutable, JSON-safe diagnostic context attached to an error.
+ */
+export type BaseErrorContext = Readonly<Record<string, unknown>>;
 
 export interface BaseErrorJSON {
   readonly code: ErrorCode;
@@ -19,14 +20,17 @@ export interface BaseErrorJSON {
 }
 
 /**
- * Canonical application error with stable metadata derived from `ERROR_CODES`.
- *
- * All domain / infrastructure error types extend this class to ensure:
- * - Consistent `code`, `statusCode`, `retryable`, `severity`, `category`.
- * - Safe, shallow-serializable `context`.
- * - Optional `cause` preserved (appended to stack trace for diagnostics).
- *
- * Never mutate an instance; treat as immutable value object.
+ * Construction options for BaseError to keep constructor signature minimal.
+ */
+export interface BaseErrorOptions {
+  readonly message?: string;
+  readonly context?: Record<string, unknown>;
+  readonly cause?: unknown;
+}
+
+/**
+ * Canonical application error with stable metadata derived from ERROR_CODES.
+ * Immutable: context is defensively cloned & frozen.
  */
 export class BaseError extends Error {
   readonly code: ErrorCode;
@@ -38,16 +42,10 @@ export class BaseError extends Error {
   readonly context: BaseErrorContext;
   readonly cause?: unknown;
 
-  /**
-   * @param code Error code (must exist in `ERROR_CODES`).
-   * @param message Optional override; defaults to code description.
-   * @param context Additional non-sensitive diagnostic data (redacted upstream if needed).
-   * @param cause Underlying error or value; not exposed in `toJSON`, but its stack is appended.
-   */
   constructor(
     code: ErrorCode,
     message?: string,
-    context: BaseErrorContext = {},
+    context: Record<string, unknown> = {},
     cause?: unknown,
   ) {
     const meta = getErrorCodeMeta(code);
@@ -59,15 +57,50 @@ export class BaseError extends Error {
     this.retryable = meta.retryable;
     this.category = meta.category;
     this.description = meta.description;
-    this.context = context;
+    this.context = Object.freeze({ ...context });
     this.cause = cause;
+
+    // Optional stack chaining (kept lightweight; avoids unconditional stack bloat).
     if (cause instanceof Error && cause.stack) {
-      this.stack += `\nCaused By: ${cause.stack}`;
+      this.stack += `\nCausedBy: ${cause.name}: ${cause.message}`;
     }
   }
 
+  /**
+   * Merge additional immutable context, returning a new instance (non-mutating).
+   */
+  withContext(extra: Record<string, unknown>): BaseError {
+    if (!extra || Object.keys(extra).length === 0) {
+      return this;
+    }
+    return new BaseError(
+      this.code,
+      this.message,
+      { ...this.context, ...extra },
+      this.cause,
+    );
+  }
+
+  /**
+   * Functional remap to a different canonical code (rare; use sparingly).
+   */
+  remap(code: ErrorCode, overrideMessage?: string): BaseError {
+    if (code === this.code && !overrideMessage) {
+      return this;
+    }
+    return new BaseError(
+      code,
+      overrideMessage || this.message,
+      { ...this.context },
+      this.cause,
+    );
+  }
+
+  /**
+   * Serialize to a stable JSON shape (no stack/cause leakage).
+   */
   toJSON(): BaseErrorJSON {
-    return {
+    const base: BaseErrorJSON = {
       category: this.category,
       code: this.code,
       description: this.description,
@@ -79,5 +112,58 @@ export class BaseError extends Error {
         ? { context: this.context }
         : {}),
     };
+    return base;
+  }
+
+  /**
+   * Normalize unknown into BaseError (lightweight alternative to mapToBaseError).
+   */
+  static from(
+    value: unknown,
+    fallbackCode: ErrorCode = "UNKNOWN",
+    context: Record<string, unknown> = {},
+  ): BaseError {
+    if (value instanceof BaseError) {
+      return value;
+    }
+    if (value instanceof Error) {
+      return new BaseError(fallbackCode, value.message, context, value);
+    }
+    let msg: string;
+    try {
+      msg =
+        typeof value === "string"
+          ? value
+          : JSON.stringify(value, (_k, v) =>
+              typeof v === "bigint" ? v.toString() : v,
+            );
+    } catch {
+      msg = "Non-serializable thrown value";
+    }
+    return new BaseError(fallbackCode, msg, {
+      ...context,
+      originalType: typeof value,
+    });
+  }
+
+  /**
+   * Wrap an error preserving original (never double-wrap BaseError).
+   */
+  static wrap(
+    code: ErrorCode,
+    err: unknown,
+    context: Record<string, unknown> = {},
+    message?: string,
+  ): BaseError {
+    if (err instanceof BaseError) {
+      return err.remap(code, message);
+    }
+    if (err instanceof Error) {
+      return new BaseError(code, message || err.message, context, err);
+    }
+    return new BaseError(code, message || "Wrapped unknown value", {
+      ...context,
+      originalValue: err,
+    });
   }
 }
