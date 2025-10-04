@@ -1,5 +1,5 @@
 import { BaseError } from "@/shared/core/errors/base-error";
-import { type ErrorCode, isErrorCode } from "@/shared/core/errors/error-codes";
+import {type ErrorCode, isErrorCode} from "@/shared/core/errors/error-codes";
 
 export interface CreateErrorParams {
   readonly code: ErrorCode;
