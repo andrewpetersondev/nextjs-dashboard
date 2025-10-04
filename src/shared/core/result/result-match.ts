@@ -27,9 +27,11 @@ export const unwrapOrThrow = <TValue, TError extends ErrorLike>(
  * @param fallback Value used when Err.
  */
 export const unwrapOr =
-  <TValue, TError extends ErrorLike>(fallback: TValue) =>
-  (r: Result<TValue, TError>): TValue =>
-    r.ok ? r.value : fallback;
+  /* @__PURE__ */
+    <TValue, TError extends ErrorLike>(fallback: TValue) =>
+    /* @__PURE__ */
+    (r: Result<TValue, TError>): TValue =>
+      r.ok ? r.value : fallback;
 
 /**
  * Unwrap or compute fallback from error.
@@ -38,9 +40,11 @@ export const unwrapOr =
  * @param fallback Function producing fallback from error.
  */
 export const unwrapOrElse =
-  <TValue, TError extends ErrorLike>(fallback: (e: TError) => TValue) =>
-  (r: Result<TValue, TError>): TValue =>
-    r.ok ? r.value : fallback(r.error);
+  /* @__PURE__ */
+    <TValue, TError extends ErrorLike>(fallback: (e: TError) => TValue) =>
+    /* @__PURE__ */
+    (r: Result<TValue, TError>): TValue =>
+      r.ok ? r.value : fallback(r.error);
 
 /**
  * Pattern match both branches.
@@ -52,7 +56,11 @@ export const unwrapOrElse =
  * @param onErr Err handler.
  * @returns TOut
  */
-export const matchResult = <TValue, TError extends ErrorLike, TOut>(
+export const matchResult = /* @__PURE__ */ <
+  TValue,
+  TError extends ErrorLike,
+  TOut,
+>(
   r: Result<TValue, TError>,
   onOk: (v: TValue) => TOut,
   onErr: (e: TError) => TOut,

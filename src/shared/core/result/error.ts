@@ -1,44 +1,59 @@
+// src/shared/core/result/error.ts
 /**
  * Lightweight error modeling primitives for the Result subsystem.
- * Keeps a narrow, serialization-safe contract independent of rich domain error classes.
- * Domain error modules should provide an adapter into AppError (do not import them here to avoid cycles).
+ * Provides a narrow, JSON‑safe `AppError` plus normalization helpers.
  */
 
-/** Internal constants for normalization defaults. */
+/** @internal Default classification for unknown errors. */
 const DEFAULT_UNKNOWN_KIND = "unknown" as const;
+/** @internal Default user-safe fallback message. */
 const DEFAULT_UNKNOWN_MESSAGE = "An unknown error occurred" as const;
+/** @internal Default severity applied to unknown errors. */
 const DEFAULT_UNKNOWN_SEVERITY: AppError["severity"] = "error";
 
-/** Primitive constraint for error generics (see TypeScript instructions). */
+/**
+ * Primitive constraint for error generics.
+ */
 export type ErrorLike = Error | { readonly message: string };
 
 /**
- * Canonical application error shape used as the default error branch inside Result.
- * All fields must remain JSON-serializable; avoid functions / Symbols.
+ * Canonical application error shape (JSON-serializable).
  */
 export interface AppError {
-  /** High-level category or domain (e.g. "validation", "io", "auth", "internal"). */
   readonly kind: string;
-  /** Human-readable message (already redacted / safe for logs or end-user mapping). */
   readonly message: string;
-  /** Stable machine-oriented code (maps to `error-codes.ts`). */
   readonly code?: string;
-  /** Optional structured, redaction-safe detail payload. */
   readonly details?: unknown;
-  /** Severity hint for logging or metrics routing. */
   readonly severity?: "info" | "warn" | "error";
-  /** Standard JS Error name when available. */
   readonly name?: string;
-  /** Stack trace (retain only for internal logging; strip before client exposure). */
   readonly stack?: string;
-  /** Downstream cause chain (avoid leaking uncontrolled objects externally). */
   readonly cause?: unknown;
 }
 
 /**
- * Type guard to prevent double normalization.
+ * Overrides accepted during unknown error normalization.
+ */
+export interface NormalizeUnknownErrorOverrides {
+  readonly kind?: string;
+  readonly code?: string;
+  readonly severity?: AppError["severity"];
+}
+
+/**
+ * Patch contract for augmenting an existing (or unknown) error.
+ * `kind` and `message` allowed but safeguarded to never become empty.
+ */
+export type AugmentAppErrorPatch = Partial<
+  Omit<AppError, "kind" | "message">
+> & {
+  readonly kind?: string;
+  readonly message?: string;
+};
+
+/**
+ * Structural guard—intentionally shallow. Does not validate optional field types beyond `kind` and `message`.
  * @param value Arbitrary value to test.
- * @returns value is AppError
+ * @returns true if shape matches minimal AppError surface.
  */
 export const isAppError = (value: unknown): value is AppError =>
   typeof value === "object" &&
@@ -50,21 +65,21 @@ export const isAppError = (value: unknown): value is AppError =>
 
 /**
  * Normalize an unknown thrown/rejected value into an AppError.
- * Keeps minimal safe fields; richer domain metadata should be injected by an adapter layer above.
+ * Precedence:
+ * 1. Existing AppError: shallow override of selected fields.
+ * 2. Native Error instance: mapped core fields (name, message, stack, cause).
+ * 3. Object with string message.
+ * 4. Primitive fallback (string used directly if non-empty).
+ * Drops extraneous enumerable properties for safety.
  * @param input Unknown error value.
- * @param overrides Optional partial metadata to override inferred values (kind, code, severity).
- * @returns AppError
+ * @param overrides Optional classification overrides.
+ * @returns AppError (never throws).
  */
 export const normalizeUnknownError = /* @__PURE__ */ (
   input: unknown,
-  overrides?: {
-    readonly kind?: string;
-    readonly code?: string;
-    readonly severity?: AppError["severity"];
-  },
+  overrides?: NormalizeUnknownErrorOverrides,
 ): AppError => {
   if (isAppError(input)) {
-    // Merge only provided overrides (do not mutate original).
     return {
       ...input,
       code: overrides?.code ?? input.code,
@@ -75,7 +90,6 @@ export const normalizeUnknownError = /* @__PURE__ */ (
 
   if (input instanceof Error) {
     return {
-      // Preserve cause if present (ES2022 Error.cause); avoid spreading arbitrary enumerable props.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cause: (input as any).cause,
       code: overrides?.code,
@@ -99,11 +113,9 @@ export const normalizeUnknownError = /* @__PURE__ */ (
       message:
         (input as { message: string }).message || DEFAULT_UNKNOWN_MESSAGE,
       severity: overrides?.severity ?? DEFAULT_UNKNOWN_SEVERITY,
-      // Intentionally omit arbitrary extra enumerable properties for safety.
     };
   }
 
-  // Primitive or structurally unexpected object.
   return {
     code: overrides?.code,
     kind: overrides?.kind ?? DEFAULT_UNKNOWN_KIND,
@@ -116,23 +128,20 @@ export const normalizeUnknownError = /* @__PURE__ */ (
 };
 
 /**
- * Create a shallowly augmented AppError from an existing one without mutation.
- * @param base Existing AppError (or unknown; will be normalized).
- * @param patch Partial fields to override/add (excluding message/kind safeguards).
+ * Create an augmented AppError from any input (normalizes first, then overlays patch).
+ * Safeguards required fields from becoming empty.
+ * @param base Input error (unknown).
+ * @param patch Partial override additions.
  * @returns AppError
  */
 export const augmentAppError = /* @__PURE__ */ (
   base: unknown,
-  patch: Partial<Omit<AppError, "message" | "kind">> & {
-    readonly message?: string;
-    readonly kind?: string;
-  },
+  patch: AugmentAppErrorPatch,
 ): AppError => {
   const normalized = normalizeUnknownError(base);
   return {
     ...normalized,
     ...patch,
-    // Ensure we never blank out required fields:
     kind: patch.kind ?? normalized.kind,
     message: patch.message ?? normalized.message,
   };

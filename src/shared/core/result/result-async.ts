@@ -1,35 +1,43 @@
-// File: src/shared/core/result/result-async.ts
-import {
-  type AppError,
-  type ErrorLike,
-  normalizeUnknownError,
-} from "@/shared/core/result/error";
+// src/shared/core/result/result-async.ts
+import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import { normalizeUnknownError } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
-interface TryAsyncMapped<TError extends ErrorLike> {
+interface TryCatchAsyncMapped<TError extends ErrorLike> {
   readonly mapError: (e: unknown) => TError;
 }
 
+/**
+ * Async thunk producing a value.
+ * @template TValue
+ */
 export type AsyncFn<TValue> = () => Promise<TValue>;
 
 /**
- * Execute an async function and wrap its outcome.
- * @template TValue
- * @template TError
- * @param fn Async thunk producing value.
- * @param options Optional mapper (required for custom error type).
- * @returns Promise of Result.
+ * Execute an async function and wrap its outcome as a Result.
+ * When no mapper is provided, unknown errors are normalized to AppError.
+ * @template TValue Success value type.
+ * @param fn Async thunk producing a value.
+ * @returns Promise resolving to Result<TValue,AppError>
  */
 export function tryCatchAsync<TValue>(
   fn: AsyncFn<TValue>,
 ): Promise<Result<TValue, AppError>>;
+/**
+ * Execute an async function with custom error mapping.
+ * @template TValue Success value type.
+ * @template TError Custom error type.
+ * @param fn Async thunk producing a value.
+ * @param options Error mapping options.
+ * @returns Promise resolving to Result<TValue,TError>
+ */
 export function tryCatchAsync<TValue, TError extends ErrorLike>(
   fn: AsyncFn<TValue>,
-  options: TryAsyncMapped<TError>,
+  options: TryCatchAsyncMapped<TError>,
 ): Promise<Result<TValue, TError>>;
 export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   fn: AsyncFn<TValue>,
-  options?: TryAsyncMapped<TError>,
+  options?: TryCatchAsyncMapped<TError>,
 ): Promise<Result<TValue, AppError | TError>> {
   try {
     return Ok(await fn());
@@ -39,16 +47,23 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
 }
 
 /**
- * Wrap a Promise value (forwarding to tryCatchAsync).
- * @template TValue
- * @template TError
- * @param promise Promise producing value.
- * @param mapError Optional error mapper.
- * @returns Promise<Result<TValue,TError>>
+ * Wrap a Promise into a Result.
+ * Thin alias over tryCatchAsync for API ergonomics.
+ * @template TValue Success value type.
+ * @param promise Input promise.
+ * @returns Promise resolving to Result<TValue,AppError>
  */
 export function fromPromise<TValue>(
   promise: Promise<TValue>,
 ): Promise<Result<TValue, AppError>>;
+/**
+ * Wrap a Promise into a Result with custom error mapping.
+ * @template TValue Success value type.
+ * @template TError Custom error type.
+ * @param promise Input promise.
+ * @param mapError Error mapper.
+ * @returns Promise resolving to Result<TValue,TError>
+ */
 export function fromPromise<TValue, TError extends ErrorLike>(
   promise: Promise<TValue>,
   mapError: (e: unknown) => TError,
@@ -63,12 +78,11 @@ export function fromPromise<TValue, TError extends ErrorLike>(
 }
 
 /**
- * Convert a Result into a Promise, rejecting on Err.
- * @template TValue
- * @template TError
+ * Convert a Result into a Promise, rejecting on Err branch.
+ * @template TValue Success value type.
+ * @template TError Error type.
  * @param r Result to unwrap.
- * @returns Promise resolving with value or rejecting with error.
- * @throws TError
+ * @returns Promise resolving with the success value or rejecting with the error.
  */
 export const toPromise = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,

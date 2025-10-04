@@ -64,7 +64,7 @@ export const Err = /* @__PURE__ */ <
 >(
   error: TError,
 ): Result<TValue, TError> => {
-  const r = { ok: RESULT_ERR, error } satisfies ErrResult<TError>;
+  const r = { error, ok: RESULT_ERR } satisfies ErrResult<TError>;
   return freezeDev(r) as Result<TValue, TError>;
 };
 

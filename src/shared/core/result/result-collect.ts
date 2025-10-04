@@ -13,7 +13,10 @@ export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
  * @param results Readonly list of Results.
  * @returns Result<readonly TValue[],TError>
  */
-export const collectAll = <TValue, TError extends ErrorLike = AppError>(
+export const collectAll = /* @__PURE__ */ <
+  TValue,
+  TError extends ErrorLike = AppError,
+>(
   results: readonly Result<TValue, TError>[],
 ): Result<readonly TValue[], TError> => {
   const acc: TValue[] = [];
@@ -23,7 +26,7 @@ export const collectAll = <TValue, TError extends ErrorLike = AppError>(
     }
     acc.push(r.value);
   }
-  return Ok<readonly TValue[], TError>(acc as readonly TValue[]);
+  return Ok(acc as readonly TValue[]);
 };
 
 /**
@@ -31,6 +34,29 @@ export const collectAll = <TValue, TError extends ErrorLike = AppError>(
  * @template TTuple Tuple of Result types.
  */
 export function collectTuple<
+  TError extends ErrorLike,
+  TTuple extends readonly Result<unknown, TError>[],
+>(
+  ...results: TTuple
+): Result<{ readonly [K in keyof TTuple]: OkType<TTuple[K]> }, TError> {
+  const acc: unknown[] = [];
+  for (const r of results) {
+    if (!r.ok) {
+      return r as Result<
+        { readonly [K in keyof TTuple]: OkType<TTuple[K]> },
+        TError
+      >;
+    }
+    acc.push(r.value);
+  }
+  return Ok(acc as { readonly [K in keyof TTuple]: OkType<TTuple[K]> });
+}
+
+/**
+ * Heterogeneous tuple collection (legacy/wide union).
+ * Use only when mixed error types are required.
+ */
+export function collectTupleHetero<
   TTuple extends readonly Result<unknown, ErrorLike>[],
 >(
   ...results: TTuple
@@ -59,14 +85,16 @@ export function collectTuple<
  * @param onEmpty Factory for error when empty.
  */
 export const firstOkOrElse =
-  <TValue, TError extends ErrorLike = AppError>(onEmpty: () => TError) =>
-  (results: readonly Result<TValue, TError>[]): Result<TValue, TError> => {
-    let lastErr: Result<never, TError> | null = null;
-    for (const r of results) {
-      if (r.ok) {
-        return r;
+  /* @__PURE__ */
+    <TValue, TError extends ErrorLike = AppError>(onEmpty: () => TError) =>
+    /* @__PURE__ */
+    (results: readonly Result<TValue, TError>[]): Result<TValue, TError> => {
+      let lastErr: Result<never, TError> | null = null;
+      for (const r of results) {
+        if (r.ok) {
+          return r;
+        }
+        lastErr = r as Result<never, TError>;
       }
-      lastErr = r as Result<never, TError>;
-    }
-    return lastErr ?? Err(onEmpty());
-  };
+      return lastErr ?? Err(onEmpty());
+    };

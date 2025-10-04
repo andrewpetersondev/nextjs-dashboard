@@ -1,58 +1,86 @@
-### Summary
+Here is a list of weaknesses that have **not** been resolved in the current codebase.
 
-Assessment of whether weaknesses listed in `src/shared/core/result/WEAKNESSES.md` have been remediated.
+---
 
-### Cross-cutting items
+### Unresolved Weaknesses
 
-- Constrained generics: Implemented (`TValue`, `TError extends ErrorLike`) across all modules.
-- Unified error shape / normalization: Implemented (`AppError`, `normalizeUnknownError`, `augmentAppError`).
-- Consistent default error generic: Implemented (defaults now `AppError`).
-- Readonly inputs: Implemented (`readonly` arrays / tuples in collectors).
-- Tree-shaking hints: Partially (present on several factories, missing on some helpers like `collectAll`, `flatMap`,
-  taps).
-- Deprecated APIs isolation: Not implemented (`legacy-result.ts` still co-located and exported).
-- Error mapping casts: Still present (`as unknown as TError` in async/sync try/catch helpers).
-- Documentation completeness: Partially (some TSDoc present; many missing full `@template`, `@param`, `@returns`,
-  `@throws`).
-- Async counterpart utilities expansion: Not implemented (no `flatMapAsync`, `mapOkAsync`, `tapOkAsync`).
-- Iterator / lazy collectors: Not implemented.
-- Identity preservation / micro-optimizations: Not addressed (e.g. `mapError` always allocates).
+#### Cross-Cutting Items
 
-### Module specifics
+- **Tree-shaking hints:** Partially present; some helpers missing `/* @__PURE__ */`.
+- **Deprecated APIs isolation:** Not implemented (`legacy-result.ts` still co-located and exported).
+- **Error mapping casts:** Still present (`as unknown as TError` in async/sync try/catch helpers).
+- **Documentation completeness:** Partial; some TSDoc missing full details.
+- **Async counterpart utilities expansion:** Not fully implemented (e.g., missing async variants for some helpers).
+- **Iterator/lazy collectors:** Not fully implemented; only partial progress.
+- **Identity preservation/micro-optimizations:** Not addressed in all places.
 
-- `result.ts`: Added `freezeDev`, discriminant constants, consistent defaults. Improvement achieved.
-- `error.ts`: Provides normalization and lightweight error modeling. Addresses prior gap.
-- `result-async.ts`: Duplication between `tryCatchAsync` and `fromPromise` remains.
-- `result-sync.ts`: Same casting pattern; no refinement improvements.
-- `result-collect.ts`: `collectTuple` still unions heterogeneous error types (original concern persists).
-- `result-map.ts`: Functionality OK; no async variants; always re-wraps error branch.
-- `result-tap.ts`: No guard around side-effect exceptions; behavior unchanged.
-- `result-transform.ts`: Only sync `flatMap`; no async variant; same error union pattern.
-- `WEAKNESSES.md`: Now partially outdated (some listed issues fixed in code).
+---
 
-### Remediation checklist status
+#### Module-Specific Observations
 
-1. Constrain generics: Done.
-2. Standardize error default and export unified shape: Done.
-3. Runtime normalization helper: Done.
-4. Readonly collections: Done.
-5. Consolidate async helpers: Not done.
-6. Isolate deprecated APIs: Not done.
-7. Add async mapping/transform/tap: Not done.
-8. Strengthen TSDoc: Partial.
-9. Type-level tests for regressions: Not verifiable (not shown).
-10. Iterator-based collectors: Not done.
+- **result-async.ts:** Duplication between `tryCatchAsync` and `fromPromise` remains.
+- **result-sync.ts:** Same casting pattern; no refinement improvements.
+- **result-collect.ts:** `collectTuple` still unions heterogeneous error types (original concern persists).
+- **result-map.ts:** No async variants; always re-wraps error branch.
+- **result-tap.ts:** No guard around side-effect exceptions in default tap; only present in `tapOkSafe`/`tapErrorSafe`.
+- **result-transform.ts:** Only sync `flatMap`; no async variant; same error union pattern.
 
-### High-priority remaining gaps
+---
 
-- Remove duplication (`fromPromise` → wrap `tryCatchAsync` or vice versa).
+#### Order of importance for refactoring, based on unresolved weaknesses and impact on codebase:
+
+1. `result-async.ts`  
+   Contains duplication (`tryCatchAsync` vs `fromPromise`), error mapping casts, and async utility expansion gaps.  
+   Central for async error handling and normalization.
+
+2. `result-sync.ts`  
+   Has error mapping casts and is foundational for sync error handling.
+
+3. `result-collect.ts`  
+   Contains error modeling issues (`collectTuple` unions), impacts aggregation logic.
+
+4. `result-map.ts`  
+   Lacks async variants, could benefit from identity-preserving error mapping.
+
+5. `result-transform.ts`  
+   Only sync `flatMap`, needs async counterpart and error union refinement.
+
+6. `result-tap.ts`  
+   Side-effect error wrapping only in safe variants, could add opt-in guards.
+
+This order prioritizes foundational error handling and normalization, then aggregation, mapping, transformation, and
+side-effects.
+
+---
+
+#### Remediation Checklist
+
+- Consolidate async helpers: Not done.
+- Isolate deprecated APIs: Not done.
+- Add async mapping/transform/tap: Not done for all helpers.
+- Strengthen TSDoc: Partial.
+- Iterator-based collectors: Not done.
+
+---
+
+#### High-Priority Remaining Gaps
+
+- Remove duplication (`fromPromise` ↔ `tryCatchAsync`).
 - Replace unsafe casts with a narrowing utility or enforce mapper return shape.
-- Add async counterparts (`flatMapAsync`, `mapOkAsync`, `tapOkAsync`).
-- Isolate/deprecate legacy exports under a `legacy/` folder with clear removal plan.
+- Add async counterparts (`flatMapAsync`, `mapOkAsync`, `tapOkAsync`) for all relevant helpers.
 - Enhance TSDoc consistency (templates + throws).
-- Provide lazy / iterator collectors for large datasets.
+- Provide lazy/iterator collectors for large datasets.
 - Optional: optimize `mapError` to preserve identity when unchanged.
 
-### Validation
+---
 
-Reviewed only attached files under `src/shared/core/result/*` and instruction files. No conflicting rules detected.
+#### Minor Observations
+
+- Add `/* @__PURE__ */` to remaining pure helpers for better tree-shaking.
+- Consider identity-preserving branch in `mapError`.
+- Optional: add side-effect error wrapping in tap helpers as opt-in.
+- Improve `collectTuple` error modeling (homogeneous constraint or error merger).
+
+---
+
+This list focuses only on weaknesses that have not been fully resolved and should be prioritized for future remediation.

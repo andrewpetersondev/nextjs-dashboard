@@ -12,8 +12,10 @@ import type { Result } from "@/shared/core/result/result";
  * @returns Result of chained computation or original Err.
  */
 export const flatMap =
-  <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
-    fn: (v: TValue) => Result<TNext, TError2>,
-  ) =>
-  (r: Result<TValue, TError1>): Result<TNext, TError1 | TError2> =>
-    r.ok ? fn(r.value) : (r as Result<TNext, TError1>);
+  /* @__PURE__ */
+    <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+      fn: (v: TValue) => Result<TNext, TError2>,
+    ) =>
+    /* @__PURE__ */
+    (r: Result<TValue, TError1>): Result<TNext, TError1 | TError2> =>
+      r.ok ? fn(r.value) : (r as Result<TNext, TError1>);

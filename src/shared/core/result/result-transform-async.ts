@@ -11,10 +11,12 @@ import type { Result } from "@/shared/core/result/result";
  * @param fn Async mapper returning a Result.
  */
 export const flatMapAsync =
-  <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
-    fn: (v: TValue) => Promise<Result<TNext, TError2>>,
-  ) =>
-  async (
-    r: Result<TValue, TError1>,
-  ): Promise<Result<TNext, TError1 | TError2>> =>
-    r.ok ? fn(r.value) : (r as Result<TNext, TError1>);
+  /* @__PURE__ */
+    <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+      fn: (v: TValue) => Promise<Result<TNext, TError2>>,
+    ) =>
+    /* @__PURE__ */
+    async (
+      r: Result<TValue, TError1>,
+    ): Promise<Result<TNext, TError1 | TError2>> =>
+      r.ok ? fn(r.value) : (r as Result<TNext, TError1>);

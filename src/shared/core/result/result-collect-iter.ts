@@ -32,7 +32,10 @@ export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
  * @param source Iterable of Results.
  * @returns Result of readonly array or first Err.
  */
-export const collectAllLazy = <TValue, TError extends ErrorLike = AppError>(
+export const collectAllLazy = /* @__PURE__ */ <
+  TValue,
+  TError extends ErrorLike = AppError,
+>(
   source: Iterable<Result<TValue, TError>>,
 ): Result<readonly TValue[], TError> => {
   const acc: TValue[] = [];
