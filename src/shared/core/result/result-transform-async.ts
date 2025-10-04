@@ -1,19 +1,20 @@
-// File: src/shared/core/result/result-transform.ts
+// File: src/shared/core/result/result-transform-async.ts
 import type { ErrorLike } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
 
 /**
- * Chain a computation on the Ok branch (flatMap).
+ * Async flatMap over Ok branch.
  * @template TValue
  * @template TNext
  * @template TError1
  * @template TError2
- * @param fn Mapping to another Result.
- * @returns Result of chained computation or original Err.
+ * @param fn Async mapper returning a Result.
  */
-export const flatMap =
+export const flatMapAsync =
   <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
-    fn: (v: TValue) => Result<TNext, TError2>,
+    fn: (v: TValue) => Promise<Result<TNext, TError2>>,
   ) =>
-  (r: Result<TValue, TError1>): Result<TNext, TError1 | TError2> =>
+  async (
+    r: Result<TValue, TError1>,
+  ): Promise<Result<TNext, TError1 | TError2>> =>
     r.ok ? fn(r.value) : (r as Result<TNext, TError1>);

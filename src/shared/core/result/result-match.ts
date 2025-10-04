@@ -1,28 +1,59 @@
+// File: `src/shared/core/result/result-match.ts`
+
+import type { ErrorLike } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
 
-/** Unwrap or throw error branch. */
-export const unwrapOrThrow = <T, E>(r: Result<T, E>): T => {
+/**
+ * Unwrap or throw error branch.
+ * @template TValue
+ * @template TError
+ * @param r Result to unwrap.
+ * @returns TValue
+ * @throws TError When Err.
+ */
+export const unwrapOrThrow = <TValue, TError extends ErrorLike>(
+  r: Result<TValue, TError>,
+): TValue => {
   if (r.ok) {
     return r.value;
   }
   throw r.error;
 };
 
-/** Unwrap or return fallback constant. */
+/**
+ * Unwrap or return fallback constant.
+ * @template TValue
+ * @template TError
+ * @param fallback Value used when Err.
+ */
 export const unwrapOr =
-  <T, E>(fallback: T) =>
-  (r: Result<T, E>): T =>
+  <TValue, TError extends ErrorLike>(fallback: TValue) =>
+  (r: Result<TValue, TError>): TValue =>
     r.ok ? r.value : fallback;
 
-/** Unwrap or compute fallback from error. */
+/**
+ * Unwrap or compute fallback from error.
+ * @template TValue
+ * @template TError
+ * @param fallback Function producing fallback from error.
+ */
 export const unwrapOrElse =
-  <T, E>(fallback: (e: E) => T) =>
-  (r: Result<T, E>): T =>
+  <TValue, TError extends ErrorLike>(fallback: (e: TError) => TValue) =>
+  (r: Result<TValue, TError>): TValue =>
     r.ok ? r.value : fallback(r.error);
 
-/** Pattern match both branches. */
-export const matchResult = <T, E, U>(
-  r: Result<T, E>,
-  onOk: (v: T) => U,
-  onErr: (e: E) => U,
-): U => (r.ok ? onOk(r.value) : onErr(r.error));
+/**
+ * Pattern match both branches.
+ * @template TValue
+ * @template TError
+ * @template TOut
+ * @param r Result to match.
+ * @param onOk Ok handler.
+ * @param onErr Err handler.
+ * @returns TOut
+ */
+export const matchResult = <TValue, TError extends ErrorLike, TOut>(
+  r: Result<TValue, TError>,
+  onOk: (v: TValue) => TOut,
+  onErr: (e: TError) => TOut,
+): TOut => (r.ok ? onOk(r.value) : onErr(r.error));

@@ -1,71 +1,58 @@
-Here is a brief analysis of type usage and weaknesses in the referenced files, following the provided TypeScript best
-practices:
+### Summary
 
-**General Strengths:**
+Assessment of whether weaknesses listed in `src/shared/core/result/WEAKNESSES.md` have been remediated.
 
-- All files use strict typing, generics, and discriminated unions for `Result`.
-- No use of `any`; generics are used for error types.
-- Functions are single-purpose and have explicit return types.
+### Cross-cutting items
 
-**Weaknesses:**
+- Constrained generics: Implemented (`TValue`, `TError extends ErrorLike`) across all modules.
+- Unified error shape / normalization: Implemented (`AppError`, `normalizeUnknownError`, `augmentAppError`).
+- Consistent default error generic: Implemented (defaults now `AppError`).
+- Readonly inputs: Implemented (`readonly` arrays / tuples in collectors).
+- Tree-shaking hints: Partially (present on several factories, missing on some helpers like `collectAll`, `flatMap`,
+  taps).
+- Deprecated APIs isolation: Not implemented (`legacy-result.ts` still co-located and exported).
+- Error mapping casts: Still present (`as unknown as TError` in async/sync try/catch helpers).
+- Documentation completeness: Partially (some TSDoc present; many missing full `@template`, `@param`, `@returns`,
+  `@throws`).
+- Async counterpart utilities expansion: Not implemented (no `flatMapAsync`, `mapOkAsync`, `tapOkAsync`).
+- Iterator / lazy collectors: Not implemented.
+- Identity preservation / micro-optimizations: Not addressed (e.g. `mapError` always allocates).
 
-1. **Unconstrained Generics:**
-    - Some generics (e.g., `<T, E>`, `<T, U, E>`) are unconstrained. Best practice is to constrain generics (e.g.,
-      `<T extends unknown, E extends unknown>`), especially for public APIs.
-    - Constraining generics helps to ensure type safety, improves code readability, and provides clearer expectations
-      for consumers of public APIs.
-    - It also helps prevent unintended behaviors and enhances maintainability by making the code self-documenting.
-    - Consider using generics with specific constraints to ensure better type inference.
+### Module specifics
 
+- `result.ts`: Added `freezeDev`, discriminant constants, consistent defaults. Improvement achieved.
+- `error.ts`: Provides normalization and lightweight error modeling. Addresses prior gap.
+- `result-async.ts`: Duplication between `tryCatchAsync` and `fromPromise` remains.
+- `result-sync.ts`: Same casting pattern; no refinement improvements.
+- `result-collect.ts`: `collectTuple` still unions heterogeneous error types (original concern persists).
+- `result-map.ts`: Functionality OK; no async variants; always re-wraps error branch.
+- `result-tap.ts`: No guard around side-effect exceptions; behavior unchanged.
+- `result-transform.ts`: Only sync `flatMap`; no async variant; same error union pattern.
+- `WEAKNESSES.md`: Now partially outdated (some listed issues fixed in code).
 
-2. **Error Type Defaulting:**
-    - Many functions default error type to `Error` (e.g., `E = Error`). This is fine for internal/server flows, but for
-      public APIs, a serializable error shape is preferred. Consider using a project-wide error DTO for public
-      boundaries.
-    - Consider defining custom error types for better clarity and maintainability.
-    - Consider using generics with specific constraints to ensure better type inference.
-    - Ensure to document error shapes used in public APIs for improved clarity.
+### Remediation checklist status
 
-3. **Nullable Handling:**
-    - `fromNullable` uses `v == null` for nullish checks, which is correct, but the error factory is unconstrained.
-      Consider constraining `E` or documenting expected error shapes.
-    - Consider defining custom error types for better clarity and maintainability.
-    -
+1. Constrain generics: Done.
+2. Standardize error default and export unified shape: Done.
+3. Runtime normalization helper: Done.
+4. Readonly collections: Done.
+5. Consolidate async helpers: Not done.
+6. Isolate deprecated APIs: Not done.
+7. Add async mapping/transform/tap: Not done.
+8. Strengthen TSDoc: Partial.
+9. Type-level tests for regressions: Not verifiable (not shown).
+10. Iterator-based collectors: Not done.
 
-4. **Type Aliases vs Interfaces:**
-    - All object shapes use type aliases. For extensible shapes (e.g., error DTOs), prefer `interface`.
-    - Consider using generics with specific constraints to ensure better type inference.
+### High-priority remaining gaps
 
-5. **Tuple/Array Inference:**
-    - `collectTuple` uses mapped types for tuple inference, which is good, but the error type is inferred as
-      `ErrType<T[number]>`, which could be too broad if error types differ. Consider constraining input to tuples of the
-      same error type.
-    - Ensure to document error shapes used in public APIs for improved clarity.
+- Remove duplication (`fromPromise` → wrap `tryCatchAsync` or vice versa).
+- Replace unsafe casts with a narrowing utility or enforce mapper return shape.
+- Add async counterparts (`flatMapAsync`, `mapOkAsync`, `tapOkAsync`).
+- Isolate/deprecate legacy exports under a `legacy/` folder with clear removal plan.
+- Enhance TSDoc consistency (templates + throws).
+- Provide lazy / iterator collectors for large datasets.
+- Optional: optimize `mapError` to preserve identity when unchanged.
 
-6. **Unknown Error Mapping:**
-    - Error mapping functions accept `unknown`, but there is no runtime narrowing or validation. Consider adding guards
-      or type assertions for safer error mapping.
-    - Ensure to document error shapes used in public APIs for improved clarity.
-    - Consider defining custom error types for better clarity and maintainability.
+### Validation
 
-7. **Immutability:**
-    - Most returned objects use `as const` for immutability, which is good. However, input parameters (e.g., arrays) are
-      not marked as `readonly`, which could allow mutation.
-
-8. **Type Guards:**
-    - Type guards (`isOk`, `isErr`) are present and correct.
-
-**Summary Table:**
-
-| Area               | Weakness                                                              |
-|--------------------|-----------------------------------------------------------------------|
-| Generics           | Unconstrained in some places; should use `<T extends unknown, ...>`   |
-| Error Types        | Default to `Error` for public APIs; prefer serializable DTOs          |
-| Immutability       | Returned objects are immutable; input arrays/tuples could be readonly |
-| Error Mapping      | Accepts `unknown` but lacks runtime narrowing                         |
-| Tuple Error Types  | `collectTuple` error type could be too broad if input errors differ   |
-| Object Shape Types | Use `type` for objects; prefer `interface` for extensible shapes      |
-
-**Recommendation:**  
-Constrain generics, prefer serializable error types for public APIs, use `readonly` for input collections, and add
-runtime guards for error mapping.
+Reviewed only attached files under `src/shared/core/result/*` and instruction files. No conflicting rules detected.

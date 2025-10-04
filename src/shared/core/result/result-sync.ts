@@ -1,51 +1,61 @@
+// File: src/shared/core/result/result-sync.ts
+import {
+  type AppError,
+  type ErrorLike,
+  normalizeUnknownError,
+} from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Execute a synchronous function and wrap its outcome in a Result.
- * If `fn` returns, yields Ok(value). If it throws, yields Err(mapped error or cast).
- * @template T Success type.
- * @template TError Error type (must be Error-like); defaults to Error.
- * @param fn Synchronous thunk to execute.
- * @param mapError Optional mapper to normalize unknown thrown values.
- * @returns Result<T, TError>
+ * Execute a synchronous function and wrap its result in a Result.
+ * Overloads enforce mapper presence when customizing error type.
+ * @template TValue Success value type.
+ * @template TError Error type (defaults to AppError when mapper omitted).
+ * @param fn Synchronous thunk.
+ * @param mapError Optional error mapper (required for custom error type).
+ * @returns Result wrapping value or normalized error.
  */
-export const tryCatch = <T, TError extends Error | { message: string } = Error>(
-  fn: () => T,
+export function tryCatch<TValue>(fn: () => TValue): Result<TValue, AppError>;
+export function tryCatch<TValue, TError extends ErrorLike>(
+  fn: () => TValue,
+  mapError: (e: unknown) => TError,
+): Result<TValue, TError>;
+export function tryCatch<TValue, TError extends ErrorLike>(
+  fn: () => TValue,
   mapError?: (e: unknown) => TError,
-): Result<T, TError> => {
+): Result<TValue, AppError | TError> {
   try {
     return Ok(fn());
   } catch (e) {
-    return Err(mapError ? mapError(e) : (e as TError));
+    return mapError ? Err(mapError(e)) : Err(normalizeUnknownError(e));
   }
-};
+}
 
 /**
- * Wrap a possibly null/undefined value in a Result.
- * Returns Ok(v) when defined; otherwise Err(onNull()).
- * @template T Success type.
- * @template TError Error type.
- * @param v Value that may be nullish.
- * @param onNull Factory producing error when `v` is null/undefined.
- * @returns Result<T, TError>
+ * Wrap a nullable value.
+ * @template TValue
+ * @template TError
+ * @param v Possibly null/undefined value.
+ * @param onNull Error factory when nullish.
+ * @returns Ok when value present; Err otherwise.
  */
-export const fromNullable = <T, TError extends Error | { message: string }>(
-  v: T | null | undefined,
+export const fromNullable = <TValue, TError extends ErrorLike = AppError>(
+  v: TValue | null | undefined,
   onNull: () => TError,
-): Result<T, TError> => (v == null ? Err(onNull()) : Ok(v));
+): Result<TValue, TError> => (v == null ? Err(onNull()) : Ok(v));
 
 /**
- * Produce a Result from a predicate applied to a value.
- * Returns Ok(value) if predicate(value) is true; otherwise Err(onFail(value)).
- * @template T Value type.
- * @template TError Error type.
- * @param value Value to test.
- * @param predicate Truth test.
+ * Guard a value by predicate.
+ * @template TValue
+ * @template TError
+ * @param value Input value.
+ * @param predicate Boolean test.
  * @param onFail Error factory when predicate fails.
- * @returns Result<T, TError>
+ * @returns Result wrapping original value or failure.
  */
-export const fromPredicate = <T, TError extends Error | { message: string }>(
-  value: T,
-  predicate: (v: T) => boolean,
-  onFail: (v: T) => TError,
-): Result<T, TError> => (predicate(value) ? Ok(value) : Err(onFail(value)));
+export const fromPredicate = <TValue, TError extends ErrorLike = AppError>(
+  value: TValue,
+  predicate: (v: TValue) => boolean,
+  onFail: (v: TValue) => TError,
+): Result<TValue, TError> =>
+  predicate(value) ? Ok(value) : Err(onFail(value));
