@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
@@ -13,7 +13,7 @@ import { ValidationError } from "@/shared/core/errors/domain-error";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export async function updateRevenue(
-  db: Database,
+  db: AppDatabase,
   id: RevenueId,
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {

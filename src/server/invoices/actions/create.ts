@@ -8,7 +8,7 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
   type BaseInvoiceEvent,
@@ -51,7 +51,7 @@ export async function createInvoiceAction(
     const parsed = CreateInvoiceSchema.safeParse(input);
 
     if (parsed.success) {
-      const repo = new InvoiceRepository(getDB());
+      const repo = new InvoiceRepository(getAppDb());
       const service = new InvoiceService(repo);
       const invoice: InvoiceDto = await service.createInvoice(parsed.data);
 

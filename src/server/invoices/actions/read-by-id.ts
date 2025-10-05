@@ -1,7 +1,7 @@
 "use server";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
@@ -14,7 +14,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
       throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
     }
     // Dependency injection: pass repository to service
-    const repo = new InvoiceRepository(getDB());
+    const repo = new InvoiceRepository(getAppDb());
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
     // Call service with validated DTO to retrieve complete InvoiceDto

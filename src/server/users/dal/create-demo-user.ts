@@ -2,7 +2,7 @@ import "server-only";
 import { createRandomPassword } from "@/features/auth/lib/auth.password";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 
@@ -15,7 +15,7 @@ import { createUserDal } from "@/server/users/dal/create";
  * @returns The created demo user as UserDto, or null if creation failed
  */
 export async function createDemoUser(
-  db: Database,
+  db: AppDatabase,
   id: number,
   role: UserRole,
 ): Promise<UserDto | null> {

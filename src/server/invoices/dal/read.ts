@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
@@ -19,7 +19,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @throws ValidationError if input parameters are invalid
  */
 export async function readInvoiceDal(
-  db: Database,
+  db: AppDatabase,
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
   // Basic validation of parameters

@@ -2,7 +2,7 @@ import "server-only";
 
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -18,7 +18,7 @@ import {
  * @param db
  */
 export async function createUserDal(
-  db: Database,
+  db: AppDatabase,
   {
     username,
     email,

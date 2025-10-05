@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -9,7 +9,7 @@ import { ValidationError } from "@/shared/core/errors/domain-error";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function createRevenue(
-  db: Database,
+  db: AppDatabase,
   revenue: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenue) {

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -27,9 +27,9 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param db - Database connection instance
    */
-  private readonly db: Database;
+  private readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
 

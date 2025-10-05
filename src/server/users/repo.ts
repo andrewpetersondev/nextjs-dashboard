@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
@@ -29,9 +29,9 @@ export type RepoError =
  * Emits RepoError variants for persistence failures.
  */
 export class UsersRepository {
-  private readonly db: Database;
+  private readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
 

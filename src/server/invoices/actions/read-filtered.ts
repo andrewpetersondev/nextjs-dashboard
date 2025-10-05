@@ -1,7 +1,7 @@
 "use server";
 
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { fetchFilteredInvoicesDal } from "@/server/invoices/dal/fetch-filtered";
 
 /**
@@ -14,6 +14,6 @@ export async function readFilteredInvoicesAction(
   query = "",
   currentPage = 1,
 ): Promise<InvoiceListFilter[]> {
-  const db = getDB();
+  const db = getAppDb();
   return await fetchFilteredInvoicesDal(db, query, currentPage);
 }

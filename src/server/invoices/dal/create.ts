@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -16,7 +16,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * Creates a new invoice in the database.
  */
 export async function createInvoiceDal(
-  db: Database,
+  db: AppDatabase,
   input: InvoiceServiceEntity,
 ): Promise<InvoiceEntity> {
   // We must ensure the referenced revenues.period exists due to FK.

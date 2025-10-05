@@ -7,7 +7,7 @@ import {
   type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
@@ -118,7 +118,7 @@ export async function updateInvoiceAction(
       };
     }
 
-    const service = new InvoiceService(new InvoiceRepository(getDB()));
+    const service = new InvoiceService(new InvoiceRepository(getAppDb()));
     const previousInvoice = await service.readInvoice(id);
     const updatedInvoice = await service.updateInvoice(id, parsed.data);
 

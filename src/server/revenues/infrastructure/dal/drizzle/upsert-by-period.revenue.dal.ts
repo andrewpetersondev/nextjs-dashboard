@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -12,7 +12,7 @@ import { toPeriod } from "@/shared/domain/id-converters";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function upsertRevenueByPeriod(
-  db: Database,
+  db: AppDatabase,
   period: Period,
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {

@@ -3,7 +3,7 @@ import "server-only";
 import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -21,7 +21,7 @@ import {
  * @returns Array of UserDto for the page.
  */
 export async function fetchFilteredUsers(
-  db: Database,
+  db: AppDatabase,
   query: string,
   currentPage: number,
 ): Promise<UserDto[]> {

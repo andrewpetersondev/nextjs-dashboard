@@ -2,7 +2,7 @@ import "server-only";
 
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -18,7 +18,7 @@ import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
  * @throws DatabaseError if query fails
  */
 export async function fetchFilteredInvoicesDal(
-  db: Database,
+  db: AppDatabase,
   query: string,
   currentPage: number,
 ): Promise<InvoiceListFilter[]> {

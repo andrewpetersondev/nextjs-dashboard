@@ -11,7 +11,7 @@ import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
 } from "@/server/customers/mappers";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 
 /**
  * Repository for Customers.
@@ -19,9 +19,9 @@ import type { Database } from "@/server/db/connection";
  * - Repository maps to server DTOs (brands IDs, normalizes sums).
  */
 export class CustomersRepository {
-  private readonly db: Database;
+  private readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
 
@@ -52,6 +52,8 @@ export class CustomersRepository {
 /**
  * Small helper factory if you prefer function-style creation.
  */
-export function createCustomersRepository(db: Database): CustomersRepository {
+export function createCustomersRepository(
+  db: AppDatabase,
+): CustomersRepository {
   return new CustomersRepository(db);
 }

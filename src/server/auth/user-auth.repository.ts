@@ -3,7 +3,7 @@ import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
 import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
@@ -22,11 +22,44 @@ import {
  * Encapsulates DAL usage and provides a single point for cross-cutting policies.
  */
 export class AuthUserRepo {
-  protected readonly db: Database;
+  protected readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
+
+  //  /**
+  //   * Run a sequence of repository operations inside a transaction.
+  //   * Orchestration remains in Service; txRepo mirrors this repository API but is bound to the tx connection.
+  //   */
+  //  async withTransaction<T>(
+  //    fn: (txRepo: AuthUserRepo) => Promise<T>,
+  //  ): Promise<T> {
+  //    try {
+  //      // Use the underlying db's transaction type without forcing it to Database.
+  //      // The callback receives a tx that is API-compatible with Database for our repository needs.
+  //      // We construct a repo bound to that tx and keep fn's typing over the repo surface.
+  //      return await (
+  //        this.db as {
+  //          transaction: <R>(scope: (tx: unknown) => Promise<R>) => Promise<R>;
+  //        }
+  //      ).transaction(async (tx) => {
+  //        // todo: what the hell is this?
+  //        const txRepo = new AuthUserRepo(tx as unknown as Database);
+  //        return await fn(txRepo);
+  //      });
+  //    } catch (err: unknown) {
+  //      serverLogger.error(
+  //        {
+  //          context: "repo.AuthUserRepo.withTransaction",
+  //          err,
+  //          kind: "unexpected",
+  //        },
+  //        "Transaction failed in AuthUserRepo",
+  //      );
+  //      throw new DatabaseError("Transaction failed");
+  //    }
+  //  }
 
   /**
    * Run a sequence of repository operations inside a transaction.
@@ -35,12 +68,15 @@ export class AuthUserRepo {
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepo) => Promise<T>,
   ): Promise<T> {
-    // Assume Database has a transaction API: db.transaction(async (tx) => { ... })
-    // If your Database typing differs, adapt the call shape here.
     try {
-      // @ts-expect-error: adapt to your Database transaction signature if needed
-      return await this.db.transaction(async (tx: Database) => {
-        const txRepo = new AuthUserRepo(tx);
+      // Preserve Drizzle's transaction type while keeping our repo API surface.
+      const dbWithTx = this.db as {
+        transaction: <R>(scope: (tx: unknown) => Promise<R>) => Promise<R>;
+      };
+
+      return await dbWithTx.transaction(async (tx) => {
+        // Bind a repo to the transactional connection; keep Database-compat at call sites.
+        const txRepo = new AuthUserRepo(tx as unknown as AppDatabase);
         return await fn(txRepo);
       });
     } catch (err: unknown) {
@@ -71,6 +107,7 @@ export class AuthUserRepo {
         throw new ValidationError("Missing required fields for signup.");
       }
 
+      // REFACTOR: move input validation and normalization to the action layer and service layer.
       const row = await createUserForSignup(this.db, {
         email: String(input.email).trim().toLowerCase(),
         passwordHash: input.passwordHash,

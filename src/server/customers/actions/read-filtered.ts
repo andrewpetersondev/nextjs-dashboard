@@ -3,7 +3,7 @@
 import { toFormattedCustomersTableRow } from "@/features/customers/lib/mapToViewModel";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
 import { createCustomersRepository } from "@/server/customers/repo";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 
 /**
  * Server action to fetch filtered customers for the customers table.
@@ -12,7 +12,7 @@ import { getDB } from "@/server/db/connection";
 export async function readFilteredCustomersAction(
   query = "",
 ): Promise<FormattedCustomersTableRow[]> {
-  const db = getDB();
+  const db = getAppDb();
   const repo = createCustomersRepository(db);
   const rows = await repo.fetchFiltered(query);
   return rows.map(toFormattedCustomersTableRow);

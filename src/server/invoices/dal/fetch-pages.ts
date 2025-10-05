@@ -1,7 +1,7 @@
 import "server-only";
 
 import { count, eq, ilike, or, sql } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -16,7 +16,7 @@ import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
  * @throws DatabaseError if query fails
  */
 export async function fetchInvoicesPagesDal(
-  db: Database,
+  db: AppDatabase,
   query: string,
 ): Promise<number> {
   // Count invoices matching the search query

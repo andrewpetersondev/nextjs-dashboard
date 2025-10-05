@@ -10,7 +10,7 @@ import {
   type CreateUserFormFieldNames,
   CreateUserFormSchema,
 } from "@/features/users/lib/user.schema";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import {
@@ -47,7 +47,7 @@ export async function createUserAction(
   _prevState: LegacyFormState<CreateUserFormFieldNames>,
   formData: FormData,
 ): Promise<LegacyFormState<CreateUserFormFieldNames>> {
-  const db = getDB();
+  const db = getAppDb();
   const allowed = deriveSchemaFieldNames(CreateUserFormSchema);
 
   try {

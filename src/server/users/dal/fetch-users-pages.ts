@@ -2,7 +2,7 @@ import "server-only";
 
 import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -15,7 +15,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * @returns Number of pages as a number.
  */
 export async function fetchUsersPages(
-  db: Database,
+  db: AppDatabase,
   query: string,
 ): Promise<number> {
   try {

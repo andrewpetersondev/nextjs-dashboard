@@ -1,7 +1,7 @@
 "use server";
 
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { fetchLatestInvoicesDal } from "@/server/invoices/dal/fetch-latest";
 import { fetchTotalInvoicesCountDal } from "@/server/invoices/dal/fetch-total-count";
 import { fetchTotalPaidInvoicesDal } from "@/server/invoices/dal/fetch-total-paid";
@@ -14,7 +14,7 @@ export type InvoicesSummary = {
 };
 
 export async function readInvoicesSummary(
-  db: Database,
+  db: AppDatabase,
 ): Promise<InvoicesSummary> {
   const [totalInvoices, totalPending, totalPaid] = await Promise.all([
     fetchTotalInvoicesCountDal(db),
@@ -26,7 +26,7 @@ export async function readInvoicesSummary(
 }
 
 export async function readLatestInvoices(
-  db: Database,
+  db: AppDatabase,
   limit = 5,
 ): Promise<InvoiceListFilter[]> {
   return await fetchLatestInvoicesDal(db, limit);

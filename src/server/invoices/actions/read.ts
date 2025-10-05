@@ -1,7 +1,7 @@
 "use server";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import { assertParams } from "@/server/invoices/helpers";
 import { InvoiceRepository } from "@/server/invoices/repo";
@@ -31,7 +31,7 @@ export async function readInvoiceAction(
       },
     );
 
-    const repo = new InvoiceRepository(getDB());
+    const repo = new InvoiceRepository(getAppDb());
     const service = new InvoiceService(repo);
     const invoice: InvoiceDto = await service.readInvoice(id);
 

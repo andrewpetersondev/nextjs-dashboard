@@ -1,7 +1,7 @@
 "use server";
 
 import type { RevenueChartDto } from "@/features/revenues/dto/types";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
   mapEntityToSimpleRevenueDto,
@@ -25,7 +25,7 @@ export async function getRevenueChartAction(): Promise<
   RevenueActionResult<RevenueChartDto>
 > {
   try {
-    const repository = new RevenueRepository(getDB());
+    const repository = new RevenueRepository(getAppDb());
     const service = new RevenueStatisticsService(repository);
 
     const [entities, rawStatistics] = await Promise.all([

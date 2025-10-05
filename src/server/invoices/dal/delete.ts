@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { InvoiceEntity } from "@/server/invoices/entity";
@@ -18,7 +18,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @throws DatabaseError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
-  db: Database,
+  db: AppDatabase,
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty

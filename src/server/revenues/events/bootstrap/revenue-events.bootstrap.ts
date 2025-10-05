@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
@@ -20,7 +20,7 @@ const globalForRevenueHandler = globalThis as typeof globalThis & {
 if (!globalForRevenueHandler.__revenueEventHandler) {
   try {
     const repository: RevenueRepositoryInterface = new RevenueRepository(
-      getDB(),
+      getAppDb(),
     );
     const service = new RevenueService(repository);
     globalForRevenueHandler.__revenueEventHandler = new RevenueEventHandler(

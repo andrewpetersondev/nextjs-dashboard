@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
@@ -11,7 +11,7 @@ import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
 
 export async function findRevenueByPeriod(
-  db: Database,
+  db: AppDatabase,
   period: Period,
 ): Promise<RevenueEntity | null> {
   if (!period) {

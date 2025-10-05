@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
   type BaseInvoiceEvent,
@@ -32,7 +32,7 @@ export async function deleteInvoiceAction(
     }
 
     // Dependency injection: pass repository to service
-    const repo = new InvoiceRepository(getDB());
+    const repo = new InvoiceRepository(getAppDb());
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
     // Call service with validated ID to delete the invoice

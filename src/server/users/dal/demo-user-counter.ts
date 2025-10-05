@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -13,7 +13,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * @returns The new counter value as a number
  */
 export async function demoUserCounter(
-  db: Database,
+  db: AppDatabase,
   role: UserRole,
 ): Promise<number> {
   try {

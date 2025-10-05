@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import { executeDalOrThrow } from "@/server/errors/error-wrappers.throw";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -10,7 +10,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * No password verification here; Service layer compares raw vs stored hash.
  */
 export async function findUserForLogin(
-  db: Database,
+  db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
   if (!email) {

@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -22,7 +22,7 @@ import type { UserId } from "@/shared/domain/domain-brands";
  * @returns The updated user as UserDto, or null if no changes or update failed.
  */
 export async function updateUserDal(
-  db: Database,
+  db: AppDatabase,
   id: UserId,
   patch: UserUpdatePatch,
 ): Promise<UserDto | null> {

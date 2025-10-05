@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
@@ -11,7 +11,7 @@ import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/
 import { ValidationError } from "@/shared/core/errors/domain-error";
 
 export async function upsertRevenue(
-  db: Database,
+  db: AppDatabase,
   revenueData: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenueData) {

@@ -1,5 +1,5 @@
 import "server-only";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 
 /**
  * Generic base repository for CRUD operations.
@@ -14,9 +14,9 @@ export abstract class BaseRepository<
   TCreateInput = unknown,
   TUpdateInput = unknown,
 > {
-  protected readonly db: Database;
+  protected readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
 

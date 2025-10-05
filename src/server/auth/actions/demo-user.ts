@@ -6,7 +6,7 @@ import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
@@ -30,7 +30,7 @@ export async function demoUser(
   };
 
   try {
-    const db = getDB();
+    const db = getAppDb();
     const counter: number = await demoUserCounter(db, toUserRole(role));
 
     if (!counter || counter <= 0) {

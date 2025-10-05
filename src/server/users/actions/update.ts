@@ -18,7 +18,7 @@ import {
   type EditUserFormValues,
 } from "@/features/users/lib/user.schema";
 import { hashPassword } from "@/server/auth/hashing";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
@@ -151,7 +151,7 @@ export async function updateUserAction(
   }
 
   try {
-    const db = getDB();
+    const db = getAppDb();
     const existing = await readUserDal(db, idRes.value);
     if (!existing) {
       return fail(USER_ERROR_MESSAGES.NOT_FOUND, ctx);

@@ -3,7 +3,7 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerAggregatesRowRaw } from "@/server/customers/types";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -13,7 +13,7 @@ import { DatabaseError } from "@/server/errors/infrastructure";
  * Returns a raw projection reflecting the DB selection (no branding).
  */
 export async function fetchFilteredCustomersDal(
-  db: Database,
+  db: AppDatabase,
   query: string,
 ): Promise<CustomerAggregatesRowRaw[]> {
   try {

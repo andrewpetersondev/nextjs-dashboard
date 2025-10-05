@@ -1,7 +1,6 @@
 import "server-only";
 import type {
   LoginData,
-  LoginField,
   SignupData,
   SignupField,
 } from "@/features/auth/lib/auth.schema";
@@ -10,7 +9,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { comparePassword, hashPassword } from "@/server/auth/hashing";
 import { asPasswordHash } from "@/server/auth/types/password.types";
 import { AuthUserRepo } from "@/server/auth/user-auth.repository";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userEntityToDto } from "@/server/users/mapping/user.mappers";
 import {
@@ -20,32 +19,87 @@ import {
 } from "@/shared/core/errors/domain-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+
+/**
+ * Domain-level auth error returned by the service.
+ * Action/controller maps this to UI shapes (e.g., DenseFieldErrorMap).
+ */
+export type AuthServiceError =
+  | {
+      kind: "missing_fields";
+      fields: readonly SignupField[];
+      message: string;
+    }
+  | {
+      kind: "conflict";
+      targets: ReadonlyArray<"email" | "username">;
+      message: string;
+    }
+  | {
+      kind: "invalid_credentials";
+      message: string;
+    }
+  | {
+      kind: "validation";
+      message: string;
+    }
+  | {
+      kind: "unexpected";
+      message: string;
+    };
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
  * Never throws; always returns Result union for UI.
  */
 export class UserAuthFlowService {
-  protected readonly db: Database;
+  protected readonly db: AppDatabase;
 
-  constructor(db: Database) {
+  constructor(db: AppDatabase) {
     this.db = db;
   }
 
+  // Internal helpers now build domain errors (ErrorLike), not UI field maps
+  private missingSignupFieldsError(): AuthServiceError {
+    return {
+      fields: ["email", "password", "username"],
+      kind: "missing_fields",
+      message: "Missing required fields",
+    };
+  }
+
+  private unexpectedError(
+    message = "Unexpected error occurred",
+  ): AuthServiceError {
+    return { kind: "unexpected", message };
+  }
+
+  private conflictError(): AuthServiceError {
+    return {
+      kind: "conflict",
+      message: "Email or username already in use",
+      targets: ["email", "username"],
+    };
+  }
+
+  private validationError(message = "Invalid data"): AuthServiceError {
+    return { kind: "validation", message };
+  }
+
+  private invalidCredentialsError(): AuthServiceError {
+    return {
+      kind: "invalid_credentials",
+      message: "Invalid email or password",
+    };
+  }
+
   /**
-   * Signup: hashes password, delegates to repo, returns Result<UserDto, DenseErrorMap>.
+   * Signup: hashes password, delegates to repo, returns Result<UserDto, AuthServiceError>.
    * Orchestration and cross-entity invariants (if any) remain here; uses repo.withTransaction when atomicity is required.
    */
-  async signup(
-    input: SignupData,
-  ): Promise<Result<UserDto, DenseFieldErrorMap<SignupField>>> {
-    if (!input.email || !input.password || !input.username) {
-      return Err({
-        email: ["Missing required fields"],
-        password: ["Missing required fields"],
-        username: ["Missing required fields"],
-      } as DenseFieldErrorMap<SignupField>);
+  async signup(input: SignupData): Promise<Result<UserDto, AuthServiceError>> {
+    if (!input?.email || !input?.password || !input?.username) {
+      return Err(this.missingSignupFieldsError());
     }
 
     const repo = new AuthUserRepo(this.db);
@@ -57,9 +111,7 @@ export class UserAuthFlowService {
       const hashed = await hashPassword(input.password as unknown as string);
       const passwordHash = asPasswordHash(hashed);
 
-      // Example transaction boundary for future multi-write invariants (e.g., audit log, welcome email outbox)
       const created = await repo.withTransaction(async (tx) => {
-        // Single write today; keep pattern ready for multi-entity invariants
         return await tx.signup({
           email,
           passwordHash,
@@ -72,37 +124,27 @@ export class UserAuthFlowService {
       return Ok(dto);
     } catch (err: unknown) {
       if (err instanceof ConflictError) {
-        return Err({
-          email: ["Email already in use"],
-          password: [],
-          username: ["Username already in use"],
-        } as DenseFieldErrorMap<SignupField>);
+        return Err(this.conflictError());
       }
       if (err instanceof ValidationError) {
-        return Err({
-          email: ["Invalid data"],
-          password: [],
-          username: [],
-        } as DenseFieldErrorMap<SignupField>);
+        return Err(this.validationError());
       }
       serverLogger.error(
-        { context: "service.UserAuthFlowService.signup", kind: "unexpected" },
+        {
+          context: "service.UserAuthFlowService.signup",
+          err,
+          kind: "unexpected",
+        },
         "Unexpected error during signup",
       );
-      return Err({
-        email: ["Unexpected error occurred"],
-        password: [],
-        username: [],
-      } as DenseFieldErrorMap<SignupField>);
+      return Err(this.unexpectedError());
     }
   }
 
   /**
    * Login: fetch user by email, compare raw vs stored hash in Service.
    */
-  async login(
-    input: LoginData,
-  ): Promise<Result<UserDto, DenseFieldErrorMap<LoginField>>> {
+  async login(input: LoginData): Promise<Result<UserDto, AuthServiceError>> {
     const repo = new AuthUserRepo(this.db);
 
     try {
@@ -128,25 +170,20 @@ export class UserAuthFlowService {
       return Ok(dto);
     } catch (err: unknown) {
       if (err instanceof UnauthorizedError) {
-        return Err({
-          email: ["Invalid email or password"],
-          password: ["Invalid email or password"],
-        } as DenseFieldErrorMap<LoginField>);
+        return Err(this.invalidCredentialsError());
       }
       if (err instanceof ValidationError) {
-        return Err({
-          email: ["Invalid data"],
-          password: [],
-        } as DenseFieldErrorMap<LoginField>);
+        return Err(this.validationError());
       }
       serverLogger.error(
-        { context: "service.UserAuthFlowService.login", kind: "unexpected" },
+        {
+          context: "service.UserAuthFlowService.login",
+          err,
+          kind: "unexpected",
+        },
         "Unexpected error during login",
       );
-      return Err({
-        email: ["Unexpected error occurred"],
-        password: [],
-      } as DenseFieldErrorMap<LoginField>);
+      return Err(this.unexpectedError());
     }
   }
 }

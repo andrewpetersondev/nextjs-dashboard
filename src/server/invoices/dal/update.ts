@@ -1,7 +1,7 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import type {
@@ -23,7 +23,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @throws DatabaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
-  db: Database,
+  db: AppDatabase,
   id: InvoiceId,
   updateData: Partial<InvoiceFormEntity>,
 ): Promise<InvoiceEntity> {

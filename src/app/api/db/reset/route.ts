@@ -2,12 +2,12 @@ import "server-only";
 
 import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { schema } from "@/server/db/schema";
 
 export async function GET() {
   try {
-    await reset(getDB(), schema);
+    await reset(getAppDb(), schema);
     return NextResponse.json({ action: "reset", ok: true });
   } catch (error) {
     console.error("Error resetting database:", error);

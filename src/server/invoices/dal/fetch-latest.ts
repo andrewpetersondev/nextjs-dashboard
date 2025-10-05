@@ -2,7 +2,7 @@ import "server-only";
 
 import { desc, eq } from "drizzle-orm";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure";
@@ -16,7 +16,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @throws DatabaseError if query fails
  */
 export async function fetchLatestInvoicesDal(
-  db: Database,
+  db: AppDatabase,
   limit = 5,
 ): Promise<InvoiceListFilter[]> {
   const data: InvoiceListFilter[] = await db

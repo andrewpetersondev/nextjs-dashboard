@@ -2,7 +2,7 @@
 
 import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { fetchUserById } from "@/server/users/dal/fetch-user-by-id";
 import { toUserId } from "@/shared/domain/id-converters";
@@ -11,7 +11,7 @@ import { toUserId } from "@/shared/domain/id-converters";
  * Fetches a user by plain string id for UI consumption.
  */
 export async function readUserAction(id: string): Promise<UserDto | null> {
-  const db = getDB();
+  const db = getAppDb();
   try {
     return await fetchUserById(db, toUserId(id));
   } catch (error) {

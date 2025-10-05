@@ -9,7 +9,7 @@ import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/lib/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import {
   readInvoicesSummary,
   readLatestInvoices,
@@ -26,7 +26,7 @@ export const dynamic = "force-dynamic";
  * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-  const db = getDB();
+  const db = getAppDb();
 
   const [session, invoicesSummary, latestInvoices, totalCustomers] =
     await Promise.all([

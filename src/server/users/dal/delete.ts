@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/lib/dto";
-import type { Database } from "@/server/db/connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -20,7 +20,7 @@ import type { UserId } from "@/shared/domain/domain-brands";
  * @returns UserDto if deleted, otherwise null
  */
 export async function deleteUserDal(
-  db: Database,
+  db: AppDatabase,
   userId: UserId, // Use branded UserId for strict typing
 ): Promise<UserDto | null> {
   try {

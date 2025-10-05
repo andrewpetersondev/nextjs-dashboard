@@ -1,7 +1,7 @@
 "use server";
 
 import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
@@ -13,7 +13,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  */
 export async function readInvoicesPagesAction(query = ""): Promise<number> {
   try {
-    const db = getDB();
+    const db = getAppDb();
     const sanitizedQuery = query.trim();
     const totalPages = await fetchInvoicesPagesDal(db, sanitizedQuery);
 

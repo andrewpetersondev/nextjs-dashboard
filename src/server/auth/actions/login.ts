@@ -10,7 +10,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { asPasswordRaw } from "@/server/auth/types/password.types";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
-import { getDB } from "@/server/db/connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
@@ -44,7 +44,7 @@ export async function login(
       password: asPasswordRaw(validated.data.password as unknown as string),
     };
 
-    const service = new UserAuthFlowService(getDB());
+    const service = new UserAuthFlowService(getAppDb());
     const res = await service.login(input);
 
     if (!res.ok || !res.value) {
