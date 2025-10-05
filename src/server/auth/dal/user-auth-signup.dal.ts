@@ -2,7 +2,7 @@ import "server-only";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { Database } from "@/server/db/connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { dalTry } from "@/server/errors/wrappers";
+import { executeDalOrThrow } from "@/server/errors/error-wrappers.throw";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
@@ -32,7 +32,7 @@ export async function createUserForSignup(
     return null;
   }
 
-  return await dalTry(async () => {
+  return await executeDalOrThrow(async () => {
     const [userRow] = await db
       .insert(users)
       .values({

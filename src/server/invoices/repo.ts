@@ -1,9 +1,9 @@
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import { promiseToRepoResult } from "@/server/errors/error-wrappers.result";
 import type { DatabaseError } from "@/server/errors/infrastructure";
 import type { RepoError } from "@/server/errors/mappers";
-import { fromDal } from "@/server/errors/wrappers";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
 import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
 import { fetchAllPaidInvoicesDal } from "@/server/invoices/dal/fetch-all-paid";
@@ -52,7 +52,9 @@ export class InvoiceRepository extends BaseRepository<
       return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
     }
 
-    const createdEntityRes = await fromDal(createInvoiceDal(this.db, input));
+    const createdEntityRes = await promiseToRepoResult(
+      createInvoiceDal(this.db, input),
+    );
 
     return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       createdEntityRes,
@@ -95,7 +97,7 @@ export class InvoiceRepository extends BaseRepository<
       return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
 
-    const entityRes = await fromDal(readInvoiceDal(this.db, id));
+    const entityRes = await promiseToRepoResult(readInvoiceDal(this.db, id));
 
     return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       entityRes,
@@ -140,7 +142,9 @@ export class InvoiceRepository extends BaseRepository<
       return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
     }
 
-    const updatedEntityRes = await fromDal(updateInvoiceDal(this.db, id, data));
+    const updatedEntityRes = await promiseToRepoResult(
+      updateInvoiceDal(this.db, id, data),
+    );
 
     return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       updatedEntityRes,
@@ -185,7 +189,9 @@ export class InvoiceRepository extends BaseRepository<
       return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
 
-    const deletedEntityRes = await fromDal(deleteInvoiceDal(this.db, id));
+    const deletedEntityRes = await promiseToRepoResult(
+      deleteInvoiceDal(this.db, id),
+    );
     return mapOk<InvoiceEntity, InvoiceDto, RepoError>(entityToInvoiceDto)(
       deletedEntityRes,
     );
@@ -219,7 +225,7 @@ export class InvoiceRepository extends BaseRepository<
     if (!id) {
       return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
     }
-    return await fromDal(readInvoiceDal(this.db, id));
+    return await promiseToRepoResult(readInvoiceDal(this.db, id));
   }
 
   /**
@@ -241,7 +247,7 @@ export class InvoiceRepository extends BaseRepository<
   async findAllSafe(): Promise<
     Result<InvoiceEntity[], ValidationError | DatabaseError>
   > {
-    const res = await fromDal(fetchAllPaidInvoicesDal(this.db));
+    const res = await promiseToRepoResult(fetchAllPaidInvoicesDal(this.db));
 
     if (!res.ok) {
       return res;

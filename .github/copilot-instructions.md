@@ -27,7 +27,7 @@ Define strict rules for Copilot responses, code suggestions, and changes in this
 
 ## Folder & Attachment Access Rule
 
-- Always inspect attached folders/files before answering or making code changes.
+- Always inspect relavent code from attached folders/files before answering or making code changes.
 - Only use the latest state of attached files; do not access files outside attachments.
 - Follow all rules in referenced instruction files.
 

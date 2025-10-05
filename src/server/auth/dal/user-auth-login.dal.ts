@@ -1,8 +1,8 @@
 import "server-only";
+import {executeDalOrThrow} from "@/server/errors/error-wrappers.throw";
 import { eq } from "drizzle-orm";
 import type { Database } from "@/server/db/connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import { dalTry } from "@/server/errors/wrappers";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
@@ -17,7 +17,7 @@ export async function findUserForLogin(
     return null;
   }
 
-  return await dalTry(async () => {
+  return await executeDalOrThrow(async () => {
     const [userRow] = await db
       .select()
       .from(users)
