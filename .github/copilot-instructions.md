@@ -1,15 +1,42 @@
 # Copilot Instructions
 
-## JetBrains AI Assistant Rules (Core + Index)
+---
 
-Preamble: Concise, enforceable rules to guide code, docs, and reviews for a Next.js + TypeScript project. Optimized for
-JetBrains AI Assistant usage.
+## Folder & Attachment Access Rule
 
-This file now serves as the always-on core plus an index of toggleable modules. See rules/* for full policies.
+- When a folder or file is attached, the assistant must inspect its contents before answering questions or making code
+  changes.
+- All answers and modifications must use the latest state of the attached files, following all instruction file rules.
+- Access outside attached folders/files is not permitted.
 
 ---
 
-### Quick Checklist (use at start of complex tasks)
+## Conflict Resolution & Fallbacks
+
+- If instructions conflict, ask for clarification; default to stricter typing and safer operations.
+- When uncertain, default to current best practices and stable APIs.
+
+---
+
+## Logging & Error Policy (Core)
+
+- Add context (operation, identifiers) without secrets.
+- Normalize API error shapes; map internal errors to safe client messages.
+- Use structured logs; log at appropriate levels.
+
+Details for TypeScript error modeling: see ./instructions/typescript.instructions.md.
+
+---
+
+## Version & Tooling Constraints
+
+- Adhere to declared package versions; prefer stable APIs.
+- Note canary/experimental usage and provide alternatives where possible.
+- Use pnpm for package and script commands.
+
+---
+
+## Quick Checklist (use at start of complex tasks)
 
 - Confirm intent, constraints, and risks.
 - Identify files to change and impacted modules.
@@ -19,7 +46,7 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-### Response & Safety Patterns
+## Response & Safety Patterns
 
 - Start with a 3–7 bullet checklist for complex changes.
 - Add a one-line preamble explaining code purpose/context.
@@ -28,43 +55,10 @@ This file now serves as the always-on core plus an index of toggleable modules. 
 
 ---
 
-### Folder & Attachment Access Rule
+## Review Checklist
 
-- When a folder or file is attached, the assistant must inspect its contents before answering questions or making code
-  changes.
-- All answers and modifications must use the latest state of the attached files, following all instruction file rules.
-- Access outside attached folders/files is not permitted.
-
----
-
-### Logging & Error Policy (Core)
-
-- Add context (operation, identifiers) without secrets.
-- Normalize API error shapes; map internal errors to safe client messages.
-- Use structured logs; log at appropriate levels.
-
-Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
-
----
-
-### Version & Tooling Constraints
-
-- Adhere to declared package versions; prefer stable APIs.
-- Note canary/experimental usage and provide alternatives where possible.
-- Use pnpm for package and script commands.
-
----
-
-### Conflict Resolution & Fallbacks
-
-- If instructions conflict, ask for clarification; default to stricter typing and safer operations.
-- When uncertain, default to current best practices and stable APIs.
-
----
-
-### Review Checklist
-
-1. Strict TypeScript; full type safety; no relaxed flags without rationale. See @rule:TYPESCRIPT.md.
+1. Strict TypeScript; full type safety; no relaxed flags without rationale. See
+   ./instructions/typescript.instructions.md.
 2. Public APIs annotated; no any except isolated transitional cases.
 3. Functions single-purpose; parameters ≤4 or parameter object.
 4. Async code with try/catch; parallelize independent awaits.
@@ -77,3 +71,15 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 11. Version/tooling compatibility; avoid deprecated APIs.
 12. Logs structured/safe; errors contextualized and sanitized.
 
+---
+
+## Preamble
+
+- Concise, enforceable rules to guide code, docs, and reviews for a Next.js + TypeScript project.
+
+---
+
+## References
+
+[Coding Style Instructions](./instructions/coding-style.instructions.md)
+[TypeScript Instructions](./instructions/typescript.instructions.md)
