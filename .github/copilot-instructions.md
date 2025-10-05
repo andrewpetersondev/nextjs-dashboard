@@ -1,9 +1,27 @@
 ---
 applyTo: '**'
-description: 'description'
+description: 'GitHub Copilot usage and response rules for this project.'
 ---
 
-# Copilot Instructions
+# GitHub Copilot Instructions
+
+--- 
+
+## Purpose
+
+Define strict rules for Copilot responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
+
+---
+
+## General Rules
+
+- Always inspect and use the latest attached instruction files before making code changes.
+- Follow all rules in:
+    - [Coding Style Instructions](./instructions/coding-style.instructions.md)
+    - [TypeScript Instructions](./instructions/typescript.instructions.md)
+    - [Result & Error Instructions](./instructions/result-error.instructions.md)
+    - [Structure & Architecture](./instructions/structure-architecture.instructions.md)
+- Never access files outside provided attachments.
 
 ---
 
@@ -50,38 +68,21 @@ description: 'description'
 
 ---
 
-## Response & Safety Patterns
+## Response Patterns
 
 - Start with a 3–7 bullet checklist for complex changes.
 - Add a one-line preamble explaining code purpose/context.
 - After major outputs, include brief validation and suggested next steps.
-- Ask explicit confirmation before irreversible or sensitive actions.
+- Ask for explicit confirmation before irreversible or sensitive actions.
 
 ---
 
 ## Review Checklist
 
-Reference detailed checklists in [Coding Style Instructions](./instructions/coding-style.instructions.md)
-and [TypeScript Instructions](./instructions/typescript.instructions.md). Key points:
-
-1. Strict TypeScript; full type safety; no relaxed flags without rationale.
-2. Public APIs annotated; no `any` except isolated, documented cases.
-3. Functions single-purpose; ≤4 parameters or parameter object.
-4. Async code with try/catch; parallelize independent awaits.
-5. Generics constrained; unions used appropriately.
-6. Null/undefined handled safely; avoid non-null assertions.
-7. Modules organized by feature/responsibility; type-only imports used.
-8. Server/client concerns separated; server components preferred for data work.
-9. Security: input validation, no secrets exposure, OWASP-aligned patterns.
-10. Documentation: TSDoc present; README current and validated.
-11. Version/tooling compatibility; avoid deprecated APIs.
-12. Logs structured/safe; errors contextualized and sanitized.
-
----
-
-## Preamble
-
-- Enforceable rules for code, docs, and reviews in a Next.js + TypeScript project.
+- Confirm strict TypeScript and explicit types.
+- Validate file/module organization by feature/domain.
+- Ensure all code follows style, naming, and immutability rules.
+- Reference all instruction files for additional requirements.
 
 ---
 
@@ -89,3 +90,9 @@ and [TypeScript Instructions](./instructions/typescript.instructions.md). Key po
 
 - [Coding Style Instructions](./instructions/coding-style.instructions.md)
 - [TypeScript Instructions](./instructions/typescript.instructions.md)
+- [Result & Error Instructions](./instructions/result-error.instructions.md)
+- [Structure & Architecture](./instructions/structure-architecture.instructions.md)
+
+---
+
+_Last updated: YYYY-MM-DD_
