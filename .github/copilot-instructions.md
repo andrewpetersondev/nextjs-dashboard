@@ -64,7 +64,7 @@ Details for TypeScript error modeling: see @rule:rules/lang/TYPESCRIPT.md
 
 ### Review Checklist
 
-1. Strict TypeScript; no relaxed flags without rationale. See @rule:TYPESCRIPT.md.
+1. Strict TypeScript; full type safety; no relaxed flags without rationale. See @rule:TYPESCRIPT.md.
 2. Public APIs annotated; no any except isolated transitional cases.
 3. Functions single-purpose; parameters ≤4 or parameter object.
 4. Async code with try/catch; parallelize independent awaits.

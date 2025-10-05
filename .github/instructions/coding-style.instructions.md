@@ -19,3 +19,7 @@ description: 'description'
 - Use biome for formatting and linting; sort objects by keys.
 - Extract magic numbers/strings to named constants.
 - Use descriptive names; avoid abbreviations.
+- All exported symbols must have explicit types.
+- Use type-only imports for all type imports.
+- Avoid any in code except for isolated, documented test cases.
+- Review all code for type coverage and explicitness before merging.
