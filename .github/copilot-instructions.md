@@ -1,3 +1,8 @@
+---
+applyTo: '**'
+description: 'description'
+---
+
 # Copilot Instructions
 
 ---
