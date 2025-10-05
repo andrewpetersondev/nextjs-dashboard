@@ -4,8 +4,10 @@ Use this guide to decide where code belongs and how layers interact.
 
 ## 1) Identify the concern: domain capability vs. page/layout composition
 
-- Domain capability: A cohesive business area with its own models, rules, and reusable UI (e.g., auth, invoices, customers).
-- Page/layout composition: App “chrome” and orchestration that stitches together multiple features for a route (e.g., dashboard pages, sidebars, nav, guards, providers).
+- Domain capability: A cohesive business area with its own models, rules, and reusable UI (e.g., auth, invoices,
+  customers).
+- Page/layout composition: App “chrome” and orchestration that stitches together multiple features for a route (e.g.,
+  dashboard pages, sidebars, nav, guards, providers).
 
 ## 2) Map concerns to layers
 
@@ -103,13 +105,16 @@ server is usable from features/shell/app as needed.
         - Navigation (sidebars, top bars, breadcrumbs) with active state
         - Cross-feature wrappers and gates (auth/role guards)
         - App-wide providers (theme, toasts), error and suspense boundaries
-        - Page-level compositions that stitch multiple features together (e.g., a dashboard page showing cards, charts, and lists from several features)
+        - Page-level compositions that stitch multiple features together (e.g., a dashboard page showing cards, charts,
+          and lists from several features)
     - What it avoids:
         - Domain/business logic (keep in features/server)
         - Data access or external API calls (keep in server)
         - Generic utilities (keep in shared)
     - Why “dashboard” was suggested to be moved here:
-        - “Dashboard” in this codebase primarily composes multiple domain features into a single screen (cards, charts, latest items) and controls navigation/layout. That is app composition—not a single domain capability—so it belongs in shell.
+        - “Dashboard” in this codebase primarily composes multiple domain features into a single screen (cards, charts,
+          latest items) and controls navigation/layout. That is app composition—not a single domain capability—so it
+          belongs in shell.
 
 4. `server` — Infrastructure and backend-facing code:
     - Database access, repositories, migrations
@@ -133,7 +138,8 @@ server is usable from features/shell/app as needed.
 4. Is it a generic utility, token, or primitive UI with no domain knowledge?
     - Yes → `shared` (utilities/tokens) or `ui` (primitive components).
 5. Route files and data fetching for pages?
-    - Prefer `src/app` server components that call into `server` (for data) and render `shell` (for composition) and `features` (for feature UI).
+    - Prefer `src/app` server components that call into `server` (for data) and render `shell` (for composition) and
+      `features` (for feature UI).
 
 ---
 
@@ -166,8 +172,15 @@ server is usable from features/shell/app as needed.
 - Authentication:
     - Forms, schemas, roles, and client helpers in `features/auth`
     - Server actions and provider integrations in `server/auth`
-    - If the sidebar needs a logout button or role-aware links, the sidebar lives in `shell`, consuming `features/auth` UI or actions.
+    - If the sidebar needs a logout button or role-aware links, the sidebar lives in `shell`, consuming `features/auth`
+      UI or actions.
 
 ---
 
-By separating domain features from app composition in `shell`, you keep features reusable, maintain clear import boundaries, and simplify testing and scaling of both the UI and the backend.
+By separating domain features from app composition in `shell`, you keep features reusable, maintain clear import
+boundaries, and simplify testing and scaling of both the UI and the backend.
+
+---
+
+_Last updated: 2025-10-04_
+_Author: GitHub Copilot_

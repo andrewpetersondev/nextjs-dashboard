@@ -3,6 +3,7 @@
 This document explains each group of scripts defined in package.json and how to use them with pnpm.
 
 ## Conventions
+
 - Run scripts with: `pnpm run <script>` (or `pnpm <script>` for short).
 - Some scripts assume a test environment file `.env.test` is present.
 
@@ -159,7 +160,8 @@ Miscellaneous helpers.
     - Use: `pnpm wait:health`
 
 - db-create  
-  Example command to create a test database inside a running Docker Postgres container. Replace `{your_postgres_user}` before running.
+  Example command to create a test database inside a running Docker Postgres container. Replace `{your_postgres_user}`
+  before running.
     - Use: `pnpm db-create`
 
 - create-auth-secret  
@@ -185,3 +187,8 @@ Miscellaneous helpers.
 
 - Reset dev DB and start fresh
     - `pnpm db-reset-dev` then `pnpm dev`
+
+---
+
+_Last updated: 2025-10-04_  
+_Author: GitHub Copilot_
