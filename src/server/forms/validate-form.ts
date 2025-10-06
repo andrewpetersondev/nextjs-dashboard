@@ -13,7 +13,10 @@ import {
   resolveRawFieldPayload,
 } from "@/shared/forms/fields/field-name-resolution";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
-import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import {
+  mapResultToFormResult,
+  type ValidationFieldErrorsError,
+} from "@/shared/forms/mapping/result-to-form-result.mapping";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 
@@ -30,12 +33,6 @@ function logValidationFailure(context: string, error: unknown): void {
     message: FORM_ERROR_MESSAGES.VALIDATION_FAILED,
     name,
   });
-}
-
-// --- Local error wrapper to satisfy ErrorLike and carry field errors ---
-interface ValidationFieldErrorsError<TFieldNames extends string> {
-  readonly message: string; // satisfies ErrorLike
-  readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
 }
 
 /**
@@ -125,7 +122,7 @@ export async function validateFormGeneric<
     parsed = await schema.safeParseAsync(raw);
   } catch (e) {
     const failure = toFailureResult<TFieldNames, TIn>(e, fields, loggerContext);
-    return mapResultToFormState(failure, {
+    return mapResultToFormResult(failure, {
       failureMessage: messages?.failureMessage ?? "Validation failed",
       fields,
       raw,
@@ -139,7 +136,7 @@ export async function validateFormGeneric<
       fields,
       loggerContext,
     );
-    return mapResultToFormState(failure, {
+    return mapResultToFormResult(failure, {
       failureMessage: messages?.failureMessage ?? "Validation failed",
       fields,
       raw,
@@ -151,7 +148,7 @@ export async function validateFormGeneric<
   const result: Result<TIn, ValidationFieldErrorsError<TFieldNames>> = Ok(
     parsed.data,
   );
-  return mapResultToFormState(result, {
+  return mapResultToFormResult(result, {
     failureMessage: messages?.failureMessage,
     fields,
     raw,

@@ -27,7 +27,7 @@ import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
 import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
-import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapping";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
@@ -70,7 +70,7 @@ function fail(
   message: string,
   ctx: Ctx,
 ): LegacyFormState<EditUserFormFieldNames> {
-  return mapResultToFormState(
+  return mapResultToFormResult(
     { error: ctx.emptyDense, ok: false },
     { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
   );

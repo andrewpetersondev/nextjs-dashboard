@@ -14,7 +14,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
 import { attachRootDenseMessageToField } from "@/shared/forms/errors/error-map-helpers";
-import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
+import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapping";
 import type {
   FormResult,
   FormValidationError,
@@ -62,7 +62,7 @@ export async function login(
         fields,
         "Login failed. Please try again.",
       );
-      return mapResultToFormState<LoginField, unknown>(
+      return mapResultToFormResult<LoginField, unknown>(
         { error: dense, ok: false },
         { fields, raw: {} },
       );
@@ -85,7 +85,7 @@ export async function login(
       fields,
       "Unexpected error. Please try again.",
     );
-    return mapResultToFormState<LoginField, unknown>(
+    return mapResultToFormResult<LoginField, unknown>(
       { error: dense, ok: false },
       { fields, raw: {} },
     );

@@ -13,19 +13,25 @@ export async function findUserForLogin(
   db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
-  if (!email) {
-    return null;
-  }
-
   return await executeDalOrThrow(async () => {
-    const [userRow] = await db
+    const selectedRow = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
 
+    const userRow = selectedRow?.[0];
+
     // Ensure the hashed password is present; without it Service cannot compare.
     if (!userRow) {
+      serverLogger.error(
+        {
+          context: "dal.findUserForLogin",
+          email,
+          msg: "SELECT returned no user row; indicates DB or ORM invariant violation",
+        },
+        "User selection: invariant violation (no row returned)",
+      );
       return null;
     }
     if (!userRow.password || typeof userRow.password !== "string") {

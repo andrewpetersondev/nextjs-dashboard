@@ -12,7 +12,7 @@ import type {
 import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
 /** Local ErrorLike wrapper used by validate-form failure path. */
-interface ValidationFieldErrorsError<TFieldNames extends string> {
+export interface ValidationFieldErrorsError<TFieldNames extends string> {
   readonly message: string;
   readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
 }
@@ -22,7 +22,7 @@ interface ValidationFieldErrorsError<TFieldNames extends string> {
  * @template TFieldNames Field name union.
  * @template TData Success data type.
  */
-export function mapResultToFormState<TFieldNames extends string, TData>(
+export function mapResultToFormResult<TFieldNames extends string, TData>(
   result: Result<TData, ValidationFieldErrorsError<TFieldNames>>,
   params: {
     successMessage?: string;
