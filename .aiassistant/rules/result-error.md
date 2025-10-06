@@ -1,13 +1,13 @@
 ---
-apply: always
+apply: manually
 ---
 
-# Result & Error Instructions
+# Result & Error Handling Rules
 
 ## Purpose
 
 Enforce consistent, type-safe result and error handling across all modules.  
-Reference [TypeScript Instructions](./typescript.instructions.md) for strictness and discriminated union rules.
+Reference [TypeScript Instructions](./typescript.md) for strictness and discriminated union rules.
 
 ---
 
@@ -48,7 +48,7 @@ Reference [TypeScript Instructions](./typescript.instructions.md) for strictness
 
 - Use result and error helpers to map validation outcomes to form state.
 - Normalize error shapes for UI consumption; provide i18n-friendly messages.
-- Document error mapping strategies in form modules (`forms/errors/`, `forms/mapping/`).
+- Document error mapping and result handling in related form modules.
 
 ---
 
@@ -59,4 +59,8 @@ Reference [TypeScript Instructions](./typescript.instructions.md) for strictness
 - No internal details or stack traces leak to clients.
 - All exported result/error types are explicit and documented.
 - Form error mapping is consistent and i18n-ready.
-- Reference TypeScript and coding style instructions for additional requirements.
+- Cross-reference [TypeScript Instructions](./typescript.md) and [Coding Style](./coding-style.md).
+
+---
+
+_Last updated: YYYY-MM-DD_

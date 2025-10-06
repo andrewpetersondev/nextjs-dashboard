@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Markdown Documentation Instructions
@@ -13,10 +13,11 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 ## General Rules
 
 - Use clear, descriptive headings and section titles.
-- Keep files ≤200 lines; split by topic if needed.
+- Start each doc with a summary or purpose section.
 - Use standard markdown syntax; avoid custom extensions.
-- Format with prettier; IDE automatically formats on file-save.
-- Validate all code snippets for correctness and compatibility.
+- Organize content by topic, using bullet or numbered lists for clarity.
+- All snippets must be valid and compatible (test/copy-paste where possible).
+- Format with prettier; IDE should auto-format on save.
 
 ---
 
@@ -24,8 +25,10 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 
 - Start with a summary or purpose section.
 - Organize content by topic; use bullet points and numbered lists for clarity.
-- Reference related instruction files and modules where relevant.
-- Document update date and author in the footer.
+- Reference relevant instruction files and modules where needed.
+- Include clear linking to any related rule or doc files.
+- Document footer includes last updated date.
+- Cross-reference related topics via inline markdown links.
 
 ---
 
@@ -41,16 +44,14 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 
 ## Responsibilities
 
-- Assign a maintainer for documentation review.
 - All contributors must update relevant docs when making code changes.
-- Use pull requests for doc updates; require review from at least one maintainer.
 
 ---
 
 ## References
 
 - [Coding Style Instructions](./coding-style.md)
-- [TypeScript Instructions](./coding-style.md)
+- [TypeScript Instructions](./typescript.md)
 - [Result & Error Instructions](./result-error.md)
 - [Structure & Architecture](./structure-architecture.md)
 

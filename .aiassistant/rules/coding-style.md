@@ -1,10 +1,12 @@
 ---
-apply: always
+apply: manually
 ---
 
 # General Style Guide
 
-Purpose: Enforce consistent, maintainable style for all code and files in this project.  
+## Purpose
+
+Enforce consistent, maintainable style for all code and files in this project.  
 See [TypeScript Instructions](./typescript.md) for strict typing rules.  
 Review [Structure & Architecture](./structure-architecture.md) when available.
 
@@ -14,11 +16,11 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 
 - Single-purpose functions; ≤50 lines.
 - Parameters ≤4; use options object for optional params.
+- Prefer standard utility types; avoid unnecessary custom wrappers.
 - Extract predicates/utilities; avoid deep nesting and excessive branching.
-- Prefer standard utility types; avoid custom wrappers when not needed.
 - All exported symbols must have explicit types.
 - Avoid `any` except for isolated, documented test cases.
-- Use biome for formatting and linting; sort object's properties by keys.
+- Use biome for formatting and linting; sort object properties by key.
 - Extract magic numbers/strings to named constants.
 - Use descriptive names; avoid abbreviations.
 
@@ -33,7 +35,7 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 
 ---
 
-## File Organization
+## File & Module Organization
 
 - File length ≤200 lines; split large files by feature/domain.
 - Avoid dumping grounds (e.g., `utils.ts`); prefer small, named modules.
@@ -54,7 +56,7 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 
 ## Tooling
 
-- Use biome for formatting and linting.
+- Use biome for formatting and linting typescript files.
 
 ---
 
@@ -64,3 +66,7 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 - Validate file/module organization by feature/domain.
 - Ensure all code follows style, naming, and immutability rules.
 - Reference TypeScript and architecture instructions for additional requirements.
+
+---
+
+_Last updated: YYYY-MM-DD_

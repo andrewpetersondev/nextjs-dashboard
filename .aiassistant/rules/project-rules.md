@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Jetbrains AI Rules
@@ -8,26 +8,26 @@ apply: always
 
 ## Purpose
 
-Define strict rules for AI responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
+Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
 
 ---
 
 ## General Rules
 
-- Always inspect and use the latest attached instruction files before making code changes.
+- Always inspect and use the most recent attached instruction files before proposing code changes.
 - Follow all rules in:
     - [Coding Style Instructions](./coding-style.md)
     - [TypeScript Instructions](./typescript.md)
     - [Result & Error Instructions](./result-error.md)
     - [Structure & Architecture](./structure-architecture.md)
-- Never access files outside provided attachments.
+- Never access or reference files outside user-provided folders or attachments.
 
 ---
 
-## Folder & Attachment Access Rule
+## Attachment & Folder Access
 
-- Always inspect relavent code from attached folders/files before answering or making code changes.
-- Only use the latest state of attached files; do not access files outside attachments.
+- Always use the latest code or content from attached files before answering or suggesting changes.
+- Do not reference files or data outside explicit attachments.
 - Follow all rules in referenced instruction files.
 
 ---
@@ -45,7 +45,7 @@ Define strict rules for AI responses, code suggestions, and changes in this Next
 - Add context (operation, identifiers) without secrets.
 - Normalize API error shapes; map internal errors to safe client messages.
 - Use structured logs at appropriate levels.
-- For TypeScript error modeling, see [TypeScript Instructions](./typescript.md).
+- Handle TypeScript errors per [TypeScript Instructions](./typescript.md).
 
 ---
 
@@ -57,31 +57,24 @@ Define strict rules for AI responses, code suggestions, and changes in this Next
 
 ---
 
-## Quick Checklist
+## Response Format & Quick Checklist
 
-- Confirm intent, constraints, and risks.
-- Identify files to change and impacted modules.
-- Propose small, composable changes; note typing and error strategy.
-- Provide copy-paste runnable commands (pnpm).
-- Validate outcome; list next steps.
-
----
-
-## Response Patterns
-
-- Start with a 3–7 bullet checklist for complex changes.
-- Add a one-line preamble explaining code purpose/context.
-- After major outputs, include brief validation and suggested next steps.
-- Ask for explicit confirmation before irreversible or sensitive actions.
+- For complex changes, begin with a 3–7 bullet checklist.
+- Always explain code purpose/context before code or file edits.
+- Always confirm intents, constraints, and affected files before acting.
+- Suggest small, composable changes; mention typing and error handling approaches.
+- Provide ready-to-use pnpm commands where relevant.
+- Summarize validation and suggest clear next steps.
+- Prompt for explicit user confirmation before any sensitive/irreversible action.
 
 ---
 
 ## Review Checklist
 
-- Confirm strict TypeScript and explicit types.
-- Validate file/module organization by feature/domain.
-- Ensure all code follows style, naming, and immutability rules.
-- Reference all instruction files for additional requirements.
+- TypeScript is strict; all exports have explicit types (no implicit `any`).
+- Files are organized by feature/domain and follow naming/immutability guidelines.
+- All code and suggestions reference and align with instruction files.
+- Changes are cross-referenced in file headers.
 
 ---
 

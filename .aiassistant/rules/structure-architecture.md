@@ -1,56 +1,57 @@
 ---
-apply: always
+apply: manually
 ---
 
-# Structure & Architecture
+# Structure & Architecture Rules
 
 ## Purpose
 
-Document the organization, layering, and architectural strategies for maintainability, scalability, and clarity.
+Document and enforce the organization, layering, and architectural strategies for maintainability, scalability, and
+clarity throughout the project.
 
 ---
 
 ## Directory Structure
 
-- `src/app/`: Next.js App Router entry, layouts, pages, API routes.
-- `src/features/`: Feature modules (auth, customers, invoices, revenues, users) with domain logic, components, types,
-  and libs.
-- `src/server/`: Server-side code (auth, config, db, errors, events, forms, logging, repository, etc.).
-- `src/shared/`: Shared utilities, domain types, config, forms, i18n, logging, money, routes, UI primitives.
-- `src/shell/`: Shell components for dashboard and UI composition.
-- `src/ui/`: UI primitives, atoms, molecules, navigation, styles, and organization docs.
+- **src/app/**: Next.js App Router entry, layouts, pages, API routes.
+- **src/features/**: Feature modules (auth, customers, invoices, revenues, users) containing domain logic, components,
+  types, and libraries.
+- **src/server/**: Server-side code (auth, configuration, db, errors, events, forms, logging, repositories, etc.).
+- **src/shared/**: Shared utilities, domain types, config, forms, i18n, logging, money, routes, UI primitives.
+- **src/shell/**: Shell components for dashboard and UI composition.
+- **src/ui/**: UI primitives, atoms, molecules, navigation, styles, and documentation for organization.
 
 ---
 
 ## Layered Architecture
 
-- **App Layer**: Routing, layout, and top-level error handling (`src/app/`).
-- **Feature Layer**: Domain-specific logic, components, and types (`src/features/`).
-- **Server Layer**: Data access, business logic, error handling, and events (`src/server/`).
+- **App Layer**: Routing, layout, top-level error handling (`src/app/`).
+- **Feature Layer**: Domain-specific logic, components, types (`src/features/`).
+- **Server Layer**: Data access, business logic, error handling, events (`src/server/`).
 - **Shared Layer**: Cross-cutting concerns, utilities, and domain models (`src/shared/`).
 - **UI Layer**: Reusable UI primitives and composition patterns (`src/ui/`).
 
 ---
 
-## Strategies
+## Strategies & Principles
 
-- Organize by feature/domain for scalability.
-- Separate server/client concerns; prefer server components for data and logic.
-- Use strict TypeScript settings and explicit types everywhere.
-- Treat inputs as immutable; avoid in-place mutations.
-- Use discriminated unions for error/result handling.
+- Organize modules strictly by feature/domain to maximize scalability.
+- Enforce strict separation of server/client code: prefer server components for data logic.
+- Use strict TypeScript with explicit types in all layers.
+- Treat all mutable input as immutable; avoid any in-place mutation.
+- Use discriminated unions for all error/result handling.
 - Prefer small, focused modules; avoid dumping grounds and barrel files.
 - Validate and parse inputs server-side (Zod recommended).
 - Use biome for formatting and linting.
 
 ---
 
-## Tooling
+## Approved Tooling
 
 - Next.js (App Router)
 - TypeScript (strict mode)
-- Biome (formatting/linting)
-- Cypress (e2e testing)
+- Biome (formatting and linting)
+- Cypress (end-to-end testing)
 - Drizzle (database migrations/config)
 - pnpm (package management)
 - PostCSS (CSS processing)
@@ -59,8 +60,12 @@ Document the organization, layering, and architectural strategies for maintainab
 
 ## Review Checklist
 
-- Directory and module organization by feature/domain.
-- Layer separation: app, feature, server, shared, UI.
-- Strict TypeScript and explicit types.
-- Immutability and error handling strategies.
-- Tooling and configuration validated.
+- Directory/module organization follows feature/domain boundaries.
+- Layer boundaries (app, feature, server, dal, repository, service, action, shared, UI) are maintained.
+- Explicit strict TypeScript usage in all files.
+- Immutability and error handling patterns are applied consistently.
+- Tooling and configuration are validated and up-to-date.
+
+---
+
+_Last updated: YYYY-MM-DD_
