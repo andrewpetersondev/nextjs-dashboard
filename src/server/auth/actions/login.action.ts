@@ -8,7 +8,6 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
-import { asPasswordRaw } from "@/server/auth/types/password.types";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
@@ -21,6 +20,9 @@ import {
 } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
+
+// --- Constants ---
+const LOGGER_CONTEXT_SESSION = "login.action.session";
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -54,7 +56,7 @@ export async function loginAction(
   // 2) Authenticate
   const input = {
     email: validated.value.data.email,
-    password: asPasswordRaw(validated.value.data.password as unknown as string),
+    password: validated.value.data.password,
   };
 
   const service = new UserAuthFlowService(getAppDb());
@@ -76,9 +78,9 @@ export async function loginAction(
   // 3) Session + redirect
   try {
     await setSessionToken(toUserId(res.value.id), toUserRole(res.value.role));
-  } catch (err) {
+  } catch (err: unknown) {
     serverLogger.error({
-      context: "login.action.session",
+      context: LOGGER_CONTEXT_SESSION,
       error:
         err instanceof Error
           ? { message: err.message, name: err.name }
