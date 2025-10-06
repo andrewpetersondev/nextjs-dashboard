@@ -23,7 +23,7 @@ import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-export async function login(
+export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {

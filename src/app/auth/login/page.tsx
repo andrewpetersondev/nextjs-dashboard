@@ -8,7 +8,7 @@ import {
   AUTH_DIVIDER_LABEL,
   LOGIN_HEADING,
 } from "@/features/auth/lib/auth.constants";
-import { login } from "@/server/auth/actions/login";
+import { loginAction } from "@/server/auth/actions/login.action";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {
@@ -18,7 +18,7 @@ export default function Page(): JSX.Element {
         <Heading text={LOGIN_HEADING} />
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-            <LoginForm action={login} />
+            <LoginForm action={loginAction} />
             <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
             <AuthFormSocialSection
               demoAdminText="Login as Demo Admin"
