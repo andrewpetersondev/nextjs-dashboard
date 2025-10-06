@@ -1,12 +1,10 @@
 ---
-apply: manually
+apply: always
 ---
 
 # TypeScript Instructions
 
 Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Always on.
-
----
 
 ## Compiler Strictness
 
