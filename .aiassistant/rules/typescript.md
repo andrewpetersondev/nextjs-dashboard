@@ -1,13 +1,8 @@
 ---
-apply: manually
+apply: always
 ---
 
----
-tags: [typescript, language, errors, async]
-scope: TypeScript usage across app, server, tests
----
-
-# TypeScript Best Practices
+# TypeScript Instructions
 
 Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Always on.
 
@@ -21,6 +16,18 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
   functions/components/hooks. Allow local inference inside function bodies.
 - For libraries or shared utils, export explicit types for options and results; avoid exporting inferred anonymous
   types.
+
+---
+
+## Type Safety Enforcement
+
+- All exported functions, components, and hooks must have explicit parameter and return types.
+- All generics must be constrained and named.
+- No use of `any` in public APIs; only allowed in isolated, documented test cases.
+- All type imports must use `import type`.
+- All error/result handling must use discriminated unions.
+- All modules must export explicit types for options/results; no inferred anonymous types.
+- All null/undefined must be modeled explicitly; avoid non-null assertions.
 
 ---
 
