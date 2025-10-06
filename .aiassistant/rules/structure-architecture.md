@@ -68,7 +68,10 @@ clarity throughout the project.
     - shared may be imported by server/features/ui/app
     - server may not import from app or ui
     - features may not import from app
-- Enforce via lint rules (e.g., import/no-restricted-paths); exceptions require an ADR documenting rationale and scope.
+- Enforcement policy:
+    - Use import restriction lint rules (e.g., no restricted paths) to codify boundaries.
+    - Any exception requires an ADR documenting rationale, scope, and planned removal timeline.
+    - PRs violating boundaries without an ADR are rejected.
 
 ## Review Checklist
 

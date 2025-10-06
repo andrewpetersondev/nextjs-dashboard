@@ -8,6 +8,12 @@ apply: always
 
 Ensure all markdown docs are accurate, consistent, and follow project standards.
 
+## Scope & Audience
+
+- Audience: documentation authors, reviewers, and AI contributors.
+- Applies to: all Markdown docs in the repository (rules, ADRs, guides).
+- Contexts: authoring, review, and CI docs lint/link checks.
+
 ## General Rules
 
 - Use clear, descriptive headings and section titles.

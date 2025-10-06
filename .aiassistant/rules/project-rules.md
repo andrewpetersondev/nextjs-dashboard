@@ -8,6 +8,12 @@ apply: always
 
 Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
 
+## Scope & Audience
+
+- Audience: AI contributors and human maintainers.
+- Applies to: all code changes, documentation updates, design/ADR notes, and CI/CD configs.
+- Contexts: proposal, review, and merge phases; interactive assistant sessions included.
+
 ## General Rules
 
 - Always inspect and use the most recent attached instruction files before proposing code changes.
@@ -60,12 +66,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - All code and suggestions reference and align with instruction files.
 - Changes are cross-referenced in file headers.
 
-## Scope & Audience
-
-- Audience: AI contributors and human maintainers.
-- Applies to: all code changes, documentation updates, design/ADR notes, and CI/CD configs.
-- Contexts: proposal, review, and merge phases; interactive assistant sessions included.
-
 ## Rule Precedence
 
 - Precedence for resolving conflicts:
@@ -84,18 +84,17 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
 - Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
 
-## AI Change Proposal Template
+## AI Change Protocol
 
-- Before edits, include:
-    - Intent and rationale
-    - Affected files and blast radius
-    - Risk assessment and rollback plan
-    - Validation steps (typecheck, lint, tests, a11y)
-    - Any production-facing behaviors
+- Before edits, an AI Edit Proposal must be provided using the template in ai-edit-plan-proposal.md.
+- Required in PR description for AI-suggested changes.
+- Must include: intent, affected files, risks, rollback, validation steps (typecheck, lint, tests, a11y), and prod
+  impact.
 
 ## Monorepo vs Single App
 
-- This repository is a single app today. If or when multiple packages are added, adopt a packages/* structure and extend
-  rules via a repo-level ADR before merging.
+- Current mode: single app.
+- If adding multiple packages, adopt packages/* and add a repository-level ADR defining package boundaries, shared
+  configs, and release/versioning strategy before merging.
 
 _Last updated: 2025-10-05_
