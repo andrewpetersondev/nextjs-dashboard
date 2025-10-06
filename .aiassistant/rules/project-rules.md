@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Jetbrains AI Rules
@@ -19,9 +19,8 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Always inspect and use the most recent attached instruction files before proposing code changes.
 - Follow all rules in:
     - [Coding Style Instructions](./coding-style.md)
-    - [TypeScript Instructions](./typescript.md)
-    - [Result & Error Instructions](./result-error.md)
-    - [Structure & Architecture](./structure-architecture.md)
+    - [TypeScript Instructions](typescript-summary.md)
+    - [Result & Error Instructions](result-error-summary.md)
 - Never access or reference files outside user-provided folders or attachments.
 
 ## Attachment & Folder Access
@@ -40,7 +39,7 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Add context (operation, identifiers) without secrets.
 - Normalize API error shapes; map internal errors to safe client messages.
 - Use structured logs at appropriate levels.
-- Handle TypeScript errors per [TypeScript Instructions](./typescript.md).
+- Handle TypeScript errors per [TypeScript Instructions](typescript-summary.md).
 
 ## Version & Tooling Constraints
 
@@ -77,11 +76,10 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 
 - Precedence for resolving conflicts:
     1) project-rules.md
-    2) typescript.md
+    2) typescript-summary.md
     3) result-error.md
-    4) structure-architecture.md
-    5) coding-style.md
-    6) md-docs.md
+    4) coding-style.md
+    5) md-docs.md
 - When unsure, ask for clarification and default to stricter typing and safer operations.
 
 ## Testing Policy

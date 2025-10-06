@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # General Style Guide
@@ -7,14 +7,7 @@ apply: always
 ## Purpose
 
 Enforce consistent, maintainable style for all code and files in this project.  
-See [TypeScript Instructions](./typescript.md) for strict typing rules.  
-Review [Structure & Architecture](./structure-architecture.md) when available.
-
-## Scope & Audience
-
-- Audience: all engineers and AI contributors.
-- Applies to: source files in all layers and test code.
-- Contexts: authoring and review; enforced by biome and CI style checks.
+See [TypeScript Instructions](typescript-summary.md) for strict typing rules.
 
 ## Coding Style
 
@@ -23,7 +16,7 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 - Prefer standard utility types; avoid unnecessary custom wrappers.
 - Extract predicates/utilities; avoid deep nesting and excessive branching.
 - All exported symbols must have explicit types.
-- Use biome for formatting and linting; sort object properties by key.
+- Sort object properties by key.
 - Extract magic numbers/strings to named constants.
 - Use descriptive names; avoid abbreviations.
 - Target cyclomatic complexity ≤15; avoid nesting deeper than 3 levels; refactor into helpers when exceeded.
@@ -43,17 +36,5 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 - Use type-only imports for all type imports.
 - Mark constants with `as const` for literal types.
 - Prefer named exports; avoid default exports to aid tree-shaking and refactors.
-
-## Tooling
-
-- Use biome for formatting and linting typescript files.
-
-## Review Checklist
-
-- Confirm strict TypeScript settings and explicit types.
-- Validate file/module organization by feature/domain.
-- Ensure all code follows style, naming, and immutability rules.
-- Reference TypeScript and architecture instructions for additional requirements.
-- Check complexity and nesting constraints; prefer named exports.
 
 _Last updated: 2025-10-05_
