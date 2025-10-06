@@ -15,8 +15,8 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import {
   expandSparseErrorsToDense,
-  pickAllowedSparseFieldErrors,
-} from "@/shared/forms/errors/error-map-utils";
+  filterSparseFieldErrors,
+} from "@/shared/forms/errors/dense-error-map";
 import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
@@ -62,10 +62,7 @@ export async function createUserAction(
     if (!parsed.success) {
       return {
         errors: expandSparseErrorsToDense(
-          pickAllowedSparseFieldErrors(
-            parsed.error.flatten().fieldErrors,
-            allowed,
-          ),
+          filterSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
           allowed,
         ),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,

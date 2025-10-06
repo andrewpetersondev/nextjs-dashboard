@@ -1,5 +1,4 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import {
@@ -18,8 +17,8 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/core/errors/domain-error";
 import {
   expandSparseErrorsToDense,
-  pickAllowedSparseFieldErrors,
-} from "@/shared/forms/errors/error-map-utils";
+  filterSparseFieldErrors,
+} from "@/shared/forms/errors/dense-error-map";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
@@ -99,10 +98,10 @@ export async function updateInvoiceAction(
         readonly string[] | undefined
       >;
 
-      const sparse = pickAllowedSparseFieldErrors<
-        UpdateInvoiceFieldNames,
-        string
-      >(zFieldErrors, schemaFields);
+      const sparse = filterSparseFieldErrors<UpdateInvoiceFieldNames, string>(
+        zFieldErrors,
+        schemaFields,
+      );
       const dense = expandSparseErrorsToDense<UpdateInvoiceFieldNames, string>(
         sparse,
         schemaFields,

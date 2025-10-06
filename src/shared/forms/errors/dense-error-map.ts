@@ -16,7 +16,7 @@ import type {
  * @param allowedFields - Field names to include.
  * @returns Sparse error map with only allowed fields that have errors.
  */
-export function pickAllowedSparseFieldErrors<
+export function filterSparseFieldErrors<
   TFieldNames extends string,
   TMsg = string,
 >(
@@ -42,7 +42,7 @@ export function pickAllowedSparseFieldErrors<
  *
  * Useful when you need a canonical dense shape (e.g., initial UI state).
  */
-export function buildEmptyDenseErrorMap<TField extends string, TMsg = string>(
+export function initializeDenseErrorMap<TField extends string, TMsg = string>(
   fields: readonly TField[],
 ): DenseFieldErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
@@ -102,7 +102,7 @@ export function _compactDenseErrorsToSparse<
 /**
  * Validate & freeze a dense error map.
  */
-export function assertAndFreezeDenseErrorMap<TField extends string, TMsg>(
+export function validateAndFreezeDenseMap<TField extends string, TMsg>(
   fields: readonly TField[],
   dense: Record<TField, readonly TMsg[]>,
 ): DenseFieldErrorMap<TField, TMsg> {

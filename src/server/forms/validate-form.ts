@@ -3,11 +3,8 @@ import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
-import {
-  isZodErrorLikeShape,
-  mapToDenseFieldErrorsFromZod,
-} from "@/shared/forms/errors/zod-error-mapping";
+import { expandSparseErrorsToDense } from "@/shared/forms/errors/dense-error-map";
+import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error-mapping";
 import {
   resolveCanonicalFieldNames,
   resolveRawFieldPayload,
@@ -17,6 +14,7 @@ import {
   mapResultToFormResult,
   type ValidationFieldErrorsError,
 } from "@/shared/forms/mapping/result-to-form-result.mapping";
+import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-errors.mappers";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 
@@ -62,7 +60,7 @@ function toFailureResult<TFieldNames extends string, TOut>(
  * @param errors Dense field error map.
  * @returns Result<never, DenseFieldErrorMap<TFieldNames>>
  */
-export function toValidationResult<TFieldNames extends string, TOut = never>(
+function toValidationResult<TFieldNames extends string, TOut = never>(
   errors: DenseFieldErrorMap<TFieldNames>,
 ): Result<TOut, ValidationFieldErrorsError<TFieldNames>> {
   return Err({
@@ -72,7 +70,7 @@ export function toValidationResult<TFieldNames extends string, TOut = never>(
 }
 
 /** Options for validateFormGeneric, factored for reuse and clarity. */
-export interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
+interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
   readonly fields?: readonly TFieldNames[];
   readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
   readonly loggerContext?: string;
@@ -120,7 +118,8 @@ export async function validateFormGeneric<
   let parsed: Awaited<ReturnType<typeof schema.safeParseAsync>>;
   try {
     parsed = await schema.safeParseAsync(raw);
-  } catch (e) {
+  } catch (e: unknown) {
+    // Normalize/minimize what we log, then map to a consistent failure
     const failure = toFailureResult<TFieldNames, TIn>(e, fields, loggerContext);
     return mapResultToFormResult(failure, {
       failureMessage: messages?.failureMessage ?? "Validation failed",

@@ -1,13 +1,4 @@
 import { type ZodRawShape, z } from "zod";
-import {
-  buildEmptyDenseErrorMap,
-  expandSparseErrorsToDense,
-  pickAllowedSparseFieldErrors,
-} from "@/shared/forms/errors/error-map-utils";
-import type {
-  DenseFieldErrorMap,
-  SparseFieldErrorMap,
-} from "@/shared/forms/types/field-errors.type";
 
 /** Shape emitted by z.ZodError#flatten().fieldErrors */
 export type ZodFlattenedFieldErrors = Record<
@@ -28,33 +19,6 @@ export function flattenZodErrorFields(error: z.ZodError): {
     fieldErrors: flattened.fieldErrors as ZodFlattenedFieldErrors,
     formErrors: flattened.formErrors ?? [],
   };
-}
-
-/**
- * Build sparse errors limited to allowed fields from a ZodError.
- * Only fields present in allowedFields may appear in the returned map.
- */
-export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
-  error: z.ZodError,
-  allowedFields: readonly TFieldNames[],
-): SparseFieldErrorMap<TFieldNames> {
-  const { fieldErrors } = flattenZodErrorFields(error);
-  return pickAllowedSparseFieldErrors<TFieldNames, string>(
-    fieldErrors,
-    allowedFields,
-  );
-}
-
-/**
- * Build dense errors aligned to allowed fields from a ZodError.
- * The returned object contains every allowed field (possibly empty arrays).
- */
-export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
-  error: z.ZodError,
-  allowedFields: readonly TFieldNames[],
-): DenseFieldErrorMap<TFieldNames> {
-  const sparse = mapZodErrorToSparseFieldErrors(error, allowedFields);
-  return expandSparseErrorsToDense(sparse, allowedFields);
 }
 
 /**
@@ -129,26 +93,4 @@ export function isZodErrorLikeShape(err: unknown): err is {
   const flattenLooksRight = typeof anyErr.flatten === "function";
 
   return nameLooksRight || issuesLooksRight || flattenLooksRight;
-}
-
-/**
- * Convert a Zod-like error to dense, per-field errors aligned with known fields.
- * Falls back to an empty dense map when the error shape is not Zod-like.
- */
-export function mapToDenseFieldErrorsFromZod<TFieldNames extends string>(
-  schemaError: unknown,
-  fields: readonly TFieldNames[],
-): DenseFieldErrorMap<TFieldNames> {
-  if (
-    isZodErrorLikeShape(schemaError) &&
-    typeof schemaError.flatten === "function"
-  ) {
-    const flattened = schemaError.flatten();
-    const sparse = pickAllowedSparseFieldErrors<TFieldNames, string>(
-      flattened.fieldErrors,
-      fields,
-    );
-    return expandSparseErrorsToDense(sparse, fields);
-  }
-  return buildEmptyDenseErrorMap(fields);
 }

@@ -4,7 +4,6 @@
  */
 
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
@@ -25,7 +24,7 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { expandSparseErrorsToDense } from "@/shared/forms/errors/error-map-utils";
+import { expandSparseErrorsToDense } from "@/shared/forms/errors/dense-error-map";
 import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapping";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";

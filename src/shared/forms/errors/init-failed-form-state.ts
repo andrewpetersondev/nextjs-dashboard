@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { buildEmptyDenseErrorMap } from "@/shared/forms/errors/error-map-utils";
+import { initializeDenseErrorMap } from "@/shared/forms/errors/dense-error-map";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 /**
@@ -10,7 +10,7 @@ export function buildInitialFailedFormState<TFieldNames extends string>(
   fieldNames: readonly TFieldNames[],
 ) {
   return {
-    errors: buildEmptyDenseErrorMap(fieldNames),
+    errors: initializeDenseErrorMap(fieldNames),
     message: "",
     success: false,
   } satisfies Extract<LegacyFormState<TFieldNames>, { success: false }>;

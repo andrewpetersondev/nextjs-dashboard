@@ -13,7 +13,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
-import { attachRootDenseMessageToField } from "@/shared/forms/errors/error-map-helpers";
+import { setDenseFieldErrorMessage } from "@/shared/forms/errors/dense-error-map-helpers";
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapping";
 import type {
   FormResult,
@@ -58,7 +58,7 @@ export async function login(
 
     if (!res.ok || !res.value) {
       // Map domain/service error into dense field errors for consistent UI handling.
-      const dense = attachRootDenseMessageToField(
+      const dense = setDenseFieldErrorMessage(
         fields,
         "Login failed. Please try again.",
       );
@@ -81,7 +81,7 @@ export async function login(
       message: "Unexpected error during login action",
     });
 
-    const dense = attachRootDenseMessageToField(
+    const dense = setDenseFieldErrorMessage(
       fields,
       "Unexpected error. Please try again.",
     );

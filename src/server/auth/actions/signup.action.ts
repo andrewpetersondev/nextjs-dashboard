@@ -9,6 +9,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
+import { mapSparseToDenseFieldError } from "@/shared/forms/mapping/sparse-to-dense-field-error.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type {
   FormResult,
@@ -33,22 +34,6 @@ const DASHBOARD_URL = "/dashboard";
 type SignupFormResult = FormResult<SignupField, unknown>;
 
 // --- Helpers ---
-function toDenseFieldErrorMap(
-  sparse: Partial<Record<SignupField, string[]>>,
-): DenseFieldErrorMap<SignupField> {
-  const result = {
-    email: [] as readonly string[],
-    password: [] as readonly string[],
-    username: [] as readonly string[],
-  } satisfies Record<SignupField, readonly string[]>;
-
-  for (const key of SIGNUP_FIELDS) {
-    const value = sparse[key] ?? [];
-    result[key] = value;
-  }
-
-  return result;
-}
 
 // Maps AuthServiceError to dense field errors
 // Helper type guards
@@ -149,7 +134,8 @@ export async function signupAction(
     // validation.error is { message, fieldErrors } from validateFormGeneric
     return {
       error: toValidationError(
-        toDenseFieldErrorMap(
+        mapSparseToDenseFieldError(
+          SIGNUP_FIELDS,
           (validation.error.fieldErrors ?? DEFAULT_FIELD_ERRORS) as Partial<
             Record<SignupField, string[]>
           >,

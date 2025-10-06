@@ -1,0 +1,63 @@
+import type { z } from "zod";
+import {
+  expandSparseErrorsToDense,
+  filterSparseFieldErrors,
+  initializeDenseErrorMap,
+} from "@/shared/forms/errors/dense-error-map";
+import {
+  flattenZodErrorFields,
+  isZodErrorLikeShape,
+} from "@/shared/forms/errors/zod-error-mapping";
+import type {
+  DenseFieldErrorMap,
+  SparseFieldErrorMap,
+} from "@/shared/forms/types/field-errors.type";
+
+/**
+ * Build sparse errors limited to allowed fields from a ZodError.
+ * Only fields present in allowedFields may appear in the returned map.
+ */
+export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
+  error: z.ZodError,
+  allowedFields: readonly TFieldNames[],
+): SparseFieldErrorMap<TFieldNames> {
+  const { fieldErrors } = flattenZodErrorFields(error);
+  return filterSparseFieldErrors<TFieldNames, string>(
+    fieldErrors,
+    allowedFields,
+  );
+}
+
+/**
+ * Build dense errors aligned to allowed fields from a ZodError.
+ * The returned object contains every allowed field (possibly empty arrays).
+ */
+export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
+  error: z.ZodError,
+  allowedFields: readonly TFieldNames[],
+): DenseFieldErrorMap<TFieldNames> {
+  const sparse = mapZodErrorToSparseFieldErrors(error, allowedFields);
+  return expandSparseErrorsToDense(sparse, allowedFields);
+}
+
+/**
+ * Convert a Zod-like error to dense, per-field errors aligned with known fields.
+ * Falls back to an empty dense map when the error shape is not Zod-like.
+ */
+export function mapToDenseFieldErrorsFromZod<TFieldNames extends string>(
+  schemaError: unknown,
+  fields: readonly TFieldNames[],
+): DenseFieldErrorMap<TFieldNames> {
+  if (
+    isZodErrorLikeShape(schemaError) &&
+    typeof schemaError.flatten === "function"
+  ) {
+    const flattened = schemaError.flatten();
+    const sparse = filterSparseFieldErrors<TFieldNames, string>(
+      flattened.fieldErrors,
+      fields,
+    );
+    return expandSparseErrorsToDense(sparse, fields);
+  }
+  return initializeDenseErrorMap(fields);
+}

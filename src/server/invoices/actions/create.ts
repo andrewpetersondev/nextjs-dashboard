@@ -17,11 +17,9 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
-import {
-  isZodErrorInstance,
-  mapZodErrorToDenseFieldErrors,
-} from "@/shared/forms/errors/zod-error-mapping";
+import { isZodErrorInstance } from "@/shared/forms/errors/zod-error-mapping";
 import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/mapping/zod-errors.mappers";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
