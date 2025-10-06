@@ -87,13 +87,6 @@ export const isValidationError = <TField extends string, TValue, TMsg>(
 /* -------------------------------------------------------------------------- */
 
 /**
- * @deprecated Legacy result shape (pre-`Result`).
- */
-export type LegacyResult<T, E> =
-  | { readonly success: true; readonly data: T }
-  | { readonly success: false; readonly error: E };
-
-/**
  * @deprecated Use FormResult instead.
  */
 export interface SuccessFormState<TData = unknown> {
@@ -127,110 +120,6 @@ export type LegacyFormState<
   TValue = string,
   TMsg = string,
 > = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
-
-/* -------------------------------------------------------------------------- */
-/* Adapters                                                                   */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Convert legacy form state (SuccessFormState | FailedFormState) to FormResult.
- */
-export const fromLegacyFormState = <
-  TField extends string,
-  TData = unknown,
-  TValue = string,
-  TMsg = string,
->(
-  legacy: LegacyFormState<TField, TData, TValue, TMsg>,
-): FormResult<TField, TData, TValue, TMsg> => {
-  if (legacy.success) {
-    return {
-      ok: true,
-      value: {
-        data: legacy.data,
-        message: legacy.message,
-      },
-    };
-  }
-  return {
-    error: {
-      fieldErrors: legacy.errors,
-      kind: "validation",
-      message: legacy.message,
-      values: legacy.values,
-    },
-    ok: false,
-  };
-};
-
-/**
- * Convert legacy result (success/error) into FormResult using mapping functions.
- */
-export const fromLegacyResult = <
-  TField extends string,
-  TData,
-  TValue = string,
-  TMsg = string,
-  E = unknown,
->(
-  legacy: LegacyResult<TData, E>,
-  mapError: (e: E) => FormError<TField, TValue, TMsg>,
-): FormResult<TField, TData, TValue, TMsg> =>
-  legacy.success
-    ? {
-        ok: true,
-        value: { data: legacy.data },
-      }
-    : {
-        error: mapError(legacy.error),
-        ok: false,
-      };
-
-/**
- * Convert new FormResult back to legacy SuccessFormState | FailedFormState.
- * (Facilitates incremental migration.)
- */
-export const toLegacyFormState = <
-  TField extends string,
-  TData,
-  TValue = string,
-  TMsg = string,
->(
-  result: FormResult<TField, TData, TValue, TMsg>,
-): LegacyFormState<TField, TData, TValue, TMsg> =>
-  result.ok
-    ? {
-        data: result.value.data,
-        message: result.value.message,
-        success: true,
-      }
-    : {
-        errors: isValidationError(result.error)
-          ? result.error.fieldErrors
-          : ({} as DenseFieldErrorMap<TField, TMsg>),
-        message: result.error.message,
-        success: false,
-        values: isValidationError(result.error)
-          ? (result.error.values as
-              | SparseFieldValueMap<TField, TValue>
-              | undefined)
-          : undefined,
-      };
-
-/**
- * Convert FormResult into LegacyResult for callers expecting `success` + (data|error).
- */
-export const toLegacyResult = <
-  TField extends string,
-  TData,
-  TValue = string,
-  TMsg = string,
->(
-  result: FormResult<TField, TData, TValue, TMsg>,
-): LegacyResult<TData, FormError<TField, TValue, TMsg>> =>
-  result.ok
-    ? { data: result.value.data, success: true }
-    : { error: result.error, success: false };
 
 /* -------------------------------------------------------------------------- */
 /* Convenience Narrowing Helpers                                              */
