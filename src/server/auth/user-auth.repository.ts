@@ -17,6 +17,24 @@ import {
   ValidationError,
 } from "@/shared/core/errors/domain-error";
 
+// --- Utility: Normalize input for signup, to enforce invariants early ---
+function toNormalizedSignupInput(
+  input: AuthSignupDalInput,
+): AuthSignupDalInput {
+  return {
+    ...input,
+    email: String(input.email).trim().toLowerCase(),
+    username: String(input.username).trim(),
+  };
+}
+
+// --- Utility: Validate mandatory signup fields ---
+function assertSignupFields(input: AuthSignupDalInput): void {
+  if (!input.email || !input.passwordHash || !input.username || !input.role) {
+    throw new ValidationError("Missing required fields for signup.");
+  }
+}
+
 /**
  * Repository for user authentication flows (signup/login).
  * Encapsulates DAL usage and provides a single point for cross-cutting policies.
@@ -28,54 +46,21 @@ export class AuthUserRepo {
     this.db = db;
   }
 
-  //  /**
-  //   * Run a sequence of repository operations inside a transaction.
-  //   * Orchestration remains in Service; txRepo mirrors this repository API but is bound to the tx connection.
-  //   */
-  //  async withTransaction<T>(
-  //    fn: (txRepo: AuthUserRepo) => Promise<T>,
-  //  ): Promise<T> {
-  //    try {
-  //      // Use the underlying db's transaction type without forcing it to Database.
-  //      // The callback receives a tx that is API-compatible with Database for our repository needs.
-  //      // We construct a repo bound to that tx and keep fn's typing over the repo surface.
-  //      return await (
-  //        this.db as {
-  //          transaction: <R>(scope: (tx: unknown) => Promise<R>) => Promise<R>;
-  //        }
-  //      ).transaction(async (tx) => {
-  //        // todo: what the hell is this?
-  //        const txRepo = new AuthUserRepo(tx as unknown as Database);
-  //        return await fn(txRepo);
-  //      });
-  //    } catch (err: unknown) {
-  //      serverLogger.error(
-  //        {
-  //          context: "repo.AuthUserRepo.withTransaction",
-  //          err,
-  //          kind: "unexpected",
-  //        },
-  //        "Transaction failed in AuthUserRepo",
-  //      );
-  //      throw new DatabaseError("Transaction failed");
-  //    }
-  //  }
-
   /**
-   * Run a sequence of repository operations inside a transaction.
-   * Orchestration remains in Service; txRepo mirrors this repository API but is bound to the tx connection.
+   * Runs a sequence of operations within a database transaction.
+   *
+   * @param fn - The operations to perform within the transaction.
+   * @returns The result of the operations.
+   * @throws DatabaseError - If the transaction fails.
    */
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepo) => Promise<T>,
   ): Promise<T> {
     try {
-      // Preserve Drizzle's transaction type while keeping our repo API surface.
       const dbWithTx = this.db as {
         transaction: <R>(scope: (tx: unknown) => Promise<R>) => Promise<R>;
       };
-
       return await dbWithTx.transaction(async (tx) => {
-        // Bind a repo to the transactional connection; keep Database-compat at call sites.
         const txRepo = new AuthUserRepo(tx as unknown as AppDatabase);
         return await fn(txRepo);
       });
@@ -93,32 +78,23 @@ export class AuthUserRepo {
   }
 
   /**
-   * Creates a new user for the auth/signup flow.
+   * Creates a new user for the signup flow.
+   *
+   * @param input - Signup input, validated and normalized.
+   * @returns The created user entity.
    * @throws ConflictError | ValidationError | DatabaseError
    */
   async signup(input: AuthSignupDalInput): Promise<UserEntity> {
     try {
-      if (
-        !input.email ||
-        !input.passwordHash ||
-        !input.username ||
-        !input.role
-      ) {
-        throw new ValidationError("Missing required fields for signup.");
-      }
+      assertSignupFields(input);
+      const normalized = toNormalizedSignupInput(input);
 
-      // REFACTOR: move input validation and normalization to the action layer and service layer.
-      const row = await createUserForSignup(this.db, {
-        email: String(input.email).trim().toLowerCase(),
-        passwordHash: input.passwordHash,
-        role: input.role,
-        username: String(input.username).trim(),
-      });
+      const row = await createUserForSignup(this.db, normalized);
 
+      // Defensive: DAL throws if row is not created, this check is redundant but type-safe.
       if (!row) {
-        throw new ValidationError("Email, username and password are required.");
+        throw new DatabaseError("User row creation returned null/undefined.");
       }
-
       return newUserDbRowToEntity(row);
     } catch (err: unknown) {
       if (
@@ -131,6 +107,7 @@ export class AuthUserRepo {
       serverLogger.error(
         {
           context: "repo.AuthUserRepo.signup",
+          err,
           kind: "unexpected",
         },
         "Unexpected error during signup repository operation",
@@ -140,7 +117,10 @@ export class AuthUserRepo {
   }
 
   /**
-   * Fetches a user by email for login; Service will verify password against stored hash.
+   * Fetches a user by email for login.
+   *
+   * @param input - Login input (email only).
+   * @returns The user entity if found and password fields exist.
    * @throws UnauthorizedError | ValidationError | DatabaseError
    */
   async login(input: AuthLoginDalInput): Promise<UserEntity> {
@@ -153,7 +133,11 @@ export class AuthUserRepo {
 
       if (!row.password || typeof row.password !== "string") {
         serverLogger.error(
-          { context: "repo.AuthUserRepo.login" },
+          {
+            context: "repo.AuthUserRepo.login",
+            kind: "auth-invariant",
+            userId: row.id,
+          },
           "User row missing hashed password; cannot authenticate",
         );
         throw new UnauthorizedError("Invalid email or password.");
@@ -169,7 +153,11 @@ export class AuthUserRepo {
         throw err;
       }
       serverLogger.error(
-        { context: "repo.AuthUserRepo.login", kind: "unexpected" },
+        {
+          context: "repo.AuthUserRepo.login",
+          err,
+          kind: "unexpected",
+        },
         "Unexpected error during login repository operation",
       );
       throw new DatabaseError("Database operation failed during login.");

@@ -6,33 +6,28 @@ import { executeDalOrThrow } from "@/server/errors/error-wrappers.throw";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
- * Inserts a new user for signup.
- * Expects pre-hashed password via AuthSignupDalInput.passwordHash.
+ * Inserts a new user record for signup flow with a pre-hashed password.
+ * Never returns null; always throws on error or invariant violation.
+ *
  * @param db - Database connection
- * @param input - AuthSignupDalInput
- * @returns NewUserRow if created, otherwise null
- * @throws ConflictError (unique violation)
- * @throws DatabaseError (infra errors)
+ * @param input - AuthSignupDalInput containing validated, normalized user input
+ * @returns {Promise<NewUserRow>} - The freshly inserted user row
+ * @throws ConflictError (if unique constraint violated)
+ * @throws DatabaseError (if underlying database fails)
+ * @throws Error (if invariant/row-missing)
+ *
  * @remarks
- * - Use try-catch for the only purpose of throwing a more specific error (e.g. "user already exists").
- * - Use executeDalOrThrow to ensure the db operation is executed and the result is returned.
- * - REFACTOR: this function should not return null, because null is not an expected value.
- * - REFACTOR: this function should throw a more specific error, such as "user already exists."
+ * - Always use as-only server context
+ * - Only call with inputs you want to persist as issued
  */
 export async function createUserForSignup(
   db: AppDatabase,
   input: AuthSignupDalInput,
-): Promise<NewUserRow | null> {
-  // Inputs are validated in the service layer. Inputs are normalized in the action layer with generic form validation function.
+): Promise<NewUserRow> {
   const { email, username, passwordHash, role } = input;
-  // Why should I check for null? This should never happen. If it does, it's a bug.
-  // DAL should return null for some operations. Just not this one. DAL should return null if the null is an expected value. For example, checking if something exists?
-  if (!email || !username || !passwordHash || !role) {
-    return null;
-  }
 
   return await executeDalOrThrow(async () => {
-    const [userRow] = await db
+    const insertedRows = await db
       .insert(users)
       .values({
         email,
@@ -42,14 +37,23 @@ export async function createUserForSignup(
       })
       .returning();
 
+    const userRow = insertedRows?.[0];
+
     if (!userRow) {
-      // If the db does not return a row, then an exception was already thrown and caught by the executeDalOrThrow wrapper function.
-      // This block should never run. If this does run, it indicates an invariant violation, not a normal null.
+      // Invariant: A successful DB insert must return the row; log and throw explicit error
       serverLogger.error(
-        { context: "dal.createUserForSignup" },
-        "This block should never run. If this does run, it indicates an invariant violation, not a normal null.",
+        {
+          context: "dal.createUserForSignup",
+          email,
+          msg: "INSERT returned no user row; indicates DB or ORM invariant violation",
+          role,
+          username,
+        },
+        "User creation: invariant violation (no row returned)",
       );
-      return null;
+      throw new Error(
+        "Invariant violation: insert did not return a new user row. This should never happen.",
+      );
     }
 
     return userRow;
