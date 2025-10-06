@@ -4,7 +4,7 @@ import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { ValidationError } from "@/shared/core/errors/domain-error";
-import { ensure } from "@/shared/core/validation/primitives/ensure";
+import { validateCondition } from "@/shared/core/validation/primitives/assert.condition";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
@@ -21,36 +21,39 @@ import { isDateValid } from "@/shared/utils/date/guards";
  * @throws {ValidationError} When row data is invalid or missing required fields
  */
 function validateRevenueRow(revenueRow: RevenueRow): void {
-  ensure(revenueRow.id, "Invalid revenue row: missing required field 'id'");
-  ensure(
+  validateCondition(
+    revenueRow.id,
+    "Invalid revenue row: missing required field 'id'",
+  );
+  validateCondition(
     revenueRow.period,
     "Invalid revenue row: missing required field 'period'",
   );
-  ensure(
+  validateCondition(
     revenueRow.calculationSource,
     "Invalid revenue row: missing required field 'calculationSource'",
   );
-  ensure(
+  validateCondition(
     isDateValid(revenueRow.createdAt),
     "Invalid revenue row: 'createdAt' must be a Date",
   );
-  ensure(
+  validateCondition(
     isDateValid(revenueRow.updatedAt),
     "Invalid revenue row: 'updatedAt' must be a Date",
   );
-  ensure(
+  validateCondition(
     isNonNegativeInteger(revenueRow.invoiceCount),
     "Invalid revenue row: 'invoiceCount' must be a non-negative integer",
   );
-  ensure(
+  validateCondition(
     isNonNegativeNumber(revenueRow.totalAmount),
     "Invalid revenue row: 'totalAmount' must be a non-negative number",
   );
-  ensure(
+  validateCondition(
     isNonNegativeNumber(revenueRow.totalPaidAmount as number),
     "Invalid revenue row: 'totalPaidAmount' must be a non-negative number",
   );
-  ensure(
+  validateCondition(
     isNonNegativeNumber(revenueRow.totalPendingAmount as number),
     "Invalid revenue row: 'totalPendingAmount' must be a non-negative number",
   );

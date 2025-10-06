@@ -1,4 +1,4 @@
-import { hasItems } from "@/shared/forms/types/core-types.util";
+import { isNonEmptyArray } from "@/shared/forms/types/core-types.util";
 import type {
   DenseFieldErrorMap,
   FieldError,
@@ -30,7 +30,7 @@ export function selectSparseFieldErrorsForAllowedFields<
     const maybeErrors = (
       fieldErrors as Record<string, readonly TMsg[] | undefined>
     )[key];
-    if (hasItems(maybeErrors)) {
+    if (isNonEmptyArray(maybeErrors)) {
       errors[key] = maybeErrors as FieldError<TMsg>;
     }
   }

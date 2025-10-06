@@ -4,33 +4,37 @@ import type {
 } from "@/shared/forms/types/core-types.util";
 
 /**
- * Field-level error: non-empty readonly array of messages.
+ * Represents an error associated with a field, containing a non-empty, readonly array of messages.
  *
- * Use this type for sparse maps where existence implies at least one error.
- *
- * @typeParam TMsg - message type (default: string).
+ * @typeParam TMsg - The type of the error message, defaulting to `string`.
+ * @public
+ * @example
+ * const error: FieldError = ["Required field", "Invalid format"];
  */
 export type FieldError<TMsg = string> = NonEmptyReadonlyArray<TMsg>;
+
 /**
- * Sparse error map.
+ * @public
+ * Represents a sparse map of field errors, useful for form validation.
  *
- * - Only includes fields that have at least one error.
- * - Each present key maps to a non-empty readonly array (`FieldError`).
- *
- * @typeParam TField - string-literal union of field names (required).
- * @typeParam TMsg - message type (default: string).
+ * @typeParam TField - The union of valid field names.
+ * @typeParam TMsg - The type of error message, defaults to `string`.
+ * @example
+ * ```ts
+ * type FormErrors = SparseFieldErrorMap<'email' | 'password'>;
+ * ```
  */
 export type SparseFieldErrorMap<TField extends string, TMsg = string> = Partial<
   Readonly<Record<TField, FieldError<TMsg>>>
 >;
+
 /**
- * Dense error map.
+ * Represents a dense mapping of field names to an array of error messages.
  *
- * - Every key from `TField` must be present.
- * - If a field has no errors, its value must be the (possibly empty) readonly array `[]`.
- *
- * @typeParam TField - string-literal union of field names (required).
- * @typeParam TMsg - message type (default: string).
+ * @typeParam TField - The type representing the fields, typically a string literal union.
+ * @typeParam TMsg - The type of the error message, defaults to `string`.
+ * @see DenseReadonlyRecord
+ * @public
  */
 export type DenseFieldErrorMap<
   TField extends string,
@@ -38,10 +42,15 @@ export type DenseFieldErrorMap<
 > = DenseReadonlyRecord<TField, readonly TMsg[]>;
 
 /**
- * Sparse map of form values: keys may be omitted (fields that were not submitted/are not present).
+ * Represents a map where specified fields may have associated values, or be undefined.
  *
- * @typeParam TField - string-literal union of field names (required).
- * @typeParam TValue - raw value type for fields (default: string).
+ * @typeParam TField - The set of keys (fields) that can exist in the map.
+ * @typeParam TValue - The type of values associated with the keys. Defaults to `string`.
+ * @example
+ * ```
+ * type UserFields = SparseFieldValueMap<'name' | 'email', string>;
+ * const example: UserFields = { name: 'John Doe' };
+ * ```
  */
 export type SparseFieldValueMap<
   TField extends string,
@@ -49,14 +58,28 @@ export type SparseFieldValueMap<
 > = Partial<Record<TField, TValue>>;
 
 // Enriched error messages with codes for i18n/UX consistency.
+/**
+ * Represents an error message with a code and descriptive text.
+ *
+ * @public
+ * @readonly
+ * @example
+ * ```
+ * const error: ErrorMessage = { code: '404', message: 'Not Found' };
+ * ```
+ */
 export interface ErrorMessage {
   readonly code: string;
   readonly message: string;
 }
 
 /**
- * Dense map variant with coded messages.
- * Use this in Actions/UI; Services may construct the same shape via `expected(...)`.
+ * Represents a dense error mapping for fields with associated error messages.
+ *
+ * @typeParam TField - The type of field keys used in the error mapping.
+ * @remarks This type associates each field with a specific error message.
+ * @see {DenseFieldErrorMap}, {ErrorMessage}
+ * @beta
  */
 export type DenseFieldErrorMapCoded<TField extends string> = DenseFieldErrorMap<
   TField,
@@ -64,7 +87,11 @@ export type DenseFieldErrorMapCoded<TField extends string> = DenseFieldErrorMap<
 >;
 
 /**
- * Form-level error (non-field-specific) with code.
+ * @alpha
+ * Represents a form error with a specific code and message.
+ *
+ * @property code - A unique identifier for the error.
+ * @property message - A descriptive message about the error.
  */
 export interface FormErrorCoded {
   readonly code: string;
@@ -72,7 +99,12 @@ export interface FormErrorCoded {
 }
 
 /**
- * Combined dense error payload for forms.
+ * @public
+ * Represents a mapping of errors in a dense format, associating fields and messages with codes.
+ *
+ * @typeParam TField - The string type representing specific form fields.
+ * @property form - An optional error code for the entire form.
+ * @property fields - An optional mapping of specific field names to error messages.
  */
 export interface DenseErrorMapCoded<TField extends string> {
   readonly form?: FormErrorCoded;
