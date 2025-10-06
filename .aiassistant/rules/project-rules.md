@@ -27,7 +27,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 ## Attachment & Folder Access
 
 - Always use the latest code or content from attached files before answering or suggesting changes.
-- Do not reference files or data outside explicit attachments.
 - Follow all rules in referenced instruction files.
 
 ## Conflict Resolution & Fallbacks
@@ -56,14 +55,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
     - rollback plan and owner
 - Pin exact versions; no auto-range updates for canary packages.
 - Weekly review for canary impact; rollback on breaking/regression per ADR.
-
-## Enforcement Hooks
-
-- CI must run: typecheck, biome lint/format check, import-boundaries lint, unit/integration tests, cypress e2e with
-  a11y, docs lint/link check.
-- Pre-commit: biome format+lint on staged files; typecheck for changed TS files; markdown lint for changed docs.
-- Provide pnpm scripts: `typecheck`, `lint`, `format:check`, `test`, `test:e2e`, `a11y`, `docs:lint`, `docs:links`,
-  `lint:imports`.
 
 ## Response Format & Quick Checklist
 
