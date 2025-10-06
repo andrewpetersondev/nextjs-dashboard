@@ -15,7 +15,7 @@ import {
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 
 /** Log validation failures with minimal, non-sensitive context. */
 function logValidationFailure(context: string, error: unknown): void {
@@ -32,6 +32,12 @@ function logValidationFailure(context: string, error: unknown): void {
   });
 }
 
+// --- Local error wrapper to satisfy ErrorLike and carry field errors ---
+interface ValidationFieldErrorsError<TFieldNames extends string> {
+  readonly message: string; // satisfies ErrorLike
+  readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
+}
+
 /**
  * Internal helper that maps a zod failure into a domain Result with dense errors.
  */
@@ -39,7 +45,7 @@ function toFailureResult<TFieldNames extends string, TOut>(
   error: unknown,
   fields: readonly TFieldNames[],
   loggerContext: string,
-): Result<TOut, DenseFieldErrorMap<TFieldNames>> {
+): Result<TOut, ValidationFieldErrorsError<TFieldNames>> {
   if (isZodErrorLikeShape(error)) {
     logValidationFailure(loggerContext, error);
     return toValidationResult<TFieldNames, TOut>(
@@ -61,8 +67,11 @@ function toFailureResult<TFieldNames extends string, TOut>(
  */
 export function toValidationResult<TFieldNames extends string, TOut = never>(
   errors: DenseFieldErrorMap<TFieldNames>,
-): Result<TOut, DenseFieldErrorMap<TFieldNames>> {
-  return Err(errors);
+): Result<TOut, ValidationFieldErrorsError<TFieldNames>> {
+  return Err({
+    fieldErrors: errors,
+    message: FORM_ERROR_MESSAGES.VALIDATION_FAILED,
+  });
 }
 
 /** Options for validateFormGeneric, factored for reuse and clarity. */
@@ -77,7 +86,7 @@ export interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
 }
 
 /**
- * Validate FormData with a Zod schema and return a FormState (UI boundary).
+ * Validate FormData with a Zod schema and return a FormResult (UI boundary).
  *
  * @template TIn Parsed input shape from schema.
  * @template TFieldNames Allowed field-name union (string keys of TIn).
@@ -85,7 +94,7 @@ export interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
  * @param schema Zod schema defining parsing/validation.
  * @param allowedFields Optional whitelist of accepted field names.
  * @param options Additional behavior overrides (fields/raw/messages/log context).
- * @returns Promise<FormState<TFieldNames, TIn>>
+ * @returns Promise<FormResult<TFieldNames, TIn>>
  */
 export async function validateFormGeneric<
   TIn,
@@ -95,7 +104,7 @@ export async function validateFormGeneric<
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<LegacyFormState<TFieldNames, TIn>> {
+): Promise<FormResult<TFieldNames, TIn>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,
@@ -115,7 +124,6 @@ export async function validateFormGeneric<
   try {
     parsed = await schema.safeParseAsync(raw);
   } catch (e) {
-    // Unexpected throw path (should be rare with safeParseAsync)
     const failure = toFailureResult<TFieldNames, TIn>(e, fields, loggerContext);
     return mapResultToFormState(failure, {
       failureMessage: messages?.failureMessage ?? "Validation failed",
@@ -139,7 +147,10 @@ export async function validateFormGeneric<
     });
   }
 
-  const result: Result<TIn, DenseFieldErrorMap<TFieldNames>> = Ok(parsed.data);
+  // Success path unchanged
+  const result: Result<TIn, ValidationFieldErrorsError<TFieldNames>> = Ok(
+    parsed.data,
+  );
   return mapResultToFormState(result, {
     failureMessage: messages?.failureMessage,
     fields,

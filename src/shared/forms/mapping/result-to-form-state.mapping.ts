@@ -4,16 +4,26 @@ import {
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/i18n/form-messages.const";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type {
+  FormError,
+  FormResult,
+  FormSuccess,
+} from "@/shared/forms/types/form-state.type";
 import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
+/** Local ErrorLike wrapper used by validate-form failure path. */
+interface ValidationFieldErrorsError<TFieldNames extends string> {
+  readonly message: string;
+  readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
+}
+
 /**
- * Map a Result<TData, DenseFieldErrorMap> to a canonical FormState (ok union).
+ * Map a Result<TData, ValidationFieldErrorsError> to a canonical FormResult (ok/err union).
  * @template TFieldNames Field name union.
  * @template TData Success data type.
  */
 export function mapResultToFormState<TFieldNames extends string, TData>(
-  result: Result<TData, DenseFieldErrorMap<TFieldNames>>,
+  result: Result<TData, ValidationFieldErrorsError<TFieldNames>>,
   params: {
     successMessage?: string;
     failureMessage?: string;
@@ -21,7 +31,7 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
     fields: readonly TFieldNames[];
     redactFields?: readonly TFieldNames[];
   },
-): LegacyFormState<TFieldNames, TData> {
+): FormResult<TFieldNames, TData> {
   const {
     successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -31,16 +41,18 @@ export function mapResultToFormState<TFieldNames extends string, TData>(
   } = params;
 
   if (result.ok) {
-    return {
+    const value: FormSuccess<TData> = {
       data: result.value,
       message: successMessage,
-      success: true,
     };
+    return { ok: true, value };
   }
-  return {
-    errors: result.error,
-    message: failureMessage,
-    success: false,
+
+  const error: FormError<TFieldNames> = {
+    fieldErrors: result.error.fieldErrors,
+    kind: "validation",
+    message: result.error.message || failureMessage,
     values: buildDisplayFieldValues(raw, fields, redactFields),
   };
+  return { error, ok: false };
 }

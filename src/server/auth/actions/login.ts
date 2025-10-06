@@ -1,5 +1,4 @@
 "use server";
-
 import { redirect } from "next/navigation";
 import {
   LOGIN_FIELDS_LIST,
@@ -16,32 +15,42 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { toUserId } from "@/shared/domain/id-converters";
 import { attachRootDenseMessageToField } from "@/shared/forms/errors/error-map-helpers";
 import { mapResultToFormState } from "@/shared/forms/mapping/result-to-form-state.mapping";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type {
+  FormResult,
+  FormValidationError,
+} from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Login Server Action
  * Validates, authenticates user, starts session, then redirects.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function login(
-  _prevState: LegacyFormState<LoginField, unknown>,
+  _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
-): Promise<LegacyFormState<LoginField, unknown>> {
+): Promise<FormResult<LoginField, unknown>> {
   const fields = LOGIN_FIELDS_LIST;
 
   // NOTE: Login Action is minimal to explore how it is different from Signup Action; Signup Action is maximal.
   const validated = await validateFormGeneric(formData, LoginSchema);
 
-  // If validation failed, return the FormState produced by validateFormGeneric
-  if (!validated.success || !validated.data) {
-    return validated;
+  // FAILED BRANCH: return FormResult from validateFormGeneric mapping
+  if (!validated.ok) {
+    // validated.error already carries kind/message/fieldErrors per validateFormGeneric contract.
+    return {
+      error: validated.error as FormValidationError<LoginField>,
+      ok: false,
+    };
   }
 
   try {
     // Brand raw password at action boundary
     const input = {
-      email: validated.data.email,
-      password: asPasswordRaw(validated.data.password as unknown as string),
+      email: validated.value.data.email,
+      password: asPasswordRaw(
+        validated.value.data.password as unknown as string,
+      ),
     };
 
     const service = new UserAuthFlowService(getAppDb());
