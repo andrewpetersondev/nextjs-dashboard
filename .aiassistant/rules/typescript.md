@@ -23,6 +23,7 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 
 ## Type Safety Enforcement
 
+- Use maximum type-safety, using casts only on primitive types (String, Number, Boolean, etc.).
 - All exported functions, components, and hooks must have explicit parameter and return types.
 - All generics must be constrained and named.
 - No use of `any` in public APIs; only allowed in isolated, documented test cases.

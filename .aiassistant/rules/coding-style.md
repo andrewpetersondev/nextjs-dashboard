@@ -23,17 +23,16 @@ Review [Structure & Architecture](./structure-architecture.md) when available.
 - Prefer standard utility types; avoid unnecessary custom wrappers.
 - Extract predicates/utilities; avoid deep nesting and excessive branching.
 - All exported symbols must have explicit types.
-- Avoid `any` except for isolated, documented test cases.
 - Use biome for formatting and linting; sort object properties by key.
 - Extract magic numbers/strings to named constants.
 - Use descriptive names; avoid abbreviations.
-- Target cyclomatic complexity ≤10; avoid nesting deeper than 3 levels; refactor into helpers when exceeded.
+- Target cyclomatic complexity ≤15; avoid nesting deeper than 3 levels; refactor into helpers when exceeded.
 
 ## React & Component Style
 
 - Export explicit prop and return types for all components/hooks.
 - Prefer function components; avoid class components.
-- Type all event handlers; avoid implicit `any`.
+- Type all event handlers.
 - Separate validation, transformation, and side-effects into dedicated functions.
 
 ## File & Module Organization

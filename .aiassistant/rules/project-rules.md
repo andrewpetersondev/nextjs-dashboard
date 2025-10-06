@@ -86,7 +86,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 
 ## Testing Policy
 
-- Pull requests must pass unit, integration, e2e, and a11y checks.
 - Minimum coverage targets: 80% lines and branches for affected packages.
 - Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
 - Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
