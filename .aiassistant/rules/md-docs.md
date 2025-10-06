@@ -41,10 +41,9 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Document changes in the file header.
 - Run docs:lint and docs:links in CI; fix any broken links before merge.
 
-## Ownership & Cadence
+## CI & Ownership
 
-- Each doc has an owner and must include:
-    - Summary, Owner, Last updated.
-- Quarterly review required; stale docs must be updated or archived.
+- CI jobs for docs: run markdown lint and link checker; fail on errors.
+- Each doc must list an Owner responsible for quarterly reviews and link integrity.
 
 _Last updated: 2025-10-05_

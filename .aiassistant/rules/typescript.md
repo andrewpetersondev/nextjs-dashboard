@@ -110,6 +110,7 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Do not export inferred anonymous object types; export a named type/interface for all public shapes.
 - Use `import type` for all type-only imports; enforce via lint rule.
 - Server-only modules must not be imported into client components; enforce with lint rule or build-time check.
+- Add import-boundaries lint to prevent higher-layer imports in lower layers.
 
 ## Review Checklist (TypeScript)
 

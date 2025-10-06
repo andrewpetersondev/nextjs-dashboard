@@ -62,6 +62,13 @@ clarity throughout the project.
     - Avoid over-fetching; paginate long lists; virtualize when >100 rows.
     - Control bundle size by keeping shared code in server or shared layers; use type-only imports in client.
 
+### Performance Budgets & Profiling
+
+- Route/page JS budget (client): 200 KB gzip target; warn at 250 KB; fail at 300 KB.
+- LCP target: ≤2.5s on Fast 3G emulation; CLS <0.1; TBT <300ms.
+- Require Lighthouse runs for key routes in CI with thresholds; PR fails on regressions.
+- Use React Profiler for interactions exceeding 50ms; document findings in PR when optimizations are applied.
+
 ## Import Boundaries Enforcement
 
 - Lower layers must not import from higher layers:

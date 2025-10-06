@@ -49,6 +49,22 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Note canary/experimental usage and suggest alternatives.
 - Use pnpm for package and script commands.
 
+### Canary and Rollback Policy
+
+- Enabling canary/experimental features requires an ADR documenting:
+    - feature flag/guard, stability notes, and exit criteria
+    - rollback plan and owner
+- Pin exact versions; no auto-range updates for canary packages.
+- Weekly review for canary impact; rollback on breaking/regression per ADR.
+
+## Enforcement Hooks
+
+- CI must run: typecheck, biome lint/format check, import-boundaries lint, unit/integration tests, cypress e2e with
+  a11y, docs lint/link check.
+- Pre-commit: biome format+lint on staged files; typecheck for changed TS files; markdown lint for changed docs.
+- Provide pnpm scripts: `typecheck`, `lint`, `format:check`, `test`, `test:e2e`, `a11y`, `docs:lint`, `docs:links`,
+  `lint:imports`.
+
 ## Response Format & Quick Checklist
 
 - For complex changes, begin with a 3–7 bullet checklist.
@@ -96,5 +112,10 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Current mode: single app.
 - If adding multiple packages, adopt packages/* and add a repository-level ADR defining package boundaries, shared
   configs, and release/versioning strategy before merging.
+
+## Performance Gates
+
+- CI must run bundle analysis for key routes; fail on exceeding budgets defined in structure-architecture.md.
+- Track size deltas per PR; include summary in checks.
 
 _Last updated: 2025-10-05_
