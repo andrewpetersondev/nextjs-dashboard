@@ -16,6 +16,7 @@ apply: always
 
 ## Core Principles
 
+- Never use barrel files.
 - Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
 - Allow casts **only for primitives** (string, number, boolean).
 - Enforce **maximum type safety** and **zero unsafe narrowing**.
