@@ -56,3 +56,48 @@ export function mapResultToFormResult<TFieldNames extends string, TData>(
   };
   return { error, ok: false };
 }
+
+/**
+ * Build a successful FormResult from already-validated data.
+ */
+export function toFormOk<TFieldNames extends string, TData>(
+  data: TData,
+  opts: {
+    readonly successMessage?: string;
+  } = {},
+): FormResult<TFieldNames, TData> {
+  const value: FormSuccess<TData> = {
+    data,
+    message: opts.successMessage ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
+  };
+  return { ok: true, value };
+}
+
+/**
+ * Build a failed FormResult from a dense error map (validation kind).
+ */
+export function toFormValidationErr<TFieldNames extends string, TData>(params: {
+  readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
+  readonly failureMessage?: string;
+  readonly raw?: Record<string, unknown>;
+  readonly fields?: readonly TFieldNames[];
+  readonly redactFields?: readonly TFieldNames[];
+}): FormResult<TFieldNames, TData> {
+  const {
+    fieldErrors,
+    failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
+    raw = {},
+    fields = [] as const,
+    redactFields = ["password" as TFieldNames],
+  } = params;
+
+  const error: FormError<TFieldNames> = {
+    fieldErrors,
+    kind: "validation",
+    message: failureMessage,
+    values: fields.length
+      ? selectDisplayableStringFieldValues(raw, fields, redactFields)
+      : undefined,
+  };
+  return { error, ok: false };
+}
