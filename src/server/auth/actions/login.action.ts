@@ -22,6 +22,16 @@ import {
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { ROUTES } from "@/shared/routes/routes";
 
+/**
+ * Handles the login action by validating form data, authenticating the user,
+ * setting up a session, and redirecting on success.
+ *
+ * @param _prevState - The previous state of the login form.
+ * @param formData - The submitted form data containing login credentials.
+ * @returns A promise that resolves to a {@link FormResult} representing the outcome.
+ * @throws If an unexpected error occurs during session establishment or redirection.
+ * @see UserAuthFlowService for authentication logic.
+ */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,

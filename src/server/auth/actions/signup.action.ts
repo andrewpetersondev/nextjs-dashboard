@@ -31,12 +31,25 @@ const DEFAULT_FIELD_ERRORS: DenseFieldErrorMap<SignupField> = {
 const DASHBOARD_URL = "/dashboard";
 
 // --- Types ---
+/**
+ * Represents the result of submitting a signup form.
+ *
+ * @typeParam SignupField - The type of the form fields for the signup form.
+ * @typeParam unknown - Placeholder for additional response data.
+ * @public
+ * @example
+ * const result: SignupFormResult = handleFormSubmission();
+ */
 type SignupFormResult = FormResult<SignupField, unknown>;
 
 // --- Helpers ---
 
-// Maps AuthServiceError to dense field errors
-// Helper type guards
+/**
+ * Determines if the provided error is a conflict error with specific targets.
+ *
+ * @param error - The error to evaluate, which can be of any type.
+ * @returns Whether the error is a conflict error with "email" or "username" targets.
+ */
 function isConflictError(
   error: unknown,
 ): error is { kind: "conflict"; targets: Array<"email" | "username"> } {
@@ -51,6 +64,12 @@ function isConflictError(
   );
 }
 
+/**
+ * Checks if the given error represents a "missing fields" error.
+ *
+ * @param error - The error object to evaluate.
+ * @returns True if the error is of type `{ kind: "missing_fields"; fields: SignupField[] }`, otherwise false.
+ */
 function isMissingFieldsError(
   error: unknown,
 ): error is { kind: "missing_fields"; fields: SignupField[] } {
@@ -66,7 +85,12 @@ function isMissingFieldsError(
   );
 }
 
-// Main mapper
+/**
+ * Transforms a given service error into a dense field error map.
+ *
+ * @param error - The error object received from the service.
+ * @returns A map of field errors for the corresponding signup fields.
+ */
 function serviceErrorToDenseFieldErrors(
   error: unknown,
 ): DenseFieldErrorMap<SignupField> {
@@ -89,6 +113,15 @@ function serviceErrorToDenseFieldErrors(
   return { ...DEFAULT_FIELD_ERRORS };
 }
 
+/**
+ * Converts field error details into a standardized `FormValidationError` object.
+ *
+ * @param errors - A map of field errors associated with signup fields.
+ * @param message - A descriptive message for the validation error.
+ * @param values - Optional additional context or data associated with the error.
+ * @returns A `FormValidationError` containing the provided field errors and details.
+ * @public
+ */
 function toValidationError(
   errors: DenseFieldErrorMap<SignupField>,
   message: string,
@@ -102,6 +135,12 @@ function toValidationError(
   };
 }
 
+/**
+ * Converts a validation error into a generic exception error.
+ *
+ * @returns A `SignupFormResult` containing pre-defined field errors, an error kind of "validation," and a generic error message.
+ * @alpha
+ */
 function toGenericExceptionError(): SignupFormResult {
   return {
     error: {
@@ -114,8 +153,11 @@ function toGenericExceptionError(): SignupFormResult {
 }
 
 /**
- * Server Action for signup.
- * Redirects on success; returns dense error map on failure.
+ * Handles the user signup process by validating input, calling the signup service, and managing session tokens.
+ *
+ * @param _prevState - The result of the previous signup attempt, used for state tracking on the client.
+ * @param formData - The form data submitted by the user for signup.
+ * @returns A promise resolving to `SignupFormResult`, indicating success or failure with any associated errors.
  */
 export async function signupAction(
   _prevState: SignupFormResult,
