@@ -114,9 +114,10 @@ export function toFormValidationErr<TFieldNames extends string, TData>(params: {
     fieldErrors,
     kind: "validation",
     message: failureMessage,
-    values: fields.length
-      ? selectDisplayableStringFieldValues(raw, fields, redactFields)
-      : undefined,
+    values:
+      fields.length > 0
+        ? selectDisplayableStringFieldValues(raw, fields, redactFields)
+        : undefined,
   };
   return { error, ok: false };
 }

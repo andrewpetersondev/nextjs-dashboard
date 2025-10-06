@@ -1,4 +1,4 @@
-// Purpose: slim, layered signup action using Result and form helpers consistently.
+// Purpose: thin signup action using shared Result helpers and centralized auth→form mapping.
 "use server";
 import { redirect } from "next/navigation";
 import {
@@ -8,12 +8,19 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
-import { UserAuthFlowService } from "@/server/auth/user-auth.service";
+import {
+  type AuthServiceError,
+  UserAuthFlowService,
+} from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
+import { authErrorToFormResult } from "@/server/forms/auth-error-to-form-result.mapper";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { tryCatchAsync } from "@/shared/core/result/result-async";
+import { mapOk } from "@/shared/core/result/result-map";
+import { flatMapAsync } from "@/shared/core/result/result-transform-async";
 import { toUserId } from "@/shared/domain/id-converters";
-import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import {
   toFormOk,
   toFormValidationErr,
@@ -25,6 +32,44 @@ import { ROUTES } from "@/shared/routes/routes";
 const LOGGER_CONTEXT = "signup.action";
 const LOGGER_CONTEXT_SESSION = "signup.action.session";
 
+type SessionResultError = AuthServiceError;
+
+// Map AppError -> AuthServiceError to keep error type consistent with service layer
+const mapAppToAuthError = (e: {
+  readonly message: string;
+}): SessionResultError => ({
+  kind: "unexpected",
+  message: e.message || "Unexpected error",
+});
+
+// Use tryCatchAsync and return a concrete Result<true, AuthServiceError>
+// this is essentially a side-effect service so it may be better to locate in /server/auth/session.service.ts
+async function establishSession(u: {
+  readonly id: string;
+  readonly role: string;
+}): Promise<Result<true, SessionResultError>> {
+  const r = await tryCatchAsync(async () => {
+    await setSessionToken(toUserId(u.id), toUserRole(u.role));
+    return true as const;
+  });
+
+  // Map the ambiguous Result<unknown, AppError> from tryCatchAsync to Result<true, AuthServiceError>
+  const mapped: Result<true, SessionResultError> = r.ok
+    ? Ok<true, SessionResultError>(true as const)
+    : Err<never, SessionResultError>(
+        mapAppToAuthError(r.error as { readonly message: string }),
+      );
+
+  if (!mapped.ok) {
+    serverLogger.error({
+      context: LOGGER_CONTEXT_SESSION,
+      error: { message: mapped.error.message, name: "AuthSessionError" },
+      message: "Failed to establish session",
+    });
+  }
+  return mapped;
+}
+
 /**
  * Handles the user signup process by validating input, calling the signup service, and managing session tokens.
  *
@@ -32,14 +77,20 @@ const LOGGER_CONTEXT_SESSION = "signup.action.session";
  * @param formData - The form data submitted by the user for signup.
  * @returns A promise resolving to `SignupFormResult`, indicating success or failure with any associated errors.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signupAction(
   _prevState: FormResult<SignupField, unknown>,
   formData: FormData,
 ): Promise<FormResult<SignupField, unknown>> {
   const fields = SIGNUP_FIELDS_LIST;
+  const rawEntries = Object.fromEntries(formData.entries());
+  const raw = Object.fromEntries(
+    Object.entries(rawEntries).map(([k, v]) => [
+      k,
+      typeof v === "string" ? v : String(v),
+    ]),
+  ) as Readonly<Record<string, string>>;
 
-  // 1) Validate input → Result<FormSuccess<{ email; password: username }>, ValidationError>
+  // 1) Validate input → Result<FormSuccess<{ email; password; username }>, ValidationError>
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
     loggerContext: LOGGER_CONTEXT,
   });
@@ -49,57 +100,29 @@ export async function signupAction(
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,
-      raw: Object.fromEntries(formData.entries()),
+      raw,
     });
   }
 
-  // 2) Authenticate
-  const input = {
-    email: validated.value.data.email,
-    password: validated.value.data.password,
-    username: validated.value.data.username,
-  };
+  const input = validated.value.data;
 
+  // 2) Service signup and compose with session setup using Result helpers
   const service = new UserAuthFlowService(getAppDb());
-  const res = await service.signup(input);
 
-  if (!res.ok) {
-    // Domain error → generic form validation error for UI
-    const dense = setSingleFieldErrorMessage(
-      fields,
-      "Signup failed. Please try again.",
-    );
-    return toFormValidationErr<SignupField, unknown>({
-      fieldErrors: dense,
-      fields,
-      raw: Object.fromEntries(formData.entries()),
-    });
+  const sessionResult: Result<true, SessionResultError> = await flatMapAsync<
+    typeof input,
+    { id: string; role: string },
+    SessionResultError,
+    SessionResultError
+  >(async (i) => service.signup(i))(Ok<typeof input, never>(input))
+    .then(mapOk((user) => ({ id: user.id, role: user.role })))
+    .then(flatMapAsync(establishSession));
+
+  if (!sessionResult.ok) {
+    return authErrorToFormResult<SignupField>(fields, sessionResult.error, raw);
   }
 
-  // 3) Session + redirect
-  try {
-    await setSessionToken(toUserId(res.value.id), toUserRole(res.value.role));
-  } catch (err: unknown) {
-    serverLogger.error({
-      context: LOGGER_CONTEXT_SESSION,
-      error:
-        err instanceof Error
-          ? { message: err.message, name: err.name }
-          : { message: "Unknown error" },
-      message: "Failed to establish session",
-    });
-    const dense = setSingleFieldErrorMessage(
-      fields,
-      "Unexpected error. Please try again.",
-    );
-    return toFormValidationErr<SignupField, unknown>({
-      fieldErrors: dense,
-      fields,
-      raw: Object.fromEntries(formData.entries()),
-    });
-  }
-
-  // success path: small ok result before redirect (useful for progressive enhancement)
+  // 3) Redirect on success
   redirect(ROUTES.DASHBOARD.ROOT);
   return toFormOk<SignupField, unknown>({});
 }

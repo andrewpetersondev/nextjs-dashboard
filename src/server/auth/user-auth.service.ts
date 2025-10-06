@@ -20,31 +20,6 @@ import {
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 
-// --- AuthServiceError Disciminated Union ---
-type AuthServiceError =
-  | {
-      fields: readonly SignupField[];
-      kind: "missing_fields";
-      message: string;
-    }
-  | {
-      kind: "conflict";
-      targets: ReadonlyArray<"email" | "username">;
-      message: string;
-    }
-  | {
-      kind: "invalid_credentials";
-      message: string;
-    }
-  | {
-      kind: "validation";
-      message: string;
-    }
-  | {
-      kind: "unexpected";
-      message: string;
-    };
-
 // --- Constants ---
 const DEFAULT_MISSING_FIELDS: readonly SignupField[] = [
   "email",
@@ -109,6 +84,21 @@ function toUnexpectedError(message: string = MSG_UNEXPECTED): AuthServiceError {
     message,
   };
 }
+
+export type AuthServiceError =
+  | {
+      readonly kind: "missing_fields";
+      readonly message: string;
+      readonly fields: readonly SignupField[];
+    }
+  | {
+      readonly kind: "conflict";
+      readonly message: string;
+      readonly targets: ReadonlyArray<"email" | "username">;
+    }
+  | { readonly kind: "invalid_credentials"; readonly message: string }
+  | { readonly kind: "validation"; readonly message: string }
+  | { readonly kind: "unexpected"; readonly message: string };
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.

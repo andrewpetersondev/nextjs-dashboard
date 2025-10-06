@@ -1,4 +1,4 @@
-// Purpose: slim, layered login action using Result and form helpers consistently.
+// Purpose: thin login action using shared Result helpers and centralized auth→form mapping.
 "use server";
 import { redirect } from "next/navigation";
 import {
@@ -10,10 +10,13 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import { setSessionToken } from "@/server/auth/session";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
+import { authErrorToFormResult } from "@/server/forms/auth-error-to-form-result.mapper";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { mapOk } from "@/shared/core/result/result-map";
+import { flatMapAsync } from "@/shared/core/result/result-transform-async";
 import { toUserId } from "@/shared/domain/id-converters";
-import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import {
   toFormOk,
   toFormValidationErr,
@@ -34,14 +37,14 @@ const LOGGER_CONTEXT_SESSION = "login.action.session";
  * @throws If an unexpected error occurs during session establishment or redirection.
  * @see UserAuthFlowService for authentication logic.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {
   const fields = LOGIN_FIELDS_LIST;
+  const raw = Object.fromEntries(formData.entries());
 
-  // 1) Validate input → Result<FormSuccess<{ email; password }>, ValidationError>
+  // 1) Validate input
   const validated = await validateFormGeneric(formData, LoginSchema, fields);
 
   if (!validated.ok) {
@@ -49,56 +52,52 @@ export async function loginAction(
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,
-      raw: Object.fromEntries(formData.entries()),
+      raw,
     });
   }
 
-  // 2) Authenticate
-  const input = {
-    email: validated.value.data.email,
-    password: validated.value.data.password,
-  };
+  const input = validated.value.data;
 
+  // 2) Service login + session using Result helpers
   const service = new UserAuthFlowService(getAppDb());
-  const res = await service.login(input);
 
-  if (!res.ok) {
-    // Domain error → generic form validation error for UI
-    const dense = setSingleFieldErrorMessage(
-      fields,
-      "Login failed. Please try again.",
+  const sessionResult: Result<
+    true,
+    Parameters<typeof authErrorToFormResult>[1]
+  > = await flatMapAsync<
+    typeof input,
+    { id: string; role: string },
+    Parameters<typeof authErrorToFormResult>[1],
+    Parameters<typeof authErrorToFormResult>[1]
+  >(async (i) => service.login(i))(Ok<typeof input, never>(input))
+    .then(mapOk((user) => ({ id: user.id, role: user.role })))
+    .then(
+      flatMapAsync(async (u) => {
+        try {
+          await setSessionToken(toUserId(u.id), toUserRole(u.role));
+          return Ok<true, never>(true);
+        } catch (err) {
+          serverLogger.error({
+            context: LOGGER_CONTEXT_SESSION,
+            error:
+              err instanceof Error
+                ? { message: err.message, name: err.name }
+                : { message: "Unknown error" },
+            message: "Failed to establish session",
+          });
+          return Err<true, Parameters<typeof authErrorToFormResult>[1]>({
+            kind: "unexpected",
+            message: "Unexpected error",
+          });
+        }
+      }),
     );
-    return toFormValidationErr<LoginField, unknown>({
-      fieldErrors: dense,
-      fields,
-      raw: Object.fromEntries(formData.entries()),
-    });
+
+  if (!sessionResult.ok) {
+    return authErrorToFormResult<LoginField>(fields, sessionResult.error, raw);
   }
 
-  // 3) Session + redirect
-  try {
-    await setSessionToken(toUserId(res.value.id), toUserRole(res.value.role));
-  } catch (err: unknown) {
-    serverLogger.error({
-      context: LOGGER_CONTEXT_SESSION,
-      error:
-        err instanceof Error
-          ? { message: err.message, name: err.name }
-          : { message: "Unknown error" },
-      message: "Failed to establish session",
-    });
-    const dense = setSingleFieldErrorMessage(
-      fields,
-      "Unexpected error. Please try again.",
-    );
-    return toFormValidationErr<LoginField, unknown>({
-      fieldErrors: dense,
-      fields,
-      raw: Object.fromEntries(formData.entries()),
-    });
-  }
-
-  // success path: small ok result before redirect (useful for progressive enhancement)
+  // 3) Redirect on success
   redirect(ROUTES.DASHBOARD.ROOT);
   return toFormOk<LoginField, unknown>({});
 }
