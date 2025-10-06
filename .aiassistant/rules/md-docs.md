@@ -8,8 +8,6 @@ apply: always
 
 Ensure all markdown docs are accurate, consistent, and follow project standards.
 
----
-
 ## General Rules
 
 - Use clear, descriptive headings and section titles.
@@ -18,8 +16,6 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Organize content by topic, using bullet or numbered lists for clarity.
 - All snippets must be valid and compatible (test/copy-paste where possible).
 - Format with prettier; IDE should auto-format on save.
-
----
 
 ## Structure & Content
 
@@ -30,8 +26,6 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Document footer includes last updated date.
 - Cross-reference related topics via inline markdown links.
 
----
-
 ## Review Checklist
 
 - Confirm formatting and linting with biome.
@@ -39,22 +33,12 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Ensure style, structure, and naming follow [Coding Style Instructions](./coding-style.md).
 - Check for outdated patterns or obsolete references.
 - Document changes in the file header.
+- Run docs:lint and docs:links in CI; fix any broken links before merge.
 
----
+## Ownership & Cadence
 
-## Responsibilities
+- Each doc has an owner and must include:
+    - Summary, Owner, Last updated.
+- Quarterly review required; stale docs must be updated or archived.
 
-- All contributors must update relevant docs when making code changes.
-
----
-
-## References
-
-- [Coding Style Instructions](./coding-style.md)
-- [TypeScript Instructions](./typescript.md)
-- [Result & Error Instructions](./result-error.md)
-- [Structure & Architecture](./structure-architecture.md)
-
----
-
-_Last updated: YYYY-MM-DD_
+_Last updated: 2025-10-05_

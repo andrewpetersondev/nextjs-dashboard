@@ -9,7 +9,11 @@ apply: always
 Document and enforce the organization, layering, and architectural strategies for maintainability, scalability, and
 clarity throughout the project.
 
----
+## Scope & Audience
+
+- Audience: maintainers, reviewers, and AI contributors.
+- Applies to: repository structure, import boundaries, layering, and Next.js architecture decisions.
+- Contexts: new modules, refactors, and ADRs; enforced during code review and linting.
 
 ## Directory Structure
 
@@ -21,8 +25,6 @@ clarity throughout the project.
 - **src/shell/**: Shell components for dashboard and UI composition.
 - **src/ui/**: UI primitives, atoms, molecules, navigation, styles, and documentation for organization.
 
----
-
 ## Layered Architecture
 
 - **App Layer**: Routing, layout, top-level error handling (`src/app/`).
@@ -30,8 +32,6 @@ clarity throughout the project.
 - **Server Layer**: Data access, business logic, error handling, events (`src/server/`).
 - **Shared Layer**: Cross-cutting concerns, utilities, and domain models (`src/shared/`).
 - **UI Layer**: Reusable UI primitives and composition patterns (`src/ui/`).
-
----
 
 ## Strategies & Principles
 
@@ -44,19 +44,31 @@ clarity throughout the project.
 - Validate and parse inputs server-side (Zod recommended).
 - Use biome for formatting and linting.
 
----
+## Next.js & React 19 Guidance
 
-## Approved Tooling
+- Components:
+    - Prefer Server Components for data fetching and heavy logic.
+    - Client Components only for interactivity; avoid bringing server-only deps client-side.
+    - Never pass non-serializable values across the RSC boundary; only JSON-serializable props.
+- Data Fetching & Caching:
+    - Default to server-first fetching; pass typed data to clients.
+    - Define revalidation via fetch({ next: { revalidate } }) or route segment config.
+    - Provide stable, typed cache keys; prefer AbortController for cancelable requests.
+- Streaming & Suspense:
+    - Keep boundaries small; avoid waterfalls; colocate Suspense with the data consumer when possible.
+- Mutations:
+    - Use Server Actions for mutations; validate inputs with Zod; return safe, typed unions or perform redirects.
+- Performance:
+    - Avoid over-fetching; paginate long lists; virtualize when >100 rows.
+    - Control bundle size by keeping shared code in server or shared layers; use type-only imports in client.
 
-- Next.js (App Router)
-- TypeScript (strict mode)
-- Biome (formatting and linting)
-- Cypress (end-to-end testing)
-- Drizzle (database migrations/config)
-- pnpm (package management)
-- PostCSS (CSS processing)
+## Import Boundaries Enforcement
 
----
+- Lower layers must not import from higher layers:
+    - shared may be imported by server/features/ui/app
+    - server may not import from app or ui
+    - features may not import from app
+- Enforce via lint rules (e.g., import/no-restricted-paths); exceptions require an ADR documenting rationale and scope.
 
 ## Review Checklist
 
@@ -65,7 +77,6 @@ clarity throughout the project.
 - Explicit strict TypeScript usage in all files.
 - Immutability and error handling patterns are applied consistently.
 - Tooling and configuration are validated and up-to-date.
+- Import boundaries are enforced by lint rules; exceptions have ADRs.
 
----
-
-_Last updated: YYYY-MM-DD_
+_Last updated: 2025-10-05_

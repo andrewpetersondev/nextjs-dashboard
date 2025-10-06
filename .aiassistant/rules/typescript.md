@@ -6,6 +6,12 @@ apply: always
 
 Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Always on.
 
+## Scope & Audience
+
+- Audience: all engineers and AI contributors.
+- Applies to: TypeScript code across app, features, server, shared, and ui layers.
+- Contexts: authoring, review, CI typecheck, and release readiness.
+
 ## Compiler Strictness
 
 - tsconfig: "strict": true; also enable noUncheckedIndexedAccess, noImplicitOverride,
@@ -14,8 +20,6 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
   functions/components/hooks. Allow local inference inside function bodies.
 - For libraries or shared utils, export explicit types for options and results; avoid exporting inferred anonymous
   types.
-
----
 
 ## Type Safety Enforcement
 
@@ -27,23 +31,17 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - All modules must export explicit types for options/results; no inferred anonymous types.
 - All null/undefined must be modeled explicitly; avoid non-null assertions.
 
----
-
 ## Types vs Interfaces
 
 - interface for extensible object shapes and public contracts.
 - type for unions, tuples, mapped, conditional, and utility-composed types.
 - Use readonly and as const for immutability; do not mutate function parameters.
 
----
-
 ## Nullability and Assertions
 
 - Avoid non-null assertions (!). If unavoidable, isolate with a comment explaining why and a narrow scope.
 - Prefer optional chaining and nullish coalescing over broad defaults that hide errors.
 - Model null/undefined explicitly in types; use exactOptionalPropertyTypes to avoid surprise widening.
-
----
 
 ## Generics
 
@@ -53,16 +51,12 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Keep generic depth shallow; avoid complex recursive conditional types unless encapsulated and well-documented.
 - For data fetch/transform utilities, prefer Result<TResult, TError> or typed exceptions boundary; never return any.
 
----
-
 ## Result and Discriminated Unions
 
 - Use a discriminated union for operations that can fail:
   type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
 - Discriminate via ok flag; never rely on presence checks of error/value only.
 - Map external/library errors into a small, app-specific error union.
-
----
 
 ## Async & Concurrency
 
@@ -72,8 +66,6 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Always handle rejection paths; convert to Result or normalize and rethrow with context.
 - Prefer AbortController for cancelable fetches and pass the signal through layers.
 
----
-
 ## Error Handling
 
 - Catch unknown; narrow via predicates or instanceof checks. Never assume error is Error.
@@ -82,8 +74,6 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - In client code, surface friendly messages; in server/actions, return typed unions or throw typed errors captured by
   boundaries.
 
----
-
 ## Next.js App Router Guidance
 
 - Prefer Server Components for data and heavy logic; keep Client Components as small shells for interactivity.
@@ -91,15 +81,11 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Use Suspense/streaming deliberately; keep boundaries minimal to avoid waterfall rendering.
 - Avoid client-side fetching when server can pre-render; pass typed props from server to client components.
 
----
-
 ## Zod Integration
 
 - Derive types with z.output<typeof Schema>; do not duplicate type definitions.
 - Prefer safeParse; return discriminated unions with parse details removed or summarized.
 - Do not expose raw ZodError to clients; map to a safe error shape.
-
----
 
 ## Code Organization
 
@@ -107,15 +93,11 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Use type-only imports (import type) for types to avoid runtime bloat and circular deps.
 - Avoid dumping grounds (utils.ts). Prefer small, named modules grouped by responsibility.
 
----
-
 ## Functions & Components
 
 - Functions: single-purpose, ≤50 lines, ≤4 parameters. Prefer a params object with required fields first, optional last.
 - Components/hooks: export explicit props and return types. Avoid implicit any in event handlers; type React events.
 - Separate validation, transformation, and side-effects into dedicated functions for testability and types.
-
----
 
 ## Data & Immutability
 
@@ -123,30 +105,11 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 - Avoid in-place mutations of state; prefer object/array spreads or structuredClone when needed.
 - Mark constants with as const to get literal types when used as discriminants/keys.
 
----
+## Additional Enforcement
 
-## Date, Numbers, and Serialization
-
-- Avoid Date as implicit timezone; prefer ISO strings in APIs and convert at boundaries.
-- Be explicit about number ranges/units. Consider branded types for identifiers and currencies.
-- Ensure all server → client data is JSON-serializable; avoid functions, Symbols, or BigInt without custom handling.
-
----
-
-## Testing Types
-
-- Use @ts-expect-error for intentional failures in tests to guard regressions.
-- Prefer narrow fixtures with explicit types; avoid any in tests except for boundary cases with comments.
-
----
-
-## JetBrains IDE Tips
-
-- Add explicit return types on exports for better navigation and refactors.
-- Prefer const enums or const objects with as const for stable symbols and auto-complete.
-- Keep modules small to leverage inspections and quick intentions effectively.
-
----
+- Do not export inferred anonymous object types; export a named type/interface for all public shapes.
+- Use `import type` for all type-only imports; enforce via lint rule.
+- Server-only modules must not be imported into client components; enforce with lint rule or build-time check.
 
 ## Review Checklist (TypeScript)
 
@@ -160,3 +123,6 @@ Purpose: Deterministic rules for strict, maintainable TypeScript in Next.js. Alw
 8. Server vs client concerns separated; inputs validated server-side; Zod safeParse preferred.
 9. Immutability favored; readonly and as const used where helpful.
 10. TSDoc on exported symbols with @param, @returns, @throws, @template for generics.
+11. No inferred anonymous exports; server-only code never imported client-side.
+
+_Last updated: 2025-10-05_

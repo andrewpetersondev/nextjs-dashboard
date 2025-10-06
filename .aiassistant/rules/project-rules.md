@@ -8,8 +8,6 @@ apply: always
 
 Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
 
----
-
 ## General Rules
 
 - Always inspect and use the most recent attached instruction files before proposing code changes.
@@ -20,23 +18,17 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
     - [Structure & Architecture](./structure-architecture.md)
 - Never access or reference files outside user-provided folders or attachments.
 
----
-
 ## Attachment & Folder Access
 
 - Always use the latest code or content from attached files before answering or suggesting changes.
 - Do not reference files or data outside explicit attachments.
 - Follow all rules in referenced instruction files.
 
----
-
 ## Conflict Resolution & Fallbacks
 
 - If instructions conflict, ask for clarification.
 - Default to strictest typing and safest operations.
 - Use current best practices and stable APIs when uncertain.
-
----
 
 ## Logging & Error Policy
 
@@ -45,15 +37,11 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Use structured logs at appropriate levels.
 - Handle TypeScript errors per [TypeScript Instructions](./typescript.md).
 
----
-
 ## Version & Tooling Constraints
 
 - Adhere to declared package versions; prefer stable APIs.
 - Note canary/experimental usage and suggest alternatives.
 - Use pnpm for package and script commands.
-
----
 
 ## Response Format & Quick Checklist
 
@@ -65,8 +53,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Summarize validation and suggest clear next steps.
 - Prompt for explicit user confirmation before any sensitive/irreversible action.
 
----
-
 ## Review Checklist
 
 - TypeScript is strict; all exports have explicit types (no implicit `any`).
@@ -74,15 +60,42 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - All code and suggestions reference and align with instruction files.
 - Changes are cross-referenced in file headers.
 
----
+## Scope & Audience
 
-## References
+- Audience: AI contributors and human maintainers.
+- Applies to: all code changes, documentation updates, design/ADR notes, and CI/CD configs.
+- Contexts: proposal, review, and merge phases; interactive assistant sessions included.
 
-- [Coding Style Instructions](./coding-style.md)
-- [TypeScript Instructions](./typescript.md)
-- [Result & Error Instructions](./result-error.md)
-- [Structure & Architecture](./structure-architecture.md)
+## Rule Precedence
 
----
+- Precedence for resolving conflicts:
+    1) project-rules.md
+    2) typescript.md
+    3) result-error.md
+    4) structure-architecture.md
+    5) coding-style.md
+    6) md-docs.md
+- When unsure, ask for clarification and default to stricter typing and safer operations.
 
-_Last updated: YYYY-MM-DD_
+## Testing Policy
+
+- Pull requests must pass unit, integration, e2e, and a11y checks.
+- Minimum coverage targets: 80% lines and branches for affected packages.
+- Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
+- Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
+
+## AI Change Proposal Template
+
+- Before edits, include:
+    - Intent and rationale
+    - Affected files and blast radius
+    - Risk assessment and rollback plan
+    - Validation steps (typecheck, lint, tests, a11y)
+    - Any production-facing behaviors
+
+## Monorepo vs Single App
+
+- This repository is a single app today. If or when multiple packages are added, adopt a packages/* structure and extend
+  rules via a repo-level ADR before merging.
+
+_Last updated: 2025-10-05_

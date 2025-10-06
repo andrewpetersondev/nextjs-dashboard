@@ -9,8 +9,6 @@ apply: always
 Enforce consistent, type-safe result and error handling across all modules.  
 Reference [TypeScript Instructions](./typescript.md) for strictness and discriminated union rules.
 
----
-
 ## Result Modeling
 
 - Use discriminated unions for all operations that can fail:
@@ -19,8 +17,6 @@ Reference [TypeScript Instructions](./typescript.md) for strictness and discrimi
 - For async operations, use `Promise<Result<T, E>>` and handle both paths.
 - Use result helpers (`result.ts`, `result-async.ts`, etc.) for mapping, collecting, and transforming results.
 - Never rely on presence checks of `error` or `value` alone; always discriminate via the `ok` flag.
-
----
 
 ## Error Modeling
 
@@ -31,26 +27,19 @@ Reference [TypeScript Instructions](./typescript.md) for strictness and discrimi
 - Use error factories and mappers to normalize external/library errors into app-specific error shapes.
 - Redact sensitive information using error redaction utilities before logging or surfacing errors.
 
----
+## Integration Details
 
-## Error Handling Patterns
-
-- Catch unknown errors; narrow via type guards or predicates.
-- Log errors with structured context (operation, identifiers) using error logger utilities.
-- Map internal errors to safe, client-facing messages before returning or throwing.
-- In forms, map Zod and domain errors to form state using helpers (`zod-error-mapping.ts`,
-  `result-to-form-state.mapping.ts`).
-- Always validate and parse inputs server-side; never expose raw ZodError to clients.
-
----
-
-## Integration with Forms
-
-- Use result and error helpers to map validation outcomes to form state.
-- Normalize error shapes for UI consumption; provide i18n-friendly messages.
-- Document error mapping and result handling in related form modules.
-
----
+- Canonical locations:
+    - src/shared/core/result for Result helpers (sync/async, mapping, collection).
+    - src/shared/core/errors for domain/infrastructure error shapes and factories.
+- Standard infrastructure error union:
+    - NetworkError | AuthError | DbError | ValidationError | UnknownError
+    - Each must have a stable `code` and safe `message`.
+- External error mappers:
+    - Normalize errors from authentication, database, and cryptography libraries into the standard union before
+      surfacing.
+- API boundaries:
+    - Map internal errors to { code, message } safe DTOs; never include stack, cause, or PII.
 
 ## Review Checklist
 
@@ -59,8 +48,6 @@ Reference [TypeScript Instructions](./typescript.md) for strictness and discrimi
 - No internal details or stack traces leak to clients.
 - All exported result/error types are explicit and documented.
 - Form error mapping is consistent and i18n-ready.
-- Cross-reference [TypeScript Instructions](./typescript.md) and [Coding Style](./coding-style.md).
+- Canonical helper locations are used; external errors are mapped to the standard union.
 
----
-
-_Last updated: YYYY-MM-DD_
+_Last updated: 2025-10-05_
