@@ -1,13 +1,13 @@
 import type { z } from "zod";
 import {
-  expandSparseErrorsToDense,
-  filterSparseFieldErrors,
-  initializeDenseErrorMap,
+  createEmptyDenseFieldErrorMap,
+  selectSparseFieldErrorsForAllowedFields,
+  toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/errors/dense-error-map";
 import {
-  flattenZodErrorFields,
+  flattenZodError,
   isZodErrorLikeShape,
-} from "@/shared/forms/errors/zod-error-mapping";
+} from "@/shared/forms/errors/zod-error.helpers";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
@@ -21,8 +21,8 @@ export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
 ): SparseFieldErrorMap<TFieldNames> {
-  const { fieldErrors } = flattenZodErrorFields(error);
-  return filterSparseFieldErrors<TFieldNames, string>(
+  const { fieldErrors } = flattenZodError(error);
+  return selectSparseFieldErrorsForAllowedFields<TFieldNames, string>(
     fieldErrors,
     allowedFields,
   );
@@ -37,7 +37,7 @@ export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
   allowedFields: readonly TFieldNames[],
 ): DenseFieldErrorMap<TFieldNames> {
   const sparse = mapZodErrorToSparseFieldErrors(error, allowedFields);
-  return expandSparseErrorsToDense(sparse, allowedFields);
+  return toDenseFieldErrorMapFromSparse(sparse, allowedFields);
 }
 
 /**
@@ -53,11 +53,11 @@ export function mapToDenseFieldErrorsFromZod<TFieldNames extends string>(
     typeof schemaError.flatten === "function"
   ) {
     const flattened = schemaError.flatten();
-    const sparse = filterSparseFieldErrors<TFieldNames, string>(
+    const sparse = selectSparseFieldErrorsForAllowedFields<TFieldNames, string>(
       flattened.fieldErrors,
       fields,
     );
-    return expandSparseErrorsToDense(sparse, fields);
+    return toDenseFieldErrorMapFromSparse(sparse, fields);
   }
-  return initializeDenseErrorMap(fields);
+  return createEmptyDenseFieldErrorMap(fields);
 }

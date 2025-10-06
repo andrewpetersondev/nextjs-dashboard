@@ -16,7 +16,7 @@ import {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type {
   DenseFieldErrorMap,
   FieldError,
@@ -100,7 +100,7 @@ export const EditInvoiceForm = ({
   errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames>;
 }): JSX.Element => {
   const initialState =
-    buildInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
+    createInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
 
   const [state, action, pending] = useActionState<
     LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,

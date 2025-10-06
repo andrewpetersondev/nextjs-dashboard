@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { isZodObjectSchema } from "@/shared/forms/errors/zod-error-mapping";
-import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
+import { isZodObjectSchema } from "@/shared/forms/errors/zod-error.helpers";
+import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
 
 /**
  * Derive allowed string field names from a Zod object schema.
@@ -16,14 +16,11 @@ import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
  * - Only object schemas are supported; callers should pass a `ZodObject`.
  * - Keys are narrowed to `string` (symbol keys are excluded).
  */
-export function deriveSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
-  schema: S,
-): readonly Extract<keyof z.output<S>, string>[] {
-  // Narrow the keys of the inferred object to strings only.
+export function deriveFieldNamesFromSchema<
+  S extends z.ZodObject<z.ZodRawShape>,
+>(schema: S): readonly Extract<keyof z.output<S>, string>[] {
   type Keys = Extract<keyof z.output<S>, string>;
-  // Read the schema's shape keys (object property names).
   const keys = Object.keys(schema.shape) as Keys[];
-  // Return as a readonly array to signal immutability to callers.
   return keys as readonly Keys[];
 }
 
@@ -42,7 +39,7 @@ export function deriveSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
  * - Otherwise, if {@link schema} is a Zod object, field names are derived from the schema shape.
  * - If {@link schema} is not a Zod object (e.g., union/array/primitive), an empty readonly array is returned.
  */
-export function resolveSchemaFieldNames<TFieldNames extends string, TIn>(
+export function resolveFieldNamesFromSchema<TFieldNames extends string, TIn>(
   schema: z.ZodSchema<TIn>,
   allowedFields?: readonly TFieldNames[],
 ): readonly TFieldNames[] {
@@ -52,7 +49,7 @@ export function resolveSchemaFieldNames<TFieldNames extends string, TIn>(
   }
   // Derive from object schemas; otherwise, return an empty readonly list.
   return isZodObjectSchema(schema)
-    ? (deriveSchemaFieldNames(schema) as readonly TFieldNames[])
+    ? (deriveFieldNamesFromSchema(schema) as readonly TFieldNames[])
     : ([] as const);
 }
 
@@ -72,7 +69,7 @@ export function resolveCanonicalFieldNames<
   if (explicitFields && explicitFields.length > 0) {
     return explicitFields;
   }
-  return resolveSchemaFieldNames<TFieldNames, TIn>(schema, allowedSubset);
+  return resolveFieldNamesFromSchema<TFieldNames, TIn>(schema, allowedSubset);
 }
 
 /**
@@ -80,7 +77,7 @@ export function resolveCanonicalFieldNames<
  *
  * Ensures deterministic shape and ignores extraneous keys.
  */
-export function projectRawToAllowedFields<TFieldNames extends string>(
+export function projectRawRecordToAllowedFields<TFieldNames extends string>(
   raw: Readonly<Partial<Record<TFieldNames, unknown>>> | undefined,
   fields: readonly TFieldNames[],
 ): Record<TFieldNames, unknown> {
@@ -107,7 +104,7 @@ export function resolveRawFieldPayload<TFieldNames extends string>(
   explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
 ): Record<TFieldNames, unknown> {
   if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    return projectRawToAllowedFields(explicitRaw, fields);
+    return projectRawRecordToAllowedFields(explicitRaw, fields);
   }
-  return extractRawFromFormData<TFieldNames>(formData, fields);
+  return extractRawRecordFromFormData<TFieldNames>(formData, fields);
 }

@@ -14,7 +14,7 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type { FieldError } from "@/shared/forms/types/field-errors.type";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
@@ -24,7 +24,7 @@ import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
 const INITIAL_STATE =
-  buildInitialFailedFormStateFromSchema(CreateInvoiceSchema);
+  createInitialFailedFormStateFromSchema(CreateInvoiceSchema);
 
 export const CreateInvoiceForm = ({
   customers,

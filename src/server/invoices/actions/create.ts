@@ -17,15 +17,15 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { isZodErrorInstance } from "@/shared/forms/errors/zod-error-mapping";
-import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/mapping/zod-errors.mappers";
+import { isZodErrorInstance } from "@/shared/forms/errors/zod-error.helpers";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";
 
-const allowed = deriveSchemaFieldNames(CreateInvoiceSchema);
+const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.

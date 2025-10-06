@@ -39,7 +39,7 @@ Reference [TypeScript Instructions](./typescript.instructions.md) for strictness
 - Catch unknown errors; narrow via type guards or predicates.
 - Log errors with structured context (operation, identifiers) using error logger utilities.
 - Map internal errors to safe, client-facing messages before returning or throwing.
-- In forms, map Zod and domain errors to form state using helpers (`zod-error-mapping.ts`,
+- In forms, map Zod and domain errors to form state using helpers (`zod-error.helpers.ts`,
   `result-to-form-state.mapping.ts`).
 - Always validate and parse inputs server-side; never expose raw ZodError to clients.
 

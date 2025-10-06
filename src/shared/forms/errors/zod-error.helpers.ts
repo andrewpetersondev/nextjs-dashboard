@@ -10,7 +10,7 @@ export type ZodFlattenedFieldErrors = Record<
  * Flatten a ZodError using Zod's built-in API, normalizing optional properties.
  * Always returns arrays for formErrors and preserves fieldErrors sparsity.
  */
-export function flattenZodErrorFields(error: z.ZodError): {
+export function flattenZodError(error: z.ZodError): {
   fieldErrors: ZodFlattenedFieldErrors;
   formErrors: readonly string[];
 } {

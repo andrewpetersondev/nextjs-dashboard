@@ -16,7 +16,7 @@ import type {
  * @param allowedFields - Field names to include.
  * @returns Sparse error map with only allowed fields that have errors.
  */
-export function filterSparseFieldErrors<
+export function selectSparseFieldErrorsForAllowedFields<
   TFieldNames extends string,
   TMsg = string,
 >(
@@ -42,9 +42,10 @@ export function filterSparseFieldErrors<
  *
  * Useful when you need a canonical dense shape (e.g., initial UI state).
  */
-export function initializeDenseErrorMap<TField extends string, TMsg = string>(
-  fields: readonly TField[],
-): DenseFieldErrorMap<TField, TMsg> {
+export function createEmptyDenseFieldErrorMap<
+  TField extends string,
+  TMsg = string,
+>(fields: readonly TField[]): DenseFieldErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
     result[f] = Object.freeze([]) as readonly TMsg[];
@@ -58,7 +59,10 @@ export function initializeDenseErrorMap<TField extends string, TMsg = string>(
  * - Keys missing from `sparse` will be set to `[]` (frozen copies).
  * - Preserves the order of `fields` passed in.
  */
-export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
+export function toDenseFieldErrorMapFromSparse<
+  TField extends string,
+  TMsg = string,
+>(
   sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
 ): DenseFieldErrorMap<TField, TMsg> {
@@ -78,31 +82,28 @@ export function expandSparseErrorsToDense<TField extends string, TMsg = string>(
  * - Fields whose array is `[]` are omitted from the result.
  * - Result uses `FieldError` (non-empty readonly arrays) for values.
  */
-export function _compactDenseErrorsToSparse<
+export function toSparseFieldErrorMapFromDense<
   TField extends string,
   TMsg = string,
 >(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, FieldError<TMsg>>> = {};
-
-  // Iterate over all keys in the dense map
   // biome-ignore lint/suspicious/useGuardForIn: <unused function>
   for (const k in dense) {
     const arr = dense[k];
-
-    // Only assign to out if the array exists and has elements
     if (arr && arr.length > 0) {
-      // At runtime we just check length; casting to FieldError<TMsg> for TS type
       out[k as TField] = arr as FieldError<TMsg>;
     }
   }
-
   return out as SparseFieldErrorMap<TField, TMsg>;
 }
 
 /**
- * Validate & freeze a dense error map.
+ * Validate and deep-freeze a dense error map according to the provided field order.
  */
-export function validateAndFreezeDenseMap<TField extends string, TMsg>(
+export function normalizeAndFreezeDenseFieldErrorMap<
+  TField extends string,
+  TMsg,
+>(
   fields: readonly TField[],
   dense: Record<TField, readonly TMsg[]>,
 ): DenseFieldErrorMap<TField, TMsg> {
@@ -114,7 +115,6 @@ export function validateAndFreezeDenseMap<TField extends string, TMsg>(
       throw new Error(`Invalid value for field ${f}`);
     }
   }
-  // Freeze inner arrays (copy) and then freeze the object to prevent mutation leakage
   const normalized = Object.fromEntries(
     fields.map((f) => [f, Object.freeze([...(dense[f] as readonly TMsg[])])]),
   ) as Record<TField, readonly TMsg[]>;

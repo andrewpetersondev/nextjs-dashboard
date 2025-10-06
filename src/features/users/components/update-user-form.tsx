@@ -10,12 +10,12 @@ import {
   EditUserFormSchema,
 } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =
-    buildInitialFailedFormStateFromSchema(EditUserFormSchema);
+    createInitialFailedFormStateFromSchema(EditUserFormSchema);
 
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: LegacyFormState<EditUserFormFieldNames>,

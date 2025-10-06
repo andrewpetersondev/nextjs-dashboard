@@ -3,13 +3,13 @@ import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/i18n/form-messages.const";
+import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type {
   FormError,
   FormResult,
   FormSuccess,
 } from "@/shared/forms/types/form-state.type";
-import { buildDisplayFieldValues } from "@/shared/forms/utils/display-values.util";
 
 /** Local ErrorLike wrapper used by validate-form failure path. */
 export interface ValidationFieldErrorsError<TFieldNames extends string> {
@@ -52,7 +52,7 @@ export function mapResultToFormResult<TFieldNames extends string, TData>(
     fieldErrors: result.error.fieldErrors,
     kind: "validation",
     message: result.error.message || failureMessage,
-    values: buildDisplayFieldValues(raw, fields, redactFields),
+    values: selectDisplayableStringFieldValues(raw, fields, redactFields),
   };
   return { error, ok: false };
 }

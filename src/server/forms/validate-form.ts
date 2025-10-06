@@ -3,18 +3,18 @@ import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-import { expandSparseErrorsToDense } from "@/shared/forms/errors/dense-error-map";
-import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error-mapping";
+import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
+import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error.helpers";
 import {
   resolveCanonicalFieldNames,
   resolveRawFieldPayload,
-} from "@/shared/forms/fields/field-name-resolution";
+} from "@/shared/forms/fields/field-names.resolve";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import {
   mapResultToFormResult,
   type ValidationFieldErrorsError,
-} from "@/shared/forms/mapping/result-to-form-result.mapping";
-import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-errors.mappers";
+} from "@/shared/forms/mapping/result-to-form-result.mapper";
+import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 
@@ -49,7 +49,7 @@ function toFailureResult<TFieldNames extends string, TOut>(
   }
   logValidationFailure(loggerContext, error);
   return toValidationResult<TFieldNames, TOut>(
-    expandSparseErrorsToDense<TFieldNames>({}, fields),
+    toDenseFieldErrorMapFromSparse<TFieldNames>({}, fields),
   );
 }
 

@@ -14,10 +14,10 @@ import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import {
-  expandSparseErrorsToDense,
-  filterSparseFieldErrors,
+  selectSparseFieldErrorsForAllowedFields,
+  toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/errors/dense-error-map";
-import { deriveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 
 type CreateUserFormData = {
@@ -48,7 +48,7 @@ export async function createUserAction(
   formData: FormData,
 ): Promise<LegacyFormState<CreateUserFormFieldNames>> {
   const db = getAppDb();
-  const allowed = deriveSchemaFieldNames(CreateUserFormSchema);
+  const allowed = deriveFieldNamesFromSchema(CreateUserFormSchema);
 
   try {
     const raw = pickCreateUserFormData(formData);
@@ -61,8 +61,11 @@ export async function createUserAction(
 
     if (!parsed.success) {
       return {
-        errors: expandSparseErrorsToDense(
-          filterSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
+        errors: toDenseFieldErrorMapFromSparse(
+          selectSparseFieldErrorsForAllowedFields(
+            parsed.error.flatten().fieldErrors,
+            allowed,
+          ),
           allowed,
         ),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -85,7 +88,7 @@ export async function createUserAction(
         safeMeta: { email, username },
       });
       return {
-        errors: expandSparseErrorsToDense({}, allowed),
+        errors: toDenseFieldErrorMapFromSparse({}, allowed),
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
         success: false,
       };
@@ -103,7 +106,7 @@ export async function createUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
     return {
-      errors: expandSparseErrorsToDense({}, allowed),
+      errors: toDenseFieldErrorMapFromSparse({}, allowed),
       message: USER_ERROR_MESSAGES.UNEXPECTED,
       success: false,
     };

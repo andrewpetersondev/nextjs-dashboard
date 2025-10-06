@@ -7,12 +7,12 @@ import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { type LoginField, LoginSchema } from "@/features/auth/lib/auth.schema";
-import { buildInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = buildInitialFailedFormStateFromSchema(LoginSchema);
+const INITIAL_STATE = createInitialFailedFormStateFromSchema(LoginSchema);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 

@@ -24,11 +24,11 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { expandSparseErrorsToDense } from "@/shared/forms/errors/dense-error-map";
-import { resolveSchemaFieldNames } from "@/shared/forms/fields/field-name-resolution";
-import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapping";
+import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
+import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
+import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
+import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
-import { extractRawFromFormData } from "@/shared/forms/utils/formdata.util";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 // Helpers for brevity and strict typing
@@ -39,7 +39,7 @@ type Ctx = {
   readonly fields: readonly EditUserFormFieldNames[];
   readonly raw: Record<string, unknown>;
   readonly emptyDense: ReturnType<
-    typeof expandSparseErrorsToDense<EditUserFormFieldNames>
+    typeof toDenseFieldErrorMapFromSparse<EditUserFormFieldNames>
   >;
 };
 
@@ -48,12 +48,12 @@ type Ctx = {
  * @param formData - Incoming FormData from the client.
  */
 function initCtx(formData: FormData): Ctx {
-  const fields = resolveSchemaFieldNames<
+  const fields = resolveFieldNamesFromSchema<
     EditUserFormFieldNames,
     EditUserFormValues
   >(EditUserFormSchema);
-  const raw = extractRawFromFormData(formData, fields);
-  const emptyDense = expandSparseErrorsToDense<EditUserFormFieldNames>(
+  const raw = extractRawRecordFromFormData(formData, fields);
+  const emptyDense = toDenseFieldErrorMapFromSparse<EditUserFormFieldNames>(
     {},
     fields,
   );
