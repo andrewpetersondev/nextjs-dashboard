@@ -6,36 +6,29 @@ apply: manually
 
 ## Purpose
 
-Ensure strict, predictable, type-safe error and result handling across all layers.  
-Attach when refactoring `result.ts`, `error.ts`, or functions that return `Result<T, E>`.
+Keep strict, type-safe error handling with a dual-tier model.  
+UI layers always use `AppError`; lower layers may use `BaseError`.  
+Attach when editing `result.ts`, `error.ts`, or `fromPromise`.
 
 ---
 
-## Result Type Convention
-
-Use **discriminated unions** only — never nullable or exceptions for control flow.
+## Result Type
 
 ```ts
 export type Result<T, E> =
     | { readonly ok: true; readonly value: T }
     | { readonly ok: false; readonly error: E };
-````
 
-Factory helpers:
-
-```ts
 export const Ok = /* @__PURE__ */ <T>(value: T): Result<T, never> =>
     ({ok: true, value} as const);
 
 export const Err = /* @__PURE__ */ <E extends ErrorLike>(error: E): Result<never, E> =>
     ({ok: false, error} as const);
-```
+````
 
 ---
 
 ## Error Model
-
-### BaseError
 
 ```ts
 export interface BaseError {
@@ -43,62 +36,86 @@ export interface BaseError {
     readonly message: string;
     readonly context?: Readonly<Record<string, unknown>>;
 }
-```
 
-All errors implement `ErrorLike extends BaseError`.
-Never cast to `any`.
-Use `normalizeUnknownError()` to safely convert thrown values to `ErrorLike`.
-
----
-
-## Error Flow by Layer
-
-| Layer   | Expected Errors                         | Unexpected Errors                         | Handling Strategy       |
-|---------|-----------------------------------------|-------------------------------------------|-------------------------|
-| DAL     | DB/IO errors → `Err({ code, message })` | Wrap unknowns via `normalizeUnknownError` | Return `Err`            |
-| Repo    | Translate DAL errors to domain codes    | Pass unexpected upstream                  | Return `Result`         |
-| Service | Combine or map results, no throw        | Return `Err` if failure                   | Return typed `Result`   |
-| Action  | Convert `Err` to user-safe messages     | Log unexpected                            | Return UI-safe `Result` |
-| UI/App  | Display mapped message                  | Never handle raw errors                   | Read `result.ok` only   |
-
----
-
-## Mapping Utilities
-
-```ts
-export function mapError<T, E1, E2>(
-    result: Result<T, E1>,
-    fn: (e: E1) => E2,
-): Result<T, E2> {
-    return result.ok ? result : Err(fn(result.error));
+export interface AppError {
+    readonly code: ErrorCode;
+    readonly message: string;
+    readonly form?: Record<string, string>; // dense field map
 }
 ```
 
+* `BaseError`: internal/logging use, may include context or stack.
+* `AppError`: lightweight, JSON-safe, UI displayable.
+* Never cast to `any`; use `normalizeUnknownError()` adapter.
+
 ---
 
-## Promise Wrappers
+## Unified Adapter
 
 ```ts
-export async function fromPromise<T, E extends ErrorLike>(
+export function toAppError(e: unknown): AppError {
+    const b = normalizeUnknownError(e); // → BaseError
+    return {code: b.code, message: b.message};
+}
+
+export async function fromPromise<T>(
     fn: () => Promise<T>,
-    mapError: (e: unknown) => E,
-): Promise<Result<T, E>> {
+): Promise<Result<T, AppError>> {
     try {
         return Ok(await fn());
     } catch (e) {
-        return Err(mapError(e));
+        return Err(toAppError(e));
     }
 }
 ```
+
+*(Integrate with `tryCatchAsync` if both exist.)*
+
+---
+
+## Layer Rules
+
+| Layer   | Error Type | Strategy                                |
+|---------|------------|-----------------------------------------|
+| DAL     | BaseError  | Return `Err`, wrap unknown              |
+| Repo    | BaseError  | Map DAL → domain                        |
+| Service | BaseError  | Combine results, never throw            |
+| Action  | AppError   | Use adapter, return UI-safe `Result`    |
+| UI/App  | AppError   | Read `result.ok`, map via `ERROR_CODES` |
 
 ---
 
 ## Best Practices
 
-* No `try/catch` unless wrapping for `Result`.
-* Never rethrow except in `app` boundaries.
-* Always prefer **explicit mapping** of error types.
-* Use literal `code` enums (e.g., `"NOT_FOUND"`, `"VALIDATION"`, `"UNEXPECTED"`).
-* Freeze error objects in dev builds for immutability.
+* No `try/catch` except around async boundaries.
+* Never rethrow except at app exit.
+* Only the adapter layer converts to `AppError`.
+* Use literal `code` enums and freeze errors in dev.
 
 *Last updated: 2025-10-06*
+
+Perfect — here’s a minimal **reference + guidance** addition for your markdown that explains when and why to promote
+`BaseError` → `AppError` without bloating it:
+
+---
+
+## Promoting BaseError → AppError
+
+- Only convert at **server action boundaries** or anywhere UI-facing results are returned.
+- Use the adapter: `toAppError(baseErrorOrUnknown)`.
+- Rationale:
+    - Keeps UI layers JSON-safe and simple.
+    - Preserves canonical error codes (`ERROR_CODES`) for user-friendly messages.
+    - Internal layers continue to use `BaseError` with full context for logging/debugging.
+- Example:
+
+```ts
+import {fromPromise} from "@/shared/core/result/from-promise";
+import {toAppError} from "@/shared/core/errors/error-adapters";
+
+export const doAction = async (): Promise<Result<User, AppError>> =>
+    fromPromise(async () => await repo.createUser(), toAppError);
+````
+
+* **Tip:** Send the unmodified `BaseError.message` or stack to server logs, and use the mapped `AppError.message` for
+  forms/UI.
