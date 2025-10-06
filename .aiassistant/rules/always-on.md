@@ -4,6 +4,16 @@ apply: always
 
 # Always-On AI Rules (Lite)
 
+## Minimal Response Rule
+
+- **Responses should be brief** and only include the **changed sections of code** or additions.
+- Do **not** repeat the entire file unless explicitly requested.
+- Use **diff-style or snippet-style output** showing context ±2 lines for clarity.
+- Include any **new imports or types** only if they are part of the change.
+- Provide a **short comment above the snippet** if needed to explain the purpose of the change.
+- Avoid explanatory text or rationale unless the user asks for it.
+- When multiple changes are suggested, **group them by file** and only include the affected lines per file.
+
 ## Core Principles
 
 - Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
