@@ -15,7 +15,7 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Use clear, descriptive headings and section titles.
 - Keep files ≤200 lines; split by topic if needed.
 - Use standard markdown syntax; avoid custom extensions.
-- Format with biome; run `pnpm biome check <file>` before merging.
+- Format with prettier; IDE automatically formats on file-save.
 - Validate all code snippets for correctness and compatibility.
 
 ---
