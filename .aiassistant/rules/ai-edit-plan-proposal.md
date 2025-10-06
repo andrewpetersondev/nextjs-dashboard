@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # AI Edit Proposal Template

@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Markdown Documentation Instructions

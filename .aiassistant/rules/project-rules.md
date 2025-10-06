@@ -6,7 +6,7 @@ apply: always
 
 ## Purpose
 
-Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
+Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript app.
 
 ## Scope & Audience
 
@@ -106,16 +106,5 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Required in PR description for AI-suggested changes.
 - Must include: intent, affected files, risks, rollback, validation steps (typecheck, lint, tests, a11y), and prod
   impact.
-
-## Monorepo vs Single App
-
-- Current mode: single app.
-- If adding multiple packages, adopt packages/* and add a repository-level ADR defining package boundaries, shared
-  configs, and release/versioning strategy before merging.
-
-## Performance Gates
-
-- CI must run bundle analysis for key routes; fail on exceeding budgets defined in structure-architecture.md.
-- Track size deltas per PR; include summary in checks.
 
 _Last updated: 2025-10-05_
