@@ -11,19 +11,28 @@ import type {
   FormSuccess,
 } from "@/shared/forms/types/form-state.type";
 
-/** Local ErrorLike wrapper used by validate-form failure path. */
-export interface ValidationFieldErrorsError<TFieldNames extends string> {
+/**
+ * @public
+ * Represents validation errors for specific fields.
+ *
+ * @typeParam TFieldNames - The type of field names used in the validation.
+ * @property message - A descriptive error message.
+ * @property fieldErrors - A mapped collection of errors for individual fields.
+ */
+export interface FormValidationResult<TFieldNames extends string> {
   readonly message: string;
   readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
 }
 
 /**
- * Map a Result<TData, ValidationFieldErrorsError> to a canonical FormResult (ok/err union).
- * @template TFieldNames Field name union.
- * @template TData Success data type.
+ * Maps a `Result` object to a corresponding `FormResult` object.
+ *
+ * @param result - The operation result containing either data or validation errors.
+ * @param params - Configuration parameters including success/failure messages, raw field values, and field names.
+ * @returns A `FormResult` containing success data or validation error details.
  */
 export function mapResultToFormResult<TFieldNames extends string, TData>(
-  result: Result<TData, ValidationFieldErrorsError<TFieldNames>>,
+  result: Result<TData, FormValidationResult<TFieldNames>>,
   params: {
     successMessage?: string;
     failureMessage?: string;
@@ -58,7 +67,13 @@ export function mapResultToFormResult<TFieldNames extends string, TData>(
 }
 
 /**
- * Build a successful FormResult from already-validated data.
+ * Converts data into a FormResult object representing a successful form operation.
+ *
+ * @typeParam TFieldNames - The type of field names used in the form.
+ * @typeParam TData - The type of data contained in the form result.
+ * @param data - The data to include in the form result.
+ * @param opts - Optional configuration, including a success message.
+ * @returns A `FormResult` object with a success status and the provided data.
  */
 export function toFormOk<TFieldNames extends string, TData>(
   data: TData,
@@ -74,7 +89,11 @@ export function toFormOk<TFieldNames extends string, TData>(
 }
 
 /**
- * Build a failed FormResult from a dense error map (validation kind).
+ * Converts provided field errors and additional metadata into a standardized form validation error.
+ *
+ * @param params - The configuration object containing field errors, optional failure message, raw data,
+ *                 specific fields to include, and fields to redact.
+ * @returns A `FormResult` object containing a validation error with the processed details.
  */
 export function toFormValidationErr<TFieldNames extends string, TData>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;

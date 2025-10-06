@@ -4,20 +4,55 @@
  * Provides a narrow, JSON‑safe `AppError` plus normalization helpers.
  */
 
-/** @internal Default classification for unknown errors. */
+/**
+ * Represents the default value for an unknown kind.
+ *
+ * @defaultValue "unknown"
+ * @readonly
+ * @public
+ */
 const DEFAULT_UNKNOWN_KIND = "unknown" as const;
-/** @internal Default user-safe fallback message. */
+/**
+ * Default message displayed for unknown errors.
+ *
+ * @defaultValue "An unknown error occurred"
+ * @public
+ */
 const DEFAULT_UNKNOWN_MESSAGE = "An unknown error occurred" as const;
-/** @internal Default severity applied to unknown errors. */
+/**
+ * @readonly
+ * @defaultValue "error"
+ * @remarks Represents the default severity level assigned when the severity is unknown.
+ */
 const DEFAULT_UNKNOWN_SEVERITY: AppError["severity"] = "error";
 
 /**
- * Primitive constraint for error generics.
+ * Represents an error-like object with a `message` property.
+ *
+ * @public
+ * @remarks This type can be used to handle both standard `Error` objects and custom objects with a `message` field.
+ * @example
+ * ```ts
+ * const error1: ErrorLike = new Error("Standard error");
+ * const error2: ErrorLike = { message: "Custom error" };
+ * ```
  */
 export type ErrorLike = Error | { readonly message: string };
 
 /**
- * Canonical application error shape (JSON-serializable).
+ * Represents an application-level error with structured information.
+ *
+ * @public
+ * @readonly
+ * @remarks Provides clarity on the context and severity of an error.
+ * @example
+ * ```
+ * const error: AppError = {
+ *   kind: "ValidationError",
+ *   message: "Invalid input provided",
+ *   severity: "error"
+ * };
+ * ```
  */
 export interface AppError {
   readonly kind: string;
@@ -31,7 +66,13 @@ export interface AppError {
 }
 
 /**
- * Overrides accepted during unknown error normalization.
+ * @public
+ * Provides overrides for normalizing unknown errors.
+ * @remarks
+ * This interface allows specifying optional properties to define the kind, code, and severity of the error.
+ * @property kind - An optional string to categorize the error.
+ * @property code - An optional string representing a specific error code.
+ * @property severity - An optional value from `AppError["severity"]` indicating the error's severity level.
  */
 export interface NormalizeUnknownErrorOverrides {
   readonly kind?: string;
@@ -40,8 +81,12 @@ export interface NormalizeUnknownErrorOverrides {
 }
 
 /**
- * Patch contract for augmenting an existing (or unknown) error.
- * `kind` and `message` allowed but safeguarded to never become empty.
+ * Represents a type for partially updating `AppError` objects while optionally overriding `kind` and `message`.
+ *
+ * @typeParam AppError - The base error object to be augmented.
+ * @public
+ * @example
+ * const errorPatch: AugmentAppErrorPatch = { kind: "ValidationError", code: 400 };
  */
 export type AugmentAppErrorPatch = Partial<
   Omit<AppError, "kind" | "message">
@@ -51,9 +96,16 @@ export type AugmentAppErrorPatch = Partial<
 };
 
 /**
- * Structural guard—intentionally shallow. Does not validate optional field types beyond `kind` and `message`.
- * @param value Arbitrary value to test.
- * @returns true if shape matches minimal AppError surface.
+ * Determines if a given value conforms to the `AppError` type.
+ *
+ * @param value - The value to be checked.
+ * @returns `true` if the value is an `AppError`, otherwise `false`.
+ * @example
+ * ```ts
+ * isAppError({ kind: 'ErrorType', message: 'An error occurred' }); // true
+ * isAppError({ type: 'ErrorType' }); // false
+ * ```
+ * @see AppError
  */
 export const isAppError = (value: unknown): value is AppError =>
   typeof value === "object" &&
@@ -64,16 +116,14 @@ export const isAppError = (value: unknown): value is AppError =>
   typeof (value as { message: unknown }).message === "string";
 
 /**
- * Normalize an unknown thrown/rejected value into an AppError.
- * Precedence:
- * 1. Existing AppError: shallow override of selected fields.
- * 2. Native Error instance: mapped core fields (name, message, stack, cause).
- * 3. Object with string message.
- * 4. Primitive fallback (string used directly if non-empty).
- * Drops extraneous enumerable properties for safety.
- * @param input Unknown error value.
- * @param overrides Optional classification overrides.
- * @returns AppError (never throws).
+ * Normalizes an unknown input into a standardized `AppError` object.
+ *
+ * @param input - The input to normalize, which can be of any type.
+ * @param overrides - Optional overrides to adjust the error's properties.
+ * @returns A normalized `AppError` with consistent structure and default values.
+ * @example
+ * const error = normalizeUnknownError(new Error("Sample error"));
+ * @public
  */
 export const normalizeUnknownError = /* @__PURE__ */ (
   input: unknown,
@@ -128,11 +178,14 @@ export const normalizeUnknownError = /* @__PURE__ */ (
 };
 
 /**
- * Create an augmented AppError from any input (normalizes first, then overlays patch).
- * Safeguards required fields from becoming empty.
- * @param base Input error (unknown).
- * @param patch Partial override additions.
- * @returns AppError
+ * Enhances a base error object with additional patch data to create an `AppError`.
+ *
+ * @param base - The base error object, which can be of any type.
+ * @param patch - Partial properties used to augment the base error.
+ * @returns The normalized and augmented `AppError`.
+ * @example
+ * const error = augmentAppError(someError, { message: 'Custom Message', kind: 'TypeA' });
+ * @public
  */
 export const augmentAppError = /* @__PURE__ */ (
   base: unknown,

@@ -10,24 +10,31 @@ import {
   resolveRawFieldPayload,
 } from "@/shared/forms/fields/field-names.resolve";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
-import type { ValidationFieldErrorsError } from "@/shared/forms/mapping/result-to-form-result.mapper";
+import type { FormValidationResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import {
   type FormSuccess,
   formSuccess,
-  validationError,
 } from "@/shared/forms/types/form-state.type";
 
 // Consolidate default messages and logger context
 const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;
 const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.VALIDATION_FAILED;
 
+/**
+ * Transforms an error into a `ValidationFieldErrorsError` object suitable for handling field-level validation errors.
+ *
+ * @typeParam TFieldNames - The type of field names that are part of the validation error.
+ * @param error - The original error object, potentially from a validation process.
+ * @param fields - The array of field names for which errors are being transformed.
+ * @param loggerContext - A context string to log additional diagnostic information.
+ * @returns A `ValidationFieldErrorsError` containing field error mappings and a default failure message.
+ */
 function toFailureError<TFieldNames extends string>(
   error: unknown,
   fields: readonly TFieldNames[],
   loggerContext: string,
-): ValidationFieldErrorsError<TFieldNames> {
+): FormValidationResult<TFieldNames> {
   logValidationFailure(loggerContext, error);
   if (isZodErrorLikeShape(error)) {
     return {
@@ -41,7 +48,14 @@ function toFailureError<TFieldNames extends string>(
   };
 }
 
-/** Log validation failures with minimal, non-sensitive context. */
+/**
+ * Logs a validation failure with contextual information and error details.
+ *
+ * @param context - A string representing the context of the validation failure.
+ * @param error - The error object to log, can contain details such as name and issues.
+ * @returns void
+ * @public
+ */
 function logValidationFailure(context: string, error: unknown): void {
   const name = isZodErrorLikeShape(error) ? error.name : undefined;
   const issues =
@@ -57,39 +71,17 @@ function logValidationFailure(context: string, error: unknown): void {
 }
 
 /**
- * Convert a dense field error map into a failed validation Result.
+ * @public
+ * Defines options for validation operations, specifying target fields, raw input data, logging context, and custom messages.
+ *
+ * @typeParam TIn - The type of the input object being validated.
+ * @typeParam TFieldNames - Represents the keys of the fields in TIn to validate.
+ *
+ * @property fields - The specific fields to validate.
+ * @property raw - Partial record containing raw input values for the provided fields.
+ * @property loggerContext - Custom context string for logging purposes.
+ * @property messages - Customizable success and failure messages for validation results.
  */
-function toValidationResult<TFieldNames extends string, TOut = never>(
-  errors: DenseFieldErrorMap<TFieldNames>,
-): Result<TOut, ValidationFieldErrorsError<TFieldNames>> {
-  return Err(
-    validationError<TFieldNames, string, string>({
-      fieldErrors: errors,
-      message: DEFAULT_FAILURE_MESSAGE,
-    }),
-  );
-}
-
-/**
- * Internal helper that maps a zod failure into a domain Result with dense errors.
- */
-function toFailureResult<TFieldNames extends string, TOut>(
-  error: unknown,
-  fields: readonly TFieldNames[],
-  loggerContext: string,
-): Result<TOut, ValidationFieldErrorsError<TFieldNames>> {
-  logValidationFailure(loggerContext, error);
-  if (isZodErrorLikeShape(error)) {
-    return toValidationResult<TFieldNames, TOut>(
-      mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
-    );
-  }
-  return toValidationResult<TFieldNames, TOut>(
-    toDenseFieldErrorMapFromSparse<TFieldNames>({}, fields),
-  );
-}
-
-/** Options for validateFormGeneric, factored for reuse and clarity. */
 interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
   readonly fields?: readonly TFieldNames[];
   readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
@@ -101,15 +93,15 @@ interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
 }
 
 /**
- * Validate FormData with a Zod schema and return a FormResult (UI boundary).
+ * Validates form data against a given schema and returns either success or validation errors.
  *
- * @template TIn Parsed input shape from schema.
- * @template TFieldNames Allowed field-name union (string keys of TIn).
- * @param formData Raw FormData from request.
- * @param schema Zod schema defining parsing/validation.
- * @param allowedFields Optional whitelist of accepted field names.
- * @param options Additional behavior overrides (fields/raw/messages/log context).
- * @returns Promise<FormResult<TFieldNames, TIn>>
+ * @typeParam TIn - The type representing the structure of the expected form data.
+ * @typeParam TFieldNames - The string keys of fields within TIn to be validated.
+ * @param formData - The form data to validate.
+ * @param schema - The Zod schema to validate the form data against.
+ * @param allowedFields - An optional list of specific fields to validate.
+ * @param options - Additional options for validation behavior.
+ * @returns A promise resolving to a `Result` of validated data or field-level validation errors.
  */
 export async function validateFormGeneric<
   TIn,
@@ -119,7 +111,7 @@ export async function validateFormGeneric<
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<Result<FormSuccess<TIn>, ValidationFieldErrorsError<TFieldNames>>> {
+): Promise<Result<FormSuccess<TIn>, FormValidationResult<TFieldNames>>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,
