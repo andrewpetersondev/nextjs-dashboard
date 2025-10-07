@@ -1,13 +1,18 @@
 // src/shared/core/errors/error-logger.ts
 import { BaseError } from "@/shared/core/errors/base-error";
 import { toBaseError } from "@/shared/core/errors/error-adapters";
+import { isBaseError } from "@/shared/core/errors/error-guards.shared";
 import type {
   LogErrorOptions,
   StructuredErrorLog,
 } from "@/shared/core/errors/error-logger.types";
 import { buildStructuredPayload } from "@/shared/core/errors/error-logger.utils";
-import { isBaseError } from "@/shared/core/errors/guards/error-guards";
 import type { AppError } from "@/shared/core/result/error";
+
+// Add constants at the top of the file
+const MAX_STRING_LENGTH = 1000;
+const TRUNCATED_LENGTH = 997;
+const TRUNCATION_SUFFIX = "...";
 
 /**
  * Attempt to extract a BaseError-like shape from unknown without throwing.
@@ -29,8 +34,8 @@ function redact(obj: Record<string, unknown>): Record<string, unknown> {
       out[k] = "[REDACTED]";
       continue;
     }
-    if (typeof v === "string" && v.length > 1000) {
-      out[k] = `${v.slice(0, 997)}...`;
+    if (typeof v === "string" && v.length > MAX_STRING_LENGTH) {
+      out[k] = `${v.slice(0, TRUNCATED_LENGTH)}${TRUNCATION_SUFFIX}`;
       continue;
     }
     out[k] = v;
