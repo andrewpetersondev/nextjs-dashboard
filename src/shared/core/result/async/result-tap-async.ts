@@ -1,8 +1,8 @@
 // File: src/shared/core/result/result-tap-async.ts
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/sync/result";
-import { Err } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
+import { Err } from "@/shared/core/result/result";
 
 /**
  * Async side-effect on Ok branch (errors from fn propagate normally).

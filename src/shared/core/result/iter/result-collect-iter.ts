@@ -1,6 +1,6 @@
 // File: src/shared/core/result/result-collect-iter.ts
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { Ok, type Result } from "@/shared/core/result/sync/result";
+import { Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Lazily iterate Ok values until an Err appears.

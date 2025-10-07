@@ -1,5 +1,5 @@
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
-import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Compiled regex for UUID validation (cached for performance)

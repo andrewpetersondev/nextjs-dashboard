@@ -18,7 +18,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
-import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import { toUserId } from "@/shared/domain/id-converters";
 import {

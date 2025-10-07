@@ -1,7 +1,7 @@
 // File: src/shared/core/result/result-map-async.ts
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { Ok, type Result } from "@/shared/core/result/sync/result";
+import { Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Async map success branch.

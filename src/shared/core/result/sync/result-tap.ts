@@ -1,8 +1,8 @@
 // File: src/shared/core/result/result-tap.ts
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/sync/result";
-import { Err } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
+import { Err } from "@/shared/core/result/result";
 
 /**
  * Side-effect on success branch (does not alter Result).

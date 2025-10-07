@@ -1,6 +1,6 @@
 // File: src/shared/core/result/result-transform.ts
 import type { ErrorLike } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
 
 /**
  * Chain a computation on the Ok branch (flatMap).

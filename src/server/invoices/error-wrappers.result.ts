@@ -4,7 +4,7 @@ import {
   type RepoError,
 } from "@/server/errors/mappers/error-mappers.server";
 import { fromPromise } from "@/shared/core/result/async/result-async";
-import type { Result } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
 
 /**
  * Typed wrapper around fromPromise to infer E via mapToRepoError,

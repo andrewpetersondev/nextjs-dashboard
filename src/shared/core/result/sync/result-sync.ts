@@ -4,7 +4,7 @@ import {
   type ErrorLike,
   normalizeUnknownError,
 } from "@/shared/core/result/error";
-import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Execute a synchronous function and wrap its result in a Result.

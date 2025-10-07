@@ -17,7 +17,7 @@ import { promiseToRepoResult } from "@/server/invoices/error-wrappers.result";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
-import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";

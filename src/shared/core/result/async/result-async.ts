@@ -2,7 +2,7 @@
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
-import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 interface TryCatchAsyncMapped<TError extends ErrorLike> {
   readonly mapError: (e: unknown) => TError;

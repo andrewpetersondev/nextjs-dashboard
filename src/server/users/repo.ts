@@ -3,8 +3,8 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
-import type { Result } from "@/shared/core/result/sync/result";
-import { Err, Ok } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
+import { Err, Ok } from "@/shared/core/result/result";
 
 export type CreateUserRepoInput = {
   readonly username: string;

@@ -17,8 +17,8 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
-import type { Result } from "@/shared/core/result/sync/result";
-import { Err, Ok } from "@/shared/core/result/sync/result";
+import type { Result } from "@/shared/core/result/result";
+import { Err, Ok } from "@/shared/core/result/result";
 
 // --- Constants ---
 const DEFAULT_MISSING_FIELDS: readonly SignupField[] = [
