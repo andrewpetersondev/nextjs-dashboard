@@ -1,38 +1,15 @@
 // src/shared/core/errors/error-adapters.ts
-
 import { BaseError } from "@/shared/core/errors/base-error";
 import {
   isErrorCode,
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/error-codes";
-import type { AppError } from "@/shared/core/result/error";
 import {
+  type AppError,
   augmentAppError,
+  DEFAULT_UNKNOWN_MESSAGE,
   normalizeUnknownError,
 } from "@/shared/core/result/error";
-
-/**
- * Convert any thrown/returned error into a UI-safe AppError.
- * - Preserves canonical code/message when source is BaseError.
- * - Falls back to normalized unknown AppError otherwise.
- */
-export function toAppError(input: unknown): AppError {
-  if (input instanceof BaseError) {
-    const meta = tryGetErrorCodeMeta(input.code);
-    return {
-      code: input.code,
-      kind: input.category,
-      message:
-        input.message || meta?.description || "An unknown error occurred",
-      name: input.name,
-      severity:
-        meta?.severity === "critical"
-          ? "error"
-          : ((meta?.severity as AppError["severity"]) ?? "error"),
-    };
-  }
-  return normalizeUnknownError(input);
-}
 
 /**
  * Convert AppError back to a BaseError for server-side logging/flows.
@@ -61,13 +38,6 @@ export function toBaseError(
 
   return be;
 }
-
-/**
- * Safe normalization at boundaries:
- * - If BaseError → AppError (UI boundary).
- * - Else normalize unknown into AppError.
- */
-export const normalizeToAppError = (e: unknown): AppError => toAppError(e);
 
 /**
  * Map unknown → BaseError with a chosen canonical code.
@@ -112,7 +82,7 @@ export function appErrorFromCode(
   return {
     code,
     kind: meta?.category ?? "unknown",
-    message: message || meta?.description || "An unknown error occurred",
+    message: message || meta?.description || DEFAULT_UNKNOWN_MESSAGE,
     severity: (meta?.severity as AppError["severity"] | undefined) ?? "error",
     ...(details ? { details } : {}),
   };
@@ -132,7 +102,7 @@ export function liftToAppError<TArgs extends readonly unknown[], TOut>(
       const value = await fn(...args);
       return { ok: true as const, value };
     } catch (e) {
-      return { error: toAppError(e), ok: false as const };
+      return { error: normalizeUnknownError(e), ok: false as const };
     }
   };
 }

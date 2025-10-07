@@ -1,5 +1,6 @@
 import type { BaseError } from "@/shared/core/errors/base-error";
 import type { StructuredErrorLog } from "@/shared/core/errors/error-logger.types";
+import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/error";
 
 /**
  * Extract cause message if nested cause is present (Node >=16 Error options or custom).
@@ -50,7 +51,8 @@ export function buildStructuredPayload(params: {
       : "Unknown error";
 
   const code = base?.code ?? "UNKNOWN";
-  const name = base?.name ?? (raw instanceof Error ? raw.name : "UnknownError");
+  const name =
+    base?.name ?? (raw instanceof Error ? raw.name : DEFAULT_UNKNOWN_MESSAGE);
   const message = base?.message ?? unknownFallbackMessage;
 
   // Context redaction only if present.

@@ -11,20 +11,20 @@
  * @readonly
  * @public
  */
-const DEFAULT_UNKNOWN_KIND = "unknown" as const;
+export const DEFAULT_UNKNOWN_KIND = "unknown" as const;
 /**
  * Default message displayed for unknown errors.
  *
  * @defaultValue "An unknown error occurred"
  * @public
  */
-const DEFAULT_UNKNOWN_MESSAGE = "An unknown error occurred" as const;
+export const DEFAULT_UNKNOWN_MESSAGE = "An unknown error occurred" as const;
 /**
  * @readonly
  * @defaultValue "error"
  * @remarks Represents the default severity level assigned when the severity is unknown.
  */
-const DEFAULT_UNKNOWN_SEVERITY: AppError["severity"] = "error";
+export const DEFAULT_UNKNOWN_SEVERITY: AppError["severity"] = "error";
 
 /**
  * Represents an error-like object with a `message` property.
