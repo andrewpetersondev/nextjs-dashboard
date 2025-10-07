@@ -48,7 +48,7 @@ export function buildStructuredPayload(params: {
     "message" in (raw as Record<string, unknown>) &&
     typeof (raw as Record<string, unknown>).message === "string"
       ? (raw as { message: string }).message
-      : "Unknown error";
+      : DEFAULT_UNKNOWN_MESSAGE;
 
   const code = base?.code ?? "UNKNOWN";
   const name =
