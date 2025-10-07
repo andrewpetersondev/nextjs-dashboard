@@ -1,5 +1,5 @@
 import { isValid } from "date-fns";
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

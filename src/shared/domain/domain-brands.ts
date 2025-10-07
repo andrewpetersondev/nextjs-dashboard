@@ -1,6 +1,6 @@
 import { type Brand, createBrand } from "@/shared/core/branding/brand";
-import { ValidationError } from "@/shared/core/errors/domain-error";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
 import { brandWith } from "@/shared/core/validation/composition/brand";
 import { validatePeriodResult } from "@/shared/core/validation/domain/period";
 import { validateUuidResult } from "@/shared/core/validation/primitives/uuid";

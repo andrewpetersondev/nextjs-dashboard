@@ -1,5 +1,5 @@
 import "server-only";
-import { BaseError } from "@/shared/core/errors/base-error";
+import { BaseError } from "@/shared/core/errors/base/base-error";
 
 /**
  * Generic infrastructure failure (storage, network, system).

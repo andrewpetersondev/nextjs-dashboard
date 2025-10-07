@@ -1,7 +1,7 @@
 // File: `src/shared/core/result/result-match.ts`
 
 import type { ErrorLike } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/sync/result";
 
 /**
  * Unwrap or throw error branch.

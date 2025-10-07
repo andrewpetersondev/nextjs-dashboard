@@ -1,6 +1,6 @@
 import { isValid } from "date-fns";
 import { dateToPeriod } from "@/features/revenues/domain/period";
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 import type { Period } from "@/shared/domain/domain-brands";
 
 /**

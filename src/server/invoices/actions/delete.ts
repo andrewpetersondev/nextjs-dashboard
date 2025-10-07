@@ -11,7 +11,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 

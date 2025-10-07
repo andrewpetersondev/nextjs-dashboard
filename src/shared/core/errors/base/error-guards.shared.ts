@@ -1,13 +1,13 @@
 // src/shared/core/errors/guards/error-guards.ts
-import { BaseError } from "@/shared/core/errors/base-error";
+import { BaseError } from "@/shared/core/errors/base/base-error";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import {
   type ConflictError,
   type ForbiddenError,
   type NotFoundError,
   type UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain-error";
-import type { ErrorCode } from "@/shared/core/errors/error-codes";
+} from "@/shared/core/errors/domain/domain-error";
 
 /**
  * Narrow unknown to BaseError.

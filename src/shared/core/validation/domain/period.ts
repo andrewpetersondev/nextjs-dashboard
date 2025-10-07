@@ -1,6 +1,6 @@
 import { format, isValid, parse } from "date-fns";
-import { ValidationError } from "@/shared/core/errors/domain-error";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthUTC } from "@/shared/utils/date/normalize";
 

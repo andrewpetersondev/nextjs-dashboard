@@ -1,9 +1,9 @@
 // src/shared/core/errors/error-adapters.ts
-import { BaseError } from "@/shared/core/errors/base-error";
+import { BaseError } from "@/shared/core/errors/base/base-error";
 import {
   isErrorCode,
   tryGetErrorCodeMeta,
-} from "@/shared/core/errors/error-codes";
+} from "@/shared/core/errors/base/error-codes";
 import {
   type AppError,
   augmentAppError,

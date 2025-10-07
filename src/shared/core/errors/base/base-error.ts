@@ -1,7 +1,7 @@
 import {
   type ErrorCode,
   getErrorCodeMeta,
-} from "@/shared/core/errors/error-codes";
+} from "@/shared/core/errors/base/error-codes";
 
 /**
  * Immutable, JSON-safe diagnostic context attached to an error.

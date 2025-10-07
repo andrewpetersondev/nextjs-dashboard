@@ -1,5 +1,5 @@
-import { ValidationError } from "@/shared/core/errors/domain-error";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
 
 /**
  * Generic enum validation (Result-based)

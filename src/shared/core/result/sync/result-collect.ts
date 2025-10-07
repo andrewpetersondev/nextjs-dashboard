@@ -1,7 +1,7 @@
 // File: `src/shared/core/result/result-collect.ts`
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
 
 export type OkType<R> = R extends Result<infer U, ErrorLike> ? U : never;
 export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;

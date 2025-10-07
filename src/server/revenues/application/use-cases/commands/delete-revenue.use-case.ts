@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class DeleteRevenueUseCase {

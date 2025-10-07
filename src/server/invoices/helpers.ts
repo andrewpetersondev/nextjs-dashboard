@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 
 /**
  * Validation rule for parameters.

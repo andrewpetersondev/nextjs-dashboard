@@ -1,8 +1,8 @@
 import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { Result } from "@/shared/core/result/result";
-import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/sync/result";
+import { Err, Ok } from "@/shared/core/result/sync/result";
 import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
 import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error.helpers";
 import {

@@ -4,7 +4,7 @@ import {
   PARTIAL_MASK_VISIBLE_EMAIL_CHARS,
   PARTIAL_MASK_VISIBLE_END_CHARS,
   PARTIAL_MASK_VISIBLE_START_CHARS,
-} from "@/shared/core/errors/error-redaction.constants";
+} from "@/shared/core/errors/redaction/error-redaction.constants";
 
 /**
  * Builds the sensitive key set (case-insensitive).

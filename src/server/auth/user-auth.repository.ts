@@ -15,7 +15,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain-error";
+} from "@/shared/core/errors/domain/domain-error";
 
 // --- Utility: Normalize input for signup, to enforce invariants early ---
 function toNormalizedSignupInput(

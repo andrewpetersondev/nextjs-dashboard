@@ -13,9 +13,9 @@ import { getAppDb } from "@/server/db/db.connection";
 import { authErrorToFormResult } from "@/server/forms/auth-error-to-form-result.mapper";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
-import { mapOk } from "@/shared/core/result/result-map";
-import { flatMapAsync } from "@/shared/core/result/result-transform-async";
+import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
+import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
+import { mapOk } from "@/shared/core/result/sync/result-map";
 import { toUserId } from "@/shared/domain/id-converters";
 import {
   toFormOk,

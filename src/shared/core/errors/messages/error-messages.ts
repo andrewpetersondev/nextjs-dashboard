@@ -1,4 +1,4 @@
-import type { ErrorCode } from "./error-codes";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 
 export const DATA_ERROR_MESSAGES = {
   ERROR_FETCH_DASHBOARD_CARDS: "Failed to fetch dashboard cards.",

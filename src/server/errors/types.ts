@@ -9,7 +9,7 @@ import type {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain-error";
+} from "@/shared/core/errors/domain/domain-error";
 
 /**
  * Layer identifiers for diagnostics.

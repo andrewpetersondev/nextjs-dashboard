@@ -1,4 +1,4 @@
-import type { Result } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/sync/result";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,

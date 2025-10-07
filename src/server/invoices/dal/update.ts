@@ -9,7 +9,7 @@ import type {
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { ValidationError } from "@/shared/core/errors/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 

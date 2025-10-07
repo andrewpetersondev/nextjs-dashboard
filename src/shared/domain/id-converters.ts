@@ -1,5 +1,5 @@
-import type { ValidationError } from "@/shared/core/errors/domain-error";
-import type { Result } from "@/shared/core/result/result";
+import type { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import type { Result } from "@/shared/core/result/sync/result";
 import {
   type CustomerId,
   createCustomerId,

@@ -8,8 +8,8 @@ import {
 } from "@/server/invoices/invoice-codecs.server";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
-import { ValidationError } from "@/shared/core/errors/domain-error";
-import { Err, type Result } from "@/shared/core/result/result";
+import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { Err, type Result } from "@/shared/core/result/sync/result";
 import { toInvoiceId } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";

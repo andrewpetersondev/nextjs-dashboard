@@ -1,6 +1,6 @@
 // File: src/shared/core/result/result-transform-async.ts
 import type { ErrorLike } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/sync/result";
 
 /**
  * Async flatMap over Ok branch.

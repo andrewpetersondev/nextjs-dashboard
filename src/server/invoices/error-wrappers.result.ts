@@ -2,9 +2,9 @@ import "server-only";
 import {
   mapToRepoError,
   type RepoError,
-} from "@/server/errors/error-mappers.server";
-import type { Result } from "@/shared/core/result/result";
-import { fromPromise } from "@/shared/core/result/result-async";
+} from "@/server/errors/mappers/error-mappers.server";
+import { fromPromise } from "@/shared/core/result/async/result-async";
+import type { Result } from "@/shared/core/result/sync/result";
 
 /**
  * Typed wrapper around fromPromise to infer E via mapToRepoError,

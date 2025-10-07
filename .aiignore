@@ -148,3 +148,5 @@ src/app/
 src/features/
 src/shell/
 src/ui/
+src/server/revenues/
+src/server/invoices/

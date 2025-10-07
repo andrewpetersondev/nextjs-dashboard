@@ -1,5 +1,5 @@
-import type { ValidationError } from "@/shared/core/errors/domain-error";
-import { Ok, type Result } from "@/shared/core/result/result";
+import type { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { Ok, type Result } from "@/shared/core/result/sync/result";
 
 /**
  * Apply a branding function to a validated value.
