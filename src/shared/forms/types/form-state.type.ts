@@ -71,7 +71,7 @@ export type FormResult<
   TData,
   TValue = string,
   TMsg = string,
-> = Result<FormSuccess<TData>, FormError<TField, TValue, TMsg>>;
+> = Result<FormSuccess<TData>, FormValidationError<TField, TValue, TMsg>>;
 
 /* -------------------------------------------------------------------------- */
 /* Constructors / Type Guards                                                 */
@@ -121,7 +121,7 @@ export const validationError = <TField extends string, TValue, TMsg>(
  * @returns True if the error is a validation error; otherwise, false.
  */
 export const isValidationError = <TField extends string, TValue, TMsg>(
-  err: FormError<TField, TValue, TMsg>,
+  err: FormValidationError<TField, TValue, TMsg>,
 ): err is FormValidationError<TField, TValue, TMsg> =>
   err.kind === "validation";
 
@@ -203,5 +203,4 @@ export const getValidationError = <
 >(
   res: FormResult<TField, TData, TValue, TMsg>,
 ): FormValidationError<TField, TValue, TMsg> | undefined =>
-  // biome-ignore lint/style/noNestedTernary: <fix when implementing>
-  res.ok ? undefined : isValidationError(res.error) ? res.error : undefined;
+  res.ok ? undefined : res.error;
