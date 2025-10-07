@@ -1,4 +1,4 @@
-import { isDatabaseError } from "@/server/errors/guards";
+import { isDatabaseError } from "@/server/errors/server-error.guards";
 import { isValidationError } from "@/shared/core/errors/guards/error-guards";
 import {
   INVOICE_MSG,
