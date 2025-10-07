@@ -38,6 +38,13 @@ apply: always
 - Separate validation, transformation, side-effects into dedicated functions.
 - Avoid dumping grounds (e.g., utils.ts); prefer small, named modules.
 - Avoid barrel files; use type-only imports for types.
+- Extract magic numbers/strings to named constants.
+- Target cyclomatic complexity ≤15; avoid nesting deeper than 3 levels; refactor into helpers when exceeded.
+- Use descriptive names; avoid abbreviations.
+- Prefer standard utility types; avoid unnecessary custom wrappers.
+- Extract predicates/utilities; avoid deep nesting and excessive branching.
+- All exported symbols must have explicit types.
+-
 
 ## Layered Architecture
 

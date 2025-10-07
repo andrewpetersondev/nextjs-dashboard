@@ -9,18 +9,6 @@ apply: manually
 Enforce consistent, maintainable style for all code and files in this project.  
 See [TypeScript Instructions](typescript-summary.md) for strict typing rules.
 
-## Coding Style
-
-- Single-purpose functions; ≤50 lines.
-- Parameters ≤4; use options object for optional params.
-- Prefer standard utility types; avoid unnecessary custom wrappers.
-- Extract predicates/utilities; avoid deep nesting and excessive branching.
-- All exported symbols must have explicit types.
-- Sort object properties by key.
-- Extract magic numbers/strings to named constants.
-- Use descriptive names; avoid abbreviations.
-- Target cyclomatic complexity ≤15; avoid nesting deeper than 3 levels; refactor into helpers when exceeded.
-
 ## React & Component Style
 
 - Export explicit prop and return types for all components/hooks.

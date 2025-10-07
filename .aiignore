@@ -144,7 +144,7 @@ postcss.config.mjs
 # Optional: source code directories
 # Uncomment if you want AI to ignore them
 # -----------------------------------------
-# src/app/
-# src/features/
-# src/shell/
-# src/ui/
+src/app/
+src/features/
+src/shell/
+src/ui/
