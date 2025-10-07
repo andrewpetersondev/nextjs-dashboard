@@ -1,14 +1,14 @@
 // src/shared/core/errors/error-logger.ts
 
-import { toBaseError } from "@/shared/core/errors/adapters/error-adapters";
+import { toBaseError } from "@/shared/core/errors/adapters/app-error-adapters";
 import { BaseError } from "@/shared/core/errors/base/base-error";
-import { isBaseError } from "@/shared/core/errors/base/error-guards.shared";
+import { isBaseError } from "@/shared/core/errors/base/error-guards";
 import type {
   LogErrorOptions,
   StructuredErrorLog,
-} from "@/shared/core/errors/logging/error-logger.types";
-import { buildStructuredPayload } from "@/shared/core/errors/logging/error-logger.utils";
-import { defaultErrorContextRedactor } from "@/shared/core/errors/redaction/error-redaction";
+} from "@/shared/core/errors/logging/error-logger.contracts";
+import { buildStructuredPayload } from "@/shared/core/errors/logging/error-logger.payload";
+import { defaultErrorContextRedactor } from "@/shared/core/errors/redaction/redaction";
 import type { AppError } from "@/shared/core/result/error";
 
 /**

@@ -7,7 +7,7 @@ import {
   type NotFoundError,
   type UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-error";
+} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Narrow unknown to BaseError.

@@ -1,13 +1,13 @@
-import { CIRCULAR_REF_PLACEHOLDER } from "@/shared/core/errors/redaction/error-redaction.constants";
+import { CIRCULAR_REF_PLACEHOLDER } from "@/shared/core/errors/redaction/redaction.constants";
 import type {
   ArrayRedactOptions,
   InternalConfig,
   ObjectRedactOptions,
-} from "@/shared/core/errors/redaction/error-redaction.types";
+} from "@/shared/core/errors/redaction/redaction.types";
 import {
   applyMask,
   isSensitiveKey,
-} from "@/shared/core/errors/redaction/error-redaction.utils";
+} from "@/shared/core/errors/redaction/redaction.utils";
 
 /**
  * Redact a primitive or return as-is.

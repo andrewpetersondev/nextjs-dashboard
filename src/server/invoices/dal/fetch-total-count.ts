@@ -3,7 +3,7 @@ import "server-only";
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { DATA_ERROR_MESSAGES } from "@/shared/core/errors/messages/error-messages";
 

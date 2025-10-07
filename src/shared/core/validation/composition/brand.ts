@@ -1,4 +1,4 @@
-import type { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import type { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { Ok, type Result } from "@/shared/core/result/sync/result";
 
 /**

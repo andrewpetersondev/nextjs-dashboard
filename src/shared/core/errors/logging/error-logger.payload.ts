@@ -1,5 +1,5 @@
 import type { BaseError } from "@/shared/core/errors/base/base-error";
-import type { StructuredErrorLog } from "@/shared/core/errors/logging/error-logger.types";
+import type { StructuredErrorLog } from "@/shared/core/errors/logging/error-logger.contracts";
 import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/error";
 
 /**

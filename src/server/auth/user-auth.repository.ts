@@ -4,7 +4,7 @@ import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
   newUserDbRowToEntity,
@@ -15,7 +15,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-error";
+} from "@/shared/core/errors/domain/domain-errors";
 
 // --- Utility: Normalize input for signup, to enforce invariants early ---
 function toNormalizedSignupInput(

@@ -2,7 +2,7 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**

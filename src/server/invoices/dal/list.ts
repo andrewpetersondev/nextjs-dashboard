@@ -4,7 +4,7 @@ import { and, count, eq } from "drizzle-orm";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";

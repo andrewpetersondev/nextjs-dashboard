@@ -1,14 +1,14 @@
 import "server-only";
 
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
-import type { DatabaseError } from "@/server/errors/infrastructure";
+import type { DatabaseError } from "@/server/errors/infrastructure-errors";
 import {
   dtoToCreateInvoiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/server/invoices/invoice-codecs.server";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
-import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { Err, type Result } from "@/shared/core/result/sync/result";
 import { toInvoiceId } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";

@@ -3,8 +3,8 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
-import { DatabaseError } from "@/server/errors/infrastructure";
-import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export async function deleteRevenue(

@@ -6,7 +6,7 @@ import type { CustomerAggregatesRowRaw } from "@/server/customers/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).

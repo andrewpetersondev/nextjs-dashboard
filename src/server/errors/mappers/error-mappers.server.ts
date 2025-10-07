@@ -1,7 +1,7 @@
 import "server-only";
 
-import { DatabaseError } from "@/server/errors/infrastructure";
-import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**

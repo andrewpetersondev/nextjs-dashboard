@@ -16,7 +16,7 @@ import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-error";
+} from "@/shared/core/errors/domain/domain-errors";
 import type { Result } from "@/shared/core/result/sync/result";
 import { Err, Ok } from "@/shared/core/result/sync/result";
 

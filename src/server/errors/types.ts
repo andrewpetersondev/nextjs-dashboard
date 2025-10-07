@@ -4,12 +4,12 @@ import type {
   CacheError,
   CryptoError,
   DatabaseError,
-} from "@/server/errors/infrastructure";
+} from "@/server/errors/infrastructure-errors";
 import type {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-error";
+} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Layer identifiers for diagnostics.

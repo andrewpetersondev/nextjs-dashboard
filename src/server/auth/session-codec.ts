@@ -25,7 +25,7 @@ import {
   SESSION_SECRET,
 } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 
 let encodedKey: Uint8Array | undefined;
 

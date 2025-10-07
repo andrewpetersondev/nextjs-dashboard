@@ -3,7 +3,7 @@ import "server-only";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   InvoiceEntity,
   InvoiceServiceEntity,

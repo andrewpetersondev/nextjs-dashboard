@@ -1,5 +1,5 @@
 import { type Brand, createBrand } from "@/shared/core/branding/brand";
-import { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { Err, Ok, type Result } from "@/shared/core/result/sync/result";
 import { brandWith } from "@/shared/core/validation/composition/brand";
 import { validatePeriodResult } from "@/shared/core/validation/domain/period";

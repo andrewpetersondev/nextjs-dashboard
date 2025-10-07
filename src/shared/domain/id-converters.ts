@@ -1,4 +1,4 @@
-import type { ValidationError } from "@/shared/core/errors/domain/domain-error";
+import type { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import type { Result } from "@/shared/core/result/sync/result";
 import {
   type CustomerId,

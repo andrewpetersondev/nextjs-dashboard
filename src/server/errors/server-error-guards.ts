@@ -4,7 +4,7 @@ import {
   CryptoError,
   DatabaseError,
   InfrastructureError,
-} from "@/server/errors/infrastructure";
+} from "@/server/errors/infrastructure-errors";
 
 export const isInfrastructureError = (e: unknown): e is InfrastructureError =>
   e instanceof InfrastructureError;

@@ -1,11 +1,11 @@
 import "server-only";
 
-import { DatabaseError } from "@/server/errors/infrastructure";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-error";
+} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Throwing-style helpers per layer.
