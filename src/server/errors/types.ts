@@ -5,7 +5,6 @@ import type {
   CryptoError,
   DatabaseError,
 } from "@/server/errors/infrastructure";
-import { BaseError } from "@/shared/core/errors/base-error";
 import type {
   ConflictError,
   UnauthorizedError,
@@ -55,9 +54,3 @@ export type RepositoryError =
 export type DalError =
   | { layer: "dal"; kind: "Database"; message: string }
   | { layer: "dal"; kind: "Conflict"; message: string };
-
-/**
- * Guard to detect BaseError (throwing style).
- */
-export const isLayerError = (e: unknown): e is LayerError =>
-  e instanceof BaseError;
