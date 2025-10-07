@@ -7,12 +7,8 @@ import type {
   StructuredErrorLog,
 } from "@/shared/core/errors/error-logger.types";
 import { buildStructuredPayload } from "@/shared/core/errors/error-logger.utils";
+import { defaultErrorContextRedactor } from "@/shared/core/errors/error-redaction";
 import type { AppError } from "@/shared/core/result/error";
-
-// Add constants at the top of the file
-const MAX_STRING_LENGTH = 1000;
-const TRUNCATED_LENGTH = 997;
-const TRUNCATION_SUFFIX = "...";
 
 /**
  * Attempt to extract a BaseError-like shape from unknown without throwing.
@@ -22,25 +18,6 @@ function coerceBaseError(e: unknown): BaseError | undefined {
     return e;
   }
   return;
-}
-
-/**
- * Redact large/unsafe fields before logging.
- */
-function redact(obj: Record<string, unknown>): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(obj)) {
-    if (k.toLowerCase().includes("password")) {
-      out[k] = "[REDACTED]";
-      continue;
-    }
-    if (typeof v === "string" && v.length > MAX_STRING_LENGTH) {
-      out[k] = `${v.slice(0, TRUNCATED_LENGTH)}${TRUNCATION_SUFFIX}`;
-      continue;
-    }
-    out[k] = v;
-  }
-  return out;
 }
 
 /**
@@ -65,7 +42,7 @@ export function logError(options: LogErrorOptions): StructuredErrorLog {
     level,
     operation,
     raw: error,
-    redact,
+    redact: redact ?? defaultErrorContextRedactor,
   });
 
   // Immutable emission object.
@@ -110,7 +87,11 @@ export function logUnknownAsBaseError(
       : BaseError.from(err, "UNKNOWN", { source: "unknown" });
   const payload = {
     code: be.code,
-    context: redact({ ...be.context, ...extra }),
+    // Use shared default redactor
+    context: defaultErrorContextRedactor({ ...be.context, ...extra }) ?? {
+      ...be.context,
+      ...extra,
+    },
     message: be.message,
     name: be.name,
     retryable: be.retryable,
@@ -131,7 +112,11 @@ export function logAppError(
   const be = toBaseError(appError, "UNKNOWN").withContext({ boundary: "ui" });
   const payload = {
     code: be.code,
-    context: redact({ ...be.context, ...extra }),
+    // Use shared default redactor
+    context: defaultErrorContextRedactor({ ...be.context, ...extra }) ?? {
+      ...be.context,
+      ...extra,
+    },
     message: be.message,
     name: appError.name ?? be.name,
     severity: be.severity,
