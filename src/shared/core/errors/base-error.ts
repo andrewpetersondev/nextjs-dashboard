@@ -24,7 +24,7 @@ export interface BaseErrorJSON {
  */
 export interface BaseErrorOptions {
   readonly message?: string;
-  readonly context?: Record<string, unknown>;
+  readonly context?: BaseErrorContext;
   readonly cause?: unknown;
 }
 
@@ -49,7 +49,10 @@ export class BaseError extends Error {
     cause?: unknown,
   ) {
     const meta = getErrorCodeMeta(code);
-    super(message || meta.description);
+    super(
+      message || meta.description,
+      cause instanceof Error ? { cause } : undefined,
+    );
     this.name = this.constructor.name;
     this.code = code;
     this.statusCode = meta.httpStatus;
@@ -59,15 +62,11 @@ export class BaseError extends Error {
     this.description = meta.description;
     this.context = Object.freeze({ ...context });
     this.cause = cause;
-
-    // Optional stack chaining (kept lightweight; avoids unconditional stack bloat).
-    if (cause instanceof Error && cause.stack) {
-      this.stack += `\nCausedBy: ${cause.name}: ${cause.message}`;
-    }
   }
 
   /**
-   * Merge additional immutable context, returning a new instance (non-mutating).
+   * Merge additional immutable context, returning a new BaseError.
+   * Note: subclass identity is not preserved.
    */
   withContext(extra: Record<string, unknown>): BaseError {
     if (!extra || Object.keys(extra).length === 0) {

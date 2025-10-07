@@ -11,18 +11,14 @@ import { Ok, type Result } from "@/shared/core/result/result";
  */
 export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
   source: Iterable<Result<TValue, TError>>,
-): Generator<
-  TValue,
-  Result<undefined, TError> | Result<undefined, never>,
-  unknown
-> {
+): Generator<TValue, Result<void, TError>, unknown> {
   for (const r of source) {
     if (!r.ok) {
-      return r as Result<undefined, TError>;
+      return r as Result<void, TError>;
     }
     yield r.value;
   }
-  return Ok<undefined, never>(undefined);
+  return Ok<void, TError>(undefined);
 }
 
 /**
