@@ -1,5 +1,5 @@
 import "server-only";
-import { mapDrizzleToDalError } from "@/server/errors/drizzle";
+import { mapDrizzleToDalError } from "@/server/errors/drizzle-errors";
 
 /**
  * Execute a DAL operation and rethrow mapped errors (throwing style).
