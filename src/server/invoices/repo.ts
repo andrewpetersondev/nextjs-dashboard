@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import type { RepoError } from "@/server/errors/error-mappers.server";
 import type { DatabaseError } from "@/server/errors/infrastructure";
-import type { RepoError } from "@/server/errors/mappers";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
 import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
 import { fetchAllPaidInvoicesDal } from "@/server/invoices/dal/fetch-all-paid";

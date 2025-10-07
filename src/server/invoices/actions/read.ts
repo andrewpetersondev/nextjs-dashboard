@@ -2,10 +2,10 @@
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { getAppDb } from "@/server/db/db.connection";
-import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import { assertParams } from "@/server/invoices/helpers";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
+import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";

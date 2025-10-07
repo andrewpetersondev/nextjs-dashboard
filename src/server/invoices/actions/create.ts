@@ -9,13 +9,13 @@ import {
 } from "@/features/invoices/lib/invoice.schema";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import { getAppDb } from "@/server/db/db.connection";
-import { toInvoiceErrorMessage } from "@/server/errors/to-invoice-error-message";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
+import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { isZodErrorInstance } from "@/shared/forms/errors/zod-error.helpers";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";

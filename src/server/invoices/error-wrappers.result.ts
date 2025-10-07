@@ -1,5 +1,8 @@
 import "server-only";
-import { mapToRepoError, type RepoError } from "@/server/errors/mappers";
+import {
+  mapToRepoError,
+  type RepoError,
+} from "@/server/errors/error-mappers.server";
 import type { Result } from "@/shared/core/result/result";
 import { fromPromise } from "@/shared/core/result/result-async";
 
