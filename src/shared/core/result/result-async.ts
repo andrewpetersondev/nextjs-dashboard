@@ -1,5 +1,5 @@
 // src/shared/core/result/result-async.ts
-import { normalizeToAppError } from "@/shared/core/errors/error-adapters";
+
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
@@ -47,35 +47,16 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   }
 }
 
-/**
- * Wrap a Promise into a Result.
- * Thin alias over tryCatchAsync for API ergonomics.
- * @template TValue Success value type.
- * @param promise Input promise.
- * @returns Promise resolving to Result<TValue,AppError>
- */
-export function fromPromise<TValue>(
-  promise: Promise<TValue>,
-): Promise<Result<TValue, AppError>>;
-/**
- * Wrap a Promise into a Result with custom error mapping.
- * @template TValue Success value type.
- * @template TError Custom error type.
- * @param promise Input promise.
- * @param mapError Error mapper.
- * @returns Promise resolving to Result<TValue,TError>
- */
-export function fromPromise<TValue, TError extends ErrorLike>(
-  promise: Promise<TValue>,
+// Generic adapter: preserves TError
+export async function fromPromise<TValue, TError extends ErrorLike>(
+  fn: () => Promise<TValue>,
   mapError: (e: unknown) => TError,
-): Promise<Result<TValue, TError>>;
-export function fromPromise<TValue, TError extends ErrorLike>(
-  promise: Promise<TValue>,
-  mapError?: (e: unknown) => TError,
-): Promise<Result<TValue, AppError | TError>> {
-  return mapError
-    ? tryCatchAsync(() => promise, { mapError })
-    : tryCatchAsync(() => promise, { mapError: normalizeToAppError });
+): Promise<Result<TValue, TError>> {
+  try {
+    return Ok(await fn());
+  } catch (e) {
+    return Err(mapError(e));
+  }
 }
 
 /**
