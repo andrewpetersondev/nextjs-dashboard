@@ -1,3 +1,4 @@
+// src/shared/core/errors/guards/error-guards.ts
 import { BaseError } from "@/shared/core/errors/base-error";
 import {
   type ConflictError,
@@ -7,6 +8,7 @@ import {
   ValidationError,
 } from "@/shared/core/errors/domain-error";
 import type { ErrorCode } from "@/shared/core/errors/error-codes";
+import type { AppError } from "@/shared/core/result/error";
 
 /**
  * Narrow unknown to BaseError.
@@ -14,6 +16,14 @@ import type { ErrorCode } from "@/shared/core/errors/error-codes";
  */
 export const isBaseError = (e: unknown): e is BaseError =>
   e instanceof BaseError;
+
+export const isAppError = (e: unknown): e is AppError =>
+  typeof e === "object" &&
+  e !== null &&
+  "message" in (e as { message?: unknown }) &&
+  typeof (e as { message?: unknown }).message === "string" &&
+  "kind" in (e as { kind?: unknown }) &&
+  typeof (e as { kind?: unknown }).kind === "string";
 
 /**
  * Narrow unknown to ValidationError.

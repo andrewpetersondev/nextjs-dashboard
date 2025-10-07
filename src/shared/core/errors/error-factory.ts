@@ -1,3 +1,4 @@
+// src/shared/core/errors/error-factory.ts
 import { BaseError } from "@/shared/core/errors/base-error";
 import { type ErrorCode, isErrorCode } from "@/shared/core/errors/error-codes";
 
@@ -45,4 +46,13 @@ export function normalizeUnknown(
   fallback: ErrorCode = "UNKNOWN",
 ): BaseError {
   return BaseError.from(value, fallback, context);
+}
+
+export function createBaseError(params: CreateErrorParams): BaseError {
+  return new BaseError(
+    params.code,
+    params.message,
+    params.context ?? {},
+    params.cause,
+  );
 }

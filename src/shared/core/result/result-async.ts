@@ -1,4 +1,5 @@
 // src/shared/core/result/result-async.ts
+import { normalizeToAppError } from "@/shared/core/errors/error-adapters";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
@@ -74,7 +75,7 @@ export function fromPromise<TValue, TError extends ErrorLike>(
 ): Promise<Result<TValue, AppError | TError>> {
   return mapError
     ? tryCatchAsync(() => promise, { mapError })
-    : tryCatchAsync(() => promise);
+    : tryCatchAsync(() => promise, { mapError: normalizeToAppError });
 }
 
 /**

@@ -1,4 +1,4 @@
-// result.ts (proposed refinements)
+// src/shared/core/result/result.ts
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 
 /** Build-time prod flag (enables dead code elimination). */
@@ -77,3 +77,15 @@ export const isOk = <TValue, TError extends ErrorLike>(
 export const isErr = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): r is ErrResult<TError> => !r.ok;
+
+// Boundary helpers to enforce promotion to AppError at UI edges.
+
+/**
+ * Map a Result<T, BaseError|unknown> into Result<T, AppError>.
+ * Keep ErrorLike constraint on TError for safety.
+ */
+export const mapErrorToApp = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
+  r: Result<TValue, TError>,
+  toApp: (e: TError) => import("@/shared/core/result/error").AppError,
+): Result<TValue, import("@/shared/core/result/error").AppError> =>
+  r.ok ? r : ({ error: toApp(r.error), ok: false } as const);
