@@ -24,8 +24,6 @@ export const isProd = (): boolean => getNodeEnv() === "production";
 export const isTest = (): boolean => getNodeEnv() === "test";
 export const isDev = (): boolean => getNodeEnv() === "development";
 
-// ... existing code ...
-
 /**
  * Resolve and validate DATABASE_ENV (runtime environment used by the database/config).
  * - Lowercases the value
