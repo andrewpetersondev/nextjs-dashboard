@@ -1,13 +1,24 @@
-// File: src/shared/core/result/result-map-async.ts
+// File: src/shared/core/result/async/result-map-async.ts
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Async map success branch.
- * @template TValue
- * @template TNext
- * @template TError
+ * Map the Ok branch of a `Result` using an async transformer.
+ *
+ * - If `r.ok === true`, awaits `fn(r.value)` and returns `Ok<TNext>`.
+ * - If `r.ok === false`, returns the original `Err` unchanged.
+ *
+ * Pure, curried helper; does not catch exceptions from `fn`.
+ *
+ * @typeParam TValue - Input Ok value type.
+ * @typeParam TNext - Output Ok value type after transformation.
+ * @typeParam TError - Error type propagated unchanged.
+ * @param fn - Async transformer applied to the Ok value.
+ * @returns Function that maps a `Result<TValue, TError>` to `Promise<Result<TNext, TError>>`.
+ * @example
+ * const toUpper = mapOkAsync((s: string) => Promise.resolve(s.toUpperCase()));
+ * const r = await toUpper(Ok("x")); // → { ok: true, value: "X" }
  */
 export const mapOkAsync =
   /* @__PURE__ */
@@ -17,7 +28,3 @@ export const mapOkAsync =
     /* @__PURE__ */
     async (r: Result<TValue, TError>): Promise<Result<TNext, TError>> =>
       r.ok ? Ok(await fn(r.value)) : r;
-
-/**
- * (Optional future) async mapError can mirror sync variant if needed.
- */
