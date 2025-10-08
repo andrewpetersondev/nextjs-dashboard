@@ -4,7 +4,12 @@ apply: always
 
 # Current Focus
 
-Focus on code related to signup and login.
+Focus on code related to:
+
+- signup and login
+- result helpers
+- error flows
+- forms
 
 Ignore:
 

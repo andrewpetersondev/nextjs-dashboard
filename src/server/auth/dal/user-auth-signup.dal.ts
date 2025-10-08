@@ -1,8 +1,8 @@
 import "server-only";
+import { executeDalOrThrow } from "@/server/auth/error-wrappers.throw";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { executeDalOrThrow } from "@/server/errors/error-wrappers.throw";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
