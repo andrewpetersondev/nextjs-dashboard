@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@auth/core": "^0.40.0",
-    "@auth/drizzle-adapter": "^1.10.0",
+    "@auth/core": "^0.41.0",
+    "@auth/drizzle-adapter": "^1.11.0",
     "@heroicons/react": "^2.2.0",
     "@next/env": "15.5.4",
     "bcryptjs": "^3.0.2",
@@ -12,7 +12,7 @@
     "drizzle-orm": "^0.44.6",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",
-    "next": "15.6.0-canary.42",
+    "next": "15.6.0-canary.53",
     "next-auth": "5.0.0-beta.29",
     "pg": "^8.16.3",
     "pino": "^10.0.0",
@@ -20,18 +20,18 @@
     "react-dom": "19.2.0",
     "server-only": "^0.0.1",
     "use-debounce": "^10.0.6",
-    "zod": "^4.1.11"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
     "@tailwindcss/postcss": "^4.1.14",
     "@testing-library/cypress": "^10.1.0",
-    "@types/node": "^24.6.2",
+    "@types/node": "^24.7.0",
     "@types/pg": "^8.15.5",
-    "@types/react": "19.2.0",
-    "@types/react-dom": "19.2.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.1",
     "axe-core": "^4.10.3",
-    "cypress": "^15.3.0",
+    "cypress": "^15.4.0",
     "cypress-axe": "^1.7.0",
     "depcheck": "^1.4.7",
     "drizzle-kit": "^0.31.5",
@@ -48,7 +48,7 @@
     "pnpm": ">=10.12.1"
   },
   "name": "nextjs-dashboard",
-  "packageManager": "pnpm@10.18.0+sha512.e804f889f1cecc40d572db084eec3e4881739f8dec69c0ff10d2d1beff9a4e309383ba27b5b750059d7f4c149535b6cd0d2cb1ed3aeb739239a4284a68f40cfa",
+  "packageManager": "pnpm@10.18.1+sha512.77a884a165cbba2d8d1c19e3b4880eee6d2fcabd0d879121e282196b80042351d5eb3ca0935fa599da1dc51265cc68816ad2bddd2a2de5ea9fdf92adbec7cd34",
   "private": true,
   "scripts": {
     "biome:check": "biome check --max-diagnostics=100",
