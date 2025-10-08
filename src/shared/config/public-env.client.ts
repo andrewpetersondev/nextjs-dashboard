@@ -1,5 +1,8 @@
+// File: public-env.client.ts
+/** biome-ignore-all lint/correctness/noProcessGlobal: <centralized env file> */
+/** biome-ignore-all lint/style/noProcessEnv: <centralized env file> */
 import { z } from "zod";
-import { getDatabaseEnv, getNodeEnv } from "@/shared/config/env-shared";
+import { getNodeEnv } from "@/shared/config/env-shared";
 import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
 const PublicEnvSchema = z.object({
@@ -10,7 +13,7 @@ const PublicEnvSchema = z.object({
  * Parse and validate public (browser-exposed) environment variables.
  * Throws early with a readable error if invalid.
  */
-function parsePublicEnv() {
+function parsePublicEnv(): Readonly<z.infer<typeof PublicEnvSchema>> {
   const parsed = PublicEnvSchema.safeParse(process.env);
   if (!parsed.success) {
     const details = parsed.error.flatten().fieldErrors;
@@ -18,14 +21,13 @@ function parsePublicEnv() {
       `Invalid public environment variables. See details:\n${JSON.stringify(details, null, 2)}`,
     );
   }
-  return parsed.data;
+  return Object.freeze(parsed.data);
 }
 
 const PUBLIC_ENV = parsePublicEnv();
 
-/** Effective Node and Database environments derived once and reused. */
+/** Effective Node environment derived once and reused. */
 const NODE_ENV = getNodeEnv();
-const DATABASE_ENV = getDatabaseEnv();
 
 /** Exported, browser-safe values */
 export const NEXT_PUBLIC_LOG_LEVEL = PUBLIC_ENV.NEXT_PUBLIC_LOG_LEVEL as
@@ -34,6 +36,7 @@ export const NEXT_PUBLIC_LOG_LEVEL = PUBLIC_ENV.NEXT_PUBLIC_LOG_LEVEL as
 
 export const IS_PROD: boolean = NODE_ENV === "production";
 
-// If you need to branch client behavior by database environment (non-secret), expose a boolean.
-// Keep it minimal to avoid leaking unnecessary config.
-export const IS_DB_PROD: boolean = DATABASE_ENV === "production";
+// Testing-only reset (no-op for browser bundles, provided for SSR tests)
+export function __resetPublicEnvCacheForTests__(): void {
+  // Intentionally empty: relies on module reload in tests; provided for symmetry.
+}

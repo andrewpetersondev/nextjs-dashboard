@@ -1,8 +1,6 @@
 // src/shared/core/result/result.ts
+import { IS_PROD } from "@/shared/config/env-shared";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-
-/** Build-time prod flag (enables dead code elimination). */
-const IS_PROD = process.env.NODE_ENV === "production";
 
 /**
  * Dev-only freeze helper to discourage accidental mutation of Result objects.
