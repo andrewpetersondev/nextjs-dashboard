@@ -3,12 +3,17 @@ import type { ErrorLike } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
 
 /**
- * Async flatMap over Ok branch.
- * @template TValue
- * @template TNext
- * @template TError1
- * @template TError2
- * @param fn Async mapper returning a Result.
+ * Asynchronously maps the `Ok` branch of a `Result` using the provided async function.
+ *
+ * If the input result is `ok`, applies the async mapper and returns its result.
+ * If the input result is `error`, returns the error unchanged (typed to the new result).
+ *
+ * @typeParam TValue The value type of the input result.
+ * @typeParam TNext The value type of the mapped result.
+ * @typeParam TError1 The error type of the input result.
+ * @typeParam TError2 The error type of the mapped result.
+ * @param fn An async function that maps a value of type `TValue` to a `Result<TNext, TError2>`.
+ * @returns A function that takes a `Result<TValue, TError1>` and returns a `Promise<Result<TNext, TError1 | TError2>>`.
  */
 export const flatMapAsync =
   /* @__PURE__ */

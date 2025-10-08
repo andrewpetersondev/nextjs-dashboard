@@ -1,8 +1,6 @@
 import "server-only";
 import { mapDrizzleToDalError } from "@/server/errors/mappers/drizzle-error-mapper";
-
-// Add explicit generic constraint and name for clarity
-type AsyncThunk<T> = () => Promise<T>;
+import type { AsyncThunk } from "@/shared/core/result/async/result-async";
 
 /**
  * Execute a DAL operation and rethrow mapped errors (throwing style).
