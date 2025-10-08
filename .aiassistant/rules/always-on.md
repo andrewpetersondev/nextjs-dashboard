@@ -20,12 +20,14 @@ apply: always
 - Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
 - Allow casts **only for primitives** (string, number, boolean).
 - Enforce **maximum type safety** and **zero unsafe narrowing**.
-- All exported functions/components/hooks must have **explicit parameter and return types**.
+- All exported functions/components/hooks must have explicit top-level parameter and return types.
+- Internal closures and callbacks may rely on safe inference when fully constrained by generics.
+- Export all symbols with explicit types when inference is ambiguous; prefer named exports; no default exports.
 - Model null/undefined explicitly; no non-null assertions.
 - Use discriminated unions for all errors/results (`{ ok: true; value } | { ok: false; error }`).
 - Inputs immutable; use `readonly` and `as const`.
 - Confirm intent before destructive or cross-layer edits.
-- Prefer small, composable changes; use `pnpm` commands in examples.
+- Prefer small, composable changes.
 
 ## Coding & Style
 
@@ -33,7 +35,6 @@ apply: always
 - File length ≤200 lines; split by feature/domain.
 - Extract predicates/utilities; avoid deep nesting; cyclomatic complexity ≤15.
 - Sort object properties by key; extract magic numbers/strings as constants.
-- Export all symbols with explicit types; prefer named exports; no default exports.
 - React: use functional components, explicit props/return types, typed event handlers.
 - Separate validation, transformation, side-effects into dedicated functions.
 - Avoid dumping grounds (e.g., utils.ts); prefer small, named modules.
@@ -43,8 +44,6 @@ apply: always
 - Use descriptive names; avoid abbreviations.
 - Prefer standard utility types; avoid unnecessary custom wrappers.
 - Extract predicates/utilities; avoid deep nesting and excessive branching.
-- All exported symbols must have explicit types.
--
 
 ## Layered Architecture
 

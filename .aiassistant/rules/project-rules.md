@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Jetbrains AI Rules
@@ -87,12 +87,5 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Minimum coverage targets: 80% lines and branches for affected packages.
 - Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
 - Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
-
-## AI Change Protocol
-
-- Before edits, an AI Edit Proposal must be provided using the template in ai-edit-plan-proposal.md.
-- Required in PR description for AI-suggested changes.
-- Must include: intent, affected files, risks, rollback, validation steps (typecheck, lint, tests, a11y), and prod
-  impact.
 
 _Last updated: 2025-10-05_
