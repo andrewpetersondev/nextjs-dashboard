@@ -48,7 +48,7 @@ apply: always
 
 - Functions single-purpose, ≤50 lines, ≤4 parameters (optional in objects).
 - Extract predicates/utilities; avoid deep nesting; cyclomatic complexity ≤15.
-- Sort object properties by key; extract magic numbers/strings as constants.
+- Extract magic numbers/strings as constants.
 - Separate validation, transformation, side-effects into dedicated functions.
 - Prefer standard utility types; avoid unnecessary custom wrappers.
 
