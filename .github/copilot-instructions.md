@@ -5,94 +5,94 @@ description: 'GitHub Copilot usage and response rules for this project.'
 
 # GitHub Copilot Instructions
 
---- 
+## Minimal Response Rule
 
-## Purpose
+- **Responses should be brief** and only include the **changed sections of code** or additions.
+- Do **not** repeat the entire file unless explicitly requested.
+- Use **diff-style or snippet-style output** showing context ±2 lines for clarity.
+- Include any **new imports or types** only if they are part of the change.
+- Provide a **short comment above the snippet** if needed to explain the purpose of the change.
+- Avoid explanatory text or rationale unless the user asks for it.
+- When multiple changes are suggested, **group them by file** and only include the affected lines per file.
 
-Define strict rules for Copilot responses, code suggestions, and changes in this Next.js + TypeScript monorepo.
+## Core Principles
 
----
+- Never use barrel files; never use index files.
+- Enforce **maximum type safety** and **zero unsafe narrowing**, except `exactOptionalPropertyTypes`, which may remain
+  disabled for practical flexibility in optional object fields.
+- Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
+- Prefer `satisfies` over `as`; Allow casts **only for primitives** (string, number, boolean).
+- All exported functions/components/hooks must have explicit top-level parameter and return types.
+- Internal closures and callbacks may rely on safe inference when fully constrained by generics.
+- Export all symbols with explicit types when inference is ambiguous; prefer named exports; no default exports.
+- Model null/undefined explicitly; no non-null assertions.
+- Use discriminated unions for all errors/results (`{ ok: true; value } | { ok: false; error }`).
+- Inputs immutable; use `readonly` and `as const`.
+- Prefer small, composable changes.
 
-## General Rules
+## Document Hierarchy
 
-- Always inspect and use the latest attached instruction files before making code changes.
-- Follow all rules in:
-    - [Coding Style Instructions](./instructions/coding-style.instructions.md)
-    - [TypeScript Instructions](./instructions/typescript.instructions.md)
-    - [Result & Error Instructions](./instructions/result-error.instructions.md)
-    - [Structure & Architecture](./instructions/structure-architecture.instructions.md)
-- Never access files outside provided attachments.
+- This file is always-on. Downstream rule documents must not repeat these rules; they should add only deltas or examples
+  and link back.
+- When conflicts arise, stop process and ask me how to proceed.
 
----
+## Coding & Style
 
-## Folder & Attachment Access Rule
+### File Conventions
 
-- Always inspect relavent code from attached folders/files before answering or making code changes.
-- Only use the latest state of attached files; do not access files outside attachments.
-- Follow all rules in referenced instruction files.
+- File length ≤200 lines; split by feature/domain.
+- Avoid dumping grounds (e.g., utils.ts); prefer small, named modules.
+- Use type-only imports for types.
+- Place local functions above exported functions.
 
----
+### Function Conventions
 
-## Conflict Resolution & Fallbacks
+- Functions single-purpose, ≤50 lines, ≤4 parameters (optional in objects).
+- Extract predicates/utilities; avoid deep nesting; cyclomatic complexity ≤15.
+- Extract magic numbers/strings as constants.
+- Separate validation, transformation, side-effects into dedicated functions.
+- Prefer standard utility types; avoid unnecessary custom wrappers.
 
-- If instructions conflict, ask for clarification.
-- Default to strictest typing and safest operations.
-- Use current best practices and stable APIs when uncertain.
+### Naming Conventions
 
----
+- Use descriptive names; avoid abbreviations.
 
-## Logging & Error Policy
+## Layered Architecture
 
-- Add context (operation, identifiers) without secrets.
-- Normalize API error shapes; map internal errors to safe client messages.
-- Use structured logs at appropriate levels.
-- For TypeScript error modeling, see [TypeScript Instructions](./instructions/typescript.instructions.md).
+### Directory Structure
 
----
+```
 
-## Version & Tooling Constraints
+src/
+├─ app/        → Next.js App Router (layouts, pages, routes)
+├─ features/   → Domain logic, components, and types per feature
+├─ server/     → Server-only logic: auth, db, repos, services, actions
+├─ shared/     → Cross-cutting utilities, domain types, constants
+├─ ui/         → Reusable UI primitives and client-only code
+└─ shell/      → Dashboard and UI composition shells
 
-- Adhere to declared package versions; prefer stable APIs.
-- Note canary/experimental usage and suggest alternatives.
-- Use pnpm for package and script commands.
+```
 
----
+Respect this strict upward dependency flow:
 
-## Quick Checklist
+```
 
-- Confirm intent, constraints, and risks.
-- Identify files to change and impacted modules.
-- Propose small, composable changes; note typing and error strategy.
-- Provide copy-paste runnable commands (pnpm).
-- Validate outcome; list next steps.
+shared --> ui --> shell --> app --> features --> server 
 
----
+```
 
-## Response Patterns
+Rules:
 
-- Start with a 3–7 bullet checklist for complex changes.
-- Add a one-line preamble explaining code purpose/context.
-- After major outputs, include brief validation and suggested next steps.
-- Ask for explicit confirmation before irreversible or sensitive actions.
+- Lower layers **must not** import from higher ones.
+- `shared` may be imported by any layer.
+- `ui` is purely client-side; no server or DB logic.
+- Keep functions short (<50 lines) and focused on a single concern.
+- Group by **feature/domain** rather than technical type.
 
----
+## Behavior & Safety
 
-## Review Checklist
+- Confirm intent before destructive or cross-layer edits.
+- Prefer small, composable changes with explicit typing and safe defaults.
+- Apply strictest interpretation if uncertain.
 
-- Confirm strict TypeScript and explicit types.
-- Validate file/module organization by feature/domain.
-- Ensure all code follows style, naming, and immutability rules.
-- Reference all instruction files for additional requirements.
-
----
-
-## References
-
-- [Coding Style Instructions](./instructions/coding-style.instructions.md)
-- [TypeScript Instructions](./instructions/typescript.instructions.md)
-- [Result & Error Instructions](./instructions/result-error.instructions.md)
-- [Structure & Architecture](./instructions/structure-architecture.instructions.md)
-
----
-
-_Last updated: YYYY-MM-DD_
+_Last updated: 2025-10-08_

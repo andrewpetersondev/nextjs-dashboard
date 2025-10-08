@@ -3,65 +3,61 @@ applyTo: '**'
 description: 'Project structure, organization, and architectural strategies for Next.js + TypeScript monorepo.'
 ---
 
-# Structure & Architecture
+# Structure & Architecture Summary
 
 ## Purpose
 
-Document the organization, layering, and architectural strategies for maintainability, scalability, and clarity.
+Define and enforce consistent, scalable structure, import boundaries, and layering in this Next.js + TypeScript app.  
+Attach for refactors, file moves, or architecture reviews.
 
 ---
 
-## Directory Structure
+## Layer Responsibilities
 
-- `src/app/`: Next.js App Router entry, layouts, pages, API routes.
-- `src/features/`: Feature modules (auth, customers, invoices, revenues, users) with domain logic, components, types,
-  and libs.
-- `src/server/`: Server-side code (auth, config, db, errors, events, forms, logging, repository, etc.).
-- `src/shared/`: Shared utilities, domain types, config, forms, i18n, logging, money, routes, UI primitives.
-- `src/shell/`: Shell components for dashboard and UI composition.
-- `src/ui/`: UI primitives, atoms, molecules, navigation, styles, and organization docs.
-
----
-
-## Layered Architecture
-
-- **App Layer**: Routing, layout, and top-level error handling (`src/app/`).
-- **Feature Layer**: Domain-specific logic, components, and types (`src/features/`).
-- **Server Layer**: Data access, business logic, error handling, and events (`src/server/`).
-- **Shared Layer**: Cross-cutting concerns, utilities, and domain models (`src/shared/`).
-- **UI Layer**: Reusable UI primitives and composition patterns (`src/ui/`).
+- **App:** Routing, layouts, top-level error and boundary handling.
+- **Action:** Server actions, input validation (Zod), and controlled side-effects.
+- **Service:** Business logic; orchestrates repos and domain operations.
+- **Repo:** Abstracts data persistence using DAL or ORM.
+- **DAL:** Low-level database or API access.
+- **Server:** Config, logging, error handling, and infrastructure modules.
+- **Shared:** Pure utilities, domain types, config, and constants.
+- **UI:** Client-side only; no server or DB logic.
 
 ---
 
-## Strategies
+## Import & Boundary Rules
 
-- Organize by feature/domain for scalability.
-- Separate server/client concerns; prefer server components for data and logic.
-- Use strict TypeScript settings and explicit types everywhere.
-- Treat inputs as immutable; avoid in-place mutations.
-- Use discriminated unions for error/result handling.
-- Prefer small, focused modules; avoid dumping grounds and barrel files.
-- Validate and parse inputs server-side (Zod recommended).
-- Use biome for formatting and linting.
+- `ui` is isolated for client-only imports.
+- Lower layers **must not import** from higher ones.
+- `shared` may be imported by any layer.
+- Server-only modules must never appear in client components.
+- Enforce via lint rules or import restrictions.
 
 ---
 
-## Tooling
+## Component & File Conventions
 
-- Next.js (App Router)
-- TypeScript (strict mode)
-- Biome (formatting/linting)
-- Cypress (e2e testing)
-- Drizzle (database migrations/config)
-- pnpm (package management)
-- PostCSS (CSS processing)
+- See always-on.md 'Coding & Style' for file size limits, function granularity, and organization guidance.
 
 ---
 
-## Review Checklist
+## React
 
-- Directory and module organization by feature/domain.
-- Layer separation: app, feature, server, shared, UI.
-- Strict TypeScript and explicit types.
-- Immutability and error handling strategies.
-- Tooling and configuration validated.
+- Use functional components, explicit props/return types, typed event handlers.
+
+## Next.js App Router Guidance
+
+- Default to **Server Components** for data fetching and logic.
+- Keep **Client Components** light, isolated, and free of server-only imports.
+- Pass only serializable props across RSC boundaries.
+- Use `fetch({ next: { revalidate } })` for cache control and typed keys.
+
+---
+
+## Performance & Review
+
+- JS bundle target ≤200 KB gzip per route.
+- Validate Lighthouse, LCP ≤2.5 s, CLS < 0.1, TBT < 300 ms.
+- Verify import boundaries and immutability on each PR.
+
+_Last updated: 2025-10-08_

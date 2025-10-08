@@ -3,61 +3,125 @@ applyTo: '**'
 description: 'Result and error modeling, handling, and mapping guidelines for Next.js + TypeScript monorepo.'
 ---
 
-# Result & Error Instructions
+# Result & Error Handling Summary
 
 ## Purpose
 
-Enforce consistent, type-safe result and error handling across all modules.  
-Reference [TypeScript Instructions](./typescript.instructions.md) for strictness and discriminated union rules.
+Keep strict, type-safe error handling with a dual-tier model.  
+UI layers always use `AppError`; lower layers may use `BaseError`.  
+Attach when editing `result.ts`, `error.ts`, or `fromPromise`.
 
 ---
 
-## Result Modeling
+## Best Practices
 
-- Use discriminated unions for all operations that can fail:
-    - `type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };`
-- Prefer explicit result types in all exports; avoid inferred anonymous types.
-- For async operations, use `Promise<Result<T, E>>` and handle both paths.
-- Use result helpers (`result.ts`, `result-async.ts`, etc.) for mapping, collecting, and transforming results.
-- Never rely on presence checks of `error` or `value` alone; always discriminate via the `ok` flag.
+* No `try/catch` except around async boundaries.
+* Never rethrow except at app exit.
+* Only the adapter layer converts to `AppError`.
+* Use literal `code` enums and freeze errors in dev.
 
 ---
 
-## Error Modeling
+## Result Type
 
-- Model errors as discriminated unions or domain-specific error classes.
-- Use explicit error codes and messages (`error-codes.ts`, `error-messages.ts`).
-- Prefer domain errors (`domain-error.ts`) for business logic; infrastructure errors for system failures.
-- Never leak internal error details or stack traces across API boundaries.
-- Use error factories and mappers to normalize external/library errors into app-specific error shapes.
-- Redact sensitive information using error redaction utilities before logging or surfacing errors.
+```ts
+export type Result<T, E> =
+    | { readonly ok: true; readonly value: T }
+    | { readonly ok: false; readonly error: E };
 
----
+export const Ok = /* @__PURE__ */ <T>(value: T): Result<T, never> =>
+    ({ok: true, value} as const);
 
-## Error Handling Patterns
-
-- Catch unknown errors; narrow via type guards or predicates.
-- Log errors with structured context (operation, identifiers) using error logger utilities.
-- Map internal errors to safe, client-facing messages before returning or throwing.
-- In forms, map Zod and domain errors to form state using helpers (`zod-error.helpers.ts`,
-  `result-to-form-state.mapping.ts`).
-- Always validate and parse inputs server-side; never expose raw ZodError to clients.
+export const Err = /* @__PURE__ */ <E extends ErrorLike>(error: E): Result<never, E> =>
+    ({ok: false, error} as const);
+````
 
 ---
 
-## Integration with Forms
+## Error Model
 
-- Use result and error helpers to map validation outcomes to form state.
-- Normalize error shapes for UI consumption; provide i18n-friendly messages.
-- Document error mapping strategies in form modules (`forms/errors/`, `forms/mapping/`).
+```ts
+export interface BaseError {
+    readonly code: ErrorCode;
+    readonly message: string;
+    readonly context?: Readonly<Record<string, unknown>>;
+}
+
+export interface AppError {
+    readonly code: ErrorCode;
+    readonly message: string;
+    readonly form?: Record<string, string>; // dense field map
+}
+```
+
+* `BaseError`: internal/logging use, may include context or stack.
+* `AppError`: lightweight, JSON-safe, UI displayable.
+* Never cast to `any`; use `normalizeUnknownError()` adapter.
 
 ---
 
-## Review Checklist
+## Unified Adapter
 
-- All result and error handling uses discriminated unions.
-- Errors are normalized, redacted, and logged with context.
-- No internal details or stack traces leak to clients.
-- All exported result/error types are explicit and documented.
-- Form error mapping is consistent and i18n-ready.
-- Reference TypeScript and coding style instructions for additional requirements.
+```ts
+export function toAppError(e: unknown): AppError {
+    const b = normalizeUnknownError(e); // → BaseError
+    return {code: b.code, message: b.message};
+}
+
+export async function fromPromise<T>(
+    fn: () => Promise<T>,
+): Promise<Result<T, AppError>> {
+    try {
+        return Ok(await fn());
+    } catch (e) {
+        return Err(toAppError(e));
+    }
+}
+```
+
+*(Integrate with `tryCatchAsync` if both exist.)*
+
+---
+
+## Layer Rules
+
+| Layer   | Error Type | Strategy                                |
+|---------|------------|-----------------------------------------|
+| DAL     | BaseError  | Return `Err`, wrap unknown              |
+| Repo    | BaseError  | Map DAL → domain                        |
+| Service | BaseError  | Combine results, never throw            |
+| Action  | AppError   | Use adapter, return UI-safe `Result`    |
+| UI/App  | AppError   | Read `result.ok`, map via `ERROR_CODES` |
+
+---
+
+
+
+
+Perfect — here’s a minimal **reference + guidance** addition for your markdown that explains when and why to promote
+`BaseError` → `AppError` without bloating it:
+
+---
+
+## Promoting BaseError → AppError
+
+- Only convert at **server action boundaries** or anywhere UI-facing results are returned.
+- Use the adapter: `toAppError(baseErrorOrUnknown)`.
+- Rationale:
+    - Keeps UI layers JSON-safe and simple.
+    - Preserves canonical error codes (`ERROR_CODES`) for user-friendly messages.
+    - Internal layers continue to use `BaseError` with full context for logging/debugging.
+- Example:
+
+```ts
+import {fromPromise} from "@/shared/core/result/from-promise";
+import {toAppError} from "@/shared/core/errors/error-adapters";
+
+export const doAction = async (): Promise<Result<User, AppError>> =>
+    fromPromise(async () => await repo.createUser(), toAppError);
+````
+
+* **Tip:** Send the unmodified `BaseError.message` or stack to server logs, and use the mapped `AppError.message` for
+  forms/UI.
+
+*Last updated: 2025-10-06*
