@@ -7,7 +7,7 @@
 import {
   IS_PROD,
   NEXT_PUBLIC_LOG_LEVEL,
-} from "@/shared/config/env/public-env.client";
+} from "@/shared/config/public-env.client";
 import type { LogLevel } from "./log-level";
 
 /**

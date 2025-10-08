@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  type DatabaseEnv,
-  DatabaseEnvEnum,
-} from "@/shared/config/env/env-shared";
+import { type DatabaseEnv, DatabaseEnvEnum } from "@/shared/config/env-shared";
 
 const MIN_LENGTH = 20;
 

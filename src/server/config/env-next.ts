@@ -1,10 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
-import {
-  type DatabaseEnv,
-  DatabaseEnvEnum,
-} from "@/shared/config/env/env-shared";
+import { type DatabaseEnv, DatabaseEnvEnum } from "@/shared/config/env-shared";
 import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
 const NON_EMPTY_STRING_MIN_LENGTH = 1 as const;

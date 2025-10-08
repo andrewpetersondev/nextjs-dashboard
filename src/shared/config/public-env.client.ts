@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getDatabaseEnv, getNodeEnv } from "@/shared/config/env/env-shared";
+import { getDatabaseEnv, getNodeEnv } from "@/shared/config/env-shared";
 import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
 const PublicEnvSchema = z.object({

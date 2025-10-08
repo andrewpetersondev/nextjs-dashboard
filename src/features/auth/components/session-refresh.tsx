@@ -7,7 +7,7 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/features/auth/sessions/session.constants";
-import { IS_PROD } from "@/shared/config/env/public-env.client";
+import { IS_PROD } from "@/shared/config/public-env.client";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
