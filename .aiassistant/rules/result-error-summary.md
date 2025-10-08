@@ -12,6 +12,15 @@ Attach when editing `result.ts`, `error.ts`, or `fromPromise`.
 
 ---
 
+## Best Practices
+
+* No `try/catch` except around async boundaries.
+* Never rethrow except at app exit.
+* Only the adapter layer converts to `AppError`.
+* Use literal `code` enums and freeze errors in dev.
+
+---
+
 ## Result Type
 
 ```ts
@@ -85,14 +94,8 @@ export async function fromPromise<T>(
 
 ---
 
-## Best Practices
 
-* No `try/catch` except around async boundaries.
-* Never rethrow except at app exit.
-* Only the adapter layer converts to `AppError`.
-* Use literal `code` enums and freeze errors in dev.
 
-*Last updated: 2025-10-06*
 
 Perfect — here’s a minimal **reference + guidance** addition for your markdown that explains when and why to promote
 `BaseError` → `AppError` without bloating it:
@@ -119,3 +122,5 @@ export const doAction = async (): Promise<Result<User, AppError>> =>
 
 * **Tip:** Send the unmodified `BaseError.message` or stack to server logs, and use the mapped `AppError.message` for
   forms/UI.
+
+*Last updated: 2025-10-06*
