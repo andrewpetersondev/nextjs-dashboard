@@ -3,10 +3,11 @@ import { IS_PROD } from "@/shared/config/env-shared";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 
 /**
- * Dev-only freeze helper to discourage accidental mutation of Result objects.
- * No-op in production for performance.
- * @param obj Immutable target.
- * @returns Frozen (in dev) or original object.
+ * Freezes an object in development to prevent mutation; no-op in production.
+ *
+ * @typeParam TObj - The object type to freeze.
+ * @param obj - The object to freeze.
+ * @returns The frozen object in development, or the original in production.
  */
 const freezeDev = <TObj extends object>(obj: TObj): TObj => {
   if (!IS_PROD) {
@@ -15,33 +16,45 @@ const freezeDev = <TObj extends object>(obj: TObj): TObj => {
   return obj;
 };
 
-/** Discriminant literal: success branch. */
+/** Discriminant for successful Result. */
 export const RESULT_OK = true as const;
-/** Discriminant literal: error branch. */
+/** Discriminant for failed Result. */
 export const RESULT_ERR = false as const;
 
-/** Successful Result branch. */
+/**
+ * Represents a successful Result.
+ *
+ * @typeParam TValue - The value type.
+ */
 export type OkResult<TValue> = { readonly ok: true; readonly value: TValue };
-/** Failed Result branch. */
+
+/**
+ * Represents a failed Result.
+ *
+ * @typeParam TError - The error type, must extend ErrorLike.
+ */
 export type ErrResult<TError extends ErrorLike> = {
   readonly ok: false;
   readonly error: TError;
 };
 
 /**
- * Discriminated union representing either success or failure.
- * @template TValue Success value type.
- * @template TError Error type.
+ * Discriminated union for operation results.
+ *
+ * @typeParam TValue - The value type.
+ * @typeParam TError - The error type, must extend ErrorLike.
  */
 export type Result<TValue, TError extends ErrorLike> =
   | OkResult<TValue>
   | ErrResult<TError>;
 
 /**
- * Construct a successful Result.
- * @template TValue
- * @template TError
- * @param value Success payload.
+ * Creates a successful Result.
+ *
+ * @typeParam TValue - The value type.
+ * @typeParam TError - The error type, must extend ErrorLike.
+ * @param value - The success value.
+ * @returns A Result with the value.
  */
 export const Ok = /* @__PURE__ */ <TValue, TError extends ErrorLike = AppError>(
   value: TValue,
@@ -51,10 +64,12 @@ export const Ok = /* @__PURE__ */ <TValue, TError extends ErrorLike = AppError>(
 };
 
 /**
- * Construct an error Result.
- * @template TValue
- * @template TError
- * @param error Error payload.
+ * Creates a failed Result.
+ *
+ * @typeParam TValue - The value type.
+ * @typeParam TError - The error type, must extend ErrorLike.
+ * @param error - The error value.
+ * @returns A Result with the error.
  */
 export const Err = /* @__PURE__ */ <
   TValue = never,
@@ -66,24 +81,26 @@ export const Err = /* @__PURE__ */ <
   return freezeDev(r) as Result<TValue, TError>;
 };
 
-/** Type guard: value is Ok branch. */
+/**
+ * Type guard for OkResult.
+ *
+ * @typeParam TValue - The value type.
+ * @typeParam TError - The error type.
+ * @param r - The Result to check.
+ * @returns True if Result is Ok.
+ */
 export const isOk = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): r is OkResult<TValue> => r.ok;
 
-/** Type guard: value is Err branch. */
+/**
+ * Type guard for ErrResult.
+ *
+ * @typeParam TValue - The value type.
+ * @typeParam TError - The error type.
+ * @param r - The Result to check.
+ * @returns True if Result is Err.
+ */
 export const isErr = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): r is ErrResult<TError> => !r.ok;
-
-// Boundary helpers to enforce promotion to AppError at UI edges.
-
-/**
- * Map a Result<T, BaseError|unknown> into Result<T, AppError>.
- * Keep ErrorLike constraint on TError for safety.
- */
-export const mapErrorToApp = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-  toApp: (e: TError) => import("@/shared/core/result/error").AppError,
-): Result<TValue, import("@/shared/core/result/error").AppError> =>
-  r.ok ? r : ({ error: toApp(r.error), ok: false } as const);
