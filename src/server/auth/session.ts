@@ -17,9 +17,11 @@ import {
 } from "@/features/auth/sessions/session.constants";
 import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import {
+  SESSION_COOKIE_HTTPONLY,
   SESSION_COOKIE_NAME,
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
+  SESSION_COOKIE_SECURE_FALLBACK,
 } from "@/server/auth/constants";
 import {
   createSessionToken,
@@ -30,14 +32,15 @@ import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 // Build standard cookie options to avoid duplication
-const buildSessionCookieOptions = (expiresAtMs: number) => ({
-  expires: new Date(expiresAtMs),
-  httpOnly: true,
-  maxAge: ROLLING_COOKIE_MAX_AGE_S,
-  path: SESSION_COOKIE_PATH,
-  sameSite: SESSION_COOKIE_SAMESITE,
-  secure: IS_PRODUCTION,
-});
+const buildSessionCookieOptions = (expiresAtMs: number) =>
+  ({
+    expires: new Date(expiresAtMs),
+    httpOnly: SESSION_COOKIE_HTTPONLY,
+    maxAge: ROLLING_COOKIE_MAX_AGE_S,
+    path: SESSION_COOKIE_PATH,
+    sameSite: SESSION_COOKIE_SAMESITE,
+    secure: IS_PRODUCTION ? true : SESSION_COOKIE_SECURE_FALLBACK,
+  }) as const;
 
 /** Internal: compute absolute lifetime status. */
 function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {

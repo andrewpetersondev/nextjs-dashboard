@@ -6,6 +6,8 @@ import type { SessionVerificationResult } from "@/features/auth/sessions/session
 import { verifySessionOptimistic } from "@/server/auth/session";
 import { serverLogger } from "@/server/logging/serverLogger";
 
+const hasValue = <T>(v: T | undefined | null): v is T => v !== null;
+
 /**
  * Returns true if the user's role is included in the allowed roles list.
  */
@@ -13,7 +15,7 @@ export const hasAllowedRole = (
   userRole: UserRole | undefined,
   allowed: readonly UserRole[],
 ): boolean => {
-  if (!userRole) {
+  if (!hasValue(userRole)) {
     return false;
   }
   return allowed.includes(userRole);

@@ -145,8 +145,13 @@ postcss.config.mjs
 # Uncomment if you want AI to ignore them
 # -----------------------------------------
 src/app/
-src/features/
 src/shell/
 src/ui/
-src/server/revenues/
+src/features/customers/
+src/features/invoices/
+src/features/revenues/
+src/features/users/
+src/server/customers/
 src/server/invoices/
+src/server/revenues/
+src/server/users/

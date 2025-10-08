@@ -29,6 +29,10 @@ import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 
 let encodedKey: Uint8Array | undefined;
 
+// Make helper explicitly typed and readonly
+const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
+  new TextEncoder();
+
 /**
  * Lazily retrieves and caches the session secret key as a Uint8Array.
  * @returns {Uint8Array} The encoded session secret key.
@@ -54,7 +58,7 @@ const getEncodedKey = (): Uint8Array => {
       "Weak SESSION_SECRET: must be at least 32 characters to ensure sufficient entropy",
     );
   }
-  encodedKey = new TextEncoder().encode(secret);
+  encodedKey = encoder.encode(secret);
   serverLogger.debug(
     { context: "getEncodedKey" },
     "Session secret key encoded and cached",
