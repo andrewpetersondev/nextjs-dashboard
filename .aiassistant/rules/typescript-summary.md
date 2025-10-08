@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # TypeScript Summary Rules
@@ -14,9 +14,7 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 ## Compiler & Strictness
 
 - tsconfig must enable: `"strict": true`, `noImplicitAny`, `noUncheckedIndexedAccess`, `noImplicitOverride`.
-- **No implicit any** anywhere. All exports must declare explicit parameter and return types.
 - Allow type inference only inside function bodies; never for exported APIs.
-- Use `import type` for all type-only imports.
 
 ---
 
@@ -40,23 +38,14 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 
 ## Result & Error Handling
 
-- Use a discriminated union for all operations that can fail:
-  ```ts
-  type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
-    ```
-
-* Never rely on `try/catch` returning unknown types; map to a known error union.
-* Catch `unknown`; narrow with predicates or `instanceof`.
-* Normalize external/library errors into app-specific safe shapes.
+- See result-error-summary.md for the canonical Result/AppError model and adapters. This document does not duplicate
+  those rules.
 
 ---
 
 ## Functions & Components
 
-* Functions: single-purpose, ≤50 lines, ≤4 parameters. Use an options object for optional args.
-* Components and hooks: export explicit prop and return types.
-* Type all event handlers and async functions (`Promise<T>`).
-* Keep validation, transformation, and side-effects in separate helpers for testability.
+- Use an options object for optional parameters. Other function/component rules are defined in always-on.md.
 
 ---
 
@@ -80,15 +69,11 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 ## Enforcement Checklist
 
 1. Strict tsconfig enabled and validated.
-2. Public exports have explicit parameter/return types.
-3. No `any` or unsafe casts (except for primitives).
-4. Generics named and constrained.
-5. Async code has explicit Promise types and safe error handling.
-6. Errors normalized to discriminated unions.
-7. Null/undefined modeled explicitly; immutability maintained.
-8. No server-only imports in client code; `import type` used for all type-only imports.
+2. Generics named and constrained.
+3. Async code has explicit Promise types and safe error handling.
+4. No server-only imports in client code; use `import type` for all type-only imports.
 
-*Last updated: 2025-10-06*
+*Last updated: 2025-10-08*
 
 
 

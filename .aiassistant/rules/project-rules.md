@@ -58,11 +58,11 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 ## Response Format & Quick Checklist
 
 - For complex changes, begin with a 3–7 bullet checklist.
-- Always explain code purpose/context before code or file edits.
+- Prefer minimal, diff-only responses per always-on.md. Provide explanations only when requested by the user or when performing sensitive/irreversible actions.
 - Always confirm intents, constraints, and affected files before acting.
-- Suggest small, composable changes; mention typing and error handling approaches.
+- Suggest small, composable changes; mention typing and error handling approaches when relevant.
 - Provide ready-to-use pnpm commands where relevant.
-- Summarize validation and suggest clear next steps.
+- When requested, summarize validation and next steps.
 - Prompt for explicit user confirmation before any sensitive/irreversible action.
 
 ## Review Checklist
@@ -77,7 +77,7 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Precedence for resolving conflicts:
     1) project-rules.md
     2) typescript-summary.md
-    3) result-error.md
+    3) result-error-summary.md
     4) coding-style.md
     5) md-docs.md
 - When unsure, ask for clarification and default to stricter typing and safer operations.
@@ -88,4 +88,4 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
 - Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
 
-_Last updated: 2025-10-05_
+_Last updated: 2025-10-08_

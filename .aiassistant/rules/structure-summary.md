@@ -11,22 +11,6 @@ Attach for refactors, file moves, or architecture reviews.
 
 ---
 
-## Directory Structure
-
-```
-
-src/
-├─ app/        → Next.js App Router (layouts, pages, routes)
-├─ features/   → Domain logic, components, and types per feature
-├─ server/     → Server-only logic: auth, db, repos, services, actions
-├─ shared/     → Cross-cutting utilities, domain types, constants
-├─ ui/         → Reusable UI primitives and client-only code
-└─ shell/      → Dashboard and UI composition shells
-
-```
-
----
-
 ## Layer Responsibilities
 
 - **App:** Routing, layouts, top-level error and boundary handling.
@@ -42,16 +26,7 @@ src/
 
 ## Import & Boundary Rules
 
-- Strict upward dependency flow only:
-
-```
-
-app → action → service → repo → dal → server → shared
-
-```
-
-`ui` is isolated for client-only imports.
-
+- `ui` is isolated for client-only imports.
 - Lower layers **must not import** from higher ones.
 - `shared` may be imported by any layer.
 - Server-only modules must never appear in client components.
@@ -61,13 +36,13 @@ app → action → service → repo → dal → server → shared
 
 ## Component & File Conventions
 
-- Organize by **feature/domain**, not technical type.
-- Avoid “dumping ground” files like `utils.ts`; create focused modules.
-- No barrel files unless for pure type re-exports.
-- File length ≤200 lines; functions ≤50 lines.
-- Prefer small, composable modules with explicit public APIs.
+- See always-on.md 'Coding & Style' for file size limits, function granularity, and organization guidance.
 
 ---
+
+## React
+
+- Use functional components, explicit props/return types, typed event handlers.
 
 ## Next.js App Router Guidance
 
@@ -84,4 +59,4 @@ app → action → service → repo → dal → server → shared
 - Validate Lighthouse, LCP ≤2.5 s, CLS < 0.1, TBT < 300 ms.
 - Verify import boundaries and immutability on each PR.
 
-_Last updated: 2025-10-06_
+_Last updated: 2025-10-08_
