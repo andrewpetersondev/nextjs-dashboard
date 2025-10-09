@@ -4,14 +4,18 @@ import type { ErrorLike } from "@/shared/core/result/error";
 import { Err, type Result } from "@/shared/core/result/result";
 
 /**
- * Transforms the `Result<TValue, TError1>` by applying a mapping function to the inner value
- * if it is `ok`, returning a new `Result`. If it is an error, the original error is propagated.
+ * Applies a transformation function to the value of a successful `Result`,
+ * flattening the nested `Result` output into a single layer.
  *
  * @typeParam TValue - The type of the input value in the `Result`.
- * @typeParam TNext - The type of the resulting value after the mapping function is applied.
+ * @typeParam TNext - The type of the output value after applying the transformation.
  * @typeParam TError1 - The type of the original error in the `Result`.
- * @typeParam TError2 - The type of the possible error after applying the mapping function.
- * @returns A new `Result` reflecting the mapped value or the combined error type.
+ * @typeParam TError2 - The type of the error that may arise during the transformation.
+ * @param fn - A function that transforms the `TValue` to a `Result<TNext, TError2>`.
+ * @returns A new `Result` either containing the transformed value or an error.
+ * @example
+ * const result = flatMap(v => Ok(v * 2))(Ok(5)); // Ok(10)
+ * const errorResult = flatMap(v => Err(new Error('Failed')))(Ok(5)); // Err
  */
 export const flatMap =
   /* @__PURE__ */

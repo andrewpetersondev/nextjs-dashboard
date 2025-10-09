@@ -4,26 +4,41 @@ import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Extracts the `Ok` value type `U` from a `Result<U, E>`.
- * @typeParam R `Result<any, any>` to inspect.
+ * Extracts the success type from a `Result` type.
+ *
+ * @typeParam R - A type that extends `Result` with an error of type `ErrorLike`.
+ * @returns The success type `U` if `R` is a `Result<U, ErrorLike>`, otherwise `never`.
+ * @example
+ * ```
+ * type Success = OkType<Result<string, Error>>;
+ * // Success is `string`
+ * ```
  */
 export type OkType<R> = R extends Result<infer U, ErrorLike> ? U : never;
 
 /**
- * Extracts the `Err` type `E` from a `Result<T, E>`.
- * @typeParam R `Result<any, any>` to inspect.
+ * Extracts the error type `E` from a `Result` type.
+ *
+ * @typeParam R - The `Result` type to extract the error type from.
+ * @returns The extracted error type `E`, or `never` if not applicable.
+ * @example
+ * ```ts
+ * type Error = ErrType<Result<number, string>>; // string
+ * ```
+ * @see Result
  */
 export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
 
 /**
- * Eagerly collects all `Ok` values until the first `Err`.
- * - On the first `Err`, returns that error immediately (no further iteration).
- * - If all entries are `Ok`, returns `Ok<readonly TValue[]>` preserving order.
- * Preserves `TError` (defaults to `AppError`); does not normalize or remap errors.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type; defaults to `AppError`.
- * @param results Readonly array of `Result<TValue, TError>`.
- * @returns `Result<readonly TValue[], TError>` — array of all Ok values or the first Err.
+ * Collects all successful results from the provided array, returning a combined `Result`.
+ *
+ * @typeParam TValue - The type of the successful value in the `Result`.
+ * @typeParam TError - The type of the error, defaulting to `AppError`.
+ * @param results - An array of `Result` objects to process.
+ * @returns A `Result` containing an array of all successful values or the first encountered error.
+ * @example
+ * const results = [Ok(1), Ok(2), Err(new AppError('fail'))];
+ * const output = collectAll(results); // Err(AppError('fail'))
  */
 export const collectAll = /* @__PURE__ */ <
   TValue,
@@ -42,13 +57,18 @@ export const collectAll = /* @__PURE__ */ <
 };
 
 /**
- * Collects a variadic tuple of `Result`s into a `Result` of a tuple.
- * - Short‑circuits on the first `Err` and returns it unchanged.
- * - On success, returns `Ok` of a tuple aligned positionally with inputs.
- * Preserves `TError`; does not normalize or remap errors.
- * @typeParam TError Error type shared by all tuple entries.
- * @typeParam TTuple Tuple of `Result<unknown, TError>`.
- * @returns `Result<{ readonly [K in keyof TTuple]: OkType<TTuple[K]> }, TError>`.
+ * Gathers a tuple of `Result` values into a single `Result`, returning all `Ok` values
+ * if successful or the first encountered `Error` otherwise.
+ *
+ * @typeParam TError - The type of error used in the `Result`.
+ * @typeParam TTuple - The tuple of `Result` objects to process.
+ * @param results - A variadic list of `Result` objects to combine.
+ * @returns A `Result` containing an array of all `Ok` values or the first `Error`.
+ * @example
+ * ```ts
+ * const res = collectTuple(Ok(1), Ok(2), Err(new Error("Failure")));
+ * // Output: Err<Error>
+ * ```
  */
 export function collectTuple<
   TError extends ErrorLike,
@@ -70,13 +90,10 @@ export function collectTuple<
 }
 
 /**
- * Collects a heterogeneous tuple of `Result`s with differing error types.
- * - Short‑circuits on the first `Err` and returns it unchanged.
- * - On success, returns `Ok` of a tuple aligned with inputs.
- * Error type is the union of all tuple `Err` types.
- * Use only when mixed error types are required.
- * @typeParam TTuple Tuple of `Result<unknown, ErrorLike>` possibly with different `Err` types.
- * @returns `Result<{ readonly [K in keyof TTuple]: OkType<TTuple[K]> }, ErrType<TTuple[number]>>`.
+ * Processes an array of heterogeneous `Result` objects and groups their successes or returns the first error encountered.
+ *
+ * @param results - A variadic array of `Result` objects to process.
+ * @returns A `Result` containing either an array of all successful values or the first occurred error.
  */
 export function collectTupleHetero<
   TTuple extends readonly Result<unknown, ErrorLike>[],
@@ -100,15 +117,19 @@ export function collectTupleHetero<
 }
 
 /**
- * Returns the first `Ok` from the list; otherwise returns:
- * - The last `Err` if at least one error is present, or
- * - `Err(onEmpty())` when the list is empty.
- * Curried helper: supply `onEmpty`, then pass the results array.
- * Preserves `TError` (defaults to `AppError`); does not normalize or remap errors.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type; defaults to `AppError`.
- * @param onEmpty Factory invoked only when the input array is empty.
- * @returns Function mapping `readonly Result<TValue, TError>[]` to `Result<TValue, TError>`.
+ * Returns the first successful `Result` in the provided array, or an error result
+ * created using `onEmpty` if none are successful.
+ *
+ * @typeParam TValue - The type of the value in a successful `Result`.
+ * @typeParam TError - The type of the error in a failed `Result`, defaults to `AppError`.
+ * @param onEmpty - A callback function that produces a fallback error when no successful result is found.
+ * @returns The first `Result` with `ok: true`, or a fallback error `Result`.
+ * @example
+ * ```ts
+ * const results = [Err(new AppError('Error1')), Ok('Success'), Err(new AppError('Error2'))];
+ * const first = firstOkOrElse(() => new AppError('No success'))(results);
+ * console.log(first); // Ok('Success')
+ * ```
  */
 export const firstOkOrElse =
   /* @__PURE__ */

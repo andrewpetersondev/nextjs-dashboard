@@ -4,27 +4,29 @@ import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Curried mapper that transforms the success (`Ok`) branch of a {@link Result}.
+ * @alpha
+ * A utility type for applying a transformation function to a successful `Result` value.
  *
- * @typeParam TValue Success value input type.
- * @typeParam TNext Transformed success value output type.
- * @typeParam TError Error type (carried through unchanged).
+ * @typeParam TValue - The type of the input value in the `Result`.
+ * @typeParam TNext - The type of the transformed value.
+ * @typeParam TError - The type of the error, defaults to `AppError`.
  *
- * @param fn Pure function applied only when the result is `Ok`.
- * @returns A function that applies the mapping to a {@link Result}.
- *
- * @remarks
- * - Does not allocate a new object for `Err` results (original reference preserved).
- * - Use when only the success branch needs modification.
+ * @param fn - A transformation function to be applied to the `TValue`.
+ * @returns A function that takes a `Result` and produces a transformed `Result`.
  */
 export type MapOk = <TValue, TNext, TError extends ErrorLike = AppError>(
   fn: (v: TValue) => TNext,
 ) => (r: Result<TValue, TError>) => Result<TNext, TError>;
 
 /**
- * Map the success value of a {@link Result} (error branch untouched).
+ * Transforms the value of an `Ok` result using the provided function, maintaining the `Err` state otherwise.
  *
- * @see MapOk
+ * @alpha
+ * @param fn - A function to apply to the `Ok` result's value.
+ * @returns A new result with the transformed value if `Ok`, or the unchanged result if `Err`.
+ * @example
+ * const result = mapOk((x) => x * 2)({ ok: true, value: 10 });
+ * // result: { ok: true, value: 20 }
  */
 export const mapOk: MapOk =
   /* @__PURE__ */
@@ -34,18 +36,13 @@ export const mapOk: MapOk =
       r.ok ? Ok(fn(r.value)) : r;
 
 /**
- * Curried mapper that replaces (not widens) the error type of a {@link Result}.
+ * Transforms the error type of a `Result` using a mapping function.
  *
- * @typeParam TValue Success value type (preserved).
- * @typeParam TError1 Original error type.
- * @typeParam TError2 New error type (replacement).
- *
- * @param fn Pure function to transform the original error into a new error.
- * @returns A function that applies the error mapping to a {@link Result}.
- *
- * @remarks
- * - Use when you want to strictly convert `Err<TError1>` into `Err<TError2>`.
- * - The original error type is not retained; for widening use {@link mapErrorUnion}.
+ * @typeParam TValue - The type of the successful result.
+ * @typeParam TError1 - The original error type, defaults to `AppError`.
+ * @typeParam TError2 - The mapped error type, defaults to `AppError`.
+ * @param fn - A function that maps from `TError1` to `TError2`.
+ * @returns A function that takes a `Result` and returns a transformed `Result`.
  */
 export type MapError = <
   TValue,
@@ -56,9 +53,14 @@ export type MapError = <
 ) => (r: Result<TValue, TError1>) => Result<TValue, TError2>;
 
 /**
- * Standard error mapping (replacement semantics).
+ * Maps an error value using the provided function if the result is an error.
  *
- * @see MapError
+ * @param fn - A function that transforms the error value.
+ * @returns A new result with the transformed error or the original success.
+ * @example
+ * const result = mapError((err) => `Error: ${err}`)(Err("Failed"));
+ * // Result: Err("Error: Failed")
+ * @public
  */
 export const mapError: MapError =
   /* @__PURE__ */
@@ -68,18 +70,14 @@ export const mapError: MapError =
       r.ok ? r : Err(fn(r.error));
 
 /**
- * Curried mapper that widens the error type by unioning the original and the mapped error.
+ * Maps an error of type `TError1` to a new error of type `TError2` within a `Result`.
  *
- * @typeParam TValue Success value type.
- * @typeParam TError1 Original error type.
- * @typeParam TError2 Added (mapped) error type.
- *
- * @param fn Pure function to map the original error to an additional error variant.
- * @returns A function producing a {@link Result} whose error is `TError1 | TError2`.
- *
- * @remarks
- * - Preserves the original error reference when no mapping occurs (i.e., success branch).
- * - Use for additive refinement without losing upstream error variants.
+ * @alpha
+ * @typeParam TValue - The type of the value in the `Result` if it is successful.
+ * @typeParam TError1 - The type of the original error in the `Result`.
+ * @typeParam TError2 - The type of the new mapped error.
+ * @param fn - A function transforming `TError1` into `TError2`.
+ * @returns A new `Result` with a mapped error if the original `Result` contained an error.
  */
 export const mapErrorUnion =
   /* @__PURE__ */
@@ -90,7 +88,16 @@ export const mapErrorUnion =
     (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> =>
       r.ok ? r : Err<TValue, TError2>(fn(r.error));
 
-// Add preserve-or-replace variant that keeps original Err object when mapper returns same reference.
+/**
+ * Maps an error from a `Result` type to a new error type while preserving the original error type if unchanged.
+ *
+ * @alpha
+ * @typeParam TValue - The value type of the `Result`.
+ * @typeParam TError1 - The original error type of the `Result`.
+ * @typeParam TError2 - The mapped error type after applying the transformation function.
+ * @param fn - A transformation function to map the error from `TError1` to `TError2`.
+ * @returns A `Result` where the error type is a union of `TError1` and `TError2`.
+ */
 export const mapErrorUnionPreserve =
   /* @__PURE__ */
     <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
@@ -106,20 +113,16 @@ export const mapErrorUnionPreserve =
     };
 
 /**
- * Curried mapper that conditionally preserves the original `Err` object if the mapped error
- * is reference-identical to the original. Otherwise allocates a new `Err`.
+ * Maps an error in a `Result` using a provided function, preserving the original error
+ * if the mapping function returns the same error instance.
  *
- * @typeParam TValue Success value type.
- * @typeParam TError1 Original error type.
- * @typeParam TError2 Mapped error type.
- *
- * @param fn Pure function mapping the original error to a (possibly identical) error value.
- * @returns A function producing a {@link Result} whose error type is widened to `TError1 | TError2`.
- *
- * @remarks
- * - Uses `Object.is` for safe reference equality across potentially disjoint generic types.
- * - Avoids unnecessary allocation when the mapper returns the original error object.
- * - Useful for refinement steps that may no-op.
+ * @param fn - A function that transforms one error type into another.
+ * @returns A function that takes a `Result` and applies the error mapping if the `Result` is not ok.
+ * @typeParam TValue - The type of the value in the `Result`.
+ * @typeParam TError1 - The initial error type.
+ * @typeParam TError2 - The transformed error type.
+ * @example
+ * const result = mapErrorPreserve(fn)(Result.err(new Error("Original")));
  */
 export const mapErrorPreserve =
   /* @__PURE__ */
@@ -136,20 +139,15 @@ export const mapErrorPreserve =
     };
 
 /**
- * Curried dual-branch mapper that transforms both success and error sides of a {@link Result}.
+ * Transforms both success and error states of a {@link Result} type using the provided functions.
  *
- * @typeParam TValue Original success value type.
- * @typeParam TNext Transformed success value type.
- * @typeParam TError1 Original error type.
- * @typeParam TError2 Transformed error type.
- *
- * @param onOk Applied when the result is `Ok`; maps `TValue` to `TNext`.
- * @param onErr Applied when the result is `Err`; maps `TError1` to `TError2`.
- * @returns A function producing a new {@link Result} with transformed branches.
- *
- * @remarks
- * - Allocates exactly one new object in either branch.
- * - Use when both value and error domains must shift together.
+ * @typeParam TValue - The type of the success value.
+ * @typeParam TNext - The type of the transformed success value.
+ * @typeParam TError1 - The type of the initial error, extending `ErrorLike`. Defaults to `AppError`.
+ * @typeParam TError2 - The type of the transformed error, extending `ErrorLike`. Defaults to `AppError`.
+ * @param onOk - A function to transform the success value.
+ * @param onErr - A function to transform the error value.
+ * @returns A new {@link Result} with the transformed success or error value.
  */
 export type MapBoth = <
   TValue,
@@ -162,9 +160,20 @@ export type MapBoth = <
 ) => (r: Result<TValue, TError1>) => Result<TNext, TError2>;
 
 /**
- * Transform both branches of a {@link Result}.
+ * Transforms both the success (`Ok`) and error (`Err`) states of a result.
  *
- * @see MapBoth
+ * @typeParam T - The type of the success value.
+ * @typeParam E - The type of the error value.
+ * @typeParam U - The type after transforming the success value.
+ * @typeParam F - The type after transforming the error value.
+ * @param onOk - Function to map the success (`Ok`) value.
+ * @param onErr - Function to map the error (`Err`) value.
+ * @returns A function that takes a result and transforms it using the provided mappings.
+ * @example
+ * const result = mapBoth(
+ *   (value) => value.toUpperCase(),
+ *   (error) => error.message
+ * )({ ok: true, value: "hello" }); // Output: { ok: true, value: "HELLO" }
  */
 export const mapBoth: MapBoth =
   /* @__PURE__ */

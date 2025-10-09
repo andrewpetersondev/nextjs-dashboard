@@ -13,9 +13,9 @@ const freezeObject = <TObj extends object>(obj: TObj): TObj =>
   Object.freeze(obj);
 
 /** Discriminant for successful Result. */
-export const RESULT_OK = true as const;
+const RESULT_OK = true as const;
 /** Discriminant for failed Result. */
-export const RESULT_ERR = false as const;
+const RESULT_ERR = false as const;
 
 /**
  * Represents a successful Result.

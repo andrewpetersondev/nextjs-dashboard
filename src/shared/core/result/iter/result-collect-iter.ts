@@ -4,10 +4,12 @@ import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Iterates over the results in the provided iterable, yielding values for successful results and stopping at the first error.
+ * Iterates over the source, yielding values from successful results until an error result is encountered.
  *
- * @param source - An iterable of `Result` objects containing values or errors.
- * @returns A generator yielding successful values or returning the first error encountered.
+ * @param source - An iterable of `Result` objects to process.
+ * @typeParam TValue - The type of successful values in the result.
+ * @typeParam TError - The type of error to handle, extending `ErrorLike`.
+ * @returns A generator that yields successful values, or an error result if one is encountered.
  */
 export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
   source: Iterable<Result<TValue, TError>>,
@@ -22,15 +24,18 @@ export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
 }
 
 /**
- * Collects all successful `Result` values from the given iterable lazily.
+ * Aggregates all successful results from the provided iterable into a single `Result` containing an array of values.
+ * If any result is an error, it returns that error without processing further elements.
  *
- * @typeParam TValue - The type of the successful result values.
- * @typeParam TError - The type of the error, extending `ErrorLike`. Defaults to `AppError`.
+ * @typeParam TValue - The type of the values contained in the results.
+ * @typeParam TError - The type of the error, defaulting to `AppError`.
  * @param source - An iterable of `Result` objects to process.
- * @returns A successful `Result` containing an array of values, or the first encountered error.
+ * @returns A `Result` containing an array of successful values or the first encountered error.
  * @example
- * const results = collectAllLazy([Ok(1), Ok(2), Err(new AppError("Error"))]);
- * // Returns: Err(new AppError("Error"))
+ * ```ts
+ * const data = [Ok(1), Ok(2), Err(new AppError("Fail"))];
+ * const result = collectAllLazy(data); // Returns Err(AppError("Fail"))
+ * ```
  */
 export const collectAllLazy = /* @__PURE__ */ <
   TValue,

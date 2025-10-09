@@ -6,15 +6,16 @@ import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 
 /**
- * Applies an asynchronous side-effect function to the `value` of a successful `Result` without altering it.
+ * Executes a provided asynchronous function if the given `Result` is successful (`ok`).
  *
- * @alpha
- * @typeParam TValue - The type of the successful value in the `Result`.
- * @typeParam TError - The type of the error in the `Result`, must extend `ErrorLike`.
- * @param fn - An asynchronous function to execute if the `Result` is successful.
- * @returns A promise resolving to the original `Result`.
+ * @typeParam TValue - The type of the successful result value.
+ * @typeParam TError - The type of the error. Defaults to `AppError`.
+ * @param fn - An asynchronous function to execute with the successful value.
+ * @returns A `Promise` resolving to the same `Result` passed as input.
  * @example
- * const result = await tapOkAsync(async (value) => console.log(value))(someResult);
+ * const result = await tapOkAsync(async (value) => {
+ *   console.log(value);
+ * })(someResult);
  */
 export const tapOkAsync =
   /* @__PURE__ */
@@ -30,7 +31,21 @@ export const tapOkAsync =
     };
 
 /**
- * Safe async tap for Ok branch; catches mapper exceptions into Err.
+ * A utility function to safely execute an asynchronous operation on a `Result` object.
+ * If the function `fn` throws, the error is mapped using `mapError` or defaults to `toAppErrorFromUnknown`.
+ *
+ * @typeParam TValue - The type of the successful value in the `Result`.
+ * @typeParam TError - The type of the original error in the `Result` (default is `AppError`).
+ * @typeParam TSideError - The type of the mapped side error (default is `AppError`).
+ * @param fn - The asynchronous function to execute if the `Result` is successful.
+ * @param mapError - An optional function to map thrown `fn` errors to a `TSideError` instance.
+ * @returns A new `Result` retaining its original value or wrapping any error encountered.
+ * @example
+ * ```ts
+ * const result = await tapOkAsyncSafe(async (value) => {
+ *   console.log(value);
+ * })(Ok(42));
+ * ```
  */
 export const tapOkAsyncSafe =
   /* @__PURE__ */
@@ -59,16 +74,15 @@ export const tapOkAsyncSafe =
     };
 
 /**
- * Asynchronously executes a provided function if the `Result` contains an error.
+ * Handles the error case of a `Result` asynchronously by executing a provided function.
  *
  * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type extending `ErrorLike` for the error value.
- * @param fn - A function that processes the error and returns a Promise.
- * @returns The original `Result` object after handling the error.
+ * @typeParam TError - The type of the error, extending `ErrorLike`. Defaults to `AppError`.
+ * @param fn - An async function to process the error when the `Result` is not successful.
+ * @returns A promise resolving to the unchanged `Result`.
  * @example
  * ```ts
- * const logError = async (err: Error) => { console.error(err.message); };
- * const result = await tapErrorAsync(logError)(someResult);
+ * await tapErrorAsync(async (err) => console.error(err))(result);
  * ```
  */
 export const tapErrorAsync =
@@ -85,7 +99,15 @@ export const tapErrorAsync =
     };
 
 /**
- * Safe async tap for Err branch; catches mapper exceptions into Err.
+ * Handles `Result` errors by invoking an asynchronous error handler function,
+ * allowing for optional error transformation during the process.
+ *
+ * @typeParam TValue - The type of the successful result value.
+ * @typeParam TError - The type of the expected error, defaults to `AppError`.
+ * @typeParam TSideError - The type of the optional side error, defaults to `AppError`.
+ * @param fn - Async function to handle the error.
+ * @param mapError - Optional function to transform unknown errors, defaults to `toAppErrorFromUnknown`.
+ * @returns A `Result` of the original value or the transformed error.
  */
 export const tapErrorAsyncSafe =
   /* @__PURE__ */
