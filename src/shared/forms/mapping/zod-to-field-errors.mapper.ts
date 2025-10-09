@@ -8,10 +8,8 @@ import {
   flattenZodError,
   isZodErrorLikeShape,
 } from "@/shared/forms/errors/zod-error.helpers";
-import type {
-  DenseFieldErrorMap,
-  SparseFieldErrorMap,
-} from "@/shared/forms/types/field-errors.type";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
+import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
 
 /**
  * Build sparse errors limited to allowed fields from a ZodError.

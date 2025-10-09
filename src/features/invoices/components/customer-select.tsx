@@ -6,7 +6,7 @@
 
 import type { JSX } from "react";
 import type { CustomerField } from "@/features/customers/types";
-import type { FieldError } from "@/shared/forms/types/field-errors.type";
+import type { FieldError } from "@/shared/forms/types/core.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 import { ErrorMessage } from "@/ui/forms/error-message";
 

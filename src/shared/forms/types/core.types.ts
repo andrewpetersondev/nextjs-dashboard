@@ -1,25 +1,33 @@
 /**
+ * src/shared/forms/types/core.types.ts
+ *
+ * NonEmptyReadonlyArray = array with at least one element
+ * FieldError = array with at least one element
+ * isNonEmptyArray = predicate
+ */
+
+/**
  * Represents a readonly array that is guaranteed to contain at least one element.
  *
- * @typeParam T - The type of elements in the array.
+ * @typeParam TElement - The type of elements in the array.
  * @example
  * const example: NonEmptyReadonlyArray<number> = [1, 2, 3];
  * @readonly
  */
-export type NonEmptyReadonlyArray<T> = readonly [T, ...(readonly T[])];
+export type NonEmptyReadonlyArray<TElement> = readonly [
+  TElement,
+  ...(readonly TElement[]),
+];
 
 /**
- * Represents a dense map where keys are strings and values are of a specified type.
+ * Represents an error associated with a field, containing a non-empty, readonly array of messages.
  *
- * @typeParam TKey - The type of the keys, constrained to `string`.
- * @typeParam TValue - The type of the values in the map.
+ * @typeParam TMsg - The type of the error message, defaulting to `string`.
  * @public
  * @example
- * const map: DenseMap<'a' | 'b', number> = { a: 1, b: 2 };
+ * const error: FieldError = ["Required field", "Invalid format"];
  */
-export type DenseMap<TKey extends string, TValue> = Readonly<
-  Record<TKey, TValue>
->;
+export type FieldError<TMsg = string> = NonEmptyReadonlyArray<TMsg>;
 
 /**
  * Determines if the provided value is a non-empty readonly array.

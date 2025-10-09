@@ -1,9 +1,9 @@
-import { isNonEmptyArray } from "@/shared/forms/types/core-types.util";
-import type {
-  DenseFieldErrorMap,
-  FieldError,
-  SparseFieldErrorMap,
-} from "@/shared/forms/types/field-errors.type";
+import {
+  type FieldError,
+  isNonEmptyArray,
+} from "@/shared/forms/types/core.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
+import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
 
 /**
  * Build a sparse error map restricted to allowed fields.

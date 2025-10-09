@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/errors/dense-error-map";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type { FormResult } from "@/shared/forms/types/form-result.type";
 
 /**

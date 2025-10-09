@@ -4,7 +4,7 @@ import {
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/i18n/form-messages.const";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type {
   FormError,
   FormResult,

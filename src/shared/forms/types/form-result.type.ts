@@ -1,8 +1,7 @@
 import type { Result } from "@/shared/core/result/result";
-import type {
-  DenseFieldErrorMap,
-  SparseFieldValueMap,
-} from "@/shared/forms/types/field-errors.type";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
+
+import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
 
 /**
  * @public
