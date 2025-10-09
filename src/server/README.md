@@ -28,8 +28,3 @@ execution only and must not be imported into client/UI modules.
 
 - Add new modules only if they are server-specific and reusable.
 - For shared logic, use `shared/`; for UI, use `ui/`.
-
-## References
-
-- [Coding Style Instructions](../../.github/instructions/coding-style.instructions.md)
-- [TypeScript Instructions](../../.github/instructions/typescript.instructions.md)

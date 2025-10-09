@@ -24,8 +24,3 @@ application feature. Code here is intended for feature isolation and reusability
 
 - Add new features as separate folders with clear boundaries.
 - For shared logic, use `shared/`; for server-side code, use `server/`.
-
-## References
-
-- [Coding Style Instructions](../../.github/instructions/coding-style.instructions.md)
-- [TypeScript Instructions](../../.github/instructions/typescript.instructions.md)

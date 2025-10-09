@@ -17,8 +17,6 @@
 - Reference issues/PRs (e.g., `Closes #123`).
 - Split large changes into logical commits.
 - Never commit secrets.
-- Run lint, type checks, and tests before committing.
-- Enforce with commitlint + Husky.
 
 ## Template
 
