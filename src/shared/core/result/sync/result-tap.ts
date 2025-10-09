@@ -1,7 +1,7 @@
 // File: src/shared/core/result/result-tap.ts
 
+import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { normalizeUnknownError } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 
@@ -99,7 +99,7 @@ export function tapOkSafe<
       try {
         fn(r.value);
       } catch (e) {
-        const sideErr = mapError ? mapError(e) : normalizeUnknownError(e); // AppError
+        const sideErr = (mapError ?? toAppErrorFromUnknown)(e);
         return Err(sideErr);
       }
     }
@@ -161,7 +161,7 @@ export function tapErrorSafe<
       try {
         fn(r.error);
       } catch (e) {
-        const sideErr = mapError ? mapError(e) : normalizeUnknownError(e); // AppError
+        const sideErr = (mapError ?? toAppErrorFromUnknown)(e);
         return Err(sideErr);
       }
     }

@@ -46,6 +46,7 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 ## Functions & Components
 
 - Use an options object for optional parameters. Other function/component rules are defined in always-on.md.
+- Limit to 3 overloads max (ideal: 1–2); if more needed, create a separate function for that use case.
 
 ---
 
