@@ -139,6 +139,8 @@ public/
 storage/
 next-env.d.ts
 postcss.config.mjs
+.gitignore
+biome.json
 
 # -----------------------------------------
 # Optional: source code directories
