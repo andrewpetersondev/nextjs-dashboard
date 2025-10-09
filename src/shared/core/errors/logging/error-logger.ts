@@ -1,6 +1,6 @@
 // src/shared/core/errors/error-logger.ts
 
-import { toBaseError } from "@/shared/core/errors/adapters/app-error-adapters";
+import { toBaseErrorFromApp } from "@/shared/core/errors/adapters/app-error-adapters";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { isBaseError } from "@/shared/core/errors/base/error-guards";
 import type {
@@ -110,7 +110,9 @@ export function logAppError(
   appError: AppError,
   extra: Readonly<Record<string, unknown>> = {},
 ): void {
-  const be = toBaseError(appError, "UNKNOWN").withContext({ boundary: "ui" });
+  const be = toBaseErrorFromApp(appError, "UNKNOWN").withContext({
+    boundary: "ui",
+  });
   const payload = {
     code: be.code,
     // Use shared default redactor
