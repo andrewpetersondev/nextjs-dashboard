@@ -14,22 +14,21 @@ import {
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
 import { createInitialFailedFormState } from "@/shared/forms/errors/init-failed-form-state";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE =
-  createInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
+const INITIAL_STATE = createInitialFailedFormState<SignupField, string>(
+  SIGNUP_FIELDS_LIST,
+);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
-type SignupAction = (
-  prevState: LegacyFormState<SignupField>,
-  formData: FormData,
-) => Promise<LegacyFormState<SignupField>>;
-
 interface SignupFormProps {
-  action: SignupAction;
+  action: (
+    prevState: FormResult<SignupField, unknown>,
+    formData: FormData,
+  ) => Promise<FormResult<SignupField, unknown>>;
 }
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
@@ -37,14 +36,14 @@ export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    LegacyFormState<SignupField>,
+    FormResult<SignupField, unknown>,
     FormData
   >(action, INITIAL_STATE);
   const baseId = useId();
   const usernameId = `${baseId}-username`;
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
-  const values = state.success ? undefined : state.values;
+  const values = state.ok ? undefined : state.error.values;
 
   return (
     <>
@@ -61,7 +60,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           dataCy="signup-username-input"
           defaultValue={values?.username}
           describedById={`${usernameId}-errors`}
-          error={state?.errors?.username}
+          error={state.ok ? undefined : state.error.fieldErrors.username}
           icon={<UserIcon aria-hidden="true" className={iconClass} />}
           id={usernameId}
           label="Username"
@@ -74,7 +73,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           dataCy="signup-email-input"
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
-          error={state?.errors?.email}
+          error={state.ok ? undefined : state.error.fieldErrors.email}
           icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
           id={emailId}
           label="Email address"
@@ -87,7 +86,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           autoComplete="new-password"
           dataCy="signup-password-input"
           describedById={`${passwordId}-errors`}
-          error={state?.errors?.password}
+          error={state.ok ? undefined : state.error.fieldErrors.password}
           icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
           id={passwordId}
           label="Password"
@@ -103,7 +102,13 @@ export const SignupForm: FC<SignupFormProps> = ({
           Sign Up
         </AuthSubmitButton>
       </form>
-      {state.message && <AuthServerMessage message={state.message} />}
+      {state.ok
+        ? state.value.message && (
+            <AuthServerMessage message={state.value.message} />
+          )
+        : state.error.message && (
+            <AuthServerMessage message={state.error.message} />
+          )}
     </>
   );
 };

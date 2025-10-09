@@ -1,31 +1,47 @@
 import type { z } from "zod";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/errors/dense-error-map";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 
 /**
- * Creates an initial failure FormState (UI-only) for a given set of fields.
- * Domain logic should use Result; actions map Result -> FormState at the boundary.
+ * Creates the initial failed form state with empty field errors.
+ *
+ * @param fieldNames - An array of field names for which the error map will be initialized.
+ * @returns An object representing a failed form state with validation errors.
+ * @alpha
+ * TODO: EVALUATE BY 10/11/2025
  */
-export function createInitialFailedFormState<TFieldNames extends string>(
-  fieldNames: readonly TFieldNames[],
-) {
+export function createInitialFailedFormState<
+  TFieldNames extends string,
+  TMsg extends string,
+  TValue = string,
+>(fieldNames: readonly TFieldNames[]) {
+  const fieldErrors: DenseFieldErrorMap<TFieldNames, TMsg> =
+    createEmptyDenseFieldErrorMap<TFieldNames, TMsg>(fieldNames);
+
   return {
-    errors: createEmptyDenseFieldErrorMap(fieldNames),
-    message: "",
-    success: false,
-  } satisfies Extract<LegacyFormState<TFieldNames>, { success: false }>;
+    error: {
+      fieldErrors,
+      kind: "validation" as const,
+      message: "",
+    },
+    ok: false as const,
+  } satisfies Extract<FormResult<TFieldNames, TValue, TMsg>, { ok: false }>;
 }
 
 /**
- * Creates an initial failure state for a given Zod object schema.
+ * Generates the initial failed form state based on the provided Zod object schema.
+ *
+ * @typeParam TSchema - The Zod schema describing the shape of the form.
+ * @param schema - The Zod object schema used to determine the form fields.
+ * @returns An initial failed form state with all fields initialized.
+ * @public
+ * TODO: EVALUATE BY 10/11/2025
  */
 export function createInitialFailedFormStateFromSchema<
   TSchema extends z.ZodObject<z.ZodRawShape>,
 >(schema: TSchema) {
-  // Derive the field names directly from the schema
   type FieldNames = keyof TSchema["shape"] & string;
-
-  // Object.keys always returns string[], but narrowing it to FieldNames is safe here
   const fields = Object.keys(schema.shape) as readonly FieldNames[];
-  return createInitialFailedFormState<FieldNames>(fields);
+  return createInitialFailedFormState<FieldNames, string, string>(fields);
 }

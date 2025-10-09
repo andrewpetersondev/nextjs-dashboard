@@ -8,7 +8,7 @@ import { AuthServerMessage } from "@/features/auth/components/auth-server-messag
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { type LoginField, LoginSchema } from "@/features/auth/lib/auth.schema";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
@@ -16,13 +16,11 @@ const INITIAL_STATE = createInitialFailedFormStateFromSchema(LoginSchema);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
-type LoginAction = (
-  prevState: LegacyFormState<LoginField>,
-  formData: FormData,
-) => Promise<LegacyFormState<LoginField>>;
-
 interface LoginFormProps {
-  action: LoginAction;
+  action: (
+    prevState: FormResult<LoginField, unknown>,
+    formData: FormData,
+  ) => Promise<FormResult<LoginField, unknown>>;
 }
 
 /**
@@ -32,14 +30,13 @@ export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    LegacyFormState<LoginField>,
+    FormResult<LoginField, unknown>,
     FormData
   >(action, INITIAL_STATE);
   const baseId = useId();
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
-  // Narrow once: values only exist on failure states
-  const values = state.success ? undefined : state.values;
+  const values = state.ok ? undefined : state.error.values;
 
   return (
     <>
@@ -56,7 +53,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           dataCy="login-email-input"
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
-          error={state?.errors?.email}
+          error={state.ok ? undefined : state.error.fieldErrors.email}
           icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
           id={emailId}
           label="Email address"
@@ -69,7 +66,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           autoComplete="current-password"
           dataCy="login-password-input"
           describedById={`${passwordId}-errors`}
-          error={state?.errors?.password}
+          error={state.ok ? undefined : state.error.fieldErrors.password}
           icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
           id={passwordId}
           label="Password"
@@ -85,7 +82,13 @@ export const LoginForm: FC<LoginFormProps> = ({
           Log In
         </AuthSubmitButton>
       </form>
-      {state.message && <AuthServerMessage message={state.message} />}
+      {state.ok
+        ? state.value.message && (
+            <AuthServerMessage message={state.value.message} />
+          )
+        : state.error.message && (
+            <AuthServerMessage message={state.error.message} />
+          )}
     </>
   );
 };
