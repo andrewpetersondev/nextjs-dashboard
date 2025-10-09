@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: off
 ---
 
 # Jetbrains AI Rules
@@ -7,12 +7,6 @@ apply: manually
 ## Purpose
 
 Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript app.
-
-## Scope & Audience
-
-- Audience: AI contributors and human maintainers.
-- Applies to: all code changes, documentation updates, design/ADR notes, and CI/CD configs.
-- Contexts: proposal, review, and merge phases; interactive assistant sessions included.
 
 ## General Rules
 
@@ -53,39 +47,5 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
     - rollback plan and owner
 - Pin exact versions; no auto-range updates for canary packages.
 - Weekly review for canary impact; rollback on breaking/regression per ADR.
-
-## Response Format & Quick Checklist
-
-- For complex changes, begin with a 3–7 bullet checklist.
-- Prefer minimal, diff-only responses per always-on.md. Provide explanations only when requested by the user or when
-  performing sensitive/irreversible actions.
-- Always confirm intents, constraints, and affected files before acting.
-- Suggest small, composable changes; mention typing and error handling approaches when relevant.
-- Provide ready-to-use pnpm commands where relevant.
-- When requested, summarize validation and next steps.
-- Prompt for explicit user confirmation before any sensitive/irreversible action.
-
-## Review Checklist
-
-- TypeScript is strict; all exports have explicit types (no implicit `any`).
-- Files are organized by feature/domain and follow naming/immutability guidelines.
-- All code and suggestions reference and align with instruction files.
-- Changes are cross-referenced in file headers.
-
-## Rule Precedence
-
-- Precedence for resolving conflicts:
-    1) project-rules.md
-    2) typescript-summary.md
-    3) result-error-summary.md
-    4) coding-style.md
-    5) md-docs.md
-- When unsure, ask for clarification and default to stricter typing and safer operations.
-
-## Testing Policy
-
-- Minimum coverage targets: 80% lines and branches for affected packages.
-- Accessibility: run cypress-axe; fail on “critical” and “serious” violations.
-- Place tests alongside features by layer (e.g., src/features/..., src/server/..., src/ui/...).
 
 _Last updated: 2025-10-08_

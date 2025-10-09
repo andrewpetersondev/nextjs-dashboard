@@ -20,7 +20,7 @@ apply: always
 - Enforce **maximum type safety** and **zero unsafe narrowing**, except `exactOptionalPropertyTypes`, which may remain
   disabled for practical flexibility in optional object fields.
 - Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
-- Prefer `satisfies` over `as`; Allow casts **only for primitives** (string, number, boolean).
+- Prefer `satisfies` over `as`; rarely use casts; never cast with `as unknown as`
 - All exported functions/components/hooks must have explicit top-level parameter and return types.
 - Internal closures and callbacks may rely on safe inference when fully constrained by generics.
 - Prefer local inference for variables inside function bodies; keep explicit types for exports only.

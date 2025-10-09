@@ -5,7 +5,8 @@ apply: always
 # Current Focus
 
 I want to perfect my signup code. i want to handle everything from dal to repo to service to action to form validation
-to ui. if there are any bad practices, poor organization, etc i want to fix it.
+to ui. if there are any bad practices, poor organization, etc i want to fix it. To do this i will need to strengthen my
+logic for results, errors, and forms.
 
 Focus on code related to:
 

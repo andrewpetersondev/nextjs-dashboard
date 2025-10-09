@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 ---
 
 # Structure & Architecture Summary
@@ -52,11 +52,5 @@ Attach for refactors, file moves, or architecture reviews.
 - Use `fetch({ next: { revalidate } })` for cache control and typed keys.
 
 ---
-
-## Performance & Review
-
-- JS bundle target ≤200 KB gzip per route.
-- Validate Lighthouse, LCP ≤2.5 s, CLS < 0.1, TBT < 300 ms.
-- Verify import boundaries and immutability on each PR.
 
 _Last updated: 2025-10-08_
