@@ -10,12 +10,20 @@ to ui. if there are any bad practices, poor organization, etc i want to fix it.
 Focus on code related to:
 
 - signup
+    - src/features/auth
+    - src/server/auth
 - result helpers
+    - src/shared/core/result
 - error flows
+    - src/shared/core/errors
+    - src/server/errors/
 - forms
+    - src/shared/forms
+    - src/server/forms
 
 Secondary focus on:
 
+- result & form & error cohesion
 - organization
 - reusable code
 - removing duplication

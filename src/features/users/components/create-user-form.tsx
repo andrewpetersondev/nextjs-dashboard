@@ -9,7 +9,7 @@ import {
 } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
-import type { FormResult } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-result.type";
 
 export function CreateUserForm(): JSX.Element {
   const initialState =

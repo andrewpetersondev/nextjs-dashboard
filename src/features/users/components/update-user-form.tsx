@@ -11,7 +11,7 @@ import {
 } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
-import type { FormResult } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-result.type";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =

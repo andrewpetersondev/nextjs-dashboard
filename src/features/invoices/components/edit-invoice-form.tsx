@@ -21,7 +21,7 @@ import type {
   DenseFieldErrorMap,
   FieldError,
 } from "@/shared/forms/types/field-errors.type";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

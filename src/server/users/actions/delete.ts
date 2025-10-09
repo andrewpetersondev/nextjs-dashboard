@@ -8,7 +8,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
 
 /**
  * Deletes a user by ID, revalidates and redirects.

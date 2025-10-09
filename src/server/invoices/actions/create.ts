@@ -20,7 +20,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { isZodErrorInstance } from "@/shared/forms/errors/zod-error.helpers";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";

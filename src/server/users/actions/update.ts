@@ -22,7 +22,7 @@ import { toUserIdResult } from "@/shared/domain/id-converters";
 import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { FormResult } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-result.type";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

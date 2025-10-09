@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/errors/dense-error-map";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
-import type { FormResult } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-result.type";
 
 /**
  * Creates the initial failed form state with empty field errors.

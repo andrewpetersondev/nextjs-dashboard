@@ -16,7 +16,7 @@ import {
 import { createInvoiceAction } from "@/server/invoices/actions/create";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
 import type { FieldError } from "@/shared/forms/types/field-errors.type";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";
 import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";

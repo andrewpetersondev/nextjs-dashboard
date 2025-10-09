@@ -15,7 +15,7 @@ import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-fiel
 import {
   type FormSuccess,
   formSuccess,
-} from "@/shared/forms/types/form-state.type";
+} from "@/shared/forms/types/form-result.type";
 
 // Consolidate default messages and logger context
 const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;

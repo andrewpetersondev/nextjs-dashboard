@@ -9,7 +9,7 @@ import type {
   FormError,
   FormResult,
   FormSuccess,
-} from "@/shared/forms/types/form-state.type";
+} from "@/shared/forms/types/form-result.type";
 
 /**
  * @public
