@@ -4,6 +4,8 @@
  * Provides a narrow, JSON‑safe `AppError` plus normalization helpers.
  */
 
+import { IS_PROD } from "@/shared/config/env-shared";
+
 /**
  * @public
  * Provides overrides for normalizing unknown errors.
@@ -56,12 +58,18 @@ const isAppError = (value: unknown): value is AppError =>
 const applyOverrides = /* @__PURE__ */ (
   base: AppError,
   overrides?: NormalizeUnknownErrorOverrides,
-): AppError => ({
-  ...base,
-  code: overrides?.code ?? base.code,
-  kind: overrides?.kind ?? base.kind,
-  severity: overrides?.severity ?? base.severity,
-});
+): AppError => {
+  const out: AppError = {
+    ...base,
+    code: overrides?.code ?? base.code,
+    kind: overrides?.kind ?? base.kind,
+    severity: overrides?.severity ?? base.severity,
+  };
+  if (!IS_PROD) {
+    Object.freeze(out);
+  }
+  return out;
+};
 
 const isPlainMessageObject = /* @__PURE__ */ (
   value: unknown,
@@ -218,6 +226,7 @@ export interface AppError {
  * @example
  * const error = normalizeUnknownError(new Error("Sample error"));
  * @public
+ * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-adapters.ts'` (`toAppError`).
  */
 export const normalizeUnknownError = /* @__PURE__ */ (
   input: unknown,
@@ -244,16 +253,21 @@ export const normalizeUnknownError = /* @__PURE__ */ (
  * @example
  * const error = augmentAppError(someError, { message: 'Custom Message', kind: 'TypeA' });
  * @public
+ * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-adapters.ts'` (`augmentAppError`).
  */
 export const augmentAppError = /* @__PURE__ */ (
   base: unknown,
   patch: AugmentAppErrorPatch,
 ): AppError => {
   const normalized = normalizeUnknownError(base);
-  return {
+  const out: AppError = {
     ...normalized,
     ...patch,
     kind: patch.kind ?? normalized.kind,
     message: patch.message ?? normalized.message,
   };
+  if (!IS_PROD) {
+    Object.freeze(out);
+  }
+  return out;
 };
