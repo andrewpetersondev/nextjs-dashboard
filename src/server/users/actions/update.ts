@@ -1,8 +1,3 @@
-/**
- * @file Basic helpers and server action for updating a user.
- * Initializes form context, validates input, builds a diff-based patch, and persists updates.
- */
-
 "use server";
 import { revalidatePath } from "next/cache";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
@@ -24,157 +19,113 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
 import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
-// Helpers for brevity and strict typing
-/** Selectable user fields used for diffing. */
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
-/** Shared form context for validation and error handling. */
-type Ctx = {
-  readonly fields: readonly EditUserFormFieldNames[];
-  readonly raw: Record<string, unknown>;
-  readonly emptyDense: ReturnType<
-    typeof toDenseFieldErrorMapFromSparse<EditUserFormFieldNames>
-  >;
-};
 
-/**
- * Builds shared context (allowed fields, raw values, empty errors) from FormData.
- * @param formData - Incoming FormData from the client.
- */
-function initCtx(formData: FormData): Ctx {
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <todo fix later>
+export async function updateUserAction(
+  id: string,
+  _prevState: FormResult<EditUserFormFieldNames, unknown>,
+  formData: FormData,
+): Promise<FormResult<EditUserFormFieldNames, UserDto>> {
   const fields = resolveFieldNamesFromSchema<
     EditUserFormFieldNames,
     EditUserFormValues
   >(EditUserFormSchema);
   const raw = extractRawRecordFromFormData(formData, fields);
-  const emptyDense = toDenseFieldErrorMapFromSparse<EditUserFormFieldNames>(
-    {},
-    fields,
-  );
-  return { emptyDense, fields, raw };
-}
 
-/**
- * Returns a failed FormState with a given message using the provided context.
- * @param message - Human-friendly failure message.
- * @param ctx - Context carrying fields, raw, and empty errors.
- */
-function fail(
-  message: string,
-  ctx: Ctx,
-): LegacyFormState<EditUserFormFieldNames> {
-  return mapResultToFormResult(
-    { error: ctx.emptyDense, ok: false },
-    { failureMessage: message, fields: ctx.fields, raw: ctx.raw },
-  );
-}
-
-/**
- * Validates and normalizes the form data against the edit schema.
- * @param formData - Incoming FormData from the client.
- * @param ctx - Validation context with fields and raw values.
- */
-async function validateForm(
-  formData: FormData,
-  ctx: Ctx,
-): Promise<LegacyFormState<EditUserFormFieldNames, EditUserFormValues>> {
-  const result = await validateFormGeneric(
-    formData,
-    EditUserFormSchema,
-    ctx.fields,
-    {
-      fields: ctx.fields,
-      raw: ctx.raw,
-    },
-  );
-  return result;
-}
-
-/**
- * Builds a minimal update patch by diffing validated data against the existing user.
- * Hashes password when provided.
- * @param existing - Current persisted user.
- * @param data - Normalized, validated input.
- */
-async function buildPatch(
-  existing: UserDto,
-  data: EditUserFormValues,
-): Promise<UserUpdatePatch> {
-  const base: DiffableUserFields = {
-    email: existing.email,
-    role: existing.role,
-    username: existing.username,
-  };
-  const candidate: Partial<DiffableUserFields> = {
-    ...(data.username ? { username: data.username } : {}),
-    ...(data.email ? { email: data.email } : {}),
-    // role is already UserRole | undefined thanks to schema; no need to reconvert/throw
-    ...(data.role ? { role: data.role } : {}),
-  };
-  const diff = diffShallowPatch<DiffableUserFields>(base, candidate);
-  const password =
-    data.password && data.password.length > 0
-      ? await hashPassword(data.password)
-      : undefined;
-  return { ...diff, ...(password ? { password } : {}) };
-}
-
-/**
- * Server action: validates input, computes patch, updates the user, and revalidates.
- * @param id - Target user ID.
- * @param _prevState - Previous form state (unused).
- * @param formData - Submitted form payload.
- *
- * @remarks - TODO: THIS FORM OR FORM-ACTION NO LONGER ACCEPTS PARTIAL INPUTS
- */
-export async function updateUserAction(
-  id: string,
-  _prevState: LegacyFormState<EditUserFormFieldNames>,
-  formData: FormData,
-): Promise<LegacyFormState<EditUserFormFieldNames>> {
-  const ctx = initCtx(formData);
   const idRes = toUserIdResult(id);
   if (!idRes.ok) {
-    return fail(USER_ERROR_MESSAGES.VALIDATION_FAILED, ctx);
+    return mapResultToFormResult(
+      {
+        error: {
+          fieldErrors: {} as never,
+          message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+        },
+        ok: false,
+      },
+      { failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED, fields, raw },
+    );
   }
 
-  const validated = await validateForm(formData, ctx);
-  if (!validated.success || typeof validated.data === "undefined") {
-    return validated;
+  const validated = await validateFormGeneric(
+    formData,
+    EditUserFormSchema,
+    fields,
+    { fields, raw },
+  );
+  if (!validated.ok) {
+    return mapResultToFormResult(validated, { fields, raw });
   }
 
   try {
     const db = getAppDb();
+
     const existing = await readUserDal(db, idRes.value);
     if (!existing) {
-      return fail(USER_ERROR_MESSAGES.NOT_FOUND, ctx);
+      return mapResultToFormResult(
+        {
+          error: {
+            fieldErrors: {} as never,
+            message: USER_ERROR_MESSAGES.NOT_FOUND,
+          },
+          ok: false,
+        },
+        { failureMessage: USER_ERROR_MESSAGES.NOT_FOUND, fields, raw },
+      );
     }
 
-    const patch = await buildPatch(existing, validated.data);
+    const data = validated.value.data;
+    const base: DiffableUserFields = {
+      email: existing.email,
+      role: existing.role,
+      username: existing.username,
+    };
+    const candidate: Partial<DiffableUserFields> = {
+      ...(data.username ? { username: data.username } : {}),
+      ...(data.email ? { email: data.email } : {}),
+      ...(data.role ? { role: data.role } : {}),
+    };
+    const diff = diffShallowPatch<DiffableUserFields>(base, candidate);
+    const password =
+      data.password && data.password.length > 0
+        ? await hashPassword(data.password)
+        : undefined;
+    const patch: UserUpdatePatch = {
+      ...diff,
+      ...(password ? { password } : {}),
+    };
+
     if (Object.keys(patch).length === 0) {
       return {
-        data: existing,
-        message: USER_SUCCESS_MESSAGES.NO_CHANGES,
-        success: true,
+        ok: true,
+        value: { data: existing, message: USER_SUCCESS_MESSAGES.NO_CHANGES },
       };
     }
 
     const updated = await updateUserDal(db, idRes.value, patch);
     if (!updated) {
-      return fail(USER_ERROR_MESSAGES.UPDATE_FAILED, ctx);
+      return mapResultToFormResult(
+        {
+          error: {
+            fieldErrors: {} as never,
+            message: USER_ERROR_MESSAGES.UPDATE_FAILED,
+          },
+          ok: false,
+        },
+        { failureMessage: USER_ERROR_MESSAGES.UPDATE_FAILED, fields, raw },
+      );
     }
 
     revalidatePath(USERS_DASHBOARD_PATH);
     return {
-      data: updated,
-      message: USER_SUCCESS_MESSAGES.UPDATE_SUCCESS,
-      success: true,
+      ok: true,
+      value: { data: updated, message: USER_SUCCESS_MESSAGES.UPDATE_SUCCESS },
     };
   } catch (error: unknown) {
     serverLogger.error({
@@ -183,6 +134,15 @@ export async function updateUserAction(
       id,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-    return fail(USER_ERROR_MESSAGES.UNEXPECTED, ctx);
+    return mapResultToFormResult(
+      {
+        error: {
+          fieldErrors: {} as never,
+          message: USER_ERROR_MESSAGES.UNEXPECTED,
+        },
+        ok: false,
+      },
+      { failureMessage: USER_ERROR_MESSAGES.UNEXPECTED, fields, raw },
+    );
   }
 }

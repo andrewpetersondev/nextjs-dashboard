@@ -20,10 +20,10 @@ export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: FormResult<EditUserFormFieldNames, unknown>,
     formData: FormData,
-  ) => Promise<FormResult<EditUserFormFieldNames, unknown>>;
+  ) => Promise<FormResult<EditUserFormFieldNames, UserDto>>;
 
   const [state, action, pending] = useActionState<
-    FormResult<EditUserFormFieldNames, unknown>,
+    FormResult<EditUserFormFieldNames, UserDto>,
     FormData
   >(updateUserWithId, initialState);
 
