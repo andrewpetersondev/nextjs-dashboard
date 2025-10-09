@@ -90,6 +90,10 @@ export const mapErrorUnion =
     (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> =>
       r.ok ? r : Err<TValue, TError2>(fn(r.error));
 
+// TODO: mapErrorUnion and mapErrorPreserve allocate a new Err
+// TODO: They intentionally create a new Err, which can drop the original error reference and stack/context unless explicitly preserved.
+// TODO: Provide a variant that preserves the original error object when the type already matches, or allow a mapper that can return the original value without wrapping.
+
 /**
  * Curried mapper that conditionally preserves the original `Err` object if the mapped error
  * is reference-identical to the original. Otherwise allocates a new `Err`.
@@ -119,6 +123,10 @@ export const mapErrorPreserve =
       const mapped = fn(r.error);
       return Object.is(mapped, r.error) ? r : Err<TValue, TError2>(mapped);
     };
+
+// TODO: mapErrorUnion and mapErrorPreserve allocate a new Err
+// TODO: They intentionally create a new Err, which can drop the original error reference and stack/context unless explicitly preserved.
+// TODO: Provide a variant that preserves the original error object when the type already matches, or allow a mapper that can return the original value without wrapping.
 
 /**
  * Curried dual-branch mapper that transforms both success and error sides of a {@link Result}.

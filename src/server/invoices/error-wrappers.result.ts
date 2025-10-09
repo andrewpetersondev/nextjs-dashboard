@@ -3,7 +3,7 @@ import {
   mapToRepoError,
   type RepoError,
 } from "@/server/errors/mappers/error-mappers.server";
-import { fromPromise } from "@/shared/core/result/async/result-async";
+import { fromPromiseThunk } from "@/shared/core/result/async/result-async";
 import type { Result } from "@/shared/core/result/result";
 
 /**
@@ -15,5 +15,5 @@ import type { Result } from "@/shared/core/result/result";
 export function promiseToRepoResult<T>(
   p: Promise<T>,
 ): Promise<Result<T, RepoError>> {
-  return fromPromise<T, RepoError>(p, mapToRepoError);
+  return fromPromiseThunk<T, RepoError>(p, mapToRepoError);
 }

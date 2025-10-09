@@ -3,6 +3,10 @@
 import { IS_PROD } from "@/shared/config/env-shared";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 
+// TODO: ErrorLike looseness
+// TODO: ErrorLike permits string or Error shapes; mapping functions can unintentionally widen to string, reducing structured error fidelity.
+// TODO: Encourage structured error types in generic constraints where possible.
+
 /**
  * Freezes an object in development to prevent mutation; no-op in production.
  *
@@ -16,6 +20,10 @@ const freezeDev = <TObj extends object>(obj: TObj): TObj => {
   }
   return obj;
 };
+
+// TODO: Freeze strategy
+// TODO: Ok/Err freeze in dev only. Code may accidentally mutate Results in production.
+// TODO: Consider freezing in all envs (small overhead) or fully documenting immutability expectations and using readonly types everywhere (already present) plus runtime asserts in critical paths.
 
 /** Discriminant for successful Result. */
 export const RESULT_OK = true as const;

@@ -26,3 +26,6 @@ export const flatMapAsync =
       r: Result<TValue, TError1>,
     ): Promise<Result<TNext, TError1 | TError2>> =>
       r.ok ? fn(r.value) : (r as Result<TNext, TError1>);
+
+// TODO: flatMapAsync return typing and casting
+// TODO: The error-widening branch uses a cast for the Err passthrough: (r as Result<TNext, TError1>). This is safe at runtime but relies on a type assertion. Prefer allocating a new Err to avoid the cast, or provide a preserve-err variant with an explicit type helper.

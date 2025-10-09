@@ -51,6 +51,15 @@ export function tryCatch<TValue, TError extends ErrorLike>(
   }
 }
 
+// TODO: tryCatch/tryCatchAsync error model coupling
+// TODO: Defaults map to AppError, but other helpers are generic over ErrorLike.
+// TODO: Ensure consistent adapter use across layers to avoid accidental AppError leakage in lower layers.
+
+// TODO: Narrow overloads vs implementation types
+// TODO: tryCatch/tryCatchAsync overloads return Result<T, AppError> or Result<T, TError>,
+// TODO: but the implementation widens to AppError | TError. This is correct, yet easy to misuse if consumers
+// TODO: expect only TError. Keep overloads but ensure call sites don’t double-wrap or mis-assume exclusivity.
+
 /**
  * Converts a nullable value into a `Result`.
  * If the value is `null` or `undefined`, an error is returned.

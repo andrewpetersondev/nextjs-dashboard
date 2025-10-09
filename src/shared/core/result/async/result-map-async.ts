@@ -19,6 +19,7 @@ import { Ok, type Result } from "@/shared/core/result/result";
  * @example
  * const toUpper = mapOkAsync((s: string) => Promise.resolve(s.toUpperCase()));
  * const r = await toUpper(Ok("x")); // → { ok: true, value: "X" }
+ * @remarks - Forwards exceptions thrown inside the async mapper
  */
 export const mapOkAsync =
   /* @__PURE__ */
@@ -28,3 +29,10 @@ export const mapOkAsync =
     /* @__PURE__ */
     async (r: Result<TValue, TError>): Promise<Result<TNext, TError>> =>
       r.ok ? Ok(await fn(r.value)) : r;
+
+// TODO: mapOkAsync doesn’t catch exceptions
+// TODO: It forwards exceptions thrown inside the async mapper, violating the Result-no-throw discipline. Consider a “safe” variant or docs warning plus a tryCatchAsync wrapper option.
+
+// TODO: Missing safe async mappers
+// TODO: No mapOkAsyncSafe/flatMapAsyncSafe that catches mapper exceptions into Err via normalizeUnknownError.
+// TODO: These are often needed at boundaries.

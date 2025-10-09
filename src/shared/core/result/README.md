@@ -24,3 +24,7 @@ Type-safe result and error modeling utilities for synchronous, asynchronous, and
 | sync/result-sync.ts             | fromPredicate<TValue, TError>(value: TValue, predicate, onFail): Result<TValue, TError>                                            | Wraps a value in a `Result` based on a predicate.                             |
 | sync/result-tap.ts              | tap<TValue, TError>(result: Result<TValue, TError>, fn: (v: TValue) => void): Result<TValue, TError>                               | Runs a side-effect on a successful `Result` without changing its value.       |
 | sync/result-transform.ts        | transform<TValue, TError, TNext, TNextError>(result: Result<TValue, TError>, onOk, onErr): Result<TNext, TNextError>               | Transforms both success and error cases of a `Result`.                        |
+
+TODO: Potential import cycles
+TODO: Multiple small files cross-import result/error modules. Ensure no circular deps with adapters (not visible here),
+especially around normalizeUnknownError.

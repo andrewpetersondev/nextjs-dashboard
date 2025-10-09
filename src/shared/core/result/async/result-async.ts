@@ -68,6 +68,15 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   }
 }
 
+// TODO: tryCatch/tryCatchAsync error model coupling
+// TODO: Defaults map to AppError, but other helpers are generic over ErrorLike.
+// TODO: Ensure consistent adapter use across layers to avoid accidental AppError leakage in lower layers.
+
+// TODO: Narrow overloads vs implementation types
+// TODO: tryCatch/tryCatchAsync overloads return Result<T, AppError> or Result<T, TError>,
+// TODO: but the implementation widens to AppError | TError. This is correct, yet easy to misuse if consumers
+// TODO: expect only TError. Keep overloads but ensure call sites don’t double-wrap or mis-assume exclusivity.
+
 /**
  * Executes a Promise-returning function and maps any thrown error to a custom error type.
  *
@@ -77,7 +86,7 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
  * @param mapError - Function to map unknown errors to the custom error type.
  * @returns A Promise resolving to a Result containing either the value or the mapped error.
  */
-export async function fromPromise<TValue, TError extends ErrorLike>(
+export async function fromPromiseThunk<TValue, TError extends ErrorLike>(
   fn: () => Promise<TValue>,
   mapError: (e: unknown) => TError,
 ): Promise<Result<TValue, TError>> {
@@ -100,3 +109,8 @@ export const toPromise = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): Promise<TValue> =>
   r.ok ? Promise.resolve(r.value) : Promise.reject(r.error);
+
+// TODO: toPromise breaks Result discipline
+// TODO: It rejects on Err, turning controlled Result flow back into exceptions.
+// TODO: This is useful for interop, but easy to misuse.
+// TODO: Consider naming it toPromiseOrThrow and documenting clearly that it throws in the Err path.
