@@ -130,16 +130,14 @@ export type SignupField = keyof SignupData;
 
 // Field Name Arrays
 
-/**
- * Readonly signup field names derived from schema shape.
- */
-export const SIGNUP_FIELDS_LIST = Object.keys(
-  SignupSchema.shape,
-) as readonly SignupField[];
+// Explicit, readonly field name lists; avoids unsafe `Object.keys(... as ...)`
+export const SIGNUP_FIELDS_LIST = [
+  "email",
+  "password",
+  "username",
+] as const satisfies readonly SignupField[];
 
-/**
- * Readonly login field names derived from schema shape.
- */
-export const LOGIN_FIELDS_LIST = Object.keys(
-  LoginSchema.shape,
-) as readonly LoginField[];
+export const LOGIN_FIELDS_LIST = [
+  "email",
+  "password",
+] as const satisfies readonly LoginField[];

@@ -5,6 +5,124 @@
  */
 
 /**
+ * @public
+ * Provides overrides for normalizing unknown errors.
+ * @remarks
+ * This interface allows specifying optional properties to define the kind, code, and severity of the error.
+ * @property kind - An optional string to categorize the error.
+ * @property code - An optional string representing a specific error code.
+ * @property severity - An optional value from `AppError["severity"]` indicating the error's severity level.
+ */
+interface NormalizeUnknownErrorOverrides {
+  readonly kind?: string;
+  readonly code?: string;
+  readonly severity?: AppError["severity"];
+}
+
+/**
+ * Represents a type for partially updating `AppError` objects while optionally overriding `kind` and `message`.
+ *
+ * @typeParam AppError - The base error object to be augmented.
+ * @public
+ * @example
+ * const errorPatch: AugmentAppErrorPatch = { kind: "ValidationError", code: 400 };
+ */
+type AugmentAppErrorPatch = Partial<Omit<AppError, "kind" | "message">> & {
+  readonly kind?: string;
+  readonly message?: string;
+};
+
+/**
+ * Determines if a given value conforms to the `AppError` type.
+ *
+ * @param value - The value to be checked.
+ * @returns `true` if the value is an `AppError`, otherwise `false`.
+ * @example
+ * ```ts
+ * isAppError({ kind: 'ErrorType', message: 'An error occurred' }); // true
+ * isAppError({ type: 'ErrorType' }); // false
+ * ```
+ * @see AppError
+ */
+const isAppError = (value: unknown): value is AppError =>
+  typeof value === "object" &&
+  value !== null &&
+  "kind" in value &&
+  typeof (value as { kind: unknown }).kind === "string" &&
+  "message" in value &&
+  typeof (value as { message: unknown }).message === "string";
+
+// helpers to apply overrides and narrow inputs
+const applyOverrides = /* @__PURE__ */ (
+  base: AppError,
+  overrides?: NormalizeUnknownErrorOverrides,
+): AppError => ({
+  ...base,
+  code: overrides?.code ?? base.code,
+  kind: overrides?.kind ?? base.kind,
+  severity: overrides?.severity ?? base.severity,
+});
+
+const isPlainMessageObject = /* @__PURE__ */ (
+  value: unknown,
+): value is { readonly message: string } => {
+  if (typeof value !== "object" || value === null || value instanceof Error) {
+    return false;
+  }
+  const obj = value as { readonly message?: unknown };
+  return "message" in obj && typeof obj.message === "string";
+};
+
+const fromErrorInstance = /* @__PURE__ */ (
+  input: Error,
+  overrides?: NormalizeUnknownErrorOverrides,
+): AppError =>
+  applyOverrides(
+    {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cause: (input as any).cause,
+      code: undefined,
+      kind: DEFAULT_UNKNOWN_KIND,
+      message: input.message || DEFAULT_UNKNOWN_MESSAGE,
+      name: input.name,
+      severity: DEFAULT_UNKNOWN_SEVERITY,
+      stack: input.stack,
+    },
+    overrides,
+  );
+
+const fromMessageObject = /* @__PURE__ */ (
+  input: { readonly message: string },
+  overrides?: NormalizeUnknownErrorOverrides,
+): AppError =>
+  applyOverrides(
+    {
+      code: undefined,
+      kind: DEFAULT_UNKNOWN_KIND,
+      message: input.message || DEFAULT_UNKNOWN_MESSAGE,
+      severity: DEFAULT_UNKNOWN_SEVERITY,
+    },
+    overrides,
+  );
+
+const fromFallback = /* @__PURE__ */ (
+  input: unknown,
+  overrides?: NormalizeUnknownErrorOverrides,
+): AppError =>
+  applyOverrides(
+    {
+      code: undefined,
+      kind: DEFAULT_UNKNOWN_KIND,
+      message:
+        typeof input === "string" && input.trim().length > 0
+          ? input
+          : DEFAULT_UNKNOWN_MESSAGE,
+      severity: DEFAULT_UNKNOWN_SEVERITY,
+    },
+    overrides,
+  );
+
+/**
  * Represents the default value for an unknown kind.
  *
  * @defaultValue "unknown"
@@ -92,56 +210,6 @@ export interface AppError {
 }
 
 /**
- * @public
- * Provides overrides for normalizing unknown errors.
- * @remarks
- * This interface allows specifying optional properties to define the kind, code, and severity of the error.
- * @property kind - An optional string to categorize the error.
- * @property code - An optional string representing a specific error code.
- * @property severity - An optional value from `AppError["severity"]` indicating the error's severity level.
- */
-export interface NormalizeUnknownErrorOverrides {
-  readonly kind?: string;
-  readonly code?: string;
-  readonly severity?: AppError["severity"];
-}
-
-/**
- * Represents a type for partially updating `AppError` objects while optionally overriding `kind` and `message`.
- *
- * @typeParam AppError - The base error object to be augmented.
- * @public
- * @example
- * const errorPatch: AugmentAppErrorPatch = { kind: "ValidationError", code: 400 };
- */
-export type AugmentAppErrorPatch = Partial<
-  Omit<AppError, "kind" | "message">
-> & {
-  readonly kind?: string;
-  readonly message?: string;
-};
-
-/**
- * Determines if a given value conforms to the `AppError` type.
- *
- * @param value - The value to be checked.
- * @returns `true` if the value is an `AppError`, otherwise `false`.
- * @example
- * ```ts
- * isAppError({ kind: 'ErrorType', message: 'An error occurred' }); // true
- * isAppError({ type: 'ErrorType' }); // false
- * ```
- * @see AppError
- */
-export const isAppError = (value: unknown): value is AppError =>
-  typeof value === "object" &&
-  value !== null &&
-  "kind" in value &&
-  typeof (value as { kind: unknown }).kind === "string" &&
-  "message" in value &&
-  typeof (value as { message: unknown }).message === "string";
-
-/**
  * Normalizes an unknown input into a standardized `AppError` object.
  *
  * @param input - The input to normalize, which can be of any type.
@@ -156,51 +224,15 @@ export const normalizeUnknownError = /* @__PURE__ */ (
   overrides?: NormalizeUnknownErrorOverrides,
 ): AppError => {
   if (isAppError(input)) {
-    return {
-      ...input,
-      code: overrides?.code ?? input.code,
-      kind: overrides?.kind ?? input.kind,
-      severity: overrides?.severity ?? input.severity,
-    };
+    return applyOverrides(input, overrides);
   }
-
   if (input instanceof Error) {
-    return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      cause: (input as any).cause,
-      code: overrides?.code,
-      kind: overrides?.kind ?? DEFAULT_UNKNOWN_KIND,
-      message: input.message || DEFAULT_UNKNOWN_MESSAGE,
-      name: input.name,
-      severity: overrides?.severity ?? DEFAULT_UNKNOWN_SEVERITY,
-      stack: input.stack,
-    };
+    return fromErrorInstance(input, overrides);
   }
-
-  if (
-    typeof input === "object" &&
-    input !== null &&
-    "message" in input &&
-    typeof (input as { message: unknown }).message === "string"
-  ) {
-    return {
-      code: overrides?.code,
-      kind: overrides?.kind ?? DEFAULT_UNKNOWN_KIND,
-      message:
-        (input as { message: string }).message || DEFAULT_UNKNOWN_MESSAGE,
-      severity: overrides?.severity ?? DEFAULT_UNKNOWN_SEVERITY,
-    };
+  if (isPlainMessageObject(input)) {
+    return fromMessageObject(input, overrides);
   }
-
-  return {
-    code: overrides?.code,
-    kind: overrides?.kind ?? DEFAULT_UNKNOWN_KIND,
-    message:
-      typeof input === "string" && input.trim().length > 0
-        ? input
-        : DEFAULT_UNKNOWN_MESSAGE,
-    severity: overrides?.severity ?? DEFAULT_UNKNOWN_SEVERITY,
-  };
+  return fromFallback(input, overrides);
 };
 
 /**
