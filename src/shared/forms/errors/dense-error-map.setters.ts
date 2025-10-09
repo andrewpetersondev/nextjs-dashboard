@@ -16,15 +16,16 @@ export function setSingleFieldErrorMessage<
   opts?: { field?: TField },
 ): DenseFieldErrorMap<TField, TMsg> {
   const dense = createEmptyDenseFieldErrorMap<TField, TMsg>(fields);
-  const target =
-    opts?.field ?? (fields[0] as TField | undefined) ?? ("" as TField);
+  const target = opts?.field ?? (fields[0] as TField | undefined);
 
   if (!target || !fields.includes(target)) {
     return dense;
   }
 
-  return normalizeAndFreezeDenseFieldErrorMap(fields, {
+  const draft = {
     ...dense,
     [target]: Object.freeze([message]) as readonly TMsg[],
-  } as Record<TField, readonly TMsg[]>);
+  } as Record<TField, readonly TMsg[]>;
+
+  return normalizeAndFreezeDenseFieldErrorMap(fields, draft);
 }

@@ -87,11 +87,10 @@ export function toSparseFieldErrorMapFromDense<
   TMsg = string,
 >(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, FieldError<TMsg>>> = {};
-  // biome-ignore lint/suspicious/useGuardForIn: <unused function>
-  for (const k in dense) {
+  for (const k of Object.keys(dense) as TField[]) {
     const arr = dense[k];
     if (arr && arr.length > 0) {
-      out[k as TField] = arr as FieldError<TMsg>;
+      out[k] = arr as FieldError<TMsg>;
     }
   }
   return out as SparseFieldErrorMap<TField, TMsg>;
@@ -99,6 +98,9 @@ export function toSparseFieldErrorMapFromDense<
 
 /**
  * Validate and deep-freeze a dense error map according to the provided field order.
+ *
+ * - Ensures every key in `fields` exists in `dense`.
+ * - Produces a new object with field arrays cloned and frozen; object is frozen too.
  */
 export function normalizeAndFreezeDenseFieldErrorMap<
   TField extends string,
@@ -108,10 +110,11 @@ export function normalizeAndFreezeDenseFieldErrorMap<
   dense: Record<TField, readonly TMsg[]>,
 ): DenseFieldErrorMap<TField, TMsg> {
   for (const f of fields) {
-    if (!(f in dense)) {
+    if (!Object.hasOwn(dense, f)) {
       throw new Error(`Missing field in dense error map: ${f}`);
     }
-    if (!Array.isArray(dense[f])) {
+    const val = dense[f];
+    if (!Array.isArray(val)) {
       throw new Error(`Invalid value for field ${f}`);
     }
   }
