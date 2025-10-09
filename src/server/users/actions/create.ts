@@ -18,7 +18,7 @@ import {
   toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/errors/dense-error-map";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -44,9 +44,9 @@ function pickCreateUserFormData(formData: FormData): CreateUserFormData {
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <52 of 50>
 export async function createUserAction(
-  _prevState: LegacyFormState<CreateUserFormFieldNames>,
+  _prevState: FormResult<CreateUserFormFieldNames, unknown>,
   formData: FormData,
-): Promise<LegacyFormState<CreateUserFormFieldNames>> {
+): Promise<FormResult<CreateUserFormFieldNames, unknown>> {
   const db = getAppDb();
   const allowed = deriveFieldNamesFromSchema(CreateUserFormSchema);
 
@@ -61,15 +61,18 @@ export async function createUserAction(
 
     if (!parsed.success) {
       return {
-        errors: toDenseFieldErrorMapFromSparse(
-          selectSparseFieldErrorsForAllowedFields(
-            parsed.error.flatten().fieldErrors,
+        error: {
+          fieldErrors: toDenseFieldErrorMapFromSparse(
+            selectSparseFieldErrorsForAllowedFields(
+              parsed.error.flatten().fieldErrors,
+              allowed,
+            ),
             allowed,
           ),
-          allowed,
-        ),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        success: false,
+          kind: "validation",
+          message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+        },
+        ok: false,
       };
     }
 
@@ -88,16 +91,21 @@ export async function createUserAction(
         safeMeta: { email, username },
       });
       return {
-        errors: toDenseFieldErrorMapFromSparse({}, allowed),
-        message: USER_ERROR_MESSAGES.CREATE_FAILED,
-        success: false,
+        error: {
+          fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+          kind: "validation",
+          message: USER_ERROR_MESSAGES.CREATE_FAILED,
+        },
+        ok: false,
       };
     }
 
     return {
-      data: user,
-      message: USER_SUCCESS_MESSAGES.CREATE_SUCCESS,
-      success: true,
+      ok: true,
+      value: {
+        data: user,
+        message: USER_SUCCESS_MESSAGES.CREATE_SUCCESS,
+      },
     };
   } catch (error) {
     serverLogger.error({
@@ -106,9 +114,12 @@ export async function createUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
     return {
-      errors: toDenseFieldErrorMapFromSparse({}, allowed),
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
+      error: {
+        fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+        kind: "validation",
+        message: USER_ERROR_MESSAGES.UNEXPECTED,
+      },
+      ok: false,
     };
   }
 }

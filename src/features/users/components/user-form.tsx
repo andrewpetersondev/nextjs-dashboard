@@ -1,9 +1,9 @@
-import { type JSX, type ReactNode, useEffect, useState } from "react";
+import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { FieldError } from "@/shared/forms/types/field-errors.type";
-import type { LegacyFormState } from "@/shared/forms/types/form-state.type";
+import type { FormResult } from "@/shared/forms/types/form-state.type";
 import { TYPING_MS } from "@/shared/ui/tokens/timings";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -14,7 +14,7 @@ type Props<TFieldNames extends string> = {
   title: string;
   description: string;
   action: (formData: FormData) => void;
-  state: LegacyFormState<TFieldNames>;
+  state: FormResult<TFieldNames, unknown>;
   pending: boolean;
   initialValues?: Partial<UserDto> & { password?: string };
   isEdit?: boolean;
@@ -39,15 +39,19 @@ export function UserForm<TFieldNames extends string>({
 }: Props<TFieldNames>): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
 
+  const message = useMemo<string | undefined>(() => {
+    return state.ok ? state.value.message : state.error.message;
+  }, [state]);
+
   useEffect(() => {
-    if (state.message) {
+    if (message) {
       setShowAlert(true);
       const timer = setTimeout(() => setShowAlert(false), TYPING_MS);
       return () => clearTimeout(timer);
     }
     setShowAlert(false);
     return;
-  }, [state.message]);
+  }, [message]);
 
   return (
     <div>
@@ -60,8 +64,15 @@ export function UserForm<TFieldNames extends string>({
         <UserFields
           // Disable inputs while pending to prevent changes mid-submit
           disabled={pending}
-          // Adapt generic state.errors to the concrete UserFields error shape
-          errors={state.errors as Record<string, FieldError> | undefined}
+          // Adapt generic state.error.fieldErrors to the concrete UserFields error shape
+          // TODO: Fix this type assertion
+          errors={
+            state.ok
+              ? undefined
+              : (state.error.fieldErrors as unknown as
+                  | Record<string, FieldError>
+                  | undefined)
+          }
           isEdit={isEdit}
           showPassword={showPassword}
           values={initialValues}
