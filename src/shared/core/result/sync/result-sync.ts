@@ -84,3 +84,14 @@ export const fromPredicate = <TValue, TError extends ErrorLike = AppError>(
   onFail: (v: TValue) => TError,
 ): Result<TValue, TError> =>
   predicate(value) ? Ok(value) : Err(onFail(value));
+
+// Guard-based variant
+export const fromGuard = /* @__PURE__ */ <
+  TIn,
+  TOut extends TIn,
+  TError extends ErrorLike = AppError,
+>(
+  value: TIn,
+  guard: (v: TIn) => v is TOut,
+  onFail: (v: TIn) => TError,
+): Result<TOut, TError> => (guard(value) ? Ok(value) : Err(onFail(value)));

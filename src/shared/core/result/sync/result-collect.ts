@@ -1,33 +1,13 @@
 // File: src/shared/core/result/sync/result-collect.ts
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
-
-/**
- * Extracts the success type from a `Result` type.
- *
- * @typeParam R - A type that extends `Result` with an error of type `ErrorLike`.
- * @returns The success type `U` if `R` is a `Result<U, ErrorLike>`, otherwise `never`.
- * @example
- * ```
- * type Success = OkType<Result<string, Error>>;
- * // Success is `string`
- * ```
- */
-export type OkType<R> = R extends Result<infer U, ErrorLike> ? U : never;
-
-/**
- * Extracts the error type `E` from a `Result` type.
- *
- * @typeParam R - The `Result` type to extract the error type from.
- * @returns The extracted error type `E`, or `never` if not applicable.
- * @example
- * ```ts
- * type Error = ErrType<Result<number, string>>; // string
- * ```
- * @see Result
- */
-export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
+import {
+  Err,
+  type ErrType,
+  Ok,
+  type OkType,
+  type Result,
+} from "@/shared/core/result/result";
 
 /**
  * Collects all successful results from the provided array, returning a combined `Result`.

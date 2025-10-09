@@ -89,6 +89,14 @@ export async function fromPromiseThunk<TValue, TError extends ErrorLike>(
   }
 }
 
+export const fromAsyncThunk = /* @__PURE__ */ <
+  TValue,
+  TError extends ErrorLike,
+>(
+  fn: () => Promise<TValue>,
+  mapError: (e: unknown) => TError,
+): Promise<Result<TValue, TError>> => fromPromiseThunk(fn, mapError);
+
 /**
  * Converts a promise into a `Result` object, mapping any error to a custom error type.
  *

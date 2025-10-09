@@ -80,3 +80,10 @@ export const matchResult = /* @__PURE__ */ <
   onOk: (v: TValue) => TOut,
   onErr: (e: TError) => TOut,
 ): TOut => (r.ok ? onOk(r.value) : onErr(r.error));
+
+// Exhaustive match with constant outputs
+export const matchTo =
+  /* @__PURE__ */
+    <TValue, TError extends ErrorLike, TOut>(onOk: TOut, onErr: TOut) =>
+    (r: Result<TValue, TError>): TOut =>
+      r.ok ? onOk : onErr;
