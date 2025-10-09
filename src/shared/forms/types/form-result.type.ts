@@ -95,36 +95,6 @@ export const formSuccess = <TData>(
   message,
 });
 
-/**
- * Creates a validation error object with the specified field, value, and message.
- *
- * @typeParam TField - The type of the field associated with the validation error.
- * @typeParam TValue - The type of the value causing the validation error.
- * @typeParam TMsg - The type of the validation message.
- * @param input - The input object containing field, value, and message excluding the 'kind' property.
- * @returns A `FormValidationError` object with the kind set to "validation".
- */
-export const validationError = <TField extends string, TValue, TMsg>(
-  input: Omit<FormValidationError<TField, TValue, TMsg>, "kind">,
-): FormValidationError<TField, TValue, TMsg> => ({
-  kind: "validation",
-  ...input,
-});
-
-/**
- * Determines whether the provided error is a validation error.
- *
- * @typeParam TField - The type of the field name.
- * @typeParam TValue - The type of the field value.
- * @typeParam TMsg - The type of the error message.
- * @param err - The error to be checked.
- * @returns True if the error is a validation error; otherwise, false.
- */
-export const isValidationError = <TField extends string, TValue, TMsg>(
-  err: FormValidationError<TField, TValue, TMsg>,
-): err is FormValidationError<TField, TValue, TMsg> =>
-  err.kind === "validation";
-
 /* -------------------------------------------------------------------------- */
 /* Accurate Legacy Types (Deprecated)                                         */
 /* -------------------------------------------------------------------------- */
@@ -180,27 +150,3 @@ export type LegacyFormState<
   TValue = string,
   TMsg = string,
 > = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
-
-/* -------------------------------------------------------------------------- */
-/* Convenience Narrowing Helpers                                              */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Extracts a validation error from the given form result if it exists.
- *
- * @typeParam TField - The type of the field name.
- * @typeParam TData - The type of the additional form data.
- * @typeParam TValue - The type of the field value. Defaults to `string`.
- * @typeParam TMsg - The type of the error message. Defaults to `string`.
- * @param res - The result object of the form validation.
- * @returns The validation error if present, otherwise `undefined`.
- */
-export const getValidationError = <
-  TField extends string,
-  TData,
-  TValue = string,
-  TMsg = string,
->(
-  res: FormResult<TField, TData, TValue, TMsg>,
-): FormValidationError<TField, TValue, TMsg> | undefined =>
-  res.ok ? undefined : res.error;
