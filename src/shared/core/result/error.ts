@@ -5,6 +5,7 @@
  */
 
 import { IS_PROD } from "@/shared/config/env-shared";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 
 /**
  * @public
@@ -17,7 +18,7 @@ import { IS_PROD } from "@/shared/config/env-shared";
  */
 interface NormalizeUnknownErrorOverrides {
   readonly kind?: string;
-  readonly code?: string;
+  readonly code?: ErrorCode;
   readonly severity?: AppError["severity"];
 }
 
@@ -209,7 +210,7 @@ export const makeErrorMapper =
 export interface AppError {
   readonly kind: string;
   readonly message: string;
-  readonly code?: string;
+  readonly code?: ErrorCode;
   readonly details?: unknown;
   readonly severity?: "info" | "warn" | "error";
   readonly name?: string;
