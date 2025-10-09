@@ -1,6 +1,6 @@
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import type { StructuredErrorLog } from "@/shared/core/errors/logging/error-logger.contracts";
-import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/error";
+import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/app-error.constants";
 
 /**
  * Extract cause message if nested cause is present (Node >=16 Error options or custom).
