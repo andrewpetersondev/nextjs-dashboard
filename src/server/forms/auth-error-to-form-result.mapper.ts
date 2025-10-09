@@ -1,6 +1,10 @@
+// File: src/server/forms/auth-error-to-form-result.mapper.ts
+
+import "server-only";
 import type { AuthServiceError } from "@/server/auth/user-auth.service";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-errors.type";
 import type { FormResult } from "@/shared/forms/types/form-state.type";
 
 export function authErrorToFormResult<TField extends string>(
@@ -8,20 +12,27 @@ export function authErrorToFormResult<TField extends string>(
   error: AuthServiceError,
   raw: Readonly<Record<string, unknown>>,
 ): FormResult<TField, unknown> {
-  // Minimal UX mapping; tune messages per kind if needed
   const messageByKind: Record<AuthServiceError["kind"], string> = {
     conflict: "Email or username already in use.",
     invalid_credentials: "Invalid email or password.",
-    missing_fields: "Please fill all required fields.",
-    unexpected: "Unexpected error. Please try again.",
-    validation: "Invalid data. Check the form and try again.",
+    missing_fields: "Please fill in all required fields.",
+    unexpected: "Something went wrong. Please try again.",
+    validation: "Please correct the highlighted fields.",
   };
 
-  const dense = setSingleFieldErrorMessage(
+  const dense: DenseFieldErrorMap<TField> = setSingleFieldErrorMessage<TField>(
     fields,
     messageByKind[error.kind] ?? "Something went wrong.",
+    {
+      field:
+        error.kind === "missing_fields"
+          ? ("email" as TField)
+          : ("form" as TField),
+    },
   );
+
   return toFormValidationErr<TField, unknown>({
+    failureMessage: messageByKind[error.kind] ?? "Something went wrong.",
     fieldErrors: dense,
     fields,
     raw,

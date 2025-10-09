@@ -83,19 +83,16 @@ export async function signupAction(
   const input: SignupData = validated.value.data;
   const service = new UserAuthFlowService(getAppDb());
 
-  // remove explicit Result<true, AuthServiceError> to allow inference from chain
   const sessionResult = await flatMapAsync((i: SignupData) =>
     service.signup(i),
   )(Ok(input))
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
     .then(flatMapAsync(establishSession));
+  // TODO: suggested change to remove // `.then(mapOk((user) => ({ id: user.id, role: user.role })))`
 
   if (!sessionResult.ok) {
-    return authErrorToFormResult<SignupField>(
-      fields,
-      toAuthServiceError(sessionResult.error),
-      raw,
-    );
+    const svcError = toAuthServiceError(sessionResult.error);
+    return authErrorToFormResult<SignupField>(fields, svcError, raw);
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);

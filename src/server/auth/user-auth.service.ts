@@ -33,26 +33,35 @@ const MSG_INVALID_CREDS = "Invalid email or password";
 const MSG_VALIDATION = "Invalid data";
 const MSG_UNEXPECTED = "Unexpected error occurred";
 
-/**
- * Build an AuthServiceError for missing signup fields.
- */
-function toMissingSignupFieldsError(): AuthServiceError {
-  return {
-    fields: DEFAULT_MISSING_FIELDS,
-    kind: "missing_fields",
-    message: MSG_MISSING,
-  };
-}
-
-/**
- * Build an AuthServiceError for signup conflicts (e.g., email/username already exists).
- */
-function toConflictError(): AuthServiceError {
-  return {
-    kind: "conflict",
-    message: MSG_CONFLICT,
-    targets: CONFLICT_TARGETS,
-  };
+function toError<K extends AuthServiceError["kind"]>(
+  kind: K,
+  init?: Partial<Extract<AuthServiceError, { kind: K }>>,
+): AuthServiceError {
+  switch (kind) {
+    case "missing_fields":
+      return {
+        fields: DEFAULT_MISSING_FIELDS,
+        kind,
+        message: MSG_MISSING,
+        ...init,
+      } as const;
+    case "conflict":
+      return {
+        kind,
+        message: MSG_CONFLICT,
+        targets: CONFLICT_TARGETS,
+        ...init,
+      } as const;
+    case "invalid_credentials":
+      return { kind, message: MSG_INVALID_CREDS, ...init } as const;
+    case "validation":
+      return { kind, message: MSG_VALIDATION, ...init } as const;
+    case "unexpected":
+      return { kind: "unexpected", message: MSG_UNEXPECTED, ...init } as const;
+    default:
+      // Narrow to a safe default for exhaustiveness
+      return { kind: "unexpected", message: MSG_UNEXPECTED } as const;
+  }
 }
 
 /**
@@ -116,9 +125,8 @@ export class UserAuthFlowService {
    * Always atomic via repo.withTransaction.
    */
   async signup(input: SignupData): Promise<Result<UserDto, AuthServiceError>> {
-    // Early missing field guard
     if (!input?.email || !input?.password || !input?.username) {
-      return Err(toMissingSignupFieldsError());
+      return Err(toError("missing_fields"));
     }
 
     const email = input.email.trim().toLowerCase();
@@ -140,10 +148,10 @@ export class UserAuthFlowService {
       return Ok(userEntityToDto(entity));
     } catch (err: unknown) {
       if (err instanceof ConflictError) {
-        return Err(toConflictError());
+        return Err(toError("conflict"));
       }
       if (err instanceof ValidationError) {
-        return Err(toValidationError());
+        return Err(toError("validation"));
       }
       serverLogger.error(
         {
@@ -153,7 +161,7 @@ export class UserAuthFlowService {
         },
         "Unexpected error during signup",
       );
-      return Err(toUnexpectedError());
+      return Err(toError("unexpected"));
     }
   }
 

@@ -41,6 +41,7 @@ function assertSignupFields(input: AuthSignupDalInput): void {
  */
 export class AuthUserRepo {
   protected readonly db: AppDatabase;
+  private static readonly CTX = "repo.AuthUserRepo" as const;
 
   constructor(db: AppDatabase) {
     this.db = db;
@@ -57,23 +58,31 @@ export class AuthUserRepo {
     fn: (txRepo: AuthUserRepo) => Promise<T>,
   ): Promise<T> {
     try {
-      const dbWithTx = this.db as {
-        transaction: <R>(scope: (tx: unknown) => Promise<R>) => Promise<R>;
+      if (
+        typeof (this.db as unknown as { transaction?: unknown }).transaction !==
+        "function"
+      ) {
+        throw new DatabaseError(
+          "Database does not support transactions in current context.",
+        );
+      }
+      const dbWithTx = this.db as AppDatabase & {
+        transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
       };
-      return await dbWithTx.transaction(async (tx) => {
-        const txRepo = new AuthUserRepo(tx as unknown as AppDatabase);
+      return await dbWithTx.transaction(async (tx: AppDatabase) => {
+        const txRepo = new AuthUserRepo(tx);
         return await fn(txRepo);
       });
     } catch (err: unknown) {
       serverLogger.error(
         {
-          context: "repo.AuthUserRepo.withTransaction",
+          context: `${AuthUserRepo.CTX}.withTransaction`,
           err,
           kind: "unexpected",
         },
-        "Transaction failed in AuthUserRepo",
+        "Unexpected error during transaction",
       );
-      throw new DatabaseError("Transaction failed");
+      throw err;
     }
   }
 
@@ -85,13 +94,12 @@ export class AuthUserRepo {
    * @throws ConflictError | ValidationError | DatabaseError
    */
   async signup(input: AuthSignupDalInput): Promise<UserEntity> {
+    // todo: why would i change this to (input: SignupInput): UserRow?
     try {
       assertSignupFields(input);
       const normalized = toNormalizedSignupInput(input);
 
       const row = await createUserForSignup(this.db, normalized);
-
-      // Defensive: DAL throws if row is not created, this check is redundant but type-safe.
       if (!row) {
         throw new DatabaseError("User row creation returned null/undefined.");
       }
@@ -106,7 +114,7 @@ export class AuthUserRepo {
       }
       serverLogger.error(
         {
-          context: "repo.AuthUserRepo.signup",
+          context: `${AuthUserRepo.CTX}.signup`,
           err,
           kind: "unexpected",
         },
@@ -154,7 +162,7 @@ export class AuthUserRepo {
       }
       serverLogger.error(
         {
-          context: "repo.AuthUserRepo.login",
+          context: `${AuthUserRepo.CTX}.login`,
           err,
           kind: "unexpected",
         },

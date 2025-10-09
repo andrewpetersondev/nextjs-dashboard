@@ -34,7 +34,7 @@ export async function createUserForSignup(
         password: passwordHash,
         role,
         username,
-      })
+      } satisfies NewUserRow)
       .returning();
 
     const userRow = insertedRows?.[0];

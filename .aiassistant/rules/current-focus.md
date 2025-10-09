@@ -4,6 +4,9 @@ apply: always
 
 # Current Focus
 
+I want to perfect my signup code. i want to handle everything from dal to repo to service to action to form validation
+to ui. if there are any bad practices, poor organization, etc i want to fix it.
+
 Focus on code related to:
 
 - signup

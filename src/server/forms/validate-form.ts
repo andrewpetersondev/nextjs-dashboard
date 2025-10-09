@@ -108,7 +108,7 @@ export async function validateFormGeneric<
   TFieldNames extends keyof TIn & string,
 >(
   formData: FormData,
-  schema: z.ZodType<TIn>,
+  schema: z.ZodType<TIn>, // TODO: schema: z.ZodType<OUTPUT, INPUT, INTERNALS>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
 ): Promise<Result<FormSuccess<TIn>, FormValidationResult<TFieldNames>>> {
