@@ -1,7 +1,8 @@
 // File: src/shared/core/result/async/result-transform-async.ts
 
-import type { ErrorLike } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/result";
+import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
+import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import { Err, type Result } from "@/shared/core/result/result";
 
 /**
  * Asynchronously maps the `Ok` branch of a `Result` using the provided async function.
@@ -25,7 +26,51 @@ export const flatMapAsync =
     async (
       r: Result<TValue, TError1>,
     ): Promise<Result<TNext, TError1 | TError2>> =>
-      r.ok ? fn(r.value) : (r as Result<TNext, TError1>);
+      r.ok ? fn(r.value) : Err<TNext, TError1>(r.error);
 
-// TODO: flatMapAsync return typing and casting
-// TODO: The error-widening branch uses a cast for the Err passthrough: (r as Result<TNext, TError1>). This is safe at runtime but relies on a type assertion. Prefer allocating a new Err to avoid the cast, or provide a preserve-err variant with an explicit type helper.
+// Preserve-Err variant for async flatMap (no casting).
+export const flatMapAsyncPreserveErr =
+  /* @__PURE__ */
+  <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    fn: (v: TValue) => Promise<Result<TNext, TError2>>,
+  ) => {
+    /* @__PURE__ */
+    return async (
+      r: Result<TValue, TError1>,
+    ): Promise<Result<TNext, TError1 | TError2>> => {
+      if (!r.ok) {
+        return Err<TNext, TError1>(r.error);
+      }
+      return await fn(r.value);
+    };
+  };
+
+/**
+ * Safe variant of flatMapAsync that catches exceptions thrown by the async mapper.
+ */
+export const flatMapAsyncSafe =
+  /* @__PURE__ */
+    <
+      TValue,
+      TNext,
+      TError1 extends ErrorLike,
+      TError2 extends ErrorLike,
+      TSideError extends ErrorLike = AppError,
+    >(
+      fn: (v: TValue) => Promise<Result<TNext, TError2>>,
+      mapError?: (e: unknown) => TSideError,
+    ) =>
+    /* @__PURE__ */
+    async (
+      r: Result<TValue, TError1>,
+    ): Promise<Result<TNext, TError1 | TError2 | TSideError | AppError>> => {
+      if (!r.ok) {
+        return Err<TNext, TError1>(r.error);
+      }
+      try {
+        return await fn(r.value);
+      } catch (e) {
+        const err = (mapError ?? toAppErrorFromUnknown)(e);
+        return Err(err);
+      }
+    };

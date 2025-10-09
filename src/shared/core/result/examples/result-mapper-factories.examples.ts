@@ -2,6 +2,9 @@
  * Below are minimal, typed examples showing where to pass a mapper (unknown → domain error) or
  * a factory (produce a domain error) so results keep NotFoundError instead of widening to AppError.
  */
+/** biome-ignore-all lint/suspicious/useAwait: <ignore> */
+/** biome-ignore-all lint/correctness/noUnusedVariables: <ignore> */
+/** biome-ignore-all lint/nursery/noShadow: <ignore> */
 
 import { NotFoundError } from "@/shared/core/errors/domain/domain-errors";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";

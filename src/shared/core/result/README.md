@@ -4,27 +4,36 @@ Type-safe result and error modeling utilities for synchronous, asynchronous, and
 
 ---
 
-| File                            | Function Signature                                                                                                                 | Description                                                                   |
-|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| error.ts                        | normalizeUnknownError(e: unknown): AppError                                                                                        | Converts any unknown error into a normalized `AppError`.                      |
-| result.ts                       | Ok<TValue, TError>(value: TValue): Result<TValue, TError>                                                                          | Wraps a value in a successful `Result`.                                       |
-| result.ts                       | Err<TValue, TError>(error: TError): Result<TValue, TError>                                                                         | Wraps an error in a failed `Result`.                                          |
-| async/result-async.ts           | tryCatchAsync<TValue, TError>(fn: () => Promise<TValue>, mapError?): Promise<Result<TValue, TError>>                               | Executes an async function and wraps its result in a `Result`.                |
-| async/result-async.ts           | fromNullableAsync<TValue, TError>(v: TValue \| null \| undefined, onNull): Promise<Result<TValue, TError>>                         | Wraps a nullable async value in a `Result`.                                   |
-| async/result-async.ts           | fromPredicateAsync<TValue, TError>(value: TValue, predicate, onFail): Promise<Result<TValue, TError>>                              | Wraps a value in a `Result` based on an async predicate.                      |
-| async/result-map-async.ts       | mapAsync<TValue, TError, TNext>(result: Result<TValue, TError>, fn: (v: TValue) => Promise<TNext>): Promise<Result<TNext, TError>> | Maps a successful async `Result` to a new value.                              |
-| async/result-tap-async.ts       | tapAsync<TValue, TError>(result: Result<TValue, TError>, fn: (v: TValue) => Promise<void>): Promise<Result<TValue, TError>>        | Runs a side-effect on a successful async `Result` without changing its value. |
-| async/result-transform-async.ts | transformAsync<TValue, TError, TNext, TNextError>(result: Result<TValue, TError>, onOk, onErr): Promise<Result<TNext, TNextError>> | Transforms both success and error cases of an async `Result`.                 |
-| iter/result-collect-iter.ts     | collectIter<TValue, TError>(results: Iterable<Result<TValue, TError>>): Result<readonly TValue[], TError>                          | Collects an iterable of `Result`s into a single `Result` of an array.         |
-| sync/result-collect.ts          | collect<TValue, TError>(results: readonly Result<TValue, TError>[]): Result<readonly TValue[], TError>                             | Collects an array of `Result`s into a single `Result` of an array.            |
-| sync/result-map.ts              | map<TValue, TError, TNext>(result: Result<TValue, TError>, fn: (v: TValue) => TNext): Result<TNext, TError>                        | Maps a successful `Result` to a new value.                                    |
-| sync/result-match.ts            | match<TValue, TError, TReturn>(result: Result<TValue, TError>, onOk, onErr): TReturn                                               | Pattern-matches on a `Result`, handling both success and error cases.         |
-| sync/result-sync.ts             | tryCatch<TValue, TError>(fn: () => TValue, mapError?): Result<TValue, TError>                                                      | Executes a synchronous function and wraps its result in a `Result`.           |
-| sync/result-sync.ts             | fromNullable<TValue, TError>(v: TValue \| null \| undefined, onNull): Result<TValue, TError>                                       | Wraps a nullable value in a `Result`.                                         |
-| sync/result-sync.ts             | fromPredicate<TValue, TError>(value: TValue, predicate, onFail): Result<TValue, TError>                                            | Wraps a value in a `Result` based on a predicate.                             |
-| sync/result-tap.ts              | tap<TValue, TError>(result: Result<TValue, TError>, fn: (v: TValue) => void): Result<TValue, TError>                               | Runs a side-effect on a successful `Result` without changing its value.       |
-| sync/result-transform.ts        | transform<TValue, TError, TNext, TNextError>(result: Result<TValue, TError>, onOk, onErr): Result<TNext, TNextError>               | Transforms both success and error cases of a `Result`.                        |
-
-TODO: Potential import cycles
-TODO: Multiple small files cross-import result/error modules. Ensure no circular deps with adapters (not visible here),
-especially around normalizeUnknownError.
+| File                            | Function Signature                                                                                   | Description                                                    |
+|---------------------------------|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| error.ts                        | normalizeUnknownError(e: unknown): AppError                                                          | Converts any unknown error into a normalized `AppError`.       |
+| result.ts                       | Ok<TValue, TError>(value: TValue): Result<TValue, TError>                                            | Wraps a value in a successful `Result`.                        |
+| result.ts                       | Err<TValue, TError>(error: TError): Result<TValue, TError>                                           | Wraps an error in a failed `Result`.                           |
+| async/result-async.ts           | tryCatchAsync<TValue, TError>(fn: () => Promise<TValue>, mapError?): Promise<Result<TValue, TError>> | Executes an async function and wraps its result in a `Result`. |
+| async/result-async.ts           | fromPromiseThunk<T>(fn: () => Promise<T>, mapError): Promise<Result<T, E>>                           | Executes a Promise-returning thunk and maps errors.            |
+| async/result-async.ts           | fromPromise<T>(p: Promise<T>, mapError): Promise<Result<T, E>>                                       | Executes a Promise and maps errors.                            |
+| async/result-async.ts           | toPromiseOrThrow<T>(r: Result<T, E>): Promise<T>                                                     | Converts a `Result` to a Promise, rejecting on error.          |
+| async/result-map-async.ts       | mapOkAsync(fn): (r) => Promise<Result<Next, E>>                                                      | Maps Ok branch with async fn.                                  |
+| async/result-map-async.ts       | mapOkAsyncSafe(fn, mapError?): (r) => Promise<Result<Next, E \| Side>>                               | Safe async Ok mapper (catches exceptions).                     |
+| async/result-map-async.ts       | mapErrorAsync(fn): (r) => Promise<Result<T, NewE>>                                                   | Async error mapping (replacement).                             |
+| async/result-map-async.ts       | mapErrorAsyncSafe(fn, mapError?): (r) => Promise<Result<T, NewE \| Side>>                            | Safe async error mapping (catches exceptions).                 |
+| async/result-transform-async.ts | flatMapAsync(fn): (r) => Promise<Result<Next, E1 \| E2>>                                             | Async flatMap for Ok branch.                                   |
+| async/result-transform-async.ts | flatMapAsyncPreserveErr(fn): (r) => Promise<Result<Next, E1 \| E2>>                                  | Async flatMap that preserves Err (no casting).                 |
+| async/result-transform-async.ts | flatMapAsyncSafe(fn, mapError?): (r) => Promise<Result<Next, E1 \| E2 \| Side>>                      | Safe async flatMap (catches exceptions).                       |
+| iter/result-collect-iter.ts     | collectAllLazy(iterable): Result<readonly T[], E>                                                    | Collects an iterable of Results.                               |
+| sync/result-collect.ts          | collectAll(results): Result<readonly T[], E>                                                         | Collects an array of Results.                                  |
+| sync/result-collect.ts          | collectTuple(...results): Result<Tuple, E>                                                           | Collects homogeneous tuple of Results.                         |
+| sync/result-collect.ts          | collectTupleHetero(...results): Result<Tuple, UnionE>                                                | Collects heterogeneous tuple of Results.                       |
+| sync/result-collect.ts          | firstOkOrElse(onEmpty)(results): Result<T, E>                                                        | Returns first Ok or last Err or onEmpty().                     |
+| sync/result-map.ts              | mapOk(fn): (r) => Result<Next, E>                                                                    | Maps Ok branch (sync).                                         |
+| sync/result-map.ts              | mapError(fn): (r) => Result<T, NewE>                                                                 | Maps error branch (replacement).                               |
+| sync/result-map.ts              | mapErrorUnion(fn): (r) => Result<T, E1 \| E2>                                                        | Widens error type (union).                                     |
+| sync/result-map.ts              | mapErrorUnionPreserve(fn): (r) => Result<T, E1 \| E2>                                                | Union-mapping with identity-preserve optimization.             |
+| sync/result-map.ts              | mapErrorPreserve(fn): (r) => Result<T, E1 \| E2>                                                     | Preserve original Err when mapped equals original.             |
+| sync/result-match.ts            | matchResult(r, onOk, onErr): Out                                                                     | Exhaustive matcher.                                            |
+| sync/result-match.ts            | unwrapOrThrow(r): T                                                                                  | Unwraps or throws.                                             |
+| sync/result-match.ts            | unwrapOr(fallback)(r): T                                                                             | Unwraps or returns constant.                                   |
+| sync/result-match.ts            | unwrapOrElse(fallbackFn)(r): T                                                                       | Unwraps or returns computed fallback.                          |
+| sync/result-sync.ts             | tryCatch(fn, mapError?): Result<T, E>                                                                | Executes a sync function and wraps result.                     |
+| sync/result-sync.ts             | fromNullable(v, onNull): Result<T, E>                                                                | Wraps nullable value.                                          |
+| sync/result-sync.ts             | fromPredicate(value, predicate, onFail): Result<T, E>                                                | Wraps value based on predicate.                                |

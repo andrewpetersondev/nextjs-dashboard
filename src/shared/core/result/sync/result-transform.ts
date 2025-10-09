@@ -1,17 +1,17 @@
 // File: src/shared/core/result/sync/result-transform.ts
 
 import type { ErrorLike } from "@/shared/core/result/error";
-import type { Result } from "@/shared/core/result/result";
+import { Err, type Result } from "@/shared/core/result/result";
 
 /**
- * Applies a transformation function to a successful `Result` value, returning a new `Result`.
+ * Transforms the `Result<TValue, TError1>` by applying a mapping function to the inner value
+ * if it is `ok`, returning a new `Result`. If it is an error, the original error is propagated.
  *
- * @typeParam TValue - The type of the input value in the initial `Result`.
- * @typeParam TNext - The type of the resulting value after transformation.
- * @typeParam TError1 - The type of the error in the initial `Result`.
- * @typeParam TError2 - The type of the error in the transformed `Result`.
- * @param fn - The function to map over a successful `Result`.
- * @returns A new `Result` containing either the transformed value or the original error.
+ * @typeParam TValue - The type of the input value in the `Result`.
+ * @typeParam TNext - The type of the resulting value after the mapping function is applied.
+ * @typeParam TError1 - The type of the original error in the `Result`.
+ * @typeParam TError2 - The type of the possible error after applying the mapping function.
+ * @returns A new `Result` reflecting the mapped value or the combined error type.
  */
 export const flatMap =
   /* @__PURE__ */
@@ -20,4 +20,4 @@ export const flatMap =
     ) =>
     /* @__PURE__ */
     (r: Result<TValue, TError1>): Result<TNext, TError1 | TError2> =>
-      r.ok ? fn(r.value) : (r as Result<TNext, TError1>);
+      r.ok ? fn(r.value) : Err<TNext, TError1>(r.error);

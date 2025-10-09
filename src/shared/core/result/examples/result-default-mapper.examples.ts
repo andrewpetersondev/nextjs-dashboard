@@ -6,6 +6,7 @@
  * In lower layers (DAL/Repo/Service), always pass a mapper or error factory to keep domain errors like NotFoundError.
  * The generic types already support this; using a mapper prevents widening to AppError.
  */
+/** biome-ignore-all lint/correctness/noUnusedVariables: <ignore> */
 
 import { NotFoundError } from "@/shared/core/errors/domain/domain-errors";
 import { tapErrorAsyncSafe } from "@/shared/core/result/async/result-tap-async";

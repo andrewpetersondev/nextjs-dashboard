@@ -68,15 +68,6 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   }
 }
 
-// TODO: tryCatch/tryCatchAsync error model coupling
-// TODO: Defaults map to AppError, but other helpers are generic over ErrorLike.
-// TODO: Ensure consistent adapter use across layers to avoid accidental AppError leakage in lower layers.
-
-// TODO: Narrow overloads vs implementation types
-// TODO: tryCatch/tryCatchAsync overloads return Result<T, AppError> or Result<T, TError>,
-// TODO: but the implementation widens to AppError | TError. This is correct, yet easy to misuse if consumers
-// TODO: expect only TError. Keep overloads but ensure call sites don’t double-wrap or mis-assume exclusivity.
-
 /**
  * Executes a Promise-returning function and maps any thrown error to a custom error type.
  *
@@ -97,20 +88,26 @@ export async function fromPromiseThunk<TValue, TError extends ErrorLike>(
   }
 }
 
+// Add direct-Promise helper and keep thunk version for clarity.
+export async function fromPromise<TValue, TError extends ErrorLike>(
+  p: Promise<TValue>,
+  mapError: (e: unknown) => TError,
+): Promise<Result<TValue, TError>> {
+  try {
+    return Ok(await p);
+  } catch (e) {
+    return Err(mapError(e));
+  }
+}
+
 /**
  * Converts a Result into a Promise, resolving with the value if successful, or rejecting with the error.
- *
  * @typeParam TValue - The type of the success value.
  * @typeParam TError - The error type, which must extend ErrorLike.
  * @param r - The Result to convert.
  * @returns A Promise that resolves with the value or rejects with the error.
  */
-export const toPromise = <TValue, TError extends ErrorLike>(
+export const toPromiseOrThrow = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): Promise<TValue> =>
   r.ok ? Promise.resolve(r.value) : Promise.reject(r.error);
-
-// TODO: toPromise breaks Result discipline
-// TODO: It rejects on Err, turning controlled Result flow back into exceptions.
-// TODO: This is useful for interop, but easy to misuse.
-// TODO: Consider naming it toPromiseOrThrow and documenting clearly that it throws in the Err path.
