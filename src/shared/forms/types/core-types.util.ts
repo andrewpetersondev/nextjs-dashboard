@@ -26,14 +26,13 @@ export type DenseReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;
  * @returns `true` if the array is non-empty, otherwise `false`.
  * @typeParam T - The type of elements in the array.
  * @example
- * ```ts
  * hasItems([1, 2, 3]); // true
  * hasItems([]); // false
  * hasItems(null); // false
- * ```
  */
 export function isNonEmptyArray<T>(
-  arr: readonly T[] | undefined | null,
-): arr is readonly [T, ...T[]] {
+  arr: readonly T[] | null | undefined,
+): arr is readonly [T, ...(readonly T[])] {
+  // Avoids mutating or widening; purely a predicate
   return Array.isArray(arr) && arr.length > 0;
 }

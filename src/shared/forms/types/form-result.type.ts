@@ -73,10 +73,6 @@ export type FormResult<
   TMsg = string,
 > = Result<FormSuccess<TData>, FormValidationError<TField, TValue, TMsg>>;
 
-/* -------------------------------------------------------------------------- */
-/* Constructors / Type Guards                                                 */
-/* -------------------------------------------------------------------------- */
-
 /**
  * Creates a `FormSuccess` object encapsulating the provided data and an optional message.
  *
@@ -95,9 +91,7 @@ export const formSuccess = <TData>(
   message,
 });
 
-/* -------------------------------------------------------------------------- */
-/* Accurate Legacy Types (Deprecated)                                         */
-/* -------------------------------------------------------------------------- */
+/* ----------------------------- Legacy (accurate) ---------------------------- */
 
 /**
  * Represents the state of a successful form submission, with optional message and data.

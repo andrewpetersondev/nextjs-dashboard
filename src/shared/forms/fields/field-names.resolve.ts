@@ -102,9 +102,16 @@ export function resolveRawFieldPayload<TFieldNames extends string>(
   formData: FormData,
   fields: readonly TFieldNames[],
   explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
-): Record<TFieldNames, unknown> {
+): Readonly<Record<TFieldNames, string>> {
   if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    return projectRawRecordToAllowedFields(explicitRaw, fields);
+    const out: Partial<Record<TFieldNames, string>> = {};
+    for (const f of fields) {
+      const v = explicitRaw[f];
+      if (v !== undefined) {
+        out[f] = typeof v === "string" ? v : String(v);
+      }
+    }
+    return Object.freeze(out) as Readonly<Record<TFieldNames, string>>;
   }
   return extractRawRecordFromFormData<TFieldNames>(formData, fields);
 }
