@@ -5,13 +5,15 @@ import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 
 /**
- * Run an async side‑effect when `Ok` .
- * Errors thrown/rejected by `fn` are not caught and will reject the returned Promise.
- * The underlying `Result` value/error is never changed.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @param fn Async consumer invoked only for `Ok` results.
- * @returns Unary function that applies the side‑effect and resolves to the original `Result`.
+ * Applies an asynchronous side-effect function to the `value` of a successful `Result` without altering it.
+ *
+ * @alpha
+ * @typeParam TValue - The type of the successful value in the `Result`.
+ * @typeParam TError - The type of the error in the `Result`, must extend `ErrorLike`.
+ * @param fn - An asynchronous function to execute if the `Result` is successful.
+ * @returns A promise resolving to the original `Result`.
+ * @example
+ * const result = await tapOkAsync(async (value) => console.log(value))(someResult);
  */
 export const tapOkAsync =
   /* @__PURE__ */
@@ -25,13 +27,17 @@ export const tapOkAsync =
     };
 
 /**
- * Run an async side‑effect when `Err`.
- * Errors thrown/rejected by `fn` are not caught and will reject the returned Promise.
- * The underlying `Result` value/error is never changed.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @param fn Async consumer invoked only for `Err` results.
- * @returns Unary function that applies the side‑effect and resolves to the original `Result`.
+ * Asynchronously executes a provided function if the `Result` contains an error.
+ *
+ * @typeParam TValue - The type of the successful result value.
+ * @typeParam TError - The type extending `ErrorLike` for the error value.
+ * @param fn - A function that processes the error and returns a Promise.
+ * @returns The original `Result` object after handling the error.
+ * @example
+ * ```ts
+ * const logError = async (err: Error) => { console.error(err.message); };
+ * const result = await tapErrorAsync(logError)(someResult);
+ * ```
  */
 export const tapErrorAsync =
   /* @__PURE__ */
@@ -45,27 +51,27 @@ export const tapErrorAsync =
     };
 
 /**
- * Safe async side‑effect when `Ok` (no mapper).
- * Catches any error thrown/rejected by `fn` and converts it to `AppError` via `normalizeUnknownError`.
- * Returns the original `Result` on success; returns `Err<AppError>` if the side‑effect fails.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @param fn Async consumer invoked only for `Ok` results.
- * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | AppError>>`.
+ * Safely applies an asynchronous operation to a `Result` object and propagates any errors.
+ *
+ * @typeParam TValue - The type of the value in the `Result`.
+ * @typeParam TError - The type of the error in the `Result`, extending `ErrorLike`.
+ * @param fn - An asynchronous function that processes the successful value of the `Result`.
+ * @returns A function that maps over a `Result` and returns a `Promise` resolving to a new `Result`.
+ * @public
  */
 export function tapOkAsyncSafe<TValue, TError extends ErrorLike>(
   fn: (v: TValue) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | AppError>>;
 /**
- * Safe async side‑effect when `Ok` with a custom mapper.
- * Catches any error from `fn` and maps it with `mapError` to `TSideError`.
- * Returns the original `Result` on success; returns `Err<TSideError>` if the side‑effect fails.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @typeParam TSideError Error type produced by `mapError`.
- * @param fn Async consumer invoked only for `Ok` results.
- * @param mapError Mapper from unknown to `TSideError`.
- * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | TSideError>>`.
+ * Executes a side-effect asynchronously on a successful result value in a type-safe manner.
+ * Maps errors occurring during the side-effect execution to a specified error type.
+ *
+ * @typeParam TValue - The type of the successful result value.
+ * @typeParam TError - The error type of the original result.
+ * @typeParam TSideError - The error type for the side-effect error.
+ * @param fn - An async function to execute as a side-effect on the successful result value.
+ * @param mapError - A function to map thrown errors during side-effect execution to `TSideError`.
+ * @returns A function that processes a result and returns a promise resolving to a new result.
  */
 export function tapOkAsyncSafe<
   TValue,
@@ -77,10 +83,14 @@ export function tapOkAsyncSafe<
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>>;
 
 /**
- * Safe async side‑effect when `Ok` (implementation).
- * Uses optional `mapError` to convert thrown/rejected errors to `TSideError`; otherwise normalizes to `AppError`.
- * Returns the original `Result` on success; returns `Err<TSideError | AppError>` if the side‑effect fails.
- * See overloads for precise types.
+ * Executes a side-effect asynchronously on a successful result, safely handling errors.
+ *
+ * @param fn - A function that performs an asynchronous operation using the successful `TValue` of the result.
+ * @param mapError - Optional function to map any caught errors to `TSideError`.
+ * @returns A `Promise` resolving to the original `Result`, or an error if the side-effect fails.
+ * @typeParam TValue - Type of the successful result value.
+ * @typeParam TError - Type of the error in the original `Result`.
+ * @typeParam TSideError - Type of the error produced by the side-effect (default is `AppError`).
  */
 export function tapOkAsyncSafe<
   TValue,
@@ -103,28 +113,21 @@ export function tapOkAsyncSafe<
 }
 
 /**
- * Safe async side‑effect when `Err` (no mapper).
- * Catches any error thrown/rejected by `fn` and converts it to `AppError` via `normalizeUnknownError`.
- * Returns the original `Result` on success; returns `Err<AppError>` if the side‑effect fails.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @param fn Async consumer invoked only for `Err` results.
- * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | AppError>>`.
+ * Safely taps into errors in a Result asynchronously, invoking the provided function.
+ *
+ * @param fn - An asynchronous function that takes the error and performs actions.
+ * @returns A function that processes a Result, returning a new Promise with the original or transformed Result.
  */
 export function tapErrorAsyncSafe<TValue, TError extends ErrorLike>(
   fn: (e: TError) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | AppError>>;
 
 /**
- * Safe async side‑effect when `Err` with a custom mapper.
- * Catches any error from `fn` and maps it with `mapError` to `TSideError`.
- * Returns the original `Result` on success; returns `Err<TSideError>` if the side‑effect fails.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type of the input `Result`.
- * @typeParam TSideError Error type produced by `mapError`.
- * @param fn Async consumer invoked only for `Err` results.
- * @param mapError Mapper from unknown to `TSideError`.
- * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | TSideError>>`.
+ * Safely processes an error in an asynchronous context, enabling error mapping.
+ *
+ * @param fn - A function to process the error of type `TError`.
+ * @param mapError - A function to map unknown errors to `TSideError`.
+ * @returns A function that takes a `Result` and returns a `Promise` of a mapped `Result`.
  */
 export function tapErrorAsyncSafe<
   TValue,
@@ -136,10 +139,14 @@ export function tapErrorAsyncSafe<
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>>;
 
 /**
- * Safe async side‑effect when \`Err\` (implementation).
- * Uses optional \`mapError\` to convert thrown/rejected errors to \`TSideError\`; otherwise normalizes to \`AppError\`.
- * Returns the original \`Result\` on success; returns \`Err<TSideError | AppError>\` if the side‑effect fails.
- * See overloads for precise types.
+ * Safely executes an asynchronous function on an error within a `Result`, mapping any failures if necessary.
+ *
+ * @typeParam TValue - The type of the successful value in the `Result`.
+ * @typeParam TError - The type of the expected error in the `Result`.
+ * @typeParam TSideError - The type of a possible mapped or secondary error (default is `AppError`).
+ * @param fn - An asynchronous function to handle the error.
+ * @param mapError - Optional function to map unknown errors to a specific `TSideError` type.
+ * @returns A `Promise` resolving to the original `Result`, or a new `Err` with a mapped error.
  */
 export function tapErrorAsyncSafe<
   TValue,

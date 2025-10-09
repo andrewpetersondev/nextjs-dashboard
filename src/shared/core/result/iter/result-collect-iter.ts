@@ -3,15 +3,10 @@ import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Lazily iterates over `Ok` values from `source` and short‑circuits on the first `Err`.
- * - Yields each `Ok` value as it is encountered.
- * - On the first `Err`, stops iteration and returns that `Err` as the generator’s return value.
- * - If no `Err` occurs, completes with `Ok<void>`.
- * Preserves `TError`; default is `AppError`.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type; defaults to `AppError`.
- * @param source Iterable of `Result<TValue, TError>`.
- * @returns `Generator<TValue, Result<void, TError>>` — yields Ok values; returns the first Err or `Ok<void>` if none.
+ * Iterates over the results in the provided iterable, yielding values for successful results and stopping at the first error.
+ *
+ * @param source - An iterable of `Result` objects containing values or errors.
+ * @returns A generator yielding successful values or returning the first error encountered.
  */
 export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
   source: Iterable<Result<TValue, TError>>,
@@ -26,14 +21,15 @@ export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
 }
 
 /**
- * Collects all `Ok` values from `source` until the first `Err`.
- * - On the first `Err`, returns that `Err` immediately (no further iteration).
- * - If all entries are `Ok`, returns `Ok<readonly TValue[]>`.
- * Preserves `TError`; does not normalize or remap errors.
- * @typeParam TValue Ok value type.
- * @typeParam TError Error type; defaults to `AppError`.
- * @param source Iterable of `Result<TValue, TError>`.
- * @returns `Result<readonly TValue[], TError>` — array of all Ok values or the first Err.
+ * Collects all successful `Result` values from the given iterable lazily.
+ *
+ * @typeParam TValue - The type of the successful result values.
+ * @typeParam TError - The type of the error, extending `ErrorLike`. Defaults to `AppError`.
+ * @param source - An iterable of `Result` objects to process.
+ * @returns A successful `Result` containing an array of values, or the first encountered error.
+ * @example
+ * const results = collectAllLazy([Ok(1), Ok(2), Err(new AppError("Error"))]);
+ * // Returns: Err(new AppError("Error"))
  */
 export const collectAllLazy = /* @__PURE__ */ <
   TValue,

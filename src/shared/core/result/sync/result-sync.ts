@@ -1,4 +1,5 @@
 // File: src/shared/core/result/result-sync.ts
+
 import {
   type AppError,
   type ErrorLike,
@@ -7,19 +8,38 @@ import {
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Execute a synchronous function and wrap its result in a Result.
- * Overloads enforce mapper presence when customizing error type.
- * @template TValue Success value type.
- * @template TError Error type (defaults to AppError when mapper omitted).
- * @param fn Synchronous thunk.
- * @param mapError Optional error mapper (required for custom error type).
- * @returns Result wrapping value or normalized error.
+ * Executes a function and captures any thrown errors as an `AppError`.
+ *
+ * @param fn - The function to execute safely.
+ * @returns A `Result` containing either the function's return value or an `AppError`.
+ * @see AppError, Result
+ * @example `const result = tryCatch(() => riskyOperation());`
  */
 export function tryCatch<TValue>(fn: () => TValue): Result<TValue, AppError>;
+
+/**
+ * Executes a function and maps any thrown error to a specified error type.
+ *
+ * @typeParam TValue - The type of the value returned by the function.
+ * @typeParam TError - The type of the mapped error.
+ * @param fn - A function to be executed safely.
+ * @param mapError - A function to map the caught error to the specified error type.
+ * @returns A `Result` containing the function's return value or the mapped error.
+ */
 export function tryCatch<TValue, TError extends ErrorLike>(
   fn: () => TValue,
   mapError: (e: unknown) => TError,
 ): Result<TValue, TError>;
+
+/**
+ * Executes a function and captures any errors, optionally mapping them to a custom type.
+ *
+ * @typeParam TValue - The type of the return value of the function.
+ * @typeParam TError - The type of the custom error.
+ * @param fn - The function to execute within a try-catch block.
+ * @param mapError - An optional function to map unknown errors to a custom error type.
+ * @returns A `Result` object containing the successful value or an error.
+ */
 export function tryCatch<TValue, TError extends ErrorLike>(
   fn: () => TValue,
   mapError?: (e: unknown) => TError,
@@ -32,12 +52,16 @@ export function tryCatch<TValue, TError extends ErrorLike>(
 }
 
 /**
- * Wrap a nullable value.
- * @template TValue
- * @template TError
- * @param v Possibly null/undefined value.
- * @param onNull Error factory when nullish.
- * @returns Ok when value present; Err otherwise.
+ * Converts a nullable value into a `Result`.
+ * If the value is `null` or `undefined`, an error is returned.
+ *
+ * @typeParam TValue - The type of the input value.
+ * @typeParam TError - The type of the error to return (defaults to `AppError`).
+ * @param v - The nullable value to evaluate.
+ * @param onNull - A callback function returning the error when the value is null or undefined.
+ * @returns A `Result` wrapping the value or the generated error.
+ * @example
+ * const result = fromNullable(value, () => new AppError("Value is null"));
  */
 export const fromNullable = <TValue, TError extends ErrorLike = AppError>(
   v: TValue | null | undefined,
@@ -45,13 +69,14 @@ export const fromNullable = <TValue, TError extends ErrorLike = AppError>(
 ): Result<TValue, TError> => (v == null ? Err(onNull()) : Ok(v));
 
 /**
- * Guard a value by predicate.
- * @template TValue
- * @template TError
- * @param value Input value.
- * @param predicate Boolean test.
- * @param onFail Error factory when predicate fails.
- * @returns Result wrapping original value or failure.
+ * Creates a `Result` object based on the evaluation of a predicate.
+ *
+ * @typeParam TValue - The type of the input value.
+ * @typeParam TError - The type of the error to return, extending `ErrorLike`.
+ * @param value - The input value to evaluate.
+ * @param predicate - The function to test the input value.
+ * @param onFail - A function invoked to generate an error when the predicate fails.
+ * @returns A `Result` containing the value if the predicate passes, otherwise an error.
  */
 export const fromPredicate = <TValue, TError extends ErrorLike = AppError>(
   value: TValue,
