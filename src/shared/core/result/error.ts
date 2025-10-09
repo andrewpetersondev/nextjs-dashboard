@@ -5,7 +5,8 @@
  */
 
 import { IS_PROD } from "@/shared/config/env-shared";
-import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-adapters";
+
+import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 
 /**
@@ -107,7 +108,7 @@ export interface AppError {
 }
 
 /**
- * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-adapters.ts'` (`toAppError`).
+ * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-normalizers.ts'` (`toAppError`).
  */
 export const normalizeUnknownError = /* @__PURE__ */ (
   input: unknown,
