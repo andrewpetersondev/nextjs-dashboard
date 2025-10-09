@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-async.ts
 
+import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { normalizeUnknownError } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -64,7 +64,7 @@ export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   try {
     return Ok(await fn());
   } catch (e) {
-    return options ? Err(options.mapError(e)) : Err(normalizeUnknownError(e));
+    return options ? Err(options.mapError(e)) : Err(toAppErrorFromUnknown(e));
   }
 }
 

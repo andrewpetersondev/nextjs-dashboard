@@ -1,10 +1,7 @@
 // File: src/shared/core/result/sync/result-sync.ts
 
-import {
-  type AppError,
-  type ErrorLike,
-  normalizeUnknownError,
-} from "@/shared/core/result/error";
+import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
+import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -47,7 +44,7 @@ export function tryCatch<TValue, TError extends ErrorLike>(
   try {
     return Ok(fn());
   } catch (e) {
-    return mapError ? Err(mapError(e)) : Err(normalizeUnknownError(e));
+    return mapError ? Err(mapError(e)) : Err(toAppErrorFromUnknown(e));
   }
 }
 
