@@ -133,7 +133,7 @@ public/.cache/
 # Project-specific / root files
 # -----------------------------------------
 .github/
-# docs/
+docs/
 drizzle/
 public/
 storage/
@@ -155,3 +155,4 @@ src/server/customers/
 src/server/invoices/
 src/server/revenues/
 src/server/users/
+src/shared/core/result/examples/

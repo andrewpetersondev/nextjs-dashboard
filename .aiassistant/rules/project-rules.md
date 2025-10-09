@@ -18,7 +18,6 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 
 - Always inspect and use the most recent attached instruction files before proposing code changes.
 - Follow all rules in:
-    - [Coding Style Instructions](./coding-style.md)
     - [TypeScript Instructions](typescript-summary.md)
     - [Result & Error Instructions](result-error-summary.md)
 - Never access or reference files outside user-provided folders or attachments.
@@ -58,7 +57,8 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 ## Response Format & Quick Checklist
 
 - For complex changes, begin with a 3–7 bullet checklist.
-- Prefer minimal, diff-only responses per always-on.md. Provide explanations only when requested by the user or when performing sensitive/irreversible actions.
+- Prefer minimal, diff-only responses per always-on.md. Provide explanations only when requested by the user or when
+  performing sensitive/irreversible actions.
 - Always confirm intents, constraints, and affected files before acting.
 - Suggest small, composable changes; mention typing and error handling approaches when relevant.
 - Provide ready-to-use pnpm commands where relevant.

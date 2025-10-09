@@ -6,18 +6,24 @@ apply: always
 
 Focus on code related to:
 
-- signup and login
+- signup
 - result helpers
 - error flows
 - forms
 
+Secondary focus on:
+
+- organization
+- reusable code
+- removing duplication
+
 Ignore:
 
-- src/server/customers
-- src/server/invoices
-- src/server/revenues
-- src/server/users
-- src/features/customers
-- src/features/invoices
-- src/features/revenues
-- src/features/users
+- src/features/customers/
+- src/server/customers/
+- src/features/invoices/
+- src/server/invoices/
+- src/features/revenues/
+- src/server/revenues/
+- src/features/users/
+- src/server/users/

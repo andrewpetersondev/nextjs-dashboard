@@ -36,7 +36,6 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 
 - Confirm formatting and linting with biome.
 - Validate links and references to code and instruction files.
-- Ensure style, structure, and naming follow [Coding Style Instructions](./coding-style.md).
 - Check for outdated patterns or obsolete references.
 - Document changes in the file header.
 - Run docs:lint and docs:links in CI; fix any broken links before merge.
