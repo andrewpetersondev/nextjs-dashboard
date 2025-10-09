@@ -9,30 +9,33 @@
 export type NonEmptyReadonlyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
- * Represents a readonly record type with dense, string-based keys and generic values.
+ * Represents a dense map where keys are strings and values are of a specified type.
  *
- * @typeParam K - The type of the string keys in the record.
- * @typeParam V - The type of the values associated with the keys.
- * @readonly
+ * @typeParam TKey - The type of the keys, constrained to `string`.
+ * @typeParam TValue - The type of the values in the map.
+ * @public
  * @example
- * const record: DenseReadonlyRecord<'key1' | 'key2', number> = { key1: 1, key2: 2 };
+ * const map: DenseMap<'a' | 'b', number> = { a: 1, b: 2 };
  */
-export type DenseReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;
+export type DenseMap<TKey extends string, TValue> = Readonly<
+  Record<TKey, TValue>
+>;
 
 /**
- * Determines if the given array has one or more items.
+ * Determines if the provided value is a non-empty readonly array.
  *
- * @param arr - The array to check; can be `undefined` or `null`.
- * @returns `true` if the array is non-empty, otherwise `false`.
- * @typeParam T - The type of elements in the array.
+ * @param arr - The array to check, which can be a readonly array, null, or undefined.
+ * @returns A boolean indicating whether the input is a non-empty readonly array.
  * @example
- * hasItems([1, 2, 3]); // true
- * hasItems([]); // false
- * hasItems(null); // false
+ * ```ts
+ * isNonEmptyArray([1, 2, 3]); // true
+ * isNonEmptyArray([]);       // false
+ * isNonEmptyArray(null);     // false
+ * ```
  */
 export function isNonEmptyArray<T>(
   arr: readonly T[] | null | undefined,
-): arr is readonly [T, ...(readonly T[])] {
+): arr is NonEmptyReadonlyArray<T> {
   // Avoids mutating or widening; purely a predicate
   return Array.isArray(arr) && arr.length > 0;
 }

@@ -1,5 +1,5 @@
 import type {
-  DenseReadonlyRecord,
+  DenseMap,
   NonEmptyReadonlyArray,
 } from "@/shared/forms/types/core-types.util";
 
@@ -33,13 +33,13 @@ export type SparseFieldErrorMap<TField extends string, TMsg = string> = Partial<
  *
  * @typeParam TField - The type representing the fields, typically a string literal union.
  * @typeParam TMsg - The type of the error message, defaults to `string`.
- * @see DenseReadonlyRecord
+ * @see DenseMap
  * @public
  */
-export type DenseFieldErrorMap<
-  TField extends string,
-  TMsg = string,
-> = DenseReadonlyRecord<TField, readonly TMsg[]>;
+export type DenseFieldErrorMap<TField extends string, TMsg = string> = DenseMap<
+  TField,
+  readonly TMsg[]
+>;
 
 /**
  * Represents a map where specified fields may have associated values, or be undefined.
