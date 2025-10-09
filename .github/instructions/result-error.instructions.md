@@ -12,7 +12,7 @@ description: 'Result and error modeling, handling, and mapping guidelines for Ne
 
 - Keep strict, type‑safe error handling with a dual‑tier model.
 - UI layers always use `AppError`; lower layers may use `BaseError` or an extended variant like `ConflictError`.
-- Attach when editing `result.ts`, `error.ts`, or `src/shared/core/errors/adapters/app-error-adapters.ts`.
+- Attach when editing `result.ts`, `error.ts`, or `src/shared/core/errors/adapters/app-error-normalizers.ts`.
 - Errors can be values or exceptions, but must be handled explicitly.
 
 ## Focus
@@ -64,7 +64,7 @@ description: 'Result and error modeling, handling, and mapping guidelines for Ne
 
 ## Unified Adapter APIs (Currently a major source of weakness)
 
-- reference `src/shared/core/errors/adapters/app-error-adapters.ts`
+- reference `src/shared/core/errors/adapters/app-error-normalizers.ts`
 
 - `toAppErrorFromUnknown`: converts unknown to `AppError`.
 - `augmentAppError`:
