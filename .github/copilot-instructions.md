@@ -9,7 +9,7 @@ description: 'GitHub Copilot usage and response rules for this project.'
 
 - **Responses should be brief** and only include the **changed sections of code** or additions.
 - Do **not** repeat the entire file unless explicitly requested.
-- Use **diff-style or snippet-style output** showing context ±2 lines for clarity.
+- Use **snippet-style output** showing context ±2 lines for clarity.
 - Include any **new imports or types** only if they are part of the change.
 - Provide a **short comment above the snippet** if needed to explain the purpose of the change.
 - Avoid explanatory text or rationale unless the user asks for it.
@@ -24,10 +24,19 @@ description: 'GitHub Copilot usage and response rules for this project.'
 - Prefer `satisfies` over `as`; Allow casts **only for primitives** (string, number, boolean).
 - All exported functions/components/hooks must have explicit top-level parameter and return types.
 - Internal closures and callbacks may rely on safe inference when fully constrained by generics.
+- Prefer local inference for variables inside function bodies; keep explicit types for exports only.
 - Export all symbols with explicit types when inference is ambiguous; prefer named exports; no default exports.
 - Model null/undefined explicitly; no non-null assertions.
 - Use discriminated unions for all errors/results (`{ ok: true; value } | { ok: false; error }`).
 - Inputs immutable; use `readonly` and `as const`.
+- Enforce `readonly` at the source (e.g., `as const` or `satisfies readonly ...`); avoid redundant consumer-side
+  annotations.
+- Avoid deriving literal field lists via `Object.keys(...)` with casts; declare explicit readonly literal arrays and
+  validate with `satisfies`.
+- Use Zod typing correctly: `z.input<typeof Schema>` for inbound/untrusted data, `z.output<typeof Schema>` for
+  validated/parsed data; name aliases accordingly.
+- Prefer small, typed helpers for normalization (e.g., `FormData → Readonly<Record<string, string>>`) instead of unsafe
+  casts.
 - Prefer small, composable changes.
 
 ## Document Hierarchy
