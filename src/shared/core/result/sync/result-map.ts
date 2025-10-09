@@ -1,4 +1,5 @@
-// src/shared/core/result/result-map.ts
+// File: src/shared/core/result/sync/result-map.ts
+
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 

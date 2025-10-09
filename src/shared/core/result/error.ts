@@ -1,4 +1,5 @@
-// src/shared/core/result/error.ts
+// File: src/shared/core/result/error.ts
+
 /**
  * Lightweight error modeling primitives for the Result subsystem.
  * Provides a narrow, JSON‑safe `AppError` plus normalization helpers.

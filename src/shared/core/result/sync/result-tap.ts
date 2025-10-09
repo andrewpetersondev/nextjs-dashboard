@@ -1,4 +1,4 @@
-// File: src/shared/core/result/result-tap.ts
+// File: src/shared/core/result/sync/result-tap.ts
 
 import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";

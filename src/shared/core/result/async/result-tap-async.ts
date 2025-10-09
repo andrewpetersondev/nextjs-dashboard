@@ -1,4 +1,5 @@
-// File: src/shared/core/result/result-tap-async.ts
+// File: src/shared/core/result/async/result-tap-async.ts
+
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";

@@ -1,4 +1,5 @@
-// File: src/shared/core/result/result-transform-async.ts
+// File: src/shared/core/result/async/result-transform-async.ts
+
 import type { ErrorLike } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
 

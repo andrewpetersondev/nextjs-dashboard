@@ -1,4 +1,5 @@
-// src/shared/core/result/result.ts
+// File: src/shared/core/result/result.ts
+
 import { IS_PROD } from "@/shared/config/env-shared";
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 

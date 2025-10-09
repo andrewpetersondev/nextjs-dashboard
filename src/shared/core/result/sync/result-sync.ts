@@ -1,4 +1,4 @@
-// File: src/shared/core/result/result-sync.ts
+// File: src/shared/core/result/sync/result-sync.ts
 
 import {
   type AppError,

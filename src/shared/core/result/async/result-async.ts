@@ -1,4 +1,4 @@
-// src/shared/core/result/result-async.ts
+// File: src/shared/core/result/async/result-async.ts
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { normalizeUnknownError } from "@/shared/core/result/error";

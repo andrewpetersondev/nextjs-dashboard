@@ -1,4 +1,4 @@
-// File: src/shared/core/result/result-transform.ts
+// File: src/shared/core/result/sync/result-transform.ts
 
 import type { ErrorLike } from "@/shared/core/result/error";
 import type { Result } from "@/shared/core/result/result";
