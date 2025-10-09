@@ -5,11 +5,13 @@ import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 
 /**
- * Async side-effect on Ok branch (errors from fn propagate normally).
- * @template TValue
- * @template TError
- * @param fn Async consumer run only when Ok.
- * @returns Function applying the side-effect and returning original Result.
+ * Run an async side‑effect when `Ok` .
+ * Errors thrown/rejected by `fn` are not caught and will reject the returned Promise.
+ * The underlying `Result` value/error is never changed.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @param fn Async consumer invoked only for `Ok` results.
+ * @returns Unary function that applies the side‑effect and resolves to the original `Result`.
  */
 export const tapOkAsync =
   /* @__PURE__ */
@@ -23,11 +25,13 @@ export const tapOkAsync =
     };
 
 /**
- * Async side-effect on Err branch (errors from fn propagate normally).
- * @template TValue
- * @template TError
- * @param fn Async consumer run only when Err.
- * @returns Function applying the side-effect and returning original Result.
+ * Run an async side‑effect when `Err`.
+ * Errors thrown/rejected by `fn` are not caught and will reject the returned Promise.
+ * The underlying `Result` value/error is never changed.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @param fn Async consumer invoked only for `Err` results.
+ * @returns Unary function that applies the side‑effect and resolves to the original `Result`.
  */
 export const tapErrorAsync =
   /* @__PURE__ */
@@ -41,14 +45,27 @@ export const tapErrorAsync =
     };
 
 /**
- * Safe async side-effect on Ok branch.
- * Overload (no mapper): thrown side-effect errors normalized to AppError.
+ * Safe async side‑effect when `Ok` (no mapper).
+ * Catches any error thrown/rejected by `fn` and converts it to `AppError` via `normalizeUnknownError`.
+ * Returns the original `Result` on success; returns `Err<AppError>` if the side‑effect fails.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @param fn Async consumer invoked only for `Ok` results.
+ * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | AppError>>`.
  */
 export function tapOkAsyncSafe<TValue, TError extends ErrorLike>(
   fn: (v: TValue) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | AppError>>;
 /**
- * Safe async side-effect on Ok branch with custom error mapper.
+ * Safe async side‑effect when `Ok` with a custom mapper.
+ * Catches any error from `fn` and maps it with `mapError` to `TSideError`.
+ * Returns the original `Result` on success; returns `Err<TSideError>` if the side‑effect fails.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @typeParam TSideError Error type produced by `mapError`.
+ * @param fn Async consumer invoked only for `Ok` results.
+ * @param mapError Mapper from unknown to `TSideError`.
+ * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | TSideError>>`.
  */
 export function tapOkAsyncSafe<
   TValue,
@@ -58,6 +75,13 @@ export function tapOkAsyncSafe<
   fn: (v: TValue) => Promise<void>,
   mapError: (e: unknown) => TSideError,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>>;
+
+/**
+ * Safe async side‑effect when `Ok` (implementation).
+ * Uses optional `mapError` to convert thrown/rejected errors to `TSideError`; otherwise normalizes to `AppError`.
+ * Returns the original `Result` on success; returns `Err<TSideError | AppError>` if the side‑effect fails.
+ * See overloads for precise types.
+ */
 export function tapOkAsyncSafe<
   TValue,
   TError extends ErrorLike,
@@ -79,14 +103,28 @@ export function tapOkAsyncSafe<
 }
 
 /**
- * Safe async side-effect on Err branch.
- * Overload (no mapper): thrown side-effect errors normalized to AppError.
+ * Safe async side‑effect when `Err` (no mapper).
+ * Catches any error thrown/rejected by `fn` and converts it to `AppError` via `normalizeUnknownError`.
+ * Returns the original `Result` on success; returns `Err<AppError>` if the side‑effect fails.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @param fn Async consumer invoked only for `Err` results.
+ * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | AppError>>`.
  */
 export function tapErrorAsyncSafe<TValue, TError extends ErrorLike>(
   fn: (e: TError) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | AppError>>;
+
 /**
- * Safe async side-effect on Err branch with custom error mapper.
+ * Safe async side‑effect when `Err` with a custom mapper.
+ * Catches any error from `fn` and maps it with `mapError` to `TSideError`.
+ * Returns the original `Result` on success; returns `Err<TSideError>` if the side‑effect fails.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type of the input `Result`.
+ * @typeParam TSideError Error type produced by `mapError`.
+ * @param fn Async consumer invoked only for `Err` results.
+ * @param mapError Mapper from unknown to `TSideError`.
+ * @returns Function `Result<TValue, TError> -> Promise<Result<TValue, TError | TSideError>>`.
  */
 export function tapErrorAsyncSafe<
   TValue,
@@ -96,6 +134,13 @@ export function tapErrorAsyncSafe<
   fn: (e: TError) => Promise<void>,
   mapError: (e: unknown) => TSideError,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>>;
+
+/**
+ * Safe async side‑effect when \`Err\` (implementation).
+ * Uses optional \`mapError\` to convert thrown/rejected errors to \`TSideError\`; otherwise normalizes to \`AppError\`.
+ * Returns the original \`Result\` on success; returns \`Err<TSideError | AppError>\` if the side‑effect fails.
+ * See overloads for precise types.
+ */
 export function tapErrorAsyncSafe<
   TValue,
   TError extends ErrorLike,

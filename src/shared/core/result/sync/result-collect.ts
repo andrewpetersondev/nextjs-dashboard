@@ -3,15 +3,27 @@
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
+/**
+ * Extracts the `Ok` value type `U` from a `Result<U, E>`.
+ * @typeParam R `Result<any, any>` to inspect.
+ */
 export type OkType<R> = R extends Result<infer U, ErrorLike> ? U : never;
+
+/**
+ * Extracts the `Err` type `E` from a `Result<T, E>`.
+ * @typeParam R `Result<any, any>` to inspect.
+ */
 export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
 
 /**
- * Collect all Ok values or short-circuit with the first Err.
- * @template TValue
- * @template TError
- * @param results Readonly list of Results.
- * @returns Result<readonly TValue[],TError>
+ * Eagerly collects all `Ok` values until the first `Err`.
+ * - On the first `Err`, returns that error immediately (no further iteration).
+ * - If all entries are `Ok`, returns `Ok<readonly TValue[]>` preserving order.
+ * Preserves `TError` (defaults to `AppError`); does not normalize or remap errors.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type; defaults to `AppError`.
+ * @param results Readonly array of `Result<TValue, TError>`.
+ * @returns `Result<readonly TValue[], TError>` — array of all Ok values or the first Err.
  */
 export const collectAll = /* @__PURE__ */ <
   TValue,
@@ -30,8 +42,13 @@ export const collectAll = /* @__PURE__ */ <
 };
 
 /**
- * Collect a tuple of Results or short-circuit on first Err.
- * @template TTuple Tuple of Result types.
+ * Collects a variadic tuple of `Result`s into a `Result` of a tuple.
+ * - Short‑circuits on the first `Err` and returns it unchanged.
+ * - On success, returns `Ok` of a tuple aligned positionally with inputs.
+ * Preserves `TError`; does not normalize or remap errors.
+ * @typeParam TError Error type shared by all tuple entries.
+ * @typeParam TTuple Tuple of `Result<unknown, TError>`.
+ * @returns `Result<{ readonly [K in keyof TTuple]: OkType<TTuple[K]> }, TError>`.
  */
 export function collectTuple<
   TError extends ErrorLike,
@@ -53,8 +70,13 @@ export function collectTuple<
 }
 
 /**
- * Heterogeneous tuple collection (legacy/wide union).
+ * Collects a heterogeneous tuple of `Result`s with differing error types.
+ * - Short‑circuits on the first `Err` and returns it unchanged.
+ * - On success, returns `Ok` of a tuple aligned with inputs.
+ * Error type is the union of all tuple `Err` types.
  * Use only when mixed error types are required.
+ * @typeParam TTuple Tuple of `Result<unknown, ErrorLike>` possibly with different `Err` types.
+ * @returns `Result<{ readonly [K in keyof TTuple]: OkType<TTuple[K]> }, ErrType<TTuple[number]>>`.
  */
 export function collectTupleHetero<
   TTuple extends readonly Result<unknown, ErrorLike>[],
@@ -78,11 +100,15 @@ export function collectTupleHetero<
 }
 
 /**
- * First Ok or an error produced when the collection is empty.
- * Propagates last Err if none are Ok.
- * @template TValue
- * @template TError
- * @param onEmpty Factory for error when empty.
+ * Returns the first `Ok` from the list; otherwise returns:
+ * - The last `Err` if at least one error is present, or
+ * - `Err(onEmpty())` when the list is empty.
+ * Curried helper: supply `onEmpty`, then pass the results array.
+ * Preserves `TError` (defaults to `AppError`); does not normalize or remap errors.
+ * @typeParam TValue Ok value type.
+ * @typeParam TError Error type; defaults to `AppError`.
+ * @param onEmpty Factory invoked only when the input array is empty.
+ * @returns Function mapping `readonly Result<TValue, TError>[]` to `Result<TValue, TError>`.
  */
 export const firstOkOrElse =
   /* @__PURE__ */

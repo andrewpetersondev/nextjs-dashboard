@@ -108,7 +108,7 @@ export interface AppError {
 }
 
 /**
- * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-normalizers.ts'` (`toAppError`).
+ * @deprecated Prefer adapter at `'/src/shared/core/errors/adapters/app-error-normalizers.ts'` (`toAppErrorFromUnknown`).
  */
 export const normalizeUnknownError = /* @__PURE__ */ (
   input: unknown,
