@@ -7,10 +7,16 @@ description: 'description'
 
 Focus on code related to:
 
-- signup and login
+- signup
 - result helpers
 - error flows
 - forms
+
+Secondary focus on:
+
+- organization
+- reusable code
+- removing duplication
 
 Ignore:
 
