@@ -77,26 +77,6 @@ export function toDenseFieldErrorMapFromSparse<
 }
 
 /**
- * Convert a dense error map into a sparse error map (only keys whose array length > 0 are kept).
- *
- * - Fields whose array is `[]` are omitted from the result.
- * - Result uses `FieldError` (non-empty readonly arrays) for values.
- */
-export function toSparseFieldErrorMapFromDense<
-  TField extends string,
-  TMsg = string,
->(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
-  const out: Partial<Record<TField, FieldError<TMsg>>> = {};
-  for (const k of Object.keys(dense) as TField[]) {
-    const arr = dense[k];
-    if (arr && arr.length > 0) {
-      out[k] = arr as FieldError<TMsg>;
-    }
-  }
-  return out as SparseFieldErrorMap<TField, TMsg>;
-}
-
-/**
  * Validate and deep-freeze a dense error map according to the provided field order.
  *
  * - Ensures every key in `fields` exists in `dense`.
@@ -122,4 +102,28 @@ export function normalizeAndFreezeDenseFieldErrorMap<
     fields.map((f) => [f, Object.freeze([...(dense[f] as readonly TMsg[])])]),
   ) as Record<TField, readonly TMsg[]>;
   return Object.freeze(normalized) as DenseFieldErrorMap<TField, TMsg>;
+}
+
+// ----------------------------------
+// Unused
+// ----------------------------------
+
+/**
+ * Convert a dense error map into a sparse error map (only keys whose array length > 0 are kept).
+ *
+ * - Fields whose array is `[]` are omitted from the result.
+ * - Result uses `FieldError` (non-empty readonly arrays) for values.
+ */
+export function _toSparseFieldErrorMapFromDense<
+  TField extends string,
+  TMsg = string,
+>(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
+  const out: Partial<Record<TField, FieldError<TMsg>>> = {};
+  for (const k of Object.keys(dense) as TField[]) {
+    const arr = dense[k];
+    if (arr && arr.length > 0) {
+      out[k] = arr as FieldError<TMsg>;
+    }
+  }
+  return out as SparseFieldErrorMap<TField, TMsg>;
 }

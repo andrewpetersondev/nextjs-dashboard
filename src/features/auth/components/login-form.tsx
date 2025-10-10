@@ -7,7 +7,7 @@ import { AuthActionsRow } from "@/features/auth/components/auth-actions-row";
 import { AuthServerMessage } from "@/features/auth/components/auth-server-message";
 import { AuthSubmitButton } from "@/features/auth/components/auth-submit-button";
 import { type LoginField, LoginSchema } from "@/features/auth/lib/auth.schema";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/initial-state/init-failed-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";

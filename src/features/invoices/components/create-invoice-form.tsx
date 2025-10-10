@@ -14,7 +14,7 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/initial-state/init-failed-form-state";
 import type { FieldError } from "@/shared/forms/types/core.types";
 import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";

@@ -13,7 +13,7 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
-import { createInitialFailedFormState } from "@/shared/forms/errors/init-failed-form-state";
+import { createInitialFailedFormState } from "@/shared/forms/initial-state/init-failed-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.type";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
