@@ -25,20 +25,30 @@ export interface FormValidationResult<TFieldNames extends string> {
 }
 
 /**
- * Maps a `Result` object to a corresponding `FormResult` object.
+ * Maps a `Result` of a domain operation to a UI-facing `FormResult`.
  *
- * @param result - The operation result containing either data or validation errors.
- * @param params - Configuration parameters including success/failure messages, raw field values, and field names.
- * @returns A `FormResult` containing success data or validation error details.
+ * @param result - The discriminated `Result` containing either success data or validation errors.
+ * @param params - Adapter options for messages and value echoing/redaction.
+ * @returns A `FormResult` containing either `{ ok: true, value }` on success or `{ ok: false, error }` on failure.
+ * @remarks
+ * - Success path:
+ *   - Wraps `result.value` as `FormSuccess<TData>` and applies `successMessage` (default: a generic success message).
+ * - Failure path:
+ *   - Converts `result.error` (fieldErrors/message) to a UI validation error.
+ *   - Always computes a redacted `values` echo using `fields` and `redactFields` (default redacts "password").
+ *   - If `result.error.message` is falsy, uses `failureMessage`.
+ * - Use this when you already have a `Result<TData, FormValidationResult<TFieldNames>>`
+ *   (e.g., from schema validation or a service boundary) and want a single adapter.
+ * - For manual construction of only the failure case with finer control over redaction/value echo, use {@link toFormValidationErr}.
  */
 export function mapResultToFormResult<TFieldNames extends string, TData>(
   result: Result<TData, FormValidationResult<TFieldNames>>,
   params: {
-    successMessage?: string;
-    failureMessage?: string;
-    raw: Record<string, unknown>;
     fields: readonly TFieldNames[];
+    raw: Record<string, unknown>;
+    failureMessage?: string;
     redactFields?: readonly TFieldNames[];
+    successMessage?: string;
   },
 ): FormResult<TFieldNames, TData> {
   const {
@@ -57,10 +67,13 @@ export function mapResultToFormResult<TFieldNames extends string, TData>(
     return { ok: true, value };
   }
 
+  // Normalize message fallback here so callers don't need to.
+  const message = result.error.message || failureMessage;
+
   const error: FormError<TFieldNames> = {
     fieldErrors: result.error.fieldErrors,
     kind: "validation",
-    message: result.error.message || failureMessage,
+    message,
     values: selectDisplayableStringFieldValues(raw, fields, redactFields),
   };
   return { error, ok: false };
@@ -74,6 +87,9 @@ export function mapResultToFormResult<TFieldNames extends string, TData>(
  * @param data - The data to include in the form result.
  * @param opts - Optional configuration, including a success message.
  * @returns A `FormResult` object with a success status and the provided data.
+ * @remarks
+ * - Equivalent to the success branch of {@link mapResultToFormResult}, but when you already have `data`.
+ * - Does not attach any echoed `values`; those are only meaningful on validation failures.
  */
 export function toFormOk<TFieldNames extends string, TData>(
   data: TData,
@@ -94,12 +110,21 @@ export function toFormOk<TFieldNames extends string, TData>(
  * @param params - The configuration object containing field errors, optional failure message, raw data,
  *                 specific fields to include, and fields to redact.
  * @returns A `FormResult` object containing a validation error with the processed details.
+ * @typeParam TFieldNames - The union of valid field names for the form.
+ * @typeParam TData - The data type the form would return on success (unused here; this function always returns an error).
+ *
+ * Notes:
+ * - Purpose: produce a UI‑ready validation error with optional redacted echo of submitted values.
+ * - Redaction: by default, redacts "password" (override via `redactFields`).
+ * - Values echo: included only when `fields` is non‑empty; omit `fields` to suppress echoing values.
+ * - Success path: this function never returns success; use {@link mapResultToFormResult} when you have a `Result`.
+ * @see {@link mapResultToFormResult} for mapping a Result (success or failure) into a FormResult.
  */
 export function toFormValidationErr<TFieldNames extends string, TData>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TFieldNames>;
   readonly failureMessage?: string;
-  readonly raw?: Record<string, unknown>;
   readonly fields?: readonly TFieldNames[];
+  readonly raw?: Record<string, unknown>;
   readonly redactFields?: readonly TFieldNames[];
 }): FormResult<TFieldNames, TData> {
   const {
@@ -110,10 +135,15 @@ export function toFormValidationErr<TFieldNames extends string, TData>(params: {
     redactFields = ["password" as TFieldNames],
   } = params;
 
+  // Ensure parity with mapResultToFormResult failure branch:
+  // - compute message once
+  // - include values only when fields provided (kept behavior)
+  const message = failureMessage;
+
   const error: FormError<TFieldNames> = {
     fieldErrors,
     kind: "validation",
-    message: failureMessage,
+    message,
     values:
       fields.length > 0
         ? selectDisplayableStringFieldValues(raw, fields, redactFields)

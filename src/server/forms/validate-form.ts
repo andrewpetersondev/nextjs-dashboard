@@ -30,7 +30,7 @@ const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.VALIDATION_FAILED;
  * @param loggerContext - A context string to log additional diagnostic information.
  * @returns A `ValidationFieldErrorsError` containing field error mappings and a default failure message.
  */
-function toFailureError<TFieldNames extends string>(
+function toValidationFailure<TFieldNames extends string>(
   error: unknown,
   fields: readonly TFieldNames[],
   loggerContext: string,
@@ -133,7 +133,7 @@ export async function validateFormGeneric<
   try {
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
-    const failure = toFailureError<TFieldNames>(e, fields, loggerContext);
+    const failure = toValidationFailure<TFieldNames>(e, fields, loggerContext);
     return Err({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
@@ -141,7 +141,7 @@ export async function validateFormGeneric<
   }
 
   if (!parsed.success) {
-    const failure = toFailureError<TFieldNames>(
+    const failure = toValidationFailure<TFieldNames>(
       parsed.error,
       fields,
       loggerContext,
