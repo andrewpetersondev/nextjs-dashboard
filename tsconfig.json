@@ -40,6 +40,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.test.ts",
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "**/*.mts"
@@ -54,7 +55,6 @@
     "docs",
     "cypress",
     "coverage",
-    "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
