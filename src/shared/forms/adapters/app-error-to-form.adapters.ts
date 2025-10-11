@@ -42,6 +42,8 @@ export function appErrorToFormValidationError<TField extends string>(params: {
  * - If code is CONFLICT and details indicate the email column/field, sets only `email` errors.
  * - Otherwise produces dense empty arrays and a generic message.
  * - Echoes redacted values from raw (defaults to password/confirmPassword redaction).
+ *
+ * TODO: the parameter type could be standardized
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export function appErrorToFormResult<TField extends string, TData>(params: {
