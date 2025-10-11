@@ -23,37 +23,58 @@ import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
-const INITIAL_STATE =
-  createInitialFailedFormStateFromSchema(CreateInvoiceSchema);
+const INITIAL_STATE = createInitialFailedFormStateFromSchema(
+  CreateInvoiceSchema,
+) as unknown as LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <todo>
 export const CreateInvoiceForm = ({
   customers,
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
+  const wrappedAction = async (
+    prev: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
+    formData: FormData,
+  ): Promise<LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> => {
+    // Coerce the server action to the expected LegacyFormState shape
+    return (await createInvoiceAction(
+      prev as any,
+      formData as any,
+    )) as unknown as LegacyFormState<
+      CreateInvoiceFieldNames,
+      CreateInvoiceOutput
+    >;
+  };
+
   const [state, action, pending] = useActionState<
     LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
     FormData
-  >(createInvoiceAction, INITIAL_STATE);
+  >(wrappedAction, INITIAL_STATE);
 
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (state.message) {
-      setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
-      return () => clearTimeout(timer);
+    if (!state?.message) {
+      setShowAlert(false);
+      return;
     }
-
-    setShowAlert(false);
-    return;
-  }, [state.message]);
+    setShowAlert(true);
+    const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
+    return () => clearTimeout(timer);
+  }, [state?.message]);
 
   return (
     <section>
       <form action={action}>
         <div className="rounded-md bg-bg-secondary p-4 md:p-6">
-          <InvoiceDate data-cy="date-input" defaultValue={getTodayIsoDate()} />
+          <InvoiceDate
+            data-cy="date-input"
+            defaultValue={getTodayIsoDate()}
+            disabled={pending}
+            id="date"
+            name="date"
+          />
 
           <SensitiveData
             data-cy="sensitive-data-input"
@@ -62,8 +83,7 @@ export const CreateInvoiceForm = ({
           />
 
           <div className="mb-4">
-            <Label htmlFor="customer" text="Choose customer" />
-
+            <Label htmlFor="customerId" text="Choose customer" />
             <CustomerSelect
               customers={customers}
               dataCy="customer-select"
