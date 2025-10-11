@@ -73,7 +73,7 @@ export function handleAuthServiceError<TField extends string>(
 ) {
   switch (e.kind) {
     case "conflict":
-      // map to form with conflict on email/username
+      // Map specific conflicting field (email by default)
       return mapAuthServiceErrorToFormResult<TField, unknown>({
         conflictEmailField: "email" as TField,
         error: e,
@@ -81,14 +81,41 @@ export function handleAuthServiceError<TField extends string>(
         raw,
       });
     case "missing_fields":
-    case "validation":
-    case "invalid_credentials":
-    case "unexpected":
-    default:
+      // Prefer validation shape with missing fields highlighted by adapter
       return mapAuthServiceErrorToFormResult<TField, unknown>({
         error: e,
         fields,
         raw,
       });
+    case "validation":
+      // Validation errors propagated; adapter preserves field-level details
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        error: e,
+        fields,
+        raw,
+      });
+    case "invalid_credentials":
+      // Surface a user-friendly message without field targeting
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        error: { ...e, message: e.message || "Invalid credentials" },
+        fields,
+        raw,
+      });
+    case "unexpected":
+      // Fallback to a safe generic failure message
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        error: { ...e, message: e.message || "Unexpected error" },
+        fields,
+        raw,
+      });
+    default: {
+      // Compile-time exhaustiveness guard if AuthServiceError changes
+      const _exhaustive: never = e as never;
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        error: _exhaustive,
+        fields,
+        raw,
+      });
+    }
   }
 }
