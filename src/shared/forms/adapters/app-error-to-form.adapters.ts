@@ -1,11 +1,17 @@
-import type { ErrorLike } from "@/shared/core/result/error";
-import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
+import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import {
+  selectSparseFieldErrorsForAllowedFields,
+  toDenseFieldErrorMapFromSparse,
+} from "@/shared/forms/errors/dense-error-map";
+import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
-import type {
-  FormResult,
-  FormValidationError,
+import {
+  FormErr,
+  type FormResult,
+  type FormValidationError,
 } from "@/shared/forms/types/form-result.types";
-import { formErrStrings } from "@/shared/forms/types/form-result.types";
+
+const EMAIL_REGEX = /email/i;
 
 /**
  * Convert an ErrorLike payload to a FormValidationError with dense empty arrays by default.
@@ -31,23 +37,85 @@ export function appErrorToFormValidationError<TField extends string>(params: {
 }
 
 /**
- * Convert an ErrorLike payload to a FormResult error with dense field errors.
+ * Adapter: AppError -> FormResult (always validation-shaped, dense map).
+ *
+ * - If code is CONFLICT and details indicate the email column/field, sets only `email` errors.
+ * - Otherwise produces dense empty arrays and a generic message.
+ * - Echoes redacted values from raw (defaults to password/confirmPassword redaction).
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export function appErrorToFormResult<TField extends string, TData>(params: {
   readonly fields: readonly TField[];
-  readonly error: ErrorLike | string;
-  readonly fieldErrorsSparse?: Partial<Record<TField, readonly string[]>>;
+  readonly raw: Readonly<Record<string, unknown>>;
+  readonly error: AppError;
+  readonly redactFields?: readonly TField[];
+  readonly conflictEmailField?: TField; // default: inferred "email" if present
+  readonly conflictMessage?: string;
+  readonly defaultMessage?: string;
 }): FormResult<TField, TData> {
-  const dense: DenseFieldErrorMap<TField, string> =
-    toDenseFieldErrorMapFromSparse<TField, string>(
-      params.fieldErrorsSparse as Partial<Record<TField, readonly string[]>>,
-      params.fields,
-    );
-  const message =
-    typeof params.error === "string" ? params.error : params.error.message;
+  const {
+    fields,
+    raw,
+    error,
+    redactFields = [] as unknown as readonly TField[],
+    conflictEmailField,
+    conflictMessage = "Email already in use",
+    defaultMessage = "Request failed. Please try again.",
+  } = params;
 
-  return formErrStrings<TField, TData>({
+  // Compute a safe default for redactFields based on allowed fields (avoid widening to string[])
+  const inferredRedact: readonly TField[] = (
+    ["password", "confirmPassword"] as const
+  )
+    .filter((k) => (fields as readonly string[]).includes(k))
+    .map((k) => k as TField);
+
+  const effectiveRedact: readonly TField[] =
+    redactFields.length > 0 ? redactFields : inferredRedact;
+
+  const emailField =
+    conflictEmailField ??
+    ((fields.includes("email" as TField) ? ("email" as TField) : undefined) as
+      | TField
+      | undefined);
+
+  const isConflict = error.code === "CONFLICT";
+  const details = (error.details ?? {}) as {
+    readonly column?: string;
+    readonly constraint?: string;
+    readonly fields?: readonly string[];
+  };
+
+  const shouldTargetEmail =
+    isConflict &&
+    emailField !== undefined &&
+    (details.column === "email" ||
+      details.fields?.includes?.("email") === true ||
+      EMAIL_REGEX.test(details.constraint ?? ""));
+
+  const sparse: Partial<Record<TField, readonly string[]>> = {};
+  if (shouldTargetEmail && emailField) {
+    sparse[emailField] = Object.freeze([conflictMessage]);
+  }
+
+  const limitedSparse = selectSparseFieldErrorsForAllowedFields<TField, string>(
+    sparse,
+    fields,
+  );
+  const dense: DenseFieldErrorMap<TField, string> =
+    toDenseFieldErrorMapFromSparse<TField, string>(limitedSparse, fields);
+
+  const values = selectDisplayableStringFieldValues(
+    raw,
+    fields,
+    effectiveRedact,
+  );
+
+  return FormErr<TField, TData, string, string>({
     fieldErrors: dense,
-    message,
+    message: shouldTargetEmail
+      ? conflictMessage
+      : error.message || defaultMessage,
+    values,
   });
 }
