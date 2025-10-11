@@ -14,18 +14,6 @@ export const freezeDev = <TObj extends object>(obj: TObj): TObj => {
 export const toSeverity = (s: unknown): AppError["severity"] | undefined =>
   s === "info" || s === "warn" || s === "error" ? s : undefined;
 
-export const isStringRecord = (o: unknown): o is Record<string, string> => {
-  if (typeof o !== "object" || o === null) {
-    return false;
-  }
-  for (const v of Object.values(o as Record<string, unknown>)) {
-    if (typeof v !== "string") {
-      return false;
-    }
-  }
-  return true;
-};
-
 export const pickOptionalFromLike = (
   v: Partial<AppError>,
 ): Readonly<Partial<AppError>> => {

@@ -57,6 +57,7 @@ export const augmentAppError = (
   }
   return merged;
 };
+
 // Tighten `patch` typing so `code` matches `ErrorCode`
 export const withAppErrorPatch = (
   e: unknown,
