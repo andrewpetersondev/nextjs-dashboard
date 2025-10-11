@@ -1,7 +1,7 @@
 // File: src/shared/core/result/iter/result-collect-iter.ts
 
 import type { AppError, ErrorLike } from "@/shared/core/result/error";
-import { Ok, type Result } from "@/shared/core/result/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
  * Iterates over the source, yielding values from successful results until an error result is encountered.
@@ -16,11 +16,11 @@ export function* iterateOk<TValue, TError extends ErrorLike = AppError>(
 ): Generator<TValue, Result<void, TError>, unknown> {
   for (const r of source) {
     if (!r.ok) {
-      return r as Result<void, TError>;
+      return Err(r.error);
     }
     yield r.value;
   }
-  return Ok<void, TError>(undefined);
+  return Ok<void>(undefined);
 }
 
 /**
@@ -46,7 +46,7 @@ export const collectAllLazy = /* @__PURE__ */ <
   const acc: TValue[] = [];
   for (const r of source) {
     if (!r.ok) {
-      return r;
+      return Err(r.error);
     }
     acc.push(r.value);
   }

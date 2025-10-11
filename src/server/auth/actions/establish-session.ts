@@ -22,8 +22,8 @@ export async function establishSession(
   });
 
   const mapped: Result<true, AuthServiceError> = r.ok
-    ? Ok<true, AuthServiceError>(true as const)
-    : Err<never, AuthServiceError>(
+    ? Ok<true>(true as const)
+    : Err<AuthServiceError>(
         mapErrorToAuthServiceUnexpected({
           message: r.error?.message ?? "Failed to establish session",
         }),

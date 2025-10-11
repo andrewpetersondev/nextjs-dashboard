@@ -26,7 +26,7 @@ export const flatMapAsync =
     async (
       r: Result<TValue, TError1>,
     ): Promise<Result<TNext, TError1 | TError2>> =>
-      r.ok ? fn(r.value) : Err<TNext, TError1>(r.error);
+      r.ok ? fn(r.value) : Err(r.error);
 
 // Preserve-Err variant for async flatMap (no casting).
 /**
@@ -53,7 +53,7 @@ export const flatMapAsyncPreserveErr =
       r: Result<TValue, TError1>,
     ): Promise<Result<TNext, TError1 | TError2>> => {
       if (!r.ok) {
-        return Err<TNext, TError1>(r.error);
+        return Err(r.error);
       }
       return await fn(r.value);
     };
@@ -97,7 +97,7 @@ export const flatMapAsyncSafe =
       r: Result<TValue, TError1>,
     ): Promise<Result<TNext, TError1 | TError2 | TSideError | AppError>> => {
       if (!r.ok) {
-        return Err<TNext, TError1>(r.error);
+        return Err(r.error);
       }
       try {
         return await fn(r.value);

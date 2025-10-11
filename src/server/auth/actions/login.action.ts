@@ -69,13 +69,13 @@ export async function loginAction(
     { id: string; role: string },
     Parameters<typeof authErrorToFormResult>[1],
     Parameters<typeof authErrorToFormResult>[1]
-  >(async (i) => service.login(i))(Ok<typeof input, never>(input))
+  >(async (i) => service.login(i))(Ok<typeof input>(input))
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
     .then(
       flatMapAsync(async (u) => {
         try {
           await setSessionToken(toUserId(u.id), toUserRole(u.role));
-          return Ok<true, never>(true);
+          return Ok<true>(true);
         } catch (err) {
           serverLogger.error({
             context: LOGGER_CONTEXT_SESSION,
@@ -85,7 +85,7 @@ export async function loginAction(
                 : { message: "Unknown error" },
             message: "Failed to establish session",
           });
-          return Err<true, Parameters<typeof authErrorToFormResult>[1]>({
+          return Err<Parameters<typeof authErrorToFormResult>[1]>({
             kind: "unexpected",
             message: "Unexpected error",
           });

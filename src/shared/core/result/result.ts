@@ -1,33 +1,20 @@
 // File: src/shared/core/result/result.ts
 
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { ErrorLike } from "@/shared/core/result/error";
 
 /**
  * Freezes an object to prevent mutation.
- *
- * @typeParam TObj - The object type to freeze.
- * @param obj - The object to freeze.
- * @returns The frozen object.
  */
-const freezeObject = <TObj extends object>(obj: TObj): TObj =>
+const freezeObject = <T extends object>(obj: T): Readonly<T> =>
   Object.freeze(obj);
-
-/** Discriminant for successful Result. */
-const RESULT_OK = true as const;
-/** Discriminant for failed Result. */
-const RESULT_ERR = false as const;
 
 /**
  * Represents a successful Result.
- *
- * @typeParam TValue - The value type.
  */
 export type OkResult<TValue> = { readonly ok: true; readonly value: TValue };
 
 /**
  * Represents a failed Result.
- *
- * @typeParam TError - The error type, must extend ErrorLike.
  */
 export type ErrResult<TError extends ErrorLike> = {
   readonly ok: false;
@@ -46,70 +33,38 @@ export type Result<TValue, TError extends ErrorLike> =
 
 /**
  * Extracts the success type from a `Result` type.
- *
- * @typeParam R - A type that extends `Result` with an error of type `ErrorLike`.
- * @returns The success type `U` if `R` is a `Result<U, ErrorLike>`, otherwise `never`.
- * @example
- * ```
- * type Success = OkType<Result<string, Error>>;
- * // Success is `string`
- * ```
  */
-export type OkType<R> = R extends Result<infer U, ErrorLike> ? U : never;
+export type OkType<R> = R extends { ok: true; value: infer U } ? U : never;
 
 /**
  * Extracts the error type `E` from a `Result` type.
- *
- * @typeParam R - The `Result` type to extract the error type from.
- * @returns The extracted error type `E`, or `never` if not applicable.
- * @example
- * ```ts
- * type Error = ErrType<Result<number, string>>; // string
- * ```
- * @see Result
  */
-export type ErrType<R> = R extends Result<unknown, infer E> ? E : never;
+export type ErrType<R> = R extends { ok: false; error: infer E } ? E : never;
 
 /**
  * Creates a successful Result.
- *
- * @typeParam TValue - The value type.
- * @typeParam TError - The error type, must extend ErrorLike.
- * @param value - The success value.
- * @returns A Result with the value.
  */
-export const Ok = /* @__PURE__ */ <TValue, TError extends ErrorLike = AppError>(
+export const Ok = /* @__PURE__ */ <TValue>(
   value: TValue,
-): Result<TValue, TError> => {
-  const r = { ok: RESULT_OK, value } satisfies OkResult<TValue>;
-  return freezeObject(r) as Result<TValue, TError>;
+): Result<TValue, never> => {
+  const r = { ok: true as const, value } satisfies OkResult<TValue>;
+  return freezeObject(r);
 };
 
 /**
  * Creates a failed Result.
- *
- * @typeParam TValue - The value type.
- * @typeParam TError - The error type, must extend ErrorLike.
- * @param error - The error value.
- * @returns A Result with the error.
+ * TODO: Defaulting TError to AppError in core constructors can unintentionally widen error unions across layers.
+ * TODO: Core should stay neutral; AppError defaults belong in adapter helpers.
  */
-export const Err = /* @__PURE__ */ <
-  TValue = never,
-  TError extends ErrorLike = AppError,
->(
+export const Err = /* @__PURE__ */ <TError extends ErrorLike>(
   error: TError,
-): Result<TValue, TError> => {
-  const r = { error, ok: RESULT_ERR } satisfies ErrResult<TError>;
-  return freezeObject(r) as Result<TValue, TError>;
+): Result<never, TError> => {
+  const r = { error, ok: false as const } satisfies ErrResult<TError>;
+  return freezeObject(r);
 };
 
 /**
  * Type guard for OkResult.
- *
- * @typeParam TValue - The value type.
- * @typeParam TError - The error type.
- * @param r - The Result to check.
- * @returns True if Result is Ok.
  */
 export const isOk = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
@@ -117,11 +72,6 @@ export const isOk = <TValue, TError extends ErrorLike>(
 
 /**
  * Type guard for ErrResult.
- *
- * @typeParam TValue - The value type.
- * @typeParam TError - The error type.
- * @param r - The Result to check.
- * @returns True if Result is Err.
  */
 export const isErr = <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
@@ -133,61 +83,11 @@ export const toNullable = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
   r: Result<TValue, TError>,
 ): TValue | null => (r.ok ? r.value : null);
 
-export const toUndefined = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-): TValue | undefined => (r.ok ? r.value : undefined);
-
-// Convenience: boolean constructor
-
-/**
- * Creates a `Result` based on a boolean condition.
- *
- * @typeParam TError - The type of error returned if the condition is `false`. Defaults to `AppError`.
- * @param condition - A boolean value determining the result.
- * @param onFalse - A callback function invoked to generate the error when `condition` is `false`.
- * @returns A `Result` containing `true` if `condition` is `true`, or the provided error otherwise.
- * @example
- * ```typescript
- * const result = fromBoolean(true, () => new Error("Condition failed"));
- * ```
- */
-export const fromBoolean = /* @__PURE__ */ <
-  TError extends ErrorLike = AppError,
->(
+// Replace fromBoolean to preserve the actual boolean value (no forced `true`)
+export const fromCondition = /* @__PURE__ */ <TError extends ErrorLike>(
   condition: boolean,
   onFalse: () => TError,
-): Result<true, TError> => (condition ? Ok(true) : Err(onFalse()));
-
-// Safe extractors
-
-export const getOk = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-): TValue | undefined => (r.ok ? r.value : undefined);
-
-export const getErr = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-): TError | undefined => (r.ok ? undefined : r.error);
-
-// Option-like conversions
-
-export const toSomeNone = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-):
-  | { readonly some: true; readonly value: TValue }
-  | { readonly some: false } =>
-  r.ok ? { some: true as const, value: r.value } : { some: false as const };
-
-export const toEither = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
-  r: Result<TValue, TError>,
-): { readonly right: TValue } | { readonly left: TError } =>
-  r.ok ? { right: r.value } : { left: r.error };
-
-// Map result to a constant (useful in control-flow)
-export const toConst = /* @__PURE__ */ <TValue, TError extends ErrorLike, TOut>(
-  r: Result<TValue, TError>,
-  onOk: TOut,
-  onErr: TOut,
-): TOut => (r.ok ? onOk : onErr);
+): Result<boolean, TError> => (condition ? Ok(true) : Err(onFalse()));
 
 // Convert Result to boolean flags as a tuple
 export const toFlags = /* @__PURE__ */ <TValue, TError extends ErrorLike>(

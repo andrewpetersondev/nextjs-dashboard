@@ -24,4 +24,4 @@ export const flatMap =
     ) =>
     /* @__PURE__ */
     (r: Result<TValue, TError1>): Result<TNext, TError1 | TError2> =>
-      r.ok ? fn(r.value) : Err<TNext, TError1>(r.error);
+      r.ok ? fn(r.value) : Err(r.error);

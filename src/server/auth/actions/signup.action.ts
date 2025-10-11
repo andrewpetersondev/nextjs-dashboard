@@ -16,11 +16,11 @@ import {
   UserAuthFlowService,
 } from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
-import { authErrorToFormResult } from "@/server/forms/auth-error-to-form-result.mapper";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
+import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
@@ -91,8 +91,30 @@ export async function signupAction(
   // TODO: suggested change to remove // `.then(mapOk((user) => ({ id: user.id, role: user.role })))`
 
   if (!sessionResult.ok) {
+    // Normalize to AuthServiceError first to avoid unions with ErrorLike
     const svcError = toAuthServiceError(sessionResult.error);
-    return authErrorToFormResult<SignupField>(fields, svcError, raw);
+
+    // Map AuthServiceError → AppError shape expected by adapter
+    const appErr = {
+      code:
+        svcError.kind === "conflict"
+          ? "CONFLICT"
+          : svcError.kind === "validation"
+            ? "VALIDATION"
+            : "UNKNOWN",
+      details:
+        svcError.kind === "conflict"
+          ? { column: "email", fields: ["email"] as const }
+          : undefined,
+      message: svcError.message,
+    } as const;
+
+    return appErrorToFormResult<SignupField, unknown>({
+      conflictEmailField: "email",
+      error: appErr,
+      fields,
+      raw,
+    });
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);

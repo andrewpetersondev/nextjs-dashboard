@@ -86,7 +86,7 @@ export const mapErrorUnion =
     ) =>
     /* @__PURE__ */
     (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> =>
-      r.ok ? r : Err<TValue, TError2>(fn(r.error));
+      r.ok ? r : Err<TError2>(fn(r.error));
 
 /**
  * Maps an error from a `Result` type to a new error type while preserving the original error type if unchanged.
@@ -109,7 +109,7 @@ export const mapErrorUnionPreserve =
         return r;
       }
       const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err<TValue, TError2>(mapped);
+      return Object.is(mapped, r.error) ? r : Err<TError2>(mapped);
     };
 
 /**
@@ -135,7 +135,7 @@ export const mapErrorPreserve =
         return r;
       }
       const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err<TValue, TError2>(mapped);
+      return Object.is(mapped, r.error) ? r : Err<TError2>(mapped);
     };
 
 /**

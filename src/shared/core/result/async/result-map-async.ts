@@ -92,7 +92,7 @@ export const mapErrorAsync =
     ) =>
     /* @__PURE__ */
     async (r: Result<TValue, TError1>): Promise<Result<TValue, TError2>> =>
-      r.ok ? r : Err<TValue, TError2>(await fn(r.error));
+      r.ok ? r : Err(await fn(r.error));
 
 /**
  * A utility function to safely transform errors in an asynchronous context.
@@ -125,11 +125,11 @@ export const mapErrorAsyncSafe =
       r: Result<TValue, TError1>,
     ): Promise<Result<TValue, TError2 | TSideError | AppError>> => {
       if (r.ok) {
-        return Ok<TValue, TError2>(r.value);
+        return Ok(r.value);
       }
       try {
         const next = await fn(r.error);
-        return Err<TValue, TError2>(next);
+        return Err(next);
       } catch (e) {
         const err = (mapError ?? toAppErrorFromUnknown)(e);
         return Err(err);

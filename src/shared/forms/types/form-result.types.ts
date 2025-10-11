@@ -4,7 +4,7 @@ import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
 
 // Freeze helper for payloads to preserve immutability guarantees
 /* @__PURE__ */
-const freeze = <T extends object>(o: T): T => Object.freeze(o);
+const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
 /**
  * SECTION: Interfaces (object shapes)
@@ -96,10 +96,7 @@ export const FormOk = <TFieldName extends string, TPayload>(
   message: string,
 ): FormResult<TFieldName, TPayload> => {
   const value = freeze<FormSuccess<TPayload>>({ data, message });
-  return Ok<
-    FormSuccess<TPayload>,
-    FormValidationError<TFieldName, string, string>
-  >(value);
+  return Ok(value);
 };
 
 // Create a FormResult validation error (freezes payload)
@@ -119,10 +116,7 @@ export const FormErr = <
     message: params.message,
     values: params.values,
   });
-  return Err<
-    FormSuccess<TPayload>,
-    FormValidationError<TFieldName, TValueEcho, TMessage>
-  >(error);
+  return Err(error);
 };
 
 // Narrow to success branch
@@ -271,11 +265,7 @@ export const FormErrFromError = <
   TMessage extends string = string,
 >(
   error: FormValidationError<TFieldName, TValueEcho, TMessage>,
-): FormResult<TFieldName, TPayload, TValueEcho, TMessage> =>
-  Err<
-    FormSuccess<TPayload>,
-    FormValidationError<TFieldName, TValueEcho, TMessage>
-  >(freeze(error));
+): FormResult<TFieldName, TPayload, TValueEcho, TMessage> => Err(freeze(error));
 
 /**
  * SECTION: Value echo utilities
@@ -317,10 +307,7 @@ export const withValuesEchoResult = <
     r.error,
     values,
   );
-  return Err<
-    FormSuccess<TPayload>,
-    FormValidationError<TFieldName, TValueEcho, TMessage>
-  >(nextErr);
+  return Err(nextErr);
 };
 
 /**

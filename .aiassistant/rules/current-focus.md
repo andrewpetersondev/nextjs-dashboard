@@ -4,23 +4,34 @@ apply: always
 
 # Current Focus
 
-If there are any bad practices, poor organization, etc. I want to fix it. To do this, I will need to strengthen my logic
-for forms, results, and errors.
+Instructions
+
+- If there are any bad practices, poor organization, etc., I want to fix it. To do this, I will need to strengthen my
+  logic for forms, results, and errors.
+
+Goals
+
+- find problems, flaws, mistakes in result code
+- code for returning results and throwing errors
+- result utilities with mappers/adapters
+- writing maintainable code
+- result & form & error cohesion
 
 Focus on code related to:
 
-Favor code in src/shared/forms/types/form-result.types.ts over similar code in other locations.
-
-- form types, helpers, adapters, etc
-    - src/shared/forms
-    - src/server/forms
 - result types, helpers, adapters, etc
-    - src/shared/core/result
+    - src/shared/core/result/
+    - src/shared/core/result/result.ts
+    - src/shared/core/result/async
+    - src/shared/core/result/iter
+    - src/shared/core/result/sync
 - error flows
     - src/shared/core/errors
     - src/server/errors/
-- writing maintainable code
-- result & form & error cohesion
+    - src/shared/core/result/error.ts
+- form types, helpers, adapters, etc
+    - src/shared/forms
+    - src/server/forms
 
 Secondary focus on:
 

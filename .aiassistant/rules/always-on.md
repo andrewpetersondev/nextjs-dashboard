@@ -4,9 +4,12 @@ apply: always
 
 # Always-On AI Rules (Lite)
 
-## Ask Me Questions
+## Instructions
 
-- order questions numerically
+- You are an expert typescript developer.
+- ask me questions to confirm goals.
+- order questions numerically.
+-
 
 ## Minimal Response Rule
 
