@@ -1,11 +1,10 @@
 // File: src/shared/core/result/async/result-async.ts
+// Purpose: Adapter-first async Result helpers (no default AppError). Callers must pass mappers.
 
-import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
-import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * @public
  * Interface for handling asynchronous operations with customizable error mapping.
  *
  * @typeParam TError - The type of error to map to, extending `ErrorLike`.
@@ -18,7 +17,6 @@ interface TryCatchAsyncMapped<TError extends ErrorLike> {
 }
 
 /**
- * @public
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
  *
  * @typeParam TValue - The type of the value the promise resolves to.
@@ -30,44 +28,22 @@ interface TryCatchAsyncMapped<TError extends ErrorLike> {
 export type AsyncThunk<TValue> = () => Promise<TValue>;
 
 /**
- * Executes an asynchronous function and wraps the result in a `Result` object, handling errors gracefully.
- *
- * @param fn - The asynchronous function to execute.
- * @returns A promise that resolves with a `Result` object containing either the value or an `AppError`.
- */
-export function tryCatchAsync<TValue>(
-  fn: AsyncThunk<TValue>,
-): Promise<Result<TValue, AppError>>;
-
-/**
- * Executes an asynchronous function and maps errors using provided options.
- *
- * @param fn - The asynchronous function to execute.
- * @param options - Configuration for mapping and handling caught errors.
- * @returns A promise resolving to a `Result` with either the value or mapped error.
- */
-export function tryCatchAsync<TValue, TError extends ErrorLike>(
-  fn: AsyncThunk<TValue>,
-  options: TryCatchAsyncMapped<TError>,
-): Promise<Result<TValue, TError>>;
-
-/**
  * Executes an asynchronous function and wraps the result in a Result object.
  *
  * @typeParam TValue - The type of the value returned on success.
  * @typeParam TError - The type of the error, extending ErrorLike.
  * @param fn - The asynchronous function to execute.
- * @param options - Optional configuration to map errors.
+ * @param options - configuration to map errors.
  * @returns A Promise resolving to a Result object with either a success value or an error.
  */
 export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   fn: AsyncThunk<TValue>,
-  options?: TryCatchAsyncMapped<TError>,
-): Promise<Result<TValue, AppError | TError>> {
+  options: TryCatchAsyncMapped<TError>,
+): Promise<Result<TValue, TError>> {
   try {
     return Ok(await fn());
   } catch (e) {
-    return options ? Err(options.mapError(e)) : Err(toAppErrorFromUnknown(e));
+    return Err(options.mapError(e));
   }
 }
 
