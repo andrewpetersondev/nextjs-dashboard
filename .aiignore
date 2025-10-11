@@ -152,9 +152,7 @@ src/ui/
 src/features/customers/
 src/features/invoices/
 src/features/revenues/
-src/features/users/
 src/server/customers/
 src/server/invoices/
 src/server/revenues/
-src/server/users/
 src/shared/core/result/examples/
