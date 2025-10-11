@@ -1,4 +1,4 @@
-import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
+import type { AppError } from "@/shared/core/result/app-error";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
@@ -8,33 +8,9 @@ import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import {
   FormErr,
   type FormResult,
-  type FormValidationError,
 } from "@/shared/forms/types/form-result.types";
 
 const EMAIL_REGEX = /email/i;
-
-/**
- * Convert an ErrorLike payload to a FormValidationError with dense empty arrays by default.
- */
-export function appErrorToFormValidationError<TField extends string>(params: {
-  readonly fields: readonly TField[];
-  readonly error: ErrorLike | string;
-  readonly fieldErrorsSparse?: Partial<Record<TField, readonly string[]>>;
-}): FormValidationError<TField, string, string> {
-  const dense: DenseFieldErrorMap<TField, string> =
-    toDenseFieldErrorMapFromSparse<TField, string>(
-      params.fieldErrorsSparse as Partial<Record<TField, string>>,
-      params.fields,
-    );
-  const message =
-    typeof params.error === "string" ? params.error : params.error.message;
-
-  return {
-    fieldErrors: dense,
-    kind: "validation",
-    message,
-  };
-}
 
 /**
  * Adapter: AppError -> FormResult (always validation-shaped, dense map).
