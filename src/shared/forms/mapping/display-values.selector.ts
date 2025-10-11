@@ -3,14 +3,14 @@ import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
 /**
  * Build a sparse map of user-displayable string values from a raw payload.
  *
- * @typeParam TFieldNames - Union of field name string literals.
+ * @typeParam TField - Union of field name string literals.
  */
-export function selectDisplayableStringFieldValues<TFieldNames extends string>(
+export function selectDisplayableStringFieldValues<TField extends string>(
   raw: Readonly<Record<string, unknown>>,
-  fields: readonly TFieldNames[],
-  redactFields: readonly TFieldNames[],
-): SparseFieldValueMap<TFieldNames> {
-  const values: Partial<Record<TFieldNames, string>> = {};
+  fields: readonly TField[],
+  redactFields: readonly TField[],
+): SparseFieldValueMap<TField> {
+  const values: Partial<Record<TField, string>> = {};
 
   for (const key of fields) {
     if (redactFields.includes(key)) {
@@ -22,5 +22,5 @@ export function selectDisplayableStringFieldValues<TFieldNames extends string>(
     }
   }
 
-  return values;
+  return Object.freeze(values) as SparseFieldValueMap<TField>;
 }

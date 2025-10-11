@@ -37,11 +37,12 @@ export function authErrorToFormResult<TField extends string>(
       | TField
       | undefined) ?? fields[0];
 
-  const dense: DenseFieldErrorMap<TField> = setSingleFieldErrorMessage<TField>(
-    fields,
-    messageByKind[error.kind] ?? FALLBACK_MESSAGE,
-    { field: preferredField },
-  );
+  const dense: DenseFieldErrorMap<TField, string> = setSingleFieldErrorMessage<
+    TField,
+    string
+  >(fields, messageByKind[error.kind] ?? FALLBACK_MESSAGE, {
+    field: preferredField,
+  });
 
   return toFormValidationErr<TField, unknown>({
     failureMessage: messageByKind[error.kind] ?? FALLBACK_MESSAGE,

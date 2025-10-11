@@ -26,7 +26,10 @@ export function createInitialFailedFormState<
       message: "",
     },
     ok: false as const,
-  } satisfies Extract<FormResult<TFieldNames, TValue, TMsg>, { ok: false }>;
+  } satisfies Extract<
+    FormResult<TFieldNames, TValue, string, TMsg>,
+    { ok: false }
+  >;
 }
 
 /**
@@ -42,6 +45,8 @@ export function createInitialFailedFormStateFromSchema<
   TSchema extends z.ZodObject<z.ZodRawShape>,
 >(schema: TSchema) {
   type FieldNames = keyof TSchema["shape"] & string;
-  const fields = Object.keys(schema.shape) as readonly FieldNames[];
+  const fields = Object.freeze(
+    Object.keys(schema.shape),
+  ) as readonly FieldNames[];
   return createInitialFailedFormState<FieldNames, string, string>(fields);
 }

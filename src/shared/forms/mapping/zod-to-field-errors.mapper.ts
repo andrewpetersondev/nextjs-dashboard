@@ -14,7 +14,7 @@ import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
 export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
-): SparseFieldErrorMap<TFieldNames> {
+): SparseFieldErrorMap<TFieldNames, string> {
   const { fieldErrors } = flattenZodError(error);
   return selectSparseFieldErrorsForAllowedFields<TFieldNames, string>(
     fieldErrors,
@@ -29,9 +29,12 @@ export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
 export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
-): DenseFieldErrorMap<TFieldNames> {
+): DenseFieldErrorMap<TFieldNames, string> {
   const sparse = mapZodErrorToSparseFieldErrors(error, allowedFields);
-  return toDenseFieldErrorMapFromSparse(sparse, allowedFields);
+  return toDenseFieldErrorMapFromSparse<TFieldNames, string>(
+    sparse,
+    allowedFields,
+  );
 }
 
 /**
@@ -40,7 +43,7 @@ export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
 export function mapToDenseFieldErrorsFromZod<TField extends string>(
   error: Pick<ZodError<unknown>, "issues">,
   fields: readonly TField[],
-): DenseFieldErrorMap<TField, readonly string[]> {
+): DenseFieldErrorMap<TField, string> {
   const sparse: Partial<Record<TField, readonly string[]>> = {};
   for (const issue of error.issues ?? []) {
     const pathKey = String(issue.path?.[0] ?? "");

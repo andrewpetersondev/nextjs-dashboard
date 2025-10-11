@@ -1,8 +1,6 @@
 import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import type { Result } from "@/shared/core/result/result";
-import { Err, Ok } from "@/shared/core/result/result";
 import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
 import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error.helpers";
 import {
@@ -12,9 +10,10 @@ import {
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import {
-  type FormSuccess,
+  FormErr,
+  FormOk,
+  type FormResult,
   type FormValidationError,
-  formSuccess,
 } from "@/shared/forms/types/form-result.types";
 
 // Consolidate default messages and logger context
@@ -36,19 +35,28 @@ function toValidationFailure<TFieldNames extends string>(
   loggerContext: string,
 ): FormValidationError<TFieldNames> {
   logValidationFailure(loggerContext, error);
-  if (isZodErrorLikeShape(error)) {
+
+  if (isZodErrorLikeShape(error) && Array.isArray(error.issues)) {
+    // Avoid typing to Pick<ZodError, 'issues'>; project only the data we need.
+    const issues = error.issues as readonly unknown[];
+    const zodLike: Pick<z.ZodError<unknown>, "issues"> = {
+      // Narrow each item to the minimal shape used by mapToDenseFieldErrorsFromZod
+      issues: issues as unknown as z.ZodError<unknown>["issues"],
+    };
     return {
-      fieldErrors: mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
+      fieldErrors: mapToDenseFieldErrorsFromZod<TFieldNames>(zodLike, fields),
       kind: "validation",
       message: DEFAULT_FAILURE_MESSAGE,
-      // values omitted at validation layer
     };
   }
+
   return {
-    fieldErrors: toDenseFieldErrorMapFromSparse<TFieldNames>({}, fields),
+    fieldErrors: toDenseFieldErrorMapFromSparse<TFieldNames, string>(
+      {},
+      fields,
+    ),
     kind: "validation",
     message: DEFAULT_FAILURE_MESSAGE,
-    // values omitted at validation layer
   };
 }
 
@@ -112,10 +120,10 @@ export async function validateFormGeneric<
   TFieldNames extends keyof TIn & string,
 >(
   formData: FormData,
-  schema: z.ZodType<TIn>, // TODO: schema: z.ZodType<OUTPUT, INPUT, INTERNALS>,
+  schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<Result<FormSuccess<TIn>, FormValidationError<TFieldNames>>> {
+): Promise<FormResult<TFieldNames, TIn>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,
@@ -132,15 +140,15 @@ export async function validateFormGeneric<
   const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
 
   const failureMessage = messages?.failureMessage ?? DEFAULT_FAILURE_MESSAGE;
+  const successMessage = messages?.successMessage ?? "";
 
   let parsed: Awaited<ReturnType<typeof schema.safeParseAsync>>;
   try {
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     const failure = toValidationFailure<TFieldNames>(e, fields, loggerContext);
-    return Err({
+    return FormErr<TFieldNames, TIn, string, string>({
       fieldErrors: failure.fieldErrors,
-      kind: "validation",
       message: failureMessage,
     });
   }
@@ -151,12 +159,11 @@ export async function validateFormGeneric<
       fields,
       loggerContext,
     );
-    return Err({
+    return FormErr<TFieldNames, TIn, string, string>({
       fieldErrors: failure.fieldErrors,
-      kind: "validation",
       message: failureMessage,
     });
   }
 
-  return Ok(formSuccess(parsed.data, messages?.successMessage));
+  return FormOk<TFieldNames, TIn>(parsed.data, successMessage);
 }

@@ -31,10 +31,13 @@ export function selectSparseFieldErrorsForAllowedFields<
       fieldErrors as Record<string, readonly TMsg[] | undefined>
     )[key];
     if (isNonEmptyArray(maybeErrors)) {
-      errors[key] = maybeErrors as FieldError<TMsg>;
+      // freeze the array to enforce immutability contract
+      errors[key] = Object.freeze([
+        ...maybeErrors,
+      ]) as unknown as FieldError<TMsg>;
     }
   }
-  return errors;
+  return Object.freeze(errors) as SparseFieldErrorMap<TFieldNames, TMsg>;
 }
 
 /**
@@ -65,15 +68,15 @@ export function toDenseFieldErrorMapFromSparse<
 >(
   sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
-): DenseFieldErrorMap<TField, readonly TMsg[]> {
+): DenseFieldErrorMap<TField, TMsg> {
   const out: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
-    const v = sparse?.[f];
+    const v = sparse?.[f] as readonly TMsg[] | undefined;
     out[f] = Array.isArray(v)
       ? (Object.freeze([...v]) as readonly TMsg[])
       : (Object.freeze([]) as readonly TMsg[]);
   }
-  return Object.freeze(out) as DenseFieldErrorMap<TField, readonly TMsg[]>;
+  return Object.freeze(out) as DenseFieldErrorMap<TField, TMsg>;
 }
 
 /**
@@ -102,28 +105,4 @@ export function normalizeAndFreezeDenseFieldErrorMap<
     fields.map((f) => [f, Object.freeze([...(dense[f] as readonly TMsg[])])]),
   ) as Record<TField, readonly TMsg[]>;
   return Object.freeze(normalized) as DenseFieldErrorMap<TField, TMsg>;
-}
-
-// ----------------------------------
-// Unused
-// ----------------------------------
-
-/**
- * Convert a dense error map into a sparse error map (only keys whose array length > 0 are kept).
- *
- * - Fields whose array is `[]` are omitted from the result.
- * - Result uses `FieldError` (non-empty readonly arrays) for values.
- */
-export function _toSparseFieldErrorMapFromDense<
-  TField extends string,
-  TMsg = string,
->(dense: DenseFieldErrorMap<TField, TMsg>): SparseFieldErrorMap<TField, TMsg> {
-  const out: Partial<Record<TField, FieldError<TMsg>>> = {};
-  for (const k of Object.keys(dense) as TField[]) {
-    const arr = dense[k];
-    if (arr && arr.length > 0) {
-      out[k] = arr as FieldError<TMsg>;
-    }
-  }
-  return out as SparseFieldErrorMap<TField, TMsg>;
 }
