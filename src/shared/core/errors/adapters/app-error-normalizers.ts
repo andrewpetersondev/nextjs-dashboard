@@ -14,7 +14,7 @@ import {
 } from "@/shared/core/errors/base/error-codes";
 import type { AppError } from "@/shared/core/result/app-error";
 
-const fromAppErrorLike = (
+export const fromAppErrorLike = (
   value: Pick<AppError, "code" | "message"> & Partial<AppError>,
 ): AppError => {
   const code = isErrorCode(value.code) ? value.code : "UNKNOWN";
@@ -28,7 +28,7 @@ const fromAppErrorLike = (
   });
 };
 
-const fromBaseOrUnknown = (value: unknown): AppError => {
+export const fromBaseOrUnknown = (value: unknown): AppError => {
   const b =
     value instanceof BaseError ? value : normalizeToBaseError(value, "UNKNOWN");
   const meta = tryGetErrorCodeMeta(b.code);
