@@ -59,16 +59,8 @@ function isEmailConflict(
   return { details, targeted };
 }
 
-/**
- * Adapter: AppError -> FormResult (always validation-shaped, dense map).
- *
- * - If code is CONFLICT and details indicate the email column/field, sets only `email` errors.
- * - Otherwise produces dense empty arrays and a generic message.
- * - Echoes redacted values from raw (defaults to password/confirmPassword redaction).
- *
- * TODO: the parameter type could be standardized
- */
-export function appErrorToFormResult<TField extends string, TData>(params: {
+// POTENTIAL TO BE USED FOR ALL APP ERRORS ACROSS ALL FEATURES IN SERVICE LAYER
+export type AppErrorToFormParams<TField extends string> = {
   readonly fields: readonly TField[];
   readonly raw: Readonly<Record<string, unknown>>;
   readonly error: AppError;
@@ -76,7 +68,18 @@ export function appErrorToFormResult<TField extends string, TData>(params: {
   readonly conflictEmailField?: TField;
   readonly conflictMessage?: string;
   readonly defaultMessage?: string;
-}): FormResult<TField, TData> {
+};
+
+/**
+ * Adapter: AppError -> FormResult (always validation-shaped, dense map).
+ *
+ * - If code is CONFLICT and details indicate the email column/field, sets only `email` errors.
+ * - Otherwise produces dense empty arrays and a generic message.
+ * - Echoes redacted values from raw (defaults to password/confirmPassword redaction).
+ */
+export function appErrorToFormResult<TField extends string, TData>(
+  params: AppErrorToFormParams<TField>,
+): FormResult<TField, TData> {
   const {
     fields,
     raw,
