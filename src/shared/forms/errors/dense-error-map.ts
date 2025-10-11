@@ -65,7 +65,7 @@ export function toDenseFieldErrorMapFromSparse<
 >(
   sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
-): DenseFieldErrorMap<TField, TMsg> {
+): DenseFieldErrorMap<TField, readonly TMsg[]> {
   const out: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
     const v = sparse?.[f];
@@ -73,7 +73,7 @@ export function toDenseFieldErrorMapFromSparse<
       ? (Object.freeze([...v]) as readonly TMsg[])
       : (Object.freeze([]) as readonly TMsg[]);
   }
-  return Object.freeze(out) as DenseFieldErrorMap<TField, TMsg>;
+  return Object.freeze(out) as DenseFieldErrorMap<TField, readonly TMsg[]>;
 }
 
 /**

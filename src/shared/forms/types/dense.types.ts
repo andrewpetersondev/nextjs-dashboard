@@ -10,14 +10,10 @@
 /**
  * Represents a dense map where keys are strings and values are of a specified type.
  *
- * @typeParam TKey - The type of the keys, constrained to `string`.
- * @typeParam TValue - The type of the values in the map.
- * @public
- * @example
- * const map: DenseMap<'a' | 'b', number> = { a: 1, b: undefined };
+ * All keys are present; values are readonly.
  */
 export type DenseMap<TKey extends string, TValue> = Readonly<
-  Record<TKey, TValue>
+  Record<TKey, Readonly<TValue>>
 >;
 
 /**
