@@ -14,6 +14,7 @@ import {
   FormOk,
   type FormResult,
   type FormValidationError,
+  formErrStrings,
 } from "@/shared/forms/types/form-result.types";
 
 // Consolidate default messages and logger context
@@ -159,7 +160,7 @@ export async function validateFormGeneric<
       fields,
       loggerContext,
     );
-    return FormErr<TFieldNames, TIn, string, string>({
+    return formErrStrings<TFieldNames, TIn>({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
     });

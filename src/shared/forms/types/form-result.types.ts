@@ -153,8 +153,13 @@ export const formSuccess = <TPayload>(
 ): FormSuccess<TPayload> => freeze({ data, message });
 
 /**
- * SECTION: Convenience constructors
- * Small helpers to reduce generic noise at call sites.
+ * Generates a form error result based on the provided field errors, message, and optional field values.
+ *
+ * @typeParam TFieldName - Specifies the type of the field names in the form.
+ * @typeParam TPayload - Specifies the structure of the additional payload included in the form result.
+ * @param params - An object containing `fieldErrors`, `message`, and optional `values`.
+ * @returns A `FormResult` object encapsulating the error details and payload.
+ * @see {@link FormErr} for base implementation details.
  */
 export const formErrStrings = <TFieldName extends string, TPayload>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, string>;
