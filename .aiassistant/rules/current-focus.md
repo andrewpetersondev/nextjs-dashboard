@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: off
 ---
 
 # Current Focus
