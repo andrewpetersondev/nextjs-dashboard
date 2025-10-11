@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-collect.ts
 
-import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error";
 import {
   Err,
   type ErrType,
@@ -13,17 +13,11 @@ import {
  * Collects all successful results from the provided array, returning a combined `Result`.
  *
  * @typeParam TValue - The type of the successful value in the `Result`.
- * @typeParam TError - The type of the error, defaulting to `AppError`.
+ * @typeParam TError - The type of the error.
  * @param results - An array of `Result` objects to process.
  * @returns A `Result` containing an array of all successful values or the first encountered error.
- * @example
- * const results = [Ok(1), Ok(2), Err(new AppError('fail'))];
- * const output = collectAll(results); // Err(AppError('fail'))
  */
-export const collectAll = /* @__PURE__ */ <
-  TValue,
-  TError extends ErrorLike = AppError,
->(
+export const collectAll = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
   results: readonly Result<TValue, TError>[],
 ): Result<readonly TValue[], TError> => {
   const acc: TValue[] = [];
@@ -101,19 +95,13 @@ export function collectTupleHetero<
  * created using `onEmpty` if none are successful.
  *
  * @typeParam TValue - The type of the value in a successful `Result`.
- * @typeParam TError - The type of the error in a failed `Result`, defaults to `AppError`.
+ * @typeParam TError - The type of the error in a failed `Result`.
  * @param onEmpty - A callback function that produces a fallback error when no successful result is found.
  * @returns The first `Result` with `ok: true`, or a fallback error `Result`.
- * @example
- * ```ts
- * const results = [Err(new AppError('Error1')), Ok('Success'), Err(new AppError('Error2'))];
- * const first = firstOkOrElse(() => new AppError('No success'))(results);
- * console.log(first); // Ok('Success')
- * ```
  */
 export const firstOkOrElse =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike = AppError>(onEmpty: () => TError) =>
+    <TValue, TError extends ErrorLike>(onEmpty: () => TError) =>
     /* @__PURE__ */
     (results: readonly Result<TValue, TError>[]): Result<TValue, TError> => {
       let lastErr: Result<never, TError> | null = null;
