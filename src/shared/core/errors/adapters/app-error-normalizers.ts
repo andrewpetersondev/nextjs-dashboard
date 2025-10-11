@@ -59,7 +59,6 @@ export function toBaseErrorFromApp(
     // Preserve minimal, JSON-safe details as context
     {
       kind: appError.kind,
-      ...(appError.form ? { form: appError.form } : {}),
       ...(appError.details ? { details: appError.details } : {}),
       ...(appError.name ? { name: appError.name } : {}),
     },

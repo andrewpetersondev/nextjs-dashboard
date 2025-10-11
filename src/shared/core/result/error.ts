@@ -48,7 +48,6 @@ export const makeErrorMapper =
 export interface AppError {
   readonly code: ErrorCode;
   readonly message: string;
-  readonly form?: Record<string, string>; // dense field map
   readonly cause?: unknown;
   readonly details?: unknown;
   readonly kind?: string;

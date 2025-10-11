@@ -20,7 +20,6 @@ export const augmentAppError = (
     readonly code?: BaseError["code"];
     readonly kind?: string;
   },
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <16 of 15>
 ): AppError => {
   const normalized = toAppErrorFromUnknown(base);
 
@@ -36,7 +35,6 @@ export const augmentAppError = (
     toSeverity(meta?.severity) ??
     "error";
 
-  const form = patch.form ?? normalized.form;
   const details =
     patch.details !== undefined ? patch.details : normalized.details;
   const cause = patch.cause !== undefined ? patch.cause : normalized.cause;
@@ -48,7 +46,6 @@ export const augmentAppError = (
     kind,
     message,
     severity,
-    ...(form ? { form } : {}),
     ...(details !== undefined ? { details } : {}),
     ...(cause !== undefined ? { cause } : {}),
     ...(name ? { name } : {}),

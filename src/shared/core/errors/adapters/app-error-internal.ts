@@ -29,13 +29,11 @@ export const isStringRecord = (o: unknown): o is Record<string, string> => {
 export const pickOptionalFromLike = (
   v: Partial<AppError>,
 ): Readonly<Partial<AppError>> => {
-  const maybeForm = v.form && isStringRecord(v.form) ? { form: v.form } : {};
   const maybeDetails = v.details !== undefined ? { details: v.details } : {};
   const maybeCause = v.cause !== undefined ? { cause: v.cause } : {};
   const maybeName = v.name ? { name: v.name } : {};
   const maybeStack = v.stack ? { stack: v.stack } : {};
   return {
-    ...maybeForm,
     ...maybeDetails,
     ...maybeCause,
     ...maybeName,
