@@ -20,17 +20,24 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 
 ## Typing & Immutability
 
-- Use `readonly` for arrays, tuples, and properties where possible.
+- Prefer `readonly` if appropriate.
 - Treat all inputs as immutable; never mutate parameters or shared objects.
 - Mark constants with `as const` when used as discriminants or literal values.
 - No non-null assertions (`!`). Narrow values safely with guards or predicates.
 
 ---
 
+## Casting
+
+- Never cast with `as unknown as`.
+
+---
+
 ## Generics
 
-- Name generics meaningfully (e.g., `TInput`, `TResult`, `TError`).
+- Name generics meaningfully (e.g., `TInput`, `TResult`, `TError`, `TPayload`, etc.).
 - Constrain generics: `extends object`, `extends ErrorLike`, etc.
+- Prefer setting default generics in adapter layers.
 - Avoid deep or recursive generics unless encapsulated and documented.
 - Prefer parameter objects for optional generics over boolean flags.
 
@@ -67,14 +74,7 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 
 ---
 
-## Enforcement Checklist
-
-1. Strict tsconfig enabled and validated.
-2. Generics named and constrained.
-3. Async code has explicit Promise types and safe error handling.
-4. No server-only imports in client code; use `import type` for all type-only imports.
-
-*Last updated: 2025-10-08*
+_Last updated: 2025-10-11_
 
 
 

@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Structure & Architecture Summary
@@ -53,4 +53,4 @@ Attach for refactors, file moves, or architecture reviews.
 
 ---
 
-_Last updated: 2025-10-08_
+_Last updated: 2025-10-11_

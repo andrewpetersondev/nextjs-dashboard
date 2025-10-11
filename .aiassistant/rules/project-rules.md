@@ -12,8 +12,8 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 
 - Always inspect and use the most recent attached instruction files before proposing code changes.
 - Follow all rules in:
-    - [TypeScript Instructions](typescript-summary.md)
-    - [Result & Error Instructions](result-error-summary.md)
+    - [TypeScript Instructions](./typescript-summary.md)
+    - [Result & Error Instructions](results-forms-errors.md)
 - Never access or reference files outside user-provided folders or attachments.
 
 ## Attachment & Folder Access
@@ -48,4 +48,4 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 - Pin exact versions; no auto-range updates for canary packages.
 - Weekly review for canary impact; rollback on breaking/regression per ADR.
 
-_Last updated: 2025-10-08_
+_Last updated: 2025-10-11_
