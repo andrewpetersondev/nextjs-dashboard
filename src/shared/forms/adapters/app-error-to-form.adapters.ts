@@ -45,7 +45,7 @@ export function appErrorToFormValidationError<TField extends string>(params: {
  *
  * TODO: the parameter type could be standardized
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <61 of 50>
 export function appErrorToFormResult<TField extends string, TData>(params: {
   readonly fields: readonly TField[];
   readonly raw: Readonly<Record<string, unknown>>;

@@ -30,7 +30,7 @@ function makeError(
   });
 }
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <its a test>
 describe("appErrorToFormResult", () => {
   it("maps CONFLICT with email details to fieldErrors.email and redacts passwords", () => {
     const err = makeError("CONFLICT", "Conflict", {
