@@ -12,7 +12,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
 import { createDemoUser } from "@/server/users/dal/create-demo-user";
 import { demoUserCounter } from "@/server/users/dal/demo-user-counter";
 import { toUserId } from "@/shared/domain/id-converters";
-import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
+import type { LegacyFormState } from "@/shared/forms/types/legacy-form.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

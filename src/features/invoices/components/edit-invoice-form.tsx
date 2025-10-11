@@ -19,7 +19,7 @@ import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/initial-state/init-failed-form-state";
 import type { FieldError } from "@/shared/forms/types/core.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
-import type { LegacyFormState } from "@/shared/forms/types/form-result.type";
+import type { LegacyFormState } from "@/shared/forms/types/legacy-form.types";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

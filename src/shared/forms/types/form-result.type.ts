@@ -1,4 +1,4 @@
-import type { Result } from "@/shared/core/result/result";
+import { Err, Ok, type Result } from "@/shared/core/result/result";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 
 import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
@@ -36,7 +36,8 @@ export interface FormValidationError<
   TMsg = string,
 > {
   readonly kind: "validation";
-  readonly fieldErrors: DenseFieldErrorMap<TField, TMsg>;
+  // Contract: dense map with readonly string[] (may be empty)
+  readonly fieldErrors: DenseFieldErrorMap<TField, readonly TMsg[]>;
   readonly values?: SparseFieldValueMap<TField, TValue>;
   readonly message: string;
 }
@@ -72,6 +73,62 @@ export type FormResult<
   TMsg = string,
 > = Result<FormSuccess<TData>, FormValidationError<TField, TValue, TMsg>>;
 
+// Add lightweight constructors/guards similar to Result helpers.
+
+// Create a FormResult success
+export function FormOk<TField extends string, TData>(
+  data: TData,
+  message?: string,
+): FormResult<TField, TData> {
+  return Ok<FormSuccess<TData>>({ data, message });
+}
+
+// Create a FormResult validation error
+export function FormErr<
+  TField extends string,
+  TData,
+  TValue = string,
+  TMsg = string,
+>(params: {
+  readonly fieldErrors: DenseFieldErrorMap<TField, readonly TMsg[]>;
+  readonly message: string;
+  readonly values?: SparseFieldValueMap<TField, TValue>;
+}): FormResult<TField, TData, TValue, TMsg> {
+  const error: FormValidationError<TField, TValue, TMsg> = {
+    fieldErrors: params.fieldErrors,
+    kind: "validation",
+    message: params.message,
+    values: params.values,
+  };
+  return Err<FormSuccess<TData>, FormValidationError<TField, TValue, TMsg>>(
+    error,
+  );
+}
+
+// Narrow to success branch
+export function isFormOk<
+  TField extends string,
+  TData,
+  TValue = string,
+  TMsg = string,
+>(
+  r: FormResult<TField, TData, TValue, TMsg>,
+): r is Result<FormSuccess<TData>, never> {
+  return r.ok;
+}
+
+// Narrow to validation error branch
+export function isFormErr<
+  TField extends string,
+  TData,
+  TValue = string,
+  TMsg = string,
+>(
+  r: FormResult<TField, TData, TValue, TMsg>,
+): r is Result<never, FormValidationError<TField, TValue, TMsg>> {
+  return !r.ok;
+}
+
 /**
  * Creates a `FormSuccess` object encapsulating the provided data and an optional message.
  *
@@ -89,57 +146,3 @@ export const formSuccess = <TData>(
   data,
   message,
 });
-
-/* ----------------------------- Legacy (accurate) ---------------------------- */
-
-/**
- * Represents the state of a successful form submission, with optional message and data.
- *
- * @typeParam TData - The type of the data returned upon a successful submission.
- * @public
- * @readonly
- * @example
- * const successState: SuccessFormState<string> = { data: "Success", success: true };
- */
-export interface SuccessFormState<TData = unknown> {
-  readonly data: TData;
-  readonly errors?: never;
-  readonly message?: string;
-  readonly success: true;
-  readonly values?: never;
-}
-
-/**
- * Represents the state of a form submission that has failed.
- *
- * @typeParam TField - The type of the field keys.
- * @typeParam TValue - The type of the optional field values. Defaults to `string`.
- * @typeParam TMsg - The type of the error messages. Defaults to `string`.
- * @public
- */
-export interface FailedFormState<
-  TField extends string,
-  TValue = string,
-  TMsg = string,
-> {
-  readonly errors: DenseFieldErrorMap<TField, TMsg>;
-  readonly message: string;
-  readonly success: false;
-  readonly values?: SparseFieldValueMap<TField, TValue>;
-}
-
-/**
- * @alpha
- * Represents the state of a legacy form, which can either be a success or failure state.
- *
- * @typeParam TField - The type representing field names.
- * @typeParam TData - The type of data in the success state. Defaults to `unknown`.
- * @typeParam TValue - The type of field values in the failure state. Defaults to `string`.
- * @typeParam TMsg - The type of error messages in the failure state. Defaults to `string`.
- */
-export type LegacyFormState<
-  TField extends string,
-  TData = unknown,
-  TValue = string,
-  TMsg = string,
-> = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
