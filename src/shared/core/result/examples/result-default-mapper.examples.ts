@@ -64,6 +64,6 @@ const onErrNotify = tapErrorAsyncSafe<unknown, NotFoundError, NotFoundError>(
 
 // Note:
 // - Using tapOk/tapError (non‑Safe variants) never changes the error type.
-// - The default `normalizeUnknownError` in `'/src/shared/core/result/error.ts'` returns AppError;
+// - The default `normalizeUnknownError` in `'/src/shared/core/result/app-error.ts'` returns AppError;
 //   you only get that when you call *Safe helpers without a mapper or use adapter‑layer utilities.
 // - Follow the layering rule: only convert to AppError at the action/UI boundary; keep BaseError/NotFoundError below.

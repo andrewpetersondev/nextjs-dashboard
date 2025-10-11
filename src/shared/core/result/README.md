@@ -6,7 +6,7 @@ Type-safe result and error modeling utilities for synchronous, asynchronous, and
 
 | File                            | Function Signature                                                                                   | Description                                                    |
 |---------------------------------|------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| error.ts                        | normalizeUnknownError(e: unknown): AppError                                                          | Converts any unknown error into a normalized `AppError`.       |
+| app-error.ts                    | normalizeUnknownError(e: unknown): AppError                                                          | Converts any unknown error into a normalized `AppError`.       |
 | result.ts                       | Ok<TValue, TError>(value: TValue): Result<TValue, TError>                                            | Wraps a value in a successful `Result`.                        |
 | result.ts                       | Err<TValue, TError>(error: TError): Result<TValue, TError>                                           | Wraps an error in a failed `Result`.                           |
 | async/result-async.ts           | tryCatchAsync<TValue, TError>(fn: () => Promise<TValue>, mapError?): Promise<Result<TValue, TError>> | Executes an async function and wraps its result in a `Result`. |

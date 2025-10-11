@@ -28,7 +28,7 @@ Focus on code related to:
 - error flows
     - src/shared/core/errors
     - src/server/errors/
-    - src/shared/core/result/error.ts
+    - src/shared/core/result/app-error.ts
 - form types, helpers, adapters, etc
     - src/shared/forms
     - src/server/forms

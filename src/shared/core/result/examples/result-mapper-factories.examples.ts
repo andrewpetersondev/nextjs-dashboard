@@ -12,7 +12,7 @@ import {
   tapErrorAsyncSafe,
   tapOkAsyncSafe,
 } from "@/shared/core/result/async/result-tap-async";
-import { makeErrorMapper } from "@/shared/core/result/error";
+import { makeErrorMapper } from "@/shared/core/result/app-error";
 import type { Result } from "@/shared/core/result/result";
 import {
   fromNullable,

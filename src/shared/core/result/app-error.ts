@@ -1,4 +1,4 @@
-// File: src/shared/core/result/error.ts
+// File: src/shared/core/result/app-error.ts
 
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 

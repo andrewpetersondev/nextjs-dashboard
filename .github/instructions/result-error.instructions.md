@@ -12,7 +12,7 @@ description: 'Result and error modeling, handling, and mapping guidelines for Ne
 
 - Keep strict, type‑safe error handling with a dual‑tier model.
 - UI layers always use `AppError`; lower layers may use `BaseError` or an extended variant like `ConflictError`.
-- Attach when editing `result.ts`, `error.ts`, or `src/shared/core/errors/adapters/app-error-normalizers.ts`.
+- Attach when editing `result.ts`, `app-error.ts`, or `src/shared/core/errors/adapters/app-error-normalizers.ts`.
 - Errors can be values or exceptions, but must be handled explicitly.
 
 ## Focus
@@ -52,7 +52,7 @@ description: 'Result and error modeling, handling, and mapping guidelines for Ne
 - reference `src/shared/core/errors/base/base-error.ts`
 - reference `src/shared/core/errors/domain/domain-errors.ts`
 - reference `src/shared/core/errors/app/error.ts`
-- reference `src/shared/core/result/error.ts`
+- reference `src/shared/core/result/app-error.ts`
 - `BaseError`: internal/logging use, may include context or stack.
 - `ConflictError`: example domain error; extend `BaseError`.
 - `AppError`: lightweight, JSON-safe, UI displayable.

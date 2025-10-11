@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-tap-async.ts
 
 import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 

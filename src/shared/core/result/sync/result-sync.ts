@@ -1,7 +1,7 @@
 // File: src/shared/core/result/sync/result-sync.ts
 
 import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**

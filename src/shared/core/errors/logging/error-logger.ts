@@ -9,7 +9,7 @@ import type {
 } from "@/shared/core/errors/logging/error-logger.contracts";
 import { buildStructuredPayload } from "@/shared/core/errors/logging/error-logger.payload";
 import { defaultErrorContextRedactor } from "@/shared/core/errors/redaction/redaction";
-import type { AppError } from "@/shared/core/result/error";
+import type { AppError } from "@/shared/core/result/app-error";
 
 /**
  * Attempt to extract a BaseError-like shape from unknown without throwing.

@@ -2,7 +2,7 @@
 // Internal helpers (frozen in dev, safe severity, and shape guards)
 
 import { IS_PROD } from "@/shared/config/env-shared";
-import type { AppError } from "@/shared/core/result/error";
+import type { AppError } from "@/shared/core/result/app-error";
 
 export const freezeDev = <TObj extends object>(obj: TObj): TObj => {
   if (!IS_PROD) {

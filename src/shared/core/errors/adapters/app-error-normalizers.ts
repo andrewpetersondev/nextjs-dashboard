@@ -12,7 +12,7 @@ import {
   isErrorCode,
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
-import type { AppError } from "@/shared/core/result/error";
+import type { AppError } from "@/shared/core/result/app-error";
 
 const fromAppErrorLike = (
   value: Pick<AppError, "code" | "message"> & Partial<AppError>,

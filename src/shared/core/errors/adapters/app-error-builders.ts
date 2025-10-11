@@ -10,7 +10,7 @@ import {
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
 import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/app-error.constants";
-import type { AppError } from "@/shared/core/result/error";
+import type { AppError } from "@/shared/core/result/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 export const augmentAppError = (

@@ -1,6 +1,6 @@
 // File: src/shared/core/result/iter/result-collect-iter.ts
 
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { AppError, ErrorLike } from "@/shared/core/result/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
