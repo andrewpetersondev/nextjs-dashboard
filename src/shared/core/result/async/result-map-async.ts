@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-map-async.ts
 
 import { toAppErrorFromUnknown } from "@/shared/core/errors/adapters/app-error-normalizers";
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -15,7 +15,7 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  */
 export const mapOkAsync =
   /* @__PURE__ */
-    <TValue, TNext, TError extends ErrorLike = AppError>(
+    <TValue, TNext, TError extends ErrorLike>(
       fn: (v: TValue) => Promise<TNext>,
     ) =>
     /* @__PURE__ */
@@ -43,19 +43,14 @@ export const mapOkAsync =
  */
 export const mapOkAsyncSafe =
   /* @__PURE__ */
-    <
-      TValue,
-      TNext,
-      TError extends ErrorLike = AppError,
-      TSideError extends ErrorLike = AppError,
-    >(
+    <TValue, TNext, TError extends ErrorLike, TSideError extends ErrorLike>(
       fn: (v: TValue) => Promise<TNext>,
       mapError?: (e: unknown) => TSideError,
     ) =>
     /* @__PURE__ */
     async (
       r: Result<TValue, TError>,
-    ): Promise<Result<TNext, TError | TSideError | AppError>> => {
+    ): Promise<Result<TNext, TError | TSideError>> => {
       if (!r.ok) {
         return r;
       }
@@ -83,11 +78,7 @@ export const mapOkAsyncSafe =
  */
 export const mapErrorAsync =
   /* @__PURE__ */
-    <
-      TValue,
-      TError1 extends ErrorLike = AppError,
-      TError2 extends ErrorLike = AppError,
-    >(
+    <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
       fn: (e: TError1) => Promise<TError2>,
     ) =>
     /* @__PURE__ */
@@ -113,9 +104,9 @@ export const mapErrorAsyncSafe =
   /* @__PURE__ */
     <
       TValue,
-      TError1 extends ErrorLike = AppError,
-      TError2 extends ErrorLike = AppError,
-      TSideError extends ErrorLike = AppError,
+      TError1 extends ErrorLike,
+      TError2 extends ErrorLike,
+      TSideError extends ErrorLike,
     >(
       fn: (e: TError1) => Promise<TError2>,
       mapError?: (e: unknown) => TSideError,
@@ -123,7 +114,7 @@ export const mapErrorAsyncSafe =
     /* @__PURE__ */
     async (
       r: Result<TValue, TError1>,
-    ): Promise<Result<TValue, TError2 | TSideError | AppError>> => {
+    ): Promise<Result<TValue, TError2 | TSideError>> => {
       if (r.ok) {
         return Ok(r.value);
       }

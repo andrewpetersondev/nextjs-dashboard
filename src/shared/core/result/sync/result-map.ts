@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-map.ts
 
-import type { AppError, ErrorLike } from "@/shared/core/result/error";
+import type { ErrorLike } from "@/shared/core/result/error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -14,7 +14,7 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  * @param fn - A transformation function to be applied to the `TValue`.
  * @returns A function that takes a `Result` and produces a transformed `Result`.
  */
-export type MapOk = <TValue, TNext, TError extends ErrorLike = AppError>(
+export type MapOk = <TValue, TNext, TError extends ErrorLike>(
   fn: (v: TValue) => TNext,
 ) => (r: Result<TValue, TError>) => Result<TNext, TError>;
 
@@ -46,8 +46,8 @@ export const mapOk: MapOk =
  */
 export type MapError = <
   TValue,
-  TError1 extends ErrorLike = AppError,
-  TError2 extends ErrorLike = AppError,
+  TError1 extends ErrorLike,
+  TError2 extends ErrorLike,
 >(
   fn: (e: TError1) => TError2,
 ) => (r: Result<TValue, TError1>) => Result<TValue, TError2>;
@@ -86,7 +86,7 @@ export const mapErrorUnion =
     ) =>
     /* @__PURE__ */
     (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> =>
-      r.ok ? r : Err<TError2>(fn(r.error));
+      r.ok ? r : Err(fn(r.error));
 
 /**
  * Maps an error from a `Result` type to a new error type while preserving the original error type if unchanged.
@@ -109,7 +109,7 @@ export const mapErrorUnionPreserve =
         return r;
       }
       const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err<TError2>(mapped);
+      return Object.is(mapped, r.error) ? r : Err(mapped);
     };
 
 /**
@@ -135,7 +135,7 @@ export const mapErrorPreserve =
         return r;
       }
       const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err<TError2>(mapped);
+      return Object.is(mapped, r.error) ? r : Err(mapped);
     };
 
 /**
@@ -152,8 +152,8 @@ export const mapErrorPreserve =
 export type MapBoth = <
   TValue,
   TNext,
-  TError1 extends ErrorLike = AppError,
-  TError2 extends ErrorLike = AppError,
+  TError1 extends ErrorLike,
+  TError2 extends ErrorLike,
 >(
   onOk: (v: TValue) => TNext,
   onErr: (e: TError1) => TError2,

@@ -70,6 +70,13 @@ export type FormResult<
   FormValidationError<TFieldName, TValueEcho, TMessage>
 >;
 
+// Canonical alias used across forms layer to avoid leaking AppError.
+export type FormResultErr<
+  TFieldName extends string,
+  TValueEcho = string,
+  TMessage extends string = string,
+> = FormValidationError<TFieldName, TValueEcho, TMessage>;
+
 // Helper type to explicitly restrict the error branch to FormValidationError only (prevents AppError leakage)
 export type FormValidationErrorOnly<
   TFieldName extends string,
