@@ -26,10 +26,7 @@ export type NonEmptyArray<TElement> = readonly [
 /**
  * Represents an error associated with a field, containing a non-empty, readonly array of messages.
  *
- * @typeParam TMsg - The type of the error message, defaulting to `string`.
- * @public
- * @example
- * const error: FieldError = ["Required field", "Invalid format"];
+ * NOTE: Keep for internal checks, but UI contract will use readonly string[] (can be empty) via DenseFieldErrorMap.
  */
 export type FieldError<TMsg = string> = NonEmptyArray<TMsg>;
 
