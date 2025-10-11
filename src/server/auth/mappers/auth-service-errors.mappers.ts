@@ -1,18 +1,27 @@
-// File: src/server/auth/mappers/auth-errors.mappers.ts
+// File: src/server/auth/mappers/auth-service-errors.mappers.ts
 import "server-only";
 import type { AuthServiceError } from "@/server/auth/user-auth.service";
 import type { AppError } from "@/shared/core/result/app-error";
 import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 
-export const mapErrorToAuthServiceUnexpected = (e: {
+// --- Mappers ---
+
+export const mapUnknownToAuthServiceError = (e: unknown): AuthServiceError => ({
+  kind: "unexpected",
+  message: String(e),
+});
+
+// rare?
+export const mapToUnexpectedAuthServiceError = (e: {
   readonly message?: string;
 }): AuthServiceError => ({
   kind: "unexpected",
   message: e.message ?? "Unexpected error",
 });
 
-export function authServiceErrorToAppError(e: AuthServiceError): AppError {
+// auth service errors -> app errors
+export function mapAuthServiceErrorToAppError(e: AuthServiceError): AppError {
   switch (e.kind) {
     case "conflict":
       return {
@@ -35,17 +44,51 @@ export function authServiceErrorToAppError(e: AuthServiceError): AppError {
   }
 }
 
-export function authServiceErrorToFormResult<TField extends string, TData>(p: {
+// auth service errors -> form result
+export function mapAuthServiceErrorToFormResult<
+  TField extends string,
+  TData,
+>(p: {
   readonly fields: readonly TField[];
   readonly raw: Readonly<Record<string, unknown>>;
   readonly error: AuthServiceError;
   readonly conflictEmailField?: TField;
 }): FormResult<TField, TData> {
-  const appErr = authServiceErrorToAppError(p.error);
+  const appErr = mapAuthServiceErrorToAppError(p.error);
   return appErrorToFormResult<TField, TData>({
     conflictEmailField: p.conflictEmailField,
     error: appErr,
     fields: p.fields,
     raw: p.raw,
   });
+}
+
+// --- Handlers ---
+
+// identify auth service error
+export function handleAuthServiceError<TField extends string>(
+  fields: readonly TField[],
+  raw: Readonly<Record<string, unknown>>,
+  e: AuthServiceError,
+) {
+  switch (e.kind) {
+    case "conflict":
+      // map to form with conflict on email/username
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        conflictEmailField: "email" as TField,
+        error: e,
+        fields,
+        raw,
+      });
+    case "missing_fields":
+    case "validation":
+    case "invalid_credentials":
+    case "unexpected":
+    default:
+      return mapAuthServiceErrorToFormResult<TField, unknown>({
+        error: e,
+        fields,
+        raw,
+      });
+  }
 }

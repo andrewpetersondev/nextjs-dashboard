@@ -4,7 +4,7 @@
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/constants";
-import { mapErrorToAuthServiceUnexpected } from "@/server/auth/mappers/auth-errors.mappers";
+import { mapToUnexpectedAuthServiceError } from "@/server/auth/mappers/auth-service-errors.mappers";
 import { setSessionToken } from "@/server/auth/session";
 import type { EstablishSessionInput } from "@/server/auth/types/session-action.types";
 import type { AuthServiceError } from "@/server/auth/user-auth.service";
@@ -32,7 +32,7 @@ export async function establishSession(
     },
     {
       mapError: (e) =>
-        mapErrorToAuthServiceUnexpected({
+        mapToUnexpectedAuthServiceError({
           message: e instanceof Error ? e.message : "Session token error",
         }),
     },
@@ -44,7 +44,7 @@ export async function establishSession(
   const mapped: Result<true, AuthServiceError> = res.ok
     ? Ok<true>(true as const)
     : Err<AuthServiceError>(
-        mapErrorToAuthServiceUnexpected({
+        mapToUnexpectedAuthServiceError({
           message: res.error?.message ?? "Failed to establish session",
         }),
       );
