@@ -18,7 +18,7 @@ import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
  */
 export function selectSparseFieldErrorsForAllowedFields<
   TFieldNames extends string,
-  TMsg = string,
+  TMsg extends string = string,
 >(
   fieldErrors:
     | Partial<Record<TFieldNames, readonly TMsg[] | undefined>>
@@ -47,7 +47,7 @@ export function selectSparseFieldErrorsForAllowedFields<
  */
 export function createEmptyDenseFieldErrorMap<
   TField extends string,
-  TMsg = string,
+  TMsg extends string = string,
 >(fields: readonly TField[]): DenseFieldErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
@@ -64,7 +64,7 @@ export function createEmptyDenseFieldErrorMap<
  */
 export function toDenseFieldErrorMapFromSparse<
   TField extends string,
-  TMsg = string,
+  TMsg extends string = string,
 >(
   sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
@@ -87,7 +87,7 @@ export function toDenseFieldErrorMapFromSparse<
  */
 export function normalizeAndFreezeDenseFieldErrorMap<
   TField extends string,
-  TMsg,
+  TMsg extends string,
 >(
   fields: readonly TField[],
   dense: Record<TField, readonly TMsg[]>,

@@ -4,6 +4,10 @@ apply: always
 
 # Always-On AI Rules (Lite)
 
+## Ask Me Questions
+
+- order questions numerically
+
 ## Minimal Response Rule
 
 - **Responses should be brief** and only include the **changed sections of code** or additions.

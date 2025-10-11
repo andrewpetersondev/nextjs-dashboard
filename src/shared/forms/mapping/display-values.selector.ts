@@ -9,7 +9,7 @@ export function selectDisplayableStringFieldValues<TField extends string>(
   raw: Readonly<Record<string, unknown>>,
   fields: readonly TField[],
   redactFields: readonly TField[],
-): SparseFieldValueMap<TField> {
+): SparseFieldValueMap<TField, string> {
   const values: Partial<Record<TField, string>> = {};
 
   for (const key of fields) {
@@ -22,5 +22,5 @@ export function selectDisplayableStringFieldValues<TField extends string>(
     }
   }
 
-  return Object.freeze(values) as SparseFieldValueMap<TField>;
+  return Object.freeze(values) as SparseFieldValueMap<TField, string>;
 }

@@ -9,7 +9,7 @@ import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
  */
 export function setSingleFieldErrorMessage<
   TField extends string,
-  TMsg = string,
+  TMsg extends string = string,
 >(
   fields: readonly TField[],
   message: TMsg,
