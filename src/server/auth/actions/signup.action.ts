@@ -22,7 +22,7 @@ import { flatMapAsync } from "@/shared/core/result/async/result-transform-async"
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { FormResult } from "@/shared/forms/types/form-result.type";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 const LOGGER_CONTEXT = "signup.action";

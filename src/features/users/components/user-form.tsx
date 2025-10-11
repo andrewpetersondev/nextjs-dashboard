@@ -3,7 +3,7 @@ import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { FieldError } from "@/shared/forms/types/core.types";
-import type { FormResult } from "@/shared/forms/types/form-result.type";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { TYPING_MS } from "@/shared/ui/tokens/timings";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";

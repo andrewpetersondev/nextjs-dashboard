@@ -21,7 +21,7 @@ import {
   toFormOk,
   toFormValidationErr,
 } from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { FormResult } from "@/shared/forms/types/form-result.type";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 // --- Constants ---

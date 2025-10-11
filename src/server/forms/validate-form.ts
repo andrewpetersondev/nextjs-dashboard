@@ -10,12 +10,12 @@ import {
   resolveRawFieldPayload,
 } from "@/shared/forms/fields/field-names.resolve";
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
-import type { FormValidationResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import {
   type FormSuccess,
+  type FormValidationError,
   formSuccess,
-} from "@/shared/forms/types/form-result.type";
+} from "@/shared/forms/types/form-result.types";
 
 // Consolidate default messages and logger context
 const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;
@@ -34,17 +34,21 @@ function toValidationFailure<TFieldNames extends string>(
   error: unknown,
   fields: readonly TFieldNames[],
   loggerContext: string,
-): FormValidationResult<TFieldNames> {
+): FormValidationError<TFieldNames> {
   logValidationFailure(loggerContext, error);
   if (isZodErrorLikeShape(error)) {
     return {
       fieldErrors: mapToDenseFieldErrorsFromZod<TFieldNames>(error, fields),
+      kind: "validation",
       message: DEFAULT_FAILURE_MESSAGE,
+      // values omitted at validation layer
     };
   }
   return {
     fieldErrors: toDenseFieldErrorMapFromSparse<TFieldNames>({}, fields),
+    kind: "validation",
     message: DEFAULT_FAILURE_MESSAGE,
+    // values omitted at validation layer
   };
 }
 
@@ -111,7 +115,7 @@ export async function validateFormGeneric<
   schema: z.ZodType<TIn>, // TODO: schema: z.ZodType<OUTPUT, INPUT, INTERNALS>,
   allowedFields?: readonly TFieldNames[],
   options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<Result<FormSuccess<TIn>, FormValidationResult<TFieldNames>>> {
+): Promise<Result<FormSuccess<TIn>, FormValidationError<TFieldNames>>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,
@@ -136,6 +140,7 @@ export async function validateFormGeneric<
     const failure = toValidationFailure<TFieldNames>(e, fields, loggerContext);
     return Err({
       fieldErrors: failure.fieldErrors,
+      kind: "validation",
       message: failureMessage,
     });
   }
@@ -148,6 +153,7 @@ export async function validateFormGeneric<
     );
     return Err({
       fieldErrors: failure.fieldErrors,
+      kind: "validation",
       message: failureMessage,
     });
   }

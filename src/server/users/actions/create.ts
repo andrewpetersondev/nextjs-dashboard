@@ -18,7 +18,7 @@ import {
   toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/errors/dense-error-map";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
-import type { FormResult } from "@/shared/forms/types/form-result.type";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

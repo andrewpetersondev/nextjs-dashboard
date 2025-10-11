@@ -5,7 +5,7 @@ import type { AuthServiceError } from "@/server/auth/user-auth.service";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
-import type { FormResult } from "@/shared/forms/types/form-result.type";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 
 // Narrow map and avoid defaulting twice; centralize fallback.
 const FALLBACK_MESSAGE = "Something went wrong. Please try again." as const;

@@ -4,27 +4,26 @@ apply: always
 
 # Current Focus
 
-I want to perfect my signup code. i want to handle everything from dal to repo to service to action to form validation
-to ui. if there are any bad practices, poor organization, etc i want to fix it. To do this i will need to strengthen my
-logic for results, errors, and forms.
+If there are any bad practices, poor organization, etc. I want to fix it. To do this, I will need to strengthen my logic
+for forms, results, and errors.
 
 Focus on code related to:
 
-- signup
-    - src/features/auth
-    - src/server/auth
-- result helpers
+Favor code in src/shared/forms/types/form-result.types.ts over similar code in other locations.
+
+- form types, helpers, adapters, etc
+    - src/shared/forms
+    - src/server/forms
+- result types, helpers, adapters, etc
     - src/shared/core/result
 - error flows
     - src/shared/core/errors
     - src/server/errors/
-- forms
-    - src/shared/forms
-    - src/server/forms
+- writing maintainable code
+- result & form & error cohesion
 
 Secondary focus on:
 
-- result & form & error cohesion
 - organization
 - reusable code
 - removing duplication

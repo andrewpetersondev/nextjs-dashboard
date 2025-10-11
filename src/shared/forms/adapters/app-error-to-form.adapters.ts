@@ -4,7 +4,7 @@ import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type {
   FormResult,
   FormValidationError,
-} from "@/shared/forms/types/form-result.type";
+} from "@/shared/forms/types/form-result.types";
 
 // Convert AppError-like payloads to a FormValidationError with dense empty arrays by default.
 export function appErrorToFormValidationError<TField extends string>(params: {

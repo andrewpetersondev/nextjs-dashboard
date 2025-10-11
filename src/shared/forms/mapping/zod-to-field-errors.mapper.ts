@@ -1,13 +1,9 @@
-import type { z } from "zod";
+import type { ZodError, z } from "zod";
 import {
-  createEmptyDenseFieldErrorMap,
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/errors/dense-error-map";
-import {
-  flattenZodError,
-  isZodErrorLikeShape,
-} from "@/shared/forms/errors/zod-error.helpers";
+import { flattenZodError } from "@/shared/forms/errors/zod-error.helpers";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
 
@@ -39,23 +35,23 @@ export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
 }
 
 /**
- * Convert a Zod-like error to dense, per-field errors aligned with known fields.
- * Falls back to an empty dense map when the error shape is not Zod-like.
+ * Map Zod issues to dense field error map of readonly string[] (can be empty).
  */
-export function mapToDenseFieldErrorsFromZod<TFieldNames extends string>(
-  schemaError: unknown,
-  fields: readonly TFieldNames[],
-): DenseFieldErrorMap<TFieldNames> {
-  if (
-    isZodErrorLikeShape(schemaError) &&
-    typeof schemaError.flatten === "function"
-  ) {
-    const flattened = schemaError.flatten();
-    const sparse = selectSparseFieldErrorsForAllowedFields<TFieldNames, string>(
-      flattened.fieldErrors,
-      fields,
-    );
-    return toDenseFieldErrorMapFromSparse(sparse, fields);
+export function mapToDenseFieldErrorsFromZod<TField extends string>(
+  error: Pick<ZodError<unknown>, "issues">,
+  fields: readonly TField[],
+): DenseFieldErrorMap<TField, readonly string[]> {
+  const sparse: Partial<Record<TField, readonly string[]>> = {};
+  for (const issue of error.issues ?? []) {
+    const pathKey = String(issue.path?.[0] ?? "");
+    if (fields.includes(pathKey as TField)) {
+      const k = pathKey as TField;
+      const prev = sparse[k] ?? [];
+      sparse[k] = Object.freeze([...prev, issue.message]);
+    }
   }
-  return createEmptyDenseFieldErrorMap(fields);
+  return toDenseFieldErrorMapFromSparse<TField, string>(
+    sparse as SparseFieldErrorMap<TField, string>,
+    fields,
+  );
 }
