@@ -1,25 +1,46 @@
 import { type ZodRawShape, z } from "zod";
-
-/** Shape emitted by z.ZodError#flatten().fieldErrors */
-export type ZodFlattenedFieldErrors = Record<
-  string,
-  readonly string[] | undefined
->;
+// ZodRawShape is a type used in Zod (v4) to describe the shape of an object schema. It represents an object where
+// each key is a string and each value is a Zod type. For example, when you create a schema with z.object({ ... }),
+// the object you pass in is a ZodRawShape. It is used internally for typing the structure of Zod object schemas.
 
 /**
- * Flatten a ZodError using Zod's built-in API, normalizing optional properties.
- * Always returns arrays for formErrors and preserves fieldErrors sparsity.
+ * Flatten a ZodError into an object with keys: formErrors, fieldErrors
+ *
+ *
+ *
+ * @example
+ * // Create invalid data (username is valid, email is invalid, password is invalid)
+ * const invalidUser = {
+ *     username: "andrew",
+ *     email: "invalid-email",
+ *     password: "123",
+ * //  asdf: "this key will cause a form error when using flatten and something similar when using treeify"
+ * };
+ *
+ * {
+ *   formErrors: [],
+ *   fieldErrors: {
+ *     email: [ 'Email had some sort of error. Please try again.' ],
+ *     password: [
+ *       'Password must be at least 5 characters long.',
+ *       'Password must contain at least one letter.',
+ *       'Password must contain at least one special character.'
+ *     ]
+ *   }
+ * }
+ *
+ * @returns formErrors: string[], fieldErrors: Record<string, string[]>
+ *
+ * @remarks
+ * - formErrors is always present as an empty array if no form errors exist
+ * - fieldErrors is an object with keys: field name and value is an array of error messages
+ *      - If no errors exist for a field, the key does not exist
+ *
  */
-export function flattenZodError(error: z.ZodError): {
-  fieldErrors: ZodFlattenedFieldErrors;
-  formErrors: readonly string[];
-} {
+export const flattenZodError = (error: z.ZodError) => {
   const flattened = z.flattenError(error);
-  return {
-    fieldErrors: flattened.fieldErrors as ZodFlattenedFieldErrors,
-    formErrors: flattened.formErrors ?? [],
-  };
-}
+  return flattened;
+};
 
 /**
  * Determine whether a given Zod schema is a {@link z.ZodObject}.
@@ -35,11 +56,9 @@ export function flattenZodError(error: z.ZodError): {
  * }
  * ```
  */
-export function isZodObjectSchema(
+export const isZodObjectSchema = (
   schema: z.ZodType,
-): schema is z.ZodObject<ZodRawShape> {
-  return schema instanceof z.ZodObject;
-}
+): schema is z.ZodObject<ZodRawShape> => schema instanceof z.ZodObject;
 
 /**
  * Type guard: checks whether the provided value is a real {@link z.ZodError}.
@@ -51,9 +70,8 @@ export function isZodObjectSchema(
  * - Use this when you know the error comes from Zod parsing within your own codebase.
  * - Narrowing with this guard gives you full type safety and access to the `ZodError` API.
  */
-export function isZodErrorInstance(err: unknown): err is z.ZodError {
-  return err instanceof z.ZodError;
-}
+export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
+  err instanceof z.ZodError;
 
 /**
  * Type guard: loosely checks whether the provided value has a shape similar to {@link z.ZodError}.
@@ -68,13 +86,15 @@ export function isZodErrorInstance(err: unknown): err is z.ZodError {
  * - This guard performs a "duck typing" check: it only verifies that the object has
  *   recognizable ZodError properties, not that it is an actual `ZodError`.
  */
-export function isZodErrorLikeShape(err: unknown): err is {
+export const isZodErrorLikeShape = (
+  err: unknown,
+): err is {
   name?: string;
   issues?: unknown[];
   flatten?: () => {
     fieldErrors: Record<string, readonly string[] | undefined>;
   };
-} {
+} => {
   if (typeof err !== "object" || err === null) {
     return false;
   }
@@ -93,4 +113,15 @@ export function isZodErrorLikeShape(err: unknown): err is {
   const flattenLooksRight = typeof anyErr.flatten === "function";
 
   return nameLooksRight || issuesLooksRight || flattenLooksRight;
-}
+};
+
+// -------------------
+// unused
+// ---------------------
+
+export const untouchedZodError = (error: z.ZodError) => error;
+
+export const treeifyZodError = (error: z.ZodError) => {
+  const tree = z.treeifyError(error);
+  return tree;
+};
