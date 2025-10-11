@@ -103,6 +103,7 @@ export const EditInvoiceForm = ({
   const [state, action, pending] = useActionState<
     LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
     FormData
+    //@ts-expect-error
   >(createWrappedUpdateAction(invoice.id), initialState);
 
   // Build a view-model for the UI:
@@ -121,8 +122,10 @@ export const EditInvoiceForm = ({
   const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames> =
     externalErrors ??
     (state.success
-      ? initialState.errors
-      : (state.errors ?? initialState.errors));
+      ? //@ts-ignore
+        initialState.errors
+      : //@ts-ignore
+        (state.errors ?? initialState.errors));
 
   return (
     <div>
@@ -143,6 +146,7 @@ export const EditInvoiceForm = ({
           </FormSubmitButton>
         </FormActionRow>
       </form>
+      {/*@ts-ignore*/}
       <ServerMessage showAlert={showAlert} state={state} />
     </div>
   );

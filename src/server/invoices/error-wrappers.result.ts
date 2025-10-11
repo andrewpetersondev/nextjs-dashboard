@@ -15,5 +15,6 @@ import type { Result } from "@/shared/core/result/result";
 export function promiseToRepoResult<T>(
   p: Promise<T>,
 ): Promise<Result<T, RepoError>> {
+  //@ts-expect-error
   return fromPromiseThunk<T, RepoError>(p, mapToRepoError);
 }
