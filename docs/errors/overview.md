@@ -135,7 +135,7 @@ Here’s a concise checklist of error types a Repository layer should handle (Po
     - Large payload materialization (hydrates big graphs unnecessarily)
     - Non-indexed search/order causing timeouts
 
-Repository-layer handling patterns:
+### Repository-layer handling patterns:
 
 - Map DAL errors:
     - Unique/constraint → Conflict (or domain-specific)
