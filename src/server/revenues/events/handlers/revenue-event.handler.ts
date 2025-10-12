@@ -34,7 +34,7 @@ export class RevenueEventHandler {
   constructor(revenueService: RevenueService) {
     this.revenueService = revenueService;
 
-    serverLogger.info({
+    serverLogger.debug({
       context: "RevenueEventHandler.constructor",
       message: "Initializing revenue event handler",
     });
