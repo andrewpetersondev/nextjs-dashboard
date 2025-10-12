@@ -22,7 +22,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * withDalTransaction is a reusable helper for atomic multi-step writes with the same normalization.
  * Identifiers in logs exclude secrets (no passwords/tokens).
  */
-export async function createUserForSignup(
+export async function signupDal(
   db: AppDatabase,
   input: AuthSignupDalInput,
 ): Promise<NewUserRow> {
@@ -46,7 +46,7 @@ export async function createUserForSignup(
         // Invariant: A successful DB insert must return the row; log and throw explicit error
         serverLogger.error(
           {
-            context: "dal.createUserForSignup",
+            context: "dal.signupDal",
             email, // identifier; not a secret
             kind: "invariant",
             role,
@@ -62,6 +62,6 @@ export async function createUserForSignup(
       return userRow;
     },
     // Minimal, non-sensitive logging context and identifiers
-    { context: "dal.createUserForSignup", identifiers: { email, username } },
+    { context: "dal.signupDal", identifiers: { email, username } },
   );
 }

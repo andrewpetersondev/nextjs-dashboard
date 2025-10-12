@@ -1,6 +1,6 @@
 import "server-only";
-import { findUserForLogin } from "@/server/auth/dal/user-auth-login.dal";
-import { createUserForSignup } from "@/server/auth/dal/user-auth-signup.dal";
+import { loginDal } from "@/server/auth/dal/user-auth-login.dal";
+import { signupDal } from "@/server/auth/dal/user-auth-signup.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -141,7 +141,7 @@ export class AuthUserRepo {
       } catch (e) {
         // If conflict, fetch existing deterministically
         if (e instanceof ConflictError) {
-          const existing = await findUserForLogin(
+          const existing = await loginDal(
             (txRepo as AuthUserRepo).db,
             input.email,
           );
@@ -184,7 +184,7 @@ export class AuthUserRepo {
       assertSignupFields(input);
       const normalized = toNormalizedSignupInput(input);
 
-      const row = await createUserForSignup(this.db, normalized);
+      const row = await signupDal(this.db, normalized);
       if (!row) {
         // Postcondition invariant: DAL must return a row.
         throw new DatabaseError("User creation did not return a row.", {
@@ -223,7 +223,7 @@ export class AuthUserRepo {
    */
   async login(input: AuthLoginDalInput): Promise<UserEntity> {
     try {
-      const row = await findUserForLogin(this.db, input.email);
+      const row = await loginDal(this.db, input.email);
 
       if (!row?.password) {
         serverLogger.warn(

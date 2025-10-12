@@ -9,7 +9,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * Finds a user by email for login.
  * No password verification here; Service layer compares raw vs stored hash.
  */
-export async function findUserForLogin(
+export async function loginDal(
   db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
@@ -27,7 +27,7 @@ export async function findUserForLogin(
       if (!userRow) {
         serverLogger.error(
           {
-            context: "dal.findUserForLogin",
+            context: "dal.loginDal",
             email,
             msg: "SELECT returned no user row; indicates DB or ORM invariant violation",
           },
@@ -37,7 +37,7 @@ export async function findUserForLogin(
       }
       if (!userRow.password) {
         serverLogger.error(
-          { context: "findUserForLogin", email },
+          { context: "loginDal", email },
           "User row missing hashed password; cannot authenticate",
         );
         return null;
@@ -45,6 +45,6 @@ export async function findUserForLogin(
 
       return userRow ?? null;
     },
-    { context: "dal.findUserForLogin", identifiers: { email } },
+    { context: "dal.loginDal", identifiers: { email } },
   );
 }
