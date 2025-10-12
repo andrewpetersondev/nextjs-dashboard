@@ -13,35 +13,38 @@ export async function findUserForLogin(
   db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
-  return await executeDalOrThrow(async () => {
-    const selectedRow = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+  return await executeDalOrThrow(
+    async () => {
+      const selectedRow = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
 
-    const userRow = selectedRow?.[0];
+      const userRow = selectedRow?.[0];
 
-    // Ensure the hashed password is present; without it Service cannot compare.
-    if (!userRow) {
-      serverLogger.error(
-        {
-          context: "dal.findUserForLogin",
-          email,
-          msg: "SELECT returned no user row; indicates DB or ORM invariant violation",
-        },
-        "User selection: invariant violation (no row returned)",
-      );
-      return null;
-    }
-    if (!userRow.password || typeof userRow.password !== "string") {
-      serverLogger.error(
-        { context: "findUserForLogin", email },
-        "User row missing hashed password; cannot authenticate",
-      );
-      return null;
-    }
+      // Ensure the hashed password is present; without it Service cannot compare.
+      if (!userRow) {
+        serverLogger.error(
+          {
+            context: "dal.findUserForLogin",
+            email,
+            msg: "SELECT returned no user row; indicates DB or ORM invariant violation",
+          },
+          "User selection: invariant violation (no row returned)",
+        );
+        return null;
+      }
+      if (!userRow.password) {
+        serverLogger.error(
+          { context: "findUserForLogin", email },
+          "User row missing hashed password; cannot authenticate",
+        );
+        return null;
+      }
 
-    return userRow ?? null;
-  });
+      return userRow ?? null;
+    },
+    { context: "dal.findUserForLogin", identifiers: { email } },
+  );
 }

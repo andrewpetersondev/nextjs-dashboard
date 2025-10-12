@@ -17,8 +17,10 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * @throws Error (if invariant/row-missing)
  *
  * @remarks
- * - Always use as-only server context
- * - Only call with inputs you want to persist as issued
+ * executeDalOrThrow maps 23505 → ConflictError; other PG codes → DatabaseError with generic, recognizable messages and code in context.
+ * Invariant “row must exist” is explicitly thrown with a clear Error after logging.
+ * withDalTransaction is a reusable helper for atomic multi-step writes with the same normalization.
+ * Identifiers in logs exclude secrets (no passwords/tokens).
  */
 export async function createUserForSignup(
   db: AppDatabase,
@@ -26,36 +28,40 @@ export async function createUserForSignup(
 ): Promise<NewUserRow> {
   const { email, username, passwordHash, role } = input;
 
-  return await executeDalOrThrow(async () => {
-    const insertedRows = await db
-      .insert(users)
-      .values({
-        email,
-        password: passwordHash,
-        role,
-        username,
-      } satisfies NewUserRow)
-      .returning();
-
-    const userRow = insertedRows?.[0];
-
-    if (!userRow) {
-      // Invariant: A successful DB insert must return the row; log and throw explicit error
-      serverLogger.error(
-        {
-          context: "dal.createUserForSignup",
+  return await executeDalOrThrow(
+    async () => {
+      const insertedRows = await db
+        .insert(users)
+        .values({
           email,
-          msg: "INSERT returned no user row; indicates DB or ORM invariant violation",
+          password: passwordHash,
           role,
           username,
-        },
-        "User creation: invariant violation (no row returned)",
-      );
-      throw new Error(
-        "Invariant violation: insert did not return a new user row. This should never happen.",
-      );
-    }
+        } satisfies NewUserRow)
+        .returning();
 
-    return userRow;
-  });
+      const userRow = insertedRows?.[0];
+
+      if (!userRow) {
+        // Invariant: A successful DB insert must return the row; log and throw explicit error
+        serverLogger.error(
+          {
+            context: "dal.createUserForSignup",
+            email, // identifier; not a secret
+            kind: "invariant",
+            role,
+            username,
+          },
+          "INSERT returned no user row",
+        );
+        throw new Error(
+          "Invariant violation: insert did not return a new user row. This should never happen.",
+        );
+      }
+
+      return userRow;
+    },
+    // Minimal, non-sensitive logging context and identifiers
+    { context: "dal.createUserForSignup", identifiers: { email, username } },
+  );
 }
