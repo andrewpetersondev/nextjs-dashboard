@@ -17,6 +17,12 @@ import {
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
 
+// Centralized retry/backoff policy (injectable if needed)
+const REPO_RETRY = {
+  attempts: 2 as const,
+  delayMs: 50 as const,
+} as const;
+
 // Known PG concurrency/timeout codes for retry/log hints.
 const RETRIABLE_PG = new Set(["40001", "40P01", "55P03", "57014"] as const);
 type RetriableCode = "40001" | "40P01" | "55P03" | "57014";
@@ -92,7 +98,7 @@ export class AuthUserRepo {
 
   /**
    * Runs a sequence of operations within a database transaction.
-   * Adds a small retry for known concurrency errors.
+   * Uses centralized retry policy for known concurrency/timeout errors.
    */
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepo) => Promise<T>,
@@ -109,9 +115,9 @@ export class AuthUserRepo {
 
     try {
       return await retry(runOnce, {
-        attempts: 2,
+        attempts: REPO_RETRY.attempts,
         context: `${AuthUserRepo.CTX}.withTransaction`,
-        delayMs: 50,
+        delayMs: REPO_RETRY.delayMs,
       });
     } catch (err) {
       serverLogger.error(
@@ -120,6 +126,86 @@ export class AuthUserRepo {
       );
       throw err;
     }
+  }
+
+  /**
+   * Deterministic upsert helper: create-or-get by unique email.
+   * Returns entity if exists or newly created. Maps conflicts to success (get).
+   */
+  async upsertUserByEmail(input: AuthSignupDalInput): Promise<UserEntity> {
+    return await this.withTransaction(async (txRepo) => {
+      try {
+        // Try to create first (fast path)
+        const created = await txRepo.signup(input);
+        return created;
+      } catch (e) {
+        // If conflict, fetch existing deterministically
+        if (e instanceof ConflictError) {
+          const existing = await findUserForLogin(
+            (txRepo as AuthUserRepo).db,
+            input.email,
+          );
+          if (!existing) {
+            // Extremely rare: conflict but no row (race with delete). Surface as DB error.
+            throw new DatabaseError(
+              "Conflict detected but existing row not found.",
+              {
+                context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
+              },
+            );
+          }
+          if (!existing.password) {
+            serverLogger.error(
+              {
+                context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
+                kind: "auth-invariant",
+              },
+              "Existing user missing password after conflict",
+            );
+            throw new DatabaseError("Existing user missing required fields.", {
+              context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
+            });
+          }
+          return userDbRowToEntity(existing);
+        }
+        throw e;
+      }
+    });
+  }
+
+  /**
+   * Optimistic locking example for future updates:
+   * Expects a version field on the entity/table; throws ConflictError on lost update.
+   */
+  async updateUserWithVersion(opts: {
+    id: string;
+    expectedVersion: number;
+    patch: Readonly<Partial<Pick<UserEntity, "username" | "role">>>;
+  }): Promise<UserEntity> {
+    return await this.withTransaction(async (txRepo) => {
+      // Fetch current
+      const current = await findUserForLogin(
+        (txRepo as AuthUserRepo).db,
+        opts.id /* replace with a find-by-id DAL */ as unknown as string,
+      );
+      if (!current) {
+        throw new DatabaseError("User not found.", {
+          context: `${AuthUserRepo.CTX}.updateUserWithVersion`,
+        });
+      }
+
+      // Pseudocode: perform UPDATE ... WHERE id=? AND version=expectedVersion RETURNING *
+      // If no row returned, treat as version conflict.
+      const updated = current; // replace with actual DAL update call returning row
+
+      // Example postcondition check
+      if (!updated) {
+        throw new ConflictError("Concurrent modification detected.", {
+          context: `${AuthUserRepo.CTX}.updateUserWithVersion`,
+        });
+      }
+      return userDbRowToEntity(updated);
+    });
   }
 
   /**

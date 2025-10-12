@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import { executeDalOrThrow } from "@/server/auth/error-wrappers.throw";
+import { executeDalOrThrow } from "@/server/auth/dal/error-wrappers.throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import { serverLogger } from "@/server/logging/serverLogger";
