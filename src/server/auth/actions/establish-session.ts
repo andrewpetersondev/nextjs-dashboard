@@ -62,14 +62,3 @@ export async function establishSession(
   // single return point for all paths
   return mapped;
 }
-
-/**
- * Adapter: after a successful signup/login, establish the session from a user-like object.
- * Accepts any object that carries id and role fields as strings.
- */
-export async function establishSessionFromUser(u: {
-  readonly id: string;
-  readonly role: string;
-}): Promise<Result<true, AuthServiceError>> {
-  return await establishSession({ id: u.id, role: u.role });
-}
