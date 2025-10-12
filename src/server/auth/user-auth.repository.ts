@@ -174,41 +174,6 @@ export class AuthUserRepo {
   }
 
   /**
-   * Optimistic locking example for future updates:
-   * Expects a version field on the entity/table; throws ConflictError on lost update.
-   */
-  async updateUserWithVersion(opts: {
-    id: string;
-    expectedVersion: number;
-    patch: Readonly<Partial<Pick<UserEntity, "username" | "role">>>;
-  }): Promise<UserEntity> {
-    return await this.withTransaction(async (txRepo) => {
-      // Fetch current
-      const current = await findUserForLogin(
-        (txRepo as AuthUserRepo).db,
-        opts.id /* replace with a find-by-id DAL */ as unknown as string,
-      );
-      if (!current) {
-        throw new DatabaseError("User not found.", {
-          context: `${AuthUserRepo.CTX}.updateUserWithVersion`,
-        });
-      }
-
-      // Pseudocode: perform UPDATE ... WHERE id=? AND version=expectedVersion RETURNING *
-      // If no row returned, treat as version conflict.
-      const updated = current; // replace with actual DAL update call returning row
-
-      // Example postcondition check
-      if (!updated) {
-        throw new ConflictError("Concurrent modification detected.", {
-          context: `${AuthUserRepo.CTX}.updateUserWithVersion`,
-        });
-      }
-      return userDbRowToEntity(updated);
-    });
-  }
-
-  /**
    * Creates a new user for the signup flow.
    * - Maps DAL conflicts to ConflictError.
    * - Enforces domain invariants before/after DAL calls.
