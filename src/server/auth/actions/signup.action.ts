@@ -12,36 +12,21 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { establishSession } from "@/server/auth/actions/establish-session";
 import {
-  type AuthServiceError,
-  UserAuthFlowService,
-} from "@/server/auth/user-auth.service";
+  mapAuthServiceErrorToFormResult,
+  mapUnknownToAuthServiceError,
+} from "@/server/auth/mappers/auth-service-errors.mappers";
+import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
-import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 const LOGGER_CONTEXT = "signup.action";
 const fields = SIGNUP_FIELDS_LIST;
-
-// add local adapters to keep action-layer error type stable
-function isAuthServiceError(e: unknown): e is AuthServiceError {
-  return typeof e === "object" && e !== null && "kind" in e && "message" in e;
-}
-
-function toAuthServiceError(e: unknown): AuthServiceError {
-  if (isAuthServiceError(e)) {
-    return e;
-  }
-  return {
-    kind: "unexpected",
-    message: e instanceof Error ? e.message : String(e),
-  } as const;
-}
 
 // Replace the helper to only collect known fields and return a frozen record.
 function pickFormDataFields(
@@ -88,30 +73,12 @@ export async function signupAction(
   )(Ok(input))
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
     .then(flatMapAsync(establishSession));
-  // TODO: suggested change to remove // `.then(mapOk((user) => ({ id: user.id, role: user.role })))`
 
   if (!sessionResult.ok) {
-    // Normalize to AuthServiceError first to avoid unions with ErrorLike
-    const svcError = toAuthServiceError(sessionResult.error);
-
-    // Map AuthServiceError → AppError shape expected by adapter
-    const appErr = {
-      code:
-        svcError.kind === "conflict"
-          ? "CONFLICT"
-          : svcError.kind === "validation"
-            ? "VALIDATION"
-            : "UNKNOWN",
-      details:
-        svcError.kind === "conflict"
-          ? { column: "email", fields: ["email"] as const }
-          : undefined,
-      message: svcError.message,
-    } as const;
-
-    return appErrorToFormResult<SignupField, unknown>({
+    const svcError = mapUnknownToAuthServiceError(sessionResult.error);
+    return mapAuthServiceErrorToFormResult<SignupField, unknown>({
       conflictEmailField: "email",
-      error: appErr,
+      error: svcError,
       fields,
       raw,
     });

@@ -135,7 +135,7 @@ const signClaims = async (
       signer = signer.setAudience(SESSION_AUDIENCE);
     }
     const token = await signer.sign(key);
-    serverLogger.info(
+    serverLogger.debug(
       {
         context: "createSessionToken",
         role: (claims as Record<string, unknown>).role,

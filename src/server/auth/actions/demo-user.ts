@@ -5,7 +5,7 @@ import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { setSessionToken } from "@/server/auth/session";
+import { establishSession } from "@/server/auth/actions/establish-session";
 import { getAppDb } from "@/server/db/db.connection";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -23,7 +23,7 @@ export async function demoUser(
 ): Promise<LegacyFormState<"_root">> {
   let demoUserObject: UserDto | null = null;
 
-  let result: LegacyFormState<"_root"> = {
+  const _result: LegacyFormState<"_root"> = {
     errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
     message: USER_ERROR_MESSAGES.UNEXPECTED,
     success: false,
@@ -53,23 +53,20 @@ export async function demoUser(
       throw new DatabaseError(USER_ERROR_MESSAGES.CREATE_FAILED);
     }
 
-    await setSessionToken(toUserId(demoUserObject.id), toUserRole(role));
-  } catch (error) {
-    serverLogger.error({
-      context: "demoUserObject",
-      demoUserObject,
-      error,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      role,
+    const session = await establishSession({
+      id: toUserId(demoUserObject.id),
+      role: toUserRole(role),
     });
-
-    result = {
-      errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
-      success: false,
-    };
-
-    return result;
+    if (!session.ok) {
+      serverLogger.error(
+        { context: "demoUserObject", message: "Failed to establish session" },
+        "Demo user session establishment failed",
+      );
+      throw new DatabaseError(USER_ERROR_MESSAGES.UNEXPECTED);
+    }
+  } catch (e) {
+    console.log("error", e);
+    throw new Error("something");
   }
   redirect(ROUTES.DASHBOARD.ROOT);
 }

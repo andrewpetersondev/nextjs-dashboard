@@ -3,20 +3,21 @@
 import { redirect } from "next/navigation";
 import {
   LOGIN_FIELDS_LIST,
+  type LoginData,
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { toUserRole } from "@/features/users/lib/to-user-role";
-import { setSessionToken } from "@/server/auth/session";
+import { establishSession } from "@/server/auth/actions/establish-session";
+import {
+  mapAuthServiceErrorToFormResult,
+  mapUnknownToAuthServiceError,
+} from "@/server/auth/mappers/auth-service-errors.mappers";
 import { UserAuthFlowService } from "@/server/auth/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
-import { authErrorToFormResult } from "@/server/forms/auth-error-to-form-result.mapper";
 import { validateFormGeneric } from "@/server/forms/validate-form";
-import { serverLogger } from "@/server/logging/serverLogger";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
-import { toUserId } from "@/shared/domain/id-converters";
 import {
   toFormOk,
   toFormValidationErr,
@@ -24,8 +25,23 @@ import {
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
-// --- Constants ---
-const LOGGER_CONTEXT_SESSION = "login.action.session";
+const LOGGER_CONTEXT = "login.action";
+const fields = LOGIN_FIELDS_LIST;
+
+// Replace the helper to only collect known fields and return a frozen record.
+function pickFormDataFields(
+  fd: FormData,
+  allowed: readonly LoginField[],
+): Readonly<Record<string, string>> {
+  const out: Record<string, string> = {};
+  for (const k of allowed) {
+    const v = fd.get(k);
+    if (v !== null) {
+      out[k] = typeof v === "string" ? v : String(v);
+    }
+  }
+  return Object.freeze(out);
+}
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -41,11 +57,10 @@ export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {
-  const fields = LOGIN_FIELDS_LIST;
-  const raw = Object.fromEntries(formData.entries());
-
-  // 1) Validate input
-  const validated = await validateFormGeneric(formData, LoginSchema, fields);
+  const raw = pickFormDataFields(formData, fields);
+  const validated = await validateFormGeneric(formData, LoginSchema, fields, {
+    loggerContext: LOGGER_CONTEXT,
+  });
 
   if (!validated.ok) {
     return toFormValidationErr<LoginField, unknown>({
@@ -56,45 +71,23 @@ export async function loginAction(
     });
   }
 
-  const input = validated.value.data;
-
-  // 2) Service login + session using Result helpers
+  const input: LoginData = validated.value.data;
   const service = new UserAuthFlowService(getAppDb());
 
-  const sessionResult: Result<
-    true,
-    Parameters<typeof authErrorToFormResult>[1]
-  > = await flatMapAsync<
-    typeof input,
-    { id: string; role: string },
-    Parameters<typeof authErrorToFormResult>[1],
-    Parameters<typeof authErrorToFormResult>[1]
-  >(async (i) => service.login(i))(Ok<typeof input>(input))
+  const sessionResult = await flatMapAsync((i: LoginData) => service.login(i))(
+    Ok(input),
+  )
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
-    .then(
-      flatMapAsync(async (u) => {
-        try {
-          await setSessionToken(toUserId(u.id), toUserRole(u.role));
-          return Ok<true>(true);
-        } catch (err) {
-          serverLogger.error({
-            context: LOGGER_CONTEXT_SESSION,
-            error:
-              err instanceof Error
-                ? { message: err.message, name: err.name }
-                : { message: "Unknown error" },
-            message: "Failed to establish session",
-          });
-          return Err<Parameters<typeof authErrorToFormResult>[1]>({
-            kind: "unexpected",
-            message: "Unexpected error",
-          });
-        }
-      }),
-    );
+    .then(flatMapAsync(establishSession));
 
   if (!sessionResult.ok) {
-    return authErrorToFormResult<LoginField>(fields, sessionResult.error, raw);
+    const svcError = mapUnknownToAuthServiceError(sessionResult.error);
+    return mapAuthServiceErrorToFormResult<LoginField, unknown>({
+      conflictEmailField: "email",
+      error: svcError,
+      fields,
+      raw,
+    });
   }
 
   // 3) Redirect on success
