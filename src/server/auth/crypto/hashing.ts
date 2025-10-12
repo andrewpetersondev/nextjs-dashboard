@@ -1,7 +1,7 @@
 import "server-only";
 
 import bcryptjs from "bcryptjs";
-import { SALT_ROUNDS } from "@/server/auth/constants";
+import { SALT_ROUNDS } from "@/server/auth/session/constants";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);

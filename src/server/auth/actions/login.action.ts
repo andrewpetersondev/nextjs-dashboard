@@ -7,12 +7,12 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { establishSession } from "@/server/auth/actions/establish-session";
+import { establishSessionAction } from "@/server/auth/actions/establish-session.action";
 import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
 } from "@/server/auth/mappers/auth-service-errors.mappers";
-import { UserAuthFlowService } from "@/server/auth/user-auth.service";
+import { UserAuthFlowService } from "@/server/auth/service/user-auth.service";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
@@ -78,7 +78,7 @@ export async function loginAction(
     Ok(input),
   )
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
-    .then(flatMapAsync(establishSession));
+    .then(flatMapAsync(establishSessionAction));
 
   if (!sessionResult.ok) {
     const svcError = mapUnknownToAuthServiceError(sessionResult.error);

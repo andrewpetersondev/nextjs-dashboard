@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import { demoUser } from "@/server/auth/actions/demo-user";
+import { demoUserAction } from "@/server/auth/actions/demo-user.action";
 import { Button } from "@/ui/atoms/button";
 
 /**
@@ -26,7 +26,7 @@ export const DemoForm: FC<DemoFormProps> = ({
   <form
     action={async (): Promise<void> => {
       "use server";
-      await demoUser(userRole);
+      await demoUserAction(userRole);
     }}
     aria-label={label}
   >

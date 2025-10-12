@@ -1,13 +1,13 @@
-// File: establish-session.ts
+// File: establish-session.action.ts
 // Purpose: side-effect to establish an authenticated session after signup/login.
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { LOGGER_CONTEXT_SESSION } from "@/server/auth/constants";
 import { mapToUnexpectedAuthServiceError } from "@/server/auth/mappers/auth-service-errors.mappers";
-import { setSessionToken } from "@/server/auth/session";
+import type { AuthServiceError } from "@/server/auth/service/user-auth.service";
+import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/constants";
+import { setSessionToken } from "@/server/auth/session/session";
 import type { EstablishSessionInput } from "@/server/auth/types/session-action.types";
-import type { AuthServiceError } from "@/server/auth/user-auth.service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
@@ -20,7 +20,7 @@ import { toUserId } from "@/shared/domain/id-converters";
  *
  * @returns A promise that resolves to a Result indicating the success or failure of the session establishment.
  */
-export async function establishSession(
+export async function establishSessionAction(
   u: EstablishSessionInput,
 ): Promise<Result<true, AuthServiceError>> {
   // sets the session token in local storage

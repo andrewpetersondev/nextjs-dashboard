@@ -10,15 +10,15 @@ import {
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/server/auth/session-jwt.mapper";
+} from "@/server/auth/session/session-jwt.mapper";
 import {
   DecryptPayloadSchema,
   EncryptPayloadSchema,
-} from "@/server/auth/session-payload.schema";
+} from "@/server/auth/session/session-payload.schema";
 import type {
   DecryptPayload,
   EncryptPayload,
-} from "@/server/auth/session-payload.types";
+} from "@/server/auth/session/session-payload.types";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

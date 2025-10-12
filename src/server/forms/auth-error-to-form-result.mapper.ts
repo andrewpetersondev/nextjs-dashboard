@@ -1,7 +1,7 @@
 // File: src/server/forms/auth-error-to-form-result.mapper.ts
 
 import "server-only";
-import type { AuthServiceError } from "@/server/auth/user-auth.service";
+import type { AuthServiceError } from "@/server/auth/service/user-auth.service";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";

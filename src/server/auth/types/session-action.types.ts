@@ -2,7 +2,7 @@
 import "server-only";
 
 /**
- * Input to establishSession action. Shared across auth actions to avoid inline types.
+ * Input to establishSessionAction action. Shared across auth actions to avoid inline types.
  */
 export type EstablishSessionInput = {
   readonly id: string;

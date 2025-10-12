@@ -117,7 +117,7 @@ Flow: DAL ↔ Repository ↔ Service ↔ Action ↔ UI (RSC/Client)
     - dal/ users.dal.ts
     - repo/ users.repo.ts
     - service/ auth.service.ts
-    - actions/ login.ts, register.ts, logout.ts
+    - actions/ login.ts, register.ts, logoutAction.ts
     - ui/ components (client/server), forms
     - mapping/ user.mappers.ts (dbRow⇄entity, entity⇄dto)
     - schemas/ user.schemas.ts (Zod)
@@ -135,7 +135,7 @@ Flow: DAL ↔ Repository ↔ Service ↔ Action ↔ UI (RSC/Client)
 - Service (command-style):
     - register(cmd: { email; password; username; role? }): Promise<Result<UserDto, DenseErrorMap>>
     - login(cmd: { email; password }): Promise<Result<{ user: UserDto; sessionToken: string }, DenseErrorMap>>
-    - logout(cmd: { sessionToken: string }): Promise<Result<void, DenseErrorMap>>
+    - logoutAction(cmd: { sessionToken: string }): Promise<Result<void, DenseErrorMap>>
     - getProfile(cmd: { userId: UserId }): Promise<Result<UserDto, DenseErrorMap>>
 
 ---
@@ -144,7 +144,7 @@ Flow: DAL ↔ Repository ↔ Service ↔ Action ↔ UI (RSC/Client)
 
 - Unit: mappers, validators, Service with fake repo/crypto/token/clock.
 - Integration: Repo + DAL against test DB.
-- E2E: Actions + UI (Cypress) for login/logout/register.
+- E2E: Actions + UI (Cypress) for login/logoutAction/register.
 
 ---
 

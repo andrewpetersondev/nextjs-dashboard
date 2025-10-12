@@ -6,9 +6,9 @@ import type {
 } from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { comparePassword, hashPassword } from "@/server/auth/hashing";
+import { comparePassword, hashPassword } from "@/server/auth/crypto/hashing";
+import { AuthUserRepo } from "@/server/auth/repo/user-auth.repository";
 import { asPasswordHash } from "@/server/auth/types/password.types";
-import { AuthUserRepo } from "@/server/auth/user-auth.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { userEntityToDto } from "@/server/users/mapping/user.mappers";

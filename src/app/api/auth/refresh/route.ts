@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { updateSessionToken } from "@/server/auth/session";
+import { updateSessionToken } from "@/server/auth/session/session";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,

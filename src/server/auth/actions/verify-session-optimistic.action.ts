@@ -1,7 +1,7 @@
 "use server";
 
 import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
-import { verifySessionOptimistic as verify } from "@/server/auth/session";
+import { verifySessionOptimistic as verify } from "@/server/auth/session/session";
 
 /**
  * Server action wrapper delegating to the server-only session verification.

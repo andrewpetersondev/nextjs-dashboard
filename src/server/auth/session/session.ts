@@ -22,12 +22,12 @@ import {
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
   SESSION_COOKIE_SECURE_FALLBACK,
-} from "@/server/auth/constants";
+} from "@/server/auth/session/constants";
 import {
   createSessionToken,
   readSessionToken,
-} from "@/server/auth/session-codec";
-import type { DecryptPayload } from "@/server/auth/session-payload.types";
+} from "@/server/auth/session/session-codec";
+import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
 
