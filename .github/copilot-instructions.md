@@ -1,70 +1,94 @@
 ---
-applyTo: '**'
-description: 'GitHub Copilot usage and response rules for this project.'
+applyTo: "**"
+description: "GitHub Copilot usage and response rules for this project."
 ---
-
-# GitHub Copilot Instructions
 
 ## Minimal Response Rule
 
-- **Responses should be brief** and only include the **changed sections of code** or additions.
-- Do **not** repeat the entire file unless explicitly requested.
-- Use **snippet-style output** showing context ±2 lines for clarity.
-- Include any **new imports or types** only if they are part of the change.
-- Provide a **short comment above the snippet** if needed to explain the purpose of the change.
-- Avoid explanatory text or rationale unless the user asks for it.
-- When multiple changes are suggested, **group them by file** and only include the affected lines per file.
+1. Keep responses concise; include only the changed or added code.
+2. Always label each snippet with the filename using the provided snippet tag.
+3. Do not include the entire file unless explicitly requested.
+4. Use snippet-style output with ±5 lines of surrounding context.
+5. Include new imports/types only if they are part of the change.
+6. Optionally add a one-line comment above the snippet to explain the change.
+7. Avoid extra explanation or rationale unless asked.
+8. If multiple files are changed, group edits per file in separate snippets.
+9. Do not use diff markers; show actual code with context.
+10. Prefer ordered lists to unordered lists.
 
 ## Core Principles
 
-- Never use barrel files; never use index files.
-- Enforce **maximum type safety** and **zero unsafe narrowing**, except `exactOptionalPropertyTypes`, which may remain
-  disabled for practical flexibility in optional object fields.
-- Follow strict, explicit typing. **Never use `any`** or implicit inference in exports.
-- Prefer `satisfies` over `as`; Allow casts **only for primitives** (string, number, boolean).
-- All exported functions/components/hooks must have explicit top-level parameter and return types.
-- Internal closures and callbacks may rely on safe inference when fully constrained by generics.
-- Prefer local inference for variables inside function bodies; keep explicit types for exports only.
-- Export all symbols with explicit types when inference is ambiguous; prefer named exports; no default exports.
-- Model null/undefined explicitly; no non-null assertions.
-- Use discriminated unions for all errors/results (`{ ok: true; value } | { ok: false; error }`).
-- Inputs immutable; use `readonly` and `as const`.
-- Enforce `readonly` at the source (e.g., `as const` or `satisfies readonly ...`); avoid redundant consumer-side
-  annotations.
-- Avoid deriving literal field lists via `Object.keys(...)` with casts; declare explicit readonly literal arrays and
-  validate with `satisfies`.
-- Use Zod typing correctly: `z.input<typeof Schema>` for inbound/untrusted data, `z.output<typeof Schema>` for
-  validated/parsed data; name aliases accordingly.
-- Prefer small, typed helpers for normalization (e.g., `FormData → Readonly<Record<string, string>>`) instead of unsafe
-  casts.
-- Prefer small, composable changes.
+- No barrel files; avoid index.ts/tsx entry re-exports.
+- Maximize type safety; no unsafe narrowing. `exactOptionalPropertyTypes` may remain disabled for practical optional fields.
+- No `any`; no implicit `any`; avoid implicit export typing.
+- Prefer `satisfies` over `as`; use casts only as a last resort.
+- All exported functions/components/hooks must declare explicit parameter and return types.
+- Internal callbacks/closures may rely on inference when fully constrained by generics.
+- Prefer local inference for internal variables; keep explicit types for all exports.
+- Use named exports only; no default exports. Export symbols with explicit types when inference is ambiguous.
+- Model `null`/`undefined` explicitly; no non-null (`!`) assertions.
+- Represent outcomes with discriminated unions (e.g., `Success | Failure`).
+- Treat inputs as immutable: use `readonly` and `as const`.
+- Enforce `readonly` at the source (e.g., `as const`, `satisfies readonly ...`); avoid redundant consumer-side annotations.
+- Prefer small, typed, reusable normalization helpers (e.g., `FormData -> Readonly<Record<string, string>>`) over casts.
+- No ambient type patching; prefer module augmentation with tests when necessary.
+- Keep error types serializable and logged structures JSON-safe.
 
-## Document Hierarchy
+## Governance and Precedence
 
-- This file is always-on. Downstream rule documents must not repeat these rules; they should add only deltas or examples
-  and link back.
-- When conflicts arise, stop process and ask me how to proceed.
+This document is always-on. Downstream documents must not restate rules from this file; they may add only deltas, clarifications, or examples, and should link back here when referencing base rules.
+
+### Precedence Order (highest → lowest)
+
+1. always-on.md (this document)
+2. project-rules.md
+3. typescript-summary.md
+4. result-error-summary.md
+5. structure-summary.md
+6. current-focus.md
+7. md-docs.md
+
+Tip: When in doubt, prefer the higher-precedence document.
+
+### Conflict Resolution
+
+- On detecting a conflict:
+  1. Pause related work.
+  2. Identify the higher-precedence rule.
+  3. Document the conflict and chosen resolution briefly.
+  4. Proceed only after confirmation or alignment.
 
 ## Coding & Style
 
 ### File Conventions
 
-- File length ≤200 lines; split by feature/domain.
+- File length ≤ 200 lines; split by feature/domain.
 - Avoid dumping grounds (e.g., utils.ts); prefer small, named modules.
 - Use type-only imports for types.
-- Place local functions above exported functions.
+- Place local code above exported code.
+- Co-locate tests and stories with their module when practical.
 
 ### Function Conventions
 
-- Functions single-purpose, ≤50 lines, ≤4 parameters (optional in objects).
-- Extract predicates/utilities; avoid deep nesting; cyclomatic complexity ≤15.
-- Extract magic numbers/strings as constants.
-- Separate validation, transformation, side-effects into dedicated functions.
+- Functions single-purpose, ≤ 50 lines, ≤ 4 parameters (optional in objects).
+- Extract predicates/utilities; avoid deep nesting; cyclomatic complexity ≤ 15.
+- Extract magic numbers/strings/regex as constants.
+- Separate validation, transformation, and side-effects into dedicated functions.
 - Prefer standard utility types; avoid unnecessary custom wrappers.
+- All exported async functions return `Promise<...>` with explicit result types.
 
 ### Naming Conventions
 
-- Use descriptive names; avoid abbreviations.
+- Use descriptive, domain-specific names; avoid abbreviations.
+- Types/interfaces end with `Type`/`Props` only when clarifying role; otherwise prefer noun phrases (e.g., `User`, `UserProfile`).
+- Boolean names read positively and start with `is/has/can/should` (e.g., `isAdmin`, `hasAccess`).
+- Event handlers start with `on` and accept a typed event (e.g., `onSubmit`, `onChange`).
+- Pure predicates start with `is/has` and return `boolean`.
+- Functions are verb-first (e.g., `fetchUser`, `createSession`, `computeHash`).
+- Constants are SCREAMING_SNAKE_CASE only for process/env or build-time flags; otherwise `camelCase` with `readonly` and `as const`.
+- React components and hooks: `PascalCase` for components, `useCamelCase` for hooks.
+- Files and folders: `kebab-case` for modules, `PascalCase` only for React components.
+- Test files: `<name>.test.ts` or `<name>.spec.ts`.
 
 ## Layered Architecture
 
@@ -79,29 +103,29 @@ src/
 ├─ shared/     → Cross-cutting utilities, domain types, constants
 ├─ ui/         → Reusable UI primitives and client-only code
 └─ shell/      → Dashboard and UI composition shells
-
 ```
 
-Respect this strict upward dependency flow:
+Respect this strict dependency flow:
 
-```
-
-shared --> ui --> shell --> app --> features --> server 
-
-```
+- shared: cannot import from other folders (ui, features, server, app)
+- ui: may import from shared only
+- features: may import from ui and shared
+- server: may import from anywhere (shared, ui, features, app)
+- app: may import from features, ui, shared, and server
 
 Rules:
 
-- Lower layers **must not** import from higher ones.
-- `shared` may be imported by any layer.
 - `ui` is purely client-side; no server or DB logic.
-- Keep functions short (<50 lines) and focused on a single concern.
-- Group by **feature/domain** rather than technical type.
+- `server` is server-only; mark with `"use server"` when applicable.
+- Group by feature/domain rather than technical type.
+- Cross-feature imports must go through `shared` or server composition, not lateral feature-to-feature.
 
 ## Behavior & Safety
 
 - Confirm intent before destructive or cross-layer edits.
 - Prefer small, composable changes with explicit typing and safe defaults.
 - Apply strictest interpretation if uncertain.
+- Validate boundaries at entry points (e.g., schema-validate inputs in server actions/services).
+- Log structured, JSON-safe errors; avoid leaking secrets in messages.
 
-_Last updated: 2025-10-08_
+_Last updated: 2025-10-13_
