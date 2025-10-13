@@ -65,8 +65,12 @@ export async function demoUserAction(
       throw new DatabaseError(USER_ERROR_MESSAGES.UNEXPECTED);
     }
   } catch (e) {
-    console.log("error", e);
-    throw new Error("something");
+    // Keep message generic; log server-side for diagnostics
+    serverLogger.error(
+      { context: "demoUser.action", err: e },
+      "Failed to create demo user",
+    );
+    throw new Error("Unexpected error creating demo user");
   }
   redirect(ROUTES.DASHBOARD.ROOT);
 }
