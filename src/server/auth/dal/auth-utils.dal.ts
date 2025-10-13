@@ -13,13 +13,13 @@ const PG_ERROR_CODES = {
   queryCanceled: "57014",
   serializationFailure: "40001",
   uniqueViolation: "23505",
-} as const;
+} as const satisfies Readonly<Record<string, string>>;
 
 type PgErrorLike = {
-  code?: unknown;
-  message?: unknown;
-  name?: unknown;
-  constraint?: unknown;
+  readonly code?: unknown;
+  readonly message?: unknown;
+  readonly name?: unknown;
+  readonly constraint?: unknown;
 };
 
 function readStr(v: unknown): string | undefined {

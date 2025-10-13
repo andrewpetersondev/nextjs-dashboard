@@ -26,12 +26,17 @@ const DEFAULT_MISSING_FIELDS: readonly SignupField[] = [
   "password",
   "username",
 ] as const;
-const CONFLICT_TARGETS = ["email", "username"] as const;
-const MSG_MISSING = "Missing required fields";
-const MSG_CONFLICT = "Email or username already in use";
-const MSG_INVALID_CREDS = "Invalid email or password";
-const MSG_VALIDATION = "Invalid data";
-const MSG_UNEXPECTED = "Unexpected error occurred";
+
+const AUTH_CONFLICT_TARGETS = ["email", "username"] as const;
+
+// Centralized messages/targets for cohesion.
+const AUTH_MESSAGES = {
+  conflict: "Email or username already in use",
+  invalidCreds: "Invalid email or password",
+  missing: "Missing required fields",
+  unexpected: "Unexpected error occurred",
+  validation: "Invalid data",
+} as const;
 
 function toError<K extends AuthServiceError["kind"]>(
   kind: K,
@@ -42,56 +47,47 @@ function toError<K extends AuthServiceError["kind"]>(
       return {
         fields: DEFAULT_MISSING_FIELDS,
         kind,
-        message: MSG_MISSING,
+        message: AUTH_MESSAGES.missing,
         ...init,
       } as const;
     case "conflict":
       return {
         kind,
-        message: MSG_CONFLICT,
-        targets: CONFLICT_TARGETS,
+        message: AUTH_MESSAGES.conflict,
+        targets: AUTH_CONFLICT_TARGETS,
         ...init,
       } as const;
     case "invalid_credentials":
-      return { kind, message: MSG_INVALID_CREDS, ...init } as const;
+      return { kind, message: AUTH_MESSAGES.invalidCreds, ...init } as const;
     case "validation":
-      return { kind, message: MSG_VALIDATION, ...init } as const;
+      return { kind, message: AUTH_MESSAGES.validation, ...init } as const;
     case "unexpected":
-      return { kind: "unexpected", message: MSG_UNEXPECTED, ...init } as const;
+      return {
+        kind: "unexpected",
+        message: AUTH_MESSAGES.unexpected,
+        ...init,
+      } as const;
     default:
-      // Narrow to a safe default for exhaustiveness
-      return { kind: "unexpected", message: MSG_UNEXPECTED } as const;
+      return { kind: "unexpected", message: AUTH_MESSAGES.unexpected } as const;
   }
 }
 
-/**
- * Build an AuthServiceError for invalid credentials.
- */
-function toInvalidCredentialsError(): AuthServiceError {
-  return {
-    kind: "invalid_credentials",
-    message: MSG_INVALID_CREDS,
-  };
-}
-
-/**
- * Build an AuthServiceError for a validation failure.
- */
-function toValidationError(message: string = MSG_VALIDATION): AuthServiceError {
-  return {
-    kind: "validation",
-    message,
-  };
-}
-
-/**
- * Build an AuthServiceError for any unexpected error.
- */
-function toUnexpectedError(message: string = MSG_UNEXPECTED): AuthServiceError {
-  return {
-    kind: "unexpected",
-    message,
-  };
+// Map repository/domain errors into AuthServiceError Results.
+function mapRepoErrorToAuthResult<T>(
+  err: unknown,
+  context: string,
+): Result<T, AuthServiceError> {
+  if (err instanceof ConflictError) {
+    return Err(toError("conflict"));
+  }
+  if (err instanceof UnauthorizedError) {
+    return Err(toError("invalid_credentials"));
+  }
+  if (err instanceof ValidationError) {
+    return Err(toError("validation"));
+  }
+  serverLogger.error({ context, kind: "unexpected" }, "Unexpected auth error");
+  return Err(toError("unexpected"));
 }
 
 export type AuthServiceError =
@@ -124,7 +120,9 @@ export class UserAuthFlowService {
    * Signup: hashes password, delegates to repo, returns Result<UserDto, AuthServiceError>.
    * Always atomic via repo.withTransaction.
    */
-  async signup(input: SignupData): Promise<Result<UserDto, AuthServiceError>> {
+  async signup(
+    input: Readonly<SignupData>,
+  ): Promise<Result<UserDto, AuthServiceError>> {
     if (!input?.email || !input?.password || !input?.username) {
       return Err(toError("missing_fields"));
     }
@@ -147,28 +145,19 @@ export class UserAuthFlowService {
       );
       return Ok(userEntityToDto(entity));
     } catch (err: unknown) {
-      if (err instanceof ConflictError) {
-        return Err(toError("conflict"));
-      }
-      if (err instanceof ValidationError) {
-        return Err(toError("validation"));
-      }
-      serverLogger.error(
-        {
-          context: "service.UserAuthFlowService.signup",
-          err,
-          kind: "unexpected",
-        },
-        "Unexpected error during signup",
+      return mapRepoErrorToAuthResult<UserDto>(
+        err,
+        "service.UserAuthFlowService.signup",
       );
-      return Err(toError("unexpected"));
     }
   }
 
   /**
    * Login: fetch user, compare password, return Result.
    */
-  async login(input: LoginData): Promise<Result<UserDto, AuthServiceError>> {
+  async login(
+    input: Readonly<LoginData>,
+  ): Promise<Result<UserDto, AuthServiceError>> {
     const repo = new AuthUserRepo(this.db);
 
     try {
@@ -184,31 +173,20 @@ export class UserAuthFlowService {
           },
           "Missing hashed password on user entity; cannot authenticate",
         );
-        throw new UnauthorizedError(MSG_INVALID_CREDS);
+        return Err(toError("invalid_credentials"));
       }
 
       const passwordOk = await comparePassword(input.password, user.password);
       if (!passwordOk) {
-        throw new UnauthorizedError(MSG_INVALID_CREDS);
+        return Err(toError("invalid_credentials"));
       }
 
       return Ok(userEntityToDto(user));
     } catch (err: unknown) {
-      if (err instanceof UnauthorizedError) {
-        return Err(toInvalidCredentialsError());
-      }
-      if (err instanceof ValidationError) {
-        return Err(toValidationError());
-      }
-      serverLogger.error(
-        {
-          context: "service.UserAuthFlowService.login",
-          err,
-          kind: "unexpected",
-        },
-        "Unexpected error during login",
+      return mapRepoErrorToAuthResult<UserDto>(
+        err,
+        "service.UserAuthFlowService.login",
       );
-      return Err(toUnexpectedError());
     }
   }
 }

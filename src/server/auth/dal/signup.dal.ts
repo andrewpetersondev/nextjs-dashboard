@@ -3,6 +3,7 @@ import { executeDalOrThrow } from "@/server/auth/dal/auth-utils.dal";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**
@@ -24,7 +25,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  */
 export async function signupDal(
   db: AppDatabase,
-  input: AuthSignupDalInput,
+  input: Readonly<AuthSignupDalInput>,
 ): Promise<NewUserRow> {
   const { email, username, passwordHash, role } = input;
 
@@ -47,15 +48,17 @@ export async function signupDal(
         serverLogger.error(
           {
             context: "dal.signupDal",
-            email, // identifier; not a secret
+            email,
             kind: "invariant",
             role,
             username,
           },
           "INSERT returned no user row",
         );
-        throw new Error(
+        // Throw a layer-appropriate DatabaseError so upper layers can narrow and avoid unreachable-return hacks.
+        throw new DatabaseError(
           "Invariant violation: insert did not return a new user row. This should never happen.",
+          { layer: "dal" },
         );
       }
 

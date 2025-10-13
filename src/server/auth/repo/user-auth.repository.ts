@@ -4,6 +4,7 @@ import { signupDal } from "@/server/auth/dal/signup.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
+import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
@@ -17,71 +18,32 @@ import {
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
 
-// Centralized retry/backoff policy (injectable if needed)
-const REPO_RETRY = {
-  attempts: 2 as const,
-  delayMs: 50 as const,
-} as const;
-
-// Known PG concurrency/timeout codes for retry/log hints.
-const RETRIABLE_PG = new Set(["40001", "40P01", "55P03", "57014"] as const);
-type RetriableCode = "40001" | "40P01" | "55P03" | "57014";
-
-function getPgCode(e: unknown): string | undefined {
-  const maybe = e as { code?: unknown } | null;
-  return typeof maybe?.code === "string" ? maybe.code : undefined;
-}
-
-function isRetriable(e: unknown): e is { code: RetriableCode } {
-  const code = getPgCode(e);
-  return !!code && RETRIABLE_PG.has(code as RetriableCode);
-}
-
-async function retry<T>(
-  fn: () => Promise<T>,
-  opts: {
-    attempts: number;
-    delayMs: number;
-    context: string;
-    ids?: Record<string, unknown>;
-  },
-): Promise<T> {
-  let lastErr: unknown;
-  for (let i = 0; i < opts.attempts; i++) {
-    try {
-      return await fn();
-    } catch (e) {
-      lastErr = e;
-      const code = getPgCode(e);
-      if (!isRetriable(e) || i === opts.attempts - 1) {
-        break;
-      }
-      serverLogger.warn(
-        { attempt: i + 1, code, context: opts.context, ...(opts.ids ?? {}) },
-        "Retriable repository error; will retry",
-      );
-      await new Promise((r) => setTimeout(r, opts.delayMs));
-    }
-  }
-  throw lastErr;
-}
-
-// --- Utility: Normalize input for signup, to enforce invariants early ---
+// Normalize without mutating; only include fields we expect in DAL.
 function toNormalizedSignupInput(
-  input: AuthSignupDalInput,
+  input: Readonly<AuthSignupDalInput>,
 ): AuthSignupDalInput {
   return {
-    ...input,
     email: String(input.email).trim().toLowerCase(),
+    passwordHash: input.passwordHash,
+    role: input.role,
     username: String(input.username).trim(),
   };
 }
 
-// --- Utility: Validate mandatory signup fields (domain-side preconditions) ---
-function assertSignupFields(input: AuthSignupDalInput): void {
+function assertSignupFields(input: Readonly<AuthSignupDalInput>): void {
   if (!input.email || !input.passwordHash || !input.username || !input.role) {
     throw new ValidationError("Missing required fields for signup.");
   }
+}
+
+export function isRepoKnownError(
+  err: unknown,
+): err is ConflictError | ValidationError | DatabaseError {
+  return (
+    err instanceof ConflictError ||
+    err instanceof ValidationError ||
+    err instanceof DatabaseError
+  );
 }
 
 /**
@@ -98,79 +60,26 @@ export class AuthUserRepo {
 
   /**
    * Runs a sequence of operations within a database transaction.
-   * Uses centralized retry policy for known concurrency/timeout errors.
+   * Keep thin; retries belong to a separate policy layer if needed.
    */
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepo) => Promise<T>,
   ): Promise<T> {
-    const runOnce = async () => {
-      const dbWithTx = this.db as AppDatabase & {
-        transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
-      };
+    const dbWithTx = this.db as AppDatabase & {
+      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
+    };
+    try {
       return await dbWithTx.transaction(async (tx: AppDatabase) => {
         const txRepo = new AuthUserRepo(tx);
         return await fn(txRepo);
       });
-    };
-
-    try {
-      return await retry(runOnce, {
-        attempts: REPO_RETRY.attempts,
-        context: `${AuthUserRepo.CTX}.withTransaction`,
-        delayMs: REPO_RETRY.delayMs,
-      });
     } catch (err) {
       serverLogger.error(
-        { context: `${AuthUserRepo.CTX}.withTransaction`, err, kind: "db" },
+        { context: `${AuthUserRepo.CTX}.withTransaction`, kind: "db" },
         "Transaction failed",
       );
       throw err;
     }
-  }
-
-  /**
-   * Deterministic upsert helper: create-or-get by unique email.
-   * Returns entity if exists or newly created. Maps conflicts to success (get).
-   */
-  async upsertUserByEmail(input: AuthSignupDalInput): Promise<UserEntity> {
-    return await this.withTransaction(async (txRepo) => {
-      try {
-        // Try to create first (fast path)
-        const created = await txRepo.signup(input);
-        return created;
-      } catch (e) {
-        // If conflict, fetch existing deterministically
-        if (e instanceof ConflictError) {
-          const existing = await loginDal(
-            (txRepo as AuthUserRepo).db,
-            input.email,
-          );
-          if (!existing) {
-            // Extremely rare: conflict but no row (race with delete). Surface as DB error.
-            throw new DatabaseError(
-              "Conflict detected but existing row not found.",
-              {
-                context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
-              },
-            );
-          }
-          if (!existing.password) {
-            serverLogger.error(
-              {
-                context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
-                kind: "auth-invariant",
-              },
-              "Existing user missing password after conflict",
-            );
-            throw new DatabaseError("Existing user missing required fields.", {
-              context: `${AuthUserRepo.CTX}.upsertUserByEmail`,
-            });
-          }
-          return userDbRowToEntity(existing);
-        }
-        throw e;
-      }
-    });
   }
 
   /**
@@ -179,40 +88,27 @@ export class AuthUserRepo {
    * - Enforces domain invariants before/after DAL calls.
    * - Surfaces infra/timeouts as DatabaseError with minimal context.
    */
-  async signup(input: AuthSignupDalInput): Promise<UserEntity> {
+  async signup(input: Readonly<AuthSignupDalInput>): Promise<UserEntity> {
     try {
       assertSignupFields(input);
-      const normalized = toNormalizedSignupInput(input);
-
+      const normalized: AuthSignupDalInput = toNormalizedSignupInput(input);
       const row = await signupDal(this.db, normalized);
       if (!row) {
-        // Postcondition invariant: DAL must return a row.
-        throw new DatabaseError("User creation did not return a row.", {
-          context: `${AuthUserRepo.CTX}.signup`,
-        });
+        return throwRepoDatabaseErr("User creation did not return a row.");
       }
       return newUserDbRowToEntity(row);
     } catch (err: unknown) {
-      if (
-        err instanceof ConflictError ||
-        err instanceof ValidationError ||
-        err instanceof DatabaseError
-      ) {
+      if (isRepoKnownError(err)) {
         throw err;
       }
-      const code = getPgCode(err);
       serverLogger.error(
-        {
-          context: `${AuthUserRepo.CTX}.signup`,
-          kind: "unexpected",
-          ...(code ? { code } : {}),
-        },
+        { context: `${AuthUserRepo.CTX}.signup`, kind: "unexpected" },
         "Unexpected error during signup repository operation",
       );
-      throw new DatabaseError("Database operation failed during signup.", {
-        context: `${AuthUserRepo.CTX}.signup`,
-        ...(code ? { code } : {}),
-      });
+      return throwRepoDatabaseErr(
+        "Database operation failed during signup.",
+        err,
+      );
     }
   }
 
@@ -221,10 +117,9 @@ export class AuthUserRepo {
    * - Maps not-found to Unauthorized (domain decision).
    * - Keeps DB errors normalized.
    */
-  async login(input: AuthLoginDalInput): Promise<UserEntity> {
+  async login(input: Readonly<AuthLoginDalInput>): Promise<UserEntity> {
     try {
       const row = await loginDal(this.db, input.email);
-
       if (!row?.password) {
         serverLogger.warn(
           {
@@ -235,7 +130,6 @@ export class AuthUserRepo {
         );
         throw new UnauthorizedError("Invalid email or password.");
       }
-
       return userDbRowToEntity(row);
     } catch (err: unknown) {
       if (
@@ -245,18 +139,15 @@ export class AuthUserRepo {
       ) {
         throw err;
       }
-      const code = getPgCode(err);
       serverLogger.error(
         {
           context: `${AuthUserRepo.CTX}.login`,
           kind: "unexpected",
-          ...(code ? { code } : {}),
         },
         "Unexpected error during login repository operation",
       );
       throw new DatabaseError("Database operation failed during login.", {
         context: `${AuthUserRepo.CTX}.login`,
-        ...(code ? { code } : {}),
       });
     }
   }
