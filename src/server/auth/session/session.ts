@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noProcessEnv: <fix later> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
-// todo: why is cache imported from react?
+// TODO: why is cache imported from react?
 import "server-only";
 
 import { cookies } from "next/headers";

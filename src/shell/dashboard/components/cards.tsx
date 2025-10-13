@@ -33,7 +33,7 @@ export function CardWrapper({ data }: CardWrapperProps): JSX.Element {
     <>
       <Card title="Collected" type="collected" value={data.totalPaid} />
       <Card title="Pending" type="pending" value={data.totalPending} />
-      {/*  todo: property is missing from CardWrapperProps */}
+      {/*  TODO: property is missing from CardWrapperProps */}
       <Card title="Total Invoices" type="invoices" value={data.totalInvoices} />
       <Card
         title="Total Customers"
