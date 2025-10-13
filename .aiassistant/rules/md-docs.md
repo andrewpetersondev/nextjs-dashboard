@@ -32,17 +32,4 @@ Ensure all markdown docs are accurate, consistent, and follow project standards.
 - Document footer includes last updated date.
 - Cross-reference related topics via inline markdown links.
 
-## Review Checklist
-
-- Confirm formatting and linting with biome.
-- Validate links and references to code and instruction files.
-- Check for outdated patterns or obsolete references.
-- Document changes in the file header.
-- Run docs:lint and docs:links in CI; fix any broken links before merge.
-
-## CI & Ownership
-
-- CI jobs for docs: run markdown lint and link checker; fail on errors.
-- Each doc must list an Owner responsible for quarterly reviews and link integrity.
-
 _Last updated: 2025-10-05_

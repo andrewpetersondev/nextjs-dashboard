@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: off
 ---
 
 # Current Focus
@@ -20,18 +20,18 @@ Goals
 Focus on code related to:
 
 - result types, helpers, adapters, etc
-    - src/shared/core/result/
-    - src/shared/core/result/result.ts
-    - src/shared/core/result/async
-    - src/shared/core/result/iter
-    - src/shared/core/result/sync
+  - src/shared/core/result/
+  - src/shared/core/result/result.ts
+  - src/shared/core/result/async
+  - src/shared/core/result/iter
+  - src/shared/core/result/sync
 - error flows
-    - src/shared/core/errors
-    - src/server/errors/
-    - src/shared/core/result/app-error.ts
+  - src/shared/core/errors
+  - src/server/errors/
+  - src/shared/core/result/app-error.ts
 - form types, helpers, adapters, etc
-    - src/shared/forms
-    - src/server/forms
+  - src/shared/forms
+  - src/server/forms
 
 Secondary focus on:
 
