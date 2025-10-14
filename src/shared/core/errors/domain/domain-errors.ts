@@ -8,10 +8,10 @@ import { isErrorWithCode } from "@/shared/core/errors/base/error-guards";
 export class ValidationError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("VALIDATION", message, context, cause);
+    super("VALIDATION", { cause, context, message });
   }
 }
 
@@ -22,10 +22,10 @@ export class ValidationError extends BaseError {
 export class NotFoundError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("NOT_FOUND", message, context, cause);
+    super("NOT_FOUND", { cause, context, message });
   }
 }
 
@@ -35,10 +35,10 @@ export class NotFoundError extends BaseError {
 export class UnauthorizedError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("UNAUTHORIZED", message, context, cause);
+    super("UNAUTHORIZED", { cause, context, message });
   }
 }
 
@@ -48,10 +48,10 @@ export class UnauthorizedError extends BaseError {
 export class ForbiddenError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("FORBIDDEN", message, context, cause);
+    super("FORBIDDEN", { cause, context, message });
   }
 }
 
@@ -61,10 +61,10 @@ export class ForbiddenError extends BaseError {
 export class ConflictError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CONFLICT", message, context, cause);
+    super("CONFLICT", { cause, context, message });
   }
 }
 

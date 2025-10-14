@@ -1,5 +1,6 @@
 import { BaseError } from "@/shared/core/errors/base/base-error";
 
+// Refactor: use new BaseError constructor/options and BaseError.from
 export const normalizeToBaseError = (
   e: unknown,
   fallbackCode: BaseError["code"] = "UNKNOWN",
@@ -9,7 +10,11 @@ export const normalizeToBaseError = (
     return e;
   }
   if (e instanceof Error) {
-    return new BaseError(fallbackCode, e.message, { ...context }, e);
+    return new BaseError(fallbackCode, {
+      cause: e,
+      context,
+      message: e.message,
+    });
   }
-  return BaseError.from(e, fallbackCode, { ...context });
+  return BaseError.from(e, fallbackCode, context);
 };

@@ -8,10 +8,11 @@ import { BaseError } from "@/shared/core/errors/base/base-error";
 export class InfrastructureError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("INFRASTRUCTURE", message, context, cause);
+    // Adapt to BaseError(options) signature
+    super("INFRASTRUCTURE", { cause, context, message });
   }
 }
 
@@ -22,10 +23,10 @@ export class InfrastructureError extends BaseError {
 export class DatabaseError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("DATABASE", message, context, cause);
+    super("DATABASE", { cause, context, message });
   }
 }
 
@@ -36,10 +37,10 @@ export class DatabaseError extends BaseError {
 export class CacheError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CACHE", message, context, cause);
+    super("CACHE", { cause, context, message });
   }
 }
 
@@ -50,9 +51,9 @@ export class CacheError extends BaseError {
 export class CryptoError extends BaseError {
   constructor(
     message?: string,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CRYPTO", message, context, cause);
+    super("CRYPTO", { cause, context, message });
   }
 }

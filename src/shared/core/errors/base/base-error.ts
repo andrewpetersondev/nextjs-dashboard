@@ -1,7 +1,35 @@
+import { IS_DEV } from "@/shared/config/env-shared";
 import {
   type ErrorCode,
   getErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
+
+// --- local helpers (not exported) ---
+
+function safeStringifyUnknown(value: unknown): string {
+  try {
+    if (typeof value === "string") {
+      return value;
+    }
+    return JSON.stringify(value, (_k, v) =>
+      typeof v === "bigint" ? v.toString() : v,
+    );
+  } catch {
+    return "Non-serializable thrown value";
+  }
+}
+
+function redactNonSerializable(value: unknown): unknown {
+  if (value instanceof Error) {
+    return { message: value.message, name: value.name };
+  }
+  try {
+    JSON.stringify(value);
+    return value;
+  } catch {
+    return { note: "non-serializable" };
+  }
+}
 
 /**
  * Immutable, JSON-safe diagnostic context attached to an error.
@@ -16,7 +44,7 @@ export interface BaseErrorJSON {
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
-  readonly context?: Record<string, unknown>;
+  readonly context?: BaseErrorContext;
 }
 
 /**
@@ -42,15 +70,11 @@ export class BaseError extends Error {
   readonly context: BaseErrorContext;
   readonly cause?: unknown;
 
-  constructor(
-    code: ErrorCode,
-    message?: string,
-    context: Record<string, unknown> = {},
-    cause?: unknown,
-  ) {
+  constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
     const meta = getErrorCodeMeta(code);
+    const { message, context, cause } = options;
     super(
-      message || meta.description,
+      message ?? meta.description,
       cause instanceof Error ? { cause } : undefined,
     );
     this.name = this.constructor.name;
@@ -60,31 +84,34 @@ export class BaseError extends Error {
     this.retryable = meta.retryable;
     this.category = meta.category;
     this.description = meta.description;
-    this.context = Object.freeze({ ...context });
+    this.context = Object.freeze({ ...(context ?? {}) });
     this.cause = cause;
+    // Freeze the instance in dev to enforce immutability
+    if (IS_DEV) {
+      Object.freeze(this);
+    }
   }
 
   /**
    * Public accessor for immutable diagnostic details.
    */
-  getDetails(): Readonly<Record<string, unknown>> {
+  getDetails(): BaseErrorContext {
     return this.context;
   }
 
   /**
    * Merge additional immutable context, returning a new BaseError.
-   * Note: subclass identity is not preserved.
+   * Note: subclass identity is not preserved unless create() is overridden.
    */
-  withContext(extra: Record<string, unknown>): BaseError {
+  withContext(extra: Readonly<Record<string, unknown>>): BaseError {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
     }
-    return new BaseError(
-      this.code,
-      this.message,
-      { ...this.context, ...extra },
-      this.cause,
-    );
+    return this.create(this.code, {
+      cause: this.cause,
+      context: { ...this.context, ...extra },
+      message: this.message,
+    });
   }
 
   /**
@@ -94,12 +121,11 @@ export class BaseError extends Error {
     if (code === this.code && !overrideMessage) {
       return this;
     }
-    return new BaseError(
-      code,
-      overrideMessage || this.message,
-      { ...this.context },
-      this.cause,
-    );
+    return this.create(code, {
+      cause: this.cause,
+      context: { ...this.context },
+      message: overrideMessage ?? this.message,
+    });
   }
 
   /**
@@ -122,33 +148,27 @@ export class BaseError extends Error {
   }
 
   /**
-   * Normalize unknown into BaseError (lightweight alternative to mapToBaseError).
+   * Normalize unknown into BaseError.
    */
   static from(
     value: unknown,
     fallbackCode: ErrorCode = "UNKNOWN",
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
   ): BaseError {
     if (value instanceof BaseError) {
       return value;
     }
     if (value instanceof Error) {
-      return new BaseError(fallbackCode, value.message, context, value);
+      return new BaseError(fallbackCode, {
+        cause: value,
+        context,
+        message: value.message,
+      });
     }
-    let msg: string;
-    try {
-      msg =
-        typeof value === "string"
-          ? value
-          : JSON.stringify(value, (_k, v) =>
-              typeof v === "bigint" ? v.toString() : v,
-            );
-    } catch {
-      msg = "Non-serializable thrown value";
-    }
-    return new BaseError(fallbackCode, msg, {
-      ...context,
-      originalType: typeof value,
+    const msg = safeStringifyUnknown(value);
+    return new BaseError(fallbackCode, {
+      context: { ...context, originalType: typeof value },
+      message: msg,
     });
   }
 
@@ -158,19 +178,31 @@ export class BaseError extends Error {
   static wrap(
     code: ErrorCode,
     err: unknown,
-    context: Record<string, unknown> = {},
+    context: Readonly<Record<string, unknown>> = {},
     message?: string,
   ): BaseError {
     if (err instanceof BaseError) {
       return err.remap(code, message);
     }
     if (err instanceof Error) {
-      return new BaseError(code, message || err.message, context, err);
+      return new BaseError(code, {
+        cause: err,
+        context,
+        message: message ?? err.message,
+      });
     }
-    return new BaseError(code, message || "Wrapped unknown value", {
-      ...context,
-      originalValue: err,
+    return new BaseError(code, {
+      context: { ...context, originalValue: redactNonSerializable(err) },
+      message: message ?? "Wrapped unknown value",
     });
+  }
+
+  /**
+   * Protected factory to preserve subclassing in helpers.
+   * Subclasses can override to return their own instances.
+   */
+  protected create(code: ErrorCode, options: BaseErrorOptions): BaseError {
+    return new BaseError(code, options);
   }
 }
 

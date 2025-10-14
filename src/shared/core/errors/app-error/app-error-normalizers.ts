@@ -54,18 +54,13 @@ export function toBaseErrorFromApp(
   const code =
     appError.code && isErrorCode(appError.code) ? appError.code : defaultCode;
 
-  const be = new BaseError(
-    code,
-    appError.message,
-    // Preserve minimal, JSON-safe details as context
-    {
+  return new BaseError(code, {
+    cause: appError.cause,
+    context: {
       kind: appError.kind,
       ...(appError.details ? { details: appError.details } : {}),
       ...(appError.name ? { name: appError.name } : {}),
     },
-    // Keep the opaque cause reference if present
-    appError.cause,
-  );
-
-  return be;
+    message: appError.message,
+  });
 }
