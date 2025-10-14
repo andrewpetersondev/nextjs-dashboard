@@ -100,11 +100,6 @@ function validateAndMaybeSanitizeContext(
   }
 }
 
-/**
- * Immutable, JSON-safe diagnostic context attached to an error.
- */
-export type BaseErrorContext = Readonly<Record<string, unknown>>;
-
 export interface BaseErrorJSON {
   readonly code: ErrorCode;
   readonly message: string;
@@ -113,7 +108,7 @@ export interface BaseErrorJSON {
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
-  readonly context?: BaseErrorContext;
+  readonly context?: Readonly<Record<string, unknown>>;
 }
 
 /**
@@ -121,7 +116,7 @@ export interface BaseErrorJSON {
  */
 export interface BaseErrorOptions {
   readonly message?: string;
-  readonly context?: BaseErrorContext;
+  readonly context?: Readonly<Record<string, unknown>>;
   readonly cause?: unknown;
 }
 
@@ -136,7 +131,7 @@ export class BaseError extends Error {
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
-  readonly context: BaseErrorContext;
+  readonly context: Readonly<Record<string, unknown>>;
   readonly originalCause?: unknown;
 
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
@@ -175,8 +170,8 @@ export class BaseError extends Error {
       ? validateAndMaybeSanitizeContext(clonedContext)
       : clonedContext;
     this.context = IS_DEV
-      ? (deepFreezeDev(checkedContext) as BaseErrorContext)
-      : (Object.freeze(checkedContext) as BaseErrorContext);
+      ? (deepFreezeDev(checkedContext) as Readonly<Record<string, unknown>>)
+      : (Object.freeze(checkedContext) as Readonly<Record<string, unknown>>);
     this.originalCause = cause;
     // Freeze the instance in all envs (top-level)
     try {
@@ -189,7 +184,7 @@ export class BaseError extends Error {
   /**
    * Public accessor for immutable diagnostic details.
    */
-  getDetails(): BaseErrorContext {
+  getDetails(): Readonly<Record<string, unknown>> {
     return this.context;
   }
 
