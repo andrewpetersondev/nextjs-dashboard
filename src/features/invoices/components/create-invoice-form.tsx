@@ -39,7 +39,9 @@ export const CreateInvoiceForm = ({
   ): Promise<LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> => {
     // Coerce the server action to the expected LegacyFormState shape
     return (await createInvoiceAction(
+      // biome-ignore lint/suspicious/noExplicitAny: <temp>
       prev as any,
+      // biome-ignore lint/suspicious/noExplicitAny: <temp>
       formData as any,
     )) as unknown as LegacyFormState<
       CreateInvoiceFieldNames,
