@@ -41,6 +41,10 @@ export async function getUserByEmailDal(
 
       return userRow;
     },
-    { context: "dal.users.getByEmail", identifiers: { email } },
+    {
+      context: "dal.users.getByEmail",
+      identifiers: { email },
+      operation: "getUserByEmail",
+    },
   );
 }

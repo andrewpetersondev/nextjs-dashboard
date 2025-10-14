@@ -62,6 +62,10 @@ export async function insertUserDal(
 
       return userRow;
     },
-    { context: "dal.users.insert", identifiers: { email, username } },
+    {
+      context: "dal.users.insert",
+      identifiers: { email, username },
+      operation: "insertUser",
+    },
   );
 }
