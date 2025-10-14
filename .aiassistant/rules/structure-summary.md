@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: manually
 ---
 
 # Structure & Architecture Summary

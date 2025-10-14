@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: manually
 ---
 
 # JetBrains AI Rules

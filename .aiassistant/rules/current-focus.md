@@ -1,43 +1,24 @@
 ---
-apply: off
+apply: manually
 ---
 
 # Current Focus
 
 Instructions
 
-- If there are any bad practices, poor organization, etc., I want to fix it. To do this, I will need to strengthen my
-  logic for forms, results, and errors.
-
 Goals
 
-- find problems, flaws, mistakes in result code
-- code for returning results and throwing errors
-- result utilities with mappers/adapters
-- writing maintainable code
-- result & form & error cohesion
+- Code for each layer should be organized, well-structured, and easy to follow.
 
 Focus on code related to:
 
-- result types, helpers, adapters, etc
-  - src/shared/core/result/
-  - src/shared/core/result/result.ts
-  - src/shared/core/result/async
-  - src/shared/core/result/iter
-  - src/shared/core/result/sync
-- error flows
-  - src/shared/core/errors
-  - src/server/errors/
-  - src/shared/core/result/app-error.ts
-- form types, helpers, adapters, etc
-  - src/shared/forms
-  - src/server/forms
+- src/features/auth/
+- src/server/auth/
 
 Secondary focus on:
 
-- organization
-- reusable code
-- removing duplication
+- Authentication UI flows and server actions for signup and login
+- Session handling related to auth (only if directly impacting signup/login)
 
 Ignore:
 
@@ -50,4 +31,4 @@ Ignore:
 - src/features/users/
 - src/server/users/
 
-_Last updated: 2025-10-11_
+_Last updated: 2025-10-13_
