@@ -47,29 +47,27 @@ function isUniqueViolation(e: unknown): boolean {
 
 function buildDatabaseMessage(e: unknown): string {
   const code = getPgCode(e);
-  // Keep messages generic; no secrets/PII.
-  if (code === PG_ERROR_CODES.serializationFailure) {
-    return "Transaction serialization failure (40001).";
+  if (!code) {
+    return "Database operation failed.";
   }
-  if (code === PG_ERROR_CODES.deadlockDetected) {
-    return "Deadlock detected (40P01).";
+  switch (code) {
+    case PG_ERROR_CODES.serializationFailure:
+      return "Transaction serialization failure (40001).";
+    case PG_ERROR_CODES.deadlockDetected:
+      return "Deadlock detected (40P01).";
+    case PG_ERROR_CODES.lockNotAvailable:
+      return "Lock not available (55P03).";
+    case PG_ERROR_CODES.queryCanceled:
+      return "Query canceled or statement timeout (57014).";
+    case PG_ERROR_CODES.foreignKeyViolation:
+      return "Foreign key constraint violation (23503).";
+    case PG_ERROR_CODES.checkViolation:
+      return "Check constraint violation (23514).";
+    case PG_ERROR_CODES.notNullViolation:
+      return "Not-null constraint violation (23502).";
+    default:
+      return "Database operation failed.";
   }
-  if (code === PG_ERROR_CODES.lockNotAvailable) {
-    return "Lock not available (55P03).";
-  }
-  if (code === PG_ERROR_CODES.queryCanceled) {
-    return "Query canceled or statement timeout (57014).";
-  }
-  if (code === PG_ERROR_CODES.foreignKeyViolation) {
-    return "Foreign key constraint violation (23503).";
-  }
-  if (code === PG_ERROR_CODES.checkViolation) {
-    return "Check constraint violation (23514).";
-  }
-  if (code === PG_ERROR_CODES.notNullViolation) {
-    return "Not-null constraint violation (23502).";
-  }
-  return "Database operation failed.";
 }
 
 /**
