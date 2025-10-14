@@ -112,31 +112,3 @@ export async function executeDalOrThrow<T>(
     throw new DatabaseError(msg, { ...logCtx, ...(code ? { code } : {}) }, e);
   }
 }
-
-/**
- * Transaction helper for multi-step writes with distinct logging and error mapping.
- * Use for atomic DAL workflows.
- */
-export async function withDalTransaction<T>(
-  db: { transaction<R>(scope: (tx: typeof db) => Promise<R>): Promise<R> },
-  context: string,
-  run: (tx: typeof db) => Promise<T>,
-  identifiers?: Record<string, unknown>,
-): Promise<T> {
-  return await executeDalOrThrow(
-    () =>
-      db.transaction(async (tx) => {
-        serverLogger.debug(
-          { context, ...(identifiers ?? {}) },
-          "Begin transaction",
-        );
-        const result = await run(tx);
-        serverLogger.debug(
-          { context, ...(identifiers ?? {}) },
-          "Commit transaction",
-        );
-        return result;
-      }),
-    { context, identifiers },
-  );
-}
