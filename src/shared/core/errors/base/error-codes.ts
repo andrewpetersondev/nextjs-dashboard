@@ -2,7 +2,7 @@
  * Canonical application error codes and their metadata.
  *
  * Single source of truth:
- * - Add new codes here (stable UPPER\_SNAKE\_CASE).
+ * - Add new codes here (stable UPPER_SNAKE_CASE).
  * - Other modules (factories, mappers, logging, API shaping) derive from this.
  *
  * Rules:
@@ -169,6 +169,9 @@ export const ERROR_CODES = {
 export type ErrorCode = keyof typeof ERROR_CODES;
 
 export type ErrorCodeMeta = (typeof ERROR_CODES)[ErrorCode];
+
+// Derive a stable Severity union from metadata values
+export type Severity = ErrorCodeMeta["severity"];
 
 /**
  * Return metadata for a code (throws if invalid in strict usage contexts).

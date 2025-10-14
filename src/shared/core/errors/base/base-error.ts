@@ -2,6 +2,7 @@ import { IS_DEV } from "@/shared/config/env-shared";
 import {
   type ErrorCode,
   getErrorCodeMeta,
+  type Severity,
 } from "@/shared/core/errors/base/error-codes";
 
 // --- local helpers (not exported) ---
@@ -40,7 +41,7 @@ export interface BaseErrorJSON {
   readonly code: ErrorCode;
   readonly message: string;
   readonly statusCode: number;
-  readonly severity: string;
+  readonly severity: Severity;
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
@@ -63,7 +64,7 @@ export interface BaseErrorOptions {
 export class BaseError extends Error {
   readonly code: ErrorCode;
   readonly statusCode: number;
-  readonly severity: string;
+  readonly severity: Severity;
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
@@ -101,9 +102,11 @@ export class BaseError extends Error {
 
   /**
    * Merge additional immutable context, returning a new BaseError.
-   * Note: subclass identity is not preserved unless create() is overridden.
+   * Note: subclass identity is preserved via protected factory.
    */
-  withContext(extra: Readonly<Record<string, unknown>>): BaseError {
+  withContext<TExtra extends Readonly<Record<string, unknown>>>(
+    extra: TExtra,
+  ): this {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
     }
@@ -111,13 +114,14 @@ export class BaseError extends Error {
       cause: this.cause,
       context: { ...this.context, ...extra },
       message: this.message,
-    });
+    }) as this;
   }
 
   /**
    * Functional remap to a different canonical code (rare; use sparingly).
+   * Preserves subclass via protected factory.
    */
-  remap(code: ErrorCode, overrideMessage?: string): BaseError {
+  remap(code: ErrorCode, overrideMessage?: string): this {
     if (code === this.code && !overrideMessage) {
       return this;
     }
@@ -125,7 +129,7 @@ export class BaseError extends Error {
       cause: this.cause,
       context: { ...this.context },
       message: overrideMessage ?? this.message,
-    });
+    }) as this;
   }
 
   /**
@@ -149,6 +153,7 @@ export class BaseError extends Error {
 
   /**
    * Normalize unknown into BaseError.
+   * Uses consistent redaction fields with wrap().
    */
   static from(
     value: unknown,
@@ -167,13 +172,18 @@ export class BaseError extends Error {
     }
     const msg = safeStringifyUnknown(value);
     return new BaseError(fallbackCode, {
-      context: { ...context, originalType: typeof value },
+      context: {
+        ...context,
+        originalType: typeof value,
+        originalValue: redactNonSerializable(value),
+      },
       message: msg,
     });
   }
 
   /**
    * Wrap an error preserving original (never double-wrap BaseError).
+   * Uses consistent redaction fields with from().
    */
   static wrap(
     code: ErrorCode,
@@ -192,7 +202,11 @@ export class BaseError extends Error {
       });
     }
     return new BaseError(code, {
-      context: { ...context, originalValue: redactNonSerializable(err) },
+      context: {
+        ...context,
+        originalType: typeof err,
+        originalValue: redactNonSerializable(err),
+      },
       message: message ?? "Wrapped unknown value",
     });
   }
