@@ -2,7 +2,7 @@
 apply: always
 ---
 
-# TypeScript Summary Rules
+# TypeScript Rules
 
 ## Purpose
 

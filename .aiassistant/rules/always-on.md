@@ -41,12 +41,12 @@ This document is always-on. Downstream documents must not restate rules from thi
 
 ### Precedence Order (highest → lowest)
 
-1. always-on.md (this document)
-2. project-rules.md
-3. typescript-summary.md
-4. result-error-summary.md
-5. structure-summary.md
-6. current-focus.md
+1. current-focus.md
+2. always-on.md (this document)
+3. project-rules.md
+4. typescript-summary.md
+5. result-error-summary.md
+6. structure-summary.md
 
 Tip: When in doubt, prefer the higher-precedence document.
 

@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Results, Errors, and Form Handling Rules

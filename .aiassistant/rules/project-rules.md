@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: manually
 ---
 
 # JetBrains AI Rules
@@ -12,7 +12,7 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 
 1. Inspect and use the most recent attached instruction files before proposing changes.
 2. Follow all rules in:
-   - [TypeScript Instructions](./typescript-summary.md)
+   - [TypeScript Instructions](typescript-rules.md)
    - [Result & Error Instructions](./results-forms-errors.md)
 3. Do not access or reference files outside user-provided folders or attachments.
 
@@ -32,7 +32,7 @@ Define strict, auditable rules for AI responses, code suggestions, and changes i
 1. Add contextual identifiers (operation, IDs) without secrets.
 2. Normalize API error shapes; map internal errors to safe client messages.
 3. Use structured logs at appropriate levels.
-4. Handle TypeScript errors per [TypeScript Instructions](./typescript-summary.md).
+4. Handle TypeScript errors per [TypeScript Instructions](typescript-rules.md).
 
 ## Version & Tooling Constraints
 

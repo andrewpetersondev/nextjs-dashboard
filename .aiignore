@@ -156,3 +156,6 @@ src/server/customers/
 src/server/invoices/
 src/server/revenues/
 src/shared/core/result/examples/
+src/shared/core/errors/app-error
+src/server/errors/factories/layer-error-return.ts
+
