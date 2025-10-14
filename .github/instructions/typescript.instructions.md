@@ -3,7 +3,7 @@ applyTo: "**"
 description: "description"
 ---
 
-# TypeScript Summary Rules
+# TypeScript Rules
 
 ## Purpose
 

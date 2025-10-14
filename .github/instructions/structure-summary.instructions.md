@@ -1,6 +1,6 @@
 ---
-applyTo: '**'
-description: 'Project structure, organization, and architectural strategies for Next.js + TypeScript monorepo.'
+applyTo: "**"
+description: "Project structure, organization, and architectural strategies for Next.js + TypeScript monorepo."
 ---
 
 # Structure & Architecture Summary
@@ -54,10 +54,4 @@ Attach for refactors, file moves, or architecture reviews.
 
 ---
 
-## Performance & Review
-
-- JS bundle target ≤200 KB gzip per route.
-- Validate Lighthouse, LCP ≤2.5 s, CLS < 0.1, TBT < 300 ms.
-- Verify import boundaries and immutability on each PR.
-
-_Last updated: 2025-10-08_
+_Last updated: 2025-10-11_

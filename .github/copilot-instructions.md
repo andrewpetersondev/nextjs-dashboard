@@ -3,6 +3,8 @@ applyTo: "**"
 description: "GitHub Copilot usage and response rules for this project."
 ---
 
+# Always-On AI Rules (Lite)
+
 ## Minimal Response Rule
 
 1. Keep responses concise; include only the changed or added code.
