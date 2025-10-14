@@ -204,4 +204,3 @@ export function isErrorCode(code: string): code is ErrorCode {
 export const ALL_ERROR_CODES: readonly ErrorCode[] = Object.freeze(
   Object.keys(ERROR_CODES) as ErrorCode[],
 );
-
