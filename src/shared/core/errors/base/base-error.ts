@@ -32,6 +32,38 @@ function redactNonSerializable(value: unknown): unknown {
   }
 }
 
+// Shallow-deep freeze for dev to discourage mutation without heavy perf cost
+function deepFreezeDev<T>(obj: T): T {
+  if (!IS_DEV || obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  const seen = new WeakSet<object>();
+  const freeze = (o: object): void => {
+    if (seen.has(o)) {
+      return;
+    }
+    seen.add(o);
+
+    for (const key of Object.getOwnPropertyNames(o)) {
+      const v = (o as Record<string, unknown>)[key];
+      if (v && typeof v === "object") {
+        try {
+          freeze(v as object);
+        } catch {
+          // ignore circular or non-configurable props
+        }
+      }
+    }
+    try {
+      Object.freeze(o);
+    } catch {
+      // ignore non-extensible targets
+    }
+  };
+  freeze(obj as unknown as object);
+  return obj;
+}
+
 /**
  * Immutable, JSON-safe diagnostic context attached to an error.
  */
@@ -74,10 +106,26 @@ export class BaseError extends Error {
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
     const meta = getErrorCodeMeta(code);
     const { message, context, cause } = options;
-    super(
-      message ?? meta.description,
-      cause instanceof Error ? { cause } : undefined,
-    );
+    //    const sanitizedCause =
+    //      cause instanceof Error
+    //        ? cause
+    //        : cause === undefined
+    //          ? undefined
+    //          : redactNonSerializable(cause);
+    let sanitizedCause: unknown;
+    switch (true) {
+      case cause instanceof Error:
+        sanitizedCause = cause;
+        break;
+      case cause === undefined:
+        sanitizedCause = undefined;
+        break;
+      default:
+        sanitizedCause = redactNonSerializable(cause);
+    }
+    super(message ?? meta.description, {
+      cause: sanitizedCause as unknown as Error | undefined,
+    });
     this.name = this.constructor.name;
     this.code = code;
     this.statusCode = meta.httpStatus;
@@ -85,7 +133,11 @@ export class BaseError extends Error {
     this.retryable = meta.retryable;
     this.category = meta.category;
     this.description = meta.description;
-    this.context = Object.freeze({ ...(context ?? {}) });
+    // Clone, optionally deep-freeze in dev
+    const clonedContext = { ...(context ?? {}) };
+    this.context = IS_DEV
+      ? (deepFreezeDev(clonedContext) as BaseErrorContext)
+      : (Object.freeze(clonedContext) as BaseErrorContext);
     this.cause = cause;
     // Freeze the instance in dev to enforce immutability
     if (IS_DEV) {
@@ -216,7 +268,16 @@ export class BaseError extends Error {
    * Subclasses can override to return their own instances.
    */
   protected create(code: ErrorCode, options: BaseErrorOptions): BaseError {
-    return new BaseError(code, options);
+    // Preserve subclass by using the same constructor when possible
+    const Ctor = this.constructor as new (
+      c: ErrorCode,
+      o: BaseErrorOptions,
+    ) => BaseError;
+    try {
+      return new Ctor(code, options);
+    } catch {
+      return new BaseError(code, options);
+    }
   }
 }
 
