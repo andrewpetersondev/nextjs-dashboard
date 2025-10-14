@@ -45,7 +45,7 @@ Last updated: 2025-09-11
 File: `src/server/auth/actions/login.ts`
 
 1. Validate form data (`LoginFormSchema`), normalize email.
-2. Lookup user via `loginDal(db, email, password)`.
+2. Lookup user via `getUserByEmailDal(db, email, password)`.
 3. On success: `setSessionToken(toUserId(user.id), toUserRole(user.role))`.
 4. Redirect to `/dashboard`.
 5. On failure: return form errors with `USER_ERROR_MESSAGES.INVALID_CREDENTIALS` (or UNEXPECTED on errors) — no session set.

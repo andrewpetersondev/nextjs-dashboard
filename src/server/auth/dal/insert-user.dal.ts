@@ -1,5 +1,5 @@
 import "server-only";
-import { executeDalOrThrow } from "@/server/auth/dal/auth-utils.dal";
+import { executeDalOrThrow } from "@/server/auth/dal/dal-execution";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
@@ -23,7 +23,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  * withDalTransaction is a reusable helper for atomic multi-step writes with the same normalization.
  * Identifiers in logs exclude secrets (no passwords/tokens).
  */
-export async function signupDal(
+export async function insertUserDal(
   db: AppDatabase,
   input: Readonly<AuthSignupDalInput>,
 ): Promise<NewUserRow> {
@@ -31,7 +31,7 @@ export async function signupDal(
 
   return await executeDalOrThrow(
     async () => {
-      const insertedRows = await db
+      const rows = await db
         .insert(users)
         .values({
           email,
@@ -41,13 +41,12 @@ export async function signupDal(
         } satisfies NewUserRow)
         .returning();
 
-      const userRow = insertedRows?.[0];
+      const userRow = rows?.[0];
 
       if (!userRow) {
-        // Invariant: A successful DB insert must return the row; log and throw explicit error
         serverLogger.error(
           {
-            context: "dal.signupDal",
+            context: "dal.users.insert",
             email,
             kind: "invariant",
             role,
@@ -55,16 +54,14 @@ export async function signupDal(
           },
           "INSERT returned no user row",
         );
-        // Throw a layer-appropriate DatabaseError so upper layers can narrow and avoid unreachable-return hacks.
         throw new DatabaseError(
-          "Invariant violation: insert did not return a new user row. This should never happen.",
+          "Invariant violation: insert did not return a new user row.",
           { layer: "dal" },
         );
       }
 
       return userRow;
     },
-    // Minimal, non-sensitive logging context and identifiers
-    { context: "dal.signupDal", identifiers: { email, username } },
+    { context: "dal.users.insert", identifiers: { email, username } },
   );
 }

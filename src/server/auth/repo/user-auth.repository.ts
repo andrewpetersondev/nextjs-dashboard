@@ -1,6 +1,6 @@
 import "server-only";
-import { loginDal } from "@/server/auth/dal/login.dal";
-import { signupDal } from "@/server/auth/dal/signup.dal";
+import { getUserByEmailDal } from "@/server/auth/dal/get-user-by-email.dal";
+import { insertUserDal } from "@/server/auth/dal/insert-user.dal";
 import type { AuthLoginDalInput } from "@/server/auth/types/login.dtos";
 import type { AuthSignupDalInput } from "@/server/auth/types/signup.dtos";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -92,7 +92,7 @@ export class AuthUserRepo {
     try {
       assertSignupFields(input);
       const normalized: AuthSignupDalInput = toNormalizedSignupInput(input);
-      const row = await signupDal(this.db, normalized);
+      const row = await insertUserDal(this.db, normalized);
       if (!row) {
         return throwRepoDatabaseErr("User creation did not return a row.");
       }
@@ -119,7 +119,7 @@ export class AuthUserRepo {
    */
   async login(input: Readonly<AuthLoginDalInput>): Promise<UserEntity> {
     try {
-      const row = await loginDal(this.db, input.email);
+      const row = await getUserByEmailDal(this.db, input.email);
       if (!row?.password) {
         serverLogger.warn(
           {
