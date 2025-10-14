@@ -1,13 +1,14 @@
-// File: 'src/shared/core/errors/adapters/app-error-normalizers.ts'
-// Normalizers and adapters between unknown/BaseError/AppError
+// File: 'src/shared/core/errors/app-error-adapters/app-error-normalizers.ts'
+// Normalizers and app-error-adapters between unknown/BaseError/AppError
 
 import {
   freezeDev,
   isAppErrorLike,
   pickOptionalFromLike,
   toSeverity,
-} from "@/shared/core/errors/adapters/app-error-internal";
+} from "@/shared/core/errors/app-error-adapters/app-error-internal";
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import { normalizeToBaseError } from "@/shared/core/errors/base/base-error-adapters";
 import {
   isErrorCode,
   tryGetErrorCodeMeta,
@@ -67,26 +68,4 @@ export function toBaseErrorFromApp(
   );
 
   return be;
-}
-
-export const normalizeToBaseError = (
-  e: unknown,
-  fallbackCode: BaseError["code"] = "UNKNOWN",
-  context: Readonly<Record<string, unknown>> = {},
-): BaseError => {
-  if (e instanceof BaseError) {
-    return e;
-  }
-  if (e instanceof Error) {
-    return new BaseError(fallbackCode, e.message, { ...context }, e);
-  }
-  return BaseError.from(e, fallbackCode, { ...context });
-};
-
-export function toBaseErrorFromUnknown(
-  e: unknown,
-  fallbackCode: BaseError["code"] = "UNKNOWN",
-  context: Readonly<Record<string, unknown>> = {},
-): BaseError {
-  return normalizeToBaseError(e, fallbackCode, context);
 }
