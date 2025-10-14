@@ -12,9 +12,14 @@ function safeStringifyUnknown(value: unknown): string {
     if (typeof value === "string") {
       return value;
     }
-    return JSON.stringify(value, (_k, v) =>
+    const json = JSON.stringify(value, (_k, v) =>
       typeof v === "bigint" ? v.toString() : v,
     );
+    const MAX = 10_000; // limit ~10KB
+    if (typeof json === "string" && json.length > MAX) {
+      return `${json.slice(0, MAX)}…[truncated ${json.length - MAX} chars]`;
+    }
+    return json ?? String(value);
   } catch {
     return "Non-serializable thrown value";
   }
@@ -64,6 +69,37 @@ function deepFreezeDev<T>(obj: T): T {
   return obj;
 }
 
+// Dev-only: ensure context is JSON-serializable; redact offending entries
+function validateAndMaybeSanitizeContext(
+  ctx: Readonly<Record<string, unknown>>,
+): Readonly<Record<string, unknown>> {
+  if (!IS_DEV) {
+    return ctx;
+  }
+  try {
+    JSON.stringify(ctx);
+    return ctx;
+  } catch {
+    const sanitized: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(ctx)) {
+      try {
+        JSON.stringify(v);
+        sanitized[k] = v;
+      } catch {
+        // eslint-disable-next-line no-console
+        console.warn("[BaseError] Redacted non-serializable context value:", k);
+        sanitized[k] = redactNonSerializable(v);
+      }
+    }
+    try {
+      JSON.stringify(sanitized);
+      return sanitized;
+    } catch {
+      return { note: "context-redacted-non-serializable" };
+    }
+  }
+}
+
 /**
  * Immutable, JSON-safe diagnostic context attached to an error.
  */
@@ -101,7 +137,7 @@ export class BaseError extends Error {
   readonly category: string;
   readonly description: string;
   readonly context: BaseErrorContext;
-  readonly cause?: unknown;
+  readonly originalCause?: unknown;
 
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
     const meta = getErrorCodeMeta(code);
@@ -124,7 +160,7 @@ export class BaseError extends Error {
         sanitizedCause = redactNonSerializable(cause);
     }
     super(message ?? meta.description, {
-      cause: sanitizedCause as unknown as Error | undefined,
+      cause: sanitizedCause as Error | undefined,
     });
     this.name = this.constructor.name;
     this.code = code;
@@ -133,15 +169,20 @@ export class BaseError extends Error {
     this.retryable = meta.retryable;
     this.category = meta.category;
     this.description = meta.description;
-    // Clone, optionally deep-freeze in dev
+    // Clone, dev-validate for serializability, optionally deep-freeze in dev
     const clonedContext = { ...(context ?? {}) };
+    const checkedContext = IS_DEV
+      ? validateAndMaybeSanitizeContext(clonedContext)
+      : clonedContext;
     this.context = IS_DEV
-      ? (deepFreezeDev(clonedContext) as BaseErrorContext)
-      : (Object.freeze(clonedContext) as BaseErrorContext);
-    this.cause = cause;
-    // Freeze the instance in dev to enforce immutability
-    if (IS_DEV) {
+      ? (deepFreezeDev(checkedContext) as BaseErrorContext)
+      : (Object.freeze(checkedContext) as BaseErrorContext);
+    this.originalCause = cause;
+    // Freeze the instance in all envs (top-level)
+    try {
       Object.freeze(this);
+    } catch {
+      // ignore non-extensible targets
     }
   }
 
@@ -162,11 +203,20 @@ export class BaseError extends Error {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
     }
-    return this.create(this.code, {
-      cause: this.cause,
+    const next = this.create(this.code, {
+      cause: this.originalCause,
       context: { ...this.context, ...extra },
       message: this.message,
     }) as this;
+    // Preserve original stack where writable
+    if (typeof this.stack === "string") {
+      try {
+        (next as { stack?: string }).stack = this.stack;
+      } catch {
+        // ignore
+      }
+    }
+    return next;
   }
 
   /**
@@ -177,11 +227,20 @@ export class BaseError extends Error {
     if (code === this.code && !overrideMessage) {
       return this;
     }
-    return this.create(code, {
-      cause: this.cause,
+    const next = this.create(code, {
+      cause: this.originalCause,
       context: { ...this.context },
       message: overrideMessage ?? this.message,
     }) as this;
+    // Preserve original stack where writable
+    if (typeof this.stack === "string") {
+      try {
+        (next as { stack?: string }).stack = this.stack;
+      } catch {
+        // ignore
+      }
+    }
+    return next;
   }
 
   /**
@@ -244,7 +303,15 @@ export class BaseError extends Error {
     message?: string,
   ): BaseError {
     if (err instanceof BaseError) {
-      return err.remap(code, message);
+      const remapped = err.remap(code, message);
+      if (remapped !== err && typeof err.stack === "string") {
+        try {
+          (remapped as { stack?: string }).stack = err.stack;
+        } catch {
+          // ignore
+        }
+      }
+      return remapped;
     }
     if (err instanceof Error) {
       return new BaseError(code, {
