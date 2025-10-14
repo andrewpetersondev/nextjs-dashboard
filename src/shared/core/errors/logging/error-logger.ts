@@ -1,6 +1,5 @@
 // src/shared/core/errors/error-logger.ts
 
-import { toBaseErrorFromApp } from "@/shared/core/errors/app-error-adapters/app-error-normalizers";
 import { BaseError, isBaseError } from "@/shared/core/errors/base/base-error";
 import type {
   LogErrorOptions,
@@ -8,7 +7,6 @@ import type {
 } from "@/shared/core/errors/logging/error-logger.contracts";
 import { buildStructuredPayload } from "@/shared/core/errors/logging/error-logger.payload";
 import { defaultErrorContextRedactor } from "@/shared/core/errors/redaction/redaction";
-import type { AppError } from "@/shared/core/result/app-error";
 
 /**
  * Attempt to extract a BaseError-like shape from unknown without throwing.
@@ -99,30 +97,4 @@ export function logUnknownAsBaseError(
     statusCode: be.statusCode,
   };
   logger.error(payload, `[${be.code}] ${be.message}`);
-}
-
-/**
- * Log an AppError by converting back to BaseError for unified metadata.
- */
-export function logAppError(
-  logger: ErrorLogger,
-  appError: AppError,
-  extra: Readonly<Record<string, unknown>> = {},
-): void {
-  const be = toBaseErrorFromApp(appError, "UNKNOWN").withContext({
-    boundary: "ui",
-  });
-  const payload = {
-    code: be.code,
-    // Use shared default redactor
-    context: defaultErrorContextRedactor({ ...be.context, ...extra }) ?? {
-      ...be.context,
-      ...extra,
-    },
-    message: be.message,
-    name: appError.name ?? be.name,
-    severity: be.severity,
-    statusCode: be.statusCode,
-  };
-  logger.warn(payload, `[${be.code}] ${be.message}`);
 }

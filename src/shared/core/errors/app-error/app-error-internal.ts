@@ -1,4 +1,4 @@
-// File: 'src/shared/core/errors/app-error-adapters/app-error-internal.ts'
+// File: 'src/shared/core/errors/app-error/app-error-internal.ts'
 // Internal helpers (frozen in dev, safe severity, and shape guards)
 
 import { IS_PROD } from "@/shared/config/env-shared";

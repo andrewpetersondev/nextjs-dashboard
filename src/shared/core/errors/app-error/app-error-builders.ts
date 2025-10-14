@@ -1,9 +1,9 @@
-// File: 'src/shared/core/errors/app-error-adapters/app-error-builders.ts'
+// File: 'src/shared/core/errors/app-error/app-error-builders.ts'
 // Builders, augmentation, lifting, and BaseError <-> AppError conversions
 
 import { IS_PROD } from "@/shared/config/env-shared";
-import { toSeverity } from "@/shared/core/errors/app-error-adapters/app-error-internal";
-import { toAppErrorFromUnknown } from "@/shared/core/errors/app-error-adapters/app-error-normalizers";
+import { toSeverity } from "@/shared/core/errors/app-error/app-error-internal";
+import { toAppErrorFromUnknown } from "@/shared/core/errors/app-error/app-error-normalizers";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import {
   isErrorCode,

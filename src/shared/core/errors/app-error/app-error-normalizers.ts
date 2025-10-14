@@ -1,12 +1,12 @@
-// File: 'src/shared/core/errors/app-error-adapters/app-error-normalizers.ts'
-// Normalizers and app-error-adapters between unknown/BaseError/AppError
+// File: 'src/shared/core/errors/app-error/app-error-normalizers.ts'
+// Normalizers and app-error between unknown/BaseError/AppError
 
 import {
   freezeDev,
   isAppErrorLike,
   pickOptionalFromLike,
   toSeverity,
-} from "@/shared/core/errors/app-error-adapters/app-error-internal";
+} from "@/shared/core/errors/app-error/app-error-internal";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { normalizeToBaseError } from "@/shared/core/errors/base/base-error-adapters";
 import {

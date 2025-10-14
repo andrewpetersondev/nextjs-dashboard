@@ -2,7 +2,7 @@
  * Examples: keep NotFoundError instead of auto‑normalizing to AppError
  *
  * Your helpers default to AppError only when you omit a mapper.
- * That’s by design so UI/app-error-adapters can safely normalize unknown exceptions.
+ * That’s by design so UI/app-error can safely normalize unknown exceptions.
  * In lower layers (DAL/Repo/Service), always pass a mapper or error factory to keep domain errors like NotFoundError.
  * The generic types already support this; using a mapper prevents widening to AppError.
  */
