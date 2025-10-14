@@ -1,4 +1,5 @@
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import { isErrorWithCode } from "@/shared/core/errors/base/error-guards";
 
 /**
  * Input validation failed (HTTP 422 by metadata).
@@ -66,3 +67,30 @@ export class ConflictError extends BaseError {
     super("CONFLICT", message, context, cause);
   }
 }
+
+/**
+ * Narrow unknown to ValidationError.
+ * @param e - unknown value
+ */
+export const isValidationError = (e: unknown): e is ValidationError =>
+  e instanceof ValidationError;
+/**
+ * NotFoundError (404 / NOT_FOUND).
+ */
+export const isNotFoundError = (e: unknown): e is NotFoundError =>
+  isErrorWithCode(e, "NOT_FOUND");
+/**
+ * UnauthorizedError (401 / UNAUTHORIZED).
+ */
+export const isUnauthorizedError = (e: unknown): e is UnauthorizedError =>
+  isErrorWithCode(e, "UNAUTHORIZED");
+/**
+ * ForbiddenError (403 / FORBIDDEN).
+ */
+export const isForbiddenError = (e: unknown): e is ForbiddenError =>
+  isErrorWithCode(e, "FORBIDDEN");
+/**
+ * ConflictError (409 / CONFLICT).
+ */
+export const isConflictError = (e: unknown): e is ConflictError =>
+  isErrorWithCode(e, "CONFLICT");

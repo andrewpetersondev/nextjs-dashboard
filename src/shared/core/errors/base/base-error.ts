@@ -173,3 +173,10 @@ export class BaseError extends Error {
     });
   }
 }
+
+/**
+ * Narrow unknown to BaseError.
+ * @param e - unknown value
+ */
+export const isBaseError = (e: unknown): e is BaseError =>
+  e instanceof BaseError;

@@ -1,8 +1,7 @@
 // src/shared/core/errors/error-logger.ts
 
 import { toBaseErrorFromApp } from "@/shared/core/errors/app-error-adapters/app-error-normalizers";
-import { BaseError } from "@/shared/core/errors/base/base-error";
-import { isBaseError } from "@/shared/core/errors/base/error-guards";
+import { BaseError, isBaseError } from "@/shared/core/errors/base/base-error";
 import type {
   LogErrorOptions,
   StructuredErrorLog,
