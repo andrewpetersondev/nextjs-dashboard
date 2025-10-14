@@ -28,7 +28,7 @@ export class UsersService {
   private normalize(input: AuthSignupDalInput): AuthSignupDalInput {
     return {
       email: input.email.toLowerCase().trim(),
-      //@ts-ignore
+      //@ts-expect-error
       password: input.password,
       role: input.role ?? USER_ROLE,
       username: input.username.trim(),
@@ -57,7 +57,7 @@ export class UsersService {
     raw: AuthSignupDalInput,
   ): Promise<Result<CreateUserRepoOutput, RepoError>> {
     const input = this.normalize(raw);
-    //@ts-ignore
+    //@ts-expect-error
     const passwordHash = await hashPassword(input.password);
     const repoInput = this.toRepoInput(input, passwordHash);
     return await this.repo.createSafe(repoInput);
