@@ -65,6 +65,13 @@ export class BaseError extends Error {
   }
 
   /**
+   * Public accessor for immutable diagnostic details.
+   */
+  getDetails(): Readonly<Record<string, unknown>> {
+    return this.context;
+  }
+
+  /**
    * Merge additional immutable context, returning a new BaseError.
    * Note: subclass identity is not preserved.
    */
