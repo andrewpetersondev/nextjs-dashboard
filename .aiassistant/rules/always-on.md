@@ -47,7 +47,6 @@ This document is always-on. Downstream documents must not restate rules from thi
 4. result-error-summary.md
 5. structure-summary.md
 6. current-focus.md
-7. md-docs.md
 
 Tip: When in doubt, prefer the higher-precedence document.
 
