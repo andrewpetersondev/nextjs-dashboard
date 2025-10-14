@@ -3,6 +3,14 @@ import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
+// Narrow Pg error shape with readonly fields for safety.
+interface PgErrorLike {
+  readonly code?: unknown;
+  readonly message?: unknown;
+  readonly name?: unknown;
+  readonly constraint?: unknown;
+}
+
 // Postgres codes we want to surface distinctly in logs/messages.
 const PG_ERROR_CODES = {
   checkViolation: "23514",
@@ -15,20 +23,22 @@ const PG_ERROR_CODES = {
   uniqueViolation: "23505",
 } as const satisfies Readonly<Record<string, string>>;
 
-type PgErrorLike = {
-  readonly code?: unknown;
-  readonly message?: unknown;
-  readonly name?: unknown;
-  readonly constraint?: unknown;
-};
+type PgCode = (typeof PG_ERROR_CODES)[keyof typeof PG_ERROR_CODES];
 
 function readStr(v: unknown): string | undefined {
   return typeof v === "string" && v.length > 0 ? v : undefined;
 }
 
-function getPgCode(e: unknown): string | undefined {
+function getPgCode(e: unknown): PgCode | undefined {
   const code = (e as PgErrorLike | null)?.code;
-  return readStr(code);
+  const s = readStr(code);
+  // Narrow to known set only
+  if (!s) {
+    return;
+  }
+  return (Object.values(PG_ERROR_CODES) as readonly string[]).includes(s)
+    ? (s as PgCode)
+    : undefined;
 }
 
 function isUniqueViolation(e: unknown): boolean {
@@ -67,16 +77,12 @@ function buildDatabaseMessage(e: unknown): string {
  * Logs minimal context.
  *
  * executeDalOrThrow maps 23505 → ConflictError; other PG codes → DatabaseError with generic, recognizable messages and code in context.
- * Invariant “row must exist” is explicitly thrown with a clear Error after logging.
- * withDalTransaction is a reusable helper for atomic multi-step writes with the same normalization.
- * Identifiers in logs exclude secrets (no passwords/tokens).
- *
  */
 export async function executeDalOrThrow<T>(
   op: () => Promise<T>,
   logCtx: {
     readonly context: string;
-    readonly identifiers?: Record<string, unknown>;
+    readonly identifiers?: Readonly<Record<string, unknown>>;
   } = { context: "dal.operation" },
 ): Promise<T> {
   try {
@@ -88,6 +94,7 @@ export async function executeDalOrThrow<T>(
           context: logCtx.context,
           ...(logCtx.identifiers ?? {}),
           code: PG_ERROR_CODES.uniqueViolation,
+          kind: "db",
         },
         "Unique constraint violation",
       );
@@ -98,13 +105,13 @@ export async function executeDalOrThrow<T>(
       );
     }
 
-    const msg = buildDatabaseMessage(e);
     const code = getPgCode(e);
+    const msg = buildDatabaseMessage(e);
     serverLogger.error(
       {
         context: logCtx.context,
         ...(logCtx.identifiers ?? {}),
-        code,
+        ...(code ? { code } : {}),
         kind: "db",
       },
       "Database error",
