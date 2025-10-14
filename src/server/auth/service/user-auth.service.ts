@@ -16,6 +16,33 @@ import { userEntityToDto } from "@/server/users/mapping/user.mappers";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 
+// --- Pure helpers (extractable/standalone) ---
+function normalizeSignupInput(input: Readonly<SignupData>): {
+  email: string;
+  username: string;
+  password: string;
+} {
+  return {
+    email: String(input.email).trim().toLowerCase(),
+    password: String(input.password),
+    username: String(input.username).trim(),
+  };
+}
+
+function hasRequiredSignupFields(
+  input: Partial<SignupData> | null | undefined,
+): boolean {
+  return Boolean(
+    input &&
+      typeof input.email === "string" &&
+      input.email.length > 0 &&
+      typeof input.password === "string" &&
+      input.password.length > 0 &&
+      typeof input.username === "string" &&
+      input.username.length > 0,
+  );
+}
+
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
  * Never throws; always returns Result union for UI.
@@ -34,24 +61,23 @@ export class UserAuthFlowService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<UserDto, AuthServiceError>> {
-    if (!input?.email || !input?.password || !input?.username) {
+    if (!hasRequiredSignupFields(input)) {
       return Err(toError("missing_fields"));
     }
 
-    const email = input.email.trim().toLowerCase();
-    const username = input.username.trim();
+    const normalized = normalizeSignupInput(input);
     const repo = new AuthUserRepo(this.db);
 
     try {
-      const hashed = await hashPassword(input.password);
+      const hashed = await hashPassword(normalized.password);
       const passwordHash = asPasswordHash(hashed);
 
       const entity = await repo.withTransaction(async (txRepo) =>
         txRepo.signup({
-          email,
+          email: normalized.email,
           passwordHash,
           role: toUserRole("USER"),
-          username,
+          username: normalized.username,
         }),
       );
       return Ok(userEntityToDto(entity));
@@ -72,7 +98,9 @@ export class UserAuthFlowService {
     const repo = new AuthUserRepo(this.db);
 
     try {
-      const user = await repo.login({ email: input.email });
+      const user = await repo.login({
+        email: String(input.email).trim().toLowerCase(),
+      });
 
       // Defensive: always check the existence/type of password
       if (!user.password || typeof user.password !== "string") {
