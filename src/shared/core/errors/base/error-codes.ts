@@ -9,6 +9,10 @@
  * - Do not remove or repurpose a code once in use (add a new one instead).
  * - Keep descriptions user-safe (no internal implementation detail or secrets).
  */
+
+// Add Category type derived from metadata (next to existing Severity).
+export type Category = ErrorCodeMeta["category"];
+
 export const ERROR_CODES = {
   BAD_REQUEST: {
     category: "client",
@@ -201,5 +205,3 @@ export const ALL_ERROR_CODES: readonly ErrorCode[] = Object.freeze(
   Object.keys(ERROR_CODES) as ErrorCode[],
 );
 
-export const GENERIC_ERROR_CODE = "UNKNOWN" as const;
-export const GENERIC_ERROR_STATUS = 500 as const;
