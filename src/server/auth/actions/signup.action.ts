@@ -1,7 +1,3 @@
-/**
- * File: src/server/auth/actions/signup.action.ts
- * Purpose: thin signup action using shared Result helpers and centralized auth→form mapping.
- */
 "use server";
 import { redirect } from "next/navigation";
 import {
@@ -21,27 +17,16 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
-import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
+import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
+import {
+  toFormOk,
+  toFormValidationErr,
+} from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 const LOGGER_CONTEXT = "signup.action";
 const fields = SIGNUP_FIELDS_LIST;
-
-// Replace the helper to only collect known fields and return a frozen record.
-function pickFormDataFields(
-  fd: FormData,
-  allowed: readonly SignupField[],
-): Readonly<Record<string, string>> {
-  const out: Record<string, string> = {};
-  for (const k of allowed) {
-    const v = fd.get(k);
-    if (v !== null) {
-      out[k] = typeof v === "string" ? v : String(v);
-    }
-  }
-  return Object.freeze(out);
-}
 
 /**
  * Handles the signup process by validating the input, interacting with the user service,
@@ -51,7 +36,7 @@ export async function signupAction(
   _prevState: FormResult<SignupField, unknown>,
   formData: FormData,
 ): Promise<FormResult<SignupField, unknown>> {
-  const raw = pickFormDataFields(formData, fields);
+  const raw = pickFormDataFields<SignupField>(formData, fields);
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
     loggerContext: LOGGER_CONTEXT,
   });
@@ -85,4 +70,5 @@ export async function signupAction(
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);
+  return toFormOk<SignupField, unknown>({});
 }

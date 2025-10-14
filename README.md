@@ -23,12 +23,16 @@ nextjs-dashboard/
 ├── cypress/                # E2E specs and support
 ├── docs/                   # Additional documentation (see docs/auth.md for auth flow)
 ├── drizzle/                # Generated SQL, migrations, meta
-├── node-only/cli/          # Drizzle config, CLI scripts for DB
+├── devtools/               # cli, config, seed-support, tasks
 ├── public/                 # Static assets
 ├── src/                    # Application source
-│   ├── features/           # Feature-based components/screens
+│   ├── app/                # App router
+│   ├── features/           # auth, customers, invoices, revenues, users
+│   ├── server/             # auth, config, customers, db, errors, evets, forms, invoices, logging, repository, revenues, users
+│   ├── shared/             # config, core, domain, forms, http, i18n, logging, money, routes, ui, utils
+│   ├── shell/              # dashbaord-wide components/screens/
+│   ├── ui/                 # atoms, brand, feedback, forms, molecules, navigation, styles
 │   ├── middleware.ts       # Route protection
-│   └── server/auth/        # Auth (session, hashing, constants)
 └── ...
 ```
 
@@ -61,7 +65,6 @@ nextjs-dashboard/
 3. Database: generate, migrate, seed
 
    Run against your desired environment using dotenv-powered helpers:
-
    - Development
      ```sh
      pnpm db:generate:migrate:dev
@@ -79,7 +82,6 @@ nextjs-dashboard/
      ```
 
 4. Start the app
-
    - Development server (Turbopack):
      ```sh
      pnpm dev
@@ -98,6 +100,7 @@ nextjs-dashboard/
   pnpm build:test
   ```
 - Start App:
+
   ```sh
   pnpm serve:test
   ```

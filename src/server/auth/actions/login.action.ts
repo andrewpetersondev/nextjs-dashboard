@@ -1,4 +1,3 @@
-// Purpose: thin login action using shared Result helpers and centralized auth→form mapping.
 "use server";
 import { redirect } from "next/navigation";
 import {
@@ -18,6 +17,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
+import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
   toFormValidationErr,
@@ -27,21 +27,6 @@ import { ROUTES } from "@/shared/routes/routes";
 
 const LOGGER_CONTEXT = "login.action";
 const fields = LOGIN_FIELDS_LIST;
-
-// Replace the helper to only collect known fields and return a frozen record.
-function pickFormDataFields(
-  fd: FormData,
-  allowed: readonly LoginField[],
-): Readonly<Record<string, string>> {
-  const out: Record<string, string> = {};
-  for (const k of allowed) {
-    const v = fd.get(k);
-    if (v !== null) {
-      out[k] = typeof v === "string" ? v : String(v);
-    }
-  }
-  return Object.freeze(out);
-}
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -57,7 +42,7 @@ export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {
-  const raw = pickFormDataFields(formData, fields);
+  const raw = pickFormDataFields<LoginField>(formData, fields);
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
     loggerContext: LOGGER_CONTEXT,
   });
@@ -90,7 +75,6 @@ export async function loginAction(
     });
   }
 
-  // 3) Redirect on success
   redirect(ROUTES.DASHBOARD.ROOT);
   return toFormOk<LoginField, unknown>({});
 }
