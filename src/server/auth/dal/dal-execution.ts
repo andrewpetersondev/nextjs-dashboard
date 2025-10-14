@@ -1,6 +1,7 @@
 import "server-only";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { BaseError } from "@/shared/core/errors/base/base-error";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
 // Narrow Pg error shape with readonly fields for safety.
@@ -32,7 +33,6 @@ function readStr(v: unknown): string | undefined {
 function getPgCode(e: unknown): PgCode | undefined {
   const code = (e as PgErrorLike | null)?.code;
   const s = readStr(code);
-  // Narrow to known set only
   if (!s) {
     return;
   }
@@ -41,15 +41,7 @@ function getPgCode(e: unknown): PgCode | undefined {
     : undefined;
 }
 
-function isUniqueViolation(e: unknown): boolean {
-  return getPgCode(e) === PG_ERROR_CODES.uniqueViolation;
-}
-
-function buildDatabaseMessage(e: unknown): string {
-  const code = getPgCode(e);
-  if (!code) {
-    return "Database operation failed.";
-  }
+function buildDatabaseMessageFromCode(code: PgCode): string {
   switch (code) {
     case PG_ERROR_CODES.serializationFailure:
       return "Transaction serialization failure (40001).";
@@ -70,6 +62,40 @@ function buildDatabaseMessage(e: unknown): string {
   }
 }
 
+function buildDatabaseMessage(e: unknown): string {
+  const code = getPgCode(e);
+  return code
+    ? buildDatabaseMessageFromCode(code)
+    : "Database operation failed.";
+}
+
+export function isPgUniqueViolation(e: unknown): boolean {
+  return getPgCode(e) === PG_ERROR_CODES.uniqueViolation;
+}
+
+export function toDatabaseBaseError(
+  err: unknown,
+  ctx: Readonly<Record<string, unknown>> = {},
+): BaseError {
+  const code = getPgCode(err);
+  if (code === PG_ERROR_CODES.uniqueViolation) {
+    return new ConflictError(
+      "A record with these values already exists.",
+      { ...ctx, code },
+      err,
+    );
+  }
+  const message = code
+    ? buildDatabaseMessageFromCode(code)
+    : "Database operation failed.";
+  return BaseError.wrap(
+    "DATABASE",
+    err,
+    { ...ctx, ...(code ? { code } : {}) },
+    message,
+  );
+}
+
 /**
  * Normalizes unknown/Drizzle/PG errors into ConflictError or DatabaseError and throws.
  * Logs minimal context.
@@ -86,7 +112,7 @@ export async function executeDalOrThrow<T>(
   try {
     return await op();
   } catch (e: unknown) {
-    if (isUniqueViolation(e)) {
+    if (isPgUniqueViolation(e)) {
       serverLogger.warn(
         {
           context: logCtx.context,
