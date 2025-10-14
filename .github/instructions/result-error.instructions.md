@@ -34,7 +34,7 @@ description: "Result and error modeling, handling, and mapping guidelines for Ne
 1. Use try/catch only at async boundaries (service/action edges).
 2. Do not rethrow except at process shutdown.
 3. Only the adapter layer converts unknown/BaseError to AppError.
-4. Use literal error codes (enums/union literals); freeze errors in dev.
+4. Use literal error codes (enums/union literals); freeze errors.
 5. Do not use any; normalize via adapters at boundaries.
 6. Prefer type guards and predicates over casts.
 7. Log JSON‑safe structures; avoid leaking secrets.
@@ -78,7 +78,7 @@ description: "Result and error modeling, handling, and mapping guidelines for Ne
 
 3. Rules:
 
-- Freeze error objects in dev for immutability.
+- Freeze error objects for immutability.
 - Normalize unknown via normalizeUnknownError(); never cast.
 - Use canonical codes; map to severity/kind via metadata.
 - Preserve causality in logs (cause chain) without leaking secrets.
@@ -151,7 +151,7 @@ Notes:
 
 2. Errors
 
-- Enforce canonical code set; freeze in dev; add type guards (isBaseError, isAppError).
+- Enforce canonical code set; freeze; add type guards (isBaseError, isAppError).
 - Implement appErrorFromCode and fromAppErrorLike for boundary creation.
 
 3. Adapters

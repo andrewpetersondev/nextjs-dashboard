@@ -33,7 +33,7 @@ apply: manually
 1. Use try/catch only at async boundaries (service/action edges).
 2. Do not rethrow except at process shutdown.
 3. Only the adapter layer converts unknown/BaseError to AppError.
-4. Use literal error codes (enums/union literals); freeze errors in dev.
+4. Use literal error codes (enums/union literals); freeze errors.
 5. Do not use any; normalize via adapters at boundaries.
 6. Prefer type guards and predicates over casts.
 7. Log JSON‑safe structures; avoid leaking secrets.
@@ -68,7 +68,7 @@ apply: manually
    - AppError: lightweight, JSON‑safe, UI displayable (code/kind/message/severity/details?).
    - ErrorLike: Error | string; normalize at boundaries.
 3. Rules:
-   - Freeze error objects in dev for immutability.
+   - Freeze error objects for immutability.
    - Normalize unknown via normalizeUnknownError(); never cast.
    - Use canonical codes; map to severity/kind via metadata.
    - Preserve causality in logs (cause chain) without leaking secrets.
@@ -128,7 +128,7 @@ Notes:
    - Ensure Ok/Err, match, map/flatMap, async variants are exported and typed.
    - Add fromPromise normalization using normalizeUnknownError().
 2. Errors
-   - Enforce canonical code set; freeze in dev; add type guards (isBaseError, isAppError).
+   - Enforce canonical code set; freeze; add type guards (isBaseError, isAppError).
    - Implement appErrorFromCode and fromAppErrorLike for boundary creation.
 3. Adapters
    - unknown → BaseError → AppError: one entry point; no any.
