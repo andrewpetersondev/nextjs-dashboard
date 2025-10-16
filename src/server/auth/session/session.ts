@@ -21,7 +21,7 @@ import {
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
   SESSION_COOKIE_SECURE_FALLBACK,
-} from "@/server/auth/session/constants";
+} from "@/server/auth/session/session.constants";
 import {
   createSessionToken,
   readSessionToken,

@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { ADMIN_ROLE } from "@/features/auth/lib/auth.roles";
-import { SESSION_COOKIE_NAME } from "@/server/auth/session/constants";
+import { SESSION_COOKIE_NAME } from "@/server/auth/session/session.constants";
 import { readSessionToken } from "@/server/auth/session/session-codec";
 import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
 import {

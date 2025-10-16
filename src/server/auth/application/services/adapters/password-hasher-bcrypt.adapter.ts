@@ -5,7 +5,7 @@ import {
   type PasswordHash,
 } from "@/server/auth/domain/types/password.types";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
-import { SALT_ROUNDS } from "@/server/auth/session/constants";
+import { SALT_ROUNDS } from "@/server/auth/session/session.constants";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);

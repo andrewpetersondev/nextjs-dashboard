@@ -10,10 +10,10 @@ import {
 import {
   hasRequiredSignupFields,
   normalizeSignupInput,
-} from "@/server/auth/domain/types/auth-signup.helpers";
+} from "@/server/auth/domain/types/auth-signup.normalization";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
+import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
-import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/user-auth.repository.port";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
@@ -24,7 +24,7 @@ import { Err, Ok } from "@/shared/core/result/result";
  *
  * Depends on small ports (AuthUserRepository, PasswordHasher) for testability.
  */
-export class UserAuthService {
+export class AuthUserService {
   private readonly repo: AuthUserRepository;
   private readonly hasher: PasswordHasher;
 

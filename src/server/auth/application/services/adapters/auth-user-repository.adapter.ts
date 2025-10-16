@@ -1,10 +1,12 @@
 import "server-only";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
-import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/user-auth.repository.port";
-import type { AuthUserRepo } from "@/server/auth/infrastructure/repository/user-auth.repository";
+import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
+import type { AuthUserRepo } from "@/server/auth/infrastructure/repository/repo/auth-user.repository";
 import type { UserEntity } from "@/server/users/types/entity";
 
-export class RepositoryAdapter implements AuthUserRepository<AuthUserRepo> {
+export class AuthUserRepositoryAdapter
+  implements AuthUserRepository<AuthUserRepo>
+{
   private readonly repo: AuthUserRepo;
 
   constructor(repo: AuthUserRepo) {
@@ -15,7 +17,7 @@ export class RepositoryAdapter implements AuthUserRepository<AuthUserRepo> {
     fn: (txRepo: AuthUserRepository<AuthUserRepo>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
-      const txAdapter = new RepositoryAdapter(txRepo);
+      const txAdapter = new AuthUserRepositoryAdapter(txRepo);
       return await fn(txAdapter);
     });
   }
