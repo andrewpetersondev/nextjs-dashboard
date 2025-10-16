@@ -2,7 +2,7 @@ import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
-import type { AuthSignupServiceInput } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type {
   CreateUserRepoInput,
   CreateUserRepoOutput,
@@ -24,7 +24,7 @@ export class UsersService {
     this.repo = repo;
   }
 
-  private normalize(input: AuthSignupServiceInput): AuthSignupServiceInput {
+  private normalize(input: AuthSignupPayload): AuthSignupPayload {
     return {
       email: input.email.toLowerCase().trim(),
       password: input.password,
@@ -34,7 +34,7 @@ export class UsersService {
   }
 
   private toRepoInput(
-    input: AuthSignupServiceInput,
+    input: AuthSignupPayload,
     password: string,
   ): CreateUserRepoInput {
     return {
@@ -52,7 +52,7 @@ export class UsersService {
    * - Returns Result with created user or infrastructure error.
    */
   async signup(
-    raw: AuthSignupServiceInput,
+    raw: AuthSignupPayload,
   ): Promise<Result<CreateUserRepoOutput, RepoError>> {
     const input = this.normalize(raw);
     const passwordHash = await hashWithSaltRounds(input.password);

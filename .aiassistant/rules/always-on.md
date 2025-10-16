@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 ---
 
 # Always-On AI Rules (Lite)

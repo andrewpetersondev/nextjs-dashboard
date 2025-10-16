@@ -12,6 +12,6 @@ export interface UserEntity {
   readonly username: string;
   readonly email: string;
   readonly role: UserRole;
-  readonly password: string;
+  readonly password: string; // TODO: auth folder uses a hashed password, update schema and this
   readonly sensitiveData: string;
 }

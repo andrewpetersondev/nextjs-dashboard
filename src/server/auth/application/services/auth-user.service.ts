@@ -45,7 +45,7 @@ export class AuthUserService {
     try {
       const passwordHash = await this.hasher.hash(input.password);
 
-      const entity = await this.repo.withTransaction(async (txRepo) =>
+      const signupResult = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
           password: passwordHash,
@@ -54,7 +54,7 @@ export class AuthUserService {
         }),
       );
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(entity));
+      return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
       return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
         err,

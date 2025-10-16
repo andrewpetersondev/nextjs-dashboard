@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupRepoInput } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import { assertSignupFields } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.assertions";
@@ -64,7 +64,7 @@ export class AuthUserRepositoryImpl {
    * - Enforces domain invariants before/after DAL calls.
    * - Surfaces infra/timeouts as DatabaseError with minimal context.
    */
-  async signup(input: Readonly<AuthSignupRepoInput>): Promise<UserEntity> {
+  async signup(input: Readonly<AuthSignupPayload>): Promise<UserEntity> {
     try {
       assertSignupFields(input);
       const row = await insertUserDal(this.db, input);

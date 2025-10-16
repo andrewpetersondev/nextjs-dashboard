@@ -1,5 +1,5 @@
 import "server-only";
-import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
@@ -25,7 +25,7 @@ import { serverLogger } from "@/server/logging/serverLogger";
  */
 export async function insertUserDal(
   db: AppDatabase,
-  input: Readonly<AuthSignupDalInput>,
+  input: Readonly<AuthSignupPayload>,
 ): Promise<NewUserRow> {
   const { email, username, password, role } = input;
 

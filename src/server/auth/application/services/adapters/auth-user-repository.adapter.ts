@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupRepoInput } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository";
 
@@ -23,7 +23,7 @@ export class AuthUserRepositoryAdapter
   }
 
   signup(
-    input: AuthSignupRepoInput,
+    input: AuthSignupPayload,
   ): ReturnType<AuthUserRepositoryImpl["signup"]> {
     return this.repo.signup({
       email: input.email,
