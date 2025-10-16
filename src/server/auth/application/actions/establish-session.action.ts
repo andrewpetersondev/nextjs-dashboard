@@ -3,7 +3,7 @@
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { mapToUnexpectedAuthServiceError } from "@/server/auth/application/mappers/auth-service-error.to-app-error.mapper";
+import { toUnexpectedAuthServiceErrorFromMessage } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
@@ -32,7 +32,7 @@ export async function establishSessionAction(
     },
     {
       mapError: (e) =>
-        mapToUnexpectedAuthServiceError({
+        toUnexpectedAuthServiceErrorFromMessage({
           message: e instanceof Error ? e.message : "Session token error",
         }),
     },
@@ -44,7 +44,7 @@ export async function establishSessionAction(
   const mapped: Result<true, AuthServiceError> = res.ok
     ? Ok<true>(true as const)
     : Err<AuthServiceError>(
-        mapToUnexpectedAuthServiceError({
+        toUnexpectedAuthServiceErrorFromMessage({
           message: res.error?.message ?? "Failed to establish session",
         }),
       );

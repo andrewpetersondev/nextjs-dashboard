@@ -1,7 +1,7 @@
 import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { hashPassword } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
+import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
 import type {
   CreateUserRepoInput,
@@ -57,7 +57,7 @@ export class UsersService {
   ): Promise<Result<CreateUserRepoOutput, RepoError>> {
     const input = this.normalize(raw);
     //@ts-expect-error
-    const passwordHash = await hashPassword(input.password);
+    const passwordHash = await hashWithSaltRounds(input.password);
     const repoInput = this.toRepoInput(input, passwordHash);
     return await this.repo.createSafe(repoInput);
   }

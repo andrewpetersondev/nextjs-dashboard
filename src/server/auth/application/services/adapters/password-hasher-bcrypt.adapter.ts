@@ -9,24 +9,25 @@ import { SALT_ROUNDS } from "@/server/auth/session/session.constants";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);
-export const hashPassword = async (password: string): Promise<string> => {
+
+export const hashWithSaltRounds = async (password: string): Promise<string> => {
   const salt = await genSalt(SALT_ROUNDS);
   return bcryptjs.hash(password, salt);
 };
 
-export async function comparePassword(
+export async function compareHash(
   plainPassword: string,
   hashedPassword: string,
 ): Promise<boolean> {
   return await bcryptjs.compare(plainPassword, hashedPassword);
 }
 
-export class CryptoPasswordHasher implements PasswordHasher {
+export class BcryptPasswordHasher implements PasswordHasher {
   async hash(raw: string): Promise<PasswordHash> {
-    const hashed = await hashPassword(raw);
+    const hashed = await hashWithSaltRounds(raw);
     return asPasswordHash(hashed);
   }
   async compare(raw: string, hash: PasswordHash): Promise<boolean> {
-    return await comparePassword(raw, hash as string);
+    return await compareHash(raw, hash as string);
   }
 }

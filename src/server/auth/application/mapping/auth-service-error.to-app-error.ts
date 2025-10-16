@@ -1,24 +1,19 @@
-// File: src/server/auth/mappers/auth-service-errors.mapper.ts
 import "server-only";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import type { AppError } from "@/shared/core/result/app-error";
 
-// --- Mappers ---
-
-export const mapUnknownToAuthServiceError = (e: unknown): AuthServiceError => ({
+export const toUnexpectedAuthServiceError = (e: unknown): AuthServiceError => ({
   kind: "unexpected",
   message: String(e),
 });
 
-// rare?
-export const mapToUnexpectedAuthServiceError = (e: {
+export const toUnexpectedAuthServiceErrorFromMessage = (e: {
   readonly message?: string;
 }): AuthServiceError => ({
   kind: "unexpected",
   message: e.message ?? "Unexpected error",
 });
 
-// auth service errors -> app errors
 export function mapAuthServiceErrorToAppError(e: AuthServiceError): AppError {
   switch (e.kind) {
     case "conflict":
@@ -41,5 +36,3 @@ export function mapAuthServiceErrorToAppError(e: AuthServiceError): AppError {
       return { code: "UNKNOWN", message: e.message };
   }
 }
-
-// --- Handlers ---

@@ -12,7 +12,7 @@ import {
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/features/users/lib/user.schema";
-import { hashPassword } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
+import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -101,7 +101,7 @@ async function buildPatch(
 
   const password =
     typeof data.password === "string" && data.password.length > 0
-      ? await hashPassword(data.password)
+      ? await hashWithSaltRounds(data.password)
       : undefined;
 
   return { ...diff, ...(password ? { password } : {}) };

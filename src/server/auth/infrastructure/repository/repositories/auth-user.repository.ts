@@ -3,9 +3,9 @@ import type { AuthLoginDalInput } from "@/server/auth/domain/types/auth-login.in
 import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { assertSignupFields } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.assertions";
-import { isRepoKnownError } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.errors";
-import { toNormalizedSignupInput } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.normalize";
+import { assertSignupFields } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.assertions";
+import { isRepoKnownError } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.errors";
+import { toNormalizedSignupInput } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.normalize";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
@@ -24,7 +24,7 @@ import {
  * Repository for user authentication flows (signup/login).
  * Encapsulates DAL usage and provides a single point for cross-cutting policies.
  */
-export class AuthUserRepo {
+export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
@@ -37,19 +37,22 @@ export class AuthUserRepo {
    * Keep thin; retries belong to a separate policy layer if needed.
    */
   async withTransaction<T>(
-    fn: (txRepo: AuthUserRepo) => Promise<T>,
+    fn: (txRepo: AuthUserRepositoryImpl) => Promise<T>,
   ): Promise<T> {
     const dbWithTx = this.db as AppDatabase & {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
     try {
       return await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepo(tx);
+        const txRepo = new AuthUserRepositoryImpl(tx);
         return await fn(txRepo);
       });
     } catch (err) {
       serverLogger.error(
-        { context: `${AuthUserRepo.CTX}.withTransaction`, kind: "db" },
+        {
+          context: `${AuthUserRepositoryImpl.CTX}.withTransaction`,
+          kind: "db",
+        },
         "Transaction failed",
       );
       throw err;
@@ -76,7 +79,7 @@ export class AuthUserRepo {
         throw err;
       }
       serverLogger.error(
-        { context: `${AuthUserRepo.CTX}.signup`, kind: "unexpected" },
+        { context: `${AuthUserRepositoryImpl.CTX}.signup`, kind: "unexpected" },
         "Unexpected error during signup repository operation",
       );
       return throwRepoDatabaseErr(
@@ -97,7 +100,7 @@ export class AuthUserRepo {
       if (!row?.password) {
         serverLogger.warn(
           {
-            context: `${AuthUserRepo.CTX}.login`,
+            context: `${AuthUserRepositoryImpl.CTX}.login`,
             kind: "not_found_or_missing_password",
           },
           "User not found or missing password",
@@ -115,13 +118,13 @@ export class AuthUserRepo {
       }
       serverLogger.error(
         {
-          context: `${AuthUserRepo.CTX}.login`,
+          context: `${AuthUserRepositoryImpl.CTX}.login`,
           kind: "unexpected",
         },
         "Unexpected error during login repository operation",
       );
       throw new DatabaseError("Database operation failed during login.", {
-        context: `${AuthUserRepo.CTX}.login`,
+        context: `${AuthUserRepositoryImpl.CTX}.login`,
       });
     }
   }

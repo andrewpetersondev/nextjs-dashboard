@@ -1,5 +1,5 @@
 import "server-only";
-import { mapAuthServiceErrorToAppError } from "@/server/auth/application/mappers/auth-service-error.to-app-error.mapper";
+import { mapAuthServiceErrorToAppError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";

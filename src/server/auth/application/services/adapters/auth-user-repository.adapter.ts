@@ -1,20 +1,23 @@
 import "server-only";
-import { asPasswordHash } from "@/server/auth/domain/types/password.types";
+import {
+  asPasswordHash,
+  type PasswordHash,
+} from "@/server/auth/domain/types/password.types";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
-import type { AuthUserRepo } from "@/server/auth/infrastructure/repository/repo/auth-user.repository";
+import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository";
 import type { UserEntity } from "@/server/users/types/entity";
 
 export class AuthUserRepositoryAdapter
-  implements AuthUserRepository<AuthUserRepo>
+  implements AuthUserRepository<AuthUserRepositoryImpl>
 {
-  private readonly repo: AuthUserRepo;
+  private readonly repo: AuthUserRepositoryImpl;
 
-  constructor(repo: AuthUserRepo) {
+  constructor(repo: AuthUserRepositoryImpl) {
     this.repo = repo;
   }
 
   withTransaction<T>(
-    fn: (txRepo: AuthUserRepository<AuthUserRepo>) => Promise<T>,
+    fn: (txRepo: AuthUserRepository<AuthUserRepositoryImpl>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
       const txAdapter = new AuthUserRepositoryAdapter(txRepo);
@@ -25,8 +28,8 @@ export class AuthUserRepositoryAdapter
   signup(input: {
     email: string;
     username: string;
-    passwordHash: string;
-    role: string;
+    passwordHash: PasswordHash;
+    role: UserEntity["role"];
   }) {
     // If input.role may be untrusted, normalize or validate here instead of casting.
     return this.repo.signup({
