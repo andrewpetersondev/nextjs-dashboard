@@ -27,7 +27,7 @@ export class AuthUserRepositoryAdapter
   ): ReturnType<AuthUserRepositoryImpl["signup"]> {
     return this.repo.signup({
       email: input.email,
-      passwordHash: input.passwordHash,
+      password: input.password,
       role: input.role,
       username: input.username,
     });

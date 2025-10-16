@@ -51,7 +51,7 @@ export class AuthUserService {
       const entity = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: normalized.email,
-          passwordHash,
+          password: passwordHash,
           role: toUserRole("USER"),
           username: normalized.username,
         }),

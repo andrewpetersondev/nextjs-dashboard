@@ -27,7 +27,7 @@ export async function insertUserDal(
   db: AppDatabase,
   input: Readonly<AuthSignupDalInput>,
 ): Promise<NewUserRow> {
-  const { email, username, passwordHash, role } = input;
+  const { email, username, password, role } = input;
 
   return await executeDalOrThrow(
     async () => {
@@ -35,7 +35,7 @@ export async function insertUserDal(
         .insert(users)
         .values({
           email,
-          password: passwordHash,
+          password,
           role,
           username,
         } satisfies NewUserRow)

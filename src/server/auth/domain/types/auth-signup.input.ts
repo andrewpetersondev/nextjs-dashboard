@@ -8,21 +8,21 @@ import type { PasswordHash } from "@/server/auth/domain/types/password.types";
  */
 export interface AuthSignupDalInput {
   readonly email: string;
-  readonly passwordHash: PasswordHash;
+  readonly password: PasswordHash;
   readonly role: UserRole;
   readonly username: string;
 }
 
 export type AuthSignupRepoInput = {
   readonly email: string;
-  readonly passwordHash: PasswordHash;
+  readonly password: PasswordHash;
   readonly role: UserRole;
   readonly username: string;
 };
 
 export type AuthSignupRepoInputPlain = {
   readonly email: string;
-  readonly passwordHash: string;
+  readonly password: string;
   readonly role: string;
   readonly username: string;
 };

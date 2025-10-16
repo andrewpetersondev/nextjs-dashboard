@@ -6,7 +6,7 @@ export function toNormalizedSignupInput(
 ): AuthSignupDalInput {
   return {
     email: String(input.email).trim().toLowerCase(),
-    passwordHash: input.passwordHash,
+    password: input.password,
     role: input.role,
     username: String(input.username).trim(),
   };
