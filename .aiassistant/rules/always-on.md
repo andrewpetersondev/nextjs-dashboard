@@ -4,6 +4,14 @@ apply: always
 
 # Always-On AI Rules (Lite)
 
+## Most Important Rules
+
+1. Always use industry best practices for TypeScript.
+1. Ask me simple questions frequently.
+1. Use professional judgment for edge cases; document deviations briefly.
+1. NEVER use barrel exports and re-exports.
+1. NEVER use barrel files; never use index files.
+
 ## Minimal Response Rule
 
 1. Keep responses concise; include only the changed or added code.
