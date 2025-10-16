@@ -1,20 +1,12 @@
 import "server-only";
-import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
+import type { AuthActionError } from "@/server/auth/domain/errors/auth-service.error";
+import { toUnexpectedAuthServiceErrorNormalized } from "@/server/auth/domain/errors/auth-service.error";
 import type { AppError } from "@/shared/core/result/app-error";
 
-export const toUnexpectedAuthServiceError = (e: unknown): AuthServiceError => ({
-  kind: "unexpected",
-  message: String(e),
-});
+export const toUnexpectedAuthServiceError = (e: unknown): AuthActionError =>
+  toUnexpectedAuthServiceErrorNormalized(e);
 
-export const toUnexpectedAuthServiceErrorFromMessage = (e: {
-  readonly message?: string;
-}): AuthServiceError => ({
-  kind: "unexpected",
-  message: e.message ?? "Unexpected error",
-});
-
-export function mapAuthServiceErrorToAppError(e: AuthServiceError): AppError {
+export function mapAuthServiceErrorToAppError(e: AuthActionError): AppError {
   switch (e.kind) {
     case "conflict":
       return {

@@ -29,7 +29,7 @@ const AUTH_MESSAGES = {
 
 // --- External ---
 
-export type AuthServiceError =
+export type AuthActionError =
   | {
       readonly kind: "missing_fields";
       readonly message: string;
@@ -44,10 +44,13 @@ export type AuthServiceError =
   | { readonly kind: "validation"; readonly message: string }
   | { readonly kind: "unexpected"; readonly message: string };
 
-export function createAuthServiceError<K extends AuthServiceError["kind"]>(
+// Backward compatibility alias (keep temporarily; remove after migration)
+export type AuthServiceError = AuthActionError;
+
+export function createAuthServiceError<K extends AuthActionError["kind"]>(
   kind: K,
-  init?: Partial<Extract<AuthServiceError, { kind: K }>>,
-): AuthServiceError {
+  init?: Partial<Extract<AuthActionError, { kind: K }>>,
+): AuthActionError {
   switch (kind) {
     case "missing_fields":
       return {
@@ -78,11 +81,28 @@ export function createAuthServiceError<K extends AuthServiceError["kind"]>(
   }
 }
 
-// Map repository/domain errors into AuthServiceError Results.
+/**
+ * Normalize any unknown error to an AuthActionError of kind "unexpected",
+ * preserving message when available.
+ */
+export function toUnexpectedAuthServiceErrorNormalized(
+  e: unknown,
+): AuthActionError {
+  const message =
+    typeof e === "object" &&
+    e !== null &&
+    "message" in e &&
+    typeof (e as { message?: unknown }).message === "string"
+      ? (e as { message: string }).message
+      : AUTH_MESSAGES.unexpected;
+  return createAuthServiceError("unexpected", { message });
+}
+
+// Map repository/domain errors into AuthActionError Results.
 export function mapRepoErrorToAuthServiceResult<T>(
   err: unknown,
   context: string,
-): Result<T, AuthServiceError> {
+): Result<T, AuthActionError> {
   if (err instanceof ConflictError) {
     return Err(createAuthServiceError("conflict"));
   }

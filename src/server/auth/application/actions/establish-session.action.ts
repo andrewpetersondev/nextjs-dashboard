@@ -1,10 +1,7 @@
-// File: establish-session.action.ts
-// Purpose: side-effect to establish an authenticated session after signup/login.
 "use server";
-
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { toUnexpectedAuthServiceErrorFromMessage } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
-import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
+import { toUnexpectedAuthServiceError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
+import type { AuthActionError } from "@/server/auth/domain/errors/auth-service.error";
 import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/session.constants";
@@ -22,32 +19,20 @@ import { toUserId } from "@/shared/domain/id-converters";
  */
 export async function establishSessionAction(
   u: EstablishSessionInput,
-): Promise<Result<true, AuthServiceError>> {
-  // sets the session token in local storage
-  // returns Result<true, AuthServiceError>
+): Promise<Result<true, AuthActionError>> {
   const res = await tryCatchAsync(
     async () => {
       await setSessionToken(toUserId(u.id), toUserRole(u.role));
       return true as const;
     },
     {
-      mapError: (e) =>
-        toUnexpectedAuthServiceErrorFromMessage({
-          message: e instanceof Error ? e.message : "Session token error",
-        }),
+      mapError: toUnexpectedAuthServiceError,
     },
   );
 
-  // normalize/build/construct res
-  // success path => create successful result => Ok<true>
-  // error path => create failed result => Err<AuthServiceError>
-  const mapped: Result<true, AuthServiceError> = res.ok
+  const mapped: Result<true, AuthActionError> = res.ok
     ? Ok<true>(true as const)
-    : Err<AuthServiceError>(
-        toUnexpectedAuthServiceErrorFromMessage({
-          message: res.error?.message ?? "Failed to establish session",
-        }),
-      );
+    : Err<AuthActionError>(toUnexpectedAuthServiceError(res.error));
 
   if (!mapped.ok) {
     serverLogger.error(
@@ -59,6 +44,5 @@ export async function establishSessionAction(
     );
   }
 
-  // single return point for all paths
   return mapped;
 }
