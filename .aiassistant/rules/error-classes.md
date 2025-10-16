@@ -1,10 +1,5 @@
 ---
 apply: manually
-patterns:
-  - "src/**/errors/**"
-  - "src/**/domain/**/errors/**"
-exclude:
-  - "src/ui/**"
 ---
 
 Best practices for TypeScript classes:
@@ -173,6 +168,84 @@ export class AppError {
 }
 ```
 
-
-
 Last updated: 2025-10-16
+
+
+## Project specifics (from code)
+
+- Canonical codes and metadata
+  - Source: src/shared/core/errors/base/error-codes.ts (getErrorCodeMeta/tryGetErrorCodeMeta, httpStatus, severity, retryable, category, description)
+  - Always use literal ErrorCode values; do not invent ad-hoc strings.
+- BaseError
+  - Source: src/shared/core/errors/base/base-error.ts
+  - Immutable instances; dev deep-freeze of nested context; JSON-safe toJSON() with stable BaseErrorJSON shape.
+  - Helpers:
+    - BaseError.from(unknown, fallbackCode?, context?) → BaseError
+    - BaseError.wrap(code, err, context?, message?) → BaseError
+    - error.isBaseError guard exported as isBaseError(value)
+    - e.withContext(extra) → returns new error instance (does not mutate)
+    - e.remap(newCode, message?) → returns new instance preserving stack when possible
+- Guards
+  - isBaseError(value): boolean (src/shared/core/errors/base/base-error.ts)
+  - isErrorWithCode(value, code): boolean and isRetryableError(value) (src/shared/core/errors/base/error-guards.ts)
+- Domain subclasses
+  - src/shared/core/errors/domain/domain-errors.ts exposes ValidationError, NotFoundError, UnauthorizedError, ForbiddenError, ConflictError with matching guards
+  - Prefer subclass only when it communicates intent (validation/not found/authz); otherwise use BaseError with precise code + context.
+- AppError (UI-transport shape)
+  - Type: src/shared/core/result/app-error.ts (interface AppError, ErrorLike)
+  - Builders/normalizers: src/shared/core/errors/app-error/app-error-builders.ts and app-error-normalizers.ts
+  - Use appErrorFromCode, fromAppErrorLike, toAppErrorFromUnknown, and liftToAppError at boundaries.
+
+## API Reference (BaseError, from code)
+
+- class BaseError(code: ErrorCode, options?: { message?: string; context?: Readonly<Record<string, unknown>>; cause?: unknown })
+- instance methods
+  - getDetails(): Readonly<Record<string, unknown>>
+  - withContext(extra): this
+  - remap(code: ErrorCode, overrideMessage?: string): this
+  - toJSON(): BaseErrorJSON
+- static helpers
+  - BaseError.from(value: unknown, fallbackCode?: ErrorCode, context?: Readonly<Record<string, unknown>>): BaseError
+  - BaseError.wrap(code: ErrorCode, err: unknown, context?: Readonly<Record<string, unknown>>, message?: string): BaseError
+- guards
+  - isBaseError(value: unknown): value is BaseError
+  - isErrorWithCode(value: unknown, code: ErrorCode): value is BaseError & { code: typeof code }
+  - isRetryableError(value: unknown): value is BaseError & { retryable: true }
+
+## Logging and redaction (server)
+
+- Use logError to emit a redacted, structured payload
+  - Source: src/shared/core/errors/logging/error-logger.ts (logError, StructuredErrorLog)
+  - Provide operation and optional extra context; objects are frozen before emission.
+- Redaction
+  - Use defaultErrorContextRedactor (src/shared/core/errors/redaction/redaction.ts) or createErrorContextRedactor to safely mask sensitive keys (password, tokens, etc.).
+- Unknown to BaseError logging
+  - logUnknownAsBaseError(logger, err, extra?) for pino-like loggers; uses BaseError.from and default redaction.
+
+## Patterns and recipes
+
+- Normalize at boundary
+  - Catch unknown → BaseError.from/wrap → adapt to AppError with toAppErrorFromUnknown or appErrorFromCode.
+- Enrich without mutation
+  - Use e.withContext({ key: value }) to attach stable diagnostics; keep payload small and JSON-safe.
+- Remap rarely
+  - Use e.remap(newCode) to translate categories when crossing layers (e.g., infrastructure → domain), preserving stack when possible.
+
+## Low‑Token Playbook (Errors)
+
+- Centralize adapters; avoid scattered error mapping code across files.
+- Prefer codes + short messages; avoid attaching large objects to context/details.
+- Use provided guards (isBaseError, isErrorWithCode) instead of ad-hoc property checks.
+- Reuse defaultErrorContextRedactor; don’t roll custom masking unless necessary.
+
+## File pointers
+
+- BaseError: src/shared/core/errors/base/base-error.ts
+- Error codes/meta: src/shared/core/errors/base/error-codes.ts
+- Guards: src/shared/core/errors/base/error-guards.ts
+- AppError (type): src/shared/core/result/app-error.ts
+- AppError builders/normalizers: src/shared/core/errors/app-error/app-error-builders.ts, app-error-normalizers.ts
+- Logging: src/shared/core/errors/logging/error-logger.ts
+- Redaction: src/shared/core/errors/redaction/redaction.ts
+- Domain subclasses: src/shared/core/errors/domain/domain-errors.ts
+- Server mapping examples: src/server/errors/*.ts
