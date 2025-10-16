@@ -28,6 +28,7 @@ export class BcryptPasswordHasher implements PasswordHasher {
     return asPasswordHash(hashed);
   }
   async compare(raw: string, hash: PasswordHash): Promise<boolean> {
-    return await compareHash(raw, hash as string);
+    // avoid unsafe cast by unboxing via asPasswordHash then String()
+    return await compareHash(raw, String(asPasswordHash(hash)));
   }
 }

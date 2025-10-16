@@ -30,17 +30,16 @@ export class AuthUserRepositoryAdapter
     username: string;
     passwordHash: PasswordHash;
     role: UserEntity["role"];
-  }) {
-    // If input.role may be untrusted, normalize or validate here instead of casting.
+  }): ReturnType<AuthUserRepositoryImpl["signup"]> {
     return this.repo.signup({
       email: input.email,
       passwordHash: asPasswordHash(input.passwordHash),
-      role: input.role as UserEntity["role"],
+      role: input.role,
       username: input.username,
     });
   }
 
-  login(input: { email: string }) {
+  login(input: { email: string }): ReturnType<AuthUserRepositoryImpl["login"]> {
     return this.repo.login({ email: input.email });
   }
 }
