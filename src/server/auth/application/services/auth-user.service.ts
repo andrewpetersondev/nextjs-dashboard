@@ -1,6 +1,5 @@
 import "server-only";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
-import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import {
   type AuthServiceError,
@@ -10,6 +9,7 @@ import {
 import { normalizeSignupInput } from "@/server/auth/domain/types/auth-signup.normalization";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
+import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -32,12 +32,12 @@ export class AuthUserService {
   }
 
   /**
-   * Signup: hashes password, delegates to repo, returns Result<UserDto, AuthServiceError>.
+   * Signup: hashes password, delegates to repo, returns Result<AuthUserTransport, AuthServiceError>.
    * Always atomic via repo.withTransaction.
    */
   async signup(
     input: Readonly<SignupData>,
-  ): Promise<Result<UserDto, AuthServiceError>> {
+  ): Promise<Result<AuthUserTransport, AuthServiceError>> {
     if (!hasRequiredSignupFields(input)) {
       return Err(createAuthServiceError("missing_fields"));
     }
@@ -56,15 +56,15 @@ export class AuthUserService {
           username: normalized.username,
         }),
       );
-      // entity is a repo return, not a full UserEntity; build DTO directly
-      return Ok<UserDto>({
+      // entity is a repo return, not a full UserEntity; build transport type directly
+      return Ok<AuthUserTransport>({
         email: String(entity.email),
         id: String(entity.id),
-        role: toUserRole(String(entity.role)) as UserDto["role"],
+        role: toUserRole(String(entity.role)),
         username: String(entity.username),
       });
     } catch (err: unknown) {
-      return mapRepoErrorToAuthServiceResult<UserDto>(
+      return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
         err,
         "service.UserAuthService.signup",
       );
@@ -76,7 +76,7 @@ export class AuthUserService {
    */
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<UserDto, AuthServiceError>> {
+  ): Promise<Result<AuthUserTransport, AuthServiceError>> {
     try {
       const user = await this.repo.login({
         email: String(input.email).trim().toLowerCase(),
@@ -104,15 +104,15 @@ export class AuthUserService {
         return Err(createAuthServiceError("invalid_credentials"));
       }
 
-      // Build DTO directly to avoid requiring full UserEntity
-      return Ok<UserDto>({
+      // Build transport type directly to avoid requiring UI DTO
+      return Ok<AuthUserTransport>({
         email: String(user.email),
         id: String(user.id),
-        role: toUserRole(String(user.role)) as UserDto["role"],
+        role: toUserRole(String(user.role)),
         username: String(user.username),
       });
     } catch (err: unknown) {
-      return mapRepoErrorToAuthServiceResult<UserDto>(
+      return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
         err,
         "service.UserAuthService.login",
       );

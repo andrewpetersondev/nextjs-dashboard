@@ -26,11 +26,3 @@ export type AuthSignupRepoInputPlain = {
   readonly role: string;
   readonly username: string;
 };
-
-export type AuthSignupRepoOutputPlain = {
-  readonly email: string;
-  readonly id: string;
-  readonly password: string | null;
-  readonly role: string;
-  readonly username: string;
-};
