@@ -149,7 +149,6 @@ biome.json
 src/app/
 src/shell/
 src/ui/
-src/features/auth/
 src/features/customers/
 src/features/invoices/
 src/features/revenues/
