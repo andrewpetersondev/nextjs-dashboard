@@ -2,17 +2,17 @@ import "server-only";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { comparePassword, hashPassword } from "@/server/auth/crypto/hashing";
-import { AuthUserRepo } from "@/server/auth/repo/user-auth.repository";
 import {
   type AuthServiceError,
   mapRepoErrorToAuthResult,
   toError,
 } from "@/server/auth/service/auth-errors";
+import type {
+  AuthUserRepository,
+  PasswordHasher,
+} from "@/server/auth/service/ports";
 import { asPasswordHash } from "@/server/auth/types/password.types";
-import type { AppDatabase } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { userEntityToDto } from "@/server/users/mapping/user.mappers";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 
@@ -32,13 +32,15 @@ function normalizeSignupInput(input: Readonly<SignupData>): {
 function hasRequiredSignupFields(
   input: Partial<SignupData> | null | undefined,
 ): boolean {
+  if (!input) {
+    return false;
+  }
   return Boolean(
-    input &&
-      typeof input.email === "string" &&
+    input.email &&
       input.email.length > 0 &&
-      typeof input.password === "string" &&
+      input.password &&
       input.password.length > 0 &&
-      typeof input.username === "string" &&
+      input.username &&
       input.username.length > 0,
   );
 }
@@ -46,12 +48,16 @@ function hasRequiredSignupFields(
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
  * Never throws; always returns Result union for UI.
+ *
+ * Depends on small ports (AuthUserRepository, PasswordHasher) for testability.
  */
 export class UserAuthFlowService {
-  protected readonly db: AppDatabase;
+  private readonly repo: AuthUserRepository;
+  private readonly hasher: PasswordHasher;
 
-  constructor(db: AppDatabase) {
-    this.db = db;
+  constructor(repo: AuthUserRepository, hasher: PasswordHasher) {
+    this.repo = repo;
+    this.hasher = hasher;
   }
 
   /**
@@ -66,13 +72,12 @@ export class UserAuthFlowService {
     }
 
     const normalized = normalizeSignupInput(input);
-    const repo = new AuthUserRepo(this.db);
 
     try {
-      const hashed = await hashPassword(normalized.password);
-      const passwordHash = asPasswordHash(hashed);
+      // Centralized hashing via PasswordHasher
+      const passwordHash = await this.hasher.hash(normalized.password);
 
-      const entity = await repo.withTransaction(async (txRepo) =>
+      const entity = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: normalized.email,
           passwordHash,
@@ -80,7 +85,13 @@ export class UserAuthFlowService {
           username: normalized.username,
         }),
       );
-      return Ok(userEntityToDto(entity));
+      // entity is a repo return, not a full UserEntity; build DTO directly
+      return Ok<UserDto>({
+        email: String(entity.email),
+        id: String(entity.id),
+        role: toUserRole(String(entity.role)) as UserDto["role"],
+        username: String(entity.username),
+      });
     } catch (err: unknown) {
       return mapRepoErrorToAuthResult<UserDto>(
         err,
@@ -95,15 +106,13 @@ export class UserAuthFlowService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<UserDto, AuthServiceError>> {
-    const repo = new AuthUserRepo(this.db);
-
     try {
-      const user = await repo.login({
+      const user = await this.repo.login({
         email: String(input.email).trim().toLowerCase(),
       });
 
-      // Defensive: always check the existence/type of password
-      if (!user.password || typeof user.password !== "string") {
+      // Defensive: ensure a non-empty hashed password exists
+      if (!user.password) {
         serverLogger.error(
           {
             context: "service.UserAuthFlowService.login",
@@ -115,12 +124,22 @@ export class UserAuthFlowService {
         return Err(toError("invalid_credentials"));
       }
 
-      const passwordOk = await comparePassword(input.password, user.password);
+      // Centralized comparison via PasswordHasher
+      const passwordOk = await this.hasher.compare(
+        input.password,
+        asPasswordHash(user.password),
+      );
       if (!passwordOk) {
         return Err(toError("invalid_credentials"));
       }
 
-      return Ok(userEntityToDto(user));
+      // Build DTO directly to avoid requiring full UserEntity
+      return Ok<UserDto>({
+        email: String(user.email),
+        id: String(user.id),
+        role: toUserRole(String(user.role)) as UserDto["role"],
+        username: String(user.username),
+      });
     } catch (err: unknown) {
       return mapRepoErrorToAuthResult<UserDto>(
         err,
