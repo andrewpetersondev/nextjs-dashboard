@@ -1,5 +1,5 @@
 import "server-only";
-import type {SignupData} from "@/features/auth/lib/auth.schema";
+import type { SignupData } from "@/features/auth/lib/auth.schema";
 
 export function normalizeSignupInput(input: Readonly<SignupData>): {
   email: string;
@@ -12,4 +12,3 @@ export function normalizeSignupInput(input: Readonly<SignupData>): {
     username: String(input.username).trim(),
   };
 }
-

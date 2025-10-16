@@ -2,25 +2,31 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
 // TODO: why is cache imported from react?
 import "server-only";
-import {LOGIN_PATH} from "@/features/auth/lib/auth.constants";
-import type {UserRole} from "@/features/auth/lib/auth.roles";
-import type {SessionVerificationResult} from "@/features/auth/sessions/session-payload.types";
-import {
-    MAX_ABSOLUTE_SESSION_MS,
-    SESSION_DURATION_MS,
-    SESSION_REFRESH_THRESHOLD_MS,
-} from "@/features/auth/sessions/session.constants";
-import {createSessionToken, readSessionToken,} from "@/server/auth/session/session-codec";
-import {buildSessionCookieOptions} from "@/server/auth/session/session-cookie.options";
-import {absoluteLifetime, timeLeftMs,} from "@/server/auth/session/session-helpers";
-import type {DecryptPayload} from "@/server/auth/session/session-payload.types";
-import type {UpdateSessionResult} from "@/server/auth/session/session-update.types";
-import {SESSION_COOKIE_NAME,} from "@/server/auth/session/session.constants";
-import {serverLogger} from "@/server/logging/serverLogger";
 
-import {cookies} from "next/headers";
-import {redirect} from "next/navigation";
-import {cache} from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { cache } from "react";
+import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
+import {
+  MAX_ABSOLUTE_SESSION_MS,
+  SESSION_DURATION_MS,
+  SESSION_REFRESH_THRESHOLD_MS,
+} from "@/features/auth/sessions/session.constants";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
+import { SESSION_COOKIE_NAME } from "@/server/auth/session/session.constants";
+import {
+  createSessionToken,
+  readSessionToken,
+} from "@/server/auth/session/session-codec";
+import { buildSessionCookieOptions } from "@/server/auth/session/session-cookie.options";
+import {
+  absoluteLifetime,
+  timeLeftMs,
+} from "@/server/auth/session/session-helpers";
+import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
+import type { UpdateSessionResult } from "@/server/auth/session/session-update.types";
+import { serverLogger } from "@/server/logging/serverLogger";
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(

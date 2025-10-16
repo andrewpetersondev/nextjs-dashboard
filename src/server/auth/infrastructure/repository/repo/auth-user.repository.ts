@@ -1,18 +1,24 @@
 import "server-only";
-import type {AuthLoginDalInput} from "@/server/auth/domain/types/auth-login.input";
-import type {AuthSignupDalInput} from "@/server/auth/domain/types/auth-signup.input";
-import {getUserByEmailDal} from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
-import {insertUserDal} from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import {assertSignupFields} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.assertions";
-import {isRepoKnownError} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.errors";
-import {toNormalizedSignupInput} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.normalize";
-import type {AppDatabase} from "@/server/db/db.connection";
-import {throwRepoDatabaseErr} from "@/server/errors/factories/layer-error-throw";
-import {DatabaseError} from "@/server/errors/infrastructure-errors";
-import {serverLogger} from "@/server/logging/serverLogger";
-import {newUserDbRowToEntity, userDbRowToEntity,} from "@/server/users/mapping/user.mappers";
-import type {UserEntity} from "@/server/users/types/entity";
-import {UnauthorizedError, ValidationError,} from "@/shared/core/errors/domain/domain-errors";
+import type { AuthLoginDalInput } from "@/server/auth/domain/types/auth-login.input";
+import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
+import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
+import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
+import { assertSignupFields } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.assertions";
+import { isRepoKnownError } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.errors";
+import { toNormalizedSignupInput } from "@/server/auth/infrastructure/repository/repo/auth-user.repository.normalize";
+import type { AppDatabase } from "@/server/db/db.connection";
+import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { serverLogger } from "@/server/logging/serverLogger";
+import {
+  newUserDbRowToEntity,
+  userDbRowToEntity,
+} from "@/server/users/mapping/user.mappers";
+import type { UserEntity } from "@/server/users/types/entity";
+import {
+  UnauthorizedError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Repository for user authentication flows (signup/login).
