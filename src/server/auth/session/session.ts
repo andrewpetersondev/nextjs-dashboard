@@ -8,13 +8,13 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import {
   MAX_ABSOLUTE_SESSION_MS,
+  SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/features/auth/sessions/session.constants";
-import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
-import { SESSION_COOKIE_NAME } from "@/server/auth/session/session.constants";
+} from "@/server/auth/session/session.constants";
 import {
   createSessionToken,
   readSessionToken,

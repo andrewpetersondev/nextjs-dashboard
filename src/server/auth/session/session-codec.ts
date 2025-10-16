@@ -2,15 +2,15 @@ import "server-only";
 
 import { jwtVerify, SignJWT } from "jose";
 import {
+  DecryptPayloadSchema,
+  EncryptPayloadSchema,
+} from "@/server/auth/domain/schemas/session-payload.schema";
+import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/features/auth/sessions/session.constants";
-import {
-  DecryptPayloadSchema,
-  EncryptPayloadSchema,
-} from "@/server/auth/domain/schemas/session-payload.schema";
+} from "@/server/auth/session/session.constants";
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,

@@ -1,6 +1,6 @@
 import "server-only";
-import { ROLLING_COOKIE_MAX_AGE_S } from "@/features/auth/sessions/session.constants";
 import {
+  ROLLING_COOKIE_MAX_AGE_S,
   SESSION_COOKIE_HTTPONLY,
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
