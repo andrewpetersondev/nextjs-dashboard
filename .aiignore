@@ -89,15 +89,15 @@ Thumbs.db
 # Testing / QA
 # -----------------------------------------
 coverage/
-cypress/
+# cypress/
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
 .playwright/
 test-results/
 reports/
-cypress.config.ts
-devtools/
+# cypress.config.ts
+# devtools/
 
 # -----------------------------------------
 # Database / ORM
@@ -154,5 +154,4 @@ src/server/customers/
 src/server/invoices/
 src/server/revenues/
 src/shared/core/result/examples/
-src/server/errors/factories/layer-error-return.ts
 
