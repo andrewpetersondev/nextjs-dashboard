@@ -1,8 +1,16 @@
 ---
-apply: manually
+apply: off
+status: Deprecated
+sunset: 2025-11-15
+replaced_by:
+  - results.md
+  - forms.md
+  - errors.md
 ---
 
-# Results, Errors, and Form Handling Rules
+# Results, Errors, and Form Handling Rules (Deprecated)
+
+> This combined document is deprecated. See: results.md, forms.md, and errors.md. It remains for historical context until the sunset date.
 
 1. These rules augment Always-On AI Rules (Lite); they do not duplicate them.
 2. Use professional judgment for edge cases; document deviations briefly.
@@ -152,4 +160,4 @@ Notes:
 
 ---
 
-Last updated: 2025-10-13
+Last updated: 2025-10-16

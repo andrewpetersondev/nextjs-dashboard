@@ -44,8 +44,8 @@ This document is always-on. Downstream documents must not restate rules from thi
 1. current-focus.md
 2. always-on.md (this document)
 3. project-rules.md
-4. typescript-summary.md
-5. result-error-summary.md
+4. typescript-rules.md
+5. results-forms-errors.md (deprecated → split into results.md, forms.md, errors.md)
 6. structure-summary.md
 
 Tip: When in doubt, prefer the higher-precedence document.

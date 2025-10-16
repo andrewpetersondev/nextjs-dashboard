@@ -1,5 +1,11 @@
 ---
-apply: off
+apply: manually
+patterns:
+  - "src/**/core/result/**"
+  - "src/server/**/services/**"
+  - "src/server/**/actions/**"
+exclude:
+  - "src/ui/**"
 ---
 
 # Result Handling Rules
@@ -58,4 +64,4 @@ apply: off
 
 ---
 
-Last updated: 2025-10-13
+Last updated: 2025-10-16

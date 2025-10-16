@@ -1,5 +1,10 @@
 ---
 apply: manually
+patterns:
+  - "src/**/errors/**"
+  - "src/**/domain/**/errors/**"
+exclude:
+  - "src/ui/**"
 ---
 
 Best practices for TypeScript classes:
@@ -167,3 +172,7 @@ export class AppError {
   }
 }
 ```
+
+
+
+Last updated: 2025-10-16
