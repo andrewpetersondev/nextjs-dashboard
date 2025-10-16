@@ -1,22 +1,16 @@
 import "server-only";
+import type { Brand } from "@/shared/core/branding/brand";
 
-/**
- * Branded raw password. Never persist.
- */
-export type PasswordRaw = string & { readonly __brand: "PasswordRaw" };
+export const PASSWORD_HASH_BRAND: unique symbol = Symbol("PasswordHash");
+
 /**
  * Branded hashed password. Only after hashing and only on server.
  */
-export type PasswordHash = string & { readonly __brand: "PasswordHash" };
-/**
- * Factory: apply PasswordRaw brand in one place.
- * @param value - untrusted user input (raw string)
- */
-export const asPasswordRaw = (value: string): PasswordRaw =>
-  value as PasswordRaw;
+export type PasswordHash = Brand<string, typeof PASSWORD_HASH_BRAND>;
+
 /**
  * Factory: apply PasswordHash brand in one place.
  * @param value - result of a trusted hashing function
  */
 export const asPasswordHash = (value: string): PasswordHash =>
-  value as PasswordHash;
+  value as unknown as PasswordHash;

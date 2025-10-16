@@ -1,6 +1,6 @@
 import "server-only";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { PasswordHash } from "@/server/auth/domain/types/password.types";
-import type { UserEntity } from "@/server/users/types/entity";
 
 /**
  * Input for the auth-signup DAL: expects server-determined role and pre-hashed password.
@@ -8,7 +8,29 @@ import type { UserEntity } from "@/server/users/types/entity";
  */
 export interface AuthSignupDalInput {
   readonly email: string;
-  readonly username: string;
   readonly passwordHash: PasswordHash;
-  readonly role: UserEntity["role"];
+  readonly role: UserRole;
+  readonly username: string;
 }
+
+export type AuthSignupRepoInput = {
+  readonly email: string;
+  readonly passwordHash: PasswordHash;
+  readonly role: UserRole;
+  readonly username: string;
+};
+
+export type AuthSignupRepoInputPlain = {
+  readonly email: string;
+  readonly passwordHash: string;
+  readonly role: string;
+  readonly username: string;
+};
+
+export type AuthSignupRepoOutputPlain = {
+  readonly email: string;
+  readonly id: string;
+  readonly password: string | null;
+  readonly role: string;
+  readonly username: string;
+};

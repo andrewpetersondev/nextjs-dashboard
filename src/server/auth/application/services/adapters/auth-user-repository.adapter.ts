@@ -1,11 +1,8 @@
 import "server-only";
-import {
-  asPasswordHash,
-  type PasswordHash,
-} from "@/server/auth/domain/types/password.types";
+import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
+import type { AuthSignupRepoInput } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository";
-import type { UserEntity } from "@/server/users/types/entity";
 
 export class AuthUserRepositoryAdapter
   implements AuthUserRepository<AuthUserRepositoryImpl>
@@ -25,21 +22,20 @@ export class AuthUserRepositoryAdapter
     });
   }
 
-  signup(input: {
-    email: string;
-    username: string;
-    passwordHash: PasswordHash;
-    role: UserEntity["role"];
-  }): ReturnType<AuthUserRepositoryImpl["signup"]> {
+  signup(
+    input: AuthSignupRepoInput,
+  ): ReturnType<AuthUserRepositoryImpl["signup"]> {
     return this.repo.signup({
       email: input.email,
-      passwordHash: asPasswordHash(input.passwordHash),
+      passwordHash: input.passwordHash,
       role: input.role,
       username: input.username,
     });
   }
 
-  login(input: { email: string }): ReturnType<AuthUserRepositoryImpl["login"]> {
+  login(
+    input: AuthLoginRepoInput,
+  ): ReturnType<AuthUserRepositoryImpl["login"]> {
     return this.repo.login({ email: input.email });
   }
 }

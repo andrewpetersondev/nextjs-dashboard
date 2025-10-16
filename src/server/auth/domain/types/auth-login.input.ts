@@ -7,3 +7,5 @@ import "server-only";
 export interface AuthLoginDalInput {
   readonly email: string;
 }
+
+export type AuthLoginRepoInput = { readonly email: string };

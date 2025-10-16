@@ -1,3 +1,5 @@
+# Auth Application Layer
+
 Here’s how src/server/auth/ is organized and what each area is responsible for.
 
 application/
@@ -46,3 +48,21 @@ session/
   - session-jwt-payload.mapper.ts: Flatten/unflatten token payload.
   - session-payload.types.ts, session-update.types.ts: Session-related TypeScript types.
   - session.constants.ts: Session-related constants (cookie name, flags, etc.).
+
+## Dependency Inversion Reminder (Ports and Adapters)
+
+- The service depends on small, stable ports, not concrete tech.
+  - In AuthUserService:
+    - private readonly repo: AuthUserRepository
+    - private readonly hasher: PasswordHasher
+  - These are interfaces describing what the service needs (user persistence and password hashing).
+
+- Concrete implementations are injected at composition time (see factories):
+  - AuthUserRepositoryAdapter wraps the DB-backed AuthUserRepositoryImpl.
+  - BcryptPasswordHasher wraps the hashing library.
+  - Tests can inject fakes/mocks.
+
+- Benefits:
+  1. Testable: swap implementations without touching service logic.
+  2. Replaceable: change DB or hashing details behind adapters.
+  3. Decoupled: service stays framework/infra-agnostic; only contracts matter.
