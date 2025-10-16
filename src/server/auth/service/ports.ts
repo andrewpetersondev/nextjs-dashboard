@@ -1,4 +1,4 @@
-// Contracts (ports) for UserAuthFlowService dependencies.
+// Contracts (ports) for UserAuthService dependencies.
 // Keep these tiny and stable for easy testing/mocking.
 
 import type { PasswordHash } from "@/server/auth/types/password.types";

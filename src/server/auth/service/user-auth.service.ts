@@ -51,7 +51,7 @@ function hasRequiredSignupFields(
  *
  * Depends on small ports (AuthUserRepository, PasswordHasher) for testability.
  */
-export class UserAuthFlowService {
+export class UserAuthService {
   private readonly repo: AuthUserRepository;
   private readonly hasher: PasswordHasher;
 
@@ -95,7 +95,7 @@ export class UserAuthFlowService {
     } catch (err: unknown) {
       return mapRepoErrorToAuthResult<UserDto>(
         err,
-        "service.UserAuthFlowService.signup",
+        "service.UserAuthService.signup",
       );
     }
   }
@@ -115,7 +115,7 @@ export class UserAuthFlowService {
       if (!user.password) {
         serverLogger.error(
           {
-            context: "service.UserAuthFlowService.login",
+            context: "service.UserAuthService.login",
             kind: "auth-invariant",
             userId: user.id,
           },
@@ -143,7 +143,7 @@ export class UserAuthFlowService {
     } catch (err: unknown) {
       return mapRepoErrorToAuthResult<UserDto>(
         err,
-        "service.UserAuthFlowService.login",
+        "service.UserAuthService.login",
       );
     }
   }

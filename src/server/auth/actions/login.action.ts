@@ -11,7 +11,7 @@ import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
 } from "@/server/auth/mappers/auth-service-errors.mappers";
-import { createUserAuthFlowService } from "@/server/auth/service/user-auth.service.factory";
+import { createUserAuthService } from "@/server/auth/service/user-auth.service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
@@ -36,7 +36,7 @@ const fields = LOGIN_FIELDS_LIST;
  * @param formData - The submitted form data containing login credentials.
  * @returns A promise that resolves to a {@link FormResult} representing the outcome.
  * @throws If an unexpected error occurs during session establishment or redirection.
- * @see UserAuthFlowService for authentication logic.
+ * @see UserAuthService for authentication logic.
  */
 export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
@@ -57,7 +57,7 @@ export async function loginAction(
   }
 
   const input: LoginData = validated.value.data;
-  const service = createUserAuthFlowService(getAppDb());
+  const service = createUserAuthService(getAppDb());
 
   const sessionResult = await flatMapAsync((i: LoginData) => service.login(i))(
     Ok(input),

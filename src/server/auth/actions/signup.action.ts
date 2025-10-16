@@ -11,7 +11,7 @@ import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
 } from "@/server/auth/mappers/auth-service-errors.mappers";
-import { createUserAuthFlowService } from "@/server/auth/service/user-auth.service.factory";
+import { createUserAuthService } from "@/server/auth/service/user-auth.service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
@@ -51,7 +51,7 @@ export async function signupAction(
   }
 
   const input: SignupData = validated.value.data;
-  const service = createUserAuthFlowService(getAppDb());
+  const service = createUserAuthService(getAppDb());
 
   const sessionResult = await flatMapAsync((i: SignupData) =>
     service.signup(i),

@@ -1,14 +1,17 @@
 import "server-only";
 import { comparePassword, hashPassword } from "@/server/auth/crypto/hashing";
 import { AuthUserRepo } from "@/server/auth/repo/user-auth.repository";
+import type {
+  AuthUserRepository,
+  PasswordHasher,
+} from "@/server/auth/service/ports";
+import { UserAuthService } from "@/server/auth/service/user-auth.service";
 import {
   asPasswordHash,
   type PasswordHash,
 } from "@/server/auth/types/password.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserEntity } from "@/server/users/types/entity";
-import type { AuthUserRepository, PasswordHasher } from "./ports";
-import { UserAuthFlowService } from "./user-auth.service";
 
 // Concrete PasswordHasher adapter over hashing module (raw is plain string)
 class CryptoPasswordHasher implements PasswordHasher {
@@ -59,13 +62,11 @@ class RepoAdapter implements AuthUserRepository<AuthUserRepo> {
 }
 
 /**
- * Composition root: builds a UserAuthFlowService with concrete adapters.
+ * Composition root: builds a UserAuthService with concrete adapters.
  */
-export function createUserAuthFlowService(
-  db: AppDatabase,
-): UserAuthFlowService {
+export function createUserAuthService(db: AppDatabase): UserAuthService {
   const repo = new AuthUserRepo(db);
   const repoPort: AuthUserRepository = new RepoAdapter(repo);
   const hasherPort: PasswordHasher = new CryptoPasswordHasher();
-  return new UserAuthFlowService(repoPort, hasherPort);
+  return new UserAuthService(repoPort, hasherPort);
 }
