@@ -2,6 +2,15 @@
 apply: manually
 ---
 
+# Error & Class Patterns
+
+## Purpose
+- Provide best practices for TypeScript classes and project error classes with JSON-safe, immutable design.
+
+## Precedence
+- See: project-rules.md (governance)
+- See: errors.md (modeling) and results.md (Result integration)
+
 Best practices for TypeScript classes:
 
 1. Keep classes single‑purpose; favor composition over inheritance.
@@ -25,148 +34,17 @@ Best practices for custom error classes:
 9. Add stable operational metadata on the base type (e.g., `statusCode`, `severity`) when useful for logging/control flow.
 10. Provide helpers to normalize unknown errors into your base type at boundaries (e.g., `from(value, fallbackCode)`), and to enrich without mutation (`withContext`).
 
-Example: frozen, serializable BaseError with code and cause.
+Examples and templates
 
-```typescript
-export type BaseErrorCode =
-  | "DB_CONFLICT"
-  | "VALIDATION"
-  | "NOT_FOUND"
-  | "INTERNAL";
+- Full class examples are omitted to reduce token usage. See project code and file pointers below for authoritative implementations:
+  - BaseError: src/shared/core/errors/base/base-error.ts
+  - AppError shape and builders/normalizers: src/shared/core/result/app-error.ts and src/shared/core/errors/app-error/
+- Use these as references rather than duplicating code in rule files.
 
-export interface BaseErrorInit<C extends BaseErrorCode = BaseErrorCode> {
-  readonly code: C;
-  readonly message: string;
-  readonly cause?: unknown;
-  readonly details?: Readonly<Record<string, unknown>>;
-  readonly statusCode?: number;
-  readonly severity?: "info" | "warn" | "error";
-}
-
-export class BaseError<C extends BaseErrorCode = BaseErrorCode> extends Error {
-  public readonly code: C;
-  public readonly cause: unknown | undefined;
-  public readonly details: Readonly<Record<string, unknown>> | undefined;
-  public readonly statusCode: number | undefined;
-  public readonly severity: "info" | "warn" | "error";
-
-  constructor(init: BaseErrorInit<C>) {
-    super(init.message);
-    this.name = "BaseError";
-    this.code = init.code;
-    this.cause = init.cause;
-    this.details = init.details;
-    this.statusCode = init.statusCode;
-    this.severity = init.severity ?? "error";
-
-    Object.setPrototypeOf(this, BaseError.prototype);
-    if (typeof Error.captureStackTrace === "function") {
-      Error.captureStackTrace(this, BaseError);
-    }
-    Object.freeze(this);
-  }
-
-  // Emit only JSON‑safe fields; prefer using a project redaction helper for details.
-  public toJSON(): {
-    readonly name: string;
-    readonly code: C;
-    readonly message: string;
-    readonly details?: Readonly<Record<string, unknown>>;
-    readonly statusCode?: number;
-    readonly severity: "info" | "warn" | "error";
-  } {
-    return {
-      name: this.name,
-      code: this.code,
-      message: this.message,
-      details: this.details,
-      statusCode: this.statusCode,
-      severity: this.severity,
-    };
-  }
-
-  // Narrowing helper for unknown values.
-  public static is(value: unknown): value is BaseError {
-    return value instanceof BaseError;
-  }
-
-  // Normalize unknown to BaseError with a fallback code.
-  public static from<C extends BaseErrorCode>(
-    value: unknown,
-    fallback: C,
-    init?: Omit<BaseErrorInit<C>, "code" | "message"> & {
-      readonly message?: string;
-    },
-  ): BaseError<C> {
-    if (value instanceof BaseError) return value as BaseError<C>;
-    const message =
-      value &&
-      typeof value === "object" &&
-      "message" in value &&
-      typeof (value as any).message === "string"
-        ? (value as any).message
-        : typeof value === "string"
-          ? value
-          : "Unknown error";
-    return new BaseError<C>({
-      code: fallback,
-      message,
-      cause: value,
-      details: init?.details,
-      statusCode: init?.statusCode,
-      severity: init?.severity,
-    });
-  }
-}
-```
-
-Example: lightweight, UI‑safe AppError value for rendering and transport.
-
-```typescript
-export type AppErrorKind = "conflict" | "validation" | "not_found" | "internal";
-export type AppErrorSeverity = "error" | "warning" | "info";
-
-export interface AppErrorInit {
-  readonly code: string;
-  readonly kind: AppErrorKind;
-  readonly message: string;
-  readonly severity?: AppErrorSeverity;
-  readonly details?: Readonly<Record<string, unknown>>;
-}
-
-export class AppError {
-  public readonly code: string;
-  public readonly kind: AppErrorKind;
-  public readonly message: string;
-  public readonly severity: AppErrorSeverity;
-  public readonly details: Readonly<Record<string, unknown>> | undefined;
-
-  constructor(init: AppErrorInit) {
-    this.code = init.code;
-    this.kind = init.kind;
-    this.message = init.message;
-    this.severity = init.severity ?? "error";
-    this.details = init.details;
-    Object.freeze(this);
-  }
-
-  public toJSON(): {
-    readonly code: string;
-    readonly kind: AppErrorKind;
-    readonly message: string;
-    readonly severity: AppErrorSeverity;
-    readonly details?: Readonly<Record<string, unknown>>;
-  } {
-    return {
-      code: this.code,
-      kind: this.kind,
-      message: this.message,
-      severity: this.severity,
-      details: this.details,
-    };
-  }
-}
-```
+## Low‑Token Playbook (Errors & Classes)
+- Reuse provided class templates; avoid writing new base types.
+- Do not open entire large files; request specific ranges for edits.
+- Keep examples short and reference real code paths.
 
 Last updated: 2025-10-16
 

@@ -1,5 +1,6 @@
 ---
-apply: always
+apply: manually
+patterns: ["src/**/*.ts", "src/**/*.tsx"]
 ---
 
 # TypeScript Rules
@@ -99,4 +100,10 @@ Attach this when authoring, reviewing, or refactoring `.ts` / `.tsx` files.
 
 ---
 
-_Last updated: 2025-10-13_
+## Low‑Token Playbook (TypeScript)
+
+- Prefer search_project and get_file_structure over opening entire files; request only the lines you need.
+- Batch refactors: list all symbols first, then apply minimal edits; avoid iterative micro-edits that trigger many assistant cycles.
+- Be explicit: provide exact function/type names and paths when asking for changes to reduce back‑and‑forth.
+- Avoid broad lint/format runs; limit to touched files.
+- Do not auto‑add types for inferred internals unless exported; focus on exported APIs first for maximal value.

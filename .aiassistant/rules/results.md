@@ -60,9 +60,6 @@ apply: manually
 
 ---
 
-Last updated: 2025-10-16
-
-
 ## Examples (Patterns)
 
 - Service boundary (async):
@@ -71,7 +68,6 @@ Last updated: 2025-10-16
   - If form, map AppError → FormResult via adapter; else return Result<T, AppError>.
 - UI rendering:
   - If not ok, map via ERROR_CODES; render message; show field errors from dense map.
-
 
 ## API Reference (from code)
 
@@ -94,6 +90,7 @@ Last updated: 2025-10-16
   - makeErrorMapper<TError extends ErrorLike>(opts): (e: unknown) => TError (see src/shared/core/result/app-error.ts)
 
 Notes:
+
 - All results are frozen (shallow) to prevent accidental mutation.
 - Discriminant property ok is the only branch key; do not add alternative discriminants.
 

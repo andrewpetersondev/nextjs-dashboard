@@ -9,14 +9,10 @@ apply: manually
 1. Establish minimum security and privacy expectations for AI-assisted changes and logs.
 2. Ensure consistent, serializable, and redacted outputs across the project.
 
-## Audience
-
-- All contributors using AI assistance.
-
 ## Precedence
 
 - See: project-rules.md (governance, activation schema)
-- See: always-on.md (coding/style, JSON-safe logging)
+- See: errors.md and results.md for error/result serialization rules
 
 ## Baseline Rules
 
@@ -29,14 +25,13 @@ apply: manually
 
 ## References
 
-- src/server/config/* (secrets management)
-- src/shared/core/errors/* (error serialization)
-- src/shared/core/result/* (stable result shapes)
+- src/server/config/\* (secrets management)
+- src/shared/core/errors/\* (error serialization)
+- src/shared/core/result/\* (stable result shapes)
 
-## Changelog
+## Low‑Token Playbook (Security)
 
-- 2025-10-16: Initial baseline added (owner: Junie).
-
-## Last updated
-
-2025-10-16
+- Prefer referencing existing helpers (logger, redaction, adapters) over writing custom emitters.
+- Avoid dumping large objects into logs; log minimal structured fields only.
+- Reuse canonical error/result types; don’t invent new shapes that require more parsing.
+- Batch security fixes by file; avoid piecemeal changes that trigger re-analysis cycles.

@@ -11,7 +11,7 @@ apply: manually
 
 ## Precedence
 
-- See: always-on.md (governance, coding/style)
+- See: project-rules.md (governance, activation, authoring)
 - See: results.md (Result helpers)
 - See: errors.md (AppError/BaseError model and adapters)
 
@@ -28,25 +28,10 @@ apply: manually
 - src/shared/forms/types/form-result.types.ts
 - src/server/forms/validate-form.ts
 
-## Changelog
-
-- 2025-10-16: Extracted from results-forms-errors.md and added file-pattern activation (owner: Junie).
-
-## Last updated
-
-2025-10-16
-
-
-## Error Adaptation
-
-- Convert AppError to FormResult via a single adapter per feature/domain.
-- Detect targeted conflicts (e.g., email) and emit field‑specific messages; otherwise return a generic message and dense empty arrays for unaffected fields.
-
 ## Implementation Checklist (Forms)
 
 - Ensure validateFormGeneric is used in actions to unify validation/transform/normalize.
 - Always return dense field error maps and echo values via display‑safe selectors with redaction.
-
 
 ## Quickstart (Low-effort, high‑value)
 
@@ -96,7 +81,10 @@ Example: Convert a service Result<T, FormValidationError<TField>> to FormResult 
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
 
 export async function adaptServiceResultToForm<TField extends string, T>(p: {
-  readonly result: import("@/shared/core/result/result").Result<T, import("@/shared/forms/types/form-result.types").FormValidationError<TField>>;
+  readonly result: import("@/shared/core/result/result").Result<
+    T,
+    import("@/shared/forms/types/form-result.types").FormValidationError<TField>
+  >;
   readonly fields: readonly TField[];
   readonly raw: Record<string, unknown>;
 }) {

@@ -36,7 +36,7 @@ Attach for refactors, file moves, or architecture reviews.
 
 ## Component & File Conventions
 
-- See always-on.md 'Coding & Style' for file size limits, function granularity, and organization guidance.
+- See project-rules.md for governance and activation; follow coding/style constraints in typescript-rules.md.
 
 ---
 
@@ -53,4 +53,11 @@ Attach for refactors, file moves, or architecture reviews.
 
 ---
 
-_Last updated: 2025-10-11_
+## Low‑Token Playbook (Architecture)
+
+- Before asking for moves, list current file structure (get_file_structure) and plan changes in a single batch.
+- Prefer rename_element over multi-file search/replace for symbol moves; it updates references in one shot.
+- Avoid opening large directories; target exact files by path.
+- When reviewing, request only diffs or specific sections rather than entire files.
+
+---

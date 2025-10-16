@@ -11,7 +11,7 @@ apply: manually
 
 ## Precedence
 
-- See: always-on.md (governance, coding/style)
+- See: project-rules.md (governance, activation, authoring)
 - See: results.md (Result helpers and usage)
 - See: forms.md (FormResult adaptation)
 
@@ -35,14 +35,12 @@ apply: manually
   - unknown/BaseError → AppError
   - AppError → Result/FormResult
 
-## Changelog
+## Low‑Token Playbook (Errors)
 
-- 2025-10-16: Extracted from results-forms-errors.md and added file-pattern activation (owner: Junie).
-
-## Last updated
-
-2025-10-16
-
+- Normalize at boundaries once; avoid multiple conversions between BaseError/AppError.
+- Use provided builders/normalizers; don’t re-implement mapping logic.
+- Keep error payloads tiny: prefer code + message; only small details when strictly needed.
+- Request only the function ranges you need when editing error adapters; don’t open full files.
 
 ## Adapter Boundaries
 
@@ -82,7 +80,6 @@ Notes:
 - Enforce a canonical code set; freeze instances; add type guards (e.g., isBaseError, isAppError).
 - Implement appErrorFromCode and fromAppErrorLike for boundary creation.
 - Ensure a single entry point for unknown → BaseError → AppError normalization; avoid any.
-
 
 ## Logging + Redaction (server-only)
 

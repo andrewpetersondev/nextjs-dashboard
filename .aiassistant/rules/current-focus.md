@@ -1,28 +1,35 @@
 ---
-apply: manually
+apply: off
 ---
 
-# Current Focus
+# Focus Template (Attach and fill in)
 
-Objectives
+Purpose
 
-- Propose an improved folder/module structure for src/server/auth following professional, domain-oriented conventions.
-- Recommend renames for code constructs (interfaces, types, constants, functions, classes, files) to align with clear, consistent, industry-standard naming.
-- When helpful, suggest extracting constructs into new files/folders to improve cohesion and separation of concerns.
+- Provide a lightweight, reusable template to guide tightly scoped reviews or proposals without writing code.
 
-Scope
+How to use
 
-- Only analyze and propose changes for: src/server/auth/
+- Duplicate this file when you need a focused analysis. Set apply: manually and tailor the sections below.
+- Narrow scope using patterns or tasks in the frontmatter when applicable.
+
+Objectives (edit these)
+
+- <Describe the specific goal of the focus, e.g., improve structure and naming for a module>
+
+Scope (edit this)
+
+- <Path or glob to limit analysis, e.g., src/server/auth/>
 
 Constraints
 
-- Do not modify code; only propose structure and naming changes.
+- Do not modify code; only propose structure and naming changes unless explicitly allowed.
 - Keep proposals minimal, incremental, and reversible.
-- Avoid references to non‑scoped files unless strictly necessary.
+- Avoid references outside the declared scope unless strictly necessary.
 
 Output Format
 
-- Suggested folder structure (tree).
+- Proposed folder structure (tree).
 - Rename suggestions: old → new with 1‑line rationale each.
 - Extraction suggestions: source → target file path with brief justification.
 - Risks or trade‑offs (if any).
@@ -30,11 +37,18 @@ Output Format
 
 Things to Avoid
 
-- No behavioral changes.
+- No behavioral changes unless the focus explicitly includes them.
 - No framework or library upgrades.
-- No cross‑feature refactors beyond src/server/auth/.
-- No barrel files.
-- No index files.
-- No re-exports.
+- No barrel files, index files, or re-exports.
 
-Last updated: 2025-10-15
+Precedence
+
+- See: project-rules.md (governance, activation)
+- See: structure-summary.md (architecture and boundaries)
+- See: typescript-rules.md (coding/style constraints)
+
+Low‑Token Playbook (Focus)
+
+- Ask for current file structure with get_file_structure before proposing moves.
+- Batch suggestions in one response; avoid iterative micro-updates.
+- Reference exact paths and keep examples minimal.
