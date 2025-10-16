@@ -1,4 +1,4 @@
-// File: src/server/auth/mappers/auth-service-errors.mappers.ts
+// File: src/server/auth/mappers/auth-service-errors.mapper.ts
 import "server-only";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-errors";
 import type { AppError } from "@/shared/core/result/app-error";

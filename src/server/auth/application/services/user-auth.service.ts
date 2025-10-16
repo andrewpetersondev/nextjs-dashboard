@@ -7,41 +7,16 @@ import {
   mapRepoErrorToAuthResult,
   toError,
 } from "@/server/auth/domain/errors/auth-errors";
+import {
+  hasRequiredSignupFields,
+  normalizeSignupInput,
+} from "@/server/auth/domain/types/auth-signup.helpers";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/user-auth.repository.port";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-
-// --- Pure helpers (extractable/standalone) ---
-function normalizeSignupInput(input: Readonly<SignupData>): {
-  email: string;
-  username: string;
-  password: string;
-} {
-  return {
-    email: String(input.email).trim().toLowerCase(),
-    password: String(input.password),
-    username: String(input.username).trim(),
-  };
-}
-
-function hasRequiredSignupFields(
-  input: Partial<SignupData> | null | undefined,
-): boolean {
-  if (!input) {
-    return false;
-  }
-  return Boolean(
-    input.email &&
-      input.email.length > 0 &&
-      input.password &&
-      input.password.length > 0 &&
-      input.username &&
-      input.username.length > 0,
-  );
-}
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.

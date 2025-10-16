@@ -11,7 +11,7 @@ import { createUserAuthService } from "@/server/auth/application/services/user-a
 import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
-} from "@/server/auth/domain/mappers/auth-service-errors.mappers";
+} from "@/server/auth/domain/mappers/auth-service-errors.mapper";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";

@@ -10,7 +10,6 @@ import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
-  ONE_SECOND_MS,
   ROLLING_COOKIE_MAX_AGE_S,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
@@ -27,6 +26,10 @@ import {
   createSessionToken,
   readSessionToken,
 } from "@/server/auth/session/session-codec";
+import {
+  absoluteLifetime,
+  timeLeftMs,
+} from "@/server/auth/session/session-helpers";
 import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -41,22 +44,6 @@ const buildSessionCookieOptions = (expiresAtMs: number) =>
     sameSite: SESSION_COOKIE_SAMESITE,
     secure: IS_PRODUCTION ? true : SESSION_COOKIE_SECURE_FALLBACK,
   }) as const;
-
-/** Internal: compute absolute lifetime status. */
-function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
-  exceeded: boolean;
-  age: number;
-} {
-  const start = user?.sessionStart ?? 0;
-  const age = Date.now() - start;
-  return { age, exceeded: !start || age > MAX_ABSOLUTE_SESSION_MS };
-}
-
-/** Internal: compute remaining time before token expiry in ms. */
-function timeLeftMs(payload?: DecryptPayload): number {
-  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
-  return expMs - Date.now();
-}
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(

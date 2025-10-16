@@ -4,7 +4,7 @@
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-errors";
-import { mapToUnexpectedAuthServiceError } from "@/server/auth/domain/mappers/auth-service-errors.mappers";
+import { mapToUnexpectedAuthServiceError } from "@/server/auth/domain/mappers/auth-service-errors.mapper";
 import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/constants";
 import { setSessionToken } from "@/server/auth/session/session";
