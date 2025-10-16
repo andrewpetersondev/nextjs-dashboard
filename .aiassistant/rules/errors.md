@@ -1,137 +1,44 @@
 ---
-apply: off
+apply: manually
 ---
 
-# Error Handling Rules
+# Error Modeling Rules
 
 ## Purpose
 
-1. Enforce strict, type‑safe error and result handling with a dual‑tier model.
-2. UI layers consume AppError; lower layers use BaseError or typed variants (e.g., ConflictError).
-3. Errors may be values or exceptions, but must be handled explicitly and serialized safely.
+1. Define a consistent, type‑safe, JSON‑safe error model across layers.
+2. Keep UI concerns (AppError) separate from internal/logging concerns (BaseError + variants).
 
-## Critical Files
+## Precedence
 
-1. src/shared/core/result/result.ts
-2. src/shared/core/result/app-error.ts
-3. src/shared/core/errors/base-error.ts
-4. src/shared/core/errors/adapters/
+- See: always-on.md (governance, coding/style)
+- See: results.md (Result helpers and usage)
+- See: forms.md (FormResult adaptation)
 
-## Scope Focus
+## Rules
 
-1. Implement end-to-end flow DAL(DB) → Repo → Service → Action → UI/App.
-2. Only after stabilization, expand reverse direction (UI → Action → Service → Repo → DAL).
+1. Use a canonical BaseError with literal `code` and immutable instances (frozen); add type guards (e.g., `BaseError.is`).
+2. Derive domain error variants from BaseError with a closed set of codes per domain.
+3. Never leak BaseError beyond service boundaries; adapt to AppError at adapters.
+4. AppError is lightweight and JSON‑safe: { code, kind, message, severity, details? } only.
+5. Normalize unknown values to BaseError at boundaries; do not cast to `any`.
+6. Preserve `cause` internally for logging; redact secrets in any `details`.
+7. Centralize code→kind/severity mapping in a single adapter helper per boundary.
 
----
+## Implementation Notes
 
-## Best Practices
+- References:
+  - src/shared/core/errors/base/base-error.ts
+  - src/shared/core/errors/domain/\*
+  - src/shared/core/errors/app/app-error.ts
+- Adapters are the only tier-crossing points:
+  - unknown/BaseError → AppError
+  - AppError → Result/FormResult
 
-1. Use try/catch only at async boundaries (service/action edges).
-2. Do not rethrow except at process shutdown.
-3. Only the adapter layer converts unknown/BaseError to AppError.
-4. Use literal error codes (enums/union literals); freeze errors.
-5. Do not use any; normalize via adapters at boundaries.
-6. Prefer type guards and predicates over casts.
-7. Log JSON‑safe structures; avoid leaking secrets.
+## Changelog
 
----
+- 2025-10-16: Extracted from results-forms-errors.md and added file-pattern activation (owner: Junie).
 
-## Result Type
+## Last updated
 
-1. Reference: src/shared/core/result/result.ts
-2. Types:
-
-- Result<TValue, TError extends ErrorLike> = OkResult<TValue> | ErrResult<TError>
-- Ok<TValue>(value: TValue): Result<TValue, never>
-- Err<TError extends ErrorLike>(error: TError): Result<never, TError>
-
-3. Provide generic helpers for:
-
-- sync: map/flatMap/match/unwrap with explicit typing
-- async: fromPromise, mapAsync, matchAsync
-- iterable: allOk/firstErr/reduceResults
-
-4. Keep discriminants stable: ok: true | false only.
-
----
-
-## Error Model
-
-1. References:
-
-- src/shared/core/errors/base/base-error.ts
-- src/shared/core/errors/domain/domain-errors.ts
-- src/shared/core/errors/app/app-error.ts
-- src/shared/core/result/app-error.ts
-
-2. Types and roles:
-
-- BaseError: internal/logging; may include context/stack; not UI‑safe.
-- Domain variants (e.g., ConflictError) extend BaseError with canonical codes.
-- AppError: lightweight, JSON‑safe, UI displayable (code/kind/message/severity/details?).
-- ErrorLike: Error | string; normalize at boundaries.
-
-3. Rules:
-
-- Freeze error objects for immutability.
-- Normalize unknown via normalizeUnknownError(); never cast.
-- Use canonical codes; map to severity/kind via metadata.
-- Preserve causality in logs (cause chain) without leaking secrets.
-
----
-
-## Forms
-
-1. References:
-
-- src/shared/forms/types/form-result.types.ts
-- src/server/forms/validate-form.ts
-
-2. Contract:
-
-- Always return dense field error maps to UI (key exists; value is readonly string[]; may be empty).
-- Echo values using display-safe selectors with redaction.
-- validateFormGeneric unifies validation/transform/normalize; prefer using it over ad‑hoc parsing.
-
-3. Error adaptation:
-
-- Convert AppError to FormResult via a single adapter per feature/domain.
-- Detect targeted conflicts (e.g., email) and emit field‑specific messages; otherwise generic message + dense empty arrays.
-
----
-
-## Unified Adapter APIs
-
-1. Adapters are the only place to cross tiers:
-
-- unknown/BaseError → AppError
-- AppError → Result/FormResult
-
-2. Guidelines:
-
-- Single‑purpose, small, reusable; no feature leakage.
-- Strict inputs/outputs; readonly data; JSON‑safe.
-- Centralize code/kind/severity mapping using metadata helpers.
-
-3. Actions:
-
-- Audit adapters for unsafe casts; replace with predicates/normalizers.
-- Consolidate duplicate mappers; introduce shared helpers per layer boundary.
-
----
-
-## Implementation Checklist
-
-1. Errors
-
-- Enforce canonical code set; freeze; add type guards (isBaseError, isAppError).
-- Implement appErrorFromCode and fromAppErrorLike for boundary creation.
-
-2. Adapters
-
-- unknown → BaseError → AppError: one entry point; no any.
-- AppError → FormResult: dense map, targeted conflict handling, safe value echo.
-
----
-
-Last updated: 2025-10-13
+2025-10-16

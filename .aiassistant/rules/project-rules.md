@@ -2,42 +2,46 @@
 apply: manually
 ---
 
-# JetBrains AI Rules
+# Project Rules & Activation Schema
 
 ## Purpose
 
-Define strict, auditable rules for AI responses, code suggestions, and changes in this Next.js + TypeScript app.
+1. Define governance for AI rule files and the activation schema used by this project.
+2. Centralize shared guidance; other rule files must only add deltas and link here.
 
-## General Rules
+## Audience
 
-1. Inspect and use the most recent attached instruction files before proposing changes.
-2. Follow all rules in:
-   - [TypeScript Instructions](typescript-rules.md)
-   - [Result & Error Instructions](./results-forms-errors.md)
-3. Do not access or reference files outside user-provided folders or attachments.
+- Rule authors, reviewers, maintainers.
 
-## Attachment & Folder Access
+## Precedence
 
-1. Use the latest content from attachments before answering or suggesting changes.
-2. Apply rules from referenced instruction files.
+- This file sits below always-on.md and above domain-specific rules.
+- See: .junie/guidelines.md for authoring and hygiene conventions.
 
-## Conflict Resolution & Fallbacks
+## Activation Schema (Frontmatter)
 
-1. If instructions conflict, ask for clarification.
-2. Default to strict typing and safest operations.
-3. Prefer current best practices and stable APIs when uncertain.
+1. apply: one of [always | manually | off].
+2. patterns: optional array of glob patterns enabling auto-activation when matching file paths.
+3. exclude: optional array of glob patterns to prevent activation (takes precedence over patterns).
+4. tasks: optional array of task labels to activate on specific work items.
+5. Do not use vendor-specific features like "by model decision".
 
-## Logging & Error Policy
+Notes:
+- Activation metadata is advisory; you can still toggle rules explicitly.
+- Prefer patterns/tasks for credit efficiency to avoid broad, unnecessary activations.
 
-1. Add contextual identifiers (operation, IDs) without secrets.
-2. Normalize API error shapes; map internal errors to safe client messages.
-3. Use structured logs at appropriate levels.
-4. Handle TypeScript errors per [TypeScript Instructions](typescript-rules.md).
+## Governance Rules
 
-## Version & Tooling Constraints
+1. Each rule file must include: Title, Purpose, Audience, Precedence links, Rules (numbered), Changelog, Last updated (ISO).
+2. Avoid duplication: centralize shared guidance here; cross-link elsewhere.
+3. Use “must/must not” language; make rules atomic and testable.
+4. Keep files ≤ 200 lines and domain-focused; split if scope grows.
+5. Update Changelog and Last updated on every edit; add status if deprecating.
 
-1. Adhere to declared package versions; prefer stable APIs.
-2. Note canary/experimental usage and suggest stable alternatives.
-3. Use pnpm for package and script commands.
+## Changelog
 
-_Last updated: 2025-10-13_
+- 2025-10-16: Introduced activation schema and governance notes (owner: Junie).
+
+## Last updated
+
+2025-10-16

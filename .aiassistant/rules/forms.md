@@ -1,60 +1,37 @@
 ---
-apply: off
+apply: manually
 ---
 
 # Form Handling Rules
 
-## Critical Files
+## Purpose
 
-1. src/server/forms/validate-form.ts
+1. Provide a consistent contract for form validation results and error mapping to UI.
+2. Ensure dense, JSON‑safe field error maps and safe value echoing.
 
-## Forms
+## Precedence
 
-1. References:
+- See: always-on.md (governance, coding/style)
+- See: results.md (Result helpers)
+- See: errors.md (AppError/BaseError model and adapters)
+
+## Rules
+
+1. Return dense field error maps: every field key present; value is readonly string[] (may be empty).
+2. Use a single adapter per feature/domain to convert AppError → FormResult.
+3. Detect targeted conflicts (e.g., duplicate email) and attach field‑specific messages; otherwise provide a generic message and empty arrays for unaffected fields.
+4. Echo values via display‑safe selectors with redaction; never include secrets/PII.
+5. Prefer validateFormGeneric (validation → transform → normalize) instead of ad‑hoc parsing.
+
+## References
 
 - src/shared/forms/types/form-result.types.ts
 - src/server/forms/validate-form.ts
 
-2. Contract:
+## Changelog
 
-- Always return dense field error maps to UI (key exists; value is readonly string[]; may be empty).
-- Echo values using display-safe selectors with redaction.
-- validateFormGeneric unifies validation/transform/normalize; prefer using it over ad‑hoc parsing.
+- 2025-10-16: Extracted from results-forms-errors.md and added file-pattern activation (owner: Junie).
 
-3. Error adaptation:
+## Last updated
 
-- Convert AppError to FormResult via a single adapter per feature/domain.
-- Detect targeted conflicts (e.g., email) and emit field‑specific messages; otherwise generic message + dense empty arrays.
-
----
-
-## Unified Adapter APIs
-
-1. Adapters are the only place to cross tiers:
-
-- AppError → Result/FormResult
-
-2. Guidelines:
-
-- Strict inputs/outputs; readonly data; JSON‑safe.
-
-3. Actions:
-
-- Audit adapters for unsafe casts; replace with predicates/normalizers.
-- Consolidate duplicate mappers; introduce shared helpers per layer boundary.
-
----
-
-## Implementation Checklist
-
-1. Adapters
-
-- AppError → FormResult: dense map, targeted conflict handling, safe value echo.
-
-2. Forms
-
-- validateFormGeneric used in actions; ensure dense output and value redaction.
-
----
-
-Last updated: 2025-10-13
+2025-10-16
