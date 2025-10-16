@@ -1,4 +1,5 @@
 "use server";
+import {mapAuthServiceErrorToFormResult} from "@/server/auth/domain/mappers/auth-service-error.to-form-result.mapper";
 import { redirect } from "next/navigation";
 import {
   LOGIN_FIELDS_LIST,
@@ -8,10 +9,9 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
 import {
-  mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
-} from "@/server/auth/application/mappers/auth-service-errors.mapper";
-import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
+} from "@/server/auth/application/mappers/auth-service-error.to-app-error.mapper";
+import { createAuthUserService } from "@/server/auth/application/services/factories/create-auth-user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";

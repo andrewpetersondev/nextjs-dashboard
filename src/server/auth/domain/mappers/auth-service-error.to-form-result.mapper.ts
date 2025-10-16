@@ -1,47 +1,55 @@
-// File: src/server/auth/mappers/auth-service-errors.mapper.ts
 import "server-only";
+import { mapAuthServiceErrorToAppError } from "@/server/auth/application/mappers/auth-service-error.to-app-error.mapper";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
-import type { AppError } from "@/shared/core/result/app-error";
 import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
+import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
+import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 
-// --- Mappers ---
+// Narrow map and avoid defaulting twice; centralize fallback.
+const FALLBACK_MESSAGE = "Something went wrong. Please try again." as const;
 
-export const mapUnknownToAuthServiceError = (e: unknown): AuthServiceError => ({
-  kind: "unexpected",
-  message: String(e),
-});
+/**
+ * Maps an AuthServiceError to a FormResult validation error.
+ *
+ * - Conflicts target the "email" field by convention for signup flows.
+ * - Missing fields target the first provided field (usually "email").
+ * - Unexpected errors attach to a special "form" pseudo-field when present in `fields`,
+ *   otherwise fall back to the first field.
+ */
+export function authServiceErrorToFormResult<TField extends string>(
+  fields: readonly TField[],
+  error: AuthServiceError,
+  raw: Readonly<Record<string, unknown>>,
+): FormResult<TField, unknown> {
+  const messageByKind: Readonly<Record<AuthServiceError["kind"], string>> = {
+    conflict: "Email or username already in use.",
+    invalid_credentials: "Invalid email or password.",
+    missing_fields: "Please fill in all required fields.",
+    unexpected: FALLBACK_MESSAGE,
+    validation: "Please correct the highlighted fields.",
+  };
 
-// rare?
-export const mapToUnexpectedAuthServiceError = (e: {
-  readonly message?: string;
-}): AuthServiceError => ({
-  kind: "unexpected",
-  message: e.message ?? "Unexpected error",
-});
+  // Prefer specific target fields commonly present in signup flows; otherwise fall back to first.
+  const preferredField: TField | undefined =
+    (["email", "username", "form"].find((f) => fields.includes(f as TField)) as
+      | TField
+      | undefined) ?? fields[0];
 
-// auth service errors -> app errors
-export function mapAuthServiceErrorToAppError(e: AuthServiceError): AppError {
-  switch (e.kind) {
-    case "conflict":
-      return {
-        code: "CONFLICT",
-        details: { column: "email", fields: ["email"] as const },
-        message: e.message,
-      };
-    case "validation":
-      return { code: "VALIDATION", message: e.message };
-    case "invalid_credentials":
-      return { code: "UNAUTHORIZED", message: e.message };
-    case "missing_fields":
-      return {
-        code: "VALIDATION",
-        details: { fields: e.fields },
-        message: e.message,
-      };
-    default:
-      return { code: "UNKNOWN", message: e.message };
-  }
+  const dense: DenseFieldErrorMap<TField, string> = setSingleFieldErrorMessage<
+    TField,
+    string
+  >(fields, messageByKind[error.kind] ?? FALLBACK_MESSAGE, {
+    field: preferredField,
+  });
+
+  return toFormValidationErr<TField, unknown>({
+    failureMessage: messageByKind[error.kind] ?? FALLBACK_MESSAGE,
+    fieldErrors: dense,
+    fields,
+    raw,
+  });
 }
 
 // auth service errors -> form result
@@ -62,8 +70,6 @@ export function mapAuthServiceErrorToFormResult<
     raw: p.raw,
   });
 }
-
-// --- Handlers ---
 
 // identify auth service error
 export function handleAuthServiceError<TField extends string>(

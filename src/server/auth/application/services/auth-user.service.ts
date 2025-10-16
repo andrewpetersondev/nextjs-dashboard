@@ -8,9 +8,9 @@ import {
   mapRepoErrorToAuthServiceResult,
 } from "@/server/auth/domain/errors/auth-service.error";
 import {
-  hasRequiredSignupFields,
   normalizeSignupInput,
 } from "@/server/auth/domain/types/auth-signup.normalization";
+import {hasRequiredSignupFields} from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";

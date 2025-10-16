@@ -3,7 +3,7 @@
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { mapToUnexpectedAuthServiceError } from "@/server/auth/application/mappers/auth-service-errors.mapper";
+import { mapToUnexpectedAuthServiceError } from "@/server/auth/application/mappers/auth-service-error.to-app-error.mapper";
 import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";

@@ -1,50 +1,18 @@
 import "server-only";
-import type { AuthLoginDalInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
-import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
-import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import type { AppDatabase } from "@/server/db/db.connection";
-import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
-import {
-  newUserDbRowToEntity,
-  userDbRowToEntity,
-} from "@/server/users/mapping/user.mappers";
-import type { UserEntity } from "@/server/users/types/entity";
-import {
-  ConflictError,
-  UnauthorizedError,
-  ValidationError,
-} from "@/shared/core/errors/domain/domain-errors";
-
-// Normalize without mutating; only include fields we expect in DAL.
-function toNormalizedSignupInput(
-  input: Readonly<AuthSignupDalInput>,
-): AuthSignupDalInput {
-  return {
-    email: String(input.email).trim().toLowerCase(),
-    passwordHash: input.passwordHash,
-    role: input.role,
-    username: String(input.username).trim(),
-  };
-}
-
-function assertSignupFields(input: Readonly<AuthSignupDalInput>): void {
-  if (!input.email || !input.passwordHash || !input.username || !input.role) {
-    throw new ValidationError("Missing required fields for signup.");
-  }
-}
-
-export function isRepoKnownError(
-  err: unknown,
-): err is ConflictError | ValidationError | DatabaseError {
-  return (
-    err instanceof ConflictError ||
-    err instanceof ValidationError ||
-    err instanceof DatabaseError
-  );
-}
+import type {AuthLoginDalInput} from "@/server/auth/domain/types/auth-login.input";
+import type {AuthSignupDalInput} from "@/server/auth/domain/types/auth-signup.input";
+import {getUserByEmailDal} from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
+import {insertUserDal} from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
+import {assertSignupFields} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.assertions";
+import {isRepoKnownError} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.errors";
+import {toNormalizedSignupInput} from "@/server/auth/infrastructure/repository/repo/auth-user.repository.normalize";
+import type {AppDatabase} from "@/server/db/db.connection";
+import {throwRepoDatabaseErr} from "@/server/errors/factories/layer-error-throw";
+import {DatabaseError} from "@/server/errors/infrastructure-errors";
+import {serverLogger} from "@/server/logging/serverLogger";
+import {newUserDbRowToEntity, userDbRowToEntity,} from "@/server/users/mapping/user.mappers";
+import type {UserEntity} from "@/server/users/types/entity";
+import {UnauthorizedError, ValidationError,} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Repository for user authentication flows (signup/login).

@@ -14,7 +14,7 @@ import {
 import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/server/auth/session/session-jwt.mapper";
+} from "@/server/auth/session/session-jwt-payload.mapper";
 import type {
   DecryptPayload,
   EncryptPayload,

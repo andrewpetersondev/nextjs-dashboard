@@ -2,48 +2,25 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
 // TODO: why is cache imported from react?
 import "server-only";
-
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { cache } from "react";
-import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import {LOGIN_PATH} from "@/features/auth/lib/auth.constants";
+import type {UserRole} from "@/features/auth/lib/auth.roles";
+import type {SessionVerificationResult} from "@/features/auth/sessions/session-payload.types";
 import {
-  MAX_ABSOLUTE_SESSION_MS,
-  ROLLING_COOKIE_MAX_AGE_S,
-  SESSION_DURATION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
+    MAX_ABSOLUTE_SESSION_MS,
+    SESSION_DURATION_MS,
+    SESSION_REFRESH_THRESHOLD_MS,
 } from "@/features/auth/sessions/session.constants";
-import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
-import {
-  SESSION_COOKIE_HTTPONLY,
-  SESSION_COOKIE_NAME,
-  SESSION_COOKIE_PATH,
-  SESSION_COOKIE_SAMESITE,
-  SESSION_COOKIE_SECURE_FALLBACK,
-} from "@/server/auth/session/session.constants";
-import {
-  createSessionToken,
-  readSessionToken,
-} from "@/server/auth/session/session-codec";
-import {
-  absoluteLifetime,
-  timeLeftMs,
-} from "@/server/auth/session/session-helpers";
-import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
-import { IS_PRODUCTION } from "@/server/config/env-next";
-import { serverLogger } from "@/server/logging/serverLogger";
+import {createSessionToken, readSessionToken,} from "@/server/auth/session/session-codec";
+import {buildSessionCookieOptions} from "@/server/auth/session/session-cookie.options";
+import {absoluteLifetime, timeLeftMs,} from "@/server/auth/session/session-helpers";
+import type {DecryptPayload} from "@/server/auth/session/session-payload.types";
+import type {UpdateSessionResult} from "@/server/auth/session/session-update.types";
+import {SESSION_COOKIE_NAME,} from "@/server/auth/session/session.constants";
+import {serverLogger} from "@/server/logging/serverLogger";
 
-// Build standard cookie options to avoid duplication
-const buildSessionCookieOptions = (expiresAtMs: number) =>
-  ({
-    expires: new Date(expiresAtMs),
-    httpOnly: SESSION_COOKIE_HTTPONLY,
-    maxAge: ROLLING_COOKIE_MAX_AGE_S,
-    path: SESSION_COOKIE_PATH,
-    sameSite: SESSION_COOKIE_SAMESITE,
-    secure: IS_PRODUCTION ? true : SESSION_COOKIE_SECURE_FALLBACK,
-  }) as const;
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+import {cache} from "react";
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(
@@ -144,34 +121,6 @@ export const verifySessionOptimistic = cache(
     };
   },
 );
-
-/**
- * Re-issues the session JWT and updates the cookie if the current token is valid.
- * Must be called from server actions or route handlers.
- * Returns a structured outcome describing what occurred.
- */
-export type UpdateSessionResult =
-  | { readonly refreshed: false; readonly reason: "no_cookie" }
-  | { readonly refreshed: false; readonly reason: "invalid_or_missing_user" }
-  | {
-      readonly refreshed: false;
-      readonly reason: "absolute_lifetime_exceeded";
-      readonly ageMs: number;
-      readonly maxMs: number;
-      readonly userId?: string;
-    }
-  | {
-      readonly refreshed: false;
-      readonly reason: "not_needed";
-      readonly timeLeftMs: number;
-    }
-  | {
-      readonly refreshed: true;
-      readonly reason: "rotated";
-      readonly expiresAt: number;
-      readonly userId: string;
-      readonly role: string;
-    };
 
 /**
  * Re-issues the session JWT and updates the cookie if the current token is valid.
