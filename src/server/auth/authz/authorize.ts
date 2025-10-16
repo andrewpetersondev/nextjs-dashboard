@@ -11,7 +11,7 @@ const hasValue = <T>(v: T | undefined | null): v is T => v !== null;
 /**
  * Returns true if the user's role is included in the allowed roles list.
  */
-export const hasAllowedRole = (
+const hasAllowedRole = (
   userRole: UserRole | undefined,
   allowed: readonly UserRole[],
 ): boolean => {

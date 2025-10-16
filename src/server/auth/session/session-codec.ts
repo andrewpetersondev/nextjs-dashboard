@@ -8,13 +8,13 @@ import {
   MIN_HS256_KEY_LENGTH,
 } from "@/features/auth/sessions/session.constants";
 import {
+  DecryptPayloadSchema,
+  EncryptPayloadSchema,
+} from "@/server/auth/domain/schemas/session-payload.schema";
+import {
   flattenEncryptPayload,
   unflattenEncryptPayload,
 } from "@/server/auth/session/session-jwt.mapper";
-import {
-  DecryptPayloadSchema,
-  EncryptPayloadSchema,
-} from "@/server/auth/session/session-payload.schema";
 import type {
   DecryptPayload,
   EncryptPayload,

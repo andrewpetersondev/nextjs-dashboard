@@ -1,5 +1,5 @@
 import "server-only";
-import type { PasswordHash } from "@/server/auth/types/password.types";
+import type { PasswordHash } from "@/server/auth/domain/types/password.types";
 import type { UserEntity } from "@/server/users/types/entity";
 
 /**

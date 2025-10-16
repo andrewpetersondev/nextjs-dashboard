@@ -1,14 +1,6 @@
 // Contracts (ports) for UserAuthService dependencies.
 // Keep these tiny and stable for easy testing/mocking.
 
-import type { PasswordHash } from "@/server/auth/types/password.types";
-
-export interface PasswordHasher {
-  // Raw password is plain string for now.
-  hash(raw: string): Promise<PasswordHash>;
-  compare(raw: string, hash: PasswordHash): Promise<boolean>;
-}
-
 export interface AuthUserRepository<TRepo = unknown> {
   // Execute a function inside a transaction. The function receives a repository bound to the transaction.
   withTransaction<T>(

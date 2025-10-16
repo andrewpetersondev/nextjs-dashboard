@@ -12,7 +12,7 @@ import {
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/features/users/lib/user.schema";
-import { hashPassword } from "@/server/auth/crypto/hashing";
+import { hashPassword } from "@/server/auth/crypto/password-hasher.bcrypt";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";

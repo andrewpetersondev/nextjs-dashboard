@@ -6,12 +6,10 @@ import {
   type AuthServiceError,
   mapRepoErrorToAuthResult,
   toError,
-} from "@/server/auth/service/auth-errors";
-import type {
-  AuthUserRepository,
-  PasswordHasher,
-} from "@/server/auth/service/ports";
-import { asPasswordHash } from "@/server/auth/types/password.types";
+} from "@/server/auth/domain/errors/auth-errors";
+import { asPasswordHash } from "@/server/auth/domain/types/password.types";
+import type { PasswordHasher } from "@/server/auth/ports/password-hasher.port";
+import type { AuthUserRepository } from "@/server/auth/ports/user-auth.repository.port";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";

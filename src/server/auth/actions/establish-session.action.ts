@@ -3,11 +3,11 @@
 "use server";
 
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { mapToUnexpectedAuthServiceError } from "@/server/auth/mappers/auth-service-errors.mappers";
-import type { AuthServiceError } from "@/server/auth/service/auth-errors";
+import type { AuthServiceError } from "@/server/auth/domain/errors/auth-errors";
+import { mapToUnexpectedAuthServiceError } from "@/server/auth/domain/mappers/auth-service-errors.mappers";
+import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/constants";
 import { setSessionToken } from "@/server/auth/session/session";
-import type { EstablishSessionInput } from "@/server/auth/types/session-action.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";

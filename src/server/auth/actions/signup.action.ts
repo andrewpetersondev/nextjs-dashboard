@@ -10,7 +10,7 @@ import { establishSessionAction } from "@/server/auth/actions/establish-session.
 import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
-} from "@/server/auth/mappers/auth-service-errors.mappers";
+} from "@/server/auth/domain/mappers/auth-service-errors.mappers";
 import { createUserAuthService } from "@/server/auth/service/user-auth.service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";

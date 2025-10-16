@@ -1,15 +1,16 @@
 import "server-only";
-import { comparePassword, hashPassword } from "@/server/auth/crypto/hashing";
-import { AuthUserRepo } from "@/server/auth/repo/user-auth.repository";
-import type {
-  AuthUserRepository,
-  PasswordHasher,
-} from "@/server/auth/service/ports";
-import { UserAuthService } from "@/server/auth/service/user-auth.service";
+import {
+  comparePassword,
+  hashPassword,
+} from "@/server/auth/crypto/password-hasher.bcrypt";
 import {
   asPasswordHash,
   type PasswordHash,
-} from "@/server/auth/types/password.types";
+} from "@/server/auth/domain/types/password.types";
+import type { PasswordHasher } from "@/server/auth/ports/password-hasher.port";
+import type { AuthUserRepository } from "@/server/auth/ports/user-auth.repository.port";
+import { AuthUserRepo } from "@/server/auth/repo/user-auth.repository";
+import { UserAuthService } from "@/server/auth/service/user-auth.service";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserEntity } from "@/server/users/types/entity";
 
