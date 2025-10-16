@@ -2,7 +2,7 @@ import "server-only";
 import {
   isPgUniqueViolation,
   toBaseErrorFromPgUnknown,
-} from "@/server/auth/repo/dal/pg-error-handler";
+} from "@/server/auth/infrastructure/repository/dal/pg-error-handler";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import { logUnknownAsBaseError } from "@/shared/core/errors/logging/error-logger";

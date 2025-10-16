@@ -8,8 +8,8 @@ import {
   toError,
 } from "@/server/auth/domain/errors/auth-errors";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
-import type { PasswordHasher } from "@/server/auth/ports/password-hasher.port";
-import type { AuthUserRepository } from "@/server/auth/ports/user-auth.repository.port";
+import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/user-auth.repository.port";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";

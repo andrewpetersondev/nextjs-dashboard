@@ -8,7 +8,7 @@ import {
   AUTH_DIVIDER_LABEL,
   LOGIN_HEADING,
 } from "@/features/auth/lib/auth.constants";
-import { loginAction } from "@/server/auth/actions/login.action";
+import { loginAction } from "@/server/auth/application/actions/login.action";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {

@@ -8,7 +8,7 @@ import {
   AUTH_DIVIDER_LABEL,
   SIGNUP_HEADING,
 } from "@/features/auth/lib/auth.constants";
-import { signupAction } from "@/server/auth/actions/signup.action";
+import { signupAction } from "@/server/auth/application/actions/signup.action";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {

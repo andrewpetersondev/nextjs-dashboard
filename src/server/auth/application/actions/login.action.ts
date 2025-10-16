@@ -6,12 +6,12 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { establishSessionAction } from "@/server/auth/actions/establish-session.action";
+import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
+import { createUserAuthService } from "@/server/auth/application/services/user-auth.service.factory";
 import {
   mapAuthServiceErrorToFormResult,
   mapUnknownToAuthServiceError,
 } from "@/server/auth/domain/mappers/auth-service-errors.mappers";
-import { createUserAuthService } from "@/server/auth/service/user-auth.service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";

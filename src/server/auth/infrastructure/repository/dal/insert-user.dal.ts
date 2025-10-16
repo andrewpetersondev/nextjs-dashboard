@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthSignupDalInput } from "@/server/auth/domain/types/signup.dtos";
-import { executeDalOrThrow } from "@/server/auth/repo/dal/dal-execution";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/dal-execution";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";

@@ -5,7 +5,7 @@ import {
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
 import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
-import { verifySessionOptimistic } from "@/server/auth/actions/verify-session-optimistic.action";
+import { verifySessionOptimistic } from "@/server/auth/application/actions/verify-session-optimistic.action";
 import { H6 } from "@/ui/atoms/typography/headings";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;

@@ -1,9 +1,8 @@
 import "server-only";
-
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { hashPassword } from "@/server/auth/crypto/password-hasher.bcrypt";
 import type { AuthSignupDalInput } from "@/server/auth/domain/types/signup.dtos";
+import { hashPassword } from "@/server/auth/infrastructure/crypto/password-hasher.bcrypt";
 import type {
   CreateUserRepoInput,
   CreateUserRepoOutput,

@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import { executeDalOrThrow } from "@/server/auth/repo/dal/dal-execution";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/dal-execution";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import { serverLogger } from "@/server/logging/serverLogger";

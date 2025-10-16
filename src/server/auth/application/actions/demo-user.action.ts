@@ -5,7 +5,7 @@ import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { establishSessionAction } from "@/server/auth/actions/establish-session.action";
+import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
 import { getAppDb } from "@/server/db/db.connection";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { serverLogger } from "@/server/logging/serverLogger";
