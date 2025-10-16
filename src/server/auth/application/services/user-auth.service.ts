@@ -4,9 +4,9 @@ import type { UserDto } from "@/features/users/lib/dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import {
   type AuthServiceError,
-  mapRepoErrorToAuthResult,
-  toError,
-} from "@/server/auth/domain/errors/auth-errors";
+  createAuthServiceError,
+  mapRepoErrorToAuthServiceResult,
+} from "@/server/auth/domain/errors/auth-service.error";
 import {
   hasRequiredSignupFields,
   normalizeSignupInput,
@@ -41,7 +41,7 @@ export class UserAuthService {
     input: Readonly<SignupData>,
   ): Promise<Result<UserDto, AuthServiceError>> {
     if (!hasRequiredSignupFields(input)) {
-      return Err(toError("missing_fields"));
+      return Err(createAuthServiceError("missing_fields"));
     }
 
     const normalized = normalizeSignupInput(input);
@@ -66,7 +66,7 @@ export class UserAuthService {
         username: String(entity.username),
       });
     } catch (err: unknown) {
-      return mapRepoErrorToAuthResult<UserDto>(
+      return mapRepoErrorToAuthServiceResult<UserDto>(
         err,
         "service.UserAuthService.signup",
       );
@@ -94,7 +94,7 @@ export class UserAuthService {
           },
           "Missing hashed password on user entity; cannot authenticate",
         );
-        return Err(toError("invalid_credentials"));
+        return Err(createAuthServiceError("invalid_credentials"));
       }
 
       // Centralized comparison via PasswordHasher
@@ -103,7 +103,7 @@ export class UserAuthService {
         asPasswordHash(user.password),
       );
       if (!passwordOk) {
-        return Err(toError("invalid_credentials"));
+        return Err(createAuthServiceError("invalid_credentials"));
       }
 
       // Build DTO directly to avoid requiring full UserEntity
@@ -114,7 +114,7 @@ export class UserAuthService {
         username: String(user.username),
       });
     } catch (err: unknown) {
-      return mapRepoErrorToAuthResult<UserDto>(
+      return mapRepoErrorToAuthServiceResult<UserDto>(
         err,
         "service.UserAuthService.login",
       );

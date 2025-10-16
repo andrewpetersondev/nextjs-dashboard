@@ -1,7 +1,7 @@
 // File: src/server/forms/auth-error-to-form-result.mapper.ts
 
 import "server-only";
-import type { AuthServiceError } from "@/server/auth/domain/errors/auth-errors";
+import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
@@ -18,7 +18,7 @@ const FALLBACK_MESSAGE = "Something went wrong. Please try again." as const;
  * - Unexpected errors attach to a special "form" pseudo-field when present in `fields`,
  *   otherwise fall back to the first field.
  */
-export function authErrorToFormResult<TField extends string>(
+export function authServiceErrorToFormResult<TField extends string>(
   fields: readonly TField[],
   error: AuthServiceError,
   raw: Readonly<Record<string, unknown>>,

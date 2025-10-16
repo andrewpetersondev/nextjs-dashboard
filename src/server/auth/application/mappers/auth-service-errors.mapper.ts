@@ -1,6 +1,6 @@
 // File: src/server/auth/mappers/auth-service-errors.mapper.ts
 import "server-only";
-import type { AuthServiceError } from "@/server/auth/domain/errors/auth-errors";
+import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
 import type { AppError } from "@/shared/core/result/app-error";
 import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import type { FormResult } from "@/shared/forms/types/form-result.types";

@@ -4,7 +4,7 @@ import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/user
 import type { AuthUserRepo } from "@/server/auth/infrastructure/repository/user-auth.repository";
 import type { UserEntity } from "@/server/users/types/entity";
 
-export class RepoAdapter implements AuthUserRepository<AuthUserRepo> {
+export class RepositoryAdapter implements AuthUserRepository<AuthUserRepo> {
   private readonly repo: AuthUserRepo;
 
   constructor(repo: AuthUserRepo) {
@@ -15,7 +15,7 @@ export class RepoAdapter implements AuthUserRepository<AuthUserRepo> {
     fn: (txRepo: AuthUserRepository<AuthUserRepo>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
-      const txAdapter = new RepoAdapter(txRepo);
+      const txAdapter = new RepositoryAdapter(txRepo);
       return await fn(txAdapter);
     });
   }

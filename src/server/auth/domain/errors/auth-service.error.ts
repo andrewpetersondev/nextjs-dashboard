@@ -8,6 +8,8 @@ import {
 } from "@/shared/core/errors/domain/domain-errors";
 import { Err, type Result } from "@/shared/core/result/result";
 
+// --- Internal Constants ---
+
 const DEFAULT_MISSING_FIELDS: readonly SignupField[] = [
   "email",
   "password",
@@ -25,6 +27,8 @@ const AUTH_MESSAGES = {
   validation: "Invalid data",
 } as const;
 
+// --- External ---
+
 export type AuthServiceError =
   | {
       readonly kind: "missing_fields";
@@ -40,7 +44,7 @@ export type AuthServiceError =
   | { readonly kind: "validation"; readonly message: string }
   | { readonly kind: "unexpected"; readonly message: string };
 
-export function toError<K extends AuthServiceError["kind"]>(
+export function createAuthServiceError<K extends AuthServiceError["kind"]>(
   kind: K,
   init?: Partial<Extract<AuthServiceError, { kind: K }>>,
 ): AuthServiceError {
@@ -75,19 +79,19 @@ export function toError<K extends AuthServiceError["kind"]>(
 }
 
 // Map repository/domain errors into AuthServiceError Results.
-export function mapRepoErrorToAuthResult<T>(
+export function mapRepoErrorToAuthServiceResult<T>(
   err: unknown,
   context: string,
 ): Result<T, AuthServiceError> {
   if (err instanceof ConflictError) {
-    return Err(toError("conflict"));
+    return Err(createAuthServiceError("conflict"));
   }
   if (err instanceof UnauthorizedError) {
-    return Err(toError("invalid_credentials"));
+    return Err(createAuthServiceError("invalid_credentials"));
   }
   if (err instanceof ValidationError) {
-    return Err(toError("validation"));
+    return Err(createAuthServiceError("validation"));
   }
   serverLogger.error({ context, kind: "unexpected" }, "Unexpected auth error");
-  return Err(toError("unexpected"));
+  return Err(createAuthServiceError("unexpected"));
 }

@@ -1,6 +1,6 @@
 import "server-only";
-import type { AuthLoginDalInput } from "@/server/auth/domain/types/login.dtos";
-import type { AuthSignupDalInput } from "@/server/auth/domain/types/signup.dtos";
+import type { AuthLoginDalInput } from "@/server/auth/domain/types/login.dto";
+import type { AuthSignupDalInput } from "@/server/auth/domain/types/signup.dto";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
