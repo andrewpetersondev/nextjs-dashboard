@@ -27,12 +27,13 @@ import {
 import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
 import type { UpdateSessionResult } from "@/server/auth/session/session-update.types";
 import { serverLogger } from "@/server/logging/serverLogger";
+import type { UserId } from "@/shared/domain/domain-brands";
 import { toUserId } from "@/shared/domain/id-converters";
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(
   store: Awaited<ReturnType<typeof cookies>>,
-  user: { userId: string; role: UserRole; sessionStart: number },
+  user: { userId: UserId; role: UserRole; sessionStart: number },
 ): Promise<UpdateSessionResult> {
   const expiresAt = Date.now() + SESSION_DURATION_MS;
   const token = await createSessionToken({
@@ -40,7 +41,7 @@ async function rotateSession(
       expiresAt,
       role: user.role,
       sessionStart: user.sessionStart,
-      userId: user.userId,
+      userId: user.userId, // UserId branded
     },
   });
   store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
@@ -58,7 +59,7 @@ async function rotateSession(
     reason: "rotated",
     refreshed: true,
     role: user.role,
-    userId: toUserId(user.userId),
+    userId: user.userId,
   };
 }
 
@@ -84,7 +85,7 @@ export async function setSessionToken(
   const now = Date.now();
   const expiresAt: number = now + SESSION_DURATION_MS;
   const session: string = await createSessionToken({
-    user: { expiresAt, role, sessionStart: now, userId },
+    user: { expiresAt, role, sessionStart: now, userId: toUserId(userId) },
   });
   const cookieStore = await cookies();
   cookieStore.set(
@@ -164,7 +165,7 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
       maxMs: MAX_ABSOLUTE_SESSION_MS,
       reason: "absolute_lifetime_exceeded",
       refreshed: false,
-      userId: toUserId(user.userId),
+      userId: user.userId, // already UserId
     };
   }
 
@@ -184,6 +185,6 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
   return rotateSession(store, {
     role: user.role,
     sessionStart: user.sessionStart,
-    userId: user.userId,
+    userId: user.userId, // pass branded UserId
   });
 }

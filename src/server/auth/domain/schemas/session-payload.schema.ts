@@ -1,7 +1,9 @@
+// Switch to Zod 4.1 Codecs for bidirectional userId transformation and tighten types with .pipe()
 import "server-only";
-
 import { z } from "zod";
 import { roleSchema } from "@/features/users/lib/user.schema";
+import type { UserId } from "@/shared/domain/domain-brands";
+import { toUserId } from "@/shared/domain/id-converters";
 
 /**
  * Issued At (iat) claim schema.
@@ -15,7 +17,21 @@ export const iatSchema = z.number().int().nonnegative();
  */
 export const expSchema = z.number().int().positive();
 
-export const userIdSchema = z.uuid();
+// Codec: string <-> branded UserId
+export const userIdCodec = z.codec(
+  z.uuid(), // input: UUID string
+  z.custom<UserId>(), // output: branded UserId
+  {
+    decode: (id) => toUserId(id),
+    encode: (userId) => String(userId),
+  },
+);
+
+// Accept either UUID string or UserId in inputs; always produce UserId
+export const userIdSchema = z
+  .union([z.string().uuid(), userIdCodec])
+  .transform<UserId>((val) => (typeof val === "string" ? toUserId(val) : val));
+
 export const expiresAtSchema = z.number().int().positive();
 export const sessionStartSchema = z.number().int().nonnegative();
 
@@ -25,13 +41,14 @@ export const EncryptPayloadSchema = z
       expiresAt: expiresAtSchema,
       role: roleSchema,
       sessionStart: sessionStartSchema,
-      userId: userIdSchema,
+      userId: userIdSchema, // => UserId post-parse
     }),
   })
   .refine((val) => val.user.sessionStart <= val.user.expiresAt, {
     message: "sessionStart must be less than or equal to expiresAt",
     path: ["user", "sessionStart"],
   });
+
 /**
  * DecryptPayloadSchema
  *

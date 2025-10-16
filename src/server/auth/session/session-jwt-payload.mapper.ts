@@ -1,33 +1,38 @@
+// Export FlatEncryptPayload so jwtVerify can be generically typed to it.
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
+import { userIdCodec } from "@/server/auth/domain/schemas/session-payload.schema";
 import type { EncryptPayload } from "@/server/auth/session/session-payload.types";
 
-/**
- * Flattens EncryptPayload for JWT compatibility.
- */
+export type FlatEncryptPayload = {
+  expiresAt: number;
+  role: UserRole;
+  sessionStart: number;
+  userId: string;
+};
+
+/** Flattens EncryptPayload for JWT compatibility. */
 export function flattenEncryptPayload(
   payload: EncryptPayload,
-): Record<string, unknown> {
+): FlatEncryptPayload {
   return {
     expiresAt: payload.user.expiresAt,
     role: payload.user.role,
     sessionStart: payload.user.sessionStart,
-    userId: payload.user.userId,
+    userId: userIdCodec.encode(payload.user.userId),
   };
 }
 
-/**
- * Reconstructs EncryptPayload from JWT payload.
- */
+/** Reconstructs EncryptPayload from flattened JWT payload. */
 export function unflattenEncryptPayload(
-  payload: Record<string, unknown>,
+  payload: FlatEncryptPayload,
 ): EncryptPayload {
   return {
     user: {
-      expiresAt: payload.expiresAt as number,
-      role: payload.role as UserRole,
-      sessionStart: payload.sessionStart as number,
-      userId: payload.userId as string,
+      expiresAt: payload.expiresAt,
+      role: payload.role,
+      sessionStart: payload.sessionStart,
+      userId: userIdCodec.decode(payload.userId),
     },
   };
 }

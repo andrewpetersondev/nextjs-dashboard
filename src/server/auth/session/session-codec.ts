@@ -1,6 +1,5 @@
 import "server-only";
-
-import { jwtVerify, SignJWT } from "jose";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import {
   DecryptPayloadSchema,
   EncryptPayloadSchema,
@@ -12,6 +11,7 @@ import {
   MIN_HS256_KEY_LENGTH,
 } from "@/server/auth/session/session.constants";
 import {
+  type FlatEncryptPayload,
   flattenEncryptPayload,
   unflattenEncryptPayload,
 } from "@/server/auth/session/session-jwt-payload.mapper";
@@ -27,6 +27,7 @@ import {
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 
+// Strongly-typed, module-local cache for the encoded key
 let encodedKey: Uint8Array | undefined;
 
 // Make helper explicitly typed and readonly
@@ -41,7 +42,7 @@ const getEncodedKey = (): Uint8Array => {
   if (encodedKey) {
     return encodedKey;
   }
-  const secret = SESSION_SECRET;
+  const secret: string | undefined = SESSION_SECRET;
   if (!secret) {
     serverLogger.error(
       { context: "getEncodedKey" },
@@ -119,12 +120,12 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
 };
 
 const signClaims = async (
-  claims: Record<string, unknown>,
+  claims: FlatEncryptPayload,
   key: Uint8Array,
   expMs: number,
 ): Promise<string> => {
   try {
-    let signer = new SignJWT(claims)
+    let signer = new SignJWT(claims satisfies JWTPayload)
       .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
       .setIssuedAt()
       .setExpirationTime(new Date(expMs));
@@ -138,8 +139,8 @@ const signClaims = async (
     serverLogger.debug(
       {
         context: "createSessionToken",
-        role: (claims as Record<string, unknown>).role,
-        userId: (claims as Record<string, unknown>).userId,
+        role: claims.role,
+        userId: claims.userId,
       },
       "Session JWT created",
     );
@@ -154,7 +155,7 @@ const signClaims = async (
 };
 
 /**
- * Build verification options for jwtVerify with minimal precise typing.
+ * Build verification options for jwtVerify with precise typing.
  */
 const buildVerifyOptions = (): Parameters<typeof jwtVerify>[2] => {
   return {
@@ -172,10 +173,11 @@ export async function createSessionToken(
   const data = parsePayloadOrThrow(payload);
   const { expiresAt: expMs, sessionStart: startMs } = data.user;
   validateTemporalFields(expMs, startMs);
-  const claims = flattenEncryptPayload(data);
+  const claims: FlatEncryptPayload = flattenEncryptPayload(data);
   return await signClaims(claims, key, expMs);
 }
 
+// Ensure we use jose's generic to type payload precisely and avoid unknown indexing
 export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
@@ -189,12 +191,16 @@ export async function readSessionToken(
   const key = getEncodedKey();
   try {
     const verifyOptions = buildVerifyOptions();
-    const { payload } = await jwtVerify(session, key, verifyOptions);
+    const { payload } = await jwtVerify<FlatEncryptPayload>(
+      session,
+      key,
+      verifyOptions,
+    );
     const reconstructed = unflattenEncryptPayload(payload);
     const withClaims = {
       ...reconstructed,
-      exp: (payload.exp as number) ?? 0,
-      iat: (payload.iat as number) ?? 0,
+      exp: payload.exp ?? 0,
+      iat: payload.iat ?? 0,
     };
     const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
     if (!validatedFields.success) {
@@ -207,7 +213,7 @@ export async function readSessionToken(
       );
       return;
     }
-    const data = validatedFields.data as unknown as DecryptPayload;
+    const data = validatedFields.data;
     serverLogger.debug(
       { context: "readSessionToken", userId: data.user.userId },
       "Session verified successfully",

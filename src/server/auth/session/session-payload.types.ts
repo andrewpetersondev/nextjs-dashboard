@@ -5,6 +5,11 @@ import type {
   EncryptPayloadSchema,
 } from "@/server/auth/domain/schemas/session-payload.schema";
 
-// Derive types from schemas to avoid drift.
-export type EncryptPayload = z.infer<typeof EncryptPayloadSchema>;
-export type DecryptPayload = z.infer<typeof DecryptPayloadSchema>;
+// Inbound (untrusted) payload when creating/signing a session
+export type EncryptPayloadInput = z.input<typeof EncryptPayloadSchema>;
+
+// Outbound (validated) payload after parsing EncryptPayloadSchema
+export type EncryptPayload = z.output<typeof EncryptPayloadSchema>;
+
+// Outbound (validated) payload after decrypt/verify
+export type DecryptPayload = z.output<typeof DecryptPayloadSchema>;
