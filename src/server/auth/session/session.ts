@@ -27,6 +27,7 @@ import {
 import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
 import type { UpdateSessionResult } from "@/server/auth/session/session-update.types";
 import { serverLogger } from "@/server/logging/serverLogger";
+import { toUserId } from "@/shared/domain/id-converters";
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(
@@ -56,8 +57,8 @@ async function rotateSession(
     expiresAt,
     reason: "rotated",
     refreshed: true,
-    role: String(user.role),
-    userId: user.userId,
+    role: user.role,
+    userId: toUserId(user.userId),
   };
 }
 
@@ -163,7 +164,7 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
       maxMs: MAX_ABSOLUTE_SESSION_MS,
       reason: "absolute_lifetime_exceeded",
       refreshed: false,
-      userId: user.userId,
+      userId: toUserId(user.userId),
     };
   }
 

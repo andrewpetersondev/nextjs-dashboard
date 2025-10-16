@@ -1,5 +1,5 @@
+import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-
 import type { EncryptPayload } from "@/server/auth/session/session-payload.types";
 
 /**

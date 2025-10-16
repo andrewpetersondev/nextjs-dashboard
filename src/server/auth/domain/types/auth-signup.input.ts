@@ -2,10 +2,7 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { PasswordHash } from "@/server/auth/domain/types/password.types";
 
-/**
- * Input for the auth-signup DAL: expects server-determined role and pre-hashed password.
- * Decouples DAL from public shapes and prevents raw password reaching persistence.
- */
+// DAL input after hashing and role resolution.
 export interface AuthSignupDalInput {
   readonly email: string;
   readonly password: PasswordHash;
@@ -13,16 +10,18 @@ export interface AuthSignupDalInput {
   readonly username: string;
 }
 
-export type AuthSignupRepoInput = {
+// Repository input within server boundary.
+export interface AuthSignupRepoInput {
   readonly email: string;
   readonly password: PasswordHash;
   readonly role: UserRole;
   readonly username: string;
-};
+}
 
-export type AuthSignupRepoInputPlain = {
+// Edge-only plain variant when adapting external sources.
+export interface AuthSignupRepoInputPlain {
   readonly email: string;
   readonly password: string;
   readonly role: string;
   readonly username: string;
-};
+}

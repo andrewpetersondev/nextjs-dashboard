@@ -15,6 +15,7 @@ import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
+import { toUserId } from "@/shared/domain/id-converters";
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
@@ -59,7 +60,7 @@ export class AuthUserService {
       // entity is a repo return, not a full UserEntity; build transport type directly
       return Ok<AuthUserTransport>({
         email: String(entity.email),
-        id: String(entity.id),
+        id: toUserId(String(entity.id)),
         role: toUserRole(String(entity.role)),
         username: String(entity.username),
       });
@@ -107,7 +108,7 @@ export class AuthUserService {
       // Build transport type directly to avoid requiring UI DTO
       return Ok<AuthUserTransport>({
         email: String(user.email),
-        id: String(user.id),
+        id: toUserId(String(user.id)),
         role: toUserRole(String(user.role)),
         username: String(user.username),
       });
