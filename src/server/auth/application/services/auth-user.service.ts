@@ -6,7 +6,7 @@ import {
   createAuthServiceError,
   mapRepoErrorToAuthServiceResult,
 } from "@/server/auth/domain/errors/auth-service.error";
-import { normalizeSignupInput } from "@/server/auth/domain/types/auth-signup.normalization";
+import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
@@ -15,7 +15,6 @@ import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-import { toUserId } from "@/shared/domain/id-converters";
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
@@ -43,27 +42,19 @@ export class AuthUserService {
       return Err(createAuthServiceError("missing_fields"));
     }
 
-    const normalized = normalizeSignupInput(input);
-
     try {
-      // Centralized hashing via PasswordHasher
-      const passwordHash = await this.hasher.hash(normalized.password);
+      const passwordHash = await this.hasher.hash(input.password);
 
       const entity = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
-          email: normalized.email,
+          email: input.email,
           password: passwordHash,
           role: toUserRole("USER"),
-          username: normalized.username,
+          username: input.username,
         }),
       );
-      // entity is a repo return, not a full UserEntity; build transport type directly
-      return Ok<AuthUserTransport>({
-        email: String(entity.email),
-        id: toUserId(String(entity.id)),
-        role: toUserRole(String(entity.role)),
-        username: String(entity.username),
-      });
+
+      return Ok<AuthUserTransport>(toAuthUserTransport(entity));
     } catch (err: unknown) {
       return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
         err,
@@ -80,10 +71,9 @@ export class AuthUserService {
   ): Promise<Result<AuthUserTransport, AuthServiceError>> {
     try {
       const user = await this.repo.login({
-        email: String(input.email).trim().toLowerCase(),
+        email: input.email,
       });
 
-      // Defensive: ensure a non-empty hashed password exists
       if (!user.password) {
         serverLogger.error(
           {
@@ -96,7 +86,6 @@ export class AuthUserService {
         return Err(createAuthServiceError("invalid_credentials"));
       }
 
-      // Centralized comparison via PasswordHasher
       const passwordOk = await this.hasher.compare(
         input.password,
         asPasswordHash(user.password),
@@ -105,13 +94,7 @@ export class AuthUserService {
         return Err(createAuthServiceError("invalid_credentials"));
       }
 
-      // Build transport type directly to avoid requiring UI DTO
-      return Ok<AuthUserTransport>({
-        email: String(user.email),
-        id: toUserId(String(user.id)),
-        role: toUserRole(String(user.role)),
-        username: String(user.username),
-      });
+      return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
       return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
         err,

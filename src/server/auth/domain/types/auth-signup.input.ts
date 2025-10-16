@@ -18,6 +18,14 @@ export interface AuthSignupRepoInput {
   readonly username: string;
 }
 
+// Service input after hashing and role resolution.
+export interface AuthSignupServiceInput {
+  readonly email: string;
+  readonly password: PasswordHash;
+  readonly role: UserRole;
+  readonly username: string;
+}
+
 // Edge-only plain variant when adapting external sources.
 export interface AuthSignupRepoInputPlain {
   readonly email: string;

@@ -1,11 +1,10 @@
 import "server-only";
-import type { AuthLoginDalInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupDalInput } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
+import type { AuthSignupRepoInput } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import { assertSignupFields } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.assertions";
 import { isRepoKnownError } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.errors";
-import { toNormalizedSignupInput } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.normalize";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
@@ -65,11 +64,10 @@ export class AuthUserRepositoryImpl {
    * - Enforces domain invariants before/after DAL calls.
    * - Surfaces infra/timeouts as DatabaseError with minimal context.
    */
-  async signup(input: Readonly<AuthSignupDalInput>): Promise<UserEntity> {
+  async signup(input: Readonly<AuthSignupRepoInput>): Promise<UserEntity> {
     try {
       assertSignupFields(input);
-      const normalized: AuthSignupDalInput = toNormalizedSignupInput(input);
-      const row = await insertUserDal(this.db, normalized);
+      const row = await insertUserDal(this.db, input);
       if (!row) {
         return throwRepoDatabaseErr("User creation did not return a row.");
       }
@@ -94,7 +92,7 @@ export class AuthUserRepositoryImpl {
    * - Maps not-found to Unauthorized (domain decision).
    * - Keeps DB errors normalized.
    */
-  async login(input: Readonly<AuthLoginDalInput>): Promise<UserEntity> {
+  async login(input: Readonly<AuthLoginRepoInput>): Promise<UserEntity> {
     try {
       const row = await getUserByEmailDal(this.db, input.email);
       if (!row?.password) {
