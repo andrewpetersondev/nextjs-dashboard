@@ -1,11 +1,9 @@
 import "server-only";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import {
-  type AuthServiceError,
-  createAuthServiceError,
-  mapRepoErrorToAuthServiceResult,
-} from "@/server/auth/domain/errors/auth-service.error";
+import { createAuthServiceError } from "@/server/auth/domain/errors/auth-error.factories";
+import { mapRepoErrorToAuthResult } from "@/server/auth/domain/errors/auth-error.mapping.repo";
+import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
@@ -37,7 +35,7 @@ export class AuthUserService {
    */
   async signup(
     input: Readonly<SignupData>,
-  ): Promise<Result<AuthUserTransport, AuthServiceError>> {
+  ): Promise<Result<AuthUserTransport, AuthError>> {
     if (!hasRequiredSignupFields(input)) {
       return Err(createAuthServiceError("missing_fields"));
     }
@@ -56,7 +54,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
-      return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
+      return mapRepoErrorToAuthResult<AuthUserTransport>(
         err,
         "service.UserAuthService.signup",
       );
@@ -68,7 +66,7 @@ export class AuthUserService {
    */
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<AuthUserTransport, AuthServiceError>> {
+  ): Promise<Result<AuthUserTransport, AuthError>> {
     try {
       const user = await this.repo.login({
         email: input.email,
@@ -96,7 +94,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      return mapRepoErrorToAuthServiceResult<AuthUserTransport>(
+      return mapRepoErrorToAuthResult<AuthUserTransport>(
         err,
         "service.UserAuthService.login",
       );

@@ -1,13 +1,12 @@
 import "server-only";
-import { mapAuthServiceErrorToAppError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
-import type { AuthServiceError } from "@/server/auth/domain/errors/auth-service.error";
+import { mapAuthServiceErrorToAppError } from "@/server/auth/application/mapping/auth-error.to-app-error";
+import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { setSingleFieldErrorMessage } from "@/shared/forms/errors/dense-error-map.setters";
 import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 
-// Narrow map and avoid defaulting twice; centralize fallback.
 const FALLBACK_MESSAGE = "Something went wrong. Please try again." as const;
 
 /**
@@ -20,10 +19,10 @@ const FALLBACK_MESSAGE = "Something went wrong. Please try again." as const;
  */
 export function authServiceErrorToFormResult<TField extends string>(
   fields: readonly TField[],
-  error: AuthServiceError,
+  error: AuthError,
   raw: Readonly<Record<string, unknown>>,
 ): FormResult<TField, unknown> {
-  const messageByKind: Readonly<Record<AuthServiceError["kind"], string>> = {
+  const messageByKind: Readonly<Record<AuthError["kind"], string>> = {
     conflict: "Email or username already in use.",
     invalid_credentials: "Invalid email or password.",
     missing_fields: "Please fill in all required fields.",
@@ -59,7 +58,7 @@ export function mapAuthServiceErrorToFormResult<
 >(p: {
   readonly fields: readonly TField[];
   readonly raw: Readonly<Record<string, unknown>>;
-  readonly error: AuthServiceError;
+  readonly error: AuthError;
   readonly conflictEmailField?: TField;
 }): FormResult<TField, TData> {
   const appErr = mapAuthServiceErrorToAppError(p.error);
@@ -71,11 +70,12 @@ export function mapAuthServiceErrorToFormResult<
   });
 }
 
+// auth-error.to-form-result.mapper.ts: domain → FormResult mapping only.
 // identify auth service error
 export function handleAuthServiceError<TField extends string>(
   fields: readonly TField[],
   raw: Readonly<Record<string, unknown>>,
-  e: AuthServiceError,
+  e: AuthError,
 ) {
   switch (e.kind) {
     case "conflict":

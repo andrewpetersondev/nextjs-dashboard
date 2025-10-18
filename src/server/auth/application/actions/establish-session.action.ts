@@ -1,7 +1,7 @@
 "use server";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { toUnexpectedAuthServiceError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
-import type { AuthActionError } from "@/server/auth/domain/errors/auth-service.error";
+import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
+import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/session.constants";
@@ -19,20 +19,20 @@ import { toUserId } from "@/shared/domain/id-converters";
  */
 export async function establishSessionAction(
   u: EstablishSessionInput,
-): Promise<Result<true, AuthActionError>> {
+): Promise<Result<true, AuthError>> {
   const res = await tryCatchAsync(
     async () => {
       await setSessionToken(toUserId(u.id), toUserRole(u.role));
       return true as const;
     },
     {
-      mapError: toUnexpectedAuthServiceError,
+      mapError: toUnexpectedAuthError,
     },
   );
 
-  const mapped: Result<true, AuthActionError> = res.ok
+  const mapped: Result<true, AuthError> = res.ok
     ? Ok<true>(true as const)
-    : Err<AuthActionError>(toUnexpectedAuthServiceError(res.error));
+    : Err<AuthError>(res.error);
 
   if (!mapped.ok) {
     serverLogger.error(

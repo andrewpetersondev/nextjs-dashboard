@@ -1,12 +1,8 @@
 import "server-only";
-import type { AuthActionError } from "@/server/auth/domain/errors/auth-service.error";
-import { toUnexpectedAuthServiceErrorNormalized } from "@/server/auth/domain/errors/auth-service.error";
+import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import type { AppError } from "@/shared/core/result/app-error";
 
-export const toUnexpectedAuthServiceError = (e: unknown): AuthActionError =>
-  toUnexpectedAuthServiceErrorNormalized(e);
-
-export function mapAuthServiceErrorToAppError(e: AuthActionError): AppError {
+export function mapAuthServiceErrorToAppError(e: AuthError): AppError {
   switch (e.kind) {
     case "conflict":
       return {

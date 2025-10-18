@@ -1,4 +1,3 @@
-// Fix types: map created user to SessionUserPayload and return a typed FormResult
 import "server-only";
 import {
   SIGNUP_FIELDS_LIST,
@@ -6,9 +5,9 @@ import {
   type SignupField,
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
-import { toUnexpectedAuthServiceError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
+import { mapAuthServiceErrorToFormResult } from "@/server/auth/application/mapping/auth-error.to-form-result.mapper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { mapAuthServiceErrorToFormResult } from "@/server/auth/domain/mappers/auth-service-error.to-form-result.mapper";
+import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
@@ -50,7 +49,7 @@ export async function executeSignupCommand(
   ).then(mapOk((user) => user));
 
   if (!result.ok) {
-    const svcError = toUnexpectedAuthServiceError(result.error);
+    const svcError = toUnexpectedAuthError(result.error);
     return mapAuthServiceErrorToFormResult<SignupField, AuthUserTransport>({
       conflictEmailField: "email",
       error: svcError,

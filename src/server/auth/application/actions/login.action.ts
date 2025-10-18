@@ -7,9 +7,9 @@ import {
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
 import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
-import { toUnexpectedAuthServiceError } from "@/server/auth/application/mapping/auth-service-error.to-app-error";
+import { mapAuthServiceErrorToFormResult } from "@/server/auth/application/mapping/auth-error.to-form-result.mapper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { mapAuthServiceErrorToFormResult } from "@/server/auth/domain/mappers/auth-service-error.to-form-result.mapper";
+import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
@@ -64,7 +64,7 @@ export async function loginAction(
     .then(flatMapAsync(establishSessionAction));
 
   if (!sessionResult.ok) {
-    const svcError = toUnexpectedAuthServiceError(sessionResult.error);
+    const svcError = toUnexpectedAuthError(sessionResult.error);
     return mapAuthServiceErrorToFormResult<LoginField, unknown>({
       conflictEmailField: "email",
       error: svcError,

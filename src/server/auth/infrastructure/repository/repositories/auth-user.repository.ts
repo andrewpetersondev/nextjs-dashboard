@@ -122,6 +122,7 @@ export class AuthUserRepositoryImpl {
         "Unexpected error during login repository operation",
       );
       throw new DatabaseError("Database operation failed during login.", {
+        cause: err,
         context: `${AuthUserRepositoryImpl.CTX}.login`,
       });
     }
