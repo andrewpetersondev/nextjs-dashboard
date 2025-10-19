@@ -28,19 +28,20 @@ const fields = LOGIN_FIELDS_LIST;
 
 /**
  * Handles the login action by validating form data, authenticating the user,
- * setting up a session, and redirecting on success.
+ * establishing a session, and redirecting on success.
  *
- * @param _prevState - The previous state of the login form.
- * @param formData - The submitted form data containing login credentials.
- * @returns A promise that resolves to a {@link FormResult} representing the outcome.
- * @throws If an unexpected error occurs during session establishment or redirection.
- * @see UserAuthService for authentication logic.
+ * Flow:
+ * - Validate form → if invalid, return FormResult with field errors.
+ * - Authenticate → map Ok(user) to { id, role } only.
+ * - Establish session → on failure, map to UI-safe FormResult.
+ * - Redirect to dashboard on success.
  */
 export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {
   const raw = pickFormDataFields<LoginField>(formData, fields);
+
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
     loggerContext: LOGGER_CONTEXT,
   });
@@ -57,7 +58,22 @@ export async function loginAction(
   const input: LoginData = validated.value.data;
   const service = createAuthUserService(getAppDb());
 
-  const sessionResult = await flatMapAsync((i: LoginData) => service.login(i))(
+  /**
+   * Login pipeline (Result-based, curried).
+   *
+   * Compose: Ok(input) → login → pick session payload → establish session
+   *
+   * Flow:
+   * 1) Seed: Ok(input) — wrap validated LoginData into a Result to drive the chain.
+   * 2) flatMapAsync((i) => service.login(i)) — if Ok, call login(i) and adopt its Result; if Err, short‑circuit.
+   * 3) .then(mapOk(user => ({ id: user.id, role: user.role }))) — on Ok, project the user to the session payload; Err passes through.
+   * 4) .then(flatMapAsync(establishSessionAction)) — if Ok, create the session and adopt its Result; otherwise short‑circuit.
+   *
+   * Notes:
+   * - “Curried” here means flatMapAsync(fn) returns a function expecting a Result; we immediately invoke it with Ok(input).
+   * - Errors are preserved across steps; the first Err stops further work.
+   */
+  const sessionResult = await flatMapAsync(service.login.bind(service))(
     Ok(input),
   )
     .then(mapOk((user) => ({ id: user.id, role: user.role })))
