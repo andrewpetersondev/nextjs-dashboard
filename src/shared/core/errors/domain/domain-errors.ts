@@ -74,21 +74,25 @@ export class ConflictError extends BaseError {
  */
 export const isValidationError = (e: unknown): e is ValidationError =>
   e instanceof ValidationError;
+
 /**
  * NotFoundError (404 / NOT_FOUND).
  */
 export const isNotFoundError = (e: unknown): e is NotFoundError =>
   isErrorWithCode(e, "NOT_FOUND");
+
 /**
  * UnauthorizedError (401 / UNAUTHORIZED).
  */
 export const isUnauthorizedError = (e: unknown): e is UnauthorizedError =>
   isErrorWithCode(e, "UNAUTHORIZED");
+
 /**
  * ForbiddenError (403 / FORBIDDEN).
  */
 export const isForbiddenError = (e: unknown): e is ForbiddenError =>
   isErrorWithCode(e, "FORBIDDEN");
+
 /**
  * ConflictError (409 / CONFLICT).
  */

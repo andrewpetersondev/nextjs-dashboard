@@ -119,10 +119,3 @@ export function createErrorContextRedactor(
  * Default redactor with standard sensitive keys + partial masking.
  */
 export const defaultErrorContextRedactor = createErrorContextRedactor();
-
-// -----------------------------------------------------------------------------
-// Example usage (do not place inside this file in production):
-// import { logError } from './error-logger';
-// import { defaultErrorContextRedactor } from './error-redaction';
-// logError({ error, operation: 'UserSignup', extra: { requestId }, redact: defaultErrorContextRedactor });
-// -----------------------------------------------------------------------------

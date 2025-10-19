@@ -5,8 +5,6 @@ import {
   type Severity,
 } from "@/shared/core/errors/base/error-codes";
 
-// --- local helpers (not exported) ---
-
 function safeStringifyUnknown(value: unknown): string {
   try {
     if (typeof value === "string") {
@@ -16,7 +14,7 @@ function safeStringifyUnknown(value: unknown): string {
       typeof v === "bigint" ? v.toString() : v,
     );
     const MAX = 10_000; // limit ~10KB
-    if (typeof json === "string" && json.length > MAX) {
+    if (json.length > MAX) {
       return `${json.slice(0, MAX)}…[truncated ${json.length - MAX} chars]`;
     }
     return json ?? String(value);
