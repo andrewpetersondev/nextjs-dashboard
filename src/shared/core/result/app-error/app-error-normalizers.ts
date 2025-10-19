@@ -1,19 +1,19 @@
 // File: 'src/shared/core/errors/app-error/app-error-normalizers.ts'
 // Normalizers and app-error between unknown/BaseError/AppError
 
-import {
-  freezeDev,
-  isAppErrorLike,
-  pickOptionalFromLike,
-  toSeverity,
-} from "@/shared/core/errors/app-error/app-error-internal";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { normalizeToBaseError } from "@/shared/core/errors/base/base-error-adapters";
 import {
   isErrorCode,
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
-import type { AppError } from "@/shared/core/result/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
+import {
+  freezeDev,
+  isAppErrorLike,
+  pickOptionalFromLike,
+  toSeverity,
+} from "@/shared/core/result/app-error/app-error-internal";
 
 export const fromAppErrorLike = (
   value: Pick<AppError, "code" | "message"> & Partial<AppError>,

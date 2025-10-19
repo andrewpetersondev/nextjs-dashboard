@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
-import type { AppError } from "@/shared/core/result/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 
 export function mapAuthServiceErrorToAppError(e: AuthError): AppError {
   switch (e.kind) {

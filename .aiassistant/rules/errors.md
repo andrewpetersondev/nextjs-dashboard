@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 ---
 
 # Error Modeling Rules

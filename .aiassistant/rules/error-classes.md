@@ -1,13 +1,15 @@
 ---
-apply: manually
+apply: always
 ---
 
 # Error & Class Patterns
 
 ## Purpose
+
 - Provide best practices for TypeScript classes and project error classes with JSON-safe, immutable design.
 
 ## Precedence
+
 - See: project-rules.md (governance)
 - See: errors.md (modeling) and results.md (Result integration)
 
@@ -42,12 +44,12 @@ Examples and templates
 - Use these as references rather than duplicating code in rule files.
 
 ## Low‑Token Playbook (Errors & Classes)
+
 - Reuse provided class templates; avoid writing new base types.
 - Do not open entire large files; request specific ranges for edits.
 - Keep examples short and reference real code paths.
 
 Last updated: 2025-10-16
-
 
 ## Project specifics (from code)
 
@@ -126,4 +128,4 @@ Last updated: 2025-10-16
 - Logging: src/shared/core/errors/logging/error-logger.ts
 - Redaction: src/shared/core/errors/redaction/redaction.ts
 - Domain subclasses: src/shared/core/errors/domain/domain-errors.ts
-- Server mapping examples: src/server/errors/*.ts
+- Server mapping examples: src/server/errors/\*.ts

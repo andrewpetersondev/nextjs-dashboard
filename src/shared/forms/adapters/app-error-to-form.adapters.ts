@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/core/result/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,

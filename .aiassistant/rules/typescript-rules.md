@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 patterns: ["src/**/*.ts", "src/**/*.tsx"]
 ---
 

@@ -1,7 +1,7 @@
-import { toBaseErrorFromApp } from "@/shared/core/errors/app-error/app-error-normalizers";
 import type { ErrorLogger } from "@/shared/core/errors/logging/error-logger";
 import { defaultErrorContextRedactor } from "@/shared/core/errors/redaction/redaction";
-import type { AppError } from "@/shared/core/result/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
+import { toBaseErrorFromApp } from "@/shared/core/result/app-error/app-error-normalizers";
 
 /**
  * Log an AppError by converting back to BaseError for unified metadata.

@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: always
 ---
 
 # Project Rules & Activation Schema

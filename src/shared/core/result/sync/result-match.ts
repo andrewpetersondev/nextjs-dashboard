@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-match.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 
 /**

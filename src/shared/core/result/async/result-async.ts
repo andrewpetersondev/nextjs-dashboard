@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-async.ts
 // Purpose: Adapter-first async Result helpers (no default AppError). Callers must pass mappers.
 
-import type { ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**

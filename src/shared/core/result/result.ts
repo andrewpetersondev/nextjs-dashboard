@@ -1,6 +1,6 @@
 // File: src/shared/core/result/result.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 
 /**
  * Freezes an object to prevent mutation (shallow).

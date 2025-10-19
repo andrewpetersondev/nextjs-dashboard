@@ -1,7 +1,7 @@
 // File: src/shared/core/result/sync/result-sync.ts
 // Purpose: Adapter-first sync builders (no default AppError).
 
-import type { ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**

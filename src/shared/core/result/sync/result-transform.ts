@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-transform.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error";
+import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 import { Err, type Result } from "@/shared/core/result/result";
 
 /**

@@ -2,15 +2,15 @@
 // Builders, augmentation, lifting, and BaseError <-> AppError conversions
 
 import { IS_PROD } from "@/shared/config/env-shared";
-import { toSeverity } from "@/shared/core/errors/app-error/app-error-internal";
-import { toAppErrorFromUnknown } from "@/shared/core/errors/app-error/app-error-normalizers";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import {
   isErrorCode,
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
-import type { AppError } from "@/shared/core/result/app-error";
-import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/app-error.constants";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
+import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/app-error/app-error.constants";
+import { toSeverity } from "@/shared/core/result/app-error/app-error-internal";
+import { toAppErrorFromUnknown } from "@/shared/core/result/app-error/app-error-normalizers";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 export const augmentAppError = (

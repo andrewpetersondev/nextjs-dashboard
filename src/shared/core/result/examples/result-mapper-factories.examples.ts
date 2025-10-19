@@ -7,7 +7,7 @@
 /** biome-ignore-all lint/nursery/noShadow: <ignore> */
 
 import { NotFoundError } from "@/shared/core/errors/domain/domain-errors";
-import { makeErrorMapper } from "@/shared/core/result/app-error";
+import { makeErrorMapper } from "@/shared/core/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import {
   tapErrorAsyncSafe,
