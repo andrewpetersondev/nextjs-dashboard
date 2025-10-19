@@ -7,7 +7,7 @@ import {
 } from "@/features/auth/lib/auth.roles";
 import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/lib/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
-import { verifySessionOptimistic } from "@/server/auth/session/session";
+import { verifySessionOptimistic } from "@/server/auth/application/actions/verify-session-optimistic.action";
 import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
 import { getAppDb } from "@/server/db/db.connection";
 import {
