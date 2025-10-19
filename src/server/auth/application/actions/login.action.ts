@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   LOGIN_FIELDS_LIST,
   type LoginData,
@@ -15,6 +16,7 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
+import type { UserId } from "@/shared/domain/domain-brands";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
@@ -25,6 +27,11 @@ import { ROUTES } from "@/shared/routes/routes";
 
 const LOGGER_CONTEXT = "login.action";
 const fields = LOGIN_FIELDS_LIST;
+
+const toSessionUser = mapOk((user: { id: UserId; role: UserRole }) => ({
+  id: user.id,
+  role: user.role,
+}));
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -58,26 +65,16 @@ export async function loginAction(
   const input: LoginData = validated.value.data;
   const service = createAuthUserService(getAppDb());
 
-  /**
-   * Login pipeline (Result-based, curried).
-   *
-   * Compose: Ok(input) → login → pick session payload → establish session
-   *
-   * Flow:
-   * 1) Seed: Ok(input) — wrap validated LoginData into a Result to drive the chain.
-   * 2) flatMapAsync((i) => service.login(i)) — if Ok, call login(i) and adopt its Result; if Err, short‑circuit.
-   * 3) .then(mapOk(user => ({ id: user.id, role: user.role }))) — on Ok, project the user to the session payload; Err passes through.
-   * 4) .then(flatMapAsync(establishSessionAction)) — if Ok, create the session and adopt its Result; otherwise short‑circuit.
-   *
-   * Notes:
-   * - “Curried” here means flatMapAsync(fn) returns a function expecting a Result; we immediately invoke it with Ok(input).
-   * - Errors are preserved across steps; the first Err stops further work.
-   */
-  const sessionResult = await flatMapAsync(service.login.bind(service))(
-    Ok(input),
-  )
-    .then(mapOk((user) => ({ id: user.id, role: user.role })))
-    .then(flatMapAsync(establishSessionAction));
+  // Login pipeline (Result-based, extracted steps).
+  // Compose: Ok(input) → authenticate → toSessionUser → establishSession
+
+  const seed = Ok(input);
+  const authenticate = flatMapAsync(service.login.bind(service));
+  const establishSession = flatMapAsync(establishSessionAction);
+
+  const sessionResult = await authenticate(seed)
+    .then(toSessionUser)
+    .then(establishSession);
 
   if (!sessionResult.ok) {
     const svcError = toUnexpectedAuthError(sessionResult.error);
