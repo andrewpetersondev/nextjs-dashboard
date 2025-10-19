@@ -1,5 +1,5 @@
 "use server";
-import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
+import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/session.constants";
@@ -24,7 +24,7 @@ export async function establishSessionAction(
       return true as const;
     },
     {
-      mapError: toUnexpectedAuthError,
+      mapError: toUnexpectedAppError,
     },
   );
 

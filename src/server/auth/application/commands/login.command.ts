@@ -5,9 +5,9 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { mapAuthServiceErrorToFormResult } from "@/server/auth/application/mapping/auth-error.to-form-result.mapper";
+import { mapAppErrorToFormResult } from "@/server/auth/application/mapping/app-error.to-form-result.mapper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
+import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
@@ -49,8 +49,8 @@ export async function executeLoginCommand(
   ).then(mapOk((user) => user));
 
   if (!result.ok) {
-    const svcError = toUnexpectedAuthError(result.error);
-    return mapAuthServiceErrorToFormResult<LoginField, AuthUserTransport>({
+    const svcError = toUnexpectedAppError(result.error);
+    return mapAppErrorToFormResult<LoginField, AuthUserTransport>({
       conflictEmailField: "email",
       error: svcError,
       fields,

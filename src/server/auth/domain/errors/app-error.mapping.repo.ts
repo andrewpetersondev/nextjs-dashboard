@@ -9,7 +9,7 @@ import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { Err, type Result } from "@/shared/core/result/result";
 
-export function mapRepoErrorToAuthResult<T>(
+export function mapRepoErrorToAppResult<T>(
   err: unknown,
   context: string,
 ): Result<T, AppError> {

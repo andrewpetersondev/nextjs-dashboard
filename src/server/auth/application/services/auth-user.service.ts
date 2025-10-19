@@ -1,8 +1,8 @@
 import "server-only";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { createAuthServiceAppError } from "@/server/auth/domain/errors/auth-error.factories";
-import { mapRepoErrorToAuthResult } from "@/server/auth/domain/errors/auth-error.mapping.repo";
+import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
+import { mapRepoErrorToAppResult } from "@/server/auth/domain/errors/app-error.mapping.repo";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
@@ -37,7 +37,7 @@ export class AuthUserService {
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     if (!hasRequiredSignupFields(input)) {
-      return Err(createAuthServiceAppError("missing_fields"));
+      return Err(createAuthAppError("missing_fields"));
     }
 
     try {
@@ -54,7 +54,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
-      return mapRepoErrorToAuthResult<AuthUserTransport>(
+      return mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         "service.UserAuthService.signup",
       );
@@ -79,7 +79,7 @@ export class AuthUserService {
           },
           "Missing hashed password on user entity; cannot authenticate",
         );
-        return Err(createAuthServiceAppError("invalid_credentials"));
+        return Err(createAuthAppError("invalid_credentials"));
       }
 
       const passwordOk = await this.hasher.compare(
@@ -87,12 +87,12 @@ export class AuthUserService {
         asPasswordHash(user.password),
       );
       if (!passwordOk) {
-        return Err(createAuthServiceAppError("invalid_credentials"));
+        return Err(createAuthAppError("invalid_credentials"));
       }
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      return mapRepoErrorToAuthResult<AuthUserTransport>(
+      return mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         "service.UserAuthService.login",
       );

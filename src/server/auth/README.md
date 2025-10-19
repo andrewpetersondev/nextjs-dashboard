@@ -18,8 +18,7 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
     - adapters/: Wrap concrete infrastructure into ports (e.g., repository adapter, password hasher adapter).
     - factories/: Composition root to wire concrete implementations for runtime.
   - mapping/: Map service errors/results into app/UI-friendly shapes.
-    - auth-error.to-app-error.ts
-    - auth-error.to-form-result.mapper.ts
+    - app-error.to-form-result.mapper.ts
 
 ## domain/
 
@@ -32,7 +31,7 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
     - session-action.types.ts
     - user-transport.types.ts
   - errors/: Discriminated error types and helpers for business outcomes.
-    - auth-error.model.ts, auth-error.factories.ts, auth-error.mapping.repo.ts
+    - app-error.metadata.ts, app-error.factories.ts, app-error.mapping.repo.ts
   - schemas/: Validation schemas for domain payloads (e.g., session payload model).
     - session-payload.schema.ts
   - mappers/: Pure mappings from domain shapes.

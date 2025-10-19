@@ -3,7 +3,7 @@ import {
   AUTH_CONFLICT_TARGETS,
   AUTH_MESSAGES,
   DEFAULT_MISSING_FIELDS,
-} from "@/server/auth/domain/errors/auth-error.model";
+} from "@/server/auth/domain/errors/app-error.metadata";
 import {
   type AppError,
   makeAppErrorDetails,
@@ -20,7 +20,7 @@ export function getErrorMessage(e: unknown, fallback: string): string {
 }
 
 // Create AppError equivalents for former AuthError kinds
-export function createAuthServiceAppError(
+export function createAuthAppError(
   kind:
     | "missing_fields"
     | "conflict"
@@ -73,7 +73,7 @@ export function createAuthServiceAppError(
 }
 
 /** Normalize unknown to AppError (was AuthError "unexpected"). */
-export function toUnexpectedAuthError(e: unknown): AppError {
+export function toUnexpectedAppError(e: unknown): AppError {
   const message = getErrorMessage(e, AUTH_MESSAGES.unexpected);
   return appErrorFromCode("UNKNOWN", message);
 }
