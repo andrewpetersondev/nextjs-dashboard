@@ -1,10 +1,10 @@
 "use server";
 import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
-import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/session.constants";
 import { serverLogger } from "@/server/logging/serverLogger";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
@@ -17,7 +17,7 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  */
 export async function establishSessionAction(
   u: SessionUser,
-): Promise<Result<true, AuthError>> {
+): Promise<Result<true, AppError>> {
   const res = await tryCatchAsync(
     async () => {
       await setSessionToken(u.id, u.role);
@@ -28,9 +28,9 @@ export async function establishSessionAction(
     },
   );
 
-  const mapped: Result<true, AuthError> = res.ok
+  const mapped: Result<true, AppError> = res.ok
     ? Ok<true>(true as const)
-    : Err<AuthError>(res.error);
+    : Err<AppError>(res.error);
 
   if (!mapped.ok) {
     serverLogger.error(

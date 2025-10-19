@@ -2,9 +2,13 @@ import "server-only";
 import {
   AUTH_CONFLICT_TARGETS,
   AUTH_MESSAGES,
-  type AuthError,
   DEFAULT_MISSING_FIELDS,
 } from "@/server/auth/domain/errors/auth-error.model";
+import {
+  type AppError,
+  makeAppErrorDetails,
+} from "@/shared/core/result/app-error/app-error";
+import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 
 export function getErrorMessage(e: unknown, fallback: string): string {
   return typeof e === "object" &&
@@ -15,45 +19,61 @@ export function getErrorMessage(e: unknown, fallback: string): string {
     : fallback;
 }
 
-export function createAuthServiceError<K extends AuthError["kind"]>(
-  kind: K,
-  init?: Partial<Extract<AuthError, { kind: K }>>,
-): AuthError {
+// Create AppError equivalents for former AuthError kinds
+export function createAuthServiceAppError(
+  kind:
+    | "missing_fields"
+    | "conflict"
+    | "invalid_credentials"
+    | "validation"
+    | "unexpected",
+  init?: Readonly<Record<string, unknown>>,
+): AppError {
   switch (kind) {
     case "missing_fields":
-      return {
-        fields: DEFAULT_MISSING_FIELDS,
-        kind,
-        message: AUTH_MESSAGES.missing,
-        ...init,
-      } as const;
+      return appErrorFromCode(
+        "VALIDATION",
+        AUTH_MESSAGES.missing,
+        makeAppErrorDetails({
+          extra: init,
+          fieldErrors: Object.fromEntries(
+            DEFAULT_MISSING_FIELDS.map((f) => [
+              f,
+              [AUTH_MESSAGES.missing] as const,
+            ]),
+          ),
+          formErrors: [],
+        }),
+      );
     case "conflict":
-      return {
-        kind,
-        message: AUTH_MESSAGES.conflict,
-        targets: AUTH_CONFLICT_TARGETS,
-        ...init,
-      } as const;
+      return appErrorFromCode(
+        "CONFLICT",
+        AUTH_MESSAGES.conflict,
+        makeAppErrorDetails({
+          extra: init,
+          fieldErrors: Object.fromEntries(
+            AUTH_CONFLICT_TARGETS.map((f) => [
+              f,
+              [AUTH_MESSAGES.conflict] as const,
+            ]),
+          ),
+          formErrors: [],
+        }),
+      );
     case "invalid_credentials":
-      return { kind, message: AUTH_MESSAGES.invalidCreds, ...init } as const;
-    case "validation":
-      return { kind, message: AUTH_MESSAGES.validation, ...init } as const;
-    case "unexpected":
-      return {
-        kind: "unexpected",
-        message: AUTH_MESSAGES.unexpected,
+      return appErrorFromCode("UNAUTHORIZED", AUTH_MESSAGES.invalidCreds, {
+        reason: "invalid_credentials",
         ...init,
-      } as const;
+      });
+    case "validation":
+      return appErrorFromCode("VALIDATION", AUTH_MESSAGES.validation, init);
     default:
-      return { kind: "unexpected", message: AUTH_MESSAGES.unexpected } as const;
+      return appErrorFromCode("UNKNOWN", AUTH_MESSAGES.unexpected, init);
   }
 }
 
-/**
- * Normalize any unknown error to an AuthActionError of kind "unexpected",
- * preserving message when available.
- */
-export function toUnexpectedAuthError(e: unknown): AuthError {
+/** Normalize unknown to AppError (was AuthError "unexpected"). */
+export function toUnexpectedAuthError(e: unknown): AppError {
   const message = getErrorMessage(e, AUTH_MESSAGES.unexpected);
-  return createAuthServiceError("unexpected", { message });
+  return appErrorFromCode("UNKNOWN", message);
 }

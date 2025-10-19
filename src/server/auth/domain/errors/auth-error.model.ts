@@ -16,18 +16,3 @@ export const AUTH_MESSAGES = {
   unexpected: "Unexpected error occurred",
   validation: "Invalid data",
 } as const;
-
-export type AuthError =
-  | {
-      readonly kind: "missing_fields";
-      readonly message: string;
-      readonly fields: readonly SignupField[];
-    }
-  | {
-      readonly kind: "conflict";
-      readonly message: string;
-      readonly targets: ReadonlyArray<"email" | "username">;
-    }
-  | { readonly kind: "invalid_credentials"; readonly message: string }
-  | { readonly kind: "validation"; readonly message: string }
-  | { readonly kind: "unexpected"; readonly message: string };

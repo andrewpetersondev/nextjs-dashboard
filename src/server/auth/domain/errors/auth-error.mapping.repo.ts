@@ -1,27 +1,27 @@
 import "server-only";
-import { createAuthServiceError } from "@/server/auth/domain/errors/auth-error.factories";
-import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import { serverLogger } from "@/server/logging/serverLogger";
 import {
   ConflictError,
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
+import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { Err, type Result } from "@/shared/core/result/result";
 
 export function mapRepoErrorToAuthResult<T>(
   err: unknown,
   context: string,
-): Result<T, AuthError> {
+): Result<T, AppError> {
   if (err instanceof ConflictError) {
-    return Err(createAuthServiceError("conflict"));
+    return Err(appErrorFromCode("CONFLICT"));
   }
   if (err instanceof UnauthorizedError) {
-    return Err(createAuthServiceError("invalid_credentials"));
+    return Err(appErrorFromCode("UNAUTHORIZED"));
   }
   if (err instanceof ValidationError) {
-    return Err(createAuthServiceError("validation"));
+    return Err(appErrorFromCode("VALIDATION"));
   }
   serverLogger.error({ context, kind: "unexpected" }, "Unexpected auth error");
-  return Err(createAuthServiceError("unexpected"));
+  return Err(appErrorFromCode("UNKNOWN"));
 }

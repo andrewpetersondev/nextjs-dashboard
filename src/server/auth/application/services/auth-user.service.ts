@@ -1,9 +1,8 @@
 import "server-only";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { createAuthServiceError } from "@/server/auth/domain/errors/auth-error.factories";
+import { createAuthServiceAppError } from "@/server/auth/domain/errors/auth-error.factories";
 import { mapRepoErrorToAuthResult } from "@/server/auth/domain/errors/auth-error.mapping.repo";
-import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
@@ -11,6 +10,7 @@ import type { AuthUserTransport } from "@/server/auth/domain/types/user-transpor
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { serverLogger } from "@/server/logging/serverLogger";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 
@@ -35,9 +35,9 @@ export class AuthUserService {
    */
   async signup(
     input: Readonly<SignupData>,
-  ): Promise<Result<AuthUserTransport, AuthError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     if (!hasRequiredSignupFields(input)) {
-      return Err(createAuthServiceError("missing_fields"));
+      return Err(createAuthServiceAppError("missing_fields"));
     }
 
     try {
@@ -66,11 +66,9 @@ export class AuthUserService {
    */
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<AuthUserTransport, AuthError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     try {
-      const user = await this.repo.login({
-        email: input.email,
-      });
+      const user = await this.repo.login({ email: input.email });
 
       if (!user.password) {
         serverLogger.error(
@@ -81,7 +79,7 @@ export class AuthUserService {
           },
           "Missing hashed password on user entity; cannot authenticate",
         );
-        return Err(createAuthServiceError("invalid_credentials"));
+        return Err(createAuthServiceAppError("invalid_credentials"));
       }
 
       const passwordOk = await this.hasher.compare(
@@ -89,7 +87,7 @@ export class AuthUserService {
         asPasswordHash(user.password),
       );
       if (!passwordOk) {
-        return Err(createAuthServiceError("invalid_credentials"));
+        return Err(createAuthServiceAppError("invalid_credentials"));
       }
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
