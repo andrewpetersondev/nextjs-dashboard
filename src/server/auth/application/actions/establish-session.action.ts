@@ -1,14 +1,12 @@
 "use server";
-import { toUserRole } from "@/features/users/lib/to-user-role";
 import { toUnexpectedAuthError } from "@/server/auth/domain/errors/auth-error.factories";
 import type { AuthError } from "@/server/auth/domain/errors/auth-error.model";
-import type { EstablishSessionInput } from "@/server/auth/domain/types/session-action.types";
+import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { setSessionToken } from "@/server/auth/session/session";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/session/session.constants";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
-import { toUserId } from "@/shared/domain/id-converters";
 
 /**
  * Establishes a session for a user by setting `jwt cookie`.
@@ -18,11 +16,11 @@ import { toUserId } from "@/shared/domain/id-converters";
  * @returns A promise that resolves to a Result indicating the success or failure of the session establishment.
  */
 export async function establishSessionAction(
-  u: EstablishSessionInput,
+  u: SessionUser,
 ): Promise<Result<true, AuthError>> {
   const res = await tryCatchAsync(
     async () => {
-      await setSessionToken(toUserId(u.id), toUserRole(u.role));
+      await setSessionToken(u.id, u.role);
       return true as const;
     },
     {

@@ -1,8 +1,4 @@
-/** biome-ignore-all lint/style/noProcessEnv: <fix later> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <fix later> */
-// TODO: why is cache imported from react?
 import "server-only";
-
 import { cookies } from "next/headers";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
@@ -24,22 +20,43 @@ import type { DecryptPayload } from "@/server/auth/session/session-payload.types
 import type { UpdateSessionResult } from "@/server/auth/session/session-update.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserId } from "@/shared/domain/domain-brands";
-import { toUserId } from "@/shared/domain/id-converters";
+
+// Small, testable builder for the JWT payload.
+function buildSessionJwtPayload(params: {
+  readonly userId: UserId;
+  readonly role: UserRole;
+  readonly now?: number;
+}) {
+  const now = params.now ?? Date.now();
+  const expiresAt = now + SESSION_DURATION_MS;
+  return {
+    expiresAt,
+    payload: {
+      user: {
+        expiresAt,
+        role: params.role,
+        sessionStart: now,
+        userId: params.userId,
+      },
+    },
+  };
+}
 
 /** Internal: rotate session and persist cookie. */
 async function rotateSession(
   store: Awaited<ReturnType<typeof cookies>>,
-  user: { userId: UserId; role: UserRole; sessionStart: number },
+  user: {
+    readonly userId: UserId;
+    readonly role: UserRole;
+    readonly sessionStart: number;
+  },
 ): Promise<UpdateSessionResult> {
-  const expiresAt = Date.now() + SESSION_DURATION_MS;
-  const token = await createSessionToken({
-    user: {
-      expiresAt,
-      role: user.role,
-      sessionStart: user.sessionStart,
-      userId: user.userId, // UserId branded
-    },
+  const { payload, expiresAt } = buildSessionJwtPayload({
+    now: user.sessionStart, // keep original sessionStart stable
+    role: user.role,
+    userId: user.userId,
   });
+  const token = await createSessionToken(payload);
   store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
   serverLogger.info(
     {
@@ -75,14 +92,11 @@ export async function deleteSessionToken(): Promise<void> {
  * Creates a new session cookie for the user.
  */
 export async function setSessionToken(
-  userId: string,
+  userId: UserId,
   role: UserRole,
 ): Promise<void> {
-  const now = Date.now();
-  const expiresAt: number = now + SESSION_DURATION_MS;
-  const session: string = await createSessionToken({
-    user: { expiresAt, role, sessionStart: now, userId: toUserId(userId) },
-  });
+  const { payload, expiresAt } = buildSessionJwtPayload({ role, userId });
+  const session = await createSessionToken(payload);
   const cookieStore = await cookies();
   cookieStore.set(
     SESSION_COOKIE_NAME,
@@ -130,7 +144,7 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
       maxMs: MAX_ABSOLUTE_SESSION_MS,
       reason: "absolute_lifetime_exceeded",
       refreshed: false,
-      userId: user.userId, // already UserId
+      userId: user.userId,
     };
   }
 
@@ -150,6 +164,6 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
   return rotateSession(store, {
     role: user.role,
     sessionStart: user.sessionStart,
-    userId: user.userId, // pass branded UserId
+    userId: user.userId,
   });
 }
