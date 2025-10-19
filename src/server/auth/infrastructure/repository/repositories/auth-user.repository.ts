@@ -95,7 +95,6 @@ export class AuthUserRepositoryImpl {
   async login(input: Readonly<AuthLoginRepoInput>): Promise<UserEntity> {
     try {
       const row = await getUserByEmailDal(this.db, input.email);
-      //note: dal can return null if user not found. this maps to UnauthorizedError (which is not ideal) then throws to service layer.
       if (!row?.password) {
         serverLogger.warn(
           {
@@ -122,10 +121,10 @@ export class AuthUserRepositoryImpl {
         },
         "Unexpected error during login repository operation",
       );
-      throw new DatabaseError("Database operation failed during login.", {
-        cause: err,
-        context: `${AuthUserRepositoryImpl.CTX}.login`,
-      });
+      return throwRepoDatabaseErr(
+        "Database operation failed during login.",
+        err,
+      );
     }
   }
 }

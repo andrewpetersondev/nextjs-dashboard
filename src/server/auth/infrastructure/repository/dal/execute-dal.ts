@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  isPgUniqueViolation,
-  toBaseErrorFromPgUnknown,
-} from "@/server/auth/infrastructure/repository/dal/pg-error.mapper";
+import { toBaseErrorFromPgUnknown } from "@/server/auth/infrastructure/repository/dal/pg-error.mapper";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import { logUnknownAsBaseError } from "@/shared/core/errors/logging/error-logger";
@@ -27,9 +24,8 @@ function normalizeDalError(err: unknown, ctx: LogCtx | undefined): BaseError {
     ...(ctx?.context ? { context: ctx.context } : {}),
     ...(ctx?.identifiers ?? {}),
   };
-  return isPgUniqueViolation(err)
-    ? toBaseErrorFromPgUnknown(err, baseCtx)
-    : toBaseErrorFromPgUnknown(err, baseCtx);
+  // Keep a single normalization path; specialize inside mapper (unique, timeouts, etc.)
+  return toBaseErrorFromPgUnknown(err, baseCtx);
 }
 
 /**
