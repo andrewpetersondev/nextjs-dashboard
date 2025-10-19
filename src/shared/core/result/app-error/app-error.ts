@@ -1,6 +1,9 @@
 // File: src/shared/core/result/app-error.ts
 
-import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
+import type {
+  ErrorCode,
+  Severity,
+} from "@/shared/core/errors/base/error-codes";
 
 /**
  * Represents an error-like object with a `message` property.
@@ -71,11 +74,13 @@ export interface AppError {
    * Canonical, JSON-safe diagnostics payload shared across boundaries.
    * See AppErrorDetails.
    */
-  readonly details?: AppErrorDetails | unknown;
+  readonly details?: AppErrorDetails;
   readonly kind?: string;
   readonly name?: string;
-  readonly severity?: "info" | "warn" | "error";
+  readonly severity?: Severity;
   readonly stack?: string;
+  /** Nominal brand to discourage ad-hoc object assignment */
+  readonly __appError?: "AppError";
 }
 
 // Factory helpers (kept minimal here to avoid cyclic deps with builders)
@@ -96,3 +101,29 @@ export const makeAppErrorDetails = (
   };
   return Object.freeze(details);
 };
+
+// Type guard to validate external details before attaching to AppError
+export function isAppErrorDetails(v: unknown): v is AppErrorDetails {
+  if (typeof v !== "object" || v === null) {
+    return false;
+  }
+  const obj = v as Record<string, unknown>;
+  const fe = obj.fieldErrors;
+  const ff = obj.formErrors;
+  const extra = obj.extra;
+  const brandOk =
+    obj.__brand === "AppErrorDetails" || obj.__brand === undefined;
+  const formOk =
+    ff === undefined ||
+    (Array.isArray(ff) && ff.every((x) => typeof x === "string"));
+  const fieldsOk =
+    fe === undefined ||
+    (typeof fe === "object" &&
+      fe !== null &&
+      Object.values(fe as Record<string, unknown[]>).every(
+        (arr) => Array.isArray(arr) && arr.every((x) => typeof x === "string"),
+      ));
+  const extraOk =
+    extra === undefined || (typeof extra === "object" && extra !== null); // JSON-safety is enforced by producers
+  return brandOk && formOk && fieldsOk && extraOk;
+}

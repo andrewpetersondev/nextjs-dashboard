@@ -8,7 +8,7 @@ import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 export const isRetryableError = (
   e: unknown,
 ): e is BaseError & { readonly retryable: true } =>
-  e instanceof BaseError && e.retryable === true;
+  e instanceof BaseError && e.retryable;
 
 /**
  * Generic guard for a specific canonical error code.

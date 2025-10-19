@@ -7,7 +7,10 @@ import {
   isErrorCode,
   tryGetErrorCodeMeta,
 } from "@/shared/core/errors/base/error-codes";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
+import {
+  type AppError,
+  isAppErrorDetails,
+} from "@/shared/core/result/app-error/app-error";
 import {
   freezeDev,
   isAppErrorLike,
@@ -54,13 +57,17 @@ export function toBaseErrorFromApp(
   const code =
     appError.code && isErrorCode(appError.code) ? appError.code : defaultCode;
 
+  const ctx: Record<string, unknown> = {
+    kind: appError.kind,
+    ...(appError.name ? { name: appError.name } : {}),
+  };
+  if (appError.details && isAppErrorDetails(appError.details)) {
+    ctx.details = appError.details;
+  }
+
   return new BaseError(code, {
     cause: appError.cause,
-    context: {
-      kind: appError.kind,
-      ...(appError.details ? { details: appError.details } : {}),
-      ...(appError.name ? { name: appError.name } : {}),
-    },
+    context: ctx,
     message: appError.message,
   });
 }
