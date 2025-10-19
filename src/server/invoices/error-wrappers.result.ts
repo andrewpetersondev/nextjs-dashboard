@@ -2,7 +2,7 @@ import "server-only";
 import {
   mapToRepoError,
   type RepoError,
-} from "@/server/errors/mappers/error-mappers.server";
+} from "@/server/invoices/error-mappers.server";
 import { fromPromiseThunk } from "@/shared/core/result/async/result-async";
 import type { Result } from "@/shared/core/result/result";
 
