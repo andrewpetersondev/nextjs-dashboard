@@ -47,9 +47,7 @@ const getUserAsync = (
   load: (id: string) => Promise<User>,
   id: string,
 ): Promise<Result<User, NotFoundError>> =>
-  tryCatchAsync<User, NotFoundError>(() => load(id), {
-    mapError: toNotFoundError,
-  }); // mapper
+  tryCatchAsync<User, NotFoundError>(() => load(id), toNotFoundError); // mapper
 
 // 3) Factory with fromNullable → Result<User, NotFoundError>
 const ensureUserPresent = (
