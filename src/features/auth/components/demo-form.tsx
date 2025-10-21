@@ -3,18 +3,9 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { demoUserAction } from "@/server/auth/application/actions/demo-user.action";
 import { Button } from "@/ui/atoms/button";
 
-/**
- * DemoForm component for logging in as a demo user with a specific role.
- *
- * @param props - Component props.
- * @returns Rendered DemoForm component.
- */
 interface DemoFormProps {
-  /** Button label for accessibility and testing */
   label: string;
-  /** Button text */
   text: string;
-  /** User role for demo login */
   userRole: UserRole;
 }
 

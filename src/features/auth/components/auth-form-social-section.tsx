@@ -13,15 +13,9 @@ import {
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
 
-/**
- * Props for AuthFormSocialSection.
- */
 interface AuthFormSocialSectionProps {
-  /** Text for the demo user button */
   demoUserText: string;
-  /** Text for the demo admin button */
   demoAdminText: string;
-  /** Mode for social login ("login" or "signup") */
   mode: "login" | "signup";
 }
 

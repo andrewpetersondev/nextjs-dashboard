@@ -26,7 +26,6 @@ export default function Page(): JSX.Element {
               mode="login"
             />
           </div>
-          {/* Switch the link below the card, matching the signup page */}
           <AuthSwitchLink
             href={ROUTES.AUTH.SIGNUP}
             linkText="Sign up here"
