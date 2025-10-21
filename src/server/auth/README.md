@@ -17,8 +17,6 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
     - auth-user.service.ts — business orchestration (never throws; returns Result)
     - adapters/: Wrap concrete infrastructure into ports (e.g., repository adapter, password hasher adapter).
     - factories/: Composition root to wire concrete implementations for runtime.
-  - mapping/: Map service errors/results into app/UI-friendly shapes.
-    - app-error.to-form-result.mapper.ts
 
 ## domain/
 

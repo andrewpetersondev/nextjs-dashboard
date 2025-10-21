@@ -8,7 +8,6 @@ import {
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
 import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
-import { mapAppErrorToFormResult } from "@/server/auth/application/mapping/app-error.to-form-result.mapper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { getAppDb } from "@/server/db/db.connection";
@@ -17,6 +16,7 @@ import { flatMapAsync } from "@/shared/core/result/async/result-transform-async"
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import type { UserId } from "@/shared/domain/domain-brands";
+import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
@@ -78,7 +78,7 @@ export async function signupAction(
 
   if (!sessionResult.ok) {
     const svcError = toUnexpectedAppError(sessionResult.error);
-    return mapAppErrorToFormResult<SignupField, unknown>({
+    return appErrorToFormResult<SignupField, unknown>({
       conflictEmailField: "email",
       error: svcError,
       fields,

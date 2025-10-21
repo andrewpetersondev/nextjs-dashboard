@@ -16,10 +16,7 @@ Structure
    - login.command.ts
    - signup.command.ts
 
-3. mapping/ — Adapters from service-layer results/errors to app-facing shapes:
-   - app-error.to-form-result.mapper.ts
-
-4. services/ — Core services and composition:
+3. services/ — Core services and composition:
    - auth-user.service.ts — business orchestration (never throws; returns Result)
    - adapters/ — concrete implementations of service ports (e.g., password hasher, repository adapter)
    - factories/ — composition roots creating fully wired services
