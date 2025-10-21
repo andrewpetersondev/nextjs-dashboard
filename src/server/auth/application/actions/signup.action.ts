@@ -1,4 +1,6 @@
 "use server";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   SIGNUP_FIELDS_LIST,
@@ -6,18 +8,15 @@ import {
   type SignupField,
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
+import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
-import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
-import {
-  toFormOk,
-  toFormValidationErr,
-} from "@/shared/forms/mapping/result-to-form-result.mapper";
+import { toFormValidationErr } from "@/shared/forms/mapping/result-to-form-result.mapper";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -32,6 +31,8 @@ const fields = SIGNUP_FIELDS_LIST;
  * - Signup → map Ok(user) to { id, role } only.
  * - Establish session → on failure, map to UI-safe FormResult.
  * - Redirect to dashboard on success.
+ *
+ * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
 export async function signupAction(
   _prevState: FormResult<SignupField, SessionUser>,
@@ -60,17 +61,20 @@ export async function signupAction(
     service.signup.bind(service),
   );
 
-  if (!sessionResult.ok) {
-    return handleAuthError<SignupField, SessionUser>(
-      sessionResult.error,
-      fields,
-      raw,
-      "email",
-    );
+  if (sessionResult.ok) {
+    (await cookies()).set("signup-success", "true", {
+      httpOnly: true,
+      maxAge: 10, // 10 seconds - gives user time to see toast even with slow loads
+      sameSite: "lax",
+    });
+
+    revalidatePath(ROUTES.DASHBOARD.ROOT);
+    redirect(ROUTES.DASHBOARD.ROOT);
   }
-
-  const sessionUser: SessionUser = sessionResult.value;
-
-  redirect(ROUTES.DASHBOARD.ROOT);
-  return toFormOk<SignupField, SessionUser>(sessionUser);
+  return handleAuthError<SignupField, SessionUser>(
+    sessionResult.error,
+    fields,
+    raw,
+    "email",
+  );
 }

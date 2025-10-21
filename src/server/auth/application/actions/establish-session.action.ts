@@ -1,8 +1,8 @@
 "use server";
+import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { LOGGER_CONTEXT_SESSION } from "@/server/auth/domain/constants/session.constants";
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
-import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";

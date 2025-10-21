@@ -1,8 +1,10 @@
 import type React from "react";
 
+const TOAST_DURATION_MS = 3000;
+
 export async function SignupToast(): Promise<React.ReactElement> {
   // simulate async work (e.g., waiting for a network response or animation)
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  await new Promise((resolve) => setTimeout(resolve, TOAST_DURATION_MS));
 
   return (
     <div

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SignupField } from "@/features/auth/lib/auth.schema";
-import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
+import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { signupAction } from "../signup.action";
 import {

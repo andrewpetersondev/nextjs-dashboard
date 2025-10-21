@@ -1,7 +1,7 @@
 // src/server/auth/application/actions/auth-pipeline.helper.ts
 
 import "server-only";
-import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
+import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { pipeAsync } from "@/shared/core/result/async/result-pipe-async";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
