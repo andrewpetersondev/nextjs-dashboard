@@ -11,20 +11,20 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 /**
  * Establishes a session for a user by setting `jwt cookie`.
  *
- * @param u - The user object containing `id` and `role`.
+ * @param user - The user object containing `id` and `role`.
  *
  * @returns A promise that resolves to a Result indicating the success or failure of the session establishment.
  */
 export async function establishSessionAction(
-  u: SessionUser,
-): Promise<Result<true, AppError>> {
+  user: SessionUser,
+): Promise<Result<SessionUser, AppError>> {
   const res = await tryCatchAsync(async () => {
-    await setSessionToken(u.id, u.role);
+    await setSessionToken(user.id, user.role);
     return true as const;
   }, toUnexpectedAppError);
 
-  const mapped: Result<true, AppError> = res.ok
-    ? Ok<true>(true as const)
+  const mapped: Result<SessionUser, AppError> = res.ok
+    ? Ok(user)
     : Err<AppError>(res.error);
 
   if (!mapped.ok) {

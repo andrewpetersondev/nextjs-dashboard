@@ -65,7 +65,7 @@ export async function pipeAsync<
   T3,
   T4,
   T5,
-  // biome-ignore lint/nursery/useMaxParams: <explanation>
+  // biome-ignore lint/nursery/useMaxParams: <multistep pipe requires more params>
 >(
   seed: Result<T1, TError1>,
   step1: PipeStep<T1, T2, TError1, TError2>,
