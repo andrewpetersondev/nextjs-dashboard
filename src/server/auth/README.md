@@ -47,12 +47,6 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
     - repositories/: Repository implementations plus assertions/normalizers around DAL.
       - auth-user.repository.ts, auth-user.repository.errors.ts, auth-user.repository.assertions.ts
 
-## policy/
-
-- Purpose: Cross-cutting authorization policies and guards.
-- Contents:
-  - authorize.ts — ensure roles or redirect to login.
-
 ## session/
 
 - Purpose: Session lifecycle mechanics, independent of a single use-case.
