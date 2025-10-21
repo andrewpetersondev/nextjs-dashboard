@@ -45,6 +45,7 @@ function toValidationFailure<TFieldNames extends string>(
       issues: issues as unknown as z.ZodError<unknown>["issues"],
     };
     return {
+      code: "VALIDATION",
       fieldErrors: mapToDenseFieldErrorsFromZod<TFieldNames>(zodLike, fields),
       kind: "validation",
       message: DEFAULT_FAILURE_MESSAGE,
@@ -52,6 +53,7 @@ function toValidationFailure<TFieldNames extends string>(
   }
 
   return {
+    code: "VALIDATION",
     fieldErrors: toDenseFieldErrorMapFromSparse<TFieldNames, string>(
       {},
       fields,

@@ -62,6 +62,7 @@ export async function createUserAction(
     if (!parsed.success) {
       return {
         error: {
+          code: "VALIDATION" as const,
           fieldErrors: toDenseFieldErrorMapFromSparse(
             selectSparseFieldErrorsForAllowedFields(
               parsed.error.flatten().fieldErrors,
@@ -92,6 +93,7 @@ export async function createUserAction(
       });
       return {
         error: {
+          code: "VALIDATION" as const,
           fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
           kind: "validation",
           message: USER_ERROR_MESSAGES.CREATE_FAILED,
@@ -115,6 +117,7 @@ export async function createUserAction(
     });
     return {
       error: {
+        code: "VALIDATION" as const,
         fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
         kind: "validation",
         message: USER_ERROR_MESSAGES.UNEXPECTED,

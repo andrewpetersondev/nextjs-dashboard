@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { Result } from "@/shared/core/result/result";
 import type {
   FormResult,
@@ -8,7 +9,10 @@ import type {
 
 // Accept either a plain Result with a message in success/error, or a FormResult
 type ServerMessageState<TField extends string = string, TData = unknown> =
-  | Result<{ readonly message?: string }, { readonly message: string }>
+  | Result<
+      { readonly code?: string; readonly message?: string },
+      { readonly code: ErrorCode; readonly message: string }
+    >
   | FormResult<TField, TData>;
 
 type ServerMessageProps<TField extends string = string, TData = unknown> = {

@@ -38,6 +38,7 @@ function idInvalidResult<F extends string>(
   return mapResultToFormResult(
     {
       error: {
+        code: "VALIDATION" as const,
         fieldErrors: {} as never,
         kind: "validation",
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -55,6 +56,7 @@ function notFoundResult<F extends string>(
   return mapResultToFormResult(
     {
       error: {
+        code: "VALIDATION" as const,
         fieldErrors: {} as never,
         kind: "validation",
         message: USER_ERROR_MESSAGES.NOT_FOUND,
@@ -159,6 +161,7 @@ export async function updateUserAction(
       return mapResultToFormResult(
         {
           error: {
+            code: "VALIDATION" as const,
             fieldErrors: {} as never,
             kind: "validation",
             message: USER_ERROR_MESSAGES.UPDATE_FAILED,
@@ -183,6 +186,7 @@ export async function updateUserAction(
     return mapResultToFormResult(
       {
         error: {
+          code: "VALIDATION" as const,
           fieldErrors: {} as never,
           kind: "validation",
           message: USER_ERROR_MESSAGES.UNEXPECTED,

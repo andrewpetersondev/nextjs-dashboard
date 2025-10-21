@@ -3,6 +3,7 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 
@@ -21,8 +22,8 @@ export type CreateUserRepoOutput = {
 };
 
 export type RepoError =
-  | { kind: "DatabaseError"; message: string }
-  | { kind: "CreateFailed"; message: string };
+  | { code: ErrorCode; kind: "DatabaseError"; message: string }
+  | { code: ErrorCode; kind: "CreateFailed"; message: string };
 
 /**
  * UsersRepository: DB-facing operations for users.
@@ -47,7 +48,8 @@ export class UsersRepository {
       });
       if (!user) {
         return Err({
-          kind: "CreateFailed",
+          code: "NOT_FOUND" as const,
+          kind: "CreateFailed" as const,
           message: "User creation returned null",
         });
       }
@@ -59,7 +61,11 @@ export class UsersRepository {
       });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
-      return Err({ kind: "DatabaseError", message });
+      return Err({
+        code: "UNKNOWN" as const,
+        kind: "DatabaseError" as const,
+        message,
+      });
     }
   }
 }
