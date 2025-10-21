@@ -1,6 +1,6 @@
 // File: src/shared/core/result/iter/result-collect-iter.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -8,10 +8,10 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  *
  * @param source - An iterable of `Result` objects to process.
  * @typeParam TValue - The type of successful values in the result.
- * @typeParam TError - The type of error to handle, extending `ErrorLike`.
+ * @typeParam TError - The type of error to handle, extending `AppError`.
  * @returns A generator that yields successful values, or an error result if one is encountered.
  */
-export function* iterateOk<TValue, TError extends ErrorLike>(
+export function* iterateOk<TValue, TError extends AppError>(
   source: Iterable<Result<TValue, TError>>,
 ): Generator<TValue, Result<void, TError>, unknown> {
   for (const r of source) {
@@ -32,10 +32,7 @@ export function* iterateOk<TValue, TError extends ErrorLike>(
  * @param source - An iterable of `Result` objects to process.
  * @returns A `Result` containing an array of successful values or the first encountered error.
  */
-export const collectAllLazy = /* @__PURE__ */ <
-  TValue,
-  TError extends ErrorLike,
->(
+export const collectAllLazy = /* @__PURE__ */ <TValue, TError extends AppError>(
   source: Iterable<Result<TValue, TError>>,
 ): Result<readonly TValue[], TError> => {
   const acc: TValue[] = [];

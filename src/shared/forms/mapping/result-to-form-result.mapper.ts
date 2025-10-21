@@ -64,6 +64,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
   }
 
   const error: FormError<TField> = {
+    code: "VALIDATION" as const,
     fieldErrors: result.error.fieldErrors as DenseFieldErrorMap<TField, string>,
     kind: "validation",
     message: result.error.message || failureMessage,

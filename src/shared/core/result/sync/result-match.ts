@@ -1,18 +1,18 @@
 // File: src/shared/core/result/sync/result-match.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 
 /**
  * Extracts the value from a successful `Result` or throws the associated error if unsuccessful.
  *
  * @typeParam TValue - The type of the value in case of success.
- * @typeParam TError - The type of the error, extending `ErrorLike`.
+ * @typeParam TError - The type of the error, extending `AppError`.
  * @param r - A `Result` object containing either a success value or an error.
  * @returns The value of type `TValue` if the result is successful.
  * @throws The error of type `TError` if the result is unsuccessful.
  */
-export const unwrapOrThrow = <TValue, TError extends ErrorLike>(
+export const unwrapOrThrow = <TValue, TError extends AppError>(
   r: Result<TValue, TError>,
 ): TValue => {
   if (r.ok) {
@@ -25,7 +25,7 @@ export const unwrapOrThrow = <TValue, TError extends ErrorLike>(
  * Returns the value from a `Result` if `ok`, otherwise returns the provided fallback.
  *
  * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type of the error, extending `ErrorLike`.
+ * @typeParam TError - The type of the error, extending `AppError`.
  * @param fallback - The default value to return if the `Result` is not `ok`.
  * @returns The value from the `Result` or the fallback value.
  * @example
@@ -33,7 +33,7 @@ export const unwrapOrThrow = <TValue, TError extends ErrorLike>(
  */
 export const unwrapOr =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike>(fallback: TValue) =>
+    <TValue, TError extends AppError>(fallback: TValue) =>
     /* @__PURE__ */
     (r: Result<TValue, TError>): TValue =>
       r.ok ? r.value : fallback;
@@ -42,7 +42,7 @@ export const unwrapOr =
  * Returns the value of a successful `Result` or computes a fallback value using the provided function.
  *
  * @typeParam TValue - The type of the successful value contained in the `Result`.
- * @typeParam TError - The type of the error contained in the `Result`, extending `ErrorLike`.
+ * @typeParam TError - The type of the error contained in the `Result`, extending `AppError`.
  * @param fallback - A function that computes a fallback value based on the `TError`.
  * @returns The value if the `Result` is successful, otherwise the value returned by the `fallback` function.
  * @example
@@ -52,7 +52,7 @@ export const unwrapOr =
  */
 export const unwrapOrElse =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike>(fallback: (e: TError) => TValue) =>
+    <TValue, TError extends AppError>(fallback: (e: TError) => TValue) =>
     /* @__PURE__ */
     (r: Result<TValue, TError>): TValue =>
       r.ok ? r.value : fallback(r.error);
@@ -61,7 +61,7 @@ export const unwrapOrElse =
  * Matches a `Result` and applies the appropriate callback based on its state.
  *
  * @typeParam TValue - The type of the successful result's value.
- * @typeParam TError - The type of the error, extending `ErrorLike`.
+ * @typeParam TError - The type of the error, extending `AppError`.
  * @typeParam TOut - The return type of the callback functions.
  * @param r - The `Result` object to match.
  * @param onOk - Callback invoked with the value if `r` is successful.
@@ -73,7 +73,7 @@ export const unwrapOrElse =
  */
 export const matchResult = /* @__PURE__ */ <
   TValue,
-  TError extends ErrorLike,
+  TError extends AppError,
   TOut,
 >(
   r: Result<TValue, TError>,
@@ -84,6 +84,6 @@ export const matchResult = /* @__PURE__ */ <
 // Exhaustive match with constant outputs
 export const matchTo =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike, TOut>(onOk: TOut, onErr: TOut) =>
+    <TValue, TError extends AppError, TOut>(onOk: TOut, onErr: TOut) =>
     (r: Result<TValue, TError>): TOut =>
       r.ok ? onOk : onErr;

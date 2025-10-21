@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-transform-async.ts
 // Purpose: Adapter-first async flatMap utilities (no default AppError).
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, type Result } from "@/shared/core/result/result";
 
 /**
@@ -16,7 +16,7 @@ import { Err, type Result } from "@/shared/core/result/result";
  */
 export const flatMapAsync =
   /* @__PURE__ */
-    <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TNext, TError1 extends AppError, TError2 extends AppError>(
       fn: (v: TValue) => Promise<Result<TNext, TError2>>,
     ) =>
     /* @__PURE__ */
@@ -38,7 +38,7 @@ export const flatMapAsync =
  */
 export const flatMapAsyncPreserveErr =
   /* @__PURE__ */
-  <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+  <TValue, TNext, TError1 extends AppError, TError2 extends AppError>(
     fn: (v: TValue) => Promise<Result<TNext, TError2>>,
   ) => {
     /* @__PURE__ */
@@ -70,9 +70,9 @@ export const flatMapAsyncSafe =
     <
       TValue,
       TNext,
-      TError1 extends ErrorLike,
-      TError2 extends ErrorLike,
-      TSideError extends ErrorLike,
+      TError1 extends AppError,
+      TError2 extends AppError,
+      TSideError extends AppError,
     >(
       fn: (v: TValue) => Promise<Result<TNext, TError2>>,
       mapError: (e: unknown) => TSideError,

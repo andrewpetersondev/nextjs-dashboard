@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-transform.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, type Result } from "@/shared/core/result/result";
 
 /**
@@ -19,7 +19,7 @@ import { Err, type Result } from "@/shared/core/result/result";
  */
 export const flatMap =
   /* @__PURE__ */
-    <TValue, TNext, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TNext, TError1 extends AppError, TError2 extends AppError>(
       fn: (v: TValue) => Result<TNext, TError2>,
     ) =>
     /* @__PURE__ */

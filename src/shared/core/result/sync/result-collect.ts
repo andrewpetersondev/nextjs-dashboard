@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-collect.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import {
   Err,
   type ErrType,
@@ -17,7 +17,7 @@ import {
  * @param results - An array of `Result` objects to process.
  * @returns A `Result` containing an array of all successful values or the first encountered error.
  */
-export const collectAll = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
+export const collectAll = /* @__PURE__ */ <TValue, TError extends AppError>(
   results: readonly Result<TValue, TError>[],
 ): Result<readonly TValue[], TError> => {
   const acc: TValue[] = [];
@@ -45,7 +45,7 @@ export const collectAll = /* @__PURE__ */ <TValue, TError extends ErrorLike>(
  * ```
  */
 export function collectTuple<
-  TError extends ErrorLike,
+  TError extends AppError,
   TTuple extends readonly Result<unknown, TError>[],
 >(
   ...results: TTuple
@@ -70,7 +70,7 @@ export function collectTuple<
  * @returns A `Result` containing either an array of all successful values or the first occurred error.
  */
 export function collectTupleHetero<
-  TTuple extends readonly Result<unknown, ErrorLike>[],
+  TTuple extends readonly Result<unknown, AppError>[],
 >(
   ...results: TTuple
 ): Result<
@@ -101,7 +101,7 @@ export function collectTupleHetero<
  */
 export const firstOkOrElse =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike>(onEmpty: () => TError) =>
+    <TValue, TError extends AppError>(onEmpty: () => TError) =>
     /* @__PURE__ */
     (results: readonly Result<TValue, TError>[]): Result<TValue, TError> => {
       let lastErr: Result<never, TError> | null = null;

@@ -1,9 +1,11 @@
+// File: src/shared/forms/types/form-result.types.ts
+
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
 
-// Freeze helper for payloads to preserve immutability guarantees
-/* @__PURE__ */
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
 /**
@@ -19,18 +21,18 @@ export interface FormSuccess<TPayload> {
 }
 
 /**
- * Validation error shape.
+ * Validation error shape - now extends AppError.
  */
 export interface FormValidationError<
   TFieldName extends string,
   TValueEcho = string,
   TMessage extends string = string,
-> {
+> extends AppError {
+  readonly code: ErrorCode; // Required by AppError
   readonly kind: "validation";
   // Contract: dense map with readonly string[] (may be empty)
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
-  readonly message: string;
 }
 
 /**
@@ -113,11 +115,13 @@ export const FormErr = <
   TValueEcho = string,
   TMessage extends string = string,
 >(params: {
+  readonly code?: ErrorCode;
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
 }): FormResult<TFieldName, TPayload, TValueEcho, TMessage> => {
   const error = freeze<FormValidationError<TFieldName, TValueEcho, TMessage>>({
+    code: params.code ?? "VALIDATION",
     fieldErrors: params.fieldErrors,
     kind: "validation" as const,
     message: params.message,
@@ -214,6 +218,7 @@ export const withFormResultMessages = <
   }
   const next = freeze<FormValidationError<TFieldName, TValueEcho, TMessage>>({
     ...r.error,
+    code: r.error.code,
     message: r.error.message || defaults.failure,
   });
   return Err(next);
@@ -253,11 +258,13 @@ export const toFormValidationError = <
   TValueEcho = string,
   TMessage extends string = string,
 >(p: {
+  readonly code?: ErrorCode;
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
 }): FormValidationError<TFieldName, TValueEcho, TMessage> =>
   freeze({
+    code: p.code ?? "VALIDATION",
     fieldErrors: p.fieldErrors,
     kind: "validation" as const,
     message: p.message,
@@ -293,6 +300,7 @@ export const withValuesEcho = <
   }
   return freeze({
     ...err,
+    code: err.code,
     values,
   });
 };

@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-map-async.ts
 // Purpose: Adapter-first async map utilities (no default AppError).
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -9,13 +9,13 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  *
  * @typeParam TValue - The type of the original value in the `Result`.
  * @typeParam TNext - The type of the transformed value after applying the function.
- * @typeParam TError - The type of the error, extending `ErrorLike` (default: `AppError`).
+ * @typeParam TError - The type of the error, extending `AppError` (default: `AppError`).
  * @param fn - An async function to transform the value if the `Result` is successful.
  * @returns A `Promise` resolving to either a transformed `Result` or the original error.
  */
 export const mapOkAsync =
   /* @__PURE__ */
-    <TValue, TNext, TError extends ErrorLike>(
+    <TValue, TNext, TError extends AppError>(
       fn: (v: TValue) => Promise<TNext>,
     ) =>
     /* @__PURE__ */
@@ -43,7 +43,7 @@ export const mapOkAsync =
  */
 export const mapOkAsyncSafe =
   /* @__PURE__ */
-    <TValue, TNext, TError extends ErrorLike, TSideError extends ErrorLike>(
+    <TValue, TNext, TError extends AppError, TSideError extends AppError>(
       fn: (v: TValue) => Promise<TNext>,
       mapError: (e: unknown) => TSideError,
     ) =>
@@ -77,7 +77,7 @@ export const mapOkAsyncSafe =
  */
 export const mapErrorAsync =
   /* @__PURE__ */
-    <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TError1 extends AppError, TError2 extends AppError>(
       fn: (e: TError1) => Promise<TError2>,
     ) =>
     /* @__PURE__ */
@@ -88,9 +88,9 @@ export const mapErrorAsync =
  * A utility function to safely transform errors in an asynchronous context.
  *
  * @typeParam TValue - The type of the successful result value.
- * @typeParam TError1 - The type of the initial error (extends `ErrorLike`).
- * @typeParam TError2 - The type of the transformed error (extends `ErrorLike`).
- * @typeParam TSideError - The type of side-error from the `mapError` function (extends `ErrorLike`).
+ * @typeParam TError1 - The type of the initial error (extends `AppError`).
+ * @typeParam TError2 - The type of the transformed error (extends `AppError`).
+ * @typeParam TSideError - The type of side-error from the `mapError` function (extends `AppError`).
  * @param fn - An async function that maps `TError1` to `TError2`.
  * @param mapError - Required function to handle unexpected errors.
  * @returns A `Promise` resolving to a `Result` containing the transformed error or successful value.
@@ -103,9 +103,9 @@ export const mapErrorAsyncSafe =
   /* @__PURE__ */
     <
       TValue,
-      TError1 extends ErrorLike,
-      TError2 extends ErrorLike,
-      TSideError extends ErrorLike,
+      TError1 extends AppError,
+      TError2 extends AppError,
+      TSideError extends AppError,
     >(
       fn: (e: TError1) => Promise<TError2>,
       mapError: (e: unknown) => TSideError,

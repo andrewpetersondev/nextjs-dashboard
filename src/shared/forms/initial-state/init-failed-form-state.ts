@@ -21,6 +21,7 @@ export function createInitialFailedFormState<
 
   return {
     error: {
+      code: "VALIDATION" as const,
       fieldErrors,
       kind: "validation" as const,
       message: "",

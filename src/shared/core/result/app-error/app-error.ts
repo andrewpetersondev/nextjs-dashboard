@@ -6,25 +6,12 @@ import type {
 } from "@/shared/core/errors/base/error-codes";
 
 /**
- * Represents an error-like object with a `message` property.
- *
- * @public
- * @remarks This type can be used to handle both standard `Error` objects and custom objects with a `message` field.
- * @example
- * ```ts
- * const error1: ErrorLike = new Error("Standard error");
- * const error2: ErrorLike = { message: "Custom error" };
- * ```
- */
-export type ErrorLike = Error | { readonly message: string };
-
-/**
  * Build a mapper unknown -> TError with a type guard and fallback constructor.
  * Keeps fromPromiseWith generic while guaranteeing a TError.
  */
 export const makeErrorMapper =
   /* @__PURE__ */
-    <TError extends ErrorLike>(opts: {
+    <TError extends AppError>(opts: {
       readonly isTarget: (e: unknown) => e is TError;
       readonly toTarget: (e: unknown) => TError;
       readonly fallback?: (e: unknown) => TError;
@@ -79,7 +66,6 @@ export interface AppError {
   readonly name?: string;
   readonly severity?: Severity;
   readonly stack?: string;
-  /** Nominal brand to discourage ad-hoc object assignment */
   readonly __appError?: "AppError";
 }
 

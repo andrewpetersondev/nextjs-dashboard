@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-map.ts
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
@@ -14,7 +14,7 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  * @param fn - A transformation function to be applied to the `TValue`.
  * @returns A function that takes a `Result` and produces a transformed `Result`.
  */
-export type MapOk = <TValue, TNext, TError extends ErrorLike>(
+export type MapOk = <TValue, TNext, TError extends AppError>(
   fn: (v: TValue) => TNext,
 ) => (r: Result<TValue, TError>) => Result<TNext, TError>;
 
@@ -46,8 +46,8 @@ export const mapOk: MapOk =
  */
 export type MapError = <
   TValue,
-  TError1 extends ErrorLike,
-  TError2 extends ErrorLike,
+  TError1 extends AppError,
+  TError2 extends AppError,
 >(
   fn: (e: TError1) => TError2,
 ) => (r: Result<TValue, TError1>) => Result<TValue, TError2>;
@@ -81,7 +81,7 @@ export const mapError: MapError =
  */
 export const mapErrorUnion =
   /* @__PURE__ */
-    <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TError1 extends AppError, TError2 extends AppError>(
       fn: (e: TError1) => TError2,
     ) =>
     /* @__PURE__ */
@@ -100,7 +100,7 @@ export const mapErrorUnion =
  */
 export const mapErrorUnionPreserve =
   /* @__PURE__ */
-    <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TError1 extends AppError, TError2 extends AppError>(
       fn: (e: TError1) => TError2,
     ) =>
     /* @__PURE__ */
@@ -126,7 +126,7 @@ export const mapErrorUnionPreserve =
  */
 export const mapErrorPreserve =
   /* @__PURE__ */
-    <TValue, TError1 extends ErrorLike, TError2 extends ErrorLike>(
+    <TValue, TError1 extends AppError, TError2 extends AppError>(
       fn: (e: TError1) => TError2,
     ) =>
     /* @__PURE__ */
@@ -143,8 +143,8 @@ export const mapErrorPreserve =
  *
  * @typeParam TValue - The type of the success value.
  * @typeParam TNext - The type of the transformed success value.
- * @typeParam TError1 - The type of the initial error, extending `ErrorLike`. Defaults to `AppError`.
- * @typeParam TError2 - The type of the transformed error, extending `ErrorLike`. Defaults to `AppError`.
+ * @typeParam TError1 - The type of the initial error, extending `AppError`. Defaults to `AppError`.
+ * @typeParam TError2 - The type of the transformed error, extending `AppError`. Defaults to `AppError`.
  * @param onOk - A function to transform the success value.
  * @param onErr - A function to transform the error value.
  * @returns A new {@link Result} with the transformed success or error value.
@@ -152,8 +152,8 @@ export const mapErrorPreserve =
 export type MapBoth = <
   TValue,
   TNext,
-  TError1 extends ErrorLike,
-  TError2 extends ErrorLike,
+  TError1 extends AppError,
+  TError2 extends AppError,
 >(
   onOk: (v: TValue) => TNext,
   onErr: (e: TError1) => TError2,

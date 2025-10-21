@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-tap-async.ts
 // Purpose: Adapter-first async taps (no default AppError).
 
-import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err } from "@/shared/core/result/result";
 
@@ -15,7 +15,7 @@ import { Err } from "@/shared/core/result/result";
  */
 export const tapOkAsync =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike>(fn: (v: TValue) => Promise<void>) =>
+    <TValue, TError extends AppError>(fn: (v: TValue) => Promise<void>) =>
     /* @__PURE__ */
     async (r: Result<TValue, TError>): Promise<Result<TValue, TError>> => {
       if (r.ok) {
@@ -37,7 +37,7 @@ export const tapOkAsync =
  */
 export const tapOkAsyncSafe =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike, TSideError extends ErrorLike>(
+    <TValue, TError extends AppError, TSideError extends AppError>(
       fn: (v: TValue) => Promise<void>,
       mapError: (e: unknown) => TSideError,
     ) =>
@@ -60,13 +60,13 @@ export const tapOkAsyncSafe =
  * Handles the error case of a `Result` asynchronously by executing a provided function.
  *
  * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type of the error, extending `ErrorLike`.
+ * @typeParam TError - The type of the error, extending `AppError`.
  * @param fn - An async function to process the error when the `Result` is not successful.
  * @returns A promise resolving to the unchanged `Result`.
  */
 export const tapErrorAsync =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike>(fn: (e: TError) => Promise<void>) =>
+    <TValue, TError extends AppError>(fn: (e: TError) => Promise<void>) =>
     /* @__PURE__ */
     async (r: Result<TValue, TError>): Promise<Result<TValue, TError>> => {
       if (!r.ok) {
@@ -87,7 +87,7 @@ export const tapErrorAsync =
  */
 export const tapErrorAsyncSafe =
   /* @__PURE__ */
-    <TValue, TError extends ErrorLike, TSideError extends ErrorLike>(
+    <TValue, TError extends AppError, TSideError extends AppError>(
       fn: (e: TError) => Promise<void>,
       mapError: (e: unknown) => TSideError,
     ) =>
