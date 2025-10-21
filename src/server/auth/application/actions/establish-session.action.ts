@@ -18,15 +18,10 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 export async function establishSessionAction(
   u: SessionUser,
 ): Promise<Result<true, AppError>> {
-  const res = await tryCatchAsync(
-    async () => {
-      await setSessionToken(u.id, u.role);
-      return true as const;
-    },
-    {
-      mapError: toUnexpectedAppError,
-    },
-  );
+  const res = await tryCatchAsync(async () => {
+    await setSessionToken(u.id, u.role);
+    return true as const;
+  }, toUnexpectedAppError);
 
   const mapped: Result<true, AppError> = res.ok
     ? Ok<true>(true as const)

@@ -12,6 +12,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
+import { pipeAsync } from "@/shared/core/result/async/result-pipe-async";
 import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
 import { Ok } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
@@ -72,9 +73,12 @@ export async function signupAction(
   const signup = flatMapAsync(service.signup.bind(service));
   const establishSession = flatMapAsync(establishSessionAction);
 
-  const sessionResult = await signup(seed)
-    .then(toSessionUser)
-    .then(establishSession);
+  const sessionResult = await pipeAsync(
+    seed,
+    signup,
+    toSessionUser,
+    establishSession,
+  );
 
   if (!sessionResult.ok) {
     const svcError = toUnexpectedAppError(sessionResult.error);

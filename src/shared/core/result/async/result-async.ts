@@ -5,18 +5,6 @@ import type { ErrorLike } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 
 /**
- * Interface for handling asynchronous operations with customizable error mapping.
- *
- * @typeParam TError - The type of error to map to, extending `ErrorLike`.
- * @property mapError - A readonly function to map unknown errors to a specific error type.
- * @example
- * const handler: TryCatchAsyncMapped<CustomError> = { mapError: (e) => new CustomError(e) };
- */
-interface TryCatchAsyncMapped<TError extends ErrorLike> {
-  readonly mapError: (e: unknown) => TError;
-}
-
-/**
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
  *
  * @typeParam TValue - The type of the value the promise resolves to.
@@ -33,17 +21,17 @@ export type AsyncThunk<TValue> = () => Promise<TValue>;
  * @typeParam TValue - The type of the value returned on success.
  * @typeParam TError - The type of the error, extending ErrorLike.
  * @param fn - The asynchronous function to execute.
- * @param options - configuration to map errors.
+ * @param mapError - A function to map unknown errors to a specific error type.
  * @returns A Promise resolving to a Result object with either a success value or an error.
  */
 export async function tryCatchAsync<TValue, TError extends ErrorLike>(
   fn: AsyncThunk<TValue>,
-  options: TryCatchAsyncMapped<TError>,
+  mapError: (e: unknown) => TError,
 ): Promise<Result<TValue, TError>> {
   try {
     return Ok(await fn());
   } catch (e) {
-    return Err(options.mapError(e));
+    return Err(mapError(e));
   }
 }
 
