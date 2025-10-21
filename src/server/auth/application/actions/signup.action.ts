@@ -10,6 +10,7 @@ import { handleAuthError } from "@/server/auth/application/actions/auth-error-ha
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
+import type { SessionUser } from "@/server/auth/domain/types/session-action.types";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
@@ -33,9 +34,9 @@ const fields = SIGNUP_FIELDS_LIST;
  * - Redirect to dashboard on success.
  */
 export async function signupAction(
-  _prevState: FormResult<SignupField, unknown>,
+  _prevState: FormResult<SignupField, SessionUser>,
   formData: FormData,
-): Promise<FormResult<SignupField, unknown>> {
+): Promise<FormResult<SignupField, SessionUser>> {
   const raw = pickFormDataFields<SignupField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
@@ -43,7 +44,7 @@ export async function signupAction(
   });
 
   if (!validated.ok) {
-    return toFormValidationErr<SignupField, unknown>({
+    return toFormValidationErr<SignupField, SessionUser>({
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,
@@ -60,9 +61,16 @@ export async function signupAction(
   );
 
   if (!sessionResult.ok) {
-    return handleAuthError(sessionResult.error, fields, raw, "email");
+    return handleAuthError<SignupField, SessionUser>(
+      sessionResult.error,
+      fields,
+      raw,
+      "email",
+    );
   }
 
+  const sessionUser: SessionUser = sessionResult.value;
+
   redirect(ROUTES.DASHBOARD.ROOT);
-  return toFormOk<SignupField, unknown>({});
+  return toFormOk<SignupField, SessionUser>(sessionUser);
 }
