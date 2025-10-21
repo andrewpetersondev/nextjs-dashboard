@@ -6,18 +6,18 @@ import {
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/server/auth/session/session.constants";
+} from "@/server/auth/domain/constants/session.constants";
 import {
   createSessionToken,
   readSessionToken,
-} from "@/server/auth/session/session-codec";
-import { buildSessionCookieOptions } from "@/server/auth/session/session-cookie.options";
+} from "@/server/auth/domain/session/codecs/session-codec";
+import { buildSessionCookieOptions } from "@/server/auth/domain/session/config/session-cookie.options";
+import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
+import type { UpdateSessionResult } from "@/server/auth/domain/session/core/session-update.types";
 import {
   absoluteLifetime,
   timeLeftMs,
-} from "@/server/auth/session/session-helpers";
-import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
-import type { UpdateSessionResult } from "@/server/auth/session/session-update.types";
+} from "@/server/auth/domain/session/helpers/session-helpers";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserId } from "@/shared/domain/domain-brands";
 

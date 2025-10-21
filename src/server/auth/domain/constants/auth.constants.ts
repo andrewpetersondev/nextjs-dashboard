@@ -1,4 +1,4 @@
-// src/server/auth/application/actions/auth-action.constants.ts
+// src/server/auth/application/actions/auth.constants.ts
 import "server-only";
 
 export const AUTH_ACTION_CONTEXTS = {

@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
 import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
-import { SESSION_COOKIE_NAME } from "@/server/auth/session/session.constants";
-import { readSessionToken } from "@/server/auth/session/session-codec";
-import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
+import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
+import { readSessionToken } from "@/server/auth/domain/session/codecs/session-codec";
+import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
 import { serverLogger } from "@/server/logging/serverLogger";
 
 /**

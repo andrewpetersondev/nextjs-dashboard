@@ -2,8 +2,8 @@ import "server-only";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
-} from "@/server/auth/session/session.constants";
-import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
+} from "@/server/auth/domain/constants/session.constants";
+import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 export function absoluteLifetime(user?: {

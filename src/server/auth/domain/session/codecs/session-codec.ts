@@ -1,24 +1,24 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import {
-  DecryptPayloadSchema,
-  EncryptPayloadSchema,
-} from "@/server/auth/domain/schemas/session-payload.schema";
-import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/server/auth/session/session.constants";
+} from "@/server/auth/domain/constants/session.constants";
 import {
   type FlatEncryptPayload,
   flattenEncryptPayload,
   unflattenEncryptPayload,
-} from "@/server/auth/session/session-jwt-payload.mapper";
+} from "@/server/auth/domain/session/codecs/session-jwt-payload.mapper";
 import type {
   DecryptPayload,
   EncryptPayload,
-} from "@/server/auth/session/session-payload.types";
+} from "@/server/auth/domain/session/core/session-payload.types";
+import {
+  DecryptPayloadSchema,
+  EncryptPayloadSchema,
+} from "@/server/auth/domain/session/validation/session-payload.schema";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

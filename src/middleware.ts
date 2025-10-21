@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { ADMIN_ROLE } from "@/features/auth/lib/auth.roles";
-import { SESSION_COOKIE_NAME } from "@/server/auth/session/session.constants";
-import { readSessionToken } from "@/server/auth/session/session-codec";
-import type { DecryptPayload } from "@/server/auth/session/session-payload.types";
+import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
+import { readSessionToken } from "@/server/auth/domain/session/codecs/session-codec";
+import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
 import {
   isAdminRoute as isAdminRouteHelper,
   isProtectedRoute as isProtectedRouteHelper,

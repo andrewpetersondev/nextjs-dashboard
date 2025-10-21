@@ -5,7 +5,7 @@ import {
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
   SESSION_COOKIE_SECURE_FALLBACK,
-} from "@/server/auth/session/session.constants";
+} from "@/server/auth/domain/constants/session.constants";
 import { IS_PRODUCTION } from "@/server/config/env-next";
 
 export const buildSessionCookieOptions = (expiresAtMs: number) =>

@@ -6,10 +6,10 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/application/actions/auth-action.constants";
 import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";

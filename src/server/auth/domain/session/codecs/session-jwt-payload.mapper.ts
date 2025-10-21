@@ -1,8 +1,8 @@
 // Export FlatEncryptPayload so jwtVerify can be generically typed to it.
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import { userIdCodec } from "@/server/auth/domain/schemas/session-payload.schema";
-import type { EncryptPayload } from "@/server/auth/session/session-payload.types";
+import type { EncryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
+import { userIdCodec } from "@/server/auth/domain/session/validation/session-payload.schema";
 
 export type FlatEncryptPayload = {
   expiresAt: number;

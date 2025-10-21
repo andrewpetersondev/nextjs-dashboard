@@ -3,7 +3,7 @@ import type { z } from "zod";
 import type {
   DecryptPayloadSchema,
   EncryptPayloadSchema,
-} from "@/server/auth/domain/schemas/session-payload.schema";
+} from "@/server/auth/domain/session/validation/session-payload.schema";
 
 // Inbound (untrusted) payload when creating/signing a session
 export type EncryptPayloadInput = z.input<typeof EncryptPayloadSchema>;
