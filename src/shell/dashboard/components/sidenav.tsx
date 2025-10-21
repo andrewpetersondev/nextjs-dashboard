@@ -5,12 +5,11 @@ import { ROUTES } from "@/shared/routes/routes";
 import { NavLinksWrapper } from "@/shell/dashboard/components/nav-links-wrapper";
 import { AcmeLogo } from "@/ui/brand/acme-logo";
 
-/**
- * SideNav component for dashboard layout.
- * Renders logo, navigation links, and logout form.
- * @returns Sidebar JSX element.
- */
-export const SideNav = (): JSX.Element => {
+interface SideNavProps {
+  readonly logoutAction: () => Promise<void>;
+}
+
+export const SideNav = ({ logoutAction }: SideNavProps): JSX.Element => {
   return (
     <nav
       aria-label="Dashboard sidebar"
@@ -31,7 +30,7 @@ export const SideNav = (): JSX.Element => {
           aria-hidden="true"
           className="hidden h-auto w-full grow rounded-md bg-bg-secondary md:block"
         />
-        <LogoutForm />
+        <LogoutForm logoutAction={logoutAction} />
       </div>
     </nav>
   );
