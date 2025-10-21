@@ -35,6 +35,7 @@ vi.mock("@/server/auth/infrastructure/session/set-session", () => ({
   setSession: mockSetSession,
 }));
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 describe("loginAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();

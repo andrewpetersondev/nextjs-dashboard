@@ -3,6 +3,7 @@ import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 describe("AuthUserService", () => {
   let mockRepo: AuthUserRepository;
   let mockHasher: PasswordHasher;
@@ -73,6 +74,7 @@ describe("AuthUserService", () => {
     });
   });
 
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   describe("login", () => {
     it("should successfully login with valid credentials", async () => {
       const mockUserRecord = {
