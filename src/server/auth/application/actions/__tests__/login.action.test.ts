@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LoginField } from "@/features/auth/lib/auth.schema";
+import type { SessionUser } from "@/features/auth/sessions/session-action.types";
+import type { UserId } from "@/shared/domain/domain-brands";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { loginAction } from "../login.action";
 
@@ -43,11 +45,9 @@ describe("loginAction", () => {
   });
 
   it("should successfully login and redirect on valid credentials", async () => {
-    const mockUser = {
-      email: "test@example.com",
-      id: "user-123",
-      role: "user",
-      username: "testuser",
+    const mockUser: SessionUser = {
+      id: "user-123" as UserId,
+      role: "USER",
     };
 
     mockAuthUserService.login.mockResolvedValue({
@@ -59,8 +59,16 @@ describe("loginAction", () => {
     formData.append("email", "test@example.com");
     formData.append("password", "SecurePass123!");
 
-    const initialState: FormResult<LoginField, unknown> = {
-      error: null,
+    const initialState: FormResult<LoginField, SessionUser> = {
+      error: {
+        code: "VALIDATION",
+        fieldErrors: {
+          email: [],
+          password: [],
+        },
+        kind: "validation",
+        message: "",
+      },
       ok: false,
     };
 
@@ -79,17 +87,25 @@ describe("loginAction", () => {
     formData.append("email", "invalid-email");
     formData.append("password", "SecurePass123!");
 
-    const initialState: FormResult<LoginField, unknown> = {
-      error: null,
+    const initialState: FormResult<LoginField, SessionUser> = {
+      error: {
+        code: "VALIDATION",
+        fieldErrors: {
+          email: [],
+          password: [],
+        },
+        kind: "validation",
+        message: "",
+      },
       ok: false,
     };
 
     const result = await loginAction(initialState, formData);
 
-    expect(result).toEqual({
-      error: expect.stringContaining("email"),
-      ok: false,
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain("email");
+    }
     expect(mockAuthUserService.login).not.toHaveBeenCalled();
   });
 
@@ -106,17 +122,25 @@ describe("loginAction", () => {
     formData.append("email", "test@example.com");
     formData.append("password", "WrongPassword123!");
 
-    const initialState: FormResult<LoginField, unknown> = {
-      error: null,
+    const initialState: FormResult<LoginField, SessionUser> = {
+      error: {
+        code: "VALIDATION",
+        fieldErrors: {
+          email: [],
+          password: [],
+        },
+        kind: "validation",
+        message: "",
+      },
       ok: false,
     };
 
     const result = await loginAction(initialState, formData);
 
-    expect(result).toEqual({
-      error: expect.stringContaining("Invalid"),
-      ok: false,
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain("Invalid");
+    }
     expect(mockSetSession).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
   });
@@ -126,17 +150,25 @@ describe("loginAction", () => {
     formData.append("email", "test@example.com");
     formData.append("password", "");
 
-    const initialState: FormResult<LoginField, unknown> = {
-      error: null,
+    const initialState: FormResult<LoginField, SessionUser> = {
+      error: {
+        code: "VALIDATION",
+        fieldErrors: {
+          email: [],
+          password: [],
+        },
+        kind: "validation",
+        message: "",
+      },
       ok: false,
     };
 
     const result = await loginAction(initialState, formData);
 
-    expect(result).toEqual({
-      error: expect.stringContaining("password"),
-      ok: false,
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain("password");
+    }
     expect(mockAuthUserService.login).not.toHaveBeenCalled();
   });
 });
