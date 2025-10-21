@@ -8,6 +8,7 @@ import {
   AUTH_DIVIDER_LABEL,
   SIGNUP_HEADING,
 } from "@/features/auth/lib/auth.constants";
+import { demoUserAction } from "@/server/auth/application/actions/demo-user.action";
 import { signupAction } from "@/server/auth/application/actions/signup.action";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -22,6 +23,7 @@ export default function Page(): JSX.Element {
             <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
             <AuthFormSocialSection
               demoAdminText="Sign Up as Demo Admin"
+              demoUserAction={demoUserAction}
               demoUserText="Sign Up as Demo User"
               mode="signup"
             />

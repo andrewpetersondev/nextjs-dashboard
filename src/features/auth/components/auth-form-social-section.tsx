@@ -12,11 +12,13 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
 
 interface AuthFormSocialSectionProps {
   demoUserText: string;
   demoAdminText: string;
   mode: "login" | "signup";
+  demoUserAction: (role: UserRole) => Promise<FormResult<never, unknown>>;
 }
 
 /**
@@ -29,16 +31,19 @@ interface AuthFormSocialSectionProps {
 export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
   demoUserText,
   demoAdminText,
+  demoUserAction,
   mode,
 }: AuthFormSocialSectionProps) => (
   <>
     {/* Demo user and admin buttons */}
     <DemoForm
+      action={demoUserAction}
       label={DEMO_USER_LABEL}
       text={demoUserText}
       userRole={USER_ROLE as UserRole}
     />
     <DemoForm
+      action={demoUserAction}
       label={DEMO_ADMIN_LABEL}
       text={demoAdminText}
       userRole={ADMIN_ROLE as UserRole}
