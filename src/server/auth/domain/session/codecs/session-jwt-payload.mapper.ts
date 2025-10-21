@@ -9,6 +9,8 @@ export type FlatEncryptPayload = {
   role: UserRole;
   sessionStart: number;
   userId: string;
+  exp?: number;
+  iat?: number;
 };
 
 /** Flattens EncryptPayload for JWT compatibility. */

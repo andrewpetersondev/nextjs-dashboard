@@ -1,9 +1,7 @@
 import "server-only";
-import { cookies } from "next/headers";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
-  SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/server/auth/domain/constants/session.constants";
@@ -18,10 +16,10 @@ import {
   absoluteLifetime,
   timeLeftMs,
 } from "@/server/auth/domain/session/helpers/session-helpers";
+import { sessionCookieAdapter } from "@/server/auth/infrastructure/session/session-cookie.adapter";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { UserId } from "@/shared/domain/domain-brands";
 
-// Small, testable builder for the JWT payload.
 function buildSessionJwtPayload(params: {
   readonly userId: UserId;
   readonly role: UserRole;
@@ -42,22 +40,20 @@ function buildSessionJwtPayload(params: {
   };
 }
 
-/** Internal: rotate session and persist cookie. */
-async function rotateSession(
-  store: Awaited<ReturnType<typeof cookies>>,
-  user: {
-    readonly userId: UserId;
-    readonly role: UserRole;
-    readonly sessionStart: number;
-  },
-): Promise<UpdateSessionResult> {
+async function rotateSession(user: {
+  readonly userId: UserId;
+  readonly role: UserRole;
+  readonly sessionStart: number;
+}): Promise<UpdateSessionResult> {
   const { payload, expiresAt } = buildSessionJwtPayload({
-    now: user.sessionStart, // keep original sessionStart stable
+    now: user.sessionStart,
     role: user.role,
     userId: user.userId,
   });
+
   const token = await createSessionToken(payload);
-  store.set(SESSION_COOKIE_NAME, token, buildSessionCookieOptions(expiresAt));
+  await sessionCookieAdapter.set(token, buildSessionCookieOptions(expiresAt));
+
   serverLogger.info(
     {
       context: "updateSessionToken",
@@ -67,6 +63,7 @@ async function rotateSession(
     },
     "Session token re-issued",
   );
+
   return {
     expiresAt,
     reason: "rotated",
@@ -76,46 +73,27 @@ async function rotateSession(
   };
 }
 
-/**
- * Deletes the session cookie.
- */
 export async function deleteSessionToken(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
-  serverLogger.info(
-    { context: "deleteSessionToken" },
-    "Session cookie deleted",
-  );
+  await sessionCookieAdapter.delete();
 }
 
-/**
- * Creates a new session cookie for the user.
- */
 export async function setSessionToken(
   userId: UserId,
   role: UserRole,
 ): Promise<void> {
   const { payload, expiresAt } = buildSessionJwtPayload({ role, userId });
   const session = await createSessionToken(payload);
-  const cookieStore = await cookies();
-  cookieStore.set(
-    SESSION_COOKIE_NAME,
-    session,
-    buildSessionCookieOptions(expiresAt),
-  );
+
+  await sessionCookieAdapter.set(session, buildSessionCookieOptions(expiresAt));
+
   serverLogger.info(
     { context: "setSessionToken", expiresAt, role, userId },
     `Session created for user ${userId} with role ${role}`,
   );
 }
 
-/**
- * Re-issues the session JWT and updates the cookie if the current token is valid.
- * Must be called from server actions or route handlers.
- */
 export async function updateSessionToken(): Promise<UpdateSessionResult> {
-  const store = await cookies();
-  const current = store.get(SESSION_COOKIE_NAME)?.value;
+  const current = await sessionCookieAdapter.get();
   if (!current) {
     return { reason: "no_cookie", refreshed: false };
   }
@@ -128,7 +106,7 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
 
   const { exceeded, age } = absoluteLifetime(user);
   if (exceeded) {
-    store.delete(SESSION_COOKIE_NAME);
+    await sessionCookieAdapter.delete();
     serverLogger.info(
       {
         ageMs: age,
@@ -137,7 +115,7 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
         reason: "absolute_lifetime_exceeded",
         userId: user.userId,
       },
-      "Session not re-issued due to absolute lifetime limit; cookie deleted",
+      "Session not re-issued due to absolute lifetime limit",
     );
     return {
       ageMs: age,
@@ -156,12 +134,12 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
         reason: "not_needed",
         timeLeftMs: remaining,
       },
-      "Session re-issue skipped; sufficient time remaining",
+      "Session re-issue skipped",
     );
     return { reason: "not_needed", refreshed: false, timeLeftMs: remaining };
   }
 
-  return rotateSession(store, {
+  return rotateSession({
     role: user.role,
     sessionStart: user.sessionStart,
     userId: user.userId,
