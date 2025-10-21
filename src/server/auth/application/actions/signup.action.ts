@@ -1,23 +1,17 @@
 "use server";
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupData,
   type SignupField,
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
-import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/application/actions/auth-action.constants";
+import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
+import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
-import { pipeAsync } from "@/shared/core/result/async/result-pipe-async";
-import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
-import { Ok } from "@/shared/core/result/result";
-import { mapOk } from "@/shared/core/result/sync/result-map";
-import type { UserId } from "@/shared/domain/domain-brands";
-import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
@@ -26,13 +20,7 @@ import {
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
-const LOGGER_CONTEXT = "signup.action";
 const fields = SIGNUP_FIELDS_LIST;
-
-const toSessionUser = mapOk((user: { id: UserId; role: UserRole }) => ({
-  id: user.id,
-  role: user.role,
-}));
 
 /**
  * Handles the signup action by validating form data, creating the user,
@@ -51,7 +39,7 @@ export async function signupAction(
   const raw = pickFormDataFields<SignupField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
-    loggerContext: LOGGER_CONTEXT,
+    loggerContext: AUTH_ACTION_CONTEXTS.SIGNUP,
   });
 
   if (!validated.ok) {
@@ -66,28 +54,13 @@ export async function signupAction(
   const input: SignupData = validated.value.data;
   const service = createAuthUserService(getAppDb());
 
-  // Signup pipeline (Result-based, extracted steps).
-  // Compose: Ok(input) → signup → toSessionUser → establishSession
-
-  const seed = Ok(input);
-  const signup = flatMapAsync(service.signup.bind(service));
-  const establishSession = flatMapAsync(establishSessionAction);
-
-  const sessionResult = await pipeAsync(
-    seed,
-    signup,
-    toSessionUser,
-    establishSession,
+  const sessionResult = await executeAuthPipeline(
+    input,
+    service.signup.bind(service),
   );
 
   if (!sessionResult.ok) {
-    const svcError = toUnexpectedAppError(sessionResult.error);
-    return appErrorToFormResult<SignupField, unknown>({
-      conflictEmailField: "email",
-      error: svcError,
-      fields,
-      raw,
-    });
+    return handleAuthError(sessionResult.error, fields, raw, "email");
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);

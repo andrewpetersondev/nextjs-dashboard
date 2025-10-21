@@ -1,22 +1,17 @@
 "use server";
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
 import {
   LOGIN_FIELDS_LIST,
   type LoginData,
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { establishSessionAction } from "@/server/auth/application/actions/establish-session.action";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/application/actions/auth-action.constants";
+import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
+import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
-import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
-import { Ok } from "@/shared/core/result/result";
-import { mapOk } from "@/shared/core/result/sync/result-map";
-import type { UserId } from "@/shared/domain/domain-brands";
-import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
 import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
@@ -25,13 +20,7 @@ import {
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
-const LOGGER_CONTEXT = "login.action";
 const fields = LOGIN_FIELDS_LIST;
-
-const toSessionUser = mapOk((user: { id: UserId; role: UserRole }) => ({
-  id: user.id,
-  role: user.role,
-}));
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -50,7 +39,7 @@ export async function loginAction(
   const raw = pickFormDataFields<LoginField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
-    loggerContext: LOGGER_CONTEXT,
+    loggerContext: AUTH_ACTION_CONTEXTS.LOGIN,
   });
 
   if (!validated.ok) {
@@ -65,25 +54,13 @@ export async function loginAction(
   const input: LoginData = validated.value.data;
   const service = createAuthUserService(getAppDb());
 
-  // Login pipeline (Result-based, extracted steps).
-  // Compose: Ok(input) → authenticate → toSessionUser → establishSession
-
-  const seed = Ok(input);
-  const authenticate = flatMapAsync(service.login.bind(service));
-  const establishSession = flatMapAsync(establishSessionAction);
-
-  const sessionResult = await authenticate(seed)
-    .then(toSessionUser)
-    .then(establishSession);
+  const sessionResult = await executeAuthPipeline(
+    input,
+    service.login.bind(service),
+  );
 
   if (!sessionResult.ok) {
-    const svcError = toUnexpectedAppError(sessionResult.error);
-    return appErrorToFormResult<LoginField, unknown>({
-      conflictEmailField: "email",
-      error: svcError,
-      fields,
-      raw,
-    });
+    return handleAuthError(sessionResult.error, fields, raw, "email");
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);
