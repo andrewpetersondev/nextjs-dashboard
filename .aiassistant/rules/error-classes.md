@@ -72,7 +72,7 @@ Last updated: 2025-10-16
   - src/shared/core/errors/domain/domain-errors.ts exposes ValidationError, NotFoundError, UnauthorizedError, ForbiddenError, ConflictError with matching guards
   - Prefer subclass only when it communicates intent (validation/not found/authz); otherwise use BaseError with precise code + context.
 - AppError (UI-transport shape)
-  - Type: src/shared/core/result/app-error.ts (interface AppError, ErrorLike)
+  - Type: src/shared/core/result/app-error.ts (interface AppError)
   - Builders/normalizers: src/shared/core/errors/app-error/app-error-builders.ts and app-error-normalizers.ts
   - Use appErrorFromCode, fromAppErrorLike, toAppErrorFromUnknown, and liftToAppError at boundaries.
 

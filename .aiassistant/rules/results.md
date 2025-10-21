@@ -35,9 +35,9 @@ apply: always
 1. Reference: src/shared/core/result/result.ts
 2. Types:
 
-- Result<TValue, TError extends ErrorLike> = OkResult<TValue> | ErrResult<TError>
+- Result<TValue, TError extends AppError> = OkResult<TValue> | ErrResult<TError>
 - Ok<TValue>(value: TValue): Result<TValue, never>
-- Err<TError extends ErrorLike>(error: TError): Result<never, TError>
+- Err<TError extends AppError>(error: TError): Result<never, TError>
 
 3. Available helpers (from code):
 
@@ -56,7 +56,7 @@ apply: always
 1. Result
 
 - Ensure Ok/Err, isOk/isErr, toNullable, fromCondition, toFlags are exported and typed.
-- Prefer ErrorLike for error typing; use makeErrorMapper when normalizing unknown errors to a specific error shape before constructing Err().
+- Prefer AppError for error typing; use makeErrorMapper when normalizing unknown errors to a specific error shape before constructing Err().
 
 ---
 
@@ -73,21 +73,21 @@ apply: always
 
 - Types
   - OkResult<TValue> = { ok: true; value: TValue }
-  - ErrResult<TError extends ErrorLike> = { ok: false; error: TError }
-  - Result<TValue, TError extends ErrorLike> = OkResult<TValue> | ErrResult<TError>
+  - ErrResult<TError extends AppError> = { ok: false; error: TError }
+  - Result<TValue, TError extends AppError> = OkResult<TValue> | ErrResult<TError>
 - Constructors
   - Ok<TValue>(value: TValue): Result<TValue, never>
-  - Err<TError extends ErrorLike>(error: TError): Result<never, TError>
+  - Err<TError extends AppError>(error: TError): Result<never, TError>
 - Type guards
-  - isOk<TValue, TError extends ErrorLike>(r): r is OkResult<TValue>
-  - isErr<TValue, TError extends ErrorLike>(r): r is ErrResult<TError>
+  - isOk<TValue, TError extends AppError>(r): r is OkResult<TValue>
+  - isErr<TValue, TError extends AppError>(r): r is ErrResult<TError>
 - Utilities
-  - toNullable<TValue, TError extends ErrorLike>(r): TValue | null
-  - fromCondition<TError extends ErrorLike>(condition: boolean, onFalse: () => TError): Result<boolean, TError>
-  - toFlags<TValue, TError extends ErrorLike>(r): readonly [isOk: boolean, isErr: boolean]
+  - toNullable<TValue, TError extends AppError>(r): TValue | null
+  - fromCondition<TError extends AppError>(condition: boolean, onFalse: () => TError): Result<boolean, TError>
+  - toFlags<TValue, TError extends AppError>(r): readonly [isOk: boolean, isErr: boolean]
 - Error helpers (related)
-  - ErrorLike: union of Error or { message: string }
-  - makeErrorMapper<TError extends ErrorLike>(opts): (e: unknown) => TError (see src/shared/core/result/app-error.ts)
+  - AppError: union of Error or { message: string }
+  - makeErrorMapper<TError extends AppError>(opts): (e: unknown) => TError (see src/shared/core/result/app-error.ts)
 
 Notes:
 
@@ -110,5 +110,5 @@ Notes:
 ## File Pointers
 
 - Core Result: src/shared/core/result/result.ts
-- ErrorLike + makeErrorMapper: src/shared/core/result/app-error.ts
+- AppError + makeErrorMapper: src/shared/core/result/app-error.ts
 - Result → FormResult adapter: src/shared/forms/mapping/result-to-form-result.mapper.ts

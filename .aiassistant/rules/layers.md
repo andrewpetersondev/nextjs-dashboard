@@ -15,13 +15,13 @@ apply: manually
 
 ## Overview
 
-| Layer   | Error Type            | Error Strategy                                                            |
-| ------- | --------------------- | ------------------------------------------------------------------------- |
-| DAL     | BaseError or Variant  | Throw (internal); never return BaseError or variant                       |
-| Repo    | BaseError or Variant  | Throw (internal); enrich with domain context                              |
-| Service | BaseError or Variant  | Catch at boundary; adapt to AppError; return Result (never throw outward) |
-| Action  | ErrorLike or AppError | Adapt to UI‑safe Result or FormResult; no throws to UI                    |
-| UI/App  | ErrorLike or AppError | Branch on result.ok; map via ERROR_CODES/messages; never parse BaseError  |
+| Layer   | Error Type           | Error Strategy                                                            |
+| ------- | -------------------- | ------------------------------------------------------------------------- |
+| DAL     | BaseError or Variant | Throw (internal); never return BaseError or variant                       |
+| Repo    | BaseError or Variant | Throw (internal); enrich with domain context                              |
+| Service | BaseError or Variant | Catch at boundary; adapt to AppError; return Result (never throw outward) |
+| Action  | AppError             | Adapt to UI‑safe Result or FormResult; no throws to UI                    |
+| UI/App  | AppError             | Branch on result.ok; map via ERROR_CODES/messages; never parse BaseError  |
 
 ## Adapters
 
