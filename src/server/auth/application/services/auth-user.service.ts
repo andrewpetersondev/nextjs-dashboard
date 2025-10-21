@@ -1,4 +1,6 @@
 import "server-only";
+import { createRandomPassword } from "@/features/auth/lib/auth.password";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
@@ -9,6 +11,8 @@ import { asPasswordHash } from "@/server/auth/domain/types/password.types";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
+import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
@@ -27,6 +31,50 @@ export class AuthUserService {
   constructor(repo: AuthUserRepository, hasher: PasswordHasher) {
     this.repo = repo;
     this.hasher = hasher;
+  }
+
+  /**
+   * Creates a demo user with a unique username and email for the given role.
+   * Returns Result<AuthUserTransport, AppError> for consistent error handling.
+   */
+  async createDemoUser(
+    role: UserRole,
+  ): Promise<Result<AuthUserTransport, AppError>> {
+    try {
+      const db = getAppDb();
+      const counter: number = await demoUserCounter(db, role);
+
+      if (!counter || counter <= 0) {
+        serverLogger.error({
+          context: "service.AuthUserService.createDemoUser",
+          message: "Failed to fetch demo user counter",
+          role,
+        });
+        return Err(createAuthAppError("unexpected"));
+      }
+
+      const demoPassword = createRandomPassword();
+      const uniqueEmail = `demo+${role}${counter}@demo.com`;
+      const uniqueUsername = `Demo_${role.toUpperCase()}_${counter}`;
+
+      const passwordHash = await this.hasher.hash(demoPassword);
+
+      const demoUserResult = await this.repo.withTransaction(async (txRepo) =>
+        txRepo.signup({
+          email: uniqueEmail,
+          password: passwordHash,
+          role,
+          username: uniqueUsername,
+        }),
+      );
+
+      return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
+    } catch (err: unknown) {
+      return mapRepoErrorToAppResult<AuthUserTransport>(
+        err,
+        "service.AuthUserService.createDemoUser",
+      );
+    }
   }
 
   /**
