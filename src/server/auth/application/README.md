@@ -12,7 +12,6 @@ Purpose: orchestrate auth use-cases (login, signup, session) by composing domain
    - `demo-user.action.ts` — demo user login flow
    - `verify-session-optimistic.action.ts` — optimistic session verification
    - `auth-pipeline.helper.ts` — shared pipeline utilities for actions
-   - `auth-error-handler.ts` — centralized error handling for auth flows
 
 2. **services/** — Core services and composition:
    - `auth-user.service.ts` — business orchestration (never throws; returns Result)
@@ -39,7 +38,6 @@ Server Action validates form data → creates service via factory → calls serv
 - Unit-test services by injecting mock ports.
 - Unit-test actions with mock services.
 - Integration-test actions with a test DB and controlled session helpers.
-- Verify error handling in `auth-error-handler.ts` separately.
 
 ## When to add here
 
