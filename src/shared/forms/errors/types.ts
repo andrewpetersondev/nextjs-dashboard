@@ -1,12 +1,3 @@
-/**
- * src/shared/forms/types/sparse.types.ts
- *
- * 1) Maps
- * 2) Field Errors
- * 3) Form Errors
- *
- */
-
 import type { FieldError } from "@/shared/forms/core/types";
 
 /**
