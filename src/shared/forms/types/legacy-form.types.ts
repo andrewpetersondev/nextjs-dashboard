@@ -10,7 +10,7 @@ import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
  * @example
  * const successState: SuccessFormState<string> = { data: "Success", success: true };
  */
-export interface SuccessFormState<TData = unknown> {
+interface SuccessFormState<TData = unknown> {
   readonly data: TData;
   readonly errors?: never;
   readonly message?: string;
@@ -26,7 +26,7 @@ export interface SuccessFormState<TData = unknown> {
  * @typeParam TMsg - The type of the error messages. Defaults to `string`.
  * @public
  */
-export interface FailedFormState<
+interface FailedFormState<
   TField extends string,
   TValue = string,
   TMsg = string,
