@@ -8,13 +8,13 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/features/auth/lib/auth.schema";
-import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
+import { appErrorToFormResult } from "@/shared/forms/errors/app-error.adapter";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import { toFormError } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
@@ -60,15 +60,21 @@ export async function loginAction(
     service.login.bind(service),
   );
 
-  if (sessionResult.ok) {
-    (await cookies()).set("login-success", "true", {
-      httpOnly: true,
-      maxAge: 10, // 10 seconds - gives user time to see toast even with slow loads
-      sameSite: "lax",
+  if (!sessionResult.ok) {
+    return appErrorToFormResult({
+      defaultMessage: "Login failed. Please try again.",
+      error: sessionResult.error,
+      fields,
+      raw,
     });
-
-    revalidatePath(ROUTES.DASHBOARD.ROOT);
-    redirect(ROUTES.DASHBOARD.ROOT);
   }
-  return handleAuthError<LoginField>(sessionResult.error, fields, raw, "email");
+
+  (await cookies()).set("login-success", "true", {
+    httpOnly: true,
+    maxAge: 10,
+    sameSite: "lax",
+  });
+
+  revalidatePath(ROUTES.DASHBOARD.ROOT);
+  redirect(ROUTES.DASHBOARD.ROOT);
 }
