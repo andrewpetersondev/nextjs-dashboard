@@ -9,7 +9,6 @@ import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/displ
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import {
   FormErr,
-  type FormError,
   FormOk,
   type FormResult,
   type FormSuccess,
@@ -63,7 +62,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
     return FormOk<TField, TPayload>(value.data, value.message);
   }
 
-  const error: FormError<TField> = {
+  const error: FormValidationError<TField> = {
     code: "VALIDATION" as const,
     fieldErrors: result.error.fieldErrors as DenseFieldErrorMap<TField, string>,
     kind: "validation",

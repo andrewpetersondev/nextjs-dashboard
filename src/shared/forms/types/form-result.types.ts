@@ -36,18 +36,6 @@ export interface FormValidationError<
 }
 
 /**
- * SECTION: Type aliases (friendly names, unions, reuse)
- */
-
-export type FormOkValue<TPayload> = FormSuccess<TPayload>;
-
-export type FormError<
-  TFieldName extends string,
-  TValueEcho = string,
-  TMessage extends string = string,
-> = FormValidationError<TFieldName, TValueEcho, TMessage>;
-
-/**
  * Result for forms (unifies success + validation error).
  */
 export type FormResult<
