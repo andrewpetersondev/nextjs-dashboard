@@ -70,7 +70,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
     message: result.error.message || failureMessage,
     values: selectDisplayableStringFieldValues(raw, fields, redactFields),
   };
-  return formError<TField, TPayload, string, string>({
+  return formError<TField, string, string>({
     fieldErrors: error.fieldErrors,
     message: error.message,
     values: error.values,
@@ -105,7 +105,7 @@ export function toFormOk<TField extends string, TPayload>(
  * Build a UI-facing validation error `FormResult` with optional redacted echo of submitted values.
  *
  * @typeParam TFieldNames - Union of valid form field names.
- * @typeParam TData - The success payload type (unused here; this always returns an error).
+ * @typeParam TMessage - Type of error messages (defaults to string).
  *
  * @param params - Configuration for error shaping.
  * @param params.fieldErrors - Dense field error map for the form fields.
@@ -115,13 +115,16 @@ export function toFormOk<TField extends string, TPayload>(
  * @param params.redactFields - Fields to redact in the echoed `values` (defaults to `["password"]`).
  * @returns `{ ok: false, error: { kind: "validation", fieldErrors, message, values? } }`.
  */
-export function toFormError<TField extends string, TPayload>(params: {
-  readonly fieldErrors: DenseFieldErrorMap<TField, string>;
+export function toFormError<
+  TField extends string,
+  TMessage extends string = string,
+>(params: {
+  readonly fieldErrors: DenseFieldErrorMap<TField, TMessage>;
   readonly failureMessage?: string;
   readonly fields?: readonly TField[];
   readonly raw?: Record<string, unknown>;
   readonly redactFields?: readonly TField[];
-}): FormResult<TField, TPayload> {
+}): FormResult<TField, never, string, TMessage> {
   const {
     fieldErrors,
     failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -135,7 +138,7 @@ export function toFormError<TField extends string, TPayload>(params: {
       ? selectDisplayableStringFieldValues(raw, fields, redactFields)
       : undefined;
 
-  return formError<TField, TPayload, string, string>({
+  return formError<TField, string, TMessage>({
     fieldErrors,
     message: failureMessage,
     values,

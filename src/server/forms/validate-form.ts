@@ -148,7 +148,7 @@ export async function validateFormGeneric<
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     const failure = toValidationFailure<TFieldNames>(e, fields, loggerContext);
-    return formError<TFieldNames, TIn, string, string>({
+    return formError<TFieldNames, string, string>({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
     });
@@ -160,7 +160,7 @@ export async function validateFormGeneric<
       fields,
       loggerContext,
     );
-    return createFormErrorWithStrings<TFieldNames, TIn>({
+    return createFormErrorWithStrings<TFieldNames>({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
     });

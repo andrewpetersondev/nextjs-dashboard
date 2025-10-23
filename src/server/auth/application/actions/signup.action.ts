@@ -8,7 +8,6 @@ import {
   type SignupField,
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
-import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
@@ -35,9 +34,9 @@ const fields = SIGNUP_FIELDS_LIST;
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
 export async function signupAction(
-  _prevState: FormResult<SignupField, SessionUser>,
+  _prevState: FormResult<SignupField, never>,
   formData: FormData,
-): Promise<FormResult<SignupField, SessionUser>> {
+): Promise<FormResult<SignupField, never>> {
   const raw = extractFormDataFields<SignupField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
@@ -45,7 +44,7 @@ export async function signupAction(
   });
 
   if (!validated.ok) {
-    return toFormError<SignupField, SessionUser>({
+    return toFormError<SignupField>({
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,
@@ -71,7 +70,7 @@ export async function signupAction(
     revalidatePath(ROUTES.DASHBOARD.ROOT);
     redirect(ROUTES.DASHBOARD.ROOT);
   }
-  return handleAuthError<SignupField, SessionUser>(
+  return handleAuthError<SignupField>(
     sessionResult.error,
     fields,
     raw,

@@ -1,4 +1,6 @@
 "use server";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   LOGIN_FIELDS_LIST,
@@ -14,10 +16,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
-import {
-  toFormError,
-  toFormOk,
-} from "@/shared/forms/state/mappers/result-to-form.mapper";
+import { toFormError } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = LOGIN_FIELDS_LIST;
@@ -31,11 +30,13 @@ const fields = LOGIN_FIELDS_LIST;
  * - Authenticate → map Ok(user) to { id, role } only.
  * - Establish session → on failure, map to UI-safe FormResult.
  * - Redirect to dashboard on success.
+ *
+ * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
 export async function loginAction(
-  _prevState: FormResult<LoginField, unknown>,
+  _prevState: FormResult<LoginField, never>,
   formData: FormData,
-): Promise<FormResult<LoginField, unknown>> {
+): Promise<FormResult<LoginField, never>> {
   const raw = extractFormDataFields<LoginField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
@@ -43,7 +44,7 @@ export async function loginAction(
   });
 
   if (!validated.ok) {
-    return toFormError<LoginField, unknown>({
+    return toFormError<LoginField>({
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,
@@ -59,10 +60,15 @@ export async function loginAction(
     service.login.bind(service),
   );
 
-  if (!sessionResult.ok) {
-    return handleAuthError(sessionResult.error, fields, raw, "email");
-  }
+  if (sessionResult.ok) {
+    (await cookies()).set("login-success", "true", {
+      httpOnly: true,
+      maxAge: 10, // 10 seconds - gives user time to see toast even with slow loads
+      sameSite: "lax",
+    });
 
-  redirect(ROUTES.DASHBOARD.ROOT);
-  return toFormOk<LoginField, unknown>({});
+    revalidatePath(ROUTES.DASHBOARD.ROOT);
+    redirect(ROUTES.DASHBOARD.ROOT);
+  }
+  return handleAuthError<LoginField>(sessionResult.error, fields, raw, "email");
 }

@@ -8,13 +8,13 @@ import { appErrorToFormResult } from "@/shared/forms/errors/app-error.adapter";
  * @deprecated Use `appErrorToFormResult` from `@/shared/forms/errors/app-error.adapter` directly.
  * This wrapper will be removed in a future release.
  */
-export function handleAuthError<F extends string, TPayload = unknown>(
+export function handleAuthError<F extends string>(
   error: AppError,
   fields: readonly F[],
   raw: Record<string, string>,
   conflictEmailField: F,
-): FormResult<F, TPayload> {
-  return appErrorToFormResult<F, TPayload>({
+): FormResult<F, never> {
+  return appErrorToFormResult<F>({
     conflictEmailField,
     error,
     fields,

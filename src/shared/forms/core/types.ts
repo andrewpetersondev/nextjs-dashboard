@@ -102,7 +102,6 @@ export const formOk = <TFieldName extends string, TPayload>(
 // Create a FormResult validation error (freezes payload)
 export const formError = <
   TFieldName extends string,
-  TPayload = never,
   TValueEcho = string,
   TMessage extends string = string,
 >(params: {
@@ -110,7 +109,7 @@ export const formError = <
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
-}): FormResult<TFieldName, TPayload, TValueEcho, TMessage> => {
+}): FormResult<TFieldName, never, TValueEcho, TMessage> => {
   const error = freeze<FormError<TFieldName, TValueEcho, TMessage>>({
     code: params.code ?? "VALIDATION",
     fieldErrors: params.fieldErrors,
@@ -145,12 +144,9 @@ export const isFormErr = <
  * @returns A `FormResult` object encapsulating the error details and payload.
  * @see {@link formError} for base implementation details.
  */
-export const createFormErrorWithStrings = <
-  TFieldName extends string,
-  TPayload,
->(params: {
+export const createFormErrorWithStrings = <TFieldName extends string>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, string>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, string>;
-}): FormResult<TFieldName, TPayload> =>
-  formError<TFieldName, TPayload, string, string>(params);
+}): FormResult<TFieldName, never> =>
+  formError<TFieldName, string, string>(params);

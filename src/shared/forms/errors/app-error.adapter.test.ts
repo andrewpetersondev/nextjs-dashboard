@@ -37,7 +37,7 @@ describe("appErrorToFormResult", () => {
       fields: ["email"],
     });
 
-    const result = appErrorToFormResult<Field, unknown>({
+    const result = appErrorToFormResult<Field>({
       error: err,
       fields,
       raw: RAW,
@@ -65,7 +65,7 @@ describe("appErrorToFormResult", () => {
   it("falls back to generic validation failure with dense empty arrays when not conflict", () => {
     const err = makeError("DATABASE", "DB failed");
 
-    const result = appErrorToFormResult<Field, unknown>({
+    const result = appErrorToFormResult<Field>({
       defaultMessage: "Request failed. Please try again.",
       error: err,
       fields,
@@ -96,7 +96,7 @@ describe("appErrorToFormResult", () => {
   it("uses provided conflictEmailField when inferring from details is not possible", () => {
     const err = makeError("CONFLICT", "Conflict");
 
-    const result = appErrorToFormResult<Field, unknown>({
+    const result = appErrorToFormResult<Field>({
       conflictEmailField: "email",
       conflictMessage: "Email already in use",
       error: err,
@@ -116,7 +116,7 @@ describe("appErrorToFormResult", () => {
   it("honors custom redactFields option", () => {
     const err = makeError("CONFLICT", "Conflict", { column: "email" });
 
-    const result = appErrorToFormResult<Field, unknown>({
+    const result = appErrorToFormResult<Field>({
       error: err,
       fields,
       raw: RAW,

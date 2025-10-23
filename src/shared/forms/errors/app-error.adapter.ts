@@ -75,9 +75,9 @@ export type AppErrorToFormParams<TField extends string> = {
  * - Otherwise produces dense empty arrays and a generic message.
  * - Echoes redacted values from raw (defaults to password/confirmPassword redaction).
  */
-export function appErrorToFormResult<TField extends string, TData>(
+export function appErrorToFormResult<TField extends string>(
   params: AppErrorToFormParams<TField>,
-): FormResult<TField, TData> {
+): FormResult<TField, never> {
   const {
     fields,
     raw,
@@ -113,7 +113,7 @@ export function appErrorToFormResult<TField extends string, TData>(
     effectiveRedact,
   );
 
-  return formError<TField, TData, string, string>({
+  return formError<TField, string, string>({
     fieldErrors: dense,
     message: targeted ? conflictMessage : error.message || defaultMessage,
     values,

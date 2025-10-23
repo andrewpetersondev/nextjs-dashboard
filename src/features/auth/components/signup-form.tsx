@@ -13,25 +13,22 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
-import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import type { FormResult } from "@/shared/forms/core/types";
 import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = createInitialFailedFormState<
-  SignupField,
-  string,
-  SessionUser
->(SIGNUP_FIELDS_LIST);
+const INITIAL_STATE = createInitialFailedFormState<SignupField, string, never>(
+  SIGNUP_FIELDS_LIST,
+);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 interface SignupFormProps {
   action: (
-    _prevState: FormResult<SignupField, SessionUser, string>,
+    _prevState: FormResult<SignupField, never>,
     formData: FormData,
-  ) => Promise<FormResult<SignupField, SessionUser, string>>;
+  ) => Promise<FormResult<SignupField, never>>;
 }
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
@@ -39,7 +36,7 @@ export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormResult<SignupField, SessionUser, string>,
+    FormResult<SignupField, never>,
     FormData
   >(action, INITIAL_STATE);
 
