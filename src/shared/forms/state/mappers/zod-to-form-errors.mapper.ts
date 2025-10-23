@@ -1,4 +1,4 @@
-import type { ZodError, z } from "zod";
+import { type ZodError, z } from "zod";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
@@ -7,7 +7,6 @@ import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/validation/error-map";
-import { flattenZodError } from "@/shared/forms/validation/utils/zod-error.helpers";
 
 /**
  * Build sparse errors limited to allowed fields from a ZodError.
@@ -17,7 +16,7 @@ export function mapZodErrorToSparseFieldErrors<TFieldNames extends string>(
   error: z.ZodError,
   allowedFields: readonly TFieldNames[],
 ): SparseFieldErrorMap<TFieldNames, string> {
-  const { fieldErrors } = flattenZodError(error);
+  const { fieldErrors } = z.flattenError(error);
   return selectSparseFieldErrorsForAllowedFields<TFieldNames, string>(
     fieldErrors,
     allowedFields,

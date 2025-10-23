@@ -9,10 +9,8 @@ import {
   formError,
   formOk,
 } from "@/shared/forms/core/types";
-import {
-  resolveCanonicalFieldNames,
-  resolveRawFieldPayload,
-} from "@/shared/forms/fields/field-names.resolve";
+import { resolveRawFieldPayload } from "@/shared/forms/fields/field-names.resolve";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
 import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/validation/error-map";
 import { isZodErrorLikeShape } from "@/shared/forms/validation/utils/zod-error.helpers";
@@ -134,7 +132,7 @@ export async function validateFormGeneric<
     messages,
   } = options;
 
-  const fields = resolveCanonicalFieldNames<TIn, TFieldNames>(
+  const fields = resolveCanonicalFieldNamesFromSchema<TIn, TFieldNames>(
     schema,
     allowedFields,
     explicitFields,

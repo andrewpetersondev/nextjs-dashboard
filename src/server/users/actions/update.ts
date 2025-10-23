@@ -21,8 +21,8 @@ import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import type { FormResult } from "@/shared/forms/core/types";
-import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
+import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
   mapResultToFormResult,
   toFormOk,

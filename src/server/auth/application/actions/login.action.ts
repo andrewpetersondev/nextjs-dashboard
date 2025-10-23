@@ -13,7 +13,7 @@ import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.consta
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
-import { pickFormDataFields } from "@/shared/forms/fields/formdata.extractor";
+import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
   toFormOk,
   toFormValidationErr,
@@ -36,7 +36,7 @@ export async function loginAction(
   _prevState: FormResult<LoginField, unknown>,
   formData: FormData,
 ): Promise<FormResult<LoginField, unknown>> {
-  const raw = pickFormDataFields<LoginField>(formData, fields);
+  const raw = extractFormDataFields<LoginField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
     loggerContext: AUTH_ACTION_CONTEXTS.LOGIN,

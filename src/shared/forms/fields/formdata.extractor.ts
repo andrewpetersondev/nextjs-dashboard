@@ -31,7 +31,7 @@ export function extractRawRecordFromFormData<TFieldNames extends string>(
  * @param allowed - An array of allowed field names to pick.
  * @returns A readonly object containing the picked fields and their string values.
  */
-export function pickFormDataFields<TAllowed extends string>(
+export function extractFormDataFields<TAllowed extends string>(
   fd: FormData,
   allowed: readonly TAllowed[],
 ): Readonly<Partial<Record<TAllowed, string>>> {

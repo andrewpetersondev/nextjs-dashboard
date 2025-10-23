@@ -4,45 +4,6 @@ import { type ZodRawShape, z } from "zod";
 // the object you pass in is a ZodRawShape. It is used internally for typing the structure of Zod object schemas.
 
 /**
- * Flatten a ZodError into an object with keys: formErrors, fieldErrors
- *
- *
- *
- * @example
- * // Create invalid data (username is valid, email is invalid, password is invalid)
- * const invalidUser = {
- *     username: "andrew",
- *     email: "invalid-email",
- *     password: "123",
- * //  asdf: "this key will cause a form error when using flatten and something similar when using treeify"
- * };
- *
- * {
- *   formErrors: [],
- *   fieldErrors: {
- *     email: [ 'Email had some sort of error. Please try again.' ],
- *     password: [
- *       'Password must be at least 5 characters long.',
- *       'Password must contain at least one letter.',
- *       'Password must contain at least one special character.'
- *     ]
- *   }
- * }
- *
- * @returns formErrors: string[], fieldErrors: Record<string, string[]>
- *
- * @remarks
- * - formErrors is always present as an empty array if no form errors exist
- * - fieldErrors is an object with keys: field name and value is an array of error messages
- *      - If no errors exist for a field, the key does not exist
- *
- */
-export const flattenZodError = (error: z.ZodError) => {
-  const flattened = z.flattenError(error);
-  return flattened;
-};
-
-/**
  * Determine whether a given Zod schema is a {@link z.ZodObject}.
  *
  * @param schema - Any Zod schema instance.
@@ -113,15 +74,4 @@ export const isZodErrorLikeShape = (
   const flattenLooksRight = typeof anyErr.flatten === "function";
 
   return nameLooksRight || issuesLooksRight || flattenLooksRight;
-};
-
-// -------------------
-// unused
-// ---------------------
-
-export const untouchedZodError = (error: z.ZodError) => error;
-
-export const treeifyZodError = (error: z.ZodError) => {
-  const tree = z.treeifyError(error);
-  return tree;
 };

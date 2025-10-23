@@ -14,7 +14,8 @@ import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import type { FormResult } from "@/shared/forms/core/types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
+
+import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
