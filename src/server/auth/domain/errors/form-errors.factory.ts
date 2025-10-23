@@ -1,3 +1,4 @@
+import "server-only";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
 

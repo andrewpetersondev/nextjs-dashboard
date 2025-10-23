@@ -16,3 +16,9 @@ export const AUTH_MESSAGES = {
   unexpected: "Unexpected error occurred",
   validation: "Invalid data",
 } as const;
+
+export const AUTH_ACTION_CONTEXTS = {
+  DEMO_USER: "demo-user.action",
+  LOGIN: "login.action",
+  SIGNUP: "signup.action",
+} as const;

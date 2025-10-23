@@ -10,7 +10,7 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/app-error.metadata";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
