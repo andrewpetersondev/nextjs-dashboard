@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: off
 ---
 
 # Layer Rules

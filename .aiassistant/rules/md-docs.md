@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: off
 patterns: src/**/*.md, docs/**/*.md
 ---
 

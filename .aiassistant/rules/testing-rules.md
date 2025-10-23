@@ -1,5 +1,5 @@
 ---
-apply: manually
+apply: off
 patterns: ["src/**/*.{test,spec}.ts", "src/**/*.{test,spec}.tsx", "cypress/**"]
 ---
 
