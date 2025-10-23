@@ -8,11 +8,11 @@ import {
 import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import {
-  FormErr,
   type FormError,
-  FormOk,
   type FormResult,
   type FormSuccess,
+  formError,
+  formOk,
 } from "@/shared/forms/types/form-result.types";
 
 /**
@@ -59,7 +59,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
       data: result.value,
       message: successMessage,
     };
-    return FormOk<TField, TPayload>(value.data, value.message);
+    return formOk<TField, TPayload>(value.data, value.message);
   }
 
   const error: FormError<TField> = {
@@ -69,7 +69,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
     message: result.error.message || failureMessage,
     values: selectDisplayableStringFieldValues(raw, fields, redactFields),
   };
-  return FormErr<TField, TPayload, string, string>({
+  return formError<TField, TPayload, string, string>({
     fieldErrors: error.fieldErrors,
     message: error.message,
     values: error.values,
@@ -97,7 +97,7 @@ export function toFormOk<TField extends string, TPayload>(
   } = {},
 ): FormResult<TField, TPayload> {
   const message = opts.successMessage ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE;
-  return FormOk<TField, TPayload>(data, message);
+  return formOk<TField, TPayload>(data, message);
 }
 
 /**
@@ -138,7 +138,7 @@ export function toFormValidationErr<TField extends string, TPayload>(params: {
       ? selectDisplayableStringFieldValues(raw, fields, redactFields)
       : undefined;
 
-  return FormErr<TField, TPayload, string, string>({
+  return formError<TField, TPayload, string, string>({
     fieldErrors,
     message: failureMessage,
     values,

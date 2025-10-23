@@ -44,7 +44,7 @@ export type FormResult<
 
 // SECTION: Constructors and guards
 
-export const FormOk = <TFieldName extends string, TPayload>(
+export const formOk = <TFieldName extends string, TPayload>(
   data: TPayload,
   message: string,
 ): FormResult<TFieldName, TPayload> => {
@@ -53,9 +53,9 @@ export const FormOk = <TFieldName extends string, TPayload>(
 };
 
 // Create a FormResult validation error (freezes payload)
-export const FormErr = <
+export const formError = <
   TFieldName extends string,
-  TPayload,
+  TPayload = never,
   TValueEcho = string,
   TMessage extends string = string,
 >(params: {
@@ -98,11 +98,14 @@ export const isFormErr = <
  * @typeParam TPayload - Specifies the structure of the additional payload included in the form result.
  * @param params - An object containing `fieldErrors`, `message`, and optional `values`.
  * @returns A `FormResult` object encapsulating the error details and payload.
- * @see {@link FormErr} for base implementation details.
+ * @see {@link formError} for base implementation details.
  */
-export const formErrStrings = <TFieldName extends string, TPayload>(params: {
+export const createFormErrorWithStrings = <
+  TFieldName extends string,
+  TPayload,
+>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, string>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, string>;
 }): FormResult<TFieldName, TPayload> =>
-  FormErr<TFieldName, TPayload, string, string>(params);
+  formError<TFieldName, TPayload, string, string>(params);

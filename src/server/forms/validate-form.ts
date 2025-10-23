@@ -10,11 +10,11 @@ import {
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import {
-  FormErr,
+  createFormErrorWithStrings,
   type FormError,
-  FormOk,
   type FormResult,
-  formErrStrings,
+  formError,
+  formOk,
 } from "@/shared/forms/types/form-result.types";
 
 // Consolidate default messages and logger context
@@ -150,7 +150,7 @@ export async function validateFormGeneric<
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     const failure = toValidationFailure<TFieldNames>(e, fields, loggerContext);
-    return FormErr<TFieldNames, TIn, string, string>({
+    return formError<TFieldNames, TIn, string, string>({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
     });
@@ -162,11 +162,11 @@ export async function validateFormGeneric<
       fields,
       loggerContext,
     );
-    return formErrStrings<TFieldNames, TIn>({
+    return createFormErrorWithStrings<TFieldNames, TIn>({
       fieldErrors: failure.fieldErrors,
       message: failureMessage,
     });
   }
 
-  return FormOk<TFieldNames, TIn>(parsed.data, successMessage);
+  return formOk<TFieldNames, TIn>(parsed.data, successMessage);
 }

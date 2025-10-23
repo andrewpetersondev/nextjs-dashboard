@@ -6,8 +6,8 @@ import {
 import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import {
-  FormErr,
   type FormResult,
+  formError,
 } from "@/shared/forms/types/form-result.types";
 
 const EMAIL_REGEX = /email/i;
@@ -115,7 +115,7 @@ export function appErrorToFormResult<TField extends string, TData>(
     effectiveRedact,
   );
 
-  return FormErr<TField, TData, string, string>({
+  return formError<TField, TData, string, string>({
     fieldErrors: dense,
     message: targeted ? conflictMessage : error.message || defaultMessage,
     values,
