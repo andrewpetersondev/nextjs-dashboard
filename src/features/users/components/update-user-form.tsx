@@ -5,10 +5,7 @@ import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
-import {
-  type EditUserFormFieldNames,
-  EditUserFormSchema,
-} from "@/features/users/lib/user.schema";
+import { EditUserFormSchema } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
 import type { FormResult } from "@/shared/forms/core/types";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
@@ -18,12 +15,12 @@ export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
     createInitialFailedFormStateFromSchema(EditUserFormSchema);
 
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
-    prevState: FormResult<EditUserFormFieldNames, unknown>,
+    prevState: FormResult<unknown>,
     formData: FormData,
-  ) => Promise<FormResult<EditUserFormFieldNames, UserDto>>;
+  ) => Promise<FormResult<unknown>>;
 
   const [state, action, pending] = useActionState<
-    FormResult<EditUserFormFieldNames, UserDto>,
+    FormResult<unknown>,
     FormData
   >(updateUserWithId, initialState);
 

@@ -9,38 +9,49 @@ import {
   LOGIN_FIELDS_LIST,
   type LoginField,
 } from "@/features/auth/lib/auth.schema";
-import type { FormResult } from "@/shared/forms/core/types";
+import {
+  type FormResult,
+  getFieldErrors,
+  getFieldValues,
+} from "@/shared/forms/core/types";
 import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = createInitialFailedFormState<LoginField, string, never>(
-  LOGIN_FIELDS_LIST,
-);
+const INITIAL_STATE =
+  createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 interface LoginFormProps {
   action: (
-    prevState: FormResult<LoginField, never>,
+    _prevState: FormResult<LoginField>,
     formData: FormData,
-  ) => Promise<FormResult<LoginField, never>>;
+  ) => Promise<FormResult<LoginField>>;
 }
 
 /**
  * LoginForm component for user authentication.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately>
 export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormResult<LoginField, never>,
+    FormResult<LoginField>,
     FormData
   >(action, INITIAL_STATE);
+
   const baseId = useId();
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
-  const values = state.ok ? undefined : state.error.values;
+
+  // Extract form details safely from AppError
+  const fieldErrors = state.ok
+    ? undefined
+    : getFieldErrors<LoginField>(state.error);
+
+  const values = state.ok ? undefined : getFieldValues<LoginField>(state.error);
 
   return (
     <>
@@ -57,7 +68,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           dataCy="login-email-input"
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
-          error={state.ok ? undefined : state.error.fieldErrors.email}
+          error={fieldErrors?.email}
           icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
           id={emailId}
           label="Email address"
@@ -70,7 +81,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           autoComplete="current-password"
           dataCy="login-password-input"
           describedById={`${passwordId}-errors`}
-          error={state.ok ? undefined : state.error.fieldErrors.password}
+          error={fieldErrors?.password}
           icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
           id={passwordId}
           label="Password"

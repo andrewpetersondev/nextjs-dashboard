@@ -10,14 +10,14 @@ import type {
  * Keeps only fields present in allowedFields and with non-empty errors.
  *
  * @typeParam TFieldNames - String-literal union of allowed field names.
- * @typeParam TMsg - Message type (defaults to FormMessage).
+ * @typeParam TMsg - Message type.
  * @param fieldErrors - Source errors keyed by field; values may be undefined.
  * @param allowedFields - Field names to include.
  * @returns Sparse error map with only allowed fields that have errors.
  */
 export function selectSparseFieldErrorsForAllowedFields<
   TFieldNames extends string,
-  TMsg extends string = string,
+  TMsg extends string,
 >(
   fieldErrors:
     | Partial<Record<TFieldNames, readonly TMsg[] | undefined>>
@@ -46,7 +46,7 @@ export function selectSparseFieldErrorsForAllowedFields<
  */
 export function createEmptyDenseFieldErrorMap<
   TField extends string,
-  TMsg extends string = string,
+  TMsg extends string,
 >(fields: readonly TField[]): DenseFieldErrorMap<TField, TMsg> {
   const result: Partial<Record<TField, readonly TMsg[]>> = {};
   for (const f of fields) {
@@ -63,7 +63,7 @@ export function createEmptyDenseFieldErrorMap<
  */
 export function toDenseFieldErrorMapFromSparse<
   TField extends string,
-  TMsg extends string = string,
+  TMsg extends string,
 >(
   sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
   fields: readonly TField[],
@@ -111,7 +111,7 @@ export function normalizeAndFreezeDenseFieldErrorMap<
  */
 export function setSingleFieldErrorMessage<
   TField extends string,
-  TMsg extends string = string,
+  TMsg extends string,
 >(
   fields: readonly TField[],
   message: TMsg,

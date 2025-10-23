@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, JSX } from "react";
 import { DemoForm } from "@/features/auth/components/demo-form";
 import { SocialLoginButton } from "@/features/auth/components/social-login-button";
 import {
@@ -15,15 +15,19 @@ import {
 import type { FormResult } from "@/shared/forms/core/types";
 
 interface AuthFormSocialSectionProps {
-  demoUserText: string;
-  demoAdminText: string;
-  mode: "login" | "signup";
-  demoUserAction: (role: UserRole) => Promise<FormResult<never, unknown>>;
+  readonly demoUserText: string;
+  readonly demoAdminText: string;
+  readonly mode: "login" | "signup";
+  readonly demoUserAction: (
+    _prevState: FormResult<never>,
+    formData: FormData,
+  ) => Promise<FormResult<never>>;
 }
 
 /**
  * AuthFormSocialSection
  * Reusable social section for authentication forms.
+ * Displays demo user/admin login buttons and OAuth social login options.
  *
  * @param props - AuthFormSocialSectionProps
  * @returns Social login section component.
@@ -33,7 +37,7 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
   demoAdminText,
   demoUserAction,
   mode,
-}: AuthFormSocialSectionProps) => (
+}: AuthFormSocialSectionProps): JSX.Element => (
   <>
     {/* Demo user and admin buttons */}
     <DemoForm

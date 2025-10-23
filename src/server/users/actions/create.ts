@@ -1,20 +1,15 @@
 "use server";
-
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/features/users/lib/messages";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import {
-  type CreateUserFormFieldNames,
-  CreateUserFormSchema,
-} from "@/features/users/lib/user.schema";
+import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
 import type { FormResult } from "@/shared/forms/core/types";
-
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
   selectSparseFieldErrorsForAllowedFields,
@@ -45,9 +40,9 @@ function pickCreateUserFormData(formData: FormData): CreateUserFormData {
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <52 of 50>
 export async function createUserAction(
-  _prevState: FormResult<CreateUserFormFieldNames, unknown>,
+  _prevState: FormResult<unknown>,
   formData: FormData,
-): Promise<FormResult<CreateUserFormFieldNames, unknown>> {
+): Promise<FormResult<unknown>> {
   const db = getAppDb();
   const allowed = deriveFieldNamesFromSchema(CreateUserFormSchema);
 
@@ -63,14 +58,17 @@ export async function createUserAction(
     if (!parsed.success) {
       return {
         error: {
+          __appError: "AppError" as const,
           code: "VALIDATION" as const,
-          fieldErrors: toDenseFieldErrorMapFromSparse(
-            selectSparseFieldErrorsForAllowedFields(
-              parsed.error.flatten().fieldErrors,
+          details: {
+            fieldErrors: toDenseFieldErrorMapFromSparse(
+              selectSparseFieldErrorsForAllowedFields(
+                parsed.error.flatten().fieldErrors,
+                allowed,
+              ),
               allowed,
             ),
-            allowed,
-          ),
+          },
           kind: "validation",
           message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
         },
@@ -94,8 +92,11 @@ export async function createUserAction(
       });
       return {
         error: {
+          __appError: "AppError" as const,
           code: "VALIDATION" as const,
-          fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+          details: {
+            fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+          },
           kind: "validation",
           message: USER_ERROR_MESSAGES.CREATE_FAILED,
         },
@@ -118,8 +119,11 @@ export async function createUserAction(
     });
     return {
       error: {
+        __appError: "AppError" as const,
         code: "VALIDATION" as const,
-        fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+        details: {
+          fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+        },
         kind: "validation",
         message: USER_ERROR_MESSAGES.UNEXPECTED,
       },

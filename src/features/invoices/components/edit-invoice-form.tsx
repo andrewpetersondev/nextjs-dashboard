@@ -43,7 +43,7 @@ function FormFields({
 }: {
   currentInvoice: EditInvoiceViewModel;
   customers: CustomerField[];
-  errors: DenseFieldErrorMap<UpdateInvoiceFieldNames>;
+  errors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
   pending: boolean;
 }): JSX.Element {
   return (
@@ -95,7 +95,7 @@ export const EditInvoiceForm = ({
 }: {
   invoice: EditInvoiceViewModel; // fully populated for UI defaults
   customers: CustomerField[];
-  errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames>;
+  errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
 }): JSX.Element => {
   const initialState =
     createInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
@@ -119,7 +119,7 @@ export const EditInvoiceForm = ({
   );
 
   // Prefer externally provided dense errors; fall back to state (failure) errors or empty dense errors from initial state
-  const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames> =
+  const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string> =
     externalErrors ??
     (state.success
       ? //@ts-ignore

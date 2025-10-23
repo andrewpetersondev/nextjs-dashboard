@@ -1,44 +1,31 @@
 // File: src/shared/forms/mappers/result-to-form.mapper.ts
 
+import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/core/constants";
 import {
-  type FormError,
   type FormResult,
-  type FormSuccess,
   formError,
   formOk,
+  getFieldErrors,
+  getFieldValues,
 } from "@/shared/forms/core/types";
-
 import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 
 /**
- * Maps a domain `Result` to a UI-facing `FormResult` by delegating to the canonical shapers.
+ * Maps a domain `Result` to a UI-facing `FormResult`.
  *
- * @typeParam TFieldNames - Union of valid form field names.
- * @typeParam TData - The success payload type.
- * @param result - Discriminated `Result` with either success data or validation errors.
+ * @param result - Discriminated `Result` with either success data or AppError.
  * @param params - Adapter options for messages and value echoing/redaction.
- * @returns
- * - `{ ok: true, value }` on success via {@link toFormOk}.
- * - `{ ok: false, error }` on failure via {@link toFormError}.
- *
- * Remarks:
- * - Success:
- *   - Delegates to {@link toFormOk} with `successMessage` (defaults to a generic success message).
- * - Failure:
- *   - Delegates to {@link toFormError} and always computes a redacted `values` echo using `fields`
- *     and `redactFields` (defaults to `["password"]`).
- *   - Uses `result.error.message` if present; otherwise falls back to `failureMessage`.
- * - Use this when you already have `Result<TData, FormValidationResult<TFieldNames>>` (e.g., schema/service output)
- *   and want a single adapter to the UI `FormResult`.
+ * @returns FormResult with success value or validation error.
  */
 export function mapResultToFormResult<TField extends string, TPayload>(
-  result: Result<TPayload, FormError<TField>>,
+  result: Result<TPayload, AppError>,
   params: {
     fields: readonly TField[];
     raw: Record<string, unknown>;
@@ -46,7 +33,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
     redactFields?: readonly TField[];
     successMessage?: string;
   },
-): FormResult<TField, TPayload> {
+): FormResult<TPayload> {
   const {
     successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
     failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -56,75 +43,49 @@ export function mapResultToFormResult<TField extends string, TPayload>(
   } = params;
 
   if (result.ok) {
-    const value: FormSuccess<TPayload> = {
-      data: result.value,
-      message: successMessage,
-    };
-    return formOk<TField, TPayload>(value.data, value.message);
+    return formOk<TPayload>(result.value, successMessage);
   }
 
-  const error: FormError<TField> = {
-    code: "VALIDATION" as const,
-    fieldErrors: result.error.fieldErrors as DenseFieldErrorMap<TField, string>,
-    kind: "validation",
+  // Extract field errors from AppError.details or create empty dense map
+  const fieldErrors =
+    getFieldErrors<TField>(result.error) ??
+    createEmptyDenseFieldErrorMap<TField, string>(fields);
+
+  // Try to preserve existing values from error, fallback to computing from raw
+  const values =
+    getFieldValues<TField>(result.error) ??
+    selectDisplayableStringFieldValues(raw, fields, redactFields);
+
+  return formError<TField>({
+    fieldErrors,
     message: result.error.message || failureMessage,
-    values: selectDisplayableStringFieldValues(raw, fields, redactFields),
-  };
-  return formError<TField, string, string>({
-    fieldErrors: error.fieldErrors,
-    message: error.message,
-    values: error.values,
+    values,
   });
 }
 
 /**
  * Create a UI-facing success `FormResult` from data.
- *
- * @typeParam TFieldNames - Union of valid form field names (not used on success; kept for consistency).
- * @typeParam TData - The success payload type.
- *
- * @param data - The successful payload.
- * @param opts - Optional success message override.
- * @returns `{ ok: true, value: { data, message } }`.
- *
- * Notes:
- * - This mirrors the success branch of {@link mapResultToFormResult}.
- * - No `values` echo is attached on success.
  */
-export function toFormOk<TField extends string, TPayload>(
+export function toFormOk<TPayload>(
   data: TPayload,
   opts: {
     readonly successMessage?: string;
   } = {},
-): FormResult<TField, TPayload> {
+): FormResult<TPayload> {
   const message = opts.successMessage ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE;
-  return formOk<TField, TPayload>(data, message);
+  return formOk<TPayload>(data, message);
 }
 
 /**
  * Build a UI-facing validation error `FormResult` with optional redacted echo of submitted values.
- *
- * @typeParam TFieldNames - Union of valid form field names.
- * @typeParam TMessage - Type of error messages (defaults to string).
- *
- * @param params - Configuration for error shaping.
- * @param params.fieldErrors - Dense field error map for the form fields.
- * @param params.failureMessage - Optional override for the failure message (defaults to a generic validation failure).
- * @param params.raw - Raw submitted values used to compute the redacted `values` echo (defaults to `{}`).
- * @param params.fields - Ordered list of fields to echo (omit or pass empty to suppress `values` entirely).
- * @param params.redactFields - Fields to redact in the echoed `values` (defaults to `["password"]`).
- * @returns `{ ok: false, error: { kind: "validation", fieldErrors, message, values? } }`.
  */
-export function toFormError<
-  TField extends string,
-  TMessage extends string = string,
->(params: {
-  readonly fieldErrors: DenseFieldErrorMap<TField, TMessage>;
+export function toFormError<TField extends string>(params: {
+  readonly fieldErrors: DenseFieldErrorMap<TField, string>;
   readonly failureMessage?: string;
   readonly fields?: readonly TField[];
   readonly raw?: Record<string, unknown>;
   readonly redactFields?: readonly TField[];
-}): FormResult<TField, never, string, TMessage> {
+}): FormResult<never> {
   const {
     fieldErrors,
     failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -138,7 +99,7 @@ export function toFormError<
       ? selectDisplayableStringFieldValues(raw, fields, redactFields)
       : undefined;
 
-  return formError<TField, string, TMessage>({
+  return formError<TField>({
     fieldErrors,
     message: failureMessage,
     values,

@@ -9,11 +9,11 @@ import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
 // Make the form generic over field names to support both create and edit flows
-type Props<TFieldNames extends string> = {
+type Props = {
   title: string;
   description: string;
   action: (formData: FormData) => void;
-  state: FormResult<TFieldNames, unknown>;
+  state: FormResult<unknown>;
   pending: boolean;
   initialValues?: Partial<UserDto> & { password?: string };
   isEdit?: boolean;
@@ -23,7 +23,7 @@ type Props<TFieldNames extends string> = {
   extraContent?: ReactNode;
 };
 
-export function UserForm<TFieldNames extends string>({
+export function UserForm({
   title,
   description,
   action,
@@ -35,7 +35,7 @@ export function UserForm<TFieldNames extends string>({
   submitLabel,
   cancelHref,
   extraContent,
-}: Props<TFieldNames>): JSX.Element {
+}: Props): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
 
   const message = useMemo<string | undefined>(() => {
@@ -63,12 +63,11 @@ export function UserForm<TFieldNames extends string>({
         <UserFields
           // Disable inputs while pending to prevent changes mid-submit
           disabled={pending}
-          // Adapt generic state.error.fieldErrors to the concrete UserFields error shape
-          // TODO: Fix this type assertion
+          // Extract field errors from AppError details
           errors={
             state.ok
               ? undefined
-              : (state.error.fieldErrors as unknown as
+              : (state.error.details?.fieldErrors as unknown as
                   | Record<string, FieldError>
                   | undefined)
           }

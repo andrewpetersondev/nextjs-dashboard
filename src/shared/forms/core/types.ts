@@ -8,6 +8,7 @@
 
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
+import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import type {
   DenseFieldErrorMap,
@@ -18,15 +19,6 @@ const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
 /**
  * Array that is guaranteed to contain at least one element.
- * - falsy values are allowed
- * - nullish values are allowed (but considered bad practice)
- * @typeParam TElement - The type of elements in the array.
- * @example
- * const example: NonEmptyArray<string> = ["", ""]; // valid falsy example
- * const example: NonEmptyArray<string[]> = [[],[]]; // valid falsy example
- * const example: NonEmptyArray<number> = [1, 2, 3];
- * const example: NonEmptyArray<string | null> = [null, null]; // valid nullish example
- * @readonly
  */
 export type NonEmptyArray<TElement> = readonly [
   TElement,
@@ -35,33 +27,20 @@ export type NonEmptyArray<TElement> = readonly [
 
 /**
  * Represents an error associated with a field, containing a non-empty, readonly array of messages.
- *
- * NOTE: Keep for internal checks, but UI contract will use readonly string[] (can be empty) via DenseFieldErrorMap.
  */
 export type FieldError<TMsg = string> = NonEmptyArray<TMsg>;
 
 /**
  * Determines if the provided value is a non-empty readonly array.
- *
- * @param arr - The array to check, which can be a readonly array, null, or undefined.
- * @returns A boolean indicating whether the input is a non-empty readonly array.
- * @example
- * isNonEmptyArray([1, 2, 3]); // true
- * isNonEmptyArray([[]]); // true
- * isNonEmptyArray([""]); // true
- * isNonEmptyArray([]); // false
- * isNonEmptyArray([], []); // false
- * isNonEmptyArray(null); // false
  */
 export function isNonEmptyArray<T>(
   arr: readonly T[] | null | undefined,
 ): arr is NonEmptyArray<T> {
-  // Avoids mutating or widening; purely a predicate
   return Array.isArray(arr) && arr.length > 0;
 }
 
 /**
- * Success payload shape
+ * Success payload shape for forms.
  */
 export interface FormSuccess<TPayload> {
   readonly data: TPayload;
@@ -69,84 +48,117 @@ export interface FormSuccess<TPayload> {
 }
 
 /**
- * Validation error shape - now extends AppError.
+ * Unified Result type for forms - uses standard Result<T, AppError>.
  */
-export interface FormError<
-  TFieldName extends string,
-  TValueEcho = string,
-  TMessage extends string = string,
-> extends AppError {
-  readonly kind: "validation";
-  // Contract: dense map with readonly string[] (may be empty)
-  readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
-  readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
-}
+export type FormResult<TPayload> = Result<FormSuccess<TPayload>, AppError>;
 
 /**
- * Result for forms (unifies success + validation error).
+ * Create a successful form result.
  */
-export type FormResult<
-  TFieldName extends string,
-  TPayload,
-  TValueEcho = string,
-  TMessage extends string = string,
-> = Result<FormSuccess<TPayload>, FormError<TFieldName, TValueEcho, TMessage>>;
-export const formOk = <TFieldName extends string, TPayload>(
+export const formOk = <TPayload>(
   data: TPayload,
   message: string,
-): FormResult<TFieldName, TPayload> => {
+): FormResult<TPayload> => {
   const value = freeze<FormSuccess<TPayload>>({ data, message });
   return Ok(value);
 };
 
-// Create a FormResult validation error (freezes payload)
-export const formError = <
-  TFieldName extends string,
-  TValueEcho = string,
-  TMessage extends string = string,
->(params: {
+/**
+ * Create a form validation error with dense field error map.
+ * Type parameter TFieldName must match the keys in fieldErrors.
+ */
+export const formError = <TFieldName extends string>(params: {
   readonly code?: ErrorCode;
-  readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly message: string;
-  readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
-}): FormResult<TFieldName, never, TValueEcho, TMessage> => {
-  const error = freeze<FormError<TFieldName, TValueEcho, TMessage>>({
+  readonly formErrors?: readonly string[];
+  readonly fieldErrors: DenseFieldErrorMap<TFieldName, string>;
+  readonly values?: SparseFieldValueMap<TFieldName, string>;
+}): FormResult<never> => {
+  const error: AppError = freeze({
+    __appError: "AppError" as const,
     code: params.code ?? "VALIDATION",
-    fieldErrors: params.fieldErrors,
-    kind: "validation" as const,
+    details: makeAppErrorDetails({
+      extra: params.values ? { values: params.values } : undefined,
+      fieldErrors: params.fieldErrors,
+      formErrors: params.formErrors,
+    }),
+    kind: "validation",
     message: params.message,
-    values: params.values,
   });
   return Err(error);
 };
 
-// Narrow to success branch
-export const isFormOk = <TFieldName extends string, TPayload>(
-  r: FormResult<TFieldName, TPayload>,
+/**
+ * Narrow to success branch.
+ */
+export const isFormOk = <TPayload>(
+  r: FormResult<TPayload>,
 ): r is Result<FormSuccess<TPayload>, never> => r.ok;
 
-// Narrow to validation error branch
-export const isFormErr = <
-  TFieldName extends string,
-  TPayload,
-  TValueEcho = string,
-  TMessage extends string = string,
->(
-  r: FormResult<TFieldName, TPayload, TValueEcho, TMessage>,
-): r is Result<never, FormError<TFieldName, TValueEcho, TMessage>> => !r.ok;
+/**
+ * Narrow to validation error branch.
+ */
+export const isFormErr = <TPayload>(
+  r: FormResult<TPayload>,
+): r is Result<never, AppError> => !r.ok;
 
 /**
- * Generates a form error result based on the provided field errors, message, and optional field values.
- *
- * @typeParam TFieldName - Specifies the type of the field names in the form.
- * @typeParam TPayload - Specifies the structure of the additional payload included in the form result.
- * @param params - An object containing `fieldErrors`, `message`, and optional `values`.
- * @returns A `FormResult` object encapsulating the error details and payload.
- * @see {@link formError} for base implementation details.
+ * Type guard to check if an AppError contains form validation details.
  */
-export const createFormErrorWithStrings = <TFieldName extends string>(params: {
-  readonly fieldErrors: DenseFieldErrorMap<TFieldName, string>;
-  readonly message: string;
-  readonly values?: SparseFieldValueMap<TFieldName, string>;
-}): FormResult<TFieldName, never> =>
-  formError<TFieldName, string, string>(params);
+export const isFormValidationError = (error: AppError): boolean =>
+  error.kind === "validation" && error.details?.fieldErrors !== undefined;
+
+/**
+ * Safely extract dense field errors from an AppError.
+ * Returns undefined if not a form validation error.
+ *
+ * @example
+ * const errors = getFieldErrors<'email' | 'password'>(appError);
+ * if (errors) {
+ *   console.log(errors.email); // readonly string[]
+ * }
+ */
+export const getFieldErrors = <TFieldName extends string>(
+  error: AppError,
+): DenseFieldErrorMap<TFieldName, string> | undefined => {
+  if (!isFormValidationError(error)) {
+    return;
+  }
+  const fieldErrors = error.details?.fieldErrors;
+  if (!fieldErrors || typeof fieldErrors !== "object") {
+    return;
+  }
+  return fieldErrors as DenseFieldErrorMap<TFieldName, string>;
+};
+
+/**
+ * Safely extract form-level errors (non-field errors) from an AppError.
+ * Returns undefined if not present.
+ */
+export const getFormErrors = (error: AppError): readonly string[] | undefined =>
+  error.details?.formErrors;
+
+/**
+ * Safely extract echoed field values from an AppError.
+ * Returns undefined if not present.
+ *
+ * @example
+ * const values = getFieldValues<'email' | 'username'>(appError);
+ * if (values?.email) {
+ *   console.log(values.email); // string
+ * }
+ */
+export const getFieldValues = <TFieldName extends string>(
+  error: AppError,
+): SparseFieldValueMap<TFieldName, string> | undefined => {
+  const extra = error.details?.extra;
+  if (!extra || typeof extra !== "object") {
+    return;
+  }
+  const values = (extra as { values?: SparseFieldValueMap<TFieldName, string> })
+    .values;
+  if (!values || typeof values !== "object") {
+    return;
+  }
+  return values;
+};

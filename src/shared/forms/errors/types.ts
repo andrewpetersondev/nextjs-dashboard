@@ -19,13 +19,13 @@ export type SparseMap<TKey extends string, TValue> = Readonly<
  * Represents a sparse map of field errors, useful for form validation.
  *
  * @typeParam TField - The union of valid field names.
- * @typeParam TMsg - The type of error message, defaults to `string`.
+ * @typeParam TMsg - The type of error message.
  * @example
  * ```ts
  * type FormErrors = SparseFieldErrorMap<'email' | 'password'>;
  * ```
  */
-export type SparseFieldErrorMap<TField extends string, TMsg = string> = Partial<
+export type SparseFieldErrorMap<TField extends string, TMsg> = Partial<
   Readonly<Record<TField, FieldError<TMsg>>>
 >;
 
@@ -33,17 +33,16 @@ export type SparseFieldErrorMap<TField extends string, TMsg = string> = Partial<
  * Represents a map where specified fields may have associated values, or be undefined.
  *
  * @typeParam TField - The set of keys (fields) that can exist in the map.
- * @typeParam TValue - The type of values associated with the keys. Defaults to `string`.
+ * @typeParam TValue - The type of values associated with the keys.
  * @example
  * ```
  * type UserFields = SparseFieldValueMap<'name' | 'email', string>;
  * const example: UserFields = { name: 'John Doe' };
  * ```
  */
-export type SparseFieldValueMap<
-  TField extends string,
-  TValue = string,
-> = Partial<Record<TField, TValue>>;
+export type SparseFieldValueMap<TField extends string, TValue> = Partial<
+  Record<TField, TValue>
+>;
 
 /**
  * Represents a dense map where keys are strings and values are of a specified type.
@@ -55,14 +54,14 @@ export type DenseMap<TKey extends string, TValue> = Readonly<
 >;
 
 /**
- * Represents a dense mappers of field names to an array of error messages.
+ * Represents a dense map of field names to an array of error messages.
  *
  * @typeParam TField - The type representing the fields, typically a string literal union.
- * @typeParam TMsg - The type of the error message, defaults to `string`.
+ * @typeParam TMsg - The type of the error message.
  * @see DenseMap
  * @public
  */
-export type DenseFieldErrorMap<TField extends string, TMsg = string> = DenseMap<
+export type DenseFieldErrorMap<TField extends string, TMsg> = DenseMap<
   TField,
   readonly TMsg[]
 >;

@@ -5,6 +5,7 @@ import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { mapRepoErrorToAppResult } from "@/server/auth/domain/errors/app-error.mapping.repo";
+import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import { asPasswordHash } from "@/server/auth/domain/types/password.types";
@@ -70,22 +71,33 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
     } catch (err: unknown) {
-      return mapRepoErrorToAppResult<AuthUserTransport>(
+      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         "service.AuthUserService.createDemoUser",
       );
+      return appError.ok
+        ? appError
+        : Err(
+            toFormAwareError(appError.error, {
+              fields: ["email", "username", "password"] as const,
+            }),
+          );
     }
   }
 
   /**
-   * Signup: hashes password, delegates to repo, returns Result<AuthUserTransport, AuthServiceError>.
+   * Signup: hashes password, delegates to repo, returns Result<AuthUserTransport, AppError>.
    * Always atomic via repo.withTransaction.
    */
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     if (!hasRequiredSignupFields(input)) {
-      return Err(createAuthAppError("missing_fields"));
+      return Err(
+        toFormAwareError(createAuthAppError("missing_fields"), {
+          fields: ["email", "username", "password", "confirmPassword"] as const,
+        }),
+      );
     }
 
     try {
@@ -102,10 +114,22 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
-      return mapRepoErrorToAppResult<AuthUserTransport>(
+      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         "service.UserAuthService.signup",
       );
+      return appError.ok
+        ? appError
+        : Err(
+            toFormAwareError(appError.error, {
+              fields: [
+                "email",
+                "username",
+                "password",
+                "confirmPassword",
+              ] as const,
+            }),
+          );
     }
   }
 
@@ -127,7 +151,11 @@ export class AuthUserService {
           },
           "Missing hashed password on user entity; cannot authenticate",
         );
-        return Err(createAuthAppError("invalid_credentials"));
+        return Err(
+          toFormAwareError(createAuthAppError("invalid_credentials"), {
+            fields: ["email", "password"] as const,
+          }),
+        );
       }
 
       const passwordOk = await this.hasher.compare(
@@ -135,15 +163,26 @@ export class AuthUserService {
         asPasswordHash(user.password),
       );
       if (!passwordOk) {
-        return Err(createAuthAppError("invalid_credentials"));
+        return Err(
+          toFormAwareError(createAuthAppError("invalid_credentials"), {
+            fields: ["email", "password"] as const,
+          }),
+        );
       }
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      return mapRepoErrorToAppResult<AuthUserTransport>(
+      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         "service.UserAuthService.login",
       );
+      return appError.ok
+        ? appError
+        : Err(
+            toFormAwareError(appError.error, {
+              fields: ["email", "password"] as const,
+            }),
+          );
     }
   }
 }

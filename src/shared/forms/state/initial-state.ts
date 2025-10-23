@@ -1,4 +1,7 @@
 import type { z } from "zod";
+import type { AppError } from "@/shared/core/result/app-error/app-error";
+import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
+import { Err } from "@/shared/core/result/result";
 import type { FormResult } from "@/shared/forms/core/types";
 import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
@@ -7,30 +10,27 @@ import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-m
  * Creates the initial failed form state with empty field errors.
  *
  * @param fieldNames - An array of field names for which the error map will be initialized.
- * @returns An object representing a failed form state with validation errors.
+ * @returns A failed FormResult with validation errors.
  * @alpha
  * TODO: EVALUATE BY 10/11/2025
  */
-export function createInitialFailedFormState<
-  TFieldNames extends string,
-  TMsg extends string,
-  TValue = string,
->(fieldNames: readonly TFieldNames[]) {
-  const fieldErrors: DenseFieldErrorMap<TFieldNames, TMsg> =
-    createEmptyDenseFieldErrorMap<TFieldNames, TMsg>(fieldNames);
+export function createInitialFailedFormState<TFieldNames extends string>(
+  fieldNames: readonly TFieldNames[],
+): FormResult<never> {
+  const fieldErrors: DenseFieldErrorMap<TFieldNames, string> =
+    createEmptyDenseFieldErrorMap<TFieldNames, string>(fieldNames);
 
-  return {
-    error: {
-      code: "VALIDATION" as const,
+  const error: AppError = Object.freeze({
+    __appError: "AppError" as const,
+    code: "VALIDATION",
+    details: makeAppErrorDetails({
       fieldErrors,
-      kind: "validation" as const,
-      message: "",
-    },
-    ok: false as const,
-  } satisfies Extract<
-    FormResult<TFieldNames, TValue, string, TMsg>,
-    { ok: false }
-  >;
+    }),
+    kind: "validation",
+    message: "",
+  });
+
+  return Err(error);
 }
 
 /**
@@ -44,10 +44,10 @@ export function createInitialFailedFormState<
  */
 export function createInitialFailedFormStateFromSchema<
   TSchema extends z.ZodObject<z.ZodRawShape>,
->(schema: TSchema) {
+>(schema: TSchema): FormResult<never> {
   type FieldNames = keyof TSchema["shape"] & string;
   const fields = Object.freeze(
     Object.keys(schema.shape),
   ) as readonly FieldNames[];
-  return createInitialFailedFormState<FieldNames, string, string>(fields);
+  return createInitialFailedFormState<FieldNames>(fields);
 }

@@ -13,22 +13,25 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
-import type { FormResult } from "@/shared/forms/core/types";
+import {
+  type FormResult,
+  getFieldErrors,
+  getFieldValues,
+} from "@/shared/forms/core/types";
 import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
-const INITIAL_STATE = createInitialFailedFormState<SignupField, string, never>(
-  SIGNUP_FIELDS_LIST,
-);
+const INITIAL_STATE =
+  createInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 interface SignupFormProps {
   action: (
-    _prevState: FormResult<SignupField, never>,
+    _prevState: FormResult<SignupField>,
     formData: FormData,
-  ) => Promise<FormResult<SignupField, never>>;
+  ) => Promise<FormResult<SignupField>>;
 }
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
@@ -36,7 +39,7 @@ export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
-    FormResult<SignupField, never>,
+    FormResult<SignupField>,
     FormData
   >(action, INITIAL_STATE);
 
@@ -44,7 +47,14 @@ export const SignupForm: FC<SignupFormProps> = ({
   const usernameId = `${baseId}-username`;
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
-  const values = state.ok ? undefined : state.error.values;
+
+  const fieldErrors = state.ok
+    ? undefined
+    : getFieldErrors<SignupField>(state.error);
+
+  const values = state.ok
+    ? undefined
+    : getFieldValues<SignupField>(state.error);
 
   return (
     <>
@@ -61,7 +71,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           dataCy="signup-username-input"
           defaultValue={values?.username}
           describedById={`${usernameId}-errors`}
-          error={state.ok ? undefined : state.error.fieldErrors.username}
+          error={fieldErrors?.username}
           icon={<UserIcon aria-hidden="true" className={iconClass} />}
           id={usernameId}
           label="Username"
@@ -74,7 +84,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           dataCy="signup-email-input"
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
-          error={state.ok ? undefined : state.error.fieldErrors.email}
+          error={fieldErrors?.email}
           icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
           id={emailId}
           label="Email address"
@@ -87,7 +97,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           autoComplete="new-password"
           dataCy="signup-password-input"
           describedById={`${passwordId}-errors`}
-          error={state.ok ? undefined : state.error.fieldErrors.password}
+          error={fieldErrors?.password}
           icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
           id={passwordId}
           label="Password"

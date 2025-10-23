@@ -14,9 +14,9 @@ import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.consta
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
-import { appErrorToFormResult } from "@/shared/forms/errors/app-error.adapter";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import { toFormError } from "@/shared/forms/state/mappers/result-to-form.mapper";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;
@@ -34,9 +34,9 @@ const fields = SIGNUP_FIELDS_LIST;
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
 export async function signupAction(
-  _prevState: FormResult<SignupField, never>,
+  _prevState: FormResult<SignupField>,
   formData: FormData,
-): Promise<FormResult<SignupField, never>> {
+): Promise<FormResult<SignupField>> {
   const raw = extractFormDataFields<SignupField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, SignupSchema, fields, {
@@ -46,7 +46,9 @@ export async function signupAction(
   if (!validated.ok) {
     return toFormError<SignupField>({
       failureMessage: validated.error.message,
-      fieldErrors: validated.error.fieldErrors,
+      fieldErrors:
+        validated.error.details?.fieldErrors ??
+        createEmptyDenseFieldErrorMap<SignupField, string>(fields),
       fields,
       raw,
     });
@@ -61,9 +63,13 @@ export async function signupAction(
   );
 
   if (!sessionResult.ok) {
-    return appErrorToFormResult({
-      defaultMessage: "Signup failed. Please try again.",
-      error: sessionResult.error,
+    // No need for appErrorToFormResult anymore - service returns form-aware errors
+    return toFormError<SignupField>({
+      failureMessage:
+        sessionResult.error.message || "Login failed. Please try again.",
+      fieldErrors:
+        sessionResult.error.details?.fieldErrors ??
+        createEmptyDenseFieldErrorMap<SignupField, string>(fields),
       fields,
       raw,
     });

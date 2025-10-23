@@ -10,8 +10,7 @@ import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
  */
 export type InvoiceActionResult = {
   data?: InvoiceDto;
-  // biome-ignore lint/suspicious/noExplicitAny: <temp>
-  errors?: DenseFieldErrorMap<any>;
+  errors?: DenseFieldErrorMap<string, string>;
   message?: string;
   success: boolean;
 };
