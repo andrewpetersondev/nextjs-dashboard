@@ -18,7 +18,7 @@ import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.re
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/validation/dense-error-map";
+} from "@/shared/forms/validation/error-map";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

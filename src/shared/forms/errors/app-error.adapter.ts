@@ -1,11 +1,12 @@
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { type FormResult, formError } from "@/shared/forms/core/types";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/validation/dense-error-map";
+} from "@/shared/forms/validation/error-map";
 
 const EMAIL_REGEX = /email/i;
 

@@ -19,7 +19,7 @@ import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-messag
 import { serverLogger } from "@/server/logging/serverLogger";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/state/mappers/zod-to-errors.mapper";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
 import { isZodErrorInstance } from "@/shared/forms/validation/utils/zod-error.helpers";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";

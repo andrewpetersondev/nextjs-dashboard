@@ -19,7 +19,7 @@ import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/validation/dense-error-map";
+} from "@/shared/forms/validation/error-map";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 

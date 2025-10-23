@@ -17,7 +17,7 @@ import {
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
 import type { FieldError } from "@/shared/forms/core/types";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";

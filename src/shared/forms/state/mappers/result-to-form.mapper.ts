@@ -12,7 +12,8 @@ import {
   formError,
   formOk,
 } from "@/shared/forms/core/types";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
 
 /**

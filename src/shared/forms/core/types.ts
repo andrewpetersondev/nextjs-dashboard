@@ -9,8 +9,10 @@
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
-import type { SparseFieldValueMap } from "@/shared/forms/errors/types/sparse.types";
+import type {
+  DenseFieldErrorMap,
+  SparseFieldValueMap,
+} from "@/shared/forms/errors/types";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 

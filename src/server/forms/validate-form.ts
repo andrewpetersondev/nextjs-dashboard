@@ -13,8 +13,8 @@ import {
   resolveCanonicalFieldNames,
   resolveRawFieldPayload,
 } from "@/shared/forms/fields/field-names.resolve";
-import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/state/mappers/zod-to-errors.mapper";
-import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/validation/dense-error-map";
+import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
+import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/validation/error-map";
 import { isZodErrorLikeShape } from "@/shared/forms/validation/utils/zod-error.helpers";
 
 // Consolidate default messages and logger context

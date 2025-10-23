@@ -41,7 +41,7 @@ apply: manually
 - Map domain Result to FormResult when you already have Result<T, FormError>:
   - Use src/shared/forms/mapping/result-to-form.mapper.ts mapResultToFormResult(result, { fields, raw, redactFields? })
 - Turn Zod issues into dense field errors without extra parsing:
-  - Use src/shared/forms/mapping/zod-to-errors.mapper.ts mapToDenseFieldErrorsFromZod(error, fields)
+  - Use src/shared/forms/mapping/zod-to-form-errors.mapper.ts mapToDenseFieldErrorsFromZod(error, fields)
 
 ## Low‑Token Playbook (Minimize credit usage)
 
@@ -98,6 +98,6 @@ export async function adaptServiceResultToForm<TField extends string, T>(p: {
 ## File Pointers
 
 - Validation flow: src/server/forms/validate-form.ts (validateFormGeneric)
-- Zod → field errors: src/shared/forms/mapping/zod-to-errors.mapper.ts
+- Zod → field errors: src/shared/forms/mapping/zod-to-form-errors.mapper.ts
 - Result → FormResult: src/shared/forms/mapping/result-to-form.mapper.ts
 - Types: src/shared/forms/core/types.ts, src/shared/forms/types/dense.types.ts

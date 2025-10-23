@@ -2,7 +2,7 @@
 import "server-only";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { FormResult } from "@/shared/forms/core/types";
-import { appErrorToFormResult } from "@/shared/forms/errors/adapters/app-error.adapter";
+import { appErrorToFormResult } from "@/shared/forms/errors/app-error.adapter";
 
 export function handleAuthError<F extends string, TPayload = unknown>(
   error: AppError,
