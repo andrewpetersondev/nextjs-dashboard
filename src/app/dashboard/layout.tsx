@@ -34,6 +34,4 @@ const Layout: FC<LayoutProps> = async ({
   );
 };
 
-export const experimental_ppr = true;
-
 export default Layout;

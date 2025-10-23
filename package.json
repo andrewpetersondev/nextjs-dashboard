@@ -3,7 +3,7 @@
     "@auth/core": "^0.41.0",
     "@auth/drizzle-adapter": "^1.11.0",
     "@heroicons/react": "^2.2.0",
-    "@next/env": "15.5.6",
+    "@next/env": "16.0.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -12,7 +12,7 @@
     "drizzle-orm": "^0.44.6",
     "drizzle-zod": "^0.8.3",
     "jose": "^6.1.0",
-    "next": "^15.5.6",
+    "next": "16.0.0",
     "next-auth": "5.0.0-beta.29",
     "pg": "^8.16.3",
     "pino": "^10.1.0",
@@ -23,7 +23,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.6",
+    "@biomejs/biome": "2.2.7",
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.15",
     "@testing-library/cypress": "^10.1.0",
@@ -41,7 +41,7 @@
     "drizzle-kit": "^0.31.5",
     "drizzle-seed": "^0.3.1",
     "eslint": "^9.38.0",
-    "eslint-config-next": "16.0.0-canary.1",
+    "eslint-config-next": "16.0.0",
     "jsdom": "^27.0.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
@@ -50,7 +50,7 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4",
+    "vitest": "^4.0.1",
     "wait-on": "^9.0.1"
   },
   "engines": {
@@ -59,6 +59,12 @@
   },
   "name": "nextjs-dashboard",
   "packageManager": "pnpm@10.18.2+sha512.9fb969fa749b3ade6035e0f109f0b8a60b5d08a1a87fdf72e337da90dcc93336e2280ca4e44f2358a649b83c17959e9993e777c2080879f3801e6f0d999ad3dd",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.2",
+      "@types/react-dom": "19.2.2"
+    }
+  },
   "private": true,
   "scripts": {
     "biome:check": "biome check --max-diagnostics=100",

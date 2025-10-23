@@ -11,7 +11,7 @@ import {
   ROUTES,
 } from "@/shared/routes/routes";
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const path: string = normalizePath(req.nextUrl.pathname);
   const isProtectedRoute: boolean = isProtectedRouteHelper(path);
   const isAdminRoute: boolean = isAdminRouteHelper(path);
