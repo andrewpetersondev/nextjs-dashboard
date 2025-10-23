@@ -1,6 +1,6 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import type { FieldError } from "@/shared/forms/types/core.types";
+import type { FieldError } from "@/shared/forms/core/types";
 
 type GenericSelectMenu = <T extends { id: string; name: string }>(
   props: SelectMenuProps<T>,

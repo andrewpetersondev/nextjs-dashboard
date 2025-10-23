@@ -1,14 +1,62 @@
-// File: src/shared/forms/types/form-result.types.ts
+/**
+ * src/shared/forms/core/types.ts
+ *
+ * NonEmptyReadonlyArray = array with at least one element
+ * FieldError = array with at least one element
+ * isNonEmptyArray = predicate
+ */
 
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
-import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+import type { SparseFieldValueMap } from "@/shared/forms/errors/types/sparse.types";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
-// SECTION: Interfaces (object shapes)
+/**
+ * Array that is guaranteed to contain at least one element.
+ * - falsy values are allowed
+ * - nullish values are allowed (but considered bad practice)
+ * @typeParam TElement - The type of elements in the array.
+ * @example
+ * const example: NonEmptyArray<string> = ["", ""]; // valid falsy example
+ * const example: NonEmptyArray<string[]> = [[],[]]; // valid falsy example
+ * const example: NonEmptyArray<number> = [1, 2, 3];
+ * const example: NonEmptyArray<string | null> = [null, null]; // valid nullish example
+ * @readonly
+ */
+export type NonEmptyArray<TElement> = readonly [
+  TElement,
+  ...(readonly TElement[]),
+];
+
+/**
+ * Represents an error associated with a field, containing a non-empty, readonly array of messages.
+ *
+ * NOTE: Keep for internal checks, but UI contract will use readonly string[] (can be empty) via DenseFieldErrorMap.
+ */
+export type FieldError<TMsg = string> = NonEmptyArray<TMsg>;
+
+/**
+ * Determines if the provided value is a non-empty readonly array.
+ *
+ * @param arr - The array to check, which can be a readonly array, null, or undefined.
+ * @returns A boolean indicating whether the input is a non-empty readonly array.
+ * @example
+ * isNonEmptyArray([1, 2, 3]); // true
+ * isNonEmptyArray([[]]); // true
+ * isNonEmptyArray([""]); // true
+ * isNonEmptyArray([]); // false
+ * isNonEmptyArray([], []); // false
+ * isNonEmptyArray(null); // false
+ */
+export function isNonEmptyArray<T>(
+  arr: readonly T[] | null | undefined,
+): arr is NonEmptyArray<T> {
+  // Avoids mutating or widening; purely a predicate
+  return Array.isArray(arr) && arr.length > 0;
+}
 
 /**
  * Success payload shape
@@ -41,9 +89,6 @@ export type FormResult<
   TValueEcho = string,
   TMessage extends string = string,
 > = Result<FormSuccess<TPayload>, FormError<TFieldName, TValueEcho, TMessage>>;
-
-// SECTION: Constructors and guards
-
 export const formOk = <TFieldName extends string, TPayload>(
   data: TPayload,
   message: string,
@@ -88,8 +133,6 @@ export const isFormErr = <
 >(
   r: FormResult<TFieldName, TPayload, TValueEcho, TMessage>,
 ): r is Result<never, FormError<TFieldName, TValueEcho, TMessage>> => !r.ok;
-
-// SECTION: Simple maker (payload-only success)
 
 /**
  * Generates a form error result based on the provided field errors, message, and optional field values.

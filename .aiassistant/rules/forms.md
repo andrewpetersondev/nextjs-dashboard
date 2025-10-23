@@ -25,7 +25,7 @@ apply: manually
 
 ## References
 
-- src/shared/forms/types/form-result.types.ts
+- src/shared/forms/core/types.ts
 - src/server/forms/validate-form.ts
 
 ## Implementation Checklist (Forms)
@@ -39,9 +39,9 @@ apply: manually
   - Use src/server/forms/validate-form.ts validateFormGeneric(formData, schema, allowedFields?, opts)
   - It returns FormResult (Ok or validation Err) with a dense field error map.
 - Map domain Result to FormResult when you already have Result<T, FormError>:
-  - Use src/shared/forms/mapping/result-to-form-result.mapper.ts mapResultToFormResult(result, { fields, raw, redactFields? })
+  - Use src/shared/forms/mapping/result-to-form.mapper.ts mapResultToFormResult(result, { fields, raw, redactFields? })
 - Turn Zod issues into dense field errors without extra parsing:
-  - Use src/shared/forms/mapping/zod-to-field-errors.mapper.ts mapToDenseFieldErrorsFromZod(error, fields)
+  - Use src/shared/forms/mapping/zod-to-errors.mapper.ts mapToDenseFieldErrorsFromZod(error, fields)
 
 ## Low‑Token Playbook (Minimize credit usage)
 
@@ -78,7 +78,7 @@ apply: manually
 Example: Convert a service Result<T, FormError<TField>> to FormResult with safe value echo.
 
 ```ts
-import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
+import { mapResultToFormResult } from "@/shared/forms/mappers/result-to-form-result.mapper";
 
 export async function adaptServiceResultToForm<TField extends string, T>(p: {
   readonly result: import("@/shared/core/result/result").Result<
@@ -98,6 +98,6 @@ export async function adaptServiceResultToForm<TField extends string, T>(p: {
 ## File Pointers
 
 - Validation flow: src/server/forms/validate-form.ts (validateFormGeneric)
-- Zod → field errors: src/shared/forms/mapping/zod-to-field-errors.mapper.ts
-- Result → FormResult: src/shared/forms/mapping/result-to-form-result.mapper.ts
-- Types: src/shared/forms/types/form-result.types.ts, src/shared/forms/types/dense.types.ts
+- Zod → field errors: src/shared/forms/mapping/zod-to-errors.mapper.ts
+- Result → FormResult: src/shared/forms/mapping/result-to-form.mapper.ts
+- Types: src/shared/forms/core/types.ts, src/shared/forms/types/dense.types.ts

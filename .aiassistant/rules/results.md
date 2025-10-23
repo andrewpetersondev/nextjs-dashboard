@@ -111,4 +111,4 @@ Notes:
 
 - Core Result: src/shared/core/result/result.ts
 - AppError + makeErrorMapper: src/shared/core/result/app-error.ts
-- Result → FormResult adapter: src/shared/forms/mapping/result-to-form-result.mapper.ts
+- Result → FormResult adapter: src/shared/forms/mapping/result-to-form.mapper.ts

@@ -1,8 +1,8 @@
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
 import {
   createEmptyDenseFieldErrorMap,
   normalizeAndFreezeDenseFieldErrorMap,
-} from "@/shared/forms/errors/dense-error-map";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
+} from "@/shared/forms/validation/dense-error-map";
 
 /**
  * Create a dense error map with a single message set on a chosen field (defaults to first).

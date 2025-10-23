@@ -1,8 +1,8 @@
 // src/server/auth/application/actions/auth-error-handler.ts
 import "server-only";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
-import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
+import { appErrorToFormResult } from "@/shared/forms/errors/adapters/app-error.adapter";
 
 export function handleAuthError<F extends string, TPayload = unknown>(
   error: AppError,

@@ -1,19 +1,19 @@
-// File: src/shared/forms/mapping/result-to-form-result.mapper.ts
+// File: src/shared/forms/mappers/result-to-form.mapper.ts
 
 import type { Result } from "@/shared/core/result/result";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
-} from "@/shared/forms/i18n/form-messages.const";
-import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/display-values.selector";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
+} from "@/shared/forms/core/constants";
 import {
   type FormError,
   type FormResult,
   type FormSuccess,
   formError,
   formOk,
-} from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/core/types";
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
 
 /**
  * Maps a domain `Result` to a UI-facing `FormResult` by delegating to the canonical shapers.

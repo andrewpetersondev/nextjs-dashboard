@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FieldError } from "@/shared/forms/types/core.types";
+import type { FieldError } from "@/shared/forms/core/types";
 import { Label } from "@/ui/atoms/label";
 import { ErrorMessage } from "@/ui/forms/error-message";
 

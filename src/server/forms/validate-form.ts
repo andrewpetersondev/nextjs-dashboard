@@ -1,21 +1,21 @@
 import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/errors/dense-error-map";
-import { isZodErrorLikeShape } from "@/shared/forms/errors/zod-error.helpers";
-import {
-  resolveCanonicalFieldNames,
-  resolveRawFieldPayload,
-} from "@/shared/forms/fields/field-names.resolve";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
-import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/core/constants";
 import {
   createFormErrorWithStrings,
   type FormError,
   type FormResult,
   formError,
   formOk,
-} from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/core/types";
+import {
+  resolveCanonicalFieldNames,
+  resolveRawFieldPayload,
+} from "@/shared/forms/fields/field-names.resolve";
+import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/state/mappers/zod-to-errors.mapper";
+import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/validation/dense-error-map";
+import { isZodErrorLikeShape } from "@/shared/forms/validation/utils/zod-error.helpers";
 
 // Consolidate default messages and logger context
 const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;

@@ -1,11 +1,11 @@
 import type { ZodError, z } from "zod";
+import type { DenseFieldErrorMap } from "@/shared/forms/errors/types/dense.types";
+import type { SparseFieldErrorMap } from "@/shared/forms/errors/types/sparse.types";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/errors/dense-error-map";
-import { flattenZodError } from "@/shared/forms/errors/zod-error.helpers";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
-import type { SparseFieldErrorMap } from "@/shared/forms/types/sparse.types";
+} from "@/shared/forms/validation/dense-error-map";
+import { flattenZodError } from "@/shared/forms/validation/utils/zod-error.helpers";
 
 /**
  * Build sparse errors limited to allowed fields from a ZodError.

@@ -6,8 +6,8 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
 import { getAppDb } from "@/server/db/db.connection";
-import { toFormOk } from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
+import { toFormOk } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { isZodObjectSchema } from "@/shared/forms/errors/zod-error.helpers";
 import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
+import { isZodObjectSchema } from "@/shared/forms/validation/utils/zod-error.helpers";
 
 /**
  * Derive allowed string field names from a Zod object schema.

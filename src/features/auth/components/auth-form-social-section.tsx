@@ -12,7 +12,7 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
 
 interface AuthFormSocialSectionProps {
   demoUserText: string;

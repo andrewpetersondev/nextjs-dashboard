@@ -5,7 +5,7 @@ import type {
   FormError,
   FormResult,
   FormSuccess,
-} from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/core/types";
 
 // Accept either a plain Result with a message in success/error, or a FormResult
 type ServerMessageState<TField extends string = string, TData = unknown> =

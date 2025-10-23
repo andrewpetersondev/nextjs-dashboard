@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
 import { Button } from "@/ui/atoms/button";
 
 interface DemoFormProps {

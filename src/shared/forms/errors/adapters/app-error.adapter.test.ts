@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
-import { appErrorToFormResult } from "@/shared/forms/adapters/app-error-to-form.adapters";
+import { appErrorToFormResult } from "@/shared/forms/errors/adapters/app-error.adapter";
 
 type Field = "email" | "password" | "username";
 

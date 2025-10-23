@@ -13,12 +13,12 @@ import {
 import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
+import type { FormResult } from "@/shared/forms/core/types";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import {
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/errors/dense-error-map";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/validation/dense-error-map";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

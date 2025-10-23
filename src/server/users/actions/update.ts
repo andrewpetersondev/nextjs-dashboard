@@ -20,13 +20,13 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
+import type { FormResult } from "@/shared/forms/core/types";
 import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/field-names.resolve";
 import { extractRawRecordFromFormData } from "@/shared/forms/fields/formdata.extractor";
 import {
   mapResultToFormResult,
   toFormOk,
-} from "@/shared/forms/mapping/result-to-form-result.mapper";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

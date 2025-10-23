@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LoginField } from "@/features/auth/lib/auth.schema";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import type { UserId } from "@/shared/domain/domain-brands";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
 import { loginAction } from "../login.action";
 
 // Create mocks

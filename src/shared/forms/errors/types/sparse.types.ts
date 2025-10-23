@@ -7,7 +7,7 @@
  *
  */
 
-import type { FieldError } from "@/shared/forms/types/core.types";
+import type { FieldError } from "@/shared/forms/core/types";
 
 /**
  * Represents a sparse map where keys are strings and values are of a specified type.

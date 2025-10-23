@@ -17,7 +17,7 @@ export type DenseMap<TKey extends string, TValue> = Readonly<
 >;
 
 /**
- * Represents a dense mapping of field names to an array of error messages.
+ * Represents a dense mappers of field names to an array of error messages.
  *
  * @typeParam TField - The type representing the fields, typically a string literal union.
  * @typeParam TMsg - The type of the error message, defaults to `string`.

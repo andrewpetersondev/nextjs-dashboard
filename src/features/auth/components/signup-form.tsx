@@ -14,8 +14,8 @@ import {
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import { createInitialFailedFormState } from "@/shared/forms/initial-state/init-failed-form-state";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/core/types";
+import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
