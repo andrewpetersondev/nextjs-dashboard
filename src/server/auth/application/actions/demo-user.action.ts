@@ -1,14 +1,14 @@
 "use server";
 import { redirect } from "next/navigation";
 import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
-import { handleAuthError } from "@/server/auth/application/actions/auth-error-handler";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/constants/auth.constants";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types";
-import { toFormOk } from "@/shared/forms/state/mappers/result-to-form.mapper";
+import { appErrorToFormResult } from "@/shared/forms/errors/app-error.adapter";
 import { ROUTES } from "@/shared/routes/routes";
+
+const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
 
 /**
  * Handles the demo user action by creating a demo user,
@@ -21,7 +21,7 @@ import { ROUTES } from "@/shared/routes/routes";
  */
 export async function demoUserAction(
   role: UserRole = GUEST_ROLE,
-): Promise<FormResult<never, unknown>> {
+): Promise<FormResult<never, Record<string, never>>> {
   const service = createAuthUserService(getAppDb());
 
   const sessionResult = await executeAuthPipeline(
@@ -30,14 +30,13 @@ export async function demoUserAction(
   );
 
   if (!sessionResult.ok) {
-    return handleAuthError(
-      sessionResult.error,
-      [],
-      {},
-      AUTH_ACTION_CONTEXTS.DEMO_USER,
-    );
+    return appErrorToFormResult({
+      defaultMessage: DEMO_USER_ERROR_MESSAGE,
+      error: sessionResult.error,
+      fields: [],
+      raw: {},
+    });
   }
 
   redirect(ROUTES.DASHBOARD.ROOT);
-  return toFormOk<never, unknown>({});
 }
