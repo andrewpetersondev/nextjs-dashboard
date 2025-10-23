@@ -15,8 +15,8 @@ import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import {
+  toFormError,
   toFormOk,
-  toFormValidationErr,
 } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -43,7 +43,7 @@ export async function loginAction(
   });
 
   if (!validated.ok) {
-    return toFormValidationErr<LoginField, unknown>({
+    return toFormError<LoginField, unknown>({
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,

@@ -17,7 +17,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
-import { toFormValidationErr } from "@/shared/forms/state/mappers/result-to-form.mapper";
+import { toFormError } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;
@@ -45,7 +45,7 @@ export async function signupAction(
   });
 
   if (!validated.ok) {
-    return toFormValidationErr<SignupField, SessionUser>({
+    return toFormError<SignupField, SessionUser>({
       failureMessage: validated.error.message,
       fieldErrors: validated.error.fieldErrors,
       fields,

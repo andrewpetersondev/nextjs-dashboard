@@ -25,13 +25,13 @@ import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers
  * @param params - Adapter options for messages and value echoing/redaction.
  * @returns
  * - `{ ok: true, value }` on success via {@link toFormOk}.
- * - `{ ok: false, error }` on failure via {@link toFormValidationErr}.
+ * - `{ ok: false, error }` on failure via {@link toFormError}.
  *
  * Remarks:
  * - Success:
  *   - Delegates to {@link toFormOk} with `successMessage` (defaults to a generic success message).
  * - Failure:
- *   - Delegates to {@link toFormValidationErr} and always computes a redacted `values` echo using `fields`
+ *   - Delegates to {@link toFormError} and always computes a redacted `values` echo using `fields`
  *     and `redactFields` (defaults to `["password"]`).
  *   - Uses `result.error.message` if present; otherwise falls back to `failureMessage`.
  * - Use this when you already have `Result<TData, FormValidationResult<TFieldNames>>` (e.g., schema/service output)
@@ -114,12 +114,8 @@ export function toFormOk<TField extends string, TPayload>(
  * @param params.fields - Ordered list of fields to echo (omit or pass empty to suppress `values` entirely).
  * @param params.redactFields - Fields to redact in the echoed `values` (defaults to `["password"]`).
  * @returns `{ ok: false, error: { kind: "validation", fieldErrors, message, values? } }`.
- *
- * Notes:
- * - Used directly when manually constructing a validation failure.
- * - The failure path of {@link mapResultToFormResult} delegates to this function for consistency.
  */
-export function toFormValidationErr<TField extends string, TPayload>(params: {
+export function toFormError<TField extends string, TPayload>(params: {
   readonly fieldErrors: DenseFieldErrorMap<TField, string>;
   readonly failureMessage?: string;
   readonly fields?: readonly TField[];
