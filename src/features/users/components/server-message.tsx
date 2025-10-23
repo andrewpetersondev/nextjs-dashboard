@@ -2,9 +2,9 @@ import type { JSX } from "react";
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { Result } from "@/shared/core/result/result";
 import type {
+  FormError,
   FormResult,
   FormSuccess,
-  FormValidationError,
 } from "@/shared/forms/types/form-result.types";
 
 // Accept either a plain Result with a message in success/error, or a FormResult
@@ -29,9 +29,7 @@ function extractMessageAndSuccess<TField extends string, TData>(
       | { readonly message?: string };
     return { message: value.message, success: true };
   }
-  const err = state.error as
-    | FormValidationError<TField>
-    | { readonly message: string };
+  const err = state.error as FormError<TField> | { readonly message: string };
   return { message: err.message, success: false };
 }
 

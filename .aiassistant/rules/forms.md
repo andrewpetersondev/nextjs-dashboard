@@ -38,7 +38,7 @@ apply: manually
 - Validate + shape result with one call:
   - Use src/server/forms/validate-form.ts validateFormGeneric(formData, schema, allowedFields?, opts)
   - It returns FormResult (Ok or validation Err) with a dense field error map.
-- Map domain Result to FormResult when you already have Result<T, FormValidationError>:
+- Map domain Result to FormResult when you already have Result<T, FormError>:
   - Use src/shared/forms/mapping/result-to-form-result.mapper.ts mapResultToFormResult(result, { fields, raw, redactFields? })
 - Turn Zod issues into dense field errors without extra parsing:
   - Use src/shared/forms/mapping/zod-to-field-errors.mapper.ts mapToDenseFieldErrorsFromZod(error, fields)
@@ -75,7 +75,7 @@ apply: manually
 
 ## Adapter Template (copy/paste)
 
-Example: Convert a service Result<T, FormValidationError<TField>> to FormResult with safe value echo.
+Example: Convert a service Result<T, FormError<TField>> to FormResult with safe value echo.
 
 ```ts
 import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-result.mapper";
@@ -83,7 +83,7 @@ import { mapResultToFormResult } from "@/shared/forms/mapping/result-to-form-res
 export async function adaptServiceResultToForm<TField extends string, T>(p: {
   readonly result: import("@/shared/core/result/result").Result<
     T,
-    import("@/shared/forms/types/form-result.types").FormValidationError<TField>
+    import("@/shared/forms/types/form-result.types").FormError<TField>
   >;
   readonly fields: readonly TField[];
   readonly raw: Record<string, unknown>;

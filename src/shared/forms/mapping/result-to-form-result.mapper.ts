@@ -9,10 +9,10 @@ import { selectDisplayableStringFieldValues } from "@/shared/forms/mapping/displ
 import type { DenseFieldErrorMap } from "@/shared/forms/types/dense.types";
 import {
   FormErr,
+  type FormError,
   FormOk,
   type FormResult,
   type FormSuccess,
-  type FormValidationError,
 } from "@/shared/forms/types/form-result.types";
 
 /**
@@ -37,7 +37,7 @@ import {
  *   and want a single adapter to the UI `FormResult`.
  */
 export function mapResultToFormResult<TField extends string, TPayload>(
-  result: Result<TPayload, FormValidationError<TField>>,
+  result: Result<TPayload, FormError<TField>>,
   params: {
     fields: readonly TField[];
     raw: Record<string, unknown>;
@@ -62,7 +62,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
     return FormOk<TField, TPayload>(value.data, value.message);
   }
 
-  const error: FormValidationError<TField> = {
+  const error: FormError<TField> = {
     code: "VALIDATION" as const,
     fieldErrors: result.error.fieldErrors as DenseFieldErrorMap<TField, string>,
     kind: "validation",

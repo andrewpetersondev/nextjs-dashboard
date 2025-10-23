@@ -8,9 +8,7 @@ import type { SparseFieldValueMap } from "@/shared/forms/types/sparse.types";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
-/**
- * SECTION: Interfaces (object shapes)
- */
+// SECTION: Interfaces (object shapes)
 
 /**
  * Success payload shape
@@ -23,7 +21,7 @@ export interface FormSuccess<TPayload> {
 /**
  * Validation error shape - now extends AppError.
  */
-export interface FormValidationError<
+export interface FormError<
   TFieldName extends string,
   TValueEcho = string,
   TMessage extends string = string,
@@ -43,17 +41,14 @@ export type FormResult<
   TPayload,
   TValueEcho = string,
   TMessage extends string = string,
-> = Result<
-  FormSuccess<TPayload>,
-  FormValidationError<TFieldName, TValueEcho, TMessage>
->;
+> = Result<FormSuccess<TPayload>, FormError<TFieldName, TValueEcho, TMessage>>;
 
-// Helper type to explicitly restrict the error branch to FormValidationError only (prevents AppError leakage)
+// Helper type to explicitly restrict the error branch to FormError only (prevents AppError leakage)
 export type FormValidationErrorOnly<
   TFieldName extends string,
   TValueEcho,
   TMessage extends string,
-> = FormValidationError<TFieldName, TValueEcho, TMessage>;
+> = FormError<TFieldName, TValueEcho, TMessage>;
 
 /**
  * Canonical default alias for the most common string case.
@@ -65,9 +60,7 @@ export type FormResultStrings<TFieldName extends string, TPayload> = FormResult<
   string
 >;
 
-/**
- * SECTION: Constructors and guards
- */
+// SECTION: Constructors and guards
 
 export const FormOk = <TFieldName extends string, TPayload>(
   data: TPayload,
@@ -89,7 +82,7 @@ export const FormErr = <
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
 }): FormResult<TFieldName, TPayload, TValueEcho, TMessage> => {
-  const error = freeze<FormValidationError<TFieldName, TValueEcho, TMessage>>({
+  const error = freeze<FormError<TFieldName, TValueEcho, TMessage>>({
     code: params.code ?? "VALIDATION",
     fieldErrors: params.fieldErrors,
     kind: "validation" as const,
@@ -112,12 +105,9 @@ export const isFormErr = <
   TMessage extends string = string,
 >(
   r: FormResult<TFieldName, TPayload, TValueEcho, TMessage>,
-): r is Result<never, FormValidationError<TFieldName, TValueEcho, TMessage>> =>
-  !r.ok;
+): r is Result<never, FormError<TFieldName, TValueEcho, TMessage>> => !r.ok;
 
-/**
- * SECTION: Simple maker (payload-only success)
- */
+// SECTION: Simple maker (payload-only success)
 
 // Build just the success payload (not a Result). Frozen for consistency.
 /* @__PURE__ */
@@ -142,10 +132,8 @@ export const formErrStrings = <TFieldName extends string, TPayload>(params: {
 }): FormResult<TFieldName, TPayload> =>
   FormErr<TFieldName, TPayload, string, string>(params);
 
-/**
- * SECTION: Narrow helpers (value/error extractors)
- * Small, safe helpers to reduce optional chaining in consumers.
- */
+// SECTION: Narrow helpers (value/error extractors)
+// Small, safe helpers to reduce optional chaining in consumers.
 
 /* @__PURE__ */
 export const getFormOk = <TFieldName extends string, TPayload>(
@@ -160,13 +148,11 @@ export const getFormErr = <
   TMessage extends string = string,
 >(
   r: FormResult<TFieldName, TPayload, TValueEcho, TMessage>,
-): FormValidationError<TFieldName, TValueEcho, TMessage> | undefined =>
+): FormError<TFieldName, TValueEcho, TMessage> | undefined =>
   r.ok ? undefined : r.error;
 
-/**
- * SECTION: Normalizers
- * Ensure consumers can rely on defaults without undefined checks.
- */
+// SECTION: Normalizers
+// Ensure consumers can rely on defaults without undefined checks.
 
 /* @__PURE__ */
 export const withFormResultMessages = <
@@ -185,7 +171,7 @@ export const withFormResultMessages = <
     });
     return Ok(next);
   }
-  const next = freeze<FormValidationError<TFieldName, TValueEcho, TMessage>>({
+  const next = freeze<FormError<TFieldName, TValueEcho, TMessage>>({
     ...r.error,
     code: r.error.code,
     message: r.error.message || defaults.failure,
@@ -193,10 +179,8 @@ export const withFormResultMessages = <
   return Err(next);
 };
 
-/**
- * SECTION: Construction guards
- * Compile-time helpers to enforce consistency at call sites.
- */
+// SECTION: Construction guards
+// Compile-time helpers to enforce consistency at call sites.
 
 export const FormErrFromDenseBuilder = <
   TFieldName extends string,
@@ -216,10 +200,8 @@ export const FormErrFromDenseBuilder = <
   });
 };
 
-/**
- * SECTION: Adapters
- * Explicitly convert foreign errors to FormValidationError before producing a Result.
- */
+// SECTION: Adapters
+// Explicitly convert foreign errors to FormError before producing a Result.
 
 /* @__PURE__ */
 export const toFormValidationError = <
@@ -231,7 +213,7 @@ export const toFormValidationError = <
   readonly fieldErrors: DenseFieldErrorMap<TFieldName, TMessage>;
   readonly message: string;
   readonly values?: SparseFieldValueMap<TFieldName, TValueEcho>;
-}): FormValidationError<TFieldName, TValueEcho, TMessage> =>
+}): FormError<TFieldName, TValueEcho, TMessage> =>
   freeze({
     code: p.code ?? "VALIDATION",
     fieldErrors: p.fieldErrors,
@@ -247,13 +229,11 @@ export const FormErrFromError = <
   TValueEcho = string,
   TMessage extends string = string,
 >(
-  error: FormValidationError<TFieldName, TValueEcho, TMessage>,
+  error: FormError<TFieldName, TValueEcho, TMessage>,
 ): FormResult<TFieldName, TPayload, TValueEcho, TMessage> => Err(freeze(error));
 
-/**
- * SECTION: Value echo utilities
- * Immutable helpers to attach/merge redacted values into error branch.
- */
+// SECTION: Value echo utilities
+// Immutable helpers to attach/merge redacted values into error branch.
 
 /* @__PURE__ */
 export const withValuesEcho = <
@@ -261,9 +241,9 @@ export const withValuesEcho = <
   TValueEcho = string,
   TMessage extends string = string,
 >(
-  err: FormValidationError<TFieldName, TValueEcho, TMessage>,
+  err: FormError<TFieldName, TValueEcho, TMessage>,
   values: SparseFieldValueMap<TFieldName, TValueEcho> | undefined,
-): FormValidationError<TFieldName, TValueEcho, TMessage> => {
+): FormError<TFieldName, TValueEcho, TMessage> => {
   if (values === undefined) {
     return err; // preserve reference if no change
   }
@@ -294,10 +274,8 @@ export const withValuesEchoResult = <
   return Err(nextErr);
 };
 
-/**
- * SECTION: Dense builders from sparse (boundary helpers)
- * Convert sparse error/value maps into dense/attached errors immutably.
- */
+// SECTION: Dense builders from sparse (boundary helpers)
+// Convert sparse error/value maps into dense/attached errors immutably.
 
 /* @__PURE__ */
 export const toDenseFromSparse = <
@@ -336,10 +314,8 @@ export const fromSparseFieldErrors = <
   });
 };
 
-/**
- * SECTION: Flag helpers
- * Tuple flags to simplify branching without re-checking r.ok.
- */
+// SECTION: Flag helpers
+// Tuple flags to simplify branching without re-checking r.ok.
 
 /* @__PURE__ */
 export const formResultFlags = <
@@ -352,5 +328,5 @@ export const formResultFlags = <
 ): readonly [
   ok: boolean,
   okValue: FormSuccess<TPayload> | undefined,
-  err: FormValidationError<TFieldName, TValueEcho, TMessage> | undefined,
+  err: FormError<TFieldName, TValueEcho, TMessage> | undefined,
 ] => (r.ok ? [true, r.value, undefined] : [false, undefined, r.error]);

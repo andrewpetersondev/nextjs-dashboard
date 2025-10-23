@@ -11,9 +11,9 @@ import { FORM_ERROR_MESSAGES } from "@/shared/forms/i18n/form-messages.const";
 import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/mapping/zod-to-field-errors.mapper";
 import {
   FormErr,
+  type FormError,
   FormOk,
   type FormResult,
-  type FormValidationError,
   formErrStrings,
 } from "@/shared/forms/types/form-result.types";
 
@@ -34,7 +34,7 @@ function toValidationFailure<TFieldNames extends string>(
   error: unknown,
   fields: readonly TFieldNames[],
   loggerContext: string,
-): FormValidationError<TFieldNames> {
+): FormError<TFieldNames> {
   logValidationFailure(loggerContext, error);
 
   if (isZodErrorLikeShape(error) && Array.isArray(error.issues)) {
