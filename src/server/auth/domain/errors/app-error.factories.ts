@@ -1,9 +1,6 @@
 import "server-only";
-import {
-  AUTH_CONFLICT_TARGETS,
-  AUTH_MESSAGES,
-  DEFAULT_MISSING_FIELDS,
-} from "@/server/auth/domain/errors/app-error.metadata";
+import { SIGNUP_FIELDS_LIST } from "@/features/auth/lib/auth.schema";
+import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import {
   type AppError,
   makeAppErrorDetails,
@@ -18,6 +15,14 @@ export function getErrorMessage(e: unknown, fallback: string): string {
     ? (e as { message: string }).message
     : fallback;
 }
+
+export const AUTH_MESSAGES = {
+  conflict: "Email or username already in use",
+  invalidCreds: "Invalid email or password",
+  missing: "Missing required fields",
+  unexpected: "Unexpected error occurred",
+  validation: "Invalid data",
+} as const;
 
 // Create AppError equivalents for former AuthError kinds
 export function createAuthAppError(
@@ -37,7 +42,7 @@ export function createAuthAppError(
         makeAppErrorDetails({
           extra: init,
           fieldErrors: Object.fromEntries(
-            DEFAULT_MISSING_FIELDS.map((f) => [
+            SIGNUP_FIELDS_LIST.map((f) => [
               f,
               [AUTH_MESSAGES.missing] as const,
             ]),
@@ -52,7 +57,7 @@ export function createAuthAppError(
         makeAppErrorDetails({
           extra: init,
           fieldErrors: Object.fromEntries(
-            AUTH_CONFLICT_TARGETS.map((f) => [
+            ERROR_CODES.UNAUTHORIZED.authFields.map((f) => [
               f,
               [AUTH_MESSAGES.conflict] as const,
             ]),
