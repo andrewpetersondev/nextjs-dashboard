@@ -20,11 +20,13 @@ interface InvoicesPageProps {
   searchParams?: Promise<InvoicesSearchParams>;
 }
 
+// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
   title: "Invoices",
 };
 
 // force this page to be dynamic, so it doesn't get cached. Why?
+// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const dynamic = "force-dynamic";
 
 export default async function Page(

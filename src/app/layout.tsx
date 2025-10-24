@@ -10,6 +10,7 @@ import { notoSans } from "@/ui/styles/fonts";
  * @param props - Layout props
  * @returns The root layout
  */
+// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
   description: "The official Next.js Learn Dashboard is built with App Router.",
   metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
