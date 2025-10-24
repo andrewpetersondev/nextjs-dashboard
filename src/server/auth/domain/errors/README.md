@@ -4,7 +4,7 @@ This folder contains the **error handling infrastructure for authentication**, b
 
 ## File Overview
 
-### 1. **`app-error.metadata.ts`** — Configuration Hub
+### 1. **`auth-error.logging.ts`** — Configuration Hub
 
 Centralized constants for auth error handling:
 

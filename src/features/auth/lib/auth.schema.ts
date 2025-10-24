@@ -128,16 +128,32 @@ export type LoginField = keyof LoginData;
 /** Valid signup field name union. */
 export type SignupField = keyof SignupData;
 
-// Field Name Arrays
+/**
+ * Derive a frozen, readonly tuple of keys from a Zod object schema.
+ *
+ * Runtime and type-safe
+ * Always in sync with schema
+ * Prevents accidental mutation
+ */
+export function schemaKeys<const T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+): readonly (keyof T)[] {
+  return Object.freeze(Object.keys(schema.shape) as readonly (keyof T)[]);
+}
+
+// --- Auto-synced, immutable field name lists ---
+
+export const LOGIN_FIELDS_LIST = schemaKeys(LoginSchema);
+export const SIGNUP_FIELDS_LIST = schemaKeys(SignupSchema);
 
 // Explicit, readonly field name lists; avoids unsafe `Object.keys(... as ...)`
-export const SIGNUP_FIELDS_LIST = [
-  "email",
-  "password",
-  "username",
-] as const satisfies readonly SignupField[];
+//export const SIGNUP_FIELDS_LIST = [
+//  "email",
+//  "password",
+//  "username",
+//] as const satisfies readonly SignupField[];
 
-export const LOGIN_FIELDS_LIST = [
-  "email",
-  "password",
-] as const satisfies readonly LoginField[];
+//export const LOGIN_FIELDS_LIST = [
+//  "email",
+//  "password",
+//] as const satisfies readonly LoginField[];

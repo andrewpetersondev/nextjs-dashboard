@@ -29,7 +29,7 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
     - session-action.types.ts
     - user-transport.types.ts
   - errors/: Discriminated error types and helpers for business outcomes.
-    - app-error.metadata.ts, app-error.factories.ts, app-error.mapping.repo.ts
+    - auth-error.logging.ts, app-error.factories.ts, app-error.mapping.repo.ts
   - schemas/: Validation schemas for domain payloads (e.g., session payload model).
     - session-payload.schema.ts
   - mappers/: Pure mappings from domain shapes.

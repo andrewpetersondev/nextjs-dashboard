@@ -10,9 +10,6 @@
  * - Keep descriptions user-safe (no internal implementation detail or secrets).
  */
 
-// Add Category type derived from metadata (next to existing Severity).
-export type Category = ErrorCodeMeta["category"];
-
 export const ERROR_CODES = {
   BAD_REQUEST: {
     category: "client",
@@ -36,6 +33,7 @@ export const ERROR_CODES = {
     severity: "critical",
   },
   CONFLICT: {
+    authFields: ["email", "username"] as const,
     category: "client",
     description: "Resource state conflict",
     httpStatus: 409,
@@ -141,8 +139,9 @@ export const ERROR_CODES = {
     severity: "error",
   },
   UNAUTHORIZED: {
+    authFields: ["email", "password"] as const,
     category: "client",
-    description: "Authentication required or failed",
+    description: "Invalid credentials",
     httpStatus: 401,
     retryable: false,
     severity: "warn",
@@ -162,13 +161,16 @@ export const ERROR_CODES = {
     severity: "error",
   },
   VALIDATION: {
+    authFields: ["email", "username", "password"] as const,
     category: "client",
-    description: "Input validation failed",
+    description: "Validation failed",
     httpStatus: 422,
     retryable: false,
     severity: "warn",
   },
 } as const;
+
+export type Category = ErrorCodeMeta["category"];
 
 export type ErrorCode = keyof typeof ERROR_CODES;
 

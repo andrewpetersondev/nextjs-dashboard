@@ -10,7 +10,7 @@ import {
 } from "@/features/auth/lib/auth.schema";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/app-error.metadata";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
@@ -40,7 +40,7 @@ export async function loginAction(
   const raw = extractFormDataFields<LoginField>(formData, fields);
 
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
-    loggerContext: AUTH_ACTION_CONTEXTS.LOGIN,
+    loggerContext: AUTH_ACTION_CONTEXTS.LOGIN.CONTEXT,
   });
 
   if (!validated.ok) {

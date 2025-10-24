@@ -134,6 +134,7 @@ public/.cache/
 # -----------------------------------------
 .github/
 docs/
+examples/
 drizzle/
 public/
 storage/
