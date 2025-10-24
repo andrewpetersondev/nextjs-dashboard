@@ -1,26 +1,5 @@
 import "server-only";
-
-/**
- * Shared shape for structured log entries.
- */
-export interface LogContext {
-  context: string;
-  kind: string;
-  message: string;
-  [key: string]: unknown;
-}
-
-/**
- * Factory helper for creating structured log contexts.
- */
-function createLogContext(
-  context: string,
-  kind: string,
-  message: string,
-  extra?: Record<string, unknown>,
-): LogContext {
-  return { context, kind, message, ...extra };
-}
+import { createLogContext } from "@/server/logging/serverLogger";
 
 /* -------------------------------------------------------------------------- */
 /*                                ACTION CONTEXTS                             */
