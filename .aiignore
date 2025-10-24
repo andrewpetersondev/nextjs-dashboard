@@ -1,25 +1,17 @@
-# -----------------------------------------
+# =========================================
 # Node modules and package managers
-# -----------------------------------------
+# =========================================
 node_modules/
 .pnp/
-.pnp.js
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+.turbo/
+.yarn/
 
-# Dependency directories
-/.turbo
-/.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-
-# -----------------------------------------
+# =========================================
 # Build artifacts and caches
-# -----------------------------------------
+# =========================================
 .next/
 .next/cache/
 .next/static/
@@ -42,26 +34,18 @@ tsconfig.tsbuildinfo
 .biome-cache/
 drizzle/migrations/.cache/
 drizzle/.cache/
+.vite/
 
-# -----------------------------------------
+# =========================================
 # Environment and secrets
-# -----------------------------------------
+# =========================================
 .env
 .env.*
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-!.env.example
-!.env.local.example
-!.env.sample
-*.local.*
-*.dev.local
-*.prod.local
+*.txt
 
-# -----------------------------------------
+# =========================================
 # Logs and diagnostics
-# -----------------------------------------
+# =========================================
 *.log
 *.log.*
 logs/
@@ -70,13 +54,12 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.pid
-*.seed
 eslint-report.*
 prettier-report.*
 
-# -----------------------------------------
+# =========================================
 # OS / Editor junk
-# -----------------------------------------
+# =========================================
 .DS_Store
 Thumbs.db
 *.swp
@@ -85,23 +68,21 @@ Thumbs.db
 .idea/
 *.iml
 
-# -----------------------------------------
+# =========================================
 # Testing / QA
-# -----------------------------------------
+# =========================================
 coverage/
-# cypress/
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
 .playwright/
 test-results/
 reports/
-# cypress.config.ts
-# devtools/
+__tests__/
 
-# -----------------------------------------
+# =========================================
 # Database / ORM
-# -----------------------------------------
+# =========================================
 *.sqlite
 *.db
 *.db-journal
@@ -111,48 +92,68 @@ drizzle/*.sqlite
 drizzle/*.db
 drizzle/*.db-journal
 
-# -----------------------------------------
-# Generated files / public
-# -----------------------------------------
+# =========================================
+# Generated / Public
+# =========================================
 public/generated/
 public/_next/
 public/.cache/
 
-# -----------------------------------------
+# =========================================
 # Misc / Build tools
-# -----------------------------------------
+# =========================================
 *.cache
 *.tmp
 .rimraf*
 .biome/
-*.js
-*.min.js
-*.map
+.js
+**/*.min.js
+**/*.map
 
-# -----------------------------------------
+
+# =========================================
 # Project-specific / root files
-# -----------------------------------------
+# =========================================
 .github/
+cypress/
+devtools/
 docs/
-examples/
 drizzle/
 public/
 storage/
-next-env.d.ts
-postcss.config.mjs
 .gitignore
 biome.json
+cypress.config.ts
+drizzle.config.ts
+eslint.config.mjs
+next-env.d.ts
+postcss.config.mjs
+vitest.config.mts
 
-# -----------------------------------------
-# Optional: source code directories
-# Uncomment if you want AI to ignore them
-# -----------------------------------------
-src/ui/
-src/features/customers/
-src/features/invoices/
-src/features/revenues/
-src/server/customers/
-src/server/invoices/
-src/server/revenues/
-src/shared/core/result/examples/
+# =========================================
+# Optional: source exclusions (comment to re-enable)
+# =========================================
+src/
+# App
+!src/app/auth/
+# Features
+!src/features/auth/
+# Server
+!src/server/auth/
+!src/server/config/
+!src/server/db/
+!src/server/errors/
+!src/server/forms/
+!src/server/logging/
+# Shared
+!src/shared/config/
+!src/shared/core/
+!src/shared/domain/
+!src/shared/forms/
+!src/shared/utils/
 
+# =========================================
+# Documentation / Markdown
+# =========================================
+*.md
+examples/
