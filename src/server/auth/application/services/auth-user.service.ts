@@ -99,7 +99,7 @@ export class AuthUserService {
       serverLogger.warn(ctx.VALIDATION_FAIL());
       return Err(
         toFormAwareError(createAuthAppError("missing_fields"), {
-          fields: ["email", "username", "password", "confirmPassword"] as const,
+          fields: ["email", "username", "password"] as const,
         }),
       );
     }
@@ -128,12 +128,7 @@ export class AuthUserService {
         ? appError
         : Err(
             toFormAwareError(appError.error, {
-              fields: [
-                "email",
-                "username",
-                "password",
-                "confirmPassword",
-              ] as const,
+              fields: ["email", "username", "password"] as const,
             }),
           );
     }

@@ -141,12 +141,8 @@ export const AUTH_FORM_FIELDS = {
       "email",
       "username",
       "password",
-      "confirmPassword",
     ] as const satisfies readonly SignupField[],
-    redactable: [
-      "password",
-      "confirmPassword",
-    ] as const satisfies readonly SignupField[],
+    redactable: ["password"] as const satisfies readonly SignupField[],
   },
 } as const;
 
@@ -321,7 +317,7 @@ export const AUTH_ERROR_CATALOG = {
   VALIDATION_ERROR: {
     code: "validation_error" as const,
     message: "Invalid data provided",
-    fields: ["email", "username", "password", "confirmPassword"] as const,
+    fields: ["email", "username", "password"] as const,
     httpStatus: 422,
   },
   UNEXPECTED_ERROR: {

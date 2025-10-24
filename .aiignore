@@ -133,24 +133,32 @@ vitest.config.mts
 # =========================================
 # Optional: source exclusions (comment to re-enable)
 # =========================================
-src/
 # App
-!src/app/auth/
+src/app/api/
+src/app/dashboard/
 # Features
-!src/features/auth/
+src/features/customers/
+src/features/invoices
+src/features/revenues/
+src/features/users/
+
 # Server
-!src/server/auth/
-!src/server/config/
-!src/server/db/
-!src/server/errors/
-!src/server/forms/
-!src/server/logging/
+src/server/customers/
+src/server/events/
+src/server/invoices/
+src/server/repository/
+src/server/revenues/
+src/server/users/
 # Shared
-!src/shared/config/
-!src/shared/core/
-!src/shared/domain/
-!src/shared/forms/
-!src/shared/utils/
+src/shared/http/
+src/shared/i18n/
+src/shared/money/
+src/shared/routes/
+src/shared/ui/
+# Shell
+src/shell/
+# UI
+src/ui/
 
 # =========================================
 # Documentation / Markdown
