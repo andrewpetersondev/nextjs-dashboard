@@ -5,6 +5,7 @@ import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { mapRepoErrorToAppResult } from "@/server/auth/domain/errors/app-error.mapping.repo";
+import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
@@ -41,16 +42,14 @@ export class AuthUserService {
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const ctx = AUTH_SERVICE_CONTEXTS.CREATE_DEMO_USER;
+
     try {
       const db = getAppDb();
-      const counter: number = await demoUserCounter(db, role);
+      const counter = await demoUserCounter(db, role);
 
       if (!counter || counter <= 0) {
-        serverLogger.error({
-          context: "service.AuthUserService.createDemoUser",
-          message: "Failed to fetch demo user counter",
-          role,
-        });
+        serverLogger.error(ctx.FAIL_COUNTER(role));
         return Err(createAuthAppError("unexpected"));
       }
 
@@ -69,11 +68,13 @@ export class AuthUserService {
         }),
       );
 
+      serverLogger.info(ctx.SUCCESS(role));
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
     } catch (err: unknown) {
+      serverLogger.error(ctx.TRANSACTION_ERROR(err));
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        "service.AuthUserService.createDemoUser",
+        ctx.CONTEXT,
       );
       return appError.ok
         ? appError
@@ -92,7 +93,10 @@ export class AuthUserService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const ctx = AUTH_SERVICE_CONTEXTS.SIGNUP;
+
     if (!hasRequiredSignupFields(input)) {
+      serverLogger.warn(ctx.VALIDATION_FAIL());
       return Err(
         toFormAwareError(createAuthAppError("missing_fields"), {
           fields: ["email", "username", "password", "confirmPassword"] as const,
@@ -112,11 +116,13 @@ export class AuthUserService {
         }),
       );
 
+      serverLogger.info(ctx.SUCCESS(input.email));
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
+      serverLogger.error(ctx.TRANSACTION_ERROR(err));
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        "service.UserAuthService.signup",
+        ctx.CONTEXT,
       );
       return appError.ok
         ? appError
@@ -139,18 +145,13 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const ctx = AUTH_SERVICE_CONTEXTS.LOGIN;
+
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user.password) {
-        serverLogger.error(
-          {
-            context: "service.UserAuthService.login",
-            kind: "auth-invariant",
-            userId: user.id,
-          },
-          "Missing hashed password on user entity; cannot authenticate",
-        );
+        serverLogger.error(ctx.MISSING_PASSWORD(user.id));
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -162,7 +163,9 @@ export class AuthUserService {
         input.password,
         asPasswordHash(user.password),
       );
+
       if (!passwordOk) {
+        serverLogger.warn(ctx.INVALID_CREDENTIALS(input.email));
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -170,11 +173,13 @@ export class AuthUserService {
         );
       }
 
+      serverLogger.info(ctx.SUCCESS(user.id));
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
+      serverLogger.error(ctx.TRANSACTION_ERROR(err));
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        "service.UserAuthService.login",
+        ctx.CONTEXT,
       );
       return appError.ok
         ? appError
