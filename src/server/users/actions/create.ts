@@ -13,6 +13,7 @@ import { createUserDal } from "@/server/users/dal/create";
 import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
+  createEmptyDenseFieldErrorMap,
   selectSparseFieldErrorsForAllowedFields,
   toDenseFieldErrorMapFromSparse,
 } from "@/shared/forms/validation/error-map";
@@ -83,7 +84,7 @@ export async function createUserAction(
         safeMeta: { email, username },
       });
       return formError({
-        fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+        fieldErrors: createEmptyDenseFieldErrorMap(allowed),
         message: USER_ERROR_MESSAGES.CREATE_FAILED,
       });
     }
