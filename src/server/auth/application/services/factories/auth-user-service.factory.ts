@@ -4,7 +4,7 @@ import { BcryptPasswordHasherAdapter } from "@/server/auth/application/services/
 import { AuthUserService } from "@/server/auth/application/services/auth-user.service";
 import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
-import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository";
+import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 
 /**
