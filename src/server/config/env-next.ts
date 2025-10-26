@@ -9,7 +9,7 @@ import {
   getDatabaseEnv,
   getNodeEnv,
 } from "@/shared/config/env-shared";
-import { type LogLevel, LogLevelSchema } from "@/shared/logging/logger.shared";
+import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
 
 const NON_EMPTY_STRING_MIN_LENGTH = 1 as const;
 

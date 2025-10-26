@@ -13,6 +13,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
+import { createChildLogger } from "@/server/logging/logger.server";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
@@ -35,11 +36,17 @@ export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
 ): Promise<FormResult<SignupField>> {
+  const ctx = AUTH_ACTION_CONTEXTS.SIGNUP;
+  const logger = createChildLogger({ context: ctx.CONTEXT });
+
+  logger.info(ctx.START(), "Signup attempt started");
+
   const validated = await validateForm(formData, SignupSchema, fields, {
-    loggerContext: AUTH_ACTION_CONTEXTS.SIGNUP.CONTEXT,
+    loggerContext: ctx.CONTEXT,
   });
 
   if (!validated.ok) {
+    logger.warn({ validation: "failed" }, "Signup validation failed");
     return validated;
   }
 
@@ -52,12 +59,15 @@ export async function signupAction(
   );
 
   if (!sessionResult.ok) {
+    logger.warn(ctx.FAIL(sessionResult.error.message), "Signup failed");
     return mapResultToFormResult(sessionResult, {
       failureMessage: "Signup failed. Please try again.",
       fields,
-      raw: input, // Use validated input as raw data for error display
+      raw: input,
     });
   }
+
+  logger.info(ctx.SUCCESS(input.email), "User signed up successfully");
 
   (await cookies()).set("signup-success", "true", {
     httpOnly: true,

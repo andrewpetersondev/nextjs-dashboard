@@ -7,7 +7,10 @@ import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/inser
 import type { AppDatabase } from "@/server/db/db.connection";
 import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
+import {
+  createChildLogger,
+  type ServerLogger,
+} from "@/server/logging/logger.server";
 import {
   newUserDbRowToEntity,
   userDbRowToEntity,
@@ -25,10 +28,12 @@ import {
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
+  private readonly logger: ServerLogger;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
   constructor(db: AppDatabase) {
     this.db = db;
+    this.logger = createChildLogger({ context: AuthUserRepositoryImpl.CTX });
   }
 
   /**
@@ -46,15 +51,20 @@ export class AuthUserRepositoryImpl {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
 
+    const txLogger = this.logger.child({ operation: "withTransaction" });
+
     try {
       return await dbWithTx.transaction(async (tx: AppDatabase) => {
         const txRepo = new AuthUserRepositoryImpl(tx);
         return await fn(txRepo);
       });
     } catch (err) {
-      serverLogger.error(
+      txLogger.error(
         {
-          context: `${AuthUserRepositoryImpl.CTX}.withTransaction`,
+          error:
+            err instanceof Error
+              ? { message: err.message, stack: err.stack }
+              : String(err),
           kind: "db",
         },
         "Transaction failed",
@@ -73,24 +83,50 @@ export class AuthUserRepositoryImpl {
    * @throws {DatabaseError} For infrastructure/timeout errors
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const context = `${AuthUserRepositoryImpl.CTX}.signup`;
+    const signupLogger = this.logger.child({
+      email: input.email,
+      operation: "signup",
+      role: input.role,
+      username: input.username,
+    });
 
     try {
       this.assertSignupFields(input);
       const row = await insertUserDal(this.db, input);
 
       if (!row) {
+        signupLogger.error(
+          { kind: "no_row_returned" },
+          "User creation did not return a row",
+        );
         return throwRepoDatabaseErr("User creation did not return a row.");
       }
 
+      signupLogger.info(
+        { kind: "success", userId: row.id },
+        "User created successfully",
+      );
       return newUserDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isRepoKnownError(err)) {
+        signupLogger.warn(
+          {
+            errorType: err instanceof Error ? err.constructor.name : typeof err,
+            kind: "known_error",
+          },
+          "Known repository error during signup",
+        );
         throw err;
       }
 
-      serverLogger.error(
-        { context, kind: "unexpected" },
+      signupLogger.error(
+        {
+          error:
+            err instanceof Error
+              ? { message: err.message, stack: err.stack }
+              : String(err),
+          kind: "unexpected",
+        },
         "Unexpected error during signup repository operation",
       );
 
@@ -110,30 +146,47 @@ export class AuthUserRepositoryImpl {
    * @throws {DatabaseError} For infrastructure errors
    */
   async login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity> {
-    const context = `${AuthUserRepositoryImpl.CTX}.login`;
+    const loginLogger = this.logger.child({
+      email: input.email,
+      operation: "login",
+    });
 
     try {
       const row = await getUserByEmailDal(this.db, input.email);
 
       if (!row?.password) {
-        serverLogger.warn(
-          {
-            context,
-            kind: "not_found_or_missing_password",
-          },
+        loginLogger.warn(
+          { kind: "not_found_or_missing_password" },
           "User not found or missing password",
         );
         throw new UnauthorizedError("Invalid email or password.");
       }
 
+      loginLogger.info(
+        { kind: "success", userId: row.id },
+        "User retrieved successfully for login",
+      );
       return userDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isKnownLoginError(err)) {
+        loginLogger.warn(
+          {
+            errorType: err instanceof Error ? err.constructor.name : typeof err,
+            kind: "known_error",
+          },
+          "Known repository error during login",
+        );
         throw err;
       }
 
-      serverLogger.error(
-        { context, kind: "unexpected" },
+      loginLogger.error(
+        {
+          error:
+            err instanceof Error
+              ? { message: err.message, stack: err.stack }
+              : String(err),
+          kind: "unexpected",
+        },
         "Unexpected error during login repository operation",
       );
 
@@ -166,6 +219,14 @@ export class AuthUserRepositoryImpl {
     }
 
     if (missingFields.length > 0) {
+      this.logger.warn(
+        {
+          kind: "validation",
+          missingFields,
+          operation: "assertSignupFields",
+        },
+        `Missing required fields for signup: ${missingFields.join(", ")}`,
+      );
       throw new ValidationError(
         `Missing required fields for signup: ${missingFields.join(", ")}`,
       );

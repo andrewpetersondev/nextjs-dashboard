@@ -1,163 +1,111 @@
 import "server-only";
-import { createLogContext } from "@/server/logging/logger.server";
 
 /* -------------------------------------------------------------------------- */
 /*                                ACTION CONTEXTS                             */
 /* -------------------------------------------------------------------------- */
+
 /**
- * Action-level contexts (triggered directly by user interaction)
+ * Action-level log data factories (triggered directly by user interaction)
  */
 export const AUTH_ACTION_CONTEXTS = {
   DEMO_USER: {
-    CONTEXT: "action.auth.demo-user",
-    FAIL: (reason: string) =>
-      createLogContext(
-        "action.auth.demo-user",
-        "failure",
-        "Failed to create demo user",
-        { reason },
-      ),
-    START: () =>
-      createLogContext(
-        "action.auth.demo-user",
-        "start",
-        "Starting demo user creation",
-      ),
-    SUCCESS: (role: string) =>
-      createLogContext(
-        "action.auth.demo-user",
-        "success",
-        "Demo user created successfully",
-        { role },
-      ),
+    CONTEXT: "action.auth.demo-user" as const,
+    FAIL: (reason: string) => ({ kind: "failure", reason }),
+    START: () => ({ kind: "start" }),
+    SUCCESS: (role: string) => ({ kind: "success", role }),
   },
 
   LOGIN: {
-    CONTEXT: "action.auth.login",
-    FAIL: (reason: string) =>
-      createLogContext("action.auth.login", "failure", "Login failed", {
-        reason,
-      }),
-    START: () =>
-      createLogContext("action.auth.login", "start", "Login attempt started"),
-    SUCCESS: (userId: string) =>
-      createLogContext("action.auth.login", "success", "User logged in", {
-        userId,
-      }),
+    CONTEXT: "action.auth.login" as const,
+    FAIL: (reason: string) => ({ kind: "failure", reason }),
+    START: () => ({ kind: "start" }),
+    SUCCESS: (userId: string) => ({ kind: "success", userId }),
   },
 
   SIGNUP: {
-    CONTEXT: "action.auth.signup",
-    FAIL: (reason: string) =>
-      createLogContext("action.auth.signup", "failure", "Signup failed", {
-        reason,
-      }),
-    START: () =>
-      createLogContext("action.auth.signup", "start", "Signup attempt started"),
-    SUCCESS: (email: string) =>
-      createLogContext("action.auth.signup", "success", "User signed up", {
-        email,
-      }),
+    CONTEXT: "action.auth.signup" as const,
+    FAIL: (reason: string) => ({ kind: "failure", reason }),
+    START: () => ({ kind: "start" }),
+    SUCCESS: (email: string) => ({ email, kind: "success" }),
   },
 } as const;
 
 /* -------------------------------------------------------------------------- */
 /*                               SERVICE CONTEXTS                             */
 /* -------------------------------------------------------------------------- */
+
 /**
- * Internal service-level contexts (server-only logic)
- * Used for diagnostics, invariants, and transactional errors.
+ * Internal service-level log data factories (server-only logic)
  */
 export const AUTH_SERVICE_CONTEXTS = {
   CREATE_DEMO_USER: {
-    CONTEXT: "service.auth.create-demo-user",
+    CONTEXT: "service.auth.create-demo-user" as const,
 
-    FAIL_COUNTER: (role: string) =>
-      createLogContext(
-        "service.auth.create-demo-user",
-        "error",
-        "Failed to fetch demo user counter",
-        { role },
-      ),
+    FAIL_COUNTER: (role: string) => ({
+      kind: "error",
+      role,
+    }),
 
-    SUCCESS: (role: string) =>
-      createLogContext(
-        "service.auth.create-demo-user",
-        "success",
-        "Demo user created successfully",
-        { role },
-      ),
+    SUCCESS: (role: string) => ({
+      kind: "success",
+      role,
+    }),
 
-    TRANSACTION_ERROR: (err: unknown) =>
-      createLogContext(
-        "service.auth.create-demo-user",
-        "exception",
-        "Unexpected error during demo user creation",
-        { error: err instanceof Error ? err.message : String(err) },
-      ),
+    TRANSACTION_ERROR: (err: unknown) => ({
+      error:
+        err instanceof Error
+          ? { message: err.message, stack: err.stack }
+          : String(err),
+      kind: "exception",
+    }),
   },
 
   LOGIN: {
-    CONTEXT: "service.auth.login",
+    CONTEXT: "service.auth.login" as const,
 
-    INVALID_CREDENTIALS: (email: string) =>
-      createLogContext(
-        "service.auth.login",
-        "validation",
-        "Invalid credentials provided",
-        { email },
-      ),
+    INVALID_CREDENTIALS: (email: string) => ({
+      email,
+      kind: "validation",
+    }),
 
-    MISSING_PASSWORD: (userId: string) =>
-      createLogContext(
-        "service.auth.login",
-        "auth-invariant",
-        "Missing hashed password on user entity; cannot authenticate",
-        { userId },
-      ),
+    MISSING_PASSWORD: (userId: string) => ({
+      kind: "auth-invariant",
+      userId,
+    }),
 
-    SUCCESS: (userId: string) =>
-      createLogContext(
-        "service.auth.login",
-        "success",
-        "User logged in successfully",
-        { userId },
-      ),
+    SUCCESS: (userId: string) => ({
+      kind: "success",
+      userId,
+    }),
 
-    TRANSACTION_ERROR: (err: unknown) =>
-      createLogContext(
-        "service.auth.login",
-        "exception",
-        "Unexpected error during login",
-        { error: err instanceof Error ? err.message : String(err) },
-      ),
+    TRANSACTION_ERROR: (err: unknown) => ({
+      error:
+        err instanceof Error
+          ? { message: err.message, stack: err.stack }
+          : String(err),
+      kind: "exception",
+    }),
   },
 
   SIGNUP: {
-    CONTEXT: "service.auth.signup",
+    CONTEXT: "service.auth.signup" as const,
 
-    SUCCESS: (email: string) =>
-      createLogContext(
-        "service.auth.signup",
-        "success",
-        "User signed up successfully",
-        { email },
-      ),
+    SUCCESS: (email: string) => ({
+      email,
+      kind: "success",
+    }),
 
-    TRANSACTION_ERROR: (err: unknown) =>
-      createLogContext(
-        "service.auth.signup",
-        "exception",
-        "Unexpected error during signup",
-        { error: err instanceof Error ? err.message : String(err) },
-      ),
+    TRANSACTION_ERROR: (err: unknown) => ({
+      error:
+        err instanceof Error
+          ? { message: err.message, stack: err.stack }
+          : String(err),
+      kind: "exception",
+    }),
 
-    VALIDATION_FAIL: () =>
-      createLogContext(
-        "service.auth.signup",
-        "validation",
-        "Missing required signup fields",
-      ),
+    VALIDATION_FAIL: () => ({
+      kind: "validation",
+    }),
   },
 } as const;
 

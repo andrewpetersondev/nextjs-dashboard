@@ -13,6 +13,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
+import { createChildLogger } from "@/server/logging/logger.server";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
@@ -35,11 +36,17 @@ export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
 ): Promise<FormResult<LoginField>> {
+  const ctx = AUTH_ACTION_CONTEXTS.LOGIN;
+  const logger = createChildLogger({ context: ctx.CONTEXT });
+
+  logger.info(ctx.START(), "Login attempt started");
+
   const validated = await validateForm(formData, LoginSchema, fields, {
-    loggerContext: AUTH_ACTION_CONTEXTS.LOGIN.CONTEXT,
+    loggerContext: ctx.CONTEXT,
   });
 
   if (!validated.ok) {
+    logger.warn({ validation: "failed" }, "Login validation failed");
     return validated;
   }
 
@@ -52,12 +59,18 @@ export async function loginAction(
   );
 
   if (!sessionResult.ok) {
+    logger.warn(ctx.FAIL(sessionResult.error.message), "Login failed");
     return mapResultToFormResult(sessionResult, {
       failureMessage: "Login failed. Please try again.",
       fields,
-      raw: input, // Use validated input as raw data for error display
+      raw: input,
     });
   }
+
+  logger.info(
+    ctx.SUCCESS(sessionResult.value.id),
+    "User logged in successfully",
+  );
 
   (await cookies()).set("login-success", "true", {
     httpOnly: true,

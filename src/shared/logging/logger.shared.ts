@@ -1,17 +1,29 @@
 /**
  * Client-safe logger facade.
  * - In the browser, delegates to console.*
- * - On the server, also delegates to console.* by default (can be wired to a server logger later).
- * Import this module from features/shared code instead of server-only loggers.
+ * - Signature matches Pino's API for consistency across client/server.
  */
 
-import { z } from "zod";
 import {
   IS_PROD,
   NEXT_PUBLIC_LOG_LEVEL,
 } from "@/shared/config/public-env.client";
+import { type LogLevel, levelOrder } from "@/shared/logging/log-level";
 
-export function safeInvoke<TArgs extends readonly unknown[]>(
+/**
+ * Format structured log data for console output.
+ */
+function formatLog(objOrMsg: unknown, msg?: string): unknown[] {
+  if (typeof objOrMsg === "string") {
+    return [objOrMsg];
+  }
+  if (msg) {
+    return [msg, objOrMsg];
+  }
+  return [objOrMsg];
+}
+
+function safeInvoke<TArgs extends readonly unknown[]>(
   fn: (...a: TArgs) => void,
   ...args: TArgs
 ): void {
@@ -22,20 +34,7 @@ export function safeInvoke<TArgs extends readonly unknown[]>(
   }
 }
 
-export type LogPayload = unknown;
-
-export const LOG_LEVELS = ["debug", "info", "warn", "error", "silent"] as const;
-
-export type LogLevel = (typeof LOG_LEVELS)[number];
-
-export const LogLevelSchema = z.enum(LOG_LEVELS);
-
-export const levelOrder: readonly LogLevel[] = LOG_LEVELS;
-
-export function isLevelEnabled(
-  current: LogLevel,
-  methodLevel: LogLevel,
-): boolean {
+function isLevelEnabled(current: LogLevel, methodLevel: LogLevel): boolean {
   if (current === "silent") {
     return false;
   }
@@ -54,25 +53,29 @@ export function getLogLevel(): LogLevel {
 
 export const currentLevel = getLogLevel();
 
+/**
+ * Client logger with Pino-compatible API signature.
+ * Supports both logger.info('message') and logger.info({data}, 'message')
+ */
 export const sharedLogger = {
-  debug(payload: LogPayload): void {
+  debug(objOrMsg: unknown, msg?: string): void {
     if (isLevelEnabled(currentLevel, "debug")) {
-      safeInvoke(console.debug, payload);
+      safeInvoke(console.debug, ...formatLog(objOrMsg, msg));
     }
   },
-  error(payload: LogPayload): void {
+  error(objOrMsg: unknown, msg?: string): void {
     if (isLevelEnabled(currentLevel, "error")) {
-      safeInvoke(console.error, payload);
+      safeInvoke(console.error, ...formatLog(objOrMsg, msg));
     }
   },
-  info(payload: LogPayload): void {
+  info(objOrMsg: unknown, msg?: string): void {
     if (isLevelEnabled(currentLevel, "info")) {
-      safeInvoke(console.info, payload);
+      safeInvoke(console.info, ...formatLog(objOrMsg, msg));
     }
   },
-  warn(payload: LogPayload): void {
+  warn(objOrMsg: unknown, msg?: string): void {
     if (isLevelEnabled(currentLevel, "warn")) {
-      safeInvoke(console.warn, payload);
+      safeInvoke(console.warn, ...formatLog(objOrMsg, msg));
     }
   },
 } as const;
