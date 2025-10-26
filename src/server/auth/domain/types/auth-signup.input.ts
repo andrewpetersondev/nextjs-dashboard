@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { PasswordHash } from "@/server/auth/domain/types/password.types";
+import type { PasswordHash } from "@/features/auth/lib/password.types";
 
 /**
  * Unified signup payload used across Service → Repo → DAL boundaries.

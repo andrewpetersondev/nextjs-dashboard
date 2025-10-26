@@ -2,6 +2,7 @@ import "server-only";
 import { createRandomPassword } from "@/features/auth/lib/auth.password";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
+import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { mapRepoErrorToAppResult } from "@/server/auth/domain/errors/app-error.mapping.repo";
@@ -9,7 +10,6 @@ import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/domain/errors/auth-error.lo
 import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
-import { asPasswordHash } from "@/server/auth/domain/types/password.types";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";

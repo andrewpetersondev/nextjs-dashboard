@@ -1,4 +1,4 @@
-import type { PasswordHash } from "@/server/auth/domain/types/password.types";
+import type { PasswordHash } from "@/features/auth/lib/password.types";
 
 export interface PasswordHasher {
   // Raw password is plain string for now.

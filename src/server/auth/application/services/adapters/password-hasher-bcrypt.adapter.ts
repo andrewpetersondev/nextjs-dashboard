@@ -1,10 +1,10 @@
 import "server-only";
 import bcryptjs from "bcryptjs";
-import { SALT_ROUNDS } from "@/server/auth/domain/constants/session.constants";
 import {
   asPasswordHash,
   type PasswordHash,
-} from "@/server/auth/domain/types/password.types";
+} from "@/features/auth/lib/password.types";
+import { SALT_ROUNDS } from "@/server/auth/domain/constants/session.constants";
 import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
 
 const genSalt = async (rounds: number): Promise<string> =>

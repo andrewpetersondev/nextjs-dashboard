@@ -14,6 +14,7 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
+import type { PasswordHash } from "@/features/auth/lib/password.types";
 import type { UserId } from "@/shared/domain/domain-brands";
 import { sessions } from "./sessions";
 
@@ -23,7 +24,9 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
-  password: varchar("password", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 })
+    .notNull()
+    .$type<PasswordHash>(),
   role: roleEnum("role").default(USER_ROLE).notNull().$type<UserRole>(),
   sensitiveData: varchar("sensitive_data", { length: 255 })
     .notNull()

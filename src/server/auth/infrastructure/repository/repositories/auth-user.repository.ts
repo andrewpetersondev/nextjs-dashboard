@@ -1,6 +1,7 @@
 import "server-only";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import type { AuthUserEntity } from "@/server/auth/domain/types/auth-user-entity.types";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import { assertSignupFields } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository.assertions";
@@ -13,7 +14,6 @@ import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
-import type { UserEntity } from "@/server/users/types/entity";
 import {
   UnauthorizedError,
   ValidationError,
@@ -64,7 +64,7 @@ export class AuthUserRepositoryImpl {
    * - Enforces domain invariants before/after DAL calls.
    * - Surfaces infra/timeouts as DatabaseError with minimal context.
    */
-  async signup(input: Readonly<AuthSignupPayload>): Promise<UserEntity> {
+  async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     try {
       assertSignupFields(input);
       const row = await insertUserDal(this.db, input);
@@ -92,7 +92,7 @@ export class AuthUserRepositoryImpl {
    * - Maps not-found to Unauthorized (domain decision).
    * - Keeps DB errors normalized.
    */
-  async login(input: Readonly<AuthLoginRepoInput>): Promise<UserEntity> {
+  async login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity> {
     try {
       const row = await getUserByEmailDal(this.db, input.email);
       if (!row?.password) {
