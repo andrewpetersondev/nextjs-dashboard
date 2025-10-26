@@ -1,4 +1,4 @@
-// Add constraint -> field hints for signup (email/username conflicts)
+import "server-only";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
