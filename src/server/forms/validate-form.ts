@@ -72,10 +72,7 @@ function createValidationFormError<TFieldNames extends string>(
  * @param options - Additional validation options.
  * @returns Promise resolving to FormResult with validated data or errors.
  */
-export async function validateFormGeneric<
-  TIn,
-  TFieldNames extends keyof TIn & string,
->(
+export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
   formData: FormData,
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],

@@ -139,7 +139,7 @@ export async function loginAction(
   formData: FormData,
 ): Promise<Result<AuthSuccess | null, AppError>> {
   // Validation
-  const validated = await validateFormGeneric(...);
+  const validated = await validateForm(...);
   if (!validated.ok) return validated; // Already Result<never, AppError>
 
   // Service call
@@ -158,13 +158,13 @@ export async function loginAction(
 
 ---
 
-### **Refinement 5: Migrate validateFormGeneric() Return Type**
+### **Refinement 5: Migrate validateForm() Return Type**
 
 Currently returns `FormResult<TIn>`, should return plain `Result`:
 
 ```typescript
 // Before
-export async function validateFormGeneric<TIn, TFieldNames extends keyof TIn & string>(
+export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
   formData: FormData,
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
@@ -172,7 +172,7 @@ export async function validateFormGeneric<TIn, TFieldNames extends keyof TIn & s
 ): Promise<FormResult<TIn>> { ... }
 
 // After
-export async function validateFormGeneric<TIn, TFieldNames extends keyof TIn & string>(
+export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
   formData: FormData,
   schema: z.ZodType<TIn>,
   allowedFields?: readonly TFieldNames[],
@@ -248,7 +248,7 @@ export type FormErrorCode = keyof typeof FORM_ERROR_MAPPINGS;
 ✓ Remove @types/FormSuccess if unused
 ✓ Replace all FormResult<T> → Result<T, AppError>
 ✓ Delete mapResultToFormResult()
-✓ Update validateFormGeneric() return type
+✓ Update validateForm() return type
 ✓ Update all action signatures
 ✓ Create toActionResponse() mapper
 ✓ Consolidate form error mappings

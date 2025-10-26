@@ -21,7 +21,7 @@ apply: off
 2. Use a single adapter per feature/domain to convert AppError → FormResult.
 3. Detect targeted conflicts (e.g., duplicate email) and attach field‑specific messages; otherwise provide a generic message and empty arrays for unaffected fields.
 4. Echo values via display‑safe selectors with redaction; never include secrets/PII.
-5. Prefer validateFormGeneric (validation → transform → normalize) instead of ad‑hoc parsing.
+5. Prefer validateForm (validation → transform → normalize) instead of ad‑hoc parsing.
 
 ## References
 
@@ -30,13 +30,13 @@ apply: off
 
 ## Implementation Checklist (Forms)
 
-- Ensure validateFormGeneric is used in actions to unify validation/transform/normalize.
+- Ensure validateForm is used in actions to unify validation/transform/normalize.
 - Always return dense field error maps and echo values via display‑safe selectors with redaction.
 
 ## Quickstart (Low-effort, high‑value)
 
 - Validate + shape result with one call:
-  - Use src/server/forms/validate-form.ts validateFormGeneric(formData, schema, allowedFields?, opts)
+  - Use src/server/forms/validate-form.ts validateForm(formData, schema, allowedFields?, opts)
   - It returns FormResult (Ok or validation Err) with a dense field error map.
 - Map domain Result to FormResult when you already have Result<T, FormError>:
   - Use src/shared/forms/mapping/result-to-form.mapper.ts mapResultToFormResult(result, { fields, raw, redactFields? })
@@ -46,7 +46,7 @@ apply: off
 ## Low‑Token Playbook (Minimize credit usage)
 
 1. Prefer adapters over ad‑hoc code.
-   - Rationale: Reusing validateFormGeneric and mapResultToFormResult avoids opening/rewriting multiple files and reduces follow‑up fixes.
+   - Rationale: Reusing validateForm and mapResultToFormResult avoids opening/rewriting multiple files and reduces follow‑up fixes.
 2. Always build dense maps up front.
    - Avoid post‑processing undefined checks in the UI; dense maps keep rendering logic O(1) and cut branching prompts.
 3. Echo only what’s needed, already redacted.
@@ -54,12 +54,12 @@ apply: off
 4. Keep error messages short and canonical.
    - Prefer FORM_ERROR_MESSAGES constants; avoid interpolating large data into messages.
 5. Use defaults; don’t over‑configure.
-   - validateFormGeneric: pass just schema and (optionally) allowedFields; omit custom messages unless required.
+   - validateForm: pass just schema and (optionally) allowedFields; omit custom messages unless required.
    - mapResultToFormResult: rely on default success/failure messages and default redactFields.
 6. Treat unknown like Zod.
    - If you only have error.issues, call mapToDenseFieldErrorsFromZod and skip constructing full ZodError.
 7. Avoid repeated parsing.
-   - Parse once (schema.safeParseAsync) via validateFormGeneric; pass the shaped result onward.
+   - Parse once (schema.safeParseAsync) via validateForm; pass the shaped result onward.
 
 ## Do / Don’t
 
@@ -97,7 +97,7 @@ export async function adaptServiceResultToForm<TField extends string, T>(p: {
 
 ## File Pointers
 
-- Validation flow: src/server/forms/validate-form.ts (validateFormGeneric)
+- Validation flow: src/server/forms/validate-form.ts (validateForm)
 - Zod → field errors: src/shared/forms/mapping/error-mapper.ts
 - Result → FormResult: src/shared/forms/mapping/result-to-form.mapper.ts
 - Types: src/shared/forms/core/types.ts, src/shared/forms/types/dense.types.ts

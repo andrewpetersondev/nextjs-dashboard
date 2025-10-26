@@ -10,7 +10,7 @@ Domain = Framework-agnostic business logic
 Application = Use case orchestration
 
 - Coordinates domain + infrastructure
-- validateFormGeneric lives here
+- validateForm lives here
 
 Infrastructure = External dependencies
 

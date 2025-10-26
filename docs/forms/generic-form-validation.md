@@ -7,19 +7,19 @@
 ## Layers + Boundaries to consider
 
 1. User Interface
-    1. Initial State
-    2. Client side validation
-    3. Handle Success + Handle Failure
+   1. Initial State
+   2. Client side validation
+   3. Handle Success + Handle Failure
 2. Server Action
-    1. Zod
-        1. Zod Schema Validation + Transformations
-            1. `transform` happens after validation
-            2. `preprocess` happens before validation
-        2. Zod Types
-            1. `infer` = `output` = the schema’s output type after parsing/transformations. Equivalent to z.output
-            2. `input` = The schema’s input type before parsing/validation/transformations.
-        3. Handle Success + Handle Failure schema validation
-    4.
+   1. Zod
+      1. Zod Schema Validation + Transformations
+         1. `transform` happens after validation
+         2. `preprocess` happens before validation
+      2. Zod Types
+         1. `infer` = `output` = the schema’s output type after parsing/transformations. Equivalent to z.output
+         2. `input` = The schema’s input type before parsing/validation/transformations.
+      3. Handle Success + Handle Failure schema validation
+   2.
 3. Service
 4. Repository
 5. Data Access Layer
@@ -27,8 +27,8 @@
 ## Key Topics
 
 - _Dense_ vs _Sparse_ error shape
-    - Dense = every form key is present, and values are either array of messages of empty array
-    - Sparse = form key is only present if values contain non-empty array
+  - Dense = every form key is present, and values are either array of messages of empty array
+  - Sparse = form key is only present if values contain non-empty array
 -
 
 ## User Interface
@@ -89,7 +89,7 @@ Reusability/utilities
 
 - derive allowed field names from schema
 - formData -> raw map
-- validateFormGeneric wrapper (schema, fields, transform)
+- validateForm wrapper (schema, fields, transform)
 - shallow diff helper for patch updates
 - dense/sparse error mapping utilities
 - result -> FormState converter
@@ -129,4 +129,4 @@ Documentation
 
 ### Continued
 
-- `validateFormGeneric` accepts (formData, schema, allowedFields?, options={})
+- `validateForm` accepts (formData, schema, allowedFields?, options={})

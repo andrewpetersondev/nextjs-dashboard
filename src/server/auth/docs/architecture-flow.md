@@ -7,7 +7,7 @@ USER SUBMITS FORM
        ↓
 loginAction() / signupAction() [Server Action - "use server"]
        ├─ extractFormDataFields() → raw form data
-       ├─ validateFormGeneric() [validate-form.ts]
+       ├─ validateForm() [validate-form.ts]
        │  ├─ resolveCanonicalFieldNames() → get field list from schema
        │  ├─ resolveRawFieldPayload() → extract FormData
        │  ├─ schema.safeParseAsync() → Zod validation

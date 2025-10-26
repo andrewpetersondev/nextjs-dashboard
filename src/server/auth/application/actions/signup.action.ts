@@ -12,7 +12,7 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
-import { validateFormGeneric } from "@/server/forms/validate-form";
+import { validateForm } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
@@ -35,7 +35,7 @@ export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
 ): Promise<FormResult<SignupField>> {
-  const validated = await validateFormGeneric(formData, SignupSchema, fields, {
+  const validated = await validateForm(formData, SignupSchema, fields, {
     loggerContext: AUTH_ACTION_CONTEXTS.SIGNUP.CONTEXT,
   });
 

@@ -431,7 +431,7 @@ export async function loginAction(
 ): Promise<LoginActionResult> {
   const raw = extractFormDataFields<LoginField>(formData, fields);
 
-  const validated = await validateFormGeneric(formData, LoginSchema, fields, {
+  const validated = await validateForm(formData, LoginSchema, fields, {
     loggerContext: AUTH_ACTION_CONTEXTS.LOGIN,
   });
 

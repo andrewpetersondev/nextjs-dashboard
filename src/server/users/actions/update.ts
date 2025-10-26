@@ -15,7 +15,7 @@ import {
 } from "@/features/users/lib/user.schema";
 import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import { getAppDb } from "@/server/db/db.connection";
-import { validateFormGeneric } from "@/server/forms/validate-form";
+import { validateForm } from "@/server/forms/validate-form";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
@@ -137,11 +137,7 @@ export async function updateUserAction(
   }
 
   // Validate form data against schema
-  const validated = await validateFormGeneric(
-    formData,
-    EditUserFormSchema,
-    fields,
-  );
+  const validated = await validateForm(formData, EditUserFormSchema, fields);
 
   if (!validated.ok) {
     return validated;
