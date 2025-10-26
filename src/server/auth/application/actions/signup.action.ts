@@ -15,8 +15,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
 import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
-import { toFormError } from "@/shared/forms/state/mappers/result-to-form.mapper";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
+import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;
@@ -44,14 +43,7 @@ export async function signupAction(
   });
 
   if (!validated.ok) {
-    return toFormError<SignupField>({
-      failureMessage: validated.error.message,
-      fieldErrors:
-        validated.error.details?.fieldErrors ??
-        createEmptyDenseFieldErrorMap<SignupField, string>(fields),
-      fields,
-      raw,
-    });
+    return validated;
   }
 
   const input: SignupData = validated.value.data;
@@ -63,13 +55,8 @@ export async function signupAction(
   );
 
   if (!sessionResult.ok) {
-    // No need for appErrorToFormResult anymore - service returns form-aware errors
-    return toFormError<SignupField>({
-      failureMessage:
-        sessionResult.error.message || "Login failed. Please try again.",
-      fieldErrors:
-        sessionResult.error.details?.fieldErrors ??
-        createEmptyDenseFieldErrorMap<SignupField, string>(fields),
+    return mapResultToFormResult(sessionResult, {
+      failureMessage: "Signup failed. Please try again.",
       fields,
       raw,
     });

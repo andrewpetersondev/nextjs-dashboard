@@ -10,7 +10,7 @@ import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import type { FormResult } from "@/shared/forms/core/types";
+import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
   selectSparseFieldErrorsForAllowedFields,
@@ -39,7 +39,6 @@ function pickCreateUserFormData(formData: FormData): CreateUserFormData {
 /**
  * Creates a new user (admin only).
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <52 of 50>
 export async function createUserAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
@@ -57,24 +56,16 @@ export async function createUserAction(
     });
 
     if (!parsed.success) {
-      return {
-        error: {
-          __appError: "AppError" as const,
-          code: "VALIDATION" as const,
-          details: {
-            fieldErrors: toDenseFieldErrorMapFromSparse(
-              selectSparseFieldErrorsForAllowedFields(
-                parsed.error.flatten().fieldErrors,
-                allowed,
-              ),
-              allowed,
-            ),
-          },
-          kind: "validation",
-          message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
-        },
-        ok: false,
-      };
+      return formError({
+        fieldErrors: toDenseFieldErrorMapFromSparse(
+          selectSparseFieldErrorsForAllowedFields(
+            parsed.error.flatten().fieldErrors,
+            allowed,
+          ),
+          allowed,
+        ),
+        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+      });
     }
 
     const { username, email, password, role } = parsed.data;
@@ -91,44 +82,22 @@ export async function createUserAction(
         message: "User creation returned empty result",
         safeMeta: { email, username },
       });
-      return {
-        error: {
-          __appError: "AppError" as const,
-          code: "VALIDATION" as const,
-          details: {
-            fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
-          },
-          kind: "validation",
-          message: USER_ERROR_MESSAGES.CREATE_FAILED,
-        },
-        ok: false,
-      };
+      return formError({
+        fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+        message: USER_ERROR_MESSAGES.CREATE_FAILED,
+      });
     }
 
-    return {
-      ok: true,
-      value: {
-        data: user,
-        message: USER_SUCCESS_MESSAGES.CREATE_SUCCESS,
-      },
-    };
+    return formOk(user, USER_SUCCESS_MESSAGES.CREATE_SUCCESS);
   } catch (error) {
     serverLogger.error({
       context: "createUserAction",
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
-    return {
-      error: {
-        __appError: "AppError" as const,
-        code: "VALIDATION" as const,
-        details: {
-          fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
-        },
-        kind: "validation",
-        message: USER_ERROR_MESSAGES.UNEXPECTED,
-      },
-      ok: false,
-    };
+    return formError({
+      fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
+    });
   }
 }

@@ -21,12 +21,8 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
-import type { FormResult } from "@/shared/forms/core/types";
+import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
 import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
-import {
-  toFormError,
-  toFormOk,
-} from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
@@ -38,10 +34,9 @@ type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 function idInvalidResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
-  return toFormError<F>({
-    failureMessage: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+  return formError<F>({
     fieldErrors: createEmptyDenseFieldErrorMap(fields),
-    fields,
+    message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
   });
 }
 
@@ -51,10 +46,9 @@ function idInvalidResult<F extends string>(
 function notFoundResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
-  return toFormError<F>({
-    failureMessage: USER_ERROR_MESSAGES.NOT_FOUND,
+  return formError<F>({
     fieldErrors: createEmptyDenseFieldErrorMap(fields),
-    fields,
+    message: USER_ERROR_MESSAGES.NOT_FOUND,
   });
 }
 
@@ -170,26 +164,21 @@ export async function updateUserAction(
 
     // If no changes, return success with current user
     if (Object.keys(patch).length === 0) {
-      return toFormOk<UserDto>(existing, {
-        successMessage: USER_SUCCESS_MESSAGES.NO_CHANGES,
-      });
+      return formOk(existing, USER_SUCCESS_MESSAGES.NO_CHANGES);
     }
 
     // Apply patch to database
     const updated = await updateUserDal(db, idRes.value, patch);
     if (!updated) {
-      return toFormError<EditUserFormFieldNames>({
-        failureMessage: USER_ERROR_MESSAGES.UPDATE_FAILED,
+      return formError<EditUserFormFieldNames>({
         fieldErrors: createEmptyDenseFieldErrorMap(fields),
-        fields,
+        message: USER_ERROR_MESSAGES.UPDATE_FAILED,
       });
     }
 
     // Revalidate cache and return success
     revalidatePath(USERS_DASHBOARD_PATH);
-    return toFormOk<UserDto>(updated, {
-      successMessage: USER_SUCCESS_MESSAGES.UPDATE_SUCCESS,
-    });
+    return formOk(updated, USER_SUCCESS_MESSAGES.UPDATE_SUCCESS);
   } catch (error: unknown) {
     serverLogger.error({
       context: "updateUserAction",
@@ -198,10 +187,9 @@ export async function updateUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
 
-    return toFormError<EditUserFormFieldNames>({
-      failureMessage: USER_ERROR_MESSAGES.UNEXPECTED,
+    return formError<EditUserFormFieldNames>({
       fieldErrors: createEmptyDenseFieldErrorMap(fields),
-      fields,
+      message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
   }
 }

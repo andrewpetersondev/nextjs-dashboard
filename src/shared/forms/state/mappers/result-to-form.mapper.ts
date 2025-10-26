@@ -1,5 +1,3 @@
-// File: src/shared/forms/mappers/result-to-form.mapper.ts
-
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import {
@@ -13,12 +11,14 @@ import {
   getFieldErrors,
   getFieldValues,
 } from "@/shared/forms/core/types";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 
 /**
  * Maps a domain `Result` to a UI-facing `FormResult`.
+ *
+ * Use this to convert domain-layer results (like authentication or business logic)
+ * into form-aware results that can be consumed by UI components.
  *
  * @param result - Discriminated `Result` with either success data or AppError.
  * @param params - Adapter options for messages and value echoing/redaction.
@@ -59,49 +59,6 @@ export function mapResultToFormResult<TField extends string, TPayload>(
   return formError<TField>({
     fieldErrors,
     message: result.error.message || failureMessage,
-    values,
-  });
-}
-
-/**
- * Create a UI-facing success `FormResult` from data.
- */
-export function toFormOk<TPayload>(
-  data: TPayload,
-  opts: {
-    readonly successMessage?: string;
-  } = {},
-): FormResult<TPayload> {
-  const message = opts.successMessage ?? FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE;
-  return formOk<TPayload>(data, message);
-}
-
-/**
- * Build a UI-facing validation error `FormResult` with optional redacted echo of submitted values.
- */
-export function toFormError<TField extends string>(params: {
-  readonly fieldErrors: DenseFieldErrorMap<TField, string>;
-  readonly failureMessage?: string;
-  readonly fields?: readonly TField[];
-  readonly raw?: Record<string, unknown>;
-  readonly redactFields?: readonly TField[];
-}): FormResult<never> {
-  const {
-    fieldErrors,
-    failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
-    raw = {},
-    fields = [] as const,
-    redactFields = ["password" as TField],
-  } = params;
-
-  const values =
-    fields.length > 0
-      ? selectDisplayableStringFieldValues(raw, fields, redactFields)
-      : undefined;
-
-  return formError<TField>({
-    fieldErrors,
-    message: failureMessage,
     values,
   });
 }
