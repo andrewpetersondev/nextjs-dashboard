@@ -3,7 +3,8 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
+} from "../../src/features/auth/lib/auth.roles";
+import type { PasswordHash } from "../../src/features/auth/lib/password.types";
 import type { invoices } from "../../src/server/db/schema/invoices";
 import type { Period } from "../../src/shared/domain/domain-brands";
 import { toCustomerId } from "../../src/shared/domain/id-converters";
@@ -22,7 +23,7 @@ import {
 export async function buildUserSeed(): Promise<
   ReadonlyArray<{
     readonly email: string;
-    readonly password: string;
+    readonly password: PasswordHash;
     readonly role: UserRole;
     readonly username: string;
   }>

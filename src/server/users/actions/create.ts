@@ -1,4 +1,5 @@
 "use server";
+import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import {
   USER_ERROR_MESSAGES,
@@ -79,7 +80,7 @@ export async function createUserAction(
     const { username, email, password, role } = parsed.data;
     const user = await createUserDal(db, {
       email,
-      password,
+      password: asPasswordHash(password),
       role: toUserRole(role),
       username,
     });

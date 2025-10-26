@@ -1,5 +1,6 @@
 import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
+import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
@@ -39,7 +40,7 @@ export class UsersService {
   ): CreateUserRepoInput {
     return {
       email: input.email,
-      password,
+      password: asPasswordHash(password),
       role: toUserRole(input.role ?? USER_ROLE),
       username: input.username,
     };

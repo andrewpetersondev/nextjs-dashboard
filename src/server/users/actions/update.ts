@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
 import {
@@ -102,7 +103,7 @@ async function buildPatch(
 
   const password =
     typeof data.password === "string" && data.password.length > 0
-      ? await hashWithSaltRounds(data.password)
+      ? asPasswordHash(await hashWithSaltRounds(data.password))
       : undefined;
 
   return { ...diff, ...(password ? { password } : {}) };

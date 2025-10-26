@@ -1,4 +1,8 @@
 import bcryptjs from "bcryptjs";
+import {
+  asPasswordHash,
+  type PasswordHash,
+} from "../../src/features/auth/lib/password.types";
 import { SEED_CONFIG } from "./constants";
 
 /**
@@ -14,9 +18,11 @@ export function validatePeriod(period: string): void {
 /**
  * Hashes a password using bcrypt with configured salt rounds.
  */
-export async function hashPassword(password: string): Promise<string> {
+export async function hashPassword(password: string): Promise<PasswordHash> {
   const salt = await bcryptjs.genSalt(SEED_CONFIG.SALT_ROUNDS);
-  return bcryptjs.hash(password, salt);
+  const hashed = bcryptjs.hash(password, salt);
+  const branded = asPasswordHash(await hashed);
+  return branded;
 }
 
 /**

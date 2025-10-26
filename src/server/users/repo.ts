@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { PasswordHash } from "@/features/auth/lib/password.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
@@ -10,7 +11,7 @@ import { Err, Ok } from "@/shared/core/result/result";
 export type CreateUserRepoInput = {
   readonly username: string;
   readonly email: string;
-  readonly password: string;
+  readonly password: PasswordHash;
   readonly role: UserRole;
 };
 
