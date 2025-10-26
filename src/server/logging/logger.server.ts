@@ -1,7 +1,8 @@
 import "server-only";
 
 import pino from "pino";
-import { getLogLevel } from "@/server/logging/get-log-level.server";
+import { DATABASE_ENV, LOG_LEVEL } from "@/server/config/env-next";
+import type { LogLevel } from "@/shared/logging/log-level";
 
 /**
  * Shared shape for structured log entries.
@@ -24,6 +25,15 @@ export function createLogContext(
   extra?: Record<string, unknown>,
 ): LogContext {
   return { context, kind, message, ...extra };
+}
+
+/**
+ * Returns the effective log level for server/runtime.
+ */
+export function getLogLevel(): LogLevel {
+  const defaultLevel: LogLevel =
+    DATABASE_ENV === "production" ? "info" : "warn";
+  return (LOG_LEVEL as LogLevel | undefined) ?? defaultLevel;
 }
 
 /**
