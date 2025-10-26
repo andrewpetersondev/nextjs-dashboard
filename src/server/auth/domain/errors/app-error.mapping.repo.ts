@@ -17,13 +17,18 @@ import { Err, type Result } from "@/shared/core/result/result";
  * Service layer should route all caught repo errors through this function.
  *
  * Policy:
- * - UnauthorizedError → UNAUTHORIZED (message kept generic)
+ * - UnauthorizedError → UNAUTHORIZED (message kept generic for security)
  * - ValidationError → VALIDATION
  * - ConflictError → CONFLICT
  * - ForbiddenError → FORBIDDEN
- * - NotFoundError → NOT_FOUND  (rare in auth; prefer Unauthorized for login)
+ * - NotFoundError → NOT_FOUND (rare in auth; prefer Unauthorized for login)
  * - DatabaseError → DATABASE
- * - default/unknown → UNKNOWN (logged)
+ * - default/unknown → UNKNOWN (logged for debugging)
+ *
+ * @typeParam T - The expected success type (never used, only for Result type compatibility)
+ * @param err - The caught error from repository layer
+ * @param context - Logging context (e.g., "auth-user.service.login")
+ * @returns Result.Err with AppError
  */
 export function mapRepoErrorToAppResult<T>(
   err: unknown,
@@ -34,25 +39,25 @@ export function mapRepoErrorToAppResult<T>(
     return Err(appErrorFromCode("UNAUTHORIZED", "Invalid credentials"));
   }
   if (err instanceof ValidationError) {
-    return Err(appErrorFromCode("VALIDATION"));
+    return Err(appErrorFromCode("VALIDATION", err.message));
   }
   if (err instanceof ConflictError) {
-    return Err(appErrorFromCode("CONFLICT"));
+    return Err(appErrorFromCode("CONFLICT", err.message));
   }
   if (err instanceof ForbiddenError) {
-    return Err(appErrorFromCode("FORBIDDEN"));
+    return Err(appErrorFromCode("FORBIDDEN", err.message));
   }
   if (err instanceof NotFoundError) {
-    return Err(appErrorFromCode("NOT_FOUND"));
+    return Err(appErrorFromCode("NOT_FOUND", err.message));
   }
-  // Infra
+  // Infrastructure
   if (err instanceof DatabaseError) {
-    return Err(appErrorFromCode("DATABASE"));
+    return Err(appErrorFromCode("DATABASE", "Database operation failed"));
   }
   // Fallback
   serverLogger.error(
-    { context, kind: "unexpected" },
+    { context, err, kind: "unexpected" },
     "Unexpected repository error",
   );
-  return Err(appErrorFromCode("UNKNOWN"));
+  return Err(appErrorFromCode("UNKNOWN", "An unexpected error occurred"));
 }
