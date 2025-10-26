@@ -2,7 +2,7 @@ import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 export class SessionCookieAdapter {
   async get(): Promise<string | undefined> {

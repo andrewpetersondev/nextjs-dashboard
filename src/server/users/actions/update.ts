@@ -16,7 +16,7 @@ import {
 import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";

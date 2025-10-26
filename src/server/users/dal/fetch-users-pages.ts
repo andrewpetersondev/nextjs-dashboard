@@ -5,7 +5,7 @@ import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 /**
  * Fetches the total number of user pages for pagination.

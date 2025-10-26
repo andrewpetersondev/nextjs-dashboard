@@ -3,7 +3,7 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

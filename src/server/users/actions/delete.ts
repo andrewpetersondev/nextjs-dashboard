@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";

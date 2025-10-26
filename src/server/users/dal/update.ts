@@ -5,7 +5,7 @@ import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import {
   userDbRowToEntity,
   userEntityToDto,

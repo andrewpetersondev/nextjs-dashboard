@@ -2,7 +2,7 @@ import "server-only";
 
 import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.client";
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import { toIntervalDuration } from "@/server/revenues/infrastructure/validation/validator";

@@ -15,7 +15,7 @@ import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/
 import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";

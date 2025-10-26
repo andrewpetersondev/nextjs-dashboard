@@ -5,7 +5,7 @@
  */
 /// <reference path="./types/domain-events.d.ts" />
 import "server-only";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 type EventName = Extract<keyof DomainEvents, string>;
 

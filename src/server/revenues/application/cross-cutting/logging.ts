@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 /**
  * Creates a standardized log entry

@@ -12,7 +12,7 @@ import {
   EncryptPayloadSchema,
 } from "@/server/auth/domain/session/validation/session-payload.schema";
 import { sessionJwtAdapter } from "@/server/auth/infrastructure/session/session-jwt.adapter";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 
 const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {

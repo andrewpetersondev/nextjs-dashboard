@@ -23,7 +23,7 @@ export type LogPayload = unknown;
 
 export const currentLevel = getLogLevel();
 
-export const clientLogger = {
+export const sharedLogger = {
   debug(payload: LogPayload): void {
     if (isLevelEnabled(currentLevel, "debug")) {
       safeInvoke(console.debug, payload);

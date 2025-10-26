@@ -1,6 +1,6 @@
 import "server-only";
 
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/revenue-display.mapper";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";

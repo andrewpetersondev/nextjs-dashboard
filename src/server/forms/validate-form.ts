@@ -1,6 +1,6 @@
 import "server-only";
 import type { z } from "zod";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import {
   resolveValidateOptions,
   type ValidateOptions,

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";

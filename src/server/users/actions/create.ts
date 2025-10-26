@@ -8,7 +8,7 @@ import {
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { createUserDal } from "@/server/users/dal/create";
 import {
   createEmptyDenseFieldErrorMap,

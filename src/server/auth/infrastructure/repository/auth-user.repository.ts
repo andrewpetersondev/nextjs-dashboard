@@ -7,7 +7,7 @@ import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/inser
 import type { AppDatabase } from "@/server/db/db.connection";
 import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import {
   newUserDbRowToEntity,
   userDbRowToEntity,

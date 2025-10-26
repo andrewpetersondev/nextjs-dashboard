@@ -2,7 +2,7 @@ import "server-only";
 
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueStatistics } from "@/features/revenues/types";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 

@@ -1,6 +1,6 @@
 import "server-only";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import {
   ConflictError,
   ForbiddenError,

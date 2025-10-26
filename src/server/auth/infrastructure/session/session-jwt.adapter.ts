@@ -12,7 +12,7 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-next";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 
 let encodedKey: Uint8Array | undefined;
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =

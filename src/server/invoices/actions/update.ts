@@ -13,7 +13,7 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import {
   selectSparseFieldErrors,

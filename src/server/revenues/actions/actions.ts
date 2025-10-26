@@ -2,7 +2,7 @@
 
 import type { RevenueChartDto } from "@/features/revenues/dto/types";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import {
   mapEntityToSimpleRevenueDto,
   mapToStatisticsDto,

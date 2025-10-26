@@ -3,7 +3,7 @@ import "server-only";
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
-import { serverLogger } from "@/server/logging/serverLogger";
+import { serverLogger } from "@/server/logging/logger.server";
 import { processInvoiceEvent } from "@/server/revenues/application/handlers/events/orchestrator";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
