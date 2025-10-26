@@ -1,21 +1,10 @@
 import { type ZodRawShape, z } from "zod";
-// ZodRawShape is a type used in Zod (v4) to describe the shape of an object schema. It represents an object where
-// each key is a string and each value is a Zod type. For example, when you create a schema with z.object({ ... }),
-// the object you pass in is a ZodRawShape. It is used internally for typing the structure of Zod object schemas.
 
 /**
  * Determine whether a given Zod schema is a {@link z.ZodObject}.
  *
  * @param schema - Any Zod schema instance.
  * @returns True if the schema is an object schema; otherwise, false.
- *
- * @example
- * ```ts
- * if (isZodObject(schema)) {
- *   // schema is narrowed to z.ZodObject<ZodRawShape>
- *   const keys = Object.keys(schema.shape);
- * }
- * ```
  */
 export const isZodObjectSchema = (
   schema: z.ZodType,
@@ -26,10 +15,6 @@ export const isZodObjectSchema = (
  *
  * @param err - The value to test.
  * @returns `true` if `err` is an instance of {@link z.ZodError}; otherwise `false`.
- *
- * @remarks
- * - Use this when you know the error comes from Zod parsing within your own codebase.
- * - Narrowing with this guard gives you full type safety and access to the `ZodError` API.
  */
 export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
   err instanceof z.ZodError;
@@ -38,14 +23,7 @@ export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
  * Type guard: loosely checks whether the provided value has a shape similar to {@link z.ZodError}.
  *
  * @param err - The value to test.
- * @returns `true` if `err` is a non-null object with ZodError-like properties
- * (`issues` or `flatten`); otherwise `false`.
- *
- * @remarks
- * - Use this at system boundaries (e.g., logging, API layers) where the error may have been
- *   serialized, come from a different runtime, or otherwise not be a real `ZodError` instance.
- * - This guard performs a "duck typing" check: it only verifies that the object has
- *   recognizable ZodError properties, not that it is an actual `ZodError`.
+ * @returns `true` if `err` is a non-null object with ZodError-like properties; otherwise `false`.
  */
 export const isZodErrorLikeShape = (
   err: unknown,
