@@ -7,15 +7,30 @@ import {
 } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 
+type AuthErrorKind =
+  | "missing_fields"
+  | "conflict"
+  | "invalid_credentials"
+  | "validation"
+  | "unexpected";
+
+/**
+ * Extracts error message from unknown error, with fallback.
+ */
 export function getErrorMessage(e: unknown, fallback: string): string {
-  return typeof e === "object" &&
-    e !== null &&
-    "message" in e &&
-    typeof (e as { message?: unknown }).message === "string"
-    ? (e as { message: string }).message
-    : fallback;
+  if (e instanceof Error) {
+    return e.message;
+  }
+  if (typeof e === "object" && e !== null && "message" in e) {
+    const msg = (e as { message: unknown }).message;
+    return typeof msg === "string" ? msg : fallback;
+  }
+  return fallback;
 }
 
+/**
+ * Standard authentication error messages.
+ */
 export const AUTH_MESSAGES = {
   conflict: "Email or username already in use",
   invalidCreds: "Invalid email or password",
@@ -24,14 +39,15 @@ export const AUTH_MESSAGES = {
   validation: "Invalid data",
 } as const;
 
-// Create AppError equivalents for former AuthError kinds
+/**
+ * Creates standardized AppError instances for common authentication scenarios.
+ *
+ * @param kind - The type of authentication error
+ * @param init - Optional additional context data
+ * @returns Properly formatted AppError with appropriate code and details
+ */
 export function createAuthAppError(
-  kind:
-    | "missing_fields"
-    | "conflict"
-    | "invalid_credentials"
-    | "validation"
-    | "unexpected",
+  kind: AuthErrorKind,
   init?: Readonly<Record<string, unknown>>,
 ): AppError {
   switch (kind) {
@@ -50,6 +66,7 @@ export function createAuthAppError(
           formErrors: [],
         }),
       );
+
     case "conflict":
       return appErrorFromCode(
         "CONFLICT",
@@ -65,20 +82,26 @@ export function createAuthAppError(
           formErrors: [],
         }),
       );
+
     case "invalid_credentials":
       return appErrorFromCode("UNAUTHORIZED", AUTH_MESSAGES.invalidCreds, {
         reason: "invalid_credentials",
         ...init,
       });
+
     case "validation":
       return appErrorFromCode("VALIDATION", AUTH_MESSAGES.validation, init);
+
     default:
       return appErrorFromCode("UNKNOWN", AUTH_MESSAGES.unexpected, init);
   }
 }
 
-/** Normalize unknown to AppError (was AuthError "unexpected"). */
+/**
+ * Converts unknown error to standardized AppError.
+ * Use as last resort for unexpected errors.
+ */
 export function toUnexpectedAppError(e: unknown): AppError {
   const message = getErrorMessage(e, AUTH_MESSAGES.unexpected);
-  return appErrorFromCode("UNKNOWN", message);
+  return appErrorFromCode("UNKNOWN", message, { originalError: e });
 }
