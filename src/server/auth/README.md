@@ -69,7 +69,7 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
 
 - Concrete implementations are injected at composition time (see factories):
   - AuthUserRepositoryAdapter wraps the DB-backed repository implementation.
-  - BcryptPasswordHasher wraps the hashing library.
+  - BcryptPasswordHasherAdapter wraps the hashing library.
   - Tests can inject fakes/mocks.
 
 - Benefits:

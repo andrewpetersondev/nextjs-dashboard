@@ -22,7 +22,7 @@ export async function compareHash(
   return await bcryptjs.compare(plainPassword, hashedPassword);
 }
 
-export class BcryptPasswordHasher implements PasswordHasher {
+export class BcryptPasswordHasherAdapter implements PasswordHasher {
   async hash(raw: string): Promise<PasswordHash> {
     const hashed = await hashWithSaltRounds(raw);
     return asPasswordHash(hashed);

@@ -19,7 +19,7 @@ loginAction() / signupAction() [Server Action - "use server"]
        ├─ createAuthUserService(db) [Composition Root / Factory Pattern]
        │  ├─ AuthUserRepositoryImpl(db) → actual DB access
        │  ├─ AuthUserRepositoryAdapter() → port adapter
-       │  ├─ BcryptPasswordHasher() → password port
+       │  ├─ BcryptPasswordHasherAdapter() → password port
        │  └─ AuthUserService(repoPort, hasherPort) → orchestrator
        │
        ├─ executeAuthPipeline(data, service.login.bind())
