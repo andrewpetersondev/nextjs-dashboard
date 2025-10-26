@@ -1,9 +1,10 @@
 // File: public-env.client.ts
+
 /** biome-ignore-all lint/correctness/noProcessGlobal: <centralized env file> */
 /** biome-ignore-all lint/style/noProcessEnv: <centralized env file> */
 import { z } from "zod";
 import { getNodeEnv } from "@/shared/config/env-shared";
-import { type LogLevel, LogLevelSchema } from "@/shared/logging/log-level";
+import { type LogLevel, LogLevelSchema } from "@/shared/logging/logger.shared";
 
 const PublicEnvSchema = z.object({
   NEXT_PUBLIC_LOG_LEVEL: LogLevelSchema.optional(),

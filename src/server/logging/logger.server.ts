@@ -2,7 +2,7 @@ import "server-only";
 
 import pino from "pino";
 import { DATABASE_ENV, LOG_LEVEL } from "@/server/config/env-next";
-import type { LogLevel } from "@/shared/logging/log-level";
+import type { LogLevel } from "@/shared/logging/logger.shared";
 
 /**
  * Shared shape for structured log entries.

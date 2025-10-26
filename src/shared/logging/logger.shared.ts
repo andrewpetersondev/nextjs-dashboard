@@ -5,8 +5,11 @@
  * Import this module from features/shared code instead of server-only loggers.
  */
 
-import { getLogLevel } from "@/shared/logging/get-log-level.client";
-import { isLevelEnabled } from "@/shared/logging/log-level";
+import { z } from "zod";
+import {
+  IS_PROD,
+  NEXT_PUBLIC_LOG_LEVEL,
+} from "@/shared/config/public-env.client";
 
 export function safeInvoke<TArgs extends readonly unknown[]>(
   fn: (...a: TArgs) => void,
@@ -20,6 +23,34 @@ export function safeInvoke<TArgs extends readonly unknown[]>(
 }
 
 export type LogPayload = unknown;
+
+export const LOG_LEVELS = ["debug", "info", "warn", "error", "silent"] as const;
+
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
+export const LogLevelSchema = z.enum(LOG_LEVELS);
+
+export const levelOrder: readonly LogLevel[] = LOG_LEVELS;
+
+export function isLevelEnabled(
+  current: LogLevel,
+  methodLevel: LogLevel,
+): boolean {
+  if (current === "silent") {
+    return false;
+  }
+  const methodIdx = levelOrder.indexOf(methodLevel);
+  const currentIdx = levelOrder.indexOf(current);
+  return methodIdx >= currentIdx;
+}
+
+/**
+ * Returns the effective log level for browser bundles.
+ */
+export function getLogLevel(): LogLevel {
+  const defaultLevel: LogLevel = IS_PROD ? "info" : "warn";
+  return (NEXT_PUBLIC_LOG_LEVEL as LogLevel | undefined) ?? defaultLevel;
+}
 
 export const currentLevel = getLogLevel();
 
