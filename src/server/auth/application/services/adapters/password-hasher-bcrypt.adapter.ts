@@ -28,7 +28,6 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
     return asPasswordHash(hashed);
   }
   async compare(raw: string, hash: PasswordHash): Promise<boolean> {
-    // avoid unsafe cast by unboxing via asPasswordHash then String()
-    return await compareHash(raw, String(asPasswordHash(hash)));
+    return await compareHash(raw, String(hash));
   }
 }

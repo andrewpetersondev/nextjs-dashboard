@@ -12,7 +12,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
  */
 export function createAuthUserService(db: AppDatabase): AuthUserService {
   const repo = new AuthUserRepositoryImpl(db);
-  const repoPort: AuthUserRepositoryPort = new AuthUserRepositoryAdapter(repo);
+  const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =
+    new AuthUserRepositoryAdapter(repo);
   const hasherPort: PasswordHasherPort = new BcryptPasswordHasherAdapter();
   return new AuthUserService(repoPort, hasherPort);
 }

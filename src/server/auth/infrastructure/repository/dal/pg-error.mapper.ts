@@ -104,10 +104,8 @@ export function conflictFromUniqueViolation(
   constraintHints?: ConstraintFieldHints,
 ): ConflictError {
   const constraint = readStr((err as PgErrorLike | null)?.constraint);
-  const field =
-    constraint && (constraintHints ?? SIGNUP_CONSTRAINT_HINTS)
-      ? (constraintHints ?? SIGNUP_CONSTRAINT_HINTS)[constraint]
-      : undefined;
+  const hints = constraintHints ?? SIGNUP_CONSTRAINT_HINTS;
+  const field = constraint ? hints[constraint] : undefined;
   const details = {
     ...logCtx,
     code: PG_ERROR_CODES.uniqueViolation,

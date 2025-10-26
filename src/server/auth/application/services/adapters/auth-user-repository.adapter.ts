@@ -25,17 +25,12 @@ export class AuthUserRepositoryAdapter
   signup(
     input: AuthSignupPayload,
   ): ReturnType<AuthUserRepositoryImpl["signup"]> {
-    return this.repo.signup({
-      email: input.email,
-      password: input.password,
-      role: input.role,
-      username: input.username,
-    });
+    return this.repo.signup(input);
   }
 
   login(
     input: AuthLoginRepoInput,
   ): ReturnType<AuthUserRepositoryImpl["login"]> {
-    return this.repo.login({ email: input.email });
+    return this.repo.login(input);
   }
 }
