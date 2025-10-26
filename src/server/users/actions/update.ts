@@ -22,7 +22,7 @@ import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/domain/id-converters";
 import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
-import { resolveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
@@ -121,9 +121,9 @@ export async function updateUserAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
 ): Promise<FormResult<unknown>> {
-  const fields = resolveFieldNamesFromSchema<
-    EditUserFormFieldNames,
-    EditUserFormValues
+  const fields = resolveCanonicalFieldNamesFromSchema<
+    EditUserFormValues,
+    EditUserFormFieldNames
   >(EditUserFormSchema);
 
   // Validate user ID
