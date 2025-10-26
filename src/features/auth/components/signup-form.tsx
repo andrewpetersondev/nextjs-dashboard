@@ -1,5 +1,4 @@
 "use client";
-
 import {
   AtSymbolIcon,
   LockClosedIcon,
@@ -14,10 +13,10 @@ import {
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
 import {
-  type FormResult,
   getFieldErrors,
   getFieldValues,
-} from "@/shared/forms/core/types";
+} from "@/shared/forms/domain/guards/form-guards";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";

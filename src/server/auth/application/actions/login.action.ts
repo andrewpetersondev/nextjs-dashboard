@@ -13,7 +13,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
-import type { FormResult } from "@/shared/forms/core/types";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 

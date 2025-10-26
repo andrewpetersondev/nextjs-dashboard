@@ -1,5 +1,4 @@
 "use client";
-
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
@@ -7,7 +6,7 @@ import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
 import { EditUserFormSchema } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/actions/update";
-import type { FormResult } from "@/shared/forms/core/types";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {

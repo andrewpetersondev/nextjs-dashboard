@@ -1,19 +1,23 @@
 import "server-only";
 import type { z } from "zod";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/core/constants";
-import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
-import { resolveRawFieldPayload } from "@/shared/forms/fields/field-names.resolve";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
+import {
+  resolveValidateOptions,
+  type ValidateOptions,
+} from "@/shared/forms/application/options/validate-options";
+import { resolveRawFieldPayload } from "@/shared/forms/application/utils/field-payload-resolver";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/error-mapper";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-resolver";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/validation/utils/zod-error.helpers";
-
-const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;
-const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.VALIDATION_FAILED;
+} from "@/shared/forms/infrastructure/zod/guards";
 
 /**
  * Transforms an error into a FormResult with validation errors.
@@ -55,37 +59,6 @@ function createValidationFormError<TFieldNames extends string>(
     fieldErrors,
     message: failureMessage,
   });
-}
-
-/**
- * Options for form validation operations.
- *
- * @typeParam TIn - Type of input object being validated.
- * @typeParam TFieldNames - String literal union of field names in TIn.
- */
-interface ValidateOptions<TIn, TFieldNames extends keyof TIn & string> {
-  readonly fields?: readonly TFieldNames[];
-  readonly raw?: Readonly<Partial<Record<TFieldNames, unknown>>>;
-  readonly loggerContext?: string;
-  readonly messages?: {
-    readonly successMessage?: string;
-    readonly failureMessage?: string;
-  };
-}
-
-/**
- * Resolves validation options with defaults.
- */
-function resolveValidateOptions<TIn, TFieldNames extends keyof TIn & string>(
-  options: ValidateOptions<TIn, TFieldNames>,
-) {
-  return {
-    failureMessage: options.messages?.failureMessage ?? DEFAULT_FAILURE_MESSAGE,
-    fields: options.fields,
-    loggerContext: options.loggerContext ?? DEFAULT_LOGGER_CONTEXT,
-    raw: options.raw,
-    successMessage: options.messages?.successMessage ?? "",
-  };
 }
 
 /**

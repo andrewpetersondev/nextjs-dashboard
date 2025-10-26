@@ -1,5 +1,4 @@
 "use client";
-
 import { type JSX, useActionState, useEffect, useState } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { CustomerSelect } from "@/features/invoices/components/customer-select";
@@ -14,7 +13,7 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { FieldError } from "@/shared/forms/core/types";
+import type { FieldError } from "@/shared/forms/domain/models/field-error";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/tokens/timings";

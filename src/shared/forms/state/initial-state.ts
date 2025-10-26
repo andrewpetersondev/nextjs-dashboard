@@ -2,9 +2,9 @@ import type { z } from "zod";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
 import { Err } from "@/shared/core/result/result";
-import type { FormResult } from "@/shared/forms/core/types";
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
+import type { DenseFieldErrorMap } from "@/shared/forms/domain/models/error-maps";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 
 /**
  * Creates the initial failed form state with empty field errors.

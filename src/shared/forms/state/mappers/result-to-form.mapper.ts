@@ -3,16 +3,18 @@ import type { Result } from "@/shared/core/result/result";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
-} from "@/shared/forms/core/constants";
+} from "@/shared/forms/constants/messages";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
 import {
-  type FormResult,
   formError,
   formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import {
   getFieldErrors,
   getFieldValues,
-} from "@/shared/forms/core/types";
+} from "@/shared/forms/domain/guards/form-guards";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
 
 /**
  * Maps a domain `Result` to a UI-facing `FormResult`.

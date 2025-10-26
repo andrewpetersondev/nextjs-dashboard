@@ -1,11 +1,10 @@
 "use client";
-
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
-import type { FormResult } from "@/shared/forms/core/types";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
 
 export function CreateUserForm(): JSX.Element {

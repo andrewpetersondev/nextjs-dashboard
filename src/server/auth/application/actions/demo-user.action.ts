@@ -4,8 +4,8 @@ import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import type { FormResult } from "@/shared/forms/core/types";
-import { formError } from "@/shared/forms/core/types";
+import { formError } from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { ROUTES } from "@/shared/routes/routes";
 
 const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";

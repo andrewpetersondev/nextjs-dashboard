@@ -15,11 +15,11 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
-import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import {
-  selectSparseFieldErrorsForAllowedFields,
-  toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/validation/error-map";
+  selectSparseFieldErrors,
+  toDenseFieldErrorMap,
+} from "@/shared/forms/domain/factories/error-map.factory";
+import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -55,7 +55,7 @@ function handleActionError<
   });
   return {
     ...prevState,
-    errors: toDenseFieldErrorMapFromSparse({}, [] as unknown as readonly N[]),
+    errors: toDenseFieldErrorMap({}, [] as unknown as readonly N[]),
     message:
       error instanceof ValidationError
         ? INVOICE_MSG.INVALID_INPUT
@@ -98,14 +98,14 @@ export async function updateInvoiceAction(
         readonly string[] | undefined
       >;
 
-      const sparse = selectSparseFieldErrorsForAllowedFields<
-        UpdateInvoiceFieldNames,
-        string
-      >(zFieldErrors, schemaFields);
-      const dense = toDenseFieldErrorMapFromSparse<
-        UpdateInvoiceFieldNames,
-        string
-      >(sparse, schemaFields);
+      const sparse = selectSparseFieldErrors<UpdateInvoiceFieldNames, string>(
+        zFieldErrors,
+        schemaFields,
+      );
+      const dense = toDenseFieldErrorMap<UpdateInvoiceFieldNames, string>(
+        sparse,
+        schemaFields,
+      );
 
       return {
         ...prevState,

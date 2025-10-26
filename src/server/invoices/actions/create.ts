@@ -1,5 +1,4 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
 import {
@@ -17,10 +16,10 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import { serverLogger } from "@/server/logging/serverLogger";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/error-mapper";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
+import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/guards";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
-import { isZodErrorInstance } from "@/shared/forms/validation/utils/zod-error.helpers";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { ROUTES } from "@/shared/routes/routes";

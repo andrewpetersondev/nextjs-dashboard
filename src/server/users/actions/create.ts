@@ -10,13 +10,17 @@ import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
 import { createUserDal } from "@/server/users/dal/create";
-import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
 import {
   createEmptyDenseFieldErrorMap,
-  selectSparseFieldErrorsForAllowedFields,
-  toDenseFieldErrorMapFromSparse,
-} from "@/shared/forms/validation/error-map";
+  selectSparseFieldErrors,
+  toDenseFieldErrorMap,
+} from "@/shared/forms/domain/factories/error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/models/form-result";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -58,11 +62,8 @@ export async function createUserAction(
 
     if (!parsed.success) {
       return formError({
-        fieldErrors: toDenseFieldErrorMapFromSparse(
-          selectSparseFieldErrorsForAllowedFields(
-            parsed.error.flatten().fieldErrors,
-            allowed,
-          ),
+        fieldErrors: toDenseFieldErrorMap(
+          selectSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
           allowed,
         ),
         message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -97,7 +98,7 @@ export async function createUserAction(
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
     return formError({
-      fieldErrors: toDenseFieldErrorMapFromSparse({}, allowed),
+      fieldErrors: toDenseFieldErrorMap({}, allowed),
       message: USER_ERROR_MESSAGES.UNEXPECTED,
     });
   }

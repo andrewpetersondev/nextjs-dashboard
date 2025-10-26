@@ -1,8 +1,6 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-
-import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
+import type { DenseFieldErrorMap } from "@/shared/forms/domain/models/error-maps";
 
 /**
  * Result type for invoice actions (create, read, update, delete).
