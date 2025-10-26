@@ -5,7 +5,7 @@ import {
   type PasswordHash,
 } from "@/features/auth/lib/password.types";
 import { SALT_ROUNDS } from "@/server/auth/domain/constants/session.constants";
-import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);
@@ -22,7 +22,7 @@ export async function compareHash(
   return await bcryptjs.compare(plainPassword, hashedPassword);
 }
 
-export class BcryptPasswordHasherAdapter implements PasswordHasher {
+export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
   async hash(raw: string): Promise<PasswordHash> {
     const hashed = await hashWithSaltRounds(raw);
     return asPasswordHash(hashed);

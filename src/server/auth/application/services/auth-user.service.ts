@@ -11,8 +11,8 @@ import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factor
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
-import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
-import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
+import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { getAppDb } from "@/server/db/db.connection";
 import { serverLogger } from "@/server/logging/serverLogger";
@@ -24,13 +24,13 @@ import { Err, Ok } from "@/shared/core/result/result";
  * Auth service: orchestrates business logic, returns discriminated Result.
  * Never throws; always returns Result union for UI.
  *
- * Depends on small ports (AuthUserRepository, PasswordHasher) for testability.
+ * Depends on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
  */
 export class AuthUserService {
-  private readonly repo: AuthUserRepository;
-  private readonly hasher: PasswordHasher;
+  private readonly repo: AuthUserRepositoryPort;
+  private readonly hasher: PasswordHasherPort;
 
-  constructor(repo: AuthUserRepository, hasher: PasswordHasher) {
+  constructor(repo: AuthUserRepositoryPort, hasher: PasswordHasherPort) {
     this.repo = repo;
     this.hasher = hasher;
   }

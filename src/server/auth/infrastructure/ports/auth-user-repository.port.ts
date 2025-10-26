@@ -3,9 +3,9 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserEntity } from "@/server/auth/domain/types/auth-user-entity.types";
 
-export interface AuthUserRepository<TRepo = unknown> {
+export interface AuthUserRepositoryPort<TRepo = unknown> {
   withTransaction<TResult>(
-    fn: (txRepo: AuthUserRepository<TRepo>) => Promise<TResult>,
+    fn: (txRepo: AuthUserRepositoryPort<TRepo>) => Promise<TResult>,
   ): Promise<TResult>;
 
   signup(input: AuthSignupPayload): Promise<AuthUserEntity>;

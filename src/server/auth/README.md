@@ -63,8 +63,8 @@ Here’s how src/server/auth/ is organized and what each area is responsible for
 
 - The service depends on small, stable ports, not concrete tech.
   - In AuthUserService:
-    - private readonly repo: AuthUserRepository
-    - private readonly hasher: PasswordHasher
+    - private readonly repo: AuthUserRepositoryPort
+    - private readonly hasher: PasswordHasherPort
   - These are interfaces describing what the service needs (user persistence and password hashing).
 
 - Concrete implementations are injected at composition time (see factories):

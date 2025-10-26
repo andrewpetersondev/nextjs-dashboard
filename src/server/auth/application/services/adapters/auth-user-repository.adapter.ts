@@ -1,11 +1,11 @@
 import "server-only";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
-import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
+import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/repositories/auth-user.repository";
 
 export class AuthUserRepositoryAdapter
-  implements AuthUserRepository<AuthUserRepositoryImpl>
+  implements AuthUserRepositoryPort<AuthUserRepositoryImpl>
 {
   private readonly repo: AuthUserRepositoryImpl;
 
@@ -14,7 +14,7 @@ export class AuthUserRepositoryAdapter
   }
 
   withTransaction<T>(
-    fn: (txRepo: AuthUserRepository<AuthUserRepositoryImpl>) => Promise<T>,
+    fn: (txRepo: AuthUserRepositoryPort<AuthUserRepositoryImpl>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
       const txAdapter = new AuthUserRepositoryAdapter(txRepo);

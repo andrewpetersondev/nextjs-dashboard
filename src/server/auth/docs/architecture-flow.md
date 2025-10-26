@@ -95,7 +95,7 @@ Result<SessionUser, AppError>
 ## Design Strengths
 
 ✅ **Monadic Composition**: `pipeAsync()` + `flatMapAsync()` enable error short-circuiting  
-✅ **Port-Adapter Pattern**: `AuthUserRepository` & `PasswordHasher` ports decouple logic  
+✅ **Port-Adapter Pattern**: `AuthUserRepositoryPort` & `PasswordHasherPort` ports decouple logic  
 ✅ **Early Enrichment**: Service layer populates `fieldErrors` immediately (no post-processing)  
 ✅ **Type Safety**: Generics (`TField extends string`) ensure field names match  
 ✅ **Immutability**: `Object.freeze()` on error details prevents mutations  

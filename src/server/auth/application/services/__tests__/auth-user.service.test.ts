@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AuthUserRepository } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
-import type { PasswordHasher } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
+import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 describe("AuthUserService", () => {
-  let mockRepo: AuthUserRepository;
-  let mockHasher: PasswordHasher;
+  let mockRepo: AuthUserRepositoryPort;
+  let mockHasher: PasswordHasherPort;
   let service: AuthUserService;
 
   beforeEach(() => {

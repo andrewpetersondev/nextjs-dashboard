@@ -24,7 +24,7 @@ Purpose: orchestrate auth use-cases (login, signup, session) by composing domain
 ## Key Principles
 
 1. **Server-only**: runs on the server; side effects belong here (e.g., session cookies).
-2. **Port-adapter**: services depend on small ports (AuthUserRepository, PasswordHasher) for testability.
+2. **Port-adapter**: services depend on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
 3. **Result-first API**: service methods return `Result<Success, Error>`; callers don't handle exceptions.
 4. **Transactions at the boundary**: repository adapter can expose `withTransaction` for atomic operations.
 5. **Narrow responsibilities**: actions validate inputs and call services; services coordinate domain logic; adapters bridge to infra.
