@@ -14,7 +14,6 @@ import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.log
 import { getAppDb } from "@/server/db/db.connection";
 import { validateFormGeneric } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/core/types";
-import { extractFormDataFields } from "@/shared/forms/fields/formdata.extractor";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -36,8 +35,6 @@ export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
 ): Promise<FormResult<LoginField>> {
-  const raw = extractFormDataFields<LoginField>(formData, fields);
-
   const validated = await validateFormGeneric(formData, LoginSchema, fields, {
     loggerContext: AUTH_ACTION_CONTEXTS.LOGIN.CONTEXT,
   });
@@ -58,7 +55,7 @@ export async function loginAction(
     return mapResultToFormResult(sessionResult, {
       failureMessage: "Login failed. Please try again.",
       fields,
-      raw,
+      raw: input, // Use validated input as raw data for error display
     });
   }
 

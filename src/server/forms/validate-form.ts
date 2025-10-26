@@ -6,39 +6,15 @@ import { type FormResult, formError, formOk } from "@/shared/forms/core/types";
 import type { DenseFieldErrorMap } from "@/shared/forms/errors/types";
 import { resolveRawFieldPayload } from "@/shared/forms/fields/field-names.resolve";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/fields/zod-field-names";
-import { mapToDenseFieldErrorsFromZod } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
-import { toDenseFieldErrorMapFromSparse } from "@/shared/forms/validation/error-map";
-import { isZodErrorLikeShape } from "@/shared/forms/validation/utils/zod-error.helpers";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/state/mappers/zod-to-form-errors.mapper";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/validation/error-map";
+import {
+  isZodErrorInstance,
+  isZodErrorLikeShape,
+} from "@/shared/forms/validation/utils/zod-error.helpers";
 
 const DEFAULT_LOGGER_CONTEXT = "validateFormGeneric" as const;
 const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.VALIDATION_FAILED;
-
-/**
- * Transforms an error into dense field error map suitable for form validation errors.
- *
- * @typeParam TFieldNames - String literal union of field names.
- * @param error - The original error object from validation.
- * @param fields - Array of field names for error mapping.
- * @param loggerContext - Context string for logging.
- * @returns Dense field error map with validation messages.
- */
-function toValidationFieldErrors<TFieldNames extends string>(
-  error: unknown,
-  fields: readonly TFieldNames[],
-  loggerContext: string,
-): DenseFieldErrorMap<TFieldNames, string> {
-  logValidationFailure(loggerContext, error);
-
-  if (isZodErrorLikeShape(error) && Array.isArray(error.issues)) {
-    const issues = error.issues as readonly unknown[];
-    const zodLike: Pick<z.ZodError<unknown>, "issues"> = {
-      issues: issues as unknown as z.ZodError<unknown>["issues"],
-    };
-    return mapToDenseFieldErrorsFromZod<TFieldNames>(zodLike, fields);
-  }
-
-  return toDenseFieldErrorMapFromSparse<TFieldNames, string>({}, fields);
-}
 
 /**
  * Logs validation failure with contextual information.
@@ -57,6 +33,70 @@ function logValidationFailure(context: string, error: unknown): void {
     issues,
     message: DEFAULT_FAILURE_MESSAGE,
     name,
+  });
+}
+
+/**
+ * Transforms an error into dense field error map suitable for form validation errors.
+ *
+ * @typeParam TFieldNames - String literal union of field names.
+ * @param error - The original error object from validation.
+ * @param fields - Array of field names for error mapping.
+ * @param loggerContext - Context string for logging.
+ * @returns Dense field error map with validation messages.
+ */
+function toValidationFieldErrors<TFieldNames extends string>(
+  error: unknown,
+  fields: readonly TFieldNames[],
+  loggerContext: string,
+): DenseFieldErrorMap<TFieldNames, string> {
+  logValidationFailure(loggerContext, error);
+
+  // Use standard mapper if it's a real Zod error instance
+  if (isZodErrorInstance(error)) {
+    return mapZodErrorToDenseFieldErrors<TFieldNames>(error, fields);
+  }
+
+  // Fallback for serialized/duck-typed Zod errors
+  if (isZodErrorLikeShape(error)) {
+    const flattened = error.flatten?.();
+    if (flattened?.fieldErrors) {
+      return mapZodErrorToDenseFieldErrors<TFieldNames>(
+        error as z.ZodError,
+        fields,
+      );
+    }
+  }
+
+  // Non-Zod errors: return empty dense map
+  return createEmptyDenseFieldErrorMap<TFieldNames, string>(fields);
+}
+
+/**
+ * Helper to create form error from validation failure.
+ * Consolidates error transformation and form error creation.
+ *
+ * @typeParam TFieldNames - String literal union of field names.
+ * @param error - The validation error to transform.
+ * @param fields - Array of field names for error mapping.
+ * @param loggerContext - Context string for logging.
+ * @param failureMessage - Message to display for the form error.
+ * @returns FormResult with validation errors.
+ */
+function createValidationFormError<TFieldNames extends string>(
+  error: unknown,
+  fields: readonly TFieldNames[],
+  loggerContext: string,
+  failureMessage: string,
+): FormResult<never> {
+  const fieldErrors = toValidationFieldErrors<TFieldNames>(
+    error,
+    fields,
+    loggerContext,
+  );
+  return formError<TFieldNames>({
+    fieldErrors,
+    message: failureMessage,
   });
 }
 
@@ -118,27 +158,23 @@ export async function validateFormGeneric<
   try {
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
-    const fieldErrors = toValidationFieldErrors<TFieldNames>(
+    // Unexpected errors during validation (e.g., async refinements throwing)
+    return createValidationFormError<TFieldNames>(
       e,
       fields,
       loggerContext,
+      failureMessage,
     );
-    return formError<TFieldNames>({
-      fieldErrors,
-      message: failureMessage,
-    });
   }
 
+  // Zod validation failed
   if (!parsed.success) {
-    const fieldErrors = toValidationFieldErrors<TFieldNames>(
+    return createValidationFormError<TFieldNames>(
       parsed.error,
       fields,
       loggerContext,
+      failureMessage,
     );
-    return formError<TFieldNames>({
-      fieldErrors,
-      message: failureMessage,
-    });
   }
 
   return formOk<TIn>(parsed.data, successMessage);
