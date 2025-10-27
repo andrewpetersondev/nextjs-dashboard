@@ -191,7 +191,7 @@
         "useDefaultSwitchClause": "on",
         "useEnumInitializers": "on",
         "useExplicitLengthCheck": "on",
-        "useExportsLast": "on",
+        "useExportsLast": "off",
         "useFilenamingConvention": "on",
         "useForOf": "on",
         "useFragmentSyntax": "on",
