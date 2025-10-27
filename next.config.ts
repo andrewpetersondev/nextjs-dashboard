@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   output: "standalone",
-  reactStrictMode: true,
   typedRoutes: true,
 };
 
