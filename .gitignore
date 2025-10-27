@@ -73,6 +73,7 @@ vault/*.json
 # ================================
 # Build Artifacts
 # ================================
+next-env.d.ts
 .next/
 .out/
 build/
