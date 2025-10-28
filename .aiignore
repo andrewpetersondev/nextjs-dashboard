@@ -128,7 +128,7 @@ drizzle.config.ts
 eslint.config.mjs
 next-env.d.ts
 postcss.config.mjs
-vitest.config.mts
+vitest.config.ts
 
 # =========================================
 # Optional: source exclusions (comment to re-enable)
