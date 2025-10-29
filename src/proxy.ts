@@ -18,7 +18,7 @@ export default async function proxy(req: NextRequest) {
   const isPublicRoute: boolean = isPublicRouteHelper(path);
 
   // If route is not relevant for auth, skip work early (avoid cookie/session reads)
-  if (!isProtectedRoute && !isAdminRoute && !isPublicRoute) {
+  if (!(isProtectedRoute || isAdminRoute || isPublicRoute)) {
     return NextResponse.next();
   }
 
@@ -56,5 +56,5 @@ export default async function proxy(req: NextRequest) {
 export const config = {
   // Exclude APIs, Next internals, data routes, and any path with a file extension.
   // Must be a static literal for Next.js to statically analyze.
-  matcher: ["/((?!api|_next/static|_next/image|_next/data|.*\\..*$).*)"],
+  matcher: ["/((?!_next/static|_next/image|_next/data|.*\\..*$).*)"],
 };

@@ -99,13 +99,7 @@
     "enabled": true,
     "rules": {
       "a11y": "on",
-      "complexity": {
-        "noExcessiveCognitiveComplexity": "on",
-        "noExcessiveLinesPerFunction": "on",
-        "noExcessiveNestedTestSuites": "on",
-        "noForEach": "on",
-        "recommended": true
-      },
+      "complexity": "on",
       "correctness": {
         "noGlobalDirnameFilename": "on",
         "noNodejsModules": "on",

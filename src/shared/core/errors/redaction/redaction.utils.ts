@@ -40,7 +40,7 @@ export function applyMask(
   }
   if (isEmail(value)) {
     const [user, domain] = value.split("@");
-    if (!user || !domain) {
+    if (!(user && domain)) {
       return mask;
     }
     const visible = user.slice(0, PARTIAL_MASK_VISIBLE_EMAIL_CHARS);
