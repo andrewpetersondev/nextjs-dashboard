@@ -5,12 +5,12 @@ import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
 import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/domain/domain-brands";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Retrieves a user from the database by branded UserId.
@@ -41,7 +41,7 @@ export async function readUserDal(
     // Map to DTO for safe return to client
     return userEntityToDto(userEntity);
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "readUserDal",
       error,
       id,

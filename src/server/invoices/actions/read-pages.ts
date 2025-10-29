@@ -3,8 +3,8 @@
 import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
-import { serverLogger } from "@/server/logging/logger.server";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Server action to fetch the total number of invoice pages for pagination.
@@ -18,7 +18,7 @@ export async function readInvoicesPagesAction(query = ""): Promise<number> {
     const totalPages = await fetchInvoicesPagesDal(db, sanitizedQuery);
 
     if (!Number.isInteger(totalPages) || totalPages < 1) {
-      serverLogger.error({
+      sharedLogger.error({
         context: "readInvoicesPagesAction",
         message: "Invalid totalPages returned from DAL",
         query: sanitizedQuery,
@@ -28,7 +28,7 @@ export async function readInvoicesPagesAction(query = ""): Promise<number> {
 
     return totalPages;
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "readInvoicesPagesAction",
       error,
       message: INVOICE_MSG.DB_ERROR,

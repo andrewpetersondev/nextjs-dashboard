@@ -5,12 +5,12 @@ import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
 import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/domain/domain-brands";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Deletes a user by branded UserId.
@@ -40,7 +40,7 @@ export async function deleteUserDal(
     // Map to DTO for safe return to client
     return userEntityToDto(deletedEntity);
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "deleteUserDal",
       error,
       message: "Failed to delete user.",

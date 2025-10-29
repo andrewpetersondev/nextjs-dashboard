@@ -6,11 +6,11 @@ import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
 import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Fetches filtered users for a specific page.
@@ -45,7 +45,7 @@ export async function fetchFilteredUsers(
     // Map each raw row to UserEntity, then to UserDto
     return userRows.map((row) => userEntityToDto(userDbRowToEntity(row)));
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "fetchFilteredUsers",
       currentPage,
       error,

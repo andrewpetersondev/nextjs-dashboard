@@ -10,9 +10,9 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { serverLogger } from "@/server/logging/logger.server";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -58,7 +58,7 @@ export async function deleteInvoiceAction(
       success: true,
     };
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "deleteInvoiceAction",
       error,
       id,

@@ -5,10 +5,10 @@ import { redirect } from "next/navigation";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/logger.server";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Deletes a user by ID, revalidates and redirects.
@@ -37,7 +37,7 @@ export async function deleteUserAction(
       };
     }
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "deleteUserAction",
       error,
       id,

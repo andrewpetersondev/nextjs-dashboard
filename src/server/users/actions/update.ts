@@ -16,7 +16,6 @@ import {
 import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { serverLogger } from "@/server/logging/logger.server";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
@@ -28,6 +27,7 @@ import {
 } from "@/shared/forms/domain/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-resolver";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
@@ -180,7 +180,7 @@ export async function updateUserAction(
     revalidatePath(USERS_DASHBOARD_PATH);
     return formOk(updated, USER_SUCCESS_MESSAGES.UPDATE_SUCCESS);
   } catch (error: unknown) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "updateUserAction",
       error,
       id,

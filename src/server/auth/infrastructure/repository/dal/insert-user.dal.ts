@@ -4,7 +4,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
@@ -44,7 +44,7 @@ export async function insertUserDal(
       const userRow = rows?.[0];
 
       if (!userRow) {
-        serverLogger.error(
+        sharedLogger.error(
           {
             context: "dal.users.insert",
             email,

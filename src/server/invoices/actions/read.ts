@@ -7,9 +7,9 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { serverLogger } from "@/server/logging/logger.server";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Server action to fetch a single invoice by its ID.
@@ -45,7 +45,7 @@ export async function readInvoiceAction(
   } catch (error) {
     const message = toInvoiceErrorMessage(error);
 
-    serverLogger.error({
+    sharedLogger.error({
       context: "readInvoiceAction",
       error,
       id,

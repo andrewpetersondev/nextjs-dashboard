@@ -5,7 +5,7 @@
  */
 /// <reference path="./types/domain-events.d.ts" />
 import "server-only";
-import { serverLogger } from "@/server/logging/logger.server";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 type EventName = Extract<keyof DomainEvents, string>;
 
@@ -86,7 +86,7 @@ export class EventBus {
       Promise.resolve()
         .then(() => (handler as EventHandler<unknown>)(event))
         .catch((error: unknown) => {
-          serverLogger.error({
+          sharedLogger.error({
             context: "EventBus.publish",
             error: error instanceof Error ? error.message : String(error),
             eventName,

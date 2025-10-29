@@ -13,7 +13,6 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { serverLogger } from "@/server/logging/logger.server";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import {
   selectSparseFieldErrors,
@@ -21,6 +20,7 @@ import {
 } from "@/shared/forms/domain/factories/error-map.factory";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Publish "invoice updated" domain event
@@ -46,7 +46,7 @@ function handleActionError<
   id: string,
   error: unknown,
 ): LegacyFormState<N, F> {
-  serverLogger.error({
+  sharedLogger.error({
     context: "updateInvoiceAction",
     error,
     id,

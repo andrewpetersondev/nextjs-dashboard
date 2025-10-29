@@ -3,12 +3,12 @@ import "server-only";
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
-import { serverLogger } from "@/server/logging/logger.server";
 import { processInvoiceEvent } from "@/server/revenues/application/handlers/events/orchestrator";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceUpdated } from "@/server/revenues/events/process-invoice/handlers/invoice-update.handlers";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Handles invoice events and updates revenue records accordingly.
@@ -34,7 +34,7 @@ export class RevenueEventHandler {
   constructor(revenueService: RevenueService) {
     this.revenueService = revenueService;
 
-    serverLogger.debug({
+    sharedLogger.debug({
       context: "RevenueEventHandler.constructor",
       message: "Initializing revenue event handler",
     });
@@ -47,7 +47,7 @@ export class RevenueEventHandler {
    * Sets up subscriptions to invoice events.
    */
   private setupEventSubscriptions(): void {
-    serverLogger.info({
+    sharedLogger.info({
       context: "RevenueEventHandler.setupEventSubscriptions",
       message: "Setting up event subscriptions",
     });
@@ -66,7 +66,7 @@ export class RevenueEventHandler {
       this.handleInvoiceDeleted.bind(this),
     );
 
-    serverLogger.info({
+    sharedLogger.info({
       context: "RevenueEventHandler.setupEventSubscriptions",
       message: "Event subscriptions set up successfully",
     });

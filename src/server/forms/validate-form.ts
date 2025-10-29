@@ -1,6 +1,5 @@
 import "server-only";
 import type { z } from "zod";
-import { serverLogger } from "@/server/logging/logger.server";
 import {
   resolveValidateOptions,
   type ValidateOptions,
@@ -18,6 +17,7 @@ import {
   isZodErrorInstance,
   isZodErrorLikeShape,
 } from "@/shared/forms/infrastructure/zod/guards";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Transforms an error into a FormResult with validation errors.
@@ -42,7 +42,7 @@ function createValidationFormError<TFieldNames extends string>(
     isZodErrorLikeShape(error) && Array.isArray(error.issues)
       ? error.issues.length
       : undefined;
-  serverLogger.error({
+  sharedLogger.error({
     context: loggerContext,
     issues,
     message: failureMessage,

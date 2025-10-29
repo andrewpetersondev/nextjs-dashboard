@@ -8,10 +8,6 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { throwRepoDatabaseErr } from "@/server/errors/factories/layer-error-throw";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import {
-  createChildLogger,
-  type ServerLogger,
-} from "@/server/logging/logger.server";
-import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
@@ -21,6 +17,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
+import { createChildLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -28,7 +25,7 @@ import {
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly logger: ServerLogger;
+  private readonly logger;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
   constructor(db: AppDatabase) {

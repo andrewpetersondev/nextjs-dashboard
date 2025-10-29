@@ -3,9 +3,9 @@
 import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/logger.server";
 import { fetchUserById } from "@/server/users/dal/fetch-user-by-id";
 import { toUserId } from "@/shared/domain/id-converters";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Fetches a user by plain string id for UI consumption.
@@ -15,7 +15,7 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
   try {
     return await fetchUserById(db, toUserId(id));
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "readUserAction",
       error,
       id,

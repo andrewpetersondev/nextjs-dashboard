@@ -1,6 +1,5 @@
 import "server-only";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
 import {
   ConflictError,
   ForbiddenError,
@@ -11,6 +10,7 @@ import {
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { Err, type Result } from "@/shared/core/result/result";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Maps repository errors to standardized AppError Results.
@@ -57,12 +57,12 @@ export function mapRepoErrorToAppResult<T>(
 
   // Infrastructure errors - hide internals
   if (err instanceof DatabaseError) {
-    serverLogger.error({ context, error: err.message }, "Database error");
+    sharedLogger.error({ context, error: err.message }, "Database error");
     return Err(appErrorFromCode("DATABASE", "Database operation failed"));
   }
 
   // Unknown/unexpected errors - log for debugging
-  serverLogger.error(
+  sharedLogger.error(
     {
       context,
       error: err instanceof Error ? err.message : String(err),

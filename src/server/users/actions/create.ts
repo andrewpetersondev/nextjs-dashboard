@@ -8,7 +8,6 @@ import {
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/logger.server";
 import { createUserDal } from "@/server/users/dal/create";
 import {
   createEmptyDenseFieldErrorMap,
@@ -21,6 +20,7 @@ import {
 } from "@/shared/forms/domain/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -79,7 +79,7 @@ export async function createUserAction(
     });
 
     if (!user) {
-      serverLogger.warn({
+      sharedLogger.warn({
         context: "createUserAction",
         message: "User creation returned empty result",
         safeMeta: { email, username },
@@ -92,7 +92,7 @@ export async function createUserAction(
 
     return formOk(user, USER_SUCCESS_MESSAGES.CREATE_SUCCESS);
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "createUserAction",
       error,
       message: USER_ERROR_MESSAGES.UNEXPECTED,

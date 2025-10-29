@@ -1,9 +1,7 @@
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import { LOGGER_CONTEXT_SESSION } from "@/server/auth/domain/constants/session.constants";
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
-import { createChildLogger } from "@/server/logging/logger.server";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
@@ -18,12 +16,6 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, AppError>> {
-  const _logger = createChildLogger({
-    context: LOGGER_CONTEXT_SESSION,
-    role: user.role,
-    userId: user.id,
-  });
-
   const res = await tryCatchAsync(async () => {
     await setSessionToken(user.id, user.role);
     return true as const;
@@ -34,18 +26,8 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    //    logger.info("Session established successfully");
     console.log("Session established successfully");
   } else {
-    //    logger.error(
-    //      {
-    //        error: {
-    //          message: mapped.error.message,
-    //          name: "AuthSessionError",
-    //        },
-    //      },
-    //      "Failed to establish session",
-    //    );
     console.error("Failed to establish session");
   }
 

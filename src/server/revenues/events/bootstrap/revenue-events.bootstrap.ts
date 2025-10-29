@@ -1,11 +1,11 @@
 import "server-only";
 
 import { getAppDb } from "@/server/db/db.connection";
-import { serverLogger } from "@/server/logging/logger.server";
 import { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 declare global {
   var __revenueEventHandler: RevenueEventHandler | undefined;
@@ -26,12 +26,12 @@ if (!globalForRevenueHandler.__revenueEventHandler) {
     globalForRevenueHandler.__revenueEventHandler = new RevenueEventHandler(
       service,
     );
-    serverLogger.info({
+    sharedLogger.info({
       context: "revenue-events.bootstrap",
       message: "RevenueEventHandler initialized",
     });
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "revenue-events.bootstrap",
       error,
       message: "Failed to initialize RevenueEventHandler",

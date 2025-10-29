@@ -5,7 +5,7 @@ import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { serverLogger } from "@/server/logging/logger.server";
+import { sharedLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Fetches the total number of user pages for pagination.
@@ -38,7 +38,7 @@ export async function fetchUsersPages(
 
     return Math.ceil(totalUsers / ITEMS_PER_PAGE_USERS);
   } catch (error) {
-    serverLogger.error({
+    sharedLogger.error({
       context: "fetchUsersPages",
       error,
       message: "Failed to fetch the total number of users.",
