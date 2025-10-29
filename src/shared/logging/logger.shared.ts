@@ -67,7 +67,7 @@ export class Logger {
       return;
     }
 
-    const args = this.format(entry);
+    const formattedArgs = this.format(entry);
 
     const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
       debug: console.debug,
@@ -77,7 +77,7 @@ export class Logger {
       warn: console.warn,
     };
 
-    (consoleMethod[entry.level] ?? console.log)(...args);
+    (consoleMethod[entry.level] ?? console.log)(...formattedArgs);
   }
 
   trace<T>(message: string, data?: T): void {
