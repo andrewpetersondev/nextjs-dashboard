@@ -38,15 +38,14 @@
     ]
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.test.ts",
-    ".next/types/**/*.ts",
     "next-env.d.ts",
-    "**/*.mts",
-    ".next/dev/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
+    "**/*.test.ts",
     "node_modules",
     ".next",
     "out",
