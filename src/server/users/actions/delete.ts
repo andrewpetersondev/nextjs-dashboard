@@ -8,7 +8,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { deleteUserDal } from "@/server/users/dal/delete";
 import { toUserId } from "@/shared/domain/id-converters";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Deletes a user by ID, revalidates and redirects.
@@ -37,11 +37,10 @@ export async function deleteUserAction(
       };
     }
   } catch (error) {
-    sharedLogger.error({
+    logger.error(USER_ERROR_MESSAGES.unexpected, {
       context: "deleteUserAction",
       error,
       id,
-      message: USER_ERROR_MESSAGES.unexpected,
     });
     result = {
       errors: { _root: [USER_ERROR_MESSAGES.unexpected] },

@@ -34,7 +34,16 @@ function parseServerEnv() {
     return cachedServerEnv;
   }
 
-  const parsed = ServerEnvSchema.safeParse(process.env);
+  // Map actual UPPER_SNAKE_CASE env vars to the camelCase shape expected by the schema
+  const envToValidate = {
+    databaseUrl: process.env.DATABASE_URL,
+    sessionAudience: process.env.SESSION_AUDIENCE,
+    sessionIssuer: process.env.SESSION_ISSUER,
+    sessionSecret: process.env.SESSION_SECRET,
+  };
+
+  const parsed = ServerEnvSchema.safeParse(envToValidate);
+
   if (!parsed.success) {
     const details = parsed.error.flatten().fieldErrors;
     throw new Error(

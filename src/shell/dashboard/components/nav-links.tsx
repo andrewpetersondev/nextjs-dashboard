@@ -14,10 +14,10 @@ import { ROUTES } from "@/shared/routes/routes";
 
 /** Navigation link paths */
 const NAV_LINKS = {
-  customers: ROUTES.dashboard.CUSTOMERS,
-  home: ROUTES.dashboard.ROOT,
-  invoices: ROUTES.dashboard.INVOICES,
-  users: ROUTES.dashboard.USERS,
+  customers: ROUTES.dashboard.customers,
+  home: ROUTES.dashboard.root,
+  invoices: ROUTES.dashboard.invoices,
+  users: ROUTES.dashboard.users,
 } as const;
 
 type NavLinksProps = {

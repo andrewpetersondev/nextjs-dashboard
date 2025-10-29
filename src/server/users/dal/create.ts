@@ -10,7 +10,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Inserts a new user record into the database.
@@ -41,11 +41,10 @@ export async function createUserDal(
     const user = userRow ? userDbRowToEntity(userRow) : null;
     return user ? userEntityToDto(user) : null;
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to create a user in the database.", {
       context: "createUserDal",
       email,
       error,
-      message: "Failed to create a user in the database.",
       role,
       username,
     });

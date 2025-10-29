@@ -9,10 +9,10 @@ import type { AppDatabase } from "@/server/db/db.connection";
  * @template TUpdateInput - The input type for updates
  */
 export abstract class BaseRepository<
-  TDto,
-  TId,
-  TCreateInput = unknown,
-  TUpdateInput = unknown,
+  Tdto,
+  Tid,
+  Tcreateinput = unknown,
+  Tupdateinput = unknown,
 > {
   protected readonly db: AppDatabase;
 
@@ -20,8 +20,8 @@ export abstract class BaseRepository<
     this.db = db;
   }
 
-  abstract create(input: TCreateInput): Promise<TDto>;
-  abstract read(id: TId): Promise<TDto>;
-  abstract update(id: TId, data: TUpdateInput): Promise<TDto>;
-  abstract delete(id: TId): Promise<TDto>;
+  abstract create(input: Tcreateinput): Promise<Tdto>;
+  abstract read(id: Tid): Promise<Tdto>;
+  abstract update(id: Tid, data: Tupdateinput): Promise<Tdto>;
+  abstract delete(id: Tid): Promise<Tdto>;
 }

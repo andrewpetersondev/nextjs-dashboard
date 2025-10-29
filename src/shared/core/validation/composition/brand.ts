@@ -7,17 +7,17 @@ import { Ok, type Result } from "@/shared/core/result/result";
  * Combines validation and branding, producing a branded type on success.
  *
  * @typeParam T - The type of the value being validated.
- * @typeParam TBrand - The branded type applied to the validated value.
+ * @typeParam Tbrand - The branded type applied to the validated value.
  * @param validator - A function to validate the input value; returns a `Result<T, ValidationError>`.
  * @param brandFn - A function to apply the brand to the validated value.
- * @returns A `Result<TBrand, ValidationError>` representing the branded value or validation failure.
+ * @returns A `Result<Tbrand, ValidationError>` representing the branded value or validation failure.
  */
 export const brandWith =
-  <T, TBrand>(
+  <T, Tbrand>(
     validator: (value: unknown) => Result<T, ValidationError>,
-    brandFn: (value: T) => TBrand,
+    brandFn: (value: T) => Tbrand,
   ) =>
-  (value: unknown): Result<TBrand, ValidationError> => {
+  (value: unknown): Result<Tbrand, ValidationError> => {
     const r = validator(value);
     return r.ok ? Ok(brandFn(r.value)) : r;
   };

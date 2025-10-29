@@ -17,7 +17,7 @@ import {
   isZodErrorInstance,
   isZodErrorLikeShape,
 } from "@/shared/forms/infrastructure/zod/guards";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Transforms an error into a FormResult with validation errors.
@@ -30,9 +30,9 @@ import { sharedLogger } from "@/shared/logging/logger.shared";
  * @param failureMessage - Message to display for the form error.
  * @returns FormResult with validation errors.
  */
-function createValidationFormError<TFieldNames extends string>(
+function createValidationFormError<Tfieldnames extends string>(
   error: unknown,
-  fields: readonly TFieldNames[],
+  fields: readonly Tfieldnames[],
   loggerContext: string,
   failureMessage: string,
 ): FormResult<never> {
@@ -42,7 +42,7 @@ function createValidationFormError<TFieldNames extends string>(
     isZodErrorLikeShape(error) && Array.isArray(error.issues)
       ? error.issues.length
       : undefined;
-  sharedLogger.error({
+  logger.error(failureMessage, {
     context: loggerContext,
     issues,
     message: failureMessage,
@@ -52,10 +52,10 @@ function createValidationFormError<TFieldNames extends string>(
   // Transform error to dense field errors
   const fieldErrors =
     isZodErrorInstance(error) || isZodErrorLikeShape(error)
-      ? mapZodErrorToDenseFieldErrors<TFieldNames>(error as z.ZodError, fields)
-      : createEmptyDenseFieldErrorMap<TFieldNames, string>(fields);
+      ? mapZodErrorToDenseFieldErrors<Tfieldnames>(error as z.ZodError, fields)
+      : createEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
 
-  return formError<TFieldNames>({
+  return formError<Tfieldnames>({
     fieldErrors,
     message: failureMessage,
   });
@@ -72,12 +72,12 @@ function createValidationFormError<TFieldNames extends string>(
  * @param options - Additional validation options.
  * @returns Promise resolving to FormResult with validated data or errors.
  */
-export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
+export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
   formData: FormData,
-  schema: z.ZodType<TIn>,
-  allowedFields?: readonly TFieldNames[],
-  options: ValidateOptions<TIn, TFieldNames> = {},
-): Promise<FormResult<TIn>> {
+  schema: z.ZodType<Tin>,
+  allowedFields?: readonly Tfieldnames[],
+  options: ValidateOptions<Tin, Tfieldnames> = {},
+): Promise<FormResult<Tin>> {
   const {
     fields: explicitFields,
     raw: explicitRaw,
@@ -86,7 +86,7 @@ export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
     successMessage,
   } = resolveValidateOptions(options);
 
-  const fields = resolveCanonicalFieldNamesFromSchema<TIn, TFieldNames>(
+  const fields = resolveCanonicalFieldNamesFromSchema<Tin, Tfieldnames>(
     schema,
     allowedFields,
     explicitFields,
@@ -99,7 +99,7 @@ export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     // Unexpected errors during validation (e.g., async refinements throwing)
-    return createValidationFormError<TFieldNames>(
+    return createValidationFormError<Tfieldnames>(
       e,
       fields,
       loggerContext,
@@ -109,7 +109,7 @@ export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
 
   // Zod validation failed
   if (!parsed.success) {
-    return createValidationFormError<TFieldNames>(
+    return createValidationFormError<Tfieldnames>(
       parsed.error,
       fields,
       loggerContext,
@@ -117,5 +117,5 @@ export async function validateForm<TIn, TFieldNames extends keyof TIn & string>(
     );
   }
 
-  return formOk<TIn>(parsed.data, successMessage);
+  return formOk<Tin>(parsed.data, successMessage);
 }

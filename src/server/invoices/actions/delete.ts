@@ -12,7 +12,7 @@ import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-messag
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -48,7 +48,7 @@ export async function deleteInvoiceAction(
     });
 
     // Invalidate dashboard cache so revenue chart updates
-    revalidatePath(ROUTES.dashboard.ROOT);
+    revalidatePath(ROUTES.dashboard.root);
 
     // Success result
     result = {
@@ -58,11 +58,10 @@ export async function deleteInvoiceAction(
       success: true,
     };
   } catch (error) {
-    sharedLogger.error({
+    logger.error(INVOICE_MSG.serviceError, {
       context: "deleteInvoiceAction",
       error,
       id,
-      message: INVOICE_MSG.serviceError,
     });
 
     const message = toInvoiceErrorMessage(error);

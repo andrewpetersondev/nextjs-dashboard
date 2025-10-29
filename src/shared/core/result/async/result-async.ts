@@ -7,27 +7,27 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 /**
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
  *
- * @typeParam TValue - The type of the value the promise resolves to.
+ * @typeParam Tvalue - The type of the value the promise resolves to.
  * @example
  * ```ts
  * const fetchData: AsyncThunk<string> = async () => "Hello, World!";
  * ```
  */
-export type AsyncThunk<TValue> = () => Promise<TValue>;
+export type AsyncThunk<Tvalue> = () => Promise<Tvalue>;
 
 /**
  * Executes an asynchronous function and wraps the result in a Result object.
  *
- * @typeParam TValue - The type of the value returned on success.
- * @typeParam TError - The type of the error, extending AppError.
+ * @typeParam Tvalue - The type of the value returned on success.
+ * @typeParam Terror - The type of the error, extending AppError.
  * @param fn - The asynchronous function to execute.
  * @param mapError - A function to map unknown errors to a specific error type.
  * @returns A Promise resolving to a Result object with either a success value or an error.
  */
-export async function tryCatchAsync<TValue, TError extends AppError>(
-  fn: AsyncThunk<TValue>,
-  mapError: (e: unknown) => TError,
-): Promise<Result<TValue, TError>> {
+export async function tryCatchAsync<Tvalue, Terror extends AppError>(
+  fn: AsyncThunk<Tvalue>,
+  mapError: (e: unknown) => Terror,
+): Promise<Result<Tvalue, Terror>> {
   try {
     return Ok(await fn());
   } catch (e) {
@@ -38,14 +38,14 @@ export async function tryCatchAsync<TValue, TError extends AppError>(
 /**
  * Executes a promise-returning function and maps errors to a custom error type.
  *
- * @param fn - A thunk that returns a promise resolving to a value of type `TValue`.
- * @param mapError - A function to map any thrown error to a `TError` type.
- * @returns A `Promise` resolving to either `Ok<TValue>` or `Err<TError>`.
+ * @param fn - A thunk that returns a promise resolving to a value of type `Tvalue`.
+ * @param mapError - A function to map any thrown error to a `Terror` type.
+ * @returns A `Promise` resolving to either `Ok<Tvalue>` or `Err<Terror>`.
  */
-export async function fromPromiseThunk<TValue, TError extends AppError>(
-  fn: () => Promise<TValue>,
-  mapError: (e: unknown) => TError,
-): Promise<Result<TValue, TError>> {
+export async function fromPromiseThunk<Tvalue, Terror extends AppError>(
+  fn: () => Promise<Tvalue>,
+  mapError: (e: unknown) => Terror,
+): Promise<Result<Tvalue, Terror>> {
   try {
     return Ok(await fn());
   } catch (e) {
@@ -53,24 +53,24 @@ export async function fromPromiseThunk<TValue, TError extends AppError>(
   }
 }
 
-export const fromAsyncThunk = /* @__PURE__ */ <TValue, TError extends AppError>(
-  fn: () => Promise<TValue>,
-  mapError: (e: unknown) => TError,
-): Promise<Result<TValue, TError>> => fromPromiseThunk(fn, mapError);
+export const fromAsyncThunk = /* @__PURE__ */ <Tvalue, Terror extends AppError>(
+  fn: () => Promise<Tvalue>,
+  mapError: (e: unknown) => Terror,
+): Promise<Result<Tvalue, Terror>> => fromPromiseThunk(fn, mapError);
 
 /**
  * Converts a promise into a `Result` object, mapping any error to a custom error type.
  *
- * @typeParam TValue - The type of the resolved value of the promise.
- * @typeParam TError - The type of the mapped error, extending `AppError`.
+ * @typeParam Tvalue - The type of the resolved value of the promise.
+ * @typeParam Terror - The type of the mapped error, extending `AppError`.
  * @param p - The promise to be converted to a `Result`.
- * @param mapError - A function that maps unknown errors to a `TError`.
+ * @param mapError - A function that maps unknown errors to a `Terror`.
  * @returns A `Result` containing either the resolved value or the mapped error.
  */
-export async function fromPromise<TValue, TError extends AppError>(
-  p: Promise<TValue>,
-  mapError: (e: unknown) => TError,
-): Promise<Result<TValue, TError>> {
+export async function fromPromise<Tvalue, Terror extends AppError>(
+  p: Promise<Tvalue>,
+  mapError: (e: unknown) => Terror,
+): Promise<Result<Tvalue, Terror>> {
   try {
     return Ok(await p);
   } catch (e) {
@@ -82,13 +82,13 @@ export async function fromPromise<TValue, TError extends AppError>(
  * Converts a `Result` to a `Promise`. Resolves with the value if the result is ok,
  * otherwise rejects with the error.
  *
- * @typeParam TValue - The type of the success value contained in the Result.
- * @typeParam TError - The type of the error, extending AppError.
+ * @typeParam Tvalue - The type of the success value contained in the Result.
+ * @typeParam Terror - The type of the error, extending AppError.
  * @param r - The Result to be transformed into a Promise.
- * @returns A Promise that resolves to `TValue` or rejects with `TError`.
+ * @returns A Promise that resolves to `Tvalue` or rejects with `Terror`.
  * @throws Throws the error if the result is not ok.
  */
-export const toPromiseOrThrow = <TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
-): Promise<TValue> =>
+export const toPromiseOrThrow = <Tvalue, Terror extends AppError>(
+  r: Result<Tvalue, Terror>,
+): Promise<Tvalue> =>
   r.ok ? Promise.resolve(r.value) : Promise.reject(r.error);

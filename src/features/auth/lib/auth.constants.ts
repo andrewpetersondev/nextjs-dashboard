@@ -32,20 +32,20 @@ export const PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER =
 
 export const EMAIL_ERROR = "Email had some sort of error. Please try again.";
 
-export const LOGIN_PATH = ROUTES.AUTH.login;
+export const LOGIN_PATH = ROUTES.auth.login;
 
 // API Endpoints
 
 export const AUTH_REFRESH_ENDPOINT = "/api/auth/refresh" as const;
 
 // OAuth provider identifiers
-export type OAuthProvider = "google" | "github";
+export type OauthProvider = "google" | "github";
 
 // OAuth endpoints by provider
 export const AUTH_ENDPOINTS = {
   github: "/api/auth/github",
   google: "/api/auth/google",
-} as const satisfies Record<OAuthProvider, `/${string}`>;
+} as const satisfies Record<OauthProvider, `/${string}`>;
 
 // Backwards-compatible named constants (preserved)
 export const AUTH_GOOGLE_ENDPOINT = AUTH_ENDPOINTS.google;

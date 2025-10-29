@@ -1,5 +1,4 @@
 import "server-only";
-
 import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -10,7 +9,7 @@ import {
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/domain/domain-brands";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Deletes a user by branded UserId.
@@ -40,10 +39,9 @@ export async function deleteUserDal(
     // Map to DTO for safe return to client
     return userEntityToDto(deletedEntity);
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to delete user.", {
       context: "deleteUserDal",
       error,
-      message: "Failed to delete user.",
       userId,
     });
     throw new DatabaseError(

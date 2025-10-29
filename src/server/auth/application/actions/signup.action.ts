@@ -75,6 +75,6 @@ export async function signupAction(
     sameSite: "lax",
   });
 
-  revalidatePath(ROUTES.dashboard.ROOT);
-  redirect(ROUTES.dashboard.ROOT);
+  revalidatePath(ROUTES.dashboard.root);
+  redirect(ROUTES.dashboard.root);
 }

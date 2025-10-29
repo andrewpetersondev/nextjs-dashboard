@@ -1,5 +1,4 @@
 import "server-only";
-
 import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
@@ -10,7 +9,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Fetches filtered users for a specific page.
@@ -45,11 +44,10 @@ export async function fetchFilteredUsers(
     // Map each raw row to UserEntity, then to UserDto
     return userRows.map((row) => userEntityToDto(userDbRowToEntity(row)));
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to fetch filtered users", {
       context: "fetchFilteredUsers",
       currentPage,
       error,
-      message: "Failed to fetch filtered users.",
       query,
     });
     throw new DatabaseError(

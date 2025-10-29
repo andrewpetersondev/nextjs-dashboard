@@ -26,39 +26,39 @@ import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers
  * @param params - Adapter options for messages and value echoing/redaction.
  * @returns FormResult with success value or validation error.
  */
-export function mapResultToFormResult<TField extends string, TPayload>(
-  result: Result<TPayload, AppError>,
+export function mapResultToFormResult<Tfield extends string, Tpayload>(
+  result: Result<Tpayload, AppError>,
   params: {
-    fields: readonly TField[];
+    fields: readonly Tfield[];
     raw: Record<string, unknown>;
     failureMessage?: string;
-    redactFields?: readonly TField[];
+    redactFields?: readonly Tfield[];
     successMessage?: string;
   },
-): FormResult<TPayload> {
+): FormResult<Tpayload> {
   const {
-    successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
+    successMessage = FORM_SUCCESS_MESSAGES.successMessage,
     failureMessage = FORM_ERROR_MESSAGES.validationFailed,
     raw,
     fields,
-    redactFields = ["password" as TField],
+    redactFields = ["password" as Tfield],
   } = params;
 
   if (result.ok) {
-    return formOk<TPayload>(result.value, successMessage);
+    return formOk<Tpayload>(result.value, successMessage);
   }
 
   // Extract field errors from AppError.details or create empty dense map
   const fieldErrors =
-    getFieldErrors<TField>(result.error) ??
-    createEmptyDenseFieldErrorMap<TField, string>(fields);
+    getFieldErrors<Tfield>(result.error) ??
+    createEmptyDenseFieldErrorMap<Tfield, string>(fields);
 
   // Try to preserve existing values from error, fallback to computing from raw
   const values =
-    getFieldValues<TField>(result.error) ??
+    getFieldValues<Tfield>(result.error) ??
     selectDisplayableStringFieldValues(raw, fields, redactFields);
 
-  return formError<TField>({
+  return formError<Tfield>({
     fieldErrors,
     message: result.error.message || failureMessage,
     values,

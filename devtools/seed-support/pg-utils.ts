@@ -7,9 +7,9 @@
  * A minimal shape for a pg/drizzle result carrying rows.
  * @template TRow - The row type contained in the result.
  */
-export interface PgRows<TRow extends object> {
+export interface PgRows<Trow extends object> {
   /** The rows returned by the query. */
-  readonly rows: readonly TRow[];
+  readonly rows: readonly Trow[];
 }
 
 /**
@@ -17,9 +17,9 @@ export interface PgRows<TRow extends object> {
  * @param value - Unknown value to test.
  * @returns True if the value has an array `rows` property.
  */
-export function hasRows<TRow extends object>(
+export function hasRows<Trow extends object>(
   value: unknown,
-): value is PgRows<TRow> {
+): value is PgRows<Trow> {
   if (typeof value !== "object" || value === null) {
     return false;
   }
@@ -32,11 +32,11 @@ export function hasRows<TRow extends object>(
  * Return first row if present and shaped as TRow, otherwise null.
  * @param value - Unknown result to extract the first row from.
  */
-export function firstRow<TRow extends object>(value: unknown): TRow | null {
-  if (!hasRows<TRow>(value)) {
+export function firstRow<Trow extends object>(value: unknown): Trow | null {
+  if (!hasRows<Trow>(value)) {
     return null;
   }
-  const [row] = value.rows as readonly TRow[];
+  const [row] = value.rows as readonly Trow[];
   return row ?? null;
 }
 
@@ -44,6 +44,6 @@ export function firstRow<TRow extends object>(value: unknown): TRow | null {
  * Return all rows if present, otherwise an empty array.
  * @param value - Unknown result to extract rows from.
  */
-export function rowsOf<TRow extends object>(value: unknown): readonly TRow[] {
-  return hasRows<TRow>(value) ? (value.rows as readonly TRow[]) : [];
+export function rowsOf<Trow extends object>(value: unknown): readonly Trow[] {
+  return hasRows<Trow>(value) ? (value.rows as readonly Trow[]) : [];
 }

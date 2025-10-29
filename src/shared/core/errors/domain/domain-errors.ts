@@ -25,7 +25,7 @@ export class NotFoundError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("NOT_FOUND", { cause, context, message });
+    super("notFound", { cause, context, message });
   }
 }
 
@@ -38,7 +38,7 @@ export class UnauthorizedError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("UNAUTHORIZED", { cause, context, message });
+    super("unauthorized", { cause, context, message });
   }
 }
 
@@ -51,7 +51,7 @@ export class ForbiddenError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("FORBIDDEN", { cause, context, message });
+    super("forbidden", { cause, context, message });
   }
 }
 
@@ -64,7 +64,7 @@ export class ConflictError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CONFLICT", { cause, context, message });
+    super("conflict", { cause, context, message });
   }
 }
 
@@ -79,22 +79,22 @@ export const isValidationError = (e: unknown): e is ValidationError =>
  * NotFoundError (404 / NOT_FOUND).
  */
 export const isNotFoundError = (e: unknown): e is NotFoundError =>
-  isErrorWithCode(e, "NOT_FOUND");
+  isErrorWithCode(e, "notFound");
 
 /**
  * UnauthorizedError (401 / UNAUTHORIZED).
  */
 export const isUnauthorizedError = (e: unknown): e is UnauthorizedError =>
-  isErrorWithCode(e, "UNAUTHORIZED");
+  isErrorWithCode(e, "unauthorized");
 
 /**
  * ForbiddenError (403 / FORBIDDEN).
  */
 export const isForbiddenError = (e: unknown): e is ForbiddenError =>
-  isErrorWithCode(e, "FORBIDDEN");
+  isErrorWithCode(e, "forbidden");
 
 /**
  * ConflictError (409 / CONFLICT).
  */
 export const isConflictError = (e: unknown): e is ConflictError =>
-  isErrorWithCode(e, "CONFLICT");
+  isErrorWithCode(e, "conflict");

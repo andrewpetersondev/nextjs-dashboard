@@ -22,10 +22,10 @@ export default defineConfig({
       // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
       // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
       config.baseUrl =
-        env.cypressBaseUrl ?? config.baseUrl ?? "http://localhost:3000";
-      config.env.DATABASE_ENV = env.databaseEnv;
-      config.env.DATABASE_URL = env.databaseUrl;
-      config.env.SESSION_SECRET = env.sessionSecret;
+        env.CYPRESS_BASE_URL ?? config.baseUrl ?? "http://localhost:3000";
+      config.env.DATABASE_ENV = env.DATABASE_ENV;
+      config.env.DATABASE_URL = env.DATABASE_URL;
+      config.env.SESSION_SECRET = env.SESSION_SECRET;
 
       // Small helper to DRY api-calls-based tasks
       const callOkJson = async (path: string) => {

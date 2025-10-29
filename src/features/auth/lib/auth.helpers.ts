@@ -1,12 +1,12 @@
 import {
   AUTH_ENDPOINTS,
-  type OAuthProvider,
+  type OauthProvider,
 } from "@/features/auth/lib/auth.constants";
 
 /**
  * Returns the API endpoint for a given OAuth provider.
  */
-export function getAuthEndpoint(provider: OAuthProvider): `/${string}` {
+export function getAuthEndpoint(provider: OauthProvider): `/${string}` {
   return AUTH_ENDPOINTS[provider];
 }
 
@@ -15,7 +15,7 @@ export function getAuthEndpoint(provider: OAuthProvider): `/${string}` {
  * Keeps logic in one place to avoid ad-hoc query handling across the app.
  */
 export function buildAuthUrl(
-  provider: OAuthProvider,
+  provider: OauthProvider,
   options?: { redirectTo?: string },
 ): string {
   const base = getAuthEndpoint(provider);

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -11,7 +10,7 @@ import {
 } from "@/server/users/mapping/user.mappers";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import type { UserId } from "@/shared/domain/domain-brands";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Updates a user in the database with the provided patch.
@@ -48,11 +47,10 @@ export async function updateUserDal(
     // Map to DTO for safe return to client
     return userEntityToDto(userEntity);
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to update user.", {
       context: "updateUserDal",
       error,
       id,
-      message: "Failed to update user.",
       patch,
     });
     throw new DatabaseError(

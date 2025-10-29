@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Finds a user by email for login.
@@ -24,18 +24,18 @@ export async function getUserByEmailDal(
       const userRow = rows?.[0];
 
       if (!userRow) {
-        sharedLogger.debug(
-          { context: "dal.users.getByEmail", email },
-          "No user found for email",
-        );
+        logger.debug("No user found for email", {
+          context: "dal.users.getByEmail",
+          email,
+        });
         return null;
       }
 
       if (!userRow.password) {
-        sharedLogger.error(
-          { context: "dal.users.getByEmail", email },
-          "User row missing hashed password; cannot authenticate",
-        );
+        logger.error("User row missing hashed password; cannot authenticate", {
+          context: "dal.users.getByEmail",
+          email,
+        });
         return null;
       }
 

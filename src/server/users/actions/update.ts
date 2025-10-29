@@ -27,7 +27,7 @@ import {
 } from "@/shared/forms/domain/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-resolver";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
@@ -180,11 +180,10 @@ export async function updateUserAction(
     revalidatePath(USERS_DASHBOARD_PATH);
     return formOk(updated, USER_SUCCESS_MESSAGES.updateSuccess);
   } catch (error: unknown) {
-    sharedLogger.error({
+    logger.error(USER_ERROR_MESSAGES.unexpected, {
       context: "updateUserAction",
       error,
       id,
-      message: USER_ERROR_MESSAGES.unexpected,
     });
 
     return formError<EditUserFormFieldNames>({

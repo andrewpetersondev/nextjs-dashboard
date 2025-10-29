@@ -20,7 +20,7 @@ import {
 } from "@/shared/forms/domain/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -79,9 +79,8 @@ export async function createUserAction(
     });
 
     if (!user) {
-      sharedLogger.warn({
+      logger.warn("User creation returned empty result", {
         context: "createUserAction",
-        message: "User creation returned empty result",
         safeMeta: { email, username },
       });
       return formError({
@@ -92,10 +91,9 @@ export async function createUserAction(
 
     return formOk(user, USER_SUCCESS_MESSAGES.createSuccess);
   } catch (error) {
-    sharedLogger.error({
+    logger.error(USER_ERROR_MESSAGES.unexpected, {
       context: "createUserAction",
       error,
-      message: USER_ERROR_MESSAGES.unexpected,
     });
     return formError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),

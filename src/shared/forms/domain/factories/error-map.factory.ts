@@ -16,58 +16,58 @@ import {
  * Creates an empty dense error map (all fields present with empty arrays).
  */
 export function createEmptyDenseFieldErrorMap<
-  TField extends string,
-  TMsg extends string,
->(fields: readonly TField[]): DenseFieldErrorMap<TField, TMsg> {
-  const result: Partial<Record<TField, readonly TMsg[]>> = {};
+  Tfield extends string,
+  Tmsg extends string,
+>(fields: readonly Tfield[]): DenseFieldErrorMap<Tfield, Tmsg> {
+  const result: Partial<Record<Tfield, readonly Tmsg[]>> = {};
   for (const f of fields) {
-    result[f] = Object.freeze([]) as readonly TMsg[];
+    result[f] = Object.freeze([]) as readonly Tmsg[];
   }
-  return Object.freeze(result) as DenseFieldErrorMap<TField, TMsg>;
+  return Object.freeze(result) as DenseFieldErrorMap<Tfield, Tmsg>;
 }
 
 /**
  * Converts sparse error map to dense (adds missing fields as empty arrays).
  */
 export function toDenseFieldErrorMap<
-  TField extends string,
-  TMsg extends string,
+  Tfield extends string,
+  Tmsg extends string,
 >(
-  sparse: SparseFieldErrorMap<TField, TMsg> | undefined,
-  fields: readonly TField[],
-): DenseFieldErrorMap<TField, TMsg> {
-  const out: Partial<Record<TField, readonly TMsg[]>> = {};
+  sparse: SparseFieldErrorMap<Tfield, Tmsg> | undefined,
+  fields: readonly Tfield[],
+): DenseFieldErrorMap<Tfield, Tmsg> {
+  const out: Partial<Record<Tfield, readonly Tmsg[]>> = {};
   for (const f of fields) {
-    const v = sparse?.[f] as readonly TMsg[] | undefined;
+    const v = sparse?.[f] as readonly Tmsg[] | undefined;
     out[f] = Array.isArray(v)
-      ? (Object.freeze([...v]) as readonly TMsg[])
-      : (Object.freeze([]) as readonly TMsg[]);
+      ? (Object.freeze([...v]) as readonly Tmsg[])
+      : (Object.freeze([]) as readonly Tmsg[]);
   }
-  return Object.freeze(out) as DenseFieldErrorMap<TField, TMsg>;
+  return Object.freeze(out) as DenseFieldErrorMap<Tfield, Tmsg>;
 }
 
 /**
  * Filters error map to allowed fields with non-empty errors.
  */
 export function selectSparseFieldErrors<
-  TFieldNames extends string,
-  TMsg extends string,
+  Tfieldnames extends string,
+  Tmsg extends string,
 >(
   fieldErrors:
-    | Partial<Record<TFieldNames, readonly TMsg[] | undefined>>
-    | Record<string, readonly TMsg[] | undefined>,
-  allowedFields: readonly TFieldNames[],
-): SparseFieldErrorMap<TFieldNames, TMsg> {
-  const errors: SparseFieldErrorMap<TFieldNames, TMsg> = {};
+    | Partial<Record<Tfieldnames, readonly Tmsg[] | undefined>>
+    | Record<string, readonly Tmsg[] | undefined>,
+  allowedFields: readonly Tfieldnames[],
+): SparseFieldErrorMap<Tfieldnames, Tmsg> {
+  const errors: SparseFieldErrorMap<Tfieldnames, Tmsg> = {};
   for (const key of allowedFields) {
     const maybeErrors = (
-      fieldErrors as Record<string, readonly TMsg[] | undefined>
+      fieldErrors as Record<string, readonly Tmsg[] | undefined>
     )[key];
     if (isNonEmptyArray(maybeErrors)) {
       errors[key] = Object.freeze([
         ...maybeErrors,
-      ]) as unknown as FieldError<TMsg>;
+      ]) as unknown as FieldError<Tmsg>;
     }
   }
-  return Object.freeze(errors) as SparseFieldErrorMap<TFieldNames, TMsg>;
+  return Object.freeze(errors) as SparseFieldErrorMap<Tfieldnames, Tmsg>;
 }

@@ -9,14 +9,14 @@ import type { DenseFieldErrorMap } from "@/shared/forms/domain/models/error-maps
  * Build dense errors aligned to allowed fields from a ZodError.
  * The returned object contains every allowed field (possibly empty arrays).
  */
-export function mapZodErrorToDenseFieldErrors<TFieldNames extends string>(
+export function mapZodErrorToDenseFieldErrors<Tfieldnames extends string>(
   error: z.ZodError,
-  allowedFields: readonly TFieldNames[],
-): DenseFieldErrorMap<TFieldNames, string> {
+  allowedFields: readonly Tfieldnames[],
+): DenseFieldErrorMap<Tfieldnames, string> {
   const { fieldErrors } = z.flattenError(error);
-  const sparse = selectSparseFieldErrors<TFieldNames, string>(
+  const sparse = selectSparseFieldErrors<Tfieldnames, string>(
     fieldErrors,
     allowedFields,
   );
-  return toDenseFieldErrorMap<TFieldNames, string>(sparse, allowedFields);
+  return toDenseFieldErrorMap<Tfieldnames, string>(sparse, allowedFields);
 }

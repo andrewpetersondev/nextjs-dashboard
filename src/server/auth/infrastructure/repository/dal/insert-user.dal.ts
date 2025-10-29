@@ -4,7 +4,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
@@ -44,16 +44,13 @@ export async function insertUserDal(
       const userRow = rows?.[0];
 
       if (!userRow) {
-        sharedLogger.error(
-          {
-            context: "dal.users.insert",
-            email,
-            kind: "invariant",
-            role,
-            username,
-          },
-          "INSERT returned no user row",
-        );
+        logger.error("INSERT returned no user row", {
+          context: "dal.users.insert",
+          email,
+          kind: "invariant",
+          role,
+          username,
+        });
         throw new DatabaseError(
           "Invariant violation: insert did not return a new user row.",
           { layer: "dal" },

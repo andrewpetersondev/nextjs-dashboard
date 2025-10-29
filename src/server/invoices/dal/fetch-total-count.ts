@@ -4,7 +4,7 @@ import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { DASHBOARD_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
 
 /**
@@ -22,9 +22,8 @@ export async function fetchTotalInvoicesCountDal(
 
     return result?.value ?? 0;
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Error fetching total invoices count", {
       error: error instanceof Error ? error.message : "Unknown error",
-      message: "Error fetching total invoices count",
       stack: error instanceof Error ? error.stack : undefined,
     });
 

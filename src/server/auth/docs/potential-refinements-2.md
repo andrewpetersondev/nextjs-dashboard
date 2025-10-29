@@ -320,7 +320,7 @@ export const AUTH_ERROR_CATALOG = {
     fields: ["email", "username", "password"] as const,
     httpStatus: 422,
   },
-  UNEXPECTED_ERROR: {
+  unexpectedError: {
     code: "unexpected" as const,
     message: "Unexpected error occurred",
     httpStatus: 500,
@@ -351,7 +351,7 @@ export function getMessageForError(errorCode: AuthErrorCode): string {
   const entry = Object.values(AUTH_ERROR_CATALOG).find(
     (e) => e.code === errorCode,
   );
-  return entry?.message ?? AUTH_ERROR_CATALOG.UNEXPECTED_ERROR.message;
+  return entry?.message ?? AUTH_ERROR_CATALOG.unexpectedError.message;
 }
 ```
 

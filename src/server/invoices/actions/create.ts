@@ -21,7 +21,7 @@ import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/guards";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
@@ -60,7 +60,7 @@ export async function createInvoiceAction(
         operation: "invoice_created",
       });
 
-      revalidatePath(ROUTES.dashboard.ROOT);
+      revalidatePath(ROUTES.dashboard.root);
 
       result = {
         data: parsed.data,
@@ -81,7 +81,7 @@ export async function createInvoiceAction(
       ? translator(INVOICE_MSG.validationFailed)
       : toInvoiceErrorMessage(error);
 
-    sharedLogger.error({
+    logger.error(baseMessage, {
       context: "createInvoiceAction",
       error,
       message: baseMessage,

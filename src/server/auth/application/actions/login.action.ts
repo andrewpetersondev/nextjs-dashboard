@@ -72,6 +72,6 @@ export async function loginAction(
     sameSite: "lax",
   });
 
-  revalidatePath(ROUTES.dashboard.ROOT);
-  redirect(ROUTES.dashboard.ROOT);
+  revalidatePath(ROUTES.dashboard.root);
+  redirect(ROUTES.dashboard.root);
 }

@@ -21,13 +21,13 @@ import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod/guards";
  * 4. If {@link schema} is not a Zod object (e.g., union/array/primitive), an empty readonly array is returned.
  */
 export function resolveCanonicalFieldNamesFromSchema<
-  TIn,
-  TFieldNames extends keyof TIn & string,
+  Tin,
+  Tfieldnames extends keyof Tin & string,
 >(
-  schema: z.ZodType<TIn>,
-  allowedSubset?: readonly TFieldNames[],
-  explicitFields?: readonly TFieldNames[],
-): readonly TFieldNames[] {
+  schema: z.ZodType<Tin>,
+  allowedSubset?: readonly Tfieldnames[],
+  explicitFields?: readonly Tfieldnames[],
+): readonly Tfieldnames[] {
   // Priority 1: Explicit whitelist
   if (explicitFields && explicitFields.length > 0) {
     return explicitFields;
@@ -40,6 +40,6 @@ export function resolveCanonicalFieldNamesFromSchema<
 
   // Priority 3: Derive from object schemas; otherwise, return empty
   return isZodObjectSchema(schema)
-    ? (deriveFieldNamesFromSchema(schema) as readonly TFieldNames[])
+    ? (deriveFieldNamesFromSchema(schema) as readonly Tfieldnames[])
     : ([] as const);
 }

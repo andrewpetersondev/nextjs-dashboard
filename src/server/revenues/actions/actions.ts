@@ -9,7 +9,7 @@ import {
 import { RevenueStatisticsService } from "@/server/revenues/application/services/statistics/statistics.service";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
 import type { RevenueActionResult } from "@/server/revenues/shared/types/action-result";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
@@ -45,7 +45,7 @@ export async function getRevenueChartAction(): Promise<
       success: true,
     };
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Get revenue chart action error (rolling 12 months)", {
       error,
       message: "Get revenue chart action error (rolling 12 months)",
     });

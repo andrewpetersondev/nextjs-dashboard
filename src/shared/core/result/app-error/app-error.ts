@@ -11,13 +11,13 @@ import type {
  */
 export const makeErrorMapper =
   /* @__PURE__ */
-    <TError extends AppError>(opts: {
-      readonly isTarget: (e: unknown) => e is TError;
-      readonly toTarget: (e: unknown) => TError;
-      readonly fallback?: (e: unknown) => TError;
+    <Terror extends AppError>(opts: {
+      readonly isTarget: (e: unknown) => e is Terror;
+      readonly toTarget: (e: unknown) => Terror;
+      readonly fallback?: (e: unknown) => Terror;
     }) =>
     /* @__PURE__ */
-    (e: unknown): TError =>
+    (e: unknown): Terror =>
       opts.isTarget(e) ? e : (opts.fallback ?? opts.toTarget)(e);
 
 /**

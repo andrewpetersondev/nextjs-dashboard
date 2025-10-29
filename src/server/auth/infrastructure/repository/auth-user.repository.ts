@@ -1,3 +1,4 @@
+// src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
@@ -17,7 +18,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
-import { createChildLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -30,7 +31,7 @@ export class AuthUserRepositoryImpl {
 
   constructor(db: AppDatabase) {
     this.db = db;
-    this.logger = createChildLogger({ context: AuthUserRepositoryImpl.CTX });
+    this.logger = logger.withContext(AuthUserRepositoryImpl.CTX);
   }
 
   /**
@@ -48,7 +49,7 @@ export class AuthUserRepositoryImpl {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
 
-    const txLogger = this.logger.child({ operation: "withTransaction" });
+    const txLogger = this.logger.withContext("withTransaction");
 
     try {
       return await dbWithTx.transaction(async (tx: AppDatabase) => {
@@ -56,16 +57,13 @@ export class AuthUserRepositoryImpl {
         return await fn(txRepo);
       });
     } catch (err) {
-      txLogger.error(
-        {
-          error:
-            err instanceof Error
-              ? { message: err.message, stack: err.stack }
-              : String(err),
-          kind: "db",
-        },
-        "Transaction failed",
-      );
+      txLogger.error("Transaction failed", {
+        error:
+          err instanceof Error
+            ? { message: err.message, stack: err.stack }
+            : String(err),
+        kind: "db",
+      });
       throw err;
     }
   }
@@ -80,51 +78,47 @@ export class AuthUserRepositoryImpl {
    * @throws {DatabaseError} For infrastructure/timeout errors
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const signupLogger = this.logger.child({
-      email: input.email,
-      operation: "signup",
-      role: input.role,
-      username: input.username,
-    });
+    const signupLogger = this.logger.withContext("signup");
 
     try {
       this.assertSignupFields(input);
       const row = await insertUserDal(this.db, input);
 
       if (!row) {
-        signupLogger.error(
-          { kind: "no_row_returned" },
-          "User creation did not return a row",
-        );
+        signupLogger.error("User creation did not return a row", {
+          email: input.email,
+          kind: "no_row_returned",
+          username: input.username,
+        });
         return throwRepoDatabaseErr("User creation did not return a row.");
       }
 
-      signupLogger.info(
-        { kind: "success", userId: row.id },
-        "User created successfully",
-      );
+      signupLogger.info("User created successfully", {
+        email: input.email,
+        kind: "success",
+        userId: row.id,
+      });
       return newUserDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isRepoKnownError(err)) {
-        signupLogger.warn(
-          {
-            errorType: err instanceof Error ? err.constructor.name : typeof err,
-            kind: "known_error",
-          },
-          "Known repository error during signup",
-        );
+        signupLogger.warn("Known repository error during signup", {
+          email: input.email,
+          errorType: err instanceof Error ? err.constructor.name : typeof err,
+          kind: "known_error",
+        });
         throw err;
       }
 
       signupLogger.error(
+        "Unexpected error during signup repository operation",
         {
+          email: input.email,
           error:
             err instanceof Error
               ? { message: err.message, stack: err.stack }
               : String(err),
           kind: "unexpected",
         },
-        "Unexpected error during signup repository operation",
       );
 
       return throwRepoDatabaseErr(
@@ -143,49 +137,43 @@ export class AuthUserRepositoryImpl {
    * @throws {DatabaseError} For infrastructure errors
    */
   async login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity> {
-    const loginLogger = this.logger.child({
-      email: input.email,
-      operation: "login",
-    });
+    const loginLogger = this.logger.withContext("login");
 
     try {
       const row = await getUserByEmailDal(this.db, input.email);
 
       if (!row?.password) {
-        loginLogger.warn(
-          { kind: "not_found_or_missing_password" },
-          "User not found or missing password",
-        );
+        loginLogger.warn("User not found or missing password", {
+          email: input.email,
+          kind: "not_found_or_missing_password",
+        });
         throw new UnauthorizedError("Invalid email or password.");
       }
 
-      loginLogger.info(
-        { kind: "success", userId: row.id },
-        "User retrieved successfully for login",
-      );
+      loginLogger.info("User retrieved successfully for login", {
+        email: input.email,
+        kind: "success",
+        userId: row.id,
+      });
       return userDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isKnownLoginError(err)) {
-        loginLogger.warn(
-          {
-            errorType: err instanceof Error ? err.constructor.name : typeof err,
-            kind: "known_error",
-          },
-          "Known repository error during login",
-        );
+        loginLogger.warn("Known repository error during login", {
+          email: input.email,
+          errorType: err instanceof Error ? err.constructor.name : typeof err,
+          kind: "known_error",
+        });
         throw err;
       }
 
-      loginLogger.error(
-        {
-          error:
-            err instanceof Error
-              ? { message: err.message, stack: err.stack }
-              : String(err),
-          kind: "unexpected",
-        },
-        "Unexpected error during login repository operation",
-      );
+      loginLogger.error("Unexpected error during login repository operation", {
+        email: input.email,
+        error:
+          err instanceof Error
+            ? { message: err.message, stack: err.stack }
+            : String(err),
+        kind: "unexpected",
+      });
 
       return throwRepoDatabaseErr(
         "Database operation failed during login.",
@@ -217,12 +205,12 @@ export class AuthUserRepositoryImpl {
 
     if (missingFields.length > 0) {
       this.logger.warn(
+        `Missing required fields for signup: ${missingFields.join(", ")}`,
         {
           kind: "validation",
           missingFields,
           operation: "assertSignupFields",
         },
-        `Missing required fields for signup: ${missingFields.join(", ")}`,
       );
       throw new ValidationError(
         `Missing required fields for signup: ${missingFields.join(", ")}`,

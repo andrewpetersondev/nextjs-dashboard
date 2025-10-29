@@ -98,7 +98,7 @@ function validateAndMaybeSanitizeContext(
   }
 }
 
-export interface BaseErrorJSON {
+export interface BaseErrorJson {
   readonly code: ErrorCode;
   readonly message: string;
   readonly statusCode: number;
@@ -190,8 +190,8 @@ export class BaseError extends Error {
    * Merge additional immutable context, returning a new BaseError.
    * Note: subclass identity is preserved via protected factory.
    */
-  withContext<TExtra extends Readonly<Record<string, unknown>>>(
-    extra: TExtra,
+  withContext<Textra extends Readonly<Record<string, unknown>>>(
+    extra: Textra,
   ): this {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
@@ -239,8 +239,8 @@ export class BaseError extends Error {
   /**
    * Serialize to a stable JSON shape (no stack/cause leakage).
    */
-  toJSON(): BaseErrorJSON {
-    const base: BaseErrorJSON = {
+  toJson(): BaseErrorJson {
+    const base: BaseErrorJson = {
       category: this.category,
       code: this.code,
       description: this.description,

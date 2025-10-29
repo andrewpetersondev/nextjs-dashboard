@@ -14,11 +14,11 @@ import type { FormResult } from "@/shared/forms/domain/models/form-result";
  * @alpha
  * TODO: EVALUATE BY 10/11/2025
  */
-export function createInitialFailedFormState<TFieldNames extends string>(
-  fieldNames: readonly TFieldNames[],
+export function createInitialFailedFormState<Tfieldnames extends string>(
+  fieldNames: readonly Tfieldnames[],
 ): FormResult<never> {
-  const fieldErrors: DenseFieldErrorMap<TFieldNames, string> =
-    createEmptyDenseFieldErrorMap<TFieldNames, string>(fieldNames);
+  const fieldErrors: DenseFieldErrorMap<Tfieldnames, string> =
+    createEmptyDenseFieldErrorMap<Tfieldnames, string>(fieldNames);
 
   const error: AppError = Object.freeze({
     __appError: "AppError" as const,
@@ -36,16 +36,16 @@ export function createInitialFailedFormState<TFieldNames extends string>(
 /**
  * Generates the initial failed form state based on the provided Zod object schema.
  *
- * @typeParam TSchema - The Zod schema describing the shape of the form.
+ * @typeParam Tschema - The Zod schema describing the shape of the form.
  * @param schema - The Zod object schema used to determine the form fields.
  * @returns An initial failed form state with all fields initialized.
  * @public
  * TODO: EVALUATE BY 10/11/2025
  */
 export function createInitialFailedFormStateFromSchema<
-  TSchema extends z.ZodObject<z.ZodRawShape>,
->(schema: TSchema): FormResult<never> {
-  type FieldNames = keyof TSchema["shape"] & string;
+  Tschema extends z.ZodObject<z.ZodRawShape>,
+>(schema: Tschema): FormResult<never> {
+  type FieldNames = keyof Tschema["shape"] & string;
   const fields = Object.freeze(
     Object.keys(schema.shape),
   ) as readonly FieldNames[];

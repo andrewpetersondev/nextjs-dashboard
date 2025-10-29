@@ -16,6 +16,6 @@ export const USER_SUCCESS_MESSAGES = {
   createSuccess: "User created successfully.",
   deleteSuccess: "User deleted successfully.",
   noChanges: "No changes detected.",
-  PARSE_SUCCESS: "User data parsed successfully.",
+  parseSuccess: "User data parsed successfully.",
   updateSuccess: "User updated successfully.",
 } as const;

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
@@ -8,7 +7,7 @@ import type { RevenueService } from "@/server/revenues/application/services/reve
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceUpdated } from "@/server/revenues/events/process-invoice/handlers/invoice-update.handlers";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Handles invoice events and updates revenue records accordingly.
@@ -34,9 +33,8 @@ export class RevenueEventHandler {
   constructor(revenueService: RevenueService) {
     this.revenueService = revenueService;
 
-    sharedLogger.debug({
+    logger.debug("Initializing revenue event handler", {
       context: "RevenueEventHandler.constructor",
-      message: "Initializing revenue event handler",
     });
 
     // Set up event subscriptions
@@ -47,9 +45,8 @@ export class RevenueEventHandler {
    * Sets up subscriptions to invoice events.
    */
   private setupEventSubscriptions(): void {
-    sharedLogger.info({
+    logger.info("Setting up event subscriptions", {
       context: "RevenueEventHandler.setupEventSubscriptions",
-      message: "Setting up event subscriptions",
     });
 
     // Subscribe to invoice events using centralized constants (DRY)
@@ -66,9 +63,8 @@ export class RevenueEventHandler {
       this.handleInvoiceDeleted.bind(this),
     );
 
-    sharedLogger.info({
+    logger.info("Event subscriptions set up successfully", {
       context: "RevenueEventHandler.setupEventSubscriptions",
-      message: "Event subscriptions set up successfully",
     });
   }
 

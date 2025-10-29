@@ -7,16 +7,16 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
  * @alpha
  * A utility type for applying a transformation function to a successful `Result` value.
  *
- * @typeParam TValue - The type of the input value in the `Result`.
- * @typeParam TNext - The type of the transformed value.
- * @typeParam TError - The type of the error, defaults to `AppError`.
+ * @typeParam Tvalue - The type of the input value in the `Result`.
+ * @typeParam Tnext - The type of the transformed value.
+ * @typeParam Terror - The type of the error, defaults to `AppError`.
  *
- * @param fn - A transformation function to be applied to the `TValue`.
+ * @param fn - A transformation function to be applied to the `Tvalue`.
  * @returns A function that takes a `Result` and produces a transformed `Result`.
  */
-export type MapOk = <TValue, TNext, TError extends AppError>(
-  fn: (v: TValue) => TNext,
-) => (r: Result<TValue, TError>) => Result<TNext, TError>;
+export type MapOk = <Tvalue, Tnext, Terror extends AppError>(
+  fn: (v: Tvalue) => Tnext,
+) => (r: Result<Tvalue, Terror>) => Result<Tnext, Terror>;
 
 /**
  * Transforms the value of an `Ok` result using the provided function, maintaining the `Err` state otherwise.
@@ -38,19 +38,19 @@ export const mapOk: MapOk =
 /**
  * Transforms the error type of a `Result` using a mapping function.
  *
- * @typeParam TValue - The type of the successful result.
- * @typeParam TError1 - The original error type, defaults to `AppError`.
- * @typeParam TError2 - The mapped error type, defaults to `AppError`.
- * @param fn - A function that maps from `TError1` to `TError2`.
+ * @typeParam Tvalue - The type of the successful result.
+ * @typeParam Terror1 - The original error type, defaults to `AppError`.
+ * @typeParam Terror2 - The mapped error type, defaults to `AppError`.
+ * @param fn - A function that maps from `Terror1` to `Terror2`.
  * @returns A function that takes a `Result` and returns a transformed `Result`.
  */
 export type MapError = <
-  TValue,
-  TError1 extends AppError,
-  TError2 extends AppError,
+  Tvalue,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
 >(
-  fn: (e: TError1) => TError2,
-) => (r: Result<TValue, TError1>) => Result<TValue, TError2>;
+  fn: (e: Terror1) => Terror2,
+) => (r: Result<Tvalue, Terror1>) => Result<Tvalue, Terror2>;
 
 /**
  * Maps an error value using the provided function if the result is an error.
@@ -70,41 +70,41 @@ export const mapError: MapError =
       r.ok ? r : Err(fn(r.error));
 
 /**
- * Maps an error of type `TError1` to a new error of type `TError2` within a `Result`.
+ * Maps an error of type `Terror1` to a new error of type `Terror2` within a `Result`.
  *
  * @alpha
- * @typeParam TValue - The type of the value in the `Result` if it is successful.
- * @typeParam TError1 - The type of the original error in the `Result`.
- * @typeParam TError2 - The type of the new mapped error.
- * @param fn - A function transforming `TError1` into `TError2`.
+ * @typeParam Tvalue - The type of the value in the `Result` if it is successful.
+ * @typeParam Terror1 - The type of the original error in the `Result`.
+ * @typeParam Terror2 - The type of the new mapped error.
+ * @param fn - A function transforming `Terror1` into `Terror2`.
  * @returns A new `Result` with a mapped error if the original `Result` contained an error.
  */
 export const mapErrorUnion =
   /* @__PURE__ */
-    <TValue, TError1 extends AppError, TError2 extends AppError>(
-      fn: (e: TError1) => TError2,
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
+      fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
-    (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> =>
+    (r: Result<Tvalue, Terror1>): Result<Tvalue, Terror1 | Terror2> =>
       r.ok ? r : Err(fn(r.error));
 
 /**
  * Maps an error from a `Result` type to a new error type while preserving the original error type if unchanged.
  *
  * @alpha
- * @typeParam TValue - The value type of the `Result`.
- * @typeParam TError1 - The original error type of the `Result`.
- * @typeParam TError2 - The mapped error type after applying the transformation function.
- * @param fn - A transformation function to map the error from `TError1` to `TError2`.
- * @returns A `Result` where the error type is a union of `TError1` and `TError2`.
+ * @typeParam Tvalue - The value type of the `Result`.
+ * @typeParam Terror1 - The original error type of the `Result`.
+ * @typeParam Terror2 - The mapped error type after applying the transformation function.
+ * @param fn - A transformation function to map the error from `Terror1` to `Terror2`.
+ * @returns A `Result` where the error type is a union of `Terror1` and `Terror2`.
  */
 export const mapErrorUnionPreserve =
   /* @__PURE__ */
-    <TValue, TError1 extends AppError, TError2 extends AppError>(
-      fn: (e: TError1) => TError2,
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
+      fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
-    (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> => {
+    (r: Result<Tvalue, Terror1>): Result<Tvalue, Terror1 | Terror2> => {
       if (r.ok) {
         return r;
       }
@@ -118,19 +118,19 @@ export const mapErrorUnionPreserve =
  *
  * @param fn - A function that transforms one error type into another.
  * @returns A function that takes a `Result` and applies the error mapping if the `Result` is not ok.
- * @typeParam TValue - The type of the value in the `Result`.
- * @typeParam TError1 - The initial error type.
- * @typeParam TError2 - The transformed error type.
+ * @typeParam Tvalue - The type of the value in the `Result`.
+ * @typeParam Terror1 - The initial error type.
+ * @typeParam Terror2 - The transformed error type.
  * @example
  * const result = mapErrorPreserve(fn)(Result.err(new Error("Original")));
  */
 export const mapErrorPreserve =
   /* @__PURE__ */
-    <TValue, TError1 extends AppError, TError2 extends AppError>(
-      fn: (e: TError1) => TError2,
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
+      fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
-    (r: Result<TValue, TError1>): Result<TValue, TError1 | TError2> => {
+    (r: Result<Tvalue, Terror1>): Result<Tvalue, Terror1 | Terror2> => {
       if (r.ok) {
         return r;
       }
@@ -141,23 +141,23 @@ export const mapErrorPreserve =
 /**
  * Transforms both success and error states of a {@link Result} type using the provided functions.
  *
- * @typeParam TValue - The type of the success value.
- * @typeParam TNext - The type of the transformed success value.
- * @typeParam TError1 - The type of the initial error, extending `AppError`. Defaults to `AppError`.
- * @typeParam TError2 - The type of the transformed error, extending `AppError`. Defaults to `AppError`.
+ * @typeParam Tvalue - The type of the success value.
+ * @typeParam Tnext - The type of the transformed success value.
+ * @typeParam Terror1 - The type of the initial error, extending `AppError`. Defaults to `AppError`.
+ * @typeParam Terror2 - The type of the transformed error, extending `AppError`. Defaults to `AppError`.
  * @param onOk - A function to transform the success value.
  * @param onErr - A function to transform the error value.
  * @returns A new {@link Result} with the transformed success or error value.
  */
 export type MapBoth = <
-  TValue,
-  TNext,
-  TError1 extends AppError,
-  TError2 extends AppError,
+  Tvalue,
+  Tnext,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
 >(
-  onOk: (v: TValue) => TNext,
-  onErr: (e: TError1) => TError2,
-) => (r: Result<TValue, TError1>) => Result<TNext, TError2>;
+  onOk: (v: Tvalue) => Tnext,
+  onErr: (e: Terror1) => Terror2,
+) => (r: Result<Tvalue, Terror1>) => Result<Tnext, Terror2>;
 
 /**
  * Transforms both the success (`Ok`) and error (`Err`) states of a result.

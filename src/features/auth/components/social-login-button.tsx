@@ -6,7 +6,7 @@ import { SOCIAL_ANCHOR_BUTTON_CLASSES } from "@/shared/ui/classes/button";
 /**
  * Supported social login providers.
  */
-type Provider = "Google" | "GitHub";
+type Provider = "google" | "github";
 
 /**
  * Props for SocialLoginButton.
@@ -23,8 +23,8 @@ interface SocialLoginButtonProps {
 }
 
 const providerIcons: Record<Provider, React.ReactNode> = {
-  GitHub: <GitHubIcon />,
-  Google: <GoogleIcon />,
+  github: <GitHubIcon />,
+  google: <GoogleIcon />,
 };
 
 /**

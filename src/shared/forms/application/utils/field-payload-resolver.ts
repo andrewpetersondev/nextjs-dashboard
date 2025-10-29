@@ -8,13 +8,13 @@ import { extractFormDataFields } from "@/shared/forms/infrastructure/formdata/ex
  * @remarks
  * This is application-level coordination between explicit data and FormData extraction.
  */
-export function resolveRawFieldPayload<TFieldNames extends string>(
+export function resolveRawFieldPayload<Tfieldnames extends string>(
   formData: FormData,
-  fields: readonly TFieldNames[],
-  explicitRaw?: Readonly<Partial<Record<TFieldNames, unknown>>>,
-): Readonly<Partial<Record<TFieldNames, string>>> {
+  fields: readonly Tfieldnames[],
+  explicitRaw?: Readonly<Partial<Record<Tfieldnames, unknown>>>,
+): Readonly<Partial<Record<Tfieldnames, string>>> {
   if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    const out: Partial<Record<TFieldNames, string>> = {};
+    const out: Partial<Record<Tfieldnames, string>> = {};
 
     for (const f of fields) {
       const v = explicitRaw[f];
@@ -25,5 +25,5 @@ export function resolveRawFieldPayload<TFieldNames extends string>(
     }
     return Object.freeze(out);
   }
-  return extractFormDataFields<TFieldNames>(formData, fields);
+  return extractFormDataFields<Tfieldnames>(formData, fields);
 }

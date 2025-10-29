@@ -26,10 +26,10 @@ import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
  * // formError.details.fieldErrors = { email: ["Invalid email or password"], password: ["Invalid email or password"] }
  * ```
  */
-export function toFormAwareError<TField extends string>(
+export function toFormAwareError<Tfield extends string>(
   error: AppError,
   params: {
-    readonly fields: readonly TField[];
+    readonly fields: readonly Tfield[];
   },
 ): AppError {
   const { fields } = params;

@@ -5,7 +5,7 @@ import { RevenueService } from "@/server/revenues/application/services/revenue/r
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 declare global {
   var __revenueEventHandler: RevenueEventHandler | undefined;
@@ -26,15 +26,13 @@ if (!globalForRevenueHandler.__revenueEventHandler) {
     globalForRevenueHandler.__revenueEventHandler = new RevenueEventHandler(
       service,
     );
-    sharedLogger.info({
+    logger.info("RevenueEventHandler initialized", {
       context: "revenue-events.bootstrap",
-      message: "RevenueEventHandler initialized",
     });
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to initialize RevenueEventHandler", {
       context: "revenue-events.bootstrap",
       error,
-      message: "Failed to initialize RevenueEventHandler",
     });
   }
 }

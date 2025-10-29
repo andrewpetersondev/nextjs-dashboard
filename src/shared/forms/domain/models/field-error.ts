@@ -6,15 +6,15 @@
 /**
  * Array that is guaranteed to contain at least one element.
  */
-export type NonEmptyArray<TElement> = readonly [
-  TElement,
-  ...(readonly TElement[]),
+export type NonEmptyArray<Telement> = readonly [
+  Telement,
+  ...(readonly Telement[]),
 ];
 
 /**
  * Represents an error associated with a field.
  */
-export type FieldError<TMsg = string> = NonEmptyArray<TMsg>;
+export type FieldError<Tmsg = string> = NonEmptyArray<Tmsg>;
 
 /**
  * Type guard: determines if value is a non-empty readonly array.

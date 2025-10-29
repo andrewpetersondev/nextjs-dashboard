@@ -3,7 +3,7 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Increments and retrieves the demo user counter for a given role.
@@ -35,12 +35,7 @@ export async function demoUserCounter(
 
     return counterRow.id;
   } catch (error) {
-    sharedLogger.error({
-      context: "demoUserCounter",
-      error,
-      message: "Failed to read the demo user counter.",
-      role,
-    });
+    logger.error("Failed to read the demo user counter.");
     throw new DatabaseError(
       "Failed to read the demo user counter.",
       {},

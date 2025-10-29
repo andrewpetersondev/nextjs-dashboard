@@ -8,16 +8,16 @@ import { Err } from "@/shared/core/result/result";
 /**
  * Executes a provided asynchronous function if the given `Result` is successful (`ok`).
  *
- * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type of the error. Defaults to `AppError`.
+ * @typeParam Tvalue - The type of the successful result value.
+ * @typeParam Terror - The type of the error. Defaults to `AppError`.
  * @param fn - An asynchronous function to execute with the successful value.
  * @returns A `Promise` resolving to the same `Result` passed as input.
  */
 export const tapOkAsync =
   /* @__PURE__ */
-    <TValue, TError extends AppError>(fn: (v: TValue) => Promise<void>) =>
+    <Tvalue, Terror extends AppError>(fn: (v: Tvalue) => Promise<void>) =>
     /* @__PURE__ */
-    async (r: Result<TValue, TError>): Promise<Result<TValue, TError>> => {
+    async (r: Result<Tvalue, Terror>): Promise<Result<Tvalue, Terror>> => {
       if (r.ok) {
         await fn(r.value);
       }
@@ -28,23 +28,23 @@ export const tapOkAsync =
  * A utility function to safely execute an asynchronous operation on a `Result` object.
  * If the function `fn` throws, the error is mapped using `mapError`.
  *
- * @typeParam TValue - The type of the successful value in the `Result`.
- * @typeParam TError - The type of the original error in the `Result`.
- * @typeParam TSideError - The type of the mapped side error.
+ * @typeParam Tvalue - The type of the successful value in the `Result`.
+ * @typeParam Terror - The type of the original error in the `Result`.
+ * @typeParam Tsideerror - The type of the mapped side error.
  * @param fn - The asynchronous function to execute if the `Result` is successful.
- * @param mapError - An optional function to map thrown `fn` errors to a `TSideError` instance.
+ * @param mapError - An optional function to map thrown `fn` errors to a `Tsideerror` instance.
  * @returns A new `Result` retaining its original value or wrapping any error encountered.
  */
 export const tapOkAsyncSafe =
   /* @__PURE__ */
-    <TValue, TError extends AppError, TSideError extends AppError>(
-      fn: (v: TValue) => Promise<void>,
-      mapError: (e: unknown) => TSideError,
+    <Tvalue, Terror extends AppError, Tsideerror extends AppError>(
+      fn: (v: Tvalue) => Promise<void>,
+      mapError: (e: unknown) => Tsideerror,
     ) =>
     /* @__PURE__ */
     async (
-      r: Result<TValue, TError>,
-    ): Promise<Result<TValue, TError | TSideError>> => {
+      r: Result<Tvalue, Terror>,
+    ): Promise<Result<Tvalue, Terror | Tsideerror>> => {
       if (!r.ok) {
         return r;
       }
@@ -59,16 +59,16 @@ export const tapOkAsyncSafe =
 /**
  * Handles the error case of a `Result` asynchronously by executing a provided function.
  *
- * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type of the error, extending `AppError`.
+ * @typeParam Tvalue - The type of the successful result value.
+ * @typeParam Terror - The type of the error, extending `AppError`.
  * @param fn - An async function to process the error when the `Result` is not successful.
  * @returns A promise resolving to the unchanged `Result`.
  */
 export const tapErrorAsync =
   /* @__PURE__ */
-    <TValue, TError extends AppError>(fn: (e: TError) => Promise<void>) =>
+    <Tvalue, Terror extends AppError>(fn: (e: Terror) => Promise<void>) =>
     /* @__PURE__ */
-    async (r: Result<TValue, TError>): Promise<Result<TValue, TError>> => {
+    async (r: Result<Tvalue, Terror>): Promise<Result<Tvalue, Terror>> => {
       if (!r.ok) {
         await fn(r.error);
       }
@@ -78,23 +78,23 @@ export const tapErrorAsync =
 /**
  * Handles `Result` errors by invoking an asynchronous error handler function,
  *
- * @typeParam TValue - The type of the successful result value.
- * @typeParam TError - The type of the expected error.
- * @typeParam TSideError - The type of the optional side error.
+ * @typeParam Tvalue - The type of the successful result value.
+ * @typeParam Terror - The type of the expected error.
+ * @typeParam Tsideerror - The type of the optional side error.
  * @param fn - Async function to handle the error.
  * @param mapError - Optional function to transform unknown errors.
  * @returns A `Result` of the original value or the transformed error.
  */
 export const tapErrorAsyncSafe =
   /* @__PURE__ */
-    <TValue, TError extends AppError, TSideError extends AppError>(
-      fn: (e: TError) => Promise<void>,
-      mapError: (e: unknown) => TSideError,
+    <Tvalue, Terror extends AppError, Tsideerror extends AppError>(
+      fn: (e: Terror) => Promise<void>,
+      mapError: (e: unknown) => Tsideerror,
     ) =>
     /* @__PURE__ */
     async (
-      r: Result<TValue, TError>,
-    ): Promise<Result<TValue, TError | TSideError>> => {
+      r: Result<Tvalue, Terror>,
+    ): Promise<Result<Tvalue, Terror | Tsideerror>> => {
       if (r.ok) {
         return r;
       }

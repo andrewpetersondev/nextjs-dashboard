@@ -19,7 +19,7 @@ export const SideNav = ({ logoutAction }: SideNavProps): JSX.Element => {
       <Link
         aria-label="Go to homepage"
         className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary md:h-40"
-        href={ROUTES.dashboard.ROOT}
+        href={ROUTES.dashboard.root}
         tabIndex={0}
       >
         <AcmeLogo />

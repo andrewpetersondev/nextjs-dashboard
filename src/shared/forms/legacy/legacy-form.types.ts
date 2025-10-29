@@ -12,8 +12,8 @@ import type {
  * @example
  * const successState: SuccessFormState<string> = { data: "Success", success: true };
  */
-interface SuccessFormState<TData = unknown> {
-  readonly data: TData;
+interface SuccessFormState<Tdata = unknown> {
+  readonly data: Tdata;
   readonly errors?: never;
   readonly message?: string;
   readonly success: true;
@@ -29,14 +29,14 @@ interface SuccessFormState<TData = unknown> {
  * @public
  */
 interface FailedFormState<
-  TField extends string,
-  TValue = string,
-  TMsg = string,
+  Tfield extends string,
+  Tvalue = string,
+  Tmsg = string,
 > {
-  readonly errors: DenseFieldErrorMap<TField, TMsg>;
+  readonly errors: DenseFieldErrorMap<Tfield, Tmsg>;
   readonly message: string;
   readonly success: false;
-  readonly values?: SparseFieldValueMap<TField, TValue>;
+  readonly values?: SparseFieldValueMap<Tfield, Tvalue>;
 }
 
 /**
@@ -49,8 +49,8 @@ interface FailedFormState<
  * @typeParam TMsg - The type of error messages in the failure state. Defaults to `string`.
  */
 export type LegacyFormState<
-  TField extends string,
-  TData = unknown,
-  TValue = string,
-  TMsg = string,
-> = SuccessFormState<TData> | FailedFormState<TField, TValue, TMsg>;
+  Tfield extends string,
+  Tdata = unknown,
+  Tvalue = string,
+  Tmsg = string,
+> = SuccessFormState<Tdata> | FailedFormState<Tfield, Tvalue, Tmsg>;

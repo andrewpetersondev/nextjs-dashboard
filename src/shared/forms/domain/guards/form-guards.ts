@@ -12,15 +12,15 @@ import type {
 /**
  * Narrow to success branch.
  */
-export const isFormOk = <TPayload>(
-  r: FormResult<TPayload>,
-): r is Result<FormSuccess<TPayload>, never> => r.ok;
+export const isFormOk = <Tpayload>(
+  r: FormResult<Tpayload>,
+): r is Result<FormSuccess<Tpayload>, never> => r.ok;
 
 /**
  * Narrow to validation error branch.
  */
-export const isFormErr = <TPayload>(
-  r: FormResult<TPayload>,
+export const isFormErr = <Tpayload>(
+  r: FormResult<Tpayload>,
 ): r is Result<never, AppError> => !r.ok;
 
 /**
@@ -39,9 +39,9 @@ export const isFormValidationError = (error: AppError): boolean =>
  *   console.log(errors.email); // readonly string[]
  * }
  */
-export const getFieldErrors = <TFieldName extends string>(
+export const getFieldErrors = <Tfieldname extends string>(
   error: AppError,
-): DenseFieldErrorMap<TFieldName, string> | undefined => {
+): DenseFieldErrorMap<Tfieldname, string> | undefined => {
   if (!isFormValidationError(error)) {
     return;
   }
@@ -49,7 +49,7 @@ export const getFieldErrors = <TFieldName extends string>(
   if (!fieldErrors || typeof fieldErrors !== "object") {
     return;
   }
-  return fieldErrors as DenseFieldErrorMap<TFieldName, string>;
+  return fieldErrors as DenseFieldErrorMap<Tfieldname, string>;
 };
 
 /**
@@ -69,14 +69,14 @@ export const getFormErrors = (error: AppError): readonly string[] | undefined =>
  *   console.log(values.email); // string
  * }
  */
-export const getFieldValues = <TFieldName extends string>(
+export const getFieldValues = <Tfieldname extends string>(
   error: AppError,
-): SparseFieldValueMap<TFieldName, string> | undefined => {
+): SparseFieldValueMap<Tfieldname, string> | undefined => {
   const extra = error.details?.extra;
   if (!extra || typeof extra !== "object") {
     return;
   }
-  const values = (extra as { values?: SparseFieldValueMap<TFieldName, string> })
+  const values = (extra as { values?: SparseFieldValueMap<Tfieldname, string> })
     .values;
   if (!values || typeof values !== "object") {
     return;

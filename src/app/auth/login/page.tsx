@@ -29,7 +29,7 @@ export default function Page(): JSX.Element {
             />
           </div>
           <AuthSwitchLink
-            href={ROUTES.AUTH.signup}
+            href={ROUTES.auth.signup}
             linkText="Sign up here"
             prompt="Not a member?"
           />

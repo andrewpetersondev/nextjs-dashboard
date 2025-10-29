@@ -10,7 +10,7 @@ import {
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { Err, type Result } from "@/shared/core/result/result";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Maps repository errors to standardized AppError Results.
@@ -57,19 +57,16 @@ export function mapRepoErrorToAppResult<T>(
 
   // Infrastructure errors - hide internals
   if (err instanceof DatabaseError) {
-    sharedLogger.error({ context, error: err.message }, "Database error");
+    logger.error("Database error", { context, error: err.message });
     return Err(appErrorFromCode("database", "Database operation failed"));
   }
 
   // Unknown/unexpected errors - log for debugging
-  sharedLogger.error(
-    {
-      context,
-      error: err instanceof Error ? err.message : String(err),
-      stack: err instanceof Error ? err.stack : undefined,
-    },
-    "Unexpected repository error",
-  );
+  logger.error("Unexpected repository error", {
+    context,
+    error: err instanceof Error ? err.message : String(err),
+    stack: err instanceof Error ? err.stack : undefined,
+  });
 
   return Err(appErrorFromCode("unknown", "An unexpected error occurred"));
 }

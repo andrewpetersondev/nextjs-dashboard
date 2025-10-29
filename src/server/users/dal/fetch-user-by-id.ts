@@ -1,5 +1,4 @@
 import "server-only";
-
 import { eq } from "drizzle-orm";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -10,7 +9,7 @@ import {
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/domain/domain-brands";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Fetches a user by their branded UserId.
@@ -37,11 +36,10 @@ export async function fetchUserById(
     // Map to DTO for safe return to client
     return userEntityToDto(userEntity);
   } catch (error) {
-    sharedLogger.error({
+    logger.error("Failed to fetch user by id.", {
       context: "fetchUserById",
       error,
       id,
-      message: "Failed to fetch user by id.",
     });
     throw new DatabaseError(
       "Failed to fetch user by id.",

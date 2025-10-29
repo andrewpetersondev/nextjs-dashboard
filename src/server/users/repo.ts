@@ -49,7 +49,7 @@ export class UsersRepository {
       });
       if (!user) {
         return Err({
-          code: "NOT_FOUND" as const,
+          code: "notFound" as const,
           kind: "CreateFailed" as const,
           message: "User creation returned null",
         });

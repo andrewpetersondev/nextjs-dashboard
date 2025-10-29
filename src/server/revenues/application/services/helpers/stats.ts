@@ -1,27 +1,27 @@
 import "server-only";
-
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueStatistics } from "@/features/revenues/types";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,
 ): RevenueStatistics {
   if (!revenueData || revenueData.length === 0) {
-    sharedLogger.debug({
+    logger.debug("No revenue data available, returning empty statistics", {
       context: "RevenueStatisticsService.calculateStatistics",
-      message: "No revenue data available, returning empty statistics",
     });
     return createEmptyStatistics();
   }
 
   const nonZeroRevenues = nonZeroAmounts(revenueData);
   if (nonZeroRevenues.length === 0) {
-    sharedLogger.debug({
-      context: "RevenueStatisticsService.calculateStatistics",
-      message: "No non-zero revenue data available, returning empty statistics",
-    });
+    logger.debug(
+      "No non-zero revenue data available, returning empty statistics",
+      {
+        context: "RevenueStatisticsService.calculateStatistics",
+      },
+    );
     return createEmptyStatistics();
   }
 

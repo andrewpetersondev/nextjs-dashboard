@@ -8,20 +8,20 @@ import type { FieldError } from "./field-error";
 /**
  * Sparse map: only errored fields present.
  */
-export type SparseFieldErrorMap<TField extends string, TMsg> = Partial<
-  Readonly<Record<TField, FieldError<TMsg>>>
+export type SparseFieldErrorMap<Tfield extends string, Tmsg> = Partial<
+  Readonly<Record<Tfield, FieldError<Tmsg>>>
 >;
 
 /**
  * Sparse value map: only populated fields present.
  */
-export type SparseFieldValueMap<TField extends string, TValue> = Partial<
-  Record<TField, TValue>
+export type SparseFieldValueMap<Tfield extends string, Tvalue> = Partial<
+  Record<Tfield, Tvalue>
 >;
 
 /**
  * Dense map: all fields present with readonly values.
  */
-export type DenseFieldErrorMap<TField extends string, TMsg> = Readonly<
-  Record<TField, readonly TMsg[]>
+export type DenseFieldErrorMap<Tfield extends string, Tmsg> = Readonly<
+  Record<Tfield, readonly Tmsg[]>
 >;

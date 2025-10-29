@@ -20,7 +20,7 @@ import {
 } from "@/shared/forms/domain/factories/error-map.factory";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Publish "invoice updated" domain event
@@ -46,7 +46,7 @@ function handleActionError<
   id: string,
   error: unknown,
 ): LegacyFormState<N, F> {
-  sharedLogger.error({
+  logger.error(INVOICE_MSG.serviceError, {
     context: "updateInvoiceAction",
     error,
     id,
@@ -122,7 +122,7 @@ export async function updateInvoiceAction(
     const updatedInvoice = await service.updateInvoice(id, parsed.data);
 
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
-    revalidatePath(ROUTES.dashboard.ROOT);
+    revalidatePath(ROUTES.dashboard.root);
 
     return {
       data: updatedInvoice,

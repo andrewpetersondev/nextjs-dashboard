@@ -13,10 +13,10 @@ import type {
  * - Safely navigates nested message properties
  * - Returns undefined for message if not found (no forced fallbacks)
  */
-type ServerMessageState<TData = unknown> = FormResult<TData>;
+type ServerMessageState<Tdata = unknown> = FormResult<Tdata>;
 
-type ServerMessageProps<TData = unknown> = Readonly<{
-  readonly state: ServerMessageState<TData>;
+type ServerMessageProps<Tdata = unknown> = Readonly<{
+  readonly state: ServerMessageState<Tdata>;
   readonly showAlert: boolean;
 }>;
 
@@ -24,7 +24,7 @@ type ServerMessageProps<TData = unknown> = Readonly<{
  * Type guard to check if a value is FormSuccess.
  * FormSuccess has `data` and `message` properties.
  */
-function isFormSuccess<TData>(value: unknown): value is FormSuccess<TData> {
+function isFormSuccess<Tdata>(value: unknown): value is FormSuccess<Tdata> {
   if (typeof value !== "object" || value === null) {
     return false;
   }
@@ -57,8 +57,8 @@ function isAppError(value: unknown): value is AppError {
  * - Returns success=true/false and optional message
  * - Never throws; returns sensible defaults
  */
-function extractMessageAndSuccess<TData>(
-  state: ServerMessageState<TData>,
+function extractMessageAndSuccess<Tdata>(
+  state: ServerMessageState<Tdata>,
 ): Readonly<{
   readonly message: string | undefined;
   readonly success: boolean;
@@ -107,10 +107,10 @@ function extractMessageAndSuccess<TData>(
  * - Conditional styling based on success state
  * - Integrates with form submission flow
  */
-export function ServerMessage<TData = unknown>({
+export function ServerMessage<Tdata = unknown>({
   state,
   showAlert,
-}: ServerMessageProps<TData>): JSX.Element {
+}: ServerMessageProps<Tdata>): JSX.Element {
   const { message, success } = extractMessageAndSuccess(state);
 
   const baseStyles =

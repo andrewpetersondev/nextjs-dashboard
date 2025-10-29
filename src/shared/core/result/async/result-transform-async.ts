@@ -7,44 +7,44 @@ import { Err, type Result } from "@/shared/core/result/result";
 /**
  * Applies an asynchronous function to the successful value in a `Result` and flattens the resulting `Result`.
  *
- * @typeParam TValue - Type of the input value.
- * @typeParam TNext - Type of the resulting value after applying `fn`.
- * @typeParam TError1 - Type of the initial error in the input `Result`.
- * @typeParam TError2 - Type of the error that `fn` might return.
+ * @typeParam Tvalue - Type of the input value.
+ * @typeParam Tnext - Type of the resulting value after applying `fn`.
+ * @typeParam Terror1 - Type of the initial error in the input `Result`.
+ * @typeParam Terror2 - Type of the error that `fn` might return.
  * @param fn - An asynchronous function that transforms a value into a `Result`.
  * @returns A promise of `Result` with the transformed value or propagated errors.
  */
 export const flatMapAsync =
   /* @__PURE__ */
-    <TValue, TNext, TError1 extends AppError, TError2 extends AppError>(
-      fn: (v: TValue) => Promise<Result<TNext, TError2>>,
+    <Tvalue, Tnext, Terror1 extends AppError, Terror2 extends AppError>(
+      fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
     ) =>
     /* @__PURE__ */
     async (
-      r: Result<TValue, TError1>,
-    ): Promise<Result<TNext, TError1 | TError2>> =>
+      r: Result<Tvalue, Terror1>,
+    ): Promise<Result<Tnext, Terror1 | Terror2>> =>
       r.ok ? fn(r.value) : Err(r.error);
 
 // Preserve-Err variant for async flatMap (no casting).
 /**
  * Transforms a `Result` asynchronously via the provided function, ensuring any original errors are preserved.
  *
- * @typeParam TValue - The type of the input value in the `Result`.
- * @typeParam TNext - The type of the transformed value.
- * @typeParam TError1 - The type of the original error.
- * @typeParam TError2 - The type of any new error from the transformation function.
+ * @typeParam Tvalue - The type of the input value in the `Result`.
+ * @typeParam Tnext - The type of the transformed value.
+ * @typeParam Terror1 - The type of the original error.
+ * @typeParam Terror2 - The type of any new error from the transformation function.
  * @param fn - A function that takes a value and returns a `Promise` of a transformed `Result`.
  * @returns A function that processes a `Result` and returns a `Promise` of a transformed `Result`.
  */
 export const flatMapAsyncPreserveErr =
   /* @__PURE__ */
-  <TValue, TNext, TError1 extends AppError, TError2 extends AppError>(
-    fn: (v: TValue) => Promise<Result<TNext, TError2>>,
+  <Tvalue, Tnext, Terror1 extends AppError, Terror2 extends AppError>(
+    fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
   ) => {
     /* @__PURE__ */
     return async (
-      r: Result<TValue, TError1>,
-    ): Promise<Result<TNext, TError1 | TError2>> => {
+      r: Result<Tvalue, Terror1>,
+    ): Promise<Result<Tnext, Terror1 | Terror2>> => {
       if (!r.ok) {
         return Err(r.error);
       }
@@ -56,31 +56,31 @@ export const flatMapAsyncPreserveErr =
  * Safely applies an asynchronous transformation to a `Result` value,
  * ensuring proper error handling and type safety.
  *
- * @typeParam TValue - The type of the input value in the `Result`.
- * @typeParam TNext - The type of the transformed value in the `Result`.
- * @typeParam TError1 - The type of the existing error in the `Result`.
- * @typeParam TError2 - The type of the error from the async function.
- * @typeParam TSideError - The type of the error from the error mapper.
+ * @typeParam Tvalue - The type of the input value in the `Result`.
+ * @typeParam Tnext - The type of the transformed value in the `Result`.
+ * @typeParam Terror1 - The type of the existing error in the `Result`.
+ * @typeParam Terror2 - The type of the error from the async function.
+ * @typeParam Tsideerror - The type of the error from the error mapper.
  * @param fn - An async function transforming the value of `Result`.
- * @param mapError - Optional function to map unknown errors to `TSideError`.
+ * @param mapError - Optional function to map unknown errors to `Tsideerror`.
  * @returns A `Promise` resolving to a new `Result` with transformed or error value.
  */
 export const flatMapAsyncSafe =
   /* @__PURE__ */
     <
-      TValue,
-      TNext,
-      TError1 extends AppError,
-      TError2 extends AppError,
-      TSideError extends AppError,
+      Tvalue,
+      Tnext,
+      Terror1 extends AppError,
+      Terror2 extends AppError,
+      Tsideerror extends AppError,
     >(
-      fn: (v: TValue) => Promise<Result<TNext, TError2>>,
-      mapError: (e: unknown) => TSideError,
+      fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
+      mapError: (e: unknown) => Tsideerror,
     ) =>
     /* @__PURE__ */
     async (
-      r: Result<TValue, TError1>,
-    ): Promise<Result<TNext, TError1 | TError2 | TSideError>> => {
+      r: Result<Tvalue, Terror1>,
+    ): Promise<Result<Tnext, Terror1 | Terror2 | Tsideerror>> => {
       if (!r.ok) {
         return Err(r.error);
       }
