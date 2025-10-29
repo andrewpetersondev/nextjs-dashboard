@@ -2,13 +2,6 @@
 # Storage, Notes, Etc.
 # ================================
 storage/
-storage/containers
-storage/notes
-storage/old
-Notes/
-keep/
-.vscode/
-containers/
 other/
 
 # ================================
@@ -16,6 +9,8 @@ other/
 # ================================
 .DS_Store
 .idea
+.vscode
+.github
 
 # ================================
 # Dependencies
@@ -24,15 +19,9 @@ node_modules/
 .pnpm-store/
 .yarn/
 
-
 # ================================
 # Testing and Coverage
 # ================================
-coverage/
-.swc/
-.nyc_output/
-.tap/
-.jest/
 cypress/videos
 cypress/screenshots
 cypress/downloads
@@ -45,6 +34,12 @@ cypress/**/*.js.map
 cypress/**/*.jsx.map
 cypress/.html-report/
 cypress/.nyc_output/
+.html-report/
+coverage/
+.swc/
+.nyc_output/
+.tap/
+.jest/
 
 # ================================
 # Tooling (Docker, Secrets, Vault, Vercel)
@@ -53,6 +48,7 @@ cypress/.nyc_output/
 password.txt
 postgres-certs/
 secrets/
+*.txt
 .vault-token
 .vault/
 vault/
@@ -64,8 +60,9 @@ vault/*.json
 .env.local
 .env.development.local
 .env.test.local
-.env.production
+.env.production.local
 .env*
+.env.*
 .envrc
 .direnv/
 
