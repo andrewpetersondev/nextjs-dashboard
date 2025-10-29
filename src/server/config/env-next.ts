@@ -17,9 +17,10 @@ const ServerEnvSchema = z.object({
     .string()
     .url("DATABASE_URL must be a valid URL")
     .min(NON_EMPTY_STRING_MIN_LENGTH),
-  SESSION_AUDIENCE: z.string().min(NON_EMPTY_STRING_MIN_LENGTH).optional(),
 
-  SESSION_ISSUER: z.string().min(NON_EMPTY_STRING_MIN_LENGTH).optional(),
+  SESSION_AUDIENCE: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
+
+  SESSION_ISSUER: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
 
   SESSION_SECRET: z
     .string()
