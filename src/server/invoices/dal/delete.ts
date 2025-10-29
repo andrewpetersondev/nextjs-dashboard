@@ -23,7 +23,7 @@ export async function deleteInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
   if (!(db && id)) {
-    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, { id });
+    throw new ValidationError(INVOICE_MSG.invalidInput, { id });
   }
 
   // db operations
@@ -34,7 +34,7 @@ export async function deleteInvoiceDal(
 
   // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
-    throw new DatabaseError(INVOICE_MSG.DELETE_FAILED, { id });
+    throw new DatabaseError(INVOICE_MSG.deleteFailed, { id });
   }
 
   // Convert raw database row to InvoiceEntity and return

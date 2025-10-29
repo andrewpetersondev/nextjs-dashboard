@@ -5,7 +5,7 @@ import { periodKey } from "@/features/revenues/domain/period";
 import type { Period } from "@/shared/domain/domain-brands";
 
 /** Formats a Date to YYYY-MM-DD for transport. */
-export function toISODateString(d: Date): string {
+export function toIsoDateString(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 

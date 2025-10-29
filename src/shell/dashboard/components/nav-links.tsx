@@ -14,10 +14,10 @@ import { ROUTES } from "@/shared/routes/routes";
 
 /** Navigation link paths */
 const NAV_LINKS = {
-  CUSTOMERS: ROUTES.DASHBOARD.CUSTOMERS,
-  HOME: ROUTES.DASHBOARD.ROOT,
-  INVOICES: ROUTES.DASHBOARD.INVOICES,
-  USERS: ROUTES.DASHBOARD.USERS,
+  customers: ROUTES.dashboard.CUSTOMERS,
+  home: ROUTES.dashboard.ROOT,
+  invoices: ROUTES.dashboard.INVOICES,
+  users: ROUTES.dashboard.USERS,
 } as const;
 
 type NavLinksProps = {
@@ -41,15 +41,15 @@ export function NavLinks({ role }: NavLinksProps): JSX.Element {
 
   // Define base links
   const links: NavLink[] = [
-    { href: NAV_LINKS.HOME, icon: HomeIcon, name: "Home" },
-    { href: NAV_LINKS.INVOICES, icon: DocumentDuplicateIcon, name: "Invoices" },
-    { href: NAV_LINKS.CUSTOMERS, icon: UserGroupIcon, name: "Customers" },
+    { href: NAV_LINKS.home, icon: HomeIcon, name: "Home" },
+    { href: NAV_LINKS.invoices, icon: DocumentDuplicateIcon, name: "Invoices" },
+    { href: NAV_LINKS.customers, icon: UserGroupIcon, name: "Customers" },
   ];
 
   // Only add a Users link for admin
   if (role === ADMIN_ROLE) {
     links.push({
-      href: NAV_LINKS.USERS,
+      href: NAV_LINKS.users,
       icon: LockClosedIcon,
       name: "Users",
     });

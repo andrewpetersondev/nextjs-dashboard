@@ -31,12 +31,12 @@ export const CustomerSelect = ({
   error,
   ...props
 }: CustomerSelectProps): JSX.Element => {
-  const ERROR_ID = "customer-select-error";
+  const ErrorId = "customer-select-error";
   const hasError = Boolean(error && error.length > 0);
   return (
     <div>
       <SelectMenu
-        aria-describedby={hasError ? ERROR_ID : undefined}
+        aria-describedby={hasError ? ErrorId : undefined}
         aria-invalid={hasError}
         defaultValue=""
         id="customer"
@@ -48,9 +48,9 @@ export const CustomerSelect = ({
       />
       {hasError && (
         <ErrorMessage
-          dataCy={ERROR_ID}
+          dataCy={ErrorId}
           error={error}
-          id={ERROR_ID}
+          id={ErrorId}
           label="Customer selection error"
         />
       )}

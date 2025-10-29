@@ -36,29 +36,29 @@ export function mapRepoErrorToAppResult<T>(
 ): Result<T, AppError> {
   // Domain-specific errors
   if (err instanceof UnauthorizedError) {
-    return Err(appErrorFromCode("UNAUTHORIZED", "Invalid credentials"));
+    return Err(appErrorFromCode("unauthorized", "Invalid credentials"));
   }
 
   if (err instanceof ValidationError) {
-    return Err(appErrorFromCode("VALIDATION", err.message));
+    return Err(appErrorFromCode("validation", err.message));
   }
 
   if (err instanceof ConflictError) {
-    return Err(appErrorFromCode("CONFLICT", err.message));
+    return Err(appErrorFromCode("conflict", err.message));
   }
 
   if (err instanceof ForbiddenError) {
-    return Err(appErrorFromCode("FORBIDDEN", err.message));
+    return Err(appErrorFromCode("forbidden", err.message));
   }
 
   if (err instanceof NotFoundError) {
-    return Err(appErrorFromCode("NOT_FOUND", err.message));
+    return Err(appErrorFromCode("notFound", err.message));
   }
 
   // Infrastructure errors - hide internals
   if (err instanceof DatabaseError) {
     sharedLogger.error({ context, error: err.message }, "Database error");
-    return Err(appErrorFromCode("DATABASE", "Database operation failed"));
+    return Err(appErrorFromCode("database", "Database operation failed"));
   }
 
   // Unknown/unexpected errors - log for debugging
@@ -71,5 +71,5 @@ export function mapRepoErrorToAppResult<T>(
     "Unexpected repository error",
   );
 
-  return Err(appErrorFromCode("UNKNOWN", "An unexpected error occurred"));
+  return Err(appErrorFromCode("unknown", "An unexpected error occurred"));
 }

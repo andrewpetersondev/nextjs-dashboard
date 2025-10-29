@@ -51,11 +51,11 @@ export default async function Page(): Promise<JSX.Element> {
 
   let title = "Dashboard";
   if (role === ADMIN_ROLE) {
-    title = DASHBOARD_TITLES.ADMIN;
+    title = DASHBOARD_TITLES.admin;
   } else if (role === USER_ROLE) {
-    title = DASHBOARD_TITLES.USER;
+    title = DASHBOARD_TITLES.user;
   } else if (role === GUEST_ROLE) {
-    title = DASHBOARD_TITLES.GUEST;
+    title = DASHBOARD_TITLES.guest;
   }
 
   const commonContent = (

@@ -33,10 +33,10 @@ export function CustomersTableMobileRow({
               <Image
                 alt={`${customer.name}'s profile picture`}
                 className="rounded-full"
-                height={IMAGE_SIZES.SMALL}
+                height={IMAGE_SIZES.small}
                 priority={true}
                 src={customer.imageUrl}
-                width={IMAGE_SIZES.SMALL}
+                width={IMAGE_SIZES.small}
               />
               <p className="font-medium">{customer.name}</p>
             </div>

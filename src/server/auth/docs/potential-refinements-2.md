@@ -308,7 +308,7 @@ export const AUTH_ERROR_CATALOG = {
     field: "username" as const,
     httpStatus: 409,
   },
-  MISSING_FIELDS: {
+  missingFields: {
     code: "missing_fields" as const,
     message: "Missing required fields",
     fields: ["email", "username", "password"] as const,
@@ -432,7 +432,7 @@ export async function loginAction(
   const raw = extractFormDataFields<LoginField>(formData, fields);
 
   const validated = await validateForm(formData, LoginSchema, fields, {
-    loggerContext: AUTH_ACTION_CONTEXTS.LOGIN,
+    loggerContext: AUTH_ACTION_CONTEXTS.login,
   });
 
   if (!validated.ok) {
@@ -460,8 +460,8 @@ export async function loginAction(
     sameSite: "lax",
   });
 
-  revalidatePath(ROUTES.DASHBOARD.ROOT);
-  redirect(ROUTES.DASHBOARD.ROOT); // ← Never returns
+  revalidatePath(ROUTES.dashboard.ROOT);
+  redirect(ROUTES.dashboard.ROOT); // ← Never returns
 }
 ```
 

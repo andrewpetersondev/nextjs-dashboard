@@ -58,11 +58,11 @@ export class RevenueEventHandler {
       this.handleInvoiceCreated.bind(this),
     );
     EventBus.subscribe(
-      INVOICE_EVENTS.UPDATED,
+      INVOICE_EVENTS.updated,
       this.handleInvoiceUpdated.bind(this),
     );
     EventBus.subscribe(
-      INVOICE_EVENTS.DELETED,
+      INVOICE_EVENTS.deleted,
       this.handleInvoiceDeleted.bind(this),
     );
 

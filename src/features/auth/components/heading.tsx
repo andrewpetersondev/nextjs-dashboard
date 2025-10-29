@@ -30,10 +30,10 @@ export function Heading({
       <Image
         alt={logoAlt}
         className="mx-auto h-10 w-auto"
-        height={IMAGE_SIZES.MEDIUM}
+        height={IMAGE_SIZES.medium}
         priority={true}
         src={logoSrc}
-        width={IMAGE_SIZES.MEDIUM}
+        width={IMAGE_SIZES.medium}
       />
       <h2 className="mt-6 text-center font-bold text-2xl/9 tracking-tight">
         {text}

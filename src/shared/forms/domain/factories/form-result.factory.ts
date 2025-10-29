@@ -38,7 +38,7 @@ export const formError = <TFieldName extends string>(params: {
 }): FormResult<never> => {
   const error: AppError = freeze({
     __appError: "AppError" as const,
-    code: params.code ?? "VALIDATION",
+    code: params.code ?? "validation",
     details: makeAppErrorDetails({
       extra: params.values ? { values: params.values } : undefined,
       fieldErrors: params.fieldErrors,

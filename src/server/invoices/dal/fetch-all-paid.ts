@@ -20,7 +20,7 @@ export async function fetchAllPaidInvoicesDal(
   db: AppDatabase,
 ): Promise<InvoiceEntity[]> {
   if (!db) {
-    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_MSG.invalidInput, {
       db: "Database instance is required",
     });
   }
@@ -33,7 +33,7 @@ export async function fetchAllPaidInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_FAILED);
+    throw new DatabaseError(INVOICE_MSG.fetchFailed);
   }
 
   // Convert raw database rows to InvoiceEntity

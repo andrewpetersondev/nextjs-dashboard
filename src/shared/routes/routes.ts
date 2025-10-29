@@ -9,52 +9,52 @@ type DynamicBuilder = (...args: string[]) => StaticPath;
 const TRAILING_SLASH_REGEX = /\/+$/;
 
 type RoutesShape = Readonly<{
-  AUTH: Readonly<{
-    LOGIN: StaticPath;
-    SIGNUP: StaticPath;
+  auth: Readonly<{
+    login: StaticPath;
+    signup: StaticPath;
   }>;
-  DASHBOARD: Readonly<{
-    ROOT: StaticPath;
-    CUSTOMERS: StaticPath;
-    INVOICES: StaticPath;
-    USERS: StaticPath;
+  dashboard: Readonly<{
+    root: StaticPath;
+    customers: StaticPath;
+    invoices: StaticPath;
+    users: StaticPath;
     createInvoice: DynamicBuilder;
     invoice: (id: string) => StaticPath;
     invoiceEdit: (id: string) => StaticPath;
     createUser: DynamicBuilder;
     userEdit: (id: string) => StaticPath;
   }>;
-  ROOT: StaticPath;
+  root: StaticPath;
 }>;
 
 // Core route map (preserved keys/shape for compatibility)
 export const ROUTES: RoutesShape = {
-  AUTH: {
-    LOGIN: "/auth/login",
-    SIGNUP: "/auth/signup",
+  auth: {
+    login: "/auth/login",
+    signup: "/auth/signup",
   },
-  DASHBOARD: {
-    CUSTOMERS: "/dashboard/customers",
+  dashboard: {
     createInvoice: () => "/dashboard/invoices/create",
     createUser: () => "/dashboard/users/create",
-    INVOICES: "/dashboard/invoices",
+    customers: "/dashboard/customers",
     invoice: (id: string) => `/dashboard/invoices/${encodeURIComponent(id)}`,
     invoiceEdit: (id: string) =>
       `/dashboard/invoices/${encodeURIComponent(id)}/edit`,
-    ROOT: "/dashboard",
-    USERS: "/dashboard/users",
+    invoices: "/dashboard/invoices",
+    root: "/dashboard",
     userEdit: (id: string) => `/dashboard/users/${encodeURIComponent(id)}/edit`,
+    users: "/dashboard/users",
   },
-  ROOT: "/",
+  root: "/",
 } as const;
 
 // Middleware/shared guards
-export const PROTECTED_PREFIX = ROUTES.DASHBOARD.ROOT;
-export const ADMIN_PREFIX = ROUTES.DASHBOARD.USERS;
+export const PROTECTED_PREFIX = ROUTES.dashboard.root;
+export const ADMIN_PREFIX = ROUTES.dashboard.users;
 export const PUBLIC_ROUTES = new Set<string>([
-  ROUTES.AUTH.LOGIN,
-  ROUTES.AUTH.SIGNUP,
-  ROUTES.ROOT,
+  ROUTES.auth.login,
+  ROUTES.auth.signup,
+  ROUTES.root,
 ]);
 
 // Helpers

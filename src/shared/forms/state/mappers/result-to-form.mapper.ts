@@ -38,7 +38,7 @@ export function mapResultToFormResult<TField extends string, TPayload>(
 ): FormResult<TPayload> {
   const {
     successMessage = FORM_SUCCESS_MESSAGES.SUCCESS_MESSAGE,
-    failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
+    failureMessage = FORM_ERROR_MESSAGES.validationFailed,
     raw,
     fields,
     redactFields = ["password" as TField],

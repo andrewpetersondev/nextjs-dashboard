@@ -35,10 +35,10 @@ export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
 ): Promise<FormResult<LoginField>> {
-  const ctx = AUTH_ACTION_CONTEXTS.LOGIN;
+  const ctx = AUTH_ACTION_CONTEXTS.login;
 
   const validated = await validateForm(formData, LoginSchema, fields, {
-    loggerContext: ctx.CONTEXT,
+    loggerContext: ctx.context,
   });
 
   if (!validated.ok) {
@@ -72,6 +72,6 @@ export async function loginAction(
     sameSite: "lax",
   });
 
-  revalidatePath(ROUTES.DASHBOARD.ROOT);
-  redirect(ROUTES.DASHBOARD.ROOT);
+  revalidatePath(ROUTES.dashboard.ROOT);
+  redirect(ROUTES.dashboard.ROOT);
 }

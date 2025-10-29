@@ -35,12 +35,12 @@ export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
 ): Promise<FormResult<SignupField>> {
-  const ctx = AUTH_ACTION_CONTEXTS.SIGNUP;
+  const ctx = AUTH_ACTION_CONTEXTS.signup;
 
-  console.info(ctx.START());
+  console.info(ctx.start());
 
   const validated = await validateForm(formData, SignupSchema, fields, {
-    loggerContext: ctx.CONTEXT,
+    loggerContext: ctx.context,
   });
 
   if (!validated.ok) {
@@ -75,6 +75,6 @@ export async function signupAction(
     sameSite: "lax",
   });
 
-  revalidatePath(ROUTES.DASHBOARD.ROOT);
-  redirect(ROUTES.DASHBOARD.ROOT);
+  revalidatePath(ROUTES.dashboard.ROOT);
+  redirect(ROUTES.dashboard.ROOT);
 }

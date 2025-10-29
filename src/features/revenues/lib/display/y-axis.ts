@@ -1,6 +1,6 @@
 import { CHART_Y_AXIS } from "@/features/revenues/constants";
 import type { SimpleRevenueDto } from "@/features/revenues/dto/types";
-import type { YAxisResult } from "@/features/revenues/types";
+import type { YaxisResult } from "@/features/revenues/types";
 
 /**
  * Generates formatted Y-axis labels and scaling information for revenue charts.
@@ -32,7 +32,7 @@ import type { YAxisResult } from "@/features/revenues/types";
  * @throws {Error} When revenue array is empty
  * @throws {Error} When revenue data contains invalid numeric values
  */
-export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
+export const generateYaxis = (revenue: SimpleRevenueDto[]): YaxisResult => {
   const yAxisLabels: string[] = [];
   const highestRecord: number = Math.max(
     ...revenue.map((month: SimpleRevenueDto) => month.totalAmount),
@@ -41,15 +41,15 @@ export const generateYAxis = (revenue: SimpleRevenueDto[]): YAxisResult => {
   // Calculate the appropriate top label with 10% padding
   const topLabel: number =
     Math.ceil(
-      (highestRecord * (1 + CHART_Y_AXIS.PADDING_RATIO)) / CHART_Y_AXIS.STEP,
-    ) * CHART_Y_AXIS.STEP;
+      (highestRecord * (1 + CHART_Y_AXIS.paddingRatio)) / CHART_Y_AXIS.step,
+    ) * CHART_Y_AXIS.step;
 
   // Generate 5-6 evenly spaced labels
-  const labelCount = CHART_Y_AXIS.LABEL_COUNT;
+  const labelCount = CHART_Y_AXIS.labelCount;
 
   for (let i = labelCount; i >= 0; i--) {
     const value = Math.round((topLabel * i) / labelCount);
-    yAxisLabels.push(`$${value / CHART_Y_AXIS.STEP}K`);
+    yAxisLabels.push(`$${value / CHART_Y_AXIS.step}K`);
   }
 
   return { topLabel, yAxisLabels };

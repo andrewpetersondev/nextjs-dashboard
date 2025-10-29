@@ -33,7 +33,7 @@ async function createDemoUserInternal(
     });
   }
 
-  redirect(ROUTES.DASHBOARD.ROOT);
+  redirect(ROUTES.dashboard.ROOT);
 }
 
 /**
@@ -91,5 +91,5 @@ export async function demoUserAction(
     });
   }
 
-  redirect(ROUTES.DASHBOARD.ROOT);
+  redirect(ROUTES.dashboard.ROOT);
 }

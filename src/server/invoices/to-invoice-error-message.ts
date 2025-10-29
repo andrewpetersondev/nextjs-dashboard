@@ -18,7 +18,7 @@ export function toInvoiceErrorMessage(error: unknown): string {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message
-      : INVOICE_MSG.INVALID_INPUT;
+      : INVOICE_MSG.invalidInput;
     return translator(id);
   }
 
@@ -26,9 +26,9 @@ export function toInvoiceErrorMessage(error: unknown): string {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message
-      : INVOICE_MSG.DB_ERROR;
+      : INVOICE_MSG.dbError;
     return translator(id);
   }
 
-  return translator(INVOICE_MSG.SERVICE_ERROR);
+  return translator(INVOICE_MSG.serviceError);
 }

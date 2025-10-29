@@ -4,7 +4,7 @@ import { toUserId } from "../../src/shared/domain/id-converters";
 import { nodeDb } from "../cli/node-db";
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
-export async function cleanupE2EUsers(): Promise<void> {
+export async function cleanupE2eUsers(): Promise<void> {
   const usersToDelete = await nodeDb
     .select({ id: users.id })
     .from(users)

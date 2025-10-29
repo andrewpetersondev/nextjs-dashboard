@@ -36,6 +36,7 @@ export const AUTH_MESSAGES = {
   invalidCreds: "Invalid email or password",
   missing: "Missing required fields",
   unexpected: "Unexpected error occurred",
+  unknown: "Unknown error occurred",
   validation: "Invalid data",
 } as const;
 
@@ -53,7 +54,7 @@ export function createAuthAppError(
   switch (kind) {
     case "missing_fields":
       return appErrorFromCode(
-        "VALIDATION",
+        "validation",
         AUTH_MESSAGES.missing,
         makeAppErrorDetails({
           extra: init,
@@ -69,7 +70,7 @@ export function createAuthAppError(
 
     case "conflict":
       return appErrorFromCode(
-        "CONFLICT",
+        "conflict",
         AUTH_MESSAGES.conflict,
         makeAppErrorDetails({
           extra: init,
@@ -84,16 +85,16 @@ export function createAuthAppError(
       );
 
     case "invalid_credentials":
-      return appErrorFromCode("UNAUTHORIZED", AUTH_MESSAGES.invalidCreds, {
+      return appErrorFromCode("unauthorized", AUTH_MESSAGES.invalidCreds, {
         reason: "invalid_credentials",
         ...init,
       });
 
     case "validation":
-      return appErrorFromCode("VALIDATION", AUTH_MESSAGES.validation, init);
+      return appErrorFromCode("validation", AUTH_MESSAGES.validation, init);
 
     default:
-      return appErrorFromCode("UNKNOWN", AUTH_MESSAGES.unexpected, init);
+      return appErrorFromCode("unknown", AUTH_MESSAGES.unexpected, init);
   }
 }
 
@@ -103,5 +104,5 @@ export function createAuthAppError(
  */
 export function toUnexpectedAppError(e: unknown): AppError {
   const message = getErrorMessage(e, AUTH_MESSAGES.unexpected);
-  return appErrorFromCode("UNKNOWN", message, { originalError: e });
+  return appErrorFromCode("unknown", message, { originalError: e });
 }

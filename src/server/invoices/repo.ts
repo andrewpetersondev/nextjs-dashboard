@@ -49,7 +49,7 @@ export class InvoiceRepository extends BaseRepository<
     input: InvoiceServiceEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!input || typeof input !== "object") {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
+      return Err(new ValidationError(INVOICE_MSG.invalidInput));
     }
 
     const createdEntityRes = await promiseToRepoResult(
@@ -73,7 +73,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.invalidInput);
     }
 
     const createdEntity = await createInvoiceDal(this.db, input);
@@ -94,7 +94,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
+      return Err(new ValidationError(INVOICE_MSG.invalidId, { id }));
     }
 
     const entityRes = await promiseToRepoResult(readInvoiceDal(this.db, id));
@@ -113,7 +113,7 @@ export class InvoiceRepository extends BaseRepository<
   async read(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
 
     // Call DAL with branded ID
@@ -136,10 +136,10 @@ export class InvoiceRepository extends BaseRepository<
     data: InvoiceFormPartialEntity,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
+      return Err(new ValidationError(INVOICE_MSG.invalidId, { id }));
     }
     if (!data || typeof data !== "object") {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
+      return Err(new ValidationError(INVOICE_MSG.invalidInput));
     }
 
     const updatedEntityRes = await promiseToRepoResult(
@@ -163,10 +163,10 @@ export class InvoiceRepository extends BaseRepository<
     data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
     if (!data || typeof data !== "object") {
-      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.invalidInput);
     }
 
     // Call DAL with branded types
@@ -186,7 +186,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
+      return Err(new ValidationError(INVOICE_MSG.invalidId, { id }));
     }
 
     const deletedEntityRes = await promiseToRepoResult(
@@ -206,7 +206,7 @@ export class InvoiceRepository extends BaseRepository<
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
 
     // Call DAL with branded ID
@@ -223,7 +223,7 @@ export class InvoiceRepository extends BaseRepository<
     id: InvoiceId,
   ): Promise<Result<InvoiceEntity, ValidationError | DatabaseError>> {
     if (!id) {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_ID, { id }));
+      return Err(new ValidationError(INVOICE_MSG.invalidId, { id }));
     }
     return await promiseToRepoResult(readInvoiceDal(this.db, id));
   }
@@ -236,7 +236,7 @@ export class InvoiceRepository extends BaseRepository<
    */
   async findById(id: InvoiceId): Promise<InvoiceEntity> {
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
     return await readInvoiceDal(this.db, id);
   }

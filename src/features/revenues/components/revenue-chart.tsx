@@ -1,7 +1,7 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import type { SimpleRevenueDto } from "@/features/revenues/dto/types";
-import { generateYAxis } from "@/features/revenues/lib/display/y-axis";
+import { generateYaxis } from "@/features/revenues/lib/display/y-axis";
 import { getRevenueChartAction } from "@/server/revenues/actions/actions";
 import { H2, H3 } from "@/ui/atoms/typography/headings";
 
@@ -26,7 +26,7 @@ export async function RevenueChart(): Promise<JSX.Element> {
   const revenue: SimpleRevenueDto[] = [...result.data.monthlyData];
   const chartHeight = 350;
 
-  const { yAxisLabels, topLabel } = generateYAxis(revenue);
+  const { yAxisLabels, topLabel } = generateYaxis(revenue);
   // Avoid division by zero when all data points are zero
   const scaleTop = topLabel > 0 ? topLabel : 1;
 

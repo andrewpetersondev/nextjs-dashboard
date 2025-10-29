@@ -29,7 +29,7 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
   if (!(db && id && updateData)) {
-    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, {
+    throw new ValidationError(INVOICE_MSG.invalidInput, {
       id,
       updateData,
     });
@@ -44,7 +44,7 @@ export async function updateInvoiceDal(
 
   // Check if update was successful
   if (!updated) {
-    throw new DatabaseError(INVOICE_MSG.UPDATE_FAILED, { id });
+    throw new DatabaseError(INVOICE_MSG.updateFailed, { id });
   }
 
   // Convert raw database row to InvoiceEntity

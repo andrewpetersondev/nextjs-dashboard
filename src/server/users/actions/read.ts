@@ -19,7 +19,7 @@ export async function readUserAction(id: string): Promise<UserDto | null> {
       context: "readUserAction",
       error,
       id,
-      message: USER_ERROR_MESSAGES.READ_FAILED,
+      message: USER_ERROR_MESSAGES.readFailed,
     });
     return null;
   }

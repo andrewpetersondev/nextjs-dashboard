@@ -1,4 +1,4 @@
 export const IMAGE_SIZES = {
-  MEDIUM: 40,
-  SMALL: 30,
+  medium: 40,
+  small: 30,
 } as const;

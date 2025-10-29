@@ -2,7 +2,7 @@ import { format, isValid, parse } from "date-fns";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { isDateValid } from "@/shared/utils/date/guards";
-import { toFirstDayOfMonthUTC } from "@/shared/utils/date/normalize";
+import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
 
 /**
  * Result-based normalization into a first-of-month UTC Date.
@@ -16,7 +16,7 @@ export function validatePeriodResult(
         new ValidationError("Invalid period: Date instance is not valid"),
       );
     }
-    return Ok(toFirstDayOfMonthUTC(input));
+    return Ok(toFirstDayOfMonthUtc(input));
   }
 
   if (typeof input === "string") {
@@ -24,7 +24,7 @@ export function validatePeriodResult(
     const parsedMonth = parse(input, "yyyy-MM", new Date());
 
     if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === input) {
-      return Ok(toFirstDayOfMonthUTC(parsedMonth));
+      return Ok(toFirstDayOfMonthUtc(parsedMonth));
     }
 
     // Try yyyy-MM-dd format (must be first day of month)
@@ -38,7 +38,7 @@ export function validatePeriodResult(
           ),
         );
       }
-      return Ok(toFirstDayOfMonthUTC(parsedDay));
+      return Ok(toFirstDayOfMonthUtc(parsedDay));
     }
 
     return Err(

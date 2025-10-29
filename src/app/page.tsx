@@ -25,7 +25,7 @@ export default function Page(): JSX.Element {
           <Link
             className="flex items-center gap-5 self-start rounded-md bg-bg-active px-6 py-3 font-semibold text-sm text-text-active shadow-sm transition-colors hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 md:text-base"
             data-testid="login-button"
-            href={ROUTES.AUTH.LOGIN}
+            href={ROUTES.AUTH.login}
           >
             <span className="font-experiment">Log in</span>{" "}
             <ArrowRightIcon className="w-5 md:w-6" />

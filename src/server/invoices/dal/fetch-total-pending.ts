@@ -20,7 +20,7 @@ export async function fetchTotalPendingInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (pending === undefined) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_TOTAL_PENDING_FAILED);
+    throw new DatabaseError(INVOICE_MSG.fetchTotalPendingFailed);
   }
 
   return pending;

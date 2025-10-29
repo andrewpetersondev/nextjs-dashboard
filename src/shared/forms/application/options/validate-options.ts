@@ -1,7 +1,7 @@
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/constants/messages";
 
 const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;
-const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.VALIDATION_FAILED;
+const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
 
 /**
  * Options for form validation operations.

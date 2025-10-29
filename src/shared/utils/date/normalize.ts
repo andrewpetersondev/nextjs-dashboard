@@ -5,7 +5,7 @@ import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
  * Normalizes a Date to the first day of its month in UTC.
  * Throws ValidationError if the provided date is invalid.
  */
-export function toFirstDayOfMonthUTC(date: Date): Date {
+export function toFirstDayOfMonthUtc(date: Date): Date {
   if (!isValid(date)) {
     throw new ValidationError("Invalid Date");
   }

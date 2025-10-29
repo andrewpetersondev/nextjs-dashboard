@@ -20,7 +20,7 @@ export async function fetchTotalPaidInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (paid === undefined) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_TOTAL_PAID_FAILED);
+    throw new DatabaseError(INVOICE_MSG.fetchTotalPaidFailed);
   }
 
   return paid;

@@ -3,7 +3,7 @@ import { format } from "date-fns";
 /**
  * Formats a Date as yyyy-MM (UTC-based string useful for keys).
  */
-export function formatYearMonthUTC(date: Date): string {
+export function formatYearMonthUtc(date: Date): string {
   return format(date, "yyyy-MM");
 }
 

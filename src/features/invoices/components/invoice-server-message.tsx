@@ -25,9 +25,9 @@ export const InvoiceServerMessage = ({
   showAlert,
 }: InvoiceServerMessageProps): JSX.Element => {
   // Constants for styling to avoid magic strings
-  const SUCCESS_STYLES = "border-green-300 bg-green-50 text-green-800";
-  const ERROR_STYLES = "border-red-300 bg-red-50 text-red-800";
-  const BASE_STYLES =
+  const SuccessStyles = "border-green-300 bg-green-50 text-green-800";
+  const ErrorStyles = "border-red-300 bg-red-50 text-red-800";
+  const BaseStyles =
     "pointer-events-auto absolute left-0 right-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500";
 
   if (!state.message) {
@@ -39,7 +39,7 @@ export const InvoiceServerMessage = ({
     <div className="relative min-h-[56px]">
       <div
         aria-live={state.success ? "polite" : "assertive"}
-        className={`${BASE_STYLES} ${showAlert ? "translate-y-0 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"} ${state.success ? SUCCESS_STYLES : ERROR_STYLES} `}
+        className={`${BaseStyles} ${showAlert ? "translate-y-0 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"} ${state.success ? SuccessStyles : ErrorStyles} `}
         data-cy={
           state.success
             ? "create-invoice-success-message"

@@ -66,7 +66,7 @@ export async function createUserAction(
           selectSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
           allowed,
         ),
-        message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+        message: USER_ERROR_MESSAGES.validationFailed,
       });
     }
 
@@ -86,20 +86,20 @@ export async function createUserAction(
       });
       return formError({
         fieldErrors: createEmptyDenseFieldErrorMap(allowed),
-        message: USER_ERROR_MESSAGES.CREATE_FAILED,
+        message: USER_ERROR_MESSAGES.createFailed,
       });
     }
 
-    return formOk(user, USER_SUCCESS_MESSAGES.CREATE_SUCCESS);
+    return formOk(user, USER_SUCCESS_MESSAGES.createSuccess);
   } catch (error) {
     sharedLogger.error({
       context: "createUserAction",
       error,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      message: USER_ERROR_MESSAGES.unexpected,
     });
     return formError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      message: USER_ERROR_MESSAGES.unexpected,
     });
   }
 }

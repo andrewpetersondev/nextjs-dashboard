@@ -18,9 +18,7 @@ export async function fetchTotalCustomersCountDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (value === undefined) {
-    throw new ValidationError(
-      CUSTOMER_SERVER_ERROR_MESSAGES.FETCH_TOTAL_FAILED,
-    );
+    throw new ValidationError(CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed);
   }
 
   return value;

@@ -12,7 +12,7 @@ export class InfrastructureError extends BaseError {
     cause?: unknown,
   ) {
     // Adapt to BaseError(options) signature
-    super("INFRASTRUCTURE", { cause, context, message });
+    super("infrastructure", { cause, context, message });
   }
 }
 
@@ -26,7 +26,7 @@ export class DatabaseError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("DATABASE", { cause, context, message });
+    super("database", { cause, context, message });
   }
 }
 
@@ -40,7 +40,7 @@ export class CacheError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CACHE", { cause, context, message });
+    super("cache", { cause, context, message });
   }
 }
 
@@ -54,6 +54,6 @@ export class CryptoError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("CRYPTO", { cause, context, message });
+    super("crypto", { cause, context, message });
   }
 }

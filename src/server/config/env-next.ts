@@ -13,16 +13,16 @@ import { z } from "zod";
 const NON_EMPTY_STRING_MIN_LENGTH = 1 as const;
 
 const ServerEnvSchema = z.object({
-  DATABASE_URL: z
+  databaseUrl: z
     .string()
     .url("DATABASE_URL must be a valid URL")
     .min(NON_EMPTY_STRING_MIN_LENGTH),
 
-  SESSION_AUDIENCE: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
+  sessionAudience: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
 
-  SESSION_ISSUER: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
+  sessionIssuer: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
 
-  SESSION_SECRET: z
+  sessionSecret: z
     .string()
     .min(NON_EMPTY_STRING_MIN_LENGTH, "SESSION_SECRET cannot be empty"),
 });
@@ -53,7 +53,7 @@ function parseServerEnv() {
 /** Export validated server-only variables */
 const env = parseServerEnv();
 
-export const DATABASE_URL = env.DATABASE_URL;
-export const SESSION_SECRET = env.SESSION_SECRET;
-export const SESSION_ISSUER = env.SESSION_ISSUER;
-export const SESSION_AUDIENCE = env.SESSION_AUDIENCE;
+export const DATABASE_URL = env.databaseUrl;
+export const SESSION_SECRET = env.sessionSecret;
+export const SESSION_ISSUER = env.sessionIssuer;
+export const SESSION_AUDIENCE = env.sessionAudience;

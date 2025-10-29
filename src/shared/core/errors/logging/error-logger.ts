@@ -24,7 +24,7 @@ export function logUnknownAsBaseError(
   const be =
     err instanceof BaseError
       ? err
-      : BaseError.from(err, "UNKNOWN", { source: "unknown" });
+      : BaseError.from(err, "unknown", { source: "unknown" });
   const payload = {
     code: be.code,
     // Use shared default redactor

@@ -17,8 +17,8 @@ export async function deleteUserAction(
   id: string,
 ): Promise<LegacyFormState<"_root">> {
   let result: LegacyFormState<"_root"> = {
-    errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
-    message: USER_ERROR_MESSAGES.UNEXPECTED,
+    errors: { _root: [USER_ERROR_MESSAGES.unexpected] },
+    message: USER_ERROR_MESSAGES.unexpected,
     success: false,
   };
 
@@ -31,8 +31,8 @@ export async function deleteUserAction(
       redirect(USERS_DASHBOARD_PATH);
     } else {
       result = {
-        errors: { _root: [USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED] },
-        message: USER_ERROR_MESSAGES.NOT_FOUND_OR_DELETE_FAILED,
+        errors: { _root: [USER_ERROR_MESSAGES.notFoundOrDeleteFailed] },
+        message: USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
         success: false,
       };
     }
@@ -41,11 +41,11 @@ export async function deleteUserAction(
       context: "deleteUserAction",
       error,
       id,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      message: USER_ERROR_MESSAGES.unexpected,
     });
     result = {
-      errors: { _root: [USER_ERROR_MESSAGES.UNEXPECTED] },
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      errors: { _root: [USER_ERROR_MESSAGES.unexpected] },
+      message: USER_ERROR_MESSAGES.unexpected,
       success: false,
     };
   }

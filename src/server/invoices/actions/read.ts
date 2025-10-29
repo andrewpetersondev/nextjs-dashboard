@@ -25,7 +25,7 @@ export async function readInvoiceAction(
       { id },
       {
         id: {
-          message: INVOICE_MSG.INVALID_ID,
+          message: INVOICE_MSG.invalidId,
           validate: (v) => v.trim().length > 0,
         },
       },
@@ -39,7 +39,7 @@ export async function readInvoiceAction(
     result = {
       data: invoice,
       errors: {},
-      message: translator(INVOICE_MSG.READ_SUCCESS),
+      message: translator(INVOICE_MSG.readSuccess),
       success: true,
     };
   } catch (error) {

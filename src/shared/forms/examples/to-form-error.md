@@ -14,7 +14,7 @@ export function toFormError<
 }): FormResult<TField, TPayload, string, TMessage> {
   const {
     fieldErrors,
-    failureMessage = FORM_ERROR_MESSAGES.VALIDATION_FAILED,
+    failureMessage = FORM_ERROR_MESSAGES.validationFailed,
     raw = {},
     fields = [] as const,
     redactFields = ["password" as TField],

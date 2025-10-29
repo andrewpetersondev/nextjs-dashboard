@@ -7,11 +7,10 @@ function readStr(v: unknown): string | undefined {
 }
 
 export const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
-  users_email_key: "email",
-  // drizzle/pg typical naming patterns; adjust to your actual constraint names if different
-  users_email_unique: "email",
-  users_username_key: "username",
-  users_username_unique: "username",
+  usersEmailKey: "email",
+  usersEmailUnique: "email",
+  usersUsernameKey: "username",
+  usersUsernameUnique: "username",
 };
 
 // Narrow Pg error shape with readonly fields for safety.
@@ -155,5 +154,5 @@ export function toBaseErrorFromPgUnknown(
   };
 
   // Normalize unknown/Error into canonical DATABASE code; preserve cause
-  return BaseError.wrap("DATABASE", err, details, message);
+  return BaseError.wrap("database", err, details, message);
 }

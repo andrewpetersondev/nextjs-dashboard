@@ -13,9 +13,9 @@ function safeStringifyUnknown(value: unknown): string {
     const json = JSON.stringify(value, (_k, v) =>
       typeof v === "bigint" ? v.toString() : v,
     );
-    const MAX = 10_000; // limit ~10KB
-    if (json.length > MAX) {
-      return `${json.slice(0, MAX)}…[truncated ${json.length - MAX} chars]`;
+    const Max = 10_000; // limit ~10KB
+    if (json.length > Max) {
+      return `${json.slice(0, Max)}…[truncated ${json.length - Max} chars]`;
     }
     return json ?? String(value);
   } catch {
@@ -261,7 +261,7 @@ export class BaseError extends Error {
    */
   static from(
     value: unknown,
-    fallbackCode: ErrorCode = "UNKNOWN",
+    fallbackCode: ErrorCode = "unknown",
     context: Readonly<Record<string, unknown>> = {},
   ): BaseError {
     if (value instanceof BaseError) {

@@ -9,10 +9,10 @@ import {
 const MIN_LENGTH = 20;
 
 const nodeToolingEnvSchema = z.object({
-  CYPRESS_BASE_URL: z.url().optional(),
-  DATABASE_ENV: EnvironmentSchema,
-  DATABASE_URL: z.url(),
-  SESSION_SECRET: z
+  cypressBaseUrl: z.url().optional(),
+  databaseEnv: EnvironmentSchema,
+  databaseUrl: z.url(),
+  sessionSecret: z
     .string()
     .min(MIN_LENGTH, `SESSION_SECRET must be at least ${MIN_LENGTH} chars`),
 });
@@ -20,7 +20,7 @@ const nodeToolingEnvSchema = z.object({
 // Merge process.env with normalized DATABASE_ENV fallback
 const baseEnv = {
   ...process.env,
-  DATABASE_ENV: getDatabaseEnv(),
+  databaseEnv: getDatabaseEnv(),
 };
 
 const parsed = nodeToolingEnvSchema.safeParse(baseEnv);
@@ -38,7 +38,7 @@ if (!parsed.success) {
 
 const data = parsed.data;
 
-export const DATABASE_ENV: Environment = data.DATABASE_ENV;
-export const DATABASE_URL: string = data.DATABASE_URL;
-export const CYPRESS_BASE_URL: string | undefined = data.CYPRESS_BASE_URL;
-export const SESSION_SECRET: string = data.SESSION_SECRET;
+export const DATABASE_ENV: Environment = data.databaseEnv;
+export const DATABASE_URL: string = data.databaseUrl;
+export const CYPRESS_BASE_URL: string | undefined = data.cypressBaseUrl;
+export const SESSION_SECRET: string = data.sessionSecret;

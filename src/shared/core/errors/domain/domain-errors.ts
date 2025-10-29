@@ -11,7 +11,7 @@ export class ValidationError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("VALIDATION", { cause, context, message });
+    super("validation", { cause, context, message });
   }
 }
 

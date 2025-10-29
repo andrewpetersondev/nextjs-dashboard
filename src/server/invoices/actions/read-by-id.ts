@@ -11,7 +11,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
     // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getAppDb());
@@ -25,7 +25,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     return invoice;
   } catch (error) {
     throw new DatabaseError(
-      INVOICE_MSG.DB_ERROR,
+      INVOICE_MSG.dbError,
       {},
       error instanceof Error ? error : undefined,
     );

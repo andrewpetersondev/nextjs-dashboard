@@ -1,5 +1,5 @@
 export const DASHBOARD_TITLES = {
-  ADMIN: "Admin Dashboard",
-  GUEST: "Guest Dashboard",
-  USER: "User Dashboard",
+  admin: "Admin Dashboard",
+  guest: "Guest Dashboard",
+  user: "User Dashboard",
 } as const;

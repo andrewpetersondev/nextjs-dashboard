@@ -71,7 +71,7 @@ export function getDatabaseEnv(): Environment {
   }
 
   const fallback = getNodeEnv();
-  const raw = toLower(process.env.DATABASE_ENV, fallback);
+  const raw = toLower(process.env.databaseEnv, fallback);
   const parsed = EnvironmentSchema.safeParse(raw);
   cachedDatabaseEnv = parsed.success ? parsed.data : "development";
 

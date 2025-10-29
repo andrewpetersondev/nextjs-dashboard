@@ -28,7 +28,7 @@ export async function deleteInvoiceAction(
   try {
     // Basic validation of input. Throw to catch block.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
 
     // Dependency injection: pass repository to service
@@ -40,7 +40,7 @@ export async function deleteInvoiceAction(
 
     // Emit base event with all context.
     const { EventBus } = await import("@/server/events/event-bus");
-    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.DELETED, {
+    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.deleted, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),
       invoice,
@@ -48,13 +48,13 @@ export async function deleteInvoiceAction(
     });
 
     // Invalidate dashboard cache so revenue chart updates
-    revalidatePath(ROUTES.DASHBOARD.ROOT);
+    revalidatePath(ROUTES.dashboard.ROOT);
 
     // Success result
     result = {
       data: invoice,
       errors: {},
-      message: INVOICE_MSG.DELETE_SUCCESS,
+      message: INVOICE_MSG.deleteSuccess,
       success: true,
     };
   } catch (error) {
@@ -62,7 +62,7 @@ export async function deleteInvoiceAction(
       context: "deleteInvoiceAction",
       error,
       id,
-      message: INVOICE_MSG.SERVICE_ERROR,
+      message: INVOICE_MSG.serviceError,
     });
 
     const message = toInvoiceErrorMessage(error);

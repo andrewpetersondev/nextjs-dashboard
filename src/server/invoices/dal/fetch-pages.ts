@@ -50,7 +50,7 @@ export async function fetchInvoicesPagesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_PAGES_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.fetchPagesFailed, {
       query,
       total,
     });

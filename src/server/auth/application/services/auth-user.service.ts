@@ -41,7 +41,7 @@ export class AuthUserService {
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.CREATE_DEMO_USER;
+    const ctx = AUTH_SERVICE_CONTEXTS.createDemoUser;
 
     try {
       const db = getAppDb();
@@ -75,7 +75,7 @@ export class AuthUserService {
 
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        ctx.CONTEXT,
+        ctx.context,
       );
       return appError.ok
         ? appError
@@ -94,7 +94,7 @@ export class AuthUserService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.SIGNUP;
+    const ctx = AUTH_SERVICE_CONTEXTS.signup;
 
     if (!hasRequiredSignupFields(input)) {
       console.error("missing required fields");
@@ -126,7 +126,7 @@ export class AuthUserService {
 
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        ctx.CONTEXT,
+        ctx.context,
       );
       return appError.ok
         ? appError
@@ -144,7 +144,7 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.LOGIN;
+    const ctx = AUTH_SERVICE_CONTEXTS.login;
 
     try {
       const user = await this.repo.login({ email: input.email });
@@ -180,7 +180,7 @@ export class AuthUserService {
       console.error("Failed to login");
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
-        ctx.CONTEXT,
+        ctx.context,
       );
       return appError.ok
         ? appError

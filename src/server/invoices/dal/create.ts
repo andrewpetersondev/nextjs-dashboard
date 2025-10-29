@@ -38,7 +38,7 @@ export async function createInvoiceDal(
       .returning();
 
     if (!createdInvoice) {
-      throw new DatabaseError(INVOICE_MSG.CREATE_FAILED, {
+      throw new DatabaseError(INVOICE_MSG.createFailed, {
         input,
       });
     }

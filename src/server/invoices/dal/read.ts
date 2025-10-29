@@ -24,7 +24,7 @@ export async function readInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Basic validation of parameters
   if (!(db && id)) {
-    throw new ValidationError(INVOICE_MSG.INVALID_INPUT, { id });
+    throw new ValidationError(INVOICE_MSG.invalidInput, { id });
   }
 
   // Fetch invoice by ID

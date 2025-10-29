@@ -8,25 +8,25 @@ import "server-only";
  * Action-level log data factories (triggered directly by user interaction)
  */
 export const AUTH_ACTION_CONTEXTS = {
-  DEMO_USER: {
-    CONTEXT: "action.auth.demo-user" as const,
-    FAIL: (reason: string) => ({ kind: "failure", reason }),
-    START: () => ({ kind: "start" }),
-    SUCCESS: (role: string) => ({ kind: "success", role }),
+  demoUser: {
+    context: "action.auth.demo-user" as const,
+    fail: (reason: string) => ({ kind: "failure", reason }),
+    start: () => ({ kind: "start" }),
+    success: (role: string) => ({ kind: "success", role }),
   },
 
-  LOGIN: {
-    CONTEXT: "action.auth.login" as const,
-    FAIL: (reason: string) => ({ kind: "failure", reason }),
-    START: () => ({ kind: "start" }),
-    SUCCESS: (userId: string) => ({ kind: "success", userId }),
+  login: {
+    context: "action.auth.login" as const,
+    fail: (reason: string) => ({ kind: "failure", reason }),
+    start: () => ({ kind: "start" }),
+    success: (userId: string) => ({ kind: "success", userId }),
   },
 
-  SIGNUP: {
-    CONTEXT: "action.auth.signup" as const,
-    FAIL: (reason: string) => ({ kind: "failure", reason }),
-    START: () => ({ kind: "start" }),
-    SUCCESS: (email: string) => ({ email, kind: "success" }),
+  signup: {
+    context: "action.auth.signup" as const,
+    fail: (reason: string) => ({ kind: "failure", reason }),
+    start: () => ({ kind: "start" }),
+    success: (email: string) => ({ email, kind: "success" }),
   },
 } as const;
 
@@ -38,20 +38,20 @@ export const AUTH_ACTION_CONTEXTS = {
  * Internal service-level log data factories (server-only logic)
  */
 export const AUTH_SERVICE_CONTEXTS = {
-  CREATE_DEMO_USER: {
-    CONTEXT: "service.auth.create-demo-user" as const,
+  createDemoUser: {
+    context: "service.auth.create-demo-user" as const,
 
-    FAIL_COUNTER: (role: string) => ({
+    failCounter: (role: string) => ({
       kind: "error",
       role,
     }),
 
-    SUCCESS: (role: string) => ({
+    success: (role: string) => ({
       kind: "success",
       role,
     }),
 
-    TRANSACTION_ERROR: (err: unknown) => ({
+    transactionError: (err: unknown) => ({
       error:
         err instanceof Error
           ? { message: err.message, stack: err.stack }
@@ -60,25 +60,25 @@ export const AUTH_SERVICE_CONTEXTS = {
     }),
   },
 
-  LOGIN: {
-    CONTEXT: "service.auth.login" as const,
+  login: {
+    context: "service.auth.login" as const,
 
     invalidCredentials: (email: string) => ({
       email,
       kind: "validation",
     }),
 
-    MISSING_PASSWORD: (userId: string) => ({
+    missingPassword: (userId: string) => ({
       kind: "auth-invariant",
       userId,
     }),
 
-    SUCCESS: (userId: string) => ({
+    success: (userId: string) => ({
       kind: "success",
       userId,
     }),
 
-    TRANSACTION_ERROR: (err: unknown) => ({
+    transactionError: (err: unknown) => ({
       error:
         err instanceof Error
           ? { message: err.message, stack: err.stack }
@@ -87,15 +87,15 @@ export const AUTH_SERVICE_CONTEXTS = {
     }),
   },
 
-  SIGNUP: {
-    CONTEXT: "service.auth.signup" as const,
+  signup: {
+    context: "service.auth.signup" as const,
 
-    SUCCESS: (email: string) => ({
+    success: (email: string) => ({
       email,
       kind: "success",
     }),
 
-    TRANSACTION_ERROR: (err: unknown) => ({
+    transactionError: (err: unknown) => ({
       error:
         err instanceof Error
           ? { message: err.message, stack: err.stack }
@@ -103,7 +103,7 @@ export const AUTH_SERVICE_CONTEXTS = {
       kind: "exception",
     }),
 
-    VALIDATION_FAIL: () => ({
+    validationFail: () => ({
       kind: "validation",
     }),
   },

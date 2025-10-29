@@ -59,7 +59,7 @@ export async function fetchFilteredCustomersDal(
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
     throw new DatabaseError(
-      CUSTOMER_SERVER_ERROR_MESSAGES.FETCH_FILTERED_FAILED,
+      CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
       {},
       error instanceof Error ? error : undefined,
     );

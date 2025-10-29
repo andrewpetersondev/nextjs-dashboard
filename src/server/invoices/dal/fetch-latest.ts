@@ -39,7 +39,7 @@ export async function fetchLatestInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_LATEST_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.fetchLatestFailed, {
       limit,
     });
   }

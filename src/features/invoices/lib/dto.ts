@@ -1,7 +1,7 @@
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 
 /** Transport aliases (unambiguous formats) */
-export type ISODateString = string; // YYYY-MM-DD
+export type IsoDateString = string; // YYYY-MM-DD
 export type PeriodFirstDayString = string; // YYYY-MM-01
 
 /**
@@ -13,7 +13,7 @@ export interface InvoiceDto {
   readonly amount: number; // integer cents
   readonly customerId: string;
   /** Transport date format: ISO date string = YYYY-MM-DD */
-  readonly date: ISODateString;
+  readonly date: IsoDateString;
   /** Transport period format: YYYY-MM-01 (first-of-month date) */
   readonly revenuePeriod: PeriodFirstDayString;
   readonly sensitiveData: string;

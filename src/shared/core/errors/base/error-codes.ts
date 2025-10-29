@@ -18,26 +18,19 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
-  CACHE: {
+  cache: {
     category: "infrastructure",
     description: "Cache operation failed",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  CONFIG: {
+  config: {
     category: "server",
     description: "Server configuration error",
     httpStatus: 500,
     retryable: false,
     severity: "critical",
-  },
-  CRYPTO: {
-    category: "infrastructure",
-    description: "Cryptographic operation failed",
-    httpStatus: 500,
-    retryable: false,
-    severity: "error",
   },
   conflict: {
     authFields: ["email", "username"] as const,
@@ -47,14 +40,21 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
-  DATABASE: {
+  crypto: {
+    category: "infrastructure",
+    description: "Cryptographic operation failed",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
+  },
+  database: {
     category: "infrastructure",
     description: "Database operation failed",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  DEPENDENCY_FAILURE: {
+  dependencyFailure: {
     category: "dependency",
     description: "Upstream dependency failed",
     httpStatus: 502,
@@ -68,21 +68,21 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
-  INFRASTRUCTURE: {
+  infrastructure: {
     category: "infrastructure",
     description: "Infrastructure failure",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  INTEGRITY: {
+  integrity: {
     category: "server",
     description: "Data integrity violation",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  INTERNAL: {
+  internal: {
     category: "server",
     description: "Internal server error",
     httpStatus: 500,
@@ -96,60 +96,46 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "info",
   },
-  PARSE: {
+  parse: {
     category: "client",
     description: "Parsing input failed",
     httpStatus: 400,
     retryable: false,
     severity: "warn",
   },
-  PRECONDITION_FAILED: {
+  preconditionFailed: {
     category: "client",
     description: "Precondition not met",
     httpStatus: 412,
     retryable: false,
     severity: "warn",
   },
-  RATE_LIMITED: {
+  rateLimited: {
     category: "client",
     description: "Too many requests",
     httpStatus: 429,
     retryable: true,
     severity: "warn",
   },
-  RETRY_EXHAUSTED: {
+  retryExhausted: {
     category: "server",
     description: "All retry attempts failed",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  SERIALIZATION: {
+  serialization: {
     category: "server",
     description: "Serialization failure",
     httpStatus: 500,
     retryable: false,
     severity: "error",
   },
-  TIMEOUT: {
+  timeout: {
     category: "infrastructure",
     description: "Operation timed out",
     httpStatus: 504,
     retryable: true,
-    severity: "error",
-  },
-  UNAVAILABLE: {
-    category: "infrastructure",
-    description: "Service temporarily unavailable",
-    httpStatus: 503,
-    retryable: true,
-    severity: "error",
-  },
-  UNKNOWN: {
-    category: "server",
-    description: "An unknown error occurred",
-    httpStatus: 500,
-    retryable: false,
     severity: "error",
   },
   unauthorized: {
@@ -160,7 +146,21 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
-  VALIDATION: {
+  unavailable: {
+    category: "infrastructure",
+    description: "Service temporarily unavailable",
+    httpStatus: 503,
+    retryable: true,
+    severity: "error",
+  },
+  unknown: {
+    category: "server",
+    description: "An unknown error occurred",
+    httpStatus: 500,
+    retryable: false,
+    severity: "error",
+  },
+  validation: {
     authFields: ["email", "username", "password"] as const,
     category: "client",
     description: "Validation failed",

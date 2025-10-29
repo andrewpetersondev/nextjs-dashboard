@@ -23,7 +23,7 @@ export async function readInvoicesPagesAction(query = ""): Promise<number> {
         message: "Invalid totalPages returned from DAL",
         query: sanitizedQuery,
       });
-      throw new Error(INVOICE_MSG.FETCH_PAGES_FAILED);
+      throw new Error(INVOICE_MSG.fetchPagesFailed);
     }
 
     return totalPages;
@@ -31,9 +31,9 @@ export async function readInvoicesPagesAction(query = ""): Promise<number> {
     sharedLogger.error({
       context: "readInvoicesPagesAction",
       error,
-      message: INVOICE_MSG.DB_ERROR,
+      message: INVOICE_MSG.dbError,
       query,
     });
-    throw new Error(INVOICE_MSG.DB_ERROR);
+    throw new Error(INVOICE_MSG.dbError);
   }
 }

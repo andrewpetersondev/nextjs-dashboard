@@ -13,8 +13,8 @@ const InvoiceOperations = [
 
 export const INVOICE_EVENTS = {
   created: "InvoiceCreatedEvent",
-  DELETED: "InvoiceDeletedEvent",
-  UPDATED: "InvoiceUpdatedEvent",
+  deleted: "InvoiceDeletedEvent",
+  updated: "InvoiceUpdatedEvent",
 } as const;
 
 /**

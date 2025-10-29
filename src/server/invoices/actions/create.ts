@@ -60,25 +60,25 @@ export async function createInvoiceAction(
         operation: "invoice_created",
       });
 
-      revalidatePath(ROUTES.DASHBOARD.ROOT);
+      revalidatePath(ROUTES.dashboard.ROOT);
 
       result = {
         data: parsed.data,
-        message: translator(INVOICE_MSG.CREATE_SUCCESS),
+        message: translator(INVOICE_MSG.createSuccess),
         success: true,
       };
     } else {
       result = {
         ...prevState,
         errors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
-        message: translator(INVOICE_MSG.VALIDATION_FAILED),
+        message: translator(INVOICE_MSG.validationFailed),
         success: false,
       };
     }
   } catch (error) {
     // Decide the top-level user-facing message based on error type
     const baseMessage = isZodErrorInstance(error)
-      ? translator(INVOICE_MSG.VALIDATION_FAILED)
+      ? translator(INVOICE_MSG.validationFailed)
       : toInvoiceErrorMessage(error);
 
     sharedLogger.error({

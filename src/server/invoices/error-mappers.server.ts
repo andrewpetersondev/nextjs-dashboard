@@ -33,5 +33,5 @@ export function mapToRepoError(e: unknown): RepoError {
   }
 
   // Attach the original unknown error as cause in a typed context object
-  return new DatabaseError(INVOICE_MSG.DB_ERROR, { cause: e });
+  return new DatabaseError(INVOICE_MSG.dbError, { cause: e });
 }

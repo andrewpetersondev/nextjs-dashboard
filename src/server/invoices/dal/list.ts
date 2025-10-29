@@ -65,7 +65,7 @@ export async function _listInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!entities || entities.length === 0 || !total || total < 0) {
-    throw new DatabaseError(INVOICE_MSG.FETCH_FAILED, {
+    throw new DatabaseError(INVOICE_MSG.fetchFailed, {
       filter,
       page,
       pageSize,

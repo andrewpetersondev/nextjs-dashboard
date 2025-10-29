@@ -63,7 +63,7 @@ export class UsersRepository {
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       return Err({
-        code: "UNKNOWN" as const,
+        code: "unknown" as const,
         kind: "DatabaseError" as const,
         message,
       });

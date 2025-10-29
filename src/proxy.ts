@@ -31,22 +31,22 @@ export default async function proxy(req: NextRequest) {
   if (isAdminRoute) {
     // Not authenticated: go straight to login (avoid double redirects)
     if (!session?.user?.userId) {
-      return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.nextUrl));
+      return NextResponse.redirect(new URL(ROUTES.AUTH.login, req.nextUrl));
     }
     // Authenticated but not admin
     if (session.user.role !== ADMIN_ROLE) {
-      return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
+      return NextResponse.redirect(new URL(ROUTES.dashboard.ROOT, req.nextUrl));
     }
   }
 
   // Protected routes (folder-scoped)
   if (isProtectedRoute && !session?.user?.userId) {
-    return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.nextUrl));
+    return NextResponse.redirect(new URL(ROUTES.AUTH.login, req.nextUrl));
   }
 
   // Public routes: bounce authenticated users to dashboard
   if (isPublicRoute && session?.user?.userId && !isProtectedRouteHelper(path)) {
-    return NextResponse.redirect(new URL(ROUTES.DASHBOARD.ROOT, req.nextUrl));
+    return NextResponse.redirect(new URL(ROUTES.dashboard.ROOT, req.nextUrl));
   }
 
   return NextResponse.next();

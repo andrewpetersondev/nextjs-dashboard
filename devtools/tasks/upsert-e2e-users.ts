@@ -6,7 +6,7 @@ import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 
 /** Upsert an E2E user and invalidate existing sessions. */
-export async function upsertE2EUser(user: {
+export async function upsertE2eUser(user: {
   email: string;
   password: string;
   role?: UserRole;

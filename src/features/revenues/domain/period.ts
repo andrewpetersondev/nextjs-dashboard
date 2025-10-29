@@ -1,6 +1,6 @@
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
-import { formatYearMonthUTC } from "@/shared/utils/date/format";
+import { formatYearMonthUtc } from "@/shared/utils/date/format";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).
@@ -21,5 +21,5 @@ export function periodToDate(period: Period): Date {
  */
 export function periodKey(period: Period): string {
   const d = periodToDate(period);
-  return formatYearMonthUTC(d);
+  return formatYearMonthUtc(d);
 }

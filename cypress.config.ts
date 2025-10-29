@@ -22,10 +22,10 @@ export default defineConfig({
       // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
       // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
       config.baseUrl =
-        env.CYPRESS_BASE_URL ?? config.baseUrl ?? "http://localhost:3000";
-      config.env.DATABASE_ENV = env.DATABASE_ENV;
-      config.env.DATABASE_URL = env.DATABASE_URL;
-      config.env.SESSION_SECRET = env.SESSION_SECRET;
+        env.cypressBaseUrl ?? config.baseUrl ?? "http://localhost:3000";
+      config.env.DATABASE_ENV = env.databaseEnv;
+      config.env.DATABASE_URL = env.databaseUrl;
+      config.env.SESSION_SECRET = env.sessionSecret;
 
       // Small helper to DRY api-calls-based tasks
       const callOkJson = async (path: string) => {
@@ -51,10 +51,10 @@ export default defineConfig({
       // Database setup/teardown tasks
       on("task", {
         async "db:cleanup"() {
-          const { cleanupE2EUsers } = await import(
+          const { cleanupE2eUsers } = await import(
             "./devtools/tasks/cleanup-e2e-users"
           );
-          await cleanupE2EUsers();
+          await cleanupE2eUsers();
           return null;
         },
         async "db:createUser"(user: {
@@ -85,10 +85,10 @@ export default defineConfig({
           username?: string;
           role?: UserRole;
         }) {
-          const { upsertE2EUser } = await import(
+          const { upsertE2eUser } = await import(
             "./devtools/tasks/upsert-e2e-users"
           );
-          await upsertE2EUser(user);
+          await upsertE2eUser(user);
           return null;
         },
         async "db:userExists"(email: string) {

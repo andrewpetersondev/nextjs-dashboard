@@ -19,7 +19,7 @@ export type RevenueSource = (typeof REVENUE_SOURCES)[number];
  * @prop yAxisLabels - Array of formatted Y-axis labels in ascending order
  * @prop topLabel - Maximum chart value in dollars for scaling purposes
  */
-export interface YAxisResult {
+export interface YaxisResult {
   readonly yAxisLabels: readonly string[];
   readonly topLabel: Dollars;
 }

@@ -27,10 +27,10 @@ export function CustomersTableDesktopRow({
           <Image
             alt={`${customer.name}'s profile picture`}
             className="rounded-full"
-            height={IMAGE_SIZES.SMALL}
+            height={IMAGE_SIZES.small}
             priority={false}
             src={customer.imageUrl}
-            width={IMAGE_SIZES.SMALL}
+            width={IMAGE_SIZES.small}
           />
           <p>{customer.name}</p>
         </div>

@@ -26,9 +26,9 @@ export function LatestInvoiceItem({
         <Image
           alt={`${invoice.name}'s profile picture`}
           className="mr-4 rounded-full"
-          height={IMAGE_SIZES.SMALL}
+          height={IMAGE_SIZES.small}
           src={invoice.imageUrl}
-          width={IMAGE_SIZES.SMALL}
+          width={IMAGE_SIZES.small}
         />
         <div className="min-w-0">
           <p className="truncate font-semibold text-sm text-text-secondary md:text-base">

@@ -29,7 +29,7 @@ async function publishUpdatedEvent(
   updatedInvoice: InvoiceDto,
 ): Promise<void> {
   const { EventBus } = await import("@/server/events/event-bus");
-  await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.UPDATED, {
+  await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.updated, {
     eventId: crypto.randomUUID(),
     eventTimestamp: new Date().toISOString(),
     invoice: updatedInvoice,
@@ -50,7 +50,7 @@ function handleActionError<
     context: "updateInvoiceAction",
     error,
     id,
-    message: INVOICE_MSG.SERVICE_ERROR,
+    message: INVOICE_MSG.serviceError,
     prevState,
   });
   return {
@@ -58,8 +58,8 @@ function handleActionError<
     errors: toDenseFieldErrorMap({}, [] as unknown as readonly N[]),
     message:
       error instanceof ValidationError
-        ? INVOICE_MSG.INVALID_INPUT
-        : INVOICE_MSG.SERVICE_ERROR,
+        ? INVOICE_MSG.invalidInput
+        : INVOICE_MSG.serviceError,
     success: false,
   };
 }
@@ -110,7 +110,7 @@ export async function updateInvoiceAction(
       return {
         ...prevState,
         errors: dense,
-        message: INVOICE_MSG.VALIDATION_FAILED,
+        message: INVOICE_MSG.validationFailed,
         success: false,
         // Optionally echo raw values (avoid sensitive fields if present)
         values: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
@@ -122,11 +122,11 @@ export async function updateInvoiceAction(
     const updatedInvoice = await service.updateInvoice(id, parsed.data);
 
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
-    revalidatePath(ROUTES.DASHBOARD.ROOT);
+    revalidatePath(ROUTES.dashboard.ROOT);
 
     return {
       data: updatedInvoice,
-      message: INVOICE_MSG.UPDATE_SUCCESS,
+      message: INVOICE_MSG.updateSuccess,
       success: true,
     };
   } catch (error) {

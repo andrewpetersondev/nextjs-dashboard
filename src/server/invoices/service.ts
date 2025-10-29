@@ -43,7 +43,7 @@ export class InvoiceService {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) {
       // Use a known message ID so upper layers can translate consistently
-      throw new ValidationError(INVOICE_MSG.INVALID_FORM_DATA);
+      throw new ValidationError(INVOICE_MSG.invalidFormData);
     }
     return date; // Already in ISO format from form
   }
@@ -75,7 +75,7 @@ export class InvoiceService {
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
     if (!dto) {
-      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.invalidInput);
     }
 
     const transformedDto = this.applyBusinessRules(dto);
@@ -94,7 +94,7 @@ export class InvoiceService {
     dto: InvoiceFormDto,
   ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
     if (!dto) {
-      return Err(new ValidationError(INVOICE_MSG.INVALID_INPUT));
+      return Err(new ValidationError(INVOICE_MSG.invalidInput));
     }
 
     let transformedDto: InvoiceFormDto;
@@ -106,7 +106,7 @@ export class InvoiceService {
       const message =
         e instanceof Error && e.message
           ? e.message
-          : INVOICE_MSG.VALIDATION_FAILED;
+          : INVOICE_MSG.validationFailed;
 
       return Err(new ValidationError(message));
     }
@@ -126,7 +126,7 @@ export class InvoiceService {
   async readInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
 
     // Transform plain string → branded ID and call repository
@@ -146,7 +146,7 @@ export class InvoiceService {
   ): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!(id && dto)) {
-      throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
+      throw new ValidationError(INVOICE_MSG.invalidInput);
     }
 
     // Object Spread Immutability
@@ -178,7 +178,7 @@ export class InvoiceService {
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.INVALID_ID, { id });
+      throw new ValidationError(INVOICE_MSG.invalidId, { id });
     }
 
     // Call repo with branded ID and return Dto to Actions layer

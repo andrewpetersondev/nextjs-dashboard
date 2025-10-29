@@ -22,7 +22,7 @@ export function createInitialFailedFormState<TFieldNames extends string>(
 
   const error: AppError = Object.freeze({
     __appError: "AppError" as const,
-    code: "VALIDATION",
+    code: "validation",
     details: makeAppErrorDetails({
       fieldErrors,
     }),

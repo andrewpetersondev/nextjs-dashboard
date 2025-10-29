@@ -40,7 +40,7 @@ function idInvalidResult<F extends string>(
 ): FormResult<never> {
   return formError<F>({
     fieldErrors: createEmptyDenseFieldErrorMap(fields),
-    message: USER_ERROR_MESSAGES.VALIDATION_FAILED,
+    message: USER_ERROR_MESSAGES.validationFailed,
   });
 }
 
@@ -164,7 +164,7 @@ export async function updateUserAction(
 
     // If no changes, return success with current user
     if (Object.keys(patch).length === 0) {
-      return formOk(existing, USER_SUCCESS_MESSAGES.NO_CHANGES);
+      return formOk(existing, USER_SUCCESS_MESSAGES.noChanges);
     }
 
     // Apply patch to database
@@ -172,24 +172,24 @@ export async function updateUserAction(
     if (!updated) {
       return formError<EditUserFormFieldNames>({
         fieldErrors: createEmptyDenseFieldErrorMap(fields),
-        message: USER_ERROR_MESSAGES.UPDATE_FAILED,
+        message: USER_ERROR_MESSAGES.updateFailed,
       });
     }
 
     // Revalidate cache and return success
     revalidatePath(USERS_DASHBOARD_PATH);
-    return formOk(updated, USER_SUCCESS_MESSAGES.UPDATE_SUCCESS);
+    return formOk(updated, USER_SUCCESS_MESSAGES.updateSuccess);
   } catch (error: unknown) {
     sharedLogger.error({
       context: "updateUserAction",
       error,
       id,
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      message: USER_ERROR_MESSAGES.unexpected,
     });
 
     return formError<EditUserFormFieldNames>({
       fieldErrors: createEmptyDenseFieldErrorMap(fields),
-      message: USER_ERROR_MESSAGES.UNEXPECTED,
+      message: USER_ERROR_MESSAGES.unexpected,
     });
   }
 }

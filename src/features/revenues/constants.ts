@@ -1,7 +1,7 @@
 export const CHART_Y_AXIS = {
-  CURRENCY_PREFIX: "$",
-  LABEL_COUNT: 5,
-  PADDING_RATIO: 0.1,
-  STEP: 1000,
-  THOUSANDS_SUFFIX: "K",
+  currencyPrefix: "$",
+  labelCount: 5,
+  paddingRatio: 0.1,
+  step: 1000,
+  thousandsSuffix: "K",
 };

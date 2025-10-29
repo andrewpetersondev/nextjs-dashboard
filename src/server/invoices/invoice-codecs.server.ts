@@ -7,13 +7,13 @@
 import "server-only";
 
 import {
-  toISODateString,
+  toIsoDateString,
   toPeriodFirstDayString,
 } from "@/features/invoices/lib/codecs";
 import type {
   InvoiceDto,
   InvoiceFormDto,
-  ISODateString,
+  IsoDateString,
 } from "@/features/invoices/lib/dto";
 import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
 import type {
@@ -31,7 +31,7 @@ import { toCustomerId } from "@/shared/domain/id-converters";
  * - revenuePeriod is YYYY-MM-01 (first-of-month date)
  */
 export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
-  const isoDate = toISODateString(entity.date); // YYYY-MM-DD
+  const isoDate = toIsoDateString(entity.date); // YYYY-MM-DD
   const periodAsFirstDay = toPeriodFirstDayString(entity.revenuePeriod); // YYYY-MM-01
 
   return {
@@ -61,7 +61,7 @@ export function dtoToCreateInvoiceEntity(
   return {
     amount: dto.amount,
     customerId: toCustomerId(dto.customerId),
-    date: new Date(dto.date as ISODateString), // YYYY-MM-DD → Date (UTC midnight)
+    date: new Date(dto.date as IsoDateString), // YYYY-MM-DD → Date (UTC midnight)
     sensitiveData: dto.sensitiveData,
     status: toInvoiceStatus(dto.status),
   };
@@ -81,7 +81,7 @@ export function partialDtoToCreateInvoiceEntity(
       customerId: toCustomerId(dto.customerId),
     }),
     ...(dto.date !== undefined && {
-      date: new Date(dto.date as ISODateString),
+      date: new Date(dto.date as IsoDateString),
     }),
     ...(dto.sensitiveData !== undefined && {
       sensitiveData: dto.sensitiveData,

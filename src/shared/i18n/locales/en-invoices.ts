@@ -5,44 +5,40 @@ import {
 
 // Single-locale dictionary (en) with compile-time completeness check
 export const enInvoices = {
-  [INVOICE_MSG.AMOUNT_REQUIRED]: "Amount is required.",
-  [INVOICE_MSG.CREATE_FAILED]: "Failed to create invoice.",
-  [INVOICE_MSG.CREATE_SUCCESS]: "Invoice created successfully.",
-  [INVOICE_MSG.CUSTOMER_ID_REQUIRED]: "Customer ID is required.",
-  [INVOICE_MSG.DB_ERROR]: "Database Error. Please try again.",
-  [INVOICE_MSG.DELETE_FAILED]: "Failed to delete invoice.",
-  [INVOICE_MSG.DELETE_SUCCESS]: "Invoice deleted successfully.",
-  [INVOICE_MSG.FETCH_ALL_SUCCESS]: "All invoices fetched successfully.",
-  [INVOICE_MSG.FETCH_FAILED]: "Database Error. Failed to Fetch InvoiceEntity.",
-  [INVOICE_MSG.FETCH_FILTERED_FAILED]: "Failed to fetch filtered invoices.",
-  [INVOICE_MSG.FETCH_FILTERED_SUCCESS]:
-    "Filtered invoices fetched successfully.",
-  [INVOICE_MSG.FETCH_LATEST_FAILED]: "Failed to fetch the latest invoices.",
-  [INVOICE_MSG.FETCH_LATEST_SUCCESS]: "Latest invoices fetched successfully.",
-  [INVOICE_MSG.FETCH_PAGES_FAILED]:
+  [INVOICE_MSG.amountRequired]: "Amount is required.",
+  [INVOICE_MSG.createFailed]: "Failed to create invoice.",
+  [INVOICE_MSG.createSuccess]: "Invoice created successfully.",
+  [INVOICE_MSG.customerIdRequired]: "Customer ID is required.",
+  [INVOICE_MSG.dbError]: "Database Error. Please try again.",
+  [INVOICE_MSG.deleteFailed]: "Failed to delete invoice.",
+  [INVOICE_MSG.deleteSuccess]: "Invoice deleted successfully.",
+  [INVOICE_MSG.fetchAllSuccess]: "All invoices fetched successfully.",
+  [INVOICE_MSG.fetchFailed]: "Database Error. Failed to Fetch InvoiceEntity.",
+  [INVOICE_MSG.fetchFilteredFailed]: "Failed to fetch filtered invoices.",
+  [INVOICE_MSG.fetchFilteredSuccess]: "Filtered invoices fetched successfully.",
+  [INVOICE_MSG.fetchLatestFailed]: "Failed to fetch the latest invoices.",
+  [INVOICE_MSG.fetchLatestSuccess]: "Latest invoices fetched successfully.",
+  [INVOICE_MSG.fetchPagesFailed]:
     "Failed to fetch the total number of invoice pages.",
-  [INVOICE_MSG.FETCH_PAGES_SUCCESS]:
-    "Total invoice pages fetched successfully.",
-  [INVOICE_MSG.FETCH_TOTAL_PAID_FAILED]:
+  [INVOICE_MSG.fetchPagesSuccess]: "Total invoice pages fetched successfully.",
+  [INVOICE_MSG.fetchTotalPaidFailed]:
     "Failed to fetch the total amount of pending invoices.",
-  [INVOICE_MSG.FETCH_TOTAL_PENDING_FAILED]:
+  [INVOICE_MSG.fetchTotalPendingFailed]:
     "Failed to fetch the total amount of pending invoices.",
-  [INVOICE_MSG.INVALID_FORM_DATA]:
-    "Invalid form data. Please check your input.",
-  [INVOICE_MSG.INVALID_ID]: "Invalid invoice ID provided.",
-  [INVOICE_MSG.INVALID_INPUT]: "Invalid input. Failed to create invoice.",
-  [INVOICE_MSG.LIST_SUCCESS]: "Invoices listed successfully.",
-  [INVOICE_MSG.MAPPING_FAILED]: "Failed to map invoice data.",
-  [INVOICE_MSG.MISSING_FIELDS]: "Missing required fields.",
+  [INVOICE_MSG.invalidFormData]: "Invalid form data. Please check your input.",
+  [INVOICE_MSG.invalidId]: "Invalid invoice ID provided.",
+  [INVOICE_MSG.invalidInput]: "Invalid input. Failed to create invoice.",
+  [INVOICE_MSG.listSuccess]: "Invoices listed successfully.",
+  [INVOICE_MSG.mappingFailed]: "Failed to map invoice data.",
+  [INVOICE_MSG.missingFields]: "Missing required fields.",
   [INVOICE_MSG.notFound]: "Invoice not found.",
-  [INVOICE_MSG.READ_FAILED]: "Failed to read invoice.",
-  [INVOICE_MSG.READ_SUCCESS]: "Invoice fetched successfully.",
-  [INVOICE_MSG.REPO_ERROR]: "Invoice Repository Error. Please try again.",
-  [INVOICE_MSG.SERVICE_ERROR]: "Invoice Service Error. Please try again.",
-  [INVOICE_MSG.STATUS_REQUIRED]: "Status is required.",
-  [INVOICE_MSG.TRANSFORMATION_FAILED]: "Failed to transform invoice data.",
-  [INVOICE_MSG.UPDATE_FAILED]: "Failed to update invoice.",
-  [INVOICE_MSG.UPDATE_SUCCESS]: "Invoice updated successfully.",
-  [INVOICE_MSG.VALIDATION_FAILED]:
-    "Validation failed. Please check your input.",
+  [INVOICE_MSG.readFailed]: "Failed to read invoice.",
+  [INVOICE_MSG.readSuccess]: "Invoice fetched successfully.",
+  [INVOICE_MSG.repoError]: "Invoice Repository Error. Please try again.",
+  [INVOICE_MSG.serviceError]: "Invoice Service Error. Please try again.",
+  [INVOICE_MSG.statusRequired]: "Status is required.",
+  [INVOICE_MSG.transformationFailed]: "Failed to transform invoice data.",
+  [INVOICE_MSG.updateFailed]: "Failed to update invoice.",
+  [INVOICE_MSG.updateSuccess]: "Invoice updated successfully.",
+  [INVOICE_MSG.validationFailed]: "Validation failed. Please check your input.",
 } satisfies Record<InvoiceMessageId, string>;
