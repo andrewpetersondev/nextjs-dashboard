@@ -42,7 +42,7 @@ export const InvoiceStatusRadioGroup = ({
     },
   ];
 
-  const hasError = !!(error && error.length > 0);
+  const hasError = Boolean(error && error.length > 0);
 
   return (
     <fieldset className="mb-4">

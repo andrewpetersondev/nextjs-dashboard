@@ -32,7 +32,7 @@ export const CustomerSelect = ({
   ...props
 }: CustomerSelectProps): JSX.Element => {
   const ERROR_ID = "customer-select-error";
-  const hasError = !!(error && error.length > 0);
+  const hasError = Boolean(error && error.length > 0);
   return (
     <div>
       <SelectMenu

@@ -17,7 +17,7 @@ export const InvoiceAmountInput = ({
   error,
   ...props
 }: InvoiceAmountInputProps): JSX.Element => {
-  const hasError = !!(error && error.length > 0);
+  const hasError = Boolean(error && error.length > 0);
 
   return (
     <div className="mb-4">

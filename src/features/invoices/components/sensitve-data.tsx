@@ -18,7 +18,7 @@ export function SensitiveData({
   value = "this is a secret",
   ...props
 }: SensitiveDataProps): JSX.Element {
-  const hasError = !!(error && error.length > 0);
+  const hasError = Boolean(error && error.length > 0);
   const errorId = "sensitive-data-error";
   return (
     <div className="mb-4">
