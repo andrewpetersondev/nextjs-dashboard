@@ -1,75 +1,109 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
-import chalk from "chalk";
-import { IS_PROD } from "@/shared/config/env-shared";
+// src/shared/logging/logger.shared.ts
 
-interface SharedLogger {
-  debug(obj: unknown, msg?: string): void;
-  debug(msg: string): void;
-  info(obj: unknown, msg?: string): void;
-  info(msg: string): void;
-  warn(obj: unknown, msg?: string): void;
-  warn(msg: string): void;
-  error(obj: unknown, msg?: string): void;
-  error(msg: string): void;
-  child(bindings: Record<string, unknown>): SharedLogger;
+export const LOG_LEVELS = ["trace", "debug", "info", "warn", "error"] as const;
+export type LogLevel = (typeof LOG_LEVELS)[number];
+
+export interface LogEntry<T = unknown> {
+  level: LogLevel;
+  message: string;
+  context?: string;
+  timestamp: string;
+  data?: T;
 }
 
-/**
- * Create a console-based logger with bound context.
- * Each child merges additional bindings into the context.
- */
-function makeLogger(context: Record<string, unknown> = {}): SharedLogger {
-  const logger: SharedLogger = {
-    child(bindings: Record<string, unknown>) {
-      return makeLogger({ ...context, ...bindings });
-    },
+const levelPriority = {
+  debug: 20,
+  error: 50,
+  info: 30,
+  trace: 10,
+  warn: 40,
+} as const satisfies Record<LogLevel, number>;
 
-    debug(obj: unknown, msg?: string) {
-      if (IS_PROD) {
-        return;
-      }
-      if (typeof obj === "string" && msg === undefined) {
-        console.debug(chalk.gray("[DEBUG]"), context, obj);
-      } else {
-        console.debug(chalk.gray("[DEBUG]"), context, obj, msg);
-      }
-    },
+// Safely determine log level from environment
+// biome-ignore lint/style/noProcessEnv: environment check
+// biome-ignore lint/correctness/noProcessGlobal: environment check
+const rawEnvLevel = (process.env.NEXT_PUBLIC_LOG_LEVEL ?? "").toLowerCase();
 
-    error(obj: unknown, msg?: string) {
-      if (typeof obj === "string" && msg === undefined) {
-        console.error(chalk.red("[ERROR]"), context, obj);
-      } else {
-        console.error(chalk.red("[ERROR]"), context, obj, msg);
-      }
-    },
-
-    info(obj: unknown, msg?: string) {
-      if (typeof obj === "string" && msg === undefined) {
-        console.info(chalk.blue("[INFO]"), context, obj);
-      } else {
-        console.info(chalk.blue("[INFO]"), context, obj, msg);
-      }
-    },
-
-    warn(obj: unknown, msg?: string) {
-      if (typeof obj === "string" && msg === undefined) {
-        console.warn(chalk.yellow("[WARN]"), context, obj);
-      } else {
-        console.warn(chalk.yellow("[WARN]"), context, obj, msg);
-      }
-    },
-  };
-
-  return logger;
+function isLogLevel(value: string): value is LogLevel {
+  return (LOG_LEVELS as readonly string[]).includes(value);
 }
 
-export const sharedLogger = makeLogger();
+const envLevel = isLogLevel(rawEnvLevel) ? rawEnvLevel : undefined;
+const currentLevel = envLevel ? levelPriority[envLevel] : levelPriority.info;
 
-/**
- * Create a child logger with bound context fields.
- */
-export function createChildLogger(
-  bindings: Record<string, unknown>,
-): SharedLogger {
-  return sharedLogger.child(bindings);
+export class Logger {
+  private readonly context?: string;
+
+  constructor(context?: string) {
+    this.context = context;
+  }
+
+  private shouldLog(level: LogLevel): boolean {
+    return currentLevel <= levelPriority[level];
+  }
+
+  private createEntry<T>(
+    level: LogLevel,
+    message: string,
+    data?: T,
+  ): LogEntry<T> {
+    return {
+      context: this.context,
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+      ...(data !== undefined ? { data } : {}),
+    };
+  }
+
+  private format(entry: LogEntry): unknown[] {
+    const { timestamp, context, message, data } = entry;
+    const prefix = context ? `[${context}]` : "";
+    return [timestamp, prefix, message, data].filter(Boolean);
+  }
+
+  private output(entry: LogEntry): void {
+    if (!this.shouldLog(entry.level)) {
+      return;
+    }
+
+    const args = this.format(entry);
+
+    const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
+      debug: console.debug,
+      error: console.error,
+      info: console.info,
+      trace: console.trace,
+      warn: console.warn,
+    };
+
+    (consoleMethod[entry.level] ?? console.log)(...args);
+  }
+
+  trace<T>(message: string, data?: T): void {
+    this.output(this.createEntry("trace", message, data));
+  }
+
+  debug<T>(message: string, data?: T): void {
+    this.output(this.createEntry("debug", message, data));
+  }
+
+  info<T>(message: string, data?: T): void {
+    this.output(this.createEntry("info", message, data));
+  }
+
+  warn<T>(message: string, data?: T): void {
+    this.output(this.createEntry("warn", message, data));
+  }
+
+  error<T>(message: string, data?: T): void {
+    this.output(this.createEntry("error", message, data));
+  }
+
+  withContext(context: string): Logger {
+    const combined = this.context ? `${this.context}:${context}` : context;
+    return new Logger(combined);
+  }
 }
+
+export const logger = new Logger();
