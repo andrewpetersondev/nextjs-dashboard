@@ -1,167 +1,84 @@
-# =========================================
-# Node modules and package managers
-# =========================================
-node_modules/
-.pnp/
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
-.turbo/
-.yarn/
-
-# =========================================
-# Build artifacts and caches
-# =========================================
-.next/
-.next/cache/
-.next/static/
-.out/
-dist/
-build/
-.vercel/
-.cache/
-.tmp/
-temp/
-tmp/
-.rpt2_cache/
-.cache-loader/
-.parcel-cache/
-.postcss-cache/
-.eslintcache
-.stylelintcache
-.tsbuildinfo
-tsconfig.tsbuildinfo
-.biome-cache/
-drizzle/migrations/.cache/
-drizzle/.cache/
-.vite/
-
-# =========================================
-# Environment and secrets
-# =========================================
-.env
-.env.*
-*.txt
-
-# =========================================
-# Logs and diagnostics
-# =========================================
-*.log
-*.log.*
-logs/
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-*.pid
-eslint-report.*
-prettier-report.*
-
-# =========================================
-# OS / Editor junk
-# =========================================
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/
 .idea/
-*.iml
-
-# =========================================
-# Testing / QA
-# =========================================
-coverage/
+.github/
+.next/
+.vscode/
+cypress/
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
-.playwright/
-test-results/
-reports/
-__tests__/
-
-# =========================================
-# Database / ORM
-# =========================================
-*.sqlite
-*.db
-*.db-journal
-pgdata/
-postgres-data/
-drizzle/*.sqlite
-drizzle/*.db
-drizzle/*.db-journal
-
-# =========================================
-# Generated / Public
-# =========================================
-public/generated/
-public/_next/
-public/.cache/
-
-# =========================================
-# Misc / Build tools
-# =========================================
-*.cache
-*.tmp
-.rimraf*
-.biome/
-.js
-**/*.min.js
-**/*.map
-
-
-# =========================================
-# Project-specific / root files
-# =========================================
-.github/
-cypress/
 devtools/
 docs/
 drizzle/
+node_modules/
 public/
 storage/
+
 .gitignore
 biome.json
 cypress.config.ts
 drizzle.config.ts
 eslint.config.mjs
+next.config.ts
 next-env.d.ts
+package.json
+pnpm-lock.yaml
 postcss.config.mjs
 vitest.config.ts
 
-# =========================================
+tsconfig.tsbuildinfo
+
+.env
+.env.*
+*.txt
+__tests__/
+
 # Optional: source exclusions (comment to re-enable)
-# =========================================
-# App
+
 src/app/api/
 src/app/dashboard/
-# Features
+
 src/features/customers/
 src/features/invoices
 src/features/revenues/
 # src/features/users/
 
-# Server
 src/server/customers/
 src/server/events/
 src/server/invoices/
 src/server/repository/
 src/server/revenues/
 # src/server/users/
-# Shared
+
 src/shared/http/
 src/shared/i18n/
 src/shared/money/
 src/shared/routes/
 src/shared/ui/
-# Shell
+
 src/shell/
-# UI
+
 src/ui/
 
-# =========================================
-# Documentation / Markdown
-# =========================================
+# Documentation / Markdown / Patterns
+
 *.md
 examples/
+**/*.js
+**/*.min.js
+**/*.map
+
+# Other
+
+build/
+.vite/
+*.log
+*.log.*
+logs/
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.iml
+coverage/
+reports/
