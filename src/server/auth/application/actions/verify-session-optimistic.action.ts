@@ -7,7 +7,6 @@ import type { SessionVerificationResult } from "@/features/auth/sessions/session
 import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
 import { readSessionToken } from "@/server/auth/domain/session/codecs/session-codec";
 import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
-import { serverLogger } from "@/server/logging/logger.server";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
@@ -18,18 +17,20 @@ export const verifySessionOptimistic = cache(
       SESSION_COOKIE_NAME,
     )?.value;
     if (!cookie) {
-      serverLogger.warn(
-        { context: "verifySessionOptimistic" },
-        "No session cookie found",
-      );
+      //      serverLogger.warn(
+      //        { context: "verifySessionOptimistic" },
+      //        "No session cookie found",
+      //      );
+      console.error("No session cookie found");
       redirect(LOGIN_PATH);
     }
     const session: DecryptPayload | undefined = await readSessionToken(cookie);
     if (!session?.user?.userId) {
-      serverLogger.warn(
-        { context: "verifySessionOptimistic" },
-        "Invalid session or missing user information",
-      );
+      //      serverLogger.warn(
+      //        { context: "verifySessionOptimistic" },
+      //        "Invalid session or missing user information",
+      //      );
+      console.warn("Invalid session or missing user information");
       redirect(LOGIN_PATH);
     }
     return {

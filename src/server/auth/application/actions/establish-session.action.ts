@@ -18,7 +18,7 @@ import { Err, Ok, type Result } from "@/shared/core/result/result";
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, AppError>> {
-  const logger = createChildLogger({
+  const _logger = createChildLogger({
     context: LOGGER_CONTEXT_SESSION,
     role: user.role,
     userId: user.id,
@@ -34,17 +34,19 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    logger.info("Session established successfully");
+    //    logger.info("Session established successfully");
+    console.log("Session established successfully");
   } else {
-    logger.error(
-      {
-        error: {
-          message: mapped.error.message,
-          name: "AuthSessionError",
-        },
-      },
-      "Failed to establish session",
-    );
+    //    logger.error(
+    //      {
+    //        error: {
+    //          message: mapped.error.message,
+    //          name: "AuthSessionError",
+    //        },
+    //      },
+    //      "Failed to establish session",
+    //    );
+    console.error("Failed to establish session");
   }
 
   return mapped;

@@ -14,7 +14,7 @@ export const toAuthUserTransport = (src: {
   readonly username: string;
 }): AuthUserTransport => {
   // Validate required fields exist
-  if (!src.email || !src.id || !src.role || !src.username) {
+  if (!(src.email && src.id && src.role && src.username)) {
     throw new Error("Invalid user entity: missing required fields");
   }
 

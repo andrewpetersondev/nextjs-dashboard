@@ -42,7 +42,7 @@ export function toFormAwareError<TField extends string>(
   // Get metadata for this error code
   const codeMeta = ERROR_CODES[error.code];
 
-  if (!codeMeta || !("authFields" in codeMeta)) {
+  if (!(codeMeta && "authFields" in codeMeta)) {
     // No field mapping for this code - return empty fieldErrors
     return {
       ...error,

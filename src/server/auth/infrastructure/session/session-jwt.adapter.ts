@@ -12,7 +12,6 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-next";
-import { serverLogger } from "@/server/logging/logger.server";
 
 let encodedKey: Uint8Array | undefined;
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
@@ -25,25 +24,25 @@ const getEncodedKey = (): Uint8Array => {
 
   const secret = SESSION_SECRET;
   if (!secret) {
-    serverLogger.error(
-      { context: "getEncodedKey" },
-      "SESSION_SECRET is not defined",
-    );
+    //    serverLogger.error(
+    //      { context: "getEncodedKey" },
+    //      "SESSION_SECRET is not defined",
+    //    );
     throw new Error("SESSION_SECRET is not defined");
   }
   if (secret.length < MIN_HS256_KEY_LENGTH) {
-    serverLogger.error(
-      { context: "getEncodedKey", length: secret.length },
-      "SESSION_SECRET is too short",
-    );
+    //    serverLogger.error(
+    //      { context: "getEncodedKey", length: secret.length },
+    //      "SESSION_SECRET is too short",
+    //    );
     throw new Error("Weak SESSION_SECRET: must be at least 32 characters");
   }
 
   encodedKey = encoder.encode(secret);
-  serverLogger.debug(
-    { context: "getEncodedKey" },
-    "Session secret key encoded and cached",
-  );
+  //  serverLogger.debug(
+  //    { context: "getEncodedKey" },
+  //    "Session secret key encoded and cached",
+  //  );
   return encodedKey;
 };
 
@@ -74,20 +73,22 @@ export class SessionJwtAdapter {
       }
 
       const token = await signer.sign(key);
-      serverLogger.debug(
-        {
-          context: "SessionJwtAdapter.encode",
-          role: claims.role,
-          userId: claims.userId,
-        },
-        "Session JWT created",
-      );
+      //      serverLogger.debug(
+      //        {
+      //          context: "SessionJwtAdapter.encode",
+      //          role: claims.role,
+      //          userId: claims.userId,
+      //        },
+      //        "Session JWT created",
+      //      );
+      console.info("Session JWT created:", { token });
       return token;
     } catch (err: unknown) {
-      serverLogger.error(
-        { context: "SessionJwtAdapter.encode", err },
-        "JWT signing failed",
-      );
+      //      serverLogger.error(
+      //        { context: "SessionJwtAdapter.encode", err },
+      //        "JWT signing failed",
+      //      );
+      console.error("JWT signing failed:", err);
       throw new Error("Failed to sign session token");
     }
   }
@@ -102,16 +103,17 @@ export class SessionJwtAdapter {
         verifyOptions,
       );
 
-      serverLogger.debug(
-        { context: "SessionJwtAdapter.decode", userId: payload.userId },
-        "Session JWT verified",
-      );
+      //      serverLogger.debug(
+      //        { context: "SessionJwtAdapter.decode", userId: payload.userId },
+      //        "Session JWT verified",
+      //      );
       return payload;
     } catch (error: unknown) {
-      serverLogger.error(
-        { context: "SessionJwtAdapter.decode", err: error },
-        "JWT verification failed",
-      );
+      //      serverLogger.error(
+      //        { context: "SessionJwtAdapter.decode", err: error },
+      //        "JWT verification failed",
+      //      );
+      console.error("JWT verification failed:", error);
       return;
     }
   }
