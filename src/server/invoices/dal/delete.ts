@@ -22,7 +22,7 @@ export async function deleteInvoiceDal(
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
-  if (!db || !id) {
+  if (!(db && id)) {
     throw new ValidationError(INVOICE_MSG.INVALID_INPUT, { id });
   }
 

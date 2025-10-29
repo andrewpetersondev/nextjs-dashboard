@@ -28,12 +28,14 @@ export function userEntityToDto(entity: UserEntity): UserDto {
  */
 export function userDbRowToEntity(row: UserRow): UserEntity {
   if (
-    !row.id ||
-    !row.email ||
-    !row.password ||
-    !row.role ||
-    !row.sensitiveData ||
-    !row.username
+    !(
+      row.id &&
+      row.email &&
+      row.password &&
+      row.role &&
+      row.sensitiveData &&
+      row.username
+    )
   ) {
     throw new Error("Missing required user row fields");
   }
@@ -55,12 +57,14 @@ export function userDbRowToEntity(row: UserRow): UserEntity {
  */
 export function newUserDbRowToEntity(row: NewUserRow): UserEntity {
   if (
-    !row.id ||
-    !row.email ||
-    !row.password ||
-    !row.role ||
-    !row.sensitiveData ||
-    !row.username
+    !(
+      row.id &&
+      row.email &&
+      row.password &&
+      row.role &&
+      row.sensitiveData &&
+      row.username
+    )
   ) {
     throw new Error("Missing required new user row fields");
   }

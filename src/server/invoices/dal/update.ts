@@ -28,7 +28,7 @@ export async function updateInvoiceDal(
   updateData: Partial<InvoiceFormEntity>,
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
-  if (!db || !id || !updateData) {
+  if (!(db && id && updateData)) {
     throw new ValidationError(INVOICE_MSG.INVALID_INPUT, {
       id,
       updateData,

@@ -145,7 +145,7 @@ export class InvoiceService {
     dto: Partial<InvoiceFormDto>,
   ): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
-    if (!id || !dto) {
+    if (!(id && dto)) {
       throw new ValidationError(INVOICE_MSG.INVALID_INPUT);
     }
 

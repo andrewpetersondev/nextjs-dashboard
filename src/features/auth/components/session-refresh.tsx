@@ -96,7 +96,7 @@ export function SessionRefresh(): null {
     // Kickoff once after a short delay with jitter.
     kickoffRef.current = setTimeout(
       () => {
-        void ping();
+        ping();
       },
       kickoffTimeout + Math.floor(Math.random() * JITTER_MS),
     );
@@ -104,19 +104,19 @@ export function SessionRefresh(): null {
     // Periodic checks; ping also runs on focus/visibilitychange.
     intervalRef.current = setInterval(
       () => {
-        void ping();
+        ping();
       },
       INTERVAL_MS + Math.floor(Math.random() * JITTER_MS),
     );
 
     const onFocus = (): void => {
-      if (!document.hidden && !inFlightRef.current) {
-        void ping();
+      if (!(document.hidden || inFlightRef.current)) {
+        ping();
       }
     };
     const onVisibility = (): void => {
-      if (!document.hidden && !inFlightRef.current) {
-        void ping();
+      if (!(document.hidden || inFlightRef.current)) {
+        ping();
       }
     };
 
