@@ -41,7 +41,7 @@ export function generateMonthlyPeriods(
     );
   }
   const [yearStr, monthStr] = start.split("-");
-  if (!yearStr || !monthStr) {
+  if (!(yearStr && monthStr)) {
     throw new Error(`Invalid date format: ${start}. Expected YYYY-MM-DD`);
   }
   const year = Number.parseInt(yearStr, 10);

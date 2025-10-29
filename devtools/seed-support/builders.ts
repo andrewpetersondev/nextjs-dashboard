@@ -71,8 +71,7 @@ export function buildRandomInvoiceRows(
     const revenuePeriod = new Date(`${period}T00:00:00.000Z`);
     const [year, month] = period.split("-").map(Number);
     if (
-      !year ||
-      !month ||
+      !(year && month) ||
       month < SEED_CONFIG.MIN_MONTH ||
       month > SEED_CONFIG.MONTHS_IN_YEAR
     ) {

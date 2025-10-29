@@ -15,7 +15,7 @@ export async function upsertE2EUser(user: {
     throw new Error("upsertE2EUser requires user object");
   }
 
-  if (!user.email || !user.password) {
+  if (!(user.email && user.password)) {
     throw new Error("upsertE2EUser requires email and password");
   }
 
