@@ -15,7 +15,6 @@ import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/
 import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { getAppDb } from "@/server/db/db.connection";
-import { createChildLogger } from "@/server/logging/logger.server";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
@@ -43,17 +42,13 @@ export class AuthUserService {
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.CREATE_DEMO_USER;
-    const logger = createChildLogger({ context: ctx.CONTEXT });
 
     try {
       const db = getAppDb();
       const counter = await demoUserCounter(db, role);
 
       if (!counter || counter <= 0) {
-        logger.error(
-          ctx.FAIL_COUNTER(role),
-          "Failed to fetch demo user counter",
-        );
+        console.error("Failed to create demo user counter");
         return Err(createAuthAppError("unexpected"));
       }
 
@@ -72,13 +67,12 @@ export class AuthUserService {
         }),
       );
 
-      logger.info(ctx.SUCCESS(role), "Demo user created successfully");
+      console.info("Demo user created successfully.");
+
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
     } catch (err: unknown) {
-      logger.error(
-        ctx.TRANSACTION_ERROR(err),
-        "Unexpected error during demo user creation",
-      );
+      console.error("Failed to create demo user counter", err);
+
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.CONTEXT,
@@ -101,10 +95,10 @@ export class AuthUserService {
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.SIGNUP;
-    const logger = createChildLogger({ context: ctx.CONTEXT });
 
     if (!hasRequiredSignupFields(input)) {
-      logger.warn(ctx.VALIDATION_FAIL(), "Missing required signup fields");
+      console.error("missing required fields");
+
       return Err(
         toFormAwareError(createAuthAppError("missing_fields"), {
           fields: ["email", "username", "password"] as const,
@@ -124,13 +118,12 @@ export class AuthUserService {
         }),
       );
 
-      logger.info(ctx.SUCCESS(input.email), "User signed up successfully");
+      console.info("Signup successfully.");
+
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
-      logger.error(
-        ctx.TRANSACTION_ERROR(err),
-        "Unexpected error during signup",
-      );
+      console.error("Failed to create demo user counter", err);
+
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.CONTEXT,
@@ -152,19 +145,13 @@ export class AuthUserService {
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.LOGIN;
-    const logger = createChildLogger({
-      context: ctx.CONTEXT,
-      email: input.email,
-    });
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user.password) {
-        logger.error(
-          ctx.MISSING_PASSWORD(user.id),
-          "Missing hashed password on user entity",
-        );
+        console.error("Failed to login");
+
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -178,10 +165,7 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        logger.warn(
-          ctx.INVALID_CREDENTIALS(input.email),
-          "Invalid credentials provided",
-        );
+        console.error("Failed to compare");
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -189,10 +173,11 @@ export class AuthUserService {
         );
       }
 
-      logger.info(ctx.SUCCESS(user.id), "User logged in successfully");
+      console.info("Login successfully.");
+
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      logger.error(ctx.TRANSACTION_ERROR(err), "Unexpected error during login");
+      console.error("Failed to login");
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.CONTEXT,
