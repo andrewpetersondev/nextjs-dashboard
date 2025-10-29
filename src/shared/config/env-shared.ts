@@ -1,62 +1,132 @@
-// File: env-shared.ts
-/** biome-ignore-all lint/correctness/noProcessGlobal: <centralized env file> */
-/** biome-ignore-all lint/style/noProcessEnv: <centralized env file> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
+/** biome-ignore-all lint/style/noProcessEnv: <env config file> */
+
+/**
+ * @file Shared environment utilities
+ * - Canonical handling of NODE_ENV, DATABASE_ENV, LOG_LEVEL
+ * - Uses Pino’s built-in log level support (no duplication)
+ * - Safe for universal import (client/server)
+ */
+
+import type { Level } from "pino";
 import { z } from "zod";
 
-export const toLower = (value: string | undefined, fallback: string): string =>
-  (value ?? fallback).toLowerCase();
+/* -------------------------------------------------------------------------------------------------
+ *  🧭 Environment Schemas
+ * -----------------------------------------------------------------------------------------------*/
 
+/** Allowed runtime environments. */
 export const ENVIRONMENTS = ["development", "test", "production"] as const;
 
-export type DatabaseEnv = (typeof ENVIRONMENTS)[number];
-export const DatabaseEnvEnum = z.enum(ENVIRONMENTS);
+/** Shared Zod schema + inferred type. */
+export const EnvironmentSchema = z.enum(ENVIRONMENTS);
+export type Environment = z.infer<typeof EnvironmentSchema>;
 
-export type NodeEnv = (typeof ENVIRONMENTS)[number];
-export const NodeEnvSchema = z.enum(ENVIRONMENTS);
+/* -------------------------------------------------------------------------------------------------
+ *  🔧 Helpers
+ * -----------------------------------------------------------------------------------------------*/
+
+/** Normalize env strings safely with lowercase fallback. */
+function toLower(value: string | undefined, fallback: string): string {
+  return (value ?? fallback).toLowerCase();
+}
+
+/* -------------------------------------------------------------------------------------------------
+ *  🧠 Cached State
+ * -----------------------------------------------------------------------------------------------*/
+
+let cachedNodeEnv: Environment | undefined;
+let cachedDatabaseEnv: Environment | undefined;
+let cachedLogLevel: Level | undefined;
+
+/* -------------------------------------------------------------------------------------------------
+ *  🌍 Environment Accessors
+ * -----------------------------------------------------------------------------------------------*/
 
 /**
- * Resolve and validate NODE_ENV in a safe, centralized way.
- * - Lowercases the value
- * - Falls back to "development" if invalid or missing
- * - Cached to avoid repeated parsing
+ * Resolve and validate NODE_ENV.
+ * - Always returns one of "development" | "test" | "production"
+ * - Defaults to "development" if invalid or missing
  */
-export let CACHED_NODE_ENV: NodeEnv | undefined;
-export function getNodeEnv(): NodeEnv {
-  if (CACHED_NODE_ENV) {
-    return CACHED_NODE_ENV;
+export function getNodeEnv(): Environment {
+  if (cachedNodeEnv) {
+    return cachedNodeEnv;
   }
+
   const raw = toLower(process.env.NODE_ENV, "development");
-  const parsed = NodeEnvSchema.safeParse(raw);
-  CACHED_NODE_ENV = parsed.success ? parsed.data : "development";
-  return CACHED_NODE_ENV;
+  const parsed = EnvironmentSchema.safeParse(raw);
+  cachedNodeEnv = parsed.success ? parsed.data : "development";
+
+  return cachedNodeEnv;
 }
 
 /**
- * Resolve and validate DATABASE_ENV (runtime environment used by the database/config).
- * - Lowercases the value
+ * Resolve and validate DATABASE_ENV.
  * - Falls back to NODE_ENV if missing
- * - Falls back to "development" if still invalid
- * - Cached to avoid repeated parsing
+ * - Defaults to "development" if invalid
  */
-export let CACHED_DATABASE_ENV: DatabaseEnv | undefined;
-export function getDatabaseEnv(): DatabaseEnv {
-  if (CACHED_DATABASE_ENV) {
-    return CACHED_DATABASE_ENV;
+export function getDatabaseEnv(): Environment {
+  if (cachedDatabaseEnv) {
+    return cachedDatabaseEnv;
   }
+
   const fallback = getNodeEnv();
   const raw = toLower(process.env.DATABASE_ENV, fallback);
-  const parsed = DatabaseEnvEnum.safeParse(raw);
-  CACHED_DATABASE_ENV = parsed.success ? parsed.data : "development";
-  return CACHED_DATABASE_ENV;
+  const parsed = EnvironmentSchema.safeParse(raw);
+  cachedDatabaseEnv = parsed.success ? parsed.data : "development";
+
+  return cachedDatabaseEnv;
 }
 
-/** Convenience flags (explicit types) */
-export const IS_DEV: boolean = getNodeEnv() === "development";
-export const IS_TEST: boolean = getNodeEnv() === "test";
-export const IS_PROD: boolean = getNodeEnv() === "production";
+/**
+ * Get effective LOG_LEVEL.
+ * - Defers to process.env.LOG_LEVEL (as Pino expects)
+ * - Defaults to "info" in production, "debug" otherwise
+ */
+export function getLogLevel(): Level {
+  if (cachedLogLevel) {
+    return cachedLogLevel;
+  }
 
-// Testing-only reset to avoid cross-test pollution (no-op in prod code paths)
+  const fallback: Level = getNodeEnv() === "production" ? "info" : "debug";
+  const raw = toLower(process.env.LOG_LEVEL, fallback) as Level;
+  cachedLogLevel = raw;
+
+  return cachedLogLevel;
+}
+
+/* -------------------------------------------------------------------------------------------------
+ *  🧩 Exported Constants & Flags
+ * -----------------------------------------------------------------------------------------------*/
+
+export const NODE_ENV: Environment = getNodeEnv();
+export const DATABASE_ENV: Environment = getDatabaseEnv();
+export const LOG_LEVEL: Level = getLogLevel();
+
+export const IS_DEV = NODE_ENV === "development";
+export const IS_TEST = NODE_ENV === "test";
+export const IS_PROD = NODE_ENV === "production";
+
+export const IS_DEV_DB = DATABASE_ENV === "development";
+export const IS_TEST_DB = DATABASE_ENV === "test";
+export const IS_PROD_DB = DATABASE_ENV === "production";
+
+/**
+ * Check if current NODE_ENV matches one of the provided values.
+ *
+ * @example
+ * if (isEnv("development", "test")) console.log("Debug logging enabled");
+ */
+export function isEnv(...envs: Environment[]): boolean {
+  return envs.includes(NODE_ENV);
+}
+
+/**
+ * Reset cached envs — useful in tests to avoid cross-test pollution.
+ * (No effect in production.)
+ */
 export function __resetEnvCachesForTests__(): void {
-  CACHED_NODE_ENV = undefined;
-  CACHED_DATABASE_ENV = undefined;
+  cachedNodeEnv = undefined;
+  cachedDatabaseEnv = undefined;
+  cachedLogLevel = undefined;
 }

@@ -1,16 +1,6 @@
 import "server-only";
 import pino from "pino";
-import { DATABASE_ENV, LOG_LEVEL } from "@/server/config/env-next";
-import type { LogLevel } from "@/shared/logging/log-level";
-
-/**
- * Returns the effective log level for server/runtime.
- */
-function getLogLevel(): LogLevel {
-  const defaultLevel: LogLevel =
-    DATABASE_ENV === "production" ? "info" : "warn";
-  return (LOG_LEVEL as LogLevel | undefined) ?? defaultLevel;
-}
+import { DATABASE_ENV, LOG_LEVEL } from "@/shared/config/env-shared";
 
 /**
  * Pino logger instance for structured logging.
@@ -19,16 +9,12 @@ function getLogLevel(): LogLevel {
  * - Use child() to create contextual loggers with bound fields.
  */
 export const serverLogger = pino({
-  level: getLogLevel(),
+  level: LOG_LEVEL,
   name: "server",
-  ...(DATABASE_ENV !== "production" && {
-    transport: {
-      options: {
-        colorize: true,
-      },
-      target: "pino-pretty",
-    },
-  }),
+  transport:
+    DATABASE_ENV !== "production"
+      ? { options: { colorize: true }, target: "pino-pretty" }
+      : undefined,
 });
 
 /**
