@@ -1,7 +1,8 @@
 .idea/
-.github/
 .next/
+.github/
 .vscode/
+
 cypress/
 cypress/screenshots/
 cypress/videos/
@@ -23,14 +24,14 @@ next-env.d.ts
 package.json
 pnpm-lock.yaml
 postcss.config.mjs
+tsconfig.tsbuildinfo
 vitest.config.ts
 
-tsconfig.tsbuildinfo
 
 .env
 .env.*
+.env*
 *.txt
-__tests__/
 
 # Optional: source exclusions (comment to re-enable)
 
@@ -38,7 +39,7 @@ src/app/api/
 src/app/dashboard/
 
 src/features/customers/
-src/features/invoices
+src/features/invoices/
 src/features/revenues/
 # src/features/users/
 
@@ -59,26 +60,32 @@ src/shell/
 
 src/ui/
 
-# Documentation / Markdown / Patterns
+# Patterns and Extensions
 
-*.md
 examples/
-**/*.js
-**/*.min.js
-**/*.map
+__tests__/
+*.tsx
+*.test.*
+*.md
+*.js
+*.map
+*.yaml
+*.sh
+Dockerfile
+Dockerfile.*
 
 # Other
 
-build/
 .vite/
+build/
+coverage/
+logs/
+reports/
 *.log
 *.log.*
-logs/
-pnpm-debug.log*
-.DS_Store
-Thumbs.db
+*.tmp
+*.DS_Store
+*.db
 *.swp
 *.swo
 *.iml
-coverage/
-reports/
