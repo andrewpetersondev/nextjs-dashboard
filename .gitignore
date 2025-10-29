@@ -1,23 +1,19 @@
-# ================================
-# Storage, Notes, Etc.
-# ================================
-storage/
-other/
+# Project Root
 
-# ================================
-# IDE and Editor Configuration
-# ================================
-.DS_Store
-.idea
-.vscode
-.github
-
-# ================================
-# Dependencies
-# ================================
+.idea/
+.vscode/
+.github/
+.next/
 node_modules/
-.pnpm-store/
-.yarn/
+storage/
+.env.development.local
+.env.production.local
+.env.test.local
+next-env.d.ts
+*.tsbuildinfo
+
+*.js
+*.map
 
 # ================================
 # Testing and Coverage
@@ -58,9 +54,6 @@ vault/*.env
 vault/*.json
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 .env*
 .env.*
 .envrc
@@ -70,8 +63,6 @@ vault/*.json
 # ================================
 # Build Artifacts
 # ================================
-next-env.d.ts
-.next/
 .out/
 build/
 dist/
@@ -81,7 +72,6 @@ logs/
 .eslintcache
 .stylelintcache
 tsconfig.tsbuildinfo
-*.tsbuildinfo
 
 
 # ================================
@@ -99,6 +89,7 @@ backups/
 # ================================
 # Suggested additions
 # ================================
+.DS_Store
 Thumbs.db
 .history/
 .fleet/
@@ -122,3 +113,5 @@ logs/*.log
 .node_repl_history
 tmp/
 temp/
+.pnpm-store/
+.yarn/
