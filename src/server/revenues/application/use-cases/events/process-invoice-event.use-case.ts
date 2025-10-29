@@ -7,9 +7,9 @@ import {
   handleEventError,
   logInfo,
 } from "@/server/revenues/application/cross-cutting/logging";
-import { isInvoiceEligibleForRevenue } from "@/server/revenues/application/guards/invoice-eligibility.guard";
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
+import { isInvoiceEligibleForRevenue } from "@/server/revenues/domain/guards/invoice-eligibility.guard";
 import type { Period } from "@/shared/domain/domain-brands";
 
 /**

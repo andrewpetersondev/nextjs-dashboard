@@ -3,54 +3,55 @@ import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
-import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
-import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
+import { computeAggregateAfterAdd } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
+import type { MetadataWithPeriod } from "@/server/revenues/events/handlers/core/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 
 interface Args {
   readonly revenueService: RevenueService;
   readonly revenueId: string;
-  readonly previousAmount: number;
-  readonly previousStatus: InvoiceStatus;
+  readonly currentCount: number;
+  readonly currentTotal: number;
   readonly currentPaidTotal: number;
   readonly currentPendingTotal: number;
+  readonly currentAmount: number;
+  readonly currentStatus: InvoiceStatus;
   readonly context: string;
-  readonly meta: MetadataWithPeriod & {
-    readonly existingCount: number;
-    readonly existingTotal: number;
-  };
+  readonly meta: MetadataWithPeriod;
 }
 
-export async function handleTransitionFromEligibleToIneligible(
+export async function handleTransitionFromIneligibleToEligible(
   args: Args,
 ): Promise<void> {
   const {
     revenueService,
     revenueId,
-    previousAmount,
-    previousStatus,
+    currentCount,
+    currentTotal,
     currentPaidTotal,
     currentPendingTotal,
+    currentAmount,
+    currentStatus,
     context,
     meta,
   } = args;
   logInfo(
     context,
-    "Invoice no longer eligible for revenue, removing from the total",
+    "Invoice now eligible for revenue, adding to the total",
     meta,
   );
-  const aggregate = computeAggregateAfterRemoval(
-    meta.existingCount,
-    meta.existingTotal,
-    previousAmount,
+  const aggregate = computeAggregateAfterAdd(
+    currentCount,
+    currentTotal,
+    currentAmount,
   );
   const nextBuckets = applyDeltaToBucket(
     {
       totalPaidAmount: currentPaidTotal,
       totalPendingAmount: currentPendingTotal,
     },
-    previousStatus,
-    -previousAmount,
+    currentStatus,
+    currentAmount,
   );
   await updateRevenueRecord(revenueService, {
     context,

@@ -3,8 +3,8 @@ import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
-import { computeAggregateAfterAdd } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
-import type { MetadataWithPeriod } from "@/server/revenues/events/common/types";
+import { computeAggregateAfterAmountChange } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
+import type { MetadataWithPeriod } from "@/server/revenues/events/handlers/core/types";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 
 interface Args {
@@ -14,15 +14,14 @@ interface Args {
   readonly currentTotal: number;
   readonly currentPaidTotal: number;
   readonly currentPendingTotal: number;
+  readonly previousAmount: number;
   readonly currentAmount: number;
   readonly currentStatus: InvoiceStatus;
   readonly context: string;
   readonly meta: MetadataWithPeriod;
 }
 
-export async function handleTransitionFromIneligibleToEligible(
-  args: Args,
-): Promise<void> {
+export async function handleEligibleAmountChange(args: Args): Promise<void> {
   const {
     revenueService,
     revenueId,
@@ -30,19 +29,22 @@ export async function handleTransitionFromIneligibleToEligible(
     currentTotal,
     currentPaidTotal,
     currentPendingTotal,
+    previousAmount,
     currentAmount,
     currentStatus,
     context,
     meta,
   } = args;
+  const amountDifference = currentAmount - previousAmount;
   logInfo(
     context,
-    "Invoice now eligible for revenue, adding to the total",
-    meta,
+    "Invoice amount changed while remaining eligible for revenue",
+    { ...meta, amountDifference, currentAmount, previousAmount },
   );
-  const aggregate = computeAggregateAfterAdd(
+  const aggregate = computeAggregateAfterAmountChange(
     currentCount,
     currentTotal,
+    previousAmount,
     currentAmount,
   );
   const nextBuckets = applyDeltaToBucket(
@@ -51,7 +53,7 @@ export async function handleTransitionFromIneligibleToEligible(
       totalPendingAmount: currentPendingTotal,
     },
     currentStatus,
-    currentAmount,
+    amountDifference,
   );
   await updateRevenueRecord(revenueService, {
     context,

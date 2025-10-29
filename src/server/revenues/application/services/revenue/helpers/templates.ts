@@ -6,6 +6,7 @@ import { toIntervalDuration } from "@/server/revenues/infrastructure/validation/
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
+import { logger } from "@/shared/logging/logger.shared";
 
 export interface TemplateAndPeriods {
   readonly template: readonly { readonly period: Date }[];
@@ -16,7 +17,7 @@ export interface TemplateAndPeriods {
 export function buildTemplateAndPeriods(): TemplateAndPeriods {
   const { startDate, endDate, duration } = calculateDateRange();
 
-  console.info("buildTemplateAndPeriods", { endDate });
+  logger.info("buildTemplateAndPeriods", { endDate });
 
   const template = generateMonthsTemplate(
     startDate,

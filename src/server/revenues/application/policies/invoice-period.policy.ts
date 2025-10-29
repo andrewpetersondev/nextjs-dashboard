@@ -4,6 +4,8 @@ import { logError } from "@/server/revenues/application/cross-cutting/logging";
 import { extractPeriodFromInvoice as extractPeriodFromInvoiceDomain } from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { Period } from "@/shared/domain/domain-brands";
 
+// TODO: THIS FILE HAS A NEAR DUPLICATE AT REVENUES/DOMAIN/POLICIES
+
 /**
  * Safely extracts the Period (first-of-month DATE) from an invoice date.
  */

@@ -6,7 +6,7 @@ import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/reve
 import type {
   MetadataWithPeriod,
   PeriodArg,
-} from "@/server/revenues/events/common/types";
+} from "@/server/revenues/events/handlers/core/types";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 
 interface Args {

@@ -5,13 +5,13 @@ import type {
   ChangeType,
   MetadataWithPeriod,
   PeriodArg,
-} from "@/server/revenues/events/common/types";
-import { handleEligibleAmountChange } from "@/server/revenues/events/status-change/handlers/handle-eligible-amount-change";
-import { handleEligibleStatusChange } from "@/server/revenues/events/status-change/handlers/handle-eligible-status-change";
-import { handleNoExistingRevenue } from "@/server/revenues/events/status-change/handlers/handle-no-existing-revenue";
-import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-eligible-to-ineligible";
-import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/status-change/handlers/handle-transition-from-ineligible-to-eligible";
-import { logNoAffectingChanges } from "@/server/revenues/events/status-change/handlers/log-no-affecting-changes";
+} from "@/server/revenues/events/handlers/core/types";
+import { handleEligibleAmountChange } from "@/server/revenues/events/handlers/handle-eligible-amount-change";
+import { handleEligibleStatusChange } from "@/server/revenues/events/handlers/handle-eligible-status-change";
+import { handleNoExistingRevenue } from "@/server/revenues/events/handlers/handle-no-existing-revenue";
+import { handleTransitionFromEligibleToIneligible } from "@/server/revenues/events/handlers/handle-transition-from-eligible-to-ineligible";
+import { handleTransitionFromIneligibleToEligible } from "@/server/revenues/events/handlers/handle-transition-from-ineligible-to-eligible";
+import { logNoAffectingChanges } from "@/server/revenues/events/handlers/log-no-affecting-changes";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
 export async function dispatchChange(

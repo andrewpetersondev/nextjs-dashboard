@@ -1,8 +1,8 @@
 import "server-only";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
-import type { MetadataBase } from "@/server/revenues/events/common/types";
-import { adjustRevenueForStatusChangeCore } from "@/server/revenues/events/status-change/core/core";
+import { adjustRevenueForStatusChangeCore } from "@/server/revenues/events/handlers/core/core";
+import type { MetadataBase } from "@/server/revenues/events/handlers/core/types";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
 
 /**

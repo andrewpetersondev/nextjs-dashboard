@@ -1,10 +1,10 @@
 import "server-only";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/revenue-display.mapper";
-import { mergeWithTemplate } from "@/server/revenues/application/services/helpers/merge";
+import { mergeWithTemplate } from "@/server/revenues/application/services/revenue/helpers/merge";
 import {
   buildDefaultsFromFreshTemplate,
   buildTemplateAndPeriods,
-} from "@/server/revenues/application/services/helpers/templates";
+} from "@/server/revenues/application/services/revenue/helpers/templates";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";

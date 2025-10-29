@@ -2,10 +2,10 @@ import "server-only";
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
-import { processInvoiceEvent } from "@/server/revenues/application/handlers/events/orchestrator";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
-import { processInvoiceUpdated } from "@/server/revenues/events/process-invoice/handlers/invoice-update.handlers";
+import { processInvoiceUpdated } from "@/server/revenues/events/handlers/invoice-update.handlers";
+import { processInvoiceEvent } from "@/server/revenues/events/handlers/orchestrator";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
 import { logger } from "@/shared/logging/logger.shared";
 

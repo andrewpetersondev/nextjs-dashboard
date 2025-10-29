@@ -5,14 +5,14 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
-import { createRevenue } from "@/server/revenues/infrastructure/dal/drizzle/create.revenue.dal";
-import { deleteRevenue } from "@/server/revenues/infrastructure/dal/drizzle/delete.revenue.dal";
-import { findRevenuesByDateRange } from "@/server/revenues/infrastructure/dal/drizzle/find-by-date-range.revenue.dal";
-import { findRevenueByPeriod } from "@/server/revenues/infrastructure/dal/drizzle/find-by-period.revenue.dal";
-import { readRevenue } from "@/server/revenues/infrastructure/dal/drizzle/read.revenue.dal";
-import { updateRevenue } from "@/server/revenues/infrastructure/dal/drizzle/update.revenue.dal";
-import { upsertRevenue } from "@/server/revenues/infrastructure/dal/drizzle/upsert.revenue.dal";
-import { upsertRevenueByPeriod } from "@/server/revenues/infrastructure/dal/drizzle/upsert-by-period.revenue.dal";
+import { createRevenue } from "@/server/revenues/infrastructure/repository/dal/create.revenue.dal";
+import { deleteRevenue } from "@/server/revenues/infrastructure/repository/dal/delete.revenue.dal";
+import { findRevenuesByDateRange } from "@/server/revenues/infrastructure/repository/dal/find-by-date-range.revenue.dal";
+import { findRevenueByPeriod } from "@/server/revenues/infrastructure/repository/dal/find-by-period.revenue.dal";
+import { readRevenue } from "@/server/revenues/infrastructure/repository/dal/read.revenue.dal";
+import { updateRevenue } from "@/server/revenues/infrastructure/repository/dal/update.revenue.dal";
+import { upsertRevenue } from "@/server/revenues/infrastructure/repository/dal/upsert.revenue.dal";
+import { upsertRevenueByPeriod } from "@/server/revenues/infrastructure/repository/dal/upsert-by-period.revenue.dal";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period, RevenueId } from "@/shared/domain/domain-brands";
 
