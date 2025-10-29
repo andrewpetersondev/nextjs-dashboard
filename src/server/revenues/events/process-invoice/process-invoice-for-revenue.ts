@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { periodKey } from "@/features/revenues/domain/period";
 import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";

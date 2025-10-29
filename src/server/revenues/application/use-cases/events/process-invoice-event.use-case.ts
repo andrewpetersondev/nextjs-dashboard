@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { periodKey } from "@/features/revenues/domain/period";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";

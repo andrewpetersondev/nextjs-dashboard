@@ -15,13 +15,6 @@ export interface TemplateAndPeriods {
 
 export function buildTemplateAndPeriods(): TemplateAndPeriods {
   const { startDate, endDate, duration } = calculateDateRange();
-  //  serverLogger.debug({
-  //    context: "RevenueStatisticsService.calculateForRollingYear",
-  //    duration,
-  //    endDate,
-  //    message: "Calculated date range for a rolling 12-month period",
-  //    startDate,
-  //  });
 
   console.info("buildTemplateAndPeriods", { endDate });
 
@@ -42,14 +35,6 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
 
   const startDatePeriod = firstMonth.period;
   const endDatePeriod = lastMonth.period;
-
-  //  serverLogger.debug({
-  //    context: "RevenueStatisticsService.calculateForRollingYear",
-  //    endPeriod: endDatePeriod,
-  //    message: "Prepared template for a 12-month period",
-  //    startPeriod: startDatePeriod,
-  //    templateMonths: template.length,
-  //  });
 
   return {
     endPeriod: toPeriod(endDatePeriod),

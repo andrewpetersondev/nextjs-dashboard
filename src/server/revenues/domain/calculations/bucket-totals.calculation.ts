@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 
 export type BucketTotals = Readonly<{

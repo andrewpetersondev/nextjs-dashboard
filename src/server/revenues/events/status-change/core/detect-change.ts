@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import type { ChangeType } from "@/server/revenues/events/common/types";

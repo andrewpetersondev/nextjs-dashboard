@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";

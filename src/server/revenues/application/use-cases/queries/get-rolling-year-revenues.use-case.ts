@@ -9,6 +9,7 @@ import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period } from "@/shared/domain/domain-brands";
+import { logger } from "@/shared/logging/logger.shared";
 
 export class GetRollingYearRevenuesUseCase {
   private readonly repository: RevenueRepositoryInterface;
@@ -19,12 +20,7 @@ export class GetRollingYearRevenuesUseCase {
 
   async execute(): Promise<RevenueDisplayEntity[]> {
     try {
-      //      serverLogger.info({
-      //        context: "RevenueStatisticsService.calculateForRollingYear",
-      //        message: "Calculating rolling 12-month revenue data",
-      //      });
-
-      console.info("buildTemplateAndPeriods execute");
+      logger.info("buildTemplateAndPeriods execute");
 
       const { template, startPeriod, endPeriod } = buildTemplateAndPeriods();
 
@@ -35,32 +31,15 @@ export class GetRollingYearRevenuesUseCase {
 
       const result = mergeWithTemplate(template, displayEntities);
 
-      //      serverLogger.info({
-      //        context: "RevenueStatisticsService.calculateForRollingYear",
-      //        message: "Successfully calculated rolling 12-month revenue data",
-      //        resultCount: result.length,
-      //        withDataCount: displayEntities.length,
-      //      });
-      console.info("buildTemplateAndPeriods execute", result);
+      logger.info("buildTemplateAndPeriods execute", result);
+
       return result;
     } catch (error) {
-      //      serverLogger.error({
-      //        context: "RevenueStatisticsService.calculateForRollingYear",
-      //        error,
-      //        message:
-      //          "Error calculating rolling 12-month revenue data; returning defaults",
-      //      });
-      console.error(error);
+      logger.error("rolling year revenue failed", error);
       try {
         return buildDefaultsFromFreshTemplate();
       } catch (fallbackError) {
-        //        serverLogger.error({
-        //          context: "RevenueStatisticsService.calculateForRollingYear",
-        //          error: fallbackError,
-        //          message:
-        //            "Fallback template generation failed; returning empty dataset",
-        //        });
-        console.error("buildTemplateAndPeriods failed", fallbackError);
+        logger.error("buildTemplateAndPeriods failed", fallbackError);
         return [];
       }
     }
@@ -73,22 +52,10 @@ export class GetRollingYearRevenuesUseCase {
     const revenueEntities: RevenueEntity[] =
       await this.repository.findByDateRange(startPeriod, endPeriod);
 
-    //    serverLogger.debug({
-    //      context: "RevenueStatisticsService.calculateForRollingYear",
-    //      entityCount: revenueEntities.length,
-    //      message: "Fetched revenue data from repository",
-    //    });
-
     const displayEntities = revenueEntities.map(
       (entity: RevenueEntity): RevenueDisplayEntity =>
         mapRevenueEntityToDisplayEntity(entity),
     );
-
-    //    serverLogger.debug({
-    //      context: "RevenueStatisticsService.calculateForRollingYear",
-    //      displayEntityCount: displayEntities.length,
-    //      message: "Transformed revenue entities to display entities",
-    //    });
 
     return displayEntities;
   }

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   RevenueEntity,
@@ -11,6 +10,7 @@ import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class UpdateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;
+
   constructor(repository: RevenueRepositoryInterface) {
     this.repository = repository;
   }

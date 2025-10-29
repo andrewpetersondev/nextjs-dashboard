@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getAppDb } from "@/server/db/db.connection";
 import { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";

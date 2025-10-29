@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";

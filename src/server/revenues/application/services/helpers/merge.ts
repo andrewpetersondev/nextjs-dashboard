@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import { toPeriod } from "@/shared/domain/id-converters";

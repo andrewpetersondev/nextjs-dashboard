@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { AppDatabase } from "@/server/db/db.connection";
 import type {
   RevenueCreateEntity,

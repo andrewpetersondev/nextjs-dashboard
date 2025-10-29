@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { CoreArgs } from "@/server/revenues/events/common/types";
 import { detectChange } from "@/server/revenues/events/status-change/core/detect-change";
 import { dispatchChange } from "@/server/revenues/events/status-change/core/dispatch-change";

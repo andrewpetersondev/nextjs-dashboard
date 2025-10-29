@@ -1,5 +1,4 @@
 import "server-only";
-
 import {
   INTERVAL_DURATIONS,
   type IntervalDuration,

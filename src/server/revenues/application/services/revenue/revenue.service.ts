@@ -1,5 +1,4 @@
 import "server-only";
-
 import { CreateRevenueUseCase } from "@/server/revenues/application/use-cases/commands/create-revenue.use-case";
 import { DeleteRevenueUseCase } from "@/server/revenues/application/use-cases/commands/delete-revenue.use-case";
 import { UpdateRevenueUseCase } from "@/server/revenues/application/use-cases/commands/update-revenue.use-case";
@@ -30,6 +29,7 @@ export class RevenueService {
    * @param repository - Repository interface for revenue data access
    */
   private readonly repository: RevenueRepositoryInterface;
+
   constructor(repository: RevenueRepositoryInterface) {
     this.repository = repository;
   }

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   RevenueCreateEntity,
@@ -10,6 +9,7 @@ import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 
 export class CreateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;
+
   constructor(repository: RevenueRepositoryInterface) {
     this.repository = repository;
   }

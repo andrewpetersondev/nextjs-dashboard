@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import type { MetadataBase } from "@/server/revenues/events/common/types";

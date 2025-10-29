@@ -1,11 +1,7 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { logError } from "@/server/revenues/application/cross-cutting/logging";
-import {
-  extractPeriodFromInvoice as extractPeriodFromInvoiceDomain,
-  validateInvoicePeriodForRevenue as validateInvoicePeriodForRevenueDomain,
-} from "@/server/revenues/domain/policies/invoice-period.policy";
+import { extractPeriodFromInvoice as extractPeriodFromInvoiceDomain } from "@/server/revenues/domain/policies/invoice-period.policy";
 import type { Period } from "@/shared/domain/domain-brands";
 
 /**
@@ -20,20 +16,6 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
       invoiceId: invoice?.id ?? null,
     });
     return null;
-  }
-}
-
-/**
- * Validates an invoice for revenue calculations.
- */
-export function validateInvoicePeriodForRevenue(
-  invoice: InvoiceDto | undefined,
-): { valid: boolean; reason?: string } {
-  try {
-    return validateInvoicePeriodForRevenueDomain(invoice);
-  } catch {
-    // Should not throw, but if it does, surface a stable invalid result
-    return { reason: "Validation error", valid: false };
   }
 }
 
