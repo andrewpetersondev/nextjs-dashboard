@@ -53,7 +53,7 @@ export async function createInvoiceAction(
       const invoice: InvoiceDto = await service.createInvoice(parsed.data);
 
       const { EventBus } = await import("@/server/events/event-bus");
-      await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.CREATED, {
+      await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
         eventId: crypto.randomUUID(),
         eventTimestamp: new Date().toISOString(),
         invoice,

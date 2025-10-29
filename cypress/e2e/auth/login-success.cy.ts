@@ -1,4 +1,4 @@
-import { UI_MATCHERS } from "../shared/regex";
+import { UI_MATCHERS_REGEX } from "../shared/regex";
 import { createTestUser } from "../shared/users";
 
 describe("Login success flow", () => {
@@ -21,7 +21,7 @@ describe("Login success flow", () => {
     // Keeping the heading assertion as the main UI guard.
     cy.findByRole("heading", {
       level: 1,
-      name: UI_MATCHERS.DASHBOARD_H1,
+      name: UI_MATCHERS_REGEX.dashboardH1,
     }).should("be.visible");
   });
 });

@@ -15,7 +15,7 @@ describe("Reset DB", () => {
       expect(
         res.status,
         `HTTP status: ${res.status}, body: ${JSON.stringify(res.body)}`,
-      ).to.eq(STATUS_CODES.OK);
+      ).to.eq(STATUS_CODES.ok);
       expect(res.body).to.have.property("action", "reset");
       expect(res.body).to.have.property("ok", true);
     });

@@ -3,9 +3,9 @@ export const E2E_ID_MODULUS = 99_999_999 as const;
 export const INVALID_EMAIL: string = "invalid@example.com";
 export const INVALID_PASSWORD: string = "wrongpassword";
 
-export const ERROR_MESSAGES = {
-  FAILED_AUTH_FORM: /Failed to validate form data/i,
-  INVALID_CREDENTIALS: /Invalid email or password/i,
+export const ERROR_MESSAGES_REGEX = {
+  failedAuthForm: /Failed to validate form data/i,
+  invalidCredentials: /Invalid email or password/i,
 } as const satisfies Readonly<Record<string, RegExp>>;
 
 export type SignupCreds = {

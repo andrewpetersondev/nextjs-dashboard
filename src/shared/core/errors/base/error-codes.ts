@@ -11,7 +11,7 @@
  */
 
 export const ERROR_CODES = {
-  BAD_REQUEST: {
+  badRequest: {
     category: "client",
     description: "Malformed or invalid request",
     httpStatus: 400,
@@ -32,20 +32,20 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "critical",
   },
-  CONFLICT: {
-    authFields: ["email", "username"] as const,
-    category: "client",
-    description: "Resource state conflict",
-    httpStatus: 409,
-    retryable: false,
-    severity: "warn",
-  },
   CRYPTO: {
     category: "infrastructure",
     description: "Cryptographic operation failed",
     httpStatus: 500,
     retryable: false,
     severity: "error",
+  },
+  conflict: {
+    authFields: ["email", "username"] as const,
+    category: "client",
+    description: "Resource state conflict",
+    httpStatus: 409,
+    retryable: false,
+    severity: "warn",
   },
   DATABASE: {
     category: "infrastructure",
@@ -61,7 +61,7 @@ export const ERROR_CODES = {
     retryable: true,
     severity: "error",
   },
-  FORBIDDEN: {
+  forbidden: {
     category: "client",
     description: "Operation not allowed",
     httpStatus: 403,
@@ -89,7 +89,7 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "error",
   },
-  NOT_FOUND: {
+  notFound: {
     category: "client",
     description: "Resource not found",
     httpStatus: 404,
@@ -138,14 +138,6 @@ export const ERROR_CODES = {
     retryable: true,
     severity: "error",
   },
-  UNAUTHORIZED: {
-    authFields: ["email", "password"] as const,
-    category: "client",
-    description: "Invalid credentials",
-    httpStatus: 401,
-    retryable: false,
-    severity: "warn",
-  },
   UNAVAILABLE: {
     category: "infrastructure",
     description: "Service temporarily unavailable",
@@ -159,6 +151,14 @@ export const ERROR_CODES = {
     httpStatus: 500,
     retryable: false,
     severity: "error",
+  },
+  unauthorized: {
+    authFields: ["email", "password"] as const,
+    category: "client",
+    description: "Invalid credentials",
+    httpStatus: 401,
+    retryable: false,
+    severity: "warn",
   },
   VALIDATION: {
     authFields: ["email", "username", "password"] as const,

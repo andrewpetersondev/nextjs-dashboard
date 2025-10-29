@@ -32,7 +32,7 @@ export async function readInvoiceDal(
 
   // Check if invoice exists
   if (!data) {
-    throw new DatabaseError(INVOICE_MSG.NOT_FOUND, { id });
+    throw new DatabaseError(INVOICE_MSG.notFound, { id });
   }
 
   // Convert raw database row to InvoiceEntity

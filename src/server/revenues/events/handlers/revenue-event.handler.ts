@@ -54,7 +54,7 @@ export class RevenueEventHandler {
 
     // Subscribe to invoice events using centralized constants (DRY)
     EventBus.subscribe(
-      INVOICE_EVENTS.CREATED,
+      INVOICE_EVENTS.created,
       this.handleInvoiceCreated.bind(this),
     );
     EventBus.subscribe(

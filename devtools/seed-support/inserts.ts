@@ -62,8 +62,8 @@ export async function insertDemoCounters(tx: Tx): Promise<void> {
       count:
         Math.floor(
           Math.random() *
-            (SEED_CONFIG.DEMO_COUNTER_MAX - SEED_CONFIG.DEMO_COUNTER_MIN + 1),
-        ) + SEED_CONFIG.DEMO_COUNTER_MIN,
+            (SEED_CONFIG.demoCounterMax - SEED_CONFIG.demoCounterMin + 1),
+        ) + SEED_CONFIG.demoCounterMin,
       role,
     })),
   );

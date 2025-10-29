@@ -10,7 +10,7 @@ import { SEED_CONFIG } from "./constants";
  */
 export function validatePeriod(period: string): void {
   const date = new Date(`${period}T00:00:00.000Z`);
-  if (date.getUTCDate() !== SEED_CONFIG.FIRST_DAY_OF_MONTH) {
+  if (date.getUTCDate() !== SEED_CONFIG.firstDayOfMonth) {
     throw new Error(`Generated period ${period} is not first day of month`);
   }
 }
@@ -19,7 +19,7 @@ export function validatePeriod(period: string): void {
  * Hashes a password using bcrypt with configured salt rounds.
  */
 export async function hashPassword(password: string): Promise<PasswordHash> {
-  const salt = await bcryptjs.genSalt(SEED_CONFIG.SALT_ROUNDS);
+  const salt = await bcryptjs.genSalt(SEED_CONFIG.saltRounds);
   const hashed = bcryptjs.hash(password, salt);
   const branded = asPasswordHash(await hashed);
   return branded;
@@ -53,10 +53,10 @@ export function generateMonthlyPeriods(
   const out: string[] = [];
   for (let i = 0; i < months; i++) {
     const currentYear =
-      year + Math.floor((month - 1 + i) / SEED_CONFIG.MONTHS_IN_YEAR);
-    const currentMonth = ((month - 1 + i) % SEED_CONFIG.MONTHS_IN_YEAR) + 1;
+      year + Math.floor((month - 1 + i) / SEED_CONFIG.monthsInYear);
+    const currentMonth = ((month - 1 + i) % SEED_CONFIG.monthsInYear) + 1;
     const d = new Date(
-      Date.UTC(currentYear, currentMonth - 1, SEED_CONFIG.FIRST_DAY_OF_MONTH),
+      Date.UTC(currentYear, currentMonth - 1, SEED_CONFIG.firstDayOfMonth),
     );
     const iso = d.toISOString().slice(0, 10);
     out.push(iso);
@@ -66,43 +66,43 @@ export function generateMonthlyPeriods(
 
 export function generateInvoiceAmount(): number {
   const r = Math.random();
-  if (r < SEED_CONFIG.ZERO_AMOUNT_PROBABILITY) {
+  if (r < SEED_CONFIG.zeroAmountProbability) {
     return 0;
   }
   if (
     r <
-    SEED_CONFIG.ZERO_AMOUNT_PROBABILITY + SEED_CONFIG.SINGLE_CENT_PROBABILITY
+    SEED_CONFIG.zeroAmountProbability + SEED_CONFIG.singleCentProbability
   ) {
-    return SEED_CONFIG.SINGLE_CENT_AMOUNT;
+    return SEED_CONFIG.singleCentAmount;
   }
   if (
     r <
-    SEED_CONFIG.ZERO_AMOUNT_PROBABILITY +
-      SEED_CONFIG.SINGLE_CENT_PROBABILITY +
-      SEED_CONFIG.MIN_AMOUNT_PROBABILITY
+    SEED_CONFIG.zeroAmountProbability +
+      SEED_CONFIG.singleCentProbability +
+      SEED_CONFIG.minAmountProbability
   ) {
-    return SEED_CONFIG.MIN_AMOUNT_CENTS;
+    return SEED_CONFIG.minAmountCents;
   }
-  if (r < SEED_CONFIG.INVOICE_REGULAR_THRESHOLD) {
+  if (r < SEED_CONFIG.invoiceRegularThreshold) {
     return (
       Math.floor(
         Math.random() *
-          (SEED_CONFIG.MAX_AMOUNT_CENTS - SEED_CONFIG.MIN_AMOUNT_CENTS + 1),
-      ) + SEED_CONFIG.MIN_AMOUNT_CENTS
+          (SEED_CONFIG.maxAmountCents - SEED_CONFIG.minAmountCents + 1),
+      ) + SEED_CONFIG.minAmountCents
     );
   }
   return (
     Math.floor(
       Math.random() *
-        (SEED_CONFIG.MAX_LARGE_AMOUNT_CENTS -
-          SEED_CONFIG.LARGE_AMOUNT_THRESHOLD +
+        (SEED_CONFIG.maxLargeAmountCents -
+          SEED_CONFIG.largeAmountThreshold +
           1),
-    ) + SEED_CONFIG.LARGE_AMOUNT_THRESHOLD
+    ) + SEED_CONFIG.largeAmountThreshold
   );
 }
 
 export function randomInvoiceStatus(): "pending" | "paid" {
-  return Math.random() < SEED_CONFIG.INVOICE_STATUS_PENDING_PROBABILITY
+  return Math.random() < SEED_CONFIG.invoiceStatusPendingProbability
     ? "pending"
     : "paid";
 }

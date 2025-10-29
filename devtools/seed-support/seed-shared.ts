@@ -58,7 +58,7 @@ export const customersData: ReadonlyArray<{
  */
 export const periods: readonly string[] = generateMonthlyPeriods(
   "2024-01-01",
-  SEED_CONFIG.GENERATE_MONTHLY_PERIODS_COUNT,
+  SEED_CONFIG.generateMonthlyPeriodsCount,
 );
 
 export const periodDates: ReadonlyArray<Date & Period> = periods.map(

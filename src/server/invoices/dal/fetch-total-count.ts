@@ -5,7 +5,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { sharedLogger } from "@/shared/logging/logger.shared";
-import { DATA_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
+import { DASHBOARD_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
 
 /**
  * Fetches the total number of invoices.
@@ -32,7 +32,7 @@ export async function fetchTotalInvoicesCountDal(
     const cause = error instanceof Error ? error : undefined;
 
     throw new DatabaseError(
-      DATA_ERROR_MESSAGES.ERROR_FETCH_DASHBOARD_CARDS,
+      DASHBOARD_ERROR_MESSAGES.fetchDashboardCards,
       context,
       cause,
     );

@@ -3,7 +3,7 @@
 
 import type { LoginCreds, SignupCreds } from "../e2e/shared/auth-forms";
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";
-import { UI_MATCHERS } from "../e2e/shared/regex";
+import { UI_MATCHERS_REGEX } from "../e2e/shared/regex";
 import { AUTH_SEL } from "../e2e/shared/selectors";
 import { TWENTY_SECONDS } from "../e2e/shared/times";
 
@@ -71,7 +71,9 @@ Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
 
 Cypress.Commands.add("loginAsDemoUser", () => {
   cy.visit(LOGIN_PATH);
-  cy.findByRole("button", { name: UI_MATCHERS.LOGIN_DEMO_USER_BUTTON }).click();
+  cy.findByRole("button", {
+    name: UI_MATCHERS_REGEX.loginDemoUserButton,
+  }).click();
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
     DASHBOARD_PATH,
@@ -81,7 +83,7 @@ Cypress.Commands.add("loginAsDemoUser", () => {
 Cypress.Commands.add("loginAsDemoAdmin", () => {
   cy.visit(LOGIN_PATH);
   cy.findByRole("button", {
-    name: UI_MATCHERS.LOGIN_DEMO_ADMIN_BUTTON,
+    name: UI_MATCHERS_REGEX.loginDemoAdminButton,
   }).click();
   cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
     "include",
@@ -97,10 +99,12 @@ Cypress.Commands.add("logoutViaForm", () => {
   // - Already logged out: redirect from /dashboard to home, just assert home screen.
   cy.location("pathname", { timeout: TWENTY_SECONDS }).then((pathname) => {
     if (pathname.includes(DASHBOARD_PATH)) {
-      cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
+      cy.findByRole("button", {
+        name: UI_MATCHERS_REGEX.signoutButton,
+      }).click();
     }
-    cy.findByText(UI_MATCHERS.WELCOME_HOME, { timeout: TWENTY_SECONDS }).should(
-      "be.visible",
-    );
+    cy.findByText(UI_MATCHERS_REGEX.welcomeHome, {
+      timeout: TWENTY_SECONDS,
+    }).should("be.visible");
   });
 });

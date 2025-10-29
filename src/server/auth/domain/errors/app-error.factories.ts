@@ -74,7 +74,7 @@ export function createAuthAppError(
         makeAppErrorDetails({
           extra: init,
           fieldErrors: Object.fromEntries(
-            ERROR_CODES.UNAUTHORIZED.authFields.map((f) => [
+            ERROR_CODES.unauthorized.authFields.map((f) => [
               f,
               [AUTH_MESSAGES.conflict] as const,
             ]),

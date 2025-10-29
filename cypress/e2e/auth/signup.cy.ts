@@ -1,5 +1,5 @@
 import { DASHBOARD_PATH, SIGNUP_PATH } from "../shared/paths";
-import { UI_MATCHERS } from "../shared/regex";
+import { UI_MATCHERS_REGEX } from "../shared/regex";
 import { AUTH_SEL } from "../shared/selectors";
 import { DEFAULT_TIMEOUT } from "../shared/times";
 import { createTestUser } from "../shared/users";
@@ -11,7 +11,7 @@ describe("Signup flow", () => {
     cy.visit(SIGNUP_PATH);
 
     // Assert signup page renders
-    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS_REGEX.signupHeading }).should(
       "be.visible",
     );
 
@@ -33,7 +33,7 @@ describe("Signup flow", () => {
     // Verify dashboard heading for a regular user
     cy.findByRole("heading", {
       level: 1,
-      name: UI_MATCHERS.DASHBOARD_H1,
+      name: UI_MATCHERS_REGEX.dashboardH1,
     }).should("be.visible");
   });
 });
@@ -52,7 +52,7 @@ describe("Signup flow with Database Tasks", () => {
     const user = createTestUser();
 
     cy.visit(SIGNUP_PATH);
-    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS_REGEX.signupHeading }).should(
       "be.visible",
     );
 
@@ -65,7 +65,7 @@ describe("Signup flow with Database Tasks", () => {
 
     cy.findByRole("heading", {
       level: 1,
-      name: UI_MATCHERS.DASHBOARD_H1,
+      name: UI_MATCHERS_REGEX.dashboardH1,
     }).should("be.visible");
   });
 });

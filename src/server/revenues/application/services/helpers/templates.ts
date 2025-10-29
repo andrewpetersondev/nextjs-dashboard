@@ -35,7 +35,7 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
   }
 
   const firstMonth = template[0];
-  const lastMonth = template[template.length - 1];
+  const lastMonth = template.at(-1);
   if (!(firstMonth && lastMonth)) {
     throw new Error("Template generation failed: invalid month data");
   }

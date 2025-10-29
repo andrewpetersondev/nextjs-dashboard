@@ -88,8 +88,8 @@ export const REVENUES_SEL = {
   revenueChartMonthLabel: '[data-cy="revenue-chart-month-label"]',
   revenueChartNoDataMessage: '[data-cy="revenue-chart-no-data-message"]',
   revenueChartSection: '[data-cy="revenue-chart-section"]',
-  revenueChartYAxis: '[data-cy="revenue-chart-y-axis"]',
-  revenueChartYAxisLabel: '[data-cy="revenue-chart-y-axis-label"]',
+  revenueChartYaxis: '[data-cy="revenue-chart-y-axis"]',
+  revenueChartYaxisLabel: '[data-cy="revenue-chart-y-axis-label"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 export type RevenuesSelKey = keyof typeof REVENUES_SEL;

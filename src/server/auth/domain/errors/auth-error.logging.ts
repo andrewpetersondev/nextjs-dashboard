@@ -63,7 +63,7 @@ export const AUTH_SERVICE_CONTEXTS = {
   LOGIN: {
     CONTEXT: "service.auth.login" as const,
 
-    INVALID_CREDENTIALS: (email: string) => ({
+    invalidCredentials: (email: string) => ({
       email,
       kind: "validation",
     }),

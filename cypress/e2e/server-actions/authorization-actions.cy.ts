@@ -1,5 +1,5 @@
 import { ADMIN_USERS_PATH, DASHBOARD_USERS_PATH } from "../shared/paths";
-import { UI_MATCHERS } from "../shared/regex";
+import { UI_MATCHERS_REGEX } from "../shared/regex";
 import { STATUS_CODES } from "../shared/status-codes";
 
 describe("Server Action Authorization", () => {
@@ -12,7 +12,7 @@ describe("Server Action Authorization", () => {
       expect(pathname).not.to.include(DASHBOARD_USERS_PATH);
     });
     // Expect to land on a non-admin screen (e.g., user dashboard)
-    cy.findByRole("heading", { name: UI_MATCHERS.DASHBOARD_H1 }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS_REGEX.dashboardH1 }).should(
       "be.visible",
     );
 
@@ -26,7 +26,7 @@ describe("Server Action Authorization", () => {
       method: "POST",
       url: ADMIN_USERS_PATH,
     }).then((response) => {
-      expect([STATUS_CODES.FORBIDDEN, STATUS_CODES.NOT_FOUND]).to.include(
+      expect([STATUS_CODES.forbidden, STATUS_CODES.notFound]).to.include(
         response.status,
       );
     });
@@ -50,7 +50,7 @@ describe("Server Action Authorization", () => {
       method: "POST",
       url: ADMIN_USERS_PATH,
     }).then((response) => {
-      expect([STATUS_CODES.OK, STATUS_CODES.NOT_FOUND]).to.include(
+      expect([STATUS_CODES.ok, STATUS_CODES.notFound]).to.include(
         response.status,
       );
     });

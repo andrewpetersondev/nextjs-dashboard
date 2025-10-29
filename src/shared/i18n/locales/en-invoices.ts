@@ -34,7 +34,7 @@ export const enInvoices = {
   [INVOICE_MSG.LIST_SUCCESS]: "Invoices listed successfully.",
   [INVOICE_MSG.MAPPING_FAILED]: "Failed to map invoice data.",
   [INVOICE_MSG.MISSING_FIELDS]: "Missing required fields.",
-  [INVOICE_MSG.NOT_FOUND]: "Invoice not found.",
+  [INVOICE_MSG.notFound]: "Invoice not found.",
   [INVOICE_MSG.READ_FAILED]: "Failed to read invoice.",
   [INVOICE_MSG.READ_SUCCESS]: "Invoice fetched successfully.",
   [INVOICE_MSG.REPO_ERROR]: "Invoice Repository Error. Please try again.",

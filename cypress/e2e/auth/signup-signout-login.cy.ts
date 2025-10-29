@@ -1,5 +1,5 @@
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../shared/paths";
-import { UI_MATCHERS } from "../shared/regex";
+import { UI_MATCHERS_REGEX } from "../shared/regex";
 import { AUTH_SEL } from "../shared/selectors";
 import { DEFAULT_TIMEOUT } from "../shared/times";
 import { createTestUser } from "../shared/users";
@@ -10,7 +10,7 @@ describe("Signup → Sign out → Login flow", () => {
 
     // 1) Sign up
     cy.visit(SIGNUP_PATH);
-    cy.findByRole("heading", { name: UI_MATCHERS.SIGNUP_HEADING }).should(
+    cy.findByRole("heading", { name: UI_MATCHERS_REGEX.signupHeading }).should(
       "be.visible",
     );
 
@@ -24,14 +24,16 @@ describe("Signup → Sign out → Login flow", () => {
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
     cy.findByRole("heading", {
       level: 1,
-      name: UI_MATCHERS.DASHBOARD_H1,
+      name: UI_MATCHERS_REGEX.dashboardH1,
     }).should("be.visible");
 
     // 3) Sign out from the dashboard (Logout button has aria-label "Sign Out")
-    cy.findByRole("button", { name: UI_MATCHERS.SIGN_OUT_BUTTON }).click();
+    cy.findByRole("button", {
+      name: UI_MATCHERS_REGEX.signoutButton,
+    }).click();
 
     // 4) After logout, redirected home
-    cy.findByText(UI_MATCHERS.WELCOME_HOME, {
+    cy.findByText(UI_MATCHERS_REGEX.welcomeHome, {
       timeout: DEFAULT_TIMEOUT,
     }).should("be.visible");
 
@@ -47,7 +49,7 @@ describe("Signup → Sign out → Login flow", () => {
     cy.url({ timeout: DEFAULT_TIMEOUT }).should("include", DASHBOARD_PATH);
     cy.findByRole("heading", {
       level: 1,
-      name: UI_MATCHERS.DASHBOARD_H1,
+      name: UI_MATCHERS_REGEX.dashboardH1,
     }).should("be.visible");
   });
 });

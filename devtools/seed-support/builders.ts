@@ -57,7 +57,7 @@ export function buildRandomInvoiceRows(
   existingCustomers: ReadonlyArray<{ readonly id: string }>,
 ): NewInvoice[] {
   const invoiceRows: NewInvoice[] = [];
-  for (let i = 0; i < SEED_CONFIG.INVOICE_COUNT; i++) {
+  for (let i = 0; i < SEED_CONFIG.invoiceCount; i++) {
     const customer =
       existingCustomers[Math.floor(Math.random() * existingCustomers.length)];
     const period = periods[Math.floor(Math.random() * periods.length)];
@@ -72,14 +72,14 @@ export function buildRandomInvoiceRows(
     const [year, month] = period.split("-").map(Number);
     if (
       !(year && month) ||
-      month < SEED_CONFIG.MIN_MONTH ||
-      month > SEED_CONFIG.MONTHS_IN_YEAR
+      month < SEED_CONFIG.minMonth ||
+      month > SEED_CONFIG.monthsInYear
     ) {
       throw new Error(`Invalid period format: ${period}. Expected YYYY-MM-DD`);
     }
     const daysInMonth = new Date(year, month, 0).getDate();
     const randomDay =
-      Math.floor(Math.random() * daysInMonth) + SEED_CONFIG.FIRST_DAY_OF_MONTH;
+      Math.floor(Math.random() * daysInMonth) + SEED_CONFIG.firstDayOfMonth;
     const invoiceDate = new Date(Date.UTC(year, month - 1, randomDay));
 
     invoiceRows.push({

@@ -290,7 +290,7 @@ import "server-only";
  */
 
 export const AUTH_ERROR_CATALOG = {
-  INVALID_CREDENTIALS: {
+  invalidCredentials: {
     code: "invalid_credentials" as const,
     message: "Invalid email or password",
     fields: ["email", "password"] as const,

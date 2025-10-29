@@ -129,6 +129,8 @@
       },
       "recommended": true,
       "security": {
+        "noDangerouslySetInnerHtml": "on",
+        "noDangerouslySetInnerHtmlWithChildren": "on",
         "recommended": true
       },
       "style": {
@@ -173,9 +175,11 @@
         "noYodaExpression": "on",
         "recommended": true,
         "useAsConstAssertion": "on",
+        "useAtIndex": "on",
         "useBlockStatements": "on",
         "useCollapsedElseIf": "on",
         "useCollapsedIf": "on",
+        "useComponentExportOnlyModules": "on",
         "useConsistentArrayType": "on",
         "useConsistentBuiltinInstantiation": "on",
         "useConsistentCurlyBraces": "on",
@@ -190,7 +194,7 @@
         "useForOf": "on",
         "useFragmentSyntax": "on",
         "useGroupedAccessorPairs": "on",
-        "useNamingConvention": "off",
+        "useNamingConvention": "on",
         "useNumberNamespace": "on",
         "useNumericSeparators": "on",
         "useObjectSpread": "on",

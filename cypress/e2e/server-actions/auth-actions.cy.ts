@@ -1,5 +1,5 @@
 import {
-  ERROR_MESSAGES,
+  ERROR_MESSAGES_REGEX,
   INVALID_EMAIL,
   INVALID_PASSWORD,
 } from "../shared/auth-forms";
@@ -30,7 +30,7 @@ describe("Authentication Server Actions", () => {
     cy.get(AUTH_SEL.loginSubmit).click();
 
     // Assert error UI is shown, and we remain on login
-    cy.findByText(ERROR_MESSAGES.FAILED_AUTH_FORM).should("be.visible");
+    cy.findByText(ERROR_MESSAGES_REGEX.failedAuthForm).should("be.visible");
     cy.url().should("include", LOGIN_PATH);
   });
 });

@@ -52,7 +52,7 @@ function notFoundResult<F extends string>(
 ): FormResult<never> {
   return formError<F>({
     fieldErrors: createEmptyDenseFieldErrorMap(fields),
-    message: USER_ERROR_MESSAGES.NOT_FOUND,
+    message: USER_ERROR_MESSAGES.notFound,
   });
 }
 
