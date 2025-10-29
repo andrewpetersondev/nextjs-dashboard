@@ -17,7 +17,7 @@ export async function updateRevenue(
   id: RevenueId,
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
-  if (!id || !revenue) {
+  if (!(id && revenue)) {
     throw new ValidationError("Revenue ID and data are required");
   }
 

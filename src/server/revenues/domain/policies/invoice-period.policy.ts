@@ -12,7 +12,7 @@ import { toPeriod } from "@/shared/domain/id-converters";
  * Pure function without logging or application concerns.
  */
 export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
-  if (!invoice || !invoice.date) {
+  if (!(invoice && invoice.date)) {
     return null;
   }
 

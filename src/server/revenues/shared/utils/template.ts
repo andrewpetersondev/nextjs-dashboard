@@ -1,6 +1,4 @@
 import "server-only";
-
-import { serverLogger } from "@/server/logging/logger.server";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/revenue-display.mapper";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
@@ -41,11 +39,13 @@ export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
   // Transform to RevenueDisplayEntity using the factory method
   const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
-  serverLogger.debug({
-    context: "createDefaultRevenueData",
-    message: "Created default revenue data",
-    period,
-  });
+  //  serverLogger.debug({
+  //    context: "createDefaultRevenueData",
+  //    message: "Created default revenue data",
+  //    period,
+  //  });
+
+  console.log("mappedData", mappedData);
 
   return mappedData;
 }

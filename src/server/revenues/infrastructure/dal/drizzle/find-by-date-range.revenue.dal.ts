@@ -15,7 +15,7 @@ export async function findRevenuesByDateRange(
   startPeriod: Period,
   endPeriod: Period,
 ): Promise<RevenueEntity[]> {
-  if (!startPeriod || !endPeriod) {
+  if (!(startPeriod && endPeriod)) {
     throw new ValidationError("Start and end periods are required");
   }
 

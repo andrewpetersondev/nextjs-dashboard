@@ -19,7 +19,7 @@ export class UpdateRevenueUseCase {
     id: RevenueId,
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
-    if (!id || !revenue) {
+    if (!(id && revenue)) {
       throw new ValidationError("Invalid revenue ID or data");
     }
     const updated = await this.repository.update(id, revenue);
