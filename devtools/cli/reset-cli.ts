@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <cli only> */
+import "../config/load-env";
 import { resetDatabase } from "./reset-db";
 
 console.log("reset-cli.ts ...");

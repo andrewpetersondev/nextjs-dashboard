@@ -1,8 +1,7 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
-import "server-only";
-import { z } from "zod";
+// TODO: CHANGE FILE NAME TO ENV-SERVER
 
 /**
  * @file Server-only environment configuration for Next.js runtime
@@ -10,22 +9,9 @@ import { z } from "zod";
  * - Shared env values are imported from `@/shared/config/env-shared`
  */
 
-const NON_EMPTY_STRING_MIN_LENGTH = 1 as const;
-
-const ServerEnvSchema = z.object({
-  databaseUrl: z
-    .string()
-    .url("DATABASE_URL must be a valid URL")
-    .min(NON_EMPTY_STRING_MIN_LENGTH),
-
-  sessionAudience: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
-
-  sessionIssuer: z.string().min(NON_EMPTY_STRING_MIN_LENGTH),
-
-  sessionSecret: z
-    .string()
-    .min(NON_EMPTY_STRING_MIN_LENGTH, "SESSION_SECRET cannot be empty"),
-});
+import "server-only";
+import type { z } from "zod";
+import { ServerEnvSchema } from "@/shared/config/env-schemas";
 
 let cachedServerEnv: Readonly<z.infer<typeof ServerEnvSchema>> | undefined;
 

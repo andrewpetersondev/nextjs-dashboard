@@ -1,11 +1,14 @@
 /** biome-ignore-all lint/style/noProcessEnv: <temp> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
-
+import "./devtools/config/load-env";
 import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle.config.ts ...");
 
-const url = process.env.databaseUrl;
+// TODO: IMPORT THE ENV VARIABLES FROM ENV-TOOLING
+// OR SHOULD I JUST ALLOW USING PROCESS FOR CLI
+
+const url = process.env.DATABASE_URL;
 
 console.log("DATABASE_URL:", url);
 
@@ -15,7 +18,7 @@ if (!url) {
 
 // Determine environment for migrations folder
 const env = (
-  process.env.databaseEnv ??
+  process.env.DATABASE_ENV ??
   process.env.NODE_ENV ??
   "development"
 ).toLowerCase();

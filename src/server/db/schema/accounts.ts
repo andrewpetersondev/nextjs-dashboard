@@ -1,4 +1,3 @@
-import type { AdapterAccountType } from "@auth/core/adapters";
 import {
   index,
   integer,
@@ -21,7 +20,7 @@ export const accounts = pgTable(
     scope: text("scope"),
     sessionState: text("session_state"),
     tokenType: text("token_type"),
-    type: text("type").$type<AdapterAccountType>().notNull(),
+    type: text("type").notNull(),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

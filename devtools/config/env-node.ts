@@ -1,30 +1,18 @@
+//TODO: CHANGE FILE NAME TO ENV-TOOLING
+
 // File: devtools/config/env-node.ts
-import { z } from "zod";
-import {
-  type Environment,
-  EnvironmentSchema,
-  getDatabaseEnv,
-} from "@/shared/config/env-shared";
+import { ToolingEnvShape } from "../../src/shared/config/env-schemas";
+import { getDatabaseEnv } from "../../src/shared/config/env-shared";
 
-const MIN_LENGTH = 20;
-
-const nodeToolingEnvSchema = z.object({
-  cypressBaseUrl: z.url().optional(),
-  databaseEnv: EnvironmentSchema,
-  databaseUrl: z.url(),
-  sessionSecret: z
-    .string()
-    .min(MIN_LENGTH, `SESSION_SECRET must be at least ${MIN_LENGTH} chars`),
-});
-
-// Merge process.env with normalized DATABASE_ENV fallback
-const baseEnv = {
-  ...process.env,
-  databaseEnv: getDatabaseEnv(),
+// Build a normalized object from process.env (use UPPER_SNAKE names)
+const envToValidate = {
+  cypressBaseUrl: process.env.CYPRESS_BASE_URL,
+  databaseEnv: process.env.DATABASE_ENV ?? getDatabaseEnv(),
+  databaseUrl: process.env.DATABASE_URL,
+  sessionSecret: process.env.SESSION_SECRET,
 };
 
-const parsed = nodeToolingEnvSchema.safeParse(baseEnv);
-
+const parsed = ToolingEnvShape.safeParse(envToValidate);
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;
   throw new Error(
@@ -36,9 +24,7 @@ if (!parsed.success) {
   );
 }
 
-const data = parsed.data;
-
-export const DATABASE_ENV: Environment = data.databaseEnv;
-export const DATABASE_URL: string = data.databaseUrl;
-export const CYPRESS_BASE_URL: string | undefined = data.cypressBaseUrl;
-export const SESSION_SECRET: string = data.sessionSecret;
+export const DATABASE_ENV = parsed.data.databaseEnv;
+export const DATABASE_URL = parsed.data.databaseUrl;
+export const CYPRESS_BASE_URL = parsed.data.cypressBaseUrl;
+export const SESSION_SECRET = parsed.data.sessionSecret;

@@ -9,18 +9,10 @@
  */
 
 import type { Level } from "pino";
-import { z } from "zod";
-
-/* -------------------------------------------------------------------------------------------------
- *  🧭 Environment Schemas
- * -----------------------------------------------------------------------------------------------*/
-
-/** Allowed runtime environments. */
-export const ENVIRONMENTS = ["development", "test", "production"] as const;
-
-/** Shared Zod schema + inferred type. */
-export const EnvironmentSchema = z.enum(ENVIRONMENTS);
-export type Environment = z.infer<typeof EnvironmentSchema>;
+import {
+  type Environment,
+  EnvironmentSchema,
+} from "@/shared/config/env-schemas";
 
 /* -------------------------------------------------------------------------------------------------
  *  🔧 Helpers
@@ -71,7 +63,8 @@ export function getDatabaseEnv(): Environment {
   }
 
   const fallback = getNodeEnv();
-  const raw = toLower(process.env.databaseEnv, fallback);
+  // Use UPPER_SNAKE env variable name as canonical
+  const raw = toLower(process.env.DATABASE_ENV, fallback);
   const parsed = EnvironmentSchema.safeParse(raw);
   cachedDatabaseEnv = parsed.success ? parsed.data : "development";
 

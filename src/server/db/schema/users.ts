@@ -13,9 +13,9 @@ import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
-import type { PasswordHash } from "@/features/auth/lib/password.types";
-import type { UserId } from "@/shared/domain/domain-brands";
+} from "../../../features/auth/lib/auth.roles";
+import type { PasswordHash } from "../../../features/auth/lib/password.types";
+import type { UserId } from "../../../shared/domain/domain-brands";
 import { sessions } from "./sessions";
 
 export const roleEnum = pgEnum("role", USER_ROLES);
