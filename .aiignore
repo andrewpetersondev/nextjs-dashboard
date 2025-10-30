@@ -1,18 +1,18 @@
-.idea/
-.next/
-.github/
-.vscode/
+.idea
+.next
+.github
+.vscode
 
-cypress/
-cypress/screenshots/
-cypress/videos/
-cypress/downloads/
-devtools/
-docs/
-drizzle/
-node_modules/
-public/
-storage/
+cypress
+cypress/screenshots
+cypress/videos
+cypress/downloads
+devtools
+docs
+drizzle
+node_modules
+public
+storage
 
 .gitignore
 biome.json
