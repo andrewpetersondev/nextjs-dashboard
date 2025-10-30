@@ -14,6 +14,7 @@ if (!process.env.__DOTENV_LOADED) {
   // mark loaded to avoid double-loading in the same process
   // (helps when tests or other tools import this file multiple times)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   (process.env as any).__DOTENV_LOADED = "1";
 }
 
