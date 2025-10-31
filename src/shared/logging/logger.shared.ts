@@ -1,7 +1,13 @@
 // src/shared/logging/logger.shared.ts
 
-export const LOG_LEVELS = ["trace", "debug", "info", "warn", "error"] as const;
-export type LogLevel = (typeof LOG_LEVELS)[number];
+export const LOG_LEVEL_TUPLE = [
+  "trace",
+  "debug",
+  "info",
+  "warn",
+  "error",
+] as const;
+export type LogLevel = (typeof LOG_LEVEL_TUPLE)[number];
 
 export interface LogEntry<T = unknown> {
   level: LogLevel;
@@ -25,7 +31,7 @@ const levelPriority = {
 const rawEnvLevel = (process.env.NEXT_PUBLIC_LOG_LEVEL ?? "").toLowerCase();
 
 function isLogLevel(value: string): value is LogLevel {
-  return (LOG_LEVELS as readonly string[]).includes(value);
+  return (LOG_LEVEL_TUPLE as readonly string[]).includes(value);
 }
 
 const envLevel = isLogLevel(rawEnvLevel) ? rawEnvLevel : undefined;
