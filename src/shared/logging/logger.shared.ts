@@ -1,12 +1,6 @@
 // src/shared/logging/logger.shared.ts
+import { LOG_LEVEL_TUPLE } from "@/shared/config/env-schemas";
 
-export const LOG_LEVEL_TUPLE = [
-  "trace",
-  "debug",
-  "info",
-  "warn",
-  "error",
-] as const;
 export type LogLevel = (typeof LOG_LEVEL_TUPLE)[number];
 
 export interface LogEntry<T = unknown> {
