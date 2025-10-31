@@ -10,8 +10,8 @@
 
 import type { Level } from "pino";
 import {
-  type Environment,
-  EnvironmentSchema,
+  type DatabaseEnvironment,
+  DatabaseEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 
 /* -------------------------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ function toLower(value: string | undefined, fallback: string): string {
  *  🧠 Cached State
  * -----------------------------------------------------------------------------------------------*/
 
-let cachedNodeEnv: Environment | undefined;
-let cachedDatabaseEnv: Environment | undefined;
+let cachedNodeEnv: DatabaseEnvironment | undefined;
+let cachedDatabaseEnv: DatabaseEnvironment | undefined;
 let cachedLogLevel: Level | undefined;
 
 /* -------------------------------------------------------------------------------------------------
@@ -40,13 +40,13 @@ let cachedLogLevel: Level | undefined;
  * - Always returns one of "development" | "test" | "production"
  * - Defaults to "development" if invalid or missing
  */
-export function getNodeEnv(): Environment {
+export function getNodeEnv(): DatabaseEnvironment {
   if (cachedNodeEnv) {
     return cachedNodeEnv;
   }
 
   const raw = toLower(process.env.NODE_ENV, "development");
-  const parsed = EnvironmentSchema.safeParse(raw);
+  const parsed = DatabaseEnvironmentSchema.safeParse(raw);
   cachedNodeEnv = parsed.success ? parsed.data : "development";
 
   return cachedNodeEnv;
@@ -57,7 +57,7 @@ export function getNodeEnv(): Environment {
  * - Falls back to NODE_ENV if missing
  * - Defaults to "development" if invalid
  */
-export function getDatabaseEnv(): Environment {
+export function getDatabaseEnv(): DatabaseEnvironment {
   if (cachedDatabaseEnv) {
     return cachedDatabaseEnv;
   }
@@ -65,7 +65,7 @@ export function getDatabaseEnv(): Environment {
   const fallback = getNodeEnv();
   // Use UPPER_SNAKE env variable name as canonical
   const raw = toLower(process.env.DATABASE_ENV, fallback);
-  const parsed = EnvironmentSchema.safeParse(raw);
+  const parsed = DatabaseEnvironmentSchema.safeParse(raw);
   cachedDatabaseEnv = parsed.success ? parsed.data : "development";
 
   return cachedDatabaseEnv;
@@ -92,8 +92,8 @@ export function getLogLevel(): Level {
  *  🧩 Exported Constants & Flags
  * -----------------------------------------------------------------------------------------------*/
 
-export const NODE_ENV: Environment = getNodeEnv();
-export const DATABASE_ENV: Environment = getDatabaseEnv();
+export const NODE_ENV: DatabaseEnvironment = getNodeEnv();
+export const DATABASE_ENV: DatabaseEnvironment = getDatabaseEnv();
 export const LOG_LEVEL: Level = getLogLevel();
 
 export const IS_DEV = NODE_ENV === "development";
@@ -110,7 +110,7 @@ export const IS_PROD_DB = DATABASE_ENV === "production";
  * @example
  * if (isEnv("development", "test")) console.log("Debug logging enabled");
  */
-export function isEnv(...envs: Environment[]): boolean {
+export function isEnv(...envs: DatabaseEnvironment[]): boolean {
   return envs.includes(NODE_ENV);
 }
 
