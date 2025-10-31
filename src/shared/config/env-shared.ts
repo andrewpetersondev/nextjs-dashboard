@@ -13,6 +13,7 @@ import {
   DatabaseEnvironmentSchema,
   LogLevelSchema,
   type NodeEnvironment,
+  NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 import type { LogLevel } from "@/shared/logging/logger.shared";
 
@@ -23,6 +24,18 @@ import type { LogLevel } from "@/shared/logging/logger.shared";
 /** Normalize env strings safely with lowercase fallback. */
 function toLower(value: string | undefined, fallback: string): string {
   return (value ?? fallback).toLowerCase();
+}
+
+/**
+ * Get a required env var value or throw a clear error.
+ * Use this for secrets/values that must be present at runtime.
+ */
+export function getRequiredEnv(name: string): string {
+  const val = process.env[name];
+  if (val === undefined || val.trim() === "") {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return val;
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -48,7 +61,7 @@ export function getNodeEnv(): NodeEnvironment {
   }
 
   const raw = toLower(process.env.NODE_ENV, "development");
-  const parsed = DatabaseEnvironmentSchema.safeParse(raw);
+  const parsed = NodeEnvironmentSchema.safeParse(raw);
   cachedNodeEnv = parsed.success ? parsed.data : "development";
 
   return cachedNodeEnv;
@@ -83,7 +96,7 @@ export function getLogLevel(): LogLevel {
   const fallback: LogLevel = getNodeEnv() === "production" ? "info" : "debug";
   const raw = toLower(process.env.LOG_LEVEL, fallback);
   const parsed = LogLevelSchema.safeParse(raw);
-  cachedLogLevel = parsed.success ? parsed.data : "debug";
+  cachedLogLevel = parsed.success ? parsed.data : fallback;
 
   return cachedLogLevel;
 }
@@ -92,7 +105,7 @@ export function getLogLevel(): LogLevel {
  *  🧩 Exported Constants & Flags
  * -----------------------------------------------------------------------------------------------*/
 
-export const NODE_ENV: DatabaseEnvironment = getNodeEnv();
+export const NODE_ENV: NodeEnvironment = getNodeEnv();
 export const DATABASE_ENV: DatabaseEnvironment = getDatabaseEnv();
 export const LOG_LEVEL: LogLevel = getLogLevel();
 
@@ -110,7 +123,7 @@ export const IS_PROD_DB = DATABASE_ENV === "production";
  * @example
  * if (isEnv("development", "test")) console.log("Debug logging enabled");
  */
-export function isEnv(...envs: DatabaseEnvironment[]): boolean {
+export function isEnv(...envs: NodeEnvironment[]): boolean {
   return envs.includes(NODE_ENV);
 }
 
