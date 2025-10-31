@@ -12,7 +12,7 @@ import {
 console.log("node-db.ts ...");
 
 // Ensure env is loaded by the process/runner before this import
-const { DATABASE_URL } = await import("../config/env-node");
+const { DATABASE_URL } = await import("../config/env-cli");
 
 console.log("Using DATABASE_URL:", DATABASE_URL);
 

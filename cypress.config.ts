@@ -1,6 +1,6 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
-import { CYPRESS_BASE_URL } from "./devtools/config/env-node";
+import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 import type { UserRole } from "./src/features/auth/lib/auth.roles";
 import type { PasswordHash } from "./src/features/auth/lib/password.types";
 
@@ -17,7 +17,7 @@ export default defineConfig({
       // Ensure .env.test.local is loaded before reading env
       dotenv.config({ path: ".env.test.local" });
 
-      const env = await import("./devtools/config/env-node");
+      const env = await import("./devtools/config/env-cli");
 
       // Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
       // baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl

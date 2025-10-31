@@ -1,6 +1,5 @@
-//TODO: CHANGE FILE NAME TO ENV-TOOLING
-
-// File: devtools/config/env-node.ts
+/** biome-ignore-all lint/style/noProcessEnv: <env config> */
+/** biome-ignore-all lint/correctness/noProcessGlobal: <env config> */
 import { getDatabaseEnv } from "../../src/shared/config/env-shared";
 import { ToolingEnvShape } from "./env-cli.schema";
 
