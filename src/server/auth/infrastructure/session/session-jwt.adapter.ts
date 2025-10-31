@@ -11,7 +11,7 @@ import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
   SESSION_SECRET,
-} from "@/server/config/env-next";
+} from "@/server/config/env-server";
 
 let encodedKey: Uint8Array | undefined;
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =

@@ -1,8 +1,6 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
-// TODO: CHANGE FILE NAME TO ENV-SERVER
-
 /**
  * @file Server-only environment configuration for Next.js runtime
  * - Validates and exposes secrets

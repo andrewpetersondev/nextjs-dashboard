@@ -29,7 +29,7 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../config/env-next";
+import { DATABASE_URL } from "../config/env-server";
 import type { schema as appSchema } from "./schema";
 
 let appDbSingleton: AppDatabase | null = null;
