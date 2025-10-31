@@ -1,8 +1,8 @@
 //TODO: CHANGE FILE NAME TO ENV-TOOLING
 
 // File: devtools/config/env-node.ts
-import { ToolingEnvShape } from "../../src/shared/config/env-schemas";
 import { getDatabaseEnv } from "../../src/shared/config/env-shared";
+import { ToolingEnvShape } from "./env-cli.schema";
 
 // Build a normalized object from process.env (use UPPER_SNAKE names)
 const envToValidate = {

@@ -8,11 +8,13 @@
  * - Safe for universal import (client/server)
  */
 
-import type { Level } from "pino";
 import {
   type DatabaseEnvironment,
   DatabaseEnvironmentSchema,
+  LogLevelSchema,
+  type NodeEnvironment,
 } from "@/shared/config/env-schemas";
+import type { LogLevel } from "@/shared/logging/logger.shared";
 
 /* -------------------------------------------------------------------------------------------------
  *  🔧 Helpers
@@ -27,9 +29,9 @@ function toLower(value: string | undefined, fallback: string): string {
  *  🧠 Cached State
  * -----------------------------------------------------------------------------------------------*/
 
-let cachedNodeEnv: DatabaseEnvironment | undefined;
+let cachedNodeEnv: NodeEnvironment | undefined;
 let cachedDatabaseEnv: DatabaseEnvironment | undefined;
-let cachedLogLevel: Level | undefined;
+let cachedLogLevel: LogLevel | undefined;
 
 /* -------------------------------------------------------------------------------------------------
  *  🌍 Environment Accessors
@@ -40,7 +42,7 @@ let cachedLogLevel: Level | undefined;
  * - Always returns one of "development" | "test" | "production"
  * - Defaults to "development" if invalid or missing
  */
-export function getNodeEnv(): DatabaseEnvironment {
+export function getNodeEnv(): NodeEnvironment {
   if (cachedNodeEnv) {
     return cachedNodeEnv;
   }
@@ -54,17 +56,14 @@ export function getNodeEnv(): DatabaseEnvironment {
 
 /**
  * Resolve and validate DATABASE_ENV.
- * - Falls back to NODE_ENV if missing
- * - Defaults to "development" if invalid
+ * - Defaults to "development" if invalid or missing
  */
 export function getDatabaseEnv(): DatabaseEnvironment {
   if (cachedDatabaseEnv) {
     return cachedDatabaseEnv;
   }
 
-  const fallback = getNodeEnv();
-  // Use UPPER_SNAKE env variable name as canonical
-  const raw = toLower(process.env.DATABASE_ENV, fallback);
+  const raw = toLower(process.env.DATABASE_ENV, "development");
   const parsed = DatabaseEnvironmentSchema.safeParse(raw);
   cachedDatabaseEnv = parsed.success ? parsed.data : "development";
 
@@ -73,17 +72,18 @@ export function getDatabaseEnv(): DatabaseEnvironment {
 
 /**
  * Get effective LOG_LEVEL.
- * - Defers to process.env.LOG_LEVEL (as Pino expects)
+ * - Defers to process.env.LOG_LEVEL
  * - Defaults to "info" in production, "debug" otherwise
  */
-export function getLogLevel(): Level {
+export function getLogLevel(): LogLevel {
   if (cachedLogLevel) {
     return cachedLogLevel;
   }
 
-  const fallback: Level = getNodeEnv() === "production" ? "info" : "debug";
-  const raw = toLower(process.env.LOG_LEVEL, fallback) as Level;
-  cachedLogLevel = raw;
+  const fallback: LogLevel = getNodeEnv() === "production" ? "info" : "debug";
+  const raw = toLower(process.env.LOG_LEVEL, fallback);
+  const parsed = LogLevelSchema.safeParse(raw);
+  cachedLogLevel = parsed.success ? parsed.data : "debug";
 
   return cachedLogLevel;
 }
@@ -94,7 +94,7 @@ export function getLogLevel(): Level {
 
 export const NODE_ENV: DatabaseEnvironment = getNodeEnv();
 export const DATABASE_ENV: DatabaseEnvironment = getDatabaseEnv();
-export const LOG_LEVEL: Level = getLogLevel();
+export const LOG_LEVEL: LogLevel = getLogLevel();
 
 export const IS_DEV = NODE_ENV === "development";
 export const IS_TEST = NODE_ENV === "test";
