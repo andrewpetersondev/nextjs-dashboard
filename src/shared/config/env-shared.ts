@@ -21,11 +21,6 @@ import type { LogLevel } from "@/shared/logging/logger.shared";
  *  🔧 Helpers
  * -----------------------------------------------------------------------------------------------*/
 
-/** Normalize env strings safely with lowercase fallback. */
-function toLower(value: string | undefined, fallback: string): string {
-  return (value ?? fallback).toLowerCase();
-}
-
 /**
  * Get a required env var value or throw a clear error.
  * Use this for secrets/values that must be present at runtime.
@@ -35,7 +30,7 @@ export function getRequiredEnv(name: string): string {
   if (val === undefined || val.trim() === "") {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  return val;
+  return val.trim();
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -52,52 +47,40 @@ let cachedLogLevel: LogLevel | undefined;
 
 /**
  * Resolve and validate NODE_ENV.
- * - Always returns one of "development" | "test" | "production"
- * - Defaults to "development" if invalid or missing
+ * - Requires NODE_ENV to be set and valid ("development" | "test" | "production")
  */
 export function getNodeEnv(): NodeEnvironment {
   if (cachedNodeEnv) {
     return cachedNodeEnv;
   }
-
-  const raw = toLower(process.env.NODE_ENV, "development");
-  const parsed = NodeEnvironmentSchema.safeParse(raw);
-  cachedNodeEnv = parsed.success ? parsed.data : "development";
-
+  const raw = getRequiredEnv("NODE_ENV");
+  cachedNodeEnv = NodeEnvironmentSchema.parse(raw);
   return cachedNodeEnv;
 }
 
 /**
  * Resolve and validate DATABASE_ENV.
- * - Defaults to "development" if invalid or missing
+ * - Requires DATABASE_ENV to be set and valid
  */
 export function getDatabaseEnv(): DatabaseEnvironment {
   if (cachedDatabaseEnv) {
     return cachedDatabaseEnv;
   }
-
-  const raw = toLower(process.env.DATABASE_ENV, "development");
-  const parsed = DatabaseEnvironmentSchema.safeParse(raw);
-  cachedDatabaseEnv = parsed.success ? parsed.data : "development";
-
+  const raw = getRequiredEnv("DATABASE_ENV");
+  cachedDatabaseEnv = DatabaseEnvironmentSchema.parse(raw);
   return cachedDatabaseEnv;
 }
 
 /**
  * Get effective LOG_LEVEL.
- * - Defers to process.env.LOG_LEVEL
- * - Defaults to "info" in production, "debug" otherwise
+ * - Requires LOG_LEVEL to be set and valid
  */
 export function getLogLevel(): LogLevel {
   if (cachedLogLevel) {
     return cachedLogLevel;
   }
-
-  const fallback: LogLevel = getNodeEnv() === "production" ? "info" : "debug";
-  const raw = toLower(process.env.LOG_LEVEL, fallback);
-  const parsed = LogLevelSchema.safeParse(raw);
-  cachedLogLevel = parsed.success ? parsed.data : fallback;
-
+  const raw = getRequiredEnv("LOG_LEVEL");
+  cachedLogLevel = LogLevelSchema.parse(raw);
   return cachedLogLevel;
 }
 

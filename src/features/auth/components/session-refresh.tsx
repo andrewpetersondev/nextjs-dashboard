@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import { AUTH_REFRESH_ENDPOINT } from "@/features/auth/lib/auth.constants";
 import {
@@ -7,12 +6,13 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/features/auth/sessions/session.constants";
-import { IS_PROD } from "@/shared/config/env-shared";
+import { IS_PUBLIC_PROD } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
 } from "@/shared/http/http-headers";
+import { logger } from "@/shared/logging/logger.shared";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;
@@ -82,8 +82,13 @@ export function SessionRefresh(): null {
         const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
         if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
           const outcome = (await res.json()) as RefreshOutcome;
-          if (!IS_PROD) {
-            console.debug("[session-refresh] outcome:", outcome);
+          // biome-ignore lint/style/noProcessEnv: <explanation>
+          // biome-ignore lint/correctness/noProcessGlobal: <explanation>
+          if (process.env.NODE_ENV === "production") {
+            logger.debug("[session-refresh] outcome:", outcome);
+          }
+          if (IS_PUBLIC_PROD) {
+            logger.debug("[session-refresh] outcome:", outcome);
           }
         }
       } catch {
