@@ -15,23 +15,8 @@ import {
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
+import { getEnvVariable } from "@/shared/config/env-utils";
 import type { LogLevel } from "@/shared/logging/logger.shared";
-
-/* -------------------------------------------------------------------------------------------------
- *  🔧 Helpers
- * -----------------------------------------------------------------------------------------------*/
-
-/**
- * Get a required env var value or throw a clear error.
- * Use this for secrets/values that must be present at runtime.
- */
-export function getRequiredEnv(name: string): string {
-  const val = process.env[name];
-  if (val === undefined || val.trim() === "") {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
-  return val.trim();
-}
 
 /* -------------------------------------------------------------------------------------------------
  *  🧠 Cached State
@@ -53,7 +38,7 @@ export function getNodeEnv(): NodeEnvironment {
   if (cachedNodeEnv) {
     return cachedNodeEnv;
   }
-  const raw = getRequiredEnv("NODE_ENV");
+  const raw = getEnvVariable("NODE_ENV");
   cachedNodeEnv = NodeEnvironmentSchema.parse(raw);
   return cachedNodeEnv;
 }
@@ -66,7 +51,7 @@ export function getDatabaseEnv(): DatabaseEnvironment {
   if (cachedDatabaseEnv) {
     return cachedDatabaseEnv;
   }
-  const raw = getRequiredEnv("DATABASE_ENV");
+  const raw = getEnvVariable("DATABASE_ENV");
   cachedDatabaseEnv = DatabaseEnvironmentSchema.parse(raw);
   return cachedDatabaseEnv;
 }
@@ -79,7 +64,7 @@ export function getLogLevel(): LogLevel {
   if (cachedLogLevel) {
     return cachedLogLevel;
   }
-  const raw = getRequiredEnv("LOG_LEVEL");
+  const raw = getEnvVariable("LOG_LEVEL");
   cachedLogLevel = LogLevelSchema.parse(raw);
   return cachedLogLevel;
 }
