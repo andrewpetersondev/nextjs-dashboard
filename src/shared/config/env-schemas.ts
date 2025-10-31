@@ -1,8 +1,6 @@
 // File: src/shared/config/env-schemas.ts
 import { z } from "zod";
 
-const NON_EMPTY = 1 as const;
-
 export const NODE_ENVIRONMENT_TUPLE = [
   "development",
   "production",
@@ -39,8 +37,8 @@ export type SessionAudience = z.infer<typeof SessionAudienceSchema>;
 
 // Canonical server/tooling schema for secrets used everywhere
 export const ServerEnvSchema = z.object({
-  databaseUrl: z.string().min(NON_EMPTY),
+  databaseUrl: z.string().min(1),
   sessionAudience: SessionAudienceSchema,
   sessionIssuer: SessionIssuerSchema,
-  sessionSecret: z.string().min(NON_EMPTY),
+  sessionSecret: z.string().min(1),
 });
