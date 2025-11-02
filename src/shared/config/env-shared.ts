@@ -11,12 +11,12 @@
 import {
   type DatabaseEnvironment,
   DatabaseEnvironmentSchema,
+  type LogLevel,
   LogLevelSchema,
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 import { getEnvVariable } from "@/shared/config/env-utils";
-import type { LogLevel } from "@/shared/logging/logger.shared";
 
 /* -------------------------------------------------------------------------------------------------
  *  🧠 Cached State

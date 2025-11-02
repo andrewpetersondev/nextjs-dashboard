@@ -12,6 +12,8 @@ export interface LogEntry<T = unknown> {
   context?: string;
   timestamp: string;
   data?: T;
+  pid?: number;
+  requestId?: string;
 }
 
 /**
@@ -60,6 +62,8 @@ function sanitize(data: unknown): unknown {
       "authorization",
       "apiKey",
       "key",
+      "credential",
+      "session",
     ];
     return Object.fromEntries(
       Object.entries(data).map(([k, v]) => [
@@ -74,13 +78,26 @@ function sanitize(data: unknown): unknown {
 }
 
 /**
+ * Cached console methods for minimal overhead.
+ */
+const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
+  debug: console.debug.bind(console),
+  error: console.error.bind(console),
+  info: console.info.bind(console),
+  trace: console.trace.bind(console),
+  warn: console.warn.bind(console),
+};
+
+/**
  * Sensitivity-aware structured logger.
  */
 export class Logger {
   private readonly context?: string;
+  private readonly requestId?: string;
 
-  constructor(context?: string) {
+  constructor(context?: string, requestId?: string) {
     this.context = context;
+    this.requestId = requestId;
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -96,11 +113,12 @@ export class Logger {
       context: this.context,
       level,
       message,
+      pid: process.pid,
+      requestId: this.requestId,
       timestamp: new Date().toISOString(),
     };
 
     if (data !== undefined) {
-      // sanitize preserves structure for logging; cast back to T for the entry
       entry.data = sanitize(data) as T;
     }
 
@@ -108,27 +126,28 @@ export class Logger {
   }
 
   private format(entry: LogEntry): unknown[] {
-    const { timestamp, context, message, data } = entry;
-    const prefix = context ? `[${context}]` : "";
     if (process.env.NODE_ENV === "production") {
       return [JSON.stringify(entry)];
     }
-    return [timestamp, prefix, message, data].filter(Boolean);
+
+    const { timestamp, context, message, data, requestId } = entry;
+    const prefixParts = [timestamp];
+    if (requestId) {
+      prefixParts.push(`[req:${requestId}]`);
+    }
+    if (context) {
+      prefixParts.push(`[${context}]`);
+    }
+
+    const prefix = prefixParts.join(" ");
+    return data !== undefined ? [prefix, message, data] : [prefix, message];
   }
 
   private output(entry: LogEntry): void {
     if (!this.shouldLog(entry.level)) {
       return;
     }
-
     const formatted = this.format(entry);
-    const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
-      debug: console.debug,
-      error: console.error,
-      info: console.info,
-      trace: console.trace,
-      warn: console.warn,
-    };
     consoleMethod[entry.level](...formatted);
   }
 
@@ -152,10 +171,23 @@ export class Logger {
     this.output(this.createEntry("error", message, data));
   }
 
+  /**
+   * Create a child logger with additional context.
+   */
   withContext(context: string): Logger {
     const combined = this.context ? `${this.context}:${context}` : context;
-    return new Logger(combined);
+    return new Logger(combined, this.requestId);
+  }
+
+  /**
+   * Attach a request ID for correlation (useful in SSR or API contexts).
+   */
+  withRequest(requestId: string): Logger {
+    return new Logger(this.context, requestId);
   }
 }
 
+/**
+ * Default shared instance
+ */
 export const logger = new Logger();

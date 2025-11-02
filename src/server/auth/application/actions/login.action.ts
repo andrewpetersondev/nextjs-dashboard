@@ -15,9 +15,14 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = LOGIN_FIELDS_LIST;
+const requestId = crypto.randomUUID();
+const actionLogger = logger
+  .withContext(AUTH_ACTION_CONTEXTS.login.context)
+  .withRequest(requestId);
 
 /**
  * Handles the login action by validating form data, authenticating the user,
@@ -37,16 +42,24 @@ export async function loginAction(
 ): Promise<FormResult<LoginField>> {
   const ctx = AUTH_ACTION_CONTEXTS.login;
 
+  actionLogger.debug("Login action initiated");
+
   const validated = await validateForm(formData, LoginSchema, fields, {
     loggerContext: ctx.context,
   });
 
   if (!validated.ok) {
-    console.error("login validation error");
+    actionLogger.warn("Login validation failed", {
+      errors: validated.error,
+    });
     return validated;
   }
 
   const input: LoginData = validated.value.data;
+  actionLogger.debug("Login form validated successfully", {
+    email: input.email,
+  });
+
   const service = createAuthUserService(getAppDb());
 
   const sessionResult = await executeAuthPipeline(
@@ -55,7 +68,11 @@ export async function loginAction(
   );
 
   if (!sessionResult.ok) {
-    console.error("login failed");
+    actionLogger.error("Login authentication failed", {
+      email: input.email,
+      errorCode: sessionResult.error.code,
+      errorMessage: sessionResult.error.message,
+    });
 
     return mapResultToFormResult(sessionResult, {
       failureMessage: "Login failed. Please try again.",
@@ -64,13 +81,19 @@ export async function loginAction(
     });
   }
 
-  console.info("user logged in successfully");
+  const { id: userId, role } = sessionResult.value;
+  actionLogger.info("User logged in successfully", {
+    role,
+    userId,
+  });
 
   (await cookies()).set("login-success", "true", {
     httpOnly: true,
     maxAge: 10,
     sameSite: "lax",
   });
+
+  actionLogger.debug("Session cookie set, redirecting to dashboard");
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);
