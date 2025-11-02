@@ -1,8 +1,11 @@
 // src/shared/logging/logger.shared.ts
-import { LOG_LEVEL_TUPLE } from "@/shared/config/env-schemas";
+/** biome-ignore-all lint/correctness/noProcessGlobal: <explanation> */
+/** biome-ignore-all lint/style/noProcessEnv: <explanation> */
+import { LOG_LEVEL_TUPLE, type LogLevel } from "@/shared/config/env-schemas";
 
-export type LogLevel = (typeof LOG_LEVEL_TUPLE)[number];
-
+/**
+ * Structured log entry format for consistency and JSON parsing.
+ */
 export interface LogEntry<T = unknown> {
   level: LogLevel;
   message: string;
@@ -11,26 +14,68 @@ export interface LogEntry<T = unknown> {
   data?: T;
 }
 
+/**
+ * Priority by **risk of exposing sensitive information**.
+ *
+ * Higher number = greater exposure risk.
+ *
+ * @property trace - Highest risk (contains most detailed internal data)
+ * @property debug - High risk (technical details, stack traces)
+ * @property info  - Moderate risk (operational events)
+ * @property warn  - Low risk (recoverable issues)
+ * @property error - Lowest risk (usually safe to expose)
+ */
 const levelPriority = {
-  debug: 20,
-  error: 50,
+  debug: 40,
+  error: 10,
   info: 30,
-  trace: 10,
-  warn: 40,
+  trace: 50,
+  warn: 20,
 } as const satisfies Record<LogLevel, number>;
 
-// Safely determine log level from environment
-// biome-ignore lint/style/noProcessEnv: environment check
-// biome-ignore lint/correctness/noProcessGlobal: environment check
-const rawEnvLevel = (process.env.NEXT_PUBLIC_LOG_LEVEL ?? "").toLowerCase();
+/**
+ * Derive current log level from environment (default: 'info').
+ */
+const rawEnvLevel = process.env.NEXT_PUBLIC_LOG_LEVEL ?? "info";
 
 function isLogLevel(value: string): value is LogLevel {
   return (LOG_LEVEL_TUPLE as readonly string[]).includes(value);
 }
 
-const envLevel = isLogLevel(rawEnvLevel) ? rawEnvLevel : undefined;
-const currentLevel = envLevel ? levelPriority[envLevel] : levelPriority.info;
+const envLevel = isLogLevel(rawEnvLevel) ? rawEnvLevel : "info";
+const currentLevel = levelPriority[envLevel];
 
+/**
+ * Recursively sanitize objects to redact sensitive fields.
+ */
+function sanitize(data: unknown): unknown {
+  if (Array.isArray(data)) {
+    return data.map(sanitize);
+  }
+  if (data && typeof data === "object") {
+    const redactedKeys = [
+      "password",
+      "token",
+      "secret",
+      "authorization",
+      "apiKey",
+      "key",
+    ];
+    return Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [
+        k,
+        redactedKeys.some((rk) => k.toLowerCase().includes(rk))
+          ? "[REDACTED]"
+          : sanitize(v),
+      ]),
+    );
+  }
+  return data;
+}
+
+/**
+ * Sensitivity-aware structured logger.
+ */
 export class Logger {
   private readonly context?: string;
 
@@ -39,7 +84,7 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    return currentLevel <= levelPriority[level];
+    return levelPriority[level] <= currentLevel;
   }
 
   private createEntry<T>(
@@ -47,18 +92,27 @@ export class Logger {
     message: string,
     data?: T,
   ): LogEntry<T> {
-    return {
+    const entry: LogEntry<T> = {
       context: this.context,
       level,
       message,
       timestamp: new Date().toISOString(),
-      ...(data !== undefined ? { data } : {}),
     };
+
+    if (data !== undefined) {
+      // sanitize preserves structure for logging; cast back to T for the entry
+      entry.data = sanitize(data) as T;
+    }
+
+    return entry;
   }
 
   private format(entry: LogEntry): unknown[] {
     const { timestamp, context, message, data } = entry;
     const prefix = context ? `[${context}]` : "";
+    if (process.env.NODE_ENV === "production") {
+      return [JSON.stringify(entry)];
+    }
     return [timestamp, prefix, message, data].filter(Boolean);
   }
 
@@ -67,8 +121,7 @@ export class Logger {
       return;
     }
 
-    const formattedArgs = this.format(entry);
-
+    const formatted = this.format(entry);
     const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
       debug: console.debug,
       error: console.error,
@@ -76,8 +129,7 @@ export class Logger {
       trace: console.trace,
       warn: console.warn,
     };
-
-    (consoleMethod[entry.level] ?? console.log)(...formattedArgs);
+    consoleMethod[entry.level](...formatted);
   }
 
   trace<T>(message: string, data?: T): void {
