@@ -76,13 +76,13 @@ Dockerfile.*
 
 # Other
 
-.vite/
-build/
-coverage/
-logs/
-reports/
-dist/
-out/
+.vite
+build
+coverage
+logs
+reports
+dist
+out
 *.log
 *.log.*
 *.tmp
