@@ -6,7 +6,7 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/features/auth/sessions/session.constants";
-import { IS_PUBLIC_PROD } from "@/shared/config/env-public";
+import { NEXT_PUBLIC_NODE_ENV } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
@@ -84,11 +84,21 @@ export function SessionRefresh(): null {
           const outcome = (await res.json()) as RefreshOutcome;
           // biome-ignore lint/style/noProcessEnv: <explanation>
           // biome-ignore lint/correctness/noProcessGlobal: <explanation>
-          if (process.env.NODE_ENV === "production") {
-            logger.debug("[session-refresh] outcome:", outcome);
-          }
-          if (IS_PUBLIC_PROD) {
-            logger.debug("[session-refresh] outcome:", outcome);
+          //          if (process.env.NODE_ENV === "development") {
+          //            logger.debug("[session-refresh] outcome:", outcome);
+          //          }
+          switch (NEXT_PUBLIC_NODE_ENV) {
+            case "production":
+              logger.error("[session-refresh] outcome:", outcome);
+              break;
+            case "development":
+              logger.debug("[session-refresh] outcome:", outcome);
+              break;
+            case "test":
+              logger.error("[session-refresh] outcome:", outcome);
+              break;
+            default:
+              logger.error("[session-refresh] outcome:", outcome);
           }
         }
       } catch {
