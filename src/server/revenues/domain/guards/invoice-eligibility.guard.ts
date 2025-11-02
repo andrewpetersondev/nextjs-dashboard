@@ -22,22 +22,22 @@ export function isInvoiceEligibleForRevenue(
     const validationResult = validateInvoicePeriodForRevenue(invoice);
 
     if (!validationResult.valid) {
-      logInfo(
-        context,
-        `Invoice not eligible for revenue: ${validationResult.reason}`,
-        {
-          invoice: invoice.id ?? null,
-          reason: validationResult.reason ?? null,
-        },
-      );
+      //      logInfo(
+      //        context,
+      //        `Invoice not eligible for revenue: ${validationResult.reason}`,
+      //        {
+      //          invoice: invoice.id ?? null,
+      //          reason: validationResult.reason ?? null,
+      //        },
+      //      );
       return false;
     }
 
     // Check if the invoice has a valid amount
     if (!invoice.amount || invoice.amount <= 0) {
-      logInfo(context, "Invoice has zero or negative amount, skipping", {
-        invoice: invoice.id ?? null,
-      });
+      //      logInfo(context, "Invoice has zero or negative amount, skipping", {
+      //        invoice: invoice.id ?? null,
+      //      });
       return false;
     }
 

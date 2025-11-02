@@ -1,6 +1,5 @@
 import "server-only";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-import { periodKey } from "@/features/revenues/domain/period";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { withIdempotency } from "@/server/revenues/application/cross-cutting/idempotency";
 import {
@@ -28,10 +27,10 @@ export class ProcessInvoiceEventUseCase {
     const context = `RevenueEventHandler.${contextMethod}`;
 
     try {
-      logInfo(context, `Processing invoice ${contextMethod} event`, {
-        eventId: event.eventId,
-        invoiceId: event.invoice.id,
-      });
+      //      logInfo(context, `Processing invoice ${contextMethod} event`, {
+      //        eventId: event.eventId,
+      //        invoiceId: event.invoice.id,
+      //      });
 
       const { executed } = await withIdempotency(event.eventId, async () => {
         await this.processOnce(event, contextMethod);
@@ -59,22 +58,22 @@ export class ProcessInvoiceEventUseCase {
           return;
         }
         await processor(invoice, period);
-        logInfo(
-          context,
-          `Successfully processed invoice ${contextMethod} event`,
-          {
-            eventId: event.eventId,
-            invoiceId: invoice.id,
-            period: periodKey(period),
-          },
-        );
+        //        logInfo(
+        //          context,
+        //          `Successfully processed invoice ${contextMethod} event`,
+        //          {
+        //            eventId: event.eventId,
+        //            invoiceId: invoice.id,
+        //            period: periodKey(period),
+        //          },
+        //        );
       });
 
       if (!executed) {
-        logInfo(context, "Duplicate event detected, skipping processing", {
-          eventId: event.eventId,
-          invoiceId: event.invoice.id,
-        });
+        //        logInfo(context, "Duplicate event detected, skipping processing", {
+        //          eventId: event.eventId,
+        //          invoiceId: event.invoice.id,
+        //        });
       }
     } catch (error) {
       handleEventError(context, event, error);

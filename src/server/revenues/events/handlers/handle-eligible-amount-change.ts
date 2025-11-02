@@ -1,6 +1,5 @@
 import "server-only";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
-import { logInfo } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterAmountChange } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
@@ -36,11 +35,11 @@ export async function handleEligibleAmountChange(args: Args): Promise<void> {
     meta,
   } = args;
   const amountDifference = currentAmount - previousAmount;
-  logInfo(
-    context,
-    "Invoice amount changed while remaining eligible for revenue",
-    { ...meta, amountDifference, currentAmount, previousAmount },
-  );
+  //  logInfo(
+  //    context,
+  //    "Invoice amount changed while remaining eligible for revenue",
+  //    { ...meta, amountDifference, currentAmount, previousAmount },
+  //  );
   const aggregate = computeAggregateAfterAmountChange(
     currentCount,
     currentTotal,

@@ -6,7 +6,6 @@ import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculati
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/domain/domain-brands";
 import type { LogMetadata } from "../../application/cross-cutting/logging";
-import { logInfo } from "../../application/cross-cutting/logging";
 
 /**
  * Options required to apply deletion effects to revenue records.
@@ -30,11 +29,11 @@ export async function applyDeletionEffects(
   const { revenueService, invoice, period, context, metadata } = options;
   const existingRevenue = await revenueService.findByPeriod(period);
   if (!existingRevenue) {
-    logInfo(
-      context,
-      "No existing revenue record was found for a period",
-      metadata,
-    );
+    //    logInfo(
+    //      context,
+    //      "No existing revenue record was found for a period",
+    //      metadata,
+    //    );
     return;
   }
   const aggregate = computeAggregateAfterRemoval(
@@ -43,10 +42,10 @@ export async function applyDeletionEffects(
     invoice.amount,
   );
   if (aggregate.invoiceCount === 0) {
-    logInfo(context, "No more invoices for a period, deleting revenue record", {
-      ...metadata,
-      revenueId: existingRevenue.id,
-    });
+    //    logInfo(context, "No more invoices for a period, deleting revenue record", {
+    //      ...metadata,
+    //      revenueId: existingRevenue.id,
+    //    });
     await revenueService.delete(existingRevenue.id);
     return;
   }

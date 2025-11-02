@@ -15,14 +15,10 @@ export class GetRevenueStatisticsUseCase {
 
   async execute(): Promise<RevenueStatistics> {
     try {
-      logger.info("execute");
-
       const rolling = new GetRollingYearRevenuesUseCase(this.repository);
       const revenueData = await rolling.execute();
 
       const stats = computeStatistics(revenueData);
-
-      logger.info("computing revenue statistics");
 
       return stats;
     } catch (error) {

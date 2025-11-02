@@ -4,7 +4,6 @@ import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
-import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.
@@ -40,7 +39,7 @@ export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
   // Transform to RevenueDisplayEntity using the factory method
   const mappedData = mapRevenueEntityToDisplayEntity(defaultEntity);
 
-  logger.info("createDefaultRevenueData", mappedData);
+  //  logger.info("createDefaultRevenueData", mappedData);
 
   return mappedData;
 }
