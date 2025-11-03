@@ -5,6 +5,7 @@ import { setSessionToken } from "@/server/auth/domain/session/core/session";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/core/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
+import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Establishes a session for a user by setting `jwt cookie`.
@@ -26,9 +27,9 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    console.log("Session established successfully");
+    logger.info("Session established successfully");
   } else {
-    console.error("Failed to establish session");
+    logger.error("Failed to establish session");
   }
 
   return mapped;
