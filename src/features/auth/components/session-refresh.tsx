@@ -82,8 +82,6 @@ export function SessionRefresh(): null {
         const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
         if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
           const outcome = (await res.json()) as RefreshOutcome;
-          // biome-ignore lint/style/noProcessEnv: <explanation>
-          // biome-ignore lint/correctness/noProcessGlobal: <explanation>
           //          if (process.env.NODE_ENV === "development") {
           //            logger.debug("[session-refresh] outcome:", outcome);
           //          }
