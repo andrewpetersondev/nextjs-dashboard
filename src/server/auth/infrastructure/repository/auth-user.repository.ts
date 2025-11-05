@@ -15,10 +15,12 @@ import {
 import { isBaseError } from "@/shared/core/errors/base/base-error";
 import { getErrorCodeMeta } from "@/shared/core/errors/base/error-codes";
 import {
+  ConflictError,
   UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
-import { logger } from "@/shared/logging/logger.shared";
+import { LoggerAdapter } from "@/shared/logging/logger.adapter";
+import type { LoggerPort } from "@/shared/logging/logger.port";
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -26,10 +28,10 @@ import { logger } from "@/shared/logging/logger.shared";
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly logger;
+  private readonly logger: LoggerPort;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
-  constructor(db: AppDatabase) {
+  constructor(db: AppDatabase, logger: LoggerPort = new LoggerAdapter()) {
     this.db = db;
     this.logger = logger.withContext(AuthUserRepositoryImpl.CTX);
   }
@@ -50,20 +52,21 @@ export class AuthUserRepositoryImpl {
     };
 
     const txLogger = this.logger.withContext("withTransaction");
+    txLogger.debug("Starting transaction");
 
     try {
-      return await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepositoryImpl(tx);
+      const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
+        const txRepo = new AuthUserRepositoryImpl(tx, this.logger);
         return await fn(txRepo);
       });
+
+      txLogger.debug("Transaction completed successfully");
+      return result;
     } catch (err) {
       txLogger.error("Transaction failed", {
-        error:
-          err instanceof Error
-            ? { message: err.message, stack: err.stack }
-            : String(err),
+        error: err instanceof Error ? { message: err.message } : String(err),
         kind: "db",
-      });
+      } as const);
       throw err;
     }
   }
@@ -89,7 +92,7 @@ export class AuthUserRepositoryImpl {
           email: input.email,
           kind: "no_row_returned",
           username: input.username,
-        });
+        } as const);
         return throwRepoDatabaseErr("User creation did not return a row.");
       }
 
@@ -97,15 +100,15 @@ export class AuthUserRepositoryImpl {
         email: input.email,
         kind: "success",
         userId: row.id,
-      });
+      } as const);
       return newUserDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isRepoKnownError(err)) {
-        signupLogger.warn("Known repository error during signup", {
+        signupLogger.debug("Known repository error during signup", {
           email: input.email,
           errorType: err instanceof Error ? err.constructor.name : typeof err,
           kind: "known_error",
-        });
+        } as const);
         throw err;
       }
 
@@ -118,7 +121,7 @@ export class AuthUserRepositoryImpl {
               ? { message: err.message, stack: err.stack }
               : String(err),
           kind: "unexpected",
-        },
+        } as const,
       );
 
       return throwRepoDatabaseErr(
@@ -143,10 +146,10 @@ export class AuthUserRepositoryImpl {
       const row = await getUserByEmailDal(this.db, input.email);
 
       if (!row?.password) {
-        loginLogger.warn("User not found or missing password", {
+        loginLogger.info("Login attempt with invalid credentials", {
           email: input.email,
-          kind: "not_found_or_missing_password",
-        });
+          kind: "invalid_credentials",
+        } as const);
         throw new UnauthorizedError("Invalid email or password.");
       }
 
@@ -154,15 +157,15 @@ export class AuthUserRepositoryImpl {
         email: input.email,
         kind: "success",
         userId: row.id,
-      });
+      } as const);
       return userDbRowToEntity(row);
     } catch (err: unknown) {
       if (this.isKnownLoginError(err)) {
-        loginLogger.warn("Known repository error during login", {
+        loginLogger.debug("Known repository error during login", {
           email: input.email,
           errorType: err instanceof Error ? err.constructor.name : typeof err,
           kind: "known_error",
-        });
+        } as const);
         throw err;
       }
 
@@ -173,7 +176,7 @@ export class AuthUserRepositoryImpl {
             ? { message: err.message, stack: err.stack }
             : String(err),
         kind: "unexpected",
-      });
+      } as const);
 
       return throwRepoDatabaseErr(
         "Database operation failed during login.",
@@ -204,13 +207,13 @@ export class AuthUserRepositoryImpl {
     }
 
     if (missingFields.length > 0) {
-      this.logger.warn(
+      this.logger.info(
         `Missing required fields for signup: ${missingFields.join(", ")}`,
         {
           kind: "validation",
           missingFields,
           operation: "assertSignupFields",
-        },
+        } as const,
       );
       throw new ValidationError(
         `Missing required fields for signup: ${missingFields.join(", ")}`,
@@ -224,7 +227,7 @@ export class AuthUserRepositoryImpl {
    * @private
    */
   private isRepoKnownError(err: unknown): boolean {
-    if (err instanceof DatabaseError) {
+    if (err instanceof DatabaseError || err instanceof ConflictError) {
       return true;
     }
 

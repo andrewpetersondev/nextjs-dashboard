@@ -96,10 +96,7 @@ export const AUTH_SERVICE_CONTEXTS = {
     }),
 
     transactionError: (err: unknown) => ({
-      error:
-        err instanceof Error
-          ? { message: err.message, stack: err.stack }
-          : String(err),
+      error: err instanceof Error ? { message: err.message } : String(err),
       kind: "exception",
     }),
 
