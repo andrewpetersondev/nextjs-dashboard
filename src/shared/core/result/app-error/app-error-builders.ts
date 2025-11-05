@@ -1,7 +1,6 @@
 // File: 'src/shared/core/errors/app-error/app-error-builders.ts'
 // Builders, augmentation, lifting, and BaseError <-> AppError conversions
-
-import { IS_PROD } from "@/shared/config/env-shared";
+import { isProd } from "@/shared/config/env-shared";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
 import { tryGetErrorCodeMeta } from "@/shared/core/errors/base/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
@@ -24,7 +23,7 @@ export function appErrorFromCode(
     severity: (meta?.severity as AppError["severity"] | undefined) ?? "error",
     ...(details ? { details } : {}),
   };
-  if (!IS_PROD) {
+  if (!isProd()) {
     Object.freeze(app);
   }
   return app;

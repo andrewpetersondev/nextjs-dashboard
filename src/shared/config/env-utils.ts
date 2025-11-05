@@ -1,6 +1,5 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <explanation> */
-/** biome-ignore-all lint/style/noProcessEnv: <explanation> */
-import { logger } from "@/shared/logging/logger.shared";
+/** biome-ignore-all lint/correctness/noProcessGlobal: <usage in env config is acceptable> */
+/** biome-ignore-all lint/style/noProcessEnv: <usage in env config is acceptable> */
 
 /**
  * Type-safe env accessor.
@@ -20,14 +19,11 @@ const ENV_VARIABLES_TUPLE = [
 export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
 
 /**
- * Get a required env var value or throw/log a warning.
+ * Get a required env var value or throw.
  */
 export function getEnvVariable<K extends EnvVariables>(key: K): string {
   const value = process.env[key];
   if (!value || value.trim() === "") {
-    if (process.env.NODE_ENV !== "production") {
-      logger.warn(`⚠️  Missing environment variable: ${key}`);
-    }
     throw new Error(`Missing required environment variable: ${key}`);
   }
   return value.trim();
@@ -58,22 +54,24 @@ export function validateEnv(
   requiredVars: readonly EnvVariables[] = ENV_VARIABLES_TUPLE,
 ): void {
   const missing: EnvVariables[] = [];
-
   for (const key of requiredVars) {
     const value = process.env[key];
     if (!value || value.trim() === "") {
       missing.push(key);
     }
   }
-
   if (missing.length > 0) {
-    for (const key of missing) {
-      logger.error(`❌ Missing required environment variable: ${key}`);
-    }
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`,
-    );
+    const errorMessage = `Missing required environment variables: ${missing.join(", ")}`;
+    console.error(`❌ ${errorMessage}`);
+    throw new Error(errorMessage);
   }
+  console.info("✅ Environment variables validated successfully");
+}
 
-  logger.info("✅ Environment variables validated successfully");
+/**
+ * Get the current process ID.
+ * Safe to use in both server and client contexts (returns undefined on client).
+ */
+export function getProcessId(): number | undefined {
+  return typeof process !== "undefined" ? process.pid : undefined;
 }

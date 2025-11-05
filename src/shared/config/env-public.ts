@@ -1,3 +1,4 @@
+// src/shared/config/env-public.ts
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
@@ -14,24 +15,20 @@ import {
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 
-/* -------------------------------------------------------------------------------------------------
- *  🧠 Cached State
- * -----------------------------------------------------------------------------------------------*/
-
-let cachedPublicNodeEnv: NodeEnvironment | undefined;
-let cachedPublicLogLevel: LogLevel | undefined;
-
-/* -------------------------------------------------------------------------------------------------
- *  🌍 Environment Accessors
- * -----------------------------------------------------------------------------------------------*/
+/**
+ * Check if process.env is available (server-side).
+ */
+function hasProcessEnv(): boolean {
+  return typeof process !== "undefined" && typeof process.env !== "undefined";
+}
 
 /**
  * Resolve and validate NEXT_PUBLIC_NODE_ENV.
  * - Requires NEXT_PUBLIC_NODE_ENV to be set and valid ("development" | "test" | "production")
  */
 export function getPublicNodeEnv(): NodeEnvironment {
-  if (cachedPublicNodeEnv) {
-    return cachedPublicNodeEnv;
+  if (!hasProcessEnv()) {
+    throw new Error("process.env is not available in this environment");
   }
   const raw = process.env.NEXT_PUBLIC_NODE_ENV;
   if (!raw) {
@@ -39,8 +36,11 @@ export function getPublicNodeEnv(): NodeEnvironment {
       "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
     );
   }
-  cachedPublicNodeEnv = NodeEnvironmentSchema.parse(raw.trim());
-  return cachedPublicNodeEnv;
+  const result = NodeEnvironmentSchema.safeParse(raw.trim());
+  if (!result.success) {
+    throw new Error(`Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`);
+  }
+  return result.data;
 }
 
 /**
@@ -48,8 +48,8 @@ export function getPublicNodeEnv(): NodeEnvironment {
  * - Requires NEXT_PUBLIC_LOG_LEVEL to be set and valid
  */
 export function getPublicLogLevel(): LogLevel {
-  if (cachedPublicLogLevel) {
-    return cachedPublicLogLevel;
+  if (!hasProcessEnv()) {
+    throw new Error("process.env is not available in this environment");
   }
   const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
   if (!raw) {
@@ -57,26 +57,37 @@ export function getPublicLogLevel(): LogLevel {
       "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
     );
   }
-  cachedPublicLogLevel = LogLevelSchema.parse(raw.trim());
-  return cachedPublicLogLevel;
+  const result = LogLevelSchema.safeParse(raw.trim());
+  if (!result.success) {
+    throw new Error(`Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`);
+  }
+  return result.data;
+}
+
+/**
+ * Get runtime NODE_ENV (server-side only).
+ * Falls back to NEXT_PUBLIC_NODE_ENV for universal access.
+ */
+export function getRuntimeNodeEnv(): NodeEnvironment {
+  if (hasProcessEnv() && process.env.NODE_ENV) {
+    const result = NodeEnvironmentSchema.safeParse(process.env.NODE_ENV);
+    if (result.success) {
+      return result.data;
+    }
+  }
+  return getPublicNodeEnv();
 }
 
 /* -------------------------------------------------------------------------------------------------
- *  🧩 Exported Constants & Flags
+ *  Flags (runtime functions)
  * -----------------------------------------------------------------------------------------------*/
 
-export const NEXT_PUBLIC_NODE_ENV: NodeEnvironment = getPublicNodeEnv();
-export const NEXT_PUBLIC_LOG_LEVEL: LogLevel = getPublicLogLevel();
-
-export const IS_PUBLIC_DEV = NEXT_PUBLIC_NODE_ENV === "development";
-export const IS_PUBLIC_TEST = NEXT_PUBLIC_NODE_ENV === "test";
-export const IS_PUBLIC_PROD = NEXT_PUBLIC_NODE_ENV === "production";
-
-/**
- * Reset cached public envs — useful in tests to avoid cross-test pollution.
- * (No effect in production.)
- */
-export function __resetPublicEnvCachesForTests__(): void {
-  cachedPublicNodeEnv = undefined;
-  cachedPublicLogLevel = undefined;
+export function isPublicDev(): boolean {
+  return getPublicNodeEnv() === "development";
+}
+export function isPublicTest(): boolean {
+  return getPublicNodeEnv() === "test";
+}
+export function isPublicProd(): boolean {
+  return getPublicNodeEnv() === "production";
 }

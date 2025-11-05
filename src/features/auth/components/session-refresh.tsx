@@ -6,7 +6,7 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/features/auth/sessions/session.constants";
-import { NEXT_PUBLIC_NODE_ENV } from "@/shared/config/env-public";
+import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
@@ -82,10 +82,7 @@ export function SessionRefresh(): null {
         const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
         if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
           const outcome = (await res.json()) as RefreshOutcome;
-          //          if (process.env.NODE_ENV === "development") {
-          //            logger.debug("[session-refresh] outcome:", outcome);
-          //          }
-          switch (NEXT_PUBLIC_NODE_ENV) {
+          switch (getPublicNodeEnv()) {
             case "production":
               logger.error("[session-refresh] outcome:", outcome);
               break;

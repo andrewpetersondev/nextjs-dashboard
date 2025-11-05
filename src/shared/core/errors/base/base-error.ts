@@ -1,4 +1,4 @@
-import { IS_DEV } from "@/shared/config/env-shared";
+import { isDev } from "@/shared/config/env-shared";
 import {
   type ErrorCode,
   getErrorCodeMeta,
@@ -37,7 +37,7 @@ function redactNonSerializable(value: unknown): unknown {
 
 // Shallow-deep freeze for dev to discourage mutation without heavy perf cost
 function deepFreezeDev<T>(obj: T): T {
-  if (!IS_DEV || obj === null || typeof obj !== "object") {
+  if (!isDev() || obj === null || typeof obj !== "object") {
     return obj;
   }
   const seen = new WeakSet<object>();
@@ -71,7 +71,7 @@ function deepFreezeDev<T>(obj: T): T {
 function validateAndMaybeSanitizeContext(
   ctx: Readonly<Record<string, unknown>>,
 ): Readonly<Record<string, unknown>> {
-  if (!IS_DEV) {
+  if (!isDev()) {
     return ctx;
   }
   try {
@@ -164,10 +164,10 @@ export class BaseError extends Error {
     this.description = meta.description;
     // Clone, dev-validate for serializability, optionally deep-freeze in dev
     const clonedContext = { ...(context ?? {}) };
-    const checkedContext = IS_DEV
+    const checkedContext = isDev()
       ? validateAndMaybeSanitizeContext(clonedContext)
       : clonedContext;
-    this.context = IS_DEV
+    this.context = isDev()
       ? (deepFreezeDev(checkedContext) as Readonly<Record<string, unknown>>)
       : (Object.freeze(checkedContext) as Readonly<Record<string, unknown>>);
     this.originalCause = cause;

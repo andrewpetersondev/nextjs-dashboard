@@ -1,10 +1,10 @@
+// src/shared/config/env-shared.ts
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
 /**
  * @file Shared environment utilities
  * - Canonical handling of NODE_ENV, DATABASE_ENV, LOG_LEVEL
- * - Uses Pino’s built-in log level support (no duplication)
  * - Safe for universal import (client/server)
  */
 
@@ -19,15 +19,7 @@ import {
 import { getEnvVariable } from "@/shared/config/env-utils";
 
 /* -------------------------------------------------------------------------------------------------
- *  🧠 Cached State
- * -----------------------------------------------------------------------------------------------*/
-
-let cachedNodeEnv: NodeEnvironment | undefined;
-let cachedDatabaseEnv: DatabaseEnvironment | undefined;
-let cachedLogLevel: LogLevel | undefined;
-
-/* -------------------------------------------------------------------------------------------------
- *  🌍 Environment Accessors
+ *  Environment Accessors (no module-level caching)
  * -----------------------------------------------------------------------------------------------*/
 
 /**
@@ -35,12 +27,12 @@ let cachedLogLevel: LogLevel | undefined;
  * - Requires NODE_ENV to be set and valid ("development" | "test" | "production")
  */
 export function getNodeEnv(): NodeEnvironment {
-  if (cachedNodeEnv) {
-    return cachedNodeEnv;
-  }
   const raw = getEnvVariable("NODE_ENV");
-  cachedNodeEnv = NodeEnvironmentSchema.parse(raw);
-  return cachedNodeEnv;
+  const result = NodeEnvironmentSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(`Invalid NODE_ENV value "${raw}": ${result.error.message}`);
+  }
+  return result.data;
 }
 
 /**
@@ -48,12 +40,14 @@ export function getNodeEnv(): NodeEnvironment {
  * - Requires DATABASE_ENV to be set and valid
  */
 export function getDatabaseEnv(): DatabaseEnvironment {
-  if (cachedDatabaseEnv) {
-    return cachedDatabaseEnv;
-  }
   const raw = getEnvVariable("DATABASE_ENV");
-  cachedDatabaseEnv = DatabaseEnvironmentSchema.parse(raw);
-  return cachedDatabaseEnv;
+  const result = DatabaseEnvironmentSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(
+      `Invalid DATABASE_ENV value "${raw}": ${result.error.message}`,
+    );
+  }
+  return result.data;
 }
 
 /**
@@ -61,29 +55,39 @@ export function getDatabaseEnv(): DatabaseEnvironment {
  * - Requires LOG_LEVEL to be set and valid
  */
 export function getLogLevel(): LogLevel {
-  if (cachedLogLevel) {
-    return cachedLogLevel;
-  }
   const raw = getEnvVariable("LOG_LEVEL");
-  cachedLogLevel = LogLevelSchema.parse(raw);
-  return cachedLogLevel;
+  const result = LogLevelSchema.safeParse(raw);
+  if (!result.success) {
+    throw new Error(
+      `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
+    );
+  }
+  return result.data;
 }
 
 /* -------------------------------------------------------------------------------------------------
- *  🧩 Exported Constants & Flags
+ *  Runtime flag helpers
  * -----------------------------------------------------------------------------------------------*/
 
-export const NODE_ENV: NodeEnvironment = getNodeEnv();
-export const DATABASE_ENV: DatabaseEnvironment = getDatabaseEnv();
-export const LOG_LEVEL: LogLevel = getLogLevel();
+export function isDev(): boolean {
+  return getNodeEnv() === "development";
+}
+export function isTest(): boolean {
+  return getNodeEnv() === "test";
+}
+export function isProd(): boolean {
+  return getNodeEnv() === "production";
+}
 
-export const IS_DEV = NODE_ENV === "development";
-export const IS_TEST = NODE_ENV === "test";
-export const IS_PROD = NODE_ENV === "production";
-
-export const IS_DEV_DB = DATABASE_ENV === "development";
-export const IS_TEST_DB = DATABASE_ENV === "test";
-export const IS_PROD_DB = DATABASE_ENV === "production";
+export function isDevDb(): boolean {
+  return getDatabaseEnv() === "development";
+}
+export function isTestDb(): boolean {
+  return getDatabaseEnv() === "test";
+}
+export function isProdDb(): boolean {
+  return getDatabaseEnv() === "production";
+}
 
 /**
  * Check if current NODE_ENV matches one of the provided values.
@@ -92,15 +96,5 @@ export const IS_PROD_DB = DATABASE_ENV === "production";
  * if (isEnv("development", "test")) console.log("Debug logging enabled");
  */
 export function isEnv(...envs: NodeEnvironment[]): boolean {
-  return envs.includes(NODE_ENV);
-}
-
-/**
- * Reset cached envs — useful in tests to avoid cross-test pollution.
- * (No effect in production.)
- */
-export function __resetEnvCachesForTests__(): void {
-  cachedNodeEnv = undefined;
-  cachedDatabaseEnv = undefined;
-  cachedLogLevel = undefined;
+  return envs.includes(getNodeEnv());
 }

@@ -1,7 +1,10 @@
 // src/shared/logging/logger.shared.ts
-/** biome-ignore-all lint/correctness/noProcessGlobal: <explanation> */
-/** biome-ignore-all lint/style/noProcessEnv: <explanation> */
-import { LOG_LEVEL_TUPLE, type LogLevel } from "@/shared/config/env-schemas";
+import {
+  getPublicLogLevel,
+  getRuntimeNodeEnv,
+} from "@/shared/config/env-public";
+import type { LogLevel } from "@/shared/config/env-schemas";
+import { getProcessId } from "@/shared/config/env-utils";
 
 /**
  * Structured log entry format for consistency and JSON parsing.
@@ -34,18 +37,6 @@ const levelPriority = {
   trace: 50,
   warn: 20,
 } as const satisfies Record<LogLevel, number>;
-
-/**
- * Derive current log level from environment (default: 'info').
- */
-const rawEnvLevel = process.env.NEXT_PUBLIC_LOG_LEVEL ?? "info";
-
-function isLogLevel(value: string): value is LogLevel {
-  return (LOG_LEVEL_TUPLE as readonly string[]).includes(value);
-}
-
-const envLevel = isLogLevel(rawEnvLevel) ? rawEnvLevel : "info";
-const currentLevel = levelPriority[envLevel];
 
 /**
  * Recursively sanitize objects to redact sensitive fields.
@@ -88,6 +79,29 @@ const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
   warn: console.warn.bind(console),
 };
 
+const processId = getProcessId();
+
+/**
+ * Derive the effective public log level at runtime.
+ * Falls back to 'info' if the public env var is missing/invalid.
+ */
+function getEffectiveLogLevel(): LogLevel {
+  try {
+    return getPublicLogLevel();
+  } catch (error) {
+    console.warn(
+      "Failed to get NEXT_PUBLIC_LOG_LEVEL, falling back to 'info':",
+      error instanceof Error ? error.message : String(error),
+    );
+    return "info";
+  }
+}
+
+function getCurrentLevelPriority(): number {
+  const envLevel = getEffectiveLogLevel();
+  return levelPriority[envLevel];
+}
+
 /**
  * Sensitivity-aware structured logger.
  */
@@ -101,7 +115,7 @@ export class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    return levelPriority[level] <= currentLevel;
+    return levelPriority[level] <= getCurrentLevelPriority();
   }
 
   private createEntry<T>(
@@ -113,7 +127,7 @@ export class Logger {
       context: this.context,
       level,
       message,
-      pid: process.pid,
+      pid: processId,
       requestId: this.requestId,
       timestamp: new Date().toISOString(),
     };
@@ -126,7 +140,7 @@ export class Logger {
   }
 
   private format(entry: LogEntry): unknown[] {
-    if (process.env.NODE_ENV === "production") {
+    if (getRuntimeNodeEnv() === "production") {
       return [JSON.stringify(entry)];
     }
 
