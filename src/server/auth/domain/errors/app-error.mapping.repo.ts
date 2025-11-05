@@ -44,7 +44,12 @@ function safeString(value: unknown): string | undefined {
 function extractBaseErrorDetails(
   err: ReturnType<typeof isBaseError> extends true ? never : unknown,
 ) {
-  if (!isBaseError(err) || err.code !== "database") {
+  if (!isBaseError(err)) {
+    return null;
+  }
+
+  // Only handle infrastructure errors here, not domain errors
+  if (err.code !== "database") {
     return null;
   }
 
@@ -79,18 +84,30 @@ export function mapRepoErrorToAppResult<T>(
   err: unknown,
   context: string,
 ): Result<T, AppError> {
-  // Handle domain errors
+  // DEBUG: Log the error type
+  console.log("[mapRepoErrorToAppResult] Error type:", {
+    code: isBaseError(err) ? err.code : "N/A",
+    isBaseError: isBaseError(err),
+    isConflictError: err instanceof ConflictError,
+    name: err instanceof Error ? err.constructor.name : typeof err,
+  });
+
+  // Handle domain errors FIRST (including ConflictError)
   if (err instanceof Error) {
     const domainError = mapDomainError(err);
+    console.log("[mapRepoErrorToAppResult] Domain error result:", domainError);
     if (domainError) {
       return Err(domainError);
     }
   }
 
-  // Handle BaseError(code==="database")
+  // Handle infrastructure BaseErrors (database code only)
   const baseErrorDetails = extractBaseErrorDetails(err);
+  console.log(
+    "[mapRepoErrorToAppResult] Base error details:",
+    baseErrorDetails,
+  );
   if (baseErrorDetails) {
-    // Use errorWithDetails for consistent BaseError logging
     if (isBaseError(err)) {
       logger.withContext(context).errorWithDetails("Database error", err);
     } else {
@@ -111,7 +128,8 @@ export function mapRepoErrorToAppResult<T>(
       ),
     );
   }
-  // Legacy/other DatabaseError
+
+  // Legacy DatabaseError
   if (err instanceof DatabaseError) {
     logger.error("Database error", { context, error: err.message });
     return Err(appErrorFromCode("database", "Database operation failed"));

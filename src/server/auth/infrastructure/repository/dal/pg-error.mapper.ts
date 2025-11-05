@@ -8,6 +8,8 @@ function readStr(v: unknown): string | undefined {
 }
 
 export const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
+  email: "email",
+  username: "username",
   usersEmailKey: "email",
   usersEmailUnique: "email",
   usersUsernameKey: "username",
@@ -68,9 +70,15 @@ export function buildDatabaseMessageFromCode(code: PgCode): string {
   }
 }
 
-// Safely extract a known Postgres error code from unknown.
 export function getPgCode(e: unknown): PgCode | undefined {
-  const s = readStr((e as PgErrorLike | null)?.code);
+  // Try direct code first
+  let s = readStr((e as PgErrorLike | null)?.code);
+
+  // If not found, try nested cause
+  if (!s && e && typeof e === "object" && "cause" in e) {
+    s = readStr((e.cause as PgErrorLike | null)?.code);
+  }
+
   return s && PG_CODE_SET.has(s) ? (s as PgCode) : undefined;
 }
 
@@ -102,7 +110,14 @@ export function conflictFromUniqueViolation(
   },
   constraintHints?: ConstraintFieldHints,
 ): ConflictError {
-  const constraint = readStr((err as PgErrorLike | null)?.constraint);
+  const pg = err as PgErrorLike | null;
+
+  // Try to get constraint from error or nested cause
+  let constraint = readStr(pg?.constraint);
+  if (!constraint && err && typeof err === "object" && "cause" in err) {
+    constraint = readStr((err.cause as PgErrorLike | null)?.constraint);
+  }
+
   const hints = constraintHints ?? SIGNUP_CONSTRAINT_HINTS;
   const field = constraint ? hints[constraint] : undefined;
 
@@ -111,6 +126,12 @@ export function conflictFromUniqueViolation(
       ? randomUUID()
       : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
+  // Try to get message from error or nested cause
+  let pgMessage = readStr(pg?.message);
+  if (!pgMessage && err && typeof err === "object" && "cause" in err) {
+    pgMessage = readStr((err.cause as PgErrorLike | null)?.message);
+  }
+
   const details = {
     code: PG_ERROR_CODES.uniqueViolation,
     ...(logCtx.context ? { context: logCtx.context } : {}),
@@ -118,9 +139,7 @@ export function conflictFromUniqueViolation(
     ...(logCtx.identifiers ?? {}),
     ...(constraint ? { constraint } : {}),
     ...(field ? { field } : {}),
-    ...(readStr((err as PgErrorLike | null)?.message)
-      ? { pgMessage: readStr((err as PgErrorLike | null)?.message) }
-      : {}),
+    ...(pgMessage ? { pgMessage } : {}),
     diagnosticId,
   };
 
@@ -145,8 +164,27 @@ export function toBaseErrorFromPgUnknown(
   ctx: Readonly<Record<string, unknown>> = {},
   constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
+  // DEBUG: Log the raw error structure
+  console.log("[toBaseErrorFromPgUnknown] Raw error:", {
+    err:
+      err instanceof Error
+        ? {
+            code: (err as any).code,
+            constraint: (err as any).constraint,
+            detail: (err as any).detail,
+            message: err.message,
+            name: err.name,
+          }
+        : err,
+  });
+
   const code = getPgCode(err);
+  console.log("[toBaseErrorFromPgUnknown] Extracted code:", code);
+
   if (code === PG_ERROR_CODES.uniqueViolation) {
+    console.log(
+      "[toBaseErrorFromPgUnknown] Detected unique violation, returning ConflictError",
+    );
     return conflictFromUniqueViolation(
       err,
       {
@@ -161,6 +199,10 @@ export function toBaseErrorFromPgUnknown(
       constraintHints,
     );
   }
+
+  console.log(
+    "[toBaseErrorFromPgUnknown] Falling through to generic database error",
+  );
 
   const pg = err as PgErrorLike | null;
   const diagnosticId =
