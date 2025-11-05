@@ -5,6 +5,7 @@ import {
 } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
+import { DEFAULT_SENSITIVE_KEYS as redactedKeys } from "@/shared/core/errors/redaction/redaction.constants";
 
 /**
  * Structured log entry format for consistency and JSON parsing.
@@ -46,16 +47,6 @@ function sanitize(data: unknown): unknown {
     return data.map(sanitize);
   }
   if (data && typeof data === "object") {
-    const redactedKeys = [
-      "password",
-      "token",
-      "secret",
-      "authorization",
-      "apiKey",
-      "key",
-      "credential",
-      "session",
-    ];
     return Object.fromEntries(
       Object.entries(data).map(([k, v]) => [
         k,
