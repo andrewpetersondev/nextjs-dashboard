@@ -60,6 +60,10 @@ src/shell/
 
 src/ui/
 
+ui
+app
+shell
+
 # Patterns and Extensions
 
 examples/

@@ -228,6 +228,8 @@ export class BaseError extends Error {
 
   /**
    * Serialize to a stable JSON shape (no stack/cause leakage).
+   * - use at output boundaries where data is sent to clients or external systems.
+   * CONSIDER REMOVING BECAUSE IT IS UNUSED
    */
   toJson(): BaseErrorJson {
     const base: BaseErrorJson = {

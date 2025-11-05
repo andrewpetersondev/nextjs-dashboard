@@ -5,6 +5,10 @@ import {
 } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
+import {
+  type BaseError,
+  isBaseError,
+} from "@/shared/core/errors/base/base-error";
 import { DEFAULT_SENSITIVE_KEYS as redactedKeys } from "@/shared/core/errors/redaction/redaction.constants";
 
 /**
@@ -190,8 +194,110 @@ export class Logger {
   withRequest(requestId: string): Logger {
     return new Logger(this.context, requestId);
   }
-}
 
+  /**
+   * Log a BaseError with full diagnostic information (internal use only).
+   * Includes stack traces and cause chains for debugging.
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await operation();
+   * } catch (err) {
+   *   const baseError = BaseError.from(err);
+   *   logger.errorWithDetails('Operation failed', baseError);
+   *   throw baseError;
+   * }
+   * ```
+   */
+  errorWithDetails(message: string, error: BaseError | unknown): void {
+    if (!isBaseError(error)) {
+      // Fallback for non-BaseError
+      this.error(message, {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      return;
+    }
+
+    this.error(message, {
+      category: error.category,
+      code: error.code,
+      context: error.context,
+      message: error.message,
+      retryable: error.retryable,
+      severity: error.severity,
+      stack: error.stack,
+      // Include cause chain if present
+      ...(error.cause instanceof Error
+        ? {
+            cause: {
+              message: error.cause.message,
+              name: error.cause.name,
+              stack: error.cause.stack,
+            },
+          }
+        : {}),
+    });
+  }
+
+  /**
+   * Log with operation context for DAL/repository patterns.
+   * Automatically includes operation, context, and identifiers.
+   *
+   * @example
+   * ```typescript
+   * logger.operation('info', 'User fetched', {
+   *   operation: 'getUserByEmail',
+   *   context: 'dal.users',
+   *   identifiers: { email: 'user@example.com' },
+   * });
+   * ```
+   */
+  operation<T extends Record<string, unknown>>(
+    level: LogLevel,
+    message: string,
+    data: T & {
+      operation: string;
+      context?: string;
+      identifiers?: Record<string, unknown>;
+    },
+  ): void {
+    const logData = {
+      operation: data.operation,
+      ...(data.identifiers || {}),
+      ...Object.fromEntries(
+        Object.entries(data).filter(
+          ([k]) => k !== "operation" && k !== "context" && k !== "identifiers",
+        ),
+      ),
+    };
+
+    // Use withContext if context provided in data
+    const targetLogger = data.context ? this.withContext(data.context) : this;
+
+    switch (level) {
+      case "trace":
+        targetLogger.trace(message, logData);
+        break;
+      case "debug":
+        targetLogger.debug(message, logData);
+        break;
+      case "info":
+        targetLogger.info(message, logData);
+        break;
+      case "warn":
+        targetLogger.warn(message, logData);
+        break;
+      case "error":
+        targetLogger.error(message, logData);
+        break;
+      default:
+        targetLogger.error(message, logData);
+        break;
+    }
+  }
+}
 /**
  * Default shared instance
  */

@@ -24,8 +24,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
-import { LoggerAdapter } from "@/shared/logging/logger.adapter";
-import { logger as sharedLogger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = LOGIN_FIELDS_LIST;
@@ -37,9 +36,8 @@ export async function loginAction(
 ): Promise<FormResult<LoginField>> {
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
-  const actionLogger = new LoggerAdapter(sharedLogger)
-    .withContext(ctx.context)
-    .withRequest(requestId);
+
+  const actionLogger = logger.withContext(ctx.context).withRequest(requestId);
   const tracker = new PerformanceTracker();
 
   logActionInitiated(actionLogger, { ip, userAgent });

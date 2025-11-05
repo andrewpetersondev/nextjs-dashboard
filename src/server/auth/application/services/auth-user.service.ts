@@ -19,7 +19,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
-import type { LoggerPort } from "@/shared/logging/logger.port";
+import type { Logger } from "@/shared/logging/logger.shared";
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
@@ -30,16 +30,16 @@ import type { LoggerPort } from "@/shared/logging/logger.port";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
-  private readonly baseLog: LoggerPort;
+  private readonly baseLog: Logger;
 
   constructor(
     repo: AuthUserRepositoryPort,
     hasher: PasswordHasherPort,
-    loggerPort: LoggerPort,
+    logger: Logger,
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.baseLog = loggerPort.withContext("AuthUserService");
+    this.baseLog = logger.withContext("AuthUserService");
   }
 
   /**

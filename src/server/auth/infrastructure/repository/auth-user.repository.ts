@@ -11,8 +11,8 @@ import {
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
 import { UnauthorizedError } from "@/shared/core/errors/domain/domain-errors";
-import { LoggerAdapter } from "@/shared/logging/logger.adapter";
-import type { LoggerPort } from "@/shared/logging/logger.port";
+import type { Logger } from "@/shared/logging/logger.shared";
+import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -20,10 +20,10 @@ import type { LoggerPort } from "@/shared/logging/logger.port";
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly logger: LoggerPort;
+  private readonly logger: Logger;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
-  constructor(db: AppDatabase, logger: LoggerPort = new LoggerAdapter()) {
+  constructor(db: AppDatabase, logger: Logger = defaultLogger) {
     this.db = db;
     this.logger = logger.withContext(AuthUserRepositoryImpl.CTX);
   }

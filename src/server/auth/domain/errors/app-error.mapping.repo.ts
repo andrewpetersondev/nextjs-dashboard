@@ -90,12 +90,17 @@ export function mapRepoErrorToAppResult<T>(
   // Handle BaseError(code==="database")
   const baseErrorDetails = extractBaseErrorDetails(err);
   if (baseErrorDetails) {
-    logger.error("Database error", {
-      code: "database",
-      context,
-      ...baseErrorDetails,
-      ...(isBaseError(err) ? { message: err.message } : {}),
-    });
+    // Use errorWithDetails for consistent BaseError logging
+    if (isBaseError(err)) {
+      logger.withContext(context).errorWithDetails("Database error", err);
+    } else {
+      logger.error("Database error", {
+        code: "database",
+        context,
+        ...baseErrorDetails,
+      });
+    }
+
     return Err(
       appErrorFromCode(
         "database",

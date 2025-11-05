@@ -1,5 +1,4 @@
-// src/server/auth/application/actions/utils/action-logger.helper.ts
-import type { LoggerPort } from "@/shared/logging/logger.port";
+import type { Logger } from "@/shared/logging/logger.shared";
 import type { PerformanceTracker } from "./performance-tracker";
 
 export interface ActionLogContext {
@@ -11,7 +10,7 @@ export interface ActionLogContext {
 }
 
 export function logActionInitiated(
-  logger: LoggerPort,
+  logger: Logger,
   metadata: { ip: string; userAgent: string },
 ): void {
   logger.info("Action initiated", {
@@ -21,7 +20,7 @@ export function logActionInitiated(
 }
 
 export function logValidationComplete(
-  logger: LoggerPort,
+  logger: Logger,
   context: { email?: string; duration: number },
 ): void {
   logger.info("Form validated successfully", {
@@ -31,7 +30,7 @@ export function logValidationComplete(
 }
 
 export function logValidationFailure(
-  logger: LoggerPort,
+  logger: Logger,
   context: { errorCount: number; ip: string; tracker: PerformanceTracker },
 ): void {
   logger.warn("Validation failed", {
@@ -42,7 +41,7 @@ export function logValidationFailure(
 }
 
 export function logAuthenticationFailure(
-  logger: LoggerPort,
+  logger: Logger,
   context: ActionLogContext,
 ): void {
   logger.error("Authentication failed", {
@@ -55,7 +54,7 @@ export function logAuthenticationFailure(
 }
 
 export function logActionSuccess(
-  logger: LoggerPort,
+  logger: Logger,
   context: {
     userId: string;
     role: string;

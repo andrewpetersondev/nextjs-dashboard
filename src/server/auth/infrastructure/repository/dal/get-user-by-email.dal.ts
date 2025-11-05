@@ -29,18 +29,14 @@ export async function getUserByEmailDal(
     const userRow = rows?.[0];
 
     if (!userRow) {
-      logger.debug("No user found for email", {
-        ...logCtx,
-        ...logCtx.identifiers, // flatten for readability
-      });
+      // Use new operation helper
+      logger.operation("debug", "No user found for email", logCtx);
       return null;
     }
 
     if (!userRow.password) {
-      logger.error("User row missing hashed password; cannot authenticate", {
-        ...logCtx,
-        ...logCtx.identifiers,
-      });
+      // Use new operation helper
+      logger.operation("error", "User row missing hashed password", logCtx);
       return null;
     }
 
