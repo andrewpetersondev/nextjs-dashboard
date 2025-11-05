@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
@@ -38,12 +39,16 @@ export const PG_ERROR_CODES = {
 
 export type PgCode = (typeof PG_ERROR_CODES)[keyof typeof PG_ERROR_CODES];
 
+const PG_CODE_SET: ReadonlySet<string> = new Set(Object.values(PG_ERROR_CODES));
+
 // Optional hook for mapping constraint names to domain field hints.
 // Repos may provide a map for better conflict targeting.
 export type ConstraintFieldHints = Readonly<Record<string, string>>;
 
 export function buildDatabaseMessageFromCode(code: PgCode): string {
   switch (code) {
+    case PG_ERROR_CODES.uniqueViolation:
+      return "Unique constraint violation (23505).";
     case PG_ERROR_CODES.serializationFailure:
       return "Transaction serialization failure (40001).";
     case PG_ERROR_CODES.deadlockDetected:
@@ -65,14 +70,8 @@ export function buildDatabaseMessageFromCode(code: PgCode): string {
 
 // Safely extract a known Postgres error code from unknown.
 export function getPgCode(e: unknown): PgCode | undefined {
-  const code = (e as PgErrorLike | null)?.code;
-  const s = readStr(code);
-  if (!s) {
-    return;
-  }
-  return (Object.values(PG_ERROR_CODES) as readonly string[]).includes(s)
-    ? (s as PgCode)
-    : undefined;
+  const s = readStr((e as PgErrorLike | null)?.code);
+  return s && PG_CODE_SET.has(s) ? (s as PgCode) : undefined;
 }
 
 // Identify transient Postgres codes suitable for retry/backoff.
@@ -97,7 +96,8 @@ export function isPgUniqueViolation(e: unknown): boolean {
 export function conflictFromUniqueViolation(
   err: unknown,
   logCtx: {
-    readonly context: string;
+    readonly context?: string;
+    readonly operation?: string;
     readonly identifiers?: Readonly<Record<string, unknown>>;
   },
   constraintHints?: ConstraintFieldHints,
@@ -105,17 +105,30 @@ export function conflictFromUniqueViolation(
   const constraint = readStr((err as PgErrorLike | null)?.constraint);
   const hints = constraintHints ?? SIGNUP_CONSTRAINT_HINTS;
   const field = constraint ? hints[constraint] : undefined;
+
+  const diagnosticId =
+    typeof randomUUID === "function"
+      ? randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
   const details = {
-    ...logCtx,
     code: PG_ERROR_CODES.uniqueViolation,
+    ...(logCtx.context ? { context: logCtx.context } : {}),
+    ...(logCtx.operation ? { operation: logCtx.operation } : {}),
+    ...(logCtx.identifiers ?? {}),
     ...(constraint ? { constraint } : {}),
     ...(field ? { field } : {}),
+    ...(readStr((err as PgErrorLike | null)?.message)
+      ? { pgMessage: readStr((err as PgErrorLike | null)?.message) }
+      : {}),
+    diagnosticId,
   };
-  return new ConflictError(
-    "A record with these values already exists.",
-    details,
-    err,
-  );
+
+  const message = field
+    ? `A ${field} with this value already exists.`
+    : "A record with these values already exists.";
+
+  return new ConflictError(message, details, err);
 }
 
 /**
@@ -123,36 +136,62 @@ export function conflictFromUniqueViolation(
  * - 23505 → ConflictError (with constraint/field hint when available)
  * - transient codes → details.retryable = true
  * - enrich context with pg detail/schema/table/constraint when present
+ *
+ * This version adds a short `diagnosticId` and richer message including
+ * operation/table/constraint/code so you can correlate logs and error messages.
  */
 export function toBaseErrorFromPgUnknown(
   err: unknown,
   ctx: Readonly<Record<string, unknown>> = {},
+  constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
   const code = getPgCode(err);
   if (code === PG_ERROR_CODES.uniqueViolation) {
     return conflictFromUniqueViolation(
       err,
-      //      { context: readStr(ctx["context"]) ?? "database", identifiers: ctx },
-      { context: readStr(ctx.context) ?? "database", identifiers: ctx },
-
-      SIGNUP_CONSTRAINT_HINTS,
+      {
+        context: readStr(ctx.context) ?? "database",
+        identifiers: Object.fromEntries(
+          Object.entries(ctx).filter(
+            ([k]) => k !== "context" && k !== "operation",
+          ),
+        ),
+        operation: readStr(ctx.operation),
+      },
+      constraintHints,
     );
   }
-  const message = code
+
+  const pg = err as PgErrorLike | null;
+  const diagnosticId =
+    typeof randomUUID === "function"
+      ? randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const baseMessage = code
     ? buildDatabaseMessageFromCode(code)
     : "Database operation failed.";
 
-  const pg = err as PgErrorLike | null;
+  const message = baseMessage;
+
+  const constraint = readStr(pg?.constraint);
+  const operation = readStr(ctx.operation);
+  const table = readStr(pg?.table);
+
   const details = {
     ...ctx,
     ...(code ? { code } : {}),
-    ...(readStr(pg?.constraint) ? { constraint: readStr(pg?.constraint) } : {}),
-    ...(readStr(pg?.detail) ? { detail: readStr(pg?.detail) } : {}),
+    ...(readStr(pg?.message) ? { pgMessage: readStr(pg?.message) } : {}),
+    ...(constraint ? { constraint } : {}),
+    ...(readStr(pg?.detail) ? { pgDetail: readStr(pg?.detail) } : {}), // Renamed from 'detail' to 'pgDetail' for clarity
     ...(readStr(pg?.schema) ? { schema: readStr(pg?.schema) } : {}),
-    ...(readStr(pg?.table) ? { table: readStr(pg?.table) } : {}),
+    ...(table ? { table } : {}),
+    ...(operation ? { operation } : {}),
     ...(code && isTransientPgCode(code) ? { retryable: true as const } : {}),
+    diagnosticId,
+    // Add timestamp for correlation
+    timestamp: new Date().toISOString(),
   };
 
-  // Normalize unknown/Error into canonical DATABASE code; preserve cause
   return BaseError.wrap("database", err, details, message);
 }

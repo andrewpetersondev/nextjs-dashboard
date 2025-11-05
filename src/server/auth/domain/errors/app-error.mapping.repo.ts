@@ -1,5 +1,6 @@
 import "server-only";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { isBaseError } from "@/shared/core/errors/base/base-error";
 import {
   ConflictError,
   ForbiddenError,
@@ -11,6 +12,50 @@ import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { Err, type Result } from "@/shared/core/result/result";
 import { logger } from "@/shared/logging/logger.shared";
+
+// Mapping table for domain errors
+const DOMAIN_ERROR_MAP = new Map<
+  new (
+    ...args: never[]
+  ) => Error,
+  { code: Parameters<typeof appErrorFromCode>[0]; useMessage: boolean }
+>([
+  [UnauthorizedError, { code: "unauthorized", useMessage: false }],
+  [ValidationError, { code: "validation", useMessage: true }],
+  [ConflictError, { code: "conflict", useMessage: true }],
+  [ForbiddenError, { code: "forbidden", useMessage: true }],
+  [NotFoundError, { code: "notFound", useMessage: true }],
+]);
+
+function mapDomainError(err: Error): AppError | null {
+  for (const [ErrorClass, config] of DOMAIN_ERROR_MAP) {
+    if (err instanceof ErrorClass) {
+      const message = config.useMessage ? err.message : "Invalid credentials";
+      return appErrorFromCode(config.code, message);
+    }
+  }
+  return null;
+}
+
+function safeString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function extractBaseErrorDetails(
+  err: ReturnType<typeof isBaseError> extends true ? never : unknown,
+) {
+  if (!isBaseError(err) || err.code !== "database") {
+    return null;
+  }
+
+  const details = err.getDetails();
+  return {
+    diagnosticId: safeString(details?.diagnosticId),
+    operation: safeString(details?.operation),
+    table: safeString(details?.table),
+    timestamp: safeString(details?.timestamp),
+  };
+}
 
 /**
  * Maps repository errors to standardized AppError Results.
@@ -34,39 +79,43 @@ export function mapRepoErrorToAppResult<T>(
   err: unknown,
   context: string,
 ): Result<T, AppError> {
-  // Domain-specific errors
-  if (err instanceof UnauthorizedError) {
-    return Err(appErrorFromCode("unauthorized", "Invalid credentials"));
+  // Handle domain errors
+  if (err instanceof Error) {
+    const domainError = mapDomainError(err);
+    if (domainError) {
+      return Err(domainError);
+    }
   }
 
-  if (err instanceof ValidationError) {
-    return Err(appErrorFromCode("validation", err.message));
+  // Handle BaseError(code==="database")
+  const baseErrorDetails = extractBaseErrorDetails(err);
+  if (baseErrorDetails) {
+    logger.error("Database error", {
+      code: "database",
+      context,
+      ...baseErrorDetails,
+      ...(isBaseError(err) ? { message: err.message } : {}),
+    });
+    return Err(
+      appErrorFromCode(
+        "database",
+        "Database operation failed",
+        baseErrorDetails.diagnosticId
+          ? { diagnosticId: baseErrorDetails.diagnosticId }
+          : undefined,
+      ),
+    );
   }
-
-  if (err instanceof ConflictError) {
-    return Err(appErrorFromCode("conflict", err.message));
-  }
-
-  if (err instanceof ForbiddenError) {
-    return Err(appErrorFromCode("forbidden", err.message));
-  }
-
-  if (err instanceof NotFoundError) {
-    return Err(appErrorFromCode("notFound", err.message));
-  }
-
-  // Infrastructure errors - hide internals
+  // Legacy/other DatabaseError
   if (err instanceof DatabaseError) {
     logger.error("Database error", { context, error: err.message });
     return Err(appErrorFromCode("database", "Database operation failed"));
   }
 
-  // Unknown/unexpected errors - log for debugging
+  // Unknown error fallback
   logger.error("Unexpected repository error", {
     context,
     error: err instanceof Error ? err.message : String(err),
-    stack: err instanceof Error ? err.stack : undefined,
   });
-
   return Err(appErrorFromCode("unknown", "An unexpected error occurred"));
 }

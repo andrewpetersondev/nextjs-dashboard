@@ -1,9 +1,10 @@
+// src/server/auth/infrastructure/repository/dal/insert-user.dal.ts
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { BaseError } from "@/shared/core/errors/base/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -12,26 +13,17 @@ import { logger } from "@/shared/logging/logger.shared";
  *
  * @param db - Database connection
  * @param input - AuthSignupDalInput containing validated, normalized user input
- * @returns {Promise<NewUserRow>} - The freshly inserted user row
+ * @returns Promise<NewUserRow> - The freshly inserted user row
  * @throws ConflictError (if unique constraint violated)
  * @throws DatabaseError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
- *
- * @remarks
- * executeDalOrThrow maps 23505 → ConflictError; other PG codes → DatabaseError with generic, recognizable messages and code in context.
- * Invariant “row must exist” is explicitly thrown with a clear Error after logging.
- * withDalTransaction is a reusable helper for atomic multi-step writes with the same normalization.
- * Identifiers in logs exclude secrets (no passwords/tokens).
  */
-export async function insertUserDal(
-  db: AppDatabase,
-  input: Readonly<AuthSignupPayload>,
-): Promise<NewUserRow> {
+export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
   const { email, username, password, role } = input;
 
   return await executeDalOrThrow(
     async () => {
-      const rows = await db
+      const [userRow] = await db
         .insert(users)
         .values({
           email,
@@ -41,8 +33,6 @@ export async function insertUserDal(
         } satisfies NewUserRow)
         .returning();
 
-      const userRow = rows?.[0];
-
       if (!userRow) {
         logger.error("INSERT returned no user row", {
           context: "dal.users.insert",
@@ -51,9 +41,19 @@ export async function insertUserDal(
           role,
           username,
         });
-        throw new DatabaseError(
-          "Invariant violation: insert did not return a new user row.",
-          { layer: "dal" },
+
+        throw BaseError.wrap(
+          "integrity",
+          new Error(
+            "Invariant violation: insert did not return a new user row.",
+          ),
+          {
+            context: "dal.users.insert",
+            email,
+            kind: "invariant",
+            operation: "insertUser",
+            username,
+          },
         );
       }
 
@@ -61,7 +61,7 @@ export async function insertUserDal(
     },
     {
       context: "dal.users.insert",
-      identifiers: { email, username },
+      identifiers: { email, username }, // Include username for better diagnostics
       operation: "insertUser",
     },
   );
