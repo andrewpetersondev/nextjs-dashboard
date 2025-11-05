@@ -8,6 +8,9 @@ import { flatMapAsync } from "@/shared/core/result/async/result-transform-async"
 import { Ok, type Result } from "@/shared/core/result/result";
 import { establishSessionAction } from "./establish-session.action";
 
+// Memoized wrapper functions to avoid creating new instances on every call
+const memoizedEstablishSession = flatMapAsync(establishSessionAction);
+
 /**
  * Executes the authentication pipeline:
  * seeds the pipeline with `input`, runs `authHandler` to authenticate/authorize the user,
@@ -26,7 +29,6 @@ export async function executeAuthPipeline<T>(
 ): Promise<Result<SessionUser, AppError>> {
   const seed = Ok(input);
   const auth = flatMapAsync(authHandler);
-  const establishSession = flatMapAsync(establishSessionAction);
 
-  return await pipeAsync(seed, auth, establishSession);
+  return await pipeAsync(seed, auth, memoizedEstablishSession);
 }

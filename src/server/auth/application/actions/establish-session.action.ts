@@ -27,9 +27,17 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    logger.info("Session established successfully");
+    logger.info("Session established successfully", {
+      role: user.role,
+      userId: user.id,
+    });
   } else {
-    logger.error("Failed to establish session");
+    logger.error("Failed to establish session", {
+      errorCode: mapped.error.code,
+      errorMessage: mapped.error.message,
+      role: user.role,
+      userId: user.id,
+    });
   }
 
   return mapped;

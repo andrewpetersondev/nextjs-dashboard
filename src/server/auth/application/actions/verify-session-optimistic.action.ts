@@ -14,22 +14,28 @@ import { logger } from "@/shared/logging/logger.shared";
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
-    const cookie: string | undefined = (await cookies()).get(
-      SESSION_COOKIE_NAME,
-    )?.value;
-    if (!cookie) {
-      logger.error("No session cookie found");
-      redirect(LOGIN_PATH);
+    try {
+      const cookie: string | undefined = (await cookies()).get(
+        SESSION_COOKIE_NAME,
+      )?.value;
+      if (!cookie) {
+        logger.warn("No session cookie found");
+        redirect(LOGIN_PATH);
+      }
+      const session: DecryptPayload | undefined =
+        await readSessionToken(cookie);
+      if (!session?.user?.userId) {
+        logger.warn("Invalid session or missing user information");
+        redirect(LOGIN_PATH);
+      }
+      return {
+        isAuthorized: true,
+        role: session.user.role,
+        userId: session.user.userId,
+      };
+    } finally {
+      // No cleanup needed currently, but this ensures any future cleanup
+      // logic executes even when redirect() throws
     }
-    const session: DecryptPayload | undefined = await readSessionToken(cookie);
-    if (!session?.user?.userId) {
-      logger.warn("Invalid session or missing user information");
-      redirect(LOGIN_PATH);
-    }
-    return {
-      isAuthorized: true,
-      role: session.user.role,
-      userId: session.user.userId,
-    };
   },
 );

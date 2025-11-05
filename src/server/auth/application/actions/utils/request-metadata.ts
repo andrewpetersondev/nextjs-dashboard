@@ -25,7 +25,7 @@ function getFirstIp(headersList: Headers): string {
   const forwarded = getHeaderValue(headersList, "forwarded", "");
   if (forwarded) {
     const ip = extractIpFromForwarded(forwarded);
-    if (ip && ip.trim() !== "") {
+    if (ip !== null && ip.trim() !== "") {
       return ip.trim();
     }
   }
