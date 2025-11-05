@@ -1,3 +1,4 @@
+// src/server/auth/application/services/auth-user.service.ts
 import "server-only";
 import { createRandomPassword } from "@/features/auth/lib/auth.password";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
@@ -18,6 +19,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
+import type { LoggerPort } from "@/shared/logging/logger.port";
 
 /**
  * Auth service: orchestrates business logic, returns discriminated Result.
@@ -28,10 +30,16 @@ import { Err, Ok } from "@/shared/core/result/result";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
+  private readonly baseLog: LoggerPort;
 
-  constructor(repo: AuthUserRepositoryPort, hasher: PasswordHasherPort) {
+  constructor(
+    repo: AuthUserRepositoryPort,
+    hasher: PasswordHasherPort,
+    loggerPort: LoggerPort,
+  ) {
     this.repo = repo;
     this.hasher = hasher;
+    this.baseLog = loggerPort.withContext("AuthUserService");
   }
 
   /**
@@ -42,13 +50,14 @@ export class AuthUserService {
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.createDemoUser;
+    const log = this.baseLog.withContext(ctx.context);
 
     try {
       const db = getAppDb();
       const counter = await demoUserCounter(db, role);
 
       if (!counter || counter <= 0) {
-        console.error("Failed to create demo user counter");
+        log.error("Invalid demo user counter", { counter, role });
         return Err(createAuthAppError("unexpected"));
       }
 
@@ -67,12 +76,15 @@ export class AuthUserService {
         }),
       );
 
-      console.info("Demo user created successfully.");
+      log.info("Demo user created", {
+        email: uniqueEmail,
+        role,
+        username: uniqueUsername,
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
     } catch (err: unknown) {
-      console.error("Failed to create demo user counter", err);
-
+      log.error("Failed to create demo user", { error: err });
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.context,
@@ -95,9 +107,13 @@ export class AuthUserService {
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.signup;
+    const log = this.baseLog.withContext(ctx.context);
 
     if (!hasRequiredSignupFields(input)) {
-      console.error("missing required fields");
+      log.warn("Missing required signup fields", {
+        email: input.email,
+        username: input.username,
+      });
 
       return Err(
         toFormAwareError(createAuthAppError("missing_fields"), {
@@ -118,12 +134,14 @@ export class AuthUserService {
         }),
       );
 
-      console.info("Signup successfully.");
+      log.info("Signup succeeded", {
+        email: input.email,
+        username: input.username,
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
     } catch (err: unknown) {
-      console.error("Failed to create demo user counter", err);
-
+      log.error("Signup failed", { error: err });
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.context,
@@ -145,13 +163,15 @@ export class AuthUserService {
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.login;
+    const log = this.baseLog.withContext(ctx.context);
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user.password) {
-        console.error("Failed to login");
-
+        log.warn("Login failed - missing password hash", {
+          email: input.email,
+        });
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -165,7 +185,7 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        console.error("Failed to compare");
+        log.warn("Login failed - invalid credentials", { email: input.email });
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -173,11 +193,14 @@ export class AuthUserService {
         );
       }
 
-      console.info("Login successfully.");
+      log.info("Login succeeded", {
+        email: input.email,
+        userId: user.id,
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      console.error("Failed to login");
+      log.error("Login failed", { error: err });
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.context,

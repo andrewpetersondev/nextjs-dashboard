@@ -41,6 +41,10 @@ export class PerformanceTracker {
     };
   }
 
+  getLastDuration(phase: string): number {
+    return this.metrics[phase]?.duration ?? 0;
+  }
+
   getTotalDuration() {
     return performance.now() - this.startTime;
   }
