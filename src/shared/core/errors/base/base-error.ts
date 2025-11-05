@@ -135,12 +135,6 @@ export class BaseError extends Error {
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
     const meta = getErrorCodeMeta(code);
     const { message, context, cause } = options;
-    //    const sanitizedCause =
-    //      cause instanceof Error
-    //        ? cause
-    //        : cause === undefined
-    //          ? undefined
-    //          : redactNonSerializable(cause);
     let sanitizedCause: unknown;
     switch (true) {
       case cause instanceof Error:
@@ -162,7 +156,6 @@ export class BaseError extends Error {
     this.retryable = meta.retryable;
     this.category = meta.category;
     this.description = meta.description;
-    // Clone, dev-validate for serializability, optionally deep-freeze in dev
     const clonedContext = { ...(context ?? {}) };
     const checkedContext = isDev()
       ? validateAndMaybeSanitizeContext(clonedContext)
@@ -171,11 +164,10 @@ export class BaseError extends Error {
       ? (deepFreezeDev(checkedContext) as Readonly<Record<string, unknown>>)
       : (Object.freeze(checkedContext) as Readonly<Record<string, unknown>>);
     this.originalCause = cause;
-    // Freeze the instance in all envs (top-level)
     try {
       Object.freeze(this);
     } catch {
-      // ignore non-extensible targets
+      // ignore
     }
   }
 
@@ -201,7 +193,6 @@ export class BaseError extends Error {
       context: { ...this.context, ...extra },
       message: this.message,
     }) as this;
-    // Preserve original stack where writable
     if (typeof this.stack === "string") {
       try {
         (next as { stack?: string }).stack = this.stack;
@@ -225,7 +216,6 @@ export class BaseError extends Error {
       context: { ...this.context },
       message: overrideMessage ?? this.message,
     }) as this;
-    // Preserve original stack where writable
     if (typeof this.stack === "string") {
       try {
         (next as { stack?: string }).stack = this.stack;
@@ -328,7 +318,6 @@ export class BaseError extends Error {
    * Subclasses can override to return their own instances.
    */
   protected create(code: ErrorCode, options: BaseErrorOptions): BaseError {
-    // Preserve subclass by using the same constructor when possible
     const Ctor = this.constructor as new (
       c: ErrorCode,
       o: BaseErrorOptions,
