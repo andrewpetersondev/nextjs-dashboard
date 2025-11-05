@@ -4,15 +4,15 @@ import type { BaseError } from "@/shared/core/errors/base/base-error";
 
 type LogCtx = Readonly<{
   operation: string;
-  context?: string;
-  identifiers?: Readonly<Record<string, unknown>>;
+  context: string;
+  identifiers: Readonly<Record<string, unknown>>;
 }>;
 
-function normalizeDalError(err: unknown, ctx: LogCtx | undefined): BaseError {
+function normalizeDalError(err: unknown, ctx: LogCtx): BaseError {
   const baseCtx = {
+    context: ctx?.context,
+    identifiers: ctx?.identifiers,
     operation: ctx?.operation,
-    ...(ctx?.context ? { context: ctx.context } : {}),
-    ...(ctx?.identifiers ?? {}),
   };
   // Keep a single normalization path; specialize inside mapper (unique, timeouts, etc.)
   return toBaseErrorFromPgUnknown(err, baseCtx);
@@ -23,11 +23,11 @@ function normalizeDalError(err: unknown, ctx: LogCtx | undefined): BaseError {
  * Note: Does not log errors; caller is responsible for logging if needed.
  */
 export async function executeDalOrThrow<T>(
-  op: () => Promise<T>,
-  logCtx?: LogCtx,
+  thunk: () => Promise<T>,
+  logCtx: LogCtx,
 ): Promise<T> {
   try {
-    return await op();
+    return await thunk();
   } catch (err) {
     throw normalizeDalError(err, logCtx);
   }

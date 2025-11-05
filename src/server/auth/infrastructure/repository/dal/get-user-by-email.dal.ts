@@ -13,38 +13,37 @@ export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
-  return await executeDalOrThrow(
-    async () => {
-      const rows = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
+  const logCtx = {
+    context: "dal.users.getByEmail",
+    identifiers: { email },
+    operation: "getUserByEmail",
+  } as const;
 
-      const userRow = rows?.[0];
+  return await executeDalOrThrow(async () => {
+    const rows = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-      if (!userRow) {
-        logger.debug("No user found for email", {
-          context: "dal.users.getByEmail",
-          email,
-        });
-        return null;
-      }
+    const userRow = rows?.[0];
 
-      if (!userRow.password) {
-        logger.error("User row missing hashed password; cannot authenticate", {
-          context: "dal.users.getByEmail",
-          email,
-        });
-        return null;
-      }
+    if (!userRow) {
+      logger.debug("No user found for email", {
+        ...logCtx,
+        ...logCtx.identifiers, // flatten for readability
+      });
+      return null;
+    }
 
-      return userRow;
-    },
-    {
-      context: "dal.users.getByEmail",
-      identifiers: { email },
-      operation: "getUserByEmail",
-    },
-  );
+    if (!userRow.password) {
+      logger.error("User row missing hashed password; cannot authenticate", {
+        ...logCtx,
+        ...logCtx.identifiers,
+      });
+      return null;
+    }
+
+    return userRow;
+  }, logCtx);
 }
