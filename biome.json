@@ -408,6 +408,36 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/shared/config/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/shared/logging/**",
+                      "@/shared/logging/logger.shared",
+                      "@/shared/logging/logger.shared.ts",
+                      "../logging/**",
+                      "../logging/logger.shared",
+                      "../logging/logger.shared.ts",
+                      "../../shared/logging/**",
+                      "../../shared/logging/logger.shared",
+                      "../../shared/logging/logger.shared.ts"
+                    ],
+                    "message": "config should not import the logger. references will be undefined at initialization time."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "root": true,
