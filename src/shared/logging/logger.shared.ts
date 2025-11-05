@@ -5,11 +5,8 @@ import {
 } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import {
-  type BaseError,
-  isBaseError,
-} from "@/shared/core/errors/base/base-error";
-import { DEFAULT_SENSITIVE_KEYS as redactedKeys } from "@/shared/core/errors/redaction/redaction.constants";
+import { isBaseError } from "@/shared/core/errors/base/base-error";
+import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/redaction/redaction.constants";
 
 /**
  * Structured log entry format for consistency and JSON parsing.
@@ -47,14 +44,20 @@ const levelPriority = {
  * Recursively sanitize objects to redact sensitive fields.
  */
 function sanitize(data: unknown): unknown {
+  if (data === null || data === undefined) {
+    return data;
+  }
   if (Array.isArray(data)) {
     return data.map(sanitize);
+  }
+  if (data instanceof Date || data instanceof RegExp) {
+    return data;
   }
   if (data && typeof data === "object") {
     return Object.fromEntries(
       Object.entries(data).map(([k, v]) => [
         k,
-        redactedKeys.some((rk) => k.toLowerCase().includes(rk))
+        DEFAULT_SENSITIVE_KEYS.some((rk) => k.toLowerCase().includes(rk))
           ? "[REDACTED]"
           : sanitize(v),
       ]),
@@ -72,7 +75,7 @@ const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
   info: console.info.bind(console),
   trace: console.trace.bind(console),
   warn: console.warn.bind(console),
-};
+} as const;
 
 const processId = getProcessId();
 
@@ -83,11 +86,7 @@ const processId = getProcessId();
 function getEffectiveLogLevel(): LogLevel {
   try {
     return getPublicLogLevel();
-  } catch (error) {
-    console.warn(
-      "Failed to get NEXT_PUBLIC_LOG_LEVEL, falling back to 'info':",
-      error instanceof Error ? error.message : String(error),
-    );
+  } catch {
     return "info";
   }
 }
@@ -119,14 +118,20 @@ export class Logger {
     data?: T,
   ): LogEntry<T> {
     const entry: LogEntry<T> = {
-      context: this.context,
       level,
       message,
-      pid: processId,
-      requestId: this.requestId,
       timestamp: new Date().toISOString(),
     };
 
+    if (this.context !== undefined) {
+      entry.context = this.context;
+    }
+    if (this.requestId !== undefined) {
+      entry.requestId = this.requestId;
+    }
+    if (processId !== undefined) {
+      entry.pid = processId;
+    }
     if (data !== undefined) {
       entry.data = sanitize(data) as T;
     }
@@ -139,17 +144,18 @@ export class Logger {
       return [JSON.stringify(entry)];
     }
 
-    const { timestamp, context, message, data, requestId } = entry;
-    const prefixParts = [timestamp];
-    if (requestId) {
-      prefixParts.push(`[req:${requestId}]`);
+    const prefixParts: string[] = [entry.timestamp];
+    if (entry.requestId) {
+      prefixParts.push(`[req:${entry.requestId}]`);
     }
-    if (context) {
-      prefixParts.push(`[${context}]`);
+    if (entry.context) {
+      prefixParts.push(`[${entry.context}]`);
     }
 
     const prefix = prefixParts.join(" ");
-    return data !== undefined ? [prefix, message, data] : [prefix, message];
+    return entry.data !== undefined
+      ? [prefix, entry.message, entry.data]
+      : [prefix, entry.message];
   }
 
   private output(entry: LogEntry): void {
@@ -210,7 +216,7 @@ export class Logger {
    * }
    * ```
    */
-  errorWithDetails(message: string, error: BaseError | unknown): void {
+  errorWithDetails(message: string, error: unknown): void {
     if (!isBaseError(error)) {
       // Fallback for non-BaseError
       this.error(message, {
@@ -220,7 +226,7 @@ export class Logger {
       return;
     }
 
-    this.error(message, {
+    const errorData: Record<string, unknown> = {
       category: error.category,
       code: error.code,
       context: error.context,
@@ -228,17 +234,18 @@ export class Logger {
       retryable: error.retryable,
       severity: error.severity,
       stack: error.stack,
-      // Include cause chain if present
-      ...(error.cause instanceof Error
-        ? {
-            cause: {
-              message: error.cause.message,
-              name: error.cause.name,
-              stack: error.cause.stack,
-            },
-          }
-        : {}),
-    });
+    };
+
+    // Include cause chain if present
+    if (error.cause instanceof Error) {
+      errorData.cause = {
+        message: error.cause.message,
+        name: error.cause.name,
+        stack: error.cause.stack,
+      };
+    }
+
+    this.error(message, errorData);
   }
 
   /**
@@ -263,19 +270,18 @@ export class Logger {
       identifiers?: Record<string, unknown>;
     },
   ): void {
+    const { operation, context, identifiers, ...rest } = data;
+
     const logData = {
-      operation: data.operation,
-      ...(data.identifiers || {}),
-      ...Object.fromEntries(
-        Object.entries(data).filter(
-          ([k]) => k !== "operation" && k !== "context" && k !== "identifiers",
-        ),
-      ),
+      operation,
+      ...(identifiers ?? {}),
+      ...rest,
     };
 
     // Use withContext if context provided in data
-    const targetLogger = data.context ? this.withContext(data.context) : this;
+    const targetLogger = context ? this.withContext(context) : this;
 
+    // biome-ignore lint/style/useDefaultSwitchClause: <all log levels are covered>
     switch (level) {
       case "trace":
         targetLogger.trace(message, logData);
@@ -290,9 +296,6 @@ export class Logger {
         targetLogger.warn(message, logData);
         break;
       case "error":
-        targetLogger.error(message, logData);
-        break;
-      default:
         targetLogger.error(message, logData);
         break;
     }
