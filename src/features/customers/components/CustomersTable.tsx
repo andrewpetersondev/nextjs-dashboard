@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import { type JSX, useId } from "react";
 import { CustomersTableDesktop } from "@/features/customers/components/CustomersTableDesktop";
 import { CustomersTableMobile } from "@/features/customers/components/CustomersTableMobile";
 import type { FormattedCustomersTableRow } from "@/features/customers/types";
@@ -12,13 +12,15 @@ interface CustomersTableProps {
 export function CustomersTable({
   customers,
 }: CustomersTableProps): JSX.Element {
+  const headingId = useId();
+
   return (
     <section
       aria-labelledby="customers-heading"
       className="w-full"
       data-cy="customers-section"
     >
-      <H1 className="mb-8" id="customers-heading">
+      <H1 className="mb-8" id={headingId}>
         Customers
       </H1>
       <Search placeholder="Search customers..." />

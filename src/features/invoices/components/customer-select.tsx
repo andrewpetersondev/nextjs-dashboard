@@ -4,7 +4,7 @@
  * @module CustomerSelect
  */
 
-import type { JSX } from "react";
+import { type JSX, useId } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import type { FieldError } from "@/shared/forms/domain/models/field-error";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
@@ -31,6 +31,7 @@ export const CustomerSelect = ({
   error,
   ...props
 }: CustomerSelectProps): JSX.Element => {
+  const customerSelectMenuId = useId();
   const ErrorId = "customer-select-error";
   const hasError = Boolean(error && error.length > 0);
   return (
@@ -39,7 +40,7 @@ export const CustomerSelect = ({
         aria-describedby={hasError ? ErrorId : undefined}
         aria-invalid={hasError}
         defaultValue=""
-        id="customer"
+        id={customerSelectMenuId}
         name="customerId"
         options={[...customers]}
         placeholder="Select a customer"

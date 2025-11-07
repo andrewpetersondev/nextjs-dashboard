@@ -1,5 +1,5 @@
 "use client";
-import { type JSX, useActionState } from "react";
+import { type JSX, useActionState, useId } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { CustomerSelect } from "@/features/invoices/components/customer-select";
 import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amount-input";
@@ -45,6 +45,7 @@ function FormFields({
   errors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
   pending: boolean;
 }): JSX.Element {
+  const invoiceAmountInputId = useId();
   return (
     <div className="rounded-md bg-bg-secondary p-4 md:p-6">
       <InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
@@ -71,7 +72,7 @@ function FormFields({
         defaultValue={currentInvoice.amount / CENTS_IN_DOLLAR}
         disabled={pending}
         error={errors.amount as FieldError | undefined}
-        id="amount"
+        id={invoiceAmountInputId}
         label="Choose an amount"
         name="amount"
       />

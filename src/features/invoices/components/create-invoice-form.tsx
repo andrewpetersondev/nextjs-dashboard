@@ -1,5 +1,5 @@
 "use client";
-import { type JSX, useActionState, useEffect, useState } from "react";
+import { type JSX, useActionState, useEffect, useId, useState } from "react";
 import type { CustomerField } from "@/features/customers/types";
 import { CustomerSelect } from "@/features/invoices/components/customer-select";
 import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amount-input";
@@ -65,6 +65,9 @@ export const CreateInvoiceForm = ({
     return () => clearTimeout(timer);
   }, [state?.message]);
 
+  const dateId = useId();
+  const amountId = useId();
+
   return (
     <section>
       <form action={action}>
@@ -73,7 +76,7 @@ export const CreateInvoiceForm = ({
             data-cy="date-input"
             defaultValue={getTodayIsoDate()}
             disabled={pending}
-            id="date"
+            id={dateId}
             name="date"
           />
 
@@ -98,7 +101,7 @@ export const CreateInvoiceForm = ({
             dataCy="amount-input"
             disabled={pending}
             error={state.errors?.amount as FieldError | undefined}
-            id="amount"
+            id={amountId}
             label="Choose an amount"
             name="amount"
             placeholder="Enter USD amount"
