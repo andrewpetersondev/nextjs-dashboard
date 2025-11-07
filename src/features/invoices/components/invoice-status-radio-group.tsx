@@ -1,5 +1,5 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
-import type { InputHTMLAttributes, JSX } from "react";
+import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import type { FieldError } from "@/shared/forms/domain/models/field-error";
 import { ErrorMessage } from "@/ui/forms/error-message";
@@ -41,8 +41,8 @@ export const InvoiceStatusRadioGroup = ({
       value: "paid",
     },
   ];
-
   const hasError = Boolean(error && error.length > 0);
+  const errorMessageId = useId();
 
   return (
     <fieldset className="mb-4">
@@ -77,7 +77,7 @@ export const InvoiceStatusRadioGroup = ({
       <ErrorMessage
         dataCy="invoice-status-error"
         error={error}
-        id="invoice-status-error"
+        id={errorMessageId}
         label="Invoice status error"
       />
     </fieldset>

@@ -1,5 +1,4 @@
 "use client";
-
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
   type ReadonlyURLSearchParams,
@@ -7,7 +6,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import type { ChangeEvent, JSX } from "react";
+import { type ChangeEvent, type JSX, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { DEBOUNCE_MS } from "@/shared/ui/tokens/timings";
 
@@ -18,6 +17,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const pathname: string = usePathname();
   const { replace } = useRouter();
+  const inputId = useId();
 
   const handleSearch = useDebouncedCallback((term: string): void => {
     const params = new URLSearchParams(searchParams);
@@ -40,7 +40,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
         autoComplete="off"
         className="peer block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-[color:var(--color-text-primary)] text-sm outline-2 transition-colors duration-200 placeholder:text-[color:var(--color-text-disabled)] hover:border-[color:var(--color-text-hover)] focus:border-[color:var(--color-text-focus)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:ring-opacity-20"
         defaultValue={searchParams.get("query")?.toString()}
-        id="search"
+        id={inputId}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
           handleSearch(e.target.value);
         }}

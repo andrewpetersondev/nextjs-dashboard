@@ -1,5 +1,5 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
-import type { InputHTMLAttributes, JSX } from "react";
+import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { FieldError } from "@/shared/forms/domain/models/field-error";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
@@ -18,6 +18,7 @@ export const InvoiceAmountInput = ({
   ...props
 }: InvoiceAmountInputProps): JSX.Element => {
   const hasError = Boolean(error && error.length > 0);
+  const invoiceAmountInputErrorId = useId();
 
   return (
     <div className="mb-4">
@@ -42,7 +43,7 @@ export const InvoiceAmountInput = ({
       <ErrorMessage
         dataCy="invoice-amount-error"
         error={error}
-        id="invoice-amount-error"
+        id={invoiceAmountInputErrorId}
         label="Invoice amount error"
       />
     </div>

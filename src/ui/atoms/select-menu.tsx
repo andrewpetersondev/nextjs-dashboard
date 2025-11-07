@@ -1,3 +1,4 @@
+// `src/ui/atoms/select-menu.tsx`
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import type { FieldError } from "@/shared/forms/domain/models/field-error";
@@ -27,6 +28,11 @@ export interface SelectMenuProps<
   disabled?: boolean;
   required?: boolean;
   error?: FieldError;
+  /**
+   * Optional id of the element that describes the select (e.g. the error container).
+   * If not provided, falls back to `${name}-error`.
+   */
+  errorId?: string;
 }
 
 /**
@@ -48,12 +54,13 @@ export const SelectMenu: SelectMenuComponent = React.memo(
     disabled = false,
     required,
     error,
+    errorId,
   }: SelectMenuProps<T>): React.ReactElement {
     return (
       <div className="relative">
         <select
           aria-describedby={
-            error && error.length > 0 ? `${name}-error` : undefined
+            error && error.length > 0 ? (errorId ?? `${name}-error`) : undefined
           }
           aria-label={placeholder}
           className={`peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary ${className}`}

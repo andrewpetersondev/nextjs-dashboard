@@ -1,4 +1,6 @@
+// `src/features/users/components/select-role.tsx`
 import type React from "react";
+import { useId } from "react";
 import {
   GUEST_ROLE,
   USER_ROLES,
@@ -17,7 +19,6 @@ interface RoleOption {
 }
 
 // --- Define ROLE_OPTIONS constant ---
-// Filters out "guest" and maps roles to { id, name } objects with capitalized names.
 const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
   (role) => role !== (GUEST_ROLE as UserRole),
 ).map((role) => ({
@@ -48,23 +49,30 @@ export const SelectRole: React.FC<SelectRoleProps> = ({
   value,
   onChange,
   ...props
-}) => (
-  <div>
-    <SelectMenu
-      error={error}
-      id="role"
-      name="role"
-      onChange={onChange}
-      options={ROLE_OPTIONS}
-      placeholder="Select a role"
-      value={value as string | undefined}
-      {...props}
-    />
-    <ErrorMessage
-      dataCy="users-select-role"
-      error={error}
-      id="users-select-role-error"
-      label="Select role error"
-    />
-  </div>
-);
+}) => {
+  const idBase = useId();
+  const selectId = `${idBase}-role-select`;
+  const errorId = `${idBase}-role-error`;
+
+  return (
+    <div>
+      <SelectMenu
+        error={error}
+        errorId={errorId}
+        id={selectId}
+        name="role"
+        onChange={onChange}
+        options={ROLE_OPTIONS}
+        placeholder="Select a role"
+        value={value as string | undefined}
+        {...props}
+      />
+      <ErrorMessage
+        dataCy="users-select-role"
+        error={error}
+        id={errorId}
+        label="Select role error"
+      />
+    </div>
+  );
+};

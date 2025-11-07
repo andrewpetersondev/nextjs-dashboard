@@ -4,6 +4,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
+import { useId } from "react";
 import { SelectRole } from "@/features/users/components/select-role";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { CreateUserFormFieldNames } from "@/features/users/lib/user.schema";
@@ -25,6 +26,10 @@ export function UserFields({
   isEdit?: boolean;
   disabled?: boolean;
 }): JSX.Element {
+  const usernameId = useId();
+  const emailId = useId();
+  const passwordId = useId();
+
   return (
     <>
       <InputField
@@ -36,7 +41,7 @@ export function UserFields({
         icon={
           <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
         }
-        id="username"
+        id={usernameId}
         label="Username"
         name="username"
         required={true}
@@ -52,7 +57,7 @@ export function UserFields({
         icon={
           <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
         }
-        id="email"
+        id={emailId}
         label="Email address"
         name="email"
         placeholder="steve@jobs.com"
@@ -70,7 +75,7 @@ export function UserFields({
           icon={
             <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
           }
-          id="password"
+          id={passwordId}
           label="Password"
           name="password"
           placeholder="Enter your password"

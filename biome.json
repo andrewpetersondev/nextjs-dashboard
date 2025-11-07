@@ -102,15 +102,13 @@
       "complexity": "on",
       "correctness": {
         "noGlobalDirnameFilename": "on",
-        "noNodejsModules": "on",
-        "noProcessGlobal": "on",
-        "noRestrictedElements": "off",
         "noUndeclaredVariables": "on",
         "recommended": true,
-        "useImportExtensions": "off",
-        "useUniqueElementIds": "off"
+        "useImportExtensions": "off"
       },
       "nursery": {
+        "noContinue": "on",
+        "noDeprecatedImports": "on",
         "noShadow": "on",
         "noUselessUndefined": "on",
         "recommended": true,

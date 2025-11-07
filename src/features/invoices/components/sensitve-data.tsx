@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import { type JSX, useId } from "react";
 import type { FieldError } from "@/shared/forms/domain/models/field-error";
 import { Label } from "@/ui/atoms/label";
 import { ErrorMessage } from "@/ui/forms/error-message";
@@ -20,6 +20,7 @@ export function SensitiveData({
 }: SensitiveDataProps): JSX.Element {
   const hasError = Boolean(error && error.length > 0);
   const errorId = "sensitive-data-error";
+  const sensitiveDataId = useId();
   return (
     <div className="mb-4">
       <Label
@@ -37,7 +38,7 @@ export function SensitiveData({
           data-cy="sensitive-data-input"
           defaultValue={value}
           disabled={disabled}
-          id="sensitiveData"
+          id={sensitiveDataId}
           name="sensitiveData"
           required={true}
           type="text"
