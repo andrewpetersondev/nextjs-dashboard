@@ -86,10 +86,11 @@ export function withQuery(
     return normBase;
   }
   const params = new URLSearchParams();
-  for (const [k, v] of Object.entries(query)) {
-    if (v === undefined || v === null) {
-      continue;
-    }
+  const entries = Object.entries(query).filter(
+    ([, v]) => v !== undefined && v !== null,
+  );
+
+  for (const [k, v] of entries) {
     params.append(k, String(v));
   }
   const qs = params.toString();

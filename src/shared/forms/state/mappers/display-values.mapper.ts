@@ -13,11 +13,10 @@ export function selectDisplayableStringFieldValues<Tfield extends string>(
   const values: Partial<Record<Tfield, string>> = {};
 
   for (const key of fields) {
-    if (redactFields.includes(key)) {
-      continue;
-    }
+    const shouldRedact = redactFields.includes(key);
     const v = raw[key as string];
-    if (typeof v === "string") {
+
+    if (!shouldRedact && typeof v === "string") {
       values[key] = v;
     }
   }

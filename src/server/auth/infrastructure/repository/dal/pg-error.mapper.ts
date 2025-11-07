@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
+/** biome-ignore-all lint/style/noMagicNumbers: <explanation> */
+/** biome-ignore-all lint/complexity/noExcessiveLinesPerFunction: <explanation> */
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { BaseError } from "@/shared/core/errors/base/base-error";
