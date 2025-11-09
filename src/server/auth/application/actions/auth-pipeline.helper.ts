@@ -12,16 +12,16 @@ import { establishSessionAction } from "./establish-session.action";
 const memoizedEstablishSession = flatMapAsync(establishSessionAction);
 
 /**
- * Executes the authentication pipeline:
- * seeds the pipeline with `input`, runs `authHandler` to authenticate/authorize the user,
- * then runs `establishSessionAction` to create a session for the authenticated user.
+ * Execute the authentication pipeline: seed the pipeline with `input`, run
+ * `authHandler` to authenticate/authorize the user, then run
+ * `establishSessionAction` to create a session for the authenticated user.
  *
  * @typeParam T - Type of the pipeline input.
  * @param input - Arbitrary data passed into `authHandler`.
  * @param authHandler - Async handler that maps `input` to a `Result` containing the
- * authenticated user `{ id, role }` or an `AppError`.
- * @returns A `Promise` resolving to the pipeline's `Result`. On success it contains the
- * authenticated user `{ id, role }`; on failure it contains an `AppError`.
+ * authenticated user (`SessionUser`) or an `AppError`.
+ * @returns A `Promise` resolving to the pipeline `Result`. On success it contains
+ * the authenticated `SessionUser`; on failure it contains an `AppError`.
  */
 export async function executeAuthPipeline<T>(
   input: T,

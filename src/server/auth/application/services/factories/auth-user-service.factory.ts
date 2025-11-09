@@ -9,7 +9,10 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
- * Composition root: builds a UserAuthService with concrete adapters.
+ * Composition root that builds an `AuthUserService` with concrete adapters.
+ *
+ * @param db - Database connection used by the repository implementation.
+ * @returns A configured `AuthUserService`.
  */
 export function createAuthUserService(db: AppDatabase): AuthUserService {
   const repo = new AuthUserRepositoryImpl(db, logger);

@@ -22,10 +22,11 @@ import { Err, Ok } from "@/shared/core/result/result";
 import type { Logger } from "@/shared/logging/logger.shared";
 
 /**
- * Auth service: orchestrates business logic, returns discriminated Result.
- * Never throws; always returns Result union for UI.
+ * AuthUserService orchestrates authentication and user creation logic.
  *
- * Depends on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
+ * @remarks
+ * - Returns discriminated Result objects instead of throwing.
+ * - Depends on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
  */
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
@@ -44,7 +45,11 @@ export class AuthUserService {
 
   /**
    * Creates a demo user with a unique username and email for the given role.
-   * Returns Result<AuthUserTransport, AppError> for consistent error handling.
+   *
+   * @param role - The role assigned to the demo user.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   *
+   * @remarks Uses repository transaction support and the password hasher port.
    */
   async createDemoUser(
     role: UserRole,
@@ -100,8 +105,12 @@ export class AuthUserService {
   }
 
   /**
-   * Signup: hashes password, delegates to repo, returns Result<AuthUserTransport, AppError>.
-   * Always atomic via repo.withTransaction.
+   * Sign up a new user.
+   *
+   * @param input - Readonly SignupData containing email, username and password.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   *
+   * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
   async signup(
     input: Readonly<SignupData>,
@@ -157,7 +166,12 @@ export class AuthUserService {
   }
 
   /**
-   * Login: fetch user, compare password, return Result.
+   * Authenticate a user by email and password.
+   *
+   * @param input - Readonly LoginData with email and password.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   *
+   * @remarks Validates stored hash using the PasswordHasherPort.
    */
   async login(
     input: Readonly<LoginData>,
