@@ -1,14 +1,40 @@
+/**
+ * @packageDocumentation
+ * Helpers for uniform action-related logging used by authentication and action flows.
+ */
+
 import type { Logger } from "@/shared/logging/logger.shared";
 import type { PerformanceTracker } from "./performance-tracker";
 
+/**
+ * Context passed to action logging helpers.
+ *
+ * @remarks
+ * Contains optional user identification and error details together with a
+ * `PerformanceTracker` instance and the request `ip`.
+ */
 export interface ActionLogContext {
+  /** Optional user email associated with the action. */
   email?: string;
+  /** Client IP address for the request. */
   ip: string;
+  /** Performance tracker that provides timing metrics for the action. */
   tracker: PerformanceTracker;
+  /** Optional error code when an error occurred. */
   errorCode?: string;
+  /** Optional human-readable error message. */
   errorMessage?: string;
 }
 
+/**
+ * Log that an action has been initiated.
+ *
+ * @param logger - Logger instance to use for writing the log.
+ * @param metadata - Metadata about the incoming request.
+ * @param metadata.ip - Client IP address.
+ * @param metadata.userAgent - User-Agent string from the request.
+ * @returns void
+ */
 export function logActionInitiated(
   logger: Logger,
   metadata: { ip: string; userAgent: string },
@@ -19,6 +45,15 @@ export function logActionInitiated(
   });
 }
 
+/**
+ * Log that form validation completed successfully.
+ *
+ * @param logger - Logger instance to use for writing the log.
+ * @param context - Validation context.
+ * @param context.email - Optional email associated with the form.
+ * @param context.duration - Validation duration in milliseconds.
+ * @returns void
+ */
 export function logValidationComplete(
   logger: Logger,
   context: { email?: string; duration: number },
@@ -29,6 +64,16 @@ export function logValidationComplete(
   });
 }
 
+/**
+ * Log that validation failed.
+ *
+ * @param logger - Logger instance to use for writing the log.
+ * @param context - Context for the validation failure.
+ * @param context.errorCount - Number of validation errors encountered.
+ * @param context.ip - Client IP address.
+ * @param context.tracker - Performance tracker used to compute durations.
+ * @returns void
+ */
 export function logValidationFailure(
   logger: Logger,
   context: { errorCount: number; ip: string; tracker: PerformanceTracker },
@@ -40,6 +85,13 @@ export function logValidationFailure(
   });
 }
 
+/**
+ * Log an authentication failure with performance metrics and error details.
+ *
+ * @param logger - Logger instance to use for writing the log.
+ * @param context - Action log context including tracker and optional error details.
+ * @returns void
+ */
 export function logAuthenticationFailure(
   logger: Logger,
   context: ActionLogContext,
@@ -53,6 +105,16 @@ export function logAuthenticationFailure(
   });
 }
 
+/**
+ * Log that an action completed successfully including performance metrics and identity.
+ *
+ * @param logger - Logger instance to use for writing the log.
+ * @param context - Context containing identity and the performance tracker.
+ * @param context.userId - Unique identifier of the user.
+ * @param context.role - Role assigned to the user for this action.
+ * @param context.tracker - Performance tracker used to obtain metrics.
+ * @returns void
+ */
 export function logActionSuccess(
   logger: Logger,
   context: {

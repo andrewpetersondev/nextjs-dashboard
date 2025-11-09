@@ -1,12 +1,16 @@
 import { extractFormDataFields } from "@/shared/forms/infrastructure/formdata/extractor";
 
 /**
- * Resolve the raw payload for form validation.
- * - If an explicit raw map is provided and non-empty, project it.
- * - Otherwise, build from FormData.
+ * Build the raw payload used for form validation.
  *
- * @remarks
- * This is application-level coordination between explicit data and FormData extraction.
+ * Uses the provided `explicitRaw` map when it exists and contains keys;
+ * otherwise extracts the requested fields from the given `FormData`.
+ *
+ * @typeParam Tfieldnames - string union of valid field names.
+ * @param formData - The `FormData` to extract values from when `explicitRaw` is absent or empty.
+ * @param fields - The list of field names to include in the result.
+ * @param explicitRaw - Optional explicit mapping of raw values. When non-empty this takes precedence.
+ * @returns A readonly partial mapping of field names to their stringified raw values.
  */
 export function resolveRawFieldPayload<Tfieldnames extends string>(
   formData: FormData,
