@@ -1,3 +1,4 @@
+// src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
 import {
@@ -20,15 +21,18 @@ import {
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
- * Transforms an error into a FormResult with validation errors.
- * Logs failure, converts error to dense field errors, and returns form error.
+ * Transform an error into a `FormResult` containing validation errors.
  *
- * @typeParam TFieldNames - String literal union of field names.
+ * @typeParam Tfieldnames - String literal union of field names.
  * @param error - The validation error to transform.
- * @param fields - Array of field names for error mapping.
- * @param loggerContext - Context string for logging.
- * @param failureMessage - Message to display for the form error.
- * @returns FormResult with validation errors.
+ * @param fields - Array of canonical field names used for error mapping.
+ * @param loggerContext - Context identifier used when logging the error.
+ * @param failureMessage - Message to include in the returned form error.
+ * @returns A `FormResult` representing a failed validation with field errors.
+ *
+ * @remarks
+ * Logs a structured error, converts Zod error shapes to a dense field error map,
+ * and returns a `formError` populated with the message and field errors.
  */
 function createValidationFormError<Tfieldnames extends string>(
   error: unknown,
@@ -62,15 +66,21 @@ function createValidationFormError<Tfieldnames extends string>(
 }
 
 /**
- * Validates form data against a Zod schema.
+ * Validate `FormData` against a Zod schema and return a `FormResult`.
  *
- * @typeParam TIn - Type representing expected form data structure.
- * @typeParam TFieldNames - String keys of fields within TIn to validate.
- * @param formData - FormData to validate.
- * @param schema - Zod schema for validation.
- * @param allowedFields - Optional list of specific fields to validate.
- * @param options - Additional validation options.
- * @returns Promise resolving to FormResult with validated data or errors.
+ * @typeParam Tin - The expected shape of the validated data.
+ * @typeParam Tfieldnames - Keys of fields within `Tin` that are validated.
+ * @param formData - The incoming `FormData` to validate.
+ * @param schema - A Zod schema describing the expected data shape.
+ * @param allowedFields - Optional subset of field keys to validate (defaults to schema fields).
+ * @param options - Validation options resolved via `resolveValidateOptions`.
+ * @returns A promise resolving to `FormResult<Tin>` which is `formOk` on success or `formError` on failure.
+ *
+ * @remarks
+ * This function:
+ * - Resolves validation options and canonical field names.
+ * - Extracts raw payload from `FormData`.
+ * - Calls `schema.safeParseAsync` and maps Zod errors to form field errors when validation fails.
  */
 export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
   formData: FormData,

@@ -1,3 +1,4 @@
+// src/shared/forms/domain/factories/error-map.factory.ts
 /**
  * Factory functions for creating and transforming error maps.
  * Pure domain logic, no framework dependencies.
@@ -14,6 +15,11 @@ import {
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).
+ *
+ * @typeParam Tfield - Field name literal union.
+ * @typeParam Tmsg - Error message string type.
+ * @param fields - Array of allowed field names.
+ * @returns A frozen {@link DenseFieldErrorMap} with each field mapped to an empty array.
  */
 export function createEmptyDenseFieldErrorMap<
   Tfield extends string,
@@ -27,7 +33,13 @@ export function createEmptyDenseFieldErrorMap<
 }
 
 /**
- * Converts sparse error map to dense (adds missing fields as empty arrays).
+ * Converts a sparse error map to a dense map by adding missing fields with empty arrays.
+ *
+ * @typeParam Tfield - Field name literal union.
+ * @typeParam Tmsg - Error message string type.
+ * @param sparse - Sparse map which may omit some fields.
+ * @param fields - Allowed field names to ensure keys for.
+ * @returns A frozen {@link DenseFieldErrorMap} with arrays for every allowed field.
  */
 export function toDenseFieldErrorMap<
   Tfield extends string,
@@ -47,7 +59,13 @@ export function toDenseFieldErrorMap<
 }
 
 /**
- * Filters error map to allowed fields with non-empty errors.
+ * Filters an error map to the allowed fields and keeps only non-empty error arrays.
+ *
+ * @typeParam Tfieldnames - Allowed field name union.
+ * @typeParam Tmsg - Error message string type.
+ * @param fieldErrors - Source field errors (sparse or raw record).
+ * @param allowedFields - Fields to include in the result.
+ * @returns A frozen {@link SparseFieldErrorMap} containing only allowed fields that have non-empty errors.
  */
 export function selectSparseFieldErrors<
   Tfieldnames extends string,

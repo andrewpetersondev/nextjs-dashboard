@@ -1,3 +1,4 @@
+// src/shared/forms/domain/factories/form-result.factory.ts
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import {
   type AppError,
@@ -16,6 +17,11 @@ import { freeze } from "@/shared/forms/domain/utils/freeze";
 
 /**
  * Create a successful form result.
+ *
+ * @typeParam Tpayload - Payload type carried by the success result.
+ * @param data - The payload value.
+ * @param message - Human-readable success message.
+ * @returns A frozen {@link FormResult} containing an {@link FormSuccess} with the given data and message.
  */
 export const formOk = <Tpayload>(
   data: Tpayload,
@@ -26,8 +32,16 @@ export const formOk = <Tpayload>(
 };
 
 /**
- * Create a form validation error with dense field error map.
- * Type parameter Tfieldname must match the keys in fieldErrors.
+ * Create a form validation error with a dense field error map.
+ *
+ * @typeParam Tfieldname - Type for field name keys present in `fieldErrors`.
+ * @param params - Error construction parameters.
+ * @param params.code - Optional error code; defaults to `"validation"`.
+ * @param params.message - Top-level error message.
+ * @param params.formErrors - Optional global form-level errors.
+ * @param params.fieldErrors - Dense map of per-field error messages.
+ * @param params.values - Optional sparse map of submitted values to include in details.
+ * @returns A frozen {@link FormResult} representing an error (`Err`) containing an {@link AppError}.
  */
 export const formError = <Tfieldname extends string>(params: {
   readonly code?: ErrorCode;
