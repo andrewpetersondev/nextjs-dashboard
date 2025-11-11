@@ -17,7 +17,7 @@ type AuthErrorKind =
 /**
  * Extracts error message from unknown error, with fallback.
  */
-export function getErrorMessage(e: unknown, fallback: string): string {
+function getErrorMessage(e: unknown, fallback: string): string {
   if (e instanceof Error) {
     return e.message;
   }
@@ -31,7 +31,7 @@ export function getErrorMessage(e: unknown, fallback: string): string {
 /**
  * Standard authentication error messages.
  */
-export const AUTH_MESSAGES = {
+const AUTH_MESSAGES = {
   conflict: "Email or username already in use",
   invalidCreds: "Invalid email or password",
   missing: "Missing required fields",
