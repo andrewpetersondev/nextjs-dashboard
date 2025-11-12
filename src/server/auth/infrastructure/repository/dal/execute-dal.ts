@@ -5,8 +5,9 @@ import { toBaseErrorFromPgUnknown } from "@/server/auth/infrastructure/repositor
 import type { OperationMetadata } from "@/shared/logging/logger.shared";
 
 /**
- * Execute a DAL operation and throw normalized BaseError on failure.
- * Note: Does not log errors; caller is responsible for logging if needed.
+ * Runs a Postgres DAL operation, throwing a normalized domain/infrastructure error if rejected.
+ * Errors are NOT logged here; logging is the caller's responsibility.
+ * Ensures all thrown errors are subclasses of our canonical error types.
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
@@ -15,7 +16,8 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    const baseError = toBaseErrorFromPgUnknown(err, logCtx);
-    throw mapBaseErrorToInfrastructureOrDomain(baseError);
+    const base = toBaseErrorFromPgUnknown(err, logCtx);
+    // Map DB error to richer type (domain or infra) for repo surface
+    throw mapBaseErrorToInfrastructureOrDomain(base);
   }
 }

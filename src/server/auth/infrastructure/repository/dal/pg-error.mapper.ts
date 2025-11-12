@@ -54,13 +54,10 @@ export function buildErrorDetails(
 }
 
 /**
- * Convert unknown Postgres or wrapped errors into BaseError variants with normalized context.
- *
- * Behavior:
- * - 23505 → ConflictError (mapped via `conflictFromUniqueViolation`)
- * - Transient codes → adds `retryable: true`
- * - Enriches error context with constraint, schema, table, detail, and pg message
- * - Always assigns a `diagnosticId` and ISO timestamp for traceability
+ * Converts errors from Postgres (native or cause-wrapped) to a normalized BaseError.
+ * - Handles unique violation with "conflict" code.
+ * - Attaches constraint/field/meta context.
+ * - Assigns stable diagnosticId and timestamp to all conversions.
  */
 export function toBaseErrorFromPgUnknown(
   err: unknown,
@@ -68,36 +65,15 @@ export function toBaseErrorFromPgUnknown(
   _constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
   const code = getPgCode(err);
-
-  // ---- Handle UNIQUE constraint violations specially ----
-  //  if (code === PG_ERROR_CODES.uniqueViolation) {
-  //    return conflictFromUniqueViolation(
-  //      err,
-  //      {
-  //        context: readStr(ctx.context) ?? "database",
-  //        identifiers: Object.fromEntries(
-  //          Object.entries(ctx).filter(
-  //            ([k]) => k !== "context" && k !== "operation",
-  //          ),
-  //        ),
-  //        operation: readStr(ctx.operation) ?? "toBaseErrorFromPgUnknown",
-  //      },
-  //      constraintHints,
-  //    );
-  //  }
-
-  // ---- Build normalized diagnostic context ----
   let pg: Partial<PgDatabaseError> | undefined;
+
   if (eIsObjectWithCause(err)) {
     pg = err.cause as Partial<PgDatabaseError>;
   } else if (eIsObjectWithCode(err)) {
     pg = err as Partial<PgDatabaseError>;
-  } else {
-    pg = undefined;
   }
-  const diagnosticId = generateDiagnosticId();
 
-  // Use 'conflict' code for unique violation, or 'database' otherwise
+  const diagnosticId = generateDiagnosticId();
   const normalizedCode =
     code === PG_ERROR_CODES.uniqueViolation ? "conflict" : "database";
 
@@ -105,9 +81,7 @@ export function toBaseErrorFromPgUnknown(
     ? buildDatabaseMessageFromCode(code)
     : ERROR_CODES.database.description;
 
-  // ---- Build structured error details ----
   const details = buildErrorDetails(ctx, pg, code, diagnosticId);
 
-  // ---- Wrap everything into a normalized BaseError ----
   return BaseError.wrap(normalizedCode, err, details, baseMessage);
 }
