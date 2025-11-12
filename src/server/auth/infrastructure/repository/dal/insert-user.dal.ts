@@ -21,6 +21,12 @@ import { logger } from "@/shared/logging/logger.shared";
 export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
   const { email, username, password, role } = input;
 
+  const metadata = {
+    context: "dal.users.insert",
+    identifiers: { email, username },
+    operation: "insertUser",
+  } as const;
+
   return await executeDalOrThrow(
     async () => {
       const [userRow] = await db
@@ -39,12 +45,9 @@ export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
           "error",
           "Invariant failed: insertUser did not return a row",
           {
-            context: "dal.users.insert",
-            email,
-            kind: "invariant",
-            operation: "insertUser",
+            ...metadata,
+            kind: "invariant" as const,
             role,
-            username,
           },
         );
 
@@ -52,31 +55,22 @@ export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
           "integrity",
           new Error("Invariant: insert did not return a row"),
           {
-            context: "dal.users.insert",
-            email,
+            ...metadata,
             kind: "invariant",
-            operation: "insertUser",
             role,
-            username,
           },
         );
       }
 
       logger.operation("info", "User inserted into DB", {
-        context: "dal.users.insert",
-        email,
-        operation: "insertUser",
+        ...metadata,
         role,
         userId: userRow.id,
-        username,
       });
 
       return userRow;
     },
-    {
-      context: "dal.users.insert",
-      identifiers: { email, username },
-      operation: "insertUser",
-    },
+    metadata,
+    { role }, // Additional context
   );
 }

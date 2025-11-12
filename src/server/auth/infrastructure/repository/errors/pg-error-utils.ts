@@ -4,12 +4,17 @@ import type { DatabaseError as PgDatabaseError } from "pg";
 import {
   type ConstraintFieldHints,
   isPgCode,
+  isTransientPgCode,
   PG_ERROR_CODES,
   type PgCode,
   SIGNUP_CONSTRAINT_HINTS,
-} from "@/server/auth/infrastructure/repository/dal/pg-error-codes";
+} from "@/server/auth/infrastructure/repository/errors/pg-error-codes";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 import type { OperationMetadata } from "@/shared/logging/logger.shared";
+
+export function fallbackDiagnosticId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
 
 /**
  * Read a string property, ensuring it's a non-empty string, or undefined.
@@ -66,10 +71,7 @@ export function conflictFromUniqueViolation(
   const hints = constraintHints ?? SIGNUP_CONSTRAINT_HINTS;
   const field = constraint ? hints[constraint] : undefined;
 
-  const diagnosticId =
-    typeof randomUUID === "function"
-      ? randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const diagnosticId = generateDiagnosticId();
 
   // Try to get message from error or nested cause
   let pgMessage = readStr(pg?.message);
@@ -132,12 +134,48 @@ export function eIsObjectWithCode(e: unknown): e is { code: string } {
 export function generateDiagnosticId(): string {
   return typeof randomUUID === "function"
     ? randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    : fallbackDiagnosticId();
 }
 
-export function extractPgField(
+/**
+ * Helper to construct detailed error context for DAL/PG errors.
+ * - Merges caller context
+ * - Extracts relevant fields from the Postgres error (constraint, table, detail, schema, message)
+ * - Marks retryable for transient errors
+ * - Always attaches diagnostic ID & timestamp (ISO string)
+ * - Includes additional metadata for observability
+ */
+export function buildErrorDetails(
+  ctx: Record<string, unknown>,
   pg: Partial<PgDatabaseError> | undefined,
-  field: keyof PgDatabaseError,
+  code: PgCode | undefined,
+  diagnosticId: string,
 ) {
-  return readStr(pg?.[field]);
+  const operation = readStr(ctx.operation);
+  const constraint = readStr(pg?.constraint);
+  const table = readStr(pg?.table);
+  const pgMessage = readStr(pg?.message);
+  const pgDetail = readStr(pg?.detail);
+  const schema = readStr(pg?.schema);
+  const pgCode = readStr(pg?.code);
+  const position = readStr(pg?.position);
+  const hint = readStr(pg?.hint);
+
+  return {
+    ...ctx,
+    ...(code && { code }),
+    ...(pgCode && { pgCode }),
+    ...(pgMessage && { pgMessage }),
+    ...(constraint && { constraint }),
+    ...(pgDetail && { pgDetail }),
+    ...(hint && { pgHint: hint }),
+    ...(position && { position }),
+    ...(schema && { schema }),
+    ...(table && { table }),
+    ...(operation && { operation }),
+    ...(code && isTransientPgCode(code) && { retryable: true as const }),
+    diagnosticId,
+    errorSource: "postgres" as const,
+    timestamp: new Date().toISOString(),
+  };
 }

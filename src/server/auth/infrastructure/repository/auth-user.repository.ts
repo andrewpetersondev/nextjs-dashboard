@@ -1,10 +1,12 @@
 // src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserEntity } from "@/server/auth/domain/types/auth-user-entity.types";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
+import { TransactionLogger } from "@/server/auth/infrastructure/repository/utils/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,
@@ -21,11 +23,13 @@ import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private readonly logger: Logger;
+  private readonly transactionLogger: TransactionLogger;
   private static readonly CTX = "repo.AuthUserRepo" as const;
 
   constructor(db: AppDatabase, logger: Logger = defaultLogger) {
     this.db = db;
     this.logger = logger.withContext(AuthUserRepositoryImpl.CTX);
+    this.transactionLogger = new TransactionLogger(this.logger);
   }
 
   /**
@@ -43,8 +47,9 @@ export class AuthUserRepositoryImpl {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
 
-    const txLogger = this.logger.withContext("withTransaction");
-    txLogger.debug("Starting transaction");
+    const transactionId = randomUUID();
+
+    this.transactionLogger.logStart(transactionId);
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
@@ -52,13 +57,10 @@ export class AuthUserRepositoryImpl {
         return await fn(txRepo);
       });
 
-      txLogger.debug("Transaction completed successfully");
+      this.transactionLogger.logCommit(transactionId);
       return result;
     } catch (err) {
-      txLogger.error("Transaction failed", {
-        error: err instanceof Error ? { message: err.message } : String(err),
-        kind: "db",
-      } as const);
+      this.transactionLogger.logRollback(transactionId, err);
       throw err;
     }
   }
@@ -75,14 +77,15 @@ export class AuthUserRepositoryImpl {
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     const signupLogger = this.logger.withContext("signup");
 
-    // executeDalOrThrow already normalizes all errors; no need to catch/re-wrap
+    // executeDalOrThrow already normalizes all errors and logs them
     const row = await insertUserDal(this.db, input);
 
-    signupLogger.info("User created successfully", {
-      email: input.email,
+    signupLogger.operation("info", "User created successfully", {
+      identifiers: { email: input.email, userId: row.id },
       kind: "success",
-      userId: row.id,
+      operation: "signup",
     } as const);
+
     return newUserDbRowToEntity(row);
   }
 
@@ -100,18 +103,20 @@ export class AuthUserRepositoryImpl {
     const row = await getUserByEmailDal(this.db, input.email);
 
     if (!row?.password) {
-      loginLogger.info("Login attempt with invalid credentials", {
-        email: input.email,
+      loginLogger.operation("warn", "Login attempt with invalid credentials", {
+        identifiers: { email: input.email },
         kind: "invalid_credentials",
+        operation: "login",
       } as const);
       throw new UnauthorizedError("Invalid email or password.");
     }
 
-    loginLogger.info("User retrieved successfully for login", {
-      email: input.email,
+    loginLogger.operation("info", "User retrieved successfully for login", {
+      identifiers: { email: input.email, userId: row.id },
       kind: "success",
-      userId: row.id,
+      operation: "login",
     } as const);
+
     return userDbRowToEntity(row);
   }
 }
