@@ -44,7 +44,7 @@ export function toBaseErrorFromPgUnknown(
             ([k]) => k !== "context" && k !== "operation",
           ),
         ),
-        operation: readStr(ctx.operation),
+        operation: readStr(ctx.operation) ?? "toBaseErrorFromPgUnknown",
       },
       constraintHints,
     );

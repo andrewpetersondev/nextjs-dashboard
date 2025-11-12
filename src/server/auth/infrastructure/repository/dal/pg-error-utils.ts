@@ -9,7 +9,11 @@ import {
   SIGNUP_CONSTRAINT_HINTS,
 } from "@/server/auth/infrastructure/repository/dal/pg-error-codes";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
+import type { OperationMetadata } from "@/shared/logging/logger.shared";
 
+/**
+ * Read a string property, ensuring it's a non-empty string, or undefined.
+ */
 export function readStr(v: unknown): string | undefined {
   return typeof v === "string" && v.length > 0 ? v : undefined;
 }
@@ -44,15 +48,17 @@ export function getPgCode(e: unknown): PgCode | undefined {
 
 /**
  * Map a PG unique violation to a ConflictError with optional field hint from constraint name.
- * Includes signup-focused constraint → field hints.
+ *
+ * The logging context passed here is aligned to logger.operation of logger.shared.ts:
+ *   - `operation` (operation name, e.g. "insertUser")
+ *   - `context` (logger context string, e.g. "dal.users")
+ *   - `identifiers` (object with business keys, e.g. { email: "foo@bar" })
+ *
+ * All `identifiers` fields are merged into the log object as top-level keys.
  */
 export function conflictFromUniqueViolation(
   err: unknown,
-  logCtx: {
-    readonly context?: string;
-    readonly operation?: string;
-    readonly identifiers?: Readonly<Record<string, unknown>>;
-  },
+  logCtx: OperationMetadata,
   constraintHints?: ConstraintFieldHints,
 ): ConflictError {
   const pg: Partial<PgDatabaseError> | undefined =
@@ -82,15 +88,23 @@ export function conflictFromUniqueViolation(
     );
   }
 
+  // ---- LOGGING CONTEXT: OperationData aligned ----
+  //   - context: string (e.g. "dal.users") if given
+  //   - operation: string (e.g. "insertUser") if given
+  //   - all identifiers as top level fields
+  //   - diagnosticId always
+  //   - constraint/field/pgMessage present if available
+  //   - code always set (PG unique violation)
   const details = {
-    code: PG_ERROR_CODES.uniqueViolation,
-    ...(logCtx.context ? { context: logCtx.context } : {}),
-    ...(logCtx.operation ? { operation: logCtx.operation } : {}),
+    operation: logCtx.operation,
     ...(logCtx.identifiers ?? {}),
     ...(constraint ? { constraint } : {}),
     ...(field ? { field } : {}),
     ...(pgMessage ? { pgMessage } : {}),
+    code: PG_ERROR_CODES.uniqueViolation,
     diagnosticId,
+    // Keep the original context for logger.withContext if present (do NOT duplicate as data/context)
+    // context is not included in data (it is passed to logger.withContext(<context>) at call time)
   };
 
   const message = field
