@@ -18,6 +18,10 @@ export const PG_CODE_SET: ReadonlySet<string> = new Set(
   Object.values(PG_ERROR_CODES),
 );
 
+export function isPgCode(code: string): code is PgCode {
+  return PG_CODE_SET.has(code);
+}
+
 // Map constraint names to domain field hints.
 export type ConstraintFieldHints = Readonly<Record<string, string>>;
 

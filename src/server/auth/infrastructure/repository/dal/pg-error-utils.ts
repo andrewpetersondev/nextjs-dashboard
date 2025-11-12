@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import {
   type ConstraintFieldHints,
-  PG_CODE_SET,
+  isPgCode,
   PG_ERROR_CODES,
   type PgCode,
   SIGNUP_CONSTRAINT_HINTS,
@@ -23,25 +23,16 @@ export function readStr(v: unknown): string | undefined {
  */
 export function getPgCode(e: unknown): PgCode | undefined {
   // Prefer pg-native error typing for full property access
-  if (
-    e &&
-    typeof e === "object" &&
-    "code" in e &&
-    typeof (e as any).code === "string"
-  ) {
-    const code = (e as PgDatabaseError).code;
-    return code && PG_CODE_SET.has(code) ? (code as PgCode) : undefined;
+  if (eIsObjectWithCode(e) && isPgCode(e.code)) {
+    return e.code;
   }
   // Fallback: try cause
   if (
-    e &&
-    typeof e === "object" &&
-    "cause" in e &&
-    e.cause &&
-    typeof e.cause === "object"
+    eIsObjectWithCause(e) &&
+    eIsObjectWithCode(e.cause) &&
+    isPgCode(e.cause.code)
   ) {
-    const code = (e.cause as PgDatabaseError).code;
-    return code && PG_CODE_SET.has(code) ? (code as PgCode) : undefined;
+    return e.cause.code;
   }
   return;
 }
@@ -66,7 +57,7 @@ export function conflictFromUniqueViolation(
 
   // Try to get constraint from error or nested cause
   let constraint = readStr(pg?.constraint);
-  if (!constraint && err && typeof err === "object" && "cause" in err) {
+  if (!constraint && eIsObjectWithCause(err)) {
     constraint = readStr(
       (err.cause as Partial<PgDatabaseError> | null)?.constraint,
     );
@@ -82,19 +73,13 @@ export function conflictFromUniqueViolation(
 
   // Try to get message from error or nested cause
   let pgMessage = readStr(pg?.message);
-  if (!pgMessage && err && typeof err === "object" && "cause" in err) {
+  if (!pgMessage && eIsObjectWithCause(err)) {
     pgMessage = readStr(
       (err.cause as Partial<PgDatabaseError> | null)?.message,
     );
   }
 
   // ---- LOGGING CONTEXT: OperationData aligned ----
-  //   - context: string (e.g. "dal.users") if given
-  //   - operation: string (e.g. "insertUser") if given
-  //   - all identifiers as top level fields
-  //   - diagnosticId always
-  //   - constraint/field/pgMessage present if available
-  //   - code always set (PG unique violation)
   const details = {
     operation: logCtx.operation,
     ...(logCtx.identifiers ?? {}),
@@ -103,8 +88,7 @@ export function conflictFromUniqueViolation(
     ...(pgMessage ? { pgMessage } : {}),
     code: PG_ERROR_CODES.uniqueViolation,
     diagnosticId,
-    // Keep the original context for logger.withContext if present (do NOT duplicate as data/context)
-    // context is not included in data (it is passed to logger.withContext(<context>) at call time)
+    // context is handled externally by logger.withContext()
   };
 
   const message = field
@@ -112,4 +96,48 @@ export function conflictFromUniqueViolation(
     : "A record with these values already exists.";
 
   return new ConflictError(message, details, err);
+}
+
+/**
+ * Type guard: true if e is an object with a non-null cause object.
+ */
+export function eIsObjectWithCause(
+  e: unknown,
+): e is { cause: Record<string, unknown> } {
+  return (
+    e !== null &&
+    typeof e === "object" &&
+    "cause" in e &&
+    Boolean((e as any).cause) &&
+    typeof (e as any).cause === "object"
+  );
+}
+
+/**
+ * Type guard: true if e is an object with a non-empty string `code` property.
+ */
+export function eIsObjectWithCode(e: unknown): e is { code: string } {
+  return (
+    e !== null &&
+    typeof e === "object" &&
+    "code" in e &&
+    typeof (e as any).code === "string" &&
+    (e as any).code.length > 0
+  );
+}
+
+/**
+ * Generate a unique diagnostic ID for errors.
+ */
+export function generateDiagnosticId(): string {
+  return typeof randomUUID === "function"
+    ? randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+export function extractPgField(
+  pg: Partial<PgDatabaseError> | undefined,
+  field: keyof PgDatabaseError,
+) {
+  return readStr(pg?.[field]);
 }
