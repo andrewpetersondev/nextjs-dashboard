@@ -85,18 +85,9 @@ export function mapRepoErrorToAppResult<T>(
   err: unknown,
   context: string,
 ): Result<T, AppError> {
-  // DEBUG: Log the error type
-  console.log("[mapRepoErrorToAppResult] Error type:", {
-    code: isBaseError(err) ? err.code : "N/A",
-    isBaseError: isBaseError(err),
-    isConflictError: err instanceof ConflictError,
-    name: err instanceof Error ? err.constructor.name : typeof err,
-  });
-
   // Handle domain errors FIRST (including ConflictError)
   if (err instanceof Error) {
     const domainError = mapDomainError(err);
-    console.log("[mapRepoErrorToAppResult] Domain error result:", domainError);
     if (domainError) {
       return Err(domainError);
     }
@@ -104,10 +95,6 @@ export function mapRepoErrorToAppResult<T>(
 
   // Handle infrastructure BaseErrors (database code only)
   const baseErrorDetails = extractBaseErrorDetails(err);
-  console.log(
-    "[mapRepoErrorToAppResult] Base error details:",
-    baseErrorDetails,
-  );
   if (baseErrorDetails) {
     if (isBaseError(err)) {
       logger.withContext(context).errorWithDetails("Database error", err);
