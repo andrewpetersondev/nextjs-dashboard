@@ -5,6 +5,7 @@ import {
   type ConstraintFieldHints,
   isTransientPgCode,
   PG_ERROR_CODES,
+  type PgCode,
   SIGNUP_CONSTRAINT_HINTS,
 } from "@/server/auth/infrastructure/repository/dal/pg-error-codes";
 import {
@@ -18,21 +19,34 @@ import {
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 
-function _buildErrorDetails(
+/**
+ * Helper to construct detailed error context for DAL/PG errors.
+ * - Merges caller context
+ * - Extracts relevant fields from the Postgres error (constraint, table, detail, schema, message)
+ * - Marks retryable for transient errors
+ * - Always attaches diagnostic ID & timestamp (ISO string)
+ */
+export function buildErrorDetails(
   ctx: Record<string, unknown>,
   pg: Partial<PgDatabaseError> | undefined,
-  code: string | undefined,
+  code: PgCode | undefined,
   diagnosticId: string,
 ) {
   const operation = readStr(ctx.operation);
+  const constraint = readStr(pg?.constraint);
+  const table = readStr(pg?.table);
+  const pgMessage = readStr(pg?.message);
+  const pgDetail = readStr(pg?.detail);
+  const schema = readStr(pg?.schema);
+
   return {
     ...ctx,
     ...(code ? { code } : {}),
-    ...(pg?.message ? { pgMessage: readStr(pg.message) } : {}),
-    ...(pg?.constraint ? { constraint: readStr(pg.constraint) } : {}),
-    ...(pg?.detail ? { pgDetail: readStr(pg.detail) } : {}),
-    ...(pg?.schema ? { schema: readStr(pg.schema) } : {}),
-    ...(pg?.table ? { table: readStr(pg.table) } : {}),
+    ...(pgMessage ? { pgMessage } : {}),
+    ...(constraint ? { constraint } : {}),
+    ...(pgDetail ? { pgDetail } : {}),
+    ...(schema ? { schema } : {}),
+    ...(table ? { table } : {}),
     ...(operation ? { operation } : {}),
     ...(code && isTransientPgCode(code) ? { retryable: true as const } : {}),
     diagnosticId,
@@ -49,7 +63,6 @@ function _buildErrorDetails(
  * - Enriches error context with constraint, schema, table, detail, and pg message
  * - Always assigns a `diagnosticId` and ISO timestamp for traceability
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export function toBaseErrorFromPgUnknown(
   err: unknown,
   ctx: Readonly<Record<string, unknown>> = {},
@@ -73,6 +86,7 @@ export function toBaseErrorFromPgUnknown(
       constraintHints,
     );
   }
+
   // ---- Build normalized diagnostic context ----
   let pg: Partial<PgDatabaseError> | undefined;
   if (eIsObjectWithCause(err)) {
@@ -88,28 +102,9 @@ export function toBaseErrorFromPgUnknown(
     ? buildDatabaseMessageFromCode(code)
     : ERROR_CODES.database.description;
 
-  // Extract useful fields safely
-  const constraint = readStr(pg?.constraint);
-  const operation = readStr(ctx.operation);
-  const table = readStr(pg?.table);
-  const pgMessage = readStr(pg?.message);
-  const pgDetail = readStr(pg?.detail);
-  const schema = readStr(pg?.schema);
-
   // ---- Build structured error details ----
-  const details = {
-    ...ctx,
-    ...(code ? { code } : {}),
-    ...(pgMessage ? { pgMessage } : {}),
-    ...(constraint ? { constraint } : {}),
-    ...(pgDetail ? { pgDetail } : {}),
-    ...(schema ? { schema } : {}),
-    ...(table ? { table } : {}),
-    ...(operation ? { operation } : {}),
-    ...(code && isTransientPgCode(code) ? { retryable: true as const } : {}),
-    diagnosticId,
-    timestamp: new Date().toISOString(),
-  };
+  const details = buildErrorDetails(ctx, pg, code, diagnosticId);
+
   // ---- Wrap everything into a normalized BaseError ----
   return BaseError.wrap("database", err, details, baseMessage);
 }
