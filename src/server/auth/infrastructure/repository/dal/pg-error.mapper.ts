@@ -2,11 +2,9 @@ import "server-only";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import {
   buildDatabaseMessageFromCode,
-  type ConstraintFieldHints,
   isTransientPgCode,
   PG_ERROR_CODES,
   type PgCode,
-  SIGNUP_CONSTRAINT_HINTS,
 } from "@/server/auth/infrastructure/repository/dal/pg-error-codes";
 import {
   eIsObjectWithCause,
@@ -62,7 +60,6 @@ export function buildErrorDetails(
 export function toBaseErrorFromPgUnknown(
   err: unknown,
   ctx: Readonly<Record<string, unknown>> = {},
-  _constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
   const code = getPgCode(err);
   let pg: Partial<PgDatabaseError> | undefined;
