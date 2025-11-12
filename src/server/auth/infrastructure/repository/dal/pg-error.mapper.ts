@@ -3,7 +3,9 @@
 /** biome-ignore-all lint/complexity/noExcessiveLinesPerFunction: <explanation> */
 import "server-only";
 import { randomUUID } from "node:crypto";
+import type { DatabaseError as PgDatabaseError } from "pg";
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
 function readStr(v: unknown): string | undefined {
@@ -18,17 +20,6 @@ const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
   usersUsernameKey: "username",
   usersUsernameUnique: "username",
 };
-
-// Narrow Pg error shape with readonly fields for safety.
-interface PgErrorLike {
-  readonly code?: string;
-  readonly constraint?: string;
-  readonly detail?: string;
-  readonly message?: string;
-  readonly name?: string;
-  readonly schema?: string;
-  readonly table?: string;
-}
 
 // Canonical subset of Postgres error codes used by our DAL normalization.
 const PG_ERROR_CODES = {
@@ -73,16 +64,32 @@ function buildDatabaseMessageFromCode(code: PgCode): string {
   }
 }
 
+/**
+ * Return code property from a pg error. Accepts both native instance and error-wrapped objects.
+ */
 function getPgCode(e: unknown): PgCode | undefined {
-  // Try direct code first
-  let s = readStr((e as PgErrorLike | null)?.code);
-
-  // If not found, try nested cause
-  if (!s && e && typeof e === "object" && "cause" in e) {
-    s = readStr((e.cause as PgErrorLike | null)?.code);
+  // Prefer pg-native error typing for full property access
+  if (
+    e &&
+    typeof e === "object" &&
+    "code" in e &&
+    typeof (e as any).code === "string"
+  ) {
+    const code = (e as PgDatabaseError).code;
+    return code && PG_CODE_SET.has(code) ? (code as PgCode) : undefined;
   }
-
-  return s && PG_CODE_SET.has(s) ? (s as PgCode) : undefined;
+  // Fallback: try cause
+  if (
+    e &&
+    typeof e === "object" &&
+    "cause" in e &&
+    e.cause &&
+    typeof e.cause === "object"
+  ) {
+    const code = (e.cause as PgDatabaseError).code;
+    return code && PG_CODE_SET.has(code) ? (code as PgCode) : undefined;
+  }
+  return;
 }
 
 // Identify transient Postgres codes suitable for retry/backoff.
@@ -108,12 +115,15 @@ function conflictFromUniqueViolation(
   },
   constraintHints?: ConstraintFieldHints,
 ): ConflictError {
-  const pg = err as PgErrorLike | null;
+  const pg: Partial<PgDatabaseError> | undefined =
+    err as Partial<PgDatabaseError>;
 
   // Try to get constraint from error or nested cause
   let constraint = readStr(pg?.constraint);
   if (!constraint && err && typeof err === "object" && "cause" in err) {
-    constraint = readStr((err.cause as PgErrorLike | null)?.constraint);
+    constraint = readStr(
+      (err.cause as Partial<PgDatabaseError> | null)?.constraint,
+    );
   }
 
   const hints = constraintHints ?? SIGNUP_CONSTRAINT_HINTS;
@@ -127,7 +137,9 @@ function conflictFromUniqueViolation(
   // Try to get message from error or nested cause
   let pgMessage = readStr(pg?.message);
   if (!pgMessage && err && typeof err === "object" && "cause" in err) {
-    pgMessage = readStr((err.cause as PgErrorLike | null)?.message);
+    pgMessage = readStr(
+      (err.cause as Partial<PgDatabaseError> | null)?.message,
+    );
   }
 
   const details = {
@@ -154,15 +166,13 @@ function conflictFromUniqueViolation(
  * - transient codes → details.retryable = true
  * - enrich context with pg detail/schema/table/constraint when present
  *
- * This version adds a short `diagnosticId` and richer message including
- * operation/table/constraint/code so you can correlate logs and error messages.
+ * Adds `diagnosticId` and richer context for logging and error messages.
  */
 export function toBaseErrorFromPgUnknown(
   err: unknown,
   ctx: Readonly<Record<string, unknown>> = {},
   constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
-  // DEBUG: Log the raw error structure
   console.log("[toBaseErrorFromPgUnknown] Raw error:", {
     err:
       err instanceof Error
@@ -202,7 +212,7 @@ export function toBaseErrorFromPgUnknown(
     "[toBaseErrorFromPgUnknown] Falling through to generic database error",
   );
 
-  const pg = err as PgErrorLike | null;
+  const pg = err as Partial<PgDatabaseError> | null;
   const diagnosticId =
     typeof randomUUID === "function"
       ? randomUUID()
@@ -210,7 +220,7 @@ export function toBaseErrorFromPgUnknown(
 
   const baseMessage = code
     ? buildDatabaseMessageFromCode(code)
-    : "Database operation failed.";
+    : ERROR_CODES.database.description;
 
   const message = baseMessage;
 
@@ -223,13 +233,12 @@ export function toBaseErrorFromPgUnknown(
     ...(code ? { code } : {}),
     ...(readStr(pg?.message) ? { pgMessage: readStr(pg?.message) } : {}),
     ...(constraint ? { constraint } : {}),
-    ...(readStr(pg?.detail) ? { pgDetail: readStr(pg?.detail) } : {}), // Renamed from 'detail' to 'pgDetail' for clarity
+    ...(readStr(pg?.detail) ? { pgDetail: readStr(pg?.detail) } : {}),
     ...(readStr(pg?.schema) ? { schema: readStr(pg?.schema) } : {}),
     ...(table ? { table } : {}),
     ...(operation ? { operation } : {}),
     ...(code && isTransientPgCode(code) ? { retryable: true as const } : {}),
     diagnosticId,
-    // Add timestamp for correlation
     timestamp: new Date().toISOString(),
   };
 
