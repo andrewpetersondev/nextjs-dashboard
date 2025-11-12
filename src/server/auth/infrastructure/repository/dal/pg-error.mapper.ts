@@ -71,21 +71,21 @@ export function toBaseErrorFromPgUnknown(
   const code = getPgCode(err);
 
   // ---- Handle UNIQUE constraint violations specially ----
-  if (code === PG_ERROR_CODES.uniqueViolation) {
-    return conflictFromUniqueViolation(
-      err,
-      {
-        context: readStr(ctx.context) ?? "database",
-        identifiers: Object.fromEntries(
-          Object.entries(ctx).filter(
-            ([k]) => k !== "context" && k !== "operation",
-          ),
-        ),
-        operation: readStr(ctx.operation) ?? "toBaseErrorFromPgUnknown",
-      },
-      constraintHints,
-    );
-  }
+  //  if (code === PG_ERROR_CODES.uniqueViolation) {
+  //    return conflictFromUniqueViolation(
+  //      err,
+  //      {
+  //        context: readStr(ctx.context) ?? "database",
+  //        identifiers: Object.fromEntries(
+  //          Object.entries(ctx).filter(
+  //            ([k]) => k !== "context" && k !== "operation",
+  //          ),
+  //        ),
+  //        operation: readStr(ctx.operation) ?? "toBaseErrorFromPgUnknown",
+  //      },
+  //      constraintHints,
+  //    );
+  //  }
 
   // ---- Build normalized diagnostic context ----
   let pg: Partial<PgDatabaseError> | undefined;
@@ -98,6 +98,10 @@ export function toBaseErrorFromPgUnknown(
   }
   const diagnosticId = generateDiagnosticId();
 
+  // Use 'conflict' code for unique violation, or 'database' otherwise
+  const normalizedCode =
+    code === PG_ERROR_CODES.uniqueViolation ? "conflict" : "database";
+
   const baseMessage = code
     ? buildDatabaseMessageFromCode(code)
     : ERROR_CODES.database.description;
@@ -106,5 +110,5 @@ export function toBaseErrorFromPgUnknown(
   const details = buildErrorDetails(ctx, pg, code, diagnosticId);
 
   // ---- Wrap everything into a normalized BaseError ----
-  return BaseError.wrap("database", err, details, baseMessage);
+  return BaseError.wrap(normalizedCode, err, details, baseMessage);
 }
