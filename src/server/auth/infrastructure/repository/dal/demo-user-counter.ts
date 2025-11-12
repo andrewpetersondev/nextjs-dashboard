@@ -1,8 +1,9 @@
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import { BaseError } from "@/shared/core/errors/base/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -16,30 +17,67 @@ export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,
 ): Promise<number> {
-  try {
-    // Insert a new counter-row for the given role and return the new id
-    const [counterRow] = await db
-      .insert(demoUserCounters)
-      .values({ count: 1, role })
-      .returning();
+  return await executeDalOrThrow(
+    async () => {
+      const [counterRow] = await db
+        .insert(demoUserCounters)
+        .values({ count: 1, role })
+        .returning();
 
-    // Defensive: Ensure the counterRow and id are valid
-    // if (!counterRow || typeof counterRow.id !== "number") {
-    // 	throw new Error("Invalid counter row returned from database.");
-    // }
-
-    // Defensive: Ensure the counterRow and id are valid (id is always a number, so just check for nullish)
-    if (!counterRow || counterRow.id == null) {
-      throw new Error("Invalid counter row returned from database.");
-    }
-
-    return counterRow.id;
-  } catch (error) {
-    logger.error("Failed to read the demo user counter.");
-    throw new DatabaseError(
-      "Failed to read the demo user counter.",
-      {},
-      error instanceof Error ? error : undefined,
-    );
-  }
+      if (!counterRow) {
+        logger.operation(
+          "error",
+          "Invariant failed: demoUserCounter did not return a row",
+          {
+            context: "dal.demo.users.counter",
+            kind: "invariant",
+            operation: "createDemoUser",
+            role,
+          },
+        );
+        throw BaseError.wrap(
+          "integrity",
+          new Error("Invariant: insert did not return a row"),
+          {
+            context: "dal.demo.users.counter",
+            kind: "invariant",
+            operation: "createDemoUser",
+            role,
+          },
+        );
+      }
+      if (counterRow.id == null) {
+        logger.operation("error", "Invalid counter row returned: missing id", {
+          context: "dal.demo.users.counter",
+          counterRow,
+          kind: "invariant",
+          operation: "createDemoUser",
+          role,
+        });
+        throw BaseError.wrap(
+          "integrity",
+          new Error("Invariant: demo user counter row returned with null id"),
+          {
+            context: "dal.demo.users.counter",
+            counterRow,
+            kind: "invariant",
+            operation: "createDemoUser",
+            role,
+          },
+        );
+      }
+      logger.operation("info", "Demo user counter created for role", {
+        context: "dal.demo.users.counter",
+        id: counterRow.id,
+        operation: "createDemoUser",
+        role,
+      });
+      return counterRow.id;
+    },
+    {
+      context: "dal.demo.users.counter",
+      identifiers: { role },
+      operation: "createDemoUser",
+    },
+  );
 }

@@ -34,13 +34,19 @@ export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
         .returning();
 
       if (!userRow) {
-        logger.error("No row returned after insert!", {
-          context: "dal.users.insert",
-          email,
-          kind: "invariant",
-          role,
-          username,
-        });
+        // Log with error severity and diagnostic context
+        logger.operation(
+          "error",
+          "Invariant failed: insertUser did not return a row",
+          {
+            context: "dal.users.insert",
+            email,
+            kind: "invariant",
+            operation: "insertUser",
+            role,
+            username,
+          },
+        );
 
         throw BaseError.wrap(
           "integrity",
@@ -55,6 +61,15 @@ export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
           },
         );
       }
+
+      logger.operation("info", "User inserted into DB", {
+        context: "dal.users.insert",
+        email,
+        operation: "insertUser",
+        role,
+        userId: userRow.id,
+        username,
+      });
 
       return userRow;
     },
