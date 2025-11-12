@@ -9,7 +9,6 @@ import {
   SIGNUP_CONSTRAINT_HINTS,
 } from "@/server/auth/infrastructure/repository/dal/pg-error-codes";
 import {
-  conflictFromUniqueViolation,
   eIsObjectWithCause,
   eIsObjectWithCode,
   generateDiagnosticId,
@@ -66,7 +65,7 @@ export function buildErrorDetails(
 export function toBaseErrorFromPgUnknown(
   err: unknown,
   ctx: Readonly<Record<string, unknown>> = {},
-  constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
+  _constraintHints: ConstraintFieldHints = SIGNUP_CONSTRAINT_HINTS,
 ): BaseError {
   const code = getPgCode(err);
 
