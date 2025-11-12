@@ -1,6 +1,7 @@
 import "server-only";
 import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { isBaseError } from "@/shared/core/errors/base/base-error";
+import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import {
   ConflictError,
   ForbiddenError,
@@ -121,7 +122,7 @@ export function mapRepoErrorToAppResult<T>(
     return Err(
       appErrorFromCode(
         "database",
-        "Database operation failed",
+        ERROR_CODES.database.description,
         baseErrorDetails.diagnosticId
           ? { diagnosticId: baseErrorDetails.diagnosticId }
           : undefined,
@@ -132,7 +133,7 @@ export function mapRepoErrorToAppResult<T>(
   // Legacy DatabaseError
   if (err instanceof DatabaseError) {
     logger.error("Database error", { context, error: err.message });
-    return Err(appErrorFromCode("database", "Database operation failed"));
+    return Err(appErrorFromCode("database", ERROR_CODES.database.description));
   }
 
   // Unknown error fallback
@@ -140,5 +141,5 @@ export function mapRepoErrorToAppResult<T>(
     context,
     error: err instanceof Error ? err.message : String(err),
   });
-  return Err(appErrorFromCode("unknown", "An unexpected error occurred"));
+  return Err(appErrorFromCode("unknown", ERROR_CODES.unknown.description));
 }
