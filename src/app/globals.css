@@ -52,11 +52,11 @@
 
 /* Merge both triggers (.dark and [data-theme=dark]) into a single custom variant */
 @custom-variant dark (&:where(
-  .dark,
-  .dark *,
-  [data-theme="dark"],
-  [data-theme="dark"] *
-));
+    .dark,
+    .dark *,
+    [data-theme="dark"],
+    [data-theme="dark"] *
+  ));
 
 p {
   font-family: var(--font-eyegrab), sans-serif;
