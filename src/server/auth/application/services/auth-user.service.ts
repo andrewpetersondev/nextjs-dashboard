@@ -105,7 +105,8 @@ export class AuthUserService {
   }
 
   /**
-   * Sign up a new user.
+   * Service method for handling user signup flow.
+   * Only handles domain/infra errors from repository layer, never DB/PG errors directly.
    *
    * @param input - Readonly SignupData containing email, username and password.
    * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
@@ -134,7 +135,9 @@ export class AuthUserService {
     try {
       const passwordHash = await this.hasher.hash(input.password);
 
-      const signupResult = await this.repo.withTransaction(async (txRepo) =>
+      // All DB errors are already converted to domain/infra errors in insertUserDal.
+      // No need to wrap or map again here.
+      const userRow = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
           password: passwordHash,
@@ -148,9 +151,11 @@ export class AuthUserService {
         username: input.username,
       });
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(signupResult));
+      return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
-      log.error("Signup failed", { error: err });
+      // Only domain/AppError types must be caught here (e.g. Conflict, Validation)
+      // Log full details (stack, cause, code/constraint/field)
+      log.errorWithDetails("Signup failed", err);
       const appError = mapRepoErrorToAppResult<AuthUserTransport>(
         err,
         ctx.context,
