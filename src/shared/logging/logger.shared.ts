@@ -8,6 +8,10 @@ import { getProcessId } from "@/shared/config/env-utils";
 import { isBaseError } from "@/shared/core/errors/base/base-error";
 import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/redaction/redaction.constants";
 
+// ============================================================================
+// Types & Interfaces
+// ============================================================================
+
 /**
  * Structured log entry format for consistency and JSON parsing.
  */
@@ -20,6 +24,29 @@ export interface LogEntry<T = unknown> {
   pid?: number;
   requestId?: string;
 }
+
+/**
+ * Operation metadata for DAL/repository pattern logging.
+ */
+export interface OperationMetadata {
+  /** The operation name (e.g., 'getUserByEmail') */
+  operation: string;
+  /** Optional context override (e.g., 'dal.users') */
+  context?: string;
+  /** Key identifiers for the operation (e.g., { userId: '123' }) */
+  identifiers?: Record<string, unknown>;
+}
+
+/**
+ * Combined data structure for operation logging.
+ */
+export type OperationData<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = T & OperationMetadata;
+
+// ============================================================================
+// Constants
+// ============================================================================
 
 /**
  * Priority by **risk of exposing sensitive information**.
@@ -39,6 +66,23 @@ const levelPriority = {
   trace: 50,
   warn: 20,
 } as const satisfies Record<LogLevel, number>;
+
+/**
+ * Cached console methods for minimal overhead.
+ */
+const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
+  debug: console.debug.bind(console),
+  error: console.error.bind(console),
+  info: console.info.bind(console),
+  trace: console.trace.bind(console),
+  warn: console.warn.bind(console),
+} as const;
+
+const processId = getProcessId();
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
 
 /**
  * Recursively sanitize objects to redact sensitive fields.
@@ -67,19 +111,6 @@ function sanitize(data: unknown): unknown {
 }
 
 /**
- * Cached console methods for minimal overhead.
- */
-const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
-  debug: console.debug.bind(console),
-  error: console.error.bind(console),
-  info: console.info.bind(console),
-  trace: console.trace.bind(console),
-  warn: console.warn.bind(console),
-} as const;
-
-const processId = getProcessId();
-
-/**
  * Derive the effective public log level at runtime.
  * Falls back to 'info' if the public env var is missing/invalid.
  */
@@ -96,6 +127,10 @@ function getCurrentLevelPriority(): number {
   return levelPriority[envLevel];
 }
 
+// ============================================================================
+// Logger Class
+// ============================================================================
+
 /**
  * Sensitivity-aware structured logger.
  */
@@ -107,6 +142,10 @@ export class Logger {
     this.context = context;
     this.requestId = requestId;
   }
+
+  // --------------------------------------------------------------------------
+  // Private Helper Methods
+  // --------------------------------------------------------------------------
 
   private shouldLog(level: LogLevel): boolean {
     return levelPriority[level] <= getCurrentLevelPriority();
@@ -166,25 +205,37 @@ export class Logger {
     consoleMethod[entry.level](...formatted);
   }
 
+  private logAtLevel<T>(level: LogLevel, message: string, data?: T): void {
+    this.output(this.createEntry(level, message, data));
+  }
+
+  // --------------------------------------------------------------------------
+  // Public Logging Methods
+  // --------------------------------------------------------------------------
+
   trace<T>(message: string, data?: T): void {
-    this.output(this.createEntry("trace", message, data));
+    this.logAtLevel("trace", message, data);
   }
 
   debug<T>(message: string, data?: T): void {
-    this.output(this.createEntry("debug", message, data));
+    this.logAtLevel("debug", message, data);
   }
 
   info<T>(message: string, data?: T): void {
-    this.output(this.createEntry("info", message, data));
+    this.logAtLevel("info", message, data);
   }
 
   warn<T>(message: string, data?: T): void {
-    this.output(this.createEntry("warn", message, data));
+    this.logAtLevel("warn", message, data);
   }
 
   error<T>(message: string, data?: T): void {
-    this.output(this.createEntry("error", message, data));
+    this.logAtLevel("error", message, data);
   }
+
+  // --------------------------------------------------------------------------
+  // Logger Factory Methods
+  // --------------------------------------------------------------------------
 
   /**
    * Create a child logger with additional context.
@@ -200,6 +251,10 @@ export class Logger {
   withRequest(requestId: string): Logger {
     return new Logger(this.context, requestId);
   }
+
+  // --------------------------------------------------------------------------
+  // Specialized Logging Methods
+  // --------------------------------------------------------------------------
 
   /**
    * Log a BaseError with full diagnostic information (internal use only).
@@ -258,20 +313,18 @@ export class Logger {
    *   operation: 'getUserByEmail',
    *   context: 'dal.users',
    *   identifiers: { email: 'user@example.com' },
+   *   additionalField: 'value',
    * });
    * ```
    */
-  operation<T extends Record<string, unknown>>(
+  operation<T extends Record<string, unknown> = Record<string, unknown>>(
     level: LogLevel,
     message: string,
-    data: T & {
-      operation: string;
-      context?: string;
-      identifiers?: Record<string, unknown>;
-    },
+    data: OperationData<T>,
   ): void {
     const { operation, context, identifiers, ...rest } = data;
 
+    // Build the structured log data
     const logData = {
       operation,
       ...(identifiers ?? {}),
@@ -281,26 +334,15 @@ export class Logger {
     // Use withContext if context provided in data
     const targetLogger = context ? this.withContext(context) : this;
 
-    // biome-ignore lint/style/useDefaultSwitchClause: <all log levels are covered>
-    switch (level) {
-      case "trace":
-        targetLogger.trace(message, logData);
-        break;
-      case "debug":
-        targetLogger.debug(message, logData);
-        break;
-      case "info":
-        targetLogger.info(message, logData);
-        break;
-      case "warn":
-        targetLogger.warn(message, logData);
-        break;
-      case "error":
-        targetLogger.error(message, logData);
-        break;
-    }
+    // Delegate to the appropriate log level
+    targetLogger.logAtLevel(level, message, logData);
   }
 }
+
+// ============================================================================
+// Default Export
+// ============================================================================
+
 /**
  * Default shared instance
  */
