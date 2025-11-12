@@ -10,7 +10,7 @@ function readStr(v: unknown): string | undefined {
   return typeof v === "string" && v.length > 0 ? v : undefined;
 }
 
-export const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
+const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
   email: "email",
   username: "username",
   usersEmailKey: "email",
@@ -20,18 +20,18 @@ export const SIGNUP_CONSTRAINT_HINTS: ConstraintFieldHints = {
 };
 
 // Narrow Pg error shape with readonly fields for safety.
-export interface PgErrorLike {
-  readonly code?: unknown;
-  readonly message?: unknown;
-  readonly name?: unknown;
-  readonly constraint?: unknown;
-  readonly detail?: unknown;
-  readonly schema?: unknown;
-  readonly table?: unknown;
+interface PgErrorLike {
+  readonly code?: string;
+  readonly constraint?: string;
+  readonly detail?: string;
+  readonly message?: string;
+  readonly name?: string;
+  readonly schema?: string;
+  readonly table?: string;
 }
 
 // Canonical subset of Postgres error codes used by our DAL normalization.
-export const PG_ERROR_CODES = {
+const PG_ERROR_CODES = {
   checkViolation: "23514",
   deadlockDetected: "40P01",
   foreignKeyViolation: "23503",
@@ -42,15 +42,15 @@ export const PG_ERROR_CODES = {
   uniqueViolation: "23505",
 } as const satisfies Readonly<Record<string, string>>;
 
-export type PgCode = (typeof PG_ERROR_CODES)[keyof typeof PG_ERROR_CODES];
+type PgCode = (typeof PG_ERROR_CODES)[keyof typeof PG_ERROR_CODES];
 
 const PG_CODE_SET: ReadonlySet<string> = new Set(Object.values(PG_ERROR_CODES));
 
 // Optional hook for mapping constraint names to domain field hints.
 // Repos may provide a map for better conflict targeting.
-export type ConstraintFieldHints = Readonly<Record<string, string>>;
+type ConstraintFieldHints = Readonly<Record<string, string>>;
 
-export function buildDatabaseMessageFromCode(code: PgCode): string {
+function buildDatabaseMessageFromCode(code: PgCode): string {
   switch (code) {
     case PG_ERROR_CODES.uniqueViolation:
       return "Unique constraint violation (23505).";
@@ -73,7 +73,7 @@ export function buildDatabaseMessageFromCode(code: PgCode): string {
   }
 }
 
-export function getPgCode(e: unknown): PgCode | undefined {
+function getPgCode(e: unknown): PgCode | undefined {
   // Try direct code first
   let s = readStr((e as PgErrorLike | null)?.code);
 
@@ -86,7 +86,7 @@ export function getPgCode(e: unknown): PgCode | undefined {
 }
 
 // Identify transient Postgres codes suitable for retry/backoff.
-export function isTransientPgCode(code: PgCode): boolean {
+function isTransientPgCode(code: PgCode): boolean {
   return (
     code === PG_ERROR_CODES.serializationFailure ||
     code === PG_ERROR_CODES.deadlockDetected ||
@@ -95,16 +95,11 @@ export function isTransientPgCode(code: PgCode): boolean {
   );
 }
 
-// Detect unique violation (23505).
-export function isPgUniqueViolation(e: unknown): boolean {
-  return getPgCode(e) === PG_ERROR_CODES.uniqueViolation;
-}
-
 /**
  * Map a PG unique violation to a ConflictError with optional field hint from constraint name.
  * Includes signup-focused constraint → field hints.
  */
-export function conflictFromUniqueViolation(
+function conflictFromUniqueViolation(
   err: unknown,
   logCtx: {
     readonly context?: string;
