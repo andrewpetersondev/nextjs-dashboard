@@ -13,7 +13,7 @@ import {
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/features/users/lib/user.schema";
-import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
+import { hashWithSaltRounds } from "@/server/auth/infrastructure/adapters/password-hasher-bcrypt.adapter";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { readUserDal } from "@/server/users/dal/read";

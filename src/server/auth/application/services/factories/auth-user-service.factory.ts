@@ -1,9 +1,9 @@
 import "server-only";
-import { AuthUserRepositoryAdapter } from "@/server/auth/application/services/adapters/auth-user-repository.adapter";
-import { BcryptPasswordHasherAdapter } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
+import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
+import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { AuthUserService } from "@/server/auth/application/services/auth-user.service";
-import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
-import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import { AuthUserRepositoryAdapter } from "@/server/auth/infrastructure/adapters/auth-user-repository.adapter";
+import { BcryptPasswordHasherAdapter } from "@/server/auth/infrastructure/adapters/password-hasher-bcrypt.adapter";
 import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/logger.shared";

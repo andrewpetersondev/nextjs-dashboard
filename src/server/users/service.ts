@@ -2,8 +2,8 @@ import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
-import { hashWithSaltRounds } from "@/server/auth/application/services/adapters/password-hasher-bcrypt.adapter";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import { hashWithSaltRounds } from "@/server/auth/infrastructure/adapters/password-hasher-bcrypt.adapter";
 import type {
   CreateUserRepoInput,
   CreateUserRepoOutput,
