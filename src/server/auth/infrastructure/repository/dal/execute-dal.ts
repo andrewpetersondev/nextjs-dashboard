@@ -7,8 +7,13 @@ import type { DalContext } from "../types/dal-context";
 
 /**
  * Execute DAL operation with automatic error handling.
- * - No redundant logging (caller logs success if needed)
- * - Single responsibility: error normalization
+ * - Normalizes any raw Postgres / external errors into BaseError
+ * - Logs once with full context
+ * - Maps BaseError to infrastructure-specific error subclasses
+ *
+ * DAL functions using this helper should:
+ * - Not catch and re-wrap database errors themselves
+ * - Only throw invariants as BaseError directly (e.g. "integrity")
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
@@ -17,7 +22,7 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    // Normalize to BaseError
+    // Normalize to BaseError (Postgres/external → BaseError)
     const baseError = toBaseErrorFromPg(err, dalContext);
 
     // Log once with full context

@@ -41,14 +41,14 @@ src/app/dashboard/
 src/features/customers/
 src/features/invoices/
 src/features/revenues/
-# src/features/users/
+src/features/users/
 
 src/server/customers/
 src/server/events/
 src/server/invoices/
 src/server/repository/
 src/server/revenues/
-# src/server/users/
+src/server/users/
 
 src/shared/http/
 src/shared/i18n/
