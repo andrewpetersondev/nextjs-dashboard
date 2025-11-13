@@ -1,9 +1,10 @@
+// src/server/auth/infrastructure/repository/dal/get-user-by-email.dal.ts
 import "server-only";
 import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
+import type { DalContext } from "@/server/auth/infrastructure/repository/types/dal-context";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import { logger } from "@/shared/logging/logger.shared";
 
 /**
  * Finds a user by email for login.
@@ -13,33 +14,20 @@ export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
 ): Promise<UserRow | null> {
-  const logCtx = {
-    context: "dal.users.getByEmail",
+  const dalContext: DalContext = {
+    context: "dal.users",
     identifiers: { email },
     operation: "getUserByEmail",
-  } as const;
+  };
 
   return await executeDalOrThrow(async () => {
-    const rows = await db
+    const [userRow] = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
 
-    const userRow = rows?.[0];
-
-    if (!userRow) {
-      // Use new operation helper
-      logger.operation("debug", "No user found for email", logCtx);
-      return null;
-    }
-
-    if (!userRow.password) {
-      // Use new operation helper
-      logger.operation("error", "User row missing hashed password", logCtx);
-      return null;
-    }
-
-    return userRow;
-  }, logCtx);
+    // No logging for normal "not found" case - it's expected
+    return userRow ?? null;
+  }, dalContext);
 }

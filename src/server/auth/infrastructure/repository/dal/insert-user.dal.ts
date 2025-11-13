@@ -2,6 +2,7 @@
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
+import type { DalContext } from "@/server/auth/infrastructure/repository/types/dal-context";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/core/errors/base/base-error";
@@ -18,59 +19,46 @@ import { logger } from "@/shared/logging/logger.shared";
  * @throws DatabaseError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
  */
-export async function insertUserDal(db: AppDatabase, input: AuthSignupPayload) {
+export async function insertUserDal(
+  db: AppDatabase,
+  input: AuthSignupPayload,
+): Promise<NewUserRow> {
   const { email, username, password, role } = input;
 
-  const metadata = {
-    context: "dal.users.insert",
+  const dalContext: DalContext = {
+    context: "dal.users",
     identifiers: { email, username },
     operation: "insertUser",
   } as const;
 
-  return await executeDalOrThrow(
-    async () => {
-      const [userRow] = await db
-        .insert(users)
-        .values({
-          email,
-          password,
-          role,
-          username,
-        } satisfies NewUserRow)
-        .returning();
+  return await executeDalOrThrow(async () => {
+    const [userRow] = await db
+      .insert(users)
+      .values({ email, password, role, username } satisfies NewUserRow)
+      .returning();
 
-      if (!userRow) {
-        // Log with error severity and diagnostic context
-        logger.operation(
-          "error",
-          "Invariant failed: insertUser did not return a row",
-          {
-            ...metadata,
-            kind: "invariant" as const,
-            role,
-          },
-        );
+    if (!userRow) {
+      throw BaseError.wrap(
+        "integrity",
+        new Error("Insert did not return a row"),
+        {
+          context: dalContext.context,
+          operation: dalContext.operation,
+          ...dalContext.identifiers,
+          kind: "invariant",
+        },
+      );
+    }
 
-        throw BaseError.wrap(
-          "integrity",
-          new Error("Invariant: insert did not return a row"),
-          {
-            ...metadata,
-            kind: "invariant",
-            role,
-          },
-        );
-      }
+    // Success logging only for significant events
+    logger.operation("info", "User created", {
+      context: dalContext.context,
+      operation: dalContext.operation,
+      role,
+      userId: userRow.id,
+      ...dalContext.identifiers,
+    });
 
-      logger.operation("info", "User inserted into DB", {
-        ...metadata,
-        role,
-        userId: userRow.id,
-      });
-
-      return userRow;
-    },
-    metadata,
-    { role }, // Additional context
-  );
+    return userRow;
+  }, dalContext);
 }

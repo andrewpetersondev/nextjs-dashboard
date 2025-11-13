@@ -1,41 +1,36 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import { repoErrorLogger } from "@/server/auth/infrastructure/repository/dal/repo-error.logger";
-import { mapBaseErrorToInfrastructureOrDomain } from "@/server/auth/infrastructure/repository/errors/base-error.mapper";
-import { toBaseErrorFromPgUnknown } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
-import type { OperationMetadata } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/logger.shared";
+import { mapBaseErrorToInfrastructureOrDomain } from "../errors/base-error.mapper";
+import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
+import type { DalContext } from "../types/dal-context";
 
 /**
- * Runs a Postgres DAL operation, throwing a normalized domain/infrastructure error if rejected.
- * Logs errors with full diagnostic context before throwing.
- * Ensures all thrown errors are subclasses of our canonical error types.
- *
- * @param thunk - The async operation to execute
- * @param logCtx - Operation metadata for logging and error context
- * @param additionalContext - Optional additional context for error logging
- * @returns The result of the operation
- * @throws {ConflictError | DatabaseError} Normalized error with full context
+ * Execute DAL operation with automatic error handling.
+ * - No redundant logging (caller logs success if needed)
+ * - Single responsibility: error normalization
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
-  logCtx: Readonly<OperationMetadata>,
-  additionalContext?: Record<string, unknown>,
+  dalContext: DalContext,
 ): Promise<T> {
   try {
-    const result = await thunk();
-    repoErrorLogger.logDalSuccess(logCtx);
-    return result;
+    return await thunk();
   } catch (err: unknown) {
-    const base = toBaseErrorFromPgUnknown(err, {
-      ...logCtx,
-      ...logCtx.identifiers,
-      ...additionalContext,
+    // Normalize to BaseError
+    const baseError = toBaseErrorFromPg(err, dalContext);
+
+    // Log once with full context
+    logger.operation("error", `DAL operation failed: ${dalContext.operation}`, {
+      code: baseError.code,
+      context: dalContext.context,
+      diagnosticId: baseError.context.diagnosticId,
+      operation: dalContext.operation,
+      severity: baseError.severity,
+      ...dalContext.identifiers,
     });
 
-    // Log the error with full diagnostic context
-    repoErrorLogger.logDalError(base, logCtx, additionalContext);
-
-    // Map DB error to richer type (domain or infra) for repo surface
-    throw mapBaseErrorToInfrastructureOrDomain(base);
+    // Map to domain-specific error type
+    throw mapBaseErrorToInfrastructureOrDomain(baseError);
   }
 }
