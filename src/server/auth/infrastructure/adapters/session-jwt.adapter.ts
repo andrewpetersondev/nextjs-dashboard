@@ -24,25 +24,12 @@ const getEncodedKey = (): Uint8Array => {
 
   const secret = SESSION_SECRET;
   if (!secret) {
-    //    serverLogger.error(
-    //      { context: "getEncodedKey" },
-    //      "SESSION_SECRET is not defined",
-    //    );
     throw new Error("SESSION_SECRET is not defined");
   }
   if (secret.length < MIN_HS256_KEY_LENGTH) {
-    //    serverLogger.error(
-    //      { context: "getEncodedKey", length: secret.length },
-    //      "SESSION_SECRET is too short",
-    //    );
     throw new Error("Weak SESSION_SECRET: must be at least 32 characters");
   }
-
   encodedKey = encoder.encode(secret);
-  //  serverLogger.debug(
-  //    { context: "getEncodedKey" },
-  //    "Session secret key encoded and cached",
-  //  );
   return encodedKey;
 };
 
@@ -71,23 +58,14 @@ export class SessionJwtAdapter {
       if (SESSION_AUDIENCE) {
         signer = signer.setAudience(SESSION_AUDIENCE);
       }
-
       const token = await signer.sign(key);
-      //      serverLogger.debug(
-      //        {
-      //          context: "SessionJwtAdapter.encode",
-      //          role: claims.role,
-      //          userId: claims.userId,
-      //        },
-      //        "Session JWT created",
-      //      );
-      console.info("Session JWT created:", { token });
+      const tokenPreview = token.slice(0, 10);
+      console.info("Session JWT created:", {
+        tokenPreview,
+        userId: claims.userId,
+      });
       return token;
     } catch (err: unknown) {
-      //      serverLogger.error(
-      //        { context: "SessionJwtAdapter.encode", err },
-      //        "JWT signing failed",
-      //      );
       console.error("JWT signing failed:", err);
       throw new Error("Failed to sign session token");
     }
@@ -102,17 +80,8 @@ export class SessionJwtAdapter {
         key,
         verifyOptions,
       );
-
-      //      serverLogger.debug(
-      //        { context: "SessionJwtAdapter.decode", userId: payload.userId },
-      //        "Session JWT verified",
-      //      );
       return payload;
     } catch (error: unknown) {
-      //      serverLogger.error(
-      //        { context: "SessionJwtAdapter.decode", err: error },
-      //        "JWT verification failed",
-      //      );
       console.error("JWT verification failed:", error);
       return;
     }
