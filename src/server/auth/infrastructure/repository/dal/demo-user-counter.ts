@@ -1,3 +1,4 @@
+// src/server/auth/infrastructure/repository/dal/demo-user-counter.ts
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";

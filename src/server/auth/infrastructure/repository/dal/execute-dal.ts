@@ -1,7 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
 import { logger } from "@/shared/logging/logger.shared";
-import { mapBaseErrorToInfrastructureOrDomain } from "../errors/base-error.mapper";
+import { mapBaseErrorToInfrastructure } from "../errors/base-error.mapper";
 import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
 import type { DalContext } from "../types/dal-context";
 
@@ -30,7 +30,7 @@ export async function executeDalOrThrow<T>(
       ...dalContext.identifiers,
     });
 
-    // Map to domain-specific error type
-    throw mapBaseErrorToInfrastructureOrDomain(baseError);
+    // Map to infrastructure-specific error type
+    throw mapBaseErrorToInfrastructure(baseError);
   }
 }

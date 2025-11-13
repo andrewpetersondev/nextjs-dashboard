@@ -1,23 +1,27 @@
+// src/server/auth/infrastructure/repository/errors/base-error.mapper.ts
 import "server-only";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import {
+  DatabaseError,
+  InfrastructureError,
+} from "@/server/errors/infrastructure-errors";
 import type { BaseError } from "@/shared/core/errors/base/base-error";
-import { ConflictError } from "@/shared/core/errors/domain/domain-errors";
 
 /**
- * Map a normalized BaseError to a more specific error subclass.
- * Extend as needed for your domain or cross-cutting infra errors.
+ * Map a normalized BaseError to a more specific infrastructure error subclass.
  * All thrown errors from DAL are guaranteed to be mapped.
  */
-export function mapBaseErrorToInfrastructureOrDomain(
+export function mapBaseErrorToInfrastructure(
   err: BaseError,
-): ConflictError | DatabaseError {
+): DatabaseError | InfrastructureError {
   switch (err.code) {
     case "conflict":
-      return new ConflictError(err.message, err.context, err.originalCause);
-    // Expand for more domain codes as needed
     case "database":
       return new DatabaseError(err.message, err.context, err.originalCause);
     default:
-      return new DatabaseError(err.message, err.context, err.originalCause);
+      return new InfrastructureError(
+        err.message,
+        err.context,
+        err.originalCause,
+      );
   }
 }

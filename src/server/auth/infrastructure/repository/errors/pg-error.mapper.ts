@@ -3,23 +3,65 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
 import type { DalContext, DalErrorContext } from "../types/dal-context";
 
-const PG_ERROR_CODES = {
-  checkViolation: "23514",
-  deadlockDetected: "40P01",
-  foreignKeyViolation: "23503",
-  notNullViolation: "23502",
-  serializationFailure: "40001",
-  uniqueViolation: "23505",
+const PG_ERRORS = {
+  checkViolation: {
+    appCode: "database" as const satisfies ErrorCode,
+    code: "23514",
+    message: "Database CHECK constraint violated",
+    name: "checkViolation",
+    retryable: false as const,
+  },
+  deadlockDetected: {
+    appCode: "database" as const satisfies ErrorCode,
+    code: "40P01",
+    message: "Database deadlock detected",
+    name: "deadlockDetected",
+    retryable: true as const,
+  },
+  foreignKeyViolation: {
+    appCode: "database" as const satisfies ErrorCode,
+    code: "23503",
+    message: "Database foreign key constraint violated",
+    name: "foreignKeyViolation",
+    retryable: false as const,
+  },
+  notNullViolation: {
+    appCode: "database" as const satisfies ErrorCode,
+    code: "23502",
+    message: "Database NOT NULL constraint violated",
+    name: "notNullViolation",
+    retryable: false as const,
+  },
+  serializationFailure: {
+    appCode: "database" as const satisfies ErrorCode,
+    code: "40001",
+    message: "Database serialization failure (transaction retry needed)",
+    name: "serializationFailure",
+    retryable: true as const,
+  },
+  uniqueViolation: {
+    appCode: "conflict" as const satisfies ErrorCode,
+    code: "23505",
+    message: "Database conflict occurred (unique constraint violated)",
+    name: "uniqueViolation",
+    retryable: false as const,
+  },
 } as const;
 
-type PgCode = (typeof PG_ERROR_CODES)[keyof typeof PG_ERROR_CODES];
+type PgErrorMeta = (typeof PG_ERRORS)[keyof typeof PG_ERRORS];
+type PgCode = PgErrorMeta["code"];
 
-const TRANSIENT_CODES = new Set<PgCode>([
-  PG_ERROR_CODES.serializationFailure,
-  PG_ERROR_CODES.deadlockDetected,
-]);
+function getPgErrorMetaByCode(
+  code: PgCode | undefined,
+): PgErrorMeta | undefined {
+  if (!code) {
+    return;
+  }
+  return Object.values(PG_ERRORS).find((entry) => entry.code === code);
+}
 
 /**
  * Extract Postgres error information from unknown error.
@@ -28,17 +70,14 @@ function extractPgError(err: unknown): Partial<PgDatabaseError> | null {
   if (!err || typeof err !== "object") {
     return null;
   }
-
   // Check if error itself is PgDatabaseError
   if ("code" in err && typeof err.code === "string") {
     return err as Partial<PgDatabaseError>;
   }
-
   // Check nested cause
   if ("cause" in err && err.cause && typeof err.cause === "object") {
     return err.cause as Partial<PgDatabaseError>;
   }
-
   return null;
 }
 
@@ -57,9 +96,14 @@ function buildErrorContext(
     errorSource: "postgres",
   };
 
+  const meta = getPgErrorMetaByCode(code);
+
   if (code) {
     metadata.pgCode = code;
-    metadata.retryable = TRANSIENT_CODES.has(code);
+    if (meta) {
+      metadata.retryable = meta.retryable;
+      metadata.pgErrorName = meta.name;
+    }
   }
 
   if (pg) {
@@ -94,35 +138,24 @@ function buildErrorContext(
 function mapPgCodeToErrorCode(
   code: PgCode | undefined,
 ): "conflict" | "database" {
-  return code === PG_ERROR_CODES.uniqueViolation ? "conflict" : "database";
+  const meta = getPgErrorMetaByCode(code);
+  return meta?.appCode ?? "database";
 }
 
 /**
- * Build user-friendly error message.
+ * Build an infrastructure-level error message.
+ *
+ * NOTE:
+ *  - This intentionally does NOT inspect constraint/table names to derive
+ *    domain/user-facing messages (e.g. "Email already in use").
+ *  - Domain/application layers should look at `error.code` and context
+ *    metadata (constraint, table, etc.) to decide final messages.
  */
-function buildErrorMessage(
-  code: PgCode | undefined,
-  pg: Partial<PgDatabaseError> | null,
-): string {
-  if (code === PG_ERROR_CODES.uniqueViolation) {
-    const constraint = pg?.constraint;
-    if (constraint?.includes("email")) {
-      return "Email already in use";
-    }
-    if (constraint?.includes("username")) {
-      return "Username already taken";
-    }
-    return "A record with these values already exists";
+function buildErrorMessage(code: PgCode | undefined): string {
+  const meta = getPgErrorMetaByCode(code);
+  if (meta) {
+    return meta.message;
   }
-
-  if (code === PG_ERROR_CODES.foreignKeyViolation) {
-    return "Referenced record does not exist";
-  }
-
-  if (code === PG_ERROR_CODES.notNullViolation) {
-    return "Required field is missing";
-  }
-
   return "Database operation failed";
 }
 
@@ -139,7 +172,7 @@ export function toBaseErrorFromPg(
 
   const errorContext = buildErrorContext(dalContext, pg, code);
   const errorCode = mapPgCodeToErrorCode(code);
-  const message = buildErrorMessage(code, pg);
+  const message = buildErrorMessage(code);
 
   // Flatten context for BaseError (no nested objects)
   const flatContext = {
