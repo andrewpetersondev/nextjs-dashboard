@@ -1,6 +1,6 @@
 import { isDatabaseError } from "@/server/errors/server-error-guards";
 
-import { isValidationError } from "@/shared/core/errors/domain/domain-errors";
+import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
@@ -14,7 +14,7 @@ function isKnownInvoiceMessageId(value: unknown): value is InvoiceMessageId {
 }
 
 export function toInvoiceErrorMessage(error: unknown): string {
-  if (isValidationError(error)) {
+  if (error instanceof ValidationError) {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message

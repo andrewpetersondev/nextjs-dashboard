@@ -7,9 +7,6 @@ import { isBaseError } from "@/shared/core/errors/base/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import {
   ConflictError,
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError,
   ValidationError,
 } from "@/shared/core/errors/domain/domain-errors";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
@@ -24,11 +21,8 @@ const DOMAIN_ERROR_MAP = new Map<
   ) => Error,
   { code: Parameters<typeof appErrorFromCode>[0]; useMessage: boolean }
 >([
-  [UnauthorizedError, { code: "unauthorized", useMessage: false }],
   [ValidationError, { code: "validation", useMessage: true }],
   [ConflictError, { code: "conflict", useMessage: true }],
-  [ForbiddenError, { code: "forbidden", useMessage: true }],
-  [NotFoundError, { code: "notFound", useMessage: true }],
 ]);
 
 function mapDomainError(err: Error): AppError | null {
