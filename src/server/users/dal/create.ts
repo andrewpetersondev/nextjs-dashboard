@@ -5,11 +5,11 @@ import type { PasswordHash } from "@/features/auth/lib/password.types";
 import type { UserDto } from "@/features/users/lib/dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
+import { DatabaseError } from "@/shared/core/errors/domain/domain-errors";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

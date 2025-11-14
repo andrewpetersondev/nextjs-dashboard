@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
-import type { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
 import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
 import { fetchAllPaidInvoicesDal } from "@/server/invoices/dal/fetch-all-paid";
@@ -16,7 +15,10 @@ import type { RepoError } from "@/server/invoices/error-mappers.server";
 import { promiseToRepoResult } from "@/server/invoices/error-wrappers.result";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  type DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import type { InvoiceId } from "@/shared/domain/domain-brands";

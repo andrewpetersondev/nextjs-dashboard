@@ -1,13 +1,15 @@
 import "server-only";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 
 export async function upsertRevenue(
   db: AppDatabase,

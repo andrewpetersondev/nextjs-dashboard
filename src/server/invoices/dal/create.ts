@@ -3,12 +3,12 @@ import "server-only";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   InvoiceEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
+import { DatabaseError } from "@/shared/core/errors/domain/domain-errors";
 import { toPeriod } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 

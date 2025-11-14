@@ -1,11 +1,13 @@
 import "server-only";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class UpdateRevenueUseCase {

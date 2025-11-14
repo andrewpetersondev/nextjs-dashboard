@@ -2,10 +2,12 @@ import "server-only";
 import { and, desc, gte, lte } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowsToEntities } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 import type { Period } from "@/shared/domain/domain-brands";
 import { toPeriod } from "@/shared/domain/id-converters";
 

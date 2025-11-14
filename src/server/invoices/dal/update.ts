@@ -3,13 +3,15 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 

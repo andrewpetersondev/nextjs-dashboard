@@ -1,10 +1,10 @@
 // src/server/auth/infrastructure/repository/errors/base-error.mapper.ts
 import "server-only";
+import type { BaseError } from "@/shared/core/errors/base/base-error";
 import {
   DatabaseError,
   InfrastructureError,
-} from "@/server/errors/infrastructure-errors";
-import type { BaseError } from "@/shared/core/errors/base/base-error";
+} from "@/shared/core/errors/domain/domain-errors";
 
 /**
  * Map a normalized BaseError to an infrastructure-specific error subclass.

@@ -1,6 +1,8 @@
 import "server-only";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import {
+  DatabaseError,
+  ValidationError,
+} from "@/shared/core/errors/domain/domain-errors";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
