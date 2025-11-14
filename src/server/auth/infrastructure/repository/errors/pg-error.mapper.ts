@@ -6,11 +6,8 @@ import type {
   DalContext,
   DalErrorContext,
 } from "@/server/auth/infrastructure/repository/types/dal-context";
-import { BaseError } from "@/shared/core/errors/base/base-error";
-import {
-  ERROR_CODES,
-  type ErrorCode,
-} from "@/shared/core/errors/base/error-codes";
+import { BaseError } from "@/shared/core/errors/base-error";
+import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
 
 const PG_ERROR_SOURCE = "postgres" as const;
 const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;

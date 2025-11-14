@@ -4,7 +4,7 @@ import {
   type ErrorCode,
   getErrorCodeMeta,
   type Severity,
-} from "@/shared/core/errors/base/error-codes";
+} from "@/shared/core/errors/error-codes";
 
 function safeStringifyUnknown(value: unknown): string {
   try {

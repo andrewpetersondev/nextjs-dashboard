@@ -5,7 +5,7 @@ import {
 } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import { isBaseError } from "@/shared/core/errors/base/base-error";
+import { isBaseError } from "@/shared/core/errors/base-error";
 import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/redaction/redaction.constants";
 
 // ============================================================================

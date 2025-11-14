@@ -1,13 +1,10 @@
 import "server-only";
-import { isBaseError } from "@/shared/core/errors/base/base-error";
-import {
-  ERROR_CODES,
-  type ErrorCode,
-} from "@/shared/core/errors/base/error-codes";
+import { isBaseError } from "@/shared/core/errors/base-error";
 import {
   ConflictError,
   ValidationError,
-} from "@/shared/core/errors/domain/base-error.subclasses";
+} from "@/shared/core/errors/base-error.subclasses";
+import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { logger } from "@/shared/logging/logger.shared";

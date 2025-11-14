@@ -4,7 +4,7 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { PasswordHash } from "@/features/auth/lib/password.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
-import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
+import type { ErrorCode } from "@/shared/core/errors/error-codes";
 import type { Result } from "@/shared/core/result/result";
 import { Err, Ok } from "@/shared/core/result/result";
 

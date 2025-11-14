@@ -1,6 +1,6 @@
 import "server-only";
 import { SIGNUP_FIELDS_LIST } from "@/features/auth/lib/auth.schema";
-import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
+import { ERROR_CODES } from "@/shared/core/errors/error-codes";
 import {
   type AppError,
   makeAppErrorDetails,

@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/core/errors/domain/base-error.subclasses";
+import { ValidationError } from "@/shared/core/errors/base-error.subclasses";
 
 /**
  * Validates the given condition and throws a ValidationError with the specified message if the condition is falsy.

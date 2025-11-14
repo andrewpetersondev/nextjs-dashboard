@@ -3,7 +3,7 @@ import "server-only";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/domain/base-error.subclasses";
+} from "@/shared/core/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**

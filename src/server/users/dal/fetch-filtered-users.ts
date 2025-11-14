@@ -8,7 +8,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { DatabaseError } from "@/shared/core/errors/domain/base-error.subclasses";
+import { DatabaseError } from "@/shared/core/errors/base-error.subclasses";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

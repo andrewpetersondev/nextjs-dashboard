@@ -5,7 +5,7 @@ import { revenues } from "@/server/db/schema/revenues";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/domain/base-error.subclasses";
+} from "@/shared/core/errors/base-error.subclasses";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export async function deleteRevenue(

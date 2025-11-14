@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
-import { ValidationError } from "@/shared/core/errors/domain/base-error.subclasses";
+import { ValidationError } from "@/shared/core/errors/base-error.subclasses";
 import { validateCondition } from "@/shared/core/validation/primitives/assert.condition";
 import {
   isNonNegativeInteger,

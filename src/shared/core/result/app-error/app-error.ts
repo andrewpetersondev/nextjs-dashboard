@@ -1,9 +1,6 @@
 // File: src/shared/core/result/app-error.ts
 
-import type {
-  ErrorCode,
-  Severity,
-} from "@/shared/core/errors/base/error-codes";
+import type { ErrorCode, Severity } from "@/shared/core/errors/error-codes";
 
 /**
  * Build a mapper unknown -> TError with a type guard and fallback constructor.

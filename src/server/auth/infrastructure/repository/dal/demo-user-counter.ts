@@ -4,8 +4,8 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { BaseError } from "@/shared/core/errors/base/base-error";
-import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
+import { BaseError } from "@/shared/core/errors/base-error";
+import { ERROR_CODES } from "@/shared/core/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

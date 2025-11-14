@@ -8,7 +8,7 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { DatabaseError } from "@/shared/core/errors/domain/base-error.subclasses";
+import { DatabaseError } from "@/shared/core/errors/base-error.subclasses";
 import { toPeriod } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 

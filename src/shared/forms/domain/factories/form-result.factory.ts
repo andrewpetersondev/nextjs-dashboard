@@ -1,5 +1,5 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
-import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
+import type { ErrorCode } from "@/shared/core/errors/error-codes";
 import {
   type AppError,
   makeAppErrorDetails,

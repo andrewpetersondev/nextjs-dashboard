@@ -1,8 +1,8 @@
 // File: 'src/shared/core/errors/app-error/app-error-builders.ts'
 // Builders, augmentation, lifting, and BaseError <-> AppError conversions
 import { isProd } from "@/shared/config/env-shared";
-import type { BaseError } from "@/shared/core/errors/base/base-error";
-import { tryGetErrorCodeMeta } from "@/shared/core/errors/base/error-codes";
+import type { BaseError } from "@/shared/core/errors/base-error";
+import { tryGetErrorCodeMeta } from "@/shared/core/errors/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/core/result/app-error/app-error.constants";
 

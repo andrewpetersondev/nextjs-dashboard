@@ -1,4 +1,4 @@
-import type { ValidationError } from "@/shared/core/errors/domain/base-error.subclasses";
+import type { ValidationError } from "@/shared/core/errors/base-error.subclasses";
 import { Ok, type Result } from "@/shared/core/result/result";
 
 /**

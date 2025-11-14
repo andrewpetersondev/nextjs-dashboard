@@ -1,5 +1,5 @@
 import "server-only";
-import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
+import { ERROR_CODES } from "@/shared/core/errors/error-codes";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { makeAppErrorDetails } from "@/shared/core/result/app-error/app-error";
 

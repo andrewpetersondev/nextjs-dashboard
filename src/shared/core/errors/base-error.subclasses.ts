@@ -1,11 +1,5 @@
-import {
-  BaseError,
-  type ErrorContext,
-} from "@/shared/core/errors/base/base-error";
-import {
-  ERROR_CODES,
-  type ErrorCode,
-} from "@/shared/core/errors/base/error-codes";
+import { BaseError, type ErrorContext } from "@/shared/core/errors/base-error";
+import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
 
 /**
  * Input validation failed (HTTP 422 by metadata).

@@ -7,7 +7,7 @@ import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructur
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/domain/base-error.subclasses";
+} from "@/shared/core/errors/base-error.subclasses";
 import type { RevenueId } from "@/shared/domain/domain-brands";
 
 export class UpdateRevenueUseCase {

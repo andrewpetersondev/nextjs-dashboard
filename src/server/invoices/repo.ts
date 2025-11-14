@@ -18,7 +18,7 @@ import { BaseRepository } from "@/server/repository/base-repository";
 import {
   type DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/domain/base-error.subclasses";
+} from "@/shared/core/errors/base-error.subclasses";
 import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { mapOk } from "@/shared/core/result/sync/result-map";
 import type { InvoiceId } from "@/shared/domain/domain-brands";
