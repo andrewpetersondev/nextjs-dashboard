@@ -1,4 +1,8 @@
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import {
+  ERROR_CODES,
+  type ErrorCode,
+} from "@/shared/core/errors/base/error-codes";
 
 /**
  * Input validation failed (HTTP 422 by metadata).
@@ -10,7 +14,11 @@ export class ValidationError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("validation", { cause, context, message });
+    super(ERROR_CODES.validation.name satisfies ErrorCode, {
+      cause,
+      context,
+      message,
+    });
   }
 }
 
@@ -23,6 +31,10 @@ export class ConflictError extends BaseError {
     context: Readonly<Record<string, unknown>> = {},
     cause?: unknown,
   ) {
-    super("conflict", { cause, context, message });
+    super(ERROR_CODES.conflict.name satisfies ErrorCode, {
+      cause,
+      context,
+      message,
+    });
   }
 }
