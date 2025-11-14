@@ -1,5 +1,6 @@
 import { isDev } from "@/shared/config/env-shared";
 import {
+  ERROR_CODES,
   type ErrorCode,
   getErrorCodeMeta,
   type Severity,
@@ -252,26 +253,26 @@ export class BaseError extends Error {
    * Uses consistent redaction fields with wrap().
    */
   static from(
-    value: unknown,
-    fallbackCode: ErrorCode = "unknown",
+    error: unknown,
+    fallbackCode: ErrorCode = ERROR_CODES.unknown.name,
     context: Readonly<Record<string, unknown>> = {},
   ): BaseError {
-    if (value instanceof BaseError) {
-      return value;
+    if (error instanceof BaseError) {
+      return error;
     }
-    if (value instanceof Error) {
+    if (error instanceof Error) {
       return new BaseError(fallbackCode, {
-        cause: value,
+        cause: error,
         context,
-        message: value.message,
+        message: error.message,
       });
     }
-    const msg = safeStringifyUnknown(value);
+    const msg = safeStringifyUnknown(error);
     return new BaseError(fallbackCode, {
       context: {
         ...context,
-        originalType: typeof value,
-        originalValue: redactNonSerializable(value),
+        originalType: typeof error,
+        originalValue: redactNonSerializable(error),
       },
       message: msg,
     });

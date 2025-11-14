@@ -6,6 +6,7 @@ import type { DalContext } from "@/server/auth/infrastructure/repository/types/d
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -39,7 +40,7 @@ export async function insertUserDal(
 
     if (!userRow) {
       throw BaseError.wrap(
-        "integrity",
+        ERROR_CODES.integrity.name,
         new Error("Insert did not return a row"),
         {
           context: dalContext.context,

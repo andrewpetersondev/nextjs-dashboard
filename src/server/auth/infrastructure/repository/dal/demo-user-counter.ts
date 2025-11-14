@@ -5,6 +5,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { BaseError } from "@/shared/core/errors/base/base-error";
+import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -40,7 +41,7 @@ export async function demoUserCounter(
         },
       );
       throw BaseError.wrap(
-        "integrity",
+        ERROR_CODES.integrity.name,
         new Error("Invariant: insert did not return a row"),
         {
           ...metadata,
@@ -56,7 +57,7 @@ export async function demoUserCounter(
         kind: "invariant" as const,
       });
       throw BaseError.wrap(
-        "integrity",
+        ERROR_CODES.integrity.name,
         new Error("Invariant: demo user counter row returned with null id"),
         {
           ...metadata,
