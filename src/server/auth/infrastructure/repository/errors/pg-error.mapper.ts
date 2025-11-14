@@ -7,46 +7,54 @@ import type {
   DalErrorContext,
 } from "@/server/auth/infrastructure/repository/types/dal-context";
 import { BaseError } from "@/shared/core/errors/base/base-error";
-import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
+import {
+  ERROR_CODES,
+  type ErrorCode,
+} from "@/shared/core/errors/base/error-codes";
 
+const PG_ERROR_SOURCE = "postgres" as const;
+const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
+const PG_DEFAULT_MESSAGE = ERROR_CODES.database.description;
+
+// ... existing code ...
 const PG_ERRORS = {
   checkViolation: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23514",
     message: "Database CHECK constraint violated",
     name: "checkViolation",
     retryable: false as const,
   },
   deadlockDetected: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "40P01",
     message: "Database deadlock detected",
     name: "deadlockDetected",
     retryable: true as const,
   },
   foreignKeyViolation: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23503",
     message: "Database foreign key constraint violated",
     name: "foreignKeyViolation",
     retryable: false as const,
   },
   notNullViolation: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23502",
     message: "Database NOT NULL constraint violated",
     name: "notNullViolation",
     retryable: false as const,
   },
   serializationFailure: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "40001",
     message: "Database serialization failure (transaction retry needed)",
     name: "serializationFailure",
     retryable: true as const,
   },
   uniqueViolation: {
-    appCode: "database" as const satisfies ErrorCode,
+    appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23505",
     message: "Database unique constraint violated",
     name: "uniqueViolation",
@@ -96,7 +104,7 @@ function buildErrorContext(
   const timestamp = new Date().toISOString();
 
   const metadata: Record<string, unknown> = {
-    errorSource: "postgres",
+    errorSource: PG_ERROR_SOURCE,
   };
 
   const meta = getPgErrorMetaByCode(code);
@@ -108,7 +116,6 @@ function buildErrorContext(
       metadata.pgErrorName = meta.name;
     }
   }
-
   if (pg) {
     if (pg.constraint) {
       metadata.constraint = pg.constraint;
@@ -126,7 +133,6 @@ function buildErrorContext(
       metadata.pgHint = pg.hint;
     }
   }
-
   return {
     ...dalContext,
     diagnosticId,
@@ -138,9 +144,9 @@ function buildErrorContext(
 /**
  * Map Postgres error to canonical BaseError code.
  */
-function mapPgCodeToErrorCode(code: PgCode | undefined): "database" {
+function mapPgCodeToErrorCode(code: PgCode | undefined): ErrorCode {
   const meta = getPgErrorMetaByCode(code);
-  return meta?.appCode ?? "database";
+  return meta?.appCode ?? PG_DEFAULT_APP_CODE;
 }
 
 /**
@@ -157,7 +163,7 @@ function buildErrorMessage(code: PgCode | undefined): string {
   if (meta) {
     return meta.message;
   }
-  return "Database operation failed";
+  return PG_DEFAULT_MESSAGE;
 }
 
 /**

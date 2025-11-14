@@ -1,6 +1,9 @@
 import "server-only";
 import { isBaseError } from "@/shared/core/errors/base/base-error";
-import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
+import {
+  ERROR_CODES,
+  type ErrorCode,
+} from "@/shared/core/errors/base/error-codes";
 import {
   ConflictError,
   ValidationError,
@@ -16,8 +19,8 @@ const DOMAIN_ERROR_MAP = new Map<
   ) => Error,
   { code: Parameters<typeof appErrorFromCode>[0]; useMessage: boolean }
 >([
-  [ValidationError, { code: "validation", useMessage: true }],
-  [ConflictError, { code: "conflict", useMessage: true }],
+  [ValidationError, { code: ERROR_CODES.validation.name, useMessage: true }],
+  [ConflictError, { code: ERROR_CODES.conflict.name, useMessage: true }],
 ]);
 
 function mapDomainError(err: Error): AppError | null {
@@ -41,8 +44,7 @@ function extractBaseErrorDetails(
     return null;
   }
 
-  // Only handle infrastructure errors here, not domain errors
-  if (err.code !== "database") {
+  if (err.code !== ERROR_CODES.database.name) {
     return null;
   }
 
@@ -80,14 +82,14 @@ export function mapRepoError(err: unknown, context: string): AppError {
       logger.withContext(context).errorWithDetails("Database error", err);
     } else {
       logger.error("Database error", {
-        code: "database",
+        code: ERROR_CODES.database.name satisfies ErrorCode,
         context,
         ...baseErrorDetails,
       });
     }
 
     return appErrorFromCode(
-      "database",
+      ERROR_CODES.database.name satisfies ErrorCode,
       ERROR_CODES.database.description,
       baseErrorDetails.diagnosticId
         ? { diagnosticId: baseErrorDetails.diagnosticId }
@@ -101,5 +103,8 @@ export function mapRepoError(err: unknown, context: string): AppError {
     error: err instanceof Error ? err.message : String(err),
   });
 
-  return appErrorFromCode("unknown", ERROR_CODES.unknown.description);
+  return appErrorFromCode(
+    ERROR_CODES.unknown.name,
+    ERROR_CODES.unknown.description,
+  );
 }
