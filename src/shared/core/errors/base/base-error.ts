@@ -99,6 +99,15 @@ function validateAndMaybeSanitizeContext(
   }
 }
 
+/**
+ * JSON-safe representation of a {@link BaseError}.
+ *
+ * - Intended for serialization across process or network boundaries
+ *   (e.g. HTTP responses, logs, queues).
+ * - Does **not** include stack traces or underlying `cause` to avoid
+ *   leaking internal implementation details.
+ * - `context` is only included if non-empty.
+ */
 export interface BaseErrorJson {
   readonly code: ErrorCode;
   readonly message: string;
@@ -111,17 +120,51 @@ export interface BaseErrorJson {
 }
 
 /**
- * Construction options for BaseError to keep constructor signature minimal.
+ * Constructor options for {@link BaseError}.
+ *
+ * Keeps the constructor signature small and stable while allowing:
+ * - message override (defaults to error code description)
+ * - structured diagnostic context
+ * - an underlying cause (any unknown value)
  */
 export interface BaseErrorOptions {
+  /**
+   * Human-readable error message.
+   *
+   * - Defaults to the description from the associated error code metadata.
+   * - Used as the `Error.message` and in `toJson().message`.
+   */
   readonly message?: string;
+
+  /**
+   * Arbitrary diagnostic context that will be:
+   * - defensively cloned
+   * - JSON-validated in development (with best-effort redaction)
+   * - frozen to discourage mutation
+   */
   readonly context?: Readonly<Record<string, unknown>>;
+
+  /**
+   * Optional underlying cause. Can be:
+   * - an `Error` instance (used as `cause` directly)
+   * - any other value, which will be redacted into a JSON-safe shape
+   * - `undefined`, meaning "no cause"
+   */
   readonly cause?: unknown;
 }
 
 /**
- * Canonical application error with stable metadata derived from ERROR_CODES.
- * Immutable: context is defensively cloned & frozen.
+ * Canonical application error type backed by centralized {@link ERROR_CODES}.
+ *
+ * Core guarantees:
+ * - **Stable metadata** from `getErrorCodeMeta` (code, status, severity, etc.).
+ * - **Immutable instances**: `context` is cloned and frozen; the error
+ *   instance is frozen where possible.
+ * - **Safe causes**: non-`Error` causes are converted into JSON-safe shapes
+ *   and attached as `Error.cause` in a controlled way.
+ * - **Subclass-friendly**: helpers like {@link BaseError.withContext},
+ *   {@link BaseError.remap}, {@link BaseError.from}, and {@link BaseError.wrap}
+ *   preserve subclass identity via {@link BaseError.create}.
  */
 export class BaseError extends Error {
   readonly code: ErrorCode;
@@ -131,6 +174,12 @@ export class BaseError extends Error {
   readonly category: string;
   readonly description: string;
   readonly context: Readonly<Record<string, unknown>>;
+  /**
+   * The original `cause` value passed in the constructor options.
+   *
+   * - May differ from `Error.cause` when a non-`Error` value is supplied,
+   *   since those are redacted before being passed to the base `Error`.
+   */
   readonly originalCause?: unknown;
 
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
@@ -173,15 +222,27 @@ export class BaseError extends Error {
   }
 
   /**
-   * Public accessor for immutable diagnostic details.
+   * Returns the immutable diagnostic context associated with this error.
+   *
+   * - The returned object is frozen; callers must not mutate it.
+   * - Use {@link BaseError.withContext} to derive a new error
+   *   with additional context instead of mutating this one.
    */
   getDetails(): Readonly<Record<string, unknown>> {
     return this.context;
   }
 
   /**
-   * Merge additional immutable context, returning a new BaseError.
-   * Note: subclass identity is preserved via protected factory.
+   * Returns a new error instance with additional immutable context merged in.
+   *
+   * Behavior:
+   * - Does **not** mutate the current error.
+   * - Shallow-merges `extra` into existing `context`, with `extra` keys
+   *   winning on conflict.
+   * - Preserves subclass identity via {@link BaseError.create}.
+   * - Copies the current `stack` onto the derived instance when possible.
+   *
+   * If `extra` is empty or falsy, the current instance is returned.
    */
   withContext<Textra extends Readonly<Record<string, unknown>>>(
     extra: Textra,
@@ -205,8 +266,17 @@ export class BaseError extends Error {
   }
 
   /**
-   * Functional remap to a different canonical code (rare; use sparingly).
-   * Preserves subclass via protected factory.
+   * Derives a new error instance mapped to a different canonical code.
+   *
+   * Behavior:
+   * - If `code` and `message` are unchanged, returns `this`.
+   * - Otherwise constructs a new instance with:
+   *   - the new `code`
+   *   - the same `originalCause`
+   *   - a cloned copy of the current `context`
+   *   - `overrideMessage` if provided; otherwise the current `message`
+   * - Preserves subclass identity via {@link BaseError.create}.
+   * - Copies the current `stack` where possible.
    */
   remap(code: ErrorCode, overrideMessage?: string): this {
     if (code === this.code && !overrideMessage) {
@@ -228,9 +298,19 @@ export class BaseError extends Error {
   }
 
   /**
-   * Serialize to a stable JSON shape (no stack/cause leakage).
-   * - use at output boundaries where data is sent to clients or external systems.
-   * CONSIDER REMOVING BECAUSE IT IS UNUSED
+   * Produces a JSON-safe representation of this error.
+   *
+   * Includes:
+   * - core metadata (code, category, severity, retryable, statusCode, description)
+   * - `message` (possibly overridden in the constructor)
+   * - `context` if non-empty
+   *
+   * Excludes:
+   * - stack traces
+   * - raw `cause` / `originalCause`
+   *
+   * This is suitable for logs or API responses where you want structured,
+   * stable error data without leaking internal details.
    */
   toJson(): BaseErrorJson {
     const base: BaseErrorJson = {
@@ -249,8 +329,19 @@ export class BaseError extends Error {
   }
 
   /**
-   * Normalize unknown into BaseError.
-   * Uses consistent redaction fields with wrap().
+   * Normalizes any unknown thrown value into a {@link BaseError}.
+   *
+   * Cases:
+   * - `BaseError` → returned as-is.
+   * - `Error` → wrapped into a new `BaseError` using `fallbackCode`,
+   *   preserving the original message as `message` and `cause`.
+   * - anything else → converted into a JSON-safe representation and stored
+   *   under `context.originalType` and `context.originalValue`.
+   *
+   * @param error - The value to normalize (e.g. from a `catch (error)` clause).
+   * @param fallbackCode - Error code used when `error` is not already a `BaseError`.
+   *                       Defaults to `ERROR_CODES.unknown.name`.
+   * @param context - Additional context to attach/merge when creating the error.
    */
   static from(
     error: unknown,
@@ -279,8 +370,20 @@ export class BaseError extends Error {
   }
 
   /**
-   * Wrap an error preserving original (never double-wrap BaseError).
-   * Uses consistent redaction fields with from().
+   * Wraps an arbitrary error value with a specific `code`, preserving the original.
+   *
+   * Cases:
+   * - `BaseError` → remapped via {@link BaseError.remap} instead of double-wrapping.
+   *   The original stack is copied to the remapped error when possible.
+   * - `Error` → wrapped in a new `BaseError` using the provided `code` and `message`
+   *   (or the original error's message if none is provided).
+   * - anything else → converted into a JSON-safe representation and stored
+   *   under `context.originalType` and `context.originalValue`.
+   *
+   * @param code - Target canonical error code.
+   * @param err - Original error or thrown value.
+   * @param context - Additional context to attach/merge.
+   * @param message - Optional message override for the resulting error.
    */
   static wrap(
     code: ErrorCode,
@@ -317,8 +420,15 @@ export class BaseError extends Error {
   }
 
   /**
-   * Protected factory to preserve subclassing in helpers.
-   * Subclasses can override to return their own instances.
+   * Protected factory method used by helpers to construct new instances.
+   *
+   * Designed for subclassing:
+   * - Subclasses can override this to customize how new instances are created
+   *   (e.g. to add extra fields or enforce invariants).
+   * - Default implementation instantiates `this.constructor` with the given
+   *   `(code, options)` and falls back to `BaseError` if that fails.
+   *
+   * Called by {@link BaseError.withContext} and {@link BaseError.remap}.
    */
   protected create(code: ErrorCode, options: BaseErrorOptions): BaseError {
     const Ctor = this.constructor as new (
@@ -334,8 +444,13 @@ export class BaseError extends Error {
 }
 
 /**
- * Narrow unknown to BaseError.
- * @param e - unknown value
+ * Type guard that narrows an unknown value to {@link BaseError}.
+ *
+ * Useful when handling errors from generic `catch` blocks to refine
+ * the type before accessing `BaseError`-specific properties.
+ *
+ * @param e - Unknown value to check.
+ * @returns `true` if `e` is a `BaseError`, otherwise `false`.
  */
 export const isBaseError = (e: unknown): e is BaseError =>
   e instanceof BaseError;
