@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AuthUserRepositoryPort } from "@/server/auth/infrastructure/ports/auth-user-repository.port";
-import type { PasswordHasherPort } from "@/server/auth/infrastructure/ports/password-hasher.port";
+import type { AuthUserRepositoryPort } from "../../ports/auth-user-repository.port";
+import type { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>

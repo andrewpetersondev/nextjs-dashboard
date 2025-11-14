@@ -1,5 +1,8 @@
 import "server-only";
-import { DatabaseError } from "@/server/errors/infrastructure-errors";
+import {
+  type AuthConflictDetails,
+  mapConflictErrorToAuthConflict,
+} from "@/server/auth/domain/errors/auth-conflict.mapper";
 import { isBaseError } from "@/shared/core/errors/base/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import {
@@ -64,36 +67,24 @@ function extractBaseErrorDetails(
 }
 
 /**
- * Maps repository errors to standardized AppError Results.
+ * Primary mapping function:
+ * Maps repository/infrastructure errors to a standardized AppError.
  *
- * This is the single source of truth for error translation from the repository
- * layer to the application layer. All service methods should route caught errors
- * through this function to ensure consistent error handling.
- *
- * @typeParam T - The expected success type (for Result type compatibility)
- * @param err - The caught error from repository layer
- * @param context - Logging context identifier (e.g., "auth-user.service.login")
- * @returns Result.Err containing standardized AppError
- *
- * @remarks
- * Error mapping policy:
- * - Domain errors (Unauthorized, Validation, etc.) → Corresponding AppError codes
- * - Infrastructure errors (Database) → Generic messages (hide internals)
- * - Unknown errors → Logged and wrapped as UNKNOWN
+ * Policy:
+ * - Domain errors (Unauthorized, Validation, Conflict, etc.) → corresponding AppError codes
+ * - Infrastructure errors (DatabaseError/BaseError with code "database") → generic DATABASE AppError
+ * - Unknown errors → UNKNOWN AppError
  */
-export function mapRepoErrorToAppResult<T>(
-  err: unknown,
-  context: string,
-): Result<T, AppError> {
-  // Handle domain errors FIRST (including ConflictError)
+export function mapRepoError(err: unknown, context: string): AppError {
+  // 1) Domain errors first
   if (err instanceof Error) {
     const domainError = mapDomainError(err);
     if (domainError) {
-      return Err(domainError);
+      return domainError;
     }
   }
 
-  // Handle infrastructure BaseErrors (database code only)
+  // 2) Infrastructure/BaseError (e.g., DatabaseError)
   const baseErrorDetails = extractBaseErrorDetails(err);
   if (baseErrorDetails) {
     if (isBaseError(err)) {
@@ -106,27 +97,63 @@ export function mapRepoErrorToAppResult<T>(
       });
     }
 
-    return Err(
-      appErrorFromCode(
-        "database",
-        ERROR_CODES.database.description,
-        baseErrorDetails.diagnosticId
-          ? { diagnosticId: baseErrorDetails.diagnosticId }
-          : undefined,
-      ),
+    return appErrorFromCode(
+      "database",
+      ERROR_CODES.database.description,
+      baseErrorDetails.diagnosticId
+        ? { diagnosticId: baseErrorDetails.diagnosticId }
+        : undefined,
     );
   }
 
-  // Legacy DatabaseError
-  if (err instanceof DatabaseError) {
-    logger.error("Database error", { context, error: err.message });
-    return Err(appErrorFromCode("database", ERROR_CODES.database.description));
-  }
-
-  // Unknown error fallback
+  // 3) Unknown error fallback
   logger.error("Unexpected repository error", {
     context,
     error: err instanceof Error ? err.message : String(err),
   });
-  return Err(appErrorFromCode("unknown", ERROR_CODES.unknown.description));
+
+  return appErrorFromCode("unknown", ERROR_CODES.unknown.description);
+}
+
+/**
+ * Backwards-compatible wrapper that returns a Result.
+ * Prefer using `mapRepoError` directly in new code.
+ */
+export function mapRepoErrorToAppResult<T>(
+  err: unknown,
+  context: string,
+): Result<T, AppError> {
+  return Err(mapRepoError(err, context));
+}
+
+/**
+ * Union of auth-domain error details that can result from repository calls.
+ * Extend this as you add more domain-specific mappings (e.g. for database
+ * errors, validation, etc.).
+ */
+export type AuthRepoErrorDetails = AuthConflictDetails;
+
+/**
+ * Map a low-level repository/infrastructure error into an auth-domain
+ * error description. This function is the main boundary between auth
+ * domain and the repository layer.
+ *
+ * It does NOT:
+ * - Log anything
+ * - Decide HTTP status codes or transport-level shapes
+ *
+ * It only:
+ * - Interprets error types
+ * - Produces domain-level error codes/messages/fields
+ */
+export function mapRepoErrorToAuthError(
+  err: unknown,
+): AuthRepoErrorDetails | undefined {
+  if (err instanceof ConflictError) {
+    return mapConflictErrorToAuthConflict(err);
+  }
+
+  // For now we only specialize ConflictError. Other errors can be handled
+  // generically (e.g. as "auth.unexpected") in higher layers if desired.
+  return;
 }

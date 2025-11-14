@@ -10,5 +10,14 @@ export interface AuthUserRepositoryPort<Trepo = unknown> {
 
   signup(input: AuthSignupPayload): Promise<AuthUserEntity>;
 
-  login(input: AuthLoginRepoInput): Promise<AuthUserEntity>;
+  /**
+   * Fetches a user suitable for login.
+   *
+   * Returns:
+   * - AuthUserEntity when a user with a password exists
+   * - null when the user is not found or lacks a password
+   *
+   * DAL-level errors are propagated and mapped by the repo/domain error mappers.
+   */
+  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null>;
 }

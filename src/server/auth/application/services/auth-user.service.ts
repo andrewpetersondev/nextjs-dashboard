@@ -8,7 +8,7 @@ import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
-import { mapRepoErrorToAppResult } from "@/server/auth/domain/errors/app-error.mapping.repo";
+import { mapRepoError } from "@/server/auth/domain/errors/app-error.mapping.repo";
 import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
@@ -72,7 +72,7 @@ export class AuthUserService {
 
       const passwordHash = await this.hasher.hash(demoPassword);
 
-      const demoUserResult = await this.repo.withTransaction(async (txRepo) =>
+      const demoUser = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: uniqueEmail,
           password: passwordHash,
@@ -87,20 +87,17 @@ export class AuthUserService {
         username: uniqueUsername,
       });
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(demoUserResult));
+      return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
       log.error("Failed to create demo user", { error: err });
-      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
-        err,
-        ctx.context,
+
+      const appError = mapRepoError(err, ctx.context);
+
+      return Err(
+        toFormAwareError(appError, {
+          fields: ["email", "username", "password"] as const,
+        }),
       );
-      return appError.ok
-        ? appError
-        : Err(
-            toFormAwareError(appError.error, {
-              fields: ["email", "username", "password"] as const,
-            }),
-          );
     }
   }
 
@@ -136,7 +133,7 @@ export class AuthUserService {
       const passwordHash = await this.hasher.hash(input.password);
 
       // All DB errors are already converted to domain/infra errors in insertUserDal.
-      // No need to wrap or map again here.
+      // mapRepoErrorToAppResult then uses auth-conflict.mapper at the domain boundary.
       const userRow = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
@@ -153,20 +150,18 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
-      // Only domain/AppError types must be caught here (e.g. Conflict, Validation)
-      // Log full details (stack, cause, code/constraint/field)
+      // Only domain/AppError types must be caught here (e.g. Conflict, Validation).
+      // mapRepoErrorToAppResult delegates conflict interpretation to the auth-domain
+      // mapper (auth-conflict.mapper.ts), keeping infra messages decoupled.
       log.errorWithDetails("Signup failed", err);
-      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
-        err,
-        ctx.context,
+
+      const appError = mapRepoError(err, ctx.context);
+
+      return Err(
+        toFormAwareError(appError, {
+          fields: ["email", "username", "password"] as const,
+        }),
       );
-      return appError.ok
-        ? appError
-        : Err(
-            toFormAwareError(appError.error, {
-              fields: ["email", "username", "password"] as const,
-            }),
-          );
     }
   }
 
@@ -176,8 +171,12 @@ export class AuthUserService {
    * @param input - Readonly LoginData with email and password.
    * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
-   * @remarks Validates stored hash using the PasswordHasherPort.
+   * @remarks
+   * - Repository returns `AuthUserEntity | null` and does not encode auth semantics.
+   * - This method owns "invalid credentials" semantics and mapping to AppError.
+   * - All infra/repo errors are mapped via `mapRepoError` into AppError.
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
@@ -187,10 +186,27 @@ export class AuthUserService {
     try {
       const user = await this.repo.login({ email: input.email });
 
+      // Repo: null → user not found or no password
+      if (!user) {
+        log.warn(
+          "Login failed - invalid credentials",
+          ctx.invalidCredentials(input.email),
+        );
+
+        return Err(
+          toFormAwareError(createAuthAppError("invalid_credentials"), {
+            fields: ["email", "password"] as const,
+          }),
+        );
+      }
+
       if (!user.password) {
-        log.warn("Login failed - missing password hash", {
-          email: input.email,
-        });
+        // Defensive: should not normally happen since repo treats "no password" as null
+        log.error(
+          "Login failed - missing password hash on user entity",
+          ctx.missingPassword(String(user.id)),
+        );
+
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -204,7 +220,11 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        log.warn("Login failed - invalid credentials", { email: input.email });
+        log.warn(
+          "Login failed - invalid credentials",
+          ctx.invalidCredentials(input.email),
+        );
+
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
             fields: ["email", "password"] as const,
@@ -212,25 +232,20 @@ export class AuthUserService {
         );
       }
 
-      log.info("Login succeeded", {
-        email: input.email,
-        userId: user.id,
-      });
+      log.info("Login succeeded", ctx.success(String(user.id)));
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
+      // Any repo/infra/domain throw is normalized here into AppError
       log.error("Login failed", { error: err });
-      const appError = mapRepoErrorToAppResult<AuthUserTransport>(
-        err,
-        ctx.context,
+
+      const appError = mapRepoError(err, ctx.context);
+
+      return Err(
+        toFormAwareError(appError, {
+          fields: ["email", "password"] as const,
+        }),
       );
-      return appError.ok
-        ? appError
-        : Err(
-            toFormAwareError(appError.error, {
-              fields: ["email", "password"] as const,
-            }),
-          );
     }
   }
 }

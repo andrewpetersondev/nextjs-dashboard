@@ -1,5 +1,6 @@
 import "server-only";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
+import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
@@ -28,9 +29,8 @@ export class AuthUserRepositoryAdapter
     return this.repo.signup(input);
   }
 
-  login(
-    input: AuthLoginRepoInput,
-  ): ReturnType<AuthUserRepositoryImpl["login"]> {
+  // repository now returns AuthUserEntity | null instead of throwing auth errors
+  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {
     return this.repo.login(input);
   }
 }

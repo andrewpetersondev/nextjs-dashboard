@@ -12,7 +12,6 @@ import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
-import { UnauthorizedError } from "@/shared/core/errors/domain/domain-errors";
 import type { Logger } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
@@ -70,9 +69,9 @@ export class AuthUserRepositoryImpl {
    *
    * @param input - Signup payload with user credentials
    * @returns The created user entity
-   * @throws {ValidationError} When required fields are missing
-   * @throws {ConflictError} When user already exists (via DAL)
-   * @throws {DatabaseError} For infrastructure/timeout errors
+   *
+   * Errors:
+   * - DAL-level errors are propagated as-is for higher layers to map.
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     const signupLogger = this.logger.withContext("signup");
@@ -92,23 +91,34 @@ export class AuthUserRepositoryImpl {
   /**
    * Fetches a user by email for login authentication.
    *
-   * @param input - Login input containing email
-   * @returns The user entity with password hash
-   * @throws {UnauthorizedError} When user not found or password missing
-   * @throws {DatabaseError} For infrastructure errors
+   * Semantics:
+   * - Returns AuthUserEntity when a user with a password exists
+   * - Returns null when user does not exist or has no password
+   *
+   * No auth/domain errors are thrown here; those belong to higher layers.
+   * DAL-level errors still propagate for centralized mapping.
    */
-  async login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity> {
+  async login(
+    input: Readonly<AuthLoginRepoInput>,
+  ): Promise<AuthUserEntity | null> {
     const loginLogger = this.logger.withContext("login");
 
     const row = await getUserByEmailDal(this.db, input.email);
 
     if (!row?.password) {
-      loginLogger.operation("warn", "Login attempt with invalid credentials", {
-        identifiers: { email: input.email },
-        kind: "invalid_credentials",
-        operation: "login",
-      } as const);
-      throw new UnauthorizedError("Invalid email or password.");
+      loginLogger.operation(
+        "warn",
+        "Login lookup resulted in no user with password",
+        {
+          identifiers: { email: input.email },
+          kind: "user_not_found_or_password_missing",
+          operation: "login",
+        } as const,
+      );
+
+      // Important: no UnauthorizedError (or other domain errors) here.
+      // We just signal "no user" via null and let the service/domain decide.
+      return null;
     }
 
     loginLogger.operation("info", "User retrieved successfully for login", {
