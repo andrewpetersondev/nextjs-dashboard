@@ -1,6 +1,6 @@
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { USER_ROLES } from "@/features/auth/lib/auth.roles";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import { ValidationError } from "@/shared/core/errors/domain/base-error.subclasses";
 import type { Result } from "@/shared/core/result/result";
 
 /**

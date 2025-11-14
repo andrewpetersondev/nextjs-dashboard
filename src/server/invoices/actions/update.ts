@@ -13,7 +13,7 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
+import { ValidationError } from "@/shared/core/errors/domain/base-error.subclasses";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,

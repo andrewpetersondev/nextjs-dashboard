@@ -5,7 +5,7 @@ import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/shared/core/errors/domain/domain-errors";
+import { DatabaseError } from "@/shared/core/errors/domain/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**

@@ -7,7 +7,7 @@ import {
 import {
   ConflictError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-errors";
+} from "@/shared/core/errors/domain/base-error.subclasses";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
 import { logger } from "@/shared/logging/logger.shared";

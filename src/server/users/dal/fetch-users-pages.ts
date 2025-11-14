@@ -3,7 +3,7 @@ import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { DatabaseError } from "@/shared/core/errors/domain/domain-errors";
+import { DatabaseError } from "@/shared/core/errors/domain/base-error.subclasses";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

@@ -4,7 +4,7 @@ import type { BaseError } from "@/shared/core/errors/base/base-error";
 import {
   DatabaseError,
   InfrastructureError,
-} from "@/shared/core/errors/domain/domain-errors";
+} from "@/shared/core/errors/domain/base-error.subclasses";
 
 /**
  * Map a normalized BaseError to an infrastructure-specific error subclass.

@@ -10,7 +10,7 @@ import type { InvoiceRepository } from "@/server/invoices/repo";
 import {
   type DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/domain/domain-errors";
+} from "@/shared/core/errors/domain/base-error.subclasses";
 import { Err, type Result } from "@/shared/core/result/result";
 import { toInvoiceId } from "@/shared/domain/id-converters";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
