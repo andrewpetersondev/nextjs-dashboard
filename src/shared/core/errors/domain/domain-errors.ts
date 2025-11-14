@@ -1,4 +1,7 @@
-import { BaseError } from "@/shared/core/errors/base/base-error";
+import {
+  BaseError,
+  type ErrorContext,
+} from "@/shared/core/errors/base/base-error";
 import {
   ERROR_CODES,
   type ErrorCode,
@@ -9,11 +12,7 @@ import {
  * Use for schema / semantic validation failures.
  */
 export class ValidationError extends BaseError {
-  constructor(
-    message?: string,
-    context: Readonly<Record<string, unknown>> = {},
-    cause?: unknown,
-  ) {
+  constructor(message?: string, context: ErrorContext = {}, cause?: unknown) {
     super(ERROR_CODES.validation.name satisfies ErrorCode, {
       cause,
       context,
@@ -26,11 +25,7 @@ export class ValidationError extends BaseError {
  * Resource state conflict (HTTP 409).
  */
 export class ConflictError extends BaseError {
-  constructor(
-    message?: string,
-    context: Readonly<Record<string, unknown>> = {},
-    cause?: unknown,
-  ) {
+  constructor(message?: string, context: ErrorContext = {}, cause?: unknown) {
     super(ERROR_CODES.conflict.name satisfies ErrorCode, {
       cause,
       context,

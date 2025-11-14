@@ -1,5 +1,5 @@
-import { isDatabaseError } from "@/server/errors/server-error-guards";
-
+import "server-only";
+import { DatabaseError } from "@/server/errors/infrastructure-errors";
 import { ValidationError } from "@/shared/core/errors/domain/domain-errors";
 import {
   INVOICE_MSG,
@@ -7,8 +7,8 @@ import {
 } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 
-// Local guard for known invoice message IDs (single-locale setup)
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));
+
 function isKnownInvoiceMessageId(value: unknown): value is InvoiceMessageId {
   return typeof value === "string" && KNOWN_INVOICE_MESSAGE_IDS.has(value);
 }
@@ -22,7 +22,7 @@ export function toInvoiceErrorMessage(error: unknown): string {
     return translator(id);
   }
 
-  if (isDatabaseError(error)) {
+  if (error instanceof DatabaseError) {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message

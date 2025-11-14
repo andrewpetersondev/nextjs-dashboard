@@ -69,9 +69,7 @@ function deepFreezeDev<T>(obj: T): T {
 }
 
 // Dev-only: ensure context is JSON-serializable; redact offending entries
-function validateAndMaybeSanitizeContext(
-  ctx: Readonly<Record<string, unknown>>,
-): Readonly<Record<string, unknown>> {
+function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
   if (!isDev()) {
     return ctx;
   }
@@ -100,6 +98,14 @@ function validateAndMaybeSanitizeContext(
 }
 
 /**
+ * @public
+ * Represents a read-only context object containing error-related metadata.
+ * @remarks
+ * The keys are strings, and the values are unknown, allowing flexibility for diverse error details.
+ */
+export type ErrorContext = Readonly<Record<string, unknown>>;
+
+/**
  * JSON-safe representation of a {@link BaseError}.
  *
  * - Intended for serialization across process or network boundaries
@@ -116,7 +122,7 @@ export interface BaseErrorJson {
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
-  readonly context?: Readonly<Record<string, unknown>>;
+  readonly context?: ErrorContext;
 }
 
 /**
@@ -142,7 +148,7 @@ export interface BaseErrorOptions {
    * - JSON-validated in development (with best-effort redaction)
    * - frozen to discourage mutation
    */
-  readonly context?: Readonly<Record<string, unknown>>;
+  readonly context?: ErrorContext;
 
   /**
    * Optional underlying cause. Can be:
@@ -173,7 +179,7 @@ export class BaseError extends Error {
   readonly retryable: boolean;
   readonly category: string;
   readonly description: string;
-  readonly context: Readonly<Record<string, unknown>>;
+  readonly context: ErrorContext;
   /**
    * The original `cause` value passed in the constructor options.
    *
@@ -211,8 +217,8 @@ export class BaseError extends Error {
       ? validateAndMaybeSanitizeContext(clonedContext)
       : clonedContext;
     this.context = isDev()
-      ? (deepFreezeDev(checkedContext) as Readonly<Record<string, unknown>>)
-      : (Object.freeze(checkedContext) as Readonly<Record<string, unknown>>);
+      ? (deepFreezeDev(checkedContext) as ErrorContext)
+      : (Object.freeze(checkedContext) as ErrorContext);
     this.originalCause = cause;
     try {
       Object.freeze(this);
@@ -228,7 +234,7 @@ export class BaseError extends Error {
    * - Use {@link BaseError.withContext} to derive a new error
    *   with additional context instead of mutating this one.
    */
-  getDetails(): Readonly<Record<string, unknown>> {
+  getDetails(): ErrorContext {
     return this.context;
   }
 
@@ -244,9 +250,7 @@ export class BaseError extends Error {
    *
    * If `extra` is empty or falsy, the current instance is returned.
    */
-  withContext<Textra extends Readonly<Record<string, unknown>>>(
-    extra: Textra,
-  ): this {
+  withContext<Textra extends ErrorContext>(extra: Textra): this {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
     }
@@ -346,7 +350,7 @@ export class BaseError extends Error {
   static from(
     error: unknown,
     fallbackCode: ErrorCode = ERROR_CODES.unknown.name,
-    context: Readonly<Record<string, unknown>> = {},
+    context: ErrorContext = {},
   ): BaseError {
     if (error instanceof BaseError) {
       return error;
@@ -388,7 +392,7 @@ export class BaseError extends Error {
   static wrap(
     code: ErrorCode,
     err: unknown,
-    context: Readonly<Record<string, unknown>> = {},
+    context: ErrorContext = {},
     message?: string,
   ): BaseError {
     if (err instanceof BaseError) {
