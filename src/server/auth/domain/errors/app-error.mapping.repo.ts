@@ -1,8 +1,4 @@
 import "server-only";
-import {
-  type AuthConflictDetails,
-  mapConflictErrorToAuthConflict,
-} from "@/server/auth/domain/errors/auth-conflict.mapper";
 import { isBaseError } from "@/shared/core/errors/base/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/base/error-codes";
 import {
@@ -11,7 +7,6 @@ import {
 } from "@/shared/core/errors/domain/domain-errors";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
-import { Err, type Result } from "@/shared/core/result/result";
 import { logger } from "@/shared/logging/logger.shared";
 
 // Mapping table for domain errors
@@ -107,47 +102,4 @@ export function mapRepoError(err: unknown, context: string): AppError {
   });
 
   return appErrorFromCode("unknown", ERROR_CODES.unknown.description);
-}
-
-/**
- * Backwards-compatible wrapper that returns a Result.
- * Prefer using `mapRepoError` directly in new code.
- */
-export function mapRepoErrorToAppResult<T>(
-  err: unknown,
-  context: string,
-): Result<T, AppError> {
-  return Err(mapRepoError(err, context));
-}
-
-/**
- * Union of auth-domain error details that can result from repository calls.
- * Extend this as you add more domain-specific mappings (e.g. for database
- * errors, validation, etc.).
- */
-export type AuthRepoErrorDetails = AuthConflictDetails;
-
-/**
- * Map a low-level repository/infrastructure error into an auth-domain
- * error description. This function is the main boundary between auth
- * domain and the repository layer.
- *
- * It does NOT:
- * - Log anything
- * - Decide HTTP status codes or transport-level shapes
- *
- * It only:
- * - Interprets error types
- * - Produces domain-level error codes/messages/fields
- */
-export function mapRepoErrorToAuthError(
-  err: unknown,
-): AuthRepoErrorDetails | undefined {
-  if (err instanceof ConflictError) {
-    return mapConflictErrorToAuthConflict(err);
-  }
-
-  // For now we only specialize ConflictError. Other errors can be handled
-  // generically (e.g. as "auth.unexpected") in higher layers if desired.
-  return;
 }
