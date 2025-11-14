@@ -2,9 +2,12 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
+import type {
+  DalContext,
+  DalErrorContext,
+} from "@/server/auth/infrastructure/repository/types/dal-context";
 import { BaseError } from "@/shared/core/errors/base/base-error";
 import type { ErrorCode } from "@/shared/core/errors/base/error-codes";
-import type { DalContext, DalErrorContext } from "../types/dal-context";
 
 const PG_ERRORS = {
   checkViolation: {
@@ -43,9 +46,9 @@ const PG_ERRORS = {
     retryable: true as const,
   },
   uniqueViolation: {
-    appCode: "conflict" as const satisfies ErrorCode,
+    appCode: "database" as const satisfies ErrorCode,
     code: "23505",
-    message: "Database conflict occurred (unique constraint violated)",
+    message: "Database unique constraint violated",
     name: "uniqueViolation",
     retryable: false as const,
   },
@@ -135,9 +138,7 @@ function buildErrorContext(
 /**
  * Map Postgres error to canonical BaseError code.
  */
-function mapPgCodeToErrorCode(
-  code: PgCode | undefined,
-): "conflict" | "database" {
+function mapPgCodeToErrorCode(code: PgCode | undefined): "database" {
   const meta = getPgErrorMetaByCode(code);
   return meta?.appCode ?? "database";
 }
