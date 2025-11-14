@@ -29,31 +29,3 @@ export class DatabaseError extends BaseError {
     super("database", { cause, context, message });
   }
 }
-
-/**
- * Cache layer failure (read/write/serialization/connectivity).
- * Code: CACHE.
- */
-export class CacheError extends BaseError {
-  constructor(
-    message?: string,
-    context: Readonly<Record<string, unknown>> = {},
-    cause?: unknown,
-  ) {
-    super("cache", { cause, context, message });
-  }
-}
-
-/**
- * Cryptographic operation failure (hash/encrypt/decrypt/key mgmt).
- * Code: CRYPTO.
- */
-export class CryptoError extends BaseError {
-  constructor(
-    message?: string,
-    context: Readonly<Record<string, unknown>> = {},
-    cause?: unknown,
-  ) {
-    super("crypto", { cause, context, message });
-  }
-}
