@@ -1,6 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/insert-user.dal.ts
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { DalContext } from "@/server/auth/infrastructure/repository/types/dal-context";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -8,6 +9,8 @@ import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/core/errors/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
+
+const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.insertUser;
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
@@ -27,7 +30,7 @@ export async function insertUserDal(
   const { email, username, password, role } = input;
 
   const dalContext: DalContext = {
-    context: "dal.users",
+    context,
     identifiers: { email, username },
     operation: "insertUser",
   } as const;
@@ -51,13 +54,11 @@ export async function insertUserDal(
       );
     }
 
-    // Success logging only for significant events
-    logger.operation("info", "User created", {
-      context: dalContext.context,
-      operation: dalContext.operation,
+    logger.info("User created", {
+      ...success(email),
+      context,
       role,
       userId: userRow.id,
-      ...dalContext.identifiers,
     });
 
     return userRow;

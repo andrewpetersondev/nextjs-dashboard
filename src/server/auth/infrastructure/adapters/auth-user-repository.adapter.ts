@@ -5,6 +5,11 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 
+/**
+ * Thin adapter that translates the port interface to the repository implementation.
+ *
+ * No logging here - that's the repository's responsibility.
+ */
 export class AuthUserRepositoryAdapter
   implements AuthUserRepositoryPort<AuthUserRepositoryImpl>
 {
@@ -29,7 +34,6 @@ export class AuthUserRepositoryAdapter
     return this.repo.signup(input);
   }
 
-  // repository now returns AuthUserEntity | null instead of throwing auth errors
   login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {
     return this.repo.login(input);
   }
