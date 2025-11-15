@@ -19,6 +19,11 @@ type TransactionExceptionPayload = {
 
 /**
  * Action-level log data factories (triggered directly by user interaction)
+ *
+ * Login action `kind` values:
+ * - "start"      : action initiated
+ * - "validation" : user-facing credential/validation failure
+ * - "success"    : login completed successfully
  */
 export const AUTH_ACTION_CONTEXTS = {
   demoUser: {
@@ -30,7 +35,8 @@ export const AUTH_ACTION_CONTEXTS = {
 
   login: {
     context: "action.auth.login" as const,
-    fail: (reason: string) => ({ kind: "failure", reason }),
+    // align with service-level invalidCredentials kind
+    fail: (reason: string) => ({ kind: "validation", reason }),
     start: () => ({ kind: "start" }),
     success: (userId: string) => ({ kind: "success", userId }),
   },
@@ -49,6 +55,12 @@ export const AUTH_ACTION_CONTEXTS = {
 
 /**
  * Internal service-level log data factories (server-only logic)
+ *
+ * Login service `kind` values:
+ * - "validation"    : invalid credentials (email/password)
+ * - "auth-invariant": internal auth invariant breach (e.g. missing password hash)
+ * - "success"       : login completed successfully
+ * - "exception"     : unexpected exception during login flow
  */
 export const AUTH_SERVICE_CONTEXTS = {
   createDemoUser: {
@@ -79,6 +91,7 @@ export const AUTH_SERVICE_CONTEXTS = {
     }),
 
     missingPassword: (userId: string) => ({
+      // keep distinct invariant for debugging
       kind: "auth-invariant",
       userId,
     }),

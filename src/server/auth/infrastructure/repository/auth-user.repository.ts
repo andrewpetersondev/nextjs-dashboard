@@ -4,10 +4,10 @@ import { randomUUID } from "node:crypto";
 import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { TransactionLogger } from "@/server/auth/infrastructure/transaction-logger";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
+import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,
@@ -115,7 +115,13 @@ export class AuthUserRepositoryImpl {
   ): Promise<AuthUserEntity | null> {
     const loginLogger = this.logger.withContext("login");
 
-    const row = await getUserByEmailDal(this.db, input.email, this.logger);
+    // Align logical operation name with service and DAL
+    const row = await getUserByEmailDal(
+      this.db,
+      input.email,
+      this.logger,
+      "login",
+    );
 
     if (!row?.password) {
       loginLogger.operation(
@@ -123,7 +129,8 @@ export class AuthUserRepositoryImpl {
         "Login lookup resulted in no user with password",
         {
           identifiers: { email: input.email },
-          kind: "user_not_found_or_password_missing",
+          // align with DAL notFound kind
+          kind: "not_found",
           operation: "login",
         } as const,
       );

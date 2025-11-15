@@ -5,8 +5,8 @@ import type { DatabaseError as PgDatabaseError } from "pg";
 import type {
   DalContext,
   DalErrorContext,
-} from "@/server/auth/infrastructure/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
+} from "@/server/auth/logging/dal-context";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import { BaseError } from "@/shared/core/errors/base-error";
 import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
 

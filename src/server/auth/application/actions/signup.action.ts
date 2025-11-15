@@ -9,17 +9,17 @@ import {
   SignupSchema,
 } from "@/features/auth/lib/auth.schema";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
+import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
+import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
+import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import {
   logActionInitiated,
   logActionSuccess,
   logAuthenticationFailure,
   logValidationComplete,
   logValidationFailure,
-} from "@/server/auth/application/actions/utils/action-logger.helper";
-import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
-import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
-import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
+} from "@/server/auth/logging/action-logger.helper";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";

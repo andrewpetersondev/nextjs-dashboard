@@ -1,12 +1,12 @@
 // src/server/auth/infrastructure/repository/dal/demo-user-counter.ts
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
   createDalContext,
   type DalContext,
-} from "@/server/auth/infrastructure/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
-import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
+} from "@/server/auth/logging/dal-context";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { BaseError } from "@/shared/core/errors/base-error";

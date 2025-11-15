@@ -1,6 +1,6 @@
 // infrastructure-error.logging.ts (transaction section refactored)
 import "server-only";
-import type { DalResultMetadata } from "@/server/auth/infrastructure/dal-context";
+import type { DalResultMetadata } from "@/server/auth/logging/dal-context";
 import type { OperationData } from "@/shared/logging/logger.shared";
 import { toSafeErrorShape } from "@/shared/logging/logger.shared";
 
@@ -32,7 +32,8 @@ export const INFRASTRUCTURE_CONTEXTS = {
       context: "infrastructure.dal.get-user-by-email" as const,
       notFound: (email: string): DalResultMetadata => ({
         identifiers: { email },
-        kind: "not-found",
+        // align with repo login warning kind
+        kind: "not_found",
       }),
       success: (email: string): DalResultMetadata => ({
         identifiers: { email },

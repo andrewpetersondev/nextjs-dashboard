@@ -1,6 +1,6 @@
 // src/server/auth/infrastructure/transaction-logger.ts
 import "server-only";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import { isBaseError } from "@/shared/core/errors/base-error";
 import type { Logger } from "@/shared/logging/logger.shared";
 

@@ -1,12 +1,12 @@
 // src/server/auth/infrastructure/repository/dal/get-user-by-email.dal.ts
 import "server-only";
 import { eq } from "drizzle-orm";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
   createDalContext,
   type DalContext,
-} from "@/server/auth/infrastructure/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
-import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
+} from "@/server/auth/logging/dal-context";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { Logger } from "@/shared/logging/logger.shared";
@@ -22,8 +22,13 @@ export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
   parentLogger: Logger,
+  /**
+   * Logical operation name for logging.
+   * Defaults to "getUserByEmail" but callers (e.g. login repo) can override.
+   */
+  operation: "getUserByEmail" | "login" = "getUserByEmail",
 ): Promise<UserRow | null> {
-  const dalContext: DalContext = createDalContext("getUserByEmail", context, {
+  const dalContext: DalContext = createDalContext(operation, context, {
     email,
   });
 
@@ -43,8 +48,9 @@ export async function getUserByEmailDal(
         dalLogger.operation("info", "User not found for login", {
           context: dalContext.context,
           identifiers: resultMeta.identifiers,
-          kind: resultMeta.kind,
-          operation: dalContext.operation,
+          // standardized infra-level failure kind
+          kind: resultMeta.kind, // "not_found"
+          operation: dalContext.operation, // "login" in repo login flow
         } as const);
 
         return null;
@@ -55,7 +61,7 @@ export async function getUserByEmailDal(
       dalLogger.operation("info", "User loaded for login", {
         context: dalContext.context,
         identifiers: resultMeta.identifiers,
-        kind: resultMeta.kind,
+        kind: resultMeta.kind, // "success"
         operation: dalContext.operation,
       } as const);
 

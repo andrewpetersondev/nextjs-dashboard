@@ -42,7 +42,7 @@ export interface RepositoryContext {
  * DAL operation result metadata.
  */
 export interface DalResultMetadata {
-  readonly kind: "success" | "not-found" | "duplicate" | "error";
+  readonly kind: "success" | "not_found" | "duplicate" | "error";
   readonly identifiers: Record<string, string | number>;
   readonly details?: Record<string, unknown>;
 }

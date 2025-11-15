@@ -1,12 +1,12 @@
 // src/server/auth/infrastructure/repository/dal/insert-user.dal.ts
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
   createDalContext,
   type DalContext,
-} from "@/server/auth/infrastructure/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
-import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
+} from "@/server/auth/logging/dal-context";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/core/errors/base-error";

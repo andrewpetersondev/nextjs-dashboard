@@ -9,12 +9,12 @@ import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/aut
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { mapRepoError } from "@/server/auth/domain/errors/app-error.mapping.repo";
-import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/domain/errors/auth-error.logging";
 import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
+import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/result/app-error/app-error";
 import type { Result } from "@/shared/core/result/result";

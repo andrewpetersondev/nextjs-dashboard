@@ -4,7 +4,7 @@
  */
 
 import type { Logger } from "@/shared/logging/logger.shared";
-import type { PerformanceTracker } from "./performance-tracker";
+import type { PerformanceTracker } from "../application/actions/utils/performance-tracker";
 
 /**
  * Context passed to action logging helpers.
