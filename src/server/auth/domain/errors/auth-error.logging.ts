@@ -1,4 +1,17 @@
 import "server-only";
+import {
+  type SafeErrorShape,
+  toSafeErrorShape,
+} from "@/shared/logging/logger.shared";
+
+/* -------------------------------------------------------------------------- */
+/*                                   TYPES                                    */
+/* -------------------------------------------------------------------------- */
+
+type TransactionExceptionPayload = {
+  kind: "exception";
+  error: SafeErrorShape;
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                ACTION CONTEXTS                             */
@@ -51,11 +64,8 @@ export const AUTH_SERVICE_CONTEXTS = {
       role,
     }),
 
-    transactionError: (err: unknown) => ({
-      error:
-        err instanceof Error
-          ? { message: err.message, stack: err.stack }
-          : String(err),
+    transactionError: (err: unknown): TransactionExceptionPayload => ({
+      error: toSafeErrorShape(err),
       kind: "exception",
     }),
   },
@@ -78,11 +88,8 @@ export const AUTH_SERVICE_CONTEXTS = {
       userId,
     }),
 
-    transactionError: (err: unknown) => ({
-      error:
-        err instanceof Error
-          ? { message: err.message, stack: err.stack }
-          : String(err),
+    transactionError: (err: unknown): TransactionExceptionPayload => ({
+      error: toSafeErrorShape(err),
       kind: "exception",
     }),
   },
@@ -95,8 +102,8 @@ export const AUTH_SERVICE_CONTEXTS = {
       kind: "success",
     }),
 
-    transactionError: (err: unknown) => ({
-      error: err instanceof Error ? { message: err.message } : String(err),
+    transactionError: (err: unknown): TransactionExceptionPayload => ({
+      error: toSafeErrorShape(err),
       kind: "exception",
     }),
 

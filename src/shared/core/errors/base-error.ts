@@ -125,6 +125,17 @@ export interface BaseErrorJson {
 }
 
 /**
+ * Serialized representation of an Error cause.
+ *
+ * Provides a safe, JSON-compatible structure for error causes.
+ */
+export interface SerializedErrorCause {
+  readonly message: string;
+  readonly name: string;
+  readonly stack?: string;
+}
+
+/**
  * Shape of a {@link BaseError} when emitted via logging.
  *
  * - Extends {@link BaseErrorJson} with optional diagnostic and debugging fields.
@@ -134,11 +145,7 @@ export interface BaseErrorJson {
 export interface BaseErrorLogPayload extends BaseErrorJson {
   readonly diagnosticId?: string;
   readonly stack?: string;
-  readonly cause?: {
-    readonly message: string;
-    readonly name: string;
-    readonly stack?: string;
-  };
+  readonly cause?: SerializedErrorCause;
 }
 
 /**

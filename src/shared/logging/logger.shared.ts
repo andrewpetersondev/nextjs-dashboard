@@ -10,6 +10,7 @@ import {
   type BaseErrorLogPayload,
   type ErrorContext,
   isBaseError,
+  type SerializedErrorCause,
 } from "@/shared/core/errors/base-error";
 import {
   ERROR_CODES,
@@ -175,25 +176,34 @@ export interface LogBaseErrorOptions {
 /**
  * Enriched error payload for detailed BaseError logging.
  *
- * Extends the base payload with optional diagnostic fields
- * that are only included when `detailed: true`.
+ * Uses the canonical {@link BaseErrorLogPayload} from the errors module.
  */
-export interface DetailedErrorPayload extends BaseErrorLogPayload {
-  /** Stack trace (only in detailed mode) */
-  readonly stack?: string;
-  /** Serialized cause chain (only in detailed mode) */
-  readonly cause?: SerializedErrorCause;
-}
+export type DetailedErrorPayload = BaseErrorLogPayload;
 
 /**
- * Serialized representation of an Error cause.
+ * Public safe error shape used when logging arbitrary `unknown` errors.
  *
- * Provides a safe, JSON-compatible structure for error causes.
+ * - `string` for primitive / non-Error values
+ * - `SerializedErrorCause` for `Error` / `BaseError` instances
  */
-export interface SerializedErrorCause {
-  readonly message: string;
-  readonly name: string;
-  readonly stack?: string;
+export type SafeErrorShape = string | SerializedErrorCause;
+
+/**
+ * Normalize any `unknown` error into a safe, structured shape for logging.
+ *
+ * @remarks
+ * - Uses the same structure as `SerializedErrorCause`
+ * - Avoids leaking arbitrary properties from the error object
+ */
+export function toSafeErrorShape(err: unknown): SafeErrorShape {
+  if (err instanceof Error) {
+    return {
+      message: err.message,
+      name: err.name,
+      ...(err.stack && { stack: err.stack }),
+    };
+  }
+  return String(err);
 }
 
 // ============================================================================
@@ -446,8 +456,7 @@ export class Logger {
   ): void {
     if (!isBaseError(error)) {
       this.error(message, {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+        error: toSafeErrorShape(error),
         ...extra,
       });
       return;

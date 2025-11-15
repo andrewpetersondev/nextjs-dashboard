@@ -23,7 +23,7 @@ export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private readonly logger: Logger;
   private readonly transactionLogger: TransactionLogger;
-  private static readonly CTX = "repo.AuthUserRepo" as const;
+  private static readonly CTX = "repo.auth.user" as const;
 
   constructor(db: AppDatabase, logger: Logger = defaultLogger) {
     this.db = db;
@@ -50,7 +50,7 @@ export class AuthUserRepositoryImpl {
     const transactionId = randomUUID();
 
     console.log("repository.withTransaction.transactionId:", transactionId);
-    this.transactionLogger.logStart(transactionId);
+    this.transactionLogger.start(transactionId);
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
@@ -60,10 +60,10 @@ export class AuthUserRepositoryImpl {
 
       console.log("does this log on failure?");
 
-      this.transactionLogger.logCommit(transactionId);
+      this.transactionLogger.commit(transactionId);
       return result;
     } catch (err) {
-      this.transactionLogger.logRollback(transactionId, err);
+      this.transactionLogger.rollback(transactionId, err);
       throw err;
     }
   }
