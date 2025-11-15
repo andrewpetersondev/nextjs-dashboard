@@ -71,6 +71,35 @@ function createVisit(
 }
 
 /**
+ * Build a normalized redaction config from options.
+ */
+function buildConfig(options?: RedactOptions): InternalConfig {
+  const {
+    extraKeys = [],
+    mask = DEFAULT_MASK,
+    maxDepth = DEFAULT_MAX_DEPTH,
+    partialMask = true,
+  } = options ?? {};
+
+  return {
+    mask,
+    maxDepth,
+    partialMask,
+    sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
+  };
+}
+
+/**
+ * Create a fresh visitor for each redaction run.
+ */
+function makeVisitor(cfg: InternalConfig) {
+  return () => {
+    const seen = new WeakSet<object>();
+    return createVisit(cfg, seen);
+  };
+}
+
+/**
  * Builds a generic redactor for arbitrary log or error data.
  *
  * - Pure: never mutates the provided value.
@@ -79,23 +108,11 @@ function createVisit(
 export function createRedactor(
   options?: RedactOptions,
 ): (value: unknown) => unknown {
-  const {
-    extraKeys = [],
-    mask = DEFAULT_MASK,
-    maxDepth = DEFAULT_MAX_DEPTH,
-    partialMask = true,
-  } = options ?? {};
-
-  const cfg: InternalConfig = {
-    mask,
-    maxDepth,
-    partialMask,
-    sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
-  };
+  const cfg = buildConfig(options);
+  const getVisitor = makeVisitor(cfg);
 
   return function redact(value: unknown): unknown {
-    const seen = new WeakSet<object>();
-    const visit = createVisit(cfg, seen);
+    const visit = getVisitor();
     return visit(value, 0);
   };
 }
@@ -109,19 +126,8 @@ export function createErrorContextRedactor(
 ): (
   ctx: Record<string, unknown> | undefined,
 ) => Record<string, unknown> | undefined {
-  const {
-    extraKeys = [],
-    mask = DEFAULT_MASK,
-    maxDepth = DEFAULT_MAX_DEPTH,
-    partialMask = true,
-  } = options ?? {};
-
-  const cfg: InternalConfig = {
-    mask,
-    maxDepth,
-    partialMask,
-    sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
-  };
+  const cfg = buildConfig(options);
+  const getVisitor = makeVisitor(cfg);
 
   return function redact(
     ctx: Record<string, unknown> | undefined,
@@ -129,9 +135,8 @@ export function createErrorContextRedactor(
     if (!ctx) {
       return ctx;
     }
-    const seen = new WeakSet<object>();
-    const visit = createVisit(cfg, seen);
 
+    const visit = getVisitor();
     let mutatedTop = false;
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(ctx)) {
