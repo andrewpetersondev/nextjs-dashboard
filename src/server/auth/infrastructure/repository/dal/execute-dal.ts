@@ -1,9 +1,9 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
 import { logger } from "@/shared/logging/logger.shared";
+import type { DalContext } from "../../dal-context";
 import { mapBaseErrorToInfrastructure } from "../errors/base-error.mapper";
 import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
-import type { DalContext } from "../types/dal-context";
 
 /**
  * Execute DAL operation with automatic error handling.
