@@ -2,9 +2,9 @@
  * @packageDocumentation
  * Helpers for uniform action-related logging used by authentication and action flows.
  */
-
+import "server-only";
+import type { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import type { Logger } from "@/shared/logging/logger.shared";
-import type { PerformanceTracker } from "../application/actions/utils/performance-tracker";
 
 /**
  * Context passed to action logging helpers.

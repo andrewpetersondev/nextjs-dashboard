@@ -10,12 +10,14 @@ interface TransactionLogExtra extends Record<string, unknown> {
   timestamp: string;
   error?: unknown;
 }
+
 type TransactionLogData = OperationData<TransactionLogExtra>;
 
 interface RepositoryLogExtra extends Record<string, unknown> {
   kind: "start" | "success" | "exception";
   error?: unknown;
 }
+
 type RepositoryLogData = OperationData<RepositoryLogExtra>;
 
 export const INFRASTRUCTURE_CONTEXTS = {
