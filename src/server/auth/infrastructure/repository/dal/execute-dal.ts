@@ -22,11 +22,21 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
+    console.log("executeDalOrThrow");
+
+    console.log("executeDalOrThrow error:", err);
+
     // Normalize to BaseError (Postgres/external → BaseError)
-    const baseError = toBaseErrorFromPg(err, dalContext);
+    const baseError = toBaseErrorFromPg(err, dalContext).withContext({
+      context: dalContext.context,
+      operation: dalContext.operation,
+      ...dalContext.identifiers,
+    });
+
+    logger.errorWithDetails("[EXECUTE DAL]", baseError);
 
     // Log once with full context
-    logger.operation("error", `DAL operation failed: ${dalContext.operation}`, {
+    logger.operation("error", "[EXECUTE DAL OPERATION]", {
       code: baseError.code,
       context: dalContext.context,
       diagnosticId: baseError.context.diagnosticId,

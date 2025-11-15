@@ -42,12 +42,14 @@ export class AuthUserRepositoryImpl {
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepositoryImpl) => Promise<T>,
   ): Promise<T> {
+    console.log("repository.withTransaction");
     const dbWithTx = this.db as AppDatabase & {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
 
     const transactionId = randomUUID();
 
+    console.log("repository.withTransaction.transactionId:", transactionId);
     this.transactionLogger.logStart(transactionId);
 
     try {
@@ -55,6 +57,8 @@ export class AuthUserRepositoryImpl {
         const txRepo = new AuthUserRepositoryImpl(tx, this.logger);
         return await fn(txRepo);
       });
+
+      console.log("does this log on failure?");
 
       this.transactionLogger.logCommit(transactionId);
       return result;
@@ -75,9 +79,12 @@ export class AuthUserRepositoryImpl {
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     const signupLogger = this.logger.withContext("signup");
+    console.log("repository.signup.input:", input);
 
     // executeDalOrThrow already normalizes all errors and logs them
     const row = await insertUserDal(this.db, input);
+
+    console.log("does this run on failure?");
 
     signupLogger.operation("info", "User created successfully", {
       identifiers: { email: input.email, userId: row.id },
