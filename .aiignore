@@ -50,6 +50,7 @@ src/server/repository/
 src/server/revenues/
 src/server/users/
 
+src/shared/branding/
 src/shared/http/
 src/shared/i18n/
 src/shared/money/

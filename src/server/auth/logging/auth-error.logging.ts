@@ -1,8 +1,6 @@
 import "server-only";
-import {
-  type SafeErrorShape,
-  toSafeErrorShape,
-} from "@/shared/logging/logger.shared";
+import { toSafeErrorShape } from "@/shared/logging/logger.shared";
+import type { SafeErrorShape } from "@/shared/logging/logger.types";
 
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */

@@ -1,8 +1,8 @@
 // infrastructure-error.logging.ts (transaction section refactored)
 import "server-only";
 import type { DalResultMetadata } from "@/server/auth/logging/dal-context";
-import type { OperationData } from "@/shared/logging/logger.shared";
 import { toSafeErrorShape } from "@/shared/logging/logger.shared";
+import type { OperationData } from "@/shared/logging/logger.types";
 
 // Extra shapes used only for logging (keeps domain types clean)
 interface TransactionLogExtra extends Record<string, unknown> {

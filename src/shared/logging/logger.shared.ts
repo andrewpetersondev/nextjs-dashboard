@@ -1,8 +1,5 @@
 // src/shared/logging/logger.shared.ts
-import {
-  getPublicLogLevel,
-  getRuntimeNodeEnv,
-} from "@/shared/config/env-public";
+import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
 import {
@@ -18,46 +15,20 @@ import {
   type Severity,
 } from "@/shared/errors/error-codes";
 import { createRedactor } from "@/shared/errors/redaction/redaction";
-
-// ============================================================================
-// Level priority (exposure risk ordering)
-// ============================================================================
-
-/**
- * Priority by **risk of exposing sensitive information**.
- *
- * Higher number = greater exposure risk.
- *
- * @property trace - Highest risk (contains most detailed internal data)
- * @property debug - High risk (technical details, stack traces)
- * @property info  - Moderate risk (operational events)
- * @property warn  - Low risk (recoverable issues)
- * @property error - Lowest risk (usually safe to expose)
- */
-const levelPriority = {
-  debug: 40,
-  error: 10,
-  info: 30,
-  trace: 50,
-  warn: 20,
-} as const satisfies Record<LogLevel, number>;
-
-/**
- * Cached console methods for minimal overhead.
- */
-const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
-  debug: console.debug.bind(console),
-  error: console.error.bind(console),
-  info: console.info.bind(console),
-  trace: console.trace.bind(console),
-  warn: console.warn.bind(console),
-} as const;
+import {
+  consoleMethod,
+  currentPriority,
+  levelPriority,
+} from "@/shared/logging/logger.levels";
+import type {
+  DetailedErrorPayload,
+  LogBaseErrorOptions,
+  LogEntry,
+  OperationData,
+  SafeErrorShape,
+} from "@/shared/logging/logger.types";
 
 const processId = getProcessId();
-
-// ============================================================================
-// Sanitization (shared redaction system)
-// ============================================================================
 
 /**
  * Shared redactor for log payloads, built on the core redaction system.
@@ -66,44 +37,6 @@ const processId = getProcessId();
  * - Guards against circular references per invocation.
  */
 const redactLogData = createRedactor();
-
-// ============================================================================
-// Runtime helpers
-// ============================================================================
-
-let cachedLogLevel: LogLevel | null = null;
-let cachedPriority: number | null = null;
-
-/**
- * Derive the effective public log level at runtime.
- * Falls back to \`info\` if the public env var is missing/invalid.
- */
-function getEffectiveLogLevel(): LogLevel {
-  if (cachedLogLevel !== null) {
-    return cachedLogLevel;
-  }
-  try {
-    cachedLogLevel = getPublicLogLevel();
-  } catch {
-    console.error("getEffectiveLogLevel failed, defaulting to 'info'");
-    cachedLogLevel = "info";
-  }
-  cachedPriority = levelPriority[cachedLogLevel];
-  return cachedLogLevel;
-}
-
-/**
- * Get the current log level priority with safe fallback.
- *
- * @returns The cached priority, or defaults to 'info' priority if uninitialized.
- */
-function currentPriority(): number {
-  if (cachedPriority === null) {
-    getEffectiveLogLevel();
-  }
-  // Defensive fallback: should never happen after getEffectiveLogLevel, but ensures type safety
-  return cachedPriority ?? levelPriority.info;
-}
 
 /**
  * Map domain \`Severity\` to \`LogLevel\` with an exhaustive check.
@@ -123,71 +56,6 @@ function severityToLogLevel(severity: Severity): LogLevel {
   }
 }
 
-// ============================================================================
-// Types
-// ============================================================================
-
-/**
- * Structured log entry format for consistency and JSON parsing.
- */
-export interface LogEntry<T = unknown> {
-  level: LogLevel;
-  message: string;
-  context?: string;
-  timestamp: string;
-  data?: T;
-  pid?: number;
-  requestId?: string;
-}
-
-/**
- * Operation metadata for DAL/repository pattern logging.
- */
-export interface OperationMetadata {
-  /** The operation name (e.g., 'getUserByEmail') */
-  operation: string;
-  /** Optional context override (e.g., 'dal.users') */
-  context?: string;
-  /** Key identifiers for the operation (e.g., { userId: '123' }) */
-  identifiers?: Record<string, unknown>;
-}
-
-/**
- * Combined data structure for operation logging.
- */
-export type OperationData<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> = T & OperationMetadata;
-
-/**
- * Options for logging BaseError instances.
- */
-export interface LogBaseErrorOptions {
-  /** Override message (defaults to error.message) */
-  message?: string;
-  /** Extra structured fields to merge */
-  extra?: Record<string, unknown>;
-  /** Include stack + cause chain (defaults false) */
-  detailed?: boolean;
-  /** Force log level override */
-  levelOverride?: LogLevel;
-}
-
-/**
- * Enriched error payload for detailed BaseError logging.
- *
- * Uses the canonical {@link BaseErrorLogPayload} from the errors module.
- */
-export type DetailedErrorPayload = BaseErrorLogPayload;
-
-/**
- * Public safe error shape used when logging arbitrary `unknown` errors.
- *
- * - `string` for primitive / non-Error values
- * - `SerializedErrorCause` for `Error` / `BaseError` instances
- */
-export type SafeErrorShape = string | SerializedErrorCause;
-
 /**
  * Normalize any `unknown` error into a safe, structured shape for logging.
  *
@@ -205,10 +73,6 @@ export function toSafeErrorShape(err: unknown): SafeErrorShape {
   }
   return String(err);
 }
-
-// ============================================================================
-// Logger
-// ============================================================================
 
 /**
  * Sensitivity-aware structured logger.
