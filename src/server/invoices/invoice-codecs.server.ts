@@ -20,7 +20,7 @@ import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
-import { toCustomerId } from "@/shared/domain/id-converters";
+import { toCustomerId } from "@/shared/branding/id-converters";
 
 /**
  * Maps branded Entity to plain DTO.

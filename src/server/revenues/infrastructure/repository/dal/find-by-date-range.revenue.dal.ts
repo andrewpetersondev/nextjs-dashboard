@@ -4,12 +4,12 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowsToEntities } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
+import type { Period } from "@/shared/branding/domain-brands";
+import { toPeriod } from "@/shared/branding/id-converters";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import type { Period } from "@/shared/domain/domain-brands";
-import { toPeriod } from "@/shared/domain/id-converters";
+} from "@/shared/errors/base-error.subclasses";
 
 export async function findRevenuesByDateRange(
   db: AppDatabase,

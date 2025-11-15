@@ -4,7 +4,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
-import type { Period, RevenueId } from "@/shared/domain/domain-brands";
+import type { Period, RevenueId } from "@/shared/branding/domain-brands";
 
 /**
  * RevenueRepositoryInterface

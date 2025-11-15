@@ -1,3 +1,5 @@
+import type { Period } from "@/shared/branding/domain-brands";
+import { toCustomerId } from "@/shared/branding/id-converters";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
@@ -6,8 +8,6 @@ import {
 } from "../../src/features/auth/lib/auth.roles";
 import type { PasswordHash } from "../../src/features/auth/lib/password.types";
 import type { invoices } from "../../src/server/db/schema/invoices";
-import type { Period } from "../../src/shared/domain/domain-brands";
-import { toCustomerId } from "../../src/shared/domain/id-converters";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods } from "./seed-shared";
 import {

@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
 import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
@@ -15,14 +14,14 @@ import type { RepoError } from "@/server/invoices/error-mappers.server";
 import { promiseToRepoResult } from "@/server/invoices/error-wrappers.result";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
+import type { InvoiceId } from "@/shared/branding/domain-brands";
 import {
   type DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
-import { mapOk } from "@/shared/core/result/sync/result-map";
-import type { InvoiceId } from "@/shared/domain/domain-brands";
+} from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { Err, Ok, type Result } from "@/shared/result/result";
+import { mapOk } from "@/shared/result/sync/result-map";
 
 /**
  * Repository for managing invoice data.

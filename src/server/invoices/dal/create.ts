@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
@@ -8,8 +7,8 @@ import type {
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import { DatabaseError } from "@/shared/core/errors/base-error.subclasses";
-import { toPeriod } from "@/shared/domain/id-converters";
+import { toPeriod } from "@/shared/branding/id-converters";
+import { DatabaseError } from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**

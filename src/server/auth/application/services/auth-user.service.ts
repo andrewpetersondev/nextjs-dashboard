@@ -16,10 +16,10 @@ import type { AuthUserTransport } from "@/server/auth/domain/types/user-transpor
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-error.logging";
 import { getAppDb } from "@/server/db/db.connection";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import type { Result } from "@/shared/core/result/result";
-import { Err, Ok } from "@/shared/core/result/result";
 import type { Logger } from "@/shared/logging/logger.shared";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import type { Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
 
 /**
  * AuthUserService orchestrates authentication and user creation logic.

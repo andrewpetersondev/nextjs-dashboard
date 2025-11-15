@@ -17,7 +17,7 @@ import {
   timeLeftMs,
 } from "@/server/auth/domain/session/helpers/session-helpers";
 import { sessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
-import type { UserId } from "@/shared/domain/domain-brands";
+import type { UserId } from "@/shared/branding/domain-brands";
 
 function buildSessionJwtPayload(params: {
   readonly userId: UserId;

@@ -9,8 +9,8 @@ import {
 import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { BaseError } from "@/shared/core/errors/base-error";
-import { ERROR_CODES } from "@/shared/core/errors/error-codes";
+import { BaseError } from "@/shared/errors/base-error";
+import { ERROR_CODES } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
 const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.demoUserCounter;

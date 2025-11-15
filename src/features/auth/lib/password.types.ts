@@ -1,4 +1,4 @@
-import type { Brand } from "@/shared/core/branding/brand";
+import type { Brand } from "@/shared/branding/brand";
 
 export const PASSWORD_HASH_BRAND: unique symbol = Symbol("PasswordHash");
 

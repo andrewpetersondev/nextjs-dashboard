@@ -1,13 +1,13 @@
 import "server-only";
-import { isBaseError } from "@/shared/core/errors/base-error";
+import { isBaseError } from "@/shared/errors/base-error";
 import {
   ConflictError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import { appErrorFromCode } from "@/shared/core/result/app-error/app-error-builders";
+} from "@/shared/errors/base-error.subclasses";
+import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import { appErrorFromCode } from "@/shared/result/app-error/app-error-builders";
 
 // Mapping table for domain errors
 const DOMAIN_ERROR_MAP = new Map<

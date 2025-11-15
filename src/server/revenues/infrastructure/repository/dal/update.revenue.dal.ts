@@ -7,11 +7,11 @@ import type {
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
+import type { RevenueId } from "@/shared/branding/domain-brands";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import type { RevenueId } from "@/shared/domain/domain-brands";
+} from "@/shared/errors/base-error.subclasses";
 
 export async function updateRevenue(
   db: AppDatabase,

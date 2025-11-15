@@ -9,7 +9,7 @@ import {
 import { extractAndValidatePeriod } from "@/server/revenues/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { isInvoiceEligibleForRevenue } from "@/server/revenues/domain/guards/invoice-eligibility.guard";
-import type { Period } from "@/shared/domain/domain-brands";
+import type { Period } from "@/shared/branding/domain-brands";
 
 /**
  * Use case that standardizes processing of invoice-related events.

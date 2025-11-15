@@ -9,7 +9,7 @@ import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
+} from "@/shared/errors/base-error.subclasses";
 
 export async function upsertRevenue(
   db: AppDatabase,

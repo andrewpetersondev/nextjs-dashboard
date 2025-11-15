@@ -4,9 +4,9 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { PasswordHash } from "@/features/auth/lib/password.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { createUserDal } from "@/server/users/dal/create";
-import type { ErrorCode } from "@/shared/core/errors/error-codes";
-import type { Result } from "@/shared/core/result/result";
-import { Err, Ok } from "@/shared/core/result/result";
+import type { ErrorCode } from "@/shared/errors/error-codes";
+import type { Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
 
 export type CreateUserRepoInput = {
   readonly username: string;

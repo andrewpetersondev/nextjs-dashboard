@@ -2,15 +2,14 @@ import "server-only";
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
-import { ValidationError } from "@/shared/core/errors/base-error.subclasses";
-import { validateCondition } from "@/shared/core/validation/primitives/assert.condition";
+import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
+import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { isDateValid } from "@/shared/utils/date/guards";
+import { validateCondition } from "@/shared/validation/primitives/assert.condition";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/shared/core/validation/primitives/number";
-import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
-
-import { isDateValid } from "@/shared/utils/date/guards";
+} from "@/shared/validation/primitives/number";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.

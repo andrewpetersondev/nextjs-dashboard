@@ -2,8 +2,8 @@
 import "server-only";
 import { z } from "zod";
 import { roleSchema } from "@/features/users/lib/user.schema";
-import type { UserId } from "@/shared/domain/domain-brands";
-import { toUserId } from "@/shared/domain/id-converters";
+import type { UserId } from "@/shared/branding/domain-brands";
+import { toUserId } from "@/shared/branding/id-converters";
 
 /**
  * Issued At (iat) claim schema.

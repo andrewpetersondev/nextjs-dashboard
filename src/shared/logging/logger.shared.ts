@@ -11,13 +11,13 @@ import {
   type ErrorContext,
   isBaseError,
   type SerializedErrorCause,
-} from "@/shared/core/errors/base-error";
+} from "@/shared/errors/base-error";
 import {
   ERROR_CODES,
   type ErrorCode,
   type Severity,
-} from "@/shared/core/errors/error-codes";
-import { createRedactor } from "@/shared/core/errors/redaction/redaction";
+} from "@/shared/errors/error-codes";
+import { createRedactor } from "@/shared/errors/redaction/redaction";
 
 // ============================================================================
 // Level priority (exposure risk ordering)

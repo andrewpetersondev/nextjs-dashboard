@@ -1,7 +1,7 @@
 import "server-only";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { LogMetadata } from "@/server/revenues/application/cross-cutting/logging";
-import type { Period } from "@/shared/domain/domain-brands";
+import type { Period } from "@/shared/branding/domain-brands";
 
 export type ChangeType =
   | "eligible-to-ineligible"

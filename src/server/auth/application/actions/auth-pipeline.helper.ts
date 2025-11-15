@@ -2,10 +2,10 @@
 
 import "server-only";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import { pipeAsync } from "@/shared/core/result/async/result-pipe-async";
-import { flatMapAsync } from "@/shared/core/result/async/result-transform-async";
-import { Ok, type Result } from "@/shared/core/result/result";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import { pipeAsync } from "@/shared/result/async/result-pipe-async";
+import { flatMapAsync } from "@/shared/result/async/result-transform-async";
+import { Ok, type Result } from "@/shared/result/result";
 import { establishSessionAction } from "./establish-session.action";
 
 // Memoized wrapper functions to avoid creating new instances on every call

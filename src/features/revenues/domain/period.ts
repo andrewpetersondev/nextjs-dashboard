@@ -1,5 +1,5 @@
-import type { Period } from "@/shared/domain/domain-brands";
-import { toPeriod } from "@/shared/domain/id-converters";
+import type { Period } from "@/shared/branding/domain-brands";
+import { toPeriod } from "@/shared/branding/id-converters";
 import { formatYearMonthUtc } from "@/shared/utils/date/format";
 
 /**

@@ -3,8 +3,8 @@ import {
   mapToRepoError,
   type RepoError,
 } from "@/server/invoices/error-mappers.server";
-import { fromPromiseThunk } from "@/shared/core/result/async/result-async";
-import type { Result } from "@/shared/core/result/result";
+import { fromPromiseThunk } from "@/shared/result/async/result-async";
+import type { Result } from "@/shared/result/result";
 
 /**
  * Typed wrapper around fromPromise to infer E via mapToRepoError,

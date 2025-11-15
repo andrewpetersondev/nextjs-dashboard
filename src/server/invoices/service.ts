@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
 import {
   dtoToCreateInvoiceEntity,
@@ -7,14 +6,14 @@ import {
 } from "@/server/invoices/invoice-codecs.server";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
+import { toInvoiceId } from "@/shared/branding/id-converters";
 import {
   type DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import { Err, type Result } from "@/shared/core/result/result";
-import { toInvoiceId } from "@/shared/domain/id-converters";
+} from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
+import { Err, type Result } from "@/shared/result/result";
 
 /**
  * Service for invoice business logic and transformation.

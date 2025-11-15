@@ -10,7 +10,7 @@ import type {
   RepoError,
   UsersRepository,
 } from "@/server/users/repo";
-import type { Result } from "@/shared/core/result/result";
+import type { Result } from "@/shared/result/result";
 
 /**
  * UsersService: business rules for users domain.

@@ -1,15 +1,14 @@
 import "server-only";
-
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
+import type { InvoiceId } from "@/shared/branding/domain-brands";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
-import type { InvoiceId } from "@/shared/domain/domain-brands";
+} from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**

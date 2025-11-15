@@ -5,7 +5,7 @@ import type {
   CustomerId,
   InvoiceId,
   Period,
-} from "@/shared/domain/domain-brands";
+} from "@/shared/branding/domain-brands";
 
 /**
  * Domain model for Invoice.

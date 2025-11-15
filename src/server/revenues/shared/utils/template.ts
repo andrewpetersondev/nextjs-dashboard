@@ -2,8 +2,8 @@ import "server-only";
 import { mapRevenueEntityToDisplayEntity } from "@/server/revenues/application/mappers/revenue-display.mapper";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import type { Period } from "@/shared/domain/domain-brands";
-import { toPeriod, toRevenueId } from "@/shared/domain/id-converters";
+import type { Period } from "@/shared/branding/domain-brands";
+import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

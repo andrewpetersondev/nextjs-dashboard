@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/core/errors/base-error.subclasses";
+import { ValidationError } from "@/shared/errors/base-error.subclasses";
 
 /**
  * Validation rule for parameters.

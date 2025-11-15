@@ -2,7 +2,7 @@ import "server-only";
 import {
   DatabaseError,
   ValidationError,
-} from "@/shared/core/errors/base-error.subclasses";
+} from "@/shared/errors/base-error.subclasses";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,

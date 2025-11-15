@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { UserId } from "@/shared/domain/domain-brands";
+import type { UserId } from "@/shared/branding/domain-brands";
 
 /**
  * Lightweight transport shape for authenticated user responses.

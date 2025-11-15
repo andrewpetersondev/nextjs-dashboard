@@ -14,7 +14,7 @@ import { updateRevenue } from "@/server/revenues/infrastructure/repository/dal/u
 import { upsertRevenue } from "@/server/revenues/infrastructure/repository/dal/upsert.revenue.dal";
 import { upsertRevenueByPeriod } from "@/server/revenues/infrastructure/repository/dal/upsert-by-period.revenue.dal";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { Period, RevenueId } from "@/shared/domain/domain-brands";
+import type { Period, RevenueId } from "@/shared/branding/domain-brands";
 
 export class RevenueRepository implements RevenueRepositoryInterface {
   /**

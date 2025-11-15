@@ -7,8 +7,8 @@ import type {
   DalErrorContext,
 } from "@/server/auth/logging/dal-context";
 import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
-import { BaseError } from "@/shared/core/errors/base-error";
-import { ERROR_CODES, type ErrorCode } from "@/shared/core/errors/error-codes";
+import { BaseError } from "@/shared/errors/base-error";
+import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
 
 const { pgError } = INFRASTRUCTURE_CONTEXTS.errorMapping;
 

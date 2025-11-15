@@ -5,8 +5,8 @@ import type {
   AuthOperation,
   AuthServiceLog,
 } from "@/server/auth/logging/auth-logging.types";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import type { Result } from "@/shared/core/result/result";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import type { Result } from "@/shared/result/result";
 
 export function mapAuthResultToServiceLog<T>(
   operation: AuthOperation,

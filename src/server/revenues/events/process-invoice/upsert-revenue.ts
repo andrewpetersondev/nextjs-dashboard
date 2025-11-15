@@ -11,8 +11,8 @@ import {
 } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { isStatusEligibleForRevenue } from "@/server/revenues/domain/guards/revenue-eligibility";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { Period } from "@/shared/domain/domain-brands";
-import { toPeriod } from "@/shared/domain/id-converters";
+import type { Period } from "@/shared/branding/domain-brands";
+import { toPeriod } from "@/shared/branding/id-converters";
 
 /**
  * Type guard indicating whether we are updating an existing invoice amount (diff update).

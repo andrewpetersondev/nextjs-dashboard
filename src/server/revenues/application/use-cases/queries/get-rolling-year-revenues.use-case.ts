@@ -8,7 +8,7 @@ import {
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import type { Period } from "@/shared/domain/domain-brands";
+import type { Period } from "@/shared/branding/domain-brands";
 import { logger } from "@/shared/logging/logger.shared";
 
 export class GetRollingYearRevenuesUseCase {

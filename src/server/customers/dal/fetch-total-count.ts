@@ -4,7 +4,7 @@ import { count } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
-import { ValidationError } from "@/shared/core/errors/base-error.subclasses";
+import { ValidationError } from "@/shared/errors/base-error.subclasses";
 
 /**
  * Fetches the total number of customers.

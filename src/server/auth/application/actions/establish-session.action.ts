@@ -2,10 +2,10 @@
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import { tryCatchAsync } from "@/shared/core/result/async/result-async";
-import { Err, Ok, type Result } from "@/shared/core/result/result";
 import { logger } from "@/shared/logging/logger.shared";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import { tryCatchAsync } from "@/shared/result/async/result-async";
+import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
  * Establishes a session for a user by setting `jwt cookie`.

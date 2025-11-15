@@ -4,7 +4,7 @@ import {
   logInfo,
 } from "@/server/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
-import { toRevenueId } from "@/shared/domain/id-converters";
+import { toRevenueId } from "@/shared/branding/id-converters";
 
 /**
  * Arguments for updating a revenue record.

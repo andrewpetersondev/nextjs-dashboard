@@ -1,5 +1,3 @@
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import type { Result } from "@/shared/core/result/result";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
@@ -8,6 +6,8 @@ import type {
   FormResult,
   FormSuccess,
 } from "@/shared/forms/domain/models/form-result";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import type { Result } from "@/shared/result/result";
 
 /**
  * Narrow to success branch.

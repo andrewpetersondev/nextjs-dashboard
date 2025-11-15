@@ -2,7 +2,7 @@ import type {
   CustomerId,
   InvoiceId,
   Period,
-} from "@/shared/domain/domain-brands";
+} from "@/shared/branding/domain-brands";
 
 /** Allowed invoice status values (immutable tuple for precise type inference). */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;

@@ -1,5 +1,5 @@
-import type { AppError } from "@/shared/core/result/app-error/app-error";
-import type { Result } from "@/shared/core/result/result";
+import type { AppError } from "@/shared/result/app-error/app-error";
+import type { Result } from "@/shared/result/result";
 
 /**
  * Success payload shape for forms.

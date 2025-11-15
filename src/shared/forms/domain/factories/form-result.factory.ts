@@ -1,10 +1,5 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
-import type { ErrorCode } from "@/shared/core/errors/error-codes";
-import {
-  type AppError,
-  makeAppErrorDetails,
-} from "@/shared/core/result/app-error/app-error";
-import { Err, Ok } from "@/shared/core/result/result";
+import type { ErrorCode } from "@/shared/errors/error-codes";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
@@ -14,6 +9,11 @@ import type {
   FormSuccess,
 } from "@/shared/forms/domain/models/form-result";
 import { freeze } from "@/shared/forms/domain/utils/freeze";
+import {
+  type AppError,
+  makeAppErrorDetails,
+} from "@/shared/result/app-error/app-error";
+import { Err, Ok } from "@/shared/result/result";
 
 /**
  * Create a successful form result.

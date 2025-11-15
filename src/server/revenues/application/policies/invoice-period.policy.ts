@@ -2,7 +2,7 @@ import "server-only";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { logError } from "@/server/revenues/application/cross-cutting/logging";
 import { extractPeriodFromInvoice as extractPeriodFromInvoiceDomain } from "@/server/revenues/domain/policies/invoice-period.policy";
-import type { Period } from "@/shared/domain/domain-brands";
+import type { Period } from "@/shared/branding/domain-brands";
 
 // TODO: THIS FILE HAS A NEAR DUPLICATE AT REVENUES/DOMAIN/POLICIES
 

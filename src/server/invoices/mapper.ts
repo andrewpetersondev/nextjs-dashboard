@@ -11,7 +11,7 @@ import {
   toCustomerId,
   toInvoiceId,
   toPeriod,
-} from "@/shared/domain/id-converters";
+} from "@/shared/branding/id-converters";
 
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthLocal } from "@/shared/utils/date/normalize";
