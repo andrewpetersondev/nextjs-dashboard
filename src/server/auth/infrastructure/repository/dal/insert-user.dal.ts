@@ -41,37 +41,41 @@ export async function insertUserDal(
 
   const dalLogger = parentLogger.withContext(dalContext.context);
 
-  return await executeDalOrThrow(async () => {
-    const [userRow] = await db
-      .insert(users)
-      .values({ email, password, role, username } satisfies NewUserRow)
-      .returning();
+  return await executeDalOrThrow(
+    async () => {
+      const [userRow] = await db
+        .insert(users)
+        .values({ email, password, role, username } satisfies NewUserRow)
+        .returning();
 
-    if (!userRow) {
-      throw BaseError.wrap(
-        ERROR_CODES.integrity.name,
-        new Error("Insert did not return a row"),
-        {
-          ...dalContext,
-          kind: "invariant",
+      if (!userRow) {
+        throw BaseError.wrap(
+          ERROR_CODES.integrity.name,
+          new Error("Insert did not return a row"),
+          {
+            ...dalContext,
+            kind: "invariant",
+          },
+        );
+      }
+
+      const resultMeta = success(email);
+
+      dalLogger.operation("info", "User row inserted", {
+        context: dalContext.context,
+        identifiers: {
+          ...dalContext.identifiers,
+          userId: userRow.id,
         },
-      );
-    }
+        kind: resultMeta.kind,
+        operation: dalContext.operation,
+        ...(resultMeta.details && { details: resultMeta.details }),
+        role,
+      } as const);
 
-    const resultMeta = success(email);
-
-    dalLogger.operation("info", "User row inserted", {
-      context: dalContext.context,
-      identifiers: {
-        ...dalContext.identifiers,
-        userId: userRow.id,
-      },
-      kind: resultMeta.kind,
-      operation: dalContext.operation,
-      ...(resultMeta.details && { details: resultMeta.details }),
-      role,
-    } as const);
-
-    return userRow;
-  }, dalContext);
+      return userRow;
+    },
+    dalContext,
+    parentLogger,
+  );
 }

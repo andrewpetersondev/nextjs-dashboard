@@ -27,10 +27,6 @@ export const INFRASTRUCTURE_CONTEXTS = {
         identifiers: { role },
         kind: "success",
       }),
-      updateFailed: (role: string): DalResultMetadata => ({
-        identifiers: { role },
-        kind: "error",
-      }),
     },
     getUserByEmail: {
       context: "infrastructure.dal.get-user-by-email" as const,

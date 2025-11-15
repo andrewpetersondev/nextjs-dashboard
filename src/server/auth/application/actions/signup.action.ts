@@ -76,7 +76,8 @@ export async function signupAction(
     email: input.email,
   });
 
-  const service = createAuthUserService(getAppDb());
+  // Use the action logger (with requestId) for the entire signup pipeline
+  const service = createAuthUserService(getAppDb(), actionLogger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );

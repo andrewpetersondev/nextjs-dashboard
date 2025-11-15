@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
 import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import { TransactionLogger } from "@/server/auth/infrastructure/transaction-logger";
@@ -15,6 +16,12 @@ import {
 import type { Logger } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
+const {
+  context: REPOSITORY_CONTEXT,
+  operationSuccess,
+  operationException,
+} = INFRASTRUCTURE_CONTEXTS.repository;
+
 /**
  * Repository for user authentication flows (signup/login).
  * Encapsulates DAL usage and provides a single point for cross-cutting policies.
@@ -23,11 +30,10 @@ export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private readonly logger: Logger;
   private readonly transactionLogger: TransactionLogger;
-  private static readonly CTX = "repo.auth.user" as const;
 
   constructor(db: AppDatabase, logger: Logger = defaultLogger) {
     this.db = db;
-    this.logger = logger.withContext(AuthUserRepositoryImpl.CTX);
+    this.logger = logger.withContext(REPOSITORY_CONTEXT);
     this.transactionLogger = new TransactionLogger(this.logger);
   }
 
@@ -56,11 +62,14 @@ export class AuthUserRepositoryImpl {
         return await fn(txRepo);
       });
 
-      console.log("does this log on failure?");
-
       this.transactionLogger.commit(transactionId);
       return result;
     } catch (err) {
+      const data = operationException("withTransaction", err, {
+        transactionId,
+      });
+      this.logger.operation("error", "Repository transaction failed", data);
+
       this.transactionLogger.rollback(transactionId, err);
       throw err;
     }
@@ -84,11 +93,12 @@ export class AuthUserRepositoryImpl {
 
     console.log("does this run on failure?");
 
-    signupLogger.operation("info", "User created successfully", {
-      identifiers: { email: input.email, userId: row.id },
-      kind: "success",
-      operation: "signup",
-    } as const);
+    const data = operationSuccess("signup", {
+      email: input.email,
+      userId: row.id,
+    });
+
+    signupLogger.operation("info", "User created successfully", data);
 
     return newUserDbRowToEntity(row);
   }
@@ -108,7 +118,7 @@ export class AuthUserRepositoryImpl {
   ): Promise<AuthUserEntity | null> {
     const loginLogger = this.logger.withContext("login");
 
-    const row = await getUserByEmailDal(this.db, input.email);
+    const row = await getUserByEmailDal(this.db, input.email, this.logger);
 
     if (!row?.password) {
       loginLogger.operation(
@@ -120,17 +130,19 @@ export class AuthUserRepositoryImpl {
           operation: "login",
         } as const,
       );
-
-      // Important: no UnauthorizedError (or other domain errors) here.
-      // We just signal "no user" via null and let the service/domain decide.
       return null;
     }
 
-    loginLogger.operation("info", "User retrieved successfully for login", {
-      identifiers: { email: input.email, userId: row.id },
-      kind: "success",
-      operation: "login",
-    } as const);
+    const data = operationSuccess("login", {
+      email: input.email,
+      userId: row.id,
+    });
+
+    loginLogger.operation(
+      "info",
+      "User retrieved successfully for login",
+      data,
+    );
 
     return userDbRowToEntity(row);
   }

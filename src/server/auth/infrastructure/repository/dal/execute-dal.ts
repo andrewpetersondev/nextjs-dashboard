@@ -1,6 +1,6 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import { logger } from "@/shared/logging/logger.shared";
+import type { Logger } from "@/shared/logging/logger.shared";
 import type { DalContext } from "../../dal-context";
 import { mapBaseErrorToInfrastructure } from "../errors/base-error.mapper";
 import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
@@ -18,14 +18,11 @@ import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
   dalContext: DalContext,
+  logger: Logger,
 ): Promise<T> {
   try {
     return await thunk();
   } catch (err: unknown) {
-    console.log("executeDalOrThrow");
-
-    console.log("executeDalOrThrow error:", err);
-
     // Normalize to BaseError (Postgres/external → BaseError)
     const baseError = toBaseErrorFromPg(err, dalContext).withContext({
       context: dalContext.context,
