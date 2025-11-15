@@ -1,14 +1,17 @@
 // src/server/auth/infrastructure/repository/dal/insert-user.dal.ts
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
-import type { DalContext } from "@/server/auth/infrastructure/dal-context";
+import {
+  createDalContext,
+  type DalContext,
+} from "@/server/auth/infrastructure/dal-context";
 import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/infrastructure/infrastructure-error.logging";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/core/errors/base-error";
 import { ERROR_CODES } from "@/shared/core/errors/error-codes";
-import { logger } from "@/shared/logging/logger.shared";
+import type { Logger } from "@/shared/logging/logger.shared";
 
 const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.insertUser;
 
@@ -18,6 +21,7 @@ const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.insertUser;
  *
  * @param db - Database connection
  * @param input - AuthSignupDalInput containing validated, normalized user input
+ * @param parentLogger - Repository / request-level logger to preserve context
  * @returns Promise<NewUserRow> - The freshly inserted user row
  * @throws ConflictError (if unique constraint violated)
  * @throws DatabaseError (if underlying database fails)
@@ -26,14 +30,16 @@ const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.insertUser;
 export async function insertUserDal(
   db: AppDatabase,
   input: AuthSignupPayload,
+  parentLogger: Logger,
 ): Promise<NewUserRow> {
   const { email, username, password, role } = input;
 
-  const dalContext: DalContext = {
-    context,
-    identifiers: { email, username },
-    operation: "insertUser",
-  } as const;
+  const dalContext: DalContext = createDalContext("insertUser", context, {
+    email,
+    username,
+  });
+
+  const dalLogger = parentLogger.withContext(dalContext.context);
 
   return await executeDalOrThrow(async () => {
     const [userRow] = await db
@@ -46,20 +52,25 @@ export async function insertUserDal(
         ERROR_CODES.integrity.name,
         new Error("Insert did not return a row"),
         {
-          context: dalContext.context,
-          operation: dalContext.operation,
-          ...dalContext.identifiers,
+          ...dalContext,
           kind: "invariant",
         },
       );
     }
 
-    logger.info("User created", {
-      ...success(email),
-      context,
+    const resultMeta = success(email);
+
+    dalLogger.operation("info", "User row inserted", {
+      context: dalContext.context,
+      identifiers: {
+        ...dalContext.identifiers,
+        userId: userRow.id,
+      },
+      kind: resultMeta.kind,
+      operation: dalContext.operation,
+      ...(resultMeta.details && { details: resultMeta.details }),
       role,
-      userId: userRow.id,
-    });
+    } as const);
 
     return userRow;
   }, dalContext);
