@@ -11,7 +11,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { Logger } from "@/shared/logging/logger.shared";
 
-const { context } = INFRASTRUCTURE_CONTEXTS.dal.getUserByEmail;
+const { context, notFound, success } =
+  INFRASTRUCTURE_CONTEXTS.dal.getUserByEmail;
 
 /**
  * Finds a user by email for login.
@@ -20,11 +21,13 @@ const { context } = INFRASTRUCTURE_CONTEXTS.dal.getUserByEmail;
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
-  logger: Logger,
+  parentLogger: Logger,
 ): Promise<UserRow | null> {
   const dalContext: DalContext = createDalContext("getUserByEmail", context, {
     email,
   });
+
+  const dalLogger = parentLogger.withContext(dalContext.context);
 
   return await executeDalOrThrow(
     async () => {
@@ -34,10 +37,31 @@ export async function getUserByEmailDal(
         .where(eq(users.email, email))
         .limit(1);
 
-      // No logging for normal "not found" case - it's expected
-      return userRow ?? null;
+      if (!userRow) {
+        const resultMeta = notFound(email);
+
+        dalLogger.operation("info", "User not found for login", {
+          context: dalContext.context,
+          identifiers: resultMeta.identifiers,
+          kind: resultMeta.kind,
+          operation: dalContext.operation,
+        } as const);
+
+        return null;
+      }
+
+      const resultMeta = success(email);
+
+      dalLogger.operation("info", "User loaded for login", {
+        context: dalContext.context,
+        identifiers: resultMeta.identifiers,
+        kind: resultMeta.kind,
+        operation: dalContext.operation,
+      } as const);
+
+      return userRow;
     },
     dalContext,
-    logger,
+    parentLogger,
   );
 }

@@ -30,6 +30,18 @@ import { ROUTES } from "@/shared/routes/routes";
 const fields = LOGIN_FIELDS_LIST;
 const ctx = AUTH_ACTION_CONTEXTS.login;
 
+/**
+ * Handles the login action by validating form data, finding the user,
+ * establishing a session, and redirecting on success.
+ *
+ * Flow:
+ * - Validate form → if invalid, return FormResult with field errors.
+ * - Login → map Ok(user) to { id, role } only.
+ * - Establish session → on failure, map to UI-safe FormResult.
+ * - Redirect to dashboard on success.
+ *
+ * @returns FormResult on validation/auth errors, never returns on success (redirects)
+ */
 export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
@@ -64,7 +76,8 @@ export async function loginAction(
     email: input.email,
   });
 
-  const service = createAuthUserService(getAppDb());
+  // Use the action logger (with requestId) for the entire login pipeline
+  const service = createAuthUserService(getAppDb(), actionLogger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.login.bind(service)),
   );

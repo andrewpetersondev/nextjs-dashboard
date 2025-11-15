@@ -40,7 +40,7 @@ export class AuthUserService {
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.baseLog = logger.withContext("AuthUserService");
+    this.baseLog = logger.withContext("auth.user.service");
   }
 
   /**

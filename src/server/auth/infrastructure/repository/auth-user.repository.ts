@@ -86,12 +86,9 @@ export class AuthUserRepositoryImpl {
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     const signupLogger = this.logger.withContext("signup");
-    console.log("repository.signup.input:", input);
 
     // executeDalOrThrow already normalizes all errors and logs them
     const row = await insertUserDal(this.db, input, this.logger);
-
-    console.log("does this run on failure?");
 
     const data = operationSuccess("signup", {
       email: input.email,
