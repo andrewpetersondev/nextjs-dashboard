@@ -83,7 +83,6 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
         JSON.stringify(v);
         sanitized[k] = v;
       } catch {
-        // eslint-disable-next-line no-console
         console.warn("[BaseError] Redacted non-serializable context value:", k);
         sanitized[k] = redactNonSerializable(v);
       }
@@ -259,13 +258,7 @@ export class BaseError extends Error {
       context: { ...this.context, ...extra },
       message: this.message,
     }) as this;
-    if (typeof this.stack === "string") {
-      try {
-        (next as { stack?: string }).stack = this.stack;
-      } catch {
-        // ignore
-      }
-    }
+    this.copyStackTo(next);
     return next;
   }
 
@@ -291,13 +284,7 @@ export class BaseError extends Error {
       context: { ...this.context },
       message: overrideMessage ?? this.message,
     }) as this;
-    if (typeof this.stack === "string") {
-      try {
-        (next as { stack?: string }).stack = this.stack;
-      } catch {
-        // ignore
-      }
-    }
+    this.copyStackTo(next);
     return next;
   }
 
@@ -336,7 +323,7 @@ export class BaseError extends Error {
    * Normalizes any unknown thrown value into a {@link BaseError}.
    *
    * Cases:
-   * - `BaseError` → returned as-is.
+   * - `BaseError` → returned with merged context if additional context is provided.
    * - `Error` → wrapped into a new `BaseError` using `fallbackCode`,
    *   preserving the original message as `message` and `cause`.
    * - anything else → converted into a JSON-safe representation and stored
@@ -353,7 +340,9 @@ export class BaseError extends Error {
     context: ErrorContext = {},
   ): BaseError {
     if (error instanceof BaseError) {
-      return error;
+      return Object.keys(context).length > 0
+        ? error.withContext(context)
+        : error;
     }
     if (error instanceof Error) {
       return new BaseError(fallbackCode, {
@@ -397,13 +386,7 @@ export class BaseError extends Error {
   ): BaseError {
     if (err instanceof BaseError) {
       const remapped = err.remap(code, message);
-      if (remapped !== err && typeof err.stack === "string") {
-        try {
-          (remapped as { stack?: string }).stack = err.stack;
-        } catch {
-          // ignore
-        }
-      }
+      err.copyStackTo(remapped);
       return remapped;
     }
     if (err instanceof Error) {
@@ -427,8 +410,8 @@ export class BaseError extends Error {
    * Protected factory method used by helpers to construct new instances.
    *
    * Designed for subclassing:
-   * - Subclasses can override this to customize how new instances are created
-   *   (e.g. to add extra fields or enforce invariants).
+   * - Subclasses with a custom constructor signature SHOULD override this
+   *   method to correctly reconstruct themselves from `(code, options)`.
    * - Default implementation instantiates `this.constructor` with the given
    *   `(code, options)` and falls back to `BaseError` if that fails.
    *
@@ -441,8 +424,24 @@ export class BaseError extends Error {
     ) => BaseError;
     try {
       return new Ctor(code, options);
-    } catch {
+    } catch (err) {
+      if (isDev()) {
+        console.warn(
+          `[BaseError] Subclass ${this.constructor.name} failed to reconstruct; falling back to BaseError`,
+          err,
+        );
+      }
       return new BaseError(code, options);
+    }
+  }
+
+  private copyStackTo(target: BaseError): void {
+    if (typeof this.stack === "string") {
+      try {
+        (target as { stack?: string }).stack = this.stack;
+      } catch {
+        // ignore
+      }
     }
   }
 }
