@@ -5,47 +5,21 @@ import {
 } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import { isBaseError } from "@/shared/core/errors/base-error";
-import { DEFAULT_SENSITIVE_KEYS } from "@/shared/core/errors/redaction/redaction.constants";
+import {
+  BaseError,
+  type BaseErrorLogPayload,
+  type ErrorContext,
+  isBaseError,
+} from "@/shared/core/errors/base-error";
+import {
+  ERROR_CODES,
+  type ErrorCode,
+  type Severity,
+} from "@/shared/core/errors/error-codes";
+import { createRedactor } from "@/shared/core/errors/redaction/redaction";
 
 // ============================================================================
-// Types & Interfaces
-// ============================================================================
-
-/**
- * Structured log entry format for consistency and JSON parsing.
- */
-export interface LogEntry<T = unknown> {
-  level: LogLevel;
-  message: string;
-  context?: string;
-  timestamp: string;
-  data?: T;
-  pid?: number;
-  requestId?: string;
-}
-
-/**
- * Operation metadata for DAL/repository pattern logging.
- */
-export interface OperationMetadata {
-  /** The operation name (e.g., 'getUserByEmail') */
-  operation: string;
-  /** Optional context override (e.g., 'dal.users') */
-  context?: string;
-  /** Key identifiers for the operation (e.g., { userId: '123' }) */
-  identifiers?: Record<string, unknown>;
-}
-
-/**
- * Combined data structure for operation logging.
- */
-export type OperationData<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> = T & OperationMetadata;
-
-// ============================================================================
-// Constants
+// Level priority (exposure risk ordering)
 // ============================================================================
 
 /**
@@ -81,54 +55,149 @@ const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
 const processId = getProcessId();
 
 // ============================================================================
-// Utility Functions
+// Sanitization (shared redaction system)
 // ============================================================================
 
 /**
- * Recursively sanitize objects to redact sensitive fields.
+ * Shared redactor for log payloads, built on the core redaction system.
+ *
+ * - Uses DEFAULT_SENSITIVE_KEYS and redaction configuration.
+ * - Guards against circular references per invocation.
  */
-function sanitize(data: unknown): unknown {
-  if (data === null || data === undefined) {
-    return data;
-  }
-  if (Array.isArray(data)) {
-    return data.map(sanitize);
-  }
-  if (data instanceof Date || data instanceof RegExp) {
-    return data;
-  }
-  if (data && typeof data === "object") {
-    return Object.fromEntries(
-      Object.entries(data).map(([k, v]) => [
-        k,
-        DEFAULT_SENSITIVE_KEYS.some((rk) => k.toLowerCase().includes(rk))
-          ? "[REDACTED]"
-          : sanitize(v),
-      ]),
-    );
-  }
-  return data;
-}
+const redactLogData = createRedactor();
+
+// ============================================================================
+// Runtime helpers
+// ============================================================================
+
+let cachedLogLevel: LogLevel | null = null;
+let cachedPriority: number | null = null;
 
 /**
  * Derive the effective public log level at runtime.
- * Falls back to 'info' if the public env var is missing/invalid.
+ * Falls back to \`info\` if the public env var is missing/invalid.
  */
 function getEffectiveLogLevel(): LogLevel {
+  if (cachedLogLevel !== null) {
+    return cachedLogLevel;
+  }
   try {
-    return getPublicLogLevel();
+    cachedLogLevel = getPublicLogLevel();
   } catch {
-    return "info";
+    console.error("getEffectiveLogLevel failed, defaulting to 'info'");
+    cachedLogLevel = "info";
+  }
+  cachedPriority = levelPriority[cachedLogLevel];
+  return cachedLogLevel;
+}
+
+/**
+ * Get the current log level priority with safe fallback.
+ *
+ * @returns The cached priority, or defaults to 'info' priority if uninitialized.
+ */
+function currentPriority(): number {
+  if (cachedPriority === null) {
+    getEffectiveLogLevel();
+  }
+  // Defensive fallback: should never happen after getEffectiveLogLevel, but ensures type safety
+  return cachedPriority ?? levelPriority.info;
+}
+
+/**
+ * Map domain \`Severity\` to \`LogLevel\` with an exhaustive check.
+ */
+function severityToLogLevel(severity: Severity): LogLevel {
+  switch (severity) {
+    case "warn":
+      return "warn";
+    case "info":
+      return "info";
+    case "error":
+      return "error";
+    default: {
+      const _exhaustive: never = severity;
+      return _exhaustive;
+    }
   }
 }
 
-function getCurrentLevelPriority(): number {
-  const envLevel = getEffectiveLogLevel();
-  return levelPriority[envLevel];
+// ============================================================================
+// Types
+// ============================================================================
+
+/**
+ * Structured log entry format for consistency and JSON parsing.
+ */
+export interface LogEntry<T = unknown> {
+  level: LogLevel;
+  message: string;
+  context?: string;
+  timestamp: string;
+  data?: T;
+  pid?: number;
+  requestId?: string;
+}
+
+/**
+ * Operation metadata for DAL/repository pattern logging.
+ */
+export interface OperationMetadata {
+  /** The operation name (e.g., 'getUserByEmail') */
+  operation: string;
+  /** Optional context override (e.g., 'dal.users') */
+  context?: string;
+  /** Key identifiers for the operation (e.g., { userId: '123' }) */
+  identifiers?: Record<string, unknown>;
+}
+
+/**
+ * Combined data structure for operation logging.
+ */
+export type OperationData<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = T & OperationMetadata;
+
+/**
+ * Options for logging BaseError instances.
+ */
+export interface LogBaseErrorOptions {
+  /** Override message (defaults to error.message) */
+  message?: string;
+  /** Extra structured fields to merge */
+  extra?: Record<string, unknown>;
+  /** Include stack + cause chain (defaults false) */
+  detailed?: boolean;
+  /** Force log level override */
+  levelOverride?: LogLevel;
+}
+
+/**
+ * Enriched error payload for detailed BaseError logging.
+ *
+ * Extends the base payload with optional diagnostic fields
+ * that are only included when `detailed: true`.
+ */
+export interface DetailedErrorPayload extends BaseErrorLogPayload {
+  /** Stack trace (only in detailed mode) */
+  readonly stack?: string;
+  /** Serialized cause chain (only in detailed mode) */
+  readonly cause?: SerializedErrorCause;
+}
+
+/**
+ * Serialized representation of an Error cause.
+ *
+ * Provides a safe, JSON-compatible structure for error causes.
+ */
+export interface SerializedErrorCause {
+  readonly message: string;
+  readonly name: string;
+  readonly stack?: string;
 }
 
 // ============================================================================
-// Logger Class
+// Logger
 // ============================================================================
 
 /**
@@ -144,93 +213,27 @@ export class Logger {
   }
 
   // --------------------------------------------------------------------------
-  // Private Helper Methods
-  // --------------------------------------------------------------------------
-
-  private shouldLog(level: LogLevel): boolean {
-    return levelPriority[level] <= getCurrentLevelPriority();
-  }
-
-  private createEntry<T>(
-    level: LogLevel,
-    message: string,
-    data?: T,
-  ): LogEntry<T> {
-    const entry: LogEntry<T> = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-    };
-
-    if (this.context !== undefined) {
-      entry.context = this.context;
-    }
-    if (this.requestId !== undefined) {
-      entry.requestId = this.requestId;
-    }
-    if (processId !== undefined) {
-      entry.pid = processId;
-    }
-    if (data !== undefined) {
-      entry.data = sanitize(data) as T;
-    }
-
-    return entry;
-  }
-
-  private format(entry: LogEntry): unknown[] {
-    if (getRuntimeNodeEnv() === "production") {
-      return [JSON.stringify(entry)];
-    }
-
-    const prefixParts: string[] = [entry.timestamp];
-    if (entry.requestId) {
-      prefixParts.push(`[req:${entry.requestId}]`);
-    }
-    if (entry.context) {
-      prefixParts.push(`[${entry.context}]`);
-    }
-
-    const prefix = prefixParts.join(" ");
-    return entry.data !== undefined
-      ? [prefix, entry.message, entry.data]
-      : [prefix, entry.message];
-  }
-
-  private output(entry: LogEntry): void {
-    if (!this.shouldLog(entry.level)) {
-      return;
-    }
-    const formatted = this.format(entry);
-    consoleMethod[entry.level](...formatted);
-  }
-
-  private logAtLevel<T>(level: LogLevel, message: string, data?: T): void {
-    this.output(this.createEntry(level, message, data));
-  }
-
-  // --------------------------------------------------------------------------
   // Public Logging Methods
   // --------------------------------------------------------------------------
 
   trace<T>(message: string, data?: T): void {
-    this.logAtLevel("trace", message, data);
+    this.logAt("trace", message, data);
   }
 
   debug<T>(message: string, data?: T): void {
-    this.logAtLevel("debug", message, data);
+    this.logAt("debug", message, data);
   }
 
   info<T>(message: string, data?: T): void {
-    this.logAtLevel("info", message, data);
+    this.logAt("info", message, data);
   }
 
   warn<T>(message: string, data?: T): void {
-    this.logAtLevel("warn", message, data);
+    this.logAt("warn", message, data);
   }
 
   error<T>(message: string, data?: T): void {
-    this.logAtLevel("error", message, data);
+    this.logAt("error", message, data);
   }
 
   // --------------------------------------------------------------------------
@@ -252,98 +255,223 @@ export class Logger {
     return new Logger(this.context, requestId);
   }
 
-  // --------------------------------------------------------------------------
-  // Specialized Logging Methods
-  // --------------------------------------------------------------------------
-
-  /**
-   * Log a BaseError with full diagnostic information (internal use only).
-   * Includes stack traces and cause chains for debugging.
-   *
-   * @example
-   * ```typescript
-   * try {
-   *   await operation();
-   * } catch (err) {
-   *   const baseError = BaseError.from(err);
-   *   logger.errorWithDetails('Operation failed', baseError);
-   *   throw baseError;
-   * }
-   * ```
-   */
-  errorWithDetails(message: string, error: unknown): void {
-    if (!isBaseError(error)) {
-      // Fallback for non-BaseError
-      this.error(message, {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-      return;
-    }
-
-    const errorData: Record<string, unknown> = {
-      category: error.category,
-      code: error.code,
-      context: error.context,
-      message: error.message,
-      retryable: error.retryable,
-      severity: error.severity,
-      stack: error.stack,
-    };
-
-    // Include cause chain if present
-    if (error.cause instanceof Error) {
-      errorData.cause = {
-        message: error.cause.message,
-        name: error.cause.name,
-        stack: error.cause.stack,
-      };
-    }
-
-    this.error(message, errorData);
+  // Core
+  private shouldLog(level: LogLevel): boolean {
+    return levelPriority[level] <= currentPriority();
   }
 
-  /**
-   * Log with operation context for DAL/repository patterns.
-   * Automatically includes operation, context, and identifiers.
-   *
-   * @example
-   * ```typescript
-   * logger.operation('info', 'User fetched', {
-   *   operation: 'getUserByEmail',
-   *   context: 'dal.users',
-   *   identifiers: { email: 'user@example.com' },
-   *   additionalField: 'value',
-   * });
-   * ```
-   */
-  operation<T extends Record<string, unknown> = Record<string, unknown>>(
+  private createEntry<T>(
+    level: LogLevel,
+    message: string,
+    data?: T,
+  ): LogEntry<T> {
+    const entry: LogEntry<T> = {
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+    };
+    if (this.context !== undefined && this.context !== "") {
+      entry.context = this.context;
+    }
+    if (this.requestId !== undefined && this.requestId !== "") {
+      entry.requestId = this.requestId;
+    }
+    if (processId !== undefined) {
+      entry.pid = processId;
+    }
+    if (data !== undefined) {
+      // Use shared redaction system for all log data
+      entry.data = redactLogData(data) as T;
+    }
+    return entry;
+  }
+
+  private format(entry: LogEntry): unknown[] {
+    if (getRuntimeNodeEnv() === "production") {
+      return [JSON.stringify(entry)];
+    }
+    const prefix: string[] = [entry.timestamp];
+    if (entry.requestId) {
+      prefix.push(`[req:${entry.requestId}]`);
+    }
+    if (entry.context) {
+      prefix.push(`[${entry.context}]`);
+    }
+    const head = prefix.join(" ");
+    return entry.data !== undefined
+      ? [head, entry.message, entry.data]
+      : [head, entry.message];
+  }
+
+  private output(entry: LogEntry): void {
+    consoleMethod[entry.level](...this.format(entry));
+  }
+
+  private logAt<T>(level: LogLevel, message: string, data?: T): void {
+    if (!this.shouldLog(level)) {
+      return;
+    }
+    const entry = this.createEntry(level, message, data);
+    this.output(entry);
+  }
+
+  // Operation logging
+  operation<T extends Record<string, unknown>>(
     level: LogLevel,
     message: string,
     data: OperationData<T>,
   ): void {
     const { operation, context, identifiers, ...rest } = data;
-
-    // Build the structured log data
     const logData = {
       operation,
       ...(identifiers ?? {}),
       ...rest,
     };
+    const target = context ? this.withContext(context) : this;
+    target.logAt(level, message, logData);
+  }
 
-    // Use withContext if context provided in data
-    const targetLogger = context ? this.withContext(context) : this;
+  /**
+   * Log a BaseError with structured, sanitized output.
+   *
+   * @remarks
+   * - By default, uses `toJson()` which excludes stack/cause for safety
+   * - Set `detailed: true` to include stack traces and cause chain
+   * - Automatically extracts `diagnosticId` from error context when present
+   * - Maps error severity to appropriate log level
+   * - All payloads are immutably constructed
+   *
+   * @example
+   * ```typescript
+   * logger.logBaseError(error);
+   * logger.logBaseError(error, { detailed: true, extra: { userId: '123' } });
+   * ```
+   */
+  logBaseError(error: BaseError, options: LogBaseErrorOptions = {}): void {
+    const {
+      message = error.message,
+      extra,
+      detailed = false,
+      levelOverride,
+    } = options;
 
-    // Delegate to the appropriate log level
-    targetLogger.logAtLevel(level, message, logData);
+    const level = levelOverride ?? severityToLogLevel(error.severity);
+
+    // Build payload immutably
+    const payload = this.buildErrorPayload(error, {
+      detailed,
+      extra,
+    });
+
+    this.logAt(level, message, payload);
+  }
+
+  /**
+   * Build an immutable error payload for logging.
+   *
+   * @internal
+   */
+  private buildErrorPayload(
+    error: BaseError,
+    options: { detailed: boolean; extra?: Record<string, unknown> },
+  ): DetailedErrorPayload {
+    const { detailed, extra } = options;
+
+    // Start with base sanitized shape (no stack/cause)
+    const baseJson = error.toJson();
+
+    // Extract diagnosticId with type safety
+    const diagnosticId = this.extractDiagnosticId(error.context);
+
+    // Build base payload immutably
+    const basePayload: BaseErrorLogPayload & Record<string, unknown> = {
+      ...baseJson,
+      ...(diagnosticId && { diagnosticId }),
+      ...(extra && { ...extra }),
+    };
+
+    // Add detailed information if requested
+    if (!detailed) {
+      return basePayload;
+    }
+
+    // Build detailed payload immutably
+    const detailedPayload: DetailedErrorPayload = {
+      ...basePayload,
+      ...(error.stack && { stack: error.stack }),
+      ...(error.cause instanceof Error && {
+        cause: this.serializeErrorCause(error.cause),
+      }),
+    };
+
+    return detailedPayload;
+  }
+
+  /**
+   * Safely extract diagnosticId from error context.
+   *
+   * @internal
+   */
+  private extractDiagnosticId(
+    context: ErrorContext | undefined,
+  ): string | undefined {
+    if (!context) {
+      return;
+    }
+
+    const ctx = context as Record<string, unknown>;
+    const id = ctx.diagnosticId;
+
+    // Type-safe extraction: only return if it's actually a string
+    return typeof id === "string" ? id : undefined;
+  }
+
+  /**
+   * Serialize an Error cause into a safe, JSON-compatible structure.
+   *
+   * @internal
+   */
+  private serializeErrorCause(cause: Error): SerializedErrorCause {
+    return {
+      message: cause.message,
+      name: cause.name,
+      ...(cause.stack && { stack: cause.stack }),
+    };
+  }
+
+  errorWithDetails(
+    message: string,
+    error: unknown,
+    extra?: Record<string, unknown>,
+  ): void {
+    if (!isBaseError(error)) {
+      this.error(message, {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        ...extra,
+      });
+      return;
+    }
+    this.logBaseError(error, {
+      detailed: true,
+      extra,
+      levelOverride: "error",
+      message,
+    });
+  }
+
+  // Convenience wrapper (safe log) for unknown values
+  normalizeAndLog(
+    err: unknown,
+    fallbackMessage = "Operation failed",
+    fallbackCode = ERROR_CODES.unknown.name satisfies ErrorCode,
+    extra?: Record<string, unknown>,
+  ): BaseError {
+    const baseErr = BaseError.from(err, fallbackCode, extra);
+    this.logBaseError(baseErr, { message: fallbackMessage });
+    return baseErr;
   }
 }
 
-// ============================================================================
-// Default Export
-// ============================================================================
-
-/**
- * Default shared instance
- */
+// Default instance
 export const logger = new Logger();

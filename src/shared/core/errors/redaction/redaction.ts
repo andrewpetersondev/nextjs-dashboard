@@ -71,6 +71,36 @@ function createVisit(
 }
 
 /**
+ * Builds a generic redactor for arbitrary log or error data.
+ *
+ * - Pure: never mutates the provided value.
+ * - Safe: guards against circular references per invocation.
+ */
+export function createRedactor(
+  options?: RedactOptions,
+): (value: unknown) => unknown {
+  const {
+    extraKeys = [],
+    mask = DEFAULT_MASK,
+    maxDepth = DEFAULT_MAX_DEPTH,
+    partialMask = true,
+  } = options ?? {};
+
+  const cfg: InternalConfig = {
+    mask,
+    maxDepth,
+    partialMask,
+    sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
+  };
+
+  return function redact(value: unknown): unknown {
+    const seen = new WeakSet<object>();
+    const visit = createVisit(cfg, seen);
+    return visit(value, 0);
+  };
+}
+
+/**
  * Builds a context redactor compatible with logError's `redact` parameter.
  * Pure: never mutates the provided context object.
  */

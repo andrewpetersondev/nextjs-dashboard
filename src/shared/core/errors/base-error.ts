@@ -125,6 +125,23 @@ export interface BaseErrorJson {
 }
 
 /**
+ * Shape of a {@link BaseError} when emitted via logging.
+ *
+ * - Extends {@link BaseErrorJson} with optional diagnostic and debugging fields.
+ * - `diagnosticId` is extracted from `context.diagnosticId` when present.
+ * - `stack` / `cause` are only included when detailed logging is enabled.
+ */
+export interface BaseErrorLogPayload extends BaseErrorJson {
+  readonly diagnosticId?: string;
+  readonly stack?: string;
+  readonly cause?: {
+    readonly message: string;
+    readonly name: string;
+    readonly stack?: string;
+  };
+}
+
+/**
  * Constructor options for {@link BaseError}.
  *
  * Keeps the constructor signature small and stable while allowing:
