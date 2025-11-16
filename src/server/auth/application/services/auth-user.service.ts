@@ -14,7 +14,7 @@ import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
-import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-error.logging";
+import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import type { Logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";

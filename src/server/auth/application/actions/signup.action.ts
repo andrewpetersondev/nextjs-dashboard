@@ -19,7 +19,7 @@ import {
   logValidationComplete,
   logValidationFailure,
 } from "@/server/auth/logging/action-logger.helper";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-error.logging";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";

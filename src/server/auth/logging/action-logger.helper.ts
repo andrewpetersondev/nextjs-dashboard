@@ -1,30 +1,7 @@
-/**
- * @packageDocumentation
- * Helpers for uniform action-related logging used by authentication and action flows.
- */
+// src/server/auth/logging/action-logger.helper.ts
 import "server-only";
 import type { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import type { Logger } from "@/shared/logging/logger.shared";
-
-/**
- * Context passed to action logging helpers.
- *
- * @remarks
- * Contains optional user identification and error details together with a
- * `PerformanceTracker` instance and the request `ip`.
- */
-export interface ActionLogContext {
-  /** Optional user email associated with the action. */
-  email?: string;
-  /** Client IP address for the request. */
-  ip: string;
-  /** Performance tracker that provides timing metrics for the action. */
-  tracker: PerformanceTracker;
-  /** Optional error code when an error occurred. */
-  errorCode?: string;
-  /** Optional human-readable error message. */
-  errorMessage?: string;
-}
 
 /**
  * Log that an action has been initiated.
@@ -94,7 +71,13 @@ export function logValidationFailure(
  */
 export function logAuthenticationFailure(
   logger: Logger,
-  context: ActionLogContext,
+  context: {
+    ip: string;
+    tracker: PerformanceTracker;
+    email?: string;
+    errorCode?: string;
+    errorMessage?: string;
+  },
 ): void {
   logger.error("Authentication failed", {
     ...context.tracker.getMetrics(),
