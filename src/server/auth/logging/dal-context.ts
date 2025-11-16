@@ -29,25 +29,6 @@ export interface DalErrorContext extends DalContext {
 }
 
 /**
- * Repository operation context.
- */
-export interface RepositoryContext {
-  readonly operation: string;
-  readonly kind: "start" | "success" | "exception";
-  readonly identifiers?: Record<string, unknown>;
-  readonly error?: unknown;
-}
-
-/**
- * DAL operation result metadata.
- */
-export interface DalResultMetadata {
-  readonly kind: "success" | "not_found" | "duplicate" | "error";
-  readonly identifiers: Record<string, string | number>;
-  readonly details?: Record<string, unknown>;
-}
-
-/**
  * Factory for creating standardized DAL contexts.
  */
 export const createDalContext = (
@@ -60,18 +41,4 @@ export const createDalContext = (
   correlationId,
   identifiers,
   operation,
-});
-
-/**
- * Factory for creating error contexts with diagnostics.
- */
-export const createDalErrorContext = (
-  dalContext: DalContext,
-  diagnosticId: string,
-  metadata?: Record<string, unknown>,
-): DalErrorContext => ({
-  ...dalContext,
-  diagnosticId,
-  metadata,
-  timestamp: new Date().toISOString(),
 });
