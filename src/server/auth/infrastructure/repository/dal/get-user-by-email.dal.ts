@@ -3,16 +3,18 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
+  AUTH_LOG_CONTEXTS,
+  AuthDalLogFactory,
+} from "@/server/auth/logging/auth-logging.contexts";
+import {
   createDalContext,
   type DalContext,
 } from "@/server/auth/logging/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { Logger } from "@/shared/logging/logger.shared";
 
-const { context, notFound, success } =
-  INFRASTRUCTURE_CONTEXTS.dal.getUserByEmail;
+const context = AUTH_LOG_CONTEXTS.dal.login;
 
 /**
  * Finds a user by email for login.
@@ -43,27 +45,17 @@ export async function getUserByEmailDal(
         .limit(1);
 
       if (!userRow) {
-        const resultMeta = notFound(email);
-
         dalLogger.operation("info", "User not found for login", {
+          ...AuthDalLogFactory.notFound(operation, { email }),
           context: dalContext.context,
-          identifiers: resultMeta.identifiers,
-          // standardized infra-level failure kind
-          kind: resultMeta.kind, // "not_found"
-          operation: dalContext.operation, // "login" in repo login flow
-        } as const);
-
+        });
         return null;
       }
 
-      const resultMeta = success(email);
-
       dalLogger.operation("info", "User loaded for login", {
+        ...AuthDalLogFactory.success(operation, { email }),
         context: dalContext.context,
-        identifiers: resultMeta.identifiers,
-        kind: resultMeta.kind, // "success"
-        operation: dalContext.operation,
-      } as const);
+      });
 
       return userRow;
     },

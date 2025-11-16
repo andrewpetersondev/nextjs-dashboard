@@ -7,7 +7,14 @@ export type AuthLogLayer =
   | "infrastructure.repository"
   | "infrastructure.dal";
 
-export type AuthOperation = "login" | "signup" | "demoUser" | "logout";
+export type AuthOperation =
+  | "login"
+  | "signup"
+  | "demoUser"
+  | "withTransaction"
+  | "insertUser"
+  | "getUserByEmail"
+  | "logout";
 
 /**
  * Common `kind` values used across layers.
@@ -45,6 +52,8 @@ export interface AuthLogBase {
   layer: AuthLogLayer;
   /** Business identifiers (email, userId, etc.) */
   identifiers?: Record<string, string | number>;
+  /** TODO: MAYBE CHANGE LATER */
+  [key: string]: unknown;
 }
 
 /* ------------------------- Layered payload shapes ------------------------- */

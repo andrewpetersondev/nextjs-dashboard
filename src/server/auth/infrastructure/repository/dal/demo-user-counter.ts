@@ -3,17 +3,20 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
+  AUTH_LOG_CONTEXTS,
+  AuthDalLogFactory,
+} from "@/server/auth/logging/auth-logging.contexts";
+import {
   createDalContext,
   type DalContext,
 } from "@/server/auth/logging/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
-const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.demoUserCounter;
+const context = AUTH_LOG_CONTEXTS.dal.demoUserCounter;
 
 /**
  * Increments and retrieves the demo user counter for a given role.
@@ -78,14 +81,15 @@ export async function demoUserCounter(
         );
       }
 
-      const resultMeta = success(role, counterRow.id);
+      const resultMeta = AuthDalLogFactory.success(
+        "demoUser",
+        { role },
+        { count: counterRow.id },
+      );
 
       logger.operation("info", "Demo user counter created for role", {
         context: dalContext.context,
-        identifiers: {
-          ...dalContext.identifiers,
-          counterId: counterRow.id,
-        },
+        identifiers: resultMeta.identifiers,
         kind: resultMeta.kind,
         operation: dalContext.operation,
         ...(resultMeta.details && { details: resultMeta.details }),

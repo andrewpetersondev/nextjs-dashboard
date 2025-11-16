@@ -3,17 +3,20 @@ import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
+  AUTH_LOG_CONTEXTS,
+  AuthDalLogFactory,
+} from "@/server/auth/logging/auth-logging.contexts";
+import {
   createDalContext,
   type DalContext,
 } from "@/server/auth/logging/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
 import type { Logger } from "@/shared/logging/logger.shared";
 
-const { context, success } = INFRASTRUCTURE_CONTEXTS.dal.insertUser;
+const context = AUTH_LOG_CONTEXTS.dal.signup;
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
@@ -59,19 +62,14 @@ export async function insertUserDal(
         );
       }
 
-      const resultMeta = success(email);
-
       dalLogger.operation("info", "User row inserted", {
-        context: dalContext.context,
-        identifiers: {
-          ...dalContext.identifiers,
+        ...AuthDalLogFactory.success("insertUser", {
+          email,
           userId: userRow.id,
-        },
-        kind: resultMeta.kind,
-        operation: dalContext.operation,
-        ...(resultMeta.details && { details: resultMeta.details }),
+        }),
+        context: dalContext.context,
         role,
-      } as const);
+      });
 
       return userRow;
     },

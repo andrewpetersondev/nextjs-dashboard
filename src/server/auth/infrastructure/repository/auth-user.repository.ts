@@ -6,7 +6,10 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
+import {
+  AUTH_LOG_CONTEXTS,
+  AuthRepoLogFactory,
+} from "@/server/auth/logging/auth-logging.contexts";
 import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
@@ -16,11 +19,7 @@ import {
 import type { Logger } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
-const {
-  context: REPOSITORY_CONTEXT,
-  operationSuccess,
-  operationException,
-} = INFRASTRUCTURE_CONTEXTS.repository;
+const REPOSITORY_CONTEXT = AUTH_LOG_CONTEXTS.repo;
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -65,7 +64,7 @@ export class AuthUserRepositoryImpl {
       this.transactionLogger.commit(transactionId);
       return result;
     } catch (err) {
-      const data = operationException("withTransaction", err, {
+      const data = AuthRepoLogFactory.exception("withTransaction", err, {
         transactionId,
       });
       this.logger.operation("error", "Repository transaction failed", data);
@@ -90,7 +89,7 @@ export class AuthUserRepositoryImpl {
     // executeDalOrThrow already normalizes all errors and logs them
     const row = await insertUserDal(this.db, input, this.logger);
 
-    const data = operationSuccess("signup", {
+    const data = AuthRepoLogFactory.success("signup", {
       email: input.email,
       userId: row.id,
     });
@@ -137,7 +136,7 @@ export class AuthUserRepositoryImpl {
       return null;
     }
 
-    const data = operationSuccess("login", {
+    const data = AuthRepoLogFactory.success("login", {
       email: input.email,
       userId: row.id,
     });

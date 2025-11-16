@@ -2,15 +2,13 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
+import { ErrorMappingFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type {
   DalContext,
   DalErrorContext,
 } from "@/server/auth/logging/dal-context";
-import { INFRASTRUCTURE_CONTEXTS } from "@/server/auth/logging/infrastructure-error.logging";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
-
-const { pgError } = INFRASTRUCTURE_CONTEXTS.errorMapping;
 
 const PG_ERROR_SOURCE = "postgres" as const;
 const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
@@ -111,7 +109,7 @@ function buildErrorContext(
 
   if (code) {
     metadata.pgCode = code;
-    metadata.errorMapping = pgError(code, pg?.detail);
+    metadata.errorMapping = ErrorMappingFactory.pgError(code, pg?.detail);
     if (meta) {
       metadata.retryable = meta.retryable;
       metadata.pgErrorName = meta.name;

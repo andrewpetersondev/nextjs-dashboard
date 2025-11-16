@@ -17,8 +17,10 @@ export const AUTH_LOG_CONTEXTS = {
     login: "infrastructure.dal.get-user-by-email" as const,
     signup: "infrastructure.dal.insert-user" as const,
   },
+  errorMapping: "infrastructure.error-mapping" as const,
   repo: "infrastructure.repository.auth-user" as const,
   service: (operation: AuthOperation) => `service.auth.${operation}` as const,
+  transaction: "db.transaction" as const,
 } as const;
 
 /* ------------------------- Action-level factories ------------------------- */
@@ -217,6 +219,57 @@ export const AuthDalLogFactory = {
       operation,
       ...(identifiers && { identifiers }),
       ...(details && { details }),
+    };
+  },
+} as const;
+
+/* ----------------------- Transaction-level factory ------------------------ */
+
+export interface TransactionLogExtra extends Record<string, unknown> {
+  event: "start" | "commit" | "rollback";
+  timestamp: string;
+  error?: unknown;
+}
+
+export const TransactionLogFactory = {
+  commit(transactionId: string): TransactionLogExtra {
+    return {
+      event: "commit",
+      identifiers: { transactionId },
+      timestamp: new Date().toISOString(),
+    };
+  },
+  rollback(transactionId: string, error?: unknown): TransactionLogExtra {
+    return {
+      event: "rollback",
+      identifiers: { transactionId },
+      timestamp: new Date().toISOString(),
+      ...(error !== undefined && { error }),
+    };
+  },
+  start(transactionId: string): TransactionLogExtra {
+    return {
+      event: "start",
+      identifiers: { transactionId },
+      timestamp: new Date().toISOString(),
+    };
+  },
+} as const;
+
+/* ----------------------- Error mapping factory ---------------------------- */
+
+export const ErrorMappingFactory = {
+  pgError(code: string, detail?: string) {
+    return {
+      code,
+      kind: "pg-error" as const,
+      ...(detail && { detail }),
+    };
+  },
+  unknownError(err: unknown) {
+    return {
+      error: err,
+      kind: "unknown" as const,
     };
   },
 } as const;
