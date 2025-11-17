@@ -63,7 +63,7 @@ function extractMessageAndSuccess<Tdata>(
     });
   }
 
-  // Error branch: state.error is AppError
+  // Error branch: state.error is BaseError
   const error = state.error;
 
   if (isBaseError(error)) {

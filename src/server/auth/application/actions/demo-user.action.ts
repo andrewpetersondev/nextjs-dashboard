@@ -54,7 +54,6 @@ async function createDemoUserInternal(
         role,
       }),
       context: actionContext.context,
-      // Only rely on AppError surface fields
       errorCode: error.code,
       errorMessage: error.message,
       identifiers: actionContext.identifiers,
@@ -70,7 +69,6 @@ async function createDemoUserInternal(
 
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
-      // Prefer AppError.message, fallback to generic
       message: error.message || DEMO_USER_ERROR_MESSAGE,
     });
   }

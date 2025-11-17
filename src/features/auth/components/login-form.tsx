@@ -43,7 +43,7 @@ export const LoginForm: FC<LoginFormProps> = ({
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
 
-  // Extract form details safely from AppError
+  // Extract form details safely from BaseError
   const fieldErrors = state.ok
     ? undefined
     : getFieldErrors<LoginField>(state.error);
