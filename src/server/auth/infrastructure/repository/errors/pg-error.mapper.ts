@@ -14,7 +14,6 @@ const PG_ERROR_SOURCE = "postgres" as const;
 const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
 const PG_DEFAULT_MESSAGE = ERROR_CODES.database.description;
 
-// ... existing code ...
 const PG_ERRORS = {
   checkViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
