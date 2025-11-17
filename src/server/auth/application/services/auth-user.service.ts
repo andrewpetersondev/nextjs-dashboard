@@ -7,12 +7,12 @@ import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
-import { createAuthAppError } from "@/server/auth/domain/errors/app-error.factories";
-import { mapRepoError } from "@/server/auth/domain/errors/app-error.mapping.repo";
-import { toFormAwareError } from "@/server/auth/domain/errors/form-errors.factory";
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
+import { createAuthAppError } from "@/server/auth/errors/app-error.factories";
+import { mapRepoError } from "@/server/auth/errors/app-error.mapping.repo";
+import { toFormAwareError } from "@/server/auth/errors/form-errors.factory";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import {
   type AuthLayerContext,

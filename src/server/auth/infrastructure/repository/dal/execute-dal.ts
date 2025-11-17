@@ -1,7 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import { mapBaseErrorToInfrastructure } from "@/server/auth/infrastructure/repository/errors/base-error.mapper";
-import { mapPgErrorToBase } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
+import { mapBaseErrorToInfrastructure } from "@/server/auth/errors/base-error.mapper";
+import { mapPgErrorToBase } from "@/server/auth/errors/pg-error.mapper";
 import {
   type AuthLayerContext,
   toErrorContext,

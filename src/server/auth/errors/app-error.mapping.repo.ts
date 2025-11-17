@@ -1,5 +1,5 @@
 import "server-only";
-import { PG_ERROR_MAP } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
+import { PG_ERROR_MAP } from "@/server/auth/errors/pg-error.mapper";
 import {
   type AppError,
   appErrorFromCode,

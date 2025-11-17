@@ -1,8 +1,8 @@
 // src/server/auth/application/actions/establish-session.action.ts
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
+import { toUnexpectedAppError } from "@/server/auth/errors/app-error.factories";
 import {
   type AuthLayerContext,
   createAuthOperationContext,
