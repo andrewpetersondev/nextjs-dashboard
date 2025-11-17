@@ -39,11 +39,3 @@ export function firstRow<Trow extends object>(value: unknown): Trow | null {
   const [row] = value.rows as readonly Trow[];
   return row ?? null;
 }
-
-/**
- * Return all rows if present, otherwise an empty array.
- * @param value - Unknown result to extract rows from.
- */
-export function rowsOf<Trow extends object>(value: unknown): readonly Trow[] {
-  return hasRows<Trow>(value) ? (value.rows as readonly Trow[]) : [];
-}

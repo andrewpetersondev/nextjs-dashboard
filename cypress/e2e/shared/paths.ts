@@ -17,5 +17,4 @@ export const DASHBOARD_USERS_PATH = "/dashboard/users" as const;
 export const ADMIN_USERS_PATH = "/admin/users" as const;
 
 // DASHBOARD --> INVOICES
-export const INVOICES_PATH = "/dashboard/invoices" as const;
 export const CREATE_INVOICE_PATH = "/dashboard/invoices/create" as const;

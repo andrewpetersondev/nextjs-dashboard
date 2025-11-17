@@ -74,5 +74,4 @@ export type EditUserInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserInput;
 
 // Zod Output (post-parse)
-export type CreateUserValues = z.output<typeof CreateUserFormSchema>;
 export type EditUserFormValues = z.output<typeof EditUserFormSchema>;

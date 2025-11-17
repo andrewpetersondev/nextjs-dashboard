@@ -5,9 +5,6 @@ import type {
   EncryptPayloadSchema,
 } from "@/server/auth/domain/session/validation/session-payload.schema";
 
-// Inbound (untrusted) payload when creating/signing a session
-export type EncryptPayloadInput = z.input<typeof EncryptPayloadSchema>;
-
 // Outbound (validated) payload after parsing EncryptPayloadSchema
 export type EncryptPayload = z.output<typeof EncryptPayloadSchema>;
 

@@ -7,5 +7,3 @@ export const TWENTY_SECONDS: Milliseconds = 20_000;
 
 /** Default timeout used in .should assertions unless specified otherwise. */
 export const DEFAULT_TIMEOUT: Milliseconds = TEN_SECONDS;
-
-export const DB_TIMEOUT: Milliseconds = TEN_SECONDS;

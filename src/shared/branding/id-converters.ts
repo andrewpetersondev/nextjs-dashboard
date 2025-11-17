@@ -83,16 +83,6 @@ export const toRevenueId = (id: string): RevenueId => {
   }
   throw r.error;
 };
-/**
- * Validates and converts a string to a branded SessionId (throws on error)
- */
-export const toSessionId = (id: string): SessionId => {
-  const r = toSessionIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-};
 
 /**
  * Normalizes an input into a branded Period (throws on error)

@@ -102,20 +102,6 @@ export const SignupSchema = AuthCredentialsSchema.safeExtend({
 
 // Derived types
 
-/**
- * Pre-parse login input type.
- *
- * @deprecated Use z.input<typeof LoginSchema> inline; input may differ from output.
- */
-export type LoginInput = z.input<typeof LoginSchema>;
-
-/**
- * Pre-parse signup input type.
- *
- * @deprecated Use z.input<typeof SignupSchema> inline; input may differ from output.
- */
-export type SignupInput = z.input<typeof SignupSchema>;
-
 /** Post-parse login data type. */
 export type LoginData = z.output<typeof LoginSchema>;
 

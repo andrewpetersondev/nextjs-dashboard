@@ -1,12 +1,5 @@
 // File: src/shared/core/result/app-error.ts
-
-import { isProd } from "@/shared/config/env-shared";
-import type { BaseError } from "@/shared/errors/base-error";
-import {
-  type ErrorCode,
-  type Severity,
-  tryGetErrorCodeMeta,
-} from "@/shared/errors/error-codes";
+import type { ErrorCode, Severity } from "@/shared/errors/error-codes";
 
 /**
  * Canonical, JSON-safe details payload for AppError.
@@ -50,47 +43,4 @@ export interface AppError {
   readonly severity?: Severity;
   readonly stack?: string;
   readonly __appError?: "AppError";
-}
-
-// Factory helpers (kept minimal here to avoid cyclic deps with builders)
-
-/** Create branded details; call sites can pass partials safely. */
-export const makeAppErrorDetails = (
-  d: Readonly<{
-    formErrors?: readonly string[];
-    fieldErrors?: Readonly<Record<string, readonly string[]>>;
-    extra?: Readonly<Record<string, unknown>>;
-  }>,
-): AppErrorDetails => {
-  const details: AppErrorDetails = {
-    ...(d.formErrors ? { formErrors: d.formErrors } : {}),
-    ...(d.fieldErrors ? { fieldErrors: d.fieldErrors } : {}),
-    ...(d.extra ? { extra: d.extra } : {}),
-    __brand: "AppErrorDetails",
-  };
-  return Object.freeze(details);
-};
-
-/**
- * Create an AppError for a specific canonical code using BaseError semantics,
- * then adapt to AppError. Useful when you know the code at the boundary.
- * @deprecated Use BaseError and related utilities instead.
- */
-export function appErrorFromCode(
-  code: BaseError["code"],
-  message?: string,
-  details?: unknown,
-): AppError {
-  const meta = tryGetErrorCodeMeta(code);
-  const app: AppError = {
-    code,
-    kind: meta?.category ?? "unknown",
-    message: message || meta?.description || "An unknown error occurred",
-    severity: (meta?.severity as AppError["severity"] | undefined) ?? "error",
-    ...(details ? { details } : {}),
-  };
-  if (!isProd()) {
-    Object.freeze(app);
-  }
-  return app;
 }
