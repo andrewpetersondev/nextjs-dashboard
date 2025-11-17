@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import { isBaseError } from "@/shared/errors/base-error";
 import type {
   FormResult,
   FormSuccess,
@@ -13,11 +13,11 @@ import type {
  * - Safely navigates nested message properties
  * - Returns undefined for message if not found (no forced fallbacks)
  */
-type ServerMessageState<Tdata = unknown> = FormResult<Tdata>;
+type ServerMessageState<Tdata> = FormResult<Tdata>;
 
-type ServerMessageProps<Tdata = unknown> = Readonly<{
-  readonly state: ServerMessageState<Tdata>;
+type ServerMessageProps<Tdata> = Readonly<{
   readonly showAlert: boolean;
+  readonly state: ServerMessageState<Tdata>;
 }>;
 
 /**
@@ -30,23 +30,6 @@ function isFormSuccess<Tdata>(value: unknown): value is FormSuccess<Tdata> {
   }
   const obj = value as Record<string, unknown>;
   return "data" in obj && "message" in obj && typeof obj.message === "string";
-}
-
-/**
- * Type guard to check if a value is AppError.
- * AppError has `code`, `message` properties and optional `details`.
- */
-function isAppError(value: unknown): value is AppError {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const obj = value as Record<string, unknown>;
-  return (
-    "code" in obj &&
-    "message" in obj &&
-    typeof obj.message === "string" &&
-    typeof obj.code === "string"
-  );
 }
 
 /**
@@ -64,7 +47,6 @@ function extractMessageAndSuccess<Tdata>(
   readonly success: boolean;
 }> {
   if (state.ok) {
-    // Success branch: state.value is FormSuccess<TData>
     const value = state.value;
 
     if (isFormSuccess(value)) {
@@ -84,7 +66,7 @@ function extractMessageAndSuccess<Tdata>(
   // Error branch: state.error is AppError
   const error = state.error;
 
-  if (isAppError(error)) {
+  if (isBaseError(error)) {
     return Object.freeze({
       message: error.message,
       success: false,
@@ -107,7 +89,7 @@ function extractMessageAndSuccess<Tdata>(
  * - Conditional styling based on success state
  * - Integrates with form submission flow
  */
-export function ServerMessage<Tdata = unknown>({
+export function ServerMessage<Tdata>({
   state,
   showAlert,
 }: ServerMessageProps<Tdata>): JSX.Element {
