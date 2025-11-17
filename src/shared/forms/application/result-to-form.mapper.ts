@@ -1,16 +1,14 @@
 import type { AppError } from "@/shared/errors/app-error/app-error";
+import { selectDisplayableStringFieldValues } from "@/shared/forms/application/display-values.mapper";
+import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
+import { getFieldValues } from "@/shared/forms/application/field-values.extractor";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
-import {
-  getFieldErrors,
-  getFieldValues,
-} from "@/shared/forms/domain/form-guards";
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
 } from "@/shared/forms/form-messages.constants";
-import { selectDisplayableStringFieldValues } from "@/shared/forms/state/display-values.mapper";
 import type { Result } from "@/shared/result/result";
 
 /**

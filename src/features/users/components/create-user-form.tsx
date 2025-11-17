@@ -5,7 +5,7 @@ import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/actions/create";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/state/initial-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-state";
 
 export function CreateUserForm(): JSX.Element {
   const initialState =
