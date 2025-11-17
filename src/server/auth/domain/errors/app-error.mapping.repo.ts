@@ -35,16 +35,19 @@ function extractBaseErrorDetails(
     return null;
   }
 
-  if (err.code !== ERROR_CODES.database.name) {
-    return null;
-  }
+  const context = err.getContext();
 
-  const details = err.getDetails();
   return {
-    diagnosticId: safeString(details?.diagnosticId),
-    operation: safeString(details?.operation),
-    table: safeString(details?.table),
-    timestamp: safeString(details?.timestamp),
+    code: err.code,
+    diagnosticId: safeString(context?.diagnosticId),
+    extra: {
+      ...(context?.constraint ? { constraint: context.constraint } : {}),
+      ...(context?.pgErrorCode ? { pgErrorCode: context.pgErrorCode } : {}),
+      ...(context?.pgErrorName ? { pgErrorName: context.pgErrorName } : {}),
+    },
+    operation: safeString(context?.operation),
+    table: safeString(context?.table),
+    timestamp: safeString(context?.timestamp),
   };
 }
 
@@ -66,25 +69,36 @@ export function mapRepoError(err: unknown, context: string): AppError {
     }
   }
 
-  // 2) Infrastructure/BaseError (e.g., DatabaseError)
+  // 2) Infrastructure/BaseError
   const baseErrorDetails = extractBaseErrorDetails(err);
-  if (baseErrorDetails) {
-    if (isBaseError(err)) {
-      logger.withContext(context).errorWithDetails("Database error", err);
-    } else {
-      logger.error("Database error", {
-        code: ERROR_CODES.database.name satisfies ErrorCode,
-        context,
-        ...baseErrorDetails,
-      });
+
+  if (baseErrorDetails && isBaseError(err)) {
+    logger.withContext(context).errorWithDetails("Database error", err);
+
+    // Map unique constraint violations to conflict error
+    const isUniqueViolation =
+      baseErrorDetails.extra.pgErrorCode === "23505" ||
+      baseErrorDetails.extra.constraint;
+
+    if (isUniqueViolation) {
+      return appErrorFromCode(
+        ERROR_CODES.conflict.name,
+        "A record with this value already exists",
+        {
+          diagnosticId: baseErrorDetails.diagnosticId,
+          extra: baseErrorDetails.extra,
+        },
+      );
     }
 
+    // Other database errors
     return appErrorFromCode(
-      ERROR_CODES.database.name satisfies ErrorCode,
+      ERROR_CODES.database.name,
       ERROR_CODES.database.description,
-      baseErrorDetails.diagnosticId
-        ? { diagnosticId: baseErrorDetails.diagnosticId }
-        : undefined,
+      {
+        diagnosticId: baseErrorDetails.diagnosticId,
+        extra: baseErrorDetails.extra,
+      },
     );
   }
 

@@ -257,7 +257,7 @@ export class BaseError extends Error {
    * - Use {@link BaseError.withContext} to derive a new error
    *   with additional context instead of mutating this one.
    */
-  getDetails(): ErrorContext {
+  getContext(): ErrorContext {
     return this.context;
   }
 
