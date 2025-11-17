@@ -189,7 +189,64 @@ export class Logger {
     this.output(entry);
   }
 
-  // Operation logging
+  /**
+   * Logs a structured application “operation” event.
+   *
+   * Designed for high‑level, business‑meaningful events such as
+   * “Signup action started”, “Demo user creation failed”, or
+   * “Transaction commit”.
+   *
+   * Behavior:
+   * - Uses `data.context` (if provided) to derive a child logger via
+   *   {@link Logger.withContext}, so the operation is tagged with a
+   *   stable logical context (e.g. `auth:application.action.signup`).
+   * - Reads `data.operation` as the canonical operation name
+   *   (e.g. `"signup"`, `"demoUser"`, `"withTransaction"`).
+   * - Flattens `data.identifiers` into the log payload so that key
+   *   identifiers (e.g. `userId`, `role`, `ip`) are top‑level fields.
+   * - Any remaining fields on `data` (excluding `context`, `operation`,
+   *   and `identifiers`) are preserved and logged (e.g. metrics, details).
+   *
+   * This method does **not** know about {@link BaseError}. It is meant for
+   * domain / operation telemetry, not for rich error logging. Use
+   * {@link Logger.errorWithDetails} or {@link Logger.logBaseError} for
+   * full error payloads.
+   *
+   * @typeParam T - Additional payload shape for the operation.
+   *
+   * @param level - Log level to use for the event (e.g. `"info"`, `"error"`).
+   * @param message - Human‑readable description of the operation event.
+   * @param data - Structured operation data. The following keys have
+   *   special meaning:
+   *   - `context?`: Logical log context; when present, it is applied via
+   *     {@link Logger.withContext} before logging.
+   *   - `operation`: Canonical operation name (e.g. `"signup"`).
+   *   - `identifiers?`: Stable identifiers to flatten into the payload
+   *     (user IDs, roles, IPs, etc.).
+   *   - Any other keys (e.g. `details`, metrics, status flags) are logged
+   *     as part of the operation payload.
+   *
+   * @example
+   * ```ts
+   * // Action‑layer operation logging
+   * actionLogger.operation("info", "Signup action started", {
+   *   context: "auth:application.action.signup",
+   *   operation: "signup",
+   *   identifiers: { ip, userId },
+   *   details: { userAgent },
+   * });
+   * ```
+   *
+   * @example
+   * ```ts
+   * // Transaction‑layer operation logging
+   * transactionLogger.operation("debug", "Transaction start", {
+   *   context: "auth:infrastructure.transaction",
+   *   operation: "withTransaction",
+   *   identifiers: { transactionId },
+   * });
+   * ```
+   */
   operation<T extends Record<string, unknown>>(
     level: LogLevel,
     message: string,
@@ -313,6 +370,67 @@ export class Logger {
     };
   }
 
+  /**
+   * Logs an unknown error value with rich, sanitized details.
+   *
+   * This is a convenience wrapper around {@link Logger.logBaseError} that:
+   * - Accepts an `unknown` error value.
+   * - If the value is a {@link BaseError}, logs it with a detailed payload
+   *   including stack traces and serialized cause information.
+   * - If the value is not a {@link BaseError}, normalizes it into a
+   *   safe error shape while preserving as much diagnostic information
+   *   as possible.
+   *
+   * Behavior:
+   * - For {@link BaseError} instances:
+   *   - Uses `logBaseError(error, { detailed: true, extra, levelOverride: "error" })`.
+   *   - Payload includes:
+   *     - Canonical error metadata (code, severity, category, retryable,
+   *       statusCode, description).
+   *     - Immutable `context` (including any DAL / auth metadata).
+   *     - Optional `diagnosticId` (when present in the error context).
+   *     - Stack trace and serialized `cause` (name, message, stack) when
+   *       available.
+   *     - Any additional `extra` fields you provide.
+   * - For non‑`BaseError` values:
+   *   - Converts the value into a JSON‑safe shape via `toSafeErrorShape`.
+   *   - Logs it at `"error"` level under an `error` field along with any
+   *     provided `extra` metadata.
+   *
+   * Use this method when you are at a boundary where an operation fails
+   * and you want *maximum* diagnostic information in logs, while still
+   * respecting redaction rules.
+   *
+   * @param message - Log message describing the failure context
+   *   (e.g. `"Transaction rollback"`, `"[EXECUTE DAL]"`).
+   * @param error - The error or thrown value to log. Can be:
+   *   - A {@link BaseError} (preferred, for canonical app errors).
+   *   - Any other `Error` instance.
+   *   - Any arbitrary unknown value.
+   * @param extra - Optional additional metadata to merge into the
+   *   logged payload. Useful for operation identifiers (e.g. context,
+   *   operation name, transaction ID, DAL identifiers).
+   *
+   * @example
+   * ```ts
+   * // Rich logging for DAL failures
+   * logger.errorWithDetails("[EXECUTE DAL]", baseError, {
+   *   context: dalContext.context,
+   *   operation: dalContext.operation,
+   *   ...dalContext.identifiers,
+   * });
+   * ```
+   *
+   * @example
+   * ```ts
+   * // Transaction rollback with full error details
+   * transactionLogger.errorWithDetails("Transaction rollback", err, {
+   *   context: "auth:infrastructure.transaction",
+   *   operation: "withTransaction",
+   *   transactionId,
+   * });
+   * ```
+   */
   errorWithDetails(
     message: string,
     error: unknown,

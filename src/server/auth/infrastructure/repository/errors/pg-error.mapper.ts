@@ -179,14 +179,21 @@ export function toBaseErrorFromPg(
   const errorCode = mapPgCodeToErrorCode(code);
   const message = buildErrorMessage(code);
 
-  // Flatten context for BaseError (no nested objects)
+  /**
+   * Flatten context for BaseError (no nested objects)
+   *
+   * baseError.context.pgCode      // "23505"
+   * baseError.context.pgErrorName // "uniqueViolation"
+   * baseError.context.constraint  // e.g. "users_email_key"
+   * baseError.context.table       // e.g. "users"
+   */
   const flatContext = {
     context: errorContext.context,
     diagnosticId: errorContext.diagnosticId,
     operation: errorContext.operation,
     timestamp: errorContext.timestamp,
     ...errorContext.identifiers,
-    ...(errorContext.metadata ?? {}),
+    ...(errorContext.metadata ?? {}), // <- pgCode, pgErrorName, constraint, table, etc.
   };
 
   return BaseError.wrap(errorCode, err, flatContext, message);

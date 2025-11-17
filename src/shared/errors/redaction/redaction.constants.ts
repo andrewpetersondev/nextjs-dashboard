@@ -27,4 +27,5 @@ export const DEFAULT_SENSITIVE_KEYS: readonly string[] = [
   "api_key",
   "clientSecret",
   "privateKey",
+  "stack",
 ] as const;

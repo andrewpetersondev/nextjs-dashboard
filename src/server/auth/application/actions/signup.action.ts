@@ -19,8 +19,9 @@ import {
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
+import { formError } from "@/shared/forms/domain/factories/form-result.factory";
+import { mapAppErrorToFormPayload } from "@/shared/forms/domain/guards/form-guards";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import { mapResultToFormResult } from "@/shared/forms/state/mappers/result-to-form.mapper";
 import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -101,7 +102,11 @@ export async function signupAction(
   // You can enrich identifiers as you go if desired:
   const enrichedContext: AuthLayerContext<"action"> = {
     ...actionContext,
-    identifiers: { ...actionContext.identifiers, email: input.email },
+    identifiers: {
+      ...actionContext.identifiers,
+      email: input.email,
+      username: input.username,
+    },
   };
 
   // Validation complete
@@ -121,6 +126,8 @@ export async function signupAction(
   );
 
   if (!sessionResult.ok) {
+    const error = sessionResult.error;
+
     // Authentication failure
     actionLogger.operation("error", "Signup authentication failed", {
       ...ctx.fail("authentication_failed"),
@@ -128,18 +135,24 @@ export async function signupAction(
       details: {
         ...tracker.getMetrics(),
         email: input.email,
-        errorCode: sessionResult.error.code,
-        errorMessage: sessionResult.error.message,
+        errorCode: error.code,
+        errorMessage: error.message,
         ip,
       },
       identifiers: enrichedContext.identifiers,
       operation: enrichedContext.operation,
     });
 
-    return mapResultToFormResult(sessionResult, {
-      failureMessage: "Signup failed. Please try again.",
-      fields,
-      raw: input,
+    const { message, fieldErrors } = mapAppErrorToFormPayload<SignupField>(
+      error,
+      "Signup failed. Please try again.",
+    );
+
+    return formError<SignupField>({
+      code: error.code,
+      fieldErrors,
+      message,
+      values: input,
     });
   }
   const { id: userId, role } = sessionResult.value;
