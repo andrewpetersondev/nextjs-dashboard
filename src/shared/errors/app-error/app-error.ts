@@ -31,6 +31,8 @@ export const makeErrorMapper =
  * Forms: normalized, framework-agnostic shape.
  * - formErrors: readonly array of non-field messages (may be empty).
  * - fieldErrors: dense map field -> readonly string[] (may be empty arrays).
+ * @deprecated Use BaseError and related utilities instead.
+ *
  */
 export interface AppErrorDetails {
   readonly formErrors?: readonly string[];
@@ -47,14 +49,7 @@ export interface AppErrorDetails {
  * @public
  * @readonly
  * @remarks Provides clarity on the context and severity of an error.
- * @example
- * ```
- * const error: AppError = {
- *   kind: "ValidationError",
- *   message: "Invalid input provided",
- *   severity: "error"
- * };
- * ```
+ * @deprecated Use BaseError and related utilities instead.
  */
 export interface AppError {
   readonly code: ErrorCode;
@@ -120,6 +115,7 @@ export function isAppErrorDetails(v: unknown): v is AppErrorDetails {
 /**
  * Create an AppError for a specific canonical code using BaseError semantics,
  * then adapt to AppError. Useful when you know the code at the boundary.
+ * @deprecated Use BaseError and related utilities instead.
  */
 export function appErrorFromCode(
   code: BaseError["code"],
