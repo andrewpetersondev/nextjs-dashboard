@@ -157,29 +157,11 @@ export interface BaseErrorLogPayload extends BaseErrorJson {
  * - an underlying cause (any unknown value)
  */
 export interface BaseErrorOptions {
-  /**
-   * Human-readable error message.
-   *
-   * - Defaults to the description from the associated error code metadata.
-   * - Used as the `Error.message` and in `toJson().message`.
-   */
-  readonly message?: string;
-
-  /**
-   * Arbitrary diagnostic context that will be:
-   * - defensively cloned
-   * - JSON-validated in development (with best-effort redaction)
-   * - frozen to discourage mutation
-   */
-  readonly context?: ErrorContext;
-
-  /**
-   * Optional underlying cause. Can be:
-   * - an `Error` instance (used as `cause` directly)
-   * - any other value, which will be redacted into a JSON-safe shape
-   * - `undefined`, meaning "no cause"
-   */
   readonly cause?: unknown;
+  readonly context?: ErrorContext;
+  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
+  readonly formErrors?: readonly string[];
+  readonly message?: string;
 }
 
 /**
@@ -210,6 +192,8 @@ export class BaseError extends Error {
    *   since those are redacted before being passed to the base `Error`.
    */
   readonly originalCause?: unknown;
+  readonly formErrors?: readonly string[];
+  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
 
   constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
     const meta = getErrorCodeMeta(code);
@@ -243,6 +227,12 @@ export class BaseError extends Error {
       ? (deepFreezeDev(checkedContext) as ErrorContext)
       : (Object.freeze(checkedContext) as ErrorContext);
     this.originalCause = cause;
+    this.formErrors = options.formErrors
+      ? Object.freeze([...options.formErrors])
+      : undefined;
+    this.fieldErrors = options.fieldErrors
+      ? Object.freeze({ ...options.fieldErrors })
+      : undefined;
     try {
       Object.freeze(this);
     } catch {
@@ -328,7 +318,7 @@ export class BaseError extends Error {
    * stable error data without leaking internal details.
    */
   toJson(): BaseErrorJson {
-    const base: BaseErrorJson = {
+    return {
       category: this.category,
       code: this.code,
       description: this.description,
@@ -339,8 +329,9 @@ export class BaseError extends Error {
       ...(Object.keys(this.context).length > 0
         ? { context: this.context }
         : {}),
+      ...(this.fieldErrors ? { fieldErrors: this.fieldErrors } : {}),
+      ...(this.formErrors ? { formErrors: this.formErrors } : {}),
     };
-    return base;
   }
 
   /**
