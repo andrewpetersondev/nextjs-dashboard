@@ -22,7 +22,6 @@ import type { Logger } from "@/shared/logging/logger.shared";
  * @param input - AuthSignupDalInput containing validated, normalized user input
  * @param parentLogger - Repository / request-level logger to preserve context
  * @returns Promise<NewUserRow> - The freshly inserted user row
- * @throws ConflictError (if unique constraint violated)
  * @throws DatabaseError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
  */

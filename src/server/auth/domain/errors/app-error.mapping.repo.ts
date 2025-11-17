@@ -1,9 +1,6 @@
 import "server-only";
 import { isBaseError } from "@/shared/errors/base-error";
-import {
-  ConflictError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { ValidationError } from "@/shared/errors/base-error.subclasses";
 import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";
@@ -15,10 +12,7 @@ const DOMAIN_ERROR_MAP = new Map<
     ...args: never[]
   ) => Error,
   { code: Parameters<typeof appErrorFromCode>[0]; useMessage: boolean }
->([
-  [ValidationError, { code: ERROR_CODES.validation.name, useMessage: true }],
-  [ConflictError, { code: ERROR_CODES.conflict.name, useMessage: true }],
-]);
+>([[ValidationError, { code: ERROR_CODES.validation.name, useMessage: true }]]);
 
 function mapDomainError(err: Error): AppError | null {
   for (const [ErrorClass, config] of DOMAIN_ERROR_MAP) {
