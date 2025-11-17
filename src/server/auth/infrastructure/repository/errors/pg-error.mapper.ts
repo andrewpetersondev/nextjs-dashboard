@@ -3,7 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
 import type {
-  DalContext,
+  AuthLayerContext,
   DalErrorContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { ErrorMappingFactory } from "@/server/auth/logging/auth-logging.contexts";
@@ -94,7 +94,7 @@ function extractPgError(err: unknown): Partial<PgDatabaseError> | null {
  * Build error context with diagnostic information.
  */
 function buildErrorContext(
-  dalContext: DalContext,
+  dalContext: AuthLayerContext<"infrastructure.dal">,
   pg: Partial<PgDatabaseError> | null,
   code: PgCode | undefined,
 ): DalErrorContext {
@@ -171,7 +171,7 @@ function buildErrorMessage(code: PgCode | undefined): string {
  */
 export function toBaseErrorFromPg(
   err: unknown,
-  dalContext: DalContext,
+  dalContext: AuthLayerContext<"infrastructure.dal">,
 ): BaseError {
   const pg = extractPgError(err);
   const code = pg?.code as PgCode | undefined;

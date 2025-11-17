@@ -1,7 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
 import type { Logger } from "@/shared/logging/logger.shared";
-import type { DalContext } from "../../../logging/auth-layer-context";
+import type { AuthLayerContext } from "../../../logging/auth-layer-context";
 import { mapBaseErrorToInfrastructure } from "../errors/base-error.mapper";
 import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
 
@@ -17,7 +17,7 @@ import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
-  dalContext: DalContext,
+  dalContext: AuthLayerContext<"infrastructure.dal">,
   logger: Logger,
 ): Promise<T> {
   try {

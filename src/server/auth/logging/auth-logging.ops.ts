@@ -6,10 +6,7 @@ import {
   AuthActionLogFactory,
   AuthServiceLogFactory,
 } from "@/server/auth/logging/auth-logging.contexts";
-import type {
-  AuthActionLog,
-  AuthServiceLog,
-} from "@/server/auth/logging/auth-logging.types";
+import type { AuthLogPayload } from "@/server/auth/logging/auth-logging.types";
 import { toSafeErrorShape } from "@/shared/logging/logger.shared";
 import type { OperationData } from "@/shared/logging/logger.types";
 
@@ -34,7 +31,7 @@ export const AUTH_ACTION_CONTEXTS = {
     },
     context: AUTH_LOG_CONTEXTS.action("demoUser"),
 
-    fail(reason: string): OperationData<AuthActionLog> {
+    fail(reason: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("demoUser", { reason }),
         context: AUTH_LOG_CONTEXTS.action("demoUser"),
@@ -48,14 +45,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthActionLog> {
+    start(): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("demoUser"),
         context: AUTH_LOG_CONTEXTS.action("demoUser"),
       };
     },
 
-    successAction(role: string): OperationData<AuthActionLog> {
+    successAction(role: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("demoUser", { role }),
         context: AUTH_LOG_CONTEXTS.action("demoUser"),
@@ -102,25 +99,9 @@ export const AUTH_ACTION_CONTEXTS = {
   },
 
   login: {
-    authenticationFailurePayload(metadata: {
-      ip: string;
-      tracker: PerformanceTracker;
-      email?: string;
-      errorCode?: string;
-      errorMessage?: string;
-    }) {
-      return {
-        ...metadata.tracker.getMetrics(),
-        email: metadata.email,
-        errorCode: metadata.errorCode,
-        errorMessage: metadata.errorMessage,
-        ip: metadata.ip,
-      };
-    },
-
     context: AUTH_LOG_CONTEXTS.action("login"),
 
-    fail(reason: string): OperationData<AuthActionLog> {
+    fail(reason: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("login", { reason }),
         context: AUTH_LOG_CONTEXTS.action("login"),
@@ -134,14 +115,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthActionLog> {
+    start(): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("login"),
         context: AUTH_LOG_CONTEXTS.action("login"),
       };
     },
 
-    successAction(userId: string): OperationData<AuthActionLog> {
+    successAction(userId: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("login", { userId }),
         context: AUTH_LOG_CONTEXTS.action("login"),
@@ -188,25 +169,9 @@ export const AUTH_ACTION_CONTEXTS = {
   },
 
   signup: {
-    authenticationFailurePayload(metadata: {
-      ip: string;
-      tracker: PerformanceTracker;
-      email?: string;
-      errorCode?: string;
-      errorMessage?: string;
-    }) {
-      return {
-        ...metadata.tracker.getMetrics(),
-        email: metadata.email,
-        errorCode: metadata.errorCode,
-        errorMessage: metadata.errorMessage,
-        ip: metadata.ip,
-      };
-    },
-
     context: AUTH_LOG_CONTEXTS.action("signup"),
 
-    fail(reason: string): OperationData<AuthActionLog> {
+    fail(reason: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("signup", { reason }),
         context: AUTH_LOG_CONTEXTS.action("signup"),
@@ -220,14 +185,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthActionLog> {
+    start(): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("signup"),
         context: AUTH_LOG_CONTEXTS.action("signup"),
       };
     },
 
-    successAction(email: string): OperationData<AuthActionLog> {
+    successAction(email: string): OperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("signup", { email }),
         context: AUTH_LOG_CONTEXTS.action("signup"),
@@ -280,21 +245,21 @@ export const AUTH_SERVICE_CONTEXTS = {
   createDemoUser: {
     context: AUTH_LOG_CONTEXTS.service("demoUser"),
 
-    failCounter(role: string): OperationData<AuthServiceLog> {
+    failCounter(role: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception("demoUser", { role }),
         context: AUTH_LOG_CONTEXTS.service("demoUser"),
       };
     },
 
-    success(role: string): OperationData<AuthServiceLog> {
+    success(role: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("demoUser", { role }),
         context: AUTH_LOG_CONTEXTS.service("demoUser"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthServiceLog> {
+    transactionError(err: unknown): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "demoUser",
@@ -309,28 +274,28 @@ export const AUTH_SERVICE_CONTEXTS = {
   login: {
     context: AUTH_LOG_CONTEXTS.service("login"),
 
-    invalidCredentials(email: string): OperationData<AuthServiceLog> {
+    invalidCredentials(email: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.validation("login", { email }),
         context: AUTH_LOG_CONTEXTS.service("login"),
       };
     },
 
-    missingPassword(userId: string): OperationData<AuthServiceLog> {
+    missingPassword(userId: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.authInvariant("login", { userId }),
         context: AUTH_LOG_CONTEXTS.service("login"),
       };
     },
 
-    success(userId: string): OperationData<AuthServiceLog> {
+    success(userId: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("login", { userId }),
         context: AUTH_LOG_CONTEXTS.service("login"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthServiceLog> {
+    transactionError(err: unknown): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "login",
@@ -345,14 +310,14 @@ export const AUTH_SERVICE_CONTEXTS = {
   signup: {
     context: AUTH_LOG_CONTEXTS.service("signup"),
 
-    success(email: string): OperationData<AuthServiceLog> {
+    success(email: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("signup", { email }),
         context: AUTH_LOG_CONTEXTS.service("signup"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthServiceLog> {
+    transactionError(err: unknown): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "signup",
@@ -363,7 +328,7 @@ export const AUTH_SERVICE_CONTEXTS = {
       };
     },
 
-    validationFail(): OperationData<AuthServiceLog> {
+    validationFail(): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.validation("signup"),
         context: AUTH_LOG_CONTEXTS.service("signup"),

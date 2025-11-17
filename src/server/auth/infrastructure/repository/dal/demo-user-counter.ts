@@ -3,8 +3,8 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
+  type AuthLayerContext,
   createAuthOperationContext,
-  type DalContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -25,11 +25,12 @@ export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,
 ): Promise<number> {
-  const dalContext: DalContext = createAuthOperationContext({
-    identifiers: { role },
-    layer: "infrastructure.dal",
-    operation: "demoUser",
-  });
+  const dalContext: AuthLayerContext<"infrastructure.dal"> =
+    createAuthOperationContext({
+      identifiers: { role },
+      layer: "infrastructure.dal",
+      operation: "demoUser",
+    });
 
   return await executeDalOrThrow(
     async () => {

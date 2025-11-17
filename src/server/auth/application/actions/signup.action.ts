@@ -12,6 +12,10 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
+import {
+  type AuthLayerContext,
+  createAuthOperationContext,
+} from "@/server/auth/logging/auth-layer-context";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
@@ -43,20 +47,31 @@ export async function signupAction(
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
 
-  const actionLogger = logger.withContext(ctx.context).withRequest(requestId);
+  // Create a unified action-layer context for this request.
+  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
+    identifiers: { ip },
+    layer: "action",
+    operation: "signup",
+  });
+
+  const actionLogger = logger
+    .withContext(actionContext.context)
+    .withRequest(requestId);
+
   const tracker = new PerformanceTracker();
 
   // Start
   actionLogger.operation("info", "Signup action started", {
     ...ctx.start(),
-    context: ctx.context,
+    context: actionContext.context,
     details: ctx.initiatedPayload({ ip, userAgent }),
-    operation: "signup",
+    identifiers: actionContext.identifiers,
+    operation: actionContext.operation,
   });
 
   const validated = await tracker.measure("validation", () =>
     validateForm(formData, SignupSchema, fields, {
-      loggerContext: ctx.context,
+      loggerContext: actionContext.context,
     }),
   );
 
@@ -68,13 +83,14 @@ export async function signupAction(
     // Validation failure
     actionLogger.operation("warn", "Signup validation failed", {
       ...ctx.validationFailed({ errorCount, ip }),
-      context: ctx.context,
+      context: actionContext.context,
       details: ctx.validationFailurePayload({
         errorCount,
         ip,
         tracker,
       }),
-      operation: "signup",
+      identifiers: actionContext.identifiers,
+      operation: actionContext.operation,
     });
 
     return validated;
@@ -82,10 +98,17 @@ export async function signupAction(
 
   const input: SignupData = validated.value.data;
 
+  // You can enrich identifiers as you go if desired:
+  const enrichedContext: AuthLayerContext<"action"> = {
+    ...actionContext,
+    identifiers: { ...actionContext.identifiers, email: input.email },
+  };
+
   // Validation complete
   actionLogger.operation("info", "Signup form validated", {
-    context: ctx.context,
-    operation: "signup",
+    context: enrichedContext.context,
+    identifiers: enrichedContext.identifiers,
+    operation: enrichedContext.operation,
     ...ctx.validationCompletePayload({
       duration: tracker.getLastDuration("validation"),
       email: input.email,
@@ -101,15 +124,16 @@ export async function signupAction(
     // Authentication failure
     actionLogger.operation("error", "Signup authentication failed", {
       ...ctx.fail("authentication_failed"),
-      context: ctx.context,
-      details: ctx.authenticationFailurePayload({
+      context: enrichedContext.context,
+      details: {
+        ...tracker.getMetrics(),
         email: input.email,
         errorCode: sessionResult.error.code,
         errorMessage: sessionResult.error.message,
         ip,
-        tracker,
-      }),
-      operation: "signup",
+      },
+      identifiers: enrichedContext.identifiers,
+      operation: enrichedContext.operation,
     });
 
     return mapResultToFormResult(sessionResult, {
@@ -123,9 +147,10 @@ export async function signupAction(
   // Success
   actionLogger.operation("info", "Signup action completed successfully", {
     ...ctx.successAction(input.email),
-    context: ctx.context,
+    context: enrichedContext.context,
     details: ctx.successPayload({ role, tracker, userId }),
-    operation: "signup",
+    identifiers: { ...enrichedContext.identifiers, userId },
+    operation: enrichedContext.operation,
   });
 
   revalidatePath(ROUTES.dashboard.root);

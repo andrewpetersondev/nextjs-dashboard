@@ -19,74 +19,63 @@ export type AuthOperation =
   | "logout";
 
 /**
- * Common `kind` values used across layers.
- * Layer-specific unions below narrow these further.
+ * Single, unified set of logical kinds across all layers.
+ *
+ * Layers may only use a subset in practice, but the envelope is the same.
  */
-export type AuthLogKindCommon =
+export type AuthLogKind =
   | "start"
   | "success"
   | "validation"
+  | "failure"
   | "exception"
   | "auth-invariant"
   | "not_found"
-  | "duplicate";
+  | "duplicate"
+  | "error";
 
-/* -------------------------- Layer-specific kinds -------------------------- */
-
-export type AuthActionKind = "start" | "validation" | "success" | "failure";
-
-export type AuthServiceKind =
-  | "validation"
-  | "auth-invariant"
-  | "success"
-  | "exception";
-
-export type AuthRepoKind = "start" | "success" | "exception" | "not_found";
-
-export type AuthDalKind = "success" | "not_found" | "duplicate" | "error";
+/**
+ * Where an error originated, when applicable.
+ */
+export type AuthErrorSource =
+  | "action"
+  | "service"
+  | "infrastructure.repository"
+  | "infrastructure.dal"
+  | "unknown";
 
 /* ----------------------------- Base log shape ----------------------------- */
 
-export interface AuthLogBase extends OperationMetadata {
+export interface AuthLogBase
+  extends OperationMetadata,
+    Record<string, unknown> {
   /** High-level auth operation (login/signup/...) */
   operation: AuthOperation;
   /** Layer from which the log originates */
   layer: AuthLogLayer;
+  /** Logical kind (start/success/error/etc.) */
+  kind: AuthLogKind;
   /** Business identifiers (email, userId, etc.) */
   identifiers?: Record<string, string | number>;
-  /** TODO: MAYBE CHANGE LATER */
-  [key: string]: unknown;
-}
-
-/* ------------------------- Layered payload shapes ------------------------- */
-
-export interface AuthActionLog extends AuthLogBase {
-  layer: "action";
-  kind: AuthActionKind;
-}
-
-export interface AuthServiceLog extends AuthLogBase {
-  layer: "service";
-  kind: AuthServiceKind;
-}
-
-export interface AuthRepoLog extends AuthLogBase {
-  layer: "infrastructure.repository";
-  kind: AuthRepoKind;
+  /**
+   * Optional error payload (BaseError, safe error shape, or something else).
+   * Only set when this log represents an error-ish condition.
+   */
   error?: unknown;
-}
-
-export interface AuthDalLog extends AuthLogBase {
-  layer: "infrastructure.dal";
-  kind: AuthDalKind;
+  /**
+   * Where the error came from. Useful when a higher layer logs an error
+   * that originated from a lower layer (DAL, repo, etc.).
+   */
+  errorSource?: AuthErrorSource;
+  /**
+   * Layer- or operation-specific details (e.g. DAL pg metadata, validation info).
+   */
   details?: Record<string, unknown>;
 }
 
 /**
- * Convenient union for any auth log payload.
+ * Convenience alias – currently there is a single auth log payload shape.
+ * If you ever need to truly specialize by layer, you can reintroduce
+ * a discriminated union here without changing most call sites.
  */
-export type AuthLogPayload =
-  | AuthActionLog
-  | AuthServiceLog
-  | AuthRepoLog
-  | AuthDalLog;
+export type AuthLogPayload = AuthLogBase;

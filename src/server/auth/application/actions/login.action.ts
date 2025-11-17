@@ -125,13 +125,13 @@ export async function loginAction(
     actionLogger.operation("error", "Login authentication failed", {
       ...ctx.fail("authentication_failed"),
       context: enrichedContext.context,
-      details: ctx.authenticationFailurePayload({
+      details: {
+        ...tracker.getMetrics(),
         email: input.email,
         errorCode: sessionResult.error.code,
         errorMessage: sessionResult.error.message,
         ip,
-        tracker,
-      }),
+      },
       identifiers: enrichedContext.identifiers,
       operation: enrichedContext.operation,
     });

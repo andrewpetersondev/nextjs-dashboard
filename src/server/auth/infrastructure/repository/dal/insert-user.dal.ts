@@ -3,8 +3,8 @@ import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
+  type AuthLayerContext,
   createAuthOperationContext,
-  type DalContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -32,11 +32,12 @@ export async function insertUserDal(
 ): Promise<NewUserRow> {
   const { email, username, password, role } = input;
 
-  const dalContext: DalContext = createAuthOperationContext({
-    identifiers: { email, username },
-    layer: "infrastructure.dal",
-    operation: "insertUser",
-  });
+  const dalContext: AuthLayerContext<"infrastructure.dal"> =
+    createAuthOperationContext({
+      identifiers: { email, username },
+      layer: "infrastructure.dal",
+      operation: "insertUser",
+    });
 
   const dalLogger = parentLogger.withContext(dalContext.context);
 

@@ -24,15 +24,10 @@ export interface AuthLayerContext<L extends AuthLogLayer = AuthLogLayer> {
 }
 
 /**
- * Standardized context for all DAL operations.
- * This is just the DAL specialization of the generic auth layer context.
- */
-export type DalContext = AuthLayerContext<"infrastructure.dal">;
-
-/**
  * Extended context with additional diagnostic information for DAL errors.
  */
-export interface DalErrorContext extends DalContext {
+export interface DalErrorContext
+  extends AuthLayerContext<"infrastructure.dal"> {
   /** Unique diagnostic ID for this specific error. */
   readonly diagnosticId: string;
   /** ISO timestamp when error occurred. */
