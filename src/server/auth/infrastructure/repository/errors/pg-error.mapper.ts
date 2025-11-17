@@ -12,7 +12,7 @@ const PG_ERROR_SOURCE = "postgres" as const;
 const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
 const PG_DEFAULT_MESSAGE = ERROR_CODES.database.description;
 
-const PG_ERROR_MAP = {
+export const PG_ERROR_MAP = {
   checkViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23514",
@@ -57,10 +57,10 @@ const PG_ERROR_MAP = {
   },
 } as const;
 
-type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
-type PgCode = PgErrorMeta["code"];
+export type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
+export type PgCode = PgErrorMeta["code"];
 
-const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
+export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
   "40P01": PG_ERROR_MAP.deadlockDetected,
   "23502": PG_ERROR_MAP.notNullViolation,
   "23503": PG_ERROR_MAP.foreignKeyViolation,

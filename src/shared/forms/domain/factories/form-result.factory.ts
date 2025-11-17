@@ -8,12 +8,12 @@ import type {
   FormResult,
   FormSuccess,
 } from "@/shared/forms/domain/models/form-result";
-import { freeze } from "@/shared/forms/domain/utils/freeze";
 import {
   type AppError,
   makeAppErrorDetails,
 } from "@/shared/result/app-error/app-error";
 import { Err, Ok } from "@/shared/result/result";
+import { freeze } from "@/shared/utils/object/freeze";
 
 /**
  * Create a successful form result.

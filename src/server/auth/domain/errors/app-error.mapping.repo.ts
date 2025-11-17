@@ -1,7 +1,8 @@
 import "server-only";
+import { PG_ERROR_MAP } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
 import { isBaseError } from "@/shared/errors/base-error";
 import { ValidationError } from "@/shared/errors/base-error.subclasses";
-import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
+import { ERROR_CODES } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";
 import { appErrorFromCode } from "@/shared/result/app-error/app-error-builders";
@@ -77,8 +78,8 @@ export function mapRepoError(err: unknown, context: string): AppError {
 
     // Map unique constraint violations to conflict error
     const isUniqueViolation =
-      baseErrorDetails.extra.pgErrorCode === "23505" ||
-      baseErrorDetails.extra.constraint;
+      baseErrorDetails.extra.pgErrorCode ===
+        PG_ERROR_MAP.uniqueViolation.code || baseErrorDetails.extra.constraint;
 
     if (isUniqueViolation) {
       return appErrorFromCode(
