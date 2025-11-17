@@ -44,6 +44,7 @@ export class RevenueEventHandler {
   /**
    * Sets up subscriptions to invoice events.
    */
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: <fine for now>
   private setupEventSubscriptions(): void {
     logger.info("Setting up event subscriptions", {
       context: "RevenueEventHandler.setupEventSubscriptions",

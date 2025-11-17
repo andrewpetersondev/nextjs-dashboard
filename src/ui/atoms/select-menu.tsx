@@ -40,6 +40,7 @@ export interface SelectMenuProps<
  * Supports both controlled and uncontrolled usage.
  * @template T - The type of the option object.
  */
+// biome-ignore lint/style/useExportsLast: <this follows convention>
 export const SelectMenu: SelectMenuComponent = React.memo(
   function SelectMenuInner<T extends { id: string; name: string }>({
     options,

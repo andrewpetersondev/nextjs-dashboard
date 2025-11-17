@@ -4,6 +4,7 @@ import { type FC, memo } from "react";
  * Google SVG icon for authentication buttons.
  * @returns {JSX.Element} The Google icon SVG.
  */
+// biome-ignore lint/style/useExportsLast: <this follows convention>
 export const GoogleIcon: FC = memo(() => (
   <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24">
     <path

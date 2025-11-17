@@ -44,6 +44,7 @@ export class EventBus {
   }
 
   // Use unknown internally to avoid unsafe "any" while keeping runtime flexible.
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: <fine for now>
   private static handlers: Partial<Record<EventName, EventHandler<unknown>[]>> =
     {};
 
