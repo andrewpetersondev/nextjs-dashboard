@@ -1,7 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
 import { mapBaseErrorToInfrastructure } from "@/server/auth/infrastructure/repository/errors/base-error.mapper";
-import { toBaseErrorFromPg } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
+import { mapPgErrorToBase } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
 import {
   type AuthLayerContext,
   toErrorContext,
@@ -27,7 +27,7 @@ export async function executeDalOrThrow<T>(
     return await thunk();
   } catch (err: unknown) {
     // Normalize to BaseError (Postgres/external → BaseError)
-    const baseError = toBaseErrorFromPg(err, dalContext).withContext(
+    const baseError = mapPgErrorToBase(err, dalContext).withContext(
       toErrorContext(dalContext),
     );
 

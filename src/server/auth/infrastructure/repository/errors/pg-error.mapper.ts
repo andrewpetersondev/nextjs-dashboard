@@ -160,7 +160,7 @@ function buildErrorMessage(code: PgCode | undefined): string {
  * Convert Postgres error to normalized BaseError.
  * Single responsibility: error transformation only.
  */
-export function toBaseErrorFromPg(
+export function mapPgErrorToBase(
   err: unknown,
   dalContext: AuthLayerContext<"infrastructure.dal">,
 ): BaseError {
