@@ -1,7 +1,7 @@
 import "server-only";
+import type { AppError } from "@/shared/errors/app-error/app-error";
+import { makeAppErrorDetails } from "@/shared/errors/app-error/app-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
-import type { AppError } from "@/shared/result/app-error/app-error";
-import { makeAppErrorDetails } from "@/shared/result/app-error/app-error";
 
 /**
  * Normalize domain AppErrors into form-aware errors.

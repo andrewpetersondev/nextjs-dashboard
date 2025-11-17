@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-collect.ts
 
-import type { AppError } from "@/shared/result/app-error/app-error";
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import {
   Err,
   type ErrType,

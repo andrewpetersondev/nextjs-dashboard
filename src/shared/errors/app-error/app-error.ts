@@ -1,6 +1,12 @@
 // File: src/shared/core/result/app-error.ts
 
-import type { ErrorCode, Severity } from "@/shared/errors/error-codes";
+import { isProd } from "@/shared/config/env-shared";
+import type { BaseError } from "@/shared/errors/base-error";
+import {
+  type ErrorCode,
+  type Severity,
+  tryGetErrorCodeMeta,
+} from "@/shared/errors/error-codes";
 
 /**
  * Build a mapper unknown -> TError with a type guard and fallback constructor.
@@ -109,4 +115,27 @@ export function isAppErrorDetails(v: unknown): v is AppErrorDetails {
   const extraOk =
     extra === undefined || (typeof extra === "object" && extra !== null); // JSON-safety is enforced by producers
   return brandOk && formOk && fieldsOk && extraOk;
+}
+
+/**
+ * Create an AppError for a specific canonical code using BaseError semantics,
+ * then adapt to AppError. Useful when you know the code at the boundary.
+ */
+export function appErrorFromCode(
+  code: BaseError["code"],
+  message?: string,
+  details?: unknown,
+): AppError {
+  const meta = tryGetErrorCodeMeta(code);
+  const app: AppError = {
+    code,
+    kind: meta?.category ?? "unknown",
+    message: message || meta?.description || "An unknown error occurred",
+    severity: (meta?.severity as AppError["severity"] | undefined) ?? "error",
+    ...(details ? { details } : {}),
+  };
+  if (!isProd()) {
+    Object.freeze(app);
+  }
+  return app;
 }

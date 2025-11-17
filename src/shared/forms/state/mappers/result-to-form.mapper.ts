@@ -1,3 +1,4 @@
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import {
   FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
@@ -13,7 +14,6 @@ import {
 } from "@/shared/forms/domain/guards/form-guards";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
-import type { AppError } from "@/shared/result/app-error/app-error";
 import type { Result } from "@/shared/result/result";
 
 /**

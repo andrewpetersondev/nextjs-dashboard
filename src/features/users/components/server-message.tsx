@@ -1,9 +1,9 @@
 import type { JSX } from "react";
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import type {
   FormResult,
   FormSuccess,
 } from "@/shared/forms/domain/models/form-result";
-import type { AppError } from "@/shared/result/app-error/app-error";
 
 /**
  * Extracts message and success status from various result types.

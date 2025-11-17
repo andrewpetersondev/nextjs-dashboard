@@ -1,11 +1,11 @@
 import "server-only";
 import { SIGNUP_FIELDS_LIST } from "@/features/auth/lib/auth.schema";
-import { ERROR_CODES } from "@/shared/errors/error-codes";
 import {
   type AppError,
+  appErrorFromCode,
   makeAppErrorDetails,
-} from "@/shared/result/app-error/app-error";
-import { appErrorFromCode } from "@/shared/result/app-error/app-error-builders";
+} from "@/shared/errors/app-error/app-error";
+import { ERROR_CODES } from "@/shared/errors/error-codes";
 
 type AuthErrorKind =
   | "missing_fields"

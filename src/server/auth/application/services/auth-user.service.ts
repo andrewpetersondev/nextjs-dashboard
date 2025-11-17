@@ -19,8 +19,8 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import type { Logger } from "@/shared/logging/logger.shared";
-import type { AppError } from "@/shared/result/app-error/app-error";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
 

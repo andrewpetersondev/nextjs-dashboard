@@ -1,11 +1,13 @@
 import "server-only";
 import { PG_ERROR_MAP } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
+import {
+  type AppError,
+  appErrorFromCode,
+} from "@/shared/errors/app-error/app-error";
 import { isBaseError } from "@/shared/errors/base-error";
 import { ValidationError } from "@/shared/errors/base-error.subclasses";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
-import type { AppError } from "@/shared/result/app-error/app-error";
-import { appErrorFromCode } from "@/shared/result/app-error/app-error-builders";
 
 // Mapping table for domain errors
 const DOMAIN_ERROR_MAP = new Map<

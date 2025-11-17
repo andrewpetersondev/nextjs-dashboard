@@ -1,9 +1,9 @@
 import type { z } from "zod";
+import type { AppError } from "@/shared/errors/app-error/app-error";
+import { makeAppErrorDetails } from "@/shared/errors/app-error/app-error";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/models/error-maps";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import type { AppError } from "@/shared/result/app-error/app-error";
-import { makeAppErrorDetails } from "@/shared/result/app-error/app-error";
 import { Err } from "@/shared/result/result";
 
 /**

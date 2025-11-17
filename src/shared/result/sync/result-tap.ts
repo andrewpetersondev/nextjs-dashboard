@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-tap.ts
 
-import type { AppError } from "@/shared/result/app-error/app-error";
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import type { Result } from "@/shared/result/result";
 import { Err } from "@/shared/result/result";
 

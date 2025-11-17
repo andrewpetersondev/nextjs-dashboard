@@ -8,8 +8,8 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
+import type { AppError } from "@/shared/errors/app-error/app-error";
 import { logger } from "@/shared/logging/logger.shared";
-import type { AppError } from "@/shared/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
