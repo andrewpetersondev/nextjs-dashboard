@@ -9,21 +9,6 @@ import {
 } from "@/shared/errors/error-codes";
 
 /**
- * Build a mapper unknown -> TError with a type guard and fallback constructor.
- * Keeps fromPromiseWith generic while guaranteeing a TError.
- */
-export const makeErrorMapper =
-  /* @__PURE__ */
-    <Terror extends AppError>(opts: {
-      readonly isTarget: (e: unknown) => e is Terror;
-      readonly toTarget: (e: unknown) => Terror;
-      readonly fallback?: (e: unknown) => Terror;
-    }) =>
-    /* @__PURE__ */
-    (e: unknown): Terror =>
-      opts.isTarget(e) ? e : (opts.fallback ?? opts.toTarget)(e);
-
-/**
  * Canonical, JSON-safe details payload for AppError.
  * - Brand enforces construction via builders/normalizers.
  * JSON-safe diagnostics and UI payloads.
@@ -85,32 +70,6 @@ export const makeAppErrorDetails = (
   };
   return Object.freeze(details);
 };
-
-// Type guard to validate external details before attaching to AppError
-export function isAppErrorDetails(v: unknown): v is AppErrorDetails {
-  if (typeof v !== "object" || v === null) {
-    return false;
-  }
-  const obj = v as Record<string, unknown>;
-  const fe = obj.fieldErrors;
-  const ff = obj.formErrors;
-  const extra = obj.extra;
-  const brandOk =
-    obj.__brand === "AppErrorDetails" || obj.__brand === undefined;
-  const formOk =
-    ff === undefined ||
-    (Array.isArray(ff) && ff.every((x) => typeof x === "string"));
-  const fieldsOk =
-    fe === undefined ||
-    (typeof fe === "object" &&
-      fe !== null &&
-      Object.values(fe as Record<string, unknown[]>).every(
-        (arr) => Array.isArray(arr) && arr.every((x) => typeof x === "string"),
-      ));
-  const extraOk =
-    extra === undefined || (typeof extra === "object" && extra !== null); // JSON-safety is enforced by producers
-  return brandOk && formOk && fieldsOk && extraOk;
-}
 
 /**
  * Create an AppError for a specific canonical code using BaseError semantics,

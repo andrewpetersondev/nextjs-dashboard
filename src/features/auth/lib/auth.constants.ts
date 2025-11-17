@@ -51,17 +51,6 @@ export const AUTH_ENDPOINTS = {
 export const AUTH_GOOGLE_ENDPOINT = AUTH_ENDPOINTS.google;
 export const AUTH_GITHUB_ENDPOINT = AUTH_ENDPOINTS.github;
 
-// Optional UI strings (central place for simple, shared copy)
-export const AUTH_UI = {
-  buttons: {
-    signInWithGitHub: "Sign in with GitHub",
-    signInWithGoogle: "Sign in with Google",
-  },
-  messages: {
-    orContinueWith: "Or continue with",
-  },
-} as const;
-
 // Headings
 export const SIGNUP_HEADING = "Sign up for an account" as const;
 export const LOGIN_HEADING = "Log in to your account" as const;

@@ -18,9 +18,6 @@ export const SESSION_COOKIE_HTTPONLY = true as const;
 // In production, `secure` is decided in session.ts via env; this is a non-prod fallback only.
 export const SESSION_COOKIE_SECURE_FALLBACK = false as const;
 
-// logging
-export const LOGGER_CONTEXT_SESSION = "auth.session.establish" as const;
-
 // Session timing (canonical)
 export const SESSION_DURATION_MS = 15 * ONE_MINUTE_MS; // 15 minutes
 export const SESSION_REFRESH_THRESHOLD_MS = 2 * ONE_MINUTE_MS; // 2 minutes

@@ -7,13 +7,9 @@ import {
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/branding/id-converters";
-import {
-  type DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { ValidationError } from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
-import { Err, type Result } from "@/shared/result/result";
 
 /**
  * Service for invoice business logic and transformation.
@@ -85,37 +81,6 @@ export class InvoiceService {
     const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
 
     return await this.repo.create(serviceEntity);
-  }
-
-  /**
-   * Safe variant: returns Result instead of throwing.
-   * Pairs with repository.createSafe and preserves business rules.
-   */
-  async createInvoiceSafe(
-    dto: InvoiceFormDto,
-  ): Promise<Result<InvoiceDto, ValidationError | DatabaseError>> {
-    if (!dto) {
-      return Err(new ValidationError(INVOICE_MSG.invalidInput));
-    }
-
-    let transformedDto: InvoiceFormDto;
-
-    try {
-      transformedDto = this.applyBusinessRules(dto);
-    } catch (e) {
-      // Normalize to a known message ID when possible; otherwise default
-      const message =
-        e instanceof Error && e.message
-          ? e.message
-          : INVOICE_MSG.validationFailed;
-
-      return Err(new ValidationError(message));
-    }
-
-    const formEntity = dtoToCreateInvoiceEntity(transformedDto);
-    const serviceEntity = invoiceFormEntityToServiceEntity(formEntity);
-
-    return await this.repo.createSafe(serviceEntity);
   }
 
   /**

@@ -122,8 +122,6 @@ export const ERROR_CODES = {
   },
 } as const;
 
-export type Category = ErrorCodeMeta["category"];
-
 export type ErrorCode = keyof typeof ERROR_CODES;
 
 export type ErrorCodeMeta = (typeof ERROR_CODES)[ErrorCode];

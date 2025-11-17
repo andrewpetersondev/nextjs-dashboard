@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import {
@@ -109,23 +109,5 @@ export async function demoUserActionAdapter(
     });
   }
 
-  return await createDemoUserInternal(role);
-}
-
-/**
- * Handles the demo user action by creating a demo user,
- * establishing a session, and redirecting on success.
- *
- * Flow:
- * - Create demo user → map Ok(user) to { id, role } only.
- * - Establish session → on failure, map to UI-safe FormResult.
- * - Redirect to dashboard on success.
- *
- * @returns FormResult on auth/session errors, redirects on success
- */
-export async function demoUserAction(
-  role: UserRole = GUEST_ROLE,
-): Promise<FormResult<never>> {
-  // Reuse the internal helper so logging + error mapping stay consistent
   return await createDemoUserInternal(role);
 }

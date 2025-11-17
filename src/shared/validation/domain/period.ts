@@ -54,14 +54,3 @@ export function validatePeriodResult(
     ),
   );
 }
-
-/**
- * Throwing wrapper for period validation (for ergonomic/legacy use).
- */
-export function validatePeriod(input: unknown): Date {
-  const r = validatePeriodResult(input);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-}
