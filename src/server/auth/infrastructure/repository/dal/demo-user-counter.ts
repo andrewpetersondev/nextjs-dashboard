@@ -21,7 +21,7 @@ import { logger } from "@/shared/logging/logger.shared";
  * @param role - The branded UserRole
  * @returns The new counter value as a number
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,

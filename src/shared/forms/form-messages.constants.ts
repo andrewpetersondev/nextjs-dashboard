@@ -5,7 +5,3 @@ export const FORM_ERROR_MESSAGES = {
   unexpectedError: "An unexpected error occurred. Please try again later.",
   validationFailed: "Form validation failed. Please check your input.",
 } as const;
-
-export const FORM_SUCCESS_MESSAGES = {
-  successMessage: "Form validation successful.",
-} as const;

@@ -7,7 +7,7 @@ import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { DatabaseError } from "@/shared/errors/base-error.subclasses";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { ITEMS_PER_PAGE } from "@/shared/ui/pagination/constants";
+import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
 
 /**
  * Fetches filtered invoices with pagination and customer information.

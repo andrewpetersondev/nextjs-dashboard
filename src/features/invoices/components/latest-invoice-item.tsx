@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { formatCurrency } from "@/shared/money/convert";
-import { IMAGE_SIZES } from "@/shared/ui/tokens/images";
+import { IMAGE_SIZES } from "@/shared/ui/images.tokens";
 
 export interface LatestInvoiceItemProps {
   readonly invoice: InvoiceListFilter;

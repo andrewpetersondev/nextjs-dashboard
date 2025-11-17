@@ -40,7 +40,7 @@ const ctx = AUTH_ACTION_CONTEXTS.signup;
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,

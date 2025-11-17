@@ -52,7 +52,7 @@ export class AuthUserService {
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {
@@ -139,7 +139,7 @@ export class AuthUserService {
    *
    * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {

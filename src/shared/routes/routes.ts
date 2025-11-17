@@ -75,29 +75,6 @@ export function normalizePath(path: string): StaticPath {
 }
 
 /**
- * Appends query parameters to a base path.
- */
-export function withQuery(
-  base: string,
-  query?: Record<string, string | number | boolean | undefined | null>,
-): StaticPath {
-  const normBase = normalizePath(base);
-  if (!query) {
-    return normBase;
-  }
-  const params = new URLSearchParams();
-  const entries = Object.entries(query).filter(
-    ([, v]) => v !== undefined && v !== null,
-  );
-
-  for (const [k, v] of entries) {
-    params.append(k, String(v));
-  }
-  const qs = params.toString();
-  return (qs ? `${normBase}?${qs}` : normBase) as StaticPath;
-}
-
-/**
  * Returns true if the path is considered public (no auth required).
  */
 export function isPublicRoute(path: string): boolean {

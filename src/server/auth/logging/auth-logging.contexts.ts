@@ -204,7 +204,7 @@ export const AuthRepoLogFactory = {
 /* -------------------------- DAL-level factories --------------------------- */
 
 export const AuthDalLogFactory = {
-  // biome-ignore lint/nursery/useMaxParams: <explanation>
+  // biome-ignore lint/nursery/useMaxParams: <fix later>
   error(
     operation: AuthOperation,
     identifiers?: AuthLogPayload["identifiers"],

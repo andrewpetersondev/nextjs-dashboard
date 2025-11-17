@@ -9,7 +9,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import type { JSX } from "react";
-import { generatePagination } from "@/shared/ui/pagination/generate";
+import { generatePagination } from "@/shared/ui/generate-pagination";
 
 const PaginationNumber = ({
   href,
