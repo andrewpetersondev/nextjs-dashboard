@@ -1,7 +1,7 @@
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/domain/models/error-maps";
+} from "@/shared/forms/domain/error-maps.types";
 
 /**
  * Represents the state of a successful form submission, with optional message and data.

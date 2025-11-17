@@ -1,19 +1,16 @@
 import type { AppError } from "@/shared/errors/app-error/app-error";
-import {
-  FORM_ERROR_MESSAGES,
-  FORM_SUCCESS_MESSAGES,
-} from "@/shared/forms/constants/messages";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import {
   getFieldErrors,
   getFieldValues,
-} from "@/shared/forms/domain/guards/form-guards";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import { selectDisplayableStringFieldValues } from "@/shared/forms/state/mappers/display-values.mapper";
+} from "@/shared/forms/domain/form-guards";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import {
+  FORM_ERROR_MESSAGES,
+  FORM_SUCCESS_MESSAGES,
+} from "@/shared/forms/form-messages.constants";
+import { selectDisplayableStringFieldValues } from "@/shared/forms/state/display-values.mapper";
 import type { Result } from "@/shared/result/result";
 
 /**

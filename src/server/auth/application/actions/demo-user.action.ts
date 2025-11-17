@@ -9,8 +9,8 @@ import {
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { getAppDb } from "@/server/db/db.connection";
-import { formError } from "@/shared/forms/domain/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
+import { formError } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 

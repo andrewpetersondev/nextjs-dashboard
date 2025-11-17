@@ -19,9 +19,9 @@ import {
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { formError } from "@/shared/forms/domain/factories/form-result.factory";
-import { mapAppErrorToFormPayload } from "@/shared/forms/domain/guards/form-guards";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
+import { mapAppErrorToFormPayload } from "@/shared/forms/domain/form-guards";
+import { formError } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 

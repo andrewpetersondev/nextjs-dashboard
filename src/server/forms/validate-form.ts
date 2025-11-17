@@ -1,23 +1,20 @@
 // src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
+import { resolveRawFieldPayload } from "@/shared/forms/application/field-payload-resolver";
 import {
   resolveValidateOptions,
   type ValidateOptions,
-} from "@/shared/forms/application/options/validate-options";
-import { resolveRawFieldPayload } from "@/shared/forms/application/utils/field-payload-resolver";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/error-mapper";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-resolver";
+} from "@/shared/forms/application/validate-options";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod-error.mapper";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field.resolver";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod/guards";
+} from "@/shared/forms/infrastructure/zod-guards";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

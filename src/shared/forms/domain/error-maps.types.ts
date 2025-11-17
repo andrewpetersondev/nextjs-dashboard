@@ -3,7 +3,7 @@
  * Both sparse (partial) and dense (complete) representations.
  */
 
-import type { FieldError } from "./field-error";
+import type { FieldError } from "./field-error.types";
 
 /**
  * Sparse map: only errored fields present.

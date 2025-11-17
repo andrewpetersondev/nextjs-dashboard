@@ -17,7 +17,7 @@ import { ValidationError } from "@/shared/errors/base-error.subclasses";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/factories/error-map.factory";
+} from "@/shared/forms/domain/error-map.factory";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { logger } from "@/shared/logging/logger.shared";

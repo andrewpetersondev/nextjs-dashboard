@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { FieldError } from "@/shared/forms/domain/models/field-error";
+import type { FieldError } from "@/shared/forms/domain/field-error.types";
 
 interface ErrorMessageProps {
   dataCy?: string;

@@ -15,8 +15,8 @@ import {
 import {
   getFieldErrors,
   getFieldValues,
-} from "@/shared/forms/domain/guards/form-guards";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
+} from "@/shared/forms/domain/form-guards";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/state/initial-state";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";

@@ -1,6 +1,6 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
-import type { FieldError } from "@/shared/forms/domain/models/field-error";
+import type { FieldError } from "@/shared/forms/domain/field-error.types";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
 interface InvoiceAmountInputProps

@@ -7,11 +7,11 @@
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/domain/models/error-maps";
+} from "@/shared/forms/domain/error-maps.types";
 import {
   type FieldError,
   isNonEmptyArray,
-} from "@/shared/forms/domain/models/field-error";
+} from "@/shared/forms/domain/field-error.types";
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).

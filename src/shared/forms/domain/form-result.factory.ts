@@ -8,11 +8,11 @@ import type { ErrorCode } from "@/shared/errors/error-codes";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/domain/models/error-maps";
+} from "@/shared/forms/domain/error-maps.types";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/models/form-result";
+} from "@/shared/forms/domain/form-result.types";
 import { Err, Ok } from "@/shared/result/result";
 import { freeze } from "@/shared/utils/object/freeze";
 

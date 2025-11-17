@@ -3,7 +3,7 @@ import type { AppError } from "@/shared/errors/app-error/app-error";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/models/form-result";
+} from "@/shared/forms/domain/form-result.types";
 
 /**
  * Extracts message and success status from various result types.

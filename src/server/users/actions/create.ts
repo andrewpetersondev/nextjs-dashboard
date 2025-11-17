@@ -13,13 +13,10 @@ import {
   createEmptyDenseFieldErrorMap,
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/factories/error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
+} from "@/shared/forms/domain/error-map.factory";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
 import { logger } from "@/shared/logging/logger.shared";
 
 type CreateUserFormData = {

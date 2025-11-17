@@ -15,9 +15,9 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/error-mapper";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-names";
-import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/guards";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod-error.mapper";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
+import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod-guards";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";

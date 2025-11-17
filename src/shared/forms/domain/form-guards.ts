@@ -2,11 +2,11 @@ import type { AppError } from "@/shared/errors/app-error/app-error";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/domain/models/error-maps";
+} from "@/shared/forms/domain/error-maps.types";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/models/form-result";
+} from "@/shared/forms/domain/form-result.types";
 import type { Result } from "@/shared/result/result";
 
 /**

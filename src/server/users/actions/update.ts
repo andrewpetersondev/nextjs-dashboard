@@ -20,13 +20,10 @@ import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import { toUserIdResult } from "@/shared/branding/id-converters";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/models/form-result";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/field-resolver";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field.resolver";
 import { logger } from "@/shared/logging/logger.shared";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
