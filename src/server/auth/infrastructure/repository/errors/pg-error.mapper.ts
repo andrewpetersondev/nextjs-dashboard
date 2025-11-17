@@ -2,11 +2,11 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
-import { ErrorMappingFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type {
   DalContext,
   DalErrorContext,
-} from "@/server/auth/logging/dal-context";
+} from "@/server/auth/logging/auth-layer-context";
+import { ErrorMappingFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
 

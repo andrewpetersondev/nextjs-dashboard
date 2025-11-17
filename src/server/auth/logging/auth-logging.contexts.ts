@@ -11,16 +11,48 @@ import type {
 /* ---------------------------- Context strings ----------------------------- */
 
 export const AUTH_LOG_CONTEXTS = {
+  /**
+   * Action layer auth contexts:
+   * - action.auth.login
+   * - action.auth.signup
+   * - action.auth.demoUser
+   * - action.auth.logout
+   */
   action: (operation: AuthOperation) => `action.auth.${operation}` as const,
-  dal: {
-    demoUserCounter: "infrastructure.dal.demo-user-counter" as const,
-    login: "infrastructure.dal.get-user-by-email" as const,
-    signup: "infrastructure.dal.insert-user" as const,
-  },
-  errorMapping: "infrastructure.error-mapping" as const,
-  repo: "infrastructure.repository.auth-user" as const,
+
+  /**
+   * DAL layer auth contexts:
+   * - infrastructure.dal.auth.insertUser
+   * - infrastructure.dal.auth.getUserByEmail
+   * - infrastructure.dal.auth.withTransaction
+   *
+   * This now mirrors the `action` setup instead of being a fixed object.
+   */
+  dal: (operation: AuthOperation) =>
+    `infrastructure.dal.auth.${operation}` as const,
+
+  /**
+   * Repository layer auth contexts:
+   * - infrastructure.repository.auth.login
+   * - infrastructure.repository.auth.signup
+   * - ...
+   */
+  repository: (operation: AuthOperation) =>
+    `infrastructure.repository.auth.${operation}` as const,
+
+  /**
+   * Service layer auth contexts:
+   * - service.auth.login
+   * - service.auth.signup
+   * - service.auth.demoUser
+   * - ...
+   */
   service: (operation: AuthOperation) => `service.auth.${operation}` as const,
-  transaction: "db.transaction" as const,
+
+  /**
+   * Special transaction context used by TransactionLogger.
+   */
+  transaction: "infrastructure.transaction.auth" as const,
 } as const;
 
 /* ------------------------- Action-level factories ------------------------- */

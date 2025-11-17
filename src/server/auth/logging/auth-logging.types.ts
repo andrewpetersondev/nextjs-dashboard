@@ -1,5 +1,6 @@
 // src/server/auth/logging/auth-logging.types.ts
 import "server-only";
+import type { OperationMetadata } from "@/shared/logging/logger.types";
 
 export type AuthLogLayer =
   | "action"
@@ -11,6 +12,7 @@ export type AuthOperation =
   | "login"
   | "signup"
   | "demoUser"
+  | "demoUserCounter"
   | "withTransaction"
   | "insertUser"
   | "getUserByEmail"
@@ -45,7 +47,7 @@ export type AuthDalKind = "success" | "not_found" | "duplicate" | "error";
 
 /* ----------------------------- Base log shape ----------------------------- */
 
-export interface AuthLogBase {
+export interface AuthLogBase extends OperationMetadata {
   /** High-level auth operation (login/signup/...) */
   operation: AuthOperation;
   /** Layer from which the log originates */

@@ -3,20 +3,15 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
-  AUTH_LOG_CONTEXTS,
-  AuthDalLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
-import {
-  createDalContext,
+  createAuthOperationContext,
   type DalContext,
-} from "@/server/auth/logging/dal-context";
+} from "@/server/auth/logging/auth-layer-context";
+import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
-
-const context = AUTH_LOG_CONTEXTS.dal.demoUserCounter;
 
 /**
  * Increments and retrieves the demo user counter for a given role.
@@ -30,8 +25,10 @@ export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,
 ): Promise<number> {
-  const dalContext: DalContext = createDalContext("createDemoUser", context, {
-    role,
+  const dalContext: DalContext = createAuthOperationContext({
+    identifiers: { role },
+    layer: "infrastructure.dal",
+    operation: "demoUser",
   });
 
   return await executeDalOrThrow(

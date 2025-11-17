@@ -12,13 +12,6 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import {
-  logActionInitiated,
-  logActionSuccess,
-  logAuthenticationFailure,
-  logValidationComplete,
-  logValidationFailure,
-} from "@/server/auth/logging/action-logger.helper";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
@@ -42,6 +35,7 @@ const ctx = AUTH_ACTION_CONTEXTS.signup;
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
@@ -52,7 +46,13 @@ export async function signupAction(
   const actionLogger = logger.withContext(ctx.context).withRequest(requestId);
   const tracker = new PerformanceTracker();
 
-  logActionInitiated(actionLogger, { ip, userAgent });
+  // Start
+  actionLogger.operation("info", "Signup action started", {
+    ...ctx.start(),
+    context: ctx.context,
+    details: ctx.initiatedPayload({ ip, userAgent }),
+    operation: "signup",
+  });
 
   const validated = await tracker.measure("validation", () =>
     validateForm(formData, SignupSchema, fields, {
@@ -61,34 +61,55 @@ export async function signupAction(
   );
 
   if (!validated.ok) {
-    logValidationFailure(actionLogger, {
-      errorCount: Object.keys(validated.error.details?.fieldErrors || {})
-        .length,
-      ip,
-      tracker,
+    const errorCount = Object.keys(
+      validated.error.details?.fieldErrors || {},
+    ).length;
+
+    // Validation failure
+    actionLogger.operation("warn", "Signup validation failed", {
+      ...ctx.validationFailed({ errorCount, ip }),
+      context: ctx.context,
+      details: ctx.validationFailurePayload({
+        errorCount,
+        ip,
+        tracker,
+      }),
+      operation: "signup",
     });
+
     return validated;
   }
 
   const input: SignupData = validated.value.data;
-  logValidationComplete(actionLogger, {
-    duration: tracker.getLastDuration("validation"),
-    email: input.email,
+
+  // Validation complete
+  actionLogger.operation("info", "Signup form validated", {
+    context: ctx.context,
+    operation: "signup",
+    ...ctx.validationCompletePayload({
+      duration: tracker.getLastDuration("validation"),
+      email: input.email,
+    }),
   });
 
-  // Use the action logger (with requestId) for the entire signup pipeline
   const service = createAuthUserService(getAppDb(), actionLogger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );
 
   if (!sessionResult.ok) {
-    logAuthenticationFailure(actionLogger, {
-      email: input.email,
-      errorCode: sessionResult.error.code,
-      errorMessage: sessionResult.error.message,
-      ip,
-      tracker,
+    // Authentication failure
+    actionLogger.operation("error", "Signup authentication failed", {
+      ...ctx.fail("authentication_failed"),
+      context: ctx.context,
+      details: ctx.authenticationFailurePayload({
+        email: input.email,
+        errorCode: sessionResult.error.code,
+        errorMessage: sessionResult.error.message,
+        ip,
+        tracker,
+      }),
+      operation: "signup",
     });
 
     return mapResultToFormResult(sessionResult, {
@@ -98,7 +119,14 @@ export async function signupAction(
     });
   }
   const { id: userId, role } = sessionResult.value;
-  logActionSuccess(actionLogger, { role, tracker, userId });
+
+  // Success
+  actionLogger.operation("info", "Signup action completed successfully", {
+    ...ctx.successAction(input.email),
+    context: ctx.context,
+    details: ctx.successPayload({ role, tracker, userId }),
+    operation: "signup",
+  });
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);

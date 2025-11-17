@@ -3,20 +3,15 @@ import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
-  AUTH_LOG_CONTEXTS,
-  AuthDalLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
-import {
-  createDalContext,
+  createAuthOperationContext,
   type DalContext,
-} from "@/server/auth/logging/dal-context";
+} from "@/server/auth/logging/auth-layer-context";
+import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
 import type { Logger } from "@/shared/logging/logger.shared";
-
-const context = AUTH_LOG_CONTEXTS.dal.signup;
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
@@ -37,9 +32,10 @@ export async function insertUserDal(
 ): Promise<NewUserRow> {
   const { email, username, password, role } = input;
 
-  const dalContext: DalContext = createDalContext("insertUser", context, {
-    email,
-    username,
+  const dalContext: DalContext = createAuthOperationContext({
+    identifiers: { email, username },
+    layer: "infrastructure.dal",
+    operation: "insertUser",
   });
 
   const dalLogger = parentLogger.withContext(dalContext.context);

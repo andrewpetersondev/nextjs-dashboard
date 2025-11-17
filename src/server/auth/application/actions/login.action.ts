@@ -13,12 +13,9 @@ import { PerformanceTracker } from "@/server/auth/application/actions/utils/perf
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import {
-  logActionInitiated,
-  logActionSuccess,
-  logAuthenticationFailure,
-  logValidationComplete,
-  logValidationFailure,
-} from "@/server/auth/logging/action-logger.helper";
+  type AuthLayerContext,
+  createAuthOperationContext,
+} from "@/server/auth/logging/auth-layer-context";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
@@ -42,6 +39,7 @@ const ctx = AUTH_ACTION_CONTEXTS.login;
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
 export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
@@ -49,47 +47,95 @@ export async function loginAction(
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
 
-  const actionLogger = logger.withContext(ctx.context).withRequest(requestId);
+  // Create a unified action-layer context for this request.
+  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
+    identifiers: { ip },
+    layer: "action",
+    operation: "login",
+  });
+
+  const actionLogger = logger
+    .withContext(actionContext.context)
+    .withRequest(requestId);
+
   const tracker = new PerformanceTracker();
 
-  logActionInitiated(actionLogger, { ip, userAgent });
+  // Start
+  actionLogger.operation("info", "Login action started", {
+    ...ctx.start(),
+    context: actionContext.context,
+    details: ctx.initiatedPayload({ ip, userAgent }),
+    identifiers: actionContext.identifiers,
+    operation: actionContext.operation,
+  });
 
   const validated = await tracker.measure("validation", () =>
     validateForm(formData, LoginSchema, fields, {
-      loggerContext: ctx.context,
+      loggerContext: actionContext.context,
     }),
   );
 
   if (!validated.ok) {
-    logValidationFailure(actionLogger, {
-      errorCount: Object.keys(validated.error.details?.fieldErrors || {})
-        .length,
-      ip,
-      tracker,
+    const errorCount = Object.keys(
+      validated.error.details?.fieldErrors || {},
+    ).length;
+
+    // Validation failure
+    actionLogger.operation("warn", "Login validation failed", {
+      ...ctx.validationFailed({ errorCount, ip }),
+      context: actionContext.context,
+      details: ctx.validationFailurePayload({
+        errorCount,
+        ip,
+        tracker,
+      }),
+      identifiers: actionContext.identifiers,
+      operation: actionContext.operation,
     });
+
     return validated;
   }
 
   const input: LoginData = validated.value.data;
-  logValidationComplete(actionLogger, {
-    duration: tracker.getLastDuration("validation"),
-    email: input.email,
+
+  // You can enrich identifiers as you go if desired:
+  const enrichedContext: AuthLayerContext<"action"> = {
+    ...actionContext,
+    identifiers: { ...actionContext.identifiers, email: input.email },
+  };
+
+  // Validation complete
+  actionLogger.operation("info", "Login form validated", {
+    context: enrichedContext.context,
+    identifiers: enrichedContext.identifiers,
+    operation: enrichedContext.operation,
+    ...ctx.validationCompletePayload({
+      duration: tracker.getLastDuration("validation"),
+      email: input.email,
+    }),
   });
 
-  // Use the action logger (with requestId) for the entire login pipeline
   const service = createAuthUserService(getAppDb(), actionLogger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.login.bind(service)),
   );
 
   if (!sessionResult.ok) {
-    logAuthenticationFailure(actionLogger, {
-      email: input.email,
-      errorCode: sessionResult.error.code,
-      errorMessage: sessionResult.error.message,
-      ip,
-      tracker,
+    // Authentication failure
+    actionLogger.operation("error", "Login authentication failed", {
+      ...ctx.fail("authentication_failed"),
+      context: enrichedContext.context,
+      details: ctx.authenticationFailurePayload({
+        email: input.email,
+        errorCode: sessionResult.error.code,
+        errorMessage: sessionResult.error.message,
+        ip,
+        tracker,
+      }),
+      identifiers: enrichedContext.identifiers,
+      operation: enrichedContext.operation,
     });
+
     return mapResultToFormResult(sessionResult, {
       failureMessage: "Login failed. Please try again.",
       fields,
@@ -98,7 +144,15 @@ export async function loginAction(
   }
 
   const { id: userId, role } = sessionResult.value;
-  logActionSuccess(actionLogger, { role, tracker, userId });
+
+  // Success
+  actionLogger.operation("info", "Login action completed successfully", {
+    ...ctx.successAction(userId),
+    context: enrichedContext.context,
+    details: ctx.successPayload({ role, tracker, userId }),
+    identifiers: { ...enrichedContext.identifiers, userId },
+    operation: enrichedContext.operation,
+  });
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);

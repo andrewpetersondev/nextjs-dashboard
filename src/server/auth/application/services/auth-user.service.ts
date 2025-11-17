@@ -14,6 +14,10 @@ import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
+import {
+  type AuthLayerContext,
+  createAuthOperationContext,
+} from "@/server/auth/logging/auth-layer-context";
 import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import type { Logger } from "@/shared/logging/logger.shared";
@@ -40,6 +44,7 @@ export class AuthUserService {
   ) {
     this.repo = repo;
     this.hasher = hasher;
+    // Preserve the additional base context you already have
     this.baseLog = logger.withContext("auth.user.service");
   }
 
@@ -51,18 +56,31 @@ export class AuthUserService {
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.createDemoUser;
-    const log = this.baseLog.withContext(ctx.context);
+    // Service-layer context for this operation
+    const serviceContext: AuthLayerContext<"service"> =
+      createAuthOperationContext({
+        identifiers: { role },
+        layer: "service",
+        operation: "demoUser",
+      });
+
+    const log = this.baseLog.withContext(serviceContext.context);
 
     try {
       const db = getAppDb();
       const counter = await demoUserCounter(db, role);
 
       if (!counter || counter <= 0) {
-        log.error("Invalid demo user counter", { counter, role });
+        log.error("Invalid demo user counter", {
+          counter,
+          identifiers: serviceContext.identifiers,
+          operation: serviceContext.operation,
+          role,
+        });
         return Err(createAuthAppError("unexpected"));
       }
 
@@ -83,15 +101,21 @@ export class AuthUserService {
 
       log.info("Demo user created", {
         email: uniqueEmail,
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
         role,
         username: uniqueUsername,
       });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      log.error("Failed to create demo user", { error: err });
+      log.error("Failed to create demo user", {
+        error: err,
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      const appError = mapRepoError(err, ctx.context);
+      const appError = mapRepoError(err, serviceContext.context);
 
       return Err(
         toFormAwareError(appError, {
@@ -110,15 +134,27 @@ export class AuthUserService {
    *
    * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.signup;
-    const log = this.baseLog.withContext(ctx.context);
+    const serviceContext: AuthLayerContext<"service"> =
+      createAuthOperationContext({
+        identifiers: {
+          email: input.email,
+          username: input.username,
+        },
+        layer: "service",
+        operation: "signup",
+      });
+
+    const log = this.baseLog.withContext(serviceContext.context);
 
     if (!hasRequiredSignupFields(input)) {
       log.warn("Missing required signup fields", {
         email: input.email,
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
         username: input.username,
       });
 
@@ -133,7 +169,6 @@ export class AuthUserService {
       const passwordHash = await this.hasher.hash(input.password);
 
       // All DB errors are already converted to domain/infra errors in insertUserDal.
-      // mapRepoErrorToAppResult then uses auth-conflict.mapper at the domain boundary.
       const userRow = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
@@ -145,17 +180,20 @@ export class AuthUserService {
 
       log.info("Signup succeeded", {
         email: input.email,
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
         username: input.username,
       });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
       // Only domain/AppError types must be caught here (e.g. Conflict, Validation).
-      // mapRepoErrorToAppResult delegates conflict interpretation to the auth-domain
-      // mapper (auth-conflict.mapper.ts), keeping infra messages decoupled.
-      log.errorWithDetails("Signup failed", err);
+      log.errorWithDetails("Signup failed", err, {
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      const appError = mapRepoError(err, ctx.context);
+      const appError = mapRepoError(err, serviceContext.context);
 
       return Err(
         toFormAwareError(appError, {
@@ -181,17 +219,26 @@ export class AuthUserService {
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const ctx = AUTH_SERVICE_CONTEXTS.login;
-    const log = this.baseLog.withContext(ctx.context);
+
+    const serviceContext: AuthLayerContext<"service"> =
+      createAuthOperationContext({
+        identifiers: { email: input.email },
+        layer: "service",
+        operation: "login",
+      });
+
+    const log = this.baseLog.withContext(serviceContext.context);
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       // Repo: null → user not found or no password
       if (!user) {
-        log.warn(
-          "Login failed - invalid credentials",
-          ctx.invalidCredentials(input.email),
-        );
+        log.warn("Login failed - invalid credentials", {
+          ...ctx.invalidCredentials(input.email),
+          identifiers: serviceContext.identifiers,
+          operation: serviceContext.operation,
+        });
 
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
@@ -202,10 +249,14 @@ export class AuthUserService {
 
       if (!user.password) {
         // Defensive: should not normally happen since repo treats "no password" as null
-        log.error(
-          "Login failed - missing password hash on user entity",
-          ctx.missingPassword(String(user.id)),
-        );
+        log.error("Login failed - missing password hash on user entity", {
+          ...ctx.missingPassword(String(user.id)),
+          identifiers: {
+            ...serviceContext.identifiers,
+            userId: String(user.id),
+          },
+          operation: serviceContext.operation,
+        });
 
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
@@ -220,10 +271,11 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        log.warn(
-          "Login failed - invalid credentials",
-          ctx.invalidCredentials(input.email),
-        );
+        log.warn("Login failed - invalid credentials", {
+          ...ctx.invalidCredentials(input.email),
+          identifiers: serviceContext.identifiers,
+          operation: serviceContext.operation,
+        });
 
         return Err(
           toFormAwareError(createAuthAppError("invalid_credentials"), {
@@ -232,14 +284,25 @@ export class AuthUserService {
         );
       }
 
-      log.info("Login succeeded", ctx.success(String(user.id)));
+      log.info("Login succeeded", {
+        ...ctx.success(String(user.id)),
+        identifiers: {
+          ...serviceContext.identifiers,
+          userId: String(user.id),
+        },
+        operation: serviceContext.operation,
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
       // Any repo/infra/domain throw is normalized here into AppError
-      log.error("Login failed", { error: err });
+      log.error("Login failed", {
+        error: err,
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      const appError = mapRepoError(err, ctx.context);
+      const appError = mapRepoError(err, serviceContext.context);
 
       return Err(
         toFormAwareError(appError, {

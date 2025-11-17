@@ -1,7 +1,12 @@
+// src/server/auth/application/actions/establish-session.action.ts
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { toUnexpectedAppError } from "@/server/auth/domain/errors/app-error.factories";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
+import {
+  type AuthLayerContext,
+  createAuthOperationContext,
+} from "@/server/auth/logging/auth-layer-context";
 import { logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
@@ -17,6 +22,14 @@ import { Err, Ok, type Result } from "@/shared/result/result";
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, AppError>> {
+  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
+    identifiers: { role: user.role, userId: user.id },
+    layer: "action",
+    operation: "login", // or a dedicated "establishSession" if you add it
+  });
+
+  const actionLogger = logger.withContext(actionContext.context);
+
   const res = await tryCatchAsync(async () => {
     await setSessionToken(user.id, user.role);
     return true as const;
@@ -27,16 +40,16 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    logger.info("Session established successfully", {
-      role: user.role,
-      userId: user.id,
+    actionLogger.info("Session established successfully", {
+      identifiers: actionContext.identifiers,
+      operation: actionContext.operation,
     });
   } else {
-    logger.error("Failed to establish session", {
+    actionLogger.error("Failed to establish session", {
       errorCode: mapped.error.code,
       errorMessage: mapped.error.message,
-      role: user.role,
-      userId: user.id,
+      identifiers: actionContext.identifiers,
+      operation: actionContext.operation,
     });
   }
 

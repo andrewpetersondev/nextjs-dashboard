@@ -6,10 +6,7 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import {
-  AUTH_LOG_CONTEXTS,
-  AuthRepoLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
+import { AuthRepoLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
@@ -18,8 +15,6 @@ import {
 } from "@/server/users/mapping/user.mappers";
 import type { Logger } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
-
-const REPOSITORY_CONTEXT = AUTH_LOG_CONTEXTS.repo;
 
 /**
  * Repository for user authentication flows (signup/login).
@@ -32,7 +27,7 @@ export class AuthUserRepositoryImpl {
 
   constructor(db: AppDatabase, logger: Logger = defaultLogger) {
     this.db = db;
-    this.logger = logger.withContext(REPOSITORY_CONTEXT);
+    this.logger = logger.withContext("auth.user.repository");
     this.transactionLogger = new TransactionLogger(this.logger);
   }
 
@@ -91,7 +86,6 @@ export class AuthUserRepositoryImpl {
 
     const data = AuthRepoLogFactory.success("signup", {
       email: input.email,
-      userId: row.id,
     });
 
     signupLogger.operation("info", "User created successfully", data);

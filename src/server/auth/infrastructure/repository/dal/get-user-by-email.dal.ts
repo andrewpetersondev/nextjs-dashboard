@@ -3,18 +3,13 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
-  AUTH_LOG_CONTEXTS,
-  AuthDalLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
-import {
-  createDalContext,
+  createAuthOperationContext,
   type DalContext,
-} from "@/server/auth/logging/dal-context";
+} from "@/server/auth/logging/auth-layer-context";
+import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { Logger } from "@/shared/logging/logger.shared";
-
-const context = AUTH_LOG_CONTEXTS.dal.login;
 
 /**
  * Finds a user by email for login.
@@ -30,8 +25,10 @@ export async function getUserByEmailDal(
    */
   operation: "getUserByEmail" | "login" = "getUserByEmail",
 ): Promise<UserRow | null> {
-  const dalContext: DalContext = createDalContext(operation, context, {
-    email,
+  const dalContext: DalContext = createAuthOperationContext({
+    identifiers: { email },
+    layer: "infrastructure.dal",
+    operation: "getUserByEmail",
   });
 
   const dalLogger = parentLogger.withContext(dalContext.context);
