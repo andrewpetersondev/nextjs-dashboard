@@ -4,7 +4,6 @@ import { isProd } from "@/shared/config/env-shared";
 import type { BaseError } from "@/shared/errors/base-error";
 import { tryGetErrorCodeMeta } from "@/shared/errors/error-codes";
 import type { AppError } from "@/shared/result/app-error/app-error";
-import { DEFAULT_UNKNOWN_MESSAGE } from "@/shared/result/app-error/app-error.constants";
 
 /**
  * Create an AppError for a specific canonical code using BaseError semantics,
@@ -19,7 +18,7 @@ export function appErrorFromCode(
   const app: AppError = {
     code,
     kind: meta?.category ?? "unknown",
-    message: message || meta?.description || DEFAULT_UNKNOWN_MESSAGE,
+    message: message || meta?.description || "An unknown error occurred",
     severity: (meta?.severity as AppError["severity"] | undefined) ?? "error",
     ...(details ? { details } : {}),
   };
