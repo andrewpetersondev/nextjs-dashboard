@@ -7,6 +7,7 @@ import {
   type AuthLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
+import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
@@ -40,16 +41,26 @@ export async function establishSessionAction(
     : Err<AppError>(res.error);
 
   if (mapped.ok) {
-    actionLogger.info("Session established successfully", {
-      identifiers: actionContext.identifiers,
-      operation: actionContext.operation,
+    actionLogger.operation("info", "Session established successfully", {
+      ...AuthActionLogFactory.success(actionContext.operation, {
+        role: user.role,
+        userId: user.id,
+      }),
+      context: actionContext.context,
     });
   } else {
-    actionLogger.error("Failed to establish session", {
-      errorCode: mapped.error.code,
-      errorMessage: mapped.error.message,
-      identifiers: actionContext.identifiers,
-      operation: actionContext.operation,
+    const error = mapped.error;
+
+    actionLogger.operation("error", "Failed to establish session", {
+      ...AuthActionLogFactory.failure(actionContext.operation, {
+        role: user.role,
+        userId: user.id,
+      }),
+      context: actionContext.context,
+      // Only rely on AppError surface fields
+      errorCode: error.code,
+      errorMessage: error.message,
+      ...(error.details && { errorDetails: error.details }),
     });
   }
 

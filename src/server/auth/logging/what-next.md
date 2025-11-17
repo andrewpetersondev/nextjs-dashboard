@@ -122,4 +122,14 @@ Concrete actions:
 
 ---
 
-If you tell me which part you want to tackle first (logging helpers vs infra error creation vs services), I can provide concrete code snippets for those specific files next.
+To fully enforce “actions never inspect DAL-specific error context” there, the remaining checklist is:
+In error branches, only use:
+error.code
+error.message
+error.details (for fieldErrors / metadata)
+Do not read error.context, error.cause, diagnosticId, or any DAL/infrastructure–specific fields.
+If you paste the full bodies of loginAction and signupAction, I can align them precisely with that rule and the same logging pattern as above.
+
+If you’d like a quick follow-up, I can also add a small helper to centralize:
+AppError → { message, fieldErrors } mapping for form actions,
+using error.details.fieldErrors where present, falling back to a generic message.

@@ -18,7 +18,6 @@ import {
   type AuthLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
-import { AUTH_SERVICE_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import type { Logger } from "@/shared/logging/logger.shared";
 import type { AppError } from "@/shared/result/app-error/app-error";
@@ -79,9 +78,17 @@ export class AuthUserService {
           counter,
           identifiers: serviceContext.identifiers,
           operation: serviceContext.operation,
+          reason: "invalid_demo_user_counter",
           role,
         });
-        return Err(createAuthAppError("unexpected"));
+        return Err(
+          createAuthAppError("unexpected", {
+            counter,
+            operation: serviceContext.operation,
+            reason: "invalid_demo_user_counter",
+            role,
+          }),
+        );
       }
 
       const demoPassword = createRandomPassword();
@@ -218,8 +225,6 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const ctx = AUTH_SERVICE_CONTEXTS.login;
-
     const serviceContext: AuthLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: { email: input.email },
@@ -235,33 +240,46 @@ export class AuthUserService {
       // Repo: null → user not found or no password
       if (!user) {
         log.warn("Login failed - invalid credentials", {
-          ...ctx.invalidCredentials(input.email),
           identifiers: serviceContext.identifiers,
           operation: serviceContext.operation,
+          reason: "invalid_credentials_user_not_found_or_no_password",
         });
 
         return Err(
-          toFormAwareError(createAuthAppError("invalid_credentials"), {
-            fields: ["email", "password"] as const,
-          }),
+          toFormAwareError(
+            createAuthAppError("invalid_credentials", {
+              operation: serviceContext.operation,
+              reason: "invalid_credentials_user_not_found_or_no_password",
+            }),
+            {
+              fields: ["email", "password"] as const,
+            },
+          ),
         );
       }
 
       if (!user.password) {
         // Defensive: should not normally happen since repo treats "no password" as null
         log.error("Login failed - missing password hash on user entity", {
-          ...ctx.missingPassword(String(user.id)),
           identifiers: {
             ...serviceContext.identifiers,
             userId: String(user.id),
           },
           operation: serviceContext.operation,
+          reason: "missing_password_hash_on_user_entity",
         });
 
         return Err(
-          toFormAwareError(createAuthAppError("invalid_credentials"), {
-            fields: ["email", "password"] as const,
-          }),
+          toFormAwareError(
+            createAuthAppError("invalid_credentials", {
+              operation: serviceContext.operation,
+              reason: "missing_password_hash_on_user_entity",
+              userId: String(user.id),
+            }),
+            {
+              fields: ["email", "password"] as const,
+            },
+          ),
         );
       }
 
@@ -272,20 +290,25 @@ export class AuthUserService {
 
       if (!passwordOk) {
         log.warn("Login failed - invalid credentials", {
-          ...ctx.invalidCredentials(input.email),
           identifiers: serviceContext.identifiers,
           operation: serviceContext.operation,
+          reason: "invalid_credentials_password_mismatch",
         });
 
         return Err(
-          toFormAwareError(createAuthAppError("invalid_credentials"), {
-            fields: ["email", "password"] as const,
-          }),
+          toFormAwareError(
+            createAuthAppError("invalid_credentials", {
+              operation: serviceContext.operation,
+              reason: "invalid_credentials_password_mismatch",
+            }),
+            {
+              fields: ["email", "password"] as const,
+            },
+          ),
         );
       }
 
       log.info("Login succeeded", {
-        ...ctx.success(String(user.id)),
         identifiers: {
           ...serviceContext.identifiers,
           userId: String(user.id),

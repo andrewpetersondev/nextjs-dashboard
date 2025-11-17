@@ -3,9 +3,15 @@ import { redirect } from "next/navigation";
 import { GUEST_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
+import {
+  type AuthLayerContext,
+  createAuthOperationContext,
+} from "@/server/auth/logging/auth-layer-context";
+import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { getAppDb } from "@/server/db/db.connection";
 import { formError } from "@/shared/forms/domain/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/models/form-result";
+import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
@@ -19,7 +25,21 @@ const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
 async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
-  const service = createAuthUserService(getAppDb());
+  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
+    identifiers: { role },
+    layer: "action",
+    operation: "demoUser",
+  });
+
+  const actionLogger = logger.withContext(actionContext.context);
+
+  actionLogger.operation("info", "Demo user creation started", {
+    ...AuthActionLogFactory.start(actionContext.operation),
+    context: actionContext.context,
+    identifiers: actionContext.identifiers,
+  });
+
+  const service = createAuthUserService(getAppDb(), actionLogger);
 
   const sessionResult = await executeAuthPipeline(
     role,
@@ -27,11 +47,34 @@ async function createDemoUserInternal(
   );
 
   if (!sessionResult.ok) {
+    const error = sessionResult.error;
+
+    actionLogger.operation("error", "Demo user creation failed", {
+      ...AuthActionLogFactory.failure(actionContext.operation, {
+        role,
+      }),
+      context: actionContext.context,
+      // Only rely on AppError surface fields
+      errorCode: error.code,
+      errorMessage: error.message,
+      identifiers: actionContext.identifiers,
+      ...(error.details && { errorDetails: error.details }),
+    });
+
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
-      message: sessionResult.error.message || DEMO_USER_ERROR_MESSAGE,
+      // Prefer AppError.message, fallback to generic
+      message: error.message || DEMO_USER_ERROR_MESSAGE,
     });
   }
+
+  actionLogger.operation("info", "Demo user created successfully", {
+    ...AuthActionLogFactory.success(actionContext.operation, {
+      role,
+    }),
+    context: actionContext.context,
+    identifiers: actionContext.identifiers,
+  });
 
   redirect(ROUTES.dashboard.root);
 }
@@ -76,20 +119,6 @@ export async function demoUserActionAdapter(
 export async function demoUserAction(
   role: UserRole = GUEST_ROLE,
 ): Promise<FormResult<never>> {
-  const service = createAuthUserService(getAppDb());
-
-  const sessionResult = await executeAuthPipeline(
-    role,
-    service.createDemoUser.bind(service),
-  );
-
-  if (!sessionResult.ok) {
-    // Service returns form-aware errors; convert to FormResult without field-specific errors
-    return formError({
-      fieldErrors: {} as Record<string, readonly string[]>,
-      message: sessionResult.error.message || DEMO_USER_ERROR_MESSAGE,
-    });
-  }
-
-  redirect(ROUTES.dashboard.root);
+  // Reuse the internal helper so logging + error mapping stay consistent
+  return await createDemoUserInternal(role);
 }
