@@ -12,52 +12,52 @@ const PG_ERROR_SOURCE = "postgres" as const;
 const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
 const PG_DEFAULT_MESSAGE = ERROR_CODES.database.description;
 
-const PG_ERRORS = {
+const PG_ERROR_MAP = {
   checkViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23514",
-    message: "Database CHECK constraint violated",
+    message: "db.check.violation",
     name: "checkViolation",
     retryable: false as const,
   },
   deadlockDetected: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "40P01",
-    message: "Database deadlock detected",
+    message: "db.deadlock.detected",
     name: "deadlockDetected",
     retryable: true as const,
   },
   foreignKeyViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23503",
-    message: "Database foreign key constraint violated",
+    message: "db.foreign_key.violation",
     name: "foreignKeyViolation",
     retryable: false as const,
   },
   notNullViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23502",
-    message: "Database NOT NULL constraint violated",
+    message: "db.not_null.violation",
     name: "notNullViolation",
     retryable: false as const,
   },
   serializationFailure: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "40001",
-    message: "Database serialization failure (transaction retry needed)",
+    message: "db.serialization.failure",
     name: "serializationFailure",
     retryable: true as const,
   },
   uniqueViolation: {
     appCode: ERROR_CODES.database.name satisfies ErrorCode,
     code: "23505",
-    message: "Database unique constraint violated",
+    message: "db.unique.violation",
     name: "uniqueViolation",
     retryable: false as const,
   },
 } as const;
 
-type PgErrorMeta = (typeof PG_ERRORS)[keyof typeof PG_ERRORS];
+type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
 type PgCode = PgErrorMeta["code"];
 
 function getPgErrorMetaByCode(
@@ -66,7 +66,7 @@ function getPgErrorMetaByCode(
   if (!code) {
     return;
   }
-  return Object.values(PG_ERRORS).find((entry) => entry.code === code);
+  return Object.values(PG_ERROR_MAP).find((entry) => entry.code === code);
 }
 
 /**
