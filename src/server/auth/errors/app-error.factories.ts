@@ -15,20 +15,6 @@ type AuthErrorKind =
   | "unexpected";
 
 /**
- * Extracts error message from unknown error, with fallback.
- */
-function getErrorMessage(e: unknown, fallback: string): string {
-  if (e instanceof Error) {
-    return e.message;
-  }
-  if (typeof e === "object" && e !== null && "message" in e) {
-    const msg = (e as { message: unknown }).message;
-    return typeof msg === "string" ? msg : fallback;
-  }
-  return fallback;
-}
-
-/**
  * Standard authentication error messages.
  */
 const AUTH_MESSAGES = {
@@ -39,6 +25,22 @@ const AUTH_MESSAGES = {
   unknown: "Unknown error occurred",
   validation: "Invalid data",
 } as const;
+
+/**
+ * Extracts error message from unknown error.
+ */
+function getErrorMessage(e: unknown): string {
+  if (e instanceof Error) {
+    return e.message;
+  }
+  if (typeof e === "object" && e !== null && "message" in e) {
+    const msg = (e as { message: unknown }).message;
+    if (typeof msg === "string") {
+      return msg;
+    }
+  }
+  return AUTH_MESSAGES.unexpected;
+}
 
 /**
  * Creates standardized AppError instances for common authentication scenarios.
@@ -86,8 +88,8 @@ export function createAuthAppError(
 
     case "invalid_credentials":
       return appErrorFromCode("unauthorized", AUTH_MESSAGES.invalidCreds, {
-        reason: "invalid_credentials",
         ...init,
+        reason: "invalid_credentials",
       });
 
     case "validation":
@@ -103,6 +105,6 @@ export function createAuthAppError(
  * Use as last resort for unexpected errors.
  */
 export function toUnexpectedAppError(e: unknown): AppError {
-  const message = getErrorMessage(e, AUTH_MESSAGES.unexpected);
+  const message = getErrorMessage(e);
   return appErrorFromCode("unknown", message, { originalError: e });
 }

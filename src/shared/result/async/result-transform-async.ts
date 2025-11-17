@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-transform-async.ts
-// Purpose: Adapter-first async flatMap utilities (no default AppError).
+// Purpose: Adapter-first async flatMap utilities (no default BaseError).
 
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import { Err, type Result } from "@/shared/result/result";
 
 /**
@@ -16,7 +16,7 @@ import { Err, type Result } from "@/shared/result/result";
  */
 export const flatMapAsync =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror1 extends AppError, Terror2 extends AppError>(
+    <Tvalue, Tnext, Terror1 extends BaseError, Terror2 extends BaseError>(
       fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
     ) =>
     /* @__PURE__ */
@@ -38,7 +38,7 @@ export const flatMapAsync =
  */
 export const flatMapAsyncPreserveErr =
   /* @__PURE__ */
-  <Tvalue, Tnext, Terror1 extends AppError, Terror2 extends AppError>(
+  <Tvalue, Tnext, Terror1 extends BaseError, Terror2 extends BaseError>(
     fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
   ) => {
     /* @__PURE__ */
@@ -70,9 +70,9 @@ export const flatMapAsyncSafe =
     <
       Tvalue,
       Tnext,
-      Terror1 extends AppError,
-      Terror2 extends AppError,
-      Tsideerror extends AppError,
+      Terror1 extends BaseError,
+      Terror2 extends BaseError,
+      Tsideerror extends BaseError,
     >(
       fn: (v: Tvalue) => Promise<Result<Tnext, Terror2>>,
       mapError: (e: unknown) => Tsideerror,

@@ -58,7 +58,14 @@ async function createDemoUserInternal(
       errorCode: error.code,
       errorMessage: error.message,
       identifiers: actionContext.identifiers,
-      ...(error.details && { errorDetails: error.details }),
+      ...(error.formErrors || error.fieldErrors
+        ? {
+            errorDetails: {
+              ...(error.formErrors && { formErrors: error.formErrors }),
+              ...(error.fieldErrors && { fieldErrors: error.fieldErrors }),
+            },
+          }
+        : {}),
     });
 
     return formError({

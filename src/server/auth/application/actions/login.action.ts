@@ -1,4 +1,5 @@
-// src/server/auth/application/actions/login.action.ts
+// File: 'src/server/auth/application/actions/login.action.ts'
+// Summary: Use mapper without a fallback parameter; return only plain POJOs to the client.
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -19,7 +20,7 @@ import {
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { mapAppErrorToFormPayload } from "@/shared/forms/application/app-error-to-form.mapper";
+import { mapBaseErrorToFormPayload } from "@/shared/errors/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { logger } from "@/shared/logging/logger.shared";
@@ -77,9 +78,7 @@ export async function loginAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(
-      validated.error.details?.fieldErrors || {},
-    ).length;
+    const errorCount = Object.keys(validated.error?.fieldErrors || {}).length;
 
     // Validation failure
     actionLogger.operation("warn", "Login validation failed", {
@@ -124,25 +123,22 @@ export async function loginAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    // Authentication failure
     actionLogger.operation("error", "Login authentication failed", {
       ...ctx.fail("authentication_failed"),
       context: enrichedContext.context,
       details: {
-        ...tracker.getMetrics(),
         email: input.email,
         errorCode: error.code,
         errorMessage: error.message,
         ip,
+        ...tracker.getMetrics(),
       },
       identifiers: enrichedContext.identifiers,
       operation: enrichedContext.operation,
     });
 
-    const { message, fieldErrors } = mapAppErrorToFormPayload<LoginField>(
-      error,
-      "Login failed. Please try again.",
-    );
+    const { fieldErrors, message } =
+      mapBaseErrorToFormPayload<LoginField>(error);
 
     return formError<LoginField>({
       code: error.code,

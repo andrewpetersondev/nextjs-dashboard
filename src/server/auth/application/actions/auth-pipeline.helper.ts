@@ -2,7 +2,7 @@
 
 import "server-only";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import { pipeAsync } from "@/shared/result/async/result-pipe-async";
 import { flatMapAsync } from "@/shared/result/async/result-transform-async";
 import { Ok, type Result } from "@/shared/result/result";
@@ -19,14 +19,14 @@ const memoizedEstablishSession = flatMapAsync(establishSessionAction);
  * @typeParam T - Type of the pipeline input.
  * @param input - Arbitrary data passed into `authHandler`.
  * @param authHandler - Async handler that maps `input` to a `Result` containing the
- * authenticated user (`SessionUser`) or an `AppError`.
+ * authenticated user (`SessionUser`) or an `BaseError`.
  * @returns A `Promise` resolving to the pipeline `Result`. On success it contains
- * the authenticated `SessionUser`; on failure it contains an `AppError`.
+ * the authenticated `SessionUser`; on failure it contains an `BaseError`.
  */
 export async function executeAuthPipeline<T>(
   input: T,
-  authHandler: (data: T) => Promise<Result<SessionUser, AppError>>,
-): Promise<Result<SessionUser, AppError>> {
+  authHandler: (data: T) => Promise<Result<SessionUser, BaseError>>,
+): Promise<Result<SessionUser, BaseError>> {
   const seed = Ok(input);
   const auth = flatMapAsync(authHandler);
 

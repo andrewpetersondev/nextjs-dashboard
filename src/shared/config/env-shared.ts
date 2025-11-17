@@ -8,6 +8,7 @@
  * - Safe for universal import (client/server)
  */
 
+import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   type DatabaseEnvironment,
   DatabaseEnvironmentSchema,
@@ -24,9 +25,13 @@ import { getEnvVariable } from "@/shared/config/env-utils";
 
 /**
  * Resolve and validate NODE_ENV.
- * - Requires NODE_ENV to be set and valid ("development" | "test" | "production")
+ * - On client: use NEXT_PUBLIC_NODE_ENV (validated by env-public)
+ * - On server: require NODE_ENV to be set and valid
  */
 export function getNodeEnv(): NodeEnvironment {
+  if (typeof window !== "undefined") {
+    return getPublicNodeEnv();
+  }
   const raw = getEnvVariable("NODE_ENV");
   const result = NodeEnvironmentSchema.safeParse(raw);
   if (!result.success) {

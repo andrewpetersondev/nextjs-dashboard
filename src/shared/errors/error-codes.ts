@@ -52,6 +52,23 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "error",
   },
+  invalidCredentials: {
+    authFields: ["email", "username", "password"] as const,
+    category: "client",
+    description: "validation.failed",
+    httpStatus: 422,
+    name: "invalidCredentials",
+    retryable: false,
+    severity: "warn",
+  },
+  missingFields: {
+    category: "server",
+    description: "missing.required.fields",
+    httpStatus: 500,
+    name: "missingFields",
+    retryable: false,
+    severity: "error",
+  },
   notFound: {
     category: "client",
     description: "Resource not found",
@@ -77,6 +94,14 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "warn",
   },
+  unexpected: {
+    category: "server",
+    description: "An unexpected error occurred",
+    httpStatus: 500,
+    name: "unexpected",
+    retryable: false,
+    severity: "error",
+  },
   unknown: {
     category: "server",
     description: "An unknown error occurred",
@@ -85,6 +110,7 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "error",
   },
+
   validation: {
     authFields: ["email", "username", "password"] as const,
     category: "client",

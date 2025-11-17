@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-transform.ts
 
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import { Err, type Result } from "@/shared/result/result";
 
 /**
@@ -19,7 +19,7 @@ import { Err, type Result } from "@/shared/result/result";
  */
 export const flatMap =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror1 extends AppError, Terror2 extends AppError>(
+    <Tvalue, Tnext, Terror1 extends BaseError, Terror2 extends BaseError>(
       fn: (v: Tvalue) => Result<Tnext, Terror2>,
     ) =>
     /* @__PURE__ */

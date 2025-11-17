@@ -1,9 +1,6 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
-
-import {
-  type AppError,
-  makeAppErrorDetails,
-} from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
+import { makeBaseError } from "@/shared/errors/base-error.factory";
 import type { ErrorCode } from "@/shared/errors/error-codes";
 import type {
   DenseFieldErrorMap,
@@ -41,8 +38,8 @@ export const formOk = <Tpayload>(
  * @param params.message - Top-level error message.
  * @param params.formErrors - Optional global form-level errors.
  * @param params.fieldErrors - Dense map of per-field error messages.
- * @param params.values - Optional sparse map of submitted values to include in details.
- * @returns A frozen {@link FormResult} representing an error (`Err`) containing an {@link AppError}.
+ * @param params.values - Optional sparse map of submitted values to include in context.
+ * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link BaseError}.
  */
 export const formError = <Tfieldname extends string>(params: {
   readonly code?: ErrorCode;
@@ -51,15 +48,11 @@ export const formError = <Tfieldname extends string>(params: {
   readonly fieldErrors: DenseFieldErrorMap<Tfieldname, string>;
   readonly values?: SparseFieldValueMap<Tfieldname, string>;
 }): FormResult<never> => {
-  const error: AppError = freeze({
-    __appError: "AppError" as const,
-    code: params.code ?? "validation",
-    details: makeAppErrorDetails({
-      extra: params.values ? { values: params.values } : undefined,
-      fieldErrors: params.fieldErrors,
-      formErrors: params.formErrors,
-    }),
-    kind: "validation",
+  const error: BaseError = makeBaseError(params.code ?? "validation", {
+    // Preserve submitted values in the error context for downstream mappers
+    context: params.values ? { values: params.values } : undefined,
+    fieldErrors: params.fieldErrors,
+    formErrors: params.formErrors,
     message: params.message,
   });
   return Err(error);

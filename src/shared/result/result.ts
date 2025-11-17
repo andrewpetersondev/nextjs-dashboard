@@ -1,6 +1,5 @@
 // File: src/shared/core/result/result.ts
-
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 
 /**
  * Freezes an object to prevent mutation (shallow).
@@ -16,7 +15,7 @@ export type OkResult<Tvalue> = { readonly ok: true; readonly value: Tvalue };
 /**
  * Represents a failed Result.
  */
-export type ErrResult<Terror extends AppError> = {
+export type ErrResult<Terror extends BaseError> = {
   readonly ok: false;
   readonly error: Terror;
 };
@@ -25,9 +24,9 @@ export type ErrResult<Terror extends AppError> = {
  * Discriminated union for operation results.
  *
  * @typeParam Tvalue - The value type.
- * @typeParam Terror - The error type, must extend AppError.
+ * @typeParam Terror - The error type, must extend BaseError.
  */
-export type Result<Tvalue, Terror extends AppError> =
+export type Result<Tvalue, Terror extends BaseError> =
   | OkResult<Tvalue>
   | ErrResult<Terror>;
 
@@ -54,7 +53,7 @@ export const Ok = /* @__PURE__ */ <Tvalue>(
 /**
  * Creates a failed Result.
  */
-export const Err = /* @__PURE__ */ <Terror extends AppError>(
+export const Err = /* @__PURE__ */ <Terror extends BaseError>(
   error: Terror,
 ): Result<never, Terror> => {
   const r = { error, ok: false as const } satisfies ErrResult<Terror>;
@@ -64,28 +63,28 @@ export const Err = /* @__PURE__ */ <Terror extends AppError>(
 /**
  * Type guard for OkResult.
  */
-export const isOk = <Tvalue, Terror extends AppError>(
+export const isOk = <Tvalue, Terror extends BaseError>(
   r: Result<Tvalue, Terror>,
 ): r is OkResult<Tvalue> => r.ok;
 
 /**
  * Type guard for ErrResult.
  */
-export const isErr = <Tvalue, Terror extends AppError>(
+export const isErr = <Tvalue, Terror extends BaseError>(
   r: Result<Tvalue, Terror>,
 ): r is ErrResult<Terror> => !r.ok;
 
 /**
  * Non-throwing unwrap to nullable.
  */
-export const toNullable = /* @__PURE__ */ <Tvalue, Terror extends AppError>(
+export const toNullable = /* @__PURE__ */ <Tvalue, Terror extends BaseError>(
   r: Result<Tvalue, Terror>,
 ): Tvalue | null => (r.ok ? r.value : null);
 
 /**
  * Construct from a boolean condition, preserving the actual boolean.
  */
-export const fromCondition = /* @__PURE__ */ <Terror extends AppError>(
+export const fromCondition = /* @__PURE__ */ <Terror extends BaseError>(
   condition: boolean,
   onFalse: () => Terror,
 ): Result<boolean, Terror> => (condition ? Ok(true) : Err(onFalse()));
@@ -93,6 +92,6 @@ export const fromCondition = /* @__PURE__ */ <Terror extends AppError>(
 /**
  * Convert Result to boolean flags as a tuple.
  */
-export const toFlags = /* @__PURE__ */ <Tvalue, Terror extends AppError>(
+export const toFlags = /* @__PURE__ */ <Tvalue, Terror extends BaseError>(
   r: Result<Tvalue, Terror>,
 ): readonly [isOk: boolean, isErr: boolean] => [r.ok, !r.ok] as const;

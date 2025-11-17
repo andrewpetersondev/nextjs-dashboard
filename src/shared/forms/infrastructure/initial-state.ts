@@ -1,6 +1,5 @@
 import type { z } from "zod";
-import type { AppError } from "@/shared/errors/app-error/app-error";
-import { makeAppErrorDetails } from "@/shared/errors/app-error/app-error";
+import { BaseError } from "@/shared/errors/base-error";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
@@ -11,8 +10,6 @@ import { Err } from "@/shared/result/result";
  *
  * @param fieldNames - An array of field names for which the error map will be initialized.
  * @returns A failed FormResult with validation errors.
- * @alpha
- * TODO: EVALUATE BY 10/11/2025
  */
 export function createInitialFailedFormState<Tfieldnames extends string>(
   fieldNames: readonly Tfieldnames[],
@@ -20,13 +17,9 @@ export function createInitialFailedFormState<Tfieldnames extends string>(
   const fieldErrors: DenseFieldErrorMap<Tfieldnames, string> =
     createEmptyDenseFieldErrorMap<Tfieldnames, string>(fieldNames);
 
-  const error: AppError = Object.freeze({
-    __appError: "AppError" as const,
-    code: "validation",
-    details: makeAppErrorDetails({
-      fieldErrors,
-    }),
-    kind: "validation",
+  const error = new BaseError("validation", {
+    fieldErrors,
+    // no message shown in UI; this is just an "empty" validation state
     message: "",
   });
 

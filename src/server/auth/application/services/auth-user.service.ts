@@ -10,16 +10,14 @@ import type { PasswordHasherPort } from "@/server/auth/application/ports/passwor
 import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
-import { createAuthAppError } from "@/server/auth/errors/app-error.factories";
-import { mapRepoError } from "@/server/auth/errors/app-error.mapping.repo";
-import { toFormAwareError } from "@/server/auth/errors/form-errors.factory";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import {
   type AuthLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import { BaseError } from "@/shared/errors/base-error";
+import { ERROR_CODES } from "@/shared/errors/error-codes";
 import type { Logger } from "@/shared/logging/logger.shared";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
@@ -43,7 +41,6 @@ export class AuthUserService {
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    // Preserve the additional base context you already have
     this.baseLog = logger.withContext("auth.user.service");
   }
 
@@ -51,15 +48,14 @@ export class AuthUserService {
    * Creates a demo user with a unique username and email for the given role.
    *
    * @param role - The role assigned to the demo user.
-   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async createDemoUser(
     role: UserRole,
-  ): Promise<Result<AuthUserTransport, AppError>> {
-    // Service-layer context for this operation
+  ): Promise<Result<AuthUserTransport, BaseError>> {
     const serviceContext: AuthLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: { role },
@@ -82,11 +78,14 @@ export class AuthUserService {
           role,
         });
         return Err(
-          createAuthAppError("unexpected", {
-            counter,
-            operation: serviceContext.operation,
-            reason: "invalid_demo_user_counter",
-            role,
+          new BaseError(ERROR_CODES.unexpected.name, {
+            context: {
+              counter,
+              operation: serviceContext.operation,
+              reason: "invalid_demo_user_counter",
+              role,
+            },
+            formErrors: ["Failed to generate demo user"],
           }),
         );
       }
@@ -122,13 +121,12 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const appError = mapRepoError(err, serviceContext.context);
+      const normalized = BaseError.from(err, ERROR_CODES.unknown.name, {
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      return Err(
-        toFormAwareError(appError, {
-          fields: ["email", "username", "password"] as const,
-        }),
-      );
+      return Err(normalized);
     }
   }
 
@@ -137,14 +135,14 @@ export class AuthUserService {
    * Only handles domain/infra errors from repository layer, never DB/PG errors directly.
    *
    * @param input - Readonly SignupData containing email, username and password.
-   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
    *
    * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async signup(
     input: Readonly<SignupData>,
-  ): Promise<Result<AuthUserTransport, AppError>> {
+  ): Promise<Result<AuthUserTransport, BaseError>> {
     const serviceContext: AuthLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: {
@@ -166,8 +164,18 @@ export class AuthUserService {
       });
 
       return Err(
-        toFormAwareError(createAuthAppError("missing_fields"), {
-          fields: ["email", "username", "password"] as const,
+        new BaseError(ERROR_CODES.missingFields.name, {
+          context: {
+            identifiers: serviceContext.identifiers,
+            operation: serviceContext.operation,
+            reason: "missing_fields",
+          },
+          fieldErrors: {
+            email: ["missing_fields"],
+            password: ["missing_fields"],
+            username: ["missing_fields"],
+          },
+          formErrors: ["Missing required signup fields"],
         }),
       );
     }
@@ -175,7 +183,6 @@ export class AuthUserService {
     try {
       const passwordHash = await this.hasher.hash(input.password);
 
-      // All DB errors are already converted to domain/infra errors in insertUserDal.
       const userRow = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
@@ -194,19 +201,17 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
-      // Only domain/AppError types must be caught here (e.g. Conflict, Validation).
       log.errorWithDetails("Signup failed", err, {
         identifiers: serviceContext.identifiers,
         operation: serviceContext.operation,
       });
 
-      const appError = mapRepoError(err, serviceContext.context);
+      const baseError = BaseError.from(err, ERROR_CODES.unknown.name, {
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      return Err(
-        toFormAwareError(appError, {
-          fields: ["email", "username", "password"] as const,
-        }),
-      );
+      return Err(baseError);
     }
   }
 
@@ -214,17 +219,17 @@ export class AuthUserService {
    * Authenticate a user by email and password.
    *
    * @param input - Readonly LoginData with email and password.
-   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
    *
    * @remarks
    * - Repository returns `AuthUserEntity | null` and does not encode auth semantics.
-   * - This method owns "invalid credentials" semantics and mapping to AppError.
-   * - All infra/repo errors are mapped via `mapRepoError` into AppError.
+   * - This method owns "invalid credentials" semantics and mapping to BaseError.
+   * - All infra/repo errors are mapped via `mapBaseErrorToFormPayload` into BaseError.
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<AuthUserTransport, AppError>> {
+  ): Promise<Result<AuthUserTransport, BaseError>> {
     const serviceContext: AuthLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: { email: input.email },
@@ -237,7 +242,6 @@ export class AuthUserService {
     try {
       const user = await this.repo.login({ email: input.email });
 
-      // Repo: null → user not found or no password
       if (!user) {
         log.warn("Login failed - invalid credentials", {
           identifiers: serviceContext.identifiers,
@@ -246,20 +250,21 @@ export class AuthUserService {
         });
 
         return Err(
-          toFormAwareError(
-            createAuthAppError("invalid_credentials", {
+          new BaseError(ERROR_CODES.invalidCredentials.name, {
+            context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_user_not_found_or_no_password",
-            }),
-            {
-              fields: ["email", "password"] as const,
             },
-          ),
+            fieldErrors: {
+              email: ["invalid_credentials"],
+              password: ["invalid_credentials"],
+            },
+            formErrors: ["Invalid credentials"],
+          }),
         );
       }
 
       if (!user.password) {
-        // Defensive: should not normally happen since repo treats "no password" as null
         log.error("Login failed - missing password hash on user entity", {
           identifiers: {
             ...serviceContext.identifiers,
@@ -270,16 +275,18 @@ export class AuthUserService {
         });
 
         return Err(
-          toFormAwareError(
-            createAuthAppError("invalid_credentials", {
+          new BaseError(ERROR_CODES.invalidCredentials.name, {
+            context: {
               operation: serviceContext.operation,
               reason: "missing_password_hash_on_user_entity",
               userId: String(user.id),
-            }),
-            {
-              fields: ["email", "password"] as const,
             },
-          ),
+            fieldErrors: {
+              email: ["invalid_credentials"],
+              password: ["invalid_credentials"],
+            },
+            formErrors: ["Invalid credentials"],
+          }),
         );
       }
 
@@ -296,15 +303,17 @@ export class AuthUserService {
         });
 
         return Err(
-          toFormAwareError(
-            createAuthAppError("invalid_credentials", {
+          new BaseError(ERROR_CODES.invalidCredentials.name, {
+            context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_password_mismatch",
-            }),
-            {
-              fields: ["email", "password"] as const,
             },
-          ),
+            fieldErrors: {
+              email: ["invalid_credentials"],
+              password: ["invalid_credentials"],
+            },
+            formErrors: ["Invalid credentials"],
+          }),
         );
       }
 
@@ -318,20 +327,18 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      // Any repo/infra/domain throw is normalized here into AppError
       log.error("Login failed", {
         error: err,
         identifiers: serviceContext.identifiers,
         operation: serviceContext.operation,
       });
 
-      const appError = mapRepoError(err, serviceContext.context);
+      const baseError = BaseError.from(err, ERROR_CODES.unknown.name, {
+        identifiers: serviceContext.identifiers,
+        operation: serviceContext.operation,
+      });
 
-      return Err(
-        toFormAwareError(appError, {
-          fields: ["email", "password"] as const,
-        }),
-      );
+      return Err(baseError);
     }
   }
 }

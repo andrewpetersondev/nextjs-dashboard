@@ -1,20 +1,20 @@
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import type { SparseFieldValueMap } from "@/shared/forms/domain/error-maps.types";
 
 /**
- * Safely extract echoed field values from an AppError.
+ * Safely extract echoed field values from an BaseError.
  * Returns undefined if not present.
  *
  * @example
- * const values = getFieldValues<'email' | 'username'>(appError);
+ * const values = getFieldValues<'email' | 'username'>(BaseError);
  * if (values?.email) {
  *   console.log(values.email); // string
  * }
  */
 export const getFieldValues = <Tfieldname extends string>(
-  error: AppError,
+  error: BaseError,
 ): SparseFieldValueMap<Tfieldname, string> | undefined => {
-  const extra = error.details?.extra;
+  const extra = error?.fieldErrors;
   if (!extra || typeof extra !== "object") {
     return;
   }

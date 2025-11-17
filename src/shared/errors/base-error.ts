@@ -114,14 +114,16 @@ export type ErrorContext = Readonly<Record<string, unknown>>;
  * - `context` is only included if non-empty.
  */
 export interface BaseErrorJson {
-  readonly code: ErrorCode;
-  readonly message: string;
-  readonly statusCode: number;
-  readonly severity: Severity;
-  readonly retryable: boolean;
   readonly category: string;
-  readonly description: string;
+  readonly code: ErrorCode;
   readonly context?: ErrorContext;
+  readonly description: string;
+  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
+  readonly formErrors?: readonly string[];
+  readonly message: string;
+  readonly retryable: boolean;
+  readonly severity: Severity;
+  readonly statusCode: number;
 }
 
 /**
@@ -318,20 +320,22 @@ export class BaseError extends Error {
    * stable error data without leaking internal details.
    */
   toJson(): BaseErrorJson {
-    return {
+    const hasContext = Object.keys(this.context).length > 0;
+
+    const json: BaseErrorJson = {
       category: this.category,
       code: this.code,
+      ...(hasContext ? { context: this.context } : {}),
       description: this.description,
+      ...(this.fieldErrors ? { fieldErrors: this.fieldErrors } : {}),
+      ...(this.formErrors ? { formErrors: this.formErrors } : {}),
       message: this.message,
       retryable: this.retryable,
       severity: this.severity,
       statusCode: this.statusCode,
-      ...(Object.keys(this.context).length > 0
-        ? { context: this.context }
-        : {}),
-      ...(this.fieldErrors ? { fieldErrors: this.fieldErrors } : {}),
-      ...(this.formErrors ? { formErrors: this.formErrors } : {}),
     };
+
+    return json;
   }
 
   /**

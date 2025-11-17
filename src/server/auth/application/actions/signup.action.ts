@@ -19,7 +19,7 @@ import {
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { mapAppErrorToFormPayload } from "@/shared/forms/application/app-error-to-form.mapper";
+import { mapBaseErrorToFormPayload } from "@/shared/errors/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { logger } from "@/shared/logging/logger.shared";
@@ -77,9 +77,7 @@ export async function signupAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(
-      validated.error.details?.fieldErrors || {},
-    ).length;
+    const errorCount = Object.keys(validated.error?.fieldErrors || {}).length;
 
     // Validation failure
     actionLogger.operation("warn", "Signup validation failed", {
@@ -143,10 +141,8 @@ export async function signupAction(
       operation: enrichedContext.operation,
     });
 
-    const { message, fieldErrors } = mapAppErrorToFormPayload<SignupField>(
-      error,
-      "Signup failed. Please try again.",
-    );
+    const { message, fieldErrors } =
+      mapBaseErrorToFormPayload<SignupField>(error);
 
     return formError<SignupField>({
       code: error.code,

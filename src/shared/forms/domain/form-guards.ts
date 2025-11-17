@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import type {
   FormResult,
   FormSuccess,
@@ -17,10 +17,10 @@ export const isFormOk = <Tpayload>(
  */
 export const isFormErr = <Tpayload>(
   r: FormResult<Tpayload>,
-): r is Result<never, AppError> => !r.ok;
+): r is Result<never, BaseError> => !r.ok;
 
 /**
- * Type guard to check if an AppError contains form validation details.
+ * Type guard to check if an BaseError contains form validation details.
  */
-export const isFormValidationError = (error: AppError): boolean =>
-  error.kind === "validation" && error.details?.fieldErrors !== undefined;
+export const isFormValidationError = (error: BaseError): boolean =>
+  error.code === "validation" && error?.fieldErrors !== undefined;

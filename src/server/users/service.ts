@@ -1,3 +1,4 @@
+// service.ts
 import "server-only";
 import { USER_ROLE } from "@/features/auth/lib/auth.roles";
 import { asPasswordHash } from "@/features/auth/lib/password.types";
@@ -7,9 +8,9 @@ import { hashWithSaltRounds } from "@/server/auth/infrastructure/adapters/passwo
 import type {
   CreateUserRepoInput,
   CreateUserRepoOutput,
-  RepoError,
   UsersRepository,
 } from "@/server/users/repo";
+import type { BaseError } from "@/shared/errors/base-error";
 import type { Result } from "@/shared/result/result";
 
 /**
@@ -50,11 +51,11 @@ export class UsersService {
    * Signup use case.
    * - Requires pre-validated input from the server action.
    * - Hashes password and persists via repository.
-   * - Returns Result with created user or infrastructure error.
+   * - Returns Result with created user or BaseError.
    */
   async signup(
     raw: AuthSignupPayload,
-  ): Promise<Result<CreateUserRepoOutput, RepoError>> {
+  ): Promise<Result<CreateUserRepoOutput, BaseError>> {
     const input = this.normalize(raw);
     const passwordHash = await hashWithSaltRounds(input.password);
     const repoInput = this.toRepoInput(input, passwordHash);

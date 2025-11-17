@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import type { Result } from "@/shared/result/result";
 
 /**
@@ -10,6 +10,6 @@ export interface FormSuccess<Tpayload> {
 }
 
 /**
- * Unified Result type for forms - uses standard Result<T, AppError>.
+ * Unified Result type for forms - uses standard Result<T, BaseError>.
  */
-export type FormResult<Tpayload> = Result<FormSuccess<Tpayload>, AppError>;
+export type FormResult<Tpayload> = Result<FormSuccess<Tpayload>, BaseError>;

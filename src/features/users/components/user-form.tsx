@@ -64,11 +64,10 @@ export function UserForm({
         <UserFields
           // Disable inputs while pending to prevent changes mid-submit
           disabled={pending}
-          // Extract field errors from AppError details
           errors={
             state.ok
               ? undefined
-              : (state.error.details?.fieldErrors as unknown as
+              : (state.error?.fieldErrors as unknown as
                   | Record<string, FieldError>
                   | undefined)
           }

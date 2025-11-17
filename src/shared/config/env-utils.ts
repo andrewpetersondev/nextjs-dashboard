@@ -22,8 +22,10 @@ export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
  * Get a required env var value or throw.
  */
 export function getEnvVariable<K extends EnvVariables>(key: K): string {
+  console.log(`Retrieving env var: ${key}`);
   const value = process.env[key];
   if (!value || value.trim() === "") {
+    console.log(`Env var ${key} is missing or empty`);
     throw new Error(`Missing required environment variable: ${key}`);
   }
   return value.trim();

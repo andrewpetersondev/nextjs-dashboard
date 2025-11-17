@@ -2,13 +2,12 @@
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
-import { toUnexpectedAppError } from "@/server/auth/errors/app-error.factories";
 import {
   type AuthLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import { BaseError } from "@/shared/errors/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/result/result";
@@ -22,7 +21,7 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  */
 export async function establishSessionAction(
   user: SessionUser,
-): Promise<Result<SessionUser, AppError>> {
+): Promise<Result<SessionUser, BaseError>> {
   const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
     identifiers: { role: user.role, userId: user.id },
     layer: "action",
@@ -31,14 +30,17 @@ export async function establishSessionAction(
 
   const actionLogger = logger.withContext(actionContext.context);
 
-  const res = await tryCatchAsync(async () => {
-    await setSessionToken(user.id, user.role);
-    return true as const;
-  }, toUnexpectedAppError);
+  const res = await tryCatchAsync(
+    async () => {
+      await setSessionToken(user.id, user.role);
+      return true as const;
+    },
+    (e: unknown): BaseError => BaseError.from(e),
+  );
 
-  const mapped: Result<SessionUser, AppError> = res.ok
+  const mapped: Result<SessionUser, BaseError> = res.ok
     ? Ok(user)
-    : Err<AppError>(res.error);
+    : Err<BaseError>(res.error);
 
   if (mapped.ok) {
     actionLogger.operation("info", "Session established successfully", {
@@ -57,10 +59,17 @@ export async function establishSessionAction(
         userId: user.id,
       }),
       context: actionContext.context,
-      // Only rely on AppError surface fields
+      // Only rely on BaseError surface fields
       errorCode: error.code,
       errorMessage: error.message,
-      ...(error.details && { errorDetails: error.details }),
+      ...(error.formErrors || error.fieldErrors
+        ? {
+            errorDetails: {
+              ...(error.formErrors && { formErrors: error.formErrors }),
+              ...(error.fieldErrors && { fieldErrors: error.fieldErrors }),
+            },
+          }
+        : {}),
     });
   }
 

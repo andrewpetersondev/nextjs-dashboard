@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/app-error/app-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import { selectDisplayableStringFieldValues } from "@/shared/forms/application/display-values.mapper";
 import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import { getFieldValues } from "@/shared/forms/application/field-values.extractor";
@@ -17,12 +17,12 @@ import type { Result } from "@/shared/result/result";
  * Use this to convert domain-layer results (like authentication or business logic)
  * into form-aware results that can be consumed by UI components.
  *
- * @param result - Discriminated `Result` with either success data or AppError.
+ * @param result - Discriminated `Result` with either success data or BaseError.
  * @param params - Adapter options for messages and value echoing/redaction.
  * @returns FormResult with success value or validation error.
  */
 export function mapResultToFormResult<Tfield extends string, Tpayload>(
-  result: Result<Tpayload, AppError>,
+  result: Result<Tpayload, BaseError>,
   params: {
     fields: readonly Tfield[];
     raw: Record<string, unknown>;
@@ -43,12 +43,10 @@ export function mapResultToFormResult<Tfield extends string, Tpayload>(
     return formOk<Tpayload>(result.value, successMessage);
   }
 
-  // Extract field errors from AppError.details or create empty dense map
   const fieldErrors =
     getFieldErrors<Tfield>(result.error) ??
     createEmptyDenseFieldErrorMap<Tfield, string>(fields);
 
-  // Try to preserve existing values from error, fallback to computing from raw
   const values =
     getFieldValues<Tfield>(result.error) ??
     selectDisplayableStringFieldValues(raw, fields, redactFields);
