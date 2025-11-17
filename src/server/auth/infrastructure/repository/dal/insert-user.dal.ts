@@ -5,6 +5,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import {
   type AuthLayerContext,
   createAuthOperationContext,
+  toErrorContext,
 } from "@/server/auth/logging/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -52,10 +53,9 @@ export async function insertUserDal(
         throw BaseError.wrap(
           ERROR_CODES.integrity.name,
           new Error("Insert did not return a row"),
-          {
-            ...dalContext,
+          toErrorContext(dalContext, {
             kind: "invariant",
-          },
+          }),
         );
       }
 

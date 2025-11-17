@@ -204,20 +204,6 @@ export const AuthRepoLogFactory = {
 /* -------------------------- DAL-level factories --------------------------- */
 
 export const AuthDalLogFactory = {
-  duplicate(
-    operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
-    details?: AuthLogPayload["details"],
-  ): AuthLogPayload {
-    return {
-      kind: "duplicate",
-      layer: "infrastructure.dal",
-      operation,
-      ...(identifiers && { identifiers }),
-      ...(details && { details }),
-      errorSource: "infrastructure.dal",
-    };
-  },
   // biome-ignore lint/nursery/useMaxParams: <explanation>
   error(
     operation: AuthOperation,
@@ -304,12 +290,6 @@ export const ErrorMappingFactory = {
       code,
       kind: "pg-error" as const,
       ...(detail && { detail }),
-    };
-  },
-  unknownError(err: unknown) {
-    return {
-      error: err,
-      kind: "unknown" as const,
     };
   },
 } as const;

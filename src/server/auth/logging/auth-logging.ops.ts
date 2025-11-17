@@ -1,34 +1,26 @@
 // src/server/auth/logging/auth-logging.ops.ts
 import "server-only";
 import type { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
+import type { AuthLayerContext } from "@/server/auth/logging/auth-layer-context";
+import { logAuthError } from "@/server/auth/logging/auth-logger.shared";
 import {
   AUTH_LOG_CONTEXTS,
   AuthActionLogFactory,
   AuthServiceLogFactory,
 } from "@/server/auth/logging/auth-logging.contexts";
-import type { AuthLogPayload } from "@/server/auth/logging/auth-logging.types";
-import { toSafeErrorShape } from "@/shared/logging/logger.shared";
+import type {
+  AuthErrorSource,
+  AuthLogKind,
+  AuthLogLayer,
+  AuthLogPayload,
+} from "@/server/auth/logging/auth-logging.types";
+import { type Logger, toSafeErrorShape } from "@/shared/logging/logger.shared";
 import type { OperationData } from "@/shared/logging/logger.types";
 
 /* ------------------------------ Action layer ------------------------------ */
 
 export const AUTH_ACTION_CONTEXTS = {
   demoUser: {
-    authenticationFailurePayload(metadata: {
-      ip: string;
-      tracker: PerformanceTracker;
-      email?: string;
-      errorCode?: string;
-      errorMessage?: string;
-    }) {
-      return {
-        ...metadata.tracker.getMetrics(),
-        email: metadata.email,
-        errorCode: metadata.errorCode,
-        errorMessage: metadata.errorMessage,
-        ip: metadata.ip,
-      };
-    },
     context: AUTH_LOG_CONTEXTS.action("demoUser"),
 
     fail(reason: string): OperationData<AuthLogPayload> {
@@ -245,13 +237,6 @@ export const AUTH_SERVICE_CONTEXTS = {
   createDemoUser: {
     context: AUTH_LOG_CONTEXTS.service("demoUser"),
 
-    failCounter(role: string): OperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.exception("demoUser", { role }),
-        context: AUTH_LOG_CONTEXTS.service("demoUser"),
-      };
-    },
-
     success(role: string): OperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("demoUser", { role }),
@@ -327,16 +312,28 @@ export const AUTH_SERVICE_CONTEXTS = {
         context: AUTH_LOG_CONTEXTS.service("signup"),
       };
     },
-
-    validationFail(): OperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.validation("signup"),
-        context: AUTH_LOG_CONTEXTS.service("signup"),
-      };
-    },
   },
 } as const;
 
 /* Convenience type parity with the old module */
 export type AuthServiceContext =
   (typeof AUTH_SERVICE_CONTEXTS)[keyof typeof AUTH_SERVICE_CONTEXTS];
+
+/**
+ * Convenience helper for logging errors from any auth layer context.
+ *
+ * This is a thin wrapper around `logAuthError` so call sites under `logging/*`
+ * (and higher layers) can use a single, centralized error-logging path.
+ */
+export function logAuthErrorForContext<L extends AuthLogLayer>(
+  logger: Logger,
+  ctx: AuthLayerContext<L>,
+  params: {
+    readonly errorSource: AuthErrorSource;
+    readonly error: unknown;
+    readonly kind?: AuthLogKind;
+    readonly details?: Readonly<Record<string, unknown>>;
+  },
+): void {
+  logAuthError(logger, ctx, params);
+}

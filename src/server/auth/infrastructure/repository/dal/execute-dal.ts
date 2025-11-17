@@ -1,9 +1,12 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
+import { mapBaseErrorToInfrastructure } from "@/server/auth/infrastructure/repository/errors/base-error.mapper";
+import { toBaseErrorFromPg } from "@/server/auth/infrastructure/repository/errors/pg-error.mapper";
+import {
+  type AuthLayerContext,
+  toErrorContext,
+} from "@/server/auth/logging/auth-layer-context";
 import type { Logger } from "@/shared/logging/logger.shared";
-import type { AuthLayerContext } from "../../../logging/auth-layer-context";
-import { mapBaseErrorToInfrastructure } from "../errors/base-error.mapper";
-import { toBaseErrorFromPg } from "../errors/pg-error.mapper";
 
 /**
  * Execute DAL operation with automatic error handling.
@@ -24,11 +27,9 @@ export async function executeDalOrThrow<T>(
     return await thunk();
   } catch (err: unknown) {
     // Normalize to BaseError (Postgres/external → BaseError)
-    const baseError = toBaseErrorFromPg(err, dalContext).withContext({
-      context: dalContext.context,
-      operation: dalContext.operation,
-      ...dalContext.identifiers,
-    });
+    const baseError = toBaseErrorFromPg(err, dalContext).withContext(
+      toErrorContext(dalContext),
+    );
 
     logger.errorWithDetails("[EXECUTE DAL]", baseError);
 

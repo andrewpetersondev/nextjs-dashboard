@@ -29,7 +29,7 @@ export async function getUserByEmailDal(
     createAuthOperationContext({
       identifiers: { email },
       layer: "infrastructure.dal",
-      operation: "getUserByEmail",
+      operation,
     });
 
   const dalLogger = parentLogger.withContext(dalContext.context);
