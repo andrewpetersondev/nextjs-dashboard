@@ -26,18 +26,13 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    // Normalize to BaseError (Postgres/external → BaseError)
     const baseError = mapPgErrorToBase(err, dalContext).withContext(
       toErrorContext(dalContext),
     );
 
-    logger.errorWithDetails(
-      "[EXECUTE DAL => logger.errorWithDetails()]",
-      baseError,
-    );
+    logger.errorWithDetails("DAL operation failed", baseError);
 
-    // Log once with full context
-    logger.operation("error", "[EXECUTE DAL OPERATION => logger.operation()]", {
+    logger.operation("error", "DAL operation error", {
       code: baseError.code,
       context: dalContext.context,
       diagnosticId: baseError.context.diagnosticId,
@@ -46,7 +41,6 @@ export async function executeDalOrThrow<T>(
       ...dalContext.identifiers,
     });
 
-    // Map to infrastructure-specific error type
     throw mapBaseErrorToInfrastructure(baseError);
   }
 }

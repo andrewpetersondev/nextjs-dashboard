@@ -60,13 +60,17 @@ const PG_ERROR_MAP = {
 type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
 type PgCode = PgErrorMeta["code"];
 
-function getPgErrorMetaByCode(
-  code: PgCode | undefined,
-): PgErrorMeta | undefined {
-  if (!code) {
-    return;
-  }
-  return Object.values(PG_ERROR_MAP).find((entry) => entry.code === code);
+const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
+  "40P01": PG_ERROR_MAP.deadlockDetected,
+  "23502": PG_ERROR_MAP.notNullViolation,
+  "23503": PG_ERROR_MAP.foreignKeyViolation,
+  "23505": PG_ERROR_MAP.uniqueViolation,
+  "23514": PG_ERROR_MAP.checkViolation,
+  "40001": PG_ERROR_MAP.serializationFailure,
+} as const;
+
+function getPgErrorMetaByCode(code: PgCode): PgErrorMeta {
+  return PG_CODE_TO_META[code];
 }
 
 /**
@@ -94,7 +98,7 @@ function extractPgError(err: unknown): Partial<PgDatabaseError> | null {
  */
 function buildPgErrorMetadata(
   pg: Partial<PgDatabaseError> | null,
-  code: PgCode | undefined,
+  code: PgCode,
 ): Readonly<Record<string, unknown>> {
   const metadata: Record<string, unknown> = {
     errorSource: PG_ERROR_SOURCE,
@@ -134,7 +138,7 @@ function buildPgErrorMetadata(
 /**
  * Map Postgres error to canonical BaseError code.
  */
-function mapPgCodeToErrorCode(code: PgCode | undefined): ErrorCode {
+function mapPgCodeToErrorCode(code: PgCode): ErrorCode {
   const meta = getPgErrorMetaByCode(code);
   return meta?.appCode ?? PG_DEFAULT_APP_CODE;
 }
@@ -148,7 +152,7 @@ function mapPgCodeToErrorCode(code: PgCode | undefined): ErrorCode {
  *  - Domain/application layers should look at `error.code` and context
  *    metadata (constraint, table, etc.) to decide final messages.
  */
-function buildErrorMessage(code: PgCode | undefined): string {
+function buildErrorMessage(code: PgCode): string {
   const meta = getPgErrorMetaByCode(code);
   if (meta) {
     return meta.message;
@@ -170,6 +174,23 @@ export function mapPgErrorToBase(
   const diagnosticId = randomUUID();
   const timestamp = new Date().toISOString();
 
+  // Handle undefined code case
+  if (!code) {
+    const errorContext = toErrorContext(dalContext, {
+      diagnosticId,
+      errorSource: PG_ERROR_SOURCE,
+      timestamp,
+    });
+
+    return BaseError.wrap(
+      PG_DEFAULT_APP_CODE,
+      err,
+      errorContext,
+      PG_DEFAULT_MESSAGE,
+    );
+  }
+
+  // Now code is guaranteed to be PgCode
   const metadata = buildPgErrorMetadata(pg, code);
 
   /**
