@@ -2,10 +2,8 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
-import type {
-  AuthLayerContext,
-  DalErrorContext,
-} from "@/server/auth/logging/auth-layer-context";
+import type { AuthLayerContext } from "@/server/auth/logging/auth-layer-context";
+import { toErrorContext } from "@/server/auth/logging/auth-layer-context";
 import { ErrorMappingFactory } from "@/server/auth/logging/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
@@ -90,16 +88,14 @@ function extractPgError(err: unknown): Partial<PgDatabaseError> | null {
 }
 
 /**
- * Build error context with diagnostic information.
+ * Build additional metadata for Postgres errors, to be merged into ErrorContext.
+ *
+ * This function is layer-agnostic and only knows about PG details.
  */
-function buildErrorContext(
-  dalContext: AuthLayerContext<"infrastructure.dal">,
+function buildPgErrorMetadata(
   pg: Partial<PgDatabaseError> | null,
   code: PgCode | undefined,
-): DalErrorContext {
-  const diagnosticId = randomUUID();
-  const timestamp = new Date().toISOString();
-
+): Readonly<Record<string, unknown>> {
   const metadata: Record<string, unknown> = {
     errorSource: PG_ERROR_SOURCE,
   };
@@ -131,12 +127,8 @@ function buildErrorContext(
       metadata.pgHint = pg.hint;
     }
   }
-  return {
-    ...dalContext,
-    diagnosticId,
-    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
-    timestamp,
-  };
+
+  return metadata;
 }
 
 /**
@@ -175,26 +167,23 @@ export function toBaseErrorFromPg(
   const pg = extractPgError(err);
   const code = pg?.code as PgCode | undefined;
 
-  const errorContext = buildErrorContext(dalContext, pg, code);
+  const diagnosticId = randomUUID();
+  const timestamp = new Date().toISOString();
+
+  const metadata = buildPgErrorMetadata(pg, code);
+
+  /**
+   * Unified ErrorContext shape across all auth layers.
+   * Extras (diagnosticId, timestamp, pgCode, constraint, etc.) are merged in.
+   */
+  const errorContext = toErrorContext(dalContext, {
+    diagnosticId,
+    timestamp,
+    ...metadata,
+  });
+
   const errorCode = mapPgCodeToErrorCode(code);
   const message = buildErrorMessage(code);
 
-  /**
-   * Flatten context for BaseError (no nested objects)
-   *
-   * baseError.context.pgCode      // "23505"
-   * baseError.context.pgErrorName // "uniqueViolation"
-   * baseError.context.constraint  // e.g. "users_email_key"
-   * baseError.context.table       // e.g. "users"
-   */
-  const flatContext = {
-    context: errorContext.context,
-    diagnosticId: errorContext.diagnosticId,
-    operation: errorContext.operation,
-    timestamp: errorContext.timestamp,
-    ...errorContext.identifiers,
-    ...(errorContext.metadata ?? {}), // <- pgCode, pgErrorName, constraint, table, etc.
-  };
-
-  return BaseError.wrap(errorCode, err, flatContext, message);
+  return BaseError.wrap(errorCode, err, errorContext, message);
 }

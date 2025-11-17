@@ -31,10 +31,13 @@ export async function executeDalOrThrow<T>(
       toErrorContext(dalContext),
     );
 
-    logger.errorWithDetails("[EXECUTE DAL]", baseError);
+    logger.errorWithDetails(
+      "[EXECUTE DAL => logger.errorWithDetails()]",
+      baseError,
+    );
 
     // Log once with full context
-    logger.operation("error", "[EXECUTE DAL OPERATION]", {
+    logger.operation("error", "[EXECUTE DAL OPERATION => logger.operation()]", {
       code: baseError.code,
       context: dalContext.context,
       diagnosticId: baseError.context.diagnosticId,

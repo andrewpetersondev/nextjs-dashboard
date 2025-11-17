@@ -25,19 +25,6 @@ export interface AuthLayerContext<L extends AuthLogLayer = AuthLogLayer> {
 }
 
 /**
- * Extended context with additional diagnostic information for DAL errors.
- */
-export interface DalErrorContext
-  extends AuthLayerContext<"infrastructure.dal"> {
-  /** Unique diagnostic ID for this specific error. */
-  readonly diagnosticId: string;
-  /** ISO timestamp when error occurred. */
-  readonly timestamp: string;
-  /** Additional metadata for debugging. */
-  readonly metadata?: Readonly<Record<string, unknown>>;
-}
-
-/**
  * Unified factory for creating standardized auth operation contexts
  * across all layers (action, service, repository, dal).
  *
