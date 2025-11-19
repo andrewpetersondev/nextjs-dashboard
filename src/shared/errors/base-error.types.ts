@@ -1,4 +1,4 @@
-import type { ErrorCode, Severity } from "@/shared/errors/error-codes";
+import type { AppErrorCode, Severity } from "@/shared/errors/error-codes";
 
 /**
  * @public
@@ -19,7 +19,7 @@ export type ErrorContext = Readonly<Record<string, unknown>>;
  */
 export interface BaseErrorJson {
   readonly category: string;
-  readonly code: ErrorCode;
+  readonly code: AppErrorCode;
   readonly context?: ErrorContext;
   readonly description: string;
   readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
@@ -36,8 +36,10 @@ export interface BaseErrorJson {
  * Provides a safe, JSON-compatible structure for error causes.
  */
 export interface SerializedErrorCause {
+  readonly code?: AppErrorCode;
   readonly message: string;
   readonly name: string;
+  readonly severity?: Severity;
   readonly stack?: string;
 }
 

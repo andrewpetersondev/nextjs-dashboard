@@ -6,8 +6,8 @@ import type {
 } from "@/shared/errors/base-error.types";
 import {
   APP_ERROR_MAP,
-  type ErrorCode,
-  getErrorCodeMeta,
+  type AppErrorCode,
+  getAppErrorCodeMeta,
   type Severity,
 } from "@/shared/errors/error-codes";
 
@@ -115,7 +115,7 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
  *   preserve subclass identity via {@link BaseError.create}.
  */
 export class BaseError extends Error {
-  readonly code: ErrorCode;
+  readonly code: AppErrorCode;
   readonly statusCode: number;
   readonly severity: Severity;
   readonly retryable: boolean;
@@ -132,8 +132,8 @@ export class BaseError extends Error {
   readonly formErrors?: readonly string[];
   readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
 
-  constructor(code: ErrorCode, options: BaseErrorOptions = {}) {
-    const meta = getErrorCodeMeta(code);
+  constructor(code: AppErrorCode, options: BaseErrorOptions = {}) {
+    const meta = getAppErrorCodeMeta(code);
     const { message, context, cause } = options;
     let sanitizedCause: unknown;
     switch (true) {
@@ -227,7 +227,7 @@ export class BaseError extends Error {
    * - Preserves subclass identity via {@link BaseError.create}.
    * - Copies the current `stack` where possible.
    */
-  remap(code: ErrorCode, overrideMessage?: string): this {
+  remap(code: AppErrorCode, overrideMessage?: string): this {
     if (code === this.code && !overrideMessage) {
       return this;
     }
@@ -291,7 +291,7 @@ export class BaseError extends Error {
    */
   static from(
     error: unknown,
-    fallbackCode: ErrorCode = APP_ERROR_MAP.unknown.name,
+    fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
     context: ErrorContext = {},
   ): BaseError {
     if (error instanceof BaseError) {
@@ -334,7 +334,7 @@ export class BaseError extends Error {
    * @param message - Optional message override for the resulting error.
    */
   static wrap(
-    code: ErrorCode,
+    code: AppErrorCode,
     err: unknown,
     context: ErrorContext = {},
     message?: string,
@@ -372,9 +372,9 @@ export class BaseError extends Error {
    *
    * Called by {@link BaseError.withContext} and {@link BaseError.remap}.
    */
-  protected create(code: ErrorCode, options: BaseErrorOptions): BaseError {
+  protected create(code: AppErrorCode, options: BaseErrorOptions): BaseError {
     const Ctor = this.constructor as new (
-      c: ErrorCode,
+      c: AppErrorCode,
       o: BaseErrorOptions,
     ) => BaseError;
     try {

@@ -2,18 +2,13 @@
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import {
-  BaseError,
-  type BaseErrorLogPayload,
-  type ErrorContext,
-  isBaseError,
-  type SerializedErrorCause,
-} from "@/shared/errors/base-error";
-import {
-  ERROR_CODES,
-  type ErrorCode,
-  type Severity,
-} from "@/shared/errors/error-codes";
+import { BaseError, isBaseError } from "@/shared/errors/base-error";
+import type {
+  BaseErrorLogPayload,
+  ErrorContext,
+  SerializedErrorCause,
+} from "@/shared/errors/base-error.types";
+import type { AppErrorCode } from "@/shared/errors/error-codes";
 import { createRedactor } from "@/shared/errors/redaction/redaction";
 import {
   consoleMethod,
@@ -21,12 +16,14 @@ import {
   levelPriority,
 } from "@/shared/logging/logger.levels";
 import type {
-  DetailedErrorPayload,
   LogBaseErrorOptions,
   LogEntry,
   OperationData,
-  SafeErrorShape,
 } from "@/shared/logging/logger.types";
+import {
+  mapSeverityToLogLevel,
+  toSafeErrorShape,
+} from "@/shared/logging/shared-logger.mappers";
 
 const processId = getProcessId();
 
@@ -93,7 +90,10 @@ export class Logger {
     return new Logger(this.context, requestId);
   }
 
+  // --------------------------------------------------------------------------
   // Core
+  // --------------------------------------------------------------------------
+
   private shouldLog(level: LogLevel): boolean {
     return levelPriority[level] <= currentPriority();
   }
@@ -104,23 +104,14 @@ export class Logger {
     data?: T,
   ): LogEntry<T> {
     const entry: LogEntry<T> = {
+      data: data !== undefined ? (redactLogData(data) as T) : undefined,
       level,
+      loggerContext: this.context || undefined,
       message,
+      pid: processId,
+      requestId: this.requestId || undefined,
       timestamp: new Date().toISOString(),
     };
-    if (this.context !== undefined && this.context !== "") {
-      entry.context = this.context;
-    }
-    if (this.requestId !== undefined && this.requestId !== "") {
-      entry.requestId = this.requestId;
-    }
-    if (processId !== undefined) {
-      entry.pid = processId;
-    }
-    if (data !== undefined) {
-      // Use shared redaction system for all log data
-      entry.data = redactLogData(data) as T;
-    }
     return entry;
   }
 
@@ -132,8 +123,8 @@ export class Logger {
     if (entry.requestId) {
       prefix.push(`[req:${entry.requestId}]`);
     }
-    if (entry.context) {
-      prefix.push(`[${entry.context}]`);
+    if (entry.loggerContext) {
+      prefix.push(`[${entry.loggerContext}]`);
     }
     const head = prefix.join(" ");
     return entry.data !== undefined
@@ -218,9 +209,9 @@ export class Logger {
   ): void {
     const { operation, context, identifiers, ...rest } = data;
     const logData = {
-      operation,
-      ...(identifiers ?? {}),
       ...rest,
+      ...(identifiers ?? {}),
+      operation,
     };
     const target = context ? this.withContext(context) : this;
     target.logAt(level, message, logData);
@@ -242,23 +233,18 @@ export class Logger {
    * logger.logBaseError(error, { detailed: true, extra: { userId: '123' } });
    * ```
    */
-  logBaseError(error: BaseError, options: LogBaseErrorOptions = {}): void {
-    const {
-      message = error.message,
-      extra,
-      detailed = false,
-      levelOverride,
-    } = options;
+  logBaseError(error: BaseError, options?: LogBaseErrorOptions): void {
+    const { detailed, extra, levelOverride, message } = options ?? {};
 
-    const level = levelOverride ?? severityToLogLevel(error.severity);
+    // Auto-map severity to log level if not explicitly overridden
+    const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
 
-    // Build payload immutably
     const payload = this.buildErrorPayload(error, {
-      detailed,
+      detailed: Boolean(detailed),
       extra,
     });
 
-    this.logAt(level, message, payload);
+    this.logAt(level, message ?? error.message, payload);
   }
 
   /**
@@ -269,34 +255,48 @@ export class Logger {
   private buildErrorPayload(
     error: BaseError,
     options: { detailed: boolean; extra?: Record<string, unknown> },
-  ): DetailedErrorPayload {
+  ): BaseErrorLogPayload {
     const { detailed, extra } = options;
-
-    // Start with base sanitized shape (no stack/cause)
     const baseJson = error.toJson();
-
-    // Extract diagnosticId with type safety
     const diagnosticId = this.extractDiagnosticId(error.context);
 
-    // Build base payload immutably
-    const basePayload: BaseErrorLogPayload & Record<string, unknown> = {
-      ...baseJson,
-      ...(diagnosticId && { diagnosticId }),
-      ...(extra && { ...extra }),
+    // Separate validation errors for better visibility
+    const hasValidationErrors =
+      (baseJson.formErrors && baseJson.formErrors.length > 0) ||
+      (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
+
+    const basePayload: BaseErrorLogPayload = {
+      category: baseJson.category,
+      code: baseJson.code,
+      context: baseJson.context,
+      description: baseJson.description,
+      diagnosticId,
+      ...(baseJson.fieldErrors && { fieldErrors: baseJson.fieldErrors }),
+      ...(baseJson.formErrors && { formErrors: baseJson.formErrors }),
+      message: baseJson.message,
+      ...(extra && Object.keys(extra).length > 0 && { meta: extra }),
+      retryable: baseJson.retryable,
+      severity: baseJson.severity,
+      statusCode: baseJson.statusCode,
+      ...(hasValidationErrors && { validationErrorPresent: true }),
     };
 
-    // Add detailed information if requested
     if (!detailed) {
       return basePayload;
     }
 
-    // Build detailed payload immutably
-    const detailedPayload: DetailedErrorPayload = {
+    const detailedPayload: BaseErrorLogPayload = {
       ...basePayload,
-      ...(error.stack && { stack: error.stack }),
-      ...(error.cause instanceof Error && {
-        cause: this.serializeErrorCause(error.cause),
+      cause:
+        error.cause instanceof Error
+          ? this.serializeErrorCause(error.cause)
+          : undefined,
+      // Include info about originalCause if it was redacted
+      ...(error.originalCause !== error.cause && {
+        originalCauseRedacted: true,
+        originalCauseType: typeof error.originalCause,
       }),
+      stack: error.stack,
     };
 
     return detailedPayload;
@@ -327,10 +327,20 @@ export class Logger {
    * @internal
    */
   private serializeErrorCause(cause: Error): SerializedErrorCause {
+    if (isBaseError(cause)) {
+      return {
+        code: cause.code,
+        message: cause.message,
+        name: cause.name,
+        severity: cause.severity,
+        stack: cause.stack,
+      };
+    }
+
     return {
       message: cause.message,
       name: cause.name,
-      ...(cause.stack && { stack: cause.stack }),
+      stack: cause.stack,
     };
   }
 
@@ -401,10 +411,13 @@ export class Logger {
     extra?: Record<string, unknown>,
   ): void {
     if (!isBaseError(error)) {
-      this.error(message, {
+      const payload: Record<string, unknown> = {
         error: toSafeErrorShape(error),
-        ...extra,
-      });
+      };
+      if (extra) {
+        Object.assign(payload, extra);
+      }
+      this.error(message, payload);
       return;
     }
     this.logBaseError(error, {
@@ -415,15 +428,35 @@ export class Logger {
     });
   }
 
-  // Convenience wrapper (safe log) for unknown values
+  /**
+   * Log an error by code with optional context.
+   * Useful for quick error reporting without constructing full BaseError.
+   */
+  errorByCode(
+    code: AppErrorCode,
+    message?: string,
+    context?: ErrorContext,
+  ): void {
+    const error = new BaseError(code, { context, message });
+    this.logBaseError(error, { levelOverride: "error" });
+  }
+
+  /**
+   * Normalize any unknown error into BaseError, log it, and return it.
+   *
+   * @returns The normalized BaseError (useful for re-throwing or further handling)
+   */
   normalizeAndLog(
     err: unknown,
-    fallbackMessage = "Operation failed",
-    fallbackCode = ERROR_CODES.unknown.name satisfies ErrorCode,
+    fallbackMessage: string,
+    fallbackCode: AppErrorCode,
     extra?: Record<string, unknown>,
   ): BaseError {
     const baseErr = BaseError.from(err, fallbackCode, extra);
-    this.logBaseError(baseErr, { message: fallbackMessage });
+    this.logBaseError(baseErr, {
+      levelOverride: "error",
+      message: fallbackMessage,
+    });
     return baseErr;
   }
 }

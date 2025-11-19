@@ -1,7 +1,7 @@
 // src/shared/errors/base-error.factory.ts
 import { BaseError } from "@/shared/errors/base-error";
 import type { BaseErrorOptions } from "@/shared/errors/base-error.types";
-import type { ErrorCode } from "@/shared/errors/error-codes";
+import type { AppErrorCode } from "@/shared/errors/error-codes";
 
 /**
  * Canonical factory for creating `BaseError` instances.
@@ -9,7 +9,7 @@ import type { ErrorCode } from "@/shared/errors/error-codes";
  * Use this instead of constructing POJO error shapes.
  */
 export function makeBaseError(
-  code: ErrorCode,
+  code: AppErrorCode,
   options: BaseErrorOptions = {},
 ): BaseError {
   return new BaseError(code, options);
