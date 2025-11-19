@@ -91,12 +91,23 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "a11y": "on",
-      "complexity": "on",
+      "a11y": {
+        "noNoninteractiveElementInteractions": "on"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "on",
+        "noExcessiveLinesPerFunction": "on",
+        "noExcessiveNestedTestSuites": "on",
+        "noForEach": "on",
+        "noImplicitCoercions": "on",
+        "noUselessStringConcat": "on",
+        "noVoid": "on",
+        "useSimplifiedLogicExpression": "on",
+        "useWhile": "on"
+      },
       "correctness": {
         "noGlobalDirnameFilename": "on",
-        "noUndeclaredVariables": "on",
-        "useImportExtensions": "off"
+        "noUndeclaredVariables": "on"
       },
       "nursery": {
         "noContinue": "on",
