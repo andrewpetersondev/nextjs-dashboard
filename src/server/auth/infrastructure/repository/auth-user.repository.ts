@@ -18,7 +18,7 @@ import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
-import { isBaseError } from "@/shared/errors/base-error";
+import { isBaseError } from "@/shared/errors/base-error.factory";
 import type { Logger } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
