@@ -1,3 +1,5 @@
+// src/shared/errors/error-codes.ts
+
 /**
  * Canonical application error codes and their metadata.
  *
