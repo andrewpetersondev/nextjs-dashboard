@@ -8,10 +8,7 @@ import type {
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/branding/domain-brands";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
@@ -20,8 +17,8 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @param id - Branded InvoiceId from url
  * @param updateData - Partial invoice data to update which omits `id`
  * @returns Promise resolving to updated InvoiceEntity
- * @throws ValidationError if input parameters are invalid
- * @throws DatabaseError if update fails or invoice not found
+ * @throws BaseError if input parameters are invalid
+ * @throws BaseError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
   db: AppDatabase,
@@ -30,9 +27,8 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db, id, and updateData are not empty
   if (!(db && id && updateData)) {
-    throw new ValidationError(INVOICE_MSG.invalidInput, {
-      id,
-      updateData,
+    throw new BaseError("validation", {
+      message: INVOICE_MSG.invalidInput,
     });
   }
 
@@ -45,7 +41,7 @@ export async function updateInvoiceDal(
 
   // Check if update was successful
   if (!updated) {
-    throw new DatabaseError(INVOICE_MSG.updateFailed, { id });
+    throw new BaseError("database", { message: INVOICE_MSG.updateFailed });
   }
 
   // Convert raw database row to InvoiceEntity

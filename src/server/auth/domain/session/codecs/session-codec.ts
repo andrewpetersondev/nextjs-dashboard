@@ -12,17 +12,17 @@ import {
   EncryptPayloadSchema,
 } from "@/server/auth/domain/session/validation/session-payload.schema";
 import { sessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);
   if (!parsed.success) {
     const errs = parsed.error.flatten().fieldErrors;
     console.error("Invalid session payload:", errs);
-    throw new ValidationError(
-      "Invalid session payload: Missing or invalid required fields",
-      errs as unknown as Record<string, unknown>,
-    );
+    throw new BaseError("validation", {
+      cause: errs as unknown as Record<string, unknown>,
+      message: "Invalid session payload: Missing or invalid required fields",
+    });
   }
   return parsed.data;
 };
@@ -31,25 +31,22 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
   const now = Date.now();
   if (expMs <= now) {
     console.error("expiresAt must be in the future:", expMs);
-    throw new ValidationError(
-      "Invalid session payload: expiresAt must be in the future",
-      { expiresAt: ["must be in the future"] } as unknown as Record<
-        string,
-        unknown
-      >,
-    );
+    throw new BaseError("validation", {
+      cause: {
+        expiresAt: ["must be in the future"],
+      },
+      message: "Invalid session payload: expiresAt must be in the future",
+    } as unknown as Record<string, unknown>);
   }
   if (startMs <= 0 || startMs > expMs) {
     console.error(
       "sessionStart must be positive and not exceed expiresAt:",
       {},
     );
-    throw new ValidationError(
-      "Invalid session payload: sessionStart must be positive and not exceed expiresAt",
-      {
-        sessionStart: ["must be positive and less than or equal to expiresAt"],
-      } as unknown as Record<string, unknown>,
-    );
+    throw new BaseError("validation", {
+      message:
+        "Invalid session payload: sessionStart must be positive and not exceed expiresAt",
+    });
   }
 };
 

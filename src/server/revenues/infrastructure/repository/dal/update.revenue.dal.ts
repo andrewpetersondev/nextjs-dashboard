@@ -8,10 +8,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import type { RevenueId } from "@/shared/branding/domain-brands";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 export async function updateRevenue(
   db: AppDatabase,
@@ -19,7 +16,9 @@ export async function updateRevenue(
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!(id && revenue)) {
-    throw new ValidationError("Revenue ID and data are required");
+    throw new BaseError("validation", {
+      message: "Revenue ID and data are required",
+    });
   }
 
   const now = new Date();
@@ -38,12 +37,16 @@ export async function updateRevenue(
     .returning()) as RevenueRow[];
 
   if (!data) {
-    throw new DatabaseError("Failed to update revenue record");
+    throw new BaseError("database", {
+      message: "Failed to update revenue record",
+    });
   }
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw new DatabaseError("Failed to convert updated revenue record");
+    throw new BaseError("database", {
+      message: "Failed to convert updated revenue record",
+    });
   }
   return result;
 }

@@ -6,22 +6,20 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 export async function upsertRevenue(
   db: AppDatabase,
   revenueData: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenueData) {
-    throw new ValidationError("Revenue data is required");
+    throw new BaseError("validation", { message: "Revenue data is required" });
   }
   if (!revenueData.period) {
-    throw new ValidationError(
-      "Revenue period (first-of-month DATE) is required and must be unique",
-    );
+    throw new BaseError("validation", {
+      message:
+        "Revenue period (first-of-month DATE) is required and must be unique",
+    });
   }
 
   const now = new Date();
@@ -48,19 +46,23 @@ export async function upsertRevenue(
       .returning()) as RevenueRow[];
 
     if (!data) {
-      throw new DatabaseError("Failed to upsert revenue record");
+      throw new BaseError("database", {
+        message: "Failed to upsert revenue record",
+      });
     }
 
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
-      throw new DatabaseError("Failed to convert revenue record");
+      throw new BaseError("database", {
+        message: "Failed to convert revenue record",
+      });
     }
     return result;
   } catch (error) {
     if (error instanceof Error && error.message.includes("unique constraint")) {
-      throw new ValidationError(
-        `Revenue record with period ${revenueData.period} already exists and could not be updated`,
-      );
+      throw new BaseError("validation", {
+        message: `Revenue record with period ${revenueData.period} already exists and could not be updated`,
+      });
     }
     throw error;
   }

@@ -5,10 +5,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { RevenueId } from "@/shared/branding/domain-brands";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 export class UpdateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;
@@ -22,11 +19,15 @@ export class UpdateRevenueUseCase {
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
     if (!(id && revenue)) {
-      throw new ValidationError("Invalid revenue ID or data");
+      throw new BaseError("validation", {
+        message: "Invalid revenue ID or data",
+      });
     }
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
-      throw new DatabaseError(`Failed to update revenue with ID ${id}`);
+      throw new BaseError("database", {
+        message: `Failed to update revenue with ID ${id}`,
+      });
     }
     return updated;
   }
