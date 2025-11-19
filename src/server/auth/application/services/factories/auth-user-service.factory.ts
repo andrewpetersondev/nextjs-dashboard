@@ -9,7 +9,7 @@ import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   logger as defaultLogger,
-  type Logger,
+  type LoggingClient,
 } from "@/shared/logging/logger.shared";
 
 /**
@@ -21,7 +21,7 @@ import {
  */
 export function createAuthUserService(
   db: AppDatabase,
-  logger: Logger = defaultLogger,
+  logger: LoggingClient = defaultLogger,
 ): AuthUserService {
   const repo = new AuthUserRepositoryImpl(db, logger);
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =

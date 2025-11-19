@@ -9,7 +9,7 @@ import {
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import type { Logger } from "@/shared/logging/logger.shared";
+import type { LoggingClient } from "@/shared/logging/logger.shared";
 
 /**
  * Finds a user by email for login.
@@ -18,7 +18,7 @@ import type { Logger } from "@/shared/logging/logger.shared";
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
-  parentLogger: Logger,
+  parentLogger: LoggingClient,
   /**
    * Logical operation name for logging.
    * Defaults to "getUserByEmail" but callers (e.g. login repo) can override.

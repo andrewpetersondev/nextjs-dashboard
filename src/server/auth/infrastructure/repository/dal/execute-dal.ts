@@ -2,7 +2,7 @@
 import "server-only";
 import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/pg-error.factory";
-import type { Logger } from "@/shared/logging/logger.shared";
+import type { LoggingClient } from "@/shared/logging/logger.shared";
 
 /**
  * Execute DAL operation with automatic error handling.
@@ -17,7 +17,7 @@ import type { Logger } from "@/shared/logging/logger.shared";
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
   dalContext: AuthLogLayerContext<"infrastructure.dal">,
-  logger: Logger,
+  logger: LoggingClient,
 ): Promise<T> {
   try {
     return await thunk();

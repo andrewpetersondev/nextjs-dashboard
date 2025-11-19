@@ -19,7 +19,7 @@ import {
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
 import { isBaseError } from "@/shared/errors/base-error.factory";
-import type { Logger } from "@/shared/logging/logger.shared";
+import type { LoggingClient } from "@/shared/logging/logger.shared";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
 
 /**
@@ -28,10 +28,10 @@ import { logger as defaultLogger } from "@/shared/logging/logger.shared";
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly logger: Logger;
+  private readonly logger: LoggingClient;
   private readonly transactionLogger: TransactionLogger;
 
-  constructor(db: AppDatabase, logger: Logger = defaultLogger) {
+  constructor(db: AppDatabase, logger: LoggingClient = defaultLogger) {
     this.db = db;
     this.logger = logger.withContext("auth.user.repository");
     this.transactionLogger = new TransactionLogger(this.logger);

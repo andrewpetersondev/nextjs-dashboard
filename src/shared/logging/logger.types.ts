@@ -59,12 +59,12 @@ export interface LogEntry<T = unknown> extends BaseLogEntry {
   readonly requestId?: string;
 }
 
-export interface Logger {
-  debug(message: string, metadata?: LogMetadata): void;
-  error(message: string, error?: Error, metadata?: LogMetadata): void;
-  info(message: string, metadata?: LogMetadata): void;
-  trace(message: string, metadata?: LogMetadata): void;
-  warn(message: string, metadata?: LogMetadata): void;
+export interface LoggingClientContract {
+  debug<T>(message: string, data?: T): void;
+  error<T>(message: string, data?: T): void;
+  info<T>(message: string, data?: T): void;
+  trace<T>(message: string, data?: T): void;
+  warn<T>(message: string, data?: T): void;
 }
 
 /**

@@ -1,7 +1,7 @@
 // src/server/auth/logging/auth-logger.shared.ts
 import "server-only";
 import {
-  type Logger,
+  type LoggingClient,
   logger as rootLogger,
 } from "@/shared/logging/logger.shared";
 
@@ -20,7 +20,10 @@ export const authLogger = rootLogger.withContext("auth");
  * - createAuthLogger("service.signup", requestId)
  * - createAuthLogger("infrastructure.dal.insertUser")
  */
-export function createAuthLogger(scope: string, requestId?: string): Logger {
+export function createAuthLogger(
+  scope: string,
+  requestId?: string,
+): LoggingClient {
   const base = authLogger.withContext(scope);
   return requestId ? base.withRequest(requestId) : base;
 }

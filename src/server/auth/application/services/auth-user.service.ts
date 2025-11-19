@@ -18,7 +18,7 @@ import {
 import { getAppDb } from "@/server/db/db.connection";
 import { BaseError } from "@/shared/errors/base-error";
 import { APP_ERROR_MAP } from "@/shared/errors/error-codes";
-import type { Logger } from "@/shared/logging/logger.shared";
+import type { LoggingClient } from "@/shared/logging/logger.shared";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
 
@@ -32,12 +32,12 @@ import { Err, Ok } from "@/shared/result/result";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
-  private readonly baseLog: Logger;
+  private readonly baseLog: LoggingClient;
 
   constructor(
     repo: AuthUserRepositoryPort,
     hasher: PasswordHasherPort,
-    logger: Logger,
+    logger: LoggingClient,
   ) {
     this.repo = repo;
     this.hasher = hasher;

@@ -72,7 +72,7 @@ const redactLogData = createRedactor();
  * // - error.context: { userId: '123', operation: 'getUser' }
  * // - requestId: 'req-456', hostname: 'api-1'
  */
-export class Logger {
+export class LoggingClient {
   // TODO: refactor names in logger to make this obsolete
   private static readonly logMetadataConflictKeys = new Set([
     "context",
@@ -99,24 +99,24 @@ export class Logger {
   // Public Logging Methods
   // --------------------------------------------------------------------------
 
-  trace<T>(message: string, data?: T): void {
-    this.logAt("trace", message, data);
-  }
-
   debug<T>(message: string, data?: T): void {
     this.logAt("debug", message, data);
+  }
+
+  error<T>(message: string, data?: T): void {
+    this.logAt("error", message, data);
   }
 
   info<T>(message: string, data?: T): void {
     this.logAt("info", message, data);
   }
 
-  warn<T>(message: string, data?: T): void {
-    this.logAt("warn", message, data);
+  trace<T>(message: string, data?: T): void {
+    this.logAt("trace", message, data);
   }
 
-  error<T>(message: string, data?: T): void {
-    this.logAt("error", message, data);
+  warn<T>(message: string, data?: T): void {
+    this.logAt("warn", message, data);
   }
 
   // --------------------------------------------------------------------------
@@ -126,18 +126,18 @@ export class Logger {
   /**
    * Create a child logger with additional context.
    */
-  withContext(context: string): Logger {
+  withContext(context: string): LoggingClient {
     const combined = this.loggerContext
       ? `${this.loggerContext}:${context}`
       : context;
-    return new Logger(combined, this.loggerRequestId);
+    return new LoggingClient(combined, this.loggerRequestId);
   }
 
   /**
    * Attach a request ID for correlation (useful in SSR or API contexts).
    */
-  withRequest(requestId: string): Logger {
-    return new Logger(this.loggerContext, requestId);
+  withRequest(requestId: string): LoggingClient {
+    return new LoggingClient(this.loggerContext, requestId);
   }
 
   // --------------------------------------------------------------------------
@@ -244,7 +244,7 @@ export class Logger {
       return;
     }
     const filteredEntries = Object.entries(payload).filter(
-      ([key]) => !Logger.logMetadataConflictKeys.has(key),
+      ([key]) => !LoggingClient.logMetadataConflictKeys.has(key),
     );
     if (filteredEntries.length === 0) {
       return;
@@ -289,7 +289,7 @@ export class Logger {
    *
    * Behavior:
    * - Uses `operationPayload.operationContext` (if provided) to derive a child logger via
-   *   {@link Logger.withContext}, so the operation is tagged with a
+   *   {@link LoggingClient.withContext}, so the operation is tagged with a
    *   stable logical context (e.g. `auth:application.action.signup`).
    * - Reads `operationPayload.operationName` as the canonical operation name
    *   (e.g. `"signup"`, `"demoUser"`, `"withTransaction"`).
@@ -300,7 +300,7 @@ export class Logger {
    *
    * This method does **not** know about {@link BaseError}. It is meant for
    * domain / operation telemetry, not for rich error logging. Use
-   * {@link Logger.errorWithDetails} or {@link Logger.logBaseError} for
+   * {@link LoggingClient.errorWithDetails} or {@link LoggingClient.logBaseError} for
    * full error payloads.
    *
    * @typeParam T - Additional payload shape for the operation.
@@ -310,7 +310,7 @@ export class Logger {
    * @param operationPayload - Structured operation data. The following keys have
    *   special meaning:
    *   - `operationContext?`: Logical log context; when present, it is applied via
-   *     {@link Logger.withContext} before logging.
+   *     {@link LoggingClient.withContext} before logging.
    *   - `operationName`: Canonical operation name (e.g. `"signup"`).
    *   - `operationIdentifiers?`: Stable identifiers to flatten into the payload
    *     (user IDs, roles, IPs, etc.).
@@ -488,7 +488,7 @@ export class Logger {
   /**
    * Logs an unknown error value with rich, sanitized details.
    *
-   * This is a convenience wrapper around {@link Logger.logBaseError} that:
+   * This is a convenience wrapper around {@link LoggingClient.logBaseError} that:
    * - Accepts an `unknown` error value.
    * - If the value is a {@link BaseError}, logs it with a detailed payload
    *   including stack traces and serialized cause information.
@@ -529,4 +529,4 @@ export class Logger {
 }
 
 // Default instance
-export const logger = new Logger();
+export const logger = new LoggingClient();
