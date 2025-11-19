@@ -7,10 +7,8 @@ import { AuthUserRepositoryAdapter } from "@/server/auth/infrastructure/adapters
 import { BcryptPasswordHasherAdapter } from "@/server/auth/infrastructure/adapters/password-hasher-bcrypt.adapter";
 import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
-import {
-  logger as defaultLogger,
-  type LoggingClient,
-} from "@/shared/logging/logger.shared";
+import { logger as defaultLogger } from "@/shared/logging/logger.shared";
+import type { LoggingClientContract } from "@/shared/logging/logger.types";
 
 /**
  * Composition root that builds an `AuthUserService` with concrete adapters.
@@ -21,7 +19,7 @@ import {
  */
 export function createAuthUserService(
   db: AppDatabase,
-  logger: LoggingClient = defaultLogger,
+  logger: LoggingClientContract = defaultLogger,
 ): AuthUserService {
   const repo = new AuthUserRepositoryImpl(db, logger);
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =

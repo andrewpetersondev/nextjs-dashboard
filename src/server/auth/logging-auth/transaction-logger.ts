@@ -5,16 +5,16 @@ import {
   AUTH_LOG_CONTEXTS,
   TransactionLogFactory,
 } from "@/server/auth/logging-auth/auth-logging.contexts";
-import type { LoggingClient } from "@/shared/logging/logger.shared";
+import type { LoggingClientContract } from "@/shared/logging/logger.types";
 
 export class TransactionLogger {
-  private readonly logger: LoggingClient;
+  private readonly logger: LoggingClientContract;
 
   /**
    * Default: uses `auth:infrastructure.transaction` as the base context.
    * You can still inject a parent logger if you need request-level context.
    */
-  constructor(parentLogger?: LoggingClient) {
+  constructor(parentLogger?: LoggingClientContract) {
     const base = parentLogger ?? createAuthLogger("infrastructure.transaction");
     this.logger = base.withContext(AUTH_LOG_CONTEXTS.transaction);
   }

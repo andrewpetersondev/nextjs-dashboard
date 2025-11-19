@@ -1,9 +1,7 @@
 // src/server/auth/logging/auth-logger.shared.ts
 import "server-only";
-import {
-  type LoggingClient,
-  logger as rootLogger,
-} from "@/shared/logging/logger.shared";
+import { logger as rootLogger } from "@/shared/logging/logger.shared";
+import type { LoggingClientContract } from "@/shared/logging/logger.types";
 
 /**
  * Base logger for all auth-related logs.
@@ -23,7 +21,7 @@ export const authLogger = rootLogger.withContext("auth");
 export function createAuthLogger(
   scope: string,
   requestId?: string,
-): LoggingClient {
+): LoggingClientContract {
   const base = authLogger.withContext(scope);
   return requestId ? base.withRequest(requestId) : base;
 }
