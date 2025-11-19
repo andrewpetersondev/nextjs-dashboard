@@ -10,6 +10,7 @@ import type {
   SerializedErrorCause,
 } from "@/shared/errors/base-error.types";
 import { createRedactor } from "@/shared/errors/redaction/redaction";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import {
   consoleMethod,
   currentLogLevelPriority,
@@ -19,7 +20,6 @@ import type {
   LogBaseErrorOptions,
   LogEntry,
   LogEventContext,
-  LoggingClientContract,
   LogOperationData,
 } from "@/shared/logging/logger.types";
 import {

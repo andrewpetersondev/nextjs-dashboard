@@ -19,8 +19,8 @@ import {
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
 import { isBaseError } from "@/shared/errors/base-error.factory";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import { logger as defaultLogger } from "@/shared/logging/logger.shared";
-import type { LoggingClientContract } from "@/shared/logging/logger.types";
 
 /**
  * Repository for user authentication flows (signup/login).

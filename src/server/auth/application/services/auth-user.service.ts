@@ -18,7 +18,7 @@ import {
 import { getAppDb } from "@/server/db/db.connection";
 import { BaseError } from "@/shared/errors/base-error";
 import { APP_ERROR_MAP } from "@/shared/errors/error-codes";
-import type { LoggingClientContract } from "@/shared/logging/logger.types";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
 

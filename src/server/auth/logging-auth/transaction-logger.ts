@@ -5,7 +5,7 @@ import {
   AUTH_LOG_CONTEXTS,
   TransactionLogFactory,
 } from "@/server/auth/logging-auth/auth-logging.contexts";
-import type { LoggingClientContract } from "@/shared/logging/logger.types";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
 export class TransactionLogger {
   private readonly logger: LoggingClientContract;

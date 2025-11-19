@@ -2,7 +2,7 @@
 import "server-only";
 import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/pg-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/logger.types";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
 /**
  * Execute DAL operation with automatic error handling.

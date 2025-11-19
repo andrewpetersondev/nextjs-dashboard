@@ -1,7 +1,7 @@
 // src/server/auth/logging/auth-logger.shared.ts
 import "server-only";
+import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import { logger as rootLogger } from "@/shared/logging/logger.shared";
-import type { LoggingClientContract } from "@/shared/logging/logger.types";
 
 /**
  * Base logger for all auth-related logs.
