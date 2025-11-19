@@ -1,7 +1,5 @@
 // src/shared/logging/logger.shared.ts
-import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
-import { getProcessId } from "@/shared/config/env-utils";
 import type { BaseError } from "@/shared/errors/base-error";
 import { isBaseError } from "@/shared/errors/base-error.factory";
 import type {
@@ -9,16 +7,10 @@ import type {
   ErrorContext,
   SerializedErrorCause,
 } from "@/shared/errors/base-error.types";
-import { createRedactor } from "@/shared/errors/redaction/redaction";
+import { AbstractLogger } from "@/shared/logging/abstract-logger";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
-import {
-  consoleMethod,
-  currentLogLevelPriority,
-  logLevelPriority,
-} from "@/shared/logging/logger.levels";
 import type {
   LogBaseErrorOptions,
-  LogEntry,
   LogEventContext,
   LogOperationData,
 } from "@/shared/logging/logger.types";
@@ -26,22 +18,6 @@ import {
   mapSeverityToLogLevel,
   toSafeErrorShape,
 } from "@/shared/logging/shared-logger.mappers";
-
-const processId = getProcessId();
-
-/**
- * Static context applied to all logs from this process.
- * Useful for version, environment, and service identifiers.
- */
-let processMetadata: Record<string, unknown> = {};
-
-/**
- * Shared redactor for log payloads, built on the core redaction system.
- *
- * - Uses DEFAULT_SENSITIVE_KEYS and redaction configuration.
- * - Guards against circular references per invocation.
- */
-const redactLogData = createRedactor();
 
 /**
  * Sensitivity-aware structured logger.
@@ -73,52 +49,15 @@ const redactLogData = createRedactor();
  * // - error.context: { userId: '123', operation: 'getUser' }
  * // - requestId: 'req-456', hostname: 'api-1'
  */
-export class LoggingClient implements LoggingClientContract {
+export class LoggingClient
+  extends AbstractLogger
+  implements LoggingClientContract
+{
   // TODO: refactor names in logger to make this obsolete
   private static readonly logMetadataConflictKeys = new Set([
     "context",
     "operation",
   ]);
-
-  private readonly loggerContext?: string;
-  private readonly loggerRequestId?: string;
-
-  constructor(context?: string, requestId?: string) {
-    this.loggerContext = context;
-    this.loggerRequestId = requestId;
-  }
-
-  /**
-   * Configure global context for all Logger instances.
-   * Call this once at application bootstrap.
-   */
-  static setGlobalContext(context: Record<string, unknown>): void {
-    processMetadata = { ...processMetadata, ...context };
-  }
-
-  // --------------------------------------------------------------------------
-  // Public Logging Methods
-  // --------------------------------------------------------------------------
-
-  debug<T>(message: string, data?: T): void {
-    this.logAt("debug", message, data);
-  }
-
-  error<T>(message: string, data?: T): void {
-    this.logAt("error", message, data);
-  }
-
-  info<T>(message: string, data?: T): void {
-    this.logAt("info", message, data);
-  }
-
-  trace<T>(message: string, data?: T): void {
-    this.logAt("trace", message, data);
-  }
-
-  warn<T>(message: string, data?: T): void {
-    this.logAt("warn", message, data);
-  }
 
   /**
    * Create a child logger with additional context.
@@ -305,77 +244,6 @@ export class LoggingClient implements LoggingClientContract {
       loggingContext,
       message,
     });
-  }
-
-  private shouldLog(level: LogLevel): boolean {
-    return logLevelPriority[level] <= currentLogLevelPriority();
-  }
-
-  private createEntry<T>(
-    level: LogLevel,
-    message: string,
-    data?: T,
-  ): LogEntry<T> {
-    let safeData = data;
-    if (safeData instanceof Error) {
-      // @ts-expect-error - transforming type for serialization purposes
-      safeData = toSafeErrorShape(safeData);
-    }
-
-    console.log("[Logger] createEntry", {
-      dataIncluded: safeData !== undefined,
-      level,
-      message,
-    });
-
-    const entry: LogEntry<T> = {
-      data: safeData !== undefined ? (redactLogData(safeData) as T) : undefined,
-      loggerContext: this.loggerContext || undefined,
-      logLevel: level,
-      message,
-      pid: processId,
-      requestId: this.loggerRequestId || undefined,
-      timestamp: new Date().toISOString(),
-      ...(Object.keys(processMetadata).length > 0
-        ? { metadata: processMetadata }
-        : {}),
-    };
-    return entry;
-  }
-
-  private format(entry: LogEntry): unknown[] {
-    if (getRuntimeNodeEnv() === "production") {
-      return [JSON.stringify(entry)];
-    }
-    const prefix: string[] = [entry.timestamp];
-    if (entry.requestId) {
-      prefix.push(`[req:${entry.requestId}]`);
-    }
-    if (entry.loggerContext) {
-      prefix.push(`[${entry.loggerContext}]`);
-    }
-    const head = prefix.join(" ");
-    return entry.data !== undefined
-      ? [head, entry.message, entry.data]
-      : [head, entry.message];
-  }
-
-  private output(entry: LogEntry): void {
-    consoleMethod[entry.logLevel](...this.format(entry));
-  }
-
-  private logAt<T>(level: LogLevel, message: string, data?: T): void {
-    if (!this.shouldLog(level)) {
-      console.log("[Logger] logAt skipped", {
-        level,
-        message,
-        reason: "below-threshold",
-      });
-      return;
-    }
-    console.log("[Logger] logAt emit", { level, message });
-    const entry = this.createEntry(level, message, data);
-    this.output(entry);
   }
 
   private composeLogPayload(
