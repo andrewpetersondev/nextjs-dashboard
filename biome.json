@@ -5,7 +5,6 @@
       "recommended": true,
       "source": {
         "organizeImports": "on",
-        "recommended": true,
         "useSortedAttributes": "on",
         "useSortedKeys": "on",
         "useSortedProperties": "on"
@@ -90,12 +89,6 @@
     }
   },
   "linter": {
-    "domains": {
-      "next": "all",
-      "project": "all",
-      "react": "all",
-      "test": "all"
-    },
     "enabled": true,
     "rules": {
       "a11y": "on",
@@ -103,7 +96,6 @@
       "correctness": {
         "noGlobalDirnameFilename": "on",
         "noUndeclaredVariables": "on",
-        "recommended": true,
         "useImportExtensions": "off"
       },
       "nursery": {
@@ -111,7 +103,6 @@
         "noDeprecatedImports": "on",
         "noShadow": "on",
         "noUselessUndefined": "on",
-        "recommended": true,
         "useExplicitType": "off",
         "useMaxParams": "on",
         "useSortedClasses": "on"
@@ -122,14 +113,12 @@
         "noDelete": "on",
         "noNamespaceImport": "on",
         "noReExportAll": "on",
-        "recommended": true,
         "useTopLevelRegex": "on"
       },
       "recommended": true,
       "security": {
         "noDangerouslySetInnerHtml": "on",
-        "noDangerouslySetInnerHtmlWithChildren": "on",
-        "recommended": true
+        "noDangerouslySetInnerHtmlWithChildren": "on"
       },
       "style": {
         "noCommonJs": "on",
@@ -171,7 +160,6 @@
         "noUnusedTemplateLiteral": "on",
         "noUselessElse": "on",
         "noYodaExpression": "on",
-        "recommended": true,
         "useAsConstAssertion": "on",
         "useAtIndex": "on",
         "useBlockStatements": "on",
@@ -216,7 +204,6 @@
         "noSkippedTests": "on",
         "noUnassignedVariables": "on",
         "noVar": "on",
-        "recommended": true,
         "useAwait": "on",
         "useErrorMessage": "on",
         "useGuardForIn": "on",
