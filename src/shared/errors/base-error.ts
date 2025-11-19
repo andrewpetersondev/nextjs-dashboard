@@ -5,7 +5,7 @@ import type {
   ErrorContext,
 } from "@/shared/errors/base-error.types";
 import {
-  ERROR_CODES,
+  APP_ERROR_MAP,
   type ErrorCode,
   getErrorCodeMeta,
   type Severity,
@@ -102,7 +102,7 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
 }
 
 /**
- * Canonical application error type backed by centralized {@link ERROR_CODES}.
+ * Canonical application error type backed by centralized {@link APP_ERROR_MAP}.
  *
  * Core guarantees:
  * - **Stable metadata** from `getErrorCodeMeta` (code, status, severity, etc.).
@@ -291,7 +291,7 @@ export class BaseError extends Error {
    */
   static from(
     error: unknown,
-    fallbackCode: ErrorCode = ERROR_CODES.unknown.name,
+    fallbackCode: ErrorCode = APP_ERROR_MAP.unknown.name,
     context: ErrorContext = {},
   ): BaseError {
     if (error instanceof BaseError) {

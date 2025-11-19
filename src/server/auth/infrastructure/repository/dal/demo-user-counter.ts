@@ -11,7 +11,7 @@ import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.conte
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { BaseError } from "@/shared/errors/base-error";
-import { ERROR_CODES } from "@/shared/errors/error-codes";
+import { APP_ERROR_MAP } from "@/shared/errors/error-codes";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -52,7 +52,7 @@ export async function demoUserCounter(
           },
         );
         throw BaseError.wrap(
-          ERROR_CODES.integrity.name,
+          APP_ERROR_MAP.integrity.name,
           new Error("Invariant: insert did not return a row"),
           toErrorContext(dalContext, {
             kind: "invariant",
@@ -69,7 +69,7 @@ export async function demoUserCounter(
           operation: dalContext.operation,
         });
         throw BaseError.wrap(
-          ERROR_CODES.integrity.name,
+          APP_ERROR_MAP.integrity.name,
           new Error("Invariant: demo user counter row returned with null id"),
           toErrorContext(dalContext, {
             counterRow,

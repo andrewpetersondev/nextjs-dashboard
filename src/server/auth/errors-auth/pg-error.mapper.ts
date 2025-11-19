@@ -6,7 +6,7 @@ import type { AuthLayerContext } from "@/server/auth/logging-auth/auth-layer-con
 import { toErrorContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { ErrorMappingFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/base-error";
-import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
+import { APP_ERROR_MAP, type ErrorCode } from "@/shared/errors/error-codes";
 import {
   PG_CODE_TO_META,
   type PgCode,
@@ -14,8 +14,8 @@ import {
 } from "@/shared/errors/pg-error-codes";
 
 const PG_ERROR_SOURCE = "postgres" as const;
-const PG_DEFAULT_APP_CODE = ERROR_CODES.database.name satisfies ErrorCode;
-const PG_DEFAULT_MESSAGE = ERROR_CODES.database.description;
+const PG_DEFAULT_APP_CODE = APP_ERROR_MAP.database.name satisfies ErrorCode;
+const PG_DEFAULT_MESSAGE = APP_ERROR_MAP.database.description;
 
 function getPgErrorMetaByCode(code: PgCode): PgErrorMeta {
   return PG_CODE_TO_META[code];

@@ -9,8 +9,7 @@
  * - Do not remove or repurpose a code once in use (add a new one instead).
  * - Keep descriptions user-safe (no internal implementation detail or secrets).
  */
-
-export const ERROR_CODES = {
+export const APP_ERROR_MAP = {
   conflict: {
     authFields: ["email", "username"] as const,
     category: "client",
@@ -110,7 +109,6 @@ export const ERROR_CODES = {
     retryable: false,
     severity: "error",
   },
-
   validation: {
     authFields: ["email", "username", "password"] as const,
     category: "client",
@@ -122,9 +120,9 @@ export const ERROR_CODES = {
   },
 } as const;
 
-export type ErrorCode = keyof typeof ERROR_CODES;
+export type ErrorCode = keyof typeof APP_ERROR_MAP;
 
-export type ErrorCodeMeta = (typeof ERROR_CODES)[ErrorCode];
+export type ErrorCodeMeta = (typeof APP_ERROR_MAP)[ErrorCode];
 
 // Derive a stable Severity union from metadata values
 export type Severity = ErrorCodeMeta["severity"];
@@ -133,26 +131,26 @@ export type Severity = ErrorCodeMeta["severity"];
  * Return metadata for a code (throws if invalid in strict usage contexts).
  */
 export function getErrorCodeMeta(code: ErrorCode): ErrorCodeMeta {
-  return ERROR_CODES[code];
+  return APP_ERROR_MAP[code];
 }
 
 /**
  * Safe lookup returning undefined for unknown inputs (e.g. external/raw sources).
  */
 export function tryGetErrorCodeMeta(code: string): ErrorCodeMeta | undefined {
-  return (ERROR_CODES as Record<string, ErrorCodeMeta | undefined>)[code];
+  return (APP_ERROR_MAP as Record<string, ErrorCodeMeta | undefined>)[code];
 }
 
 /**
  * Narrow an arbitrary string to ErrorCode if present.
  */
 export function isErrorCode(code: string): code is ErrorCode {
-  return Object.hasOwn(ERROR_CODES, code);
+  return Object.hasOwn(APP_ERROR_MAP, code);
 }
 
 /**
  * List all canonical error codes.
  */
 export const ALL_ERROR_CODES: readonly ErrorCode[] = Object.freeze(
-  Object.keys(ERROR_CODES) as ErrorCode[],
+  Object.keys(APP_ERROR_MAP) as ErrorCode[],
 );

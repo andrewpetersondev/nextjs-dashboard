@@ -3,7 +3,7 @@ import type {
   BaseErrorOptions,
   ErrorContext,
 } from "@/shared/errors/base-error.types";
-import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
+import { APP_ERROR_MAP, type ErrorCode } from "@/shared/errors/error-codes";
 
 /**
  * Input validation failed (HTTP 422 by metadata).
@@ -11,7 +11,7 @@ import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
  */
 export class ValidationError extends BaseError {
   constructor(message?: string, context?: ErrorContext, cause?: unknown) {
-    super(ERROR_CODES.validation.name satisfies ErrorCode, {
+    super(APP_ERROR_MAP.validation.name satisfies ErrorCode, {
       cause,
       context,
       message,
@@ -25,7 +25,7 @@ export class ValidationError extends BaseError {
    * - For any other code, fall back to a plain `BaseError`.
    */
   protected override create(code: ErrorCode, options: BaseErrorOptions): this {
-    if (code !== ERROR_CODES.validation.name) {
+    if (code !== APP_ERROR_MAP.validation.name) {
       return new BaseError(code, options) as this;
     }
     return new ValidationError(
@@ -42,7 +42,7 @@ export class ValidationError extends BaseError {
  */
 export class InfrastructureError extends BaseError {
   constructor(message?: string, context?: ErrorContext, cause?: unknown) {
-    super(ERROR_CODES.infrastructure.name satisfies ErrorCode, {
+    super(APP_ERROR_MAP.infrastructure.name satisfies ErrorCode, {
       cause,
       context,
       message,
@@ -50,7 +50,7 @@ export class InfrastructureError extends BaseError {
   }
 
   protected override create(code: ErrorCode, options: BaseErrorOptions): this {
-    if (code !== ERROR_CODES.infrastructure.name) {
+    if (code !== APP_ERROR_MAP.infrastructure.name) {
       return new BaseError(code, options) as this;
     }
     return new InfrastructureError(
@@ -67,7 +67,7 @@ export class InfrastructureError extends BaseError {
  */
 export class DatabaseError extends BaseError {
   constructor(message?: string, context?: ErrorContext, cause?: unknown) {
-    super(ERROR_CODES.database.name satisfies ErrorCode, {
+    super(APP_ERROR_MAP.database.name satisfies ErrorCode, {
       cause,
       context,
       message,
@@ -75,7 +75,7 @@ export class DatabaseError extends BaseError {
   }
 
   protected override create(code: ErrorCode, options: BaseErrorOptions): this {
-    if (code !== ERROR_CODES.database.name) {
+    if (code !== APP_ERROR_MAP.database.name) {
       return new BaseError(code, options) as this;
     }
     return new DatabaseError(
