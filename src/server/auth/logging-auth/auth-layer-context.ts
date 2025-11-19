@@ -12,16 +12,16 @@ import type { ErrorContext } from "@/shared/errors/base-error.types";
  * Provides consistent structure for logging and error handling.
  */
 export interface AuthLayerContext<L extends AuthLogLayer = AuthLogLayer> {
+  /** Logger context path (e.g., 'infrastructure.dal.auth.insertUser'). */
+  readonly context: string;
+  /** Optional correlation ID for request tracing. */
+  readonly correlationId?: string;
+  /** Business identifiers for the operation. */
+  readonly identifiers: Readonly<Record<string, string | number>>;
   /** Layer from which the context originates (action/service/repository/dal). */
   readonly layer: L;
   /** Operation name (e.g., 'login', 'signup', 'insertUser'). */
   readonly operation: AuthOperation;
-  /** Logger context path (e.g., 'infrastructure.dal.auth.insertUser'). */
-  readonly context: string;
-  /** Business identifiers for the operation. */
-  readonly identifiers: Readonly<Record<string, string | number>>;
-  /** Optional correlation ID for request tracing. */
-  readonly correlationId?: string;
 }
 
 /**

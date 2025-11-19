@@ -6,7 +6,35 @@ import {
   toErrorContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { mapBaseErrorToInfrastructure } from "@/shared/errors/base-error.mapper";
+import { normalizePgError } from "@/shared/errors/pg-error.factory";
 import type { Logger } from "@/shared/logging/logger.shared";
+
+async function _executeDalOrThrowOld<T>(
+  thunk: () => Promise<T>,
+  dalContext: AuthLayerContext<"infrastructure.dal">,
+  logger: Logger,
+): Promise<T> {
+  try {
+    return await thunk();
+  } catch (err: unknown) {
+    const baseError = mapPgErrorToBase(err, dalContext).withContext(
+      toErrorContext(dalContext),
+    );
+
+    logger.errorWithDetails("DAL operation failed", baseError);
+
+    logger.operation("error", "DAL operation error", {
+      code: baseError.code,
+      context: dalContext.context,
+      diagnosticId: baseError.context.diagnosticId,
+      operation: dalContext.operation,
+      severity: baseError.severity,
+      ...dalContext.identifiers,
+    });
+
+    throw mapBaseErrorToInfrastructure(baseError);
+  }
+}
 
 /**
  * Execute DAL operation with automatic error handling.
@@ -26,9 +54,13 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    const baseError = mapPgErrorToBase(err, dalContext).withContext(
-      toErrorContext(dalContext),
-    );
+    const baseError = normalizePgError(err, {
+      context: dalContext.context,
+      correlationId: dalContext.correlationId,
+      identifiers: dalContext.identifiers,
+      layer: dalContext.layer,
+      operation: dalContext.operation,
+    });
 
     logger.errorWithDetails("DAL operation failed", baseError);
 
