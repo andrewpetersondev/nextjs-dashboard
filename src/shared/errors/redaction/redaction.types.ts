@@ -7,16 +7,16 @@ export interface InternalConfig {
 
 export interface ArrayRedactOptions {
   arr: unknown[];
-  depth: number;
   cfg: InternalConfig;
+  depth: number;
   seen: WeakSet<object>;
   walker: (value: unknown, depth: number, keyHint?: string) => unknown;
 }
 
 export interface ObjectRedactOptions {
-  obj: Record<string, unknown>;
-  depth: number;
   cfg: InternalConfig;
+  depth: number;
+  obj: Record<string, unknown>;
   seen: WeakSet<object>;
   walker: (value: unknown, depth: number, keyHint?: string) => unknown;
 }
