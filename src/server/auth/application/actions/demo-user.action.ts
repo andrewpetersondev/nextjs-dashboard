@@ -4,7 +4,7 @@ import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
@@ -25,17 +25,18 @@ const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
 async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
-  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
-    identifiers: { role },
-    layer: "action",
-    operation: "demoUser",
-  });
+  const actionContext: AuthLogLayerContext<"action"> =
+    createAuthOperationContext({
+      identifiers: { role },
+      layer: "action",
+      operation: "demoUser",
+    });
 
-  const actionLogger = logger.withContext(actionContext.context);
+  const actionLogger = logger.withContext(actionContext.loggerContext);
 
   actionLogger.operation("info", "Demo user creation started", {
     ...AuthActionLogFactory.start(actionContext.operation),
-    context: actionContext.context,
+    context: actionContext.loggerContext,
     identifiers: actionContext.identifiers,
   });
 
@@ -53,7 +54,7 @@ async function createDemoUserInternal(
       ...AuthActionLogFactory.failure(actionContext.operation, {
         role,
       }),
-      context: actionContext.context,
+      context: actionContext.loggerContext,
       errorCode: error.code,
       errorMessage: error.message,
       identifiers: actionContext.identifiers,
@@ -77,7 +78,7 @@ async function createDemoUserInternal(
     ...AuthActionLogFactory.success(actionContext.operation, {
       role,
     }),
-    context: actionContext.context,
+    context: actionContext.loggerContext,
     identifiers: actionContext.identifiers,
   });
 

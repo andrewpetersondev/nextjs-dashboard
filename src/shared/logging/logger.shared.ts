@@ -2,25 +2,24 @@
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/base-error";
 import { isBaseError } from "@/shared/errors/base-error.factory";
 import type {
   BaseErrorLogPayload,
   ErrorContext,
   SerializedErrorCause,
 } from "@/shared/errors/base-error.types";
-import type { AppErrorCode } from "@/shared/errors/error-codes";
 import { createRedactor } from "@/shared/errors/redaction/redaction";
 import {
   consoleMethod,
-  currentPriority,
-  levelPriority,
+  currentLogLevelPriority,
+  logLevelPriority,
 } from "@/shared/logging/logger.levels";
 import type {
   LogBaseErrorOptions,
   LogEntry,
-  LoggingContext,
-  OperationData,
+  LogEventContext,
+  LogOperationData,
 } from "@/shared/logging/logger.types";
 import {
   mapSeverityToLogLevel,
@@ -74,12 +73,18 @@ const redactLogData = createRedactor();
  * // - requestId: 'req-456', hostname: 'api-1'
  */
 export class Logger {
-  private readonly context?: string;
-  private readonly requestId?: string;
+  // TODO: refactor names in logger to make this obsolete
+  private static readonly logMetadataConflictKeys = new Set([
+    "context",
+    "operation",
+  ]);
+
+  private readonly loggerContext?: string;
+  private readonly loggerRequestId?: string;
 
   constructor(context?: string, requestId?: string) {
-    this.context = context;
-    this.requestId = requestId;
+    this.loggerContext = context;
+    this.loggerRequestId = requestId;
   }
 
   /**
@@ -122,15 +127,17 @@ export class Logger {
    * Create a child logger with additional context.
    */
   withContext(context: string): Logger {
-    const combined = this.context ? `${this.context}:${context}` : context;
-    return new Logger(combined, this.requestId);
+    const combined = this.loggerContext
+      ? `${this.loggerContext}:${context}`
+      : context;
+    return new Logger(combined, this.loggerRequestId);
   }
 
   /**
    * Attach a request ID for correlation (useful in SSR or API contexts).
    */
   withRequest(requestId: string): Logger {
-    return new Logger(this.context, requestId);
+    return new Logger(this.loggerContext, requestId);
   }
 
   // --------------------------------------------------------------------------
@@ -138,7 +145,7 @@ export class Logger {
   // --------------------------------------------------------------------------
 
   private shouldLog(level: LogLevel): boolean {
-    return levelPriority[level] <= currentPriority();
+    return logLevelPriority[level] <= currentLogLevelPriority();
   }
 
   private createEntry<T>(
@@ -146,23 +153,26 @@ export class Logger {
     message: string,
     data?: T,
   ): LogEntry<T> {
-    // SAFETY: If data is a raw Error object, standard JSON.stringify will return {}
-    // We automatically convert it to a safe shape to prevent data loss.
     let safeData = data;
     if (safeData instanceof Error) {
       // @ts-expect-error - transforming type for serialization purposes
       safeData = toSafeErrorShape(safeData);
     }
 
+    console.log("[Logger] createEntry", {
+      dataIncluded: safeData !== undefined,
+      level,
+      message,
+    });
+
     const entry: LogEntry<T> = {
       data: safeData !== undefined ? (redactLogData(safeData) as T) : undefined,
-      level,
-      loggerContext: this.context || undefined,
+      loggerContext: this.loggerContext || undefined,
+      logLevel: level,
       message,
       pid: processId,
-      requestId: this.requestId || undefined,
+      requestId: this.loggerRequestId || undefined,
       timestamp: new Date().toISOString(),
-      // Merge global context if available (casted to match LogEntry structure if needed)
       ...(Object.keys(processMetadata).length > 0
         ? { metadata: processMetadata }
         : {}),
@@ -188,15 +198,86 @@ export class Logger {
   }
 
   private output(entry: LogEntry): void {
-    consoleMethod[entry.level](...this.format(entry));
+    consoleMethod[entry.logLevel](...this.format(entry));
   }
 
   private logAt<T>(level: LogLevel, message: string, data?: T): void {
     if (!this.shouldLog(level)) {
+      console.log("[Logger] logAt skipped", {
+        level,
+        message,
+        reason: "below-threshold",
+      });
       return;
     }
+    console.log("[Logger] logAt emit", { level, message });
     const entry = this.createEntry(level, message, data);
     this.output(entry);
+  }
+
+  private composeLogPayload(
+    ...segments: Array<Record<string, unknown> | undefined>
+  ): Record<string, unknown> {
+    const merged: Record<string, unknown> = {};
+
+    for (const segment of segments) {
+      if (!segment) {
+        continue;
+      }
+      for (const [key, value] of Object.entries(segment)) {
+        merged[key] = value;
+      }
+    }
+
+    return Object.keys(merged)
+      .sort((a, b) => a.localeCompare(b))
+      .reduce<Record<string, unknown>>((sorted, key) => {
+        sorted[key] = merged[key];
+        return sorted;
+      }, {});
+  }
+
+  private removeConflictingKeys(
+    payload?: Record<string, unknown>,
+  ): Record<string, unknown> | undefined {
+    if (!payload) {
+      return;
+    }
+    const filteredEntries = Object.entries(payload).filter(
+      ([key]) => !Logger.logMetadataConflictKeys.has(key),
+    );
+    if (filteredEntries.length === 0) {
+      return;
+    }
+    return filteredEntries
+      .sort(([a], [b]) => a.localeCompare(b))
+      .reduce<Record<string, unknown>>((result, [key, value]) => {
+        result[key] = value;
+        return result;
+      }, {});
+  }
+
+  private sanitizeLogMetadata(
+    metadata?: LogEventContext,
+  ): Record<string, unknown> | undefined {
+    if (!metadata) {
+      return;
+    }
+    return this.removeConflictingKeys(metadata as Record<string, unknown>);
+  }
+
+  private mapErrorPayloadToRecord(
+    payload: BaseErrorLogPayload,
+  ): Record<string, unknown> {
+    return Object.keys(payload)
+      .sort((a, b) => a.localeCompare(b))
+      .reduce<Record<string, unknown>>((acc, key) => {
+        const value = payload[key as keyof BaseErrorLogPayload];
+        if (value !== undefined) {
+          acc[key] = value as unknown;
+        }
+        return acc;
+      }, {});
   }
 
   /**
@@ -207,15 +288,15 @@ export class Logger {
    * “Transaction commit”.
    *
    * Behavior:
-   * - Uses `data.context` (if provided) to derive a child logger via
+   * - Uses `operationPayload.operationContext` (if provided) to derive a child logger via
    *   {@link Logger.withContext}, so the operation is tagged with a
    *   stable logical context (e.g. `auth:application.action.signup`).
-   * - Reads `data.operation` as the canonical operation name
+   * - Reads `operationPayload.operationName` as the canonical operation name
    *   (e.g. `"signup"`, `"demoUser"`, `"withTransaction"`).
-   * - Flattens `data.identifiers` into the log payload so that key
+   * - Flattens `operationPayload.operationIdentifiers` into the log payload so that key
    *   identifiers (e.g. `userId`, `role`, `ip`) are top‑level fields.
-   * - Any remaining fields on `data` (excluding `context`, `operation`,
-   *   and `identifiers`) are preserved and logged (e.g. metrics, details).
+   * - Runtime guards drop conflicting keys such as `context` or `operation`
+   *   to keep them disjoint from BaseError payload fields.
    *
    * This method does **not** know about {@link BaseError}. It is meant for
    * domain / operation telemetry, not for rich error logging. Use
@@ -226,61 +307,60 @@ export class Logger {
    *
    * @param level - Log level to use for the event (e.g. `"info"`, `"error"`).
    * @param message - Human‑readable description of the operation event.
-   * @param data - Structured operation data. The following keys have
+   * @param operationPayload - Structured operation data. The following keys have
    *   special meaning:
-   *   - `context?`: Logical log context; when present, it is applied via
+   *   - `operationContext?`: Logical log context; when present, it is applied via
    *     {@link Logger.withContext} before logging.
-   *   - `operation`: Canonical operation name (e.g. `"signup"`).
-   *   - `identifiers?`: Stable identifiers to flatten into the payload
+   *   - `operationName`: Canonical operation name (e.g. `"signup"`).
+   *   - `operationIdentifiers?`: Stable identifiers to flatten into the payload
    *     (user IDs, roles, IPs, etc.).
    *   - Any other keys (e.g. `details`, metrics, status flags) are logged
-   *     as part of the operation payload.
+   *     as part of the operation payload after conflicting keys are filtered.
    *
    * @example
    * ```ts
    * // Action‑layer operation logging
    * actionLogger.operation("info", "Signup action started", {
-   *   context: "auth:application.action.signup",
-   *   operation: "signup",
-   *   identifiers: { ip, userId },
    *   details: { userAgent },
+   *   operationContext: "auth:application.action.signup",
+   *   operationIdentifiers: { ip, userId },
+   *   operationName: "signup",
    * });
-   * ```
-   *
-   * @example
-   * ```ts
-   * // Transaction‑layer operation logging
-   * transactionLogger.operation("debug", "Transaction start", {
-   *   context: "auth:infrastructure.transaction",
-   *   operation: "withTransaction",
-   *   identifiers: { transactionId },
-   * });
-   * ```
    */
   operation<T extends Record<string, unknown>>(
     level: LogLevel,
     message: string,
-    data: OperationData<T>,
+    operationPayload: LogOperationData<T>,
   ): void {
-    const { operationName, operationContext, operationIdentifiers, ...rest } =
-      data;
+    const { operationContext, operationIdentifiers, operationName, ...rest } =
+      operationPayload;
 
-    // SAFETY: Handle 'error' field specifically if it exists in the operation data
-    // We cast to Record<string, unknown> to allow checking/modifying 'error'
-    // regardless of T's specific shape.
     const safeRest = { ...rest } as Record<string, unknown>;
 
     if ("error" in safeRest && safeRest.error instanceof Error) {
       safeRest.error = toSafeErrorShape(safeRest.error);
     }
 
-    const logData = {
-      ...safeRest,
-      ...(operationIdentifiers ?? {}),
-      operation: operationName,
-    };
+    const sanitizedOperationDetails = this.removeConflictingKeys(safeRest);
+    const sanitizedIdentifiers = this.removeConflictingKeys(
+      operationIdentifiers as Record<string, unknown> | undefined,
+    );
+
+    const operationLogPayload = this.composeLogPayload(
+      sanitizedOperationDetails,
+      sanitizedIdentifiers,
+      { operationName },
+    );
+
+    console.log("[Logger] operation payload", {
+      level,
+      message,
+      operationContext,
+      operationName,
+    });
+
     const target = operationContext ? this.withContext(operationContext) : this;
-    target.logAt(level, message, logData);
+    target.logAt(level, message, operationLogPayload);
   }
 
   /**
@@ -308,24 +388,25 @@ export class Logger {
 
     const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
 
-    const errorPayload = this.buildErrorPayload(error, {
+    const baseLogPayload = this.buildErrorPayload(error, {
       detailed: Boolean(detailed),
     });
 
-    // Merge logging context into the data payload, not the error payload
-    // Note: Type safety ensures keys in loggingContext do not overlap with errorPayload
-    const logData = loggingContext
-      ? { ...errorPayload, ...loggingContext }
-      : errorPayload;
+    const sanitizedMetadata = this.sanitizeLogMetadata(loggingContext);
+    const mergedLogPayload = this.composeLogPayload(
+      this.mapErrorPayloadToRecord(baseLogPayload),
+      sanitizedMetadata,
+    );
 
-    this.logAt(level, message ?? error.message, logData);
+    console.log("[Logger] logBaseError", {
+      code: error.code,
+      level,
+      message: message ?? error.message,
+    });
+
+    this.logAt(level, message ?? error.message, mergedLogPayload);
   }
 
-  /**
-   * Build an immutable error payload for logging.
-   *
-   * @internal
-   */
   private buildErrorPayload(
     error: BaseError,
     options: { detailed: boolean },
@@ -373,11 +454,6 @@ export class Logger {
     return detailedPayload;
   }
 
-  /**
-   * Safely extract diagnosticId from error context.
-   *
-   * @internal
-   */
   private extractDiagnosticId(
     context: ErrorContext | undefined,
   ): string | undefined {
@@ -388,15 +464,9 @@ export class Logger {
     const ctx = context as Record<string, unknown>;
     const id = ctx.diagnosticId;
 
-    // Type-safe extraction: only return if it's actually a string
     return typeof id === "string" ? id : undefined;
   }
 
-  /**
-   * Serialize an Error cause into a safe, JSON-compatible structure.
-   *
-   * @internal
-   */
   private serializeErrorCause(cause: Error): SerializedErrorCause {
     if (isBaseError(cause)) {
       return {
@@ -434,15 +504,19 @@ export class Logger {
   errorWithDetails(
     message: string,
     error: unknown,
-    loggingContext?: LoggingContext,
+    loggingContext?: LogEventContext,
   ): void {
     if (!isBaseError(error)) {
-      const payload: Record<string, unknown> = {
-        ...(loggingContext ?? {}),
-        error: toSafeErrorShape(error),
-      };
+      const sanitizedMetadata = this.sanitizeLogMetadata(loggingContext);
+      const safeErrorDetails = { error: toSafeErrorShape(error) };
+      const errorLogPayload = this.composeLogPayload(
+        sanitizedMetadata,
+        safeErrorDetails,
+      );
 
-      this.error(message, payload);
+      console.log("[Logger] errorWithDetails nonBaseError", { message });
+
+      this.error(message, errorLogPayload);
       return;
     }
     this.logBaseError(error, {
@@ -451,43 +525,6 @@ export class Logger {
       loggingContext,
       message,
     });
-  }
-
-  /**
-   * Log an error by code with optional context.
-   * Useful for quick error reporting without constructing full BaseError.
-   */
-  errorByCode(
-    code: AppErrorCode,
-    message?: string,
-    context?: ErrorContext,
-  ): void {
-    const error = new BaseError(code, { context, message });
-    this.logBaseError(error, { levelOverride: "error" });
-  }
-
-  /**
-   * Normalize any unknown error into BaseError, log it, and return it.
-   *
-   * @param err - Unknown error value to normalize
-   * @param fallbackMessage - Message to use when logging
-   * @param fallbackCode - Error code to use for non-BaseError values
-   * @param loggingContext - Optional operational metadata attached at log-time
-   * @returns The normalized BaseError (useful for re-throwing or further handling)
-   */
-  normalizeAndLog(
-    err: unknown,
-    fallbackMessage: string,
-    fallbackCode: AppErrorCode,
-    loggingContext?: LoggingContext,
-  ): BaseError {
-    const baseErr = BaseError.from(err, fallbackCode);
-    this.logBaseError(baseErr, {
-      levelOverride: "error",
-      loggingContext,
-      message: fallbackMessage,
-    });
-    return baseErr;
   }
 }
 

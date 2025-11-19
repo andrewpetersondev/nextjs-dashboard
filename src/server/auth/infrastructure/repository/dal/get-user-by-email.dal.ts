@@ -3,7 +3,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
@@ -25,14 +25,14 @@ export async function getUserByEmailDal(
    */
   operation: "getUserByEmail" | "login" = "getUserByEmail",
 ): Promise<UserRow | null> {
-  const dalContext: AuthLayerContext<"infrastructure.dal"> =
+  const dalContext: AuthLogLayerContext<"infrastructure.dal"> =
     createAuthOperationContext({
       identifiers: { email },
       layer: "infrastructure.dal",
       operation,
     });
 
-  const dalLogger = parentLogger.withContext(dalContext.context);
+  const dalLogger = parentLogger.withContext(dalContext.loggerContext);
 
   return await executeDalOrThrow(
     async () => {
@@ -45,14 +45,14 @@ export async function getUserByEmailDal(
       if (!userRow) {
         dalLogger.operation("info", "User not found for login", {
           ...AuthDalLogFactory.notFound(operation, { email }),
-          context: dalContext.context,
+          context: dalContext.loggerContext,
         });
         return null;
       }
 
       dalLogger.operation("info", "User loaded for login", {
         ...AuthDalLogFactory.success(operation, { email }),
-        context: dalContext.context,
+        context: dalContext.loggerContext,
       });
 
       return userRow;

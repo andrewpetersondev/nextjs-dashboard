@@ -3,7 +3,7 @@ import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
   toErrorContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
@@ -26,7 +26,7 @@ export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,
 ): Promise<number> {
-  const dalContext: AuthLayerContext<"infrastructure.dal"> =
+  const dalContext: AuthLogLayerContext<"infrastructure.dal"> =
     createAuthOperationContext({
       identifiers: { role },
       layer: "infrastructure.dal",
@@ -45,7 +45,7 @@ export async function demoUserCounter(
           "error",
           "Invariant failed: demoUserCounter did not return a row",
           {
-            context: dalContext.context,
+            context: dalContext.loggerContext,
             identifiers: dalContext.identifiers,
             kind: "invariant" as const,
             operationName: dalContext.operation,
@@ -62,7 +62,7 @@ export async function demoUserCounter(
 
       if (counterRow.id == null) {
         logger.operation("error", "Invalid counter row returned: missing id", {
-          context: dalContext.context,
+          context: dalContext.loggerContext,
           counterRow,
           identifiers: dalContext.identifiers,
           kind: "invariant" as const,
@@ -85,7 +85,7 @@ export async function demoUserCounter(
       );
 
       logger.operation("info", "Demo user counter created for role", {
-        context: dalContext.context,
+        context: dalContext.loggerContext,
         identifiers: resultMeta.operationIdentifiers,
         kind: resultMeta.kind,
         operationName: dalContext.operation,

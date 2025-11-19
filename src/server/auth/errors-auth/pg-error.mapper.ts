@@ -2,7 +2,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type { DatabaseError as PgDatabaseError } from "pg";
-import type { AuthLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
+import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { toErrorContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { ErrorMappingFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/base-error";
@@ -114,7 +114,7 @@ function buildErrorMessage(code: PgCode): string {
  */
 export function mapPgErrorToBase(
   err: unknown,
-  dalContext: AuthLayerContext<"infrastructure.dal">,
+  dalContext: AuthLogLayerContext<"infrastructure.dal">,
 ): BaseError {
   const pg = extractPgError(err);
   const code = pg?.code as PgCode | undefined;

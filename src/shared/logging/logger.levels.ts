@@ -18,7 +18,7 @@ function getEffectiveLogLevel(): LogLevel {
     console.error("getEffectiveLogLevel failed, defaulting to 'info'");
     cachedLogLevel = "info";
   }
-  cachedPriority = levelPriority[cachedLogLevel];
+  cachedPriority = logLevelPriority[cachedLogLevel];
   return cachedLogLevel;
 }
 
@@ -33,7 +33,7 @@ function getEffectiveLogLevel(): LogLevel {
  * @property warn  - Low risk (recoverable issues)
  * @property error - Lowest risk (usually safe to expose)
  */
-export const levelPriority = {
+export const logLevelPriority = {
   debug: 40,
   error: 10,
   info: 30,
@@ -57,10 +57,10 @@ export const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
  *
  * @returns The cached priority, or defaults to 'info' priority if uninitialized.
  */
-export function currentPriority(): number {
+export function currentLogLevelPriority(): number {
   if (cachedPriority === null) {
     getEffectiveLogLevel();
   }
   // Defensive fallback: should never happen after getEffectiveLogLevel, but ensures type safety
-  return cachedPriority ?? levelPriority.info;
+  return cachedPriority ?? logLevelPriority.info;
 }

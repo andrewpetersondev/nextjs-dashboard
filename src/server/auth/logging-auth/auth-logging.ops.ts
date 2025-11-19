@@ -7,16 +7,14 @@ import {
   AuthServiceLogFactory,
 } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
-import type { OperationData } from "@/shared/logging/logger.types";
+import type { LogOperationData } from "@/shared/logging/logger.types";
 import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
-
-/* ------------------------------ Action layer ------------------------------ */
 
 export const AUTH_ACTION_CONTEXTS = {
   demoUser: {
     context: AUTH_LOG_CONTEXTS.action("demoUser"),
 
-    fail(reason: string): OperationData<AuthLogPayload> {
+    fail(reason: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("demoUser", { reason }),
         operationContext: AUTH_LOG_CONTEXTS.action("demoUser"),
@@ -30,14 +28,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthLogPayload> {
+    start(): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("demoUser"),
         operationContext: AUTH_LOG_CONTEXTS.action("demoUser"),
       };
     },
 
-    successAction(role: string): OperationData<AuthLogPayload> {
+    successAction(role: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("demoUser", { role }),
         operationContext: AUTH_LOG_CONTEXTS.action("demoUser"),
@@ -86,7 +84,7 @@ export const AUTH_ACTION_CONTEXTS = {
   login: {
     context: AUTH_LOG_CONTEXTS.action("login"),
 
-    fail(reason: string): OperationData<AuthLogPayload> {
+    fail(reason: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("login", { reason }),
         operationContext: AUTH_LOG_CONTEXTS.action("login"),
@@ -100,14 +98,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthLogPayload> {
+    start(): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("login"),
         operationContext: AUTH_LOG_CONTEXTS.action("login"),
       };
     },
 
-    successAction(userId: string): OperationData<AuthLogPayload> {
+    successAction(userId: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("login", { userId }),
         operationContext: AUTH_LOG_CONTEXTS.action("login"),
@@ -156,7 +154,7 @@ export const AUTH_ACTION_CONTEXTS = {
   signup: {
     context: AUTH_LOG_CONTEXTS.action("signup"),
 
-    fail(reason: string): OperationData<AuthLogPayload> {
+    fail(reason: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.failure("signup", { reason }),
         operationContext: AUTH_LOG_CONTEXTS.action("signup"),
@@ -170,14 +168,14 @@ export const AUTH_ACTION_CONTEXTS = {
       };
     },
 
-    start(): OperationData<AuthLogPayload> {
+    start(): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.start("signup"),
         operationContext: AUTH_LOG_CONTEXTS.action("signup"),
       };
     },
 
-    successAction(email: string): OperationData<AuthLogPayload> {
+    successAction(email: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthActionLogFactory.success("signup", { email }),
         operationContext: AUTH_LOG_CONTEXTS.action("signup"),
@@ -224,20 +222,18 @@ export const AUTH_ACTION_CONTEXTS = {
   },
 } as const;
 
-/* ----------------------------- Service layer ------------------------------ */
-
 export const AUTH_SERVICE_CONTEXTS = {
   createDemoUser: {
     context: AUTH_LOG_CONTEXTS.service("demoUser"),
 
-    success(role: string): OperationData<AuthLogPayload> {
+    success(role: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("demoUser", { role }),
         operationContext: AUTH_LOG_CONTEXTS.service("demoUser"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthLogPayload> {
+    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "demoUser",
@@ -252,21 +248,21 @@ export const AUTH_SERVICE_CONTEXTS = {
   login: {
     context: AUTH_LOG_CONTEXTS.service("login"),
 
-    invalidCredentials(email: string): OperationData<AuthLogPayload> {
+    invalidCredentials(email: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.validation("login", { email }),
         operationContext: AUTH_LOG_CONTEXTS.service("login"),
       };
     },
 
-    success(userId: string): OperationData<AuthLogPayload> {
+    success(userId: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("login", { userId }),
         operationContext: AUTH_LOG_CONTEXTS.service("login"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthLogPayload> {
+    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "login",
@@ -281,14 +277,14 @@ export const AUTH_SERVICE_CONTEXTS = {
   signup: {
     context: AUTH_LOG_CONTEXTS.service("signup"),
 
-    success(email: string): OperationData<AuthLogPayload> {
+    success(email: string): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.success("signup", { email }),
         operationContext: AUTH_LOG_CONTEXTS.service("signup"),
       };
     },
 
-    transactionError(err: unknown): OperationData<AuthLogPayload> {
+    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
       return {
         ...AuthServiceLogFactory.exception(
           "signup",

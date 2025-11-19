@@ -5,19 +5,58 @@ import type {
   SerializedErrorCause,
 } from "@/shared/errors/base-error.types";
 
-export interface LogMetadata {
-  readonly [key: string]: unknown;
-  readonly context?: string;
-  readonly correlationId?: string;
-  readonly duration?: number;
-  readonly userId?: string;
+type ImmutableRecord = Readonly<Record<string, unknown>>;
+
+type ReservedKeyBlocker = {
+  readonly [K in LogReservedKeys]?: never;
+};
+
+interface BaseLogEntry {
+  readonly logLevel: LogLevel;
+  readonly message: string;
+  readonly timestamp: string;
 }
 
-export interface StructuredLogEntry {
-  readonly level: LogLevel;
-  readonly message: string;
+export type LogReservedKeys = keyof BaseErrorLogPayload;
+
+/**
+ * Keys reserved by the error logging system.
+ * These keys cannot be used in LoggingContext to prevent overwriting diagnostic data.
+ */
+export type ProhibitedLogKeys = LogReservedKeys;
+
+/**
+ * Ephemeral operational metadata attached at log-time.
+ *
+ * Contains information about the logging event itself, not the error.
+ * Reserved BaseError payload keys are explicitly forbidden.
+ */
+export type LogEventContext<T extends ImmutableRecord = ImmutableRecord> = T &
+  ReservedKeyBlocker;
+
+export type LogMetadata = LogEventContext & {
+  readonly correlationId?: string;
+  readonly duration?: number;
+  readonly loggerContext?: string;
+  readonly userId?: string;
+};
+
+/**
+ * Structured log entry format for consistency and JSON parsing.
+ */
+export interface StructuredLogEntry extends BaseLogEntry {
   readonly metadata?: LogMetadata;
-  readonly timestamp: string;
+}
+
+/**
+ * Runtime log entry emitted by the logger implementation.
+ */
+export interface LogEntry<T = unknown> extends BaseLogEntry {
+  readonly data?: T;
+  readonly loggerContext?: string;
+  readonly metadata?: Record<string, unknown>;
+  readonly pid?: number;
+  readonly requestId?: string;
 }
 
 export interface Logger {
@@ -29,89 +68,28 @@ export interface Logger {
 }
 
 /**
- * Keys reserved by the error logging system.
- * These keys cannot be used in LoggingContext to prevent overwriting diagnostic data.
- */
-export type ReservedLogKeys = keyof BaseErrorLogPayload;
-
-/**
- * Ephemeral operational metadata attached at log-time.
- *
- * Contains information about the logging event itself, not the error:
- * - Request/correlation identifiers (requestId, correlationId)
- * - Environment/runtime context (hostname, service name, pod name)
- * - Tracing metadata (spanId, traceId)
- * - Deployment context (version, region, environment)
- * - User/session context (userId, sessionId) when not part of error diagnostics
- *
- * This context is transient and specific to where/when/how the log was created.
- * It is merged into the log entry's data payload, not embedded in the error object.
- *
- * @remarks
- * Keys that conflict with BaseErrorLogPayload (like 'code', 'context', 'stack')
- * are explicitly forbidden by the type system.
- *
- * @example
- * ```typescript
- * const loggingContext: LoggingContext = {
- *   requestId: 'req-123',
- *   hostname: 'api-server-1',
- *   environment: 'production',
- *   // context: {} // TS Error: Property 'context' is incompatible with index signature.
- * };
- *
- * logger.logBaseError(error, { loggingContext });
- * // Results in log entry with both error data AND logging context
- */
-export type LoggingContext = Readonly<Record<string, unknown>> & {
-  readonly [K in ReservedLogKeys]?: never;
-};
-
-/**
- * Structured log entry format for consistency and JSON parsing.
- */
-export interface LogEntry<T = unknown> {
-  data?: T;
-  level: LogLevel;
-  loggerContext?: string;
-  message: string;
-  /** Global process-level metadata (version, env, etc) */
-  metadata?: Record<string, unknown>;
-  pid?: number;
-  requestId?: string;
-  timestamp: string;
-}
-
-/**
  * Operation metadata for DAL/repository pattern logging.
  */
-export interface OperationMetadata {
-  /** Optional context override (e.g., 'dal.users') */
-  operationContext?: string;
-  /** Key identifiers for the operation (e.g., { userId: '123' }) */
-  operationIdentifiers?: Record<string, unknown>;
-  /** The operation name (e.g., 'getUserByEmail') */
-  operationName: string;
+export interface LogOperationMetadata {
+  readonly operationContext?: string;
+  readonly operationIdentifiers?: Record<string, unknown>;
+  readonly operationName: string;
 }
 
 /**
  * Combined data structure for operation logging.
  */
-export type OperationData<
+export type LogOperationData<
   T extends Record<string, unknown> = Record<string, unknown>,
-> = T & OperationMetadata;
+> = T & LogOperationMetadata;
 
 /**
  * Options for logging BaseError instances.
  */
 export interface LogBaseErrorOptions {
-  /** Include stack + cause chain (defaults false) */
   readonly detailed?: boolean;
-  /** Force log level override */
   readonly levelOverride?: LogLevel;
-  /** Ephemeral operational metadata attached at log-time */
-  readonly loggingContext?: LoggingContext;
-  /** Override message (defaults to error.message) */
+  readonly loggingContext?: LogEventContext;
   readonly message?: string;
 }
 

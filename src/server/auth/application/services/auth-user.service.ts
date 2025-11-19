@@ -12,7 +12,7 @@ import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
@@ -56,14 +56,14 @@ export class AuthUserService {
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLayerContext<"service"> =
+    const serviceContext: AuthLogLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: { role },
         layer: "service",
         operation: "demoUser",
       });
 
-    const log = this.baseLog.withContext(serviceContext.context);
+    const log = this.baseLog.withContext(serviceContext.loggerContext);
 
     try {
       const db = getAppDb();
@@ -140,7 +140,7 @@ export class AuthUserService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLayerContext<"service"> =
+    const serviceContext: AuthLogLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: {
           email: input.email,
@@ -150,7 +150,7 @@ export class AuthUserService {
         operation: "signup",
       });
 
-    const log = this.baseLog.withContext(serviceContext.context);
+    const log = this.baseLog.withContext(serviceContext.loggerContext);
 
     if (!hasRequiredSignupFields(input)) {
       log.warn("Missing required signup fields", {
@@ -224,14 +224,14 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLayerContext<"service"> =
+    const serviceContext: AuthLogLayerContext<"service"> =
       createAuthOperationContext({
         identifiers: { email: input.email },
         layer: "service",
         operation: "login",
       });
 
-    const log = this.baseLog.withContext(serviceContext.context);
+    const log = this.baseLog.withContext(serviceContext.loggerContext);
 
     try {
       const user = await this.repo.login({ email: input.email });

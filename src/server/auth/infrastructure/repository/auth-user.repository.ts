@@ -7,7 +7,7 @@ import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.i
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
   toErrorContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
@@ -54,7 +54,7 @@ export class AuthUserRepositoryImpl {
 
     const transactionId = randomUUID();
 
-    const repoContext: AuthLayerContext<"infrastructure.repository"> =
+    const repoContext: AuthLogLayerContext<"infrastructure.repository"> =
       createAuthOperationContext({
         identifiers: { transactionId },
         layer: "infrastructure.repository",

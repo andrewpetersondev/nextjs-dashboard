@@ -1,6 +1,6 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import type { AuthLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
+import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/pg-error.factory";
 import type { Logger } from "@/shared/logging/logger.shared";
 
@@ -16,14 +16,14 @@ import type { Logger } from "@/shared/logging/logger.shared";
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
-  dalContext: AuthLayerContext<"infrastructure.dal">,
+  dalContext: AuthLogLayerContext<"infrastructure.dal">,
   logger: Logger,
 ): Promise<T> {
   try {
     return await thunk();
   } catch (err: unknown) {
     const baseError = normalizePgError(err, {
-      context: dalContext.context,
+      context: dalContext.loggerContext,
       correlationId: dalContext.correlationId,
       identifiers: dalContext.identifiers,
       layer: dalContext.layer,
@@ -35,7 +35,7 @@ export async function executeDalOrThrow<T>(
     logger.operation("error", "DAL operation error", {
       code: baseError.code,
       diagnosticId: baseError.context.diagnosticId,
-      operationContext: dalContext.context,
+      operationContext: dalContext.loggerContext,
       operationIdentifiers: dalContext.identifiers,
       operationName: dalContext.operation,
       severity: baseError.severity,

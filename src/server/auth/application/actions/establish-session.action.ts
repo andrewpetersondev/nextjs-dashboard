@@ -3,7 +3,7 @@
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
@@ -22,13 +22,14 @@ import { Err, Ok, type Result } from "@/shared/result/result";
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, BaseError>> {
-  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
-    identifiers: { role: user.role, userId: user.id },
-    layer: "action",
-    operation: "login", // or a dedicated "establishSession" if you add it
-  });
+  const actionContext: AuthLogLayerContext<"action"> =
+    createAuthOperationContext({
+      identifiers: { role: user.role, userId: user.id },
+      layer: "action",
+      operation: "login", // or a dedicated "establishSession" if you add it
+    });
 
-  const actionLogger = logger.withContext(actionContext.context);
+  const actionLogger = logger.withContext(actionContext.loggerContext);
 
   const res = await tryCatchAsync(
     async () => {
@@ -48,7 +49,7 @@ export async function establishSessionAction(
         role: user.role,
         userId: user.id,
       }),
-      context: actionContext.context,
+      context: actionContext.loggerContext,
     });
   } else {
     const error = mapped.error;
@@ -58,7 +59,7 @@ export async function establishSessionAction(
         role: user.role,
         userId: user.id,
       }),
-      context: actionContext.context,
+      context: actionContext.loggerContext,
       // Only rely on BaseError surface fields
       errorCode: error.code,
       errorMessage: error.message,

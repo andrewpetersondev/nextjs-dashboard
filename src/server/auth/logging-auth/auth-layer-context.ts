@@ -6,20 +6,21 @@ import type {
   AuthOperation,
 } from "@/server/auth/logging-auth/auth-logging.types";
 import type { ErrorContext } from "@/shared/errors/base-error.types";
+import type { LogEventContext } from "@/shared/logging/logger.types";
 
 /**
  * Generic standardized context for any auth layer operation.
  * Provides consistent structure for logging and error handling.
  */
-export interface AuthLayerContext<L extends AuthLogLayer = AuthLogLayer> {
-  /** Logger context path (e.g., 'infrastructure.dal.auth.insertUser'). */
-  readonly context: string;
+export interface AuthLogLayerContext<L extends AuthLogLayer = AuthLogLayer> {
   /** Optional correlation ID for request tracing. */
   readonly correlationId?: string;
   /** Business identifiers for the operation. */
   readonly identifiers: Readonly<Record<string, string | number>>;
   /** Layer from which the context originates (action/service/repository/dal). */
   readonly layer: L;
+  /** Logger context path (e.g., 'infrastructure.dal.auth.insertUser'). */
+  readonly loggerContext: string;
   /** Operation name (e.g., 'login', 'signup', 'insertUser'). */
   readonly operation: AuthOperation;
 }
@@ -49,10 +50,10 @@ export function createAuthOperationContext<
   operation: O;
   identifiers: Record<string, string | number>;
   correlationId?: string;
-}): AuthLayerContext<L> {
+}): AuthLogLayerContext<L> {
   const { layer, operation, identifiers, correlationId } = params;
 
-  const context = (() => {
+  const loggerContext = (() => {
     switch (layer) {
       case "action":
         return AUTH_LOG_CONTEXTS.action(operation);
@@ -71,10 +72,10 @@ export function createAuthOperationContext<
   })();
 
   return {
-    context,
     correlationId,
     identifiers,
     layer,
+    loggerContext,
     operation,
   };
 }
@@ -86,15 +87,34 @@ export function createAuthOperationContext<
  * Callers can optionally provide extra metadata (e.g. diagnosticId, table, timestamp).
  */
 export function toErrorContext<L extends AuthLogLayer>(
-  ctx: AuthLayerContext<L>,
+  authContext: AuthLogLayerContext<L>,
   extras?: Readonly<Record<string, unknown>>,
 ): ErrorContext {
   return {
-    context: ctx.context,
-    correlationId: ctx.correlationId,
-    identifiers: ctx.identifiers,
-    layer: ctx.layer,
-    operation: ctx.operation,
+    context: authContext.loggerContext,
+    correlationId: authContext.correlationId,
+    identifiers: authContext.identifiers,
+    layer: authContext.layer,
+    operation: authContext.operation,
+    ...(extras ?? {}),
+  } as const;
+}
+
+/**
+ * Helper to convert an AuthLayerContext into logging metadata.
+ *
+ * This produces operational context for the logging event, not diagnostic error context.
+ * For error diagnostics, use the identifiers/operation/layer fields directly.
+ */
+export function toLoggingContext<L extends AuthLogLayer>(
+  authContext: AuthLogLayerContext<L>,
+  extras?: Readonly<Record<string, unknown>>,
+): LogEventContext {
+  return {
+    correlationId: authContext.correlationId,
+    layer: authContext.layer,
+    loggerContext: authContext.loggerContext,
+    operation: authContext.operation,
     ...(extras ?? {}),
   } as const;
 }

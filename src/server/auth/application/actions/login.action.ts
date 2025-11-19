@@ -14,7 +14,7 @@ import { PerformanceTracker } from "@/server/auth/application/actions/utils/perf
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import {
-  type AuthLayerContext,
+  type AuthLogLayerContext,
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.ops";
@@ -50,14 +50,15 @@ export async function loginAction(
   const { ip, userAgent } = await getRequestMetadata();
 
   // Create a unified action-layer context for this request.
-  const actionContext: AuthLayerContext<"action"> = createAuthOperationContext({
-    identifiers: { ip },
-    layer: "action",
-    operation: "login",
-  });
+  const actionContext: AuthLogLayerContext<"action"> =
+    createAuthOperationContext({
+      identifiers: { ip },
+      layer: "action",
+      operation: "login",
+    });
 
   const actionLogger = logger
-    .withContext(actionContext.context)
+    .withContext(actionContext.loggerContext)
     .withRequest(requestId);
 
   const tracker = new PerformanceTracker();
@@ -65,7 +66,7 @@ export async function loginAction(
   // Start
   actionLogger.operation("info", "Login action started", {
     ...ctx.start(),
-    context: actionContext.context,
+    context: actionContext.loggerContext,
     details: ctx.initiatedPayload({ ip, userAgent }),
     identifiers: actionContext.identifiers,
     operation: actionContext.operation,
@@ -73,7 +74,7 @@ export async function loginAction(
 
   const validated = await tracker.measure("validation", () =>
     validateForm(formData, LoginSchema, fields, {
-      loggerContext: actionContext.context,
+      loggerContext: actionContext.loggerContext,
     }),
   );
 
@@ -83,7 +84,7 @@ export async function loginAction(
     // Validation failure
     actionLogger.operation("warn", "Login validation failed", {
       ...ctx.validationFailed({ errorCount, ip }),
-      context: actionContext.context,
+      context: actionContext.loggerContext,
       details: ctx.validationFailurePayload({
         errorCount,
         ip,
@@ -99,14 +100,14 @@ export async function loginAction(
   const input: LoginData = validated.value.data;
 
   // You can enrich identifiers as you go if desired:
-  const enrichedContext: AuthLayerContext<"action"> = {
+  const enrichedContext: AuthLogLayerContext<"action"> = {
     ...actionContext,
     identifiers: { ...actionContext.identifiers, email: input.email },
   };
 
   // Validation complete
   actionLogger.operation("info", "Login form validated", {
-    operationContext: enrichedContext.context,
+    operationContext: enrichedContext.loggerContext,
     operationIdentifiers: enrichedContext.identifiers,
     operationName: enrichedContext.operation,
     ...ctx.validationCompletePayload({
@@ -125,7 +126,7 @@ export async function loginAction(
 
     actionLogger.operation("error", "Login authentication failed", {
       ...ctx.fail("authentication_failed"),
-      context: enrichedContext.context,
+      context: enrichedContext.loggerContext,
       details: {
         email: input.email,
         errorCode: error.code,
@@ -153,7 +154,7 @@ export async function loginAction(
   // Success
   actionLogger.operation("info", "Login action completed successfully", {
     ...ctx.successAction(userId),
-    context: enrichedContext.context,
+    context: enrichedContext.loggerContext,
     details: ctx.successPayload({ role, tracker, userId }),
     identifiers: { ...enrichedContext.identifiers, userId },
     operation: enrichedContext.operation,

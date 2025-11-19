@@ -1,6 +1,6 @@
 // src/server/auth/logging/auth-logging.types.ts
 import "server-only";
-import type { OperationMetadata } from "@/shared/logging/logger.types";
+import type { LogOperationMetadata } from "@/shared/logging/logger.types";
 
 export type AuthLogLayer =
   | "action"
@@ -47,7 +47,7 @@ export type AuthErrorSource =
 /* ----------------------------- Base log shape ----------------------------- */
 
 export interface AuthLogBase
-  extends OperationMetadata,
+  extends LogOperationMetadata,
     Record<string, unknown> {
   /** High-level auth operation (login/signup/...) */
   operationName: AuthOperation;
