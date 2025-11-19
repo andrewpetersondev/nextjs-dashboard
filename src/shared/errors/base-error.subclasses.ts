@@ -1,8 +1,8 @@
-import {
-  BaseError,
-  type BaseErrorOptions,
-  type ErrorContext,
-} from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/base-error";
+import type {
+  BaseErrorOptions,
+  ErrorContext,
+} from "@/shared/errors/base-error.types";
 import { ERROR_CODES, type ErrorCode } from "@/shared/errors/error-codes";
 
 /**

@@ -1,4 +1,9 @@
 import { isDev } from "@/shared/config/env-shared";
+import type {
+  BaseErrorJson,
+  BaseErrorOptions,
+  ErrorContext,
+} from "@/shared/errors/base-error.types";
 import {
   ERROR_CODES,
   type ErrorCode,
@@ -97,76 +102,6 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
 }
 
 /**
- * @public
- * Represents a read-only context object containing error-related metadata.
- * @remarks
- * The keys are strings, and the values are unknown, allowing flexibility for diverse error details.
- */
-export type ErrorContext = Readonly<Record<string, unknown>>;
-
-/**
- * JSON-safe representation of a {@link BaseError}.
- *
- * - Intended for serialization across process or network boundaries
- *   (e.g. HTTP responses, logs, queues).
- * - Does **not** include stack traces or underlying `cause` to avoid
- *   leaking internal implementation details.
- * - `context` is only included if non-empty.
- */
-export interface BaseErrorJson {
-  readonly category: string;
-  readonly code: ErrorCode;
-  readonly context?: ErrorContext;
-  readonly description: string;
-  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
-  readonly formErrors?: readonly string[];
-  readonly message: string;
-  readonly retryable: boolean;
-  readonly severity: Severity;
-  readonly statusCode: number;
-}
-
-/**
- * Serialized representation of an Error cause.
- *
- * Provides a safe, JSON-compatible structure for error causes.
- */
-export interface SerializedErrorCause {
-  readonly message: string;
-  readonly name: string;
-  readonly stack?: string;
-}
-
-/**
- * Shape of a {@link BaseError} when emitted via logging.
- *
- * - Extends {@link BaseErrorJson} with optional diagnostic and debugging fields.
- * - `diagnosticId` is extracted from `context.diagnosticId` when present.
- * - `stack` / `cause` are only included when detailed logging is enabled.
- */
-export interface BaseErrorLogPayload extends BaseErrorJson {
-  readonly diagnosticId?: string;
-  readonly stack?: string;
-  readonly cause?: SerializedErrorCause;
-}
-
-/**
- * Constructor options for {@link BaseError}.
- *
- * Keeps the constructor signature small and stable while allowing:
- * - message override (defaults to error code description)
- * - structured diagnostic context
- * - an underlying cause (any unknown value)
- */
-export interface BaseErrorOptions {
-  readonly cause?: unknown;
-  readonly context?: ErrorContext;
-  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
-  readonly formErrors?: readonly string[];
-  readonly message?: string;
-}
-
-/**
  * Canonical application error type backed by centralized {@link ERROR_CODES}.
  *
  * Core guarantees:
@@ -239,6 +174,7 @@ export class BaseError extends Error {
       Object.freeze(this);
     } catch {
       // ignore
+      console.log("error occurred in base error constructor");
     }
   }
 
@@ -265,7 +201,7 @@ export class BaseError extends Error {
    *
    * If `extra` is empty or falsy, the current instance is returned.
    */
-  withContext<Textra extends ErrorContext>(extra: Textra): this {
+  withContext<T extends ErrorContext>(extra: T): this {
     if (!extra || Object.keys(extra).length === 0) {
       return this;
     }

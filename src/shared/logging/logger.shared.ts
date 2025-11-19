@@ -39,42 +39,6 @@ const processId = getProcessId();
 const redactLogData = createRedactor();
 
 /**
- * Map domain \`Severity\` to \`LogLevel\` with an exhaustive check.
- */
-function severityToLogLevel(severity: Severity): LogLevel {
-  switch (severity) {
-    case "warn":
-      return "warn";
-    case "info":
-      return "info";
-    case "error":
-      return "error";
-    default: {
-      const _exhaustive: never = severity;
-      return _exhaustive;
-    }
-  }
-}
-
-/**
- * Normalize any `unknown` error into a safe, structured shape for logging.
- *
- * @remarks
- * - Uses the same structure as `SerializedErrorCause`
- * - Avoids leaking arbitrary properties from the error object
- */
-export function toSafeErrorShape(err: unknown): SafeErrorShape {
-  if (err instanceof Error) {
-    return {
-      message: err.message,
-      name: err.name,
-      ...(err.stack && { stack: err.stack }),
-    };
-  }
-  return String(err);
-}
-
-/**
  * Sensitivity-aware structured logger.
  */
 export class Logger {

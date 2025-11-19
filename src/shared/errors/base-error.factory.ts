@@ -1,5 +1,6 @@
 // src/shared/errors/base-error.factory.ts
-import { BaseError, type BaseErrorOptions } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/base-error";
+import type { BaseErrorOptions } from "@/shared/errors/base-error.types";
 import type { ErrorCode } from "@/shared/errors/error-codes";
 
 /**

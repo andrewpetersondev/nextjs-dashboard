@@ -7,8 +7,8 @@ import {
   AuthServiceLogFactory,
 } from "@/server/auth/logging/auth-logging.contexts";
 import type { AuthLogPayload } from "@/server/auth/logging/auth-logging.types";
-import { toSafeErrorShape } from "@/shared/logging/logger.shared";
 import type { OperationData } from "@/shared/logging/logger.types";
+import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
 
 /* ------------------------------ Action layer ------------------------------ */
 
