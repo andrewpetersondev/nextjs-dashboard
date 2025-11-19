@@ -1,6 +1,5 @@
 // File: 'src/shared/errors/base-error.mappers.ts'
 // Summary: Form mapping without fallbacks. Message comes directly from the error.
-
 import type { BaseError } from "@/shared/errors/base-error";
 import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
