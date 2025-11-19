@@ -22,8 +22,8 @@ export class TransactionLogger {
   start(transactionId: string): void {
     const data = TransactionLogFactory.start(transactionId);
     this.logger.operation("debug", "Transaction start", {
-      context: AUTH_LOG_CONTEXTS.transaction,
-      operation: "withTransaction",
+      operationContext: AUTH_LOG_CONTEXTS.transaction,
+      operationName: "withTransaction",
       ...data,
     });
   }
@@ -31,8 +31,8 @@ export class TransactionLogger {
   commit(transactionId: string): void {
     const data = TransactionLogFactory.commit(transactionId);
     this.logger.operation("debug", "Transaction commit", {
-      context: AUTH_LOG_CONTEXTS.transaction,
-      operation: "withTransaction",
+      operationContext: AUTH_LOG_CONTEXTS.transaction,
+      operationName: "withTransaction",
       ...data,
     });
   }
@@ -41,8 +41,8 @@ export class TransactionLogger {
     const data = TransactionLogFactory.rollback(transactionId, error);
 
     this.logger.errorWithDetails("Transaction rollback", error, {
-      context: AUTH_LOG_CONTEXTS.transaction,
-      operation: "withTransaction",
+      operationContext: AUTH_LOG_CONTEXTS.transaction,
+      operationName: "withTransaction",
       ...data,
     });
   }

@@ -78,6 +78,24 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
   if (!isDev()) {
     return ctx;
   }
+
+  // Warn about likely misplaced logging metadata. TODO: MOVE THIS TO A CENTRAL LOCATION
+  const loggingKeys = [
+    "requestId",
+    "hostname",
+    "traceId",
+    "spanId",
+    "environment",
+  ];
+  const foundKeys = loggingKeys.filter((k) => k in ctx);
+  if (foundKeys.length > 0) {
+    console.warn(
+      "[BaseError] Context contains logging-like keys that should use LoggingContext instead:",
+      foundKeys.join(", "),
+    );
+  }
+
+  // Existing serialization validation...
   try {
     JSON.stringify(ctx);
     return ctx;
@@ -278,38 +296,42 @@ export class BaseError extends Error {
    * Normalizes any unknown thrown value into a {@link BaseError}.
    *
    * Cases:
-   * - `BaseError` → returned with merged context if additional context is provided.
+   * - `BaseError` → returned as-is (use `.withContext()` to add more context)
    * - `Error` → wrapped into a new `BaseError` using `fallbackCode`,
-   *   preserving the original message as `message` and `cause`.
+   *   preserving the original message and cause
    * - anything else → converted into a JSON-safe representation and stored
-   *   under `context.originalType` and `context.originalValue`.
+   *   in context as `originalType` and `originalValue`
    *
-   * @param error - The value to normalize (e.g. from a `catch (error)` clause).
-   * @param fallbackCode - Error code used when `error` is not already a `BaseError`.
-   *                       Defaults to `ERROR_CODES.unknown.name`.
-   * @param context - Additional context to attach/merge when creating the error.
+   * @param error - The value to normalize (e.g. from a `catch (error)` clause)
+   * @param fallbackCode - Error code used when `error` is not already a `BaseError`
+   *                       Defaults to `ERROR_CODES.unknown.name`
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await riskyOperation();
+   * } catch (err) {
+   *   const baseErr = BaseError.from(err, 'OPERATION_FAILED');
+   *   // Add context separately if needed:
+   *   throw baseErr.withContext({ userId: '123' });
+   * }
    */
   static from(
     error: unknown,
     fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
-    context: ErrorContext = {},
   ): BaseError {
     if (error instanceof BaseError) {
-      return Object.keys(context).length > 0
-        ? error.withContext(context)
-        : error;
+      return error; // No merging—caller should use .withContext() if needed
     }
     if (error instanceof Error) {
       return new BaseError(fallbackCode, {
         cause: error,
-        context,
         message: error.message,
       });
     }
     const msg = safeStringifyUnknown(error);
     return new BaseError(fallbackCode, {
       context: {
-        ...context,
         originalType: typeof error,
         originalValue: redactNonSerializable(error),
       },
@@ -321,17 +343,28 @@ export class BaseError extends Error {
    * Wraps an arbitrary error value with a specific `code`, preserving the original.
    *
    * Cases:
-   * - `BaseError` → remapped via {@link BaseError.remap} instead of double-wrapping.
-   *   The original stack is copied to the remapped error when possible.
-   * - `Error` → wrapped in a new `BaseError` using the provided `code` and `message`
-   *   (or the original error's message if none is provided).
-   * - anything else → converted into a JSON-safe representation and stored
-   *   under `context.originalType` and `context.originalValue`.
+   * - `BaseError` → remapped via {@link BaseError.remap}
+   * - `Error` → wrapped in a new `BaseError` with the original as `cause`
+   * - anything else → converted to JSON-safe representation in context
    *
-   * @param code - Target canonical error code.
-   * @param err - Original error or thrown value.
-   * @param context - Additional context to attach/merge.
-   * @param message - Optional message override for the resulting error.
+   * @param code - Target canonical error code
+   * @param err - Original error or thrown value
+   * @param context - Diagnostic context for the wrapping layer
+   *   (e.g., `{ operation: 'fetchUser', userId: '123' }`)
+   * @param message - Optional message override
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await db.query(sql);
+   * } catch (dbErr) {
+   *   throw BaseError.wrap(
+   *     'DATABASE_QUERY_FAILED',
+   *     dbErr,
+   *     { query: 'SELECT * FROM users', userId: '123' },
+   *     'Failed to fetch user from database'
+   *   );
+   * }
    */
   static wrap(
     code: AppErrorCode,
@@ -400,15 +433,3 @@ export class BaseError extends Error {
     }
   }
 }
-
-/**
- * Type guard that narrows an unknown value to {@link BaseError}.
- *
- * Useful when handling errors from generic `catch` blocks to refine
- * the type before accessing `BaseError`-specific properties.
- *
- * @param e - Unknown value to check.
- * @returns `true` if `e` is a `BaseError`, otherwise `false`.
- */
-export const isBaseError = (e: unknown): e is BaseError =>
-  e instanceof BaseError;

@@ -34,11 +34,11 @@ export async function executeDalOrThrow<T>(
 
     logger.operation("error", "DAL operation error", {
       code: baseError.code,
-      context: dalContext.context,
       diagnosticId: baseError.context.diagnosticId,
-      operation: dalContext.operation,
+      operationContext: dalContext.context,
+      operationIdentifiers: dalContext.identifiers,
+      operationName: dalContext.operation,
       severity: baseError.severity,
-      ...dalContext.identifiers,
     });
 
     throw baseError;

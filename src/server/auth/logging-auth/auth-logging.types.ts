@@ -50,13 +50,13 @@ export interface AuthLogBase
   extends OperationMetadata,
     Record<string, unknown> {
   /** High-level auth operation (login/signup/...) */
-  operation: AuthOperation;
+  operationName: AuthOperation;
   /** Layer from which the log originates */
   layer: AuthLogLayer;
   /** Logical kind (start/success/error/etc.) */
   kind: AuthLogKind;
   /** Business identifiers (email, userId, etc.) */
-  identifiers?: Record<string, string | number>;
+  operationIdentifiers?: Record<string, string | number>;
   /**
    * Optional error payload (BaseError, safe error shape, or something else).
    * Only set when this log represents an error-ish condition.

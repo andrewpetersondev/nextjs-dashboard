@@ -2,7 +2,8 @@
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import { BaseError, isBaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/base-error";
+import { isBaseError } from "@/shared/errors/base-error.factory";
 import type {
   BaseErrorLogPayload,
   ErrorContext,
@@ -18,6 +19,7 @@ import {
 import type {
   LogBaseErrorOptions,
   LogEntry,
+  LoggingContext,
   OperationData,
 } from "@/shared/logging/logger.types";
 import {
@@ -26,6 +28,12 @@ import {
 } from "@/shared/logging/shared-logger.mappers";
 
 const processId = getProcessId();
+
+/**
+ * Static context applied to all logs from this process.
+ * Useful for version, environment, and service identifiers.
+ */
+let processMetadata: Record<string, unknown> = {};
 
 /**
  * Shared redactor for log payloads, built on the core redaction system.
@@ -37,6 +45,33 @@ const redactLogData = createRedactor();
 
 /**
  * Sensitivity-aware structured logger.
+ *
+ * Key Concepts:
+ *
+ * **Error Context vs Logging Context**
+ * - ErrorContext: Diagnostic data frozen at error creation (part of the error)
+ * - LoggingContext: Operational metadata attached at log-time (part of the log entry)
+ *
+ * When logging errors:
+ * 1. Error diagnostic data (context) is embedded in BaseError
+ * 2. Logging metadata (loggingContext) is merged into the log entry
+ * 3. Both appear in the final log output but serve different purposes
+ *
+ * @example
+ * ```typescript
+ * // Error constructed with diagnostic context
+ * const error = new BaseError('USER_NOT_FOUND', {
+ *   context: { userId: '123', operation: 'getUser' }
+ * });
+ *
+ * // Logged with operational metadata
+ * logger.logBaseError(error, {
+ *   loggingContext: { requestId: 'req-456', hostname: 'api-1' }
+ * });
+ *
+ * // Final log contains both:
+ * // - error.context: { userId: '123', operation: 'getUser' }
+ * // - requestId: 'req-456', hostname: 'api-1'
  */
 export class Logger {
   private readonly context?: string;
@@ -45,6 +80,14 @@ export class Logger {
   constructor(context?: string, requestId?: string) {
     this.context = context;
     this.requestId = requestId;
+  }
+
+  /**
+   * Configure global context for all Logger instances.
+   * Call this once at application bootstrap.
+   */
+  static setGlobalContext(context: Record<string, unknown>): void {
+    processMetadata = { ...processMetadata, ...context };
   }
 
   // --------------------------------------------------------------------------
@@ -103,14 +146,26 @@ export class Logger {
     message: string,
     data?: T,
   ): LogEntry<T> {
+    // SAFETY: If data is a raw Error object, standard JSON.stringify will return {}
+    // We automatically convert it to a safe shape to prevent data loss.
+    let safeData = data;
+    if (safeData instanceof Error) {
+      // @ts-expect-error - transforming type for serialization purposes
+      safeData = toSafeErrorShape(safeData);
+    }
+
     const entry: LogEntry<T> = {
-      data: data !== undefined ? (redactLogData(data) as T) : undefined,
+      data: safeData !== undefined ? (redactLogData(safeData) as T) : undefined,
       level,
       loggerContext: this.context || undefined,
       message,
       pid: processId,
       requestId: this.requestId || undefined,
       timestamp: new Date().toISOString(),
+      // Merge global context if available (casted to match LogEntry structure if needed)
+      ...(Object.keys(processMetadata).length > 0
+        ? { metadata: processMetadata }
+        : {}),
     };
     return entry;
   }
@@ -207,13 +262,24 @@ export class Logger {
     message: string,
     data: OperationData<T>,
   ): void {
-    const { operation, context, identifiers, ...rest } = data;
+    const { operationName, operationContext, operationIdentifiers, ...rest } =
+      data;
+
+    // SAFETY: Handle 'error' field specifically if it exists in the operation data
+    // We cast to Record<string, unknown> to allow checking/modifying 'error'
+    // regardless of T's specific shape.
+    const safeRest = { ...rest } as Record<string, unknown>;
+
+    if ("error" in safeRest && safeRest.error instanceof Error) {
+      safeRest.error = toSafeErrorShape(safeRest.error);
+    }
+
     const logData = {
-      ...rest,
-      ...(identifiers ?? {}),
-      operation,
+      ...safeRest,
+      ...(operationIdentifiers ?? {}),
+      operation: operationName,
     };
-    const target = context ? this.withContext(context) : this;
+    const target = operationContext ? this.withContext(operationContext) : this;
     target.logAt(level, message, logData);
   }
 
@@ -225,26 +291,34 @@ export class Logger {
    * - Set `detailed: true` to include stack traces and cause chain
    * - Automatically extracts `diagnosticId` from error context when present
    * - Maps error severity to appropriate log level
+   * - `loggingContext` is merged into the log entry data, not the error payload
    * - All payloads are immutably constructed
    *
    * @example
    * ```typescript
    * logger.logBaseError(error);
-   * logger.logBaseError(error, { detailed: true, extra: { userId: '123' } });
-   * ```
+   * logger.logBaseError(error, {
+   *   detailed: true,
+   *   loggingContext: { requestId: 'abc', hostname: 'api-1' }
+   * });
+   *
    */
   logBaseError(error: BaseError, options?: LogBaseErrorOptions): void {
-    const { detailed, extra, levelOverride, message } = options ?? {};
+    const { detailed, levelOverride, loggingContext, message } = options ?? {};
 
-    // Auto-map severity to log level if not explicitly overridden
     const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
 
-    const payload = this.buildErrorPayload(error, {
+    const errorPayload = this.buildErrorPayload(error, {
       detailed: Boolean(detailed),
-      extra,
     });
 
-    this.logAt(level, message ?? error.message, payload);
+    // Merge logging context into the data payload, not the error payload
+    // Note: Type safety ensures keys in loggingContext do not overlap with errorPayload
+    const logData = loggingContext
+      ? { ...errorPayload, ...loggingContext }
+      : errorPayload;
+
+    this.logAt(level, message ?? error.message, logData);
   }
 
   /**
@@ -254,13 +328,12 @@ export class Logger {
    */
   private buildErrorPayload(
     error: BaseError,
-    options: { detailed: boolean; extra?: Record<string, unknown> },
+    options: { detailed: boolean },
   ): BaseErrorLogPayload {
-    const { detailed, extra } = options;
+    const { detailed } = options;
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.context);
 
-    // Separate validation errors for better visibility
     const hasValidationErrors =
       (baseJson.formErrors && baseJson.formErrors.length > 0) ||
       (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
@@ -274,7 +347,6 @@ export class Logger {
       ...(baseJson.fieldErrors && { fieldErrors: baseJson.fieldErrors }),
       ...(baseJson.formErrors && { formErrors: baseJson.formErrors }),
       message: baseJson.message,
-      ...(extra && Object.keys(extra).length > 0 && { meta: extra }),
       retryable: baseJson.retryable,
       severity: baseJson.severity,
       statusCode: baseJson.statusCode,
@@ -291,7 +363,6 @@ export class Logger {
         error.cause instanceof Error
           ? this.serializeErrorCause(error.cause)
           : undefined,
-      // Include info about originalCause if it was redacted
       ...(error.originalCause !== error.cause && {
         originalCauseRedacted: true,
         originalCauseType: typeof error.originalCause,
@@ -355,75 +426,29 @@ export class Logger {
    *   safe error shape while preserving as much diagnostic information
    *   as possible.
    *
-   * Behavior:
-   * - For {@link BaseError} instances:
-   *   - Uses `logBaseError(error, { detailed: true, extra, levelOverride: "error" })`.
-   *   - Payload includes:
-   *     - Canonical error metadata (code, severity, category, retryable,
-   *       statusCode, description).
-   *     - Immutable `context` (including any DAL / auth metadata).
-   *     - Optional `diagnosticId` (when present in the error context).
-   *     - Stack trace and serialized `cause` (name, message, stack) when
-   *       available.
-   *     - Any additional `extra` fields you provide.
-   * - For non‑`BaseError` values:
-   *   - Converts the value into a JSON‑safe shape via `toSafeErrorShape`.
-   *   - Logs it at `"error"` level under an `error` field along with any
-   *     provided `extra` metadata.
-   *
-   * Use this method when you are at a boundary where an operation fails
-   * and you want *maximum* diagnostic information in logs, while still
-   * respecting redaction rules.
-   *
    * @param message - Log message describing the failure context
-   *   (e.g. `"Transaction rollback"`, `"[EXECUTE DAL]"`).
-   * @param error - The error or thrown value to log. Can be:
-   *   - A {@link BaseError} (preferred, for canonical app errors).
-   *   - Any other `Error` instance.
-   *   - Any arbitrary unknown value.
-   * @param extra - Optional additional metadata to merge into the
-   *   logged payload. Useful for operation identifiers (e.g. context,
-   *   operation name, transaction ID, DAL identifiers).
-   *
-   * @example
-   * ```ts
-   * // Rich logging for DAL failures
-   * logger.errorWithDetails("[EXECUTE DAL]", baseError, {
-   *   context: dalContext.context,
-   *   operation: dalContext.operation,
-   *   ...dalContext.identifiers,
-   * });
-   * ```
-   *
-   * @example
-   * ```ts
-   * // Transaction rollback with full error details
-   * transactionLogger.errorWithDetails("Transaction rollback", err, {
-   *   context: "auth:infrastructure.transaction",
-   *   operation: "withTransaction",
-   *   transactionId,
-   * });
-   * ```
+   * @param error - The error or thrown value to log
+   * @param loggingContext - Optional operational metadata attached at log-time
+   *   (e.g. requestId, hostname, traceId)
    */
   errorWithDetails(
     message: string,
     error: unknown,
-    extra?: Record<string, unknown>,
+    loggingContext?: LoggingContext,
   ): void {
     if (!isBaseError(error)) {
       const payload: Record<string, unknown> = {
+        ...(loggingContext ?? {}),
         error: toSafeErrorShape(error),
       };
-      if (extra) {
-        Object.assign(payload, extra);
-      }
+
       this.error(message, payload);
       return;
     }
     this.logBaseError(error, {
       detailed: true,
-      extra,
       levelOverride: "error",
+      loggingContext,
       message,
     });
   }
@@ -444,17 +469,22 @@ export class Logger {
   /**
    * Normalize any unknown error into BaseError, log it, and return it.
    *
+   * @param err - Unknown error value to normalize
+   * @param fallbackMessage - Message to use when logging
+   * @param fallbackCode - Error code to use for non-BaseError values
+   * @param loggingContext - Optional operational metadata attached at log-time
    * @returns The normalized BaseError (useful for re-throwing or further handling)
    */
   normalizeAndLog(
     err: unknown,
     fallbackMessage: string,
     fallbackCode: AppErrorCode,
-    extra?: Record<string, unknown>,
+    loggingContext?: LoggingContext,
   ): BaseError {
-    const baseErr = BaseError.from(err, fallbackCode, extra);
+    const baseErr = BaseError.from(err, fallbackCode);
     this.logBaseError(baseErr, {
       levelOverride: "error",
+      loggingContext,
       message: fallbackMessage,
     });
     return baseErr;

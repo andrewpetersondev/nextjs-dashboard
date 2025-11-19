@@ -58,42 +58,42 @@ export const AUTH_LOG_CONTEXTS = {
 export const AuthActionLogFactory = {
   failure(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "failure",
       layer: "action",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   start(operation: AuthOperation): AuthLogPayload {
     return {
       kind: "start",
       layer: "action",
-      operation,
+      operationName: operation,
     };
   },
   success(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "success",
       layer: "action",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   validation(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "validation",
       layer: "action",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
 } as const;
@@ -103,48 +103,48 @@ export const AuthActionLogFactory = {
 export const AuthServiceLogFactory = {
   authInvariant(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "auth-invariant",
       layer: "service",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   exception(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
     error?: unknown,
   ): AuthLogPayload {
     return {
       kind: "exception",
       layer: "service",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
       ...(error !== undefined && { error }),
     };
   },
   success(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "success",
       layer: "service",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   validation(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "validation",
       layer: "service",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
 } as const;
@@ -155,48 +155,48 @@ export const AuthRepoLogFactory = {
   exception(
     operation: AuthOperation,
     error: unknown,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       error,
       kind: "exception",
       layer: "infrastructure.repository",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
       errorSource: "infrastructure.repository",
     };
   },
   notFound(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "not_found",
       layer: "infrastructure.repository",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   start(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "start",
       layer: "infrastructure.repository",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
   success(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "success",
       layer: "infrastructure.repository",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
     };
   },
 } as const;
@@ -207,7 +207,7 @@ export const AuthDalLogFactory = {
   // biome-ignore lint/nursery/useMaxParams: <fix later>
   error(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
     details?: AuthLogPayload["details"],
     error?: unknown,
     errorSource: AuthErrorSource = "infrastructure.dal",
@@ -215,8 +215,8 @@ export const AuthDalLogFactory = {
     return {
       kind: "error",
       layer: "infrastructure.dal",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
       ...(details && { details }),
       ...(error !== undefined && { error }),
       errorSource,
@@ -224,26 +224,26 @@ export const AuthDalLogFactory = {
   },
   notFound(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
   ): AuthLogPayload {
     return {
       kind: "not_found",
       layer: "infrastructure.dal",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
       errorSource: "infrastructure.dal",
     };
   },
   success(
     operation: AuthOperation,
-    identifiers?: AuthLogPayload["identifiers"],
+    identifiers?: AuthLogPayload["operationIdentifiers"],
     details?: AuthLogPayload["details"],
   ): AuthLogPayload {
     return {
       kind: "success",
       layer: "infrastructure.dal",
-      operation,
-      ...(identifiers && { identifiers }),
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
       ...(details && { details }),
     };
   },

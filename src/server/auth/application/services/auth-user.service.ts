@@ -121,10 +121,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const normalized = BaseError.from(err, APP_ERROR_MAP.unknown.name, {
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      const normalized = BaseError.from(err, APP_ERROR_MAP.unknown.name);
 
       return Err(normalized);
     }
@@ -206,10 +203,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name, {
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name);
 
       return Err(baseError);
     }
@@ -333,10 +327,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name, {
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name);
 
       return Err(baseError);
     }

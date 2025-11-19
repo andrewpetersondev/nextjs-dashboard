@@ -142,7 +142,7 @@ export class AuthUserRepositoryImpl {
           identifiers: { email: input.email },
           // align with DAL notFound kind
           kind: "not_found",
-          operation: "login",
+          operationName: "login",
         } as const,
       );
       return null;

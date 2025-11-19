@@ -48,7 +48,7 @@ export async function demoUserCounter(
             context: dalContext.context,
             identifiers: dalContext.identifiers,
             kind: "invariant" as const,
-            operation: dalContext.operation,
+            operationName: dalContext.operation,
           },
         );
         throw BaseError.wrap(
@@ -66,7 +66,7 @@ export async function demoUserCounter(
           counterRow,
           identifiers: dalContext.identifiers,
           kind: "invariant" as const,
-          operation: dalContext.operation,
+          operationName: dalContext.operation,
         });
         throw BaseError.wrap(
           APP_ERROR_MAP.integrity.name,
@@ -86,9 +86,9 @@ export async function demoUserCounter(
 
       logger.operation("info", "Demo user counter created for role", {
         context: dalContext.context,
-        identifiers: resultMeta.identifiers,
+        identifiers: resultMeta.operationIdentifiers,
         kind: resultMeta.kind,
-        operation: dalContext.operation,
+        operationName: dalContext.operation,
         ...(resultMeta.details && { details: resultMeta.details }),
       });
 

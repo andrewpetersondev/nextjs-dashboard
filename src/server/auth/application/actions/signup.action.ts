@@ -109,9 +109,9 @@ export async function signupAction(
 
   // Validation complete
   actionLogger.operation("info", "Signup form validated", {
-    context: enrichedContext.context,
-    identifiers: enrichedContext.identifiers,
-    operation: enrichedContext.operation,
+    operationContext: enrichedContext.context,
+    operationIdentifiers: enrichedContext.identifiers,
+    operationName: enrichedContext.operation,
     ...ctx.validationCompletePayload({
       duration: tracker.getLastDuration("validation"),
       email: input.email,
