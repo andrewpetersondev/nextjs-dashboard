@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { makeValidationError } from "@/shared/errors/base-error.factory";
 
 /**
  * Validates the given condition and throws a ValidationError with the specified message if the condition is falsy.
@@ -14,6 +14,6 @@ export const validateCondition = (
   message: string,
 ): void => {
   if (!condition) {
-    throw new ValidationError(message);
+    throw makeValidationError({ message });
   }
 };

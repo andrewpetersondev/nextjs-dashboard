@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
@@ -16,7 +13,7 @@ function isKnownInvoiceMessageId(value: unknown): value is InvoiceMessageId {
 }
 
 export function toInvoiceErrorMessage(error: unknown): string {
-  if (error instanceof ValidationError) {
+  if (error instanceof BaseError) {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message
@@ -24,7 +21,7 @@ export function toInvoiceErrorMessage(error: unknown): string {
     return translator(id);
   }
 
-  if (error instanceof DatabaseError) {
+  if (error instanceof BaseError) {
     const message = (error as Error).message;
     const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
       ? message

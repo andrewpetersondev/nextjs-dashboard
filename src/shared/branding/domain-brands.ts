@@ -1,5 +1,5 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 import { brandWith } from "@/shared/validation/composition/brand";
 import { validatePeriodResult } from "@/shared/validation/domain/period";
@@ -26,19 +26,21 @@ export type Period = Brand<Date, typeof PERIOD_BRAND>;
  */
 export const uuidValidatorFor =
   (label: string) =>
-  (value: unknown): Result<string, ValidationError> => {
+  (value: unknown): Result<string, BaseError> => {
     const r = validateUuidResult(value, label);
-    return r.ok ? Ok(r.value) : Err(new ValidationError(r.error.message));
+    return r.ok
+      ? Ok(r.value)
+      : Err(new BaseError("validation", { message: r.error.message }));
   };
 
 /**
  * Validate and transform a period value (Result-based).
  */
-export const periodValidator = (
-  value: unknown,
-): Result<Date, ValidationError> => {
+export const periodValidator = (value: unknown): Result<Date, BaseError> => {
   const r = validatePeriodResult(value);
-  return r.ok ? Ok(r.value) : Err(new ValidationError(r.error.message));
+  return r.ok
+    ? Ok(r.value)
+    : Err(new BaseError("validation", { message: r.error.message }));
 };
 
 // --- Factories ---
@@ -60,7 +62,7 @@ export const createBrandedIdValidator = <
     ((value: string) => brandFn(value) as T) as (value: string) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError> => internalCreator(value);
+  return (value: unknown): Result<T, BaseError> => internalCreator(value);
 };
 
 /**
@@ -78,7 +80,7 @@ export const createBrandedPeriodValidator = <
     ((value: Date) => brandFn(value) as T) as (value: Date) => T,
   );
 
-  return (value: unknown): Result<T, ValidationError> => internalCreator(value);
+  return (value: unknown): Result<T, BaseError> => internalCreator(value);
 };
 
 export const createCustomerId = createBrandedIdValidator<

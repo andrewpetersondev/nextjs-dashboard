@@ -12,34 +12,32 @@ import {
   type SessionId,
   type UserId,
 } from "@/shared/branding/domain-brands";
-import type { ValidationError } from "@/shared/errors/base-error.subclasses";
+import type { BaseError } from "@/shared/errors/base-error";
 import type { Result } from "@/shared/result/result";
 
 // --- New: Result-returning converters (thin wrappers over factories) ---
 
 export const toCustomerIdResult = (
   value: unknown,
-): Result<CustomerId, ValidationError> => createCustomerId(value);
+): Result<CustomerId, BaseError> => createCustomerId(value);
 
-export const toUserIdResult = (
-  value: unknown,
-): Result<UserId, ValidationError> => createUserId(value);
+export const toUserIdResult = (value: unknown): Result<UserId, BaseError> =>
+  createUserId(value);
 
 export const toInvoiceIdResult = (
   value: unknown,
-): Result<InvoiceId, ValidationError> => createInvoiceId(value);
+): Result<InvoiceId, BaseError> => createInvoiceId(value);
 
 export const toRevenueIdResult = (
   value: unknown,
-): Result<RevenueId, ValidationError> => createRevenueId(value);
+): Result<RevenueId, BaseError> => createRevenueId(value);
 
 export const toSessionIdResult = (
   value: unknown,
-): Result<SessionId, ValidationError> => createSessionId(value);
+): Result<SessionId, BaseError> => createSessionId(value);
 
-export const toPeriodResult = (
-  value: unknown,
-): Result<Period, ValidationError> => createPeriod(value);
+export const toPeriodResult = (value: unknown): Result<Period, BaseError> =>
+  createPeriod(value);
 
 // --- Existing throw-based APIs preserved (now implemented via Result) ---
 

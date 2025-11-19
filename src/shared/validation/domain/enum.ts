@@ -1,4 +1,4 @@
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -8,12 +8,12 @@ export const validateEnumResult = <T extends string>(
   value: unknown,
   enumValues: readonly T[],
   enumName: string,
-): Result<T, ValidationError> => {
+): Result<T, BaseError> => {
   if (typeof value !== "string") {
     return Err(
-      new ValidationError(
-        `Invalid ${enumName}: expected string, got ${typeof value}`,
-      ),
+      new BaseError("validation", {
+        message: `Invalid ${enumName}: expected string, got ${typeof value}`,
+      }),
     );
   }
   const candidate = value as T;
@@ -21,9 +21,9 @@ export const validateEnumResult = <T extends string>(
     return Ok(candidate);
   }
   return Err(
-    new ValidationError(
-      `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
-    ),
+    new BaseError("validation", {
+      message: `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
+    }),
   );
 };
 

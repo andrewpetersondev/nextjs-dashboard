@@ -8,6 +8,7 @@ import { APP_ERROR_MAP, type AppErrorCode } from "@/shared/errors/error-codes";
 /**
  * Input validation failed (HTTP 422 by metadata).
  * Use for schema / semantic validation failures.
+ * @deprecated new strategy avoids subclassing for common cases
  */
 export class ValidationError extends BaseError {
   constructor(message?: string, context?: ErrorContext, cause?: unknown) {
@@ -40,36 +41,10 @@ export class ValidationError extends BaseError {
 }
 
 /**
- * Generic infrastructure failure (storage, network, system).
- * Code: INFRASTRUCTURE (HTTP/status/severity derived from metadata).
- */
-export class InfrastructureError extends BaseError {
-  constructor(message?: string, context?: ErrorContext, cause?: unknown) {
-    super(APP_ERROR_MAP.infrastructure.name satisfies AppErrorCode, {
-      cause,
-      context,
-      message,
-    });
-  }
-
-  protected override create(
-    code: AppErrorCode,
-    options: BaseErrorOptions,
-  ): this {
-    if (code !== APP_ERROR_MAP.infrastructure.name) {
-      return new BaseError(code, options) as this;
-    }
-    return new InfrastructureError(
-      options.message,
-      options.context,
-      options.cause,
-    ) as this;
-  }
-}
-
-/**
  * Database operation failure (query/connection/transaction).
- * Code: DATABASE.
+ * Code: database
+ * @deprecated new strategy avoids subclassing for common cases
+ *
  */
 export class DatabaseError extends BaseError {
   constructor(message?: string, context?: ErrorContext, cause?: unknown) {

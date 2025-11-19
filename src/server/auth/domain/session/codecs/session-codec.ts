@@ -18,10 +18,6 @@ const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);
   if (!parsed.success) {
     const errs = parsed.error.flatten().fieldErrors;
-    //    serverLogger.error(
-    //      { context: "createSessionToken", err: errs },
-    //      "Invalid session payload",
-    //    );
     console.error("Invalid session payload:", errs);
     throw new ValidationError(
       "Invalid session payload: Missing or invalid required fields",
@@ -34,10 +30,6 @@ const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
 const validateTemporalFields = (expMs: number, startMs: number): void => {
   const now = Date.now();
   if (expMs <= now) {
-    //    serverLogger.error(
-    //      { context: "createSessionToken", expiresAt: expMs },
-    //      "expiresAt must be in the future",
-    //    );
     console.error("expiresAt must be in the future:", expMs);
     throw new ValidationError(
       "Invalid session payload: expiresAt must be in the future",
@@ -48,14 +40,6 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
     );
   }
   if (startMs <= 0 || startMs > expMs) {
-    //    serverLogger.error(
-    //      {
-    //        context: "createSessionToken",
-    //        expiresAt: expMs,
-    //        sessionStart: startMs,
-    //      },
-    //      "sessionStart must be positive and not exceed expiresAt",
-    //    );
     console.error(
       "sessionStart must be positive and not exceed expiresAt:",
       {},
@@ -84,10 +68,6 @@ export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
   if (!session) {
-    //    serverLogger.warn(
-    //      { context: "readSessionToken" },
-    //      "No session token provided",
-    //    );
     console.warn("No session token provided");
     return;
   }
@@ -108,13 +88,6 @@ export async function readSessionToken(
 
   const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
   if (!validatedFields.success) {
-    //    serverLogger.error(
-    //      {
-    //        context: "readSessionToken",
-    //        err: validatedFields.error.flatten().fieldErrors,
-    //      },
-    //      "Session JWT payload validation failed",
-    //    );
     console.error(
       "Session JWT payload validation failed:",
       validatedFields.error.flatten().fieldErrors,
