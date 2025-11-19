@@ -5,8 +5,8 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import {
   type AuthLayerContext,
   createAuthOperationContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { Logger } from "@/shared/logging/logger.shared";

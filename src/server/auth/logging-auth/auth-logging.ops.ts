@@ -5,8 +5,8 @@ import {
   AUTH_LOG_CONTEXTS,
   AuthActionLogFactory,
   AuthServiceLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
-import type { AuthLogPayload } from "@/server/auth/logging/auth-logging.types";
+} from "@/server/auth/logging-auth/auth-logging.contexts";
+import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
 import type { OperationData } from "@/shared/logging/logger.types";
 import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
 

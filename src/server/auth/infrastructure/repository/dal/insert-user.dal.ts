@@ -6,8 +6,8 @@ import {
   type AuthLayerContext,
   createAuthOperationContext,
   toErrorContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AuthDalLogFactory } from "@/server/auth/logging/auth-logging.contexts";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/errors/base-error";

@@ -4,7 +4,7 @@ import type {
   AuthErrorSource,
   AuthLogPayload,
   AuthOperation,
-} from "@/server/auth/logging/auth-logging.types";
+} from "@/server/auth/logging-auth/auth-logging.types";
 
 /* ---------------------------- Context strings ----------------------------- */
 

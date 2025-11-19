@@ -1,11 +1,11 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
+import { mapPgErrorToBase } from "@/server/auth/errors-auth/pg-error.mapper";
 import {
   type AuthLayerContext,
   toErrorContext,
-} from "@/server/auth/logging/auth-layer-context";
+} from "@/server/auth/logging-auth/auth-layer-context";
 import { mapBaseErrorToInfrastructure } from "@/shared/errors/base-error.mapper";
-import { mapPgErrorToBase } from "@/shared/errors/pg-error.mapper";
 import type { Logger } from "@/shared/logging/logger.shared";
 
 /**

@@ -1,10 +1,10 @@
 // src/server/auth/logging/auth-layer-context.ts
 import "server-only";
-import { AUTH_LOG_CONTEXTS } from "@/server/auth/logging/auth-logging.contexts";
+import { AUTH_LOG_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type {
   AuthLogLayer,
   AuthOperation,
-} from "@/server/auth/logging/auth-logging.types";
+} from "@/server/auth/logging-auth/auth-logging.types";
 import type { ErrorContext } from "@/shared/errors/base-error.types";
 
 /**

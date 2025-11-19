@@ -6,8 +6,8 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import {
   type AuthLayerContext,
   createAuthOperationContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { getAppDb } from "@/server/db/db.connection";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";

@@ -10,9 +10,9 @@ import {
   type AuthLayerContext,
   createAuthOperationContext,
   toErrorContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AuthRepoLogFactory } from "@/server/auth/logging/auth-logging.contexts";
-import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthRepoLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import { TransactionLogger } from "@/server/auth/logging-auth/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,

@@ -16,8 +16,8 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import {
   type AuthLayerContext,
   createAuthOperationContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging/auth-logging.ops";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { mapBaseErrorToFormPayload } from "@/shared/errors/base-error.mappers";

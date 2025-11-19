@@ -5,8 +5,8 @@ import { setSessionToken } from "@/server/auth/domain/session/core/session";
 import {
   type AuthLayerContext,
   createAuthOperationContext,
-} from "@/server/auth/logging/auth-layer-context";
-import { AuthActionLogFactory } from "@/server/auth/logging/auth-logging.contexts";
+} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 import { tryCatchAsync } from "@/shared/result/async/result-async";

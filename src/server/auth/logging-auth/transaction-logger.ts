@@ -1,10 +1,10 @@
 // src/server/auth/logging/transaction-logger.ts
 import "server-only";
-import { createAuthLogger } from "@/server/auth/logging/auth-logger.shared";
+import { createAuthLogger } from "@/server/auth/logging-auth/auth-logger.shared";
 import {
   AUTH_LOG_CONTEXTS,
   TransactionLogFactory,
-} from "@/server/auth/logging/auth-logging.contexts";
+} from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { Logger } from "@/shared/logging/logger.shared";
 
 export class TransactionLogger {

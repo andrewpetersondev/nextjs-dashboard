@@ -14,7 +14,7 @@ import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/dem
 import {
   type AuthLayerContext,
   createAuthOperationContext,
-} from "@/server/auth/logging/auth-layer-context";
+} from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
 import { BaseError } from "@/shared/errors/base-error";
 import { ERROR_CODES } from "@/shared/errors/error-codes";
