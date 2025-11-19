@@ -106,12 +106,14 @@
         "useWhile": "on"
       },
       "correctness": {
+        "noChildrenProp": "on",
         "noGlobalDirnameFilename": "on",
+        "noNestedComponentDefinitions": "on",
+        "noPrivateImports": "error",
         "noUndeclaredVariables": "on"
       },
       "nursery": {
         "noContinue": "on",
-        "noDeprecatedImports": "on",
         "noShadow": "on",
         "noUselessUndefined": "on",
         "useExplicitType": "off",
