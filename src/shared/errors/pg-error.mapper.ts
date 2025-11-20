@@ -35,7 +35,7 @@ export function mapPgError(err: unknown): PgErrorMapping | undefined {
   const pgErrorDef = PG_CODE_TO_META[code];
 
   // Infrastructure-safe message; domain can override if needed
-  const condition = pgErrorDef.condition ?? "Database operation failed";
+  const condition = pgErrorDef.condition ?? "db_unknown_error";
 
   return {
     condition,
