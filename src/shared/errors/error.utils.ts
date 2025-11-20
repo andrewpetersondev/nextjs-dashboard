@@ -1,34 +1,56 @@
-// src/shared/errors/error.utils
+// src/shared/errors/error.utils.ts
+import { BaseError } from "@/shared/errors/base-error";
+import type { ErrorContext } from "@/shared/errors/base-error.types";
+import { APP_ERROR_MAP, type AppErrorCode } from "@/shared/errors/error-codes";
 
-function normalizeError(error: unknown): Error {
-  if (error instanceof Error) {
-    return error;
-  }
-  if (typeof error === "string") {
-    return new Error(error);
-  }
-  return new Error("Unknown error occurred");
+/**
+ * Normalize an unknown value into a BaseError using {@link BaseError.from}.
+ *
+ * This is the preferred entry-point for converting arbitrary thrown values
+ * into the canonical `BaseError` type.
+ */
+export function normalizeToBaseError(
+  error: unknown,
+  fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
+): BaseError {
+  return BaseError.from(error, fallbackCode);
 }
 
-export async function catchAsync<T>(
+/**
+ * Typed helper that normalizes failures into BaseError.
+ *
+ * Use this for new async code paths where you want a tuple-style result:
+ * `[value, null]` on success, `[null, BaseError]` on failure.
+ */
+export async function _catchAsyncBase<T>(
   fn: () => Promise<T>,
-): Promise<[T, null] | [null, Error]> {
+  fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
+): Promise<[T, null] | [null, BaseError]> {
   try {
     const result = await fn();
     return [result, null];
   } catch (error) {
-    return [null, error instanceof Error ? error : new Error(String(error))];
+    return [null, normalizeToBaseError(error, fallbackCode)];
   }
 }
 
-export function wrapAsync<T extends unknown[], R>(
+/**
+ * Wrapper that rethrows normalized BaseError,
+ * preserving the original as cause and attaching context.
+ *
+ * This is the preferred wrapper for async boundaries.
+ */
+export function _wrapAsyncBase<T extends unknown[], R>(
+  code: AppErrorCode,
   fn: (...args: T) => Promise<R>,
+  baseContext: ErrorContext = {},
+  message?: string,
 ): (...args: T) => Promise<R> {
   return async (...args: T): Promise<R> => {
     try {
       return await fn(...args);
-    } catch (error) {
-      throw normalizeError(error);
+    } catch (err) {
+      throw BaseError.wrap(code, err, baseContext, message);
     }
   };
 }
