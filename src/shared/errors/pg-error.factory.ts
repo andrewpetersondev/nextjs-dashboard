@@ -27,7 +27,7 @@ export function normalizePgError(
   return new BaseError(mapping.appCode, {
     cause: err,
     context: {
-      ...additionalContext,
+      ...(additionalContext ?? {}),
       ...mapping.context,
     },
     message: mapping.message,
