@@ -8,7 +8,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -50,10 +50,8 @@ export async function fetchFilteredUsers(
       error,
       query,
     });
-    throw new DatabaseError(
-      "Failed to fetch filtered users.",
-      {},
-      error instanceof Error ? error : undefined,
-    );
+    throw new BaseError("database", {
+      message: "Failed to fetch filtered users.",
+    });
   }
 }

@@ -1,9 +1,8 @@
 import "server-only";
-
 import { eq, sql } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function fetchTotalPaidInvoicesDal(
@@ -20,7 +19,9 @@ export async function fetchTotalPaidInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (paid === undefined) {
-    throw new DatabaseError(INVOICE_MSG.fetchTotalPaidFailed);
+    throw new BaseError("database", {
+      message: INVOICE_MSG.fetchTotalPaidFailed,
+    });
   }
 
   return paid;

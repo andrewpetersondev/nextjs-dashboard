@@ -1,9 +1,8 @@
 import "server-only";
-
 import { eq, sql } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function fetchTotalPendingInvoicesDal(
@@ -20,7 +19,9 @@ export async function fetchTotalPendingInvoicesDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (pending === undefined) {
-    throw new DatabaseError(INVOICE_MSG.fetchTotalPendingFailed);
+    throw new BaseError("database", {
+      message: INVOICE_MSG.fetchTotalPendingFailed,
+    });
   }
 
   return pending;

@@ -1,12 +1,11 @@
 import "server-only";
-
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerAggregatesRowRaw } from "@/server/customers/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).
@@ -58,10 +57,8 @@ export async function fetchFilteredCustomersDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
-    throw new DatabaseError(
-      CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
-      {},
-      error instanceof Error ? error : undefined,
-    );
+    throw new BaseError("database", {
+      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
+    });
   }
 }

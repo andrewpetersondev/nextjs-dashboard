@@ -3,7 +3,7 @@ import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -43,10 +43,8 @@ export async function fetchUsersPages(
       query,
     });
 
-    throw new DatabaseError(
-      "Failed to fetch the total number of users.",
-      {},
-      error instanceof Error ? error : undefined,
-    );
+    throw new BaseError("database", {
+      message: "Failed to fetch the total number of users.",
+    });
   }
 }

@@ -1,11 +1,10 @@
 import "server-only";
-
 import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerSelectRowRaw } from "@/server/customers/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 /**
  * Fetches all customers for select options.
@@ -25,10 +24,8 @@ export async function fetchCustomersSelectDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Database Error:", error);
-    throw new DatabaseError(
-      CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
-      {},
-      error instanceof Error ? error : undefined,
-    );
+    throw new BaseError("database", {
+      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
+    });
   }
 }

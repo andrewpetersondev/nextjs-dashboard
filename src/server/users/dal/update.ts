@@ -9,7 +9,7 @@ import {
 } from "@/server/users/mapping/user.mappers";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import type { UserId } from "@/shared/branding/domain-brands";
-import { DatabaseError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -53,10 +53,8 @@ export async function updateUserDal(
       id,
       patch,
     });
-    throw new DatabaseError(
-      "Failed to update user.",
-      {},
-      error instanceof Error ? error : undefined,
-    );
+    throw new BaseError("database", {
+      message: "Failed to update user.",
+    });
   }
 }

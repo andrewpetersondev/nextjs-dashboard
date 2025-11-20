@@ -13,7 +13,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @param db - Drizzle database instance
  * @param id - Invoice ID
  * @returns Promise resolving to deleted InvoiceEntity
- * @throws DatabaseError if deletion fails or invoice not found
+ * @throws BaseError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
   db: AppDatabase,

@@ -22,7 +22,7 @@ import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
  * @param input - AuthSignupDalInput containing validated, normalized user input
  * @param parentLogger - Repository / request-level logger to preserve context
  * @returns Promise<NewUserRow> - The freshly inserted user row
- * @throws DatabaseError (if underlying database fails)
+ * @throws BaseError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
  */
 export async function insertUserDal(
