@@ -8,22 +8,22 @@ import {
 } from "@/features/revenues/constants/date";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
  *
  * @param revenueEntity - The revenue entity to transform
  * @returns RevenueDisplayEntity with additional display fields
- * @throws {ValidationError} When entity data is invalid or period cannot be parsed
+ * @throws {BaseError} (code: "validation") When entity data is invalid or period cannot be parsed
  */
 export function mapRevenueEntityToDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
-    throw new ValidationError(
-      "Invalid revenue entity: expected non-null object",
-    );
+    throw new BaseError("validation", {
+      message: "Invalid revenue entity: expected non-null object",
+    });
   }
   try {
     const monthNumber = revenueEntity.period.getUTCMonth() + 1;
@@ -33,17 +33,24 @@ export function mapRevenueEntityToDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw new ValidationError("Invalid year extracted from period");
+      throw new BaseError("validation", {
+        context: { period: revenueEntity.period, yearNumber },
+        message: "Invalid year extracted from period",
+      });
     }
-    // if (monthNumber < 1 || monthNumber > 12) {}
+
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw new ValidationError("Invalid month number extracted from period");
+      throw new BaseError("validation", {
+        context: { monthNumber, period: revenueEntity.period },
+        message: "Invalid month number extracted from period",
+      });
     }
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
-      throw new ValidationError(
-        "Invalid month name computed from month number",
-      );
+      throw new BaseError("validation", {
+        context: { monthNumber },
+        message: "Invalid month name computed from month number",
+      });
     }
     return {
       ...revenueEntity,
@@ -52,8 +59,17 @@ export function mapRevenueEntityToDisplayEntity(
       year: yearNumber,
     };
   } catch (error) {
-    throw new ValidationError(
-      `Failed to map revenue entity to display entity: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    if (error instanceof BaseError) {
+      // Preserve existing BaseError details but add context that this failed in the mapper
+      throw error.withContext({ scope: "mapRevenueEntityToDisplayEntity" });
+    }
+
+    throw new BaseError("validation", {
+      cause: error instanceof Error ? error : undefined,
+      context: { revenueEntity },
+      message: `Failed to map revenue entity to display entity: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+    });
   }
 }

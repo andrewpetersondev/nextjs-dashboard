@@ -3,7 +3,7 @@ import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { validateCondition } from "@/shared/validation/primitives/assert.condition";
 import {
@@ -16,7 +16,7 @@ import {
  *
  * @param revenueRow - Raw revenue data from the database
  * @returns Validated RevenueEntity
- * @throws {ValidationError} When row data is invalid or missing required fields
+ * @throws {BaseError} When row data is invalid or missing required fields
  */
 function validateRevenueRow(revenueRow: RevenueRow): void {
   validateCondition(
@@ -59,9 +59,9 @@ function validateRevenueRow(revenueRow: RevenueRow): void {
 
 export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   if (!revenueRow || typeof revenueRow !== "object") {
-    throw new ValidationError(
-      "Invalid revenue row data: expected non-null object",
-    );
+    throw new BaseError("validation", {
+      message: "Invalid revenue row data: expected non-null object",
+    });
   }
   try {
     validateRevenueRow(revenueRow);
@@ -77,9 +77,9 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
       updatedAt: revenueRow.updatedAt,
     };
   } catch (error) {
-    throw new ValidationError(
-      `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    throw new BaseError("validation", {
+      message: `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
+    });
   }
 }
 
@@ -88,21 +88,23 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
  *
  * @param revenueRows - Array of raw revenue data from the database
  * @returns Array of validated RevenueEntity objects
- * @throws {ValidationError} When rows is not an array or contains invalid data
+ * @throws {BaseError} When rows is not an array or contains invalid data
  */
 export function mapRevenueRowsToEntities(
   revenueRows: RevenueRow[],
 ): RevenueEntity[] {
   if (!Array.isArray(revenueRows)) {
-    throw new ValidationError("Invalid revenue rows data: expected array");
+    throw new BaseError("validation", {
+      message: "Invalid revenue rows data: expected array",
+    });
   }
   return revenueRows.map((revenueRow, index) => {
     try {
       return mapRevenueRowToEntity(revenueRow);
     } catch (error) {
-      throw new ValidationError(
-        `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      throw new BaseError("validation", {
+        message: `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      });
     }
   });
 }

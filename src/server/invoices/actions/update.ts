@@ -13,7 +13,7 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
@@ -57,7 +57,7 @@ function handleActionError<
     ...prevState,
     errors: toDenseFieldErrorMap({}, [] as unknown as readonly N[]),
     message:
-      error instanceof ValidationError
+      error instanceof BaseError
         ? INVOICE_MSG.invalidInput
         : INVOICE_MSG.serviceError,
     success: false,

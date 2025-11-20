@@ -4,10 +4,7 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 export class CreateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;
@@ -18,11 +15,16 @@ export class CreateRevenueUseCase {
 
   async execute(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
-      throw new ValidationError("Invalid revenue data");
+      throw new BaseError("validation", {
+        message: "Invalid revenue data",
+      });
     }
     const created = await this.repository.create(revenue);
     if (!created) {
-      throw new DatabaseError("Failed to create a revenue record");
+      throw new BaseError("database", {
+        context: { revenue },
+        message: "Failed to create a revenue record",
+      });
     }
     return created;
   }

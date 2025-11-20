@@ -5,7 +5,6 @@ import { makeValidationError } from "@/shared/errors/base-error.factory";
  *
  * @param condition - The condition to evaluate; typically a boolean or truthy/falsy value.
  * @param message - The error message to include if the validation fails.
- * @throws {ValidationError} If the provided condition is falsy.
  * @example
  * validateCondition(user.name, "Name is required"); // Throws if user.name is falsy.
  */

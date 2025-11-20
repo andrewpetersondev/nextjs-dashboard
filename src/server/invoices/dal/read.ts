@@ -5,10 +5,7 @@ import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/branding/domain-brands";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
@@ -16,8 +13,8 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @param db - Drizzle database instance
  * @param id - branded Invoice ID
  * @returns Promise resolving to InvoiceEntity
- * @throws DatabaseError if invoice not found
- * @throws ValidationError if input parameters are invalid
+ * @throws BaseError if invoice not found
+ * @throws BaseError if input parameters are invalid
  */
 export async function readInvoiceDal(
   db: AppDatabase,
@@ -25,7 +22,10 @@ export async function readInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Basic validation of parameters
   if (!(db && id)) {
-    throw new ValidationError(INVOICE_MSG.invalidInput, { id });
+    throw new BaseError("validation", {
+      context: { id },
+      message: INVOICE_MSG.invalidInput,
+    });
   }
 
   // Fetch invoice by ID
@@ -33,7 +33,10 @@ export async function readInvoiceDal(
 
   // Check if invoice exists
   if (!data) {
-    throw new DatabaseError(INVOICE_MSG.notFound, { id });
+    throw new BaseError("database", {
+      context: { id },
+      message: INVOICE_MSG.notFound,
+    });
   }
 
   // Convert raw database row to InvoiceEntity

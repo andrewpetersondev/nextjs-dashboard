@@ -1,10 +1,9 @@
 import "server-only";
-
 import { count } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 /**
  * Fetches the total number of customers.
@@ -18,7 +17,9 @@ export async function fetchTotalCustomersCountDal(
     .then((rows) => rows[0]?.value ?? 0);
 
   if (value === undefined) {
-    throw new ValidationError(CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed);
+    throw new BaseError("validation", {
+      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed,
+    });
   }
 
   return value;

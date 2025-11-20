@@ -39,8 +39,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param revenue - Full creation payload
    * @returns The created RevenueEntity
-   * @throws ValidationError If payload is missing/invalid
-   * @throws DatabaseError On persistence/mappers failures
+   * @throws BaseError If payload is missing/invalid
+   * @throws BaseError On persistence/mappers failures
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     return await createRevenue(this.db, revenue);
@@ -51,8 +51,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param id - RevenueId
    * @returns The RevenueEntity
-   * @throws ValidationError If id is missing
-   * @throws DatabaseError If record not found or mappers fails
+   * @throws BaseError If id is missing
+   * @throws BaseError If record not found or mappers fails
    */
   async read(id: RevenueId): Promise<RevenueEntity> {
     return await readRevenue(this.db, id);
@@ -68,8 +68,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param id - RevenueId of the row to update
    * @param revenue - Updatable fields (invoiceCount, totalAmount, calculationSource)
    * @returns The updated RevenueEntity
-   * @throws ValidationError If inputs are missing
-   * @throws DatabaseError If update or mappers fails
+   * @throws BaseError If inputs are missing
+   * @throws BaseError If update or mappers fails
    */
   async update(
     id: RevenueId,
@@ -82,8 +82,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Delete a revenue record by id.
    *
    * @param id - RevenueId of the row to delete
-   * @throws ValidationError If id is missing
-   * @throws DatabaseError If deletion fails
+   * @throws BaseError If id is missing
+   * @throws BaseError If deletion fails
    */
   async delete(id: RevenueId): Promise<void> {
     await deleteRevenue(this.db, id);
@@ -99,8 +99,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param startPeriod - Inclusive start period (first-of-month DATE)
    * @param endPeriod - Inclusive end period (first-of-month DATE)
    * @returns A list of RevenueEntity records if present; empty array otherwise
-   * @throws ValidationError If either period is missing
-   * @throws DatabaseError On retrieval or mappers failures
+   * @throws BaseError If either period is missing
+   * @throws BaseError On retrieval or mappers failures
    */
   async findByDateRange(
     startPeriod: Period,
@@ -118,8 +118,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param period - Target Period (first-of-month DATE)
    * @returns The RevenueEntity or null when not found
-   * @throws ValidationError If period is missing
-   * @throws DatabaseError On mappers failures
+   * @throws BaseError If period is missing
+   * @throws BaseError On mappers failures
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
     return await findRevenueByPeriod(this.db, period);
@@ -138,8 +138,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    *
    * @param revenueData - Full creation payload including period
    * @returns The created or updated RevenueEntity
-   * @throws ValidationError If payload or period is missing, or when uniqueness violations are detected
-   * @throws DatabaseError On persistence/mappers failures
+   * @throws BaseError If payload or period is missing, or when uniqueness violations are detected
+   * @throws BaseError On persistence/mappers failures
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
     return await upsertRevenue(this.db, revenueData);
@@ -151,8 +151,8 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * Retained for backward compatibility with older callers.
    *
    * @param id - RevenueId
-   * @throws ValidationError If id is missing
-   * @throws DatabaseError If deletion fails
+   * @throws BaseError If id is missing
+   * @throws BaseError If deletion fails
    */
   async deleteById(id: RevenueId): Promise<void> {
     // Alias for delete(id); kept for backward compatibility
@@ -177,9 +177,9 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param period - Target Period (first-of-month DATE).
    * @param revenue - Updatable fields only (invoiceCount, totalAmount, calculationSource).
    * @returns The created or updated RevenueEntity.
-   * @throws ValidationError If `period` or `revenue` is missing.
-   * @throws ValidationError Propagated from `upsert()` on uniqueness/conflict-related errors.
-   * @throws DatabaseError Propagated from persistence/mappers failures.
+   * @throws BaseError If `period` or `revenue` is missing.
+   * @throws BaseError Propagated from `upsert()` on uniqueness/conflict-related errors.
+   * @throws BaseError Propagated from persistence/mappers failures.
    */
   async upsertByPeriod(
     period: Period,

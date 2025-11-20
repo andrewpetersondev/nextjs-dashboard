@@ -11,7 +11,7 @@ import type {
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/domain-brands";
-import { ValidationError } from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
@@ -37,13 +37,15 @@ export class InvoiceRepository extends BaseRepository<
    * - generated values in the service layer (`InvoiceServiceEntity`).
    * @param input - Invoice creation data as InvoiceServiceEntity
    * @returns Promise resolving to created InvoiceDto returning to Service layer.
-   * @throws ValidationError for invalid input
+   * @throws BaseError (code: "validation") for invalid input
    * @throws
    * - Error bubbles up through the Service Layer to the Actions layer.
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new ValidationError(INVOICE_MSG.invalidInput);
+      throw new BaseError("validation", {
+        message: INVOICE_MSG.invalidInput,
+      });
     }
 
     const createdEntity = await createInvoiceDal(this.db, input);
@@ -55,12 +57,15 @@ export class InvoiceRepository extends BaseRepository<
    * Reads an invoice by ID.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to InvoiceDto
-   * @throws ValidationError for invalid parameter id
+   * @throws BaseError (code: "validation") for invalid parameter id
    */
   async read(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.invalidId, { id });
+      throw new BaseError("validation", {
+        context: { id },
+        message: INVOICE_MSG.invalidId,
+      });
     }
 
     // Call DAL with branded ID
@@ -75,17 +80,22 @@ export class InvoiceRepository extends BaseRepository<
    * @param id - InvoiceId (branded type)
    * @param data - Update data as InvoiceFormPartialEntity
    * @returns Promise resolving to updated InvoiceDto
-   * @throws ValidationError for invalid input
+   * @throws BaseError (code: "validation") for invalid input
    */
   async update(
     id: InvoiceId,
     data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.invalidId, { id });
+      throw new BaseError("validation", {
+        context: { id },
+        message: INVOICE_MSG.invalidId,
+      });
     }
     if (!data || typeof data !== "object") {
-      throw new ValidationError(INVOICE_MSG.invalidInput);
+      throw new BaseError("validation", {
+        message: INVOICE_MSG.invalidInput,
+      });
     }
 
     // Call DAL with branded types
@@ -99,12 +109,15 @@ export class InvoiceRepository extends BaseRepository<
    * Deletes an invoice.
    * @param id - InvoiceId (branded type)
    * @returns Promise resolving to deleted InvoiceDto
-   * @throws ValidationError for invalid ID
+   * @throws BaseError (code: "validation") for invalid ID
    */
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new ValidationError(INVOICE_MSG.invalidId, { id });
+      throw new BaseError("validation", {
+        context: { id },
+        message: INVOICE_MSG.invalidId,
+      });
     }
 
     // Call DAL with branded ID

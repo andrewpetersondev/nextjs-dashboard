@@ -5,17 +5,14 @@ import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import type { RevenueId } from "@/shared/branding/domain-brands";
-import {
-  DatabaseError,
-  ValidationError,
-} from "@/shared/errors/base-error.subclasses";
+import { BaseError } from "@/shared/errors/base-error";
 
 export async function readRevenue(
   db: AppDatabase,
   id: RevenueId,
 ): Promise<RevenueEntity> {
   if (!id) {
-    throw new ValidationError("Revenue ID is required");
+    throw new BaseError("validation", { message: "Revenue ID is required" });
   }
 
   const data: RevenueRow | undefined = await db
@@ -26,12 +23,14 @@ export async function readRevenue(
     .then((rows) => rows[0]);
 
   if (!data) {
-    throw new DatabaseError("Revenue record not found");
+    throw new BaseError("database", { message: "Revenue record not found" });
   }
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw new DatabaseError("Failed to convert revenue record");
+    throw new BaseError("database", {
+      message: "Failed to convert revenue record",
+    });
   }
   return result;
 }
