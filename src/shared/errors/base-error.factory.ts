@@ -22,14 +22,6 @@ export function makeValidationError(options: BaseErrorOptions = {}): BaseError {
   return makeBaseError("validation", options);
 }
 
-export function makeConflictError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("conflict", options);
-}
-
-export function makeUnexpectedError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("unknown", options);
-}
-
 /**
  * Type guard that narrows an unknown value to {@link BaseError}.
  *
@@ -40,18 +32,5 @@ export function makeUnexpectedError(options: BaseErrorOptions = {}): BaseError {
  * @returns `true` if `e` is a `BaseError`, otherwise `false`.
  */
 export function isBaseError(error: unknown): error is BaseError {
-  return (
-    error instanceof Error &&
-    "code" in error &&
-    "statusCode" in error &&
-    "serialize" in error // TODO: this is wrong
-  );
-}
-
-export function isErrorWithCause(
-  error: unknown,
-): error is Error & { cause: Error } {
-  return (
-    error instanceof Error && "cause" in error && error.cause instanceof Error
-  );
+  return error instanceof BaseError;
 }
