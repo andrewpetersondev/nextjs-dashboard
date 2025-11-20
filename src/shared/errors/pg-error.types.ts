@@ -1,6 +1,6 @@
 // src/shared/errors/pg-error.types.ts
 import type { ErrorContext } from "@/shared/errors/base-error.types";
-import type { PgCode } from "@/shared/errors/pg-error-codes";
+import type { PgCode, PgErrorMeta } from "@/shared/errors/pg-error-codes";
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.
@@ -23,7 +23,7 @@ export interface PgErrorMetadata {
  * Mapping result from Postgres error to app error code + context.
  */
 export interface PgErrorMapping {
-  readonly condition: string;
+  readonly condition: PgErrorMeta["condition"];
   readonly context: ErrorContext;
   readonly pgMetadata: PgErrorMetadata;
 }

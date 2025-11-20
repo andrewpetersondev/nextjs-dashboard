@@ -1,5 +1,11 @@
 // src/shared/errors/pg-error-codes.ts
 
+export interface PgErrorDefinition {
+  readonly code: string;
+  readonly condition: string;
+  readonly name: string;
+}
+
 export const PG_ERROR_MAP = {
   checkViolation: {
     code: "23514",
@@ -16,14 +22,16 @@ export const PG_ERROR_MAP = {
     condition: "db_unique_violation",
     name: "uniqueViolation",
   },
-} as const;
+} as const satisfies Record<string, PgErrorDefinition>;
 
-export type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
+export type PgErrorKey = keyof typeof PG_ERROR_MAP;
+
+export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgErrorKey];
 
 export type PgCode = PgErrorMeta["code"];
 
 export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
-  "23502": PG_ERROR_MAP.notNullViolation,
-  "23505": PG_ERROR_MAP.uniqueViolation,
-  "23514": PG_ERROR_MAP.checkViolation,
+  [PG_ERROR_MAP.notNullViolation.code]: PG_ERROR_MAP.notNullViolation,
+  [PG_ERROR_MAP.uniqueViolation.code]: PG_ERROR_MAP.uniqueViolation,
+  [PG_ERROR_MAP.checkViolation.code]: PG_ERROR_MAP.checkViolation,
 } as const;
