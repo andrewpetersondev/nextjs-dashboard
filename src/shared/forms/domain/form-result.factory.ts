@@ -1,7 +1,7 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
 import type { BaseError } from "@/shared/errors/base-error";
 import { makeBaseError } from "@/shared/errors/base-error.factory";
-import type { AppErrorCode } from "@/shared/errors/error-codes";
+import type { AppErrorKey } from "@/shared/errors/error-codes";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
@@ -42,7 +42,7 @@ export const formOk = <Tpayload>(
  * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link BaseError}.
  */
 export const formError = <Tfieldname extends string>(params: {
-  readonly code?: AppErrorCode;
+  readonly code?: AppErrorKey;
   readonly message: string;
   readonly formErrors?: readonly string[];
   readonly fieldErrors: DenseFieldErrorMap<Tfieldname, string>;

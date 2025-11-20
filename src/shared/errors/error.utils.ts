@@ -1,7 +1,7 @@
 // src/shared/errors/error.utils.ts
 import { BaseError } from "@/shared/errors/base-error";
 import type { ErrorContext } from "@/shared/errors/base-error.types";
-import { APP_ERROR_MAP, type AppErrorCode } from "@/shared/errors/error-codes";
+import type { AppErrorKey } from "@/shared/errors/error-codes";
 
 /**
  * Normalize an unknown value into a BaseError using {@link BaseError.from}.
@@ -11,7 +11,7 @@ import { APP_ERROR_MAP, type AppErrorCode } from "@/shared/errors/error-codes";
  */
 export function normalizeToBaseError(
   error: unknown,
-  fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
+  fallbackCode: AppErrorKey = "unknown",
 ): BaseError {
   return BaseError.from(error, fallbackCode);
 }
@@ -24,7 +24,7 @@ export function normalizeToBaseError(
  */
 export async function _catchAsyncBase<T>(
   fn: () => Promise<T>,
-  fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
+  fallbackCode: AppErrorKey = "unknown",
 ): Promise<[T, null] | [null, BaseError]> {
   try {
     const result = await fn();
@@ -41,7 +41,7 @@ export async function _catchAsyncBase<T>(
  * This is the preferred wrapper for async boundaries.
  */
 export function _wrapAsyncBase<T extends unknown[], R>(
-  code: AppErrorCode,
+  code: AppErrorKey,
   fn: (...args: T) => Promise<R>,
   baseContext: ErrorContext = {},
   message?: string,

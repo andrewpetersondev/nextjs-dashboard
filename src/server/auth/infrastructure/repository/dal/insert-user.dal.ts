@@ -11,7 +11,6 @@ import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.conte
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { BaseError } from "@/shared/errors/base-error";
-import { APP_ERROR_MAP } from "@/shared/errors/error-codes";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
 /**
@@ -50,7 +49,7 @@ export async function insertUserDal(
 
       if (!userRow) {
         throw BaseError.wrap(
-          APP_ERROR_MAP.integrity.name,
+          "integrity",
           new Error("Insert did not return a row"),
           toErrorContext(dalContext, {
             kind: "invariant",

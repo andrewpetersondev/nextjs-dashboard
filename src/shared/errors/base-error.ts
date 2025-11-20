@@ -6,7 +6,7 @@ import type {
 } from "@/shared/errors/base-error.types";
 import {
   APP_ERROR_MAP,
-  type AppErrorCode,
+  type AppErrorKey,
   getAppErrorCodeMeta,
   type Severity,
 } from "@/shared/errors/error-codes";
@@ -133,7 +133,7 @@ function validateAndMaybeSanitizeContext(ctx: ErrorContext): ErrorContext {
  *   preserve subclass identity via {@link BaseError.create}.
  */
 export class BaseError extends Error {
-  readonly code: AppErrorCode;
+  readonly code: AppErrorKey;
   readonly statusCode: number;
   readonly severity: Severity;
   readonly retryable: boolean;
@@ -150,7 +150,7 @@ export class BaseError extends Error {
   readonly formErrors?: readonly string[];
   readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
 
-  constructor(code: AppErrorCode, options: BaseErrorOptions = {}) {
+  constructor(code: AppErrorKey, options: BaseErrorOptions = {}) {
     const meta = getAppErrorCodeMeta(code);
     const { message, context, cause } = options;
     let sanitizedCause: unknown;
@@ -245,7 +245,7 @@ export class BaseError extends Error {
    * - Preserves subclass identity via {@link BaseError.create}.
    * - Copies the current `stack` where possible.
    */
-  remap(code: AppErrorCode, overrideMessage?: string): this {
+  remap(code: AppErrorKey, overrideMessage?: string): this {
     if (code === this.code && !overrideMessage) {
       return this;
     }
@@ -318,7 +318,7 @@ export class BaseError extends Error {
    */
   static from(
     error: unknown,
-    fallbackCode: AppErrorCode = APP_ERROR_MAP.unknown.name,
+    fallbackCode: AppErrorKey = "unknown",
   ): BaseError {
     if (error instanceof BaseError) {
       return error; // No merging—caller should use .withContext() if needed
@@ -367,7 +367,7 @@ export class BaseError extends Error {
    * }
    */
   static wrap(
-    code: AppErrorCode,
+    code: AppErrorKey,
     err: unknown,
     context: ErrorContext = {},
     message?: string,
@@ -405,9 +405,9 @@ export class BaseError extends Error {
    *
    * Called by {@link BaseError.withContext} and {@link BaseError.remap}.
    */
-  protected create(code: AppErrorCode, options: BaseErrorOptions): BaseError {
+  protected create(code: AppErrorKey, options: BaseErrorOptions): BaseError {
     const Ctor = this.constructor as new (
-      c: AppErrorCode,
+      c: AppErrorKey,
       o: BaseErrorOptions,
     ) => BaseError;
     try {
