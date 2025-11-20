@@ -2,46 +2,19 @@
 
 export const PG_ERROR_MAP = {
   checkViolation: {
-    appCode: "database",
     code: "23514",
-    message: "db.check.violation",
+    condition: "db_check_violation",
     name: "checkViolation",
-    retryable: false as const,
-  },
-  deadlockDetected: {
-    appCode: "database",
-    code: "40P01",
-    message: "db.deadlock.detected",
-    name: "deadlockDetected",
-    retryable: true as const,
-  },
-  foreignKeyViolation: {
-    appCode: "database",
-    code: "23503",
-    message: "db.foreign_key.violation",
-    name: "foreignKeyViolation",
-    retryable: false as const,
   },
   notNullViolation: {
-    appCode: "database",
     code: "23502",
-    message: "db.not_null.violation",
+    condition: "db_not_null_violation",
     name: "notNullViolation",
-    retryable: false as const,
-  },
-  serializationFailure: {
-    appCode: "database",
-    code: "40001",
-    message: "db.serialization.failure",
-    name: "serializationFailure",
-    retryable: true as const,
   },
   uniqueViolation: {
-    appCode: "database",
     code: "23505",
-    message: "db.unique.violation",
+    condition: "db_unique_violation",
     name: "uniqueViolation",
-    retryable: false as const,
   },
 } as const;
 
@@ -50,10 +23,7 @@ export type PgErrorMeta = (typeof PG_ERROR_MAP)[keyof typeof PG_ERROR_MAP];
 export type PgCode = PgErrorMeta["code"];
 
 export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
-  "40P01": PG_ERROR_MAP.deadlockDetected,
   "23502": PG_ERROR_MAP.notNullViolation,
-  "23503": PG_ERROR_MAP.foreignKeyViolation,
   "23505": PG_ERROR_MAP.uniqueViolation,
   "23514": PG_ERROR_MAP.checkViolation,
-  "40001": PG_ERROR_MAP.serializationFailure,
 } as const;

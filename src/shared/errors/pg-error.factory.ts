@@ -1,5 +1,6 @@
 // src/shared/errors/pg-error.factory.ts
-import { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/base-error";
+import { makeBaseError } from "@/shared/errors/base-error.factory";
 import type { ErrorContext } from "@/shared/errors/base-error.types";
 import { mapPgError } from "@/shared/errors/pg-error.mapper";
 
@@ -17,19 +18,19 @@ export function normalizePgError(
 
   if (!mapping) {
     // Not a Postgres error - fallback to generic database error
-    return new BaseError("database", {
+    return makeBaseError("database", {
       cause: err,
       context: additionalContext,
       message: "Database operation failed",
     });
   }
 
-  return new BaseError(mapping.appCode, {
+  return makeBaseError("database", {
     cause: err,
     context: {
       ...(additionalContext ?? {}),
       ...mapping.context,
     },
-    message: mapping.message,
+    message: mapping.condition,
   });
 }

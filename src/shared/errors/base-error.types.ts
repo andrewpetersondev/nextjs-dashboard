@@ -1,12 +1,22 @@
 // src/shared/errors/base-error.types.ts
 import type { AppErrorCode, Severity } from "@/shared/errors/error-codes";
 
-type ImmutableRecord = Readonly<Record<string, unknown>>;
+// JSON-safe value types for error contexts
+type JsonPrimitive = string | number | boolean | null;
+
+export type JsonValue =
+  | JsonPrimitive
+  | JsonValue[]
+  | { readonly [key: string]: JsonValue };
+
+export interface JsonObject {
+  readonly [key: string]: JsonValue;
+}
 
 /**
  * Canonical metadata shared by all serialized error shapes.
  */
-interface CanonicalErrorMetadata {
+export interface CanonicalErrorMetadata {
   readonly category: string;
   readonly code: AppErrorCode;
   readonly description: string;
@@ -16,26 +26,24 @@ interface CanonicalErrorMetadata {
   readonly statusCode: number;
 }
 
-export type BaseErrorContext = ImmutableRecord;
-
 export interface SerializedError
   extends Pick<CanonicalErrorMetadata, "code" | "message" | "statusCode"> {
-  readonly context?: BaseErrorContext;
+  readonly context?: ErrorContext;
   readonly name: string;
   readonly timestamp: string;
 }
 
-export interface ErrorFactoryOptions {
-  readonly cause?: Error;
-  readonly context?: BaseErrorContext;
-  readonly message?: string;
-  readonly statusCode?: number;
-}
-
 /**
  * Immutable diagnostic context embedded directly on errors.
+ *
+ * Design note:
+ *  - We intentionally allow `unknown` values to reduce friction at call sites
+ *    (e.g., Dates, domain entities). In development, `BaseError` sanitizes
+ *    context to be JSON-serializable and redacts non-serializable values.
+ *  - In production, the context object is frozen as-is for performance.
+ *    Downstream serializers should handle non-JSON types if present.
  */
-export type ErrorContext = ImmutableRecord;
+export type ErrorContext = Readonly<Record<string, unknown>>;
 
 export interface BaseErrorJson extends CanonicalErrorMetadata {
   readonly context?: ErrorContext;
