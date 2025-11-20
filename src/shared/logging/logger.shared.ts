@@ -253,6 +253,7 @@ export class LoggingClient
 
     for (const segment of segments) {
       if (!segment) {
+        // biome-ignore lint/nursery/noContinue: <nursery rule>
         continue;
       }
       for (const [key, value] of Object.entries(segment)) {
