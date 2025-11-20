@@ -165,7 +165,7 @@ export class BaseError extends Error {
         sanitizedCause = redactNonSerializable(cause);
     }
     super(message ?? meta.description, {
-      cause: sanitizedCause as Error | undefined,
+      cause: sanitizedCause,
     });
     this.name = this.constructor.name;
     this.code = code;
