@@ -1,6 +1,10 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
+import {
+  type AuthLogLayerContext,
+  toErrorContext,
+  toLoggingContext,
+} from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
@@ -22,15 +26,21 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    const baseError = normalizePgError(err, {
-      context: dalContext.loggerContext,
-      correlationId: dalContext.correlationId,
-      identifiers: dalContext.identifiers,
-      layer: dalContext.layer,
-      operation: dalContext.operation,
+    // Diagnostic context for the error
+    const errorContext = toErrorContext(dalContext, {
+      // purely diagnostic extras only (e.g. table, queryName, diagnosticId)
     });
 
-    logger.errorWithDetails("DAL operation failed", baseError);
+    const baseError = normalizePgError(err, errorContext);
+
+    // Operational context for logging
+    const loggingContext = toLoggingContext(dalContext, {
+      // any log-time extras like correlationId; if you want it here, put it here,
+      // not in the error's diagnostic context
+      correlationId: dalContext.correlationId,
+    });
+
+    logger.errorWithDetails("DAL operation failed", baseError, loggingContext);
 
     logger.operation("error", "DAL operation error", {
       code: baseError.code,
