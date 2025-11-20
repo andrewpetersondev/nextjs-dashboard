@@ -29,7 +29,7 @@ export function normalizePgError(
     cause: err,
     context: {
       ...(additionalContext ?? {}),
-      ...mapping.context,
+      ...mapping.pgMetadata,
     },
     message: mapping.condition,
   });
