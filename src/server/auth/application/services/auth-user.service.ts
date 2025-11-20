@@ -16,8 +16,13 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
-import { BaseError } from "@/shared/errors/base-error";
-import { APP_ERROR_MAP } from "@/shared/errors/error-codes";
+import type { BaseError } from "@/shared/errors/base-error";
+import {
+  makeInvalidCredentialsError,
+  makeMissingFieldsError,
+  makeUnexpectedError,
+} from "@/shared/errors/base-error.factory";
+import { normalizeToBaseError } from "@/shared/errors/error.utils";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
@@ -77,8 +82,9 @@ export class AuthUserService {
           reason: "invalid_demo_user_counter",
           role,
         });
+
         return Err(
-          new BaseError(APP_ERROR_MAP.unexpected.name, {
+          makeUnexpectedError({
             context: {
               counter,
               operation: serviceContext.operation,
@@ -121,7 +127,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const normalized = BaseError.from(err, APP_ERROR_MAP.unknown.name);
+      const normalized = normalizeToBaseError(err, "unexpected");
 
       return Err(normalized);
     }
@@ -161,7 +167,7 @@ export class AuthUserService {
       });
 
       return Err(
-        new BaseError(APP_ERROR_MAP.missingFields.name, {
+        makeMissingFieldsError({
           context: {
             identifiers: serviceContext.identifiers,
             operation: serviceContext.operation,
@@ -203,7 +209,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name);
+      const baseError = normalizeToBaseError(err, "unexpected");
 
       return Err(baseError);
     }
@@ -244,7 +250,7 @@ export class AuthUserService {
         });
 
         return Err(
-          new BaseError(APP_ERROR_MAP.invalidCredentials.name, {
+          makeInvalidCredentialsError({
             context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_user_not_found_or_no_password",
@@ -269,7 +275,7 @@ export class AuthUserService {
         });
 
         return Err(
-          new BaseError(APP_ERROR_MAP.invalidCredentials.name, {
+          makeInvalidCredentialsError({
             context: {
               operation: serviceContext.operation,
               reason: "missing_password_hash_on_user_entity",
@@ -297,7 +303,7 @@ export class AuthUserService {
         });
 
         return Err(
-          new BaseError(APP_ERROR_MAP.invalidCredentials.name, {
+          makeInvalidCredentialsError({
             context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_password_mismatch",
@@ -327,7 +333,7 @@ export class AuthUserService {
         operation: serviceContext.operation,
       });
 
-      const baseError = BaseError.from(err, APP_ERROR_MAP.unknown.name);
+      const baseError = normalizeToBaseError(err, "unexpected");
 
       return Err(baseError);
     }

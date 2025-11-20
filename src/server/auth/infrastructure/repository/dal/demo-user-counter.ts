@@ -10,7 +10,7 @@ import {
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { BaseError } from "@/shared/errors/base-error";
+import { makeIntegrityError } from "@/shared/errors/base-error.factory";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**
@@ -50,13 +50,12 @@ export async function demoUserCounter(
             operationName: dalContext.operation,
           },
         );
-        throw BaseError.wrap(
-          "integrity",
-          new Error("Invariant: insert did not return a row"),
-          toErrorContext(dalContext, {
+        throw makeIntegrityError({
+          context: toErrorContext(dalContext, {
             kind: "invariant",
           }),
-        );
+          message: "Invariant: insert did not return a row",
+        });
       }
 
       if (counterRow.id == null) {
@@ -67,14 +66,13 @@ export async function demoUserCounter(
           kind: "invariant" as const,
           operationName: dalContext.operation,
         });
-        throw BaseError.wrap(
-          "integrity",
-          new Error("Invariant: demo user counter row returned with null id"),
-          toErrorContext(dalContext, {
+        throw makeIntegrityError({
+          context: toErrorContext(dalContext, {
             counterRow,
             kind: "invariant",
           }),
-        );
+          message: "Invariant: demo user counter row returned with null id",
+        });
       }
 
       const resultMeta = AuthDalLogFactory.success(
