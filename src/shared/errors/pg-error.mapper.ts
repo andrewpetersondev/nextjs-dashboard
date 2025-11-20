@@ -4,9 +4,24 @@ import type {
   JsonObject,
   JsonValue,
 } from "@/shared/errors/base-error.types";
-import { extractPgErrorMetadata } from "@/shared/errors/pg-error.extractor";
-import type { PgErrorMapping } from "@/shared/errors/pg-error.types";
-import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/pg-error-codes";
+import {
+  extractPgErrorMetadata,
+  type PgErrorMetadata,
+} from "@/shared/errors/pg-error.extractor";
+import {
+  PG_CODE_TO_META,
+  type PgCode,
+  type PgErrorMeta,
+} from "@/shared/errors/pg-error-codes";
+
+/**
+ * Mapping result from Postgres error to app error code + context.
+ */
+export interface PgErrorMapping {
+  readonly condition: PgErrorMeta["condition"];
+  readonly context: ErrorContext;
+  readonly pgMetadata: PgErrorMetadata;
+}
 
 /**
  * Map a Postgres error to app error code + rich context.
@@ -18,40 +33,40 @@ import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/pg-error-codes";
  * 4. Return normalized mapping ready for BaseError construction
  */
 export function mapPgError(err: unknown): PgErrorMapping | undefined {
-  const pgMeta = extractPgErrorMetadata(err);
-  if (!pgMeta) {
+  const pgErrorMetadata = extractPgErrorMetadata(err);
+  if (!pgErrorMetadata) {
     return;
   }
 
-  const code: PgCode = pgMeta.code;
+  const code: PgCode = pgErrorMetadata.code;
   const pgErrorDef = PG_CODE_TO_META[code];
 
   // Build JSON-safe context
   const contextEntries: [string, JsonValue][] = [["pgCode", code]];
 
-  if (pgMeta.constraint) {
-    contextEntries.push(["constraint", pgMeta.constraint]);
+  if (pgErrorMetadata.constraint) {
+    contextEntries.push(["constraint", pgErrorMetadata.constraint]);
   }
-  if (pgMeta.detail) {
-    contextEntries.push(["pgDetail", pgMeta.detail]);
+  if (pgErrorMetadata.detail) {
+    contextEntries.push(["pgDetail", pgErrorMetadata.detail]);
   }
-  if (pgMeta.hint) {
-    contextEntries.push(["pgHint", pgMeta.hint]);
+  if (pgErrorMetadata.hint) {
+    contextEntries.push(["pgHint", pgErrorMetadata.hint]);
   }
-  if (pgMeta.severity) {
-    contextEntries.push(["pgSeverity", pgMeta.severity]);
+  if (pgErrorMetadata.severity) {
+    contextEntries.push(["pgSeverity", pgErrorMetadata.severity]);
   }
-  if (pgMeta.table) {
-    contextEntries.push(["table", pgMeta.table]);
+  if (pgErrorMetadata.table) {
+    contextEntries.push(["table", pgErrorMetadata.table]);
   }
-  if (pgMeta.schema) {
-    contextEntries.push(["schema", pgMeta.schema]);
+  if (pgErrorMetadata.schema) {
+    contextEntries.push(["schema", pgErrorMetadata.schema]);
   }
-  if (pgMeta.column) {
-    contextEntries.push(["column", pgMeta.column]);
+  if (pgErrorMetadata.column) {
+    contextEntries.push(["column", pgErrorMetadata.column]);
   }
-  if (pgMeta.where) {
-    contextEntries.push(["where", pgMeta.where]);
+  if (pgErrorMetadata.where) {
+    contextEntries.push(["where", pgErrorMetadata.where]);
   }
 
   const jsonContext = Object.freeze(
@@ -66,6 +81,6 @@ export function mapPgError(err: unknown): PgErrorMapping | undefined {
   return {
     condition,
     context,
-    pgMetadata: pgMeta,
+    pgMetadata: pgErrorMetadata,
   };
 }

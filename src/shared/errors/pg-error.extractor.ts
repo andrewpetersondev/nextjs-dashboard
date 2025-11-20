@@ -1,6 +1,22 @@
 // src/shared/errors/pg-error.extractor.ts
-import type { PgErrorMetadata } from "@/shared/errors/pg-error.types";
 import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/pg-error-codes";
+
+/**
+ * Normalized Postgres error metadata extracted from pg error objects.
+ */
+export interface PgErrorMetadata {
+  readonly code: PgCode;
+  readonly column?: string;
+  readonly constraint?: string;
+  readonly datatype?: string;
+  readonly detail?: string;
+  readonly hint?: string;
+  readonly position?: string;
+  readonly schema?: string;
+  readonly severity?: string;
+  readonly table?: string;
+  readonly where?: string;
+}
 
 /**
  * Safely extract Postgres error metadata from unknown error value.

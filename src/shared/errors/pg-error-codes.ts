@@ -25,9 +25,7 @@ export const PG_ERROR_MAP = {
 } as const satisfies Record<string, PgErrorDefinition>;
 
 export type PgErrorKey = keyof typeof PG_ERROR_MAP;
-
 export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgErrorKey];
-
 export type PgCode = PgErrorMeta["code"];
 
 export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
