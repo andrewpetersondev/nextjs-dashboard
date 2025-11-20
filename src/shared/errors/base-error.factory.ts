@@ -44,7 +44,7 @@ export function isBaseError(error: unknown): error is BaseError {
     error instanceof Error &&
     "code" in error &&
     "statusCode" in error &&
-    "serialize" in error
+    "serialize" in error // TODO: this is wrong
   );
 }
 
