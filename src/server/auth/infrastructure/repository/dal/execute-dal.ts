@@ -26,6 +26,8 @@ export async function executeDalOrThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
+    console.log("execute dal catch", err);
+
     // Diagnostic context for the error
     const errorContext = toErrorContext(dalContext, {
       // purely diagnostic extras only (e.g. table, queryName, diagnosticId)
@@ -39,6 +41,10 @@ export async function executeDalOrThrow<T>(
       // not in the error's diagnostic context
       correlationId: dalContext.correlationId,
     });
+
+    console.log(baseError.code);
+    console.log(baseError.cause);
+    console.log(baseError.toJson());
 
     logger.errorWithDetails("DAL operation failed", baseError, loggingContext);
 
