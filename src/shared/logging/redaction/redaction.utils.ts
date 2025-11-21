@@ -5,7 +5,7 @@ import {
   PARTIAL_MASK_VISIBLE_EMAIL_CHARS,
   PARTIAL_MASK_VISIBLE_END_CHARS,
   PARTIAL_MASK_VISIBLE_START_CHARS,
-} from "@/shared/errors/core/redaction/redaction.constants";
+} from "@/shared/logging/redaction/redaction.constants";
 
 let SeenCache = new WeakMap<object, unknown>();
 
