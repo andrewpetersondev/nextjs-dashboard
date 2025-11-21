@@ -7,7 +7,7 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/result/result";

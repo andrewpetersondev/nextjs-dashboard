@@ -1,4 +1,4 @@
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

@@ -6,7 +6,7 @@ import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowsToEntities } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import type { Period } from "@/shared/branding/domain-brands";
 import { toPeriod } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 
 export async function findRevenuesByDateRange(
   db: AppDatabase,

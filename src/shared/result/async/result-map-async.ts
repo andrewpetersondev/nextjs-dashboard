@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-map-async.ts
 // Purpose: Adapter-first async map utilities (now `BaseError`-centric).
 
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

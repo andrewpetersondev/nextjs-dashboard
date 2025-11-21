@@ -2,7 +2,7 @@ import "server-only";
 import { eq, sql } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function fetchTotalPendingInvoicesDal(

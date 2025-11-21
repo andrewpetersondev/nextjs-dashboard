@@ -8,7 +8,7 @@ import {
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/branding/domain-brands";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

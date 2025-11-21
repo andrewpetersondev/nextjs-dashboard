@@ -3,7 +3,7 @@ import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
 import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { validateCondition } from "@/shared/validation/primitives/assert.condition";
 import {

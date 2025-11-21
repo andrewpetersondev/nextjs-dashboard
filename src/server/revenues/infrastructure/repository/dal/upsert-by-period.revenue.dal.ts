@@ -7,7 +7,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import type { Period } from "@/shared/branding/domain-brands";
 import { toPeriod } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function upsertRevenueByPeriod(

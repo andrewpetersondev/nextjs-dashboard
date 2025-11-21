@@ -16,13 +16,13 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import {
   makeInvalidCredentialsError,
   makeMissingFieldsError,
   makeUnexpectedError,
-} from "@/shared/errors/base-error.factory";
-import { normalizeToBaseError } from "@/shared/errors/error.utils";
+} from "@/shared/errors/core/base-error.factory";
+import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";

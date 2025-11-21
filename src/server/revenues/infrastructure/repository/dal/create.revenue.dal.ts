@@ -4,7 +4,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function createRevenue(

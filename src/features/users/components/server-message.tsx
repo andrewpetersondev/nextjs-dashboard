@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isBaseError } from "@/shared/errors/base-error.factory";
+import { isBaseError } from "@/shared/errors/core/base-error.factory";
 import type {
   FormResult,
   FormSuccess,

@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import { isFormValidationError } from "@/shared/forms/domain/form-guards";
 

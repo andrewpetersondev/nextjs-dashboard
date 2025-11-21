@@ -1,5 +1,5 @@
 // File: src/shared/core/result/result.ts
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 
 /**
  * Freezes an object to prevent mutation (shallow).

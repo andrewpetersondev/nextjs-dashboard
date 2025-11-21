@@ -1,7 +1,7 @@
 // File: src/shared/core/result/sync/result-sync.ts
 // Purpose: Adapter-first sync builders (no default BaseError).
 
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

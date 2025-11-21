@@ -19,7 +19,7 @@ import {
 import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.ops";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { mapBaseErrorToFormPayload } from "@/shared/errors/base-error.mappers";
+import { mapBaseErrorToFormPayload } from "@/shared/errors/forms/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { logger } from "@/shared/logging/logger.shared";

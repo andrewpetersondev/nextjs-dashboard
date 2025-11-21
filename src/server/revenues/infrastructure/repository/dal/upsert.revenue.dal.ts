@@ -6,7 +6,7 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 
 export async function upsertRevenue(
   db: AppDatabase,

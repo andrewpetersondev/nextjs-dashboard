@@ -10,7 +10,7 @@ import {
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { makeIntegrityError } from "@/shared/errors/base-error.factory";
+import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
 import { logger } from "@/shared/logging/logger.shared";
 
 /**

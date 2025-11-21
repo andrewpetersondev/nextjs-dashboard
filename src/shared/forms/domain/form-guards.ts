@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import type {
   FormResult,
   FormSuccess,

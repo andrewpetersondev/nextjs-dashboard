@@ -10,7 +10,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { logger } from "@/shared/logging/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";

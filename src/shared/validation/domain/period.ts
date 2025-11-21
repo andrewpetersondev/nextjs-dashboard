@@ -1,5 +1,5 @@
 import { format, isValid, parse } from "date-fns";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";

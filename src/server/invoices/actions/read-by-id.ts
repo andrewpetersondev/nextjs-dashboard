@@ -3,7 +3,7 @@ import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { getAppDb } from "@/server/db/db.connection";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {

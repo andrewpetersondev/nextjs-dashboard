@@ -5,7 +5,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { RevenueId } from "@/shared/branding/domain-brands";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 
 export class UpdateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;

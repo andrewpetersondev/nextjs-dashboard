@@ -12,7 +12,7 @@ import {
   EncryptPayloadSchema,
 } from "@/server/auth/domain/session/validation/session-payload.schema";
 import { sessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 
 const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);

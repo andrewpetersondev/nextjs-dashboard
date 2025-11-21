@@ -5,7 +5,7 @@ import {
   toErrorContext,
   toLoggingContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
-import { normalizePgError } from "@/shared/errors/pg-error.factory";
+import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
 /**

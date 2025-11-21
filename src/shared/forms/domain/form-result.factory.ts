@@ -1,7 +1,7 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
-import type { BaseError } from "@/shared/errors/base-error";
-import { makeBaseError } from "@/shared/errors/base-error.factory";
-import type { AppErrorKey } from "@/shared/errors/error-codes";
+import type { BaseError } from "@/shared/errors/core/base-error";
+import { makeBaseError } from "@/shared/errors/core/base-error.factory";
+import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";

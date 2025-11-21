@@ -12,7 +12,7 @@ import {
   type SessionId,
   type UserId,
 } from "@/shared/branding/domain-brands";
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import type { Result } from "@/shared/result/result";
 
 // --- New: Result-returning converters (thin wrappers over factories) ---

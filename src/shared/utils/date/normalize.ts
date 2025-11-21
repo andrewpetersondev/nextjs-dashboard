@@ -1,5 +1,5 @@
 import { isValid } from "date-fns";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

@@ -1,5 +1,5 @@
 import "server-only";
-import { BaseError } from "@/shared/errors/base-error";
+import { BaseError } from "@/shared/errors/core/base-error";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,

@@ -10,7 +10,7 @@ import {
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { makeIntegrityError } from "@/shared/errors/base-error.factory";
+import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 
 /**

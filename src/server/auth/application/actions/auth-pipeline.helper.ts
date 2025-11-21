@@ -2,7 +2,7 @@
 
 import "server-only";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import { pipeAsync } from "@/shared/result/async/result-pipe-async";
 import { flatMapAsync } from "@/shared/result/async/result-transform-async";
 import { Ok, type Result } from "@/shared/result/result";

@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-transform.ts
 
-import type { BaseError } from "@/shared/errors/base-error";
+import type { BaseError } from "@/shared/errors/core/base-error";
 import { Err, type Result } from "@/shared/result/result";
 
 /**
