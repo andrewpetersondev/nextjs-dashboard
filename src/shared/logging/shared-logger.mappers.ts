@@ -25,11 +25,11 @@ export function toSafeErrorShape(err: unknown): SafeErrorShape {
  */
 export function mapSeverityToLogLevel(severity: Severity): LogLevel {
   switch (severity) {
-    case "warn":
+    case "WARN":
       return "warn";
-    case "info":
+    case "INFO":
       return "info";
-    case "error":
+    case "ERROR":
       return "error";
     default: {
       const _exhaustive: never = severity;

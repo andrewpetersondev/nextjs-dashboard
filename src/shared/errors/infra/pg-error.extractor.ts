@@ -6,6 +6,8 @@ import {
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.
+ *
+ * TODO: should i add message and name?
  */
 export interface PgErrorMetadata {
   readonly code: PgCode;
