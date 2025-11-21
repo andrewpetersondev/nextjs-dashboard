@@ -5,12 +5,12 @@ import type {
   ErrorContext,
 } from "@/shared/errors/base-error.types";
 import {
-  APP_ERROR_MAP,
   type AppErrorKey,
   getAppErrorCodeMeta,
   type Severity,
 } from "@/shared/errors/error-codes";
 import {
+  buildUnknownValueContext,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
@@ -219,10 +219,7 @@ export class BaseError extends Error {
     }
     const msg = safeStringifyUnknown(error);
     return new BaseError(fallbackCode, {
-      context: {
-        originalType: typeof error,
-        originalValue: redactNonSerializable(error),
-      },
+      context: buildUnknownValueContext(error),
       message: msg,
     });
   }
@@ -260,11 +257,7 @@ export class BaseError extends Error {
       });
     }
     return new BaseError(code, {
-      context: {
-        ...context,
-        originalType: typeof err,
-        originalValue: redactNonSerializable(err),
-      },
+      context: buildUnknownValueContext(err, context),
       message: message ?? "Wrapped unknown value",
     });
   }

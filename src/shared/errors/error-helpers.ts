@@ -1,4 +1,4 @@
-// src/shared/errors/error-helpers
+// src/shared/errors/error-helpers.ts
 import { isDev } from "@/shared/config/env-shared";
 import type { ErrorContext } from "@/shared/errors/base-error.types";
 
@@ -30,6 +30,18 @@ export function redactNonSerializable(value: unknown): unknown {
   } catch {
     return { note: "non-serializable" };
   }
+}
+
+// Helper to build the standard context shape for unknown thrown values
+export function buildUnknownValueContext(
+  value: unknown,
+  base: ErrorContext = {},
+): ErrorContext {
+  return {
+    ...base,
+    originalType: typeof value,
+    originalValue: redactNonSerializable(value),
+  };
 }
 
 // Shallow-deep freeze for dev to discourage mutation without heavy perf cost

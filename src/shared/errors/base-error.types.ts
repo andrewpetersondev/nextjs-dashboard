@@ -26,13 +26,6 @@ export interface CanonicalErrorMetadata {
   readonly statusCode: number;
 }
 
-export interface SerializedError
-  extends Pick<CanonicalErrorMetadata, "code" | "message" | "statusCode"> {
-  readonly context?: ErrorContext;
-  readonly name: string;
-  readonly timestamp: string;
-}
-
 /**
  * Immutable diagnostic context embedded directly on errors.
  *
@@ -51,27 +44,46 @@ export interface BaseErrorJson extends CanonicalErrorMetadata {
   readonly formErrors?: readonly string[];
 }
 
-export interface SerializedErrorCause {
-  readonly code?: AppErrorKey;
-  readonly message: string;
-  readonly name: string;
-  readonly severity?: Severity;
-  readonly stack?: string;
-}
-
-export interface BaseErrorLogPayload extends BaseErrorJson {
-  readonly cause?: SerializedErrorCause;
-  readonly diagnosticId?: string;
-  readonly originalCauseRedacted?: boolean;
-  readonly originalCauseType?: string;
-  readonly stack?: string;
-  readonly validationErrorPresent?: boolean;
-}
-
+/**
+ * Options for constructing a BaseError.
+ *
+ * - `cause` is the original thrown value or underlying error.
+ * - `context` is a small, diagnostic object (non-logging) describing where/why.
+ * - `fieldErrors` / `formErrors` are reserved for validation-like errors.
+ *   They are always cloned & frozen by BaseError; callers may pass plain
+ *   mutable objects/arrays.
+ */
 export interface BaseErrorOptions {
+  /**
+   * Original thrown value or underlying cause.
+   *
+   * If this is an `Error`, it is passed through as `Error.cause`.
+   * Otherwise it is redacted into a JSON-safe shape.
+   */
   readonly cause?: unknown;
+
+  /**
+   * Diagnostic context describing the failure in domain terms.
+   *
+   * Should NOT contain logging metadata (request ids, hostnames, etc.);
+   * keep that in the logging layer instead.
+   */
   readonly context?: ErrorContext;
+
+  /**
+   * Per-field error messages, typically for validation failures.
+   *
+   * Keys are field names; values are one or more human-readable codes/messages.
+   */
   readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
+
+  /**
+   * Form-level (non-field-specific) error messages.
+   */
   readonly formErrors?: readonly string[];
+
+  /**
+   * Message to use instead of the canonical code description.
+   */
   readonly message?: string;
 }

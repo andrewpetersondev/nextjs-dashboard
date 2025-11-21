@@ -1,9 +1,7 @@
 // src/shared/logging/logger.types.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type {
-  BaseErrorLogPayload,
-  SerializedErrorCause,
-} from "@/shared/errors/base-error.types";
+import type { BaseErrorJson } from "@/shared/errors/base-error.types";
+import type { AppErrorKey, Severity } from "@/shared/errors/error-codes";
 
 type ImmutableRecord = Readonly<Record<string, unknown>>;
 
@@ -15,6 +13,23 @@ interface BaseLogEntry {
   readonly logLevel: LogLevel;
   readonly message: string;
   readonly timestamp: string;
+}
+
+export interface SerializedErrorCause {
+  readonly code?: AppErrorKey;
+  readonly message: string;
+  readonly name: string;
+  readonly severity?: Severity;
+  readonly stack?: string;
+}
+
+export interface BaseErrorLogPayload extends BaseErrorJson {
+  readonly cause?: SerializedErrorCause;
+  readonly diagnosticId?: string;
+  readonly originalCauseRedacted?: boolean;
+  readonly originalCauseType?: string;
+  readonly stack?: string;
+  readonly validationErrorPresent?: boolean;
 }
 
 export type LogReservedKeys = keyof BaseErrorLogPayload;
