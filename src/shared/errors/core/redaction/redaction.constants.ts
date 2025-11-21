@@ -37,31 +37,3 @@ export const DEFAULT_SENSITIVE_KEYS: readonly string[] = [
   "stack",
   "token",
 ] as const;
-
-/**
- * Additional keys to redact specifically in error contexts.
- *
- * These are typically internal implementation details that:
- * - Are safe to log at trace level but not in errors
- * - Contain stack traces already handled elsewhere
- * - May leak architectural details
- */
-export const ERROR_CONTEXT_SENSITIVE_KEYS: readonly string[] = [
-  ...DEFAULT_SENSITIVE_KEYS,
-  // Add error-specific keys here if needed
-] as const;
-
-/**
- * Additional keys to redact specifically in log payloads.
- *
- * These might include:
- * - Internal headers that are safe in errors but not logs
- * - Session cookies
- * - Query strings with sensitive params
- */
-export const LOG_PAYLOAD_SENSITIVE_KEYS: readonly string[] = [
-  ...DEFAULT_SENSITIVE_KEYS,
-  "cookie",
-  "cookies",
-  "set-cookie",
-] as const;
