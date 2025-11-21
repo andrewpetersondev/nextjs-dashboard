@@ -1,8 +1,8 @@
 // src/shared/logging/logger.shared.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { BaseError } from "@/shared/errors/base-error";
-import { isBaseError } from "@/shared/errors/base-error.factory";
-import type { ErrorContext } from "@/shared/errors/base-error.types";
+import type { BaseError } from "@/shared/errors/core/base-error";
+import { isBaseError } from "@/shared/errors/core/base-error.factory";
+import type { ErrorContext } from "@/shared/errors/core/base-error.types";
 import { AbstractLogger } from "@/shared/logging/abstract-logger";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
 import type {
@@ -323,17 +323,18 @@ export class LoggingClient
       (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
 
     const basePayload: BaseErrorLogPayload = {
-      category: baseJson.category,
+      // BaseErrorJson is now transport-agnostic:
+      // no HTTP status, no "category", but includes `layer`.
       code: baseJson.code,
       context: baseJson.context,
       description: baseJson.description,
       diagnosticId,
+      layer: baseJson.layer,
       ...(baseJson.fieldErrors && { fieldErrors: baseJson.fieldErrors }),
       ...(baseJson.formErrors && { formErrors: baseJson.formErrors }),
       message: baseJson.message,
       retryable: baseJson.retryable,
       severity: baseJson.severity,
-      statusCode: baseJson.statusCode,
       ...(hasValidationErrors && { validationErrorPresent: true }),
     };
 

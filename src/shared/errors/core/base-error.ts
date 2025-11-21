@@ -6,22 +6,23 @@ import type {
 } from "@/shared/errors/core/base-error.types";
 import {
   type AppErrorKey,
+  type AppErrorLayer,
   getAppErrorCodeMeta,
   type Severity,
-} from "@/shared/errors/error-codes";
+} from "@/shared/errors/core/error-codes";
 import {
   buildUnknownValueContext,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
   validateAndMaybeSanitizeContext,
-} from "@/shared/errors/error-helpers";
+} from "@/shared/errors/core/error-helpers";
 
 /**
  * Canonical application error type backed by centralized {@link APP_ERROR_MAP}.
  *
  * Core guarantees:
- * - **Stable metadata** from `getErrorCodeMeta` (code, status, severity, etc.).
+ * - **Stable metadata** from `getAppErrorCodeMeta` (code, severity, retryable, layer, description).
  * - **Immutable instances**: `context` is cloned and frozen; the error
  *   instance is frozen where possible.
  * - **Safe causes**: non-`Error` causes are converted into JSON-safe shapes
@@ -29,14 +30,17 @@ import {
  * - **Subclass-friendly**: helpers like {@link BaseError.withContext},
  *   {@link BaseError.remap}, {@link BaseError.from}, and {@link BaseError.wrap}
  *   preserve subclass identity via {@link BaseError.create}.
+ *
+ * NOTE: This class is transport-agnostic. It does NOT know about HTTP status codes
+ * or responsibility ("client"/"server"/"infrastructure"); those are handled
+ * by adapter layers.
  */
 export class BaseError extends Error {
   readonly code: AppErrorKey;
-  readonly statusCode: number;
   readonly severity: Severity;
   readonly retryable: boolean;
-  readonly category: string;
   readonly description: string;
+  readonly layer: AppErrorLayer;
   readonly context: ErrorContext;
   /**
    * The original `cause` value passed in the constructor options.
@@ -67,11 +71,11 @@ export class BaseError extends Error {
     });
     this.name = this.constructor.name;
     this.code = code;
-    this.statusCode = meta.httpStatus;
     this.severity = meta.severity;
     this.retryable = meta.retryable;
-    this.category = meta.category;
     this.description = meta.description;
+    this.layer = meta.layer;
+
     const clonedContext = { ...(context ?? {}) };
     const checkedContext = isDev()
       ? validateAndMaybeSanitizeContext(clonedContext)
@@ -160,7 +164,7 @@ export class BaseError extends Error {
    * Produces a JSON-safe representation of this error.
    *
    * Includes:
-   * - core metadata (code, category, severity, retryable, statusCode, description)
+   * - core metadata (code, layer, severity, retryable, description)
    * - `message` (possibly overridden in the constructor)
    * - `context` if non-empty
    *
@@ -168,23 +172,22 @@ export class BaseError extends Error {
    * - stack traces
    * - raw `cause` / `originalCause`
    *
-   * This is suitable for logs or API responses where you want structured,
-   * stable error data without leaking internal details.
+   * Transport layers (HTTP, etc.) are responsible for attaching status codes
+   * and responsibility fields based on `code` / `layer`.
    */
   toJson(): BaseErrorJson {
     const hasContext = Object.keys(this.context).length > 0;
 
     const json: BaseErrorJson = {
-      category: this.category,
       code: this.code,
-      ...(hasContext ? { context: this.context } : {}),
       description: this.description,
-      ...(this.fieldErrors ? { fieldErrors: this.fieldErrors } : {}),
-      ...(this.formErrors ? { formErrors: this.formErrors } : {}),
+      layer: this.layer,
       message: this.message,
       retryable: this.retryable,
       severity: this.severity,
-      statusCode: this.statusCode,
+      ...(hasContext ? { context: this.context } : {}),
+      ...(this.fieldErrors ? { fieldErrors: this.fieldErrors } : {}),
+      ...(this.formErrors ? { formErrors: this.formErrors } : {}),
     };
 
     return json;

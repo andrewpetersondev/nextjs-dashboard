@@ -113,7 +113,6 @@ export function toLoggingContext<L extends AuthLogLayer>(
 ): LogEventContext {
   return {
     correlationId: authContext.correlationId,
-    layer: authContext.layer,
     loggerContext: authContext.loggerContext,
     operation: authContext.operation,
     ...(extras ?? {}),
