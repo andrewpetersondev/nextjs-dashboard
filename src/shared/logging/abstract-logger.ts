@@ -2,7 +2,7 @@
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
-import { createRedactor } from "@/shared/errors/redaction/redaction";
+import { createRedactor } from "@/shared/errors/core/redaction/redaction";
 import {
   consoleMethod,
   currentLogLevelPriority,

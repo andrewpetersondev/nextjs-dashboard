@@ -2,12 +2,12 @@
 import {
   extractPgErrorMetadata,
   type PgErrorMetadata,
-} from "@/shared/errors/pg-error.extractor";
+} from "@/shared/errors/infra/pg-error.extractor";
 import {
   PG_CODE_TO_META,
   type PgCode,
   type PgErrorMeta,
-} from "@/shared/errors/pg-error-codes";
+} from "@/shared/errors/infra/pg-error-codes";
 
 /**
  * Mapping result from Postgres error to app error code + metadata.

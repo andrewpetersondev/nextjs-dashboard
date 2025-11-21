@@ -1,5 +1,9 @@
 // src/shared/errors/base-error.types.ts
-import type { AppErrorKey, Severity } from "@/shared/errors/error-codes";
+import type {
+  AppErrorKey,
+  AppErrorLayer,
+  Severity,
+} from "@/shared/errors/core/error-codes";
 
 // JSON-safe value types for error contexts
 type JsonPrimitive = string | number | boolean | null;
@@ -15,15 +19,19 @@ export interface JsonObject {
 
 /**
  * Canonical metadata shared by all serialized error shapes.
+ *
+ * NOTE:
+ * - No HTTP status here.
+ * - No "client/server/infrastructure" responsibility here.
+ * Those live in transport adapters.
  */
 export interface CanonicalErrorMetadata {
-  readonly category: string;
   readonly code: AppErrorKey;
   readonly description: string;
   readonly message: string;
   readonly retryable: boolean;
   readonly severity: Severity;
-  readonly statusCode: number;
+  readonly layer: AppErrorLayer;
 }
 
 /**

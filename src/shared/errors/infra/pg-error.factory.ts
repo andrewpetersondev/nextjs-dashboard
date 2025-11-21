@@ -1,8 +1,8 @@
 // src/shared/errors/pg-error.factory.ts
-import type { BaseError } from "@/shared/errors/base-error";
-import { makeBaseError } from "@/shared/errors/base-error.factory";
-import type { ErrorContext } from "@/shared/errors/base-error.types";
-import { mapPgError } from "@/shared/errors/pg-error.mapper";
+import type { BaseError } from "@/shared/errors/core/base-error";
+import { makeBaseError } from "@/shared/errors/core/base-error.factory";
+import type { ErrorContext } from "@/shared/errors/core/base-error.types";
+import { mapPgError } from "@/shared/errors/infra/pg-error.mapper";
 
 /**
  * Normalize a Postgres error into a BaseError with rich context.

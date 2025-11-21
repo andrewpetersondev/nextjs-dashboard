@@ -1,5 +1,8 @@
 // src/shared/errors/pg-error.extractor.ts
-import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/pg-error-codes";
+import {
+  PG_CODE_TO_META,
+  type PgCode,
+} from "@/shared/errors/infra/pg-error-codes";
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.

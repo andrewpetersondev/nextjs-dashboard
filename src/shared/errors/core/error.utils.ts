@@ -1,6 +1,6 @@
 // src/shared/errors/error.utils.ts
-import { BaseError } from "@/shared/errors/base-error";
-import type { AppErrorKey } from "@/shared/errors/error-codes";
+import { BaseError } from "@/shared/errors/core/base-error";
+import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 
 /**
  * Normalize an unknown value into a BaseError using {@link BaseError.from}.

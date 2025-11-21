@@ -1,6 +1,6 @@
 // src/shared/errors/error-helpers.ts
 import { isDev } from "@/shared/config/env-shared";
-import type { ErrorContext } from "@/shared/errors/base-error.types";
+import type { ErrorContext } from "@/shared/errors/core/base-error.types";
 
 export function safeStringifyUnknown(value: unknown): string {
   try {

@@ -3,7 +3,7 @@ import type {
   BaseErrorJson,
   BaseErrorOptions,
   ErrorContext,
-} from "@/shared/errors/base-error.types";
+} from "@/shared/errors/core/base-error.types";
 import {
   type AppErrorKey,
   getAppErrorCodeMeta,

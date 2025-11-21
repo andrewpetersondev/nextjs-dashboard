@@ -2,17 +2,17 @@ import {
   DEFAULT_MASK,
   DEFAULT_MAX_DEPTH,
   DEFAULT_SENSITIVE_KEYS,
-} from "@/shared/errors/redaction/redaction.constants";
+} from "@/shared/errors/core/redaction/redaction.constants";
 import {
   handleArray,
   handleObject,
   handlePrimitive,
-} from "@/shared/errors/redaction/redaction.handlers";
+} from "@/shared/errors/core/redaction/redaction.handlers";
 import type {
   InternalConfig,
   RedactOptions,
-} from "@/shared/errors/redaction/redaction.types";
-import { buildSensitiveSet } from "@/shared/errors/redaction/redaction.utils";
+} from "@/shared/errors/core/redaction/redaction.types";
+import { buildSensitiveSet } from "@/shared/errors/core/redaction/redaction.utils";
 
 /**
  * Create a visit function (closure over config + seen set).
