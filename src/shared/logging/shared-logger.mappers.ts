@@ -4,10 +4,6 @@ import type { SafeErrorShape } from "@/shared/logging/logger.types";
 
 /**
  * Normalize any `unknown` error into a safe, structured shape for logging.
- *
- * @remarks
- * - Uses the same structure as `SerializedErrorCause`
- * - Avoids leaking arbitrary properties from the error object
  */
 export function toSafeErrorShape(err: unknown): SafeErrorShape {
   if (err instanceof Error) {

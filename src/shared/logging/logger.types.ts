@@ -36,15 +36,11 @@ export type LogReservedKeys = keyof BaseErrorLogPayload;
 
 /**
  * Keys reserved by the error logging system.
- * These keys cannot be used in LoggingContext to prevent overwriting diagnostic data.
  */
 export type ProhibitedLogKeys = LogReservedKeys;
 
 /**
  * Ephemeral operational metadata attached at log-time.
- *
- * Contains information about the logging event itself, not the error.
- * Reserved BaseError payload keys are explicitly forbidden.
  */
 export type LogEventContext<T extends ImmutableRecord = ImmutableRecord> = T &
   ReservedKeyBlocker;
@@ -102,8 +98,5 @@ export interface LogBaseErrorOptions {
 
 /**
  * Public safe error shape used when logging arbitrary `unknown` errors.
- *
- * - `string` for primitive / non-Error values
- * - `SerializedErrorCause` for `Error` / `BaseError` instances
  */
 export type SafeErrorShape = string | SerializedErrorCause;

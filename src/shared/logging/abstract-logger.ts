@@ -20,10 +20,7 @@ const processId = getProcessId();
 let processMetadata: Record<string, unknown> = {};
 
 /**
- * Shared redactor for log payloads, built on the core redaction system.
- *
- * - Uses DEFAULT_SENSITIVE_KEYS and redaction configuration.
- * - Guards against circular references per invocation.
+ * Redactor for log payloads, built on the core redaction system.
  */
 const redactLogData = createRedactor();
 
@@ -45,6 +42,7 @@ export abstract class AbstractLogger {
   }
 
   abstract withContext(context: string): AbstractLogger;
+
   abstract withRequest(requestId: string): AbstractLogger;
 
   debug<T>(message: string, data?: T): void {
@@ -77,8 +75,8 @@ export abstract class AbstractLogger {
     data?: T,
   ): LogEntry<T> {
     let safeData = data;
+
     if (safeData instanceof Error) {
-      // @ts-expect-error - transforming type for serialization purposes
       safeData = toSafeErrorShape(safeData);
     }
 
@@ -126,14 +124,8 @@ export abstract class AbstractLogger {
 
   logAt<T>(level: LogLevel, message: string, data?: T): void {
     if (!this.shouldLog(level)) {
-      console.log("[Logger] logAt skipped", {
-        level,
-        message,
-        reason: "below-threshold",
-      });
       return;
     }
-    console.log("[Logger] logAt emit", { level, message });
     const entry = this.createEntry(level, message, data);
     this.output(entry);
   }

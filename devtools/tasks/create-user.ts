@@ -22,6 +22,5 @@ export async function createUser(user: {
 
   const password = await hashPassword(user.password);
 
-  console.log("createUser", { email, role, username });
   await nodeDb.insert(users).values({ email, password, role, username });
 }

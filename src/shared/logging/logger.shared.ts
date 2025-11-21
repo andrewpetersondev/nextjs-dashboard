@@ -19,33 +19,6 @@ import {
 
 /**
  * Sensitivity-aware structured logger.
- *
- * Key Concepts:
- *
- * **Error Context vs Logging Context**
- * - ErrorContext: Diagnostic data frozen at error creation (part of the error)
- * - LoggingContext: Operational metadata attached at log-time (part of the log entry)
- *
- * When logging errors:
- * 1. Error diagnostic data (context) is embedded in BaseError
- * 2. Logging metadata (loggingContext) is merged into the log entry
- * 3. Both appear in the final log output but serve different purposes
- *
- * @example
- * ```typescript
- * // Error constructed with diagnostic context
- * const error = new BaseError('USER_NOT_FOUND', {
- *   context: { userId: '123', operation: 'getUser' }
- * });
- *
- * // Logged with operational metadata
- * logger.logBaseError(error, {
- *   loggingContext: { requestId: 'req-456', hostname: 'api-1' }
- * });
- *
- * // Final log contains both:
- * // - error.context: { userId: '123', operation: 'getUser' }
- * // - requestId: 'req-456', hostname: 'api-1'
  */
 export class LoggingClient
   extends AbstractLogger
@@ -82,45 +55,9 @@ export class LoggingClient
    * “Signup action started”, “Demo user creation failed”, or
    * “Transaction commit”.
    *
-   * Behavior:
-   * - Uses `operationPayload.operationContext` (if provided) to derive a child logger via
-   *   {@link LoggingClient.withContext}, so the operation is tagged with a
-   *   stable logical context (e.g. `auth:application.action.signup`).
-   * - Reads `operationPayload.operationName` as the canonical operation name
-   *   (e.g. `"signup"`, `"demoUser"`, `"withTransaction"`).
-   * - Flattens `operationPayload.operationIdentifiers` into the log payload so that key
-   *   identifiers (e.g. `userId`, `role`, `ip`) are top‑level fields.
-   * - Runtime guards drop conflicting keys such as `context` or `operation`
-   *   to keep them disjoint from BaseError payload fields.
-   *
-   * This method does **not** know about {@link BaseError}. It is meant for
-   * domain / operation telemetry, not for rich error logging. Use
-   * {@link LoggingClient.errorWithDetails} or {@link LoggingClient.logBaseError} for
-   * full error payloads.
-   *
-   * @typeParam T - Additional payload shape for the operation.
-   *
    * @param level - Log level to use for the event (e.g. `"info"`, `"error"`).
    * @param message - Human‑readable description of the operation event.
-   * @param operationPayload - Structured operation data. The following keys have
-   *   special meaning:
-   *   - `operationContext?`: Logical log context; when present, it is applied via
-   *     {@link LoggingClient.withContext} before logging.
-   *   - `operationName`: Canonical operation name (e.g. `"signup"`).
-   *   - `operationIdentifiers?`: Stable identifiers to flatten into the payload
-   *     (user IDs, roles, IPs, etc.).
-   *   - Any other keys (e.g. `details`, metrics, status flags) are logged
-   *     as part of the operation payload after conflicting keys are filtered.
-   *
-   * @example
-   * ```ts
-   * // Action‑layer operation logging
-   * actionLogger.operation("info", "Signup action started", {
-   *   details: { userAgent },
-   *   operationContext: "auth:application.action.signup",
-   *   operationIdentifiers: { ip, userId },
-   *   operationName: "signup",
-   * });
+   * @param operationPayload - Structured operation data.
    */
   operation<T extends Record<string, unknown>>(
     level: LogLevel,
@@ -147,36 +84,12 @@ export class LoggingClient
       { operationName },
     );
 
-    console.log("[Logger] operation payload", {
-      level,
-      message,
-      operationContext,
-      operationName,
-    });
-
     const target = operationContext ? this.withContext(operationContext) : this;
     target.logAt(level, message, operationLogPayload);
   }
 
   /**
    * Log a BaseError with structured, sanitized output.
-   *
-   * @remarks
-   * - By default, uses `toJson()` which excludes stack/cause for safety
-   * - Set `detailed: true` to include stack traces and cause chain
-   * - Automatically extracts `diagnosticId` from error context when present
-   * - Maps error severity to appropriate log level
-   * - `loggingContext` is merged into the log entry data, not the error payload
-   * - All payloads are immutably constructed
-   *
-   * @example
-   * ```typescript
-   * logger.logBaseError(error);
-   * logger.logBaseError(error, {
-   *   detailed: true,
-   *   loggingContext: { requestId: 'abc', hostname: 'api-1' }
-   * });
-   *
    */
   logBaseError(error: BaseError, options?: LogBaseErrorOptions): void {
     const { detailed, levelOverride, loggingContext, message } = options ?? {};
@@ -193,26 +106,11 @@ export class LoggingClient
       sanitizedMetadata,
     );
 
-    console.log("[Logger] logBaseError", {
-      code: error.code,
-      level,
-      message: message ?? error.message,
-    });
-
     this.logAt(level, message ?? error.message, mergedLogPayload);
   }
 
   /**
    * Logs an unknown error value with rich, sanitized details.
-   *
-   * This is a convenience wrapper around {@link LoggingClient.logBaseError} that:
-   * - Accepts an `unknown` error value.
-   * - If the value is a {@link BaseError}, logs it with a detailed payload
-   *   including stack traces and serialized cause information.
-   * - If the value is not a {@link BaseError}, normalizes it into a
-   *   safe error shape while preserving as much diagnostic information
-   *   as possible.
-   *
    * @param message - Log message describing the failure context
    * @param error - The error or thrown value to log
    * @param loggingContext - Optional operational metadata attached at log-time
@@ -230,8 +128,6 @@ export class LoggingClient
         sanitizedMetadata,
         safeErrorDetails,
       );
-
-      console.log("[Logger] errorWithDetails nonBaseError", { message });
 
       this.error(message, errorLogPayload);
       return;
@@ -323,8 +219,6 @@ export class LoggingClient
       (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
 
     const basePayload: BaseErrorLogPayload = {
-      // BaseErrorJson is now transport-agnostic:
-      // no HTTP status, no "category", but includes `layer`.
       code: baseJson.code,
       context: baseJson.context,
       description: baseJson.description,
@@ -390,5 +284,4 @@ export class LoggingClient
   }
 }
 
-// Default instance
 export const logger = new LoggingClient();

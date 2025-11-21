@@ -54,13 +54,10 @@ export const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
 
 /**
  * Get the current log level priority with safe fallback.
- *
- * @returns The cached priority, or defaults to 'info' priority if uninitialized.
  */
 export function currentLogLevelPriority(): number {
   if (cachedPriority === null) {
     getEffectiveLogLevel();
   }
-  // Defensive fallback: should never happen after getEffectiveLogLevel, but ensures type safety
   return cachedPriority ?? logLevelPriority.info;
 }
