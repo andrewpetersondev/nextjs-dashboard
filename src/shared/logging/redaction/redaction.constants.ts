@@ -1,4 +1,4 @@
-// src/shared/errors/redaction/redaction.constants.ts
+// src/shared/logging/redaction/redaction.constants.ts
 
 export const DEFAULT_MASK = "***REDACTED***" as const;
 export const DEFAULT_MAX_DEPTH = 4 as const;

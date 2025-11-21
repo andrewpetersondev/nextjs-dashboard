@@ -25,10 +25,7 @@ export class LoggingClient
   implements LoggingClientContract
 {
   // TODO: refactor names in logger to make this obsolete
-  private static readonly logMetadataConflictKeys = new Set([
-    "context",
-    "operation",
-  ]);
+  private static readonly logMetadataConflictKeys = new Set(["do_not_log_me"]);
 
   /**
    * Create a child logger with additional context.
