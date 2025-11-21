@@ -18,9 +18,8 @@ import {
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import {
-  makeInvalidCredentialsError,
-  makeMissingFieldsError,
   makeUnexpectedError,
+  makeValidationError,
 } from "@/shared/errors/core/base-error.factory";
 import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
 import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
@@ -167,7 +166,7 @@ export class AuthUserService {
       });
 
       return Err(
-        makeMissingFieldsError({
+        makeValidationError({
           context: {
             identifiers: serviceContext.identifiers,
             operation: serviceContext.operation,
@@ -250,7 +249,7 @@ export class AuthUserService {
         });
 
         return Err(
-          makeInvalidCredentialsError({
+          makeValidationError({
             context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_user_not_found_or_no_password",
@@ -275,7 +274,7 @@ export class AuthUserService {
         });
 
         return Err(
-          makeInvalidCredentialsError({
+          makeValidationError({
             context: {
               operation: serviceContext.operation,
               reason: "missing_password_hash_on_user_entity",
@@ -303,7 +302,7 @@ export class AuthUserService {
         });
 
         return Err(
-          makeInvalidCredentialsError({
+          makeValidationError({
             context: {
               operation: serviceContext.operation,
               reason: "invalid_credentials_password_mismatch",

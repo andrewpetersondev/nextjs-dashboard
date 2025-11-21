@@ -26,18 +26,6 @@ export function makeUnexpectedError(options: BaseErrorOptions = {}): BaseError {
   return makeBaseError("unexpected", options);
 }
 
-export function makeMissingFieldsError(
-  options: BaseErrorOptions = {},
-): BaseError {
-  return makeBaseError("missingFields", options);
-}
-
-export function makeInvalidCredentialsError(
-  options: BaseErrorOptions = {},
-): BaseError {
-  return makeBaseError("invalidCredentials", options);
-}
-
 export function makeIntegrityError(options: BaseErrorOptions = {}): BaseError {
   return makeBaseError("integrity", options);
 }
