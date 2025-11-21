@@ -42,42 +42,6 @@ export function makeIntegrityError(options: BaseErrorOptions = {}): BaseError {
   return makeBaseError("integrity", options);
 }
 
-export function makeConflictError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("conflict", options);
-}
-
-export function makeDatabaseError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("database", options);
-}
-
-export function makeNotFoundError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("notFound", options);
-}
-
-export function makeUnauthorizedError(
-  options: BaseErrorOptions = {},
-): BaseError {
-  return makeBaseError("unauthorized", options);
-}
-
-export function makeForbiddenError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("forbidden", options);
-}
-
-export function makeParseError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("parse", options);
-}
-
-export function makeInfrastructureError(
-  options: BaseErrorOptions = {},
-): BaseError {
-  return makeBaseError("infrastructure", options);
-}
-
-export function makeUnknownError(options: BaseErrorOptions = {}): BaseError {
-  return makeBaseError("unknown", options);
-}
-
 /**
  * Type guard that narrows an unknown value to {@link BaseError}.
  *
