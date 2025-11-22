@@ -41,9 +41,9 @@ export abstract class AbstractLogger {
     processMetadata = { ...processMetadata, ...context };
   }
 
-  abstract withContext(context: string): AbstractLogger;
+  abstract withContext(context: string): this;
 
-  abstract withRequest(requestId: string): AbstractLogger;
+  abstract withRequest(requestId: string): this;
 
   debug<T>(message: string, data?: T): void {
     this.logAt("debug", message, data);
@@ -79,12 +79,6 @@ export abstract class AbstractLogger {
     if (safeData instanceof Error) {
       safeData = toSafeErrorShape(safeData);
     }
-
-    console.log("[Logger] createEntry", {
-      dataIncluded: safeData !== undefined,
-      level,
-      message,
-    });
 
     const entry: LogEntry<T> = {
       data: safeData !== undefined ? (redactLogData(safeData) as T) : undefined,
