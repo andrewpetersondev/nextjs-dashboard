@@ -1,4 +1,4 @@
-// src/shared/logging/logger.types.ts
+// src/shared/logging/core/logger.types.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseErrorJson } from "@/shared/errors/core/base-error.types";
 import type { AppErrorKey, Severity } from "@/shared/errors/core/error-codes";

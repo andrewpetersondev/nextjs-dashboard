@@ -1,3 +1,4 @@
+// src/shared/logging/infra/logging.levels.ts
 import { getPublicLogLevel } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 
@@ -6,7 +7,7 @@ let cachedPriority: number | null = null;
 
 /**
  * Derive the effective public log level at runtime.
- * Falls back to \`info\` if the public env var is missing/invalid.
+ * Falls back to `info` if the public env var is missing/invalid.
  */
 function getEffectiveLogLevel(): LogLevel {
   if (cachedLogLevel !== null) {

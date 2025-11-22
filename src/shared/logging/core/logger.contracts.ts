@@ -1,4 +1,4 @@
-// src/shared/logging/logger.contracts.ts
+// src/shared/logging/core/logger.contracts.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type {
   LogEventContext,

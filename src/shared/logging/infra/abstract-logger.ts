@@ -1,4 +1,4 @@
-// src/shared/logging/abstract-logger
+// src/shared/logging/infra/abstract-logger.ts
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";

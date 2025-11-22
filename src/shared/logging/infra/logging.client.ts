@@ -1,4 +1,4 @@
-// src/shared/logging/logger.shared.ts
+// src/shared/logging/infra/logging.client.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { isBaseError } from "@/shared/errors/core/base-error.factory";

@@ -1,3 +1,4 @@
+// src/shared/logging/infra/logging.mappers.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { Severity } from "@/shared/errors/core/error-codes";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
@@ -17,7 +18,7 @@ export function toSafeErrorShape(err: unknown): SafeErrorShape {
 }
 
 /**
- * Map domain \`Severity\` to \`LogLevel\` with an exhaustive check.
+ * Map domain `Severity` to `LogLevel` with an exhaustive check.
  */
 export function mapSeverityToLogLevel(severity: Severity): LogLevel {
   switch (severity) {
