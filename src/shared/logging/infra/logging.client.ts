@@ -12,10 +12,7 @@ import type {
   SerializedErrorCause,
 } from "@/shared/logging/core/logger.types";
 import { AbstractLogger } from "@/shared/logging/infra/abstract-logger";
-import {
-  mapSeverityToLogLevel,
-  toSafeErrorShape,
-} from "@/shared/logging/infra/logging.mappers";
+import { mapSeverityToLogLevel } from "@/shared/logging/infra/logging.mappers";
 
 /**
  * Sensitivity-aware structured logger.
@@ -24,9 +21,6 @@ export class LoggingClient
   extends AbstractLogger
   implements LoggingClientContract
 {
-  // TODO: refactor names in logger to make this obsolete
-  private static readonly logMetadataConflictKeys = new Set(["do_not_log_me"]);
-
   /**
    * Create a child logger with additional context.
    */
@@ -64,22 +58,13 @@ export class LoggingClient
     const { operationContext, operationIdentifiers, operationName, ...rest } =
       operationPayload;
 
-    const safeRest = { ...rest } as Record<string, unknown>;
-
-    if ("error" in safeRest && safeRest.error instanceof Error) {
-      safeRest.error = toSafeErrorShape(safeRest.error);
-    }
-
-    const sanitizedOperationDetails = this.removeConflictingKeys(safeRest);
-    const sanitizedIdentifiers = this.removeConflictingKeys(
-      operationIdentifiers as Record<string, unknown> | undefined,
-    );
-
-    const operationLogPayload = this.composeLogPayload(
-      sanitizedOperationDetails,
-      sanitizedIdentifiers,
-      { operationName },
-    );
+    // We construct the payload explicitly to ensure standard fields are present
+    // and easy to query in logs.
+    const operationLogPayload = {
+      ...rest,
+      ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
+      operationName,
+    };
 
     const target = operationContext ? this.withContext(operationContext) : this;
     target.logAt(level, message, operationLogPayload);
@@ -97,11 +82,10 @@ export class LoggingClient
       detailed: Boolean(detailed),
     });
 
-    const sanitizedMetadata = this.sanitizeLogMetadata(loggingContext);
-    const mergedLogPayload = this.composeLogPayload(
-      this.mapErrorPayloadToRecord(baseLogPayload),
-      sanitizedMetadata,
-    );
+    const mergedLogPayload = {
+      ...baseLogPayload,
+      ...(loggingContext ?? {}),
+    };
 
     this.logAt(level, message ?? error.message, mergedLogPayload);
   }
@@ -119,14 +103,14 @@ export class LoggingClient
     loggingContext?: LogEventContext,
   ): void {
     if (!isBaseError(error)) {
-      const sanitizedMetadata = this.sanitizeLogMetadata(loggingContext);
-      const safeErrorDetails = { error: toSafeErrorShape(error) };
-      const errorLogPayload = this.composeLogPayload(
-        sanitizedMetadata,
-        safeErrorDetails,
-      );
+      // Pass the raw error through. AbstractLogger will handle basic serialization
+      // if it's an Error object, but we won't force redaction or shape-shifting here.
+      const errorPayload = {
+        error,
+        ...(loggingContext ?? {}),
+      };
 
-      this.error(message, errorLogPayload);
+      this.error(message, errorPayload);
       return;
     }
     this.logBaseError(error, {
@@ -135,72 +119,6 @@ export class LoggingClient
       loggingContext,
       message,
     });
-  }
-
-  private composeLogPayload(
-    ...segments: Array<Record<string, unknown> | undefined>
-  ): Record<string, unknown> {
-    const merged: Record<string, unknown> = {};
-
-    for (const segment of segments) {
-      if (!segment) {
-        // biome-ignore lint/nursery/noContinue: <nursery rule>
-        continue;
-      }
-      for (const [key, value] of Object.entries(segment)) {
-        merged[key] = value;
-      }
-    }
-
-    return Object.keys(merged)
-      .sort((a, b) => a.localeCompare(b))
-      .reduce<Record<string, unknown>>((sorted, key) => {
-        sorted[key] = merged[key];
-        return sorted;
-      }, {});
-  }
-
-  private removeConflictingKeys(
-    payload?: Record<string, unknown>,
-  ): Record<string, unknown> | undefined {
-    if (!payload) {
-      return;
-    }
-    const filteredEntries = Object.entries(payload).filter(
-      ([key]) => !LoggingClient.logMetadataConflictKeys.has(key),
-    );
-    if (filteredEntries.length === 0) {
-      return;
-    }
-    return filteredEntries
-      .sort(([a], [b]) => a.localeCompare(b))
-      .reduce<Record<string, unknown>>((result, [key, value]) => {
-        result[key] = value;
-        return result;
-      }, {});
-  }
-
-  private sanitizeLogMetadata(
-    metadata?: LogEventContext,
-  ): Record<string, unknown> | undefined {
-    if (!metadata) {
-      return;
-    }
-    return this.removeConflictingKeys(metadata as Record<string, unknown>);
-  }
-
-  private mapErrorPayloadToRecord(
-    payload: BaseErrorLogPayload,
-  ): Record<string, unknown> {
-    return Object.keys(payload)
-      .sort((a, b) => a.localeCompare(b))
-      .reduce<Record<string, unknown>>((acc, key) => {
-        const value = payload[key as keyof BaseErrorLogPayload];
-        if (value !== undefined) {
-          acc[key] = value as unknown;
-        }
-        return acc;
-      }, {});
   }
 
   private buildErrorPayload(

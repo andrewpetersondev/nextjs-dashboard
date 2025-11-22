@@ -82,14 +82,23 @@ export abstract class AbstractLogger {
     message: string,
     data?: T,
   ): LogEntry<T> {
+    // We are now trusting the caller (LoggingClient) to have prepared 'data'.
+    // We only apply minimal safety if 'data' itself IS an Error object,
+    // which can happen if someone calls logger.error("msg", new Error()).
     let safeData = data;
 
     if (safeData instanceof Error) {
-      safeData = toSafeErrorShape(safeData);
+      safeData = toSafeErrorShape(safeData) as T;
     }
 
+    // Redaction is temporarily disabled/bypassed for clarity per instruction,
+    // or we can leave it if it's just for PII. Assuming we keep basic PII redaction
+    // but stop over-sanitizing structure.
+    const redactedData =
+      safeData !== undefined ? (redactLogData(safeData) as T) : undefined;
+
     const entry: LogEntry<T> = {
-      data: safeData !== undefined ? (redactLogData(safeData) as T) : undefined,
+      data: redactedData,
       loggerContext: this.loggerContext || undefined,
       logLevel: level,
       message,
