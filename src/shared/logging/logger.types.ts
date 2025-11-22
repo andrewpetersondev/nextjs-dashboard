@@ -35,29 +35,10 @@ export interface BaseErrorLogPayload extends BaseErrorJson {
 export type LogReservedKeys = keyof BaseErrorLogPayload;
 
 /**
- * Keys reserved by the error logging system.
- */
-export type ProhibitedLogKeys = LogReservedKeys;
-
-/**
  * Ephemeral operational metadata attached at log-time.
  */
 export type LogEventContext<T extends ImmutableRecord = ImmutableRecord> = T &
   ReservedKeyBlocker;
-
-export type LogMetadata = LogEventContext & {
-  readonly correlationId?: string;
-  readonly duration?: number;
-  readonly loggerContext?: string;
-  readonly userId?: string;
-};
-
-/**
- * Structured log entry format for consistency and JSON parsing.
- */
-export interface StructuredLogEntry extends BaseLogEntry {
-  readonly metadata?: LogMetadata;
-}
 
 /**
  * Runtime log entry emitted by the logger implementation.
