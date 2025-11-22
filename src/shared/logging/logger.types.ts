@@ -37,7 +37,7 @@ export type LogReservedKeys = keyof BaseErrorLogPayload;
 /**
  * Ephemeral operational metadata attached at log-time.
  */
-export type LogEventContext<T extends ImmutableRecord = ImmutableRecord> = T &
+export type LogEventContext<T extends object = ImmutableRecord> = T &
   ReservedKeyBlocker;
 
 /**
@@ -63,9 +63,8 @@ export interface LogOperationMetadata {
 /**
  * Combined data structure for operation logging.
  */
-export type LogOperationData<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> = T & LogOperationMetadata;
+export type LogOperationData<T extends object = Record<string, unknown>> = T &
+  LogOperationMetadata;
 
 /**
  * Options for logging BaseError instances.
