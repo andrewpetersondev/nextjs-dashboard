@@ -4,7 +4,7 @@ import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Server action to fetch the total number of invoice pages for pagination.

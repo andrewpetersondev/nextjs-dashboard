@@ -7,7 +7,7 @@ import {
   AuthServiceLogFactory,
 } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
-import type { LogOperationData } from "@/shared/logging/logger.types";
+import type { LogOperationData } from "@/shared/logging/core/logger.types";
 import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
 
 export const AUTH_ACTION_CONTEXTS = {

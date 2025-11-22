@@ -11,7 +11,7 @@ import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.conte
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.

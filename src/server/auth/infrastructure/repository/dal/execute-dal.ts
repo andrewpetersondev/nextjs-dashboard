@@ -6,7 +6,7 @@ import {
   toLoggingContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
  * Execute DAL operation with automatic error handling.

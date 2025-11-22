@@ -22,7 +22,7 @@ import {
   makeValidationError,
 } from "@/shared/errors/core/base-error.factory";
 import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
-import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
 

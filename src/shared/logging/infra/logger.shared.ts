@@ -3,15 +3,15 @@ import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { isBaseError } from "@/shared/errors/core/base-error.factory";
 import type { ErrorContext } from "@/shared/errors/core/base-error.types";
-import { AbstractLogger } from "@/shared/logging/abstract-logger";
-import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,
   LogBaseErrorOptions,
   LogEventContext,
   LogOperationData,
   SerializedErrorCause,
-} from "@/shared/logging/logger.types";
+} from "@/shared/logging/core/logger.types";
+import { AbstractLogger } from "@/shared/logging/infra/abstract-logger";
 import {
   mapSeverityToLogLevel,
   toSafeErrorShape,

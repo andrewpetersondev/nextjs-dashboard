@@ -11,7 +11,7 @@ import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.conte
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

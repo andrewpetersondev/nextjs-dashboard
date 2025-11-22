@@ -7,7 +7,7 @@ import { adjustRevenueForDeletedInvoice } from "@/server/revenues/events/deleted
 import { processInvoiceUpdated } from "@/server/revenues/events/handlers/invoice-update.handlers";
 import { processInvoiceEvent } from "@/server/revenues/events/handlers/orchestrator";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Handles invoice events and updates revenue records accordingly.

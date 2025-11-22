@@ -20,7 +20,7 @@ import {
 } from "@/shared/forms/domain/error-map.factory";
 import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Publish "invoice updated" domain event

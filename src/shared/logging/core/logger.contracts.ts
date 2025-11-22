@@ -3,7 +3,7 @@ import type { LogLevel } from "@/shared/config/env-schemas";
 import type {
   LogEventContext,
   LogOperationData,
-} from "@/shared/logging/logger.types";
+} from "@/shared/logging/core/logger.types";
 
 export interface LoggingClientContract {
   debug<T>(message: string, data?: T): void;

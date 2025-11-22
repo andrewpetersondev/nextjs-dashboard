@@ -1,6 +1,6 @@
 import "server-only";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Creates a standardized log entry

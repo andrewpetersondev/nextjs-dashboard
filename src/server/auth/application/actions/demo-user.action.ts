@@ -11,7 +11,7 @@ import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.co
 import { getAppDb } from "@/server/db/db.connection";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";

@@ -9,7 +9,7 @@ import {
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Fetches filtered users for a specific page.

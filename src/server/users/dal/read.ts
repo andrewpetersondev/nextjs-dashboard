@@ -9,7 +9,7 @@ import {
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/branding/domain-brands";
 import { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 
 /**
  * Retrieves a user from the database by branded UserId.

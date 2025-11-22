@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { Severity } from "@/shared/errors/core/error-codes";
-import type { SafeErrorShape } from "@/shared/logging/logger.types";
+import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
 /**
  * Normalize any `unknown` error into a safe, structured shape for logging.

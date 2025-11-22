@@ -2,12 +2,12 @@
 import { getRuntimeNodeEnv } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
+import type { LogEntry } from "@/shared/logging/core/logger.types";
 import {
   consoleMethod,
   currentLogLevelPriority,
   logLevelPriority,
 } from "@/shared/logging/logger.levels";
-import type { LogEntry } from "@/shared/logging/logger.types";
 import { createRedactor } from "@/shared/logging/redaction/redaction";
 import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
 

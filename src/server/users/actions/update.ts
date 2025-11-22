@@ -24,7 +24,7 @@ import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.f
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field.resolver";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

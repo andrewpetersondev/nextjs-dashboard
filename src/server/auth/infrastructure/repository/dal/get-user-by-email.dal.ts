@@ -9,7 +9,7 @@ import {
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import type { LoggingClientContract } from "@/shared/logging/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
  * Finds a user by email for login.

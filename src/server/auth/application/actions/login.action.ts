@@ -23,7 +23,7 @@ import { validateForm } from "@/server/forms/validate-form";
 import { mapBaseErrorToFormPayload } from "@/shared/errors/forms/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { logger } from "@/shared/logging/logger.shared";
+import { logger } from "@/shared/logging/infra/logger.shared";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = LOGIN_FIELDS_LIST;

@@ -6,7 +6,7 @@ import type {
   AuthOperation,
 } from "@/server/auth/logging-auth/auth-logging.types";
 import type { ErrorContext } from "@/shared/errors/core/base-error.types";
-import type { LogEventContext } from "@/shared/logging/logger.types";
+import type { LogEventContext } from "@/shared/logging/core/logger.types";
 
 /**
  * Generic standardized context for any auth layer operation.
