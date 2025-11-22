@@ -65,6 +65,14 @@ export abstract class AbstractLogger {
     this.logAt("warn", message, data);
   }
 
+  logAt<T>(level: LogLevel, message: string, data?: T): void {
+    if (!this.shouldLog(level)) {
+      return;
+    }
+    const entry = this.createEntry(level, message, data);
+    this.output(entry);
+  }
+
   protected shouldLog(level: LogLevel): boolean {
     return logLevelPriority[level] <= currentLogLevelPriority();
   }
@@ -114,13 +122,5 @@ export abstract class AbstractLogger {
 
   protected output(entry: LogEntry): void {
     consoleMethod[entry.logLevel](...this.format(entry));
-  }
-
-  logAt<T>(level: LogLevel, message: string, data?: T): void {
-    if (!this.shouldLog(level)) {
-      return;
-    }
-    const entry = this.createEntry(level, message, data);
-    this.output(entry);
   }
 }
