@@ -25,6 +25,10 @@ export const LOG_LEVEL_TUPLE = [
   "error",
 ] as const;
 export const LogLevelSchema = z.enum(LOG_LEVEL_TUPLE);
+/**
+ * Represents log severity levels used throughout the application.
+ * Available values: 'trace', 'debug', 'info', 'warn', 'error'
+ */
 export type LogLevel = z.infer<typeof LogLevelSchema>;
 
 export const SESSION_ISSUER_TUPLE = ["my-app"] as const;
