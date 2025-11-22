@@ -7,9 +7,9 @@ import {
   consoleMethod,
   currentLogLevelPriority,
   logLevelPriority,
-} from "@/shared/logging/logger.levels";
+} from "@/shared/logging/infra/logger.levels";
+import { toSafeErrorShape } from "@/shared/logging/infra/shared-logger.mappers";
 import { createRedactor } from "@/shared/logging/redaction/redaction";
-import { toSafeErrorShape } from "@/shared/logging/shared-logger.mappers";
 
 const processId = getProcessId();
 
