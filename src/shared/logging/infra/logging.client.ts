@@ -9,10 +9,13 @@ import type {
   LogBaseErrorOptions,
   LogEventContext,
   LogOperationData,
-  SerializedErrorCause,
+  SerializedError,
 } from "@/shared/logging/core/logger.types";
 import { AbstractLogger } from "@/shared/logging/infra/abstract-logger";
-import { mapSeverityToLogLevel } from "@/shared/logging/infra/logging.mappers";
+import {
+  mapSeverityToLogLevel,
+  toSafeErrorShape,
+} from "@/shared/logging/infra/logging.mappers";
 
 /**
  * Sensitivity-aware structured logger.
@@ -58,10 +61,18 @@ export class LoggingClient
     const { operationContext, operationIdentifiers, operationName, ...rest } =
       operationPayload;
 
+    // Extract error if it exists to keep it nested
+    // This prevents error properties (code, stack, etc.) from polluting the top-level log
+    const { error, ...otherData } = rest as Record<string, unknown>;
+
+    // Now safely handled by the mapper regardless of whether it's BaseError or standard Error
+    const safeError = error ? toSafeErrorShape(error) : undefined;
+
     // We construct the payload explicitly to ensure standard fields are present
     // and easy to query in logs.
     const operationLogPayload = {
-      ...rest,
+      ...otherData,
+      ...(safeError ? { error: safeError } : {}), // Keep error nested
       ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
       operationName,
     };
@@ -83,8 +94,8 @@ export class LoggingClient
     });
 
     const mergedLogPayload = {
-      ...baseLogPayload,
-      ...(loggingContext ?? {}),
+      error: baseLogPayload,
+      ...(loggingContext ? { logging: loggingContext } : {}),
     };
 
     this.logAt(level, message ?? error.message, mergedLogPayload);
@@ -105,9 +116,11 @@ export class LoggingClient
     if (!isBaseError(error)) {
       // Pass the raw error through. AbstractLogger will handle basic serialization
       // if it's an Error object, but we won't force redaction or shape-shifting here.
+      const safeError = toSafeErrorShape(error);
+
       const errorPayload = {
-        error,
-        ...(loggingContext ?? {}),
+        error: safeError,
+        ...(loggingContext ? { logging: loggingContext } : {}),
       };
 
       this.error(message, errorPayload);
@@ -180,7 +193,7 @@ export class LoggingClient
     return typeof id === "string" ? id : undefined;
   }
 
-  private serializeErrorCause(cause: Error): SerializedErrorCause {
+  private serializeErrorCause(cause: Error): SerializedError {
     if (isBaseError(cause)) {
       return {
         code: cause.code,
