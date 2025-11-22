@@ -3,13 +3,13 @@ import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseErrorJson } from "@/shared/errors/core/base-error.types";
 import type { AppErrorKey, Severity } from "@/shared/errors/core/error-codes";
 
-type ImmutableRecord = Readonly<Record<string, unknown>>;
+export type ImmutableRecord = Readonly<Record<string, unknown>>;
 
-type ReservedKeyBlocker = {
+export type ReservedKeyBlocker = {
   readonly [K in LogReservedKeys]?: never;
 };
 
-interface BaseLogEntry {
+export interface BaseLogEntry {
   readonly logLevel: LogLevel;
   readonly message: string;
   readonly timestamp: string;
