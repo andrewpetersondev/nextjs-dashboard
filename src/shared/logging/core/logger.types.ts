@@ -15,7 +15,10 @@ export interface BaseLogEntry {
   readonly timestamp: string;
 }
 
-export interface SerializedErrorCause {
+/**
+ * JSON-serializable representation of a standard Error object.
+ */
+export interface SerializedError {
   readonly code?: AppErrorKey;
   readonly message: string;
   readonly name: string;
@@ -24,7 +27,7 @@ export interface SerializedErrorCause {
 }
 
 export interface BaseErrorLogPayload extends BaseErrorJson {
-  readonly cause?: SerializedErrorCause;
+  readonly cause?: SerializedError;
   readonly diagnosticId?: string;
   readonly originalCauseRedacted?: boolean;
   readonly originalCauseType?: string;
@@ -79,4 +82,4 @@ export interface LogBaseErrorOptions {
 /**
  * Public safe error shape used when logging arbitrary `unknown` errors.
  */
-export type SafeErrorShape = string | SerializedErrorCause;
+export type SafeErrorShape = string | SerializedError;
