@@ -4,7 +4,7 @@ import { RevenueService } from "@/server/revenues/application/services/revenue/r
 import { RevenueEventHandler } from "@/server/revenues/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 declare global {
   var __revenueEventHandler: RevenueEventHandler | undefined;

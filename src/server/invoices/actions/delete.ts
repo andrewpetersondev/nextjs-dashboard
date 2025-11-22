@@ -12,7 +12,7 @@ import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-messag
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { BaseError } from "@/shared/errors/core/base-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

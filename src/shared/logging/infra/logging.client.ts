@@ -15,7 +15,7 @@ import { AbstractLogger } from "@/shared/logging/infra/abstract-logger";
 import {
   mapSeverityToLogLevel,
   toSafeErrorShape,
-} from "@/shared/logging/infra/shared-logger.mappers";
+} from "@/shared/logging/infra/logging.mappers";
 
 /**
  * Sensitivity-aware structured logger.

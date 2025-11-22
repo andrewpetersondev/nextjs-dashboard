@@ -15,7 +15,7 @@ import {
   isZodErrorInstance,
   isZodErrorLikeShape,
 } from "@/shared/forms/infrastructure/zod-guards";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
  * Transform an error into a `FormResult` containing validation errors.

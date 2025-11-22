@@ -10,7 +10,7 @@ import {
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import type { UserId } from "@/shared/branding/domain-brands";
 import { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
  * Updates a user in the database with the provided patch.

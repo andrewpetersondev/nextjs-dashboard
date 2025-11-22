@@ -4,7 +4,7 @@ import type { RevenueStatistics } from "@/features/revenues/types";
 import { computeStatistics } from "@/server/revenues/application/services/statistics/stats";
 import { GetRollingYearRevenuesUseCase } from "@/server/revenues/application/use-cases/queries/get-rolling-year-revenues.use-case";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 export class GetRevenueStatisticsUseCase {
   private readonly repository: RevenueRepositoryInterface;

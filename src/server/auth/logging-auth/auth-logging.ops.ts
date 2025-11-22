@@ -8,7 +8,7 @@ import {
 } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
 import type { LogOperationData } from "@/shared/logging/core/logger.types";
-import { toSafeErrorShape } from "@/shared/logging/infra/shared-logger.mappers";
+import { toSafeErrorShape } from "@/shared/logging/infra/logging.mappers";
 
 export const AUTH_ACTION_CONTEXTS = {
   demoUser: {

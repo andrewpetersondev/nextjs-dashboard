@@ -12,7 +12,7 @@ import {
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
 } from "@/shared/http/http-headers";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;

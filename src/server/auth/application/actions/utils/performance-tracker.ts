@@ -1,5 +1,5 @@
 // src/server/auth/application/actions/utils/performance-tracker.ts
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
  * Utility for measuring durations of asynchronous phases and aggregating metrics.

@@ -8,7 +8,7 @@ import {
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/result/result";
 

@@ -17,7 +17,7 @@ import {
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
-import { logger } from "@/shared/logging/infra/logger.shared";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
