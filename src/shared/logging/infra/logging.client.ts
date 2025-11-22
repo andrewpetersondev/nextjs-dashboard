@@ -166,9 +166,10 @@ export class LoggingClient
 
     const detailedPayload: BaseErrorLogPayload = {
       ...basePayload,
+      // CONSOLIDATED: Use shared mapper instead of private serializeErrorCause
       cause:
         error.cause instanceof Error
-          ? this.serializeErrorCause(error.cause)
+          ? (toSafeErrorShape(error.cause) as SerializedError)
           : undefined,
       ...(error.originalCause !== error.cause && {
         originalCauseRedacted: true,
@@ -191,24 +192,6 @@ export class LoggingClient
     const id = ctx.diagnosticId;
 
     return typeof id === "string" ? id : undefined;
-  }
-
-  private serializeErrorCause(cause: Error): SerializedError {
-    if (isBaseError(cause)) {
-      return {
-        code: cause.code,
-        message: cause.message,
-        name: cause.name,
-        severity: cause.severity,
-        stack: cause.stack,
-      };
-    }
-
-    return {
-      message: cause.message,
-      name: cause.name,
-      stack: cause.stack,
-    };
   }
 }
 
