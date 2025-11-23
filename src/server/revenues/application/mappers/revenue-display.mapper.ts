@@ -60,8 +60,7 @@ export function mapRevenueEntityToDisplayEntity(
     };
   } catch (error) {
     if (error instanceof BaseError) {
-      // Preserve existing BaseError details but add context that this failed in the mapper
-      throw error.withContext({ scope: "mapRevenueEntityToDisplayEntity" });
+      throw error;
     }
 
     throw new BaseError("validation", {
