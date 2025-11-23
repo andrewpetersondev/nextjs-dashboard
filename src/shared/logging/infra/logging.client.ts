@@ -105,13 +105,11 @@ export class LoggingClient
    * Log a BaseError with structured, sanitized output.
    */
   logBaseError(error: BaseError, options?: LogBaseErrorOptions): void {
-    const { detailed, levelOverride, loggingContext, message } = options ?? {};
+    const { levelOverride, loggingContext, message } = options ?? {};
 
     const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
 
-    const baseLogPayload = this.buildErrorPayload(error, {
-      detailed: Boolean(detailed),
-    });
+    const baseLogPayload = this.buildErrorPayload(error);
 
     const mergedLogPayload = {
       error: baseLogPayload,
@@ -147,18 +145,13 @@ export class LoggingClient
       return;
     }
     this.logBaseError(error, {
-      detailed: true,
       levelOverride: "error",
       loggingContext,
       message,
     });
   }
 
-  private buildErrorPayload(
-    error: BaseError,
-    options: { detailed: boolean },
-  ): BaseErrorLogPayload {
-    const { detailed } = options;
+  private buildErrorPayload(error: BaseError): BaseErrorLogPayload {
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.context);
 
@@ -166,7 +159,7 @@ export class LoggingClient
       (baseJson.formErrors && baseJson.formErrors.length > 0) ||
       (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
 
-    const basePayload: BaseErrorLogPayload = {
+    return {
       code: baseJson.code,
       description: baseJson.description,
       diagnosticId,
@@ -178,15 +171,6 @@ export class LoggingClient
       retryable: baseJson.retryable,
       severity: baseJson.severity,
       ...(hasValidationErrors && { validationErrorPresent: true }),
-    };
-
-    if (!detailed) {
-      return basePayload;
-    }
-
-    const detailedPayload: BaseErrorLogPayload = {
-      ...basePayload,
-      // CONSOLIDATED: Use shared mapper instead of private serializeErrorCause
       cause:
         error.cause instanceof Error
           ? (toSafeErrorShape(error.cause) as SerializedError)
@@ -197,8 +181,6 @@ export class LoggingClient
       }),
       stack: error.stack,
     };
-
-    return detailedPayload;
   }
 
   private extractDiagnosticId(

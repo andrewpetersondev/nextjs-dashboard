@@ -73,7 +73,6 @@ export type LogOperationData<T extends object = Record<string, unknown>> = T &
  * Options for logging BaseError instances.
  */
 export interface LogBaseErrorOptions {
-  readonly detailed?: boolean;
   readonly levelOverride?: LogLevel;
   readonly loggingContext?: LogEventContext;
   readonly message?: string;
