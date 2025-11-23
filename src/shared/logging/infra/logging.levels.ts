@@ -9,7 +9,7 @@ let cachedPriority: number | null = null;
  * Derive the effective public log level at runtime.
  * Falls back to `info` if the public env var is missing/invalid.
  */
-function getEffectiveLogLevel(): LogLevel {
+export function getEffectiveLogLevel(): LogLevel {
   if (cachedLogLevel !== null) {
     return cachedLogLevel;
   }
