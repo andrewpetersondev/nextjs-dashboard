@@ -1,6 +1,9 @@
 // src/server/auth/logging/transaction-logger.ts
 import "server-only";
-import { createAuthLogger } from "@/server/auth/logging-auth/auth-logger.shared";
+import {
+  createAuthLogger,
+  logAuthError,
+} from "@/server/auth/logging-auth/auth-logger.shared";
 import {
   AUTH_LOG_CONTEXTS,
   TransactionLogFactory,
@@ -40,15 +43,15 @@ export class TransactionLogger {
   rollback(transactionId: string, error: unknown): void {
     // Extract error from factory payload to avoid duplication in logging context
     // since it's already passed as the main error argument
-    const { error: _, ...data } = TransactionLogFactory.rollback(
-      transactionId,
-      error,
-    );
+    const payload = TransactionLogFactory.rollback(transactionId, error);
 
-    this.logger.errorWithDetails("Transaction rollback", error, {
+    logAuthError(this.logger, "Transaction rollback", {
+      ...payload,
+      errorSource: "infrastructure.dal",
+      kind: "error",
+      layer: "infrastructure.dal",
       operationContext: AUTH_LOG_CONTEXTS.transaction,
       operationName: "withTransaction",
-      ...data,
     });
   }
 }

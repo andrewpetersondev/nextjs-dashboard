@@ -56,6 +56,20 @@ export const AUTH_LOG_CONTEXTS = {
 /* ------------------------- Action-level factories ------------------------- */
 
 export const AuthActionLogFactory = {
+  error(
+    operation: AuthOperation,
+    error: unknown,
+    identifiers?: AuthLogPayload["operationIdentifiers"],
+  ): AuthLogPayload {
+    return {
+      error,
+      errorSource: "action",
+      kind: "error",
+      layer: "action",
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
+    };
+  },
   failure(
     operation: AuthOperation,
     identifiers?: AuthLogPayload["operationIdentifiers"],
@@ -101,6 +115,20 @@ export const AuthActionLogFactory = {
 /* ---------------------- Repository-level factories ------------------------ */
 
 export const AuthRepoLogFactory = {
+  error(
+    operation: AuthOperation,
+    error: unknown,
+    identifiers?: AuthLogPayload["operationIdentifiers"],
+  ): AuthLogPayload {
+    return {
+      error,
+      errorSource: "infrastructure.repository",
+      kind: "error",
+      layer: "infrastructure.repository",
+      operationName: operation,
+      ...(identifiers && { operationIdentifiers: identifiers }),
+    };
+  },
   exception(
     operation: AuthOperation,
     error: unknown,

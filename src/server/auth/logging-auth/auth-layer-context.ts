@@ -89,10 +89,14 @@ export function toLoggingContext<L extends AuthLogLayer>(
   authContext: AuthLogLayerContext<L>,
   extras?: Readonly<Record<string, unknown>>,
 ): LogEventContext {
+  // Ensure we do not spread 'layer' or other blocked keys into the result
+  // if they happen to exist in extras or authContext in the future.
+  const { correlationId, loggerContext, operation } = authContext;
+
   return {
-    correlationId: authContext.correlationId,
-    loggerContext: authContext.loggerContext,
-    operation: authContext.operation,
+    correlationId,
+    loggerContext,
+    operation, // Note: 'operation' is not reserved (LogReservedKeys checks BaseErrorLogPayload)
     ...(extras ?? {}),
   } as const;
 }
