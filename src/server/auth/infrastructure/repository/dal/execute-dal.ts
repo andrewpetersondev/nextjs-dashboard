@@ -1,9 +1,6 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import {
-  type AuthLogLayerContext,
-  toLoggingContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
+import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
@@ -32,20 +29,12 @@ export async function executeDalOrThrow<T>(
 
     const baseError = normalizePgError(err, errorContext);
 
-    // Operational context for logging
-    const loggingContext = toLoggingContext(dalContext, {
-      // any log-time extras like correlationId; if you want it here, put it here,
-      // not in the error's diagnostic context
-      correlationId: dalContext.correlationId,
-    });
-
-    console.log("baseError.toJson()", baseError.toJson());
-
-    logger.errorWithDetails("DAL operation failed", baseError, loggingContext);
-
-    logger.operation("error", "DAL operation error", {
+    // Log once at the source (DAL) with full details
+    // We use .operation to keep structure consistent, passing the error explicitly
+    logger.operation("error", "DAL operation failed", {
       code: baseError.code,
       diagnosticId: baseError.context.diagnosticId,
+      error: baseError, // Attach error here
       operationContext: dalContext.loggerContext,
       operationIdentifiers: dalContext.identifiers,
       operationName: dalContext.operation,

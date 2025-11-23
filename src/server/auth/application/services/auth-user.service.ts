@@ -14,7 +14,6 @@ import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/dem
 import {
   type AuthLogLayerContext,
   createAuthOperationContext,
-  toLoggingContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
@@ -37,8 +36,6 @@ import { Err, Ok } from "@/shared/result/result";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
-  // Remove baseLog as we will pass logger per method or use the one from constructor if it's request scoped (which it is in the factory)
-  // actually the factory creates a new service per request.
   private readonly logger: LoggingClientContract;
 
   constructor(
@@ -48,8 +45,7 @@ export class AuthUserService {
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    // The incoming logger is already the request-scoped logger from the action
-    // We create a child for this service instance
+    // Create a child logger for this service instance with "service" scope
     this.logger = logger.child({ scope: "service" });
   }
 
@@ -72,7 +68,6 @@ export class AuthUserService {
         operation: "demoUser",
       });
 
-    // Use the service-scoped logger
     const log = this.logger;
 
     try {
@@ -125,12 +120,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      log.errorWithDetails(
-        "Failed to create demo user",
-        err,
-        toLoggingContext(serviceContext),
-      );
-
+      // Intermediate layer: Propagate error without logging
       const normalized = normalizeToBaseError(err, "unexpected");
 
       return Err(normalized);
@@ -146,7 +136,6 @@ export class AuthUserService {
    *
    * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
@@ -204,12 +193,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
-      log.errorWithDetails(
-        "Signup failed",
-        err,
-        toLoggingContext(serviceContext),
-      );
-
+      // Intermediate layer: Propagate error without logging
       const baseError = normalizeToBaseError(err, "unexpected");
 
       return Err(baseError);
@@ -334,12 +318,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      log.errorWithDetails(
-        "Login failed",
-        err,
-        toLoggingContext(serviceContext),
-      );
-
+      // Intermediate layer: Propagate error without logging
       const baseError = normalizeToBaseError(err, "unexpected");
 
       return Err(baseError);

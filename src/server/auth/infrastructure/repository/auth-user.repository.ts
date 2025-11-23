@@ -27,7 +27,7 @@ export class AuthUserRepositoryImpl {
 
   constructor(db: AppDatabase, logger: LoggingClientContract = defaultLogger) {
     this.db = db;
-    // Inherit context/request from parent, just add repository scope
+    // Create a child logger with "repository" scope
     this.logger = logger.child({ scope: "repository" });
     this.transactionLogger = new TransactionLogger(this.logger);
   }
@@ -53,7 +53,7 @@ export class AuthUserRepositoryImpl {
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        // Pass the repository-scoped logger to the transaction instance
+        // Pass the scoped logger
         const txRepo = new AuthUserRepositoryImpl(tx, this.logger);
         return await fn(txRepo);
       });
@@ -61,12 +61,8 @@ export class AuthUserRepositoryImpl {
       this.transactionLogger.commit(transactionId);
       return result;
     } catch (err) {
-      const data = AuthRepoLogFactory.exception("withTransaction", err, {
-        transactionId,
-      });
-      this.logger.operation("error", "Repository transaction failed", data);
-
-      // Don't enrich error with logging context - keep them separate
+      // Intermediate layer: Do not log the error itself, it is logged at DAL or top-level
+      // Just rollback and rethrow
       this.transactionLogger.rollback(transactionId, err);
       throw err;
     }
@@ -82,10 +78,9 @@ export class AuthUserRepositoryImpl {
    * - DAL-level errors are propagated as-is for higher layers to map.
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const signupLogger = this.logger; // already scoped
+    const signupLogger = this.logger;
 
     // executeDalOrThrow already normalizes all errors and logs them
-    // Pass the repository logger down to DAL
     const row = await insertUserDal(this.db, input, this.logger);
 
     const data = AuthRepoLogFactory.success("signup", {

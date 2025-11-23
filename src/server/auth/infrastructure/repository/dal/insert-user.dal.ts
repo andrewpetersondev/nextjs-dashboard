@@ -37,7 +37,7 @@ export async function insertUserDal(
       operation: "insertUser",
     });
 
-  // Use child logger with dal scope instead of withContext
+  // Use child logger with dal scope
   const dalLogger = parentLogger.child({ scope: "dal" });
 
   return await executeDalOrThrow(

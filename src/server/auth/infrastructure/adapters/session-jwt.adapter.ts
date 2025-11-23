@@ -60,17 +60,11 @@ export class SessionJwtAdapter {
         signer = signer.setAudience(SESSION_AUDIENCE);
       }
       const token = await signer.sign(key);
-      const tokenPreview = token.slice(0, 10);
-      logger.info("Session JWT created", {
-        logging: {
-          tokenPreview,
-          userId: claims.userId,
-        },
-      });
+      // Removed redundant logging
       return token;
     } catch (err: unknown) {
-      logger.errorWithDetails("JWT signing failed", err);
-      throw new Error("Failed to sign session token");
+      // Propagate error without logging; caller handles it
+      throw new Error("Failed to sign session token", err as Error);
     }
   }
 
@@ -85,6 +79,7 @@ export class SessionJwtAdapter {
       );
       return payload;
     } catch (error: unknown) {
+      // Keep this one as it suppresses the error and returns undefined
       logger.warn("JWT verification failed", {
         error: String(error),
       });

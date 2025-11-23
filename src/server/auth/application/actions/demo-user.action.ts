@@ -22,6 +22,7 @@ const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
  *
  * @internal
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <close enough>
 async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
