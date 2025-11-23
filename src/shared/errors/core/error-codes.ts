@@ -14,9 +14,10 @@ export type Severity = "ERROR" | "WARN" | "INFO";
 export type AppErrorLayer = "CORE" | "INFRA" | "HTTP" | "AUTH" | "VALIDATION";
 
 export interface AppErrorDefinition {
-  readonly layer: AppErrorLayer;
+  /** @deprecated move authFields somewhere else */
   readonly authFields?: readonly string[];
   readonly description: string;
+  readonly layer: AppErrorLayer;
   readonly retryable: boolean;
   readonly severity: Severity;
 }
