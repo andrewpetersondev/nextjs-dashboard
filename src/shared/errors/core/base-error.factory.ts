@@ -1,12 +1,10 @@
-// src/shared/errors/base-error.factory.ts
+// src/shared/errors/core/base-error.factory.ts
 import { BaseError } from "@/shared/errors/core/base-error";
 import type { BaseErrorOptions } from "@/shared/errors/core/base-error.types";
 import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 
 /**
  * Canonical factory for creating `BaseError` instances.
- *
- * Use this instead of constructing POJO error shapes.
  */
 export function makeBaseError(
   code: AppErrorKey,
@@ -31,14 +29,8 @@ export function makeIntegrityError(options: BaseErrorOptions = {}): BaseError {
 }
 
 /**
- * Type guard that narrows an unknown value to {@link BaseError}.
- *
- * Useful when handling errors from generic `catch` blocks to refine
- * the type before accessing `BaseError`-specific properties.
- *
- * @param error - Unknown value to check.
- * @returns `true` if `e` is a `BaseError`, otherwise `false`.
+ * Type guard for narrowing to `BaseError`.
  */
 export function isBaseError(error: unknown): error is BaseError {
-  return error instanceof BaseError;
+  return BaseError.isBaseError(error);
 }

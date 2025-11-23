@@ -14,31 +14,10 @@ export type Severity = "ERROR" | "WARN" | "INFO";
 export type AppErrorLayer = "CORE" | "INFRA" | "HTTP" | "AUTH" | "VALIDATION";
 
 export interface AppErrorDefinition {
-  /**
-   * Logical ownership of this error code (INFRA, AUTH, VALIDATION, etc.).
-   */
   readonly layer: AppErrorLayer;
-  /**
-   * Optional set of auth-related fields a UI might highlight for this error.
-   * Only meaningful for certain auth/validation codes.
-   */
   readonly authFields?: readonly string[];
-  /**
-   * Human-readable, canonical description for this error code.
-   *
-   * This is domain-facing; HTTP or transport layers may override the
-   * final message shown to end users.
-   */
   readonly description: string;
-
-  /**
-   * Should an automated caller reasonably retry this operation?
-   */
   readonly retryable: boolean;
-
-  /**
-   * Diagnostic severity for this code.
-   */
   readonly severity: Severity;
 }
 

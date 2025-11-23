@@ -1,6 +1,14 @@
-// src/shared/errors/error-helpers.ts
+// src/shared/errors/core/error-helpers.ts
 import { isDev } from "@/shared/config/env-shared";
-import type { ErrorContext } from "@/shared/errors/core/base-error.types";
+
+function isSerializable(value: unknown): boolean {
+  try {
+    JSON.stringify(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export function safeStringifyUnknown(value: unknown): string {
   try {
@@ -10,7 +18,7 @@ export function safeStringifyUnknown(value: unknown): string {
     const json = JSON.stringify(value, (_k, v) =>
       typeof v === "bigint" ? v.toString() : v,
     );
-    const Max = 10_000; // limit ~10KB
+    const Max = 10_000;
     if (json.length > Max) {
       return `${json.slice(0, Max)}…[truncated ${json.length - Max} chars]`;
     }
@@ -32,19 +40,17 @@ export function redactNonSerializable(value: unknown): unknown {
   }
 }
 
-// Helper to build the standard context shape for unknown thrown values
 export function buildUnknownValueContext(
   value: unknown,
-  base: ErrorContext = {},
-): ErrorContext {
+  extra: Record<string, unknown> = {},
+): Record<string, unknown> {
   return {
-    ...base,
-    originalType: typeof value,
+    ...extra,
+    originalType: value === null ? "null" : typeof value,
     originalValue: redactNonSerializable(value),
   };
 }
 
-// Shallow-deep freeze for dev to discourage mutation without heavy perf cost
 export function deepFreezeDev<T>(obj: T): T {
   if (!isDev() || obj === null || typeof obj !== "object") {
     return obj;
@@ -62,64 +68,27 @@ export function deepFreezeDev<T>(obj: T): T {
         try {
           freeze(v as object);
         } catch {
-          // ignore circular or non-configurable props
+          /* silent */
         }
       }
     }
     try {
       Object.freeze(o);
     } catch {
-      // ignore non-extensible targets
+      /* silent */
     }
   };
   freeze(obj as unknown as object);
   return obj;
 }
 
-// Dev-only: ensure context is JSON-serializable; redact offending entries
 export function validateAndMaybeSanitizeContext(
-  ctx: ErrorContext,
-): ErrorContext {
-  if (!isDev()) {
-    return ctx;
+  ctx: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of Object.keys(ctx).sort()) {
+    const val = ctx[key];
+    out[key] = isSerializable(val) ? val : redactNonSerializable(val);
   }
-
-  // Warn about likely misplaced logging metadata. TODO: MOVE THIS TO A CENTRAL LOCATION
-  const loggingKeys = [
-    "requestId",
-    "hostname",
-    "traceId",
-    "spanId",
-    "environment",
-  ];
-  const foundKeys = loggingKeys.filter((k) => k in ctx);
-  if (foundKeys.length > 0) {
-    console.warn(
-      "[BaseError] Context contains logging-like keys that should use LoggingContext instead:",
-      foundKeys.join(", "),
-    );
-  }
-
-  // Existing serialization validation...
-  try {
-    JSON.stringify(ctx);
-    return ctx;
-  } catch {
-    const sanitized: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(ctx)) {
-      try {
-        JSON.stringify(v);
-        sanitized[k] = v;
-      } catch {
-        console.warn("[BaseError] Redacted non-serializable context value:", k);
-        sanitized[k] = redactNonSerializable(v);
-      }
-    }
-    try {
-      JSON.stringify(sanitized);
-      return sanitized;
-    } catch {
-      return { note: "context-redacted-non-serializable" };
-    }
-  }
+  return out;
 }
