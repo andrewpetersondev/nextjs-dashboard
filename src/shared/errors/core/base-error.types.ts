@@ -9,10 +9,8 @@ export type ErrorMetadata = Readonly<Record<string, unknown>>;
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 export type FormErrors = readonly string[];
 
-/**
- * Canonical metadata shared by all serialized error shapes.
- */
-export interface CanonicalErrorMetadata {
+// Core metadata shared by all errors
+export interface ErrorCoreMetadata {
   readonly code: AppErrorKey;
   readonly description: string;
   readonly layer: AppErrorLayer;
@@ -20,13 +18,15 @@ export interface CanonicalErrorMetadata {
   readonly severity: Severity;
 }
 
-export interface BaseErrorJson extends CanonicalErrorMetadata {
+// JSON shape for serialization
+export interface BaseErrorJson extends ErrorCoreMetadata {
   readonly fieldErrors?: FieldErrors;
   readonly formErrors?: FormErrors;
   readonly message: string;
   readonly metadata?: ErrorMetadata;
 }
 
+// Options for constructing a BaseError
 export interface BaseErrorOptions {
   readonly cause?: unknown;
   /** @deprecated Use metadata instead */
