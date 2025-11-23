@@ -25,9 +25,6 @@ export interface BaseErrorJson extends CanonicalErrorMetadata {
 
 export type ErrorMetadata = Readonly<Record<string, unknown>>;
 
-/** @deprecated Use ErrorMetadata instead */
-export type ErrorContext = ErrorMetadata;
-
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 
 export type FormErrors = readonly string[];

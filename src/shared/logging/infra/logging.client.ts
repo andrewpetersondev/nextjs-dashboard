@@ -2,7 +2,7 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { isBaseError } from "@/shared/errors/core/base-error.factory";
-import type { ErrorContext } from "@/shared/errors/core/base-error.types";
+import type { ErrorMetadata } from "@/shared/errors/core/base-error.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,
@@ -204,7 +204,7 @@ export class LoggingClient
   }
 
   private extractDiagnosticId(
-    context: ErrorContext | undefined,
+    context: ErrorMetadata | undefined,
   ): string | undefined {
     if (!context) {
       return;

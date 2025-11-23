@@ -40,9 +40,11 @@ export class BaseError extends Error {
 
   constructor(code: AppErrorKey, options: BaseErrorOptions = {}) {
     const meta = getAppErrorCodeMeta(code);
+
     const { message, context, metadata, cause, formErrors, fieldErrors } =
       options;
 
+    // Ensure cause is an Error, otherwise sanitize or set as undefined for safe error chaining.
     const sanitizedCause =
       cause instanceof Error
         ? cause
@@ -52,13 +54,14 @@ export class BaseError extends Error {
           : redactNonSerializable(cause);
 
     super(message ?? meta.description, { cause: sanitizedCause });
-    this.name = this.constructor.name;
+
     this.code = code;
     this.description = meta.description;
+    this.fieldErrors = fieldErrors
+      ? Object.freeze({ ...fieldErrors })
+      : undefined;
+    this.formErrors = formErrors ? Object.freeze([...formErrors]) : undefined;
     this.layer = meta.layer;
-    this.retryable = meta.retryable;
-    this.severity = meta.severity;
-
     // Merge old `context` and new `metadata`, with `metadata` taking precedence
     const merged = { ...(context ?? {}), ...(metadata ?? {}) };
     const checked = isDev() ? validateAndMaybeSanitizeMetadata(merged) : merged;
@@ -66,12 +69,10 @@ export class BaseError extends Error {
       ? (deepFreezeDev(checked) as ErrorMetadata)
       : (Object.freeze(checked) as ErrorMetadata);
     this.metadata = frozen;
-
+    this.name = this.constructor.name;
     this.originalCause = cause;
-    this.formErrors = formErrors ? Object.freeze([...formErrors]) : undefined;
-    this.fieldErrors = fieldErrors
-      ? Object.freeze({ ...fieldErrors })
-      : undefined;
+    this.retryable = meta.retryable;
+    this.severity = meta.severity;
 
     try {
       Object.freeze(this);
