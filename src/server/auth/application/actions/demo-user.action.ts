@@ -32,7 +32,12 @@ async function createDemoUserInternal(
       operation: "demoUser",
     });
 
-  const actionLogger = logger.withContext(actionContext.loggerContext);
+  const requestId = crypto.randomUUID();
+
+  // Root logger for the request, scoped to the action
+  const actionLogger = logger
+    .withRequest(requestId)
+    .child({ operation: "demoUser", scope: "action" });
 
   actionLogger.operation("info", "Demo user creation started", {
     ...AuthActionLogFactory.start(actionContext.operation),

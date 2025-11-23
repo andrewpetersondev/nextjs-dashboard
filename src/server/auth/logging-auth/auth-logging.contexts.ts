@@ -11,46 +11,45 @@ import type {
 export const AUTH_LOG_CONTEXTS = {
   /**
    * Action layer auth contexts:
-   * - action.auth.login
-   * - action.auth.signup
-   * - action.auth.demoUser
-   * - action.auth.logout
+   * - action.login
+   * - action.signup
+   * - action.demoUser
+   * - action.logout
    */
-  action: (operation: AuthOperation) => `action.auth.${operation}` as const,
+  action: (operation: AuthOperation) => `action.${operation}` as const,
 
   /**
    * DAL layer auth contexts:
-   * - infrastructure.dal.auth.insertUser
-   * - infrastructure.dal.auth.getUserByEmail
-   * - infrastructure.dal.auth.withTransaction
+   * - infrastructure.dal.insertUser
+   * - infrastructure.dal.getUserByEmail
+   * - infrastructure.dal.withTransaction
    *
    * This now mirrors the `action` setup instead of being a fixed object.
    */
-  dal: (operation: AuthOperation) =>
-    `infrastructure.dal.auth.${operation}` as const,
+  dal: (operation: AuthOperation) => `infrastructure.dal.${operation}` as const,
 
   /**
    * Repository layer auth contexts:
-   * - infrastructure.repository.auth.login
-   * - infrastructure.repository.auth.signup
+   * - infrastructure.repository.login
+   * - infrastructure.repository.signup
    * - ...
    */
   repository: (operation: AuthOperation) =>
-    `infrastructure.repository.auth.${operation}` as const,
+    `infrastructure.repository.${operation}` as const,
 
   /**
    * Service layer auth contexts:
-   * - service.auth.login
-   * - service.auth.signup
-   * - service.auth.demoUser
+   * - service.login
+   * - service.signup
+   * - service.demoUser
    * - ...
    */
-  service: (operation: AuthOperation) => `service.auth.${operation}` as const,
+  service: (operation: AuthOperation) => `service.${operation}` as const,
 
   /**
    * Special transaction context used by TransactionLogger.
    */
-  transaction: "infrastructure.transaction.auth" as const,
+  transaction: "infrastructure.transaction" as const,
 } as const;
 
 /* ------------------------- Action-level factories ------------------------- */
@@ -247,7 +246,7 @@ export const TransactionLogFactory = {
       event: "rollback",
       identifiers: { transactionId },
       timestamp: new Date().toISOString(),
-      ...(error !== undefined && { error }), // <--- It puts the whole error object here
+      ...(error !== undefined && { error }),
     };
   },
   start(transactionId: string): TransactionLogExtra {

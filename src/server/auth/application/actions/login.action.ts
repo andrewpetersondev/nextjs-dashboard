@@ -57,9 +57,10 @@ export async function loginAction(
       operation: "login",
     });
 
+  // Root logger for the request, scoped to the action
   const actionLogger = logger
-    .withContext(actionContext.loggerContext)
-    .withRequest(requestId);
+    .withRequest(requestId)
+    .child({ operation: "login", scope: "action" });
 
   const tracker = new PerformanceTracker();
 
@@ -114,6 +115,7 @@ export async function loginAction(
     }),
   });
 
+  // Pass the actionLogger to the service factory
   const service = createAuthUserService(getAppDb(), actionLogger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.login.bind(service)),

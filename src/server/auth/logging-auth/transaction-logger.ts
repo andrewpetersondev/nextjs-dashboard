@@ -19,7 +19,7 @@ export class TransactionLogger {
    */
   constructor(parentLogger?: LoggingClientContract) {
     const base = parentLogger ?? createAuthLogger("infrastructure.transaction");
-    this.logger = base.withContext(AUTH_LOG_CONTEXTS.transaction);
+    this.logger = base.child({ scope: "transaction" });
   }
 
   start(transactionId: string): void {

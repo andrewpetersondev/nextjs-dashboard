@@ -29,7 +29,13 @@ export async function establishSessionAction(
       operation: "login", // or a dedicated "establishSession" if you add it
     });
 
-  const actionLogger = logger.withContext(actionContext.loggerContext);
+  // This action might be called from a pipeline where a logger already exists contextually,
+  // but since it's a standalone server action, we create a fresh one or we could accept it.
+  // Given the signature, we create one here.
+  const requestId = crypto.randomUUID();
+  const actionLogger = logger
+    .withRequest(requestId)
+    .child({ operation: "establishSession", scope: "action" });
 
   const res = await tryCatchAsync(
     async () => {

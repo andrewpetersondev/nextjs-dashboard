@@ -21,7 +21,6 @@ export const AUTH_ACTION_CONTEXTS = {
 
     initiatedPayload(metadata: { ip: string; userAgent: string }) {
       return {
-        ip: metadata.ip,
         userAgent: metadata.userAgent,
       };
     },
@@ -48,13 +47,11 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         ...metadata.tracker.getMetrics(),
         role: metadata.role,
-        userId: metadata.userId,
       };
     },
 
     validationCompletePayload(metadata: { email?: string; duration: number }) {
       return {
-        email: metadata.email,
         validationDuration: metadata.duration,
       };
     },
@@ -74,7 +71,6 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         duration: metadata.tracker.getTotalDuration(),
         errorCount: metadata.errorCount,
-        ip: metadata.ip,
       };
     },
   },
@@ -91,7 +87,6 @@ export const AUTH_ACTION_CONTEXTS = {
 
     initiatedPayload(metadata: { ip: string; userAgent: string }) {
       return {
-        ip: metadata.ip,
         userAgent: metadata.userAgent,
       };
     },
@@ -118,13 +113,11 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         ...metadata.tracker.getMetrics(),
         role: metadata.role,
-        userId: metadata.userId,
       };
     },
 
     validationCompletePayload(metadata: { email?: string; duration: number }) {
       return {
-        email: metadata.email,
         validationDuration: metadata.duration,
       };
     },
@@ -144,7 +137,6 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         duration: metadata.tracker.getTotalDuration(),
         errorCount: metadata.errorCount,
-        ip: metadata.ip,
       };
     },
   },
@@ -161,7 +153,6 @@ export const AUTH_ACTION_CONTEXTS = {
 
     initiatedPayload(metadata: { ip: string; userAgent: string }) {
       return {
-        ip: metadata.ip,
         userAgent: metadata.userAgent,
       };
     },
@@ -188,13 +179,11 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         ...metadata.tracker.getMetrics(),
         role: metadata.role,
-        userId: metadata.userId,
       };
     },
 
     validationCompletePayload(metadata: { email?: string; duration: number }) {
       return {
-        email: metadata.email,
         validationDuration: metadata.duration,
       };
     },
@@ -214,7 +203,6 @@ export const AUTH_ACTION_CONTEXTS = {
       return {
         duration: metadata.tracker.getTotalDuration(),
         errorCount: metadata.errorCount,
-        ip: metadata.ip,
       };
     },
   },

@@ -49,27 +49,12 @@ export type AuthErrorSource =
 export interface AuthLogBase
   extends LogOperationMetadata,
     Record<string, unknown> {
-  /** High-level auth operation (login/signup/...) */
   operationName: AuthOperation;
-  /** Layer from which the log originates */
   layer: AuthLogLayer;
-  /** Logical kind (start/success/error/etc.) */
   kind: AuthLogKind;
-  /** Business identifiers (email, userId, etc.) */
   operationIdentifiers?: Record<string, string | number>;
-  /**
-   * Optional error payload (BaseError, safe error shape, or something else).
-   * Only set when this log represents an error-ish condition.
-   */
   error?: unknown;
-  /**
-   * Where the error came from. Useful when a higher layer logs an error
-   * that originated from a lower layer (DAL, repo, etc.).
-   */
   errorSource?: AuthErrorSource;
-  /**
-   * Layer- or operation-specific details (e.g. DAL pg metadata, validation info).
-   */
   details?: Record<string, unknown>;
 }
 

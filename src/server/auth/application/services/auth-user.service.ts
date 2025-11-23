@@ -37,7 +37,9 @@ import { Err, Ok } from "@/shared/result/result";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
-  private readonly baseLog: LoggingClientContract;
+  // Remove baseLog as we will pass logger per method or use the one from constructor if it's request scoped (which it is in the factory)
+  // actually the factory creates a new service per request.
+  private readonly logger: LoggingClientContract;
 
   constructor(
     repo: AuthUserRepositoryPort,
@@ -46,7 +48,9 @@ export class AuthUserService {
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.baseLog = logger.withContext("auth.user.service");
+    // The incoming logger is already the request-scoped logger from the action
+    // We create a child for this service instance
+    this.logger = logger.child({ scope: "service" });
   }
 
   /**
@@ -68,7 +72,8 @@ export class AuthUserService {
         operation: "demoUser",
       });
 
-    const log = this.baseLog.withContext(serviceContext.loggerContext);
+    // Use the service-scoped logger
+    const log = this.logger;
 
     try {
       const db = getAppDb();
@@ -110,8 +115,11 @@ export class AuthUserService {
       );
 
       log.operation("info", "Demo user created", {
-        details: { email: uniqueEmail, username: uniqueUsername },
-        operationIdentifiers: serviceContext.identifiers,
+        operationIdentifiers: {
+          ...serviceContext.identifiers,
+          email: uniqueEmail,
+          username: uniqueUsername,
+        },
         operationName: serviceContext.operation,
       });
 
@@ -152,11 +160,10 @@ export class AuthUserService {
         operation: "signup",
       });
 
-    const log = this.baseLog.withContext(serviceContext.loggerContext);
+    const log = this.logger;
 
     if (!hasRequiredSignupFields(input)) {
       log.operation("warn", "Missing required signup fields", {
-        details: { email: input.email, username: input.username },
         operationIdentifiers: serviceContext.identifiers,
         operationName: serviceContext.operation,
       });
@@ -191,7 +198,6 @@ export class AuthUserService {
       );
 
       log.operation("info", "Signup succeeded", {
-        details: { email: input.email, username: input.username },
         operationIdentifiers: serviceContext.identifiers,
         operationName: serviceContext.operation,
       });
@@ -232,7 +238,7 @@ export class AuthUserService {
         operation: "login",
       });
 
-    const log = this.baseLog.withContext(serviceContext.loggerContext);
+    const log = this.logger;
 
     try {
       const user = await this.repo.login({ email: input.email });

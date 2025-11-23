@@ -7,6 +7,7 @@ import {
   createAuthOperationContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import type { AuthOperation } from "@/server/auth/logging-auth/auth-logging.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -19,11 +20,7 @@ export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
   parentLogger: LoggingClientContract,
-  /**
-   * Logical operation name for logging.
-   * Defaults to "getUserByEmail" but callers (e.g. login repo) can override.
-   */
-  operation: "getUserByEmail" | "login" = "getUserByEmail",
+  operation: AuthOperation = "getUserByEmail",
 ): Promise<UserRow | null> {
   const dalContext: AuthLogLayerContext<"infrastructure.dal"> =
     createAuthOperationContext({
@@ -32,7 +29,7 @@ export async function getUserByEmailDal(
       operation,
     });
 
-  const dalLogger = parentLogger.withContext(dalContext.loggerContext);
+  const dalLogger = parentLogger.child({ scope: "dal" });
 
   return await executeDalOrThrow(
     async () => {
@@ -49,8 +46,9 @@ export async function getUserByEmailDal(
         return null;
       }
 
-      dalLogger.operation("info", "User loaded for login", {
-        ...AuthDalLogFactory.success(operation, { email }),
+      dalLogger.operation("info", "User found", {
+        details: { email },
+        operationName: "getUserByEmail",
       });
 
       return userRow;
