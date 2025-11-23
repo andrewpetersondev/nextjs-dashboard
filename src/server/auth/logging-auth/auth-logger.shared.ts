@@ -50,45 +50,14 @@ export function logAuthError(
   message: string,
   payload: AuthLogPayload,
 ): void {
-  const {
-    error,
-    // These keys conflict with BaseErrorLogPayload (ReservedKeyBlocker)
-    // or are specific to AuthLogPayload
-    layer,
-    kind,
-    details,
-    errorSource,
-    operationIdentifiers,
-    operationName,
-    operationContext,
-    ...rest
-  } = payload;
+  const { error, ...rest } = payload;
 
   // 1. Build the LogEventContext (Operational metadata)
+  // We can now safely spread all auth metadata into the 'log' object
+  // because the error is isolated in the 'error' root key.
   const loggingContext: LogEventContext = {
-    ...rest, // e.g. correlationId
-    // We pass these explicitly if they exist, as they are not reserved
-    ...(operationContext ? { operationContext } : {}),
+    ...rest,
   };
 
-  // 2. Build a metadata object for the auth specifics
-  //    This ensures we don't lose 'layer' or 'errorSource' info
-  //    even if the error object itself doesn't have them.
-  const authMetadata = {
-    details,
-    errorSource,
-    identifiers: operationIdentifiers,
-    kind,
-    layer,
-    operationName,
-  };
-
-  // 3. Merge authMetadata into loggingContext under a specific key
-  //    to avoid collision with reserved keys like 'layer'.
-  const safeContext: LogEventContext = {
-    ...loggingContext,
-    auth: authMetadata,
-  };
-
-  logger.errorWithDetails(message, error, safeContext);
+  logger.errorWithDetails(message, error, loggingContext);
 }

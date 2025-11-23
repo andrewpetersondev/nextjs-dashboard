@@ -19,7 +19,7 @@ const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);
   if (!parsed.success) {
     const errs = parsed.error.flatten().fieldErrors;
-    logger.error("Invalid session payload", { logging: { errors: errs } });
+    logger.error("Invalid session payload", { errors: errs });
     throw new BaseError("validation", {
       cause: errs as unknown as Record<string, unknown>,
       message: "Invalid session payload: Missing or invalid required fields",
@@ -32,7 +32,7 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
   const now = Date.now();
   if (expMs <= now) {
     logger.error("expiresAt must be in the future", {
-      logging: { expiresAt: expMs },
+      expiresAt: expMs,
     });
     throw new BaseError("validation", {
       cause: {
@@ -43,7 +43,8 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
   }
   if (startMs <= 0 || startMs > expMs) {
     logger.error("sessionStart must be positive and not exceed expiresAt", {
-      logging: { expiresAt: expMs, sessionStart: startMs },
+      expiresAt: expMs,
+      sessionStart: startMs,
     });
     throw new BaseError("validation", {
       message:
@@ -88,7 +89,7 @@ export async function readSessionToken(
   const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
   if (!validatedFields.success) {
     logger.error("Session JWT payload validation failed", {
-      logging: { errors: validatedFields.error.flatten().fieldErrors },
+      errors: validatedFields.error.flatten().fieldErrors,
     });
     return;
   }

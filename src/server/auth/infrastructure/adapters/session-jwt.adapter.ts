@@ -86,7 +86,7 @@ export class SessionJwtAdapter {
       return payload;
     } catch (error: unknown) {
       logger.warn("JWT verification failed", {
-        logging: { error: String(error) },
+        error: String(error),
       });
       return;
     }

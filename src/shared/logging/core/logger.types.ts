@@ -5,10 +5,6 @@ import type { AppErrorKey, Severity } from "@/shared/errors/core/error-codes";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
 
-export type ReservedKeyBlocker = {
-  readonly [K in LogReservedKeys]?: never;
-};
-
 export interface BaseLogEntry {
   readonly logLevel: LogLevel;
   readonly message: string;
@@ -35,13 +31,10 @@ export interface BaseErrorLogPayload extends BaseErrorJson {
   readonly validationErrorPresent?: boolean;
 }
 
-export type LogReservedKeys = keyof BaseErrorLogPayload;
-
 /**
  * Ephemeral operational metadata attached at log-time.
  */
-export type LogEventContext<T extends object = ImmutableRecord> = T &
-  ReservedKeyBlocker;
+export type LogEventContext<T extends object = ImmutableRecord> = T;
 
 /**
  * Runtime log entry emitted by the logger implementation.

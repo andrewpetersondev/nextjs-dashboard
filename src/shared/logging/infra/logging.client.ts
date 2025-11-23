@@ -24,6 +24,26 @@ export class LoggingClient
   extends AbstractLogger
   implements LoggingClientContract
 {
+  debug<T>(message: string, data?: T): void {
+    this.logAt("debug", message, { log: data });
+  }
+
+  info<T>(message: string, data?: T): void {
+    this.logAt("info", message, { log: data });
+  }
+
+  warn<T>(message: string, data?: T): void {
+    this.logAt("warn", message, { log: data });
+  }
+
+  error<T>(message: string, data?: T): void {
+    this.logAt("error", message, { log: data });
+  }
+
+  trace<T>(message: string, data?: T): void {
+    this.logAt("trace", message, { log: data });
+  }
+
   /**
    * Create a child logger with additional context.
    */
@@ -89,7 +109,7 @@ export class LoggingClient
     // We construct the payload explicitly to ensure standard fields are present
     // and easy to query in logs.
     const operationLogPayload = {
-      logging: {
+      log: {
         ...otherData,
         ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
         operationName,
@@ -113,7 +133,7 @@ export class LoggingClient
 
     const mergedLogPayload = {
       error: baseLogPayload,
-      ...(loggingContext ? { logging: loggingContext } : {}),
+      ...(loggingContext ? { log: loggingContext } : {}),
     };
 
     this.logAt(level, message ?? error.message, mergedLogPayload);
@@ -138,10 +158,10 @@ export class LoggingClient
 
       const errorPayload = {
         error: safeError,
-        ...(loggingContext ? { logging: loggingContext } : {}),
+        ...(loggingContext ? { log: loggingContext } : {}),
       };
 
-      this.error(message, errorPayload);
+      this.logAt("error", message, errorPayload);
       return;
     }
     this.logBaseError(error, {
