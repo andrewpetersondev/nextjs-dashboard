@@ -5,6 +5,10 @@ import type {
   Severity,
 } from "@/shared/errors/core/error-codes";
 
+export type ErrorMetadata = Readonly<Record<string, unknown>>;
+export type FieldErrors = Readonly<Record<string, readonly string[]>>;
+export type FormErrors = readonly string[];
+
 /**
  * Canonical metadata shared by all serialized error shapes.
  */
@@ -22,12 +26,6 @@ export interface BaseErrorJson extends CanonicalErrorMetadata {
   readonly message: string;
   readonly metadata?: ErrorMetadata;
 }
-
-export type ErrorMetadata = Readonly<Record<string, unknown>>;
-
-export type FieldErrors = Readonly<Record<string, readonly string[]>>;
-
-export type FormErrors = readonly string[];
 
 export interface BaseErrorOptions {
   readonly cause?: unknown;
