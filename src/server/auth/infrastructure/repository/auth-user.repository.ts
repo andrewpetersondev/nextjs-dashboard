@@ -139,11 +139,8 @@ export class AuthUserRepositoryImpl {
         "warn",
         "Login lookup resulted in no user with password",
         {
-          identifiers: { email: input.email },
-          // align with DAL notFound kind
-          kind: "not_found",
-          operationName: "login",
-        } as const,
+          ...AuthRepoLogFactory.notFound("login", { email: input.email }),
+        },
       );
       return null;
     }

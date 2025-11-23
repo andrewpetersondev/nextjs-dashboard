@@ -45,14 +45,12 @@ export async function getUserByEmailDal(
       if (!userRow) {
         dalLogger.operation("info", "User not found for login", {
           ...AuthDalLogFactory.notFound(operation, { email }),
-          context: dalContext.loggerContext,
         });
         return null;
       }
 
       dalLogger.operation("info", "User loaded for login", {
         ...AuthDalLogFactory.success(operation, { email }),
-        context: dalContext.loggerContext,
       });
 
       return userRow;

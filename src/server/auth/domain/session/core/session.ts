@@ -18,6 +18,7 @@ import {
 } from "@/server/auth/domain/session/helpers/session-helpers";
 import { sessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
 import type { UserId } from "@/shared/branding/domain-brands";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 function buildSessionJwtPayload(params: {
   readonly userId: UserId;
@@ -53,17 +54,13 @@ async function rotateSession(user: {
   const token = await createSessionToken(payload);
   await sessionCookieAdapter.set(token, buildSessionCookieOptions(expiresAt));
 
-  //  serverLogger.info(
-  //    {
-  //      context: "updateSessionToken",
-  //      expiresAt,
-  //      role: user.role,
-  //      userId: user.userId,
-  //    },
-  //    "Session token re-issued",
-  //  );
-
-  console.info("Session token re-issued");
+  logger.info("Session token re-issued", {
+    logging: {
+      expiresAt,
+      role: user.role,
+      userId: user.userId,
+    },
+  });
 
   return {
     expiresAt,
@@ -87,12 +84,9 @@ export async function setSessionToken(
 
   await sessionCookieAdapter.set(session, buildSessionCookieOptions(expiresAt));
 
-  //  serverLogger.info(
-  //    { context: "setSessionToken", expiresAt, role, userId },
-  //    `Session created for user ${userId} with role ${role}`,
-  //  );
-
-  console.info(`Session created for user ${userId} with role ${role}`);
+  logger.info(`Session created for user ${userId} with role ${role}`, {
+    logging: { expiresAt, role, userId },
+  });
 }
 
 export async function updateSessionToken(): Promise<UpdateSessionResult> {
@@ -110,18 +104,13 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
   const { exceeded, age } = absoluteLifetime(user);
   if (exceeded) {
     await sessionCookieAdapter.delete();
-    //    serverLogger.info(
-    //      {
-    //        ageMs: age,
-    //        context: "updateSessionToken",
-    //        maxMs: MAX_ABSOLUTE_SESSION_MS,
-    //        reason: "absolute_lifetime_exceeded",
-    //        userId: user.userId,
-    //      },
-    //      "Session not re-issued due to absolute lifetime limit",
-    //    );
-    console.info("Session not re-issued due to absolute lifetime limit", {
-      age,
+    logger.info("Session not re-issued due to absolute lifetime limit", {
+      logging: {
+        ageMs: age,
+        maxMs: MAX_ABSOLUTE_SESSION_MS,
+        reason: "absolute_lifetime_exceeded",
+        userId: user.userId,
+      },
     });
     return {
       ageMs: age,
@@ -134,15 +123,12 @@ export async function updateSessionToken(): Promise<UpdateSessionResult> {
 
   const remaining = timeLeftMs(payload);
   if (remaining > SESSION_REFRESH_THRESHOLD_MS) {
-    //    serverLogger.debug(
-    //      {
-    //        context: "updateSessionToken",
-    //        reason: "not_needed",
-    //        timeLeftMs: remaining,
-    //      },
-    //      "Session re-issue skipped",
-    //    );
-    console.debug("Session re-issue skipped", { remaining });
+    logger.debug("Session re-issue skipped", {
+      logging: {
+        reason: "not_needed",
+        timeLeftMs: remaining,
+      },
+    });
     return { reason: "not_needed", refreshed: false, timeLeftMs: remaining };
   }
 

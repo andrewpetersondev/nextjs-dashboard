@@ -12,6 +12,7 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-server";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 let encodedKey: Uint8Array | undefined;
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
@@ -60,13 +61,15 @@ export class SessionJwtAdapter {
       }
       const token = await signer.sign(key);
       const tokenPreview = token.slice(0, 10);
-      console.info("Session JWT created:", {
-        tokenPreview,
-        userId: claims.userId,
+      logger.info("Session JWT created", {
+        logging: {
+          tokenPreview,
+          userId: claims.userId,
+        },
       });
       return token;
     } catch (err: unknown) {
-      console.error("JWT signing failed:", err);
+      logger.errorWithDetails("JWT signing failed", err);
       throw new Error("Failed to sign session token");
     }
   }
@@ -82,7 +85,9 @@ export class SessionJwtAdapter {
       );
       return payload;
     } catch (error: unknown) {
-      console.error("JWT verification failed:", error);
+      logger.warn("JWT verification failed", {
+        logging: { error: String(error) },
+      });
       return;
     }
   }

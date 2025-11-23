@@ -61,8 +61,7 @@ export async function insertUserDal(
           email,
           userId: userRow.id,
         }),
-        context: dalContext.loggerContext,
-        role,
+        details: { role },
       });
 
       return userRow;

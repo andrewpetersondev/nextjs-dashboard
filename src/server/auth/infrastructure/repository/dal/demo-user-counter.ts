@@ -20,7 +20,6 @@ import { logger } from "@/shared/logging/infra/logging.client";
  * @param role - The branded UserRole
  * @returns The new counter value as a number
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function demoUserCounter(
   db: AppDatabase,
   role: UserRole,
@@ -44,9 +43,8 @@ export async function demoUserCounter(
           "error",
           "Invariant failed: demoUserCounter did not return a row",
           {
-            context: dalContext.loggerContext,
-            identifiers: dalContext.identifiers,
             kind: "invariant" as const,
+            operationIdentifiers: dalContext.identifiers,
             operationName: dalContext.operation,
           },
         );
@@ -60,10 +58,9 @@ export async function demoUserCounter(
 
       if (counterRow.id == null) {
         logger.operation("error", "Invalid counter row returned: missing id", {
-          context: dalContext.loggerContext,
-          counterRow,
-          identifiers: dalContext.identifiers,
+          details: { counterRow },
           kind: "invariant" as const,
+          operationIdentifiers: dalContext.identifiers,
           operationName: dalContext.operation,
         });
         throw makeIntegrityError({
@@ -82,11 +79,7 @@ export async function demoUserCounter(
       );
 
       logger.operation("info", "Demo user counter created for role", {
-        context: dalContext.loggerContext,
-        identifiers: resultMeta.operationIdentifiers,
-        kind: resultMeta.kind,
-        operationName: dalContext.operation,
-        ...(resultMeta.details && { details: resultMeta.details }),
+        ...resultMeta,
       });
 
       return counterRow.id;

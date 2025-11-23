@@ -2,6 +2,7 @@ import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 export class SessionCookieAdapter {
   async get(): Promise<string | undefined> {
@@ -12,19 +13,17 @@ export class SessionCookieAdapter {
   async set(value: string, options: Partial<ResponseCookie>): Promise<void> {
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE_NAME, value, options);
-    //    serverLogger.debug(
-    //      { context: "SessionCookieAdapter.set" },
-    //      "Session cookie set",
-    //    );
+    logger.debug("Session cookie set", {
+      logging: { context: "SessionCookieAdapter.set" },
+    });
   }
 
   async delete(): Promise<void> {
     const cookieStore = await cookies();
     cookieStore.delete(SESSION_COOKIE_NAME);
-    //    serverLogger.info(
-    //      { context: "SessionCookieAdapter.delete" },
-    //      "Session cookie deleted",
-    //    );
+    logger.info("Session cookie deleted", {
+      logging: { context: "SessionCookieAdapter.delete" },
+    });
   }
 }
 

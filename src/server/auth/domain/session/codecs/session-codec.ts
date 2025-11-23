@@ -13,12 +13,13 @@ import {
 } from "@/server/auth/domain/session/validation/session-payload.schema";
 import { sessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
 import { BaseError } from "@/shared/errors/core/base-error";
+import { logger } from "@/shared/logging/infra/logging.client";
 
 const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
   const parsed = EncryptPayloadSchema.safeParse(payload);
   if (!parsed.success) {
     const errs = parsed.error.flatten().fieldErrors;
-    console.error("Invalid session payload:", errs);
+    logger.error("Invalid session payload", { logging: { errors: errs } });
     throw new BaseError("validation", {
       cause: errs as unknown as Record<string, unknown>,
       message: "Invalid session payload: Missing or invalid required fields",
@@ -30,7 +31,9 @@ const parsePayloadOrThrow = (payload: EncryptPayload): EncryptPayload => {
 const validateTemporalFields = (expMs: number, startMs: number): void => {
   const now = Date.now();
   if (expMs <= now) {
-    console.error("expiresAt must be in the future:", expMs);
+    logger.error("expiresAt must be in the future", {
+      logging: { expiresAt: expMs },
+    });
     throw new BaseError("validation", {
       cause: {
         expiresAt: ["must be in the future"],
@@ -39,10 +42,9 @@ const validateTemporalFields = (expMs: number, startMs: number): void => {
     } as unknown as Record<string, unknown>);
   }
   if (startMs <= 0 || startMs > expMs) {
-    console.error(
-      "sessionStart must be positive and not exceed expiresAt:",
-      {},
-    );
+    logger.error("sessionStart must be positive and not exceed expiresAt", {
+      logging: { expiresAt: expMs, sessionStart: startMs },
+    });
     throw new BaseError("validation", {
       message:
         "Invalid session payload: sessionStart must be positive and not exceed expiresAt",
@@ -65,7 +67,7 @@ export async function readSessionToken(
   session?: string,
 ): Promise<DecryptPayload | undefined> {
   if (!session) {
-    console.warn("No session token provided");
+    logger.warn("No session token provided");
     return;
   }
 
@@ -85,10 +87,9 @@ export async function readSessionToken(
 
   const validatedFields = DecryptPayloadSchema.safeParse(withClaims);
   if (!validatedFields.success) {
-    console.error(
-      "Session JWT payload validation failed:",
-      validatedFields.error.flatten().fieldErrors,
-    );
+    logger.error("Session JWT payload validation failed", {
+      logging: { errors: validatedFields.error.flatten().fieldErrors },
+    });
     return;
   }
 
