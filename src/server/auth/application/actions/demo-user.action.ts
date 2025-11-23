@@ -57,6 +57,7 @@ async function createDemoUserInternal(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
+    // TODO: WHY DO I HAVE errorDetails?
     actionLogger.operation("error", "Demo user creation failed", {
       ...AuthActionLogFactory.failure(actionContext.operation, {
         role,
@@ -65,14 +66,28 @@ async function createDemoUserInternal(
       errorMessage: error.message,
       operationContext: actionContext.loggerContext,
       operationIdentifiers: actionContext.identifiers,
-      ...(error.formErrors || error.fieldErrors
-        ? {
-            errorDetails: {
-              ...(error.formErrors && { formErrors: error.formErrors }),
-              ...(error.fieldErrors && { fieldErrors: error.fieldErrors }),
-            },
-          }
-        : {}),
+      ...(() => {
+        if (!error.metadata) {
+          return {};
+        }
+        const formErrors = error.metadata.formErrors as
+          | readonly string[]
+          | undefined;
+        const fieldErrors = error.metadata.fieldErrors as
+          | Record<string, readonly string[]>
+          | undefined;
+        if (!(formErrors || fieldErrors)) {
+          return {};
+        }
+        const details: Record<string, unknown> = {};
+        if (formErrors) {
+          details.formErrors = formErrors;
+        }
+        if (fieldErrors) {
+          details.fieldErrors = fieldErrors;
+        }
+        return { errorDetails: details };
+      })(),
     });
 
     return formError({

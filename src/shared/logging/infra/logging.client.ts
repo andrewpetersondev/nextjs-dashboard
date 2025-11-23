@@ -175,21 +175,29 @@ export class LoggingClient
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.context);
 
+    // Extract form errors from metadata if present
+    const fieldErrors = error.metadata?.fieldErrors as
+      | Record<string, readonly string[]>
+      | undefined;
+    const formErrors = error.metadata?.formErrors as
+      | readonly string[]
+      | undefined;
+
     const hasValidationErrors =
-      (baseJson.formErrors && baseJson.formErrors.length > 0) ||
-      (baseJson.fieldErrors && Object.keys(baseJson.fieldErrors).length > 0);
+      (formErrors && formErrors.length > 0) ||
+      (fieldErrors && Object.keys(fieldErrors).length > 0);
 
     return {
       code: baseJson.code,
       description: baseJson.description,
       diagnosticId,
       layer: baseJson.layer,
-      metadata: baseJson.metadata,
-      ...(baseJson.fieldErrors && { fieldErrors: baseJson.fieldErrors }),
-      ...(baseJson.formErrors && { formErrors: baseJson.formErrors }),
       message: baseJson.message,
+      metadata: baseJson.metadata,
       retryable: baseJson.retryable,
       severity: baseJson.severity,
+      ...(fieldErrors && { fieldErrors }),
+      ...(formErrors && { formErrors }),
       ...(hasValidationErrors && { validationErrorPresent: true }),
       cause:
         error.cause instanceof Error

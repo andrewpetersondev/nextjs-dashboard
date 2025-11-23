@@ -18,7 +18,7 @@ export const getFieldErrors = <Tfieldname extends string>(
   if (!isFormValidationError(error)) {
     return;
   }
-  const fieldErrors = error?.fieldErrors;
+  const fieldErrors = error?.metadata?.fieldErrors;
   if (!fieldErrors || typeof fieldErrors !== "object") {
     return;
   }

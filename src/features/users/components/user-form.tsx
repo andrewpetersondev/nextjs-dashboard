@@ -67,7 +67,7 @@ export function UserForm({
           errors={
             state.ok
               ? undefined
-              : (state.error?.fieldErrors as unknown as
+              : (state.error?.metadata?.fieldErrors as unknown as
                   | Record<string, FieldError>
                   | undefined)
           }

@@ -83,13 +83,13 @@ export class AuthUserService {
 
         return Err(
           makeUnexpectedError({
-            context: {
+            metadata: {
               counter,
+              formErrors: ["Failed to generate demo user"],
               operation: serviceContext.operation,
               reason: "invalid_demo_user_counter",
               role,
             },
-            formErrors: ["Failed to generate demo user"],
           }),
         );
       }
@@ -159,17 +159,17 @@ export class AuthUserService {
 
       return Err(
         makeValidationError({
-          context: {
+          metadata: {
+            fieldErrors: {
+              email: ["missing_fields"],
+              password: ["missing_fields"],
+              username: ["missing_fields"],
+            },
+            formErrors: ["Missing required signup fields"],
             identifiers: serviceContext.identifiers,
             operation: serviceContext.operation,
             reason: "missing_fields",
           },
-          fieldErrors: {
-            email: ["missing_fields"],
-            password: ["missing_fields"],
-            username: ["missing_fields"],
-          },
-          formErrors: ["Missing required signup fields"],
         }),
       );
     }
@@ -238,15 +238,15 @@ export class AuthUserService {
 
         return Err(
           makeValidationError({
-            context: {
+            metadata: {
+              fieldErrors: {
+                email: ["invalid_credentials"],
+                password: ["invalid_credentials"],
+              },
+              formErrors: ["Invalid credentials"],
               operation: serviceContext.operation,
               reason: "invalid_credentials_user_not_found_or_no_password",
             },
-            fieldErrors: {
-              email: ["invalid_credentials"],
-              password: ["invalid_credentials"],
-            },
-            formErrors: ["Invalid credentials"],
           }),
         );
       }
@@ -267,16 +267,16 @@ export class AuthUserService {
 
         return Err(
           makeValidationError({
-            context: {
+            metadata: {
+              fieldErrors: {
+                email: ["invalid_credentials"],
+                password: ["invalid_credentials"],
+              },
+              formErrors: ["Invalid credentials"],
               operation: serviceContext.operation,
               reason: "missing_password_hash_on_user_entity",
               userId: String(user.id),
             },
-            fieldErrors: {
-              email: ["invalid_credentials"],
-              password: ["invalid_credentials"],
-            },
-            formErrors: ["Invalid credentials"],
           }),
         );
       }
@@ -295,15 +295,15 @@ export class AuthUserService {
 
         return Err(
           makeValidationError({
-            context: {
+            metadata: {
+              fieldErrors: {
+                email: ["invalid_credentials"],
+                password: ["invalid_credentials"],
+              },
+              formErrors: ["Invalid credentials"],
               operation: serviceContext.operation,
               reason: "invalid_credentials_password_mismatch",
             },
-            fieldErrors: {
-              email: ["invalid_credentials"],
-              password: ["invalid_credentials"],
-            },
-            formErrors: ["Invalid credentials"],
           }),
         );
       }

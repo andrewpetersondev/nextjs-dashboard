@@ -23,4 +23,6 @@ export const isFormErr = <Tpayload>(
  * Type guard to check if an BaseError contains form validation details.
  */
 export const isFormValidationError = (error: BaseError): boolean =>
-  error.code === "validation" && error?.fieldErrors !== undefined;
+  error.code === "validation" &&
+  error.metadata !== undefined &&
+  "fieldErrors" in error.metadata;

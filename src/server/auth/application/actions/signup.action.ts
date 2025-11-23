@@ -77,7 +77,9 @@ export async function signupAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(validated.error?.fieldErrors || {}).length;
+    const errorCount = Object.keys(
+      validated.error?.metadata?.fieldErrors || {},
+    ).length;
 
     // Validation failure
     actionLogger.operation("warn", "Signup validation failed", {

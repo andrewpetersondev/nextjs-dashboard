@@ -1,5 +1,6 @@
 // src/shared/errors/forms/base-error.mappers.ts
 import type { BaseError } from "@/shared/errors/core/base-error";
+import { getFieldErrors } from "@/shared/errors/core/base-error.guards";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 
 export function mapBaseErrorToFormPayload<T extends string>(
@@ -8,9 +9,8 @@ export function mapBaseErrorToFormPayload<T extends string>(
   fieldErrors: DenseFieldErrorMap<T, string>;
   message: string;
 } {
-  // Break dependency on shared/forms application layer.
-  // We directly access fieldErrors from the error object.
-  const fieldErrors = (error.fieldErrors ??
+  // Extract fieldErrors from metadata using type guard
+  const fieldErrors = (getFieldErrors(error) ??
     {}) as unknown as DenseFieldErrorMap<T, string>;
 
   const message = error.message;

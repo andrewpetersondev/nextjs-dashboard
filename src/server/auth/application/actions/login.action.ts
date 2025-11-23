@@ -79,7 +79,9 @@ export async function loginAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(validated.error?.fieldErrors || {}).length;
+    const errorCount = Object.keys(
+      validated.error?.metadata?.fieldErrors || {},
+    ).length;
 
     // Validation failure
     actionLogger.operation("warn", "Login validation failed", {

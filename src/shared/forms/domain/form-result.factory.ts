@@ -43,17 +43,19 @@ export const formOk = <Tpayload>(
  */
 export const formError = <Tfieldname extends string>(params: {
   readonly code?: AppErrorKey;
-  readonly message: string;
-  readonly formErrors?: readonly string[];
   readonly fieldErrors: DenseFieldErrorMap<Tfieldname, string>;
+  readonly formErrors?: readonly string[];
+  readonly message: string;
   readonly values?: SparseFieldValueMap<Tfieldname, string>;
 }): FormResult<never> => {
   const error: BaseError = makeBaseError(params.code ?? "validation", {
-    // Preserve submitted values in the error context for downstream mappers
-    context: params.values ? { values: params.values } : undefined,
-    fieldErrors: params.fieldErrors,
-    formErrors: params.formErrors,
     message: params.message,
+    // Store form errors in metadata along with submitted values
+    metadata: {
+      fieldErrors: params.fieldErrors,
+      ...(params.formErrors && { formErrors: params.formErrors }),
+      ...(params.values && { values: params.values }),
+    },
   });
   return Err(error);
 };

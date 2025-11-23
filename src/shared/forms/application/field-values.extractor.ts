@@ -14,12 +14,13 @@ import type { SparseFieldValueMap } from "@/shared/forms/domain/error-maps.types
 export const getFieldValues = <Tfieldname extends string>(
   error: BaseError,
 ): SparseFieldValueMap<Tfieldname, string> | undefined => {
-  const extra = error?.fieldErrors;
-  if (!extra || typeof extra !== "object") {
+  const metadata = error?.metadata;
+  if (!metadata || typeof metadata !== "object") {
     return;
   }
-  const values = (extra as { values?: SparseFieldValueMap<Tfieldname, string> })
-    .values;
+  const values = (
+    metadata as { values?: SparseFieldValueMap<Tfieldname, string> }
+  ).values;
   if (!values || typeof values !== "object") {
     return;
   }

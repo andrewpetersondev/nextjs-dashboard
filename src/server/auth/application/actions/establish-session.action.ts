@@ -19,6 +19,7 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  *
  * @returns A promise that resolves to a Result indicating the success or failure of the session establishment.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, BaseError>> {
@@ -59,6 +60,7 @@ export async function establishSessionAction(
   } else {
     const error = mapped.error;
 
+    // TODO: WHY DO I HAVE errorDetails? also I should probably extract the metadata to errorDetails builder
     actionLogger.operation("error", "Failed to establish session", {
       ...AuthActionLogFactory.failure(actionContext.operation, {
         role: user.role,
@@ -67,14 +69,28 @@ export async function establishSessionAction(
       // Only rely on BaseError surface fields
       errorCode: error.code,
       errorMessage: error.message,
-      ...(error.formErrors || error.fieldErrors
-        ? {
-            errorDetails: {
-              ...(error.formErrors && { formErrors: error.formErrors }),
-              ...(error.fieldErrors && { fieldErrors: error.fieldErrors }),
-            },
-          }
-        : {}),
+      ...(() => {
+        if (!error.metadata) {
+          return {};
+        }
+        const formErrors = error.metadata.formErrors as
+          | readonly string[]
+          | undefined;
+        const fieldErrors = error.metadata.fieldErrors as
+          | Record<string, readonly string[]>
+          | undefined;
+        if (!(formErrors || fieldErrors)) {
+          return {};
+        }
+        const details: Record<string, unknown> = {};
+        if (formErrors) {
+          details.formErrors = formErrors;
+        }
+        if (fieldErrors) {
+          details.fieldErrors = fieldErrors;
+        }
+        return { errorDetails: details };
+      })(),
     });
   }
 
