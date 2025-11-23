@@ -27,6 +27,12 @@ export interface LoggingClientContract {
   withRequest(requestId: string): this;
 
   /**
+   * Creates a child logger with persistent structured bound data.
+   * This data will be attached to every log entry emitted by this logger.
+   */
+  child(bindings: Record<string, unknown>): this;
+
+  /**
    * Logs an unknown error value with rich, sanitized details.
    */
   errorWithDetails(

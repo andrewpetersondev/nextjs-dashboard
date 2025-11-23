@@ -23,9 +23,19 @@ export const authLogger = rootLogger.withContext("auth");
 export function createAuthLogger(
   scope: string,
   requestId?: string,
+  bindings?: Record<string, unknown>,
 ): LoggingClientContract {
-  const base = authLogger.withContext(scope);
-  return requestId ? base.withRequest(requestId) : base;
+  let base = authLogger.withContext(scope);
+
+  if (requestId) {
+    base = base.withRequest(requestId);
+  }
+
+  if (bindings) {
+    base = base.child(bindings);
+  }
+
+  return base;
 }
 
 /**

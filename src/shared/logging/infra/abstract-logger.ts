@@ -27,10 +27,16 @@ const redactLogData = createRedactor();
 export abstract class AbstractLogger {
   protected readonly loggerContext?: string;
   protected readonly loggerRequestId?: string;
+  protected readonly bindings: Record<string, unknown>;
 
-  constructor(context?: string, requestId?: string) {
+  constructor(
+    context?: string,
+    requestId?: string,
+    bindings: Record<string, unknown> = {},
+  ) {
     this.loggerContext = context;
     this.loggerRequestId = requestId;
+    this.bindings = bindings;
   }
 
   /**
@@ -44,6 +50,8 @@ export abstract class AbstractLogger {
   abstract withContext(context: string): this;
 
   abstract withRequest(requestId: string): this;
+
+  abstract child(bindings: Record<string, unknown>): this;
 
   debug<T>(message: string, data?: T): void {
     this.logAt("debug", message, data);
@@ -97,6 +105,9 @@ export abstract class AbstractLogger {
     const redactedData =
       safeData !== undefined ? (redactLogData(safeData) as T) : undefined;
 
+    const metadata = { ...processMetadata, ...this.bindings };
+    const hasMetadata = Object.keys(metadata).length > 0;
+
     const entry: LogEntry<T> = {
       data: redactedData,
       loggerContext: this.loggerContext || undefined,
@@ -105,9 +116,7 @@ export abstract class AbstractLogger {
       pid: processId,
       requestId: this.loggerRequestId || undefined,
       timestamp: new Date().toISOString(),
-      ...(Object.keys(processMetadata).length > 0
-        ? { metadata: processMetadata }
-        : {}),
+      ...(hasMetadata ? { metadata } : {}),
     };
     return entry;
   }

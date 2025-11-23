@@ -32,14 +32,32 @@ export class LoggingClient
       ? `${this.loggerContext}:${context}`
       : context;
 
-    return new LoggingClient(combined, this.loggerRequestId) as this;
+    return new LoggingClient(
+      combined,
+      this.loggerRequestId,
+      this.bindings,
+    ) as this;
   }
 
   /**
    * Attach a request ID for correlation (useful in SSR or API contexts).
    */
   withRequest(requestId: string): this {
-    return new LoggingClient(this.loggerContext, requestId) as this;
+    return new LoggingClient(
+      this.loggerContext,
+      requestId,
+      this.bindings,
+    ) as this;
+  }
+
+  /**
+   * Create a child logger with persistent structured bound data.
+   */
+  child(bindings: Record<string, unknown>): this {
+    return new LoggingClient(this.loggerContext, this.loggerRequestId, {
+      ...this.bindings,
+      ...bindings,
+    }) as this;
   }
 
   /**
