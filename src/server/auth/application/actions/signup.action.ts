@@ -65,10 +65,8 @@ export async function signupAction(
   // Start
   actionLogger.operation("info", "Signup action started", {
     ...ctx.start(),
-    context: actionContext.loggerContext,
     details: ctx.initiatedPayload({ ip, userAgent }),
-    identifiers: actionContext.identifiers,
-    operation: actionContext.operation,
+    operationIdentifiers: actionContext.identifiers,
   });
 
   const validated = await tracker.measure("validation", () =>
@@ -83,14 +81,12 @@ export async function signupAction(
     // Validation failure
     actionLogger.operation("warn", "Signup validation failed", {
       ...ctx.validationFailed({ errorCount, ip }),
-      context: actionContext.loggerContext,
       details: ctx.validationFailurePayload({
         errorCount,
         ip,
         tracker,
       }),
-      identifiers: actionContext.identifiers,
-      operation: actionContext.operation,
+      operationIdentifiers: actionContext.identifiers,
     });
 
     return validated;
@@ -130,7 +126,6 @@ export async function signupAction(
     // Authentication failure
     actionLogger.operation("error", "Signup authentication failed", {
       ...ctx.fail("authentication_failed"),
-      context: enrichedContext.loggerContext,
       details: {
         ...tracker.getMetrics(),
         email: input.email,
@@ -138,8 +133,7 @@ export async function signupAction(
         errorMessage: error.message,
         ip,
       },
-      identifiers: enrichedContext.identifiers,
-      operation: enrichedContext.operation,
+      operationIdentifiers: enrichedContext.identifiers,
     });
 
     const { message, fieldErrors } =
@@ -157,10 +151,8 @@ export async function signupAction(
   // Success
   actionLogger.operation("info", "Signup action completed successfully", {
     ...ctx.successAction(input.email),
-    context: enrichedContext.loggerContext,
     details: ctx.successPayload({ role, tracker, userId }),
-    identifiers: { ...enrichedContext.identifiers, userId },
-    operation: enrichedContext.operation,
+    operationIdentifiers: { ...enrichedContext.identifiers, userId },
   });
 
   revalidatePath(ROUTES.dashboard.root);

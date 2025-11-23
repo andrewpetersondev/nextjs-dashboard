@@ -14,6 +14,7 @@ import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/dem
 import {
   type AuthLogLayerContext,
   createAuthOperationContext,
+  toLoggingContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
@@ -74,12 +75,10 @@ export class AuthUserService {
       const counter = await demoUserCounter(db, role);
 
       if (!counter || counter <= 0) {
-        log.error("Invalid demo user counter", {
-          counter,
-          identifiers: serviceContext.identifiers,
-          operation: serviceContext.operation,
-          reason: "invalid_demo_user_counter",
-          role,
+        log.operation("error", "Invalid demo user counter", {
+          details: { counter, reason: "invalid_demo_user_counter" },
+          operationIdentifiers: serviceContext.identifiers,
+          operationName: serviceContext.operation,
         });
 
         return Err(
@@ -110,21 +109,19 @@ export class AuthUserService {
         }),
       );
 
-      log.info("Demo user created", {
-        email: uniqueEmail,
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-        role,
-        username: uniqueUsername,
+      log.operation("info", "Demo user created", {
+        details: { email: uniqueEmail, username: uniqueUsername },
+        operationIdentifiers: serviceContext.identifiers,
+        operationName: serviceContext.operation,
       });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      log.error("Failed to create demo user", {
-        error: err,
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      log.errorWithDetails(
+        "Failed to create demo user",
+        err,
+        toLoggingContext(serviceContext),
+      );
 
       const normalized = normalizeToBaseError(err, "unexpected");
 
@@ -158,11 +155,10 @@ export class AuthUserService {
     const log = this.baseLog.withContext(serviceContext.loggerContext);
 
     if (!hasRequiredSignupFields(input)) {
-      log.warn("Missing required signup fields", {
-        email: input.email,
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-        username: input.username,
+      log.operation("warn", "Missing required signup fields", {
+        details: { email: input.email, username: input.username },
+        operationIdentifiers: serviceContext.identifiers,
+        operationName: serviceContext.operation,
       });
 
       return Err(
@@ -194,19 +190,19 @@ export class AuthUserService {
         }),
       );
 
-      log.info("Signup succeeded", {
-        email: input.email,
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-        username: input.username,
+      log.operation("info", "Signup succeeded", {
+        details: { email: input.email, username: input.username },
+        operationIdentifiers: serviceContext.identifiers,
+        operationName: serviceContext.operation,
       });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
     } catch (err: unknown) {
-      log.errorWithDetails("Signup failed", err, {
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      log.errorWithDetails(
+        "Signup failed",
+        err,
+        toLoggingContext(serviceContext),
+      );
 
       const baseError = normalizeToBaseError(err, "unexpected");
 
@@ -242,10 +238,12 @@ export class AuthUserService {
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
-        log.warn("Login failed - invalid credentials", {
-          identifiers: serviceContext.identifiers,
-          operation: serviceContext.operation,
-          reason: "invalid_credentials_user_not_found_or_no_password",
+        log.operation("warn", "Login failed - invalid credentials", {
+          details: {
+            reason: "invalid_credentials_user_not_found_or_no_password",
+          },
+          operationIdentifiers: serviceContext.identifiers,
+          operationName: serviceContext.operation,
         });
 
         return Err(
@@ -264,14 +262,18 @@ export class AuthUserService {
       }
 
       if (!user.password) {
-        log.error("Login failed - missing password hash on user entity", {
-          identifiers: {
-            ...serviceContext.identifiers,
-            userId: String(user.id),
+        log.operation(
+          "error",
+          "Login failed - missing password hash on user entity",
+          {
+            details: { reason: "missing_password_hash_on_user_entity" },
+            operationIdentifiers: {
+              ...serviceContext.identifiers,
+              userId: String(user.id),
+            },
+            operationName: serviceContext.operation,
           },
-          operation: serviceContext.operation,
-          reason: "missing_password_hash_on_user_entity",
-        });
+        );
 
         return Err(
           makeValidationError({
@@ -295,10 +297,10 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        log.warn("Login failed - invalid credentials", {
-          identifiers: serviceContext.identifiers,
-          operation: serviceContext.operation,
-          reason: "invalid_credentials_password_mismatch",
+        log.operation("warn", "Login failed - invalid credentials", {
+          details: { reason: "invalid_credentials_password_mismatch" },
+          operationIdentifiers: serviceContext.identifiers,
+          operationName: serviceContext.operation,
         });
 
         return Err(
@@ -316,21 +318,21 @@ export class AuthUserService {
         );
       }
 
-      log.info("Login succeeded", {
-        identifiers: {
+      log.operation("info", "Login succeeded", {
+        operationIdentifiers: {
           ...serviceContext.identifiers,
           userId: String(user.id),
         },
-        operation: serviceContext.operation,
+        operationName: serviceContext.operation,
       });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      log.error("Login failed", {
-        error: err,
-        identifiers: serviceContext.identifiers,
-        operation: serviceContext.operation,
-      });
+      log.errorWithDetails(
+        "Login failed",
+        err,
+        toLoggingContext(serviceContext),
+      );
 
       const baseError = normalizeToBaseError(err, "unexpected");
 

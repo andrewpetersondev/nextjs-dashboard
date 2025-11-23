@@ -1,5 +1,4 @@
 // src/server/auth/application/actions/utils/performance-tracker.ts
-import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
  * Utility for measuring durations of asynchronous phases and aggregating metrics.
@@ -98,19 +97,5 @@ export class PerformanceTracker {
    */
   getTotalDuration() {
     return performance.now() - this.startTime;
-  }
-
-  /**
-   * Clear all recorded metrics.
-   *
-   * Logs a debug message containing the number of metrics removed.
-   */
-  reset() {
-    const keys = Object.keys(this.metrics);
-    const count = keys.length;
-    for (const key of keys) {
-      delete this.metrics[key];
-    }
-    logger.debug("PerformanceTracker reset", { metricCount: count });
   }
 }

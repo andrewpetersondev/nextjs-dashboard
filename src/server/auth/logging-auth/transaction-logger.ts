@@ -38,7 +38,12 @@ export class TransactionLogger {
   }
 
   rollback(transactionId: string, error: unknown): void {
-    const data = TransactionLogFactory.rollback(transactionId, error);
+    // Extract error from factory payload to avoid duplication in logging context
+    // since it's already passed as the main error argument
+    const { error: _, ...data } = TransactionLogFactory.rollback(
+      transactionId,
+      error,
+    );
 
     this.logger.errorWithDetails("Transaction rollback", error, {
       operationContext: AUTH_LOG_CONTEXTS.transaction,

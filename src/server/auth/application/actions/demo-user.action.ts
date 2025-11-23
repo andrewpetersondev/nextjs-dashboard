@@ -36,8 +36,9 @@ async function createDemoUserInternal(
 
   actionLogger.operation("info", "Demo user creation started", {
     ...AuthActionLogFactory.start(actionContext.operation),
-    context: actionContext.loggerContext,
     identifiers: actionContext.identifiers,
+    operationContext: actionContext.loggerContext,
+    operationIdentifiers: actionContext.identifiers,
   });
 
   const service = createAuthUserService(getAppDb(), actionLogger);
@@ -54,10 +55,10 @@ async function createDemoUserInternal(
       ...AuthActionLogFactory.failure(actionContext.operation, {
         role,
       }),
-      context: actionContext.loggerContext,
       errorCode: error.code,
       errorMessage: error.message,
-      identifiers: actionContext.identifiers,
+      operationContext: actionContext.loggerContext,
+      operationIdentifiers: actionContext.identifiers,
       ...(error.formErrors || error.fieldErrors
         ? {
             errorDetails: {
@@ -78,8 +79,8 @@ async function createDemoUserInternal(
     ...AuthActionLogFactory.success(actionContext.operation, {
       role,
     }),
-    context: actionContext.loggerContext,
-    identifiers: actionContext.identifiers,
+    operationContext: actionContext.loggerContext,
+    operationIdentifiers: actionContext.identifiers,
   });
 
   redirect(ROUTES.dashboard.root);

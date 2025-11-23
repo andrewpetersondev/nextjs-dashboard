@@ -71,10 +71,12 @@ export class LoggingClient
     // We construct the payload explicitly to ensure standard fields are present
     // and easy to query in logs.
     const operationLogPayload = {
-      ...otherData,
+      logging: {
+        ...otherData,
+        ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
+        operationName,
+      },
       ...(safeError ? { error: safeError } : {}), // Keep error nested
-      ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
-      operationName,
     };
 
     const target = operationContext ? this.withContext(operationContext) : this;

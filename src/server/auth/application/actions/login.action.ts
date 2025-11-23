@@ -66,7 +66,6 @@ export async function loginAction(
   // Start
   actionLogger.operation("info", "Login action started", {
     ...ctx.start(),
-    context: actionContext.loggerContext,
     details: ctx.initiatedPayload({ ip, userAgent }),
     identifiers: actionContext.identifiers,
     operation: actionContext.operation,
@@ -84,7 +83,6 @@ export async function loginAction(
     // Validation failure
     actionLogger.operation("warn", "Login validation failed", {
       ...ctx.validationFailed({ errorCount, ip }),
-      context: actionContext.loggerContext,
       details: ctx.validationFailurePayload({
         errorCount,
         ip,

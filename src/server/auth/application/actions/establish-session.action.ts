@@ -49,7 +49,6 @@ export async function establishSessionAction(
         role: user.role,
         userId: user.id,
       }),
-      context: actionContext.loggerContext,
     });
   } else {
     const error = mapped.error;
@@ -59,7 +58,6 @@ export async function establishSessionAction(
         role: user.role,
         userId: user.id,
       }),
-      context: actionContext.loggerContext,
       // Only rely on BaseError surface fields
       errorCode: error.code,
       errorMessage: error.message,
