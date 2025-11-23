@@ -4,11 +4,9 @@ import type { PerformanceTracker } from "@/server/auth/application/actions/utils
 import {
   AUTH_LOG_CONTEXTS,
   AuthActionLogFactory,
-  AuthServiceLogFactory,
 } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
 import type { LogOperationData } from "@/shared/logging/core/logger.types";
-import { toSafeErrorShape } from "@/shared/logging/infra/logging.mappers";
 
 export const AUTH_ACTION_CONTEXTS = {
   demoUser: {
@@ -217,81 +215,6 @@ export const AUTH_ACTION_CONTEXTS = {
         duration: metadata.tracker.getTotalDuration(),
         errorCount: metadata.errorCount,
         ip: metadata.ip,
-      };
-    },
-  },
-} as const;
-
-export const AUTH_SERVICE_CONTEXTS = {
-  createDemoUser: {
-    context: AUTH_LOG_CONTEXTS.service("demoUser"),
-
-    success(role: string): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.success("demoUser", { role }),
-        operationContext: AUTH_LOG_CONTEXTS.service("demoUser"),
-      };
-    },
-
-    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.exception(
-          "demoUser",
-          undefined,
-          toSafeErrorShape(err),
-        ),
-        operationContext: AUTH_LOG_CONTEXTS.service("demoUser"),
-      };
-    },
-  },
-
-  login: {
-    context: AUTH_LOG_CONTEXTS.service("login"),
-
-    invalidCredentials(email: string): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.validation("login", { email }),
-        operationContext: AUTH_LOG_CONTEXTS.service("login"),
-      };
-    },
-
-    success(userId: string): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.success("login", { userId }),
-        operationContext: AUTH_LOG_CONTEXTS.service("login"),
-      };
-    },
-
-    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.exception(
-          "login",
-          undefined,
-          toSafeErrorShape(err),
-        ),
-        operationContext: AUTH_LOG_CONTEXTS.service("login"),
-      };
-    },
-  },
-
-  signup: {
-    context: AUTH_LOG_CONTEXTS.service("signup"),
-
-    success(email: string): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.success("signup", { email }),
-        operationContext: AUTH_LOG_CONTEXTS.service("signup"),
-      };
-    },
-
-    transactionError(err: unknown): LogOperationData<AuthLogPayload> {
-      return {
-        ...AuthServiceLogFactory.exception(
-          "signup",
-          undefined,
-          toSafeErrorShape(err),
-        ),
-        operationContext: AUTH_LOG_CONTEXTS.service("signup"),
       };
     },
   },

@@ -101,17 +101,6 @@ export const AuthActionLogFactory = {
 /* ------------------------ Service-level factories ------------------------- */
 
 export const AuthServiceLogFactory = {
-  authInvariant(
-    operation: AuthOperation,
-    identifiers?: AuthLogPayload["operationIdentifiers"],
-  ): AuthLogPayload {
-    return {
-      kind: "auth-invariant",
-      layer: "service",
-      operationName: operation,
-      ...(identifiers && { operationIdentifiers: identifiers }),
-    };
-  },
   exception(
     operation: AuthOperation,
     identifiers?: AuthLogPayload["operationIdentifiers"],
@@ -278,18 +267,6 @@ export const TransactionLogFactory = {
       event: "start",
       identifiers: { transactionId },
       timestamp: new Date().toISOString(),
-    };
-  },
-} as const;
-
-/* ----------------------- Error mapping factory ---------------------------- */
-
-export const ErrorMappingFactory = {
-  pgError(code: string, detail?: string) {
-    return {
-      code,
-      kind: "pg-error" as const,
-      ...(detail && { detail }),
     };
   },
 } as const;
