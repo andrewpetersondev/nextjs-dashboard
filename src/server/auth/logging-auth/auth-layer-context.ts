@@ -5,7 +5,6 @@ import type {
   AuthLogLayer,
   AuthOperation,
 } from "@/server/auth/logging-auth/auth-logging.types";
-import type { ErrorContext } from "@/shared/errors/core/base-error.types";
 import type { LogEventContext } from "@/shared/logging/core/logger.types";
 
 /**
@@ -78,27 +77,6 @@ export function createAuthOperationContext<
     loggerContext,
     operation,
   };
-}
-
-/**
- * Helper to convert an AuthLayerContext into a generic ErrorContext.
- *
- * This is the single, unified shape used by errors across all layers.
- * Callers can optionally provide extra metadata (e.g. diagnosticId, table, timestamp).
- *
- * Design: this intentionally omits logging-only fields such as `loggerContext`
- * or correlation/request IDs. Those belong in LogEventContext, not ErrorContext.
- */
-export function toErrorContext<L extends AuthLogLayer>(
-  authContext: AuthLogLayerContext<L>,
-  extras?: Readonly<Record<string, unknown>>,
-): ErrorContext {
-  return {
-    identifiers: authContext.identifiers,
-    layer: authContext.layer,
-    operation: authContext.operation,
-    ...(extras ?? {}),
-  } as const;
 }
 
 /**

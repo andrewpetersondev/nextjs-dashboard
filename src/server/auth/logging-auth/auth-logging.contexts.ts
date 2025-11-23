@@ -98,46 +98,6 @@ export const AuthActionLogFactory = {
   },
 } as const;
 
-/* ------------------------ Service-level factories ------------------------- */
-
-export const AuthServiceLogFactory = {
-  exception(
-    operation: AuthOperation,
-    identifiers?: AuthLogPayload["operationIdentifiers"],
-    error?: unknown,
-  ): AuthLogPayload {
-    return {
-      kind: "exception",
-      layer: "service",
-      operationName: operation,
-      ...(identifiers && { operationIdentifiers: identifiers }),
-      ...(error !== undefined && { error }),
-    };
-  },
-  success(
-    operation: AuthOperation,
-    identifiers?: AuthLogPayload["operationIdentifiers"],
-  ): AuthLogPayload {
-    return {
-      kind: "success",
-      layer: "service",
-      operationName: operation,
-      ...(identifiers && { operationIdentifiers: identifiers }),
-    };
-  },
-  validation(
-    operation: AuthOperation,
-    identifiers?: AuthLogPayload["operationIdentifiers"],
-  ): AuthLogPayload {
-    return {
-      kind: "validation",
-      layer: "service",
-      operationName: operation,
-      ...(identifiers && { operationIdentifiers: identifiers }),
-    };
-  },
-} as const;
-
 /* ---------------------- Repository-level factories ------------------------ */
 
 export const AuthRepoLogFactory = {
@@ -259,7 +219,7 @@ export const TransactionLogFactory = {
       event: "rollback",
       identifiers: { transactionId },
       timestamp: new Date().toISOString(),
-      ...(error !== undefined && { error }),
+      ...(error !== undefined && { error }), // <--- It puts the whole error object here
     };
   },
   start(transactionId: string): TransactionLogExtra {

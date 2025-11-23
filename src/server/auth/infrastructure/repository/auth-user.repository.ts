@@ -6,11 +6,6 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-  toErrorContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthRepoLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import { TransactionLogger } from "@/server/auth/logging-auth/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -18,7 +13,6 @@ import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
-import { isBaseError } from "@/shared/errors/core/base-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as defaultLogger } from "@/shared/logging/infra/logging.client";
 
@@ -54,13 +48,6 @@ export class AuthUserRepositoryImpl {
 
     const transactionId = randomUUID();
 
-    const repoContext: AuthLogLayerContext<"infrastructure.repository"> =
-      createAuthOperationContext({
-        identifiers: { transactionId },
-        layer: "infrastructure.repository",
-        operation: "withTransaction",
-      });
-
     this.transactionLogger.start(transactionId);
 
     try {
@@ -77,13 +64,9 @@ export class AuthUserRepositoryImpl {
       });
       this.logger.operation("error", "Repository transaction failed", data);
 
-      const enrichedError =
-        isBaseError(err) && Object.isExtensible(err)
-          ? err.withContext(toErrorContext(repoContext))
-          : err;
-
-      this.transactionLogger.rollback(transactionId, enrichedError);
-      throw enrichedError;
+      // Don't enrich error with logging context - keep them separate
+      this.transactionLogger.rollback(transactionId, err);
+      throw err;
     }
   }
 

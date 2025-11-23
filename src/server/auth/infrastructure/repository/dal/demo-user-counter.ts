@@ -5,7 +5,6 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import {
   type AuthLogLayerContext,
   createAuthOperationContext,
-  toErrorContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -49,9 +48,9 @@ export async function demoUserCounter(
           },
         );
         throw makeIntegrityError({
-          context: toErrorContext(dalContext, {
+          context: {
             kind: "invariant",
-          }),
+          },
           message: "Invariant: insert did not return a row",
         });
       }
@@ -64,10 +63,10 @@ export async function demoUserCounter(
           operationName: dalContext.operation,
         });
         throw makeIntegrityError({
-          context: toErrorContext(dalContext, {
+          context: {
             counterRow,
             kind: "invariant",
-          }),
+          },
           message: "Invariant: demo user counter row returned with null id",
         });
       }

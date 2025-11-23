@@ -2,7 +2,6 @@
 import "server-only";
 import {
   type AuthLogLayerContext,
-  toErrorContext,
   toLoggingContext,
 } from "@/server/auth/logging-auth/auth-layer-context";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
@@ -27,9 +26,9 @@ export async function executeDalOrThrow<T>(
     return await thunk();
   } catch (err: unknown) {
     // Diagnostic context for the error
-    const errorContext = toErrorContext(dalContext, {
+    const errorContext = {
       // purely diagnostic extras only (e.g. table, queryName, diagnosticId)
-    });
+    };
 
     const baseError = normalizePgError(err, errorContext);
 
