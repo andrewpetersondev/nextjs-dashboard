@@ -3,7 +3,7 @@ import { isDev } from "@/shared/config/env-shared";
 import type {
   BaseErrorJson,
   BaseErrorOptions,
-  ErrorContext,
+  ErrorMetadata,
   FieldErrors,
   FormErrors,
 } from "@/shared/errors/core/base-error.types";
@@ -14,11 +14,11 @@ import {
   type Severity,
 } from "@/shared/errors/core/error-codes";
 import {
-  buildUnknownValueContext,
+  buildUnknownValueMetadata,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
-  validateAndMaybeSanitizeContext,
+  validateAndMaybeSanitizeMetadata,
 } from "@/shared/errors/core/error-helpers";
 
 export class BaseError extends Error {
@@ -26,13 +26,17 @@ export class BaseError extends Error {
   readonly description: string;
   readonly fieldErrors?: FieldErrors;
   readonly formErrors?: FormErrors;
-  // Deprecated: keep for transition
-  readonly context: ErrorContext;
+
   readonly layer: AppErrorLayer;
-  readonly metadata: ErrorContext;
+  readonly metadata: ErrorMetadata;
   readonly originalCause?: unknown;
   readonly retryable: boolean;
   readonly severity: Severity;
+
+  /** @deprecated Use metadata instead */
+  get context(): ErrorMetadata {
+    return this.metadata;
+  }
 
   constructor(code: AppErrorKey, options: BaseErrorOptions = {}) {
     const meta = getAppErrorCodeMeta(code);
@@ -57,12 +61,11 @@ export class BaseError extends Error {
 
     // Merge old `context` and new `metadata`, with `metadata` taking precedence
     const merged = { ...(context ?? {}), ...(metadata ?? {}) };
-    const checked = isDev() ? validateAndMaybeSanitizeContext(merged) : merged;
+    const checked = isDev() ? validateAndMaybeSanitizeMetadata(merged) : merged;
     const frozen = isDev()
-      ? (deepFreezeDev(checked) as ErrorContext)
-      : (Object.freeze(checked) as ErrorContext);
+      ? (deepFreezeDev(checked) as ErrorMetadata)
+      : (Object.freeze(checked) as ErrorMetadata);
     this.metadata = frozen;
-    this.context = frozen; // deprecated alias
 
     this.originalCause = cause;
     this.formErrors = formErrors ? Object.freeze([...formErrors]) : undefined;
@@ -95,15 +98,15 @@ export class BaseError extends Error {
       });
     }
     return new BaseError(fallbackCode, {
-      context: buildUnknownValueContext(error),
       message: safeStringifyUnknown(error),
+      metadata: buildUnknownValueMetadata(error),
     });
   }
 
   static wrap(
     code: AppErrorKey,
     err: unknown,
-    context: ErrorContext = {},
+    metadata: ErrorMetadata = {},
     message?: string,
   ): BaseError {
     if (err instanceof BaseError) {
@@ -114,13 +117,13 @@ export class BaseError extends Error {
     if (err instanceof Error) {
       return new BaseError(code, {
         cause: err,
-        context,
         message: message ?? err.message,
+        metadata,
       });
     }
     return new BaseError(code, {
-      context: buildUnknownValueContext(err, context),
       message: message ?? "Wrapped unknown value",
+      metadata: buildUnknownValueMetadata(err, metadata),
     });
   }
 
@@ -130,10 +133,10 @@ export class BaseError extends Error {
     }
     const next = this.create(code, {
       cause: this.originalCause,
-      context: { ...this.context },
       fieldErrors: this.fieldErrors,
       formErrors: this.formErrors,
       message: overrideMessage ?? this.message,
+      metadata: { ...this.metadata },
     }) as this;
     this.copyStackTo(next);
     return next;

@@ -150,10 +150,10 @@ export class LoggingClient
 
     const basePayload: BaseErrorLogPayload = {
       code: baseJson.code,
-      context: baseJson.context,
       description: baseJson.description,
       diagnosticId,
       layer: baseJson.layer,
+      metadata: baseJson.metadata,
       ...(baseJson.fieldErrors && { fieldErrors: baseJson.fieldErrors }),
       ...(baseJson.formErrors && { formErrors: baseJson.formErrors }),
       message: baseJson.message,

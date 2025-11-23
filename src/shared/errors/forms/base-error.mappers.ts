@@ -1,7 +1,5 @@
-// File: 'src/shared/errors/base-error.mappers.ts'
-// Summary: Form mapping without fallbacks. Message comes directly from the error.
+// src/shared/errors/forms/base-error.mappers.ts
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 
 export function mapBaseErrorToFormPayload<T extends string>(
@@ -10,8 +8,10 @@ export function mapBaseErrorToFormPayload<T extends string>(
   fieldErrors: DenseFieldErrorMap<T, string>;
   message: string;
 } {
-  const fieldErrors =
-    getFieldErrors<T>(error) ?? ({} as DenseFieldErrorMap<T, string>);
+  // Break dependency on shared/forms application layer.
+  // We directly access fieldErrors from the error object.
+  const fieldErrors = (error.fieldErrors ??
+    {}) as unknown as DenseFieldErrorMap<T, string>;
 
   const message = error.message;
 

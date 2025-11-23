@@ -40,7 +40,7 @@ export function redactNonSerializable(value: unknown): unknown {
   }
 }
 
-export function buildUnknownValueContext(
+export function buildUnknownValueMetadata(
   value: unknown,
   extra: Record<string, unknown> = {},
 ): Record<string, unknown> {
@@ -82,7 +82,7 @@ export function deepFreezeDev<T>(obj: T): T {
   return obj;
 }
 
-export function validateAndMaybeSanitizeContext(
+export function validateAndMaybeSanitizeMetadata(
   ctx: Record<string, unknown>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};

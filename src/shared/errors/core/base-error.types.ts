@@ -17,15 +17,16 @@ export interface CanonicalErrorMetadata {
 }
 
 export interface BaseErrorJson extends CanonicalErrorMetadata {
-  // Deprecated: prefer \`metadata\`
-  readonly context?: ErrorContext;
   readonly fieldErrors?: FieldErrors;
   readonly formErrors?: FormErrors;
   readonly message: string;
-  readonly metadata?: ErrorContext;
+  readonly metadata?: ErrorMetadata;
 }
 
-export type ErrorContext = Readonly<Record<string, unknown>>;
+export type ErrorMetadata = Readonly<Record<string, unknown>>;
+
+/** @deprecated Use ErrorMetadata instead */
+export type ErrorContext = ErrorMetadata;
 
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 
@@ -33,10 +34,10 @@ export type FormErrors = readonly string[];
 
 export interface BaseErrorOptions {
   readonly cause?: unknown;
-  // Deprecated: prefer \`metadata\`
-  readonly context?: ErrorContext;
+  /** @deprecated Use metadata instead */
+  readonly context?: ErrorMetadata;
   readonly fieldErrors?: FieldErrors;
   readonly formErrors?: FormErrors;
   readonly message?: string;
-  readonly metadata?: ErrorContext;
+  readonly metadata?: ErrorMetadata;
 }
