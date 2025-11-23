@@ -2,7 +2,7 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "ES2022",
+    "target": "ES2024",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
