@@ -10,6 +10,7 @@
 import "server-only";
 import type { z } from "zod";
 import { ServerEnvSchema } from "@/shared/config/env-schemas";
+import { mapEnvVars } from "@/shared/config/env-utils";
 
 let cachedServerEnv: Readonly<z.infer<typeof ServerEnvSchema>> | undefined;
 
@@ -18,13 +19,13 @@ function parseServerEnv() {
     return cachedServerEnv;
   }
 
-  // Map actual UPPER_SNAKE_CASE env vars to the camelCase shape expected by the schema
-  const envToValidate = {
-    databaseUrl: process.env.DATABASE_URL,
-    sessionAudience: process.env.SESSION_AUDIENCE,
-    sessionIssuer: process.env.SESSION_ISSUER,
-    sessionSecret: process.env.SESSION_SECRET,
-  };
+  // Use centralized env mapping from shared config
+  const envToValidate = mapEnvVars({
+    databaseUrl: "DATABASE_URL",
+    sessionAudience: "SESSION_AUDIENCE",
+    sessionIssuer: "SESSION_ISSUER",
+    sessionSecret: "SESSION_SECRET",
+  });
 
   const parsed = ServerEnvSchema.safeParse(envToValidate);
 

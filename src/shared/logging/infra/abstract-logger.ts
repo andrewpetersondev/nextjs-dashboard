@@ -1,5 +1,6 @@
 // src/shared/logging/infra/abstract-logger.ts
-import { getRuntimeNodeEnv } from "@/shared/config/env-public";
+
+import { isPublicProd } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
 import type { LogEntry } from "@/shared/logging/core/logger.types";
@@ -11,6 +12,10 @@ import {
 import { toSafeErrorShape } from "@/shared/logging/infra/logging.mappers";
 import { createRedactor } from "@/shared/logging/redaction/redaction";
 
+/**
+ * Get process ID if available (server-side only).
+ * Returns undefined in browser environments.
+ */
 const processId = getProcessId();
 
 /**
@@ -122,9 +127,12 @@ export abstract class AbstractLogger {
   }
 
   protected format(entry: LogEntry): unknown[] {
-    if (getRuntimeNodeEnv() === "production") {
+    // Use centralized production detection from config
+    if (isPublicProd()) {
       return [JSON.stringify(entry)];
     }
+
+    // Development formatting: human-readable console output
     const prefix: string[] = [entry.timestamp];
     if (entry.requestId) {
       prefix.push(`[req:${entry.requestId}]`);
