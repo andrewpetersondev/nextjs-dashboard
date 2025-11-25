@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { AuthUserRepositoryPort } from "../../ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: test suite requires multiple scenarios
 describe("AuthUserService", () => {
   let mockRepo: AuthUserRepositoryPort;
   let mockHasher: PasswordHasherPort;
+  let mockLogger: LoggingClientContract;
   let service: AuthUserService;
 
   beforeEach(() => {
@@ -21,7 +23,20 @@ describe("AuthUserService", () => {
       hash: vi.fn(),
     };
 
-    service = new AuthUserService(mockRepo, mockHasher);
+    mockLogger = {
+      child: vi.fn().mockReturnThis(),
+      debug: vi.fn(),
+      error: vi.fn(),
+      errorWithDetails: vi.fn(),
+      info: vi.fn(),
+      operation: vi.fn(),
+      trace: vi.fn(),
+      warn: vi.fn(),
+      withContext: vi.fn().mockReturnThis(),
+      withRequest: vi.fn().mockReturnThis(),
+    } as unknown as LoggingClientContract;
+
+    service = new AuthUserService(mockRepo, mockHasher, mockLogger);
   });
 
   describe("signup", () => {
@@ -29,9 +44,10 @@ describe("AuthUserService", () => {
       const mockHashedPassword = "hashed_password_123";
       const mockUserRecord = {
         email: "test@example.com",
-        id: "user-123",
+        id: "550e8400-e29b-41d4-a716-446655440000",
         password: mockHashedPassword,
         role: "USER",
+        sensitiveData: "",
         username: "testuser",
       };
 
@@ -68,20 +84,21 @@ describe("AuthUserService", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.kind).toBe("missing_fields");
+        expect(result.error.code).toBe("validation");
       }
       expect(mockRepo.signup).not.toHaveBeenCalled();
     });
   });
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login tests need multiple scenarios
   describe("login", () => {
     it("should successfully login with valid credentials", async () => {
       const mockUserRecord = {
         email: "test@example.com",
-        id: "user-123",
+        id: "550e8400-e29b-41d4-a716-446655440000",
         password: "hashed_password_123",
         role: "USER",
+        sensitiveData: "",
         username: "testuser",
       };
 
@@ -96,7 +113,7 @@ describe("AuthUserService", () => {
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.value.email).toBe("test@example.com");
-        expect(result.value.id).toBe("user-123");
+        expect(result.value.id).toBe("550e8400-e29b-41d4-a716-446655440000");
       }
       expect(mockRepo.login).toHaveBeenCalledWith({
         email: "test@example.com",
@@ -110,9 +127,10 @@ describe("AuthUserService", () => {
     it("should return error when password is incorrect", async () => {
       const mockUserRecord = {
         email: "test@example.com",
-        id: "user-123",
+        id: "550e8400-e29b-41d4-a716-446655440001",
         password: "hashed_password_123",
         role: "USER",
+        sensitiveData: "",
         username: "testuser",
       };
 
@@ -126,16 +144,17 @@ describe("AuthUserService", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.kind).toBe("invalid_credentials");
+        expect(result.error.code).toBe("validation");
       }
     });
 
     it("should return error when user has no password hash", async () => {
       const mockUserRecord = {
         email: "test@example.com",
-        id: "user-123",
+        id: "550e8400-e29b-41d4-a716-446655440002",
         password: "",
         role: "USER",
+        sensitiveData: "",
         username: "testuser",
       };
 
@@ -148,7 +167,7 @@ describe("AuthUserService", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.kind).toBe("invalid_credentials");
+        expect(result.error.code).toBe("validation");
       }
       expect(mockHasher.compare).not.toHaveBeenCalled();
     });

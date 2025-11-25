@@ -46,7 +46,6 @@
     "**/*.mts"
   ],
   "exclude": [
-    "**/*.test.ts",
     "node_modules",
     ".next",
     "out",
@@ -56,7 +55,6 @@
     "docs",
     "cypress",
     "coverage",
-    "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/*.cy.ts",
