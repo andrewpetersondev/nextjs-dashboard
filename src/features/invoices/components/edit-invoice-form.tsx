@@ -15,10 +15,11 @@ import {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
+import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import type { FieldError } from "@/shared/forms/domain/field-error.types";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-state";
-import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
@@ -27,9 +28,9 @@ import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
   return async (
-    prevState: LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+    prevState: FormResult<UpdateInvoiceOutput>,
     formData: FormData,
-  ): Promise<LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> =>
+  ): Promise<FormResult<UpdateInvoiceOutput>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
@@ -97,35 +98,44 @@ export const EditInvoiceForm = ({
   customers: CustomerField[];
   errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
 }): JSX.Element => {
-  const initialState =
-    createInitialFailedFormStateFromSchema(UpdateInvoiceSchema);
+  const initialState = createInitialFailedFormState<UpdateInvoiceFieldNames>(
+    Object.keys(
+      UpdateInvoiceSchema.shape,
+    ) as readonly UpdateInvoiceFieldNames[],
+  );
 
   const [state, action, pending] = useActionState<
-    LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+    FormResult<UpdateInvoiceOutput>,
     FormData
-    //@ts-expect-error
   >(createWrappedUpdateAction(invoice.id), initialState);
-
   // Build a view-model for the UI:
   // - Before submit: use the provided invoice (required fields)
   // - After successful submit: merge the server-validated patch into the existing view
   const currentInvoice: EditInvoiceViewModel =
-    state.success && state.data
-      ? ({ ...invoice, ...state.data } as EditInvoiceViewModel)
+    state.ok && state.value.data
+      ? ({ ...invoice, ...state.value.data } as EditInvoiceViewModel)
       : invoice;
 
-  const showAlert = useAutoHideAlert(
-    state.message ? "do not keep this" : "this needs to be replace",
-  );
+  // Extract message from either success or error state
+  const message = state.ok ? state.value.message : state.error.message;
 
-  // Prefer externally provided dense errors; fall back to state (failure) errors or empty dense errors from initial state
+  const showAlert = useAutoHideAlert(message || "");
+
+  // Extract field errors from BaseError metadata
+  const stateFieldErrors = state.ok
+    ? undefined
+    : getFieldErrors<UpdateInvoiceFieldNames>(state.error);
+
+  // Prefer externally provided dense errors; fall back to state errors or empty from initial state
+  const emptyErrors = initialState.ok
+    ? undefined
+    : getFieldErrors<UpdateInvoiceFieldNames>(initialState.error);
+
   const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string> =
     externalErrors ??
-    (state.success
-      ? //@ts-ignore
-        initialState.errors
-      : //@ts-ignore
-        (state.errors ?? initialState.errors));
+    stateFieldErrors ??
+    emptyErrors ??
+    ({} as DenseFieldErrorMap<UpdateInvoiceFieldNames, string>);
 
   return (
     <div>
@@ -136,7 +146,6 @@ export const EditInvoiceForm = ({
           errors={denseErrors}
           pending={pending}
         />
-
         <FormActionRow cancelHref="/dashboard/invoices">
           <FormSubmitButton
             data-cy="edit-invoice-submit-button"
@@ -146,7 +155,6 @@ export const EditInvoiceForm = ({
           </FormSubmitButton>
         </FormActionRow>
       </form>
-      {/*@ts-ignore*/}
       <ServerMessage showAlert={showAlert} state={state} />
     </div>
   );

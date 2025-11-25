@@ -13,18 +13,19 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
+import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { FieldError } from "@/shared/forms/domain/field-error.types";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-state";
-import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/timings.tokens";
 import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 
-const INITIAL_STATE = createInitialFailedFormStateFromSchema(
-  CreateInvoiceSchema,
-) as unknown as LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
+const INITIAL_STATE = createInitialFailedFormState<CreateInvoiceFieldNames>(
+  Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
+);
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <TODO FIX LATER>
 export const CreateInvoiceForm = ({
@@ -32,41 +33,33 @@ export const CreateInvoiceForm = ({
 }: {
   customers: CustomerField[];
 }): JSX.Element => {
-  const wrappedAction = async (
-    prev: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
-    formData: FormData,
-  ): Promise<LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> => {
-    // Coerce the server action to the expected LegacyFormState shape
-    return (await createInvoiceAction(
-      // biome-ignore lint/suspicious/noExplicitAny: <temp>
-      prev as any,
-      // biome-ignore lint/suspicious/noExplicitAny: <temp>
-      formData as any,
-    )) as unknown as LegacyFormState<
-      CreateInvoiceFieldNames,
-      CreateInvoiceOutput
-    >;
-  };
-
   const [state, action, pending] = useActionState<
-    LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
+    FormResult<CreateInvoiceOutput>,
     FormData
-  >(wrappedAction, INITIAL_STATE);
+  >(createInvoiceAction, INITIAL_STATE);
 
   const [showAlert, setShowAlert] = useState(false);
 
+  // Extract message from either success or error state
+  const message = state.ok ? state.value.message : state.error.message;
+
   useEffect(() => {
-    if (!state?.message) {
+    if (!message) {
       setShowAlert(false);
       return;
     }
     setShowAlert(true);
     const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
     return () => clearTimeout(timer);
-  }, [state?.message]);
+  }, [message]);
 
   const dateId = useId();
   const amountId = useId();
+
+  // Extract field errors from BaseError metadata
+  const fieldErrors = state.ok
+    ? undefined
+    : getFieldErrors<CreateInvoiceFieldNames>(state.error);
 
   return (
     <section>
@@ -83,7 +76,7 @@ export const CreateInvoiceForm = ({
           <SensitiveData
             data-cy="sensitive-data-input"
             disabled={pending}
-            error={state.errors?.sensitiveData as FieldError | undefined}
+            error={fieldErrors?.sensitiveData as FieldError | undefined}
           />
 
           <div className="mb-4">
@@ -93,14 +86,14 @@ export const CreateInvoiceForm = ({
               dataCy="customer-select"
               defaultValue=""
               disabled={pending}
-              error={state.errors?.customerId as FieldError | undefined}
+              error={fieldErrors?.customerId as FieldError | undefined}
             />
           </div>
 
           <InvoiceAmountInput
             dataCy="amount-input"
             disabled={pending}
-            error={state.errors?.amount as FieldError | undefined}
+            error={fieldErrors?.amount as FieldError | undefined}
             id={amountId}
             label="Choose an amount"
             name="amount"
@@ -112,7 +105,7 @@ export const CreateInvoiceForm = ({
           <InvoiceStatusRadioGroup
             data-cy="invoice-status-radio-group"
             disabled={pending}
-            error={state.errors?.status as FieldError | undefined}
+            error={fieldErrors?.status as FieldError | undefined}
             name="status"
             value="pending"
           />

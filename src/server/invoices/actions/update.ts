@@ -18,7 +18,8 @@ import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
 } from "@/shared/forms/domain/error-map.factory";
-import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
@@ -38,45 +39,40 @@ async function publishUpdatedEvent(
   });
 }
 
-function handleActionError<
-  N extends UpdateInvoiceFieldNames,
-  F extends UpdateInvoiceOutput,
->(
-  prevState: LegacyFormState<N, F>,
-  id: string,
-  error: unknown,
-): LegacyFormState<N, F> {
+function handleActionError(id: string, error: unknown): FormResult<never> {
   logger.error(INVOICE_MSG.serviceError, {
     context: "updateInvoiceAction",
     error,
     id,
     message: INVOICE_MSG.serviceError,
-    prevState,
   });
-  return {
-    ...prevState,
-    errors: toDenseFieldErrorMap({}, [] as unknown as readonly N[]),
+
+  const schemaFields = Object.keys(
+    UpdateInvoiceSchema.shape,
+  ) as readonly UpdateInvoiceFieldNames[];
+
+  return formError<UpdateInvoiceFieldNames>({
+    fieldErrors: toDenseFieldErrorMap({}, schemaFields),
     message:
       error instanceof BaseError
         ? INVOICE_MSG.invalidInput
         : INVOICE_MSG.serviceError,
-    success: false,
-  };
+  });
 }
 
 /**
  * Server action for updating an invoice.
  * Extracts and validates form data, then calls the service layer.
- * @param prevState - Previous form state
+ * @param _prevState - Previous form state (unused but required by useActionState)
  * @param id - Invoice ID as a string
  * @param formData - FormData from the client
- * @returns FormState with data, errors, message, and success
+ * @returns FormResult with data, errors, message, and success
  */
 export async function updateInvoiceAction(
-  prevState: LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>,
+  _prevState: FormResult<UpdateInvoiceOutput>,
   id: string,
   formData: FormData,
-): Promise<LegacyFormState<UpdateInvoiceFieldNames, UpdateInvoiceOutput>> {
+): Promise<FormResult<UpdateInvoiceOutput>> {
   try {
     const input = {
       amount: formData.get("amount"),
@@ -107,14 +103,11 @@ export async function updateInvoiceAction(
         schemaFields,
       );
 
-      return {
-        ...prevState,
-        errors: dense,
+      return formError<UpdateInvoiceFieldNames>({
+        fieldErrors: dense,
         message: INVOICE_MSG.validationFailed,
-        success: false,
-        // Optionally echo raw values (avoid sensitive fields if present)
         values: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
-      };
+      });
     }
 
     const service = new InvoiceService(new InvoiceRepository(getAppDb()));
@@ -124,12 +117,8 @@ export async function updateInvoiceAction(
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
     revalidatePath(ROUTES.dashboard.root);
 
-    return {
-      data: updatedInvoice,
-      message: INVOICE_MSG.updateSuccess,
-      success: true,
-    };
+    return formOk(updatedInvoice, INVOICE_MSG.updateSuccess);
   } catch (error) {
-    return handleActionError(prevState, id, error);
+    return handleActionError(id, error);
   }
 }

@@ -15,10 +15,11 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
+import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod-error.mapper";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
 import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod-guards";
-import type { LegacyFormState } from "@/shared/forms/legacy/legacy-form.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { logger } from "@/shared/logging/infra/logging.client";
@@ -29,13 +30,10 @@ const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
 /**
  * Server action for creating a new invoice.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function createInvoiceAction(
-  prevState: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>,
+  _prevState: FormResult<CreateInvoiceOutput>,
   formData: FormData,
-): Promise<LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>> {
-  let result: LegacyFormState<CreateInvoiceFieldNames, CreateInvoiceOutput>;
-
+): Promise<FormResult<CreateInvoiceOutput>> {
   try {
     const input: InvoiceFormDto = {
       amount: Number(formData.get("amount")),
@@ -62,19 +60,13 @@ export async function createInvoiceAction(
 
       revalidatePath(ROUTES.dashboard.root);
 
-      result = {
-        data: parsed.data,
-        message: translator(INVOICE_MSG.createSuccess),
-        success: true,
-      };
-    } else {
-      result = {
-        ...prevState,
-        errors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
-        message: translator(INVOICE_MSG.validationFailed),
-        success: false,
-      };
+      return formOk(parsed.data, translator(INVOICE_MSG.createSuccess));
     }
+
+    return formError<CreateInvoiceFieldNames>({
+      fieldErrors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
+      message: translator(INVOICE_MSG.validationFailed),
+    });
   } catch (error) {
     // Decide the top-level user-facing message based on error type
     const baseMessage = isZodErrorInstance(error)
@@ -87,15 +79,11 @@ export async function createInvoiceAction(
       message: baseMessage,
     });
 
-    result = {
-      ...prevState,
-      // Ensure errors always match the dense map type expected by FormState
-      errors: isZodErrorInstance(error)
+    return formError<CreateInvoiceFieldNames>({
+      fieldErrors: isZodErrorInstance(error)
         ? mapZodErrorToDenseFieldErrors(error, allowed)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       message: baseMessage,
-      success: false,
-    };
+    });
   }
-  return result;
 }
