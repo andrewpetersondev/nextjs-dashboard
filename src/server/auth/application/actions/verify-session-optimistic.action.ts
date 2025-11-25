@@ -7,7 +7,7 @@ import type { SessionVerificationResult } from "@/features/auth/sessions/session
 import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
 import { readSessionToken } from "@/server/auth/domain/session/codecs/session-codec";
 import type { DecryptPayload } from "@/server/auth/domain/session/core/session-payload.types";
-import { authLogger as logger } from "@/server/auth/logging-auth/auth-logger.shared";
+import { authLogger as logger } from "@/server/auth/logging-auth/auth-logger";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.

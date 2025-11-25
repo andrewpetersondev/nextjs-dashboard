@@ -1,4 +1,4 @@
-// src/server/auth/logging/auth-logger.shared.ts
+// src/server/auth/logging/auth-logger.ts
 import "server-only";
 import type { AuthLogPayload } from "@/server/auth/logging-auth/auth-logging.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

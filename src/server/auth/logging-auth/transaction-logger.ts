@@ -3,7 +3,7 @@ import "server-only";
 import {
   createAuthLogger,
   logAuthError,
-} from "@/server/auth/logging-auth/auth-logger.shared";
+} from "@/server/auth/logging-auth/auth-logger";
 import {
   AUTH_LOG_CONTEXTS,
   TransactionLogFactory,
