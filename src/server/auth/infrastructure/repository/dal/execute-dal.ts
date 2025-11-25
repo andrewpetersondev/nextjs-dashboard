@@ -1,35 +1,50 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import type { AuthLogBase } from "@/server/auth/logging-auth/auth-logging.types";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 interface DalContextLite {
-  operation: string;
   identifiers: Record<string, string | number>;
+  operation: string;
 }
 
 function buildDalErrorPayload(
   op: string,
   error: unknown,
   identifiers: Record<string, string | number>,
-) {
+): AuthLogBase {
+  let payload: AuthLogBase;
+
   switch (op) {
     case "getUserByEmail":
-      return AuthLog.dal.getUserByEmail.error(error, identifiers);
+      payload = AuthLog.dal.getUserByEmail.error(error, identifiers);
+      break;
     case "insertUser":
-      return AuthLog.dal.insertUser.error(error, identifiers);
+      payload = AuthLog.dal.insertUser.error(error, identifiers);
+      break;
     case "demoUserCounter":
     case "demoUser":
-      return AuthLog.dal.demoUserCounter.error(error, identifiers);
+      payload = AuthLog.dal.demoUserCounter.error(error, identifiers);
+      break;
     case "withTransaction":
-      return AuthLog.dal.withTransaction.error(
+      payload = AuthLog.dal.withTransaction.error(
         String(identifiers.transactionId || "unknown"),
         error,
-      ); // adapt
+      );
+      break;
     default:
-      return AuthLog.dal.insertUser.error(error, identifiers);
+      // Generic fallback for unknown operations - use insertUser error as template
+      // since we don't have a generic dal error factory
+      payload = AuthLog.dal.insertUser.error(error, {
+        ...identifiers,
+        unknownOperation: op,
+      });
+      break;
   }
+
+  return payload;
 }
 
 /**

@@ -52,6 +52,10 @@ export class AuthUserRepositoryImpl {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
 
+    if (typeof dbWithTx.transaction !== "function") {
+      throw new Error("Database does not support transactions");
+    }
+
     const transactionId = randomUUID();
 
     this.transactionLogger.start(transactionId);
