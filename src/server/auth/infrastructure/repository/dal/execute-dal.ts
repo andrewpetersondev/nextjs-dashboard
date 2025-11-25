@@ -1,8 +1,36 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import type { AuthLogLayerContext } from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+
+interface DalContextLite {
+  operation: string;
+  identifiers: Record<string, string | number>;
+}
+
+function buildDalErrorPayload(
+  op: string,
+  error: unknown,
+  identifiers: Record<string, string | number>,
+) {
+  switch (op) {
+    case "getUserByEmail":
+      return AuthLog.dal.getUserByEmail.error(error, identifiers);
+    case "insertUser":
+      return AuthLog.dal.insertUser.error(error, identifiers);
+    case "demoUserCounter":
+    case "demoUser":
+      return AuthLog.dal.demoUserCounter.error(error, identifiers);
+    case "withTransaction":
+      return AuthLog.dal.withTransaction.error(
+        String(identifiers.transactionId || "unknown"),
+        error,
+      ); // adapt
+    default:
+      return AuthLog.dal.insertUser.error(error, identifiers);
+  }
+}
 
 /**
  * Execute DAL operation with automatic error handling.
@@ -16,31 +44,23 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
-  dalContext: AuthLogLayerContext<"infrastructure.dal">,
-  logger: LoggingClientContract,
+  dalContext: DalContextLite,
+  _logger: LoggingClientContract,
 ): Promise<T> {
   try {
     return await thunk();
   } catch (err: unknown) {
-    // Diagnostic context for the error
-    const errorContext = {
-      // purely diagnostic extras only (e.g. table, queryName, diagnosticId)
-    };
-
-    const baseError = normalizePgError(err, errorContext);
-
-    // Log once at the source (DAL) with full details
-    // We use .operation to keep structure consistent, passing the error explicitly
-    logger.operation("error", "DAL operation failed", {
-      code: baseError.code,
-      diagnosticId: baseError.context.diagnosticId,
-      error: baseError, // Attach error here
-      operationContext: dalContext.loggerContext,
-      operationIdentifiers: dalContext.identifiers,
-      operationName: dalContext.operation,
-      severity: baseError.severity,
-    });
-
+    const baseError = normalizePgError(err, {});
+    // Use unified logging
+    logAuth(
+      "error",
+      "DAL operation failed",
+      buildDalErrorPayload(
+        dalContext.operation,
+        baseError,
+        dalContext.identifiers,
+      ),
+    );
     throw baseError;
   }
 }

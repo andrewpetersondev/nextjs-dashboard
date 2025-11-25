@@ -2,13 +2,8 @@
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { setSessionToken } from "@/server/auth/domain/session/core/session";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/infra/logging.client";
 import { tryCatchAsync } from "@/shared/result/async/result-async";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
@@ -19,24 +14,16 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  *
  * @returns A promise that resolves to a Result indicating the success or failure of the session establishment.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function establishSessionAction(
   user: SessionUser,
 ): Promise<Result<SessionUser, BaseError>> {
-  const actionContext: AuthLogLayerContext<"action"> =
-    createAuthOperationContext({
-      identifiers: { role: user.role, userId: user.id },
-      layer: "action",
-      operation: "login", // or a dedicated "establishSession" if you add it
-    });
-
-  // This action might be called from a pipeline where a logger already exists contextually,
-  // but since it's a standalone server action, we create a fresh one or we could accept it.
-  // Given the signature, we create one here.
   const requestId = crypto.randomUUID();
-  const actionLogger = logger
-    .withRequest(requestId)
-    .child({ operation: "establishSession", scope: "action" });
+
+  // Start (optional start event)
+  logAuth("info", "Establish session start", AuthLog.action.login.start(), {
+    additionalData: { role: user.role, userId: user.id },
+    requestId,
+  });
 
   const res = await tryCatchAsync(
     async () => {
@@ -51,47 +38,20 @@ export async function establishSessionAction(
     : Err<BaseError>(res.error);
 
   if (mapped.ok) {
-    actionLogger.operation("info", "Session established successfully", {
-      ...AuthActionLogFactory.success(actionContext.operation, {
-        role: user.role,
-        userId: user.id,
-      }),
-    });
+    logAuth(
+      "info",
+      "Session established successfully",
+      AuthLog.action.login.success({ role: user.role, userId: user.id }),
+      { requestId },
+    );
   } else {
     const error = mapped.error;
-
-    // TODO: WHY DO I HAVE errorDetails? also I should probably extract the metadata to errorDetails builder
-    actionLogger.operation("error", "Failed to establish session", {
-      ...AuthActionLogFactory.failure(actionContext.operation, {
-        role: user.role,
-        userId: user.id,
-      }),
-      // Only rely on BaseError surface fields
-      errorCode: error.code,
-      errorMessage: error.message,
-      ...(() => {
-        if (!error.metadata) {
-          return {};
-        }
-        const formErrors = error.metadata.formErrors as
-          | readonly string[]
-          | undefined;
-        const fieldErrors = error.metadata.fieldErrors as
-          | Record<string, readonly string[]>
-          | undefined;
-        if (!(formErrors || fieldErrors)) {
-          return {};
-        }
-        const details: Record<string, unknown> = {};
-        if (formErrors) {
-          details.formErrors = formErrors;
-        }
-        if (fieldErrors) {
-          details.fieldErrors = fieldErrors;
-        }
-        return { errorDetails: details };
-      })(),
-    });
+    logAuth(
+      "error",
+      "Failed to establish session",
+      AuthLog.action.login.error(error, { role: user.role, userId: user.id }),
+      { requestId },
+    );
   }
 
   return mapped;

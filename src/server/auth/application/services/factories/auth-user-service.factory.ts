@@ -15,13 +15,15 @@ import { logger as defaultLogger } from "@/shared/logging/infra/logging.client";
  *
  * @param db - Database connection used by the repository implementation.
  * @param logger -
+ * @param requestId
  * @returns A configured `AuthUserService`.
  */
 export function createAuthUserService(
   db: AppDatabase,
   logger: LoggingClientContract = defaultLogger,
+  requestId?: string,
 ): AuthUserService {
-  const repo = new AuthUserRepositoryImpl(db, logger);
+  const repo = new AuthUserRepositoryImpl(db, logger, requestId);
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =
     new AuthUserRepositoryAdapter(repo);
   const hasherPort: PasswordHasherPort = new BcryptPasswordHasherAdapter();

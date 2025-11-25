@@ -3,15 +3,10 @@ import { redirect } from "next/navigation";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AuthActionLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
@@ -22,32 +17,22 @@ const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
  *
  * @internal
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <close enough>
 async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
-  const actionContext: AuthLogLayerContext<"action"> =
-    createAuthOperationContext({
-      identifiers: { role },
-      layer: "action",
-      operation: "demoUser",
-    });
-
   const requestId = crypto.randomUUID();
 
-  // Root logger for the request, scoped to the action
-  const actionLogger = logger
-    .withRequest(requestId)
-    .child({ operation: "demoUser", scope: "action" });
+  logAuth(
+    "info",
+    "Demo user creation started",
+    AuthLog.action.demoUser.start(),
+    {
+      additionalData: { role },
+      requestId,
+    },
+  );
 
-  actionLogger.operation("info", "Demo user creation started", {
-    ...AuthActionLogFactory.start(actionContext.operation),
-    identifiers: actionContext.identifiers,
-    operationContext: actionContext.loggerContext,
-    operationIdentifiers: actionContext.identifiers,
-  });
-
-  const service = createAuthUserService(getAppDb(), actionLogger);
+  const service = createAuthUserService(getAppDb());
 
   const sessionResult = await executeAuthPipeline(
     role,
@@ -57,38 +42,14 @@ async function createDemoUserInternal(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    // TODO: WHY DO I HAVE errorDetails?
-    actionLogger.operation("error", "Demo user creation failed", {
-      ...AuthActionLogFactory.failure(actionContext.operation, {
-        role,
-      }),
-      errorCode: error.code,
-      errorMessage: error.message,
-      operationContext: actionContext.loggerContext,
-      operationIdentifiers: actionContext.identifiers,
-      ...(() => {
-        if (!error.metadata) {
-          return {};
-        }
-        const formErrors = error.metadata.formErrors as
-          | readonly string[]
-          | undefined;
-        const fieldErrors = error.metadata.fieldErrors as
-          | Record<string, readonly string[]>
-          | undefined;
-        if (!(formErrors || fieldErrors)) {
-          return {};
-        }
-        const details: Record<string, unknown> = {};
-        if (formErrors) {
-          details.formErrors = formErrors;
-        }
-        if (fieldErrors) {
-          details.fieldErrors = fieldErrors;
-        }
-        return { errorDetails: details };
-      })(),
-    });
+    logAuth(
+      "error",
+      "Demo user creation failed",
+      AuthLog.action.demoUser.error(error, { role }),
+      {
+        requestId,
+      },
+    );
 
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
@@ -96,13 +57,14 @@ async function createDemoUserInternal(
     });
   }
 
-  actionLogger.operation("info", "Demo user created successfully", {
-    ...AuthActionLogFactory.success(actionContext.operation, {
-      role,
-    }),
-    operationContext: actionContext.loggerContext,
-    operationIdentifiers: actionContext.identifiers,
-  });
+  logAuth(
+    "info",
+    "Demo user created successfully",
+    AuthLog.action.demoUser.success({ role }),
+    {
+      requestId,
+    },
+  );
 
   redirect(ROUTES.dashboard.root);
 }

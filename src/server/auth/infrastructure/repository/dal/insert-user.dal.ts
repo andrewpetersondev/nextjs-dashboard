@@ -2,11 +2,7 @@
 import "server-only";
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
@@ -19,6 +15,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * @param db - Database connection
  * @param input - AuthSignupDalInput containing validated, normalized user input
  * @param parentLogger - Repository / request-level logger to preserve context
+ * @param requestId - Optional request ID for tracing
  * @returns Promise<NewUserRow> - The freshly inserted user row
  * @throws BaseError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
@@ -27,18 +24,10 @@ export async function insertUserDal(
   db: AppDatabase,
   input: AuthSignupPayload,
   parentLogger: LoggingClientContract,
+  requestId?: string,
 ): Promise<NewUserRow> {
   const { email, username, password, role } = input;
-
-  const dalContext: AuthLogLayerContext<"infrastructure.dal"> =
-    createAuthOperationContext({
-      identifiers: { email, username },
-      layer: "infrastructure.dal",
-      operation: "insertUser",
-    });
-
-  // Use child logger with dal scope
-  const dalLogger = parentLogger.child({ scope: "dal" });
+  const identifiers = { email, username } as Record<string, string>;
 
   return await executeDalOrThrow(
     async () => {
@@ -49,24 +38,21 @@ export async function insertUserDal(
 
       if (!userRow) {
         throw makeIntegrityError({
-          context: {
-            kind: "invariant",
-          },
+          context: { kind: "invariant" },
           message: "Insert did not return a row",
         });
       }
 
-      dalLogger.operation("info", "User row inserted", {
-        ...AuthDalLogFactory.success("insertUser", {
-          email,
-          userId: userRow.id,
-        }),
-        details: { role },
-      });
+      logAuth(
+        "info",
+        "User row inserted",
+        AuthLog.dal.insertUser.success({ email, userId: userRow.id }),
+        { additionalData: { role }, requestId },
+      );
 
       return userRow;
     },
-    dalContext,
+    { identifiers, operation: "insertUser" },
     parentLogger,
   );
 }

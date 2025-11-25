@@ -13,21 +13,15 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.ops";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { mapBaseErrorToFormPayload } from "@/shared/errors/forms/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = LOGIN_FIELDS_LIST;
-const ctx = AUTH_ACTION_CONTEXTS.login;
 
 /**
  * Handles the login action by validating form data, finding the user,
@@ -48,34 +42,16 @@ export async function loginAction(
 ): Promise<FormResult<LoginField>> {
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
-
-  // Create a unified action-layer context for this request.
-  const actionContext: AuthLogLayerContext<"action"> =
-    createAuthOperationContext({
-      identifiers: { ip },
-      layer: "action",
-      operation: "login",
-    });
-
-  // Root logger for the request, scoped to the action
-  const actionLogger = logger
-    .withRequest(requestId)
-    .child({ operation: "login", scope: "action" });
-
   const tracker = new PerformanceTracker();
 
   // Start
-  actionLogger.operation("info", "Login action started", {
-    ...ctx.start(),
-    details: ctx.initiatedPayload({ ip, userAgent }),
-    identifiers: actionContext.identifiers,
-    operation: actionContext.operation,
+  logAuth("info", "Login action started", AuthLog.action.login.start(), {
+    additionalData: { ip, userAgent },
+    requestId,
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, LoginSchema, fields, {
-      loggerContext: actionContext.loggerContext,
-    }),
+    validateForm(formData, LoginSchema, fields),
   );
 
   if (!validated.ok) {
@@ -84,41 +60,40 @@ export async function loginAction(
     ).length;
 
     // Validation failure
-    actionLogger.operation("warn", "Login validation failed", {
-      ...ctx.validationFailed({ errorCount, ip }),
-      details: ctx.validationFailurePayload({
-        errorCount,
-        ip,
-        tracker,
-      }),
-      identifiers: actionContext.identifiers,
-      operation: actionContext.operation,
-    });
+    logAuth(
+      "warn",
+      "Login validation failed",
+      AuthLog.action.login.validation({ errorCount, ip }),
+      {
+        additionalData: {
+          duration: tracker.getTotalDuration(),
+          errorCount,
+          ip,
+        },
+        requestId,
+      },
+    );
 
     return validated;
   }
 
   const input: LoginData = validated.value.data;
 
-  // You can enrich identifiers as you go if desired:
-  const enrichedContext: AuthLogLayerContext<"action"> = {
-    ...actionContext,
-    identifiers: { ...actionContext.identifiers, email: input.email },
-  };
-
   // Validation complete
-  actionLogger.operation("info", "Login form validated", {
-    operationContext: enrichedContext.loggerContext,
-    operationIdentifiers: enrichedContext.identifiers,
-    operationName: enrichedContext.operation,
-    ...ctx.validationCompletePayload({
-      duration: tracker.getLastDuration("validation"),
-      email: input.email,
-    }),
-  });
+  logAuth(
+    "info",
+    "Login form validated",
+    AuthLog.action.login.success({ email: input.email }),
+    {
+      additionalData: {
+        duration: tracker.getLastDuration("validation"),
+        email: input.email,
+      },
+      requestId,
+    },
+  );
 
-  // Pass the actionLogger to the service factory
-  const service = createAuthUserService(getAppDb(), actionLogger);
+  const service = createAuthUserService(getAppDb());
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.login.bind(service)),
   );
@@ -126,19 +101,19 @@ export async function loginAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    actionLogger.operation("error", "Login authentication failed", {
-      ...ctx.fail("authentication_failed"),
-      context: enrichedContext.loggerContext,
-      details: {
-        email: input.email,
-        errorCode: error.code,
-        errorMessage: error.message,
-        ip,
-        ...tracker.getMetrics(),
+    logAuth(
+      "error",
+      "Login authentication failed",
+      AuthLog.action.login.error(error, { email: input.email, ip }),
+      {
+        additionalData: {
+          email: input.email,
+          ip,
+          ...tracker.getMetrics(),
+        },
+        requestId,
       },
-      identifiers: enrichedContext.identifiers,
-      operation: enrichedContext.operation,
-    });
+    );
 
     const { fieldErrors, message } =
       mapBaseErrorToFormPayload<LoginField>(error);
@@ -154,13 +129,18 @@ export async function loginAction(
   const { id: userId, role } = sessionResult.value;
 
   // Success
-  actionLogger.operation("info", "Login action completed successfully", {
-    ...ctx.successAction(userId),
-    context: enrichedContext.loggerContext,
-    details: ctx.successPayload({ role, tracker, userId }),
-    identifiers: { ...enrichedContext.identifiers, userId },
-    operation: enrichedContext.operation,
-  });
+  logAuth(
+    "info",
+    "Login action completed successfully",
+    AuthLog.action.login.success({ email: input.email, userId }),
+    {
+      additionalData: {
+        role,
+        ...tracker.getMetrics(),
+      },
+      requestId,
+    },
+  );
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);

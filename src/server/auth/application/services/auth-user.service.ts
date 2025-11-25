@@ -11,10 +11,7 @@ import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport
 import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
 import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import {
@@ -61,32 +58,33 @@ export class AuthUserService {
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLogLayerContext<"service"> =
-      createAuthOperationContext({
-        identifiers: { role },
-        layer: "service",
-        operation: "demoUser",
-      });
+    const requestId = crypto.randomUUID();
 
-    const log = this.logger;
+    logAuth(
+      "info",
+      "Demo user creation start",
+      AuthLog.service.demoUser.start({ role }),
+      { requestId },
+    );
 
     try {
       const db = getAppDb();
-      const counter = await demoUserCounter(db, role);
+      const counter = await demoUserCounter(db, role, this.logger, requestId);
 
       if (!counter || counter <= 0) {
-        log.operation("error", "Invalid demo user counter", {
-          details: { counter, reason: "invalid_demo_user_counter" },
-          operationIdentifiers: serviceContext.identifiers,
-          operationName: serviceContext.operation,
-        });
-
+        logAuth(
+          "error",
+          "Invalid demo user counter",
+          AuthLog.service.demoUser.error(new Error("invalid_counter"), {
+            role,
+          }),
+          { additionalData: { counter }, requestId },
+        );
         return Err(
           makeUnexpectedError({
             metadata: {
               counter,
               formErrors: ["Failed to generate demo user"],
-              operation: serviceContext.operation,
               reason: "invalid_demo_user_counter",
               role,
             },
@@ -97,7 +95,6 @@ export class AuthUserService {
       const demoPassword = createRandomPassword();
       const uniqueEmail = `demo+${role}${counter}@demo.com`;
       const uniqueUsername = `Demo_${role.toUpperCase()}_${counter}`;
-
       const passwordHash = await this.hasher.hash(demoPassword);
 
       const demoUser = await this.repo.withTransaction(async (txRepo) =>
@@ -109,20 +106,25 @@ export class AuthUserService {
         }),
       );
 
-      log.operation("info", "Demo user created", {
-        operationIdentifiers: {
-          ...serviceContext.identifiers,
-          email: uniqueEmail,
-          username: uniqueUsername,
+      logAuth(
+        "info",
+        "Demo user created",
+        AuthLog.service.demoUser.success({ role }),
+        {
+          additionalData: { email: uniqueEmail, username: uniqueUsername },
+          requestId,
         },
-        operationName: serviceContext.operation,
-      });
+      );
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      // Intermediate layer: Propagate error without logging
       const normalized = normalizeToBaseError(err, "unexpected");
-
+      logAuth(
+        "error",
+        "Demo user creation failed",
+        AuthLog.service.demoUser.error(normalized, { role }),
+        { requestId },
+      );
       return Err(normalized);
     }
   }
@@ -139,35 +141,31 @@ export class AuthUserService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLogLayerContext<"service"> =
-      createAuthOperationContext({
-        identifiers: {
-          email: input.email,
-          username: input.username,
-        },
-        layer: "service",
-        operation: "signup",
-      });
-
-    const log = this.logger;
+    const requestId = crypto.randomUUID();
+    logAuth(
+      "info",
+      "Signup service start",
+      AuthLog.service.signup.start({
+        email: input.email,
+        username: input.username,
+      }),
+      { requestId },
+    );
 
     if (!hasRequiredSignupFields(input)) {
-      log.operation("warn", "Missing required signup fields", {
-        operationIdentifiers: serviceContext.identifiers,
-        operationName: serviceContext.operation,
-      });
-
+      logAuth(
+        "warn",
+        "Missing required signup fields",
+        AuthLog.service.signup.error(new Error("missing_fields"), {
+          email: input.email,
+          username: input.username,
+        }),
+        { requestId },
+      );
       return Err(
         makeValidationError({
           metadata: {
-            fieldErrors: {
-              email: ["missing_fields"],
-              password: ["missing_fields"],
-              username: ["missing_fields"],
-            },
-            formErrors: ["Missing required signup fields"],
-            identifiers: serviceContext.identifiers,
-            operation: serviceContext.operation,
+            fieldErrors: { email: ["Missing"], username: ["Missing"] },
             reason: "missing_fields",
           },
         }),
@@ -176,27 +174,32 @@ export class AuthUserService {
 
     try {
       const passwordHash = await this.hasher.hash(input.password);
-
-      const userRow = await this.repo.withTransaction(async (txRepo) =>
+      const demoUser = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
           password: passwordHash,
-          role: toUserRole("USER"),
+          role: toUserRole("user"),
           username: input.username,
         }),
       );
 
-      log.operation("info", "Signup succeeded", {
-        operationIdentifiers: serviceContext.identifiers,
-        operationName: serviceContext.operation,
-      });
+      logAuth(
+        "info",
+        "Signup service success",
+        AuthLog.service.signup.success({ email: input.email }),
+        { requestId },
+      );
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(userRow));
+      return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      // Intermediate layer: Propagate error without logging
-      const baseError = normalizeToBaseError(err, "unexpected");
-
-      return Err(baseError);
+      const normalized = normalizeToBaseError(err, "unexpected");
+      logAuth(
+        "error",
+        "Signup service failed",
+        AuthLog.service.signup.error(normalized, { email: input.email }),
+        { requestId },
+      );
+      return Err(normalized);
     }
   }
 
@@ -215,27 +218,26 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
-    const serviceContext: AuthLogLayerContext<"service"> =
-      createAuthOperationContext({
-        identifiers: { email: input.email },
-        layer: "service",
-        operation: "login",
-      });
-
-    const log = this.logger;
+    const requestId = crypto.randomUUID();
+    logAuth(
+      "info",
+      "Login service start",
+      AuthLog.service.login.start({ email: input.email }),
+      { requestId },
+    );
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
-        log.operation("warn", "Login failed - invalid credentials", {
-          details: {
-            reason: "invalid_credentials_user_not_found_or_no_password",
-          },
-          operationIdentifiers: serviceContext.identifiers,
-          operationName: serviceContext.operation,
-        });
-
+        logAuth(
+          "warn",
+          "Login failed - invalid credentials",
+          AuthLog.service.login.error(new Error("user_not_found"), {
+            email: input.email,
+          }),
+          { requestId },
+        );
         return Err(
           makeValidationError({
             metadata: {
@@ -244,7 +246,6 @@ export class AuthUserService {
                 password: ["invalid_credentials"],
               },
               formErrors: ["Invalid credentials"],
-              operation: serviceContext.operation,
               reason: "invalid_credentials_user_not_found_or_no_password",
             },
           }),
@@ -252,19 +253,15 @@ export class AuthUserService {
       }
 
       if (!user.password) {
-        log.operation(
+        logAuth(
           "error",
-          "Login failed - missing password hash on user entity",
-          {
-            details: { reason: "missing_password_hash_on_user_entity" },
-            operationIdentifiers: {
-              ...serviceContext.identifiers,
-              userId: String(user.id),
-            },
-            operationName: serviceContext.operation,
-          },
+          "Login failed - missing password hash",
+          AuthLog.service.login.error(new Error("missing_password_hash"), {
+            email: input.email,
+            userId: String(user.id),
+          }),
+          { requestId },
         );
-
         return Err(
           makeValidationError({
             metadata: {
@@ -273,7 +270,6 @@ export class AuthUserService {
                 password: ["invalid_credentials"],
               },
               formErrors: ["Invalid credentials"],
-              operation: serviceContext.operation,
               reason: "missing_password_hash_on_user_entity",
               userId: String(user.id),
             },
@@ -287,12 +283,14 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        log.operation("warn", "Login failed - invalid credentials", {
-          details: { reason: "invalid_credentials_password_mismatch" },
-          operationIdentifiers: serviceContext.identifiers,
-          operationName: serviceContext.operation,
-        });
-
+        logAuth(
+          "warn",
+          "Login failed - invalid password",
+          AuthLog.service.login.error(new Error("password_mismatch"), {
+            email: input.email,
+          }),
+          { requestId },
+        );
         return Err(
           makeValidationError({
             metadata: {
@@ -301,26 +299,28 @@ export class AuthUserService {
                 password: ["invalid_credentials"],
               },
               formErrors: ["Invalid credentials"],
-              operation: serviceContext.operation,
               reason: "invalid_credentials_password_mismatch",
             },
           }),
         );
       }
 
-      log.operation("info", "Login succeeded", {
-        operationIdentifiers: {
-          ...serviceContext.identifiers,
-          userId: String(user.id),
-        },
-        operationName: serviceContext.operation,
-      });
+      logAuth(
+        "info",
+        "Login succeeded",
+        AuthLog.service.login.success({ email: input.email }),
+        { additionalData: { userId: String(user.id) }, requestId },
+      );
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      // Intermediate layer: Propagate error without logging
       const baseError = normalizeToBaseError(err, "unexpected");
-
+      logAuth(
+        "error",
+        "Login service unexpected error",
+        AuthLog.service.login.error(baseError, { email: input.email }),
+        { requestId },
+      );
       return Err(baseError);
     }
   }

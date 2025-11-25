@@ -1,57 +1,42 @@
 // src/server/auth/logging/transaction-logger.ts
 import "server-only";
-import {
-  createAuthLogger,
-  logAuthError,
-} from "@/server/auth/logging-auth/auth-logger";
-import {
-  AUTH_LOG_CONTEXTS,
-  TransactionLogFactory,
-} from "@/server/auth/logging-auth/auth-logging.contexts";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 
+/**
+ * Lightweight transaction logger for auth-related DAL transactions.
+ * Uses the unified AuthLog + logAuth API.
+ */
 export class TransactionLogger {
-  private readonly logger: LoggingClientContract;
+  private readonly requestId?: string;
 
-  /**
-   * Default: uses `auth:infrastructure.transaction` as the base context.
-   * You can still inject a parent logger if you need request-level context.
-   */
-  constructor(parentLogger?: LoggingClientContract) {
-    const base = parentLogger ?? createAuthLogger("infrastructure.transaction");
-    this.logger = base.child({ scope: "transaction" });
+  constructor(requestId?: string) {
+    this.requestId = requestId;
   }
 
   start(transactionId: string): void {
-    const data = TransactionLogFactory.start(transactionId);
-    this.logger.operation("debug", "Transaction start", {
-      operationContext: AUTH_LOG_CONTEXTS.transaction,
-      operationName: "withTransaction",
-      ...data,
-    });
+    logAuth(
+      "debug",
+      "Transaction start",
+      AuthLog.dal.withTransaction.start(transactionId),
+      { requestId: this.requestId },
+    );
   }
 
   commit(transactionId: string): void {
-    const data = TransactionLogFactory.commit(transactionId);
-    this.logger.operation("debug", "Transaction commit", {
-      operationContext: AUTH_LOG_CONTEXTS.transaction,
-      operationName: "withTransaction",
-      ...data,
-    });
+    logAuth(
+      "debug",
+      "Transaction commit",
+      AuthLog.dal.withTransaction.commit(transactionId),
+      { requestId: this.requestId },
+    );
   }
 
   rollback(transactionId: string, error: unknown): void {
-    // Extract error from factory payload to avoid duplication in logging context
-    // since it's already passed as the main error argument
-    const payload = TransactionLogFactory.rollback(transactionId, error);
-
-    logAuthError(this.logger, "Transaction rollback", {
-      ...payload,
-      errorSource: "infrastructure.dal",
-      kind: "error",
-      layer: "infrastructure.dal",
-      operationContext: AUTH_LOG_CONTEXTS.transaction,
-      operationName: "withTransaction",
-    });
+    logAuth(
+      "error",
+      "Transaction rollback",
+      AuthLog.dal.withTransaction.error(transactionId, error),
+      { requestId: this.requestId },
+    );
   }
 }

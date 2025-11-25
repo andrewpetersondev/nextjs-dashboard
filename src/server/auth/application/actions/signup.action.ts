@@ -12,21 +12,15 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AUTH_ACTION_CONTEXTS } from "@/server/auth/logging-auth/auth-logging.ops";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { mapBaseErrorToFormPayload } from "@/shared/errors/forms/base-error.mappers";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;
-const ctx = AUTH_ACTION_CONTEXTS.signup;
 
 /**
  * Handles the signup action by validating form data, creating the user,
@@ -40,40 +34,23 @@ const ctx = AUTH_ACTION_CONTEXTS.signup;
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
 ): Promise<FormResult<SignupField>> {
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
-
-  // Create a unified action-layer context for this request.
-  const actionContext: AuthLogLayerContext<"action"> =
-    createAuthOperationContext({
-      identifiers: { ip },
-      layer: "action",
-      operation: "signup",
-    });
-
-  // Root logger for the request, scoped to the action
-  const actionLogger = logger
-    .withRequest(requestId)
-    .child({ operation: "signup", scope: "action" });
-
   const tracker = new PerformanceTracker();
 
   // Start
-  actionLogger.operation("info", "Signup action started", {
-    ...ctx.start(),
-    details: ctx.initiatedPayload({ ip, userAgent }),
-    operationIdentifiers: actionContext.identifiers,
+  logAuth("info", "Signup action started", AuthLog.action.signup.start(), {
+    additionalData: { ip, userAgent },
+    requestId,
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, SignupSchema, fields, {
-      loggerContext: actionContext.loggerContext,
-    }),
+    validateForm(formData, SignupSchema, fields),
   );
 
   if (!validated.ok) {
@@ -82,44 +59,43 @@ export async function signupAction(
     ).length;
 
     // Validation failure
-    actionLogger.operation("warn", "Signup validation failed", {
-      ...ctx.validationFailed({ errorCount, ip }),
-      details: ctx.validationFailurePayload({
-        errorCount,
-        ip,
-        tracker,
-      }),
-      operationIdentifiers: actionContext.identifiers,
-    });
+    logAuth(
+      "warn",
+      "Signup validation failed",
+      AuthLog.action.signup.validation({ errorCount, ip }),
+      {
+        additionalData: {
+          duration: tracker.getTotalDuration(),
+          errorCount,
+          ip,
+        },
+        requestId,
+      },
+    );
 
     return validated;
   }
 
   const input: SignupData = validated.value.data;
 
-  // You can enrich identifiers as you go if desired:
-  const enrichedContext: AuthLogLayerContext<"action"> = {
-    ...actionContext,
-    identifiers: {
-      ...actionContext.identifiers,
+  // Validation complete
+  logAuth(
+    "info",
+    "Signup form validated",
+    AuthLog.action.signup.success({
       email: input.email,
       username: input.username,
-    },
-  };
-
-  // Validation complete
-  actionLogger.operation("info", "Signup form validated", {
-    operationContext: enrichedContext.loggerContext,
-    operationIdentifiers: enrichedContext.identifiers,
-    operationName: enrichedContext.operation,
-    ...ctx.validationCompletePayload({
-      duration: tracker.getLastDuration("validation"),
-      email: input.email,
     }),
-  });
+    {
+      additionalData: {
+        duration: tracker.getLastDuration("validation"),
+        email: input.email,
+      },
+      requestId,
+    },
+  );
 
-  // Pass the actionLogger to the service factory
-  const service = createAuthUserService(getAppDb(), actionLogger);
+  const service = createAuthUserService(getAppDb());
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );
@@ -128,17 +104,23 @@ export async function signupAction(
     const error = sessionResult.error;
 
     // Authentication failure
-    actionLogger.operation("error", "Signup authentication failed", {
-      ...ctx.fail("authentication_failed"),
-      details: {
-        ...tracker.getMetrics(),
+    logAuth(
+      "error",
+      "Signup authentication failed",
+      AuthLog.action.signup.error(error, {
         email: input.email,
-        errorCode: error.code,
-        errorMessage: error.message,
         ip,
+        username: input.username,
+      }),
+      {
+        additionalData: {
+          ...tracker.getMetrics(),
+          email: input.email,
+          ip,
+        },
+        requestId,
       },
-      operationIdentifiers: enrichedContext.identifiers,
-    });
+    );
 
     const { message, fieldErrors } =
       mapBaseErrorToFormPayload<SignupField>(error);
@@ -153,11 +135,22 @@ export async function signupAction(
   const { id: userId, role } = sessionResult.value;
 
   // Success
-  actionLogger.operation("info", "Signup action completed successfully", {
-    ...ctx.successAction(input.email),
-    details: ctx.successPayload({ role, tracker, userId }),
-    operationIdentifiers: { ...enrichedContext.identifiers, userId },
-  });
+  logAuth(
+    "info",
+    "Signup action completed successfully",
+    AuthLog.action.signup.success({
+      email: input.email,
+      userId,
+      username: input.username,
+    }),
+    {
+      additionalData: {
+        role,
+        ...tracker.getMetrics(),
+      },
+      requestId,
+    },
+  );
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);

@@ -2,12 +2,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
-import {
-  type AuthLogLayerContext,
-  createAuthOperationContext,
-} from "@/server/auth/logging-auth/auth-layer-context";
-import { AuthDalLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
-import type { AuthOperation } from "@/server/auth/logging-auth/auth-logging.types";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -20,17 +15,8 @@ export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
   parentLogger: LoggingClientContract,
-  operation: AuthOperation = "getUserByEmail",
+  requestId?: string,
 ): Promise<UserRow | null> {
-  const dalContext: AuthLogLayerContext<"infrastructure.dal"> =
-    createAuthOperationContext({
-      identifiers: { email },
-      layer: "infrastructure.dal",
-      operation,
-    });
-
-  const dalLogger = parentLogger.child({ scope: "dal" });
-
   return await executeDalOrThrow(
     async () => {
       const [userRow] = await db
@@ -40,20 +26,25 @@ export async function getUserByEmailDal(
         .limit(1);
 
       if (!userRow) {
-        dalLogger.operation("info", "User not found for login", {
-          ...AuthDalLogFactory.notFound(operation, { email }),
-        });
+        logAuth(
+          "info",
+          "User not found",
+          AuthLog.dal.getUserByEmail.notFound({ email }),
+          { requestId },
+        );
         return null;
       }
 
-      dalLogger.operation("info", "User found", {
-        details: { email },
-        operationName: "getUserByEmail",
-      });
+      logAuth(
+        "info",
+        "User row fetched",
+        AuthLog.dal.getUserByEmail.success({ email }),
+        { requestId },
+      );
 
       return userRow;
     },
-    dalContext,
+    { identifiers: { email }, operation: "getUserByEmail" },
     parentLogger,
   );
 }

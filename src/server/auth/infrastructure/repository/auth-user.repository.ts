@@ -6,7 +6,7 @@ import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.i
 import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { AuthRepoLogFactory } from "@/server/auth/logging-auth/auth-logging.contexts";
+import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { TransactionLogger } from "@/server/auth/logging-auth/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
@@ -22,14 +22,19 @@ import { logger as defaultLogger } from "@/shared/logging/infra/logging.client";
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly logger: LoggingClientContract;
   private readonly transactionLogger: TransactionLogger;
+  private readonly requestId?: string;
+  private readonly logger: LoggingClientContract;
 
-  constructor(db: AppDatabase, logger: LoggingClientContract = defaultLogger) {
+  constructor(
+    db: AppDatabase,
+    logger?: LoggingClientContract,
+    requestId?: string,
+  ) {
     this.db = db;
-    // Create a child logger with "repository" scope
-    this.logger = logger.child({ scope: "repository" });
-    this.transactionLogger = new TransactionLogger(this.logger);
+    this.logger = logger ?? defaultLogger;
+    this.requestId = requestId;
+    this.transactionLogger = new TransactionLogger(requestId);
   }
 
   /**
@@ -53,16 +58,17 @@ export class AuthUserRepositoryImpl {
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        // Pass the scoped logger
-        const txRepo = new AuthUserRepositoryImpl(tx, this.logger);
+        const txRepo = new AuthUserRepositoryImpl(
+          tx,
+          this.logger,
+          this.requestId,
+        );
         return await fn(txRepo);
       });
 
       this.transactionLogger.commit(transactionId);
       return result;
     } catch (err) {
-      // Intermediate layer: Do not log the error itself, it is logged at DAL or top-level
-      // Just rollback and rethrow
       this.transactionLogger.rollback(transactionId, err);
       throw err;
     }
@@ -78,16 +84,19 @@ export class AuthUserRepositoryImpl {
    * - DAL-level errors are propagated as-is for higher layers to map.
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const signupLogger = this.logger;
+    const row = await insertUserDal(
+      this.db,
+      input,
+      this.logger,
+      this.requestId,
+    );
 
-    // executeDalOrThrow already normalizes all errors and logs them
-    const row = await insertUserDal(this.db, input, this.logger);
-
-    const data = AuthRepoLogFactory.success("signup", {
-      email: input.email,
-    });
-
-    signupLogger.operation("info", "User created successfully", data);
+    logAuth(
+      "info",
+      "User created successfully",
+      AuthLog.repository.signup.success({ email: input.email }),
+      { requestId: this.requestId },
+    );
 
     return newUserDbRowToEntity(row);
   }
@@ -105,36 +114,28 @@ export class AuthUserRepositoryImpl {
   async login(
     input: Readonly<AuthLoginRepoInput>,
   ): Promise<AuthUserEntity | null> {
-    const loginLogger = this.logger; // already scoped
-
-    // Align logical operation name with service and DAL
     const row = await getUserByEmailDal(
       this.db,
       input.email,
       this.logger,
-      "login",
+      this.requestId,
     );
 
     if (!row?.password) {
-      loginLogger.operation(
+      logAuth(
         "warn",
         "Login lookup resulted in no user with password",
-        {
-          ...AuthRepoLogFactory.notFound("login", { email: input.email }),
-        },
+        AuthLog.repository.login.notFound({ email: input.email }),
+        { requestId: this.requestId },
       );
       return null;
     }
 
-    const data = AuthRepoLogFactory.success("login", {
-      email: input.email,
-      userId: row.id,
-    });
-
-    loginLogger.operation(
+    logAuth(
       "info",
       "User retrieved successfully for login",
-      data,
+      AuthLog.repository.login.success({ email: input.email, userId: row.id }),
+      { requestId: this.requestId },
     );
 
     return userDbRowToEntity(row);
