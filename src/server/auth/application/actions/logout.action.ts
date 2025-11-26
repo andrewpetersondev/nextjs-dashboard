@@ -1,11 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
-import { SessionManager } from "@/server/auth/application/services/session-manager.service";
-import { createSessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
-import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
+import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/infra/logging.client";
 
 export async function logoutAction(): Promise<void> {
   const requestId = crypto.randomUUID();
@@ -14,11 +11,7 @@ export async function logoutAction(): Promise<void> {
     requestId,
   });
 
-  const sessionManager = new SessionManager(
-    createSessionCookieAdapter(),
-    createSessionJwtAdapter(),
-    logger,
-  );
+  const sessionManager = createSessionManager();
 
   const res = await sessionManager.clear();
 

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { SessionManager } from "@/server/auth/application/services/session-manager.service";
-import { createSessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
-import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
+import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,
@@ -12,18 +10,9 @@ import {
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
 } from "@/shared/http/http-headers";
-import { logger } from "@/shared/logging/infra/logging.client";
-
-function buildManager(): SessionManager {
-  return new SessionManager(
-    createSessionCookieAdapter(),
-    createSessionJwtAdapter(),
-    logger,
-  );
-}
 
 export async function POST(): Promise<NextResponse> {
-  const outcome = await buildManager().rotate();
+  const outcome = await createSessionManager().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -33,7 +22,7 @@ export async function POST(): Promise<NextResponse> {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const outcome = await buildManager().rotate();
+  const outcome = await createSessionManager().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -43,7 +32,7 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function HEAD(): Promise<NextResponse> {
-  await buildManager().rotate();
+  await createSessionManager().rotate();
   const res = new NextResponse(null, { status: 204 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);

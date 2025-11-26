@@ -195,7 +195,7 @@ export class SessionManager {
         error: String(err),
         logging: { code: "session_rotate_failed" },
       });
-      return { reason: "invalid_or_missing_user", refreshed: false };
+      return { reason: "unexpected_error", refreshed: false };
     }
   }
 }

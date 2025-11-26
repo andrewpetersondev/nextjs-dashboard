@@ -1,12 +1,9 @@
 // src/server/auth/application/actions/establish-session.action.ts
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import { SessionManager } from "@/server/auth/application/services/session-manager.service";
-import { createSessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
-import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
+import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { logger } from "@/shared/logging/infra/logging.client";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -27,11 +24,7 @@ export async function establishSessionAction(
     requestId,
   });
 
-  const sessionManager = new SessionManager(
-    createSessionCookieAdapter(),
-    createSessionJwtAdapter(),
-    logger,
-  );
+  const sessionManager = createSessionManager();
 
   const res = await sessionManager.establish(user);
 

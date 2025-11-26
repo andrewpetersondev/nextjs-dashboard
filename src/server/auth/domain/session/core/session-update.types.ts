@@ -8,6 +8,7 @@ import type { UserId } from "@/shared/branding/domain-brands";
 export type UpdateSessionResult =
   | { readonly refreshed: false; readonly reason: "no_cookie" }
   | { readonly refreshed: false; readonly reason: "invalid_or_missing_user" }
+  | { readonly refreshed: false; readonly reason: "unexpected_error" }
   | {
       readonly refreshed: false;
       readonly reason: "absolute_lifetime_exceeded";
