@@ -11,7 +11,7 @@ import { hasRequiredSignupFields } from "@/server/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/server/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { normalizeToBaseError } from "@/shared/errors/core/error.utils";

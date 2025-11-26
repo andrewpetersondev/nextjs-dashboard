@@ -3,7 +3,7 @@ import "server-only";
 
 import type { AuthSignupPayload } from "@/server/auth/domain/auth.types";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";

@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { BaseError } from "@/shared/errors/core/base-error";
 
 export async function logoutAction(): Promise<void> {

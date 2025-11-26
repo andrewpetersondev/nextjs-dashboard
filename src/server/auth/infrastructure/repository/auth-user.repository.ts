@@ -8,8 +8,8 @@ import type {
 } from "@/server/auth/domain/auth.types";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
-import { TransactionLogger } from "@/server/auth/logging-auth/transaction-logger";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
+import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,

@@ -2,7 +2,7 @@
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 

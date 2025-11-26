@@ -1,7 +1,7 @@
 // src/server/auth/infrastructure/repository/dal/execute-dal.ts
 import "server-only";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
-import type { AuthLogBase } from "@/server/auth/logging-auth/auth-logging.types";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
+import type { AuthLogBase } from "@/server/auth/logging/auth-logging.types";
 import { normalizePgError } from "@/shared/errors/infra/pg-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 

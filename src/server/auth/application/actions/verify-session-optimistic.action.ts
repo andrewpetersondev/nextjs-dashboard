@@ -4,7 +4,7 @@ import { cache } from "react";
 import { LOGIN_PATH } from "@/features/auth/lib/auth.constants";
 import type { SessionVerificationResult } from "@/features/auth/sessions/session-payload.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.

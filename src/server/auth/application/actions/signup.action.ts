@@ -12,7 +12,7 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { PerformanceTracker } from "@/server/auth/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/server/auth/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
+import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { mapBaseErrorToFormPayload } from "@/shared/errors/forms/base-error.mappers";

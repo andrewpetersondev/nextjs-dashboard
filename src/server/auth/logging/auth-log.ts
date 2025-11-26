@@ -1,11 +1,11 @@
-// src/server/auth/logging-auth/auth-log.ts
+// src/server/auth/logging/auth-log.ts
 import "server-only";
 import type {
   AuthLogKind,
   AuthLogLayer,
   AuthLogPayload,
   AuthOperation,
-} from "@/server/auth/logging-auth/auth-logging.types";
+} from "@/server/auth/logging/auth-logging.types";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as rootLogger } from "@/shared/logging/infra/logging.client";
