@@ -112,9 +112,6 @@ export class SessionJwtAdapter {
   }
 }
 
-// Export singleton instance
-export const sessionJwtAdapter = new SessionJwtAdapter();
-
 // Factory function
 export function createSessionJwtAdapter(): SessionJwtAdapter {
   return new SessionJwtAdapter();

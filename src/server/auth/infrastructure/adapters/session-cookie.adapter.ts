@@ -43,9 +43,6 @@ export class SessionCookieAdapter {
   }
 }
 
-// Export singleton instance
-export const sessionCookieAdapter = new SessionCookieAdapter();
-
 // Factory function for creating adapter instances without singletons
 export function createSessionCookieAdapter(): SessionCookieAdapter {
   return new SessionCookieAdapter();

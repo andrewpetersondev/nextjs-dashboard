@@ -9,7 +9,6 @@ import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/server/auth/domain/constants/session.constants";
-import { readSessionToken } from "@/server/auth/domain/session/codecs/session-codec";
 import { buildSessionCookieOptions } from "@/server/auth/domain/session/config/session-cookie.options";
 import type { UpdateSessionResult } from "@/server/auth/domain/session/core/session-update.types";
 import {
@@ -119,14 +118,25 @@ export class SessionManager {
     }
   }
 
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async rotate(): Promise<UpdateSessionResult> {
     try {
       const current = await this.cookie.get();
       if (!current) {
         return { reason: "no_cookie", refreshed: false };
       }
-      const payload = await readSessionToken(current);
-      const user = payload?.user;
+      // Decode using injected JWT codec port (flat claims)
+      const decoded = await this.jwt.decode(current);
+      if (!decoded) {
+        return { reason: "invalid_or_missing_user", refreshed: false };
+      }
+      const user = decoded?.userId
+        ? {
+            role: decoded.role,
+            sessionStart: decoded.sessionStart,
+            userId: userIdCodec.decode(decoded.userId),
+          }
+        : undefined;
       if (!user?.userId) {
         return { reason: "invalid_or_missing_user", refreshed: false };
       }
@@ -152,7 +162,11 @@ export class SessionManager {
           userId: user.userId,
         };
       }
-      const remaining = timeLeftMs(payload);
+      // Use helpers with the new flat claims shape
+      const remaining = timeLeftMs({
+        exp: decoded.exp,
+        expiresAt: decoded.expiresAt,
+      });
       if (remaining > SESSION_REFRESH_THRESHOLD_MS) {
         this.logger.debug("Session re-issue skipped", {
           logging: { reason: "not_needed", timeLeftMs: remaining },

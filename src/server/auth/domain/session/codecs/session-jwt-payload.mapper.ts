@@ -14,6 +14,10 @@ export type FlatEncryptPayload = {
 };
 
 /** Flattens EncryptPayload for JWT compatibility. */
+/**
+ * @deprecated The system now uses flat JWT claims directly in SessionManager.
+ * Prefer constructing flat claims where needed and using SessionTokenCodecPort.encode.
+ */
 export function flattenEncryptPayload(
   payload: EncryptPayload,
 ): FlatEncryptPayload {
@@ -26,6 +30,10 @@ export function flattenEncryptPayload(
 }
 
 /** Reconstructs EncryptPayload from flattened JWT payload. */
+/**
+ * @deprecated The system now operates on flat JWT claims via SessionManager.
+ * Prefer using SessionTokenCodecPort.decode and consume the flat shape directly.
+ */
 export function unflattenEncryptPayload(
   payload: FlatEncryptPayload,
 ): EncryptPayload {
