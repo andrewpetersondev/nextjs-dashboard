@@ -21,9 +21,9 @@ import type { UserId } from "@/shared/branding/domain-brands";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 function buildSessionJwtPayload(params: {
-  readonly userId: UserId;
-  readonly role: UserRole;
   readonly now?: number;
+  readonly role: UserRole;
+  readonly userId: UserId;
 }) {
   const now = params.now ?? Date.now();
   const expiresAt = now + SESSION_DURATION_MS;
@@ -41,9 +41,9 @@ function buildSessionJwtPayload(params: {
 }
 
 async function rotateSession(user: {
-  readonly userId: UserId;
   readonly role: UserRole;
   readonly sessionStart: number;
+  readonly userId: UserId;
 }): Promise<UpdateSessionResult> {
   const { payload, expiresAt } = buildSessionJwtPayload({
     now: user.sessionStart,
@@ -71,10 +71,12 @@ async function rotateSession(user: {
   };
 }
 
+/** @deprecated Use SessionManager.clear() */
 export async function deleteSessionToken(): Promise<void> {
   await sessionCookieAdapter.delete();
 }
 
+/** @deprecated Use SessionManager.establish() */
 export async function setSessionToken(
   userId: UserId,
   role: UserRole,
@@ -89,6 +91,7 @@ export async function setSessionToken(
   });
 }
 
+/** @deprecated Use SessionManager.rotate() */
 export async function updateSessionToken(): Promise<UpdateSessionResult> {
   const current = await sessionCookieAdapter.get();
   if (!current) {

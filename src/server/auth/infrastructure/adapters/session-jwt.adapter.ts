@@ -49,8 +49,8 @@ export class SessionJwtAdapter {
   private buildVerifyOptions(): Parameters<typeof jwtVerify>[2] {
     return {
       algorithms: [JWT_ALG_HS256],
-      clockTolerance: CLOCK_TOLERANCE_SEC,
       ...(SESSION_AUDIENCE ? { audience: SESSION_AUDIENCE } : {}),
+      clockTolerance: CLOCK_TOLERANCE_SEC,
       ...(SESSION_ISSUER ? { issuer: SESSION_ISSUER } : {}),
     };
   }
@@ -82,7 +82,7 @@ export class SessionJwtAdapter {
       const token = await signer.sign(this.encodedKey);
       return token;
     } catch (err: unknown) {
-      throw new Error("Failed to sign session token", { cause: err });
+      throw new Error("session_sign_failed", { cause: err });
     }
   }
 
@@ -114,3 +114,8 @@ export class SessionJwtAdapter {
 
 // Export singleton instance
 export const sessionJwtAdapter = new SessionJwtAdapter();
+
+// Factory function
+export function createSessionJwtAdapter(): SessionJwtAdapter {
+  return new SessionJwtAdapter();
+}

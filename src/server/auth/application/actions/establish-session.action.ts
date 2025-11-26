@@ -1,10 +1,12 @@
 // src/server/auth/application/actions/establish-session.action.ts
 "use server";
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
-import { setSessionToken } from "@/server/auth/domain/session/core/session";
+import { SessionManager } from "@/server/auth/application/services/session-manager.service";
+import { createSessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
+import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
-import { BaseError } from "@/shared/errors/core/base-error";
-import { tryCatchAsync } from "@/shared/result/async/result-async";
+import type { BaseError } from "@/shared/errors/core/base-error";
+import { logger } from "@/shared/logging/infra/logging.client";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -25,34 +27,30 @@ export async function establishSessionAction(
     requestId,
   });
 
-  const res = await tryCatchAsync(
-    async () => {
-      await setSessionToken(user.id, user.role);
-      return true as const;
-    },
-    (e: unknown): BaseError => BaseError.from(e),
+  const sessionManager = new SessionManager(
+    createSessionCookieAdapter(),
+    createSessionJwtAdapter(),
+    logger,
   );
 
-  const mapped: Result<SessionUser, BaseError> = res.ok
-    ? Ok(user)
-    : Err<BaseError>(res.error);
+  const res = await sessionManager.establish(user);
 
-  if (mapped.ok) {
+  if (res.ok) {
     logAuth(
       "info",
       "Session established successfully",
       AuthLog.action.login.success({ role: user.role, userId: user.id }),
       { requestId },
     );
-  } else {
-    const error = mapped.error;
-    logAuth(
-      "error",
-      "Failed to establish session",
-      AuthLog.action.login.error(error, { role: user.role, userId: user.id }),
-      { requestId },
-    );
+    return Ok(user);
   }
 
-  return mapped;
+  const error = res.error;
+  logAuth(
+    "error",
+    "Failed to establish session",
+    AuthLog.action.login.error(error, { role: user.role, userId: user.id }),
+    { requestId },
+  );
+  return Err<BaseError>(error);
 }

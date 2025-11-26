@@ -10,6 +10,17 @@ import { logger } from "@/shared/logging/infra/logging.client";
  */
 export class SessionCookieAdapter {
   /**
+   * Deletes the session cookie, effectively logging out the user.
+   */
+  async delete(): Promise<void> {
+    const cookieStore = await cookies();
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    logger.info("Session cookie deleted", {
+      logging: { context: "SessionCookieAdapter.delete" },
+    });
+  }
+
+  /**
    * Retrieves the current session cookie value.
    * @returns The session cookie value, or undefined if not set
    */
@@ -30,18 +41,12 @@ export class SessionCookieAdapter {
       logging: { context: "SessionCookieAdapter.set" },
     });
   }
-
-  /**
-   * Deletes the session cookie, effectively logging out the user.
-   */
-  async delete(): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.delete(SESSION_COOKIE_NAME);
-    logger.info("Session cookie deleted", {
-      logging: { context: "SessionCookieAdapter.delete" },
-    });
-  }
 }
 
 // Export singleton instance
 export const sessionCookieAdapter = new SessionCookieAdapter();
+
+// Factory function for creating adapter instances without singletons
+export function createSessionCookieAdapter(): SessionCookieAdapter {
+  return new SessionCookieAdapter();
+}

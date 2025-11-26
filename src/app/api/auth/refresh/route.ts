@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { updateSessionToken } from "@/server/auth/domain/session/core/session";
+import { SessionManager } from "@/server/auth/application/services/session-manager.service";
+import { createSessionCookieAdapter } from "@/server/auth/infrastructure/adapters/session-cookie.adapter";
+import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,
@@ -10,11 +12,18 @@ import {
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
 } from "@/shared/http/http-headers";
+import { logger } from "@/shared/logging/infra/logging.client";
 
-// Route handler to roll (refresh) the session token if it's near expiry.
-// Safe to call repeatedly; it only re-issues when needed and respects absolute lifetime.
+function buildManager(): SessionManager {
+  return new SessionManager(
+    createSessionCookieAdapter(),
+    createSessionJwtAdapter(),
+    logger,
+  );
+}
+
 export async function POST(): Promise<NextResponse> {
-  const outcome = await updateSessionToken();
+  const outcome = await buildManager().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -24,7 +33,7 @@ export async function POST(): Promise<NextResponse> {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const outcome = await updateSessionToken();
+  const outcome = await buildManager().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -33,9 +42,8 @@ export async function GET(): Promise<NextResponse> {
   return res;
 }
 
-// Lightweight “are we fresh?” option; responds like GET/POST but HEAD typically has no body.
 export async function HEAD(): Promise<NextResponse> {
-  await updateSessionToken();
+  await buildManager().rotate();
   const res = new NextResponse(null, { status: 204 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);

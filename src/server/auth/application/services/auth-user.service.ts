@@ -14,10 +14,6 @@ import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/dem
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import {
-  makeUnexpectedError,
-  makeValidationError,
-} from "@/shared/errors/core/base-error.factory";
 import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
@@ -54,7 +50,6 @@ export class AuthUserService {
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {
@@ -72,24 +67,17 @@ export class AuthUserService {
       const counter = await demoUserCounter(db, role, this.logger, requestId);
 
       if (!counter || counter <= 0) {
+        const baseError = normalizeToBaseError(
+          new Error("invalid_counter"),
+          "unexpected",
+        );
         logAuth(
           "error",
           "Invalid demo user counter",
-          AuthLog.service.demoUser.error(new Error("invalid_counter"), {
-            role,
-          }),
+          AuthLog.service.demoUser.error(baseError, { role }),
           { additionalData: { counter }, requestId },
         );
-        return Err(
-          makeUnexpectedError({
-            metadata: {
-              counter,
-              formErrors: ["Failed to generate demo user"],
-              reason: "invalid_demo_user_counter",
-              role,
-            },
-          }),
-        );
+        return Err(baseError);
       }
 
       const demoPassword = createRandomPassword();
@@ -162,14 +150,11 @@ export class AuthUserService {
         }),
         { requestId },
       );
-      return Err(
-        makeValidationError({
-          metadata: {
-            fieldErrors: { email: ["Missing"], username: ["Missing"] },
-            reason: "missing_fields",
-          },
-        }),
+      const baseError = normalizeToBaseError(
+        new Error("missing_fields"),
+        "missingFields",
       );
+      return Err(baseError);
     }
 
     try {
@@ -233,23 +218,16 @@ export class AuthUserService {
         logAuth(
           "warn",
           "Login failed - invalid credentials",
-          AuthLog.service.login.error(new Error("user_not_found"), {
+          AuthLog.service.login.error(new Error("invalid_credentials"), {
             email: input.email,
           }),
           { requestId },
         );
-        return Err(
-          makeValidationError({
-            metadata: {
-              fieldErrors: {
-                email: ["invalid_credentials"],
-                password: ["invalid_credentials"],
-              },
-              formErrors: ["Invalid credentials"],
-              reason: "invalid_credentials_user_not_found_or_no_password",
-            },
-          }),
+        const baseError = normalizeToBaseError(
+          new Error("invalid_credentials"),
+          "invalidCredentials",
         );
+        return Err(baseError);
       }
 
       if (!user.password) {
@@ -262,19 +240,11 @@ export class AuthUserService {
           }),
           { requestId },
         );
-        return Err(
-          makeValidationError({
-            metadata: {
-              fieldErrors: {
-                email: ["invalid_credentials"],
-                password: ["invalid_credentials"],
-              },
-              formErrors: ["Invalid credentials"],
-              reason: "missing_password_hash_on_user_entity",
-              userId: String(user.id),
-            },
-          }),
+        const baseError = normalizeToBaseError(
+          new Error("missing_password_hash"),
+          "invalidCredentials",
         );
+        return Err(baseError);
       }
 
       const passwordOk = await this.hasher.compare(
@@ -286,23 +256,16 @@ export class AuthUserService {
         logAuth(
           "warn",
           "Login failed - invalid password",
-          AuthLog.service.login.error(new Error("password_mismatch"), {
+          AuthLog.service.login.error(new Error("invalid_credentials"), {
             email: input.email,
           }),
           { requestId },
         );
-        return Err(
-          makeValidationError({
-            metadata: {
-              fieldErrors: {
-                email: ["invalid_credentials"],
-                password: ["invalid_credentials"],
-              },
-              formErrors: ["Invalid credentials"],
-              reason: "invalid_credentials_password_mismatch",
-            },
-          }),
+        const baseError = normalizeToBaseError(
+          new Error("invalid_credentials"),
+          "invalidCredentials",
         );
+        return Err(baseError);
       }
 
       logAuth(
