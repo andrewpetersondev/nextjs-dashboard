@@ -7,9 +7,9 @@ import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
-import { toAuthUserTransport } from "@/server/auth/domain/mappers/user-transport.mapper";
-import { hasRequiredSignupFields } from "@/server/auth/domain/types/auth-signup.presence-guard";
-import type { AuthUserTransport } from "@/server/auth/domain/types/user-transport.types";
+import { hasRequiredSignupFields } from "@/server/auth/domain/auth.guards";
+import { toAuthUserTransport } from "@/server/auth/domain/auth.mappers";
+import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
@@ -50,6 +50,7 @@ export class AuthUserService {
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {

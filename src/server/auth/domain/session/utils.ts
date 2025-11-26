@@ -2,7 +2,13 @@ import "server-only";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
-} from "@/server/auth/domain/constants/session.constants";
+  ROLLING_COOKIE_MAX_AGE_S,
+  SESSION_COOKIE_HTTPONLY,
+  SESSION_COOKIE_PATH,
+  SESSION_COOKIE_SAMESITE,
+  SESSION_COOKIE_SECURE_FALLBACK,
+} from "@/server/auth/domain/session/constants";
+import { isProd } from "@/shared/config/env-shared";
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 export function absoluteLifetime(user?: {
@@ -30,3 +36,13 @@ export function timeLeftMs(payload?: {
   const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
   return expMs - Date.now();
 }
+
+export const buildSessionCookieOptions = (expiresAtMs: number) =>
+  ({
+    expires: new Date(expiresAtMs),
+    httpOnly: SESSION_COOKIE_HTTPONLY,
+    maxAge: ROLLING_COOKIE_MAX_AGE_S,
+    path: SESSION_COOKIE_PATH,
+    sameSite: SESSION_COOKIE_SAMESITE,
+    secure: isProd() ? true : SESSION_COOKIE_SECURE_FALLBACK,
+  }) as const;

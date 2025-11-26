@@ -1,6 +1,6 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import type { FlatEncryptPayload } from "@/server/auth/domain/session/codecs/session-jwt-payload.mapper";
+import type { FlatEncryptPayload } from "@/server/auth/domain/session/types";
 
 export interface SessionPort {
   delete(): Promise<void>;

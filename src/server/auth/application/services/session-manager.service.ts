@@ -8,14 +8,14 @@ import {
   MAX_ABSOLUTE_SESSION_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/server/auth/domain/constants/session.constants";
-import { buildSessionCookieOptions } from "@/server/auth/domain/session/config/session-cookie.options";
-import type { UpdateSessionResult } from "@/server/auth/domain/session/core/session-update.types";
+} from "@/server/auth/domain/session/constants";
+import { userIdCodec } from "@/server/auth/domain/session/schema";
+import type { UpdateSessionResult } from "@/server/auth/domain/session/types";
 import {
   absoluteLifetime,
+  buildSessionCookieOptions,
   timeLeftMs,
-} from "@/server/auth/domain/session/helpers/session-helpers";
-import { userIdCodec } from "@/server/auth/domain/session/validation/session-payload.schema";
+} from "@/server/auth/domain/session/utils";
 import type { UserId } from "@/shared/branding/domain-brands";
 import type { BaseError } from "@/shared/errors/core/base-error";
 import { normalizeToBaseError } from "@/shared/errors/core/error.utils";

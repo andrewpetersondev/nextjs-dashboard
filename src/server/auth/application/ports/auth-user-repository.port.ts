@@ -1,7 +1,9 @@
 import "server-only";
-import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
-import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import type {
+  AuthLoginRepoInput,
+  AuthSignupPayload,
+  AuthUserEntity,
+} from "@/server/auth/domain/auth.types";
 
 export interface AuthUserRepositoryPort<Trepo = unknown> {
   withTransaction<Tresult>(

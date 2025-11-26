@@ -1,9 +1,11 @@
 // src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
 import { randomUUID } from "node:crypto";
-import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
-import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import type {
+  AuthLoginRepoInput,
+  AuthSignupPayload,
+  AuthUserEntity,
+} from "@/server/auth/domain/auth.types";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
 import { AuthLog, logAuth } from "@/server/auth/logging-auth/auth-log";

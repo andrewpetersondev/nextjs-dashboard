@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { ADMIN_ROLE } from "@/features/auth/lib/auth.roles";
-import { SESSION_COOKIE_NAME } from "@/server/auth/domain/constants/session.constants";
+import { SESSION_COOKIE_NAME } from "@/server/auth/domain/session/constants";
 import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
 import {
   isAdminRoute as isAdminRouteHelper,

@@ -7,18 +7,21 @@ import { SessionManager } from "@/server/auth/application/services/session-manag
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/server/auth/domain/constants/session.constants";
+} from "@/server/auth/domain/session/constants";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as realLogger } from "@/shared/logging/infra/logging.client";
 
 class InMemoryCookie implements SessionPort {
   private value?: string;
+  // biome-ignore lint/suspicious/useAwait: <explanation>
   async delete(): Promise<void> {
     this.value = undefined;
   }
+  // biome-ignore lint/suspicious/useAwait: <explanation>
   async get(): Promise<string | undefined> {
     return this.value;
   }
+  // biome-ignore lint/suspicious/useAwait: <explanation>
   async set(value: string): Promise<void> {
     this.value = value;
   }

@@ -1,8 +1,10 @@
 import "server-only";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
-import type { AuthUserEntity } from "@/server/auth/domain/entities/auth-user-entity.types";
-import type { AuthLoginRepoInput } from "@/server/auth/domain/types/auth-login.input";
-import type { AuthSignupPayload } from "@/server/auth/domain/types/auth-signup.input";
+import type {
+  AuthLoginRepoInput,
+  AuthSignupPayload,
+  AuthUserEntity,
+} from "@/server/auth/domain/auth.types";
 import type { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 
 /**
