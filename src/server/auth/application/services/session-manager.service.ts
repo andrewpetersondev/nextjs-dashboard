@@ -6,6 +6,7 @@ import type {
 } from "@/server/auth/application/ports/session.port";
 import {
   MAX_ABSOLUTE_SESSION_MS,
+  ONE_SECOND_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/server/auth/domain/session/constants";
@@ -49,9 +50,9 @@ export class SessionManager {
       const now = Date.now();
       const expiresAtMs = now + SESSION_DURATION_MS;
       const claims = {
-        exp: Math.floor(expiresAtMs / 1000),
+        exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
         expiresAt: expiresAtMs,
-        iat: Math.floor(now / 1000),
+        iat: Math.floor(now / ONE_SECOND_MS),
         role: user.role,
         sessionStart: now,
         userId: String(user.id),
@@ -181,9 +182,9 @@ export class SessionManager {
       const now = user.sessionStart;
       const expiresAtMs = now + SESSION_DURATION_MS;
       const claims = {
-        exp: Math.floor(expiresAtMs / 1000),
+        exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
         expiresAt: expiresAtMs,
-        iat: Math.floor(now / 1000),
+        iat: Math.floor(now / ONE_SECOND_MS),
         role: user.role,
         sessionStart: now,
         userId: user.userId,
