@@ -9,12 +9,12 @@ import {
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod-error.mapper";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field.resolver";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/zod-error.mapper";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field.resolver";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod-guards";
+} from "@/shared/forms/infrastructure/zod/zod-guards";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**

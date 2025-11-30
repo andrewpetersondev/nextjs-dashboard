@@ -1,12 +1,12 @@
 import type { z } from "zod";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
-import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod-guards";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field-names.derive";
+import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod/zod-guards";
 
 /**
  * Resolve the canonical array of field names for a Zod schema.
  *
- * @typeParam Tinput - The input type the Zod schema validates.
- * @typeParam TfieldNames - String literal union of valid field names (e.g., `keyof TInput & string`).
+ * @typeParam T - The input type the Zod schema validates.
+ * @typeParam K - String literal union of valid field names (e.g., `keyof T & string`).
  *
  * @param schema - Zod schema describing the payload.
  * @param allowedSubset - Optional subset of fields to validate (used if `explicitFields` is absent).
@@ -21,13 +21,13 @@ import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod-guards";
  * 4. Empty readonly array for non-object schemas.
  */
 export function resolveCanonicalFieldNamesFromSchema<
-  Tinput,
-  TfieldNames extends keyof Tinput & string,
+  T,
+  K extends keyof T & string,
 >(
-  schema: z.ZodType<Tinput>,
-  allowedSubset?: readonly TfieldNames[],
-  explicitFields?: readonly TfieldNames[],
-): readonly TfieldNames[] {
+  schema: z.ZodType<T>,
+  allowedSubset?: readonly K[],
+  explicitFields?: readonly K[],
+): readonly K[] {
   // Priority 1: explicit whitelist
   if (explicitFields && explicitFields.length > 0) {
     return explicitFields;
@@ -40,6 +40,6 @@ export function resolveCanonicalFieldNamesFromSchema<
 
   // Priority 3: derive from object schema; otherwise return empty readonly array
   return isZodObjectSchema(schema)
-    ? (deriveFieldNamesFromSchema(schema) as readonly TfieldNames[])
+    ? (deriveFieldNamesFromSchema(schema) as readonly K[])
     : ([] as const);
 }

@@ -1,4 +1,4 @@
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages.constants";
+import { FORM_ERROR_MESSAGES } from "@/shared/forms/domain/constants/form-messages.constants";
 
 const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;
 const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
@@ -6,20 +6,20 @@ const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
 /**
  * Options controlling form validation behavior.
  *
- * @typeParam Tin - The shape of the object being validated.
- * @typeParam Tfieldnames - A string literal union of keys from `Tin` representing field names.
+ * @typeParam T - The shape of the object being validated.
+ * @typeParam K - A string literal union of keys from `T` representing field names.
  */
-export interface ValidateOptions<Tin, Tfieldnames extends keyof Tin & string> {
+export interface ValidateOptions<T, K extends keyof T & string> {
   /**
    * Specific fields to validate. When omitted, callers may validate all applicable fields.
    */
-  readonly fields?: readonly Tfieldnames[];
+  readonly fields?: readonly K[];
 
   /**
    * Raw input values (often unvalidated/unparsed) keyed by field name.
    * Use when validation needs access to original input (e.g. for type coercion or error context).
    */
-  readonly raw?: Readonly<Partial<Record<Tfieldnames, unknown>>>;
+  readonly raw?: Readonly<Partial<Record<K, unknown>>>;
 
   /**
    * Context string used for logging/tracing. Defaults to `DEFAULT_LOGGER_CONTEXT`.
@@ -45,15 +45,14 @@ export interface ValidateOptions<Tin, Tfieldnames extends keyof Tin & string> {
 /**
  * Resolve validation options by applying defaults for missing values.
  *
- * @typeParam Tin - The input object type being validated.
- * @typeParam Tfieldnames - A string literal union of keys from `Tin`.
+ * @typeParam T - The input object type being validated.
+ * @typeParam K - A string literal union of keys from `T`.
  * @param options - Validation options to resolve.
  * @returns An object containing resolved `failureMessage`, `successMessage`, `loggerContext`, `fields`, and `raw`.
  */
-export function resolveValidateOptions<
-  Tin,
-  Tfieldnames extends keyof Tin & string,
->(options: ValidateOptions<Tin, Tfieldnames>) {
+export function resolveValidateOptions<T, K extends keyof T & string>(
+  options: ValidateOptions<T, K>,
+) {
   return {
     failureMessage: options.messages?.failureMessage ?? DEFAULT_FAILURE_MESSAGE,
     fields: options.fields,

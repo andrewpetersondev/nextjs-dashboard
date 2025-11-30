@@ -16,7 +16,7 @@ import {
 } from "@/shared/forms/domain/error-map.factory";
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field-names.derive";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field-names.derive";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 type CreateUserFormData = {

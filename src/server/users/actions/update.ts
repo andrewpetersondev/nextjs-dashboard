@@ -23,7 +23,7 @@ import { toUserIdResult } from "@/shared/branding/id-converters";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod-field.resolver";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field.resolver";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
