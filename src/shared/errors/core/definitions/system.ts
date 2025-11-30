@@ -1,6 +1,6 @@
 import type { AppErrorDefinition } from "@/shared/errors/core/types";
 
-export const CORE_ERRORS = {
+export const SYSTEM_ERRORS = {
   // Core/server errors
   missingFields: {
     description: "missing.required.fields",

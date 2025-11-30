@@ -6,7 +6,7 @@ import { DOMAIN_ERRORS } from "@/shared/errors/core/definitions/domain";
 import { HTTP_ERRORS } from "@/shared/errors/core/definitions/http";
 import { INFRA_ERRORS } from "@/shared/errors/core/definitions/infra";
 import { PRESENTATION_ERRORS } from "@/shared/errors/core/definitions/presentation";
-import { CORE_ERRORS } from "@/shared/errors/core/definitions/system";
+import { SYSTEM_ERRORS } from "@/shared/errors/core/definitions/system";
 import { VALIDATION_ERRORS } from "@/shared/errors/core/definitions/validation";
 import type {
   AppErrorDefinition,
@@ -22,7 +22,7 @@ import type {
 export const APP_ERROR_MAP = {
   ...APPLICATION_ERRORS,
   ...AUTH_ERRORS,
-  ...CORE_ERRORS,
+  ...SYSTEM_ERRORS,
   ...DOMAIN_ERRORS,
   ...HTTP_ERRORS,
   ...INFRA_ERRORS,
