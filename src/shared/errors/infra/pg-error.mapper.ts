@@ -1,23 +1,11 @@
 // src/shared/errors/infra/pg-error.mapper.ts
 import type { AppErrorKey } from "@/shared/errors/core/error-codes";
-import {
-  extractPgErrorMetadata,
-  type PgErrorMetadata,
-} from "@/shared/errors/infra/pg-error.extractor";
+import { extractPgErrorMetadata } from "@/shared/errors/infra/pg-error.extractor";
+import type { PgErrorMapping } from "@/shared/errors/infra/pg-error.types";
 import {
   PG_CODE_TO_META,
   type PgCode,
-  type PgErrorMeta,
 } from "@/shared/errors/infra/pg-error-codes";
-
-/**
- * Mapping result from Postgres error to app error code + metadata.
- */
-export interface PgErrorMapping {
-  readonly condition: PgErrorMeta["condition"];
-  readonly appCode: AppErrorKey;
-  readonly pgMetadata: PgErrorMetadata;
-}
 
 /**
  * Map a Postgres error to app error code + rich metadata.

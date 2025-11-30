@@ -318,6 +318,6 @@ errors/
 └── infra/
     ├── pg-error-codes.ts      # Postgres error codes
     ├── pg-error.extractor.ts  # PG error extraction
-    ├── pg-error.factory.ts    # PG → BaseError conversion
+    ├── pg-error.normalizer.ts    # PG → BaseError conversion
     └── pg-error.mapper.ts     # PG error mapping
 ```
