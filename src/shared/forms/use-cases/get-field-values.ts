@@ -15,13 +15,17 @@ export const getFieldValues = <T extends string>(
   error: AppError,
 ): SparseFieldValueMap<T, string> | undefined => {
   const metadata = error?.metadata;
+
   if (!metadata || typeof metadata !== "object") {
     return;
   }
+
   const values = (metadata as { values?: SparseFieldValueMap<T, string> })
     .values;
+
   if (!values || typeof values !== "object") {
     return;
   }
+
   return values;
 };

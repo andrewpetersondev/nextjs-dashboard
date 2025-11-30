@@ -18,9 +18,12 @@ export const getFieldErrors = <T extends string>(
   if (!isFormValidationError(error)) {
     return;
   }
+
   const fieldErrors = error?.metadata?.fieldErrors;
+
   if (!fieldErrors || typeof fieldErrors !== "object") {
     return;
   }
+
   return fieldErrors as DenseFieldErrorMap<T, string>;
 };

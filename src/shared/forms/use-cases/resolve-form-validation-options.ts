@@ -8,38 +8,22 @@ const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
  *
  * @typeParam T - The shape of the object being validated.
  * @typeParam K - A string literal union of keys from `T` representing field names.
+ * @param fields - Specific fields to validate. When omitted, callers may validate all applicable fields.
+ * @param raw - Raw input values (often unvalidated/unparsed) keyed by field name.
+ * Use when validation needs access to original input (e.g. for type coercion or error context).
+ * @param loggerContext - Context string used for logging/tracing. Defaults to `DEFAULT_LOGGER_CONTEXT`.
+ * @param messages - Optional custom messages for the validation operation.
+ * @param messages.successMessage - Message to use when validation succeeds. Defaults to an empty string.
+ * @param messages.failureMessage - Message to use when validation fails. Defaults to `DEFAULT_FAILURE_MESSAGE`.
  */
 export interface FormValidationOptions<T, K extends keyof T & string> {
-  /**
-   * Specific fields to validate. When omitted, callers may validate all applicable fields.
-   */
   readonly fields?: readonly K[];
-
-  /**
-   * Raw input values (often unvalidated/unparsed) keyed by field name.
-   * Use when validation needs access to original input (e.g. for type coercion or error context).
-   */
-  readonly raw?: Readonly<Partial<Record<K, unknown>>>;
-
-  /**
-   * Context string used for logging/tracing. Defaults to `DEFAULT_LOGGER_CONTEXT`.
-   */
   readonly loggerContext?: string;
-
-  /**
-   * Optional custom messages for the validation operation.
-   */
   readonly messages?: {
-    /**
-     * Message to use when validation succeeds. Defaults to an empty string.
-     */
     readonly successMessage?: string;
-
-    /**
-     * Message to use when validation fails. Defaults to `DEFAULT_FAILURE_MESSAGE`.
-     */
     readonly failureMessage?: string;
   };
+  readonly raw?: Readonly<Partial<Record<K, unknown>>>;
 }
 
 /**

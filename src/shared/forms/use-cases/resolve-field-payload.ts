@@ -27,7 +27,9 @@ export function resolveRawFieldPayload<T extends string>(
         out[f] = String(v);
       }
     }
+
     return Object.freeze(out);
   }
+
   return extractFormDataFields<T>(formData, fields);
 }
