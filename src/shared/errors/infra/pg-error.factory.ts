@@ -33,12 +33,12 @@ export function normalizePgError(
     // Not a Postgres error - fallback to generic database error
     return makeBaseError("database", {
       cause: err,
-      message: "unknown",
+      message: "db_unknown_error",
       metadata: additionalMetadata,
     });
   }
 
-  return makeBaseError("database", {
+  return makeBaseError(mapping.appCode, {
     cause: err,
     message: mapping.condition,
     metadata: {

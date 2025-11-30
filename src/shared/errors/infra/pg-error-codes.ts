@@ -12,15 +12,15 @@ export const PG_ERROR_MAP = {
     condition: "db_check_violation",
     name: "checkViolation",
   },
-  foreignKeyViolation: {
-    code: "23503",
-    condition: "db_foreign_key_violation",
-    name: "foreignKeyViolation",
-  },
   exclusionViolation: {
     code: "23P01",
     condition: "db_exclusion_violation",
     name: "exclusionViolation",
+  },
+  foreignKeyViolation: {
+    code: "23503",
+    condition: "db_foreign_key_violation",
+    name: "foreignKeyViolation",
   },
   notNullViolation: {
     code: "23502",

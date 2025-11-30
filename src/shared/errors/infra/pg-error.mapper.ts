@@ -1,4 +1,5 @@
 // src/shared/errors/infra/pg-error.mapper.ts
+import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 import {
   extractPgErrorMetadata,
   type PgErrorMetadata,
@@ -14,6 +15,7 @@ import {
  */
 export interface PgErrorMapping {
   readonly condition: PgErrorMeta["condition"];
+  readonly appCode: AppErrorKey;
   readonly pgMetadata: PgErrorMetadata;
 }
 
@@ -36,8 +38,11 @@ export function mapPgError(err: unknown): PgErrorMapping | undefined {
 
   // Infrastructure-safe message; domain can override if needed
   const condition = pgErrorDef.condition ?? "db_unknown_error";
+  // Known codes in PG_CODE_TO_META describe integrity violations
+  const appCode: AppErrorKey = "integrity";
 
   return {
+    appCode,
     condition,
     pgMetadata: pgErrorMetadata,
   };
