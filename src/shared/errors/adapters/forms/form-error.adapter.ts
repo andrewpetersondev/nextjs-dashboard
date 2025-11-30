@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { getFieldErrors } from "@/shared/errors/guards/form-error.guards";
-import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/domain/types/error-maps.types";
 
 export function mapAppErrorToFormPayload<T extends string>(
   error: AppError,

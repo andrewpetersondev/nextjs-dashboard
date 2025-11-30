@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
-import { isFormValidationError } from "@/shared/forms/domain/form-guards";
+import { isFormValidationError } from "@/shared/forms/domain/guards/form-guards";
+import type { DenseFieldErrorMap } from "@/shared/forms/domain/types/error-maps.types";
 
 /**
  * Safely extract dense field errors from an AppError.

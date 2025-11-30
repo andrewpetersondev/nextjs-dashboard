@@ -1,9 +1,12 @@
 // src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
-import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/zod-error.mapper";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field.resolver";
 import {

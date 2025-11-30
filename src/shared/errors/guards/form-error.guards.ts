@@ -3,7 +3,7 @@ import type { FormErrorMetadata } from "@/shared/errors/core/error.types";
 import type {
   FieldErrors,
   FormErrors,
-} from "@/shared/forms/domain/field-error.types";
+} from "@/shared/forms/domain/types/field-error.types";
 
 /**
  * Type guard to check if error metadata contains form errors.

@@ -15,8 +15,11 @@ import {
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
-import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/zod-error.mapper";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field-names.derive";
 import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";

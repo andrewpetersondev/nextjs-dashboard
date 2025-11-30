@@ -1,4 +1,4 @@
-import type { SparseFieldValueMap } from "@/shared/forms/domain/error-maps.types";
+import type { SparseFieldValueMap } from "@/shared/forms/domain/types/error-maps.types";
 
 /**
  * Build a sparse map of user-displayable string values from a raw payload.

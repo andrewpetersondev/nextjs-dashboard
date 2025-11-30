@@ -6,7 +6,7 @@ import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 import type {
   FieldErrors,
   FormErrors,
-} from "@/shared/forms/domain/field-error.types";
+} from "@/shared/forms/domain/types/field-error.types";
 
 /**
  * Generic error metadata container.

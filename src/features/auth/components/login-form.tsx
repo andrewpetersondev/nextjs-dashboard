@@ -8,7 +8,7 @@ import {
   LOGIN_FIELDS_LIST,
   type LoginField,
 } from "@/features/auth/lib/auth.schema";
-import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
 import { getFieldErrors } from "@/shared/forms/use-cases/field-errors.extractor";
 import { getFieldValues } from "@/shared/forms/use-cases/field-values.extractor";

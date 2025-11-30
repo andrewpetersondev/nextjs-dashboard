@@ -4,11 +4,11 @@ import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/domain/error-maps.types";
+} from "@/shared/forms/domain/types/error-maps.types";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/form-result.types";
+} from "@/shared/forms/domain/types/form-result.types";
 import { Err, Ok } from "@/shared/result/result";
 import { freeze } from "@/shared/utils/object/freeze";
 

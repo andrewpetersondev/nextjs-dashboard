@@ -15,8 +15,8 @@ import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
 import { mapAppErrorToFormPayload } from "@/shared/errors/adapters/forms/form-error.adapter";
-import { formError } from "@/shared/forms/domain/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/form-result.types";
+import { formError } from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;

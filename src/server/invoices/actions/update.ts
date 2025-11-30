@@ -17,9 +17,12 @@ import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/error-map.factory";
-import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/form-result.types";
+} from "@/shared/forms/domain/factories/error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/domain/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
