@@ -22,6 +22,7 @@ export interface AppErrorDefinition {
 }
 
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
+
 export type FormErrors = readonly string[];
 /**
  * Generic error metadata container.
@@ -65,7 +66,7 @@ export interface DatabaseErrorMetadata extends Record<string, unknown> {
   readonly constraint?: string;
   readonly entity?: string;
   readonly operation?: string;
-  readonly pgCode?: string;
+  readonly pgCode?: string; // Matches the property name in PgErrorMetadata
   readonly table?: string;
 }
 

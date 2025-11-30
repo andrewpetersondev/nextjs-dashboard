@@ -7,12 +7,12 @@ function extractMetadataFromObject(
   code: PgCode,
 ): PgErrorMetadata {
   return {
-    code,
     column: asString(obj.column),
     constraint: asString(obj.constraint),
     datatype: asString(obj.datatype),
     detail: asString(obj.detail),
     hint: asString(obj.hint),
+    pgCode: code, // Map 'code' to 'pgCode'
     position: asString(obj.position),
     schema: asString(obj.schema),
     severity: asString(obj.severity),

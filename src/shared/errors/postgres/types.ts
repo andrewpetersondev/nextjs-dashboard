@@ -5,7 +5,7 @@ import type { AppErrorKey } from "@/shared/errors/registry";
  * Normalized Postgres error metadata extracted from pg error objects.
  */
 export interface PgErrorMetadata {
-  readonly code: PgCode;
+  readonly pgCode: PgCode;
   readonly column?: string;
   readonly constraint?: string;
   readonly datatype?: string;
@@ -22,8 +22,8 @@ export interface PgErrorMetadata {
  * Mapping result from Postgres error to app error code + metadata.
  */
 export interface PgErrorMapping {
-  readonly condition: PgErrorMeta["condition"];
   readonly appCode: AppErrorKey;
+  readonly condition: PgErrorMeta["condition"];
   readonly pgMetadata: PgErrorMetadata;
 }
 
@@ -35,7 +35,7 @@ export interface PgErrorMapping {
  * table/entity was involved.
  */
 export interface DatabaseOperationMetadata {
+  readonly entity?: string;
   readonly operation?: string;
   readonly table?: string;
-  readonly entity?: string;
 }

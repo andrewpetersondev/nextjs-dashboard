@@ -1,4 +1,3 @@
-// src/shared/errors/factory.ts
 import { AppError } from "@/shared/errors/app-error";
 import type { AppErrorKey } from "@/shared/errors/registry";
 import type { AppErrorOptions, FormErrorMetadata } from "@/shared/errors/types";
@@ -34,6 +33,16 @@ export function makeInvariantError(
     message: `Invariant failed: ${message}`,
     metadata: { ...metadata, kind: "invariant" },
   });
+}
+
+export function makeInfrastructureError(
+  options: AppErrorOptions = {},
+): AppError {
+  return makeAppError("infrastructure", options);
+}
+
+export function makeDatabaseError(options: AppErrorOptions = {}): AppError {
+  return makeAppError("database", options);
 }
 
 export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
