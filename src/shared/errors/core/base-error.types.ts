@@ -1,9 +1,6 @@
 // src/shared/errors/core/base-error.types.ts
-import type {
-  AppErrorKey,
-  AppErrorLayer,
-  Severity,
-} from "@/shared/errors/core/error-codes";
+import type { AppErrorKey } from "@/shared/errors/core/error-codes";
+import type { AppErrorLayer, Severity } from "@/shared/errors/core/error-types";
 
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 export type FormErrors = readonly string[];

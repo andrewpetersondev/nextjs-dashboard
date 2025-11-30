@@ -1,26 +1,17 @@
 // src/shared/errors/error-codes.ts
 
-export type Severity = "ERROR" | "WARN" | "INFO";
-
-/**
- * Logical ownership of an error code.
- *
- * - "CORE"       → generic, cross-cutting server errors (unexpected, unknown, etc.)
- * - "INFRA"      → infrastructure / integration boundaries (database, infrastructure, integrity)
- * - "HTTP"       → HTTP/client semantics (notFound, forbidden, conflict, parse)
- * - "AUTH"       → authentication / authorization semantics (invalidCredentials, unauthorized)
- * - "VALIDATION" → generic input validation semantics (422-style validation failures)
- */
-export type AppErrorLayer = "CORE" | "INFRA" | "HTTP" | "AUTH" | "VALIDATION";
-
-export interface AppErrorDefinition {
-  /** @deprecated move authFields somewhere else */
-  readonly authFields?: readonly string[];
-  readonly description: string;
-  readonly layer: AppErrorLayer;
-  readonly retryable: boolean;
-  readonly severity: Severity;
-}
+import { APPLICATION_ERRORS } from "@/shared/errors/core/application/application-errors";
+import { AUTH_ERRORS } from "@/shared/errors/core/auth-errors";
+import { CORE_ERRORS } from "@/shared/errors/core/core-errors";
+import { DOMAIN_ERRORS } from "@/shared/errors/core/domain/domain-errors";
+import type {
+  AppErrorDefinition,
+  AppErrorLayer,
+} from "@/shared/errors/core/error-types";
+import { HTTP_ERRORS } from "@/shared/errors/core/http-errors";
+import { INFRA_ERRORS } from "@/shared/errors/core/infra/infra-errors";
+import { PRESENTATION_ERRORS } from "@/shared/errors/core/presentation/presentation-errors";
+import { VALIDATION_ERRORS } from "@/shared/errors/core/validation-errors";
 
 /**
  * Canonical, transport-agnostic error code registry.
@@ -29,96 +20,14 @@ export interface AppErrorDefinition {
  * Those live in adapter layers (e.g. HTTP, message-bus) that map from codes.
  */
 export const APP_ERROR_MAP = {
-  // HTTP/client semantics (domain meaning: conflict in state)
-  conflict: {
-    authFields: ["email", "username"] as const,
-    description: "Resource state conflict",
-    layer: "HTTP",
-    retryable: false,
-    severity: "WARN",
-  },
-
-  // Infrastructure / integration boundaries
-  database: {
-    description: "Database operation failed",
-    layer: "INFRA",
-    retryable: false,
-    severity: "ERROR",
-  },
-  forbidden: {
-    description: "Operation not allowed",
-    layer: "HTTP",
-    retryable: false,
-    severity: "WARN",
-  },
-  infrastructure: {
-    description: "Infrastructure failure",
-    layer: "INFRA",
-    retryable: false,
-    severity: "ERROR",
-  },
-  integrity: {
-    description: "Data integrity violation",
-    layer: "INFRA",
-    retryable: false,
-    severity: "ERROR",
-  },
-  invalidCredentials: {
-    authFields: ["email", "username", "password"] as const,
-    description: "Invalid credentials",
-    layer: "AUTH",
-    retryable: false,
-    severity: "WARN",
-  },
-
-  // Core/server errors
-  missingFields: {
-    description: "missing.required.fields",
-    layer: "CORE",
-    retryable: false,
-    severity: "ERROR",
-  },
-  notFound: {
-    description: "Resource not found",
-    layer: "HTTP",
-    retryable: false,
-    severity: "INFO",
-  },
-  parse: {
-    description: "Parsing input failed",
-    layer: "HTTP",
-    retryable: false,
-    severity: "WARN",
-  },
-
-  // Auth semantics (distinct from generic validation)
-  unauthorized: {
-    authFields: ["email", "password"] as const,
-    description: "Invalid credentials",
-    layer: "AUTH",
-    retryable: false,
-    severity: "WARN",
-  },
-  unexpected: {
-    description: "An unexpected error occurred",
-    layer: "CORE",
-    retryable: false,
-    severity: "ERROR",
-  },
-  unknown: {
-    description: "An unknown error occurred",
-    layer: "CORE",
-    retryable: false,
-    severity: "ERROR",
-  },
-
-  // Generic validation semantics
-  validation: {
-    description: "Validation failed",
-    layer: "VALIDATION",
-    retryable: false,
-    severity: "WARN",
-  },
+  ...APPLICATION_ERRORS,
+  ...AUTH_ERRORS,
+  ...CORE_ERRORS,
+  ...DOMAIN_ERRORS,
+  ...HTTP_ERRORS,
+  ...INFRA_ERRORS,
+  ...PRESENTATION_ERRORS,
+  ...VALIDATION_ERRORS,
 } as const satisfies Record<string, AppErrorDefinition>;
 
 export type AppErrorKey = keyof typeof APP_ERROR_MAP;
@@ -165,4 +74,16 @@ export function isAuthErrorCode(code: AppErrorKey): boolean {
 
 export function isValidationErrorCode(code: AppErrorKey): boolean {
   return getAppErrorLayer(code) === "VALIDATION";
+}
+
+export function isDomainErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "DOMAIN";
+}
+
+export function isApplicationErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "APPLICATION";
+}
+
+export function isPresentationErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "PRESENTATION";
 }

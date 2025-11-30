@@ -15,12 +15,21 @@ export interface HttpErrorDefinition {
  * BaseError transport-agnostic.
  */
 export const HTTP_ERROR_MAP: Record<AppErrorKey, HttpErrorDefinition> = {
+  // New layered error codes
+  applicationError: {
+    responsibility: "server",
+    status: 500,
+  },
   conflict: {
     responsibility: "client",
     status: 409,
   },
   database: {
     responsibility: "infrastructure",
+    status: 500,
+  },
+  domainError: {
+    responsibility: "server",
     status: 500,
   },
   forbidden: {
@@ -51,6 +60,10 @@ export const HTTP_ERROR_MAP: Record<AppErrorKey, HttpErrorDefinition> = {
   parse: {
     responsibility: "client",
     status: 400,
+  },
+  presentationError: {
+    responsibility: "server",
+    status: 500,
   },
 
   unauthorized: {

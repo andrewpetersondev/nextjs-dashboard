@@ -50,35 +50,27 @@ export class AuthUserService {
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, BaseError>> {
     const requestId = crypto.randomUUID();
-
-    logAuth(
-      "info",
-      "Demo user creation start",
-      AuthLog.service.demoUser.start({ role }),
-      { requestId },
-    );
 
     try {
       const db = getAppDb();
       const counter = await demoUserCounter(db, role, this.logger, requestId);
 
       if (!counter || counter <= 0) {
-        const baseError = normalizeToBaseError(
+        const error = normalizeToBaseError(
           new Error("invalid_counter"),
-          "unexpected",
+          "validation",
         );
         logAuth(
           "error",
           "Invalid demo user counter",
-          AuthLog.service.demoUser.error(baseError, { role }),
+          AuthLog.service.demoUser.error(error, { role }),
           { additionalData: { counter }, requestId },
         );
-        return Err(baseError);
+        return Err(error);
       }
 
       const demoPassword = createRandomPassword();
@@ -107,14 +99,14 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      const normalized = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToBaseError(err, "unexpected");
       logAuth(
         "error",
         "Demo user creation failed",
-        AuthLog.service.demoUser.error(normalized, { role }),
+        AuthLog.service.demoUser.error(error, { role }),
         { requestId },
       );
-      return Err(normalized);
+      return Err(error);
     }
   }
 
@@ -131,31 +123,22 @@ export class AuthUserService {
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
     const requestId = crypto.randomUUID();
-    logAuth(
-      "info",
-      "Signup service start",
-      AuthLog.service.signup.start({
-        email: input.email,
-        username: input.username,
-      }),
-      { requestId },
-    );
 
     if (!hasRequiredSignupFields(input)) {
+      const error = normalizeToBaseError(
+        new Error("missing_fields"),
+        "missingFields",
+      );
       logAuth(
         "warn",
         "Missing required signup fields",
-        AuthLog.service.signup.error(new Error("missing_fields"), {
+        AuthLog.service.signup.error(error, {
           email: input.email,
           username: input.username,
         }),
         { requestId },
       );
-      const baseError = normalizeToBaseError(
-        new Error("missing_fields"),
-        "missingFields",
-      );
-      return Err(baseError);
+      return Err(error);
     }
 
     try {
@@ -178,14 +161,14 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      const normalized = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToBaseError(err, "unexpected");
       logAuth(
         "error",
         "Signup service failed",
-        AuthLog.service.signup.error(normalized, { email: input.email }),
+        AuthLog.service.signup.error(error, { email: input.email }),
         { requestId },
       );
-      return Err(normalized);
+      return Err(error);
     }
   }
 
@@ -205,47 +188,39 @@ export class AuthUserService {
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, BaseError>> {
     const requestId = crypto.randomUUID();
-    logAuth(
-      "info",
-      "Login service start",
-      AuthLog.service.login.start({ email: input.email }),
-      { requestId },
-    );
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
+        const error = normalizeToBaseError(
+          new Error("user_not_found"),
+          "notFound",
+        );
         logAuth(
           "warn",
-          "Login failed - invalid credentials",
-          AuthLog.service.login.error(new Error("invalid_credentials"), {
-            email: input.email,
-          }),
+          "Login failed - user not found",
+          AuthLog.service.login.error(error, { email: input.email }),
           { requestId },
         );
-        const baseError = normalizeToBaseError(
-          new Error("invalid_credentials"),
-          "invalidCredentials",
-        );
-        return Err(baseError);
+        return Err(error);
       }
 
       if (!user.password) {
+        const error = normalizeToBaseError(
+          new Error("missing_password_hash"),
+          "validation",
+        );
         logAuth(
           "error",
           "Login failed - missing password hash",
-          AuthLog.service.login.error(new Error("missing_password_hash"), {
+          AuthLog.service.login.error(error, {
             email: input.email,
             userId: String(user.id),
           }),
           { requestId },
         );
-        const baseError = normalizeToBaseError(
-          new Error("missing_password_hash"),
-          "invalidCredentials",
-        );
-        return Err(baseError);
+        return Err(error);
       }
 
       const passwordOk = await this.hasher.compare(
@@ -254,19 +229,17 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
+        const error = normalizeToBaseError(
+          new Error("invalid_password"),
+          "invalidCredentials",
+        );
         logAuth(
           "warn",
           "Login failed - invalid password",
-          AuthLog.service.login.error(new Error("invalid_credentials"), {
-            email: input.email,
-          }),
+          AuthLog.service.login.error(error, { email: input.email }),
           { requestId },
         );
-        const baseError = normalizeToBaseError(
-          new Error("invalid_credentials"),
-          "invalidCredentials",
-        );
-        return Err(baseError);
+        return Err(error);
       }
 
       logAuth(
@@ -278,14 +251,14 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      const baseError = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToBaseError(err, "unexpected");
       logAuth(
         "error",
         "Login service unexpected error",
-        AuthLog.service.login.error(baseError, { email: input.email }),
+        AuthLog.service.login.error(error, { email: input.email }),
         { requestId },
       );
-      return Err(baseError);
+      return Err(error);
     }
   }
 }

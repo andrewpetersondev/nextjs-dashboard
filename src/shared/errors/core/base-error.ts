@@ -7,9 +7,7 @@ import type {
 } from "@/shared/errors/core/base-error.types";
 import {
   type AppErrorKey,
-  type AppErrorLayer,
   getAppErrorCodeMeta,
-  type Severity,
 } from "@/shared/errors/core/error-codes";
 import {
   buildUnknownValueMetadata,
@@ -18,6 +16,7 @@ import {
   safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
 } from "@/shared/errors/core/error-helpers";
+import type { AppErrorLayer, Severity } from "@/shared/errors/core/error-types";
 
 /**
  * Standardized application error with transport-agnostic error codes.
