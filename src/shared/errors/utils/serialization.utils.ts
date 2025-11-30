@@ -1,3 +1,4 @@
+// src/shared/errors/utils/serialization.utils.ts
 import { isDev } from "@/shared/config/env-shared";
 
 function isSerializable(value: unknown): boolean {
@@ -17,9 +18,9 @@ export function safeStringifyUnknown(value: unknown): string {
     const json = JSON.stringify(value, (_k, v) =>
       typeof v === "bigint" ? v.toString() : v,
     );
-    const Max = 10_000;
-    if (json.length > Max) {
-      return `${json.slice(0, Max)}…[truncated ${json.length - Max} chars]`;
+    const MaxLength = 10_000;
+    if (json.length > MaxLength) {
+      return `${json.slice(0, MaxLength)}…[truncated ${json.length - MaxLength} chars]`;
     }
     return json ?? String(value);
   } catch {
@@ -48,6 +49,17 @@ export function buildUnknownValueMetadata(
     originalType: value === null ? "null" : typeof value,
     originalValue: redactNonSerializable(value),
   };
+}
+
+export function validateAndMaybeSanitizeMetadata(
+  ctx: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of Object.keys(ctx).sort()) {
+    const val = ctx[key];
+    out[key] = isSerializable(val) ? val : redactNonSerializable(val);
+  }
+  return out;
 }
 
 export function deepFreezeDev<T>(obj: T): T {
@@ -79,48 +91,4 @@ export function deepFreezeDev<T>(obj: T): T {
   };
   freeze(obj as unknown as object);
   return obj;
-}
-
-export function validateAndMaybeSanitizeMetadata(
-  ctx: Record<string, unknown>,
-): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  for (const key of Object.keys(ctx).sort()) {
-    const val = ctx[key];
-    out[key] = isSerializable(val) ? val : redactNonSerializable(val);
-  }
-  return out;
-}
-
-/**
- * BFS to flatten the error chain, looking into common wrapper properties.
- * Useful for finding the root cause or specific metadata in nested errors.
- */
-export function flattenErrorChain(root: unknown): Record<string, unknown>[] {
-  if (!root || typeof root !== "object") {
-    return [];
-  }
-
-  const queue: Record<string, unknown>[] = [root as Record<string, unknown>];
-  const result: Record<string, unknown>[] = [];
-  const seen = new Set<object>();
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    if (seen.has(current)) {
-      continue;
-    }
-    seen.add(current);
-    result.push(current);
-
-    // Check common wrapper properties
-    // We use a predefined list to avoid infinite recursion on arbitrary props
-    const propsToCheck = ["cause", "originalError", "originalCause", "error"];
-    for (const prop of propsToCheck) {
-      const val = current[prop];
-      if (val && typeof val === "object") {
-        queue.push(val as Record<string, unknown>);
-      }
-    }
-  }
-  return result;
 }

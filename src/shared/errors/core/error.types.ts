@@ -3,10 +3,11 @@ import type {
   Severity,
 } from "@/shared/errors/core/error-definition.types";
 import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
+import type {
+  FieldErrors,
+  FormErrors,
+} from "@/shared/forms/domain/field-error.types";
 
-export type FieldErrors = Readonly<Record<string, readonly string[]>>;
-
-export type FormErrors = readonly string[];
 /**
  * Generic error metadata container.
  *
@@ -31,7 +32,6 @@ export type ErrorMetadata = Readonly<Record<string, unknown>>;
 
 /**
  * Form-specific error metadata structure.
- * Stored in the metadata property when error involves form validation.
  */
 export interface FormErrorMetadata extends Record<string, unknown> {
   readonly fieldErrors?: FieldErrors;
@@ -42,18 +42,19 @@ export interface FormErrorMetadata extends Record<string, unknown> {
 
 /**
  * Database-specific error metadata structure.
- * Stored in the metadata property when error originates from database layer.
  */
 export interface DatabaseErrorMetadata extends Record<string, unknown> {
   readonly column?: string;
   readonly constraint?: string;
   readonly entity?: string;
   readonly operation?: string;
-  readonly pgCode?: string; // Matches the property name in PgErrorMetadata
+  readonly pgCode?: string;
   readonly table?: string;
 }
 
-// Core metadata shared by all errors
+/**
+ * Core metadata shared by all errors.
+ */
 export interface ErrorCoreMetadata {
   readonly code: AppErrorKey;
   readonly description: string;
@@ -62,17 +63,19 @@ export interface ErrorCoreMetadata {
   readonly severity: Severity;
 }
 
-// JSON shape for serialization
+/**
+ * JSON shape for serialization.
+ */
 export interface AppErrorJson extends ErrorCoreMetadata {
   readonly message: string;
   readonly metadata?: ErrorMetadata;
 }
 
-// Options for constructing a AppError
+/**
+ * Options for constructing an AppError.
+ */
 export interface AppErrorOptions {
   readonly cause?: unknown;
-  /** @deprecated Use metadata instead */
-  readonly context?: ErrorMetadata;
   readonly message?: string;
   readonly metadata?: ErrorMetadata;
 }

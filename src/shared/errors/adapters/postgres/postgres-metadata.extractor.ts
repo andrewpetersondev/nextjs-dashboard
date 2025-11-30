@@ -3,7 +3,7 @@ import {
   type PgCode,
 } from "@/shared/errors/adapters/postgres/postgres.codes";
 import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/postgres-error.types";
-import { flattenErrorChain } from "@/shared/errors/utils/error-serialization.utils";
+import { flattenErrorChain } from "@/shared/errors/utils/error-chain.utils";
 
 function extractMetadataFromObject(
   obj: Record<string, unknown>,

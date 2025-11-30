@@ -24,3 +24,7 @@ export function isNonEmptyArray<T>(
 ): arr is NonEmptyArray<T> {
   return Array.isArray(arr) && arr.length > 0;
 }
+
+export type FieldErrors = Readonly<Record<string, readonly string[]>>;
+
+export type FormErrors = readonly string[];

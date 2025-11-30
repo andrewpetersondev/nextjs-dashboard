@@ -18,7 +18,7 @@ import {
   redactNonSerializable,
   safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
-} from "@/shared/errors/utils/error-serialization.utils";
+} from "@/shared/errors/utils/serialization.utils";
 
 /**
  * Standardized application error with transport-agnostic error codes.
@@ -60,15 +60,10 @@ export class AppError extends Error {
   readonly retryable: boolean;
   readonly severity: Severity;
 
-  /** @deprecated Use metadata instead */
-  get context(): ErrorMetadata {
-    return this.metadata;
-  }
-
   constructor(code: AppErrorKey, options: AppErrorOptions = {}) {
     const meta = getAppErrorCodeMeta(code);
 
-    const { cause, context, message, metadata } = options;
+    const { cause, message, metadata } = options;
 
     // Ensure cause is an Error, otherwise sanitize or set as undefined for safe error chaining.
     let sanitizedCause: unknown;
@@ -88,9 +83,9 @@ export class AppError extends Error {
     this.retryable = meta.retryable;
     this.severity = meta.severity;
 
-    // Merge old `context` and new `metadata`, with `metadata` taking precedence
-    const merged = { ...(context ?? {}), ...(metadata ?? {}) };
-    const checked = isDev() ? validateAndMaybeSanitizeMetadata(merged) : merged;
+    const checked = isDev()
+      ? validateAndMaybeSanitizeMetadata(metadata ?? {})
+      : (metadata ?? {});
     this.metadata = isDev()
       ? (deepFreezeDev(checked) as ErrorMetadata)
       : (Object.freeze(checked) as ErrorMetadata);

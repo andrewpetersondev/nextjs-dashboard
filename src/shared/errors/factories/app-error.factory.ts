@@ -17,7 +17,7 @@ export function makeAppError(
 }
 
 /**
- * Convenience helpers for common patterns.
+ * Convenience factory for validation errors with form metadata.
  */
 export function makeValidationError(
   options: AppErrorOptions & { metadata: FormErrorMetadata },
@@ -25,10 +25,16 @@ export function makeValidationError(
   return makeAppError("validation", options);
 }
 
+/**
+ * Convenience factory for unexpected errors.
+ */
 export function makeUnexpectedError(options: AppErrorOptions = {}): AppError {
   return makeAppError("unexpected", options);
 }
 
+/**
+ * Convenience factory for invariant violations.
+ */
 export function makeInvariantError(
   message: string,
   metadata?: Record<string, unknown>,
@@ -39,24 +45,34 @@ export function makeInvariantError(
   });
 }
 
+/**
+ * Convenience factory for infrastructure errors.
+ */
 export function makeInfrastructureError(
   options: AppErrorOptions = {},
 ): AppError {
   return makeAppError("infrastructure", options);
 }
 
+/**
+ * Convenience factory for database errors.
+ */
 export function makeDatabaseError(
   options: AppErrorOptions & { metadata?: DatabaseErrorMetadata } = {},
 ): AppError {
   return makeAppError("database", options);
 }
 
+/**
+ * Convenience factory for integrity errors.
+ */
 export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
   return makeAppError("integrity", options);
 }
 
 /**
  * Type guard for narrowing to `AppError`.
+ * @remarks use `AppError.isAppError(error)` instead.
  */
 export function isAppError(error: unknown): error is AppError {
   return AppError.isAppError(error);
