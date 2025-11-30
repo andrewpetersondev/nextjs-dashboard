@@ -15,23 +15,20 @@ import { freeze } from "@/shared/utils/object/freeze";
 /**
  * Create a successful form result.
  *
- * @typeParam Tpayload - Payload type carried by the success result.
+ * @typeParam T - Payload type carried by the success result.
  * @param data - The payload value.
  * @param message - Human-readable success message.
  * @returns A frozen {@link FormResult} containing an {@link FormSuccess} with the given data and message.
  */
-export const formOk = <Tpayload>(
-  data: Tpayload,
-  message: string,
-): FormResult<Tpayload> => {
-  const value = freeze<FormSuccess<Tpayload>>({ data, message });
+export const formOk = <T>(data: T, message: string): FormResult<T> => {
+  const value = freeze<FormSuccess<T>>({ data, message });
   return Ok(value);
 };
 
 /**
  * Create a form validation error with a dense field error map.
  *
- * @typeParam Tfieldname - Type for field name keys present in `fieldErrors`.
+ * @typeParam F - Type for field name keys present in `fieldErrors`.
  * @param params - Error construction parameters.
  * @param params.code - Optional error code; defaults to `"validation"`.
  * @param params.message - Top-level error message.
@@ -40,12 +37,12 @@ export const formOk = <Tpayload>(
  * @param params.values - Optional sparse map of submitted values to include in context.
  * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link AppError}.
  */
-export const formError = <Tfieldname extends string>(params: {
+export const formError = <F extends string>(params: {
   readonly code?: AppErrorKey;
-  readonly fieldErrors: DenseFieldErrorMap<Tfieldname, string>;
+  readonly fieldErrors: DenseFieldErrorMap<F, string>;
   readonly formErrors?: readonly string[];
   readonly message: string;
-  readonly values?: SparseFieldValueMap<Tfieldname, string>;
+  readonly values?: SparseFieldValueMap<F, string>;
 }): FormResult<never> => {
   const error: AppError = makeAppError(params.code ?? "validation", {
     message: params.message,
