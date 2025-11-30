@@ -1,5 +1,5 @@
-// src/shared/errors/db/pg-error.types.ts
-import type { PgCode, PgErrorMeta } from "@/shared/errors/db/pg-error-codes";
+// src/shared/errors/db/types.ts
+import type { PgCode, PgErrorMeta } from "@/shared/errors/db/codes";
 import type { AppErrorKey } from "@/shared/errors/registry";
 
 /**

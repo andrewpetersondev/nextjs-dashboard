@@ -206,7 +206,7 @@ export async function signupAction(formData) {
 
 ## Error Codes
 
-Defined in `registry.ts`, organized by layer:
+Defined in `status-codes.ts`, organized by layer:
 
 ### CORE Layer
 
@@ -313,11 +313,11 @@ errors/
 ├── forms/
 │   └── app-error.mappers.ts  # Form error extraction
 ├── http/
-│   ├── http-error.map.ts      # HTTP status mapping
+│   ├── status-codes.ts      # HTTP status mapping
 │   └── http-error.serializer.ts
 └── infra/
-    ├── pg-registry.ts      # Postgres error codes
-    ├── pg-error.extractor.ts  # PG error extraction
+    ├── codes.ts      # Postgres error codes
+    ├── extractor.ts  # PG error extraction
     ├── pg-error.normalizer.ts    # PG → AppError conversion
-    └── pg-error.mapper.ts     # PG error mapping
+    └── mapper.ts     # PG error mapping
 ```

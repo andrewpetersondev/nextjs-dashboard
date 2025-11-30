@@ -1,7 +1,7 @@
 // src/shared/logging/infra/logging.client.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppError } from "@/shared/errors/app-error";
-import { isBaseError } from "@/shared/errors/factory";
+import { isAppError } from "@/shared/errors/factory";
 
 import type { ErrorMetadata } from "@/shared/errors/types";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -152,7 +152,7 @@ export class LoggingClient
     error: unknown,
     loggingContext?: LogEventContext,
   ): void {
-    if (!isBaseError(error)) {
+    if (!isAppError(error)) {
       // Pass the raw error through. AbstractLogger will handle basic serialization
       // if it's an Error object, but we won't force redaction or shape-shifting here.
       const safeError = toSafeErrorShape(error);

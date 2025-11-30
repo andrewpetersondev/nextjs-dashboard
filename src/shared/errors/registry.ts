@@ -1,5 +1,4 @@
 // src/shared/errors/registry.ts
-
 import { APPLICATION_ERRORS } from "@/shared/errors/definitions/application";
 import { AUTH_ERRORS } from "@/shared/errors/definitions/auth";
 import { DOMAIN_ERRORS } from "@/shared/errors/definitions/domain";
@@ -45,4 +44,33 @@ export function getAppErrorCodeMeta(code: AppErrorKey): AppErrorMeta {
  */
 export function getAppErrorLayer(code: AppErrorKey): AppErrorLayer {
   return APP_ERROR_MAP[code].layer;
+}
+
+// Layer predicates
+export function isDbErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "DB";
+}
+
+export function isInternalErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "INTERNAL";
+}
+
+export function isApiErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "API";
+}
+
+export function isSecurityErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "SECURITY";
+}
+
+export function isValidationErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "VALIDATION";
+}
+
+export function isDomainErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "DOMAIN";
+}
+
+export function isUiErrorCode(code: AppErrorKey): boolean {
+  return getAppErrorLayer(code) === "UI";
 }

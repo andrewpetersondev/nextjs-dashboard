@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isBaseError } from "@/shared/errors/factory";
+import { isAppError } from "@/shared/errors/factory";
 import type {
   FormResult,
   FormSuccess,
@@ -66,7 +66,7 @@ function extractMessageAndSuccess<Tdata>(
   // Error branch: state.error is AppError
   const error = state.error;
 
-  if (isBaseError(error)) {
+  if (isAppError(error)) {
     return Object.freeze({
       message: error.message,
       success: false,

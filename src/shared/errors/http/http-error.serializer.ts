@@ -3,7 +3,7 @@ import type { AppError } from "@/shared/errors/app-error";
 import {
   HTTP_ERROR_MAP,
   type HttpResponsibility,
-} from "@/shared/errors/http/http-error.map";
+} from "@/shared/errors/http/status-codes";
 import type { AppErrorJson } from "@/shared/errors/types";
 
 export interface HttpErrorPayload extends AppErrorJson {

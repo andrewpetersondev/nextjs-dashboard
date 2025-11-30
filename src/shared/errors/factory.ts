@@ -1,4 +1,4 @@
-// src/shared/errors/core/factory.ts
+// src/shared/errors/factory.ts
 import { AppError } from "@/shared/errors/app-error";
 import type { AppErrorKey } from "@/shared/errors/registry";
 import type { AppErrorOptions, FormErrorMetadata } from "@/shared/errors/types";
@@ -43,6 +43,6 @@ export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
 /**
  * Type guard for narrowing to `AppError`.
  */
-export function isBaseError(error: unknown): error is AppError {
+export function isAppError(error: unknown): error is AppError {
   return AppError.isAppError(error);
 }

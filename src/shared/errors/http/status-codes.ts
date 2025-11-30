@@ -1,4 +1,4 @@
-// src/shared/errors/http/http-error.map.ts
+// src/shared/errors/http/status-codes.ts
 import type { AppErrorKey } from "@/shared/errors/registry";
 
 export type HttpResponsibility = "client" | "server" | "infrastructure";
@@ -23,7 +23,7 @@ export const HTTP_ERROR_MAP: Record<AppErrorKey, HttpErrorDefinition> = {
   infrastructure: { responsibility: "infrastructure", status: 500 },
   integrity: { responsibility: "infrastructure", status: 500 },
   invalidCredentials: { responsibility: "client", status: 422 },
-  missingFields: { responsibility: "server", status: 500 },
+  missingFields: { responsibility: "client", status: 422 },
   notFound: { responsibility: "client", status: 404 },
   parse: { responsibility: "client", status: 400 },
   presentationError: { responsibility: "server", status: 500 },

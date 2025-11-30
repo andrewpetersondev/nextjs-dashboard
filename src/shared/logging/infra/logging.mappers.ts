@@ -1,6 +1,6 @@
 // src/shared/logging/infra/logging.mappers.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import { isBaseError } from "@/shared/errors/factory";
+import { isAppError } from "@/shared/errors/factory";
 import type { Severity } from "@/shared/errors/types";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
@@ -12,7 +12,7 @@ import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
  * - If it's anything else (string, number, etc.), returns the string representation.
  */
 export function toSafeErrorShape(err: unknown): SafeErrorShape | unknown {
-  if (isBaseError(err)) {
+  if (isAppError(err)) {
     return err;
   }
   if (err instanceof Error) {

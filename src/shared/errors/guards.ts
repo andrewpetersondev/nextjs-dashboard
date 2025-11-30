@@ -79,16 +79,12 @@ export function hasPgMetadata(
 
 /**
  * Type guard to check if error is database-related.
- *
- * @example
- * if (isDatabaseError(error)) {
- *   console.log(error.metadata.operation); // string | undefined
- * }
+ * Relies on the error layer being "DB".
  */
 export function isDatabaseError(
   error: AppError,
 ): error is AppError & { metadata: DatabaseErrorMetadata } {
-  return error.code === "database" || error.code === "integrity";
+  return error.layer === "DB";
 }
 
 /**
