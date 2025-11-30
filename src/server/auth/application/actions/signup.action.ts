@@ -14,7 +14,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { mapAppErrorToFormPayload } from "@/shared/errors/forms/transformer";
+import { mapAppErrorToFormPayload } from "@/shared/errors/forms/adapter";
 import { formError } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";

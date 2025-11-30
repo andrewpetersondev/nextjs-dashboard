@@ -4,12 +4,11 @@ import {
   type AppErrorKey,
   getAppErrorCodeMeta,
 } from "@/shared/errors/registry";
+import type { AppErrorLayer, Severity } from "@/shared/errors/schema";
 import type {
   AppErrorJson,
-  AppErrorLayer,
   AppErrorOptions,
   ErrorMetadata,
-  Severity,
 } from "@/shared/errors/types";
 import {
   buildUnknownValueMetadata,

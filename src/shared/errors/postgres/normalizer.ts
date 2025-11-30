@@ -1,5 +1,5 @@
 import type { AppError } from "@/shared/errors/app-error";
-import { makeAppError } from "@/shared/errors/factory";
+import { makeAppError, makeDatabaseError } from "@/shared/errors/factory";
 import { mapPgError } from "@/shared/errors/postgres/translator";
 import type { DatabaseOperationMetadata } from "@/shared/errors/postgres/types";
 import type { ErrorMetadata } from "@/shared/errors/types";
@@ -29,7 +29,7 @@ function createGenericDbError(
   err: unknown,
   additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
 ): AppError {
-  return makeAppError("database", {
+  return makeDatabaseError({
     cause: err,
     message: "db_unknown_error",
     metadata: additionalMetadata,

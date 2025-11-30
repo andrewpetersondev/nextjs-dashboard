@@ -1,7 +1,8 @@
 // src/shared/logging/core/logger.types.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppErrorKey } from "@/shared/errors/registry";
-import type { AppErrorJson, Severity } from "@/shared/errors/types";
+import type { Severity } from "@/shared/errors/schema";
+import type { AppErrorJson } from "@/shared/errors/types";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
 

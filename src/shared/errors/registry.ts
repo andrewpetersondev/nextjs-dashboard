@@ -6,7 +6,7 @@ import { INFRA_ERRORS } from "@/shared/errors/definitions/infra";
 import { PRESENTATION_ERRORS } from "@/shared/errors/definitions/presentation";
 import { SYSTEM_ERRORS } from "@/shared/errors/definitions/system";
 import { VALIDATION_ERRORS } from "@/shared/errors/definitions/validation";
-import type { AppErrorDefinition, AppErrorLayer } from "@/shared/errors/types";
+import type { AppErrorDefinition, AppErrorLayer } from "@/shared/errors/schema";
 
 /**
  * Canonical, transport-agnostic error code registry.

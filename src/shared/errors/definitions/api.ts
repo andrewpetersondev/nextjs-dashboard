@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/types";
+import type { AppErrorDefinition } from "@/shared/errors/schema";
 
 export const API_ERRORS = {
   conflict: {

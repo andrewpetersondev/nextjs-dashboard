@@ -1,6 +1,10 @@
 import { AppError } from "@/shared/errors/app-error";
 import type { AppErrorKey } from "@/shared/errors/registry";
-import type { AppErrorOptions, FormErrorMetadata } from "@/shared/errors/types";
+import type {
+  AppErrorOptions,
+  DatabaseErrorMetadata,
+  FormErrorMetadata,
+} from "@/shared/errors/types";
 
 /**
  * Canonical factory for creating `AppError` instances.
@@ -41,7 +45,9 @@ export function makeInfrastructureError(
   return makeAppError("infrastructure", options);
 }
 
-export function makeDatabaseError(options: AppErrorOptions = {}): AppError {
+export function makeDatabaseError(
+  options: AppErrorOptions & { metadata?: DatabaseErrorMetadata } = {},
+): AppError {
   return makeAppError("database", options);
 }
 

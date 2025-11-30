@@ -1,7 +1,7 @@
 // src/shared/logging/infra/logging.mappers.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { isAppError } from "@/shared/errors/factory";
-import type { Severity } from "@/shared/errors/types";
+import type { Severity } from "@/shared/errors/schema";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
 /**
