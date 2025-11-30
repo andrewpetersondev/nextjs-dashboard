@@ -1,5 +1,4 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-
 import { getFieldErrors } from "@/shared/errors/guards/form-error.guards";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 
@@ -9,14 +8,12 @@ export function mapAppErrorToFormPayload<T extends string>(
   fieldErrors: DenseFieldErrorMap<T, string>;
   message: string;
 } {
-  // Extract fieldErrors from metadata using type guard
-  const fieldErrors = (getFieldErrors(error) ??
-    {}) as unknown as DenseFieldErrorMap<T, string>;
-
-  const message = error.message;
+  const sparse = getFieldErrors(error);
+  const fieldErrors: DenseFieldErrorMap<T, string> = (sparse ??
+    {}) as DenseFieldErrorMap<T, string>;
 
   return {
     fieldErrors,
-    message,
+    message: error.message,
   };
 }

@@ -18,6 +18,7 @@ export interface HttpErrorPayload extends AppErrorJson {
  */
 export function mapAppErrorToHttpPayload(error: AppError): HttpErrorPayload {
   const base: AppErrorJson = error.toJson();
+
   const httpDef = HTTP_ERROR_MAP[error.code] ?? {
     responsibility: "server" as const,
     status: 500,
