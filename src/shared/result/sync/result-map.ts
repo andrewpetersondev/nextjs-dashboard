@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-map.ts
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -9,12 +9,12 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  *
  * @typeParam Tvalue - The type of the input value in the `Result`.
  * @typeParam Tnext - The type of the transformed value.
- * @typeParam Terror - The type of the error, defaults to `BaseError`.
+ * @typeParam Terror - The type of the error, defaults to `AppError`.
  *
  * @param fn - A transformation function to be applied to the `Tvalue`.
  * @returns A function that takes a `Result` and produces a transformed `Result`.
  */
-export type MapOk = <Tvalue, Tnext, Terror extends BaseError>(
+export type MapOk = <Tvalue, Tnext, Terror extends AppError>(
   fn: (v: Tvalue) => Tnext,
 ) => (r: Result<Tvalue, Terror>) => Result<Tnext, Terror>;
 
@@ -39,15 +39,15 @@ export const mapOk: MapOk =
  * Transforms the error type of a `Result` using a mapping function.
  *
  * @typeParam Tvalue - The type of the successful result.
- * @typeParam Terror1 - The original error type, defaults to `BaseError`.
- * @typeParam Terror2 - The mapped error type, defaults to `BaseError`.
+ * @typeParam Terror1 - The original error type, defaults to `AppError`.
+ * @typeParam Terror2 - The mapped error type, defaults to `AppError`.
  * @param fn - A function that maps from `Terror1` to `Terror2`.
  * @returns A function that takes a `Result` and returns a transformed `Result`.
  */
 export type MapError = <
   Tvalue,
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
 >(
   fn: (e: Terror1) => Terror2,
 ) => (r: Result<Tvalue, Terror1>) => Result<Tvalue, Terror2>;
@@ -81,7 +81,7 @@ export const mapError: MapError =
  */
 export const mapErrorUnion =
   /* @__PURE__ */
-    <Tvalue, Terror1 extends BaseError, Terror2 extends BaseError>(
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
       fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
@@ -100,7 +100,7 @@ export const mapErrorUnion =
  */
 export const mapErrorUnionPreserve =
   /* @__PURE__ */
-    <Tvalue, Terror1 extends BaseError, Terror2 extends BaseError>(
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
       fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
@@ -126,7 +126,7 @@ export const mapErrorUnionPreserve =
  */
 export const mapErrorPreserve =
   /* @__PURE__ */
-    <Tvalue, Terror1 extends BaseError, Terror2 extends BaseError>(
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
       fn: (e: Terror1) => Terror2,
     ) =>
     /* @__PURE__ */
@@ -143,8 +143,8 @@ export const mapErrorPreserve =
  *
  * @typeParam Tvalue - The type of the success value.
  * @typeParam Tnext - The type of the transformed success value.
- * @typeParam Terror1 - The type of the initial error, extending `BaseError`. Defaults to `BaseError`.
- * @typeParam Terror2 - The type of the transformed error, extending `BaseError`. Defaults to `BaseError`.
+ * @typeParam Terror1 - The type of the initial error, extending `AppError`. Defaults to `AppError`.
+ * @typeParam Terror2 - The type of the transformed error, extending `AppError`. Defaults to `AppError`.
  * @param onOk - A function to transform the success value.
  * @param onErr - A function to transform the error value.
  * @returns A new {@link Result} with the transformed success or error value.
@@ -152,8 +152,8 @@ export const mapErrorPreserve =
 export type MapBoth = <
   Tvalue,
   Tnext,
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
 >(
   onOk: (v: Tvalue) => Tnext,
   onErr: (e: Terror1) => Terror2,

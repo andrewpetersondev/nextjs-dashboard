@@ -1,4 +1,4 @@
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -13,10 +13,10 @@ export const UUID_REGEX =
 export const validateUuidResult = (
   value: unknown,
   label = "id",
-): Result<string, BaseError> => {
+): Result<string, AppError> => {
   if (typeof value !== "string") {
     return Err(
-      new BaseError("validation", {
+      new AppError("validation", {
         message: `Invalid ${label}: expected string, got ${typeof value}`,
       }),
     );
@@ -24,12 +24,12 @@ export const validateUuidResult = (
   const v = value.trim();
   if (v.length === 0) {
     return Err(
-      new BaseError("validation", { message: `${label} cannot be empty` }),
+      new AppError("validation", { message: `${label} cannot be empty` }),
     );
   }
   if (!UUID_REGEX.test(v)) {
     return Err(
-      new BaseError("validation", {
+      new AppError("validation", {
         message: `Invalid ${label}: "${value}". Must be a valid UUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).`,
       }),
     );

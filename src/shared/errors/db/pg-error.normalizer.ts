@@ -1,19 +1,19 @@
-// src/shared/errors/infra/pg-error.normalizer.ts
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { makeBaseError } from "@/shared/errors/core/factory";
-import type { ErrorMetadata } from "@/shared/errors/core/base-error.types";
-import { mapPgError } from "@/shared/errors/infra/pg-error.mapper";
-import type { DatabaseOperationMetadata } from "@/shared/errors/infra/pg-error.types";
+// src/shared/errors/db/pg-error.normalizer.ts
+import type { AppError } from "@/shared/errors/app-error";
+import { mapPgError } from "@/shared/errors/db/pg-error.mapper";
+import type { DatabaseOperationMetadata } from "@/shared/errors/db/pg-error.types";
+import { makeAppError } from "@/shared/errors/factory";
+import type { ErrorMetadata } from "@/shared/errors/types";
 
 /**
- * Creates a specific BaseError based on a successful Postgres mapping.
+ * Creates a specific AppError based on a successful Postgres mapping.
  */
 function createMappedPgError(
   err: unknown,
   mapping: NonNullable<ReturnType<typeof mapPgError>>,
   additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
-): BaseError {
-  return makeBaseError(mapping.appCode, {
+): AppError {
+  return makeAppError(mapping.appCode, {
     cause: err,
     message: mapping.condition,
     metadata: {
@@ -29,8 +29,8 @@ function createMappedPgError(
 function createGenericDbError(
   err: unknown,
   additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
-): BaseError {
-  return makeBaseError("database", {
+): AppError {
+  return makeAppError("database", {
     cause: err,
     message: "db_unknown_error",
     metadata: additionalMetadata,
@@ -38,7 +38,7 @@ function createGenericDbError(
 }
 
 /**
- * Normalize a Postgres error into a BaseError with rich metadata.
+ * Normalize a Postgres error into a AppError with rich metadata.
  *
  * Preserves all Postgres metadata while mapping to appropriate app error code.
  * If not a Postgres error, returns a generic database error.
@@ -46,7 +46,7 @@ function createGenericDbError(
 export function normalizePgError(
   err: unknown,
   additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
-): BaseError {
+): AppError {
   const mapping = mapPgError(err);
 
   if (mapping) {

@@ -114,7 +114,7 @@ async function buildPatch(
  * - Automatic password hashing
  * - Cache revalidation
  *
- * @returns FormResult<unknown> wrapping FormSuccess<UserDto>  BaseError
+ * @returns FormResult<unknown> wrapping FormSuccess<UserDto>  AppError
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not my focus>
 export async function updateUserAction(

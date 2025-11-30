@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 
 export async function logoutAction(): Promise<void> {
   const requestId = crypto.randomUUID();
@@ -20,7 +20,7 @@ export async function logoutAction(): Promise<void> {
       requestId,
     });
   } else {
-    const error: BaseError = res.error;
+    const error: AppError = res.error;
     logAuth(
       "error",
       "Logout session clear failed",

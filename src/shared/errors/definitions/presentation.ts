@@ -1,10 +1,9 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const PRESENTATION_ERRORS = {
-  // Presentation layer (ui, http)
   presentationError: {
     description: "Presentation layer error",
-    layer: "PRESENTATION",
+    layer: "UI",
     retryable: false,
     severity: "ERROR",
   } as const satisfies AppErrorDefinition,

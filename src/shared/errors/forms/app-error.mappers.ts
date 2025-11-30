@@ -1,10 +1,10 @@
-// src/shared/errors/forms/base-error.mappers.ts
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { getFieldErrors } from "@/shared/errors/core/guards";
+// src/shared/errors/forms/app-error.mappers.ts
+import type { AppError } from "@/shared/errors/app-error";
+import { getFieldErrors } from "@/shared/errors/guards";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 
-export function mapBaseErrorToFormPayload<T extends string>(
-  error: BaseError,
+export function mapAppErrorToFormPayload<T extends string>(
+  error: AppError,
 ): {
   fieldErrors: DenseFieldErrorMap<T, string>;
   message: string;

@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-tap.ts
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import type { Result } from "@/shared/result/result";
 import { Err } from "@/shared/result/result";
 
@@ -10,13 +10,13 @@ import { Err } from "@/shared/result/result";
  *
  * @public
  * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror - The type of the error in the result, extending `BaseError`.
+ * @typeParam Terror - The type of the error in the result, extending `AppError`.
  * @param fn - The function to execute if the result is successful.
  * @returns The original `Result` instance.
  */
 export const tapOk =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError>(fn: (v: Tvalue) => void) =>
+    <Tvalue, Terror extends AppError>(fn: (v: Tvalue) => void) =>
     (r: Result<Tvalue, Terror>): Result<Tvalue, Terror> => {
       if (r.ok) {
         fn(r.value);
@@ -28,7 +28,7 @@ export const tapOk =
  * Applies a side-effect function to the error of a `Result` if it is not ok.
  *
  * @typeParam Tvalue - The type of the success value.
- * @typeParam Terror - The type of the error, extending `BaseError`.
+ * @typeParam Terror - The type of the error, extending `AppError`.
  * @param fn - A function to handle the error.
  * @returns The original `Result` after applying the side-effect.
  * @example
@@ -36,7 +36,7 @@ export const tapOk =
  */
 export const tapError =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError>(fn: (e: Terror) => void) =>
+    <Tvalue, Terror extends AppError>(fn: (e: Terror) => void) =>
     (r: Result<Tvalue, Terror>): Result<Tvalue, Terror> => {
       if (!r.ok) {
         fn(r.error);
@@ -53,8 +53,8 @@ export const tapError =
  */
 export function tapOkSafe<
   Tvalue,
-  Terror extends BaseError,
-  Tsideerror extends BaseError,
+  Terror extends AppError,
+  Tsideerror extends AppError,
 >(
   fn: (v: Tvalue) => void,
   mapError: (e: unknown) => Tsideerror,
@@ -69,8 +69,8 @@ export function tapOkSafe<
  */
 export function tapOkSafe<
   Tvalue,
-  Terror extends BaseError,
-  Tsideerror extends BaseError,
+  Terror extends AppError,
+  Tsideerror extends AppError,
 >(fn: (v: Tvalue) => void, mapError: (e: unknown) => Tsideerror) {
   return /* @__PURE__ */ (
     r: Result<Tvalue, Terror>,
@@ -91,15 +91,15 @@ export function tapOkSafe<
  * Safely taps into the error of a `Result` object, applying a function to it and handling potential exceptions.
  *
  * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror - The type of the error, extends `BaseError`.
+ * @typeParam Terror - The type of the error, extends `AppError`.
  * @param fn - Callback function to process the error.
  * @param mapError - Function to transform unknown errors into a `Tsideerror`.
  * @returns A new `Result` containing the original value or a transformed error.
  */
 export function tapErrorSafe<
   Tvalue,
-  Terror extends BaseError,
-  Tsideerror extends BaseError,
+  Terror extends AppError,
+  Tsideerror extends AppError,
 >(
   fn: (e: Terror) => void,
   mapError: (e: unknown) => Tsideerror,
@@ -117,8 +117,8 @@ export function tapErrorSafe<
  */
 export function tapErrorSafe<
   Tvalue,
-  Terror extends BaseError,
-  Tsideerror extends BaseError,
+  Terror extends AppError,
+  Tsideerror extends AppError,
 >(fn: (e: Terror) => void, mapError: (e: unknown) => Tsideerror) {
   return /* @__PURE__ */ (
     r: Result<Tvalue, Terror>,

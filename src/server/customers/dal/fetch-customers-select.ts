@@ -4,7 +4,7 @@ import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/server/customers/messages";
 import type { CustomerSelectRowRaw } from "@/server/customers/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 
 /**
  * Fetches all customers for select options.
@@ -24,7 +24,7 @@ export async function fetchCustomersSelectDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Database Error:", error);
-    throw new BaseError("database", {
+    throw new AppError("database", {
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
     });
   }

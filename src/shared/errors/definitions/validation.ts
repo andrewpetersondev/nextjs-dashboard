@@ -1,7 +1,6 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const VALIDATION_ERRORS = {
-  // Generic validation semantics
   validation: {
     description: "Validation failed",
     layer: "VALIDATION",

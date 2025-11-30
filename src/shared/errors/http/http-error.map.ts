@@ -1,5 +1,5 @@
 // src/shared/errors/http/http-error.map.ts
-import type { AppErrorKey } from "@/shared/errors/core/registry";
+import type { AppErrorKey } from "@/shared/errors/registry";
 
 export type HttpResponsibility = "client" | "server" | "infrastructure";
 
@@ -12,10 +12,9 @@ export interface HttpErrorDefinition {
  * HTTP transport mapping: AppErrorKey → HTTP status + responsibility.
  *
  * This is intentionally separate from the core APP_ERROR_MAP to keep
- * BaseError transport-agnostic.
+ * AppError transport-agnostic.
  */
 export const HTTP_ERROR_MAP: Record<AppErrorKey, HttpErrorDefinition> = {
-  // New layered error codes (alphabetical by key)
   applicationError: { responsibility: "server", status: 500 },
   conflict: { responsibility: "client", status: 409 },
   database: { responsibility: "infrastructure", status: 500 },

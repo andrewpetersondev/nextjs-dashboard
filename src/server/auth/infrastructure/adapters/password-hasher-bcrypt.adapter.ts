@@ -6,7 +6,7 @@ import {
 } from "@/features/auth/lib/password.types";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { SALT_ROUNDS } from "@/server/auth/domain/session/constants";
-import { makeBaseError } from "@/shared/errors/core/factory";
+import { makeAppError } from "@/shared/errors/factory";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);
@@ -37,7 +37,7 @@ export async function compareHash(
  *
  * Features:
  * - Uses 10 salt rounds (SALT_ROUNDS constant)
- * - Normalizes all bcrypt errors to BaseError with "encryption" code
+ * - Normalizes all bcrypt errors to AppError with "encryption" code
  * - Provides consistent error handling across hash and compare operations
  */
 export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
@@ -46,7 +46,7 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
       const hashed = await hashWithSaltRounds(raw);
       return asPasswordHash(hashed);
     } catch (err) {
-      throw makeBaseError("infrastructure", {
+      throw makeAppError("infrastructure", {
         cause: err,
         message: "Failed to hash password",
         metadata: { cryptoOperation: "hash", operation: "hash" },
@@ -58,7 +58,7 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
     try {
       return await compareHash(raw, String(hash));
     } catch (err) {
-      throw makeBaseError("infrastructure", {
+      throw makeAppError("infrastructure", {
         cause: err,
         message: "Failed to compare password hash",
         metadata: { cryptoOperation: "compare", operation: "compare" },

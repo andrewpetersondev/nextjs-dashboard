@@ -1,19 +1,19 @@
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { USER_ROLES } from "@/features/auth/lib/auth.roles";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import type { Result } from "@/shared/result/result";
 
 /**
  * Validates and converts an unknown value to a valid UserRole (Result-based).
  * Does not throw.
  */
-export function toUserRoleResult(role: unknown): Result<UserRole, BaseError> {
+export function toUserRoleResult(role: unknown): Result<UserRole, AppError> {
   const value = typeof role === "string" ? role.trim().toUpperCase() : role;
   if (USER_ROLES.includes(value as UserRole)) {
     return { ok: true, value: value as UserRole };
   }
   return {
-    error: new BaseError("validation", {
+    error: new AppError("validation", {
       cause: { role },
       message: "Invalid user role",
     }),

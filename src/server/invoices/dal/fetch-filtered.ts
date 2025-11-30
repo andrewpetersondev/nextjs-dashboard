@@ -4,7 +4,7 @@ import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
 
@@ -14,7 +14,7 @@ import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
  * @param query - Search query string
  * @param currentPage - Current page number
  * @returns Promise resolving to array of InvoiceListFilter
- * @throws BaseError if query fails
+ * @throws AppError if query fails
  */
 export async function fetchFilteredInvoicesDal(
   db: AppDatabase,
@@ -65,7 +65,7 @@ export async function fetchFilteredInvoicesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
-    throw new BaseError("database", {
+    throw new AppError("database", {
       context: {
         currentPage,
         query,

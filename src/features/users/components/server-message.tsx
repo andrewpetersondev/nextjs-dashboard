@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isBaseError } from "@/shared/errors/core/factory";
+import { isBaseError } from "@/shared/errors/factory";
 import type {
   FormResult,
   FormSuccess,
@@ -63,7 +63,7 @@ function extractMessageAndSuccess<Tdata>(
     });
   }
 
-  // Error branch: state.error is BaseError
+  // Error branch: state.error is AppError
   const error = state.error;
 
   if (isBaseError(error)) {

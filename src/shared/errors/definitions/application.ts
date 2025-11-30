@@ -1,10 +1,9 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const APPLICATION_ERRORS = {
-  // Application layer (service, action)
   applicationError: {
     description: "Application logic error",
-    layer: "APPLICATION",
+    layer: "INTERNAL",
     retryable: false,
     severity: "ERROR",
   } as const satisfies AppErrorDefinition,

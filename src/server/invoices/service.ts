@@ -7,7 +7,7 @@ import {
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 
@@ -40,7 +40,7 @@ export class InvoiceService {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) {
       // Use a known message ID so upper layers can translate consistently
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { date },
         message: INVOICE_MSG.invalidFormData,
       });
@@ -71,11 +71,11 @@ export class InvoiceService {
    * Creates an invoice from validated DTO.
    * @param dto - Validated InvoiceFormDto
    * @returns Promise resolving to created InvoiceDto
-   * @throws BaseError (code: "validation") with an InvoiceMessageId for invalid input
+   * @throws AppError (code: "validation") with an InvoiceMessageId for invalid input
    */
   async createInvoice(dto: InvoiceFormDto): Promise<InvoiceDto> {
     if (!dto) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         message: INVOICE_MSG.invalidInput,
       });
     }
@@ -92,12 +92,12 @@ export class InvoiceService {
    * Reads an invoice by ID.
    * @param id - Invoice ID as string
    * @returns Promise resolving to InvoiceDto
-   * @throws BaseError (code: "validation") with an InvoiceMessageId for invalid ID
+   * @throws AppError (code: "validation") with an InvoiceMessageId for invalid ID
    */
   async readInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!id) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { id },
         message: INVOICE_MSG.invalidId,
       });
@@ -112,7 +112,7 @@ export class InvoiceService {
    * @param id - Invoice ID as string
    * @param dto - Partial validated InvoiceFormDto
    * @returns Promise resolving to updated InvoiceDto
-   * @throws BaseError (code: "validation") with an InvoiceMessageId for invalid input
+   * @throws AppError (code: "validation") with an InvoiceMessageId for invalid input
    */
   async updateInvoice(
     id: string,
@@ -120,7 +120,7 @@ export class InvoiceService {
   ): Promise<InvoiceDto> {
     // Basic validation of input. Throw error to Actions layer.
     if (!(id && dto)) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { hasDto: Boolean(dto), id },
         message: INVOICE_MSG.invalidInput,
       });
@@ -150,12 +150,12 @@ export class InvoiceService {
    * Deletes an invoice by ID.
    * @param id - Invoice ID as string
    * @returns Promise resolving to deleted InvoiceDto
-   * @throws BaseError (code: "validation") with an InvoiceMessageId for invalid ID
+   * @throws AppError (code: "validation") with an InvoiceMessageId for invalid ID
    */
   async deleteInvoice(id: string): Promise<InvoiceDto> {
     // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { id },
         message: INVOICE_MSG.invalidId,
       });

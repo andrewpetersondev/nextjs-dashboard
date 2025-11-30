@@ -10,7 +10,7 @@ import { validateEnum } from "@/shared/validation/domain/enum";
  * Validates and converts a value to an IntervalDuration
  * @param duration - The duration value to validate
  * @returns A validated IntervalDuration
- * @throws {BaseError} If the duration is invalid
+ * @throws {AppError} If the duration is invalid
  */
 export const toIntervalDuration = (duration: unknown): IntervalDuration => {
   return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
@@ -19,7 +19,7 @@ export const toIntervalDuration = (duration: unknown): IntervalDuration => {
  * Validates and converts a value to a RevenueSource
  * @param source - The source value to validate
  * @returns A validated RevenueSource
- * @throws {BaseError} If the source is invalid
+ * @throws {AppError} If the source is invalid
  */
 export const toRevenueSource = (source: unknown): RevenueSource => {
   return validateEnum(source, REVENUE_SOURCES, "RevenueSource");

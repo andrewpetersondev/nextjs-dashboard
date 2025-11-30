@@ -5,7 +5,7 @@ import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceEntity } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/branding/domain-brands";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
@@ -13,7 +13,7 @@ import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
  * @param db - Drizzle database instance
  * @param id - Invoice ID
  * @returns Promise resolving to deleted InvoiceEntity
- * @throws BaseError if deletion fails or invoice not found
+ * @throws AppError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
   db: AppDatabase,
@@ -21,7 +21,7 @@ export async function deleteInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
   if (!(db && id)) {
-    throw new BaseError("validation", {
+    throw new AppError("validation", {
       context: { id },
       message: INVOICE_MSG.invalidInput,
     });
@@ -35,7 +35,7 @@ export async function deleteInvoiceDal(
 
   // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
-    throw new BaseError("database", {
+    throw new AppError("database", {
       context: { id },
       message: INVOICE_MSG.deleteFailed,
     });

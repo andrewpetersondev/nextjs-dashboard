@@ -1,7 +1,7 @@
 // src/shared/forms/domain/factories/form-result.factory.ts
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { makeBaseError } from "@/shared/errors/core/factory";
-import type { AppErrorKey } from "@/shared/errors/core/registry";
+import type { AppError } from "@/shared/errors/app-error";
+import { makeAppError } from "@/shared/errors/factory";
+import type { AppErrorKey } from "@/shared/errors/registry";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
@@ -39,7 +39,7 @@ export const formOk = <Tpayload>(
  * @param params.formErrors - Optional global form-level errors.
  * @param params.fieldErrors - Dense map of per-field error messages.
  * @param params.values - Optional sparse map of submitted values to include in context.
- * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link BaseError}.
+ * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link AppError}.
  */
 export const formError = <Tfieldname extends string>(params: {
   readonly code?: AppErrorKey;
@@ -48,7 +48,7 @@ export const formError = <Tfieldname extends string>(params: {
   readonly message: string;
   readonly values?: SparseFieldValueMap<Tfieldname, string>;
 }): FormResult<never> => {
-  const error: BaseError = makeBaseError(params.code ?? "validation", {
+  const error: AppError = makeAppError(params.code ?? "validation", {
     message: params.message,
     // Store form errors in metadata along with submitted values
     metadata: {

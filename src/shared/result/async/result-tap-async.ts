@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-tap-async.ts
-// Purpose: Adapter-first async taps (no default BaseError).
+// Purpose: Adapter-first async taps (no default AppError).
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import type { Result } from "@/shared/result/result";
 import { Err } from "@/shared/result/result";
 
@@ -9,13 +9,13 @@ import { Err } from "@/shared/result/result";
  * Executes a provided asynchronous function if the given `Result` is successful (`ok`).
  *
  * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror - The type of the error. Defaults to `BaseError`.
+ * @typeParam Terror - The type of the error. Defaults to `AppError`.
  * @param fn - An asynchronous function to execute with the successful value.
  * @returns A `Promise` resolving to the same `Result` passed as input.
  */
 export const tapOkAsync =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError>(fn: (v: Tvalue) => Promise<void>) =>
+    <Tvalue, Terror extends AppError>(fn: (v: Tvalue) => Promise<void>) =>
     /* @__PURE__ */
     async (r: Result<Tvalue, Terror>): Promise<Result<Tvalue, Terror>> => {
       if (r.ok) {
@@ -37,7 +37,7 @@ export const tapOkAsync =
  */
 export const tapOkAsyncSafe =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError, Tsideerror extends BaseError>(
+    <Tvalue, Terror extends AppError, Tsideerror extends AppError>(
       fn: (v: Tvalue) => Promise<void>,
       mapError: (e: unknown) => Tsideerror,
     ) =>
@@ -60,13 +60,13 @@ export const tapOkAsyncSafe =
  * Handles the error case of a `Result` asynchronously by executing a provided function.
  *
  * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror - The type of the error, extending `BaseError`.
+ * @typeParam Terror - The type of the error, extending `AppError`.
  * @param fn - An async function to process the error when the `Result` is not successful.
  * @returns A promise resolving to the unchanged `Result`.
  */
 export const tapErrorAsync =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError>(fn: (e: Terror) => Promise<void>) =>
+    <Tvalue, Terror extends AppError>(fn: (e: Terror) => Promise<void>) =>
     /* @__PURE__ */
     async (r: Result<Tvalue, Terror>): Promise<Result<Tvalue, Terror>> => {
       if (!r.ok) {
@@ -87,7 +87,7 @@ export const tapErrorAsync =
  */
 export const tapErrorAsyncSafe =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError, Tsideerror extends BaseError>(
+    <Tvalue, Terror extends AppError, Tsideerror extends AppError>(
       fn: (e: Terror) => Promise<void>,
       mapError: (e: unknown) => Tsideerror,
     ) =>

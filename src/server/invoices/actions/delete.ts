@@ -10,7 +10,7 @@ import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
@@ -28,7 +28,7 @@ export async function deleteInvoiceAction(
   try {
     // Basic validation of input. Throw to catch block.
     if (!id) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { id },
         message: INVOICE_MSG.invalidId,
       });

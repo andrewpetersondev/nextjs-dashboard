@@ -8,7 +8,7 @@ import type {
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { toPeriod } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 /**
@@ -37,7 +37,7 @@ export async function createInvoiceDal(
       .returning();
 
     if (!createdInvoice) {
-      throw new BaseError("database", {
+      throw new AppError("database", {
         context: {
           input,
         },

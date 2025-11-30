@@ -1,22 +1,23 @@
-// src/shared/errors/core/base-error.ts
+// src/shared/errors/app-error.ts
 import { isDev } from "@/shared/config/env-shared";
-import type {
-  BaseErrorJson,
-  BaseErrorOptions,
-  ErrorMetadata,
-} from "@/shared/errors/core/base-error.types";
 import {
   type AppErrorKey,
   getAppErrorCodeMeta,
-} from "@/shared/errors/core/registry";
+} from "@/shared/errors/registry";
+import type {
+  AppErrorJson,
+  AppErrorLayer,
+  AppErrorOptions,
+  ErrorMetadata,
+  Severity,
+} from "@/shared/errors/types";
 import {
   buildUnknownValueMetadata,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
-} from "@/shared/errors/core/utils";
-import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
+} from "@/shared/errors/utils";
 
 /**
  * Standardized application error with transport-agnostic error codes.
@@ -29,7 +30,7 @@ import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
  *
  * @example
  * // Form validation error
- * new BaseError("validation", {
+ * new AppError("validation", {
  *   message: "Invalid input",
  *   metadata: {
  *     fieldErrors: { email: ["required"] },
@@ -39,7 +40,7 @@ import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
  *
  * @example
  * // Database error with PG metadata
- * new BaseError("database", {
+ * new AppError("database", {
  *   message: "Duplicate key",
  *   cause: pgError,
  *   metadata: {
@@ -49,7 +50,7 @@ import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
  *   }
  * })
  */
-export class BaseError extends Error {
+export class AppError extends Error {
   readonly code: AppErrorKey;
   readonly description: string;
   readonly layer: AppErrorLayer;
@@ -63,7 +64,7 @@ export class BaseError extends Error {
     return this.metadata;
   }
 
-  constructor(code: AppErrorKey, options: BaseErrorOptions = {}) {
+  constructor(code: AppErrorKey, options: AppErrorOptions = {}) {
     const meta = getAppErrorCodeMeta(code);
 
     const { cause, context, message, metadata } = options;
@@ -100,30 +101,27 @@ export class BaseError extends Error {
     }
   }
 
-  static isBaseError(val: unknown): val is BaseError {
-    return val instanceof BaseError;
+  static isAppError(val: unknown): val is AppError {
+    return val instanceof AppError;
   }
 
-  static from(
-    error: unknown,
-    fallbackCode: AppErrorKey = "unknown",
-  ): BaseError {
-    if (error instanceof BaseError) {
+  static from(error: unknown, fallbackCode: AppErrorKey = "unknown"): AppError {
+    if (error instanceof AppError) {
       return error;
     }
     if (error instanceof Error) {
-      return new BaseError(fallbackCode, {
+      return new AppError(fallbackCode, {
         cause: error,
         message: error.message,
       });
     }
-    return new BaseError(fallbackCode, {
+    return new AppError(fallbackCode, {
       message: safeStringifyUnknown(error),
       metadata: buildUnknownValueMetadata(error),
     });
   }
 
-  toJson(): BaseErrorJson {
+  toJson(): AppErrorJson {
     const hasMetadata = Object.keys(this.metadata).length > 0;
     return {
       code: this.code,

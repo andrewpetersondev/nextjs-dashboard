@@ -3,7 +3,7 @@
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -15,7 +15,7 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  */
 export async function establishSessionAction(
   user: SessionUser,
-): Promise<Result<SessionUser, BaseError>> {
+): Promise<Result<SessionUser, AppError>> {
   const requestId = crypto.randomUUID();
 
   // Start (optional start event)
@@ -45,5 +45,5 @@ export async function establishSessionAction(
     AuthLog.action.login.error(error, { role: user.role, userId: user.id }),
     { requestId },
   );
-  return Err<BaseError>(error);
+  return Err<AppError>(error);
 }

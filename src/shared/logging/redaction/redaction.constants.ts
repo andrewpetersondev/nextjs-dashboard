@@ -13,7 +13,7 @@ export const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
  * Sensitive key identifiers (case-insensitive).
  *
  * Used for both:
- * - Error context redaction (BaseError)
+ * - Error context redaction (AppError)
  * - Log payload redaction (Logger)
  *
  * These keys are redacted wherever they appear to prevent credential leakage.

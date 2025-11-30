@@ -8,20 +8,20 @@ import {
 } from "@/features/revenues/constants/date";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
  *
  * @param revenueEntity - The revenue entity to transform
  * @returns RevenueDisplayEntity with additional display fields
- * @throws {BaseError} (code: "validation") When entity data is invalid or period cannot be parsed
+ * @throws {AppError} (code: "validation") When entity data is invalid or period cannot be parsed
  */
 export function mapRevenueEntityToDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
-    throw new BaseError("validation", {
+    throw new AppError("validation", {
       message: "Invalid revenue entity: expected non-null object",
     });
   }
@@ -33,21 +33,21 @@ export function mapRevenueEntityToDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { period: revenueEntity.period, yearNumber },
         message: "Invalid year extracted from period",
       });
     }
 
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { monthNumber, period: revenueEntity.period },
         message: "Invalid month number extracted from period",
       });
     }
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { monthNumber },
         message: "Invalid month name computed from month number",
       });
@@ -59,11 +59,11 @@ export function mapRevenueEntityToDisplayEntity(
       year: yearNumber,
     };
   } catch (error) {
-    if (error instanceof BaseError) {
+    if (error instanceof AppError) {
       throw error;
     }
 
-    throw new BaseError("validation", {
+    throw new AppError("validation", {
       cause: error instanceof Error ? error : undefined,
       context: { revenueEntity },
       message: `Failed to map revenue entity to display entity: ${

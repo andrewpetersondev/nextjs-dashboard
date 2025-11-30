@@ -1,8 +1,7 @@
 // src/shared/logging/core/logger.types.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { BaseErrorJson } from "@/shared/errors/core/base-error.types";
-import type { AppErrorKey } from "@/shared/errors/core/registry";
-import type { Severity } from "@/shared/errors/core/types";
+import type { AppErrorKey } from "@/shared/errors/registry";
+import type { AppErrorJson, Severity } from "@/shared/errors/types";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
 
@@ -23,7 +22,7 @@ export interface SerializedError {
   readonly stack?: string;
 }
 
-export interface BaseErrorLogPayload extends BaseErrorJson {
+export interface BaseErrorLogPayload extends AppErrorJson {
   readonly cause?: SerializedError;
   readonly diagnosticId?: string;
   readonly originalCauseRedacted?: boolean;
@@ -64,7 +63,7 @@ export type LogOperationData<T extends object = Record<string, unknown>> = T &
   LogOperationMetadata;
 
 /**
- * Options for logging BaseError instances.
+ * Options for logging AppError instances.
  */
 export interface LogBaseErrorOptions {
   readonly levelOverride?: LogLevel;

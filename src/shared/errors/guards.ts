@@ -1,11 +1,11 @@
-// src/shared/errors/core/guards.ts
-import type { BaseError } from "@/shared/errors/core/base-error";
+// src/shared/errors/guards.ts
+import type { AppError } from "@/shared/errors/app-error";
 import type {
   DatabaseErrorMetadata,
   FieldErrors,
   FormErrorMetadata,
   FormErrors,
-} from "@/shared/errors/core/base-error.types";
+} from "@/shared/errors/types";
 
 /**
  * Type guard to check if error metadata contains form errors.
@@ -15,7 +15,7 @@ import type {
  *   console.log(error.metadata.formErrors); // string[]
  * }
  */
-export function hasFormErrors(error: BaseError): error is BaseError & {
+export function hasFormErrors(error: AppError): error is AppError & {
   metadata: FormErrorMetadata & { formErrors: FormErrors };
 } {
   return (
@@ -33,7 +33,7 @@ export function hasFormErrors(error: BaseError): error is BaseError & {
  *   console.log(error.metadata.fieldErrors.email); // string[]
  * }
  */
-export function hasFieldErrors(error: BaseError): error is BaseError & {
+export function hasFieldErrors(error: AppError): error is AppError & {
   metadata: FormErrorMetadata & { fieldErrors: FieldErrors };
 } {
   return (
@@ -53,8 +53,8 @@ export function hasFieldErrors(error: BaseError): error is BaseError & {
  * }
  */
 export function isFormValidationError(
-  error: BaseError,
-): error is BaseError & { metadata: FormErrorMetadata } {
+  error: AppError,
+): error is AppError & { metadata: FormErrorMetadata } {
   return hasFormErrors(error) || hasFieldErrors(error);
 }
 
@@ -67,14 +67,13 @@ export function isFormValidationError(
  * }
  */
 export function hasPgMetadata(
-  error: BaseError,
-): error is BaseError & { metadata: DatabaseErrorMetadata } {
+  error: AppError,
+): error is AppError & { metadata: DatabaseErrorMetadata } {
   return (
     error.metadata !== undefined &&
     ("pgCode" in error.metadata ||
       "constraint" in error.metadata ||
-      "table" in error.metadata ||
-      "column" in error.metadata)
+      "table" in error.metadata)
   );
 }
 
@@ -87,8 +86,8 @@ export function hasPgMetadata(
  * }
  */
 export function isDatabaseError(
-  error: BaseError,
-): error is BaseError & { metadata: DatabaseErrorMetadata } {
+  error: AppError,
+): error is AppError & { metadata: DatabaseErrorMetadata } {
   return error.code === "database" || error.code === "integrity";
 }
 
@@ -102,7 +101,7 @@ export function isDatabaseError(
  *   console.log(fieldErrors.email); // string[] | undefined
  * }
  */
-export function getFieldErrors(error: BaseError): FieldErrors | undefined {
+export function getFieldErrors(error: AppError): FieldErrors | undefined {
   if (!hasFieldErrors(error)) {
     return;
   }
@@ -119,7 +118,7 @@ export function getFieldErrors(error: BaseError): FieldErrors | undefined {
  *   console.log(formErrors[0]); // string
  * }
  */
-export function getFormErrors(error: BaseError): FormErrors | undefined {
+export function getFormErrors(error: AppError): FormErrors | undefined {
   if (!hasFormErrors(error)) {
     return;
   }

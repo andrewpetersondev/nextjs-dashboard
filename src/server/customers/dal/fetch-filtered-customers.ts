@@ -5,7 +5,7 @@ import type { CustomerAggregatesRowRaw } from "@/server/customers/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).
@@ -57,7 +57,7 @@ export async function fetchFilteredCustomersDal(
   } catch (error) {
     // Use structured logging in production
     console.error("Fetch Filtered Customers Error:", error);
-    throw new BaseError("database", {
+    throw new AppError("database", {
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
     });
   }

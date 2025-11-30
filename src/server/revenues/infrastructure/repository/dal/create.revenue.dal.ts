@@ -4,7 +4,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function createRevenue(
@@ -12,7 +12,7 @@ export async function createRevenue(
   revenue: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenue) {
-    throw new BaseError("validation", { message: "Revenue data is required" });
+    throw new AppError("validation", { message: "Revenue data is required" });
   }
   return await upsertRevenue(db, revenue);
 }

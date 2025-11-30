@@ -16,8 +16,8 @@ import type { Period, RevenueId } from "@/shared/branding/domain-brands";
  * - Inputs are validated and failures surface as domain-centric errors.
  *
  * Error model guidelines
- * - BaseError: missing/invalid inputs, uniqueness/constraint violations.
- * - BaseError: unexpected persistence failures or mapping errors.
+ * - AppError: missing/invalid inputs, uniqueness/constraint violations.
+ * - AppError: unexpected persistence failures or mapping errors.
  */
 export interface RevenueRepositoryInterface {
   /**
@@ -28,8 +28,8 @@ export interface RevenueRepositoryInterface {
    *
    * @param revenue - Full creation payload
    * @returns The created RevenueEntity
-   * @throws BaseError If payload is missing/invalid
-   * @throws BaseError On persistence/mapping failures
+   * @throws AppError If payload is missing/invalid
+   * @throws AppError On persistence/mapping failures
    */
   create(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
 
@@ -38,8 +38,8 @@ export interface RevenueRepositoryInterface {
    *
    * @param id - RevenueId
    * @returns The RevenueEntity
-   * @throws BaseError If id is missing
-   * @throws BaseError If record not found or mapping fails
+   * @throws AppError If id is missing
+   * @throws AppError If record not found or mapping fails
    */
   read(id: RevenueId): Promise<RevenueEntity>;
 
@@ -53,8 +53,8 @@ export interface RevenueRepositoryInterface {
    * @param id - RevenueId of the row to update
    * @param revenue - Updatable fields (invoiceCount, totalAmount, calculationSource)
    * @returns The updated RevenueEntity
-   * @throws BaseError If inputs are missing/invalid
-   * @throws BaseError If update or mapping fails
+   * @throws AppError If inputs are missing/invalid
+   * @throws AppError If update or mapping fails
    */
   update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>;
 
@@ -62,8 +62,8 @@ export interface RevenueRepositoryInterface {
    * Delete a revenue record by id.
    *
    * @param id - RevenueId of the row to delete
-   * @throws BaseError If id is missing
-   * @throws BaseError If deletion fails
+   * @throws AppError If id is missing
+   * @throws AppError If deletion fails
    */
   delete(id: RevenueId): Promise<void>;
 
@@ -77,8 +77,8 @@ export interface RevenueRepositoryInterface {
    * @param startPeriod - Inclusive start period (first-of-month DATE)
    * @param endPeriod - Inclusive end period (first-of-month DATE)
    * @returns A list of RevenueEntity records if present; empty array otherwise
-   * @throws BaseError If either period is missing/invalid
-   * @throws BaseError On retrieval or mapping failures
+   * @throws AppError If either period is missing/invalid
+   * @throws AppError On retrieval or mapping failures
    */
   findByDateRange(
     startPeriod: Period,
@@ -99,8 +99,8 @@ export interface RevenueRepositoryInterface {
    *
    * @param revenue - Full creation payload including period
    * @returns The created or updated RevenueEntity
-   * @throws BaseError If payload/period is missing or uniqueness violations occur
-   * @throws BaseError On persistence/mapping failures
+   * @throws AppError If payload/period is missing or uniqueness violations occur
+   * @throws AppError On persistence/mapping failures
    */
   upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
   /**
@@ -109,8 +109,8 @@ export interface RevenueRepositoryInterface {
    * Retained for backward compatibility with older callers.
    *
    * @param id - RevenueId
-   * @throws BaseError If id is missing
-   * @throws BaseError If deletion fails
+   * @throws AppError If id is missing
+   * @throws AppError If deletion fails
    */
   deleteById(id: RevenueId): Promise<void>;
 
@@ -123,8 +123,8 @@ export interface RevenueRepositoryInterface {
    *
    * @param period - Target Period (first-of-month DATE)
    * @returns The RevenueEntity or null when not found
-   * @throws BaseError If period is missing/invalid
-   * @throws BaseError On mapping failures
+   * @throws AppError If period is missing/invalid
+   * @throws AppError On mapping failures
    */
   findByPeriod(period: Period): Promise<RevenueEntity | null>;
   /**
@@ -147,9 +147,9 @@ export interface RevenueRepositoryInterface {
    * @param period - Target Period (first-of-month DATE)
    * @param revenue - Updatable fields only (invoiceCount, totalAmount, calculationSource)
    * @returns The created or updated RevenueEntity
-   * @throws BaseError If `period` or `revenue` is missing/invalid
-   * @throws BaseError Propagated from upsert() on uniqueness/conflict-related errors
-   * @throws BaseError Propagated from persistence/mapping failures
+   * @throws AppError If `period` or `revenue` is missing/invalid
+   * @throws AppError Propagated from upsert() on uniqueness/conflict-related errors
+   * @throws AppError Propagated from persistence/mapping failures
    */
   upsertByPeriod(
     period: Period,

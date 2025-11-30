@@ -23,7 +23,7 @@
 
 - ✅ **Added error handling to BcryptPasswordHasherAdapter**
   - File: `password-hasher-bcrypt.adapter.ts`
-  - Change: Wrap hash/compare in try-catch with BaseError normalization
+  - Change: Wrap hash/compare in try-catch with AppError normalization
   - Verified: Errors properly normalized, backward compatible
 
 ---

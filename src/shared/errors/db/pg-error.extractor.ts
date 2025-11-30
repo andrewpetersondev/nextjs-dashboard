@@ -1,9 +1,9 @@
 // src/shared/errors/infra/pg-error.extractor.ts
-import type { PgErrorMetadata } from "@/shared/errors/infra/pg-error.types";
+import type { PgErrorMetadata } from "@/shared/errors/db/pg-error.types";
 import {
   PG_CODE_TO_META,
   type PgCode,
-} from "@/shared/errors/infra/pg-error-codes";
+} from "@/shared/errors/db/pg-error-codes";
 
 /**
  * BFS to flatten the error chain, looking into common wrapper properties.

@@ -38,7 +38,7 @@ throw new Error("Failed to sign session token", { cause: err });
 **Changes:**
 
 - Wrapped `hash()` and `compare()` methods in try-catch blocks
-- Normalize bcrypt errors to BaseError with "infrastructure" code
+- Normalize bcrypt errors to AppError with "infrastructure" code
 - Made utility functions (`hashWithSaltRounds`, `compareHash`) private
 - Added comprehensive JSDoc documentation
 
@@ -59,7 +59,7 @@ async hash(raw: string): Promise<PasswordHash> {
     const hashed = await hashWithSaltRounds(raw);
     return asPasswordHash(hashed);
   } catch (err) {
-    throw makeBaseError("infrastructure", {
+    throw makeAppError("infrastructure", {
       cause: err,
       message: "Failed to hash password",
       metadata: { operation: "hash", cryptoOperation: "hash" },

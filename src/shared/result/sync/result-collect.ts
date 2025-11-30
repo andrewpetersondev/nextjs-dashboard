@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-collect.ts
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import {
   Err,
   type ErrType,
@@ -17,7 +17,7 @@ import {
  * @param results - An array of `Result` objects to process.
  * @returns A `Result` containing an array of all successful values or the first encountered error.
  */
-export const collectAll = /* @__PURE__ */ <Tvalue, Terror extends BaseError>(
+export const collectAll = /* @__PURE__ */ <Tvalue, Terror extends AppError>(
   results: readonly Result<Tvalue, Terror>[],
 ): Result<readonly Tvalue[], Terror> => {
   const acc: Tvalue[] = [];
@@ -45,7 +45,7 @@ export const collectAll = /* @__PURE__ */ <Tvalue, Terror extends BaseError>(
  * ```
  */
 export function collectTuple<
-  Terror extends BaseError,
+  Terror extends AppError,
   Ttuple extends readonly Result<unknown, Terror>[],
 >(
   ...results: Ttuple
@@ -70,7 +70,7 @@ export function collectTuple<
  * @returns A `Result` containing either an array of all successful values or the first occurred error.
  */
 export function collectTupleHetero<
-  Ttuple extends readonly Result<unknown, BaseError>[],
+  Ttuple extends readonly Result<unknown, AppError>[],
 >(
   ...results: Ttuple
 ): Result<
@@ -101,7 +101,7 @@ export function collectTupleHetero<
  */
 export const firstOkOrElse =
   /* @__PURE__ */
-    <Tvalue, Terror extends BaseError>(onEmpty: () => Terror) =>
+    <Tvalue, Terror extends AppError>(onEmpty: () => Terror) =>
     /* @__PURE__ */
     (results: readonly Result<Tvalue, Terror>[]): Result<Tvalue, Terror> => {
       let lastErr: Result<never, Terror> | null = null;

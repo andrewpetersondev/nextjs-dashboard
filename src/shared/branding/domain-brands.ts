@@ -1,5 +1,5 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 import { brandWith } from "@/shared/validation/composition/brand";
 import { validatePeriodResult } from "@/shared/validation/domain/period";
@@ -26,21 +26,21 @@ export type Period = Brand<Date, typeof PERIOD_BRAND>;
  */
 export const uuidValidatorFor =
   (label: string) =>
-  (value: unknown): Result<string, BaseError> => {
+  (value: unknown): Result<string, AppError> => {
     const r = validateUuidResult(value, label);
     return r.ok
       ? Ok(r.value)
-      : Err(new BaseError("validation", { message: r.error.message }));
+      : Err(new AppError("validation", { message: r.error.message }));
   };
 
 /**
  * Validate and transform a period value (Result-based).
  */
-export const periodValidator = (value: unknown): Result<Date, BaseError> => {
+export const periodValidator = (value: unknown): Result<Date, AppError> => {
   const r = validatePeriodResult(value);
   return r.ok
     ? Ok(r.value)
-    : Err(new BaseError("validation", { message: r.error.message }));
+    : Err(new AppError("validation", { message: r.error.message }));
 };
 
 // --- Factories ---
@@ -62,7 +62,7 @@ export const createBrandedIdValidator = <
     ((value: string) => brandFn(value) as T) as (value: string) => T,
   );
 
-  return (value: unknown): Result<T, BaseError> => internalCreator(value);
+  return (value: unknown): Result<T, AppError> => internalCreator(value);
 };
 
 /**
@@ -80,7 +80,7 @@ export const createBrandedPeriodValidator = <
     ((value: Date) => brandFn(value) as T) as (value: Date) => T,
   );
 
-  return (value: unknown): Result<T, BaseError> => internalCreator(value);
+  return (value: unknown): Result<T, AppError> => internalCreator(value);
 };
 
 export const createCustomerId = createBrandedIdValidator<

@@ -1,10 +1,28 @@
-// src/shared/errors/core/base-error.types.ts
-import type { AppErrorKey } from "@/shared/errors/core/registry";
-import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
+import type { AppErrorKey } from "@/shared/errors/registry";
+
+export type Severity = "ERROR" | "WARN" | "INFO";
+
+/**
+ * Logical layers of the application where errors occur.
+ */
+export type AppErrorLayer =
+  | "DOMAIN" // Business rules & domain logic
+  | "API" // HTTP transport & API interface
+  | "UI" // Presentation & UI components
+  | "DB" // Database & Persistence
+  | "SECURITY" // Authentication & Authorization
+  | "VALIDATION" // Input validation
+  | "INTERNAL"; // System, panic, & unexpected errors
+
+export interface AppErrorDefinition {
+  readonly description: string;
+  readonly layer: AppErrorLayer;
+  readonly retryable: boolean;
+  readonly severity: Severity;
+}
 
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 export type FormErrors = readonly string[];
-
 /**
  * Generic error metadata container.
  *
@@ -61,13 +79,13 @@ export interface ErrorCoreMetadata {
 }
 
 // JSON shape for serialization
-export interface BaseErrorJson extends ErrorCoreMetadata {
+export interface AppErrorJson extends ErrorCoreMetadata {
   readonly message: string;
   readonly metadata?: ErrorMetadata;
 }
 
-// Options for constructing a BaseError
-export interface BaseErrorOptions {
+// Options for constructing a AppError
+export interface AppErrorOptions {
   readonly cause?: unknown;
   /** @deprecated Use metadata instead */
   readonly context?: ErrorMetadata;

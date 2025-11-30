@@ -12,31 +12,31 @@ import {
   type SessionId,
   type UserId,
 } from "@/shared/branding/domain-brands";
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import type { Result } from "@/shared/result/result";
 
 // --- New: Result-returning converters (thin wrappers over factories) ---
 
 export const toCustomerIdResult = (
   value: unknown,
-): Result<CustomerId, BaseError> => createCustomerId(value);
+): Result<CustomerId, AppError> => createCustomerId(value);
 
-export const toUserIdResult = (value: unknown): Result<UserId, BaseError> =>
+export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
   createUserId(value);
 
 export const toInvoiceIdResult = (
   value: unknown,
-): Result<InvoiceId, BaseError> => createInvoiceId(value);
+): Result<InvoiceId, AppError> => createInvoiceId(value);
 
 export const toRevenueIdResult = (
   value: unknown,
-): Result<RevenueId, BaseError> => createRevenueId(value);
+): Result<RevenueId, AppError> => createRevenueId(value);
 
 export const toSessionIdResult = (
   value: unknown,
-): Result<SessionId, BaseError> => createSessionId(value);
+): Result<SessionId, AppError> => createSessionId(value);
 
-export const toPeriodResult = (value: unknown): Result<Period, BaseError> =>
+export const toPeriodResult = (value: unknown): Result<Period, AppError> =>
   createPeriod(value);
 
 // --- Existing throw-based APIs preserved (now implemented via Result) ---

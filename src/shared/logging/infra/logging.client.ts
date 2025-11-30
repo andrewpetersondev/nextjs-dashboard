@@ -1,8 +1,9 @@
 // src/shared/logging/infra/logging.client.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { isBaseError } from "@/shared/errors/core/factory";
-import type { ErrorMetadata } from "@/shared/errors/core/base-error.types";
+import type { AppError } from "@/shared/errors/app-error";
+import { isBaseError } from "@/shared/errors/factory";
+
+import type { ErrorMetadata } from "@/shared/errors/types";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,
@@ -103,7 +104,7 @@ export class LoggingClient
     // This prevents error properties (code, stack, etc.) from polluting the top-level log
     const { error, ...otherData } = rest as Record<string, unknown>;
 
-    // Now safely handled by the mapper regardless of whether it's BaseError or standard Error
+    // Now safely handled by the mapper regardless of whether it's AppError or standard Error
     const safeError = error ? toSafeErrorShape(error) : undefined;
 
     // We construct the payload explicitly to ensure standard fields are present
@@ -122,9 +123,9 @@ export class LoggingClient
   }
 
   /**
-   * Log a BaseError with structured, sanitized output.
+   * Log a AppError with structured, sanitized output.
    */
-  logBaseError(error: BaseError, options?: LogBaseErrorOptions): void {
+  logBaseError(error: AppError, options?: LogBaseErrorOptions): void {
     const { levelOverride, loggingContext, message } = options ?? {};
 
     const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
@@ -171,7 +172,7 @@ export class LoggingClient
     });
   }
 
-  private buildErrorPayload(error: BaseError): BaseErrorLogPayload {
+  private buildErrorPayload(error: AppError): BaseErrorLogPayload {
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.context);
 

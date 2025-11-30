@@ -1,16 +1,15 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const AUTH_ERRORS = {
   invalidCredentials: {
     description: "Invalid credentials",
-    layer: "AUTH",
+    layer: "SECURITY",
     retryable: false,
     severity: "WARN",
   } as const satisfies AppErrorDefinition,
-  // Auth semantics (distinct from generic validation)
   unauthorized: {
     description: "Unauthorized",
-    layer: "AUTH",
+    layer: "SECURITY",
     retryable: false,
     severity: "WARN",
   } as const satisfies AppErrorDefinition,

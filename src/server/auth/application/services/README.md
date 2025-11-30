@@ -6,7 +6,7 @@ This directory contains the `SessionManager` service and small ports used to man
 
 - Single lifecycle entry point for session operations (establish, read, clear).
 - Decoupled adapters via ports to enable per-request instances and avoid singletons.
-- Consistent error codes (no custom BaseError subclasses) and alphabetically sorted object properties.
+- Consistent error codes (no custom AppError subclasses) and alphabetically sorted object properties.
 
 ## Usage (factory + DI)
 

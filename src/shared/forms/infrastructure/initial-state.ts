@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
@@ -17,7 +17,7 @@ export function createInitialFailedFormState<Tfieldnames extends string>(
   const fieldErrors: DenseFieldErrorMap<Tfieldnames, string> =
     createEmptyDenseFieldErrorMap<Tfieldnames, string>(fieldNames);
 
-  const error = new BaseError("validation", {
+  const error = new AppError("validation", {
     // no message shown in UI; this is just an "empty" validation state
     message: "",
     metadata: {

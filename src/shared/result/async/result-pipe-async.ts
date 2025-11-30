@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <safe because of overloads> */
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import type { Result } from "@/shared/result/result";
 
 /**
@@ -9,15 +9,15 @@ import type { Result } from "@/shared/result/result";
 type PipeStep<
   Tin,
   Tout,
-  Terrorin extends BaseError,
-  Terrorout extends BaseError,
+  Terrorin extends AppError,
+  Terrorout extends AppError,
 > = (
   r: Result<Tin, Terrorin>,
 ) => Result<Tout, Terrorout> | Promise<Result<Tout, Terrorout>>;
 
 export async function pipeAsync<
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
   T1,
   T2,
 >(
@@ -26,9 +26,9 @@ export async function pipeAsync<
 ): Promise<Result<T2, Terror1 | Terror2>>;
 
 export async function pipeAsync<
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
-  Terror3 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
+  Terror3 extends AppError,
   T1,
   T2,
   T3,
@@ -39,10 +39,10 @@ export async function pipeAsync<
 ): Promise<Result<T3, Terror1 | Terror2 | Terror3>>;
 
 export async function pipeAsync<
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
-  Terror3 extends BaseError,
-  Terror4 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
+  Terror3 extends AppError,
+  Terror4 extends AppError,
   T1,
   T2,
   T3,
@@ -55,11 +55,11 @@ export async function pipeAsync<
 ): Promise<Result<T4, Terror1 | Terror2 | Terror3 | Terror4>>;
 
 export async function pipeAsync<
-  Terror1 extends BaseError,
-  Terror2 extends BaseError,
-  Terror3 extends BaseError,
-  Terror4 extends BaseError,
-  Terror5 extends BaseError,
+  Terror1 extends AppError,
+  Terror2 extends AppError,
+  Terror3 extends AppError,
+  Terror4 extends AppError,
+  Terror5 extends AppError,
   T1,
   T2,
   T3,
@@ -74,7 +74,7 @@ export async function pipeAsync<
   step4: PipeStep<T4, T5, Terror1 | Terror2 | Terror3 | Terror4, Terror5>,
 ): Promise<Result<T5, Terror1 | Terror2 | Terror3 | Terror4 | Terror5>>;
 
-export async function pipeAsync<Terror extends BaseError>(
+export async function pipeAsync<Terror extends AppError>(
   seed: Result<any, Terror>,
   ...steps: readonly PipeStep<any, any, any, any>[]
 ): Promise<Result<any, Terror>> {

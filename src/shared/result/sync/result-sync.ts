@@ -1,7 +1,7 @@
 // File: src/shared/core/result/sync/result-sync.ts
-// Purpose: Adapter-first sync builders (no default BaseError).
+// Purpose: Adapter-first sync builders (no default AppError).
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -13,7 +13,7 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  * @param mapError - A callback to convert thrown errors into a specific error type.
  * @returns A `Result` object containing either the value or the mapped error.
  */
-export function tryCatch<Tvalue, Terror extends BaseError>(
+export function tryCatch<Tvalue, Terror extends AppError>(
   fn: () => Tvalue,
   mapError: (e: unknown) => Terror,
 ): Result<Tvalue, Terror> {
@@ -28,14 +28,14 @@ export function tryCatch<Tvalue, Terror extends BaseError>(
  * Creates a `Result` object from a potentially nullable value.
  *
  * @typeParam Tvalue - The type of the expected value.
- * @typeParam Terror - The type of error to return, extending `BaseError`.
+ * @typeParam Terror - The type of error to return, extending `AppError`.
  * @param v - The value which may be `null` or `undefined`.
  * @param onNull - A callback that returns an error when the value is `null` or `undefined`.
  * @returns A `Result` containing a value if `v` is non-null, otherwise an error.
  * @example
- * const result = fromNullable(value, () => new BaseError('Value is null or undefined'));
+ * const result = fromNullable(value, () => new AppError('Value is null or undefined'));
  */
-export const fromNullable = <Tvalue, Terror extends BaseError>(
+export const fromNullable = <Tvalue, Terror extends AppError>(
   v: Tvalue | null | undefined,
   onNull: () => Terror,
 ): Result<Tvalue, Terror> => (v == null ? Err(onNull()) : Ok(v));
@@ -50,7 +50,7 @@ export const fromNullable = <Tvalue, Terror extends BaseError>(
  * @param onFail - A function that generates an error when the predicate fails.
  * @returns A `Result` containing the value if the predicate passes, or an error otherwise.
  */
-export const fromPredicate = <Tvalue, Terror extends BaseError>(
+export const fromPredicate = <Tvalue, Terror extends AppError>(
   value: Tvalue,
   predicate: (v: Tvalue) => boolean,
   onFail: (v: Tvalue) => Terror,
@@ -61,7 +61,7 @@ export const fromPredicate = <Tvalue, Terror extends BaseError>(
 export const fromGuard = /* @__PURE__ */ <
   Tin,
   Tout extends Tin,
-  Terror extends BaseError,
+  Terror extends AppError,
 >(
   value: Tin,
   guard: (v: Tin) => v is Tout,

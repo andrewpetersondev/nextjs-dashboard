@@ -13,8 +13,8 @@ import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { normalizeToBaseError } from "@/shared/errors/core/base-error.normalizer";
+import type { AppError } from "@/shared/errors/app-error";
+import { normalizeToAppError } from "@/shared/errors/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
@@ -46,13 +46,13 @@ export class AuthUserService {
    * Creates a demo user with a unique username and email for the given role.
    *
    * @param role - The role assigned to the demo user.
-   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
    * @remarks Uses repository transaction support and the password hasher port.
    */
   async createDemoUser(
     role: UserRole,
-  ): Promise<Result<AuthUserTransport, BaseError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     const requestId = crypto.randomUUID();
 
     try {
@@ -60,7 +60,7 @@ export class AuthUserService {
       const counter = await demoUserCounter(db, role, this.logger, requestId);
 
       if (!counter || counter <= 0) {
-        const error = normalizeToBaseError(
+        const error = normalizeToAppError(
           new Error("invalid_counter"),
           "validation",
         );
@@ -99,7 +99,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      const error = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToAppError(err, "unexpected");
       logAuth(
         "error",
         "Demo user creation failed",
@@ -115,17 +115,17 @@ export class AuthUserService {
    * Only handles domain/infra errors from repository layer, never DB/PG errors directly.
    *
    * @param input - Readonly SignupData containing email, username and password.
-   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
    * @remarks The password is hashed and the operation is performed inside a repository transaction.
    */
   async signup(
     input: Readonly<SignupData>,
-  ): Promise<Result<AuthUserTransport, BaseError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     const requestId = crypto.randomUUID();
 
     if (!hasRequiredSignupFields(input)) {
-      const error = normalizeToBaseError(
+      const error = normalizeToAppError(
         new Error("missing_fields"),
         "missingFields",
       );
@@ -161,7 +161,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      const error = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToAppError(err, "unexpected");
       logAuth(
         "error",
         "Signup service failed",
@@ -176,24 +176,24 @@ export class AuthUserService {
    * Authenticate a user by email and password.
    *
    * @param input - Readonly LoginData with email and password.
-   * @returns A discriminated Result containing AuthUserTransport on success or BaseError on failure.
+   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
    * @remarks
    * - Repository returns `AuthUserEntity | null` and does not encode auth semantics.
-   * - This method owns "invalid credentials" semantics and mapping to BaseError.
-   * - All infra/repo errors are mapped via `mapBaseErrorToFormPayload` into BaseError.
+   * - This method owns "invalid credentials" semantics and mapping to AppError.
+   * - All infra/repo errors are mapped via `mapAppErrorToFormPayload` into AppError.
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<AuthUserTransport, BaseError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     const requestId = crypto.randomUUID();
 
     try {
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
-        const error = normalizeToBaseError(
+        const error = normalizeToAppError(
           new Error("user_not_found"),
           "notFound",
         );
@@ -207,7 +207,7 @@ export class AuthUserService {
       }
 
       if (!user.password) {
-        const error = normalizeToBaseError(
+        const error = normalizeToAppError(
           new Error("missing_password_hash"),
           "validation",
         );
@@ -229,7 +229,7 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        const error = normalizeToBaseError(
+        const error = normalizeToAppError(
           new Error("invalid_password"),
           "invalidCredentials",
         );
@@ -251,7 +251,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      const error = normalizeToBaseError(err, "unexpected");
+      const error = normalizeToAppError(err, "unexpected");
       logAuth(
         "error",
         "Login service unexpected error",

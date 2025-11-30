@@ -1,13 +1,13 @@
 // src/shared/logging/infra/logging.mappers.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import { isBaseError } from "@/shared/errors/core/factory";
-import type { Severity } from "@/shared/errors/core/types";
+import { isBaseError } from "@/shared/errors/factory";
+import type { Severity } from "@/shared/errors/types";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
 /**
  * Normalize any `unknown` error into a safe, structured shape for logging.
  *
- * - If it's a BaseError, returns it as-is (serialized later by logger).
+ * - If it's a AppError, returns it as-is (serialized later by logger).
  * - If it's a standard Error object, returns a POJO with message, name, and stack.
  * - If it's anything else (string, number, etc.), returns the string representation.
  */

@@ -18,8 +18,8 @@ import {
   timeLeftMs,
 } from "@/server/auth/domain/session/utils";
 import type { UserId } from "@/shared/branding/domain-brands";
-import type { BaseError } from "@/shared/errors/core/base-error";
-import { normalizeToBaseError } from "@/shared/errors/core/base-error.normalizer";
+import type { AppError } from "@/shared/errors/app-error";
+import { normalizeToAppError } from "@/shared/errors/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
@@ -44,7 +44,7 @@ export class SessionManager {
     this.logger = logger.child({ scope: "service" });
   }
 
-  async establish(user: SessionUser): Promise<Result<SessionUser, BaseError>> {
+  async establish(user: SessionUser): Promise<Result<SessionUser, AppError>> {
     const requestId = crypto.randomUUID();
     try {
       const now = Date.now();
@@ -64,7 +64,7 @@ export class SessionManager {
       });
       return Ok(user);
     } catch (err: unknown) {
-      const base = normalizeToBaseError(err, "unexpected");
+      const base = normalizeToAppError(err, "unexpected");
       this.logger.error("Session establish failed", {
         error: String(err),
         logging: { code: "session_establish_failed" },
@@ -74,7 +74,7 @@ export class SessionManager {
     }
   }
 
-  async clear(): Promise<Result<void, BaseError>> {
+  async clear(): Promise<Result<void, AppError>> {
     const requestId = crypto.randomUUID();
     try {
       await this.cookie.delete();
@@ -83,7 +83,7 @@ export class SessionManager {
       });
       return Ok<void>(undefined);
     } catch (err: unknown) {
-      const base = normalizeToBaseError(err, "unexpected");
+      const base = normalizeToAppError(err, "unexpected");
       this.logger.error("Session clear failed", {
         error: String(err),
         logging: { code: "session_clear_failed" },

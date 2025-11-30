@@ -2,7 +2,7 @@ import "server-only";
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { DASHBOARD_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
 
@@ -29,7 +29,7 @@ export async function fetchTotalInvoicesCountDal(
     const context = error instanceof Error ? {} : { error };
     const cause = error instanceof Error ? error : undefined;
 
-    throw new BaseError("database", {
+    throw new AppError("database", {
       cause,
       context,
       message: DASHBOARD_ERROR_MESSAGES.fetchDashboardCards,

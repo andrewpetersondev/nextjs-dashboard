@@ -6,7 +6,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { makeIntegrityError } from "@/shared/errors/core/factory";
+import { makeIntegrityError } from "@/shared/errors/factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
@@ -18,7 +18,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * @param parentLogger - Repository / request-level logger to preserve context
  * @param requestId - Optional request ID for tracing
  * @returns Promise<NewUserRow> - The freshly inserted user row
- * @throws BaseError (if underlying database fails)
+ * @throws AppError (if underlying database fails)
  * @throws Error (if invariant/row-missing)
  */
 export async function insertUserDal(

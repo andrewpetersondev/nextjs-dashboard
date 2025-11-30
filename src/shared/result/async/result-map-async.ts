@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-map-async.ts
-// Purpose: Adapter-first async map utilities (now `BaseError`-centric).
+// Purpose: Adapter-first async map utilities (now `AppError`-centric).
 
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -9,13 +9,13 @@ import { Err, Ok, type Result } from "@/shared/result/result";
  *
  * @typeParam Tvalue - The type of the original value in the `Result`.
  * @typeParam Tnext - The type of the transformed value after applying the function.
- * @typeParam Terror - The type of the error, extending `BaseError`.
+ * @typeParam Terror - The type of the error, extending `AppError`.
  * @param fn - An async function to transform the value if the `Result` is successful.
  * @returns A `Promise` resolving to either a transformed `Result` or the original error.
  */
 export const mapOkAsync =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror extends BaseError>(
+    <Tvalue, Tnext, Terror extends AppError>(
       fn: (v: Tvalue) => Promise<Tnext>,
     ) =>
     /* @__PURE__ */
@@ -37,7 +37,7 @@ export const mapOkAsync =
  */
 export const mapOkAsyncSafe =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror extends BaseError, Tsideerror extends BaseError>(
+    <Tvalue, Tnext, Terror extends AppError, Tsideerror extends AppError>(
       fn: (v: Tvalue) => Promise<Tnext>,
       mapError: (e: unknown) => Tsideerror,
     ) =>
@@ -67,7 +67,7 @@ export const mapOkAsyncSafe =
  */
 export const mapErrorAsync =
   /* @__PURE__ */
-    <Tvalue, Terror1 extends BaseError, Terror2 extends BaseError>(
+    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
       fn: (e: Terror1) => Promise<Terror2>,
     ) =>
     /* @__PURE__ */
@@ -78,9 +78,9 @@ export const mapErrorAsync =
  * A utility function to safely transform errors in an asynchronous context.
  *
  * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror1 - The type of the initial error (extends `BaseError`).
- * @typeParam Terror2 - The type of the transformed error (extends `BaseError`).
- * @typeParam Tsideerror - The type of side-error from the `mapError` function (extends `BaseError`).
+ * @typeParam Terror1 - The type of the initial error (extends `AppError`).
+ * @typeParam Terror2 - The type of the transformed error (extends `AppError`).
+ * @typeParam Tsideerror - The type of side-error from the `mapError` function (extends `AppError`).
  * @param fn - An async function that maps `Terror1` to `Terror2`.
  * @param mapError - Required function to handle unexpected errors.
  * @returns A `Promise` resolving to a `Result` containing the transformed error or successful value.
@@ -89,9 +89,9 @@ export const mapErrorAsyncSafe =
   /* @__PURE__ */
     <
       Tvalue,
-      Terror1 extends BaseError,
-      Terror2 extends BaseError,
-      Tsideerror extends BaseError,
+      Terror1 extends AppError,
+      Terror2 extends AppError,
+      Tsideerror extends AppError,
     >(
       fn: (e: Terror1) => Promise<Terror2>,
       mapError: (e: unknown) => Tsideerror,

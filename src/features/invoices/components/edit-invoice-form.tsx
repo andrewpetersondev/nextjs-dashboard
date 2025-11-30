@@ -121,7 +121,7 @@ export const EditInvoiceForm = ({
 
   const showAlert = useAutoHideAlert(message || "");
 
-  // Extract field errors from BaseError metadata
+  // Extract field errors from AppError metadata
   const stateFieldErrors = state.ok
     ? undefined
     : getFieldErrors<UpdateInvoiceFieldNames>(state.error);

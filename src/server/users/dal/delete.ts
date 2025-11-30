@@ -8,7 +8,7 @@ import {
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
 import type { UserId } from "@/shared/branding/domain-brands";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
@@ -44,7 +44,7 @@ export async function deleteUserDal(
       error,
       userId,
     });
-    throw new BaseError("database", {
+    throw new AppError("database", {
       message: "An unexpected error occurred. Please try again.",
     });
   }

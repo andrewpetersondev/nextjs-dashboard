@@ -1,5 +1,5 @@
 import { format, isValid, parse } from "date-fns";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { Err, Ok, type Result } from "@/shared/result/result";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
@@ -7,11 +7,11 @@ import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
 /**
  * Result-based normalization into a first-of-month UTC Date.
  */
-export function validatePeriodResult(input: unknown): Result<Date, BaseError> {
+export function validatePeriodResult(input: unknown): Result<Date, AppError> {
   if (input instanceof Date) {
     if (!isDateValid(input)) {
       return Err(
-        new BaseError("validation", {
+        new AppError("validation", {
           message: "Invalid period: Date instance is not valid",
         }),
       );
@@ -33,7 +33,7 @@ export function validatePeriodResult(input: unknown): Result<Date, BaseError> {
     if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === input) {
       if (parsedDay.getUTCDate() !== 1) {
         return Err(
-          new BaseError("validation", {
+          new AppError("validation", {
             message: `Invalid period: date must be the first day of the month, got "${input}"`,
           }),
         );
@@ -42,14 +42,14 @@ export function validatePeriodResult(input: unknown): Result<Date, BaseError> {
     }
 
     return Err(
-      new BaseError("validation", {
+      new AppError("validation", {
         message: `Invalid period: "${input}". Expected "yyyy-MM" or "yyyy-MM-01"`,
       }),
     );
   }
 
   return Err(
-    new BaseError("validation", {
+    new AppError("validation", {
       message: `Invalid period: unsupported input type ${typeof input} (expected Date or string)`,
     }),
   );

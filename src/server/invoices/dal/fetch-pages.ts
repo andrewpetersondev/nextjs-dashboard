@@ -3,7 +3,7 @@ import { count, eq, ilike, or, sql } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
 
@@ -12,7 +12,7 @@ import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
  * @param db - Drizzle database instance
  * @param query - Search query string
  * @returns Promise resolving to total number of pages
- * @throws BaseError if query fails
+ * @throws AppError if query fails
  */
 export async function fetchInvoicesPagesDal(
   db: AppDatabase,
@@ -49,7 +49,7 @@ export async function fetchInvoicesPagesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new BaseError("database", {
+    throw new AppError("database", {
       context: {
         query,
         total,

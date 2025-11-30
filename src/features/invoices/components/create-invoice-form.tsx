@@ -56,7 +56,7 @@ export const CreateInvoiceForm = ({
   const dateId = useId();
   const amountId = useId();
 
-  // Extract field errors from BaseError metadata
+  // Extract field errors from AppError metadata
   const fieldErrors = state.ok
     ? undefined
     : getFieldErrors<CreateInvoiceFieldNames>(state.error);

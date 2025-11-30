@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const DOMAIN_ERRORS = {
   // Domain layer (repo, domain logic)

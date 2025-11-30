@@ -7,7 +7,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import type { Period } from "@/shared/branding/domain-brands";
 import { toPeriod } from "@/shared/branding/id-converters";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function upsertRevenueByPeriod(
@@ -16,10 +16,10 @@ export async function upsertRevenueByPeriod(
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!period) {
-    throw new BaseError("validation", { message: "Period is required" });
+    throw new AppError("validation", { message: "Period is required" });
   }
   if (!revenue) {
-    throw new BaseError("validation", { message: "Revenue data is required" });
+    throw new AppError("validation", { message: "Revenue data is required" });
   }
 
   const now = new Date();

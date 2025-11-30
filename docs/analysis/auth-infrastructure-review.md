@@ -41,7 +41,7 @@ throw new Error("Failed to sign session token", { cause: err });
 
 **Impact:** Inconsistent error handling across the application; external library errors leak to higher layers.
 
-**Fix:** Add try-catch blocks that normalize bcrypt errors to BaseError:
+**Fix:** Add try-catch blocks that normalize bcrypt errors to AppError:
 
 ```typescript
 async hash(raw: string): Promise<PasswordHash> {
@@ -49,7 +49,7 @@ async hash(raw: string): Promise<PasswordHash> {
     const hashed = await hashWithSaltRounds(raw);
     return asPasswordHash(hashed);
   } catch (err) {
-    throw makeBaseError("encryption", {
+    throw makeAppError("encryption", {
       cause: err,
       message: "Failed to hash password",
     });
@@ -445,7 +445,7 @@ infrastructure/
 
 1. ✅ **Clean Architecture**: Excellent port-adapter pattern
 2. ✅ **Separation of Concerns**: DAL, Repository, and Adapters are distinct
-3. ✅ **Error Handling Foundation**: Good use of BaseError and normalization
+3. ✅ **Error Handling Foundation**: Good use of AppError and normalization
 4. ✅ **Logging Infrastructure**: Comprehensive logging with context
 5. ✅ **Type Safety**: Strong TypeScript usage throughout
 6. ✅ **Server-Only Guards**: Proper use of "server-only" imports

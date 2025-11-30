@@ -1,5 +1,5 @@
 import { isValid } from "date-fns";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.
@@ -7,7 +7,7 @@ import { BaseError } from "@/shared/errors/core/base-error";
  */
 export function toFirstDayOfMonthUtc(date: Date): Date {
   if (!isValid(date)) {
-    throw new BaseError("validation", { message: "Invalid Date" });
+    throw new AppError("validation", { message: "Invalid Date" });
   }
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }

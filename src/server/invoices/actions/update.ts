@@ -13,7 +13,7 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
@@ -54,7 +54,7 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
   return formError<UpdateInvoiceFieldNames>({
     fieldErrors: toDenseFieldErrorMap({}, schemaFields),
     message:
-      error instanceof BaseError
+      error instanceof AppError
         ? INVOICE_MSG.invalidInput
         : INVOICE_MSG.serviceError,
   });

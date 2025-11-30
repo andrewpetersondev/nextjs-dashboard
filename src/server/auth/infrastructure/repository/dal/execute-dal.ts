@@ -2,7 +2,7 @@
 import "server-only";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AuthLogBase } from "@/server/auth/logging/auth-logging.types";
-import { normalizePgError } from "@/shared/errors/infra/pg-error.normalizer";
+import { normalizePgError } from "@/shared/errors/db/pg-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 interface DalContextLite {
@@ -49,13 +49,13 @@ function buildDalErrorPayload(
 
 /**
  * Execute DAL operation with automatic error handling.
- * - Normalizes any raw Postgres / external errors into BaseError
+ * - Normalizes any raw Postgres / external errors into AppError
  * - Logs once with full context
- * - Maps BaseError to infrastructure-specific error subclasses
+ * - Maps AppError to infrastructure-specific error subclasses
  *
  * DAL functions using this helper should:
  * - Not catch and re-wrap database errors themselves
- * - Only throw invariants as BaseError directly (e.g. "integrity")
+ * - Only throw invariants as AppError directly (e.g. "integrity")
  */
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,

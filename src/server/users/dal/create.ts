@@ -8,7 +8,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
@@ -47,7 +47,7 @@ export async function createUserDal(
       role,
       username,
     });
-    throw new BaseError("database", {
+    throw new AppError("database", {
       message: "Failed to create a user in the database.",
     });
   }

@@ -1,4 +1,4 @@
-import type { BaseError } from "@/shared/errors/core/base-error";
+import type { AppError } from "@/shared/errors/app-error";
 import { Ok, type Result } from "@/shared/result/result";
 
 /**
@@ -8,16 +8,16 @@ import { Ok, type Result } from "@/shared/result/result";
  *
  * @typeParam T - The type of the value being validated.
  * @typeParam Tbrand - The branded type applied to the validated value.
- * @param validator - A function to validate the input value; returns a `Result<T, BaseError>`.
+ * @param validator - A function to validate the input value; returns a `Result<T, AppError>`.
  * @param brandFn - A function to apply the brand to the validated value.
- * @returns A `Result<Tbrand, BaseError>` representing the branded value or validation failure.
+ * @returns A `Result<Tbrand, AppError>` representing the branded value or validation failure.
  */
 export const brandWith =
   <T, Tbrand>(
-    validator: (value: unknown) => Result<T, BaseError>,
+    validator: (value: unknown) => Result<T, AppError>,
     brandFn: (value: T) => Tbrand,
   ) =>
-  (value: unknown): Result<Tbrand, BaseError> => {
+  (value: unknown): Result<Tbrand, AppError> => {
     const r = validator(value);
     return r.ok ? Ok(brandFn(r.value)) : r;
   };
@@ -28,10 +28,10 @@ export const brandWith =
  */
 export const compose =
   <A, B>(
-    v1: (x: unknown) => Result<A, BaseError>,
-    v2: (x: A) => Result<B, BaseError>,
+    v1: (x: unknown) => Result<A, AppError>,
+    v2: (x: A) => Result<B, AppError>,
   ) =>
-  (x: unknown): Result<B, BaseError> => {
+  (x: unknown): Result<B, AppError> => {
     const r1 = v1(x);
     return r1.ok ? v2(r1.value) : r1;
   };

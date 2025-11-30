@@ -3,13 +3,13 @@ import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import { getAppDb } from "@/server/db/db.connection";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { BaseError } from "@/shared/errors/core/base-error";
+import { AppError } from "@/shared/errors/app-error";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
-      throw new BaseError("validation", {
+      throw new AppError("validation", {
         context: { id },
         message: INVOICE_MSG.invalidId,
       });
@@ -21,13 +21,13 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     // Call service with validated DTO to retrieve complete InvoiceDto
     const invoice: InvoiceDto = await service.readInvoice(id);
     if (!invoice) {
-      throw new BaseError("notFound", {
+      throw new AppError("notFound", {
         message: `Invoice with ID ${id} not found`,
       });
     }
     return invoice;
   } catch (error) {
-    throw new BaseError("database", {
+    throw new AppError("database", {
       context: { error },
       message: INVOICE_MSG.dbError,
     });

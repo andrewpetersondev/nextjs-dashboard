@@ -1,22 +1,21 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/types";
+import type { AppErrorDefinition } from "@/shared/errors/types";
 
 export const INFRA_ERRORS = {
-  // Infrastructure / integration boundaries
   database: {
     description: "Database operation failed",
-    layer: "INFRA",
+    layer: "DB",
     retryable: true,
     severity: "ERROR",
   } as const satisfies AppErrorDefinition,
   infrastructure: {
     description: "Infrastructure failure",
-    layer: "INFRA",
+    layer: "INTERNAL",
     retryable: true,
     severity: "ERROR",
   } as const satisfies AppErrorDefinition,
   integrity: {
     description: "Data integrity violation",
-    layer: "INFRA",
+    layer: "DB",
     retryable: false,
     severity: "ERROR",
   } as const satisfies AppErrorDefinition,

@@ -1,6 +1,6 @@
 # Error Handling System
 
-This directory contains the application's standardized error handling system built around `BaseError`.
+This directory contains the application's standardized error handling system built around `AppError`.
 
 ## Architecture Overview
 
@@ -14,11 +14,11 @@ This directory contains the application's standardized error handling system bui
 └──────┬──────┘
        │
 ┌──────▼──────┐
-│ Repository  │ (normalizeToBaseError)
+│ Repository  │ (normalizeToAppError)
 └──────┬──────┘
        │
 ┌──────▼──────┐
-│     DAL     │ (normalizePgError - creates BaseError)
+│     DAL     │ (normalizePgError - creates AppError)
 └──────┬──────┘
        │
 ┌──────▼──────┐
@@ -28,9 +28,9 @@ This directory contains the application's standardized error handling system bui
 
 ## Core Concepts
 
-### BaseError Class
+### AppError Class
 
-The `BaseError` class is the foundation of our error system. It extends native `Error` and adds:
+The `AppError` class is the foundation of our error system. It extends native `Error` and adds:
 
 - **code**: Transport-agnostic error code (e.g., `"validation"`, `"database"`)
 - **metadata**: Flexible key-value store for diagnostic information
@@ -42,9 +42,9 @@ The `BaseError` class is the foundation of our error system. It extends native `
 Errors are **never lost** as they cross layers:
 
 1. **Database Layer**: PG error thrown
-2. **DAL**: `normalizePgError()` wraps it as `BaseError` with `originalCause` = PG error
-3. **Service**: Catches BaseError, re-throws or wraps with `normalizeToBaseError()`
-4. **Action**: Maps to form-friendly structure with `mapBaseErrorToFormPayload()`
+2. **DAL**: `normalizePgError()` wraps it as `AppError` with `originalCause` = PG error
+3. **Service**: Catches AppError, re-throws or wraps with `normalizeToAppError()`
+4. **Action**: Maps to form-friendly structure with `mapAppErrorToFormPayload()`
 
 ```typescript
 // DAL: Preserve original PG error
@@ -60,7 +60,7 @@ catch (err) {
 
 // Service: Propagate without re-wrapping
 catch (err) {
-  const normalized = normalizeToBaseError(err, "unexpected");
+  const normalized = normalizeToAppError(err, "unexpected");
   return Err(normalized); // Result pattern, no throw
 }
 ```
@@ -108,16 +108,16 @@ Stored in `metadata` when error originates from database:
 
 ### Core Factories (`factory.ts`)
 
-- **`makeBaseError(code, options)`**: Main factory for all errors
+- **`makeAppError(code, options)`**: Main factory for all errors
 - **`makeValidationError(options)`**: Convenience for validation errors
 - **`makeUnexpectedError(options)`**: Convenience for unexpected errors
 - **`makeIntegrityError(options)`**: Convenience for data integrity violations
 
 ### Specialized Factories
 
-- **`normalizePgError(err, metadata)`**: Convert PG errors to BaseError
+- **`normalizePgError(err, metadata)`**: Convert PG errors to AppError
 - **`formError(params)`**: Create form-friendly validation errors
-- **`normalizeToBaseError(err, fallbackCode)`**: Safely convert unknown values
+- **`normalizeToAppError(err, fallbackCode)`**: Safely convert unknown values
 
 ## Type Guards (`guards.ts`)
 
@@ -172,7 +172,7 @@ async signup(input) {
     const user = await this.repo.signup(input);
     return Ok(user);
   } catch (err) {
-    const baseError = normalizeToBaseError(err, "unexpected");
+    const baseError = normalizeToAppError(err, "unexpected");
     return Err(baseError); // Preserve full error chain
   }
 }
@@ -294,8 +294,8 @@ const formErrors = getFormErrors(error); // FormErrors | undefined
 
 **Removed unused methods:**
 
-- `BaseError.wrap()` - Use `makeBaseError()` instead
-- `BaseError.remap()` - Create new error instead of remapping
+- `AppError.wrap()` - Use `makeAppError()` instead
+- `AppError.remap()` - Create new error instead of remapping
 
 ## Directory Structure
 
@@ -303,21 +303,21 @@ const formErrors = getFormErrors(error); // FormErrors | undefined
 errors/
 ├── README.md (this file)
 ├── core/
-│   ├── base-error.ts          # BaseError class
+│   ├── app-error.ts          # AppError class
 │   ├── base-error.types.ts    # Type definitions
 │   ├── factory.ts  # Factory functions
 │   ├── guards.ts   # Type guards
 │   ├── registry.ts         # Error code registry
 │   ├── utils.ts       # Utility functions
-│   └── base-error.normalizer.ts         # Convenience utilities
+│   └── app-error.normalizer.ts         # Convenience utilities
 ├── forms/
-│   └── base-error.mappers.ts  # Form error extraction
+│   └── app-error.mappers.ts  # Form error extraction
 ├── http/
 │   ├── http-error.map.ts      # HTTP status mapping
 │   └── http-error.serializer.ts
 └── infra/
     ├── pg-registry.ts      # Postgres error codes
     ├── pg-error.extractor.ts  # PG error extraction
-    ├── pg-error.normalizer.ts    # PG → BaseError conversion
+    ├── pg-error.normalizer.ts    # PG → AppError conversion
     └── pg-error.mapper.ts     # PG error mapping
 ```
