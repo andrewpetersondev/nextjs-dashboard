@@ -1,17 +1,17 @@
 // src/shared/errors/core/error-codes.ts
 
-import { APPLICATION_ERRORS } from "@/shared/errors/core/application/application-errors";
-import { AUTH_ERRORS } from "@/shared/errors/core/auth-errors";
-import { CORE_ERRORS } from "@/shared/errors/core/core-errors";
-import { DOMAIN_ERRORS } from "@/shared/errors/core/domain/domain-errors";
+import { APPLICATION_ERRORS } from "@/shared/errors/core/definitions/application";
+import { AUTH_ERRORS } from "@/shared/errors/core/definitions/auth";
+import { DOMAIN_ERRORS } from "@/shared/errors/core/definitions/domain";
+import { HTTP_ERRORS } from "@/shared/errors/core/definitions/http";
+import { INFRA_ERRORS } from "@/shared/errors/core/definitions/infra";
+import { PRESENTATION_ERRORS } from "@/shared/errors/core/definitions/presentation";
+import { CORE_ERRORS } from "@/shared/errors/core/definitions/system";
+import { VALIDATION_ERRORS } from "@/shared/errors/core/definitions/validation";
 import type {
   AppErrorDefinition,
   AppErrorLayer,
 } from "@/shared/errors/core/error-types";
-import { HTTP_ERRORS } from "@/shared/errors/core/http-errors";
-import { INFRA_ERRORS } from "@/shared/errors/core/infra/infra-errors";
-import { PRESENTATION_ERRORS } from "@/shared/errors/core/presentation/presentation-errors";
-import { VALIDATION_ERRORS } from "@/shared/errors/core/validation-errors";
 
 /**
  * Canonical, transport-agnostic error code registry.
