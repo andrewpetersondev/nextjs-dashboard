@@ -39,8 +39,8 @@ export async function insertUserDal(
 
       if (!userRow) {
         throw makeIntegrityError({
-          context: { kind: "invariant" },
           message: "Insert did not return a row",
+          metadata: { kind: "invariant" },
         });
       }
 

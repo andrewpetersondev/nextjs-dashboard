@@ -63,8 +63,8 @@ export class InvoiceRepository extends BaseRepository<
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
 
@@ -88,8 +88,8 @@ export class InvoiceRepository extends BaseRepository<
   ): Promise<InvoiceDto> {
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
     if (!data || typeof data !== "object") {
@@ -115,8 +115,8 @@ export class InvoiceRepository extends BaseRepository<
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
 

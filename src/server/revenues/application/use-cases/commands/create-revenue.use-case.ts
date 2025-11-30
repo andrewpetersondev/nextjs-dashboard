@@ -22,8 +22,8 @@ export class CreateRevenueUseCase {
     const created = await this.repository.create(revenue);
     if (!created) {
       throw new AppError("database", {
-        context: { revenue },
         message: "Failed to create a revenue record",
+        metadata: { revenue },
       });
     }
     return created;

@@ -10,8 +10,8 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
     // Dependency injection: pass repository to service
@@ -28,8 +28,8 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     return invoice;
   } catch (error) {
     throw new AppError("database", {
-      context: { error },
       message: INVOICE_MSG.dbError,
+      metadata: { error },
     });
   }
 }

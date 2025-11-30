@@ -41,8 +41,8 @@ export class InvoiceService {
     if (Number.isNaN(parsed.getTime())) {
       // Use a known message ID so upper layers can translate consistently
       throw new AppError("validation", {
-        context: { date },
         message: INVOICE_MSG.invalidFormData,
+        metadata: { date },
       });
     }
     return date; // Already in ISO format from form
@@ -98,8 +98,8 @@ export class InvoiceService {
     // Basic validation of input. Throw error to Actions layer.
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
 
@@ -121,8 +121,8 @@ export class InvoiceService {
     // Basic validation of input. Throw error to Actions layer.
     if (!(id && dto)) {
       throw new AppError("validation", {
-        context: { hasDto: Boolean(dto), id },
         message: INVOICE_MSG.invalidInput,
+        metadata: { hasDto: Boolean(dto), id },
       });
     }
 
@@ -156,8 +156,8 @@ export class InvoiceService {
     // Basic validation of parameters. Throw error to Actions layer.
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
 

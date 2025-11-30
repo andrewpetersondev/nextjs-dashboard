@@ -23,8 +23,8 @@ export async function readInvoiceDal(
   // Basic validation of parameters
   if (!(db && id)) {
     throw new AppError("validation", {
-      context: { id },
       message: INVOICE_MSG.invalidInput,
+      metadata: { id },
     });
   }
 
@@ -34,8 +34,8 @@ export async function readInvoiceDal(
   // Check if invoice exists
   if (!data) {
     throw new AppError("database", {
-      context: { id },
       message: INVOICE_MSG.notFound,
+      metadata: { id },
     });
   }
 

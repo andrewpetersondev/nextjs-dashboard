@@ -172,7 +172,7 @@ export class LoggingClient
 
   private buildErrorPayload(error: AppError): BaseErrorLogPayload {
     const baseJson = error.toJson();
-    const diagnosticId = this.extractDiagnosticId(error.context);
+    const diagnosticId = this.extractDiagnosticId(error.metadata);
 
     // Extract form errors from metadata if present
     const fieldErrors = error.metadata?.fieldErrors as

@@ -22,8 +22,8 @@ export async function deleteInvoiceDal(
   // Ensure db and id are not empty
   if (!(db && id)) {
     throw new AppError("validation", {
-      context: { id },
       message: INVOICE_MSG.invalidInput,
+      metadata: { id },
     });
   }
 
@@ -36,8 +36,8 @@ export async function deleteInvoiceDal(
   // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
     throw new AppError("database", {
-      context: { id },
       message: INVOICE_MSG.deleteFailed,
+      metadata: { id },
     });
   }
 

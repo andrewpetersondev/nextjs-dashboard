@@ -26,13 +26,13 @@ export async function fetchTotalInvoicesCountDal(
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    const context = error instanceof Error ? {} : { error };
+    const metadata = error instanceof Error ? {} : { error };
     const cause = error instanceof Error ? error : undefined;
 
     throw new AppError("database", {
       cause,
-      context,
       message: DASHBOARD_ERROR_MESSAGES.fetchDashboardCards,
+      metadata,
     });
   }
 }

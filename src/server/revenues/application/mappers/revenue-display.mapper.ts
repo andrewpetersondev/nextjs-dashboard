@@ -34,22 +34,22 @@ export function mapRevenueEntityToDisplayEntity(
       yearNumber > MAX_REVENUE_YEAR
     ) {
       throw new AppError("validation", {
-        context: { period: revenueEntity.period, yearNumber },
         message: "Invalid year extracted from period",
+        metadata: { period: revenueEntity.period, yearNumber },
       });
     }
 
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
       throw new AppError("validation", {
-        context: { monthNumber, period: revenueEntity.period },
         message: "Invalid month number extracted from period",
+        metadata: { monthNumber, period: revenueEntity.period },
       });
     }
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
       throw new AppError("validation", {
-        context: { monthNumber },
         message: "Invalid month name computed from month number",
+        metadata: { monthNumber },
       });
     }
     return {
@@ -65,10 +65,10 @@ export function mapRevenueEntityToDisplayEntity(
 
     throw new AppError("validation", {
       cause: error instanceof Error ? error : undefined,
-      context: { revenueEntity },
       message: `Failed to map revenue entity to display entity: ${
         error instanceof Error ? error.message : "Unknown error"
       }`,
+      metadata: { revenueEntity },
     });
   }
 }

@@ -29,8 +29,8 @@ export async function deleteInvoiceAction(
     // Basic validation of input. Throw to catch block.
     if (!id) {
       throw new AppError("validation", {
-        context: { id },
         message: INVOICE_MSG.invalidId,
+        metadata: { id },
       });
     }
 

@@ -38,8 +38,8 @@ export async function demoUserCounter(
           { requestId },
         );
         throw makeIntegrityError({
-          context: { kind: "invariant" },
           message: "Invariant: insert did not return a row",
+          metadata: { kind: "invariant" },
         });
       }
 
@@ -51,8 +51,8 @@ export async function demoUserCounter(
           { additionalData: { counterRow }, requestId },
         );
         throw makeIntegrityError({
-          context: { counterRow, kind: "invariant" },
           message: "Invariant: demo user counter row returned with null id",
+          metadata: { counterRow, kind: "invariant" },
         });
       }
 

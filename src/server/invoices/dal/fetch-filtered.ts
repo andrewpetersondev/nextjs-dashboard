@@ -66,11 +66,11 @@ export async function fetchFilteredInvoicesDal(
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!data || data.length === 0) {
     throw new AppError("database", {
-      context: {
+      message: INVOICE_MSG.fetchFilteredFailed,
+      metadata: {
         currentPage,
         query,
       },
-      message: INVOICE_MSG.fetchFilteredFailed,
     });
   }
 
