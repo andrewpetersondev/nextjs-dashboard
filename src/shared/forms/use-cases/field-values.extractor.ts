@@ -11,16 +11,15 @@ import type { SparseFieldValueMap } from "@/shared/forms/domain/error-maps.types
  *   console.log(values.email); // string
  * }
  */
-export const getFieldValues = <Tfieldname extends string>(
+export const getFieldValues = <T extends string>(
   error: AppError,
-): SparseFieldValueMap<Tfieldname, string> | undefined => {
+): SparseFieldValueMap<T, string> | undefined => {
   const metadata = error?.metadata;
   if (!metadata || typeof metadata !== "object") {
     return;
   }
-  const values = (
-    metadata as { values?: SparseFieldValueMap<Tfieldname, string> }
-  ).values;
+  const values = (metadata as { values?: SparseFieldValueMap<T, string> })
+    .values;
   if (!values || typeof values !== "object") {
     return;
   }

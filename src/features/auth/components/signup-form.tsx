@@ -12,10 +12,10 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/features/auth/lib/auth.schema";
-import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
-import { getFieldValues } from "@/shared/forms/application/field-values.extractor";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
+import { getFieldErrors } from "@/shared/forms/use-cases/field-errors.extractor";
+import { getFieldValues } from "@/shared/forms/use-cases/field-values.extractor";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 

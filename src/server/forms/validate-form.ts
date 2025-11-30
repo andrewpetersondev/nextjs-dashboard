@@ -1,11 +1,6 @@
 // src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
-import { resolveRawFieldPayload } from "@/shared/forms/application/field-payload-resolver";
-import {
-  resolveValidateOptions,
-  type ValidateOptions,
-} from "@/shared/forms/application/validate-options";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/error-map.factory";
 import { formError, formOk } from "@/shared/forms/domain/form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
@@ -15,6 +10,11 @@ import {
   isZodErrorInstance,
   isZodErrorLikeShape,
 } from "@/shared/forms/infrastructure/zod/zod-guards";
+import { resolveRawFieldPayload } from "@/shared/forms/use-cases/field-payload-resolver";
+import {
+  resolveValidateOptions,
+  type ValidateOptions,
+} from "@/shared/forms/use-cases/validate-options";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**

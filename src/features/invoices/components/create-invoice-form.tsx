@@ -13,10 +13,10 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { FieldError } from "@/shared/forms/domain/field-error.types";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
+import { getFieldErrors } from "@/shared/forms/use-cases/field-errors.extractor";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/timings.tokens";
 import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";

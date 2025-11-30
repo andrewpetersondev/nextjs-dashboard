@@ -6,19 +6,19 @@ import { extractFormDataFields } from "@/shared/forms/infrastructure/extractor.f
  * Uses the provided `explicitRaw` map when it exists and contains keys;
  * otherwise extracts the requested fields from the given `FormData`.
  *
- * @typeParam Tfieldnames - string union of valid field names.
+ * @typeParam T - string union of valid field names.
  * @param formData - The `FormData` to extract values from when `explicitRaw` is absent or empty.
  * @param fields - The list of field names to include in the result.
  * @param explicitRaw - Optional explicit mapping of raw values. When non-empty this takes precedence.
  * @returns A readonly partial mapping of field names to their stringified raw values.
  */
-export function resolveRawFieldPayload<Tfieldnames extends string>(
+export function resolveRawFieldPayload<T extends string>(
   formData: FormData,
-  fields: readonly Tfieldnames[],
-  explicitRaw?: Readonly<Partial<Record<Tfieldnames, unknown>>>,
-): Readonly<Partial<Record<Tfieldnames, string>>> {
+  fields: readonly T[],
+  explicitRaw?: Readonly<Partial<Record<T, unknown>>>,
+): Readonly<Partial<Record<T, string>>> {
   if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    const out: Partial<Record<Tfieldnames, string>> = {};
+    const out: Partial<Record<T, string>> = {};
 
     for (const f of fields) {
       const v = explicitRaw[f];
@@ -29,5 +29,5 @@ export function resolveRawFieldPayload<Tfieldnames extends string>(
     }
     return Object.freeze(out);
   }
-  return extractFormDataFields<Tfieldnames>(formData, fields);
+  return extractFormDataFields<T>(formData, fields);
 }

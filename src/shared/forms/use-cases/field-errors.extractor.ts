@@ -12,9 +12,9 @@ import { isFormValidationError } from "@/shared/forms/domain/form-guards";
  *   console.log(errors.email); // readonly string[]
  * }
  */
-export const getFieldErrors = <Tfieldname extends string>(
+export const getFieldErrors = <T extends string>(
   error: AppError,
-): DenseFieldErrorMap<Tfieldname, string> | undefined => {
+): DenseFieldErrorMap<T, string> | undefined => {
   if (!isFormValidationError(error)) {
     return;
   }
@@ -22,5 +22,5 @@ export const getFieldErrors = <Tfieldname extends string>(
   if (!fieldErrors || typeof fieldErrors !== "object") {
     return;
   }
-  return fieldErrors as DenseFieldErrorMap<Tfieldname, string>;
+  return fieldErrors as DenseFieldErrorMap<T, string>;
 };

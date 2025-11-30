@@ -15,11 +15,11 @@ import {
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { updateInvoiceAction } from "@/server/invoices/actions/update";
-import { getFieldErrors } from "@/shared/forms/application/field-errors.extractor";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";
 import type { FieldError } from "@/shared/forms/domain/field-error.types";
 import type { FormResult } from "@/shared/forms/domain/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
+import { getFieldErrors } from "@/shared/forms/use-cases/field-errors.extractor";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
