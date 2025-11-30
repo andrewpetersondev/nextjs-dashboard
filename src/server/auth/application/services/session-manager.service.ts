@@ -18,8 +18,8 @@ import {
   timeLeftMs,
 } from "@/server/auth/domain/session/utils";
 import type { UserId } from "@/shared/branding/domain-brands";
-import type { AppError } from "@/shared/errors/app-error";
-import { normalizeToAppError } from "@/shared/errors/normalizer";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";

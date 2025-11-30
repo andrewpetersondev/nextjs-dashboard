@@ -1,22 +1,24 @@
-// src/shared/errors/app-error.ts
 import { isDev } from "@/shared/config/env-shared";
-import {
-  type AppErrorKey,
-  getAppErrorCodeMeta,
-} from "@/shared/errors/registry";
-import type { AppErrorLayer, Severity } from "@/shared/errors/schema";
 import type {
   AppErrorJson,
   AppErrorOptions,
   ErrorMetadata,
-} from "@/shared/errors/types";
+} from "@/shared/errors/core/error.types";
+import type {
+  AppErrorLayer,
+  Severity,
+} from "@/shared/errors/core/error-definition.types";
+import {
+  type AppErrorKey,
+  getAppErrorCodeMeta,
+} from "@/shared/errors/registry/error-code.registry";
 import {
   buildUnknownValueMetadata,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
-} from "@/shared/errors/utils";
+} from "@/shared/errors/utils/error-serialization.utils";
 
 /**
  * Standardized application error with transport-agnostic error codes.

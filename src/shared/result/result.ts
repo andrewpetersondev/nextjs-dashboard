@@ -1,5 +1,5 @@
 // File: src/shared/core/result/result.ts
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Freezes an object to prevent mutation (shallow).

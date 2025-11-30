@@ -1,8 +1,11 @@
-import type { AppError } from "@/shared/errors/app-error";
-import { makeAppError, makeDatabaseError } from "@/shared/errors/factory";
-import { mapPgError } from "@/shared/errors/postgres/translator";
-import type { DatabaseOperationMetadata } from "@/shared/errors/postgres/types";
-import type { ErrorMetadata } from "@/shared/errors/types";
+import { mapPgError } from "@/shared/errors/adapters/postgres/postgres-code.translator";
+import type { DatabaseOperationMetadata } from "@/shared/errors/adapters/postgres/postgres-error.types";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { ErrorMetadata } from "@/shared/errors/core/error.types";
+import {
+  makeAppError,
+  makeDatabaseError,
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Creates a specific AppError based on a successful Postgres mapping.

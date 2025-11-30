@@ -7,7 +7,7 @@ import {
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
 import { toInvoiceId } from "@/shared/branding/id-converters";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 

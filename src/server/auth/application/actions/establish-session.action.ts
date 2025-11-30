@@ -3,7 +3,7 @@
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

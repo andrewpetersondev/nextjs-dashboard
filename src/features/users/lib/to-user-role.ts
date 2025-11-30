@@ -1,6 +1,6 @@
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { USER_ROLES } from "@/features/auth/lib/auth.roles";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result";
 
 /**

@@ -1,5 +1,8 @@
-import type { AppErrorKey } from "@/shared/errors/registry";
-import type { AppErrorLayer, Severity } from "@/shared/errors/schema";
+import type {
+  AppErrorLayer,
+  Severity,
+} from "@/shared/errors/core/error-definition.types";
+import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 
 export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 

@@ -1,5 +1,5 @@
 import { isValid } from "date-fns";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

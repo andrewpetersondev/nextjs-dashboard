@@ -1,6 +1,6 @@
 // File: src/shared/core/result/sync/result-map.ts
 
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

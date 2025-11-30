@@ -8,7 +8,7 @@ import {
 } from "@/features/revenues/constants/date";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.

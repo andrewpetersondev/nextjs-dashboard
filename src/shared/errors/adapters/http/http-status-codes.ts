@@ -1,5 +1,4 @@
-// src/shared/errors/http/status-codes.ts
-import type { AppErrorKey } from "@/shared/errors/registry";
+import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 
 export type HttpResponsibility = "client" | "server" | "infrastructure";
 

@@ -1,6 +1,5 @@
-// src/shared/errors/normalizer.ts
-import { AppError } from "@/shared/errors/app-error";
-import type { AppErrorKey } from "@/shared/errors/registry";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 
 /**
  * Normalize an unknown value into a AppError using {@link AppError.from}.

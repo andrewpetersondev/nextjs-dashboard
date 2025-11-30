@@ -1,12 +1,15 @@
-import { API_ERRORS } from "@/shared/errors/definitions/api";
-import { APPLICATION_ERRORS } from "@/shared/errors/definitions/application";
-import { AUTH_ERRORS } from "@/shared/errors/definitions/auth";
-import { DOMAIN_ERRORS } from "@/shared/errors/definitions/domain";
-import { INFRA_ERRORS } from "@/shared/errors/definitions/infra";
-import { PRESENTATION_ERRORS } from "@/shared/errors/definitions/presentation";
-import { SYSTEM_ERRORS } from "@/shared/errors/definitions/system";
-import { VALIDATION_ERRORS } from "@/shared/errors/definitions/validation";
-import type { AppErrorDefinition, AppErrorLayer } from "@/shared/errors/schema";
+import type {
+  AppErrorDefinition,
+  AppErrorLayer,
+} from "@/shared/errors/core/error-definition.types";
+import { API_ERRORS } from "@/shared/errors/definitions/api.definitions";
+import { APPLICATION_ERRORS } from "@/shared/errors/definitions/application.definitions";
+import { AUTH_ERRORS } from "@/shared/errors/definitions/auth.definitions";
+import { DOMAIN_ERRORS } from "@/shared/errors/definitions/domain.definitions";
+import { INFRA_ERRORS } from "@/shared/errors/definitions/infrastructure.definitions";
+import { PRESENTATION_ERRORS } from "@/shared/errors/definitions/presentation.definitions";
+import { SYSTEM_ERRORS } from "@/shared/errors/definitions/system.definitions";
+import { VALIDATION_ERRORS } from "@/shared/errors/definitions/validation.definitions";
 
 /**
  * Canonical, transport-agnostic error code registry.

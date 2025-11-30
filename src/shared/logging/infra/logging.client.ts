@@ -1,9 +1,7 @@
-// src/shared/logging/infra/logging.client.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { AppError } from "@/shared/errors/app-error";
-import { isAppError } from "@/shared/errors/factory";
-
-import type { ErrorMetadata } from "@/shared/errors/types";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { ErrorMetadata } from "@/shared/errors/core/error.types";
+import { isAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,

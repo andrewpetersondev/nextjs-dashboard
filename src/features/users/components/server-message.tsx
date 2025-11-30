@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isAppError } from "@/shared/errors/factory";
+import { isAppError } from "@/shared/errors/factories/app-error.factory";
 import type {
   FormResult,
   FormSuccess,

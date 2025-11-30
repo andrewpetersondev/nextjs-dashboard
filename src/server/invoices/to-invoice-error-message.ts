@@ -1,5 +1,5 @@
 import "server-only";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,

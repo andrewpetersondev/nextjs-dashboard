@@ -8,7 +8,7 @@ import type {
 } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
 import type { RevenueId } from "@/shared/branding/domain-brands";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 export async function updateRevenue(
   db: AppDatabase,

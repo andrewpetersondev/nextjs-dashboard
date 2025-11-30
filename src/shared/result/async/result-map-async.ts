@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-map-async.ts
 // Purpose: Adapter-first async map utilities (now `AppError`-centric).
 
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**

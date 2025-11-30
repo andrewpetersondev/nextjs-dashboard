@@ -1,5 +1,8 @@
-import type { PgCode, PgErrorMeta } from "@/shared/errors/postgres/codes";
-import type { AppErrorKey } from "@/shared/errors/registry";
+import type {
+  PgCode,
+  PgErrorMeta,
+} from "@/shared/errors/adapters/postgres/postgres.codes";
+import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.

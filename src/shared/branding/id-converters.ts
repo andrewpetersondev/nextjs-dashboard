@@ -12,7 +12,7 @@ import {
   type SessionId,
   type UserId,
 } from "@/shared/branding/domain-brands";
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result";
 
 // --- New: Result-returning converters (thin wrappers over factories) ---

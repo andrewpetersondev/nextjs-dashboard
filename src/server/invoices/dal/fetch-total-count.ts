@@ -2,7 +2,7 @@ import "server-only";
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { DASHBOARD_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
 

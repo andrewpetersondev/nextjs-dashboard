@@ -1,7 +1,7 @@
 // File: src/shared/core/result/async/result-tap-async.ts
 // Purpose: Adapter-first async taps (no default AppError).
 
-import type { AppError } from "@/shared/errors/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result";
 import { Err } from "@/shared/result/result";
 

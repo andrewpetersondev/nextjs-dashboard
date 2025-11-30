@@ -4,7 +4,7 @@ import type {
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
-import { AppError } from "@/shared/errors/app-error";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 export class CreateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;

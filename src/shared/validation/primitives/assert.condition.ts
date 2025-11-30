@@ -1,4 +1,4 @@
-import { makeAppError } from "@/shared/errors/factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Validates the given condition and throws a ValidationError with the specified message if the condition is falsy.

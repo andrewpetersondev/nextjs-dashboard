@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/schema";
+import type { AppErrorDefinition } from "@/shared/errors/core/error-definition.types";
 
 export const PRESENTATION_ERRORS = {
   presentationError: {
