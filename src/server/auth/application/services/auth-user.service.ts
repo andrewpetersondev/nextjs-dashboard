@@ -14,7 +14,7 @@ import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/dem
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
+import { normalizeToBaseError } from "@/shared/errors/core/base-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";

@@ -1,5 +1,5 @@
 // src/shared/errors/infra/pg-error.mapper.ts
-import type { AppErrorKey } from "@/shared/errors/core/error-codes";
+import type { AppErrorKey } from "@/shared/errors/core/registry";
 import { extractPgErrorMetadata } from "@/shared/errors/infra/pg-error.extractor";
 import type { PgErrorMapping } from "@/shared/errors/infra/pg-error.types";
 import {

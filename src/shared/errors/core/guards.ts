@@ -1,4 +1,4 @@
-// src/shared/errors/core/base-error.guards.ts
+// src/shared/errors/core/guards.ts
 import type { BaseError } from "@/shared/errors/core/base-error";
 import type {
   DatabaseErrorMetadata,

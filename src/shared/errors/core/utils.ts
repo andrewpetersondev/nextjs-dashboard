@@ -1,4 +1,4 @@
-// src/shared/errors/core/error-helpers.ts
+// src/shared/errors/core/utils.ts
 import { isDev } from "@/shared/config/env-shared";
 
 function isSerializable(value: unknown): boolean {

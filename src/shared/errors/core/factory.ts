@@ -1,10 +1,10 @@
-// src/shared/errors/core/base-error.factory.ts
+// src/shared/errors/core/factory.ts
 import { BaseError } from "@/shared/errors/core/base-error";
 import type {
   BaseErrorOptions,
   FormErrorMetadata,
 } from "@/shared/errors/core/base-error.types";
-import type { AppErrorKey } from "@/shared/errors/core/error-codes";
+import type { AppErrorKey } from "@/shared/errors/core/registry";
 
 /**
  * Canonical factory for creating `BaseError` instances.

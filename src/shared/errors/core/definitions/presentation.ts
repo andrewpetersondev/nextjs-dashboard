@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/error-types";
+import type { AppErrorDefinition } from "@/shared/errors/core/types";
 
 export const PRESENTATION_ERRORS = {
   // Presentation layer (ui, http)

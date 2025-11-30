@@ -1,4 +1,4 @@
-import { makeBaseError } from "@/shared/errors/core/base-error.factory";
+import { makeBaseError } from "@/shared/errors/core/factory";
 
 /**
  * Validates the given condition and throws a ValidationError with the specified message if the condition is falsy.

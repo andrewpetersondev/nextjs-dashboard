@@ -106,7 +106,7 @@ Stored in `metadata` when error originates from database:
 
 ## Factory Functions
 
-### Core Factories (`base-error.factory.ts`)
+### Core Factories (`factory.ts`)
 
 - **`makeBaseError(code, options)`**: Main factory for all errors
 - **`makeValidationError(options)`**: Convenience for validation errors
@@ -119,7 +119,7 @@ Stored in `metadata` when error originates from database:
 - **`formError(params)`**: Create form-friendly validation errors
 - **`normalizeToBaseError(err, fallbackCode)`**: Safely convert unknown values
 
-## Type Guards (`base-error.guards.ts`)
+## Type Guards (`guards.ts`)
 
 Use these to safely access metadata:
 
@@ -206,7 +206,7 @@ export async function signupAction(formData) {
 
 ## Error Codes
 
-Defined in `error-codes.ts`, organized by layer:
+Defined in `registry.ts`, organized by layer:
 
 ### CORE Layer
 
@@ -305,18 +305,18 @@ errors/
 ├── core/
 │   ├── base-error.ts          # BaseError class
 │   ├── base-error.types.ts    # Type definitions
-│   ├── base-error.factory.ts  # Factory functions
-│   ├── base-error.guards.ts   # Type guards
-│   ├── error-codes.ts         # Error code registry
-│   ├── error-helpers.ts       # Utility functions
-│   └── error.utils.ts         # Convenience utilities
+│   ├── factory.ts  # Factory functions
+│   ├── guards.ts   # Type guards
+│   ├── registry.ts         # Error code registry
+│   ├── utils.ts       # Utility functions
+│   └── base-error.normalizer.ts         # Convenience utilities
 ├── forms/
 │   └── base-error.mappers.ts  # Form error extraction
 ├── http/
 │   ├── http-error.map.ts      # HTTP status mapping
 │   └── http-error.serializer.ts
 └── infra/
-    ├── pg-error-codes.ts      # Postgres error codes
+    ├── pg-registry.ts      # Postgres error codes
     ├── pg-error.extractor.ts  # PG error extraction
     ├── pg-error.normalizer.ts    # PG → BaseError conversion
     └── pg-error.mapper.ts     # PG error mapping

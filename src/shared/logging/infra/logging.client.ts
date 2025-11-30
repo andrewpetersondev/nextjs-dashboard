@@ -1,7 +1,7 @@
 // src/shared/logging/infra/logging.client.ts
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { isBaseError } from "@/shared/errors/core/base-error.factory";
+import { isBaseError } from "@/shared/errors/core/factory";
 import type { ErrorMetadata } from "@/shared/errors/core/base-error.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {

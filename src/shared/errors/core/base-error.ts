@@ -8,15 +8,15 @@ import type {
 import {
   type AppErrorKey,
   getAppErrorCodeMeta,
-} from "@/shared/errors/core/error-codes";
+} from "@/shared/errors/core/registry";
 import {
   buildUnknownValueMetadata,
   deepFreezeDev,
   redactNonSerializable,
   safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
-} from "@/shared/errors/core/error-helpers";
-import type { AppErrorLayer, Severity } from "@/shared/errors/core/error-types";
+} from "@/shared/errors/core/utils";
+import type { AppErrorLayer, Severity } from "@/shared/errors/core/types";
 
 /**
  * Standardized application error with transport-agnostic error codes.

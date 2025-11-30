@@ -19,7 +19,7 @@ import {
 } from "@/server/auth/domain/session/utils";
 import type { UserId } from "@/shared/branding/domain-brands";
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { normalizeToBaseError } from "@/shared/errors/core/error.utils";
+import { normalizeToBaseError } from "@/shared/errors/core/base-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";

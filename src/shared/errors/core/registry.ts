@@ -1,4 +1,4 @@
-// src/shared/errors/core/error-codes.ts
+// src/shared/errors/core/registry.ts
 
 import { APPLICATION_ERRORS } from "@/shared/errors/core/definitions/application";
 import { AUTH_ERRORS } from "@/shared/errors/core/definitions/auth";
@@ -11,7 +11,7 @@ import { VALIDATION_ERRORS } from "@/shared/errors/core/definitions/validation";
 import type {
   AppErrorDefinition,
   AppErrorLayer,
-} from "@/shared/errors/core/error-types";
+} from "@/shared/errors/core/types";
 
 /**
  * Canonical, transport-agnostic error code registry.

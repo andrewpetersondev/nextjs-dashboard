@@ -1,5 +1,5 @@
 // src/shared/errors/http/http-error.map.ts
-import type { AppErrorKey } from "@/shared/errors/core/error-codes";
+import type { AppErrorKey } from "@/shared/errors/core/registry";
 
 export type HttpResponsibility = "client" | "server" | "infrastructure";
 

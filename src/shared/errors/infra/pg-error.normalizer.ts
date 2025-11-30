@@ -1,6 +1,6 @@
 // src/shared/errors/infra/pg-error.normalizer.ts
 import type { BaseError } from "@/shared/errors/core/base-error";
-import { makeBaseError } from "@/shared/errors/core/base-error.factory";
+import { makeBaseError } from "@/shared/errors/core/factory";
 import type { ErrorMetadata } from "@/shared/errors/core/base-error.types";
 import { mapPgError } from "@/shared/errors/infra/pg-error.mapper";
 import type { DatabaseOperationMetadata } from "@/shared/errors/infra/pg-error.types";

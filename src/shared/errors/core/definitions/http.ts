@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/error-types";
+import type { AppErrorDefinition } from "@/shared/errors/core/types";
 
 export const HTTP_ERRORS = {
   // HTTP/client semantics (domain meaning: conflict in state)

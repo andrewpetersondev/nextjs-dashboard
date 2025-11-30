@@ -6,7 +6,7 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { makeIntegrityError } from "@/shared/errors/core/base-error.factory";
+import { makeIntegrityError } from "@/shared/errors/core/factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
