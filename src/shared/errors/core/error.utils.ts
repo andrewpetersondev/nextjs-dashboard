@@ -1,4 +1,4 @@
-// src/shared/errors/error.utils.ts
+// src/shared/errors/core/error.utils.ts
 import { BaseError } from "@/shared/errors/core/base-error";
 import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 

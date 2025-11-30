@@ -73,7 +73,8 @@ export function hasPgMetadata(
     error.metadata !== undefined &&
     ("pgCode" in error.metadata ||
       "constraint" in error.metadata ||
-      "table" in error.metadata)
+      "table" in error.metadata ||
+      "column" in error.metadata)
   );
 }
 
