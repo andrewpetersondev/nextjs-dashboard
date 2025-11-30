@@ -1,23 +1,23 @@
 // src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/error-map.factory";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
+} from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/zod-error.mapper";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field.resolver";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-error";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-zod-field";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod/zod-guards";
-import { resolveRawFieldPayload } from "@/shared/forms/use-cases/field-payload-resolver";
+} from "@/shared/forms/infrastructure/zod/zod-form-guards";
+import { resolveRawFieldPayload } from "@/shared/forms/use-cases/resolve-field-payload";
 import {
   resolveValidateOptions,
-  type ValidateOptions,
-} from "@/shared/forms/use-cases/validate-options";
+  type ValidateFormOptions,
+} from "@/shared/forms/use-cases/validate-form-options";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
@@ -86,7 +86,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
   formData: FormData,
   schema: z.ZodType<Tin>,
   allowedFields?: readonly Tfieldnames[],
-  options: ValidateOptions<Tin, Tfieldnames> = {},
+  options: ValidateFormOptions<Tin, Tfieldnames> = {},
 ): Promise<FormResult<Tin>> {
   const {
     fields: explicitFields,

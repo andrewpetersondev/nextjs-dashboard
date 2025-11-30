@@ -18,11 +18,11 @@ import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-messag
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/form-result.factory";
+} from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/zod-error.mapper";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/zod-field-names.derive";
-import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-zod";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-error";
+import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-form-guards";
 import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 import { logger } from "@/shared/logging/infra/logging.client";

@@ -5,7 +5,7 @@ import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipe
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
-import { formError } from "@/shared/forms/domain/factories/form-result.factory";
+import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 

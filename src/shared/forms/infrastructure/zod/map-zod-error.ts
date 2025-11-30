@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/factories/error-map.factory";
+} from "@/shared/forms/domain/factories/create-error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/types/error-maps.types";
 
 /**

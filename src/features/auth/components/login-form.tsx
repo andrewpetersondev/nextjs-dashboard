@@ -9,9 +9,9 @@ import {
   type LoginField,
 } from "@/features/auth/lib/auth.schema";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-state";
-import { getFieldErrors } from "@/shared/forms/use-cases/field-errors.extractor";
-import { getFieldValues } from "@/shared/forms/use-cases/field-values.extractor";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
+import { getFieldErrors } from "@/shared/forms/use-cases/extract-field-errors";
+import { getFieldValues } from "@/shared/forms/use-cases/extract-field-values";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
