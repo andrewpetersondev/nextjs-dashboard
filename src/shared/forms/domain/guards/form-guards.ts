@@ -8,16 +8,15 @@ import type { Result } from "@/shared/result/result";
 /**
  * Narrow to success branch.
  */
-export const isFormOk = <Tpayload>(
-  r: FormResult<Tpayload>,
-): r is Result<FormSuccess<Tpayload>, never> => r.ok;
+export const isFormOk = <T>(
+  r: FormResult<T>,
+): r is Result<FormSuccess<T>, never> => r.ok;
 
 /**
  * Narrow to validation error branch.
  */
-export const isFormErr = <Tpayload>(
-  r: FormResult<Tpayload>,
-): r is Result<never, AppError> => !r.ok;
+export const isFormErr = <T>(r: FormResult<T>): r is Result<never, AppError> =>
+  !r.ok;
 
 /**
  * Type guard to check if an AppError contains form validation details.
