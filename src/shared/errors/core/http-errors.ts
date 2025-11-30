@@ -3,7 +3,6 @@ import type { AppErrorDefinition } from "@/shared/errors/core/error-types";
 export const HTTP_ERRORS = {
   // HTTP/client semantics (domain meaning: conflict in state)
   conflict: {
-    authFields: ["email", "username"] as const,
     description: "Resource state conflict",
     layer: "HTTP",
     retryable: false,

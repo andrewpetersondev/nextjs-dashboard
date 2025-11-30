@@ -2,7 +2,6 @@ import type { AppErrorDefinition } from "@/shared/errors/core/error-types";
 
 export const AUTH_ERRORS = {
   invalidCredentials: {
-    authFields: ["email", "username", "password"] as const,
     description: "Invalid credentials",
     layer: "AUTH",
     retryable: false,
@@ -10,7 +9,6 @@ export const AUTH_ERRORS = {
   } as const satisfies AppErrorDefinition,
   // Auth semantics (distinct from generic validation)
   unauthorized: {
-    authFields: ["email", "password"] as const,
     description: "Invalid credentials",
     layer: "AUTH",
     retryable: false,

@@ -69,13 +69,12 @@ export class BaseError extends Error {
     const { cause, context, message, metadata } = options;
 
     // Ensure cause is an Error, otherwise sanitize or set as undefined for safe error chaining.
-    const sanitizedCause =
-      cause instanceof Error
-        ? cause
-        : // biome-ignore lint/style/noNestedTernary: <keep for now>
-          cause === undefined
-          ? undefined
-          : redactNonSerializable(cause);
+    let sanitizedCause: unknown;
+    if (cause instanceof Error) {
+      sanitizedCause = cause;
+    } else if (cause !== undefined) {
+      sanitizedCause = redactNonSerializable(cause);
+    }
 
     super(message ?? meta.description, { cause: sanitizedCause });
 

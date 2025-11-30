@@ -1,6 +1,9 @@
 // src/shared/errors/core/base-error.factory.ts
 import { BaseError } from "@/shared/errors/core/base-error";
-import type { BaseErrorOptions } from "@/shared/errors/core/base-error.types";
+import type {
+  BaseErrorOptions,
+  FormErrorMetadata,
+} from "@/shared/errors/core/base-error.types";
 import type { AppErrorKey } from "@/shared/errors/core/error-codes";
 
 /**
@@ -16,12 +19,24 @@ export function makeBaseError(
 /**
  * Convenience helpers for common patterns.
  */
-export function makeValidationError(options: BaseErrorOptions = {}): BaseError {
+export function makeValidationError(
+  options: BaseErrorOptions & { metadata: FormErrorMetadata },
+): BaseError {
   return makeBaseError("validation", options);
 }
 
 export function makeUnexpectedError(options: BaseErrorOptions = {}): BaseError {
   return makeBaseError("unexpected", options);
+}
+
+export function makeInvariantError(
+  message: string,
+  metadata?: Record<string, unknown>,
+): BaseError {
+  return makeBaseError("unexpected", {
+    message: `Invariant failed: ${message}`,
+    metadata: { ...metadata, kind: "invariant" },
+  });
 }
 
 export function makeIntegrityError(options: BaseErrorOptions = {}): BaseError {

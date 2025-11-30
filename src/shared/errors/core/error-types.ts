@@ -11,8 +11,6 @@ export type AppErrorLayer =
   | "VALIDATION";
 
 export interface AppErrorDefinition {
-  /** @deprecated move authFields somewhere else */
-  readonly authFields?: readonly string[];
   readonly description: string;
   readonly layer: AppErrorLayer;
   readonly retryable: boolean;
