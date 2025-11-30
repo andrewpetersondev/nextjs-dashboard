@@ -2,7 +2,7 @@
 import "server-only";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AuthLogBase } from "@/server/auth/logging/auth-logging.types";
-import { normalizePgError } from "@/shared/errors/db/pg-error.normalizer";
+import { normalizePgError } from "@/shared/errors/db/normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 interface DalContextLite {

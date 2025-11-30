@@ -1,4 +1,4 @@
-// src/shared/errors/http/http-error.serializer.ts
+// src/shared/errors/http/mapper.ts
 import type { AppError } from "@/shared/errors/app-error";
 import {
   HTTP_ERROR_MAP,
@@ -17,7 +17,7 @@ export interface HttpErrorPayload extends AppErrorJson {
  * - Resolves status and responsibility using HTTP_ERROR_MAP
  * - Attaches them on top of the core AppErrorJson
  */
-export function toHttpErrorPayload(error: AppError): HttpErrorPayload {
+export function mapAppErrorToHttpPayload(error: AppError): HttpErrorPayload {
   const base: AppErrorJson = error.toJson();
   const httpDef = HTTP_ERROR_MAP[error.code] ?? {
     responsibility: "server" as const,

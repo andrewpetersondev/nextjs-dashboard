@@ -1,4 +1,4 @@
-// src/shared/errors/core/app-error.normalizer.ts
+// src/shared/errors/normalizer.ts
 import { AppError } from "@/shared/errors/app-error";
 import type { AppErrorKey } from "@/shared/errors/registry";
 

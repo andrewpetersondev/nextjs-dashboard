@@ -1,4 +1,4 @@
-// src/shared/errors/db/pg-error.normalizer.ts
+// src/shared/errors/db/normalizer.ts
 import type { AppError } from "@/shared/errors/app-error";
 import { mapPgError } from "@/shared/errors/db/mapper";
 import type { DatabaseOperationMetadata } from "@/shared/errors/db/types";

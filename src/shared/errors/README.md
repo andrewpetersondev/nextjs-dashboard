@@ -241,9 +241,9 @@ Defined in `status-codes.ts`, organized by layer:
 The `http/` subdirectory maps error codes to HTTP responses:
 
 ```typescript
-import { toHttpErrorPayload } from "@/shared/errors/http/http-error.serializer";
+import { mapAppErrorToHttpPayload } from "@/shared/errors/http/http-error.serializer";
 
-const httpPayload = toHttpErrorPayload(baseError);
+const httpPayload = mapAppErrorToHttpPayload(baseError);
 // {
 //   code: "validation",
 //   statusCode: 422,
@@ -309,15 +309,15 @@ errors/
 │   ├── guards.ts   # Type guards
 │   ├── registry.ts         # Error code registry
 │   ├── utils.ts       # Utility functions
-│   └── app-error.normalizer.ts         # Convenience utilities
+│   └── normalizer.ts         # Convenience utilities
 ├── forms/
-│   └── app-error.mappers.ts  # Form error extraction
+│   └── mapper.ts  # Form error extraction
 ├── http/
 │   ├── status-codes.ts      # HTTP status mapping
-│   └── http-error.serializer.ts
+│   └── mapper.ts
 └── infra/
     ├── codes.ts      # Postgres error codes
     ├── extractor.ts  # PG error extraction
-    ├── pg-error.normalizer.ts    # PG → AppError conversion
+    ├── normalizer.ts    # PG → AppError conversion
     └── mapper.ts     # PG error mapping
 ```
