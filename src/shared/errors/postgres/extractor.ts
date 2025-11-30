@@ -1,34 +1,6 @@
-// src/shared/errors/db/extractor.ts
-import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/db/codes";
-import type { PgErrorMetadata } from "@/shared/errors/db/types";
-
-/**
- * BFS to flatten the error chain, looking into common wrapper properties.
- */
-function flattenErrorChain(root: unknown): Record<string, unknown>[] {
-  const queue: Record<string, unknown>[] = [root as Record<string, unknown>];
-  const result: Record<string, unknown>[] = [];
-  const seen = new Set<object>();
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    if (seen.has(current)) {
-      continue;
-    }
-    seen.add(current);
-    result.push(current);
-
-    // Check common wrapper properties
-    // We use a predefined list to avoid infinite recursion on arbitrary props
-    const propsToCheck = ["cause", "originalError", "originalCause", "error"];
-    for (const prop of propsToCheck) {
-      const val = current[prop];
-      if (val && typeof val === "object") {
-        queue.push(val as Record<string, unknown>);
-      }
-    }
-  }
-  return result;
-}
+import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/postgres/codes";
+import type { PgErrorMetadata } from "@/shared/errors/postgres/types";
+import { flattenErrorChain } from "@/shared/errors/utils";
 
 function extractMetadataFromObject(
   obj: Record<string, unknown>,

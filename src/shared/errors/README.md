@@ -311,13 +311,13 @@ errors/
 │   ├── utils.ts       # Utility functions
 │   └── normalizer.ts         # Convenience utilities
 ├── forms/
-│   └── mapper.ts  # Form error extraction
+│   └── transformer.ts  # Form error extraction
 ├── http/
 │   ├── status-codes.ts      # HTTP status mapping
-│   └── mapper.ts
-└── infra/
+│   └── adapter.ts
+└── postgres/
     ├── codes.ts      # Postgres error codes
     ├── extractor.ts  # PG error extraction
     ├── normalizer.ts    # PG → AppError conversion
-    └── mapper.ts     # PG error mapping
+    └── translator.ts     # PG error mapping
 ```

@@ -1,7 +1,6 @@
-// src/shared/errors/db/mapper.ts
-import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/db/codes";
-import { extractPgErrorMetadata } from "@/shared/errors/db/extractor";
-import type { PgErrorMapping } from "@/shared/errors/db/types";
+import { PG_CODE_TO_META, type PgCode } from "@/shared/errors/postgres/codes";
+import { extractPgErrorMetadata } from "@/shared/errors/postgres/extractor";
+import type { PgErrorMapping } from "@/shared/errors/postgres/types";
 import type { AppErrorKey } from "@/shared/errors/registry";
 
 /**

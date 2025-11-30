@@ -1,8 +1,7 @@
-// src/shared/errors/registry.ts
+import { API_ERRORS } from "@/shared/errors/definitions/api";
 import { APPLICATION_ERRORS } from "@/shared/errors/definitions/application";
 import { AUTH_ERRORS } from "@/shared/errors/definitions/auth";
 import { DOMAIN_ERRORS } from "@/shared/errors/definitions/domain";
-import { HTTP_ERRORS } from "@/shared/errors/definitions/http";
 import { INFRA_ERRORS } from "@/shared/errors/definitions/infra";
 import { PRESENTATION_ERRORS } from "@/shared/errors/definitions/presentation";
 import { SYSTEM_ERRORS } from "@/shared/errors/definitions/system";
@@ -18,10 +17,10 @@ import type { AppErrorDefinition, AppErrorLayer } from "@/shared/errors/types";
 export const APP_ERROR_MAP = {
   ...APPLICATION_ERRORS,
   ...AUTH_ERRORS,
-  ...SYSTEM_ERRORS,
+  ...API_ERRORS,
   ...DOMAIN_ERRORS,
-  ...HTTP_ERRORS,
   ...INFRA_ERRORS,
+  ...SYSTEM_ERRORS,
   ...PRESENTATION_ERRORS,
   ...VALIDATION_ERRORS,
 } as const satisfies Record<string, AppErrorDefinition>;

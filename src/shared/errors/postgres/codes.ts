@@ -1,5 +1,3 @@
-// src/shared/errors/db/codes.ts
-
 export interface PgErrorDefinition {
   readonly code: string;
   readonly condition: string;

@@ -1,4 +1,3 @@
-// src/shared/errors/http/mapper.ts
 import type { AppError } from "@/shared/errors/app-error";
 import {
   HTTP_ERROR_MAP,

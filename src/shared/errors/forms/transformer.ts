@@ -1,4 +1,3 @@
-// src/shared/errors/forms/mapper.ts
 import type { AppError } from "@/shared/errors/app-error";
 import { getFieldErrors } from "@/shared/errors/guards";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/error-maps.types";

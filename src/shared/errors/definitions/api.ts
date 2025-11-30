@@ -1,6 +1,6 @@
 import type { AppErrorDefinition } from "@/shared/errors/types";
 
-export const HTTP_ERRORS = {
+export const API_ERRORS = {
   conflict: {
     description: "Resource state conflict",
     layer: "API",
