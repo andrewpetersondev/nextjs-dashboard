@@ -1,4 +1,3 @@
-// src/server/forms/validate-form.ts
 import "server-only";
 import type { z } from "zod";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
@@ -7,17 +6,17 @@ import {
   formOk,
 } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-error";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-zod-field";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod/zod-form-guards";
+} from "@/shared/forms/infrastructure/zod/zod-guards";
 import { resolveRawFieldPayload } from "@/shared/forms/use-cases/resolve-field-payload";
 import {
-  resolveValidateOptions,
-  type ValidateFormOptions,
-} from "@/shared/forms/use-cases/validate-form-options";
+  type FormValidationOptions,
+  resolveFormValidationOptions,
+} from "@/shared/forms/use-cases/resolve-form-validation-options";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**
@@ -86,7 +85,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
   formData: FormData,
   schema: z.ZodType<Tin>,
   allowedFields?: readonly Tfieldnames[],
-  options: ValidateFormOptions<Tin, Tfieldnames> = {},
+  options: FormValidationOptions<Tin, Tfieldnames> = {},
 ): Promise<FormResult<Tin>> {
   const {
     fields: explicitFields,
@@ -94,7 +93,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     loggerContext,
     failureMessage,
     successMessage,
-  } = resolveValidateOptions(options);
+  } = resolveFormValidationOptions(options);
 
   const fields = resolveCanonicalFieldNamesFromSchema<Tin, Tfieldnames>(
     schema,

@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-zod";
-import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod/zod-form-guards";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
+import { isZodObjectSchema } from "@/shared/forms/infrastructure/zod/zod-guards";
 
 /**
  * Resolve the canonical array of field names for a Zod schema.

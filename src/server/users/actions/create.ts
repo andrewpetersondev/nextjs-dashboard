@@ -19,7 +19,7 @@ import {
   formOk,
 } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-zod";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 type CreateUserFormData = {

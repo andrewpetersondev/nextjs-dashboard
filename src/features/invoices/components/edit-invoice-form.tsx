@@ -19,7 +19,7 @@ import type { DenseFieldErrorMap } from "@/shared/forms/domain/types/error-maps.
 import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import { getFieldErrors } from "@/shared/forms/use-cases/extract-field-errors";
+import { getFieldErrors } from "@/shared/forms/use-cases/get-field-errors";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";

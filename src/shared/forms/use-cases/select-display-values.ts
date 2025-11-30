@@ -14,6 +14,7 @@ export function selectDisplayableStringFieldValues<T extends string>(
 
   for (const key of fields) {
     const shouldRedact = redactFields.includes(key);
+
     const v = raw[key as string];
 
     if (!shouldRedact && typeof v === "string") {

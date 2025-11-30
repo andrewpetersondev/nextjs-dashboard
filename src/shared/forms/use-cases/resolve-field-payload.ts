@@ -1,4 +1,4 @@
-import { extractFormDataFields } from "@/shared/forms/infrastructure/extract-form-data";
+import { extractFormDataFields } from "@/shared/forms/infrastructure/extract-form-fields";
 
 /**
  * Build the raw payload used for form validation.

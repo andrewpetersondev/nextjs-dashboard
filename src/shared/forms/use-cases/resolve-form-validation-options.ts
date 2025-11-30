@@ -9,7 +9,7 @@ const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
  * @typeParam T - The shape of the object being validated.
  * @typeParam K - A string literal union of keys from `T` representing field names.
  */
-export interface ValidateFormOptions<T, K extends keyof T & string> {
+export interface FormValidationOptions<T, K extends keyof T & string> {
   /**
    * Specific fields to validate. When omitted, callers may validate all applicable fields.
    */
@@ -50,8 +50,8 @@ export interface ValidateFormOptions<T, K extends keyof T & string> {
  * @param options - Validation options to resolve.
  * @returns An object containing resolved `failureMessage`, `successMessage`, `loggerContext`, `fields`, and `raw`.
  */
-export function resolveValidateOptions<T, K extends keyof T & string>(
-  options: ValidateFormOptions<T, K>,
+export function resolveFormValidationOptions<T, K extends keyof T & string>(
+  options: FormValidationOptions<T, K>,
 ) {
   return {
     failureMessage: options.messages?.failureMessage ?? DEFAULT_FAILURE_MESSAGE,

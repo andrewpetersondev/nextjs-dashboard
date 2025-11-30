@@ -16,7 +16,7 @@ import { createInvoiceAction } from "@/server/invoices/actions/create";
 import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import { getFieldErrors } from "@/shared/forms/use-cases/extract-field-errors";
+import { getFieldErrors } from "@/shared/forms/use-cases/get-field-errors";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/timings.tokens";
 import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";

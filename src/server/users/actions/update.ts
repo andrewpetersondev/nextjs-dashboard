@@ -26,7 +26,7 @@ import {
   formOk,
 } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-zod-field";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { diffShallowPatch } from "@/shared/utils/object/diff";
 
