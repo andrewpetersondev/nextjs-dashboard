@@ -1,4 +1,3 @@
-// src/shared/forms/application/options/validate-options.ts
 import { FORM_ERROR_MESSAGES } from "@/shared/forms/form-messages.constants";
 
 const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;

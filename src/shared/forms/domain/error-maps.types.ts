@@ -1,8 +1,3 @@
-/**
- * Domain types for error map structures.
- * Both sparse (partial) and dense (complete) representations.
- */
-
 import type { FieldError } from "./field-error.types";
 
 /**

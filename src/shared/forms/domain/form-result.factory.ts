@@ -1,4 +1,3 @@
-// src/shared/forms/domain/factories/form-result.factory.ts
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { AppErrorKey } from "@/shared/errors/registry/error-code.registry";

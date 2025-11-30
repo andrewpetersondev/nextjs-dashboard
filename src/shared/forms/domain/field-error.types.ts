@@ -1,9 +1,4 @@
 /**
- * Domain models for field-level errors.
- * Framework-agnostic.
- */
-
-/**
  * Array that is guaranteed to contain at least one element.
  */
 export type NonEmptyArray<Telement> = readonly [

@@ -1,9 +1,3 @@
-// src/shared/forms/domain/factories/error-map.factory.ts
-/**
- * Factory functions for creating and transforming error maps.
- * Pure domain logic, no framework dependencies.
- */
-
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
