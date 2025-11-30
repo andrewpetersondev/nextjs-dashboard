@@ -1,4 +1,4 @@
-// src/shared/errors/error-codes.ts
+// src/shared/errors/core/error-codes.ts
 
 import { APPLICATION_ERRORS } from "@/shared/errors/core/application/application-errors";
 import { AUTH_ERRORS } from "@/shared/errors/core/auth-errors";

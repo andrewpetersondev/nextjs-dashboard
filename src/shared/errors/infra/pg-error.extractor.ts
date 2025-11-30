@@ -1,4 +1,4 @@
-// src/shared/errors/pg-error.extractor.ts
+// src/shared/errors/infra/pg-error.extractor.ts
 import {
   PG_CODE_TO_META,
   type PgCode,
@@ -21,7 +21,7 @@ function flattenErrorChain(root: unknown): Record<string, unknown>[] {
 
     // Check common wrapper properties
     // We use a predefined list to avoid infinite recursion on arbitrary props
-    const propsToCheck = ["cause", "originalError", "error"];
+    const propsToCheck = ["cause", "originalError", "originalCause", "error"];
     for (const prop of propsToCheck) {
       const val = current[prop];
       if (val && typeof val === "object") {

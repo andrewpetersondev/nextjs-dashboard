@@ -1,4 +1,4 @@
-// src/shared/errors/pg-error-codes.ts
+// src/shared/errors/infra/pg-error-codes.ts
 
 export interface PgErrorDefinition {
   readonly code: string;

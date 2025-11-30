@@ -1,4 +1,4 @@
-// src/shared/errors/pg-error.mapper.ts
+// src/shared/errors/infra/pg-error.mapper.ts
 import {
   extractPgErrorMetadata,
   type PgErrorMetadata,

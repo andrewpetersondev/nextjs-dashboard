@@ -1,6 +1,7 @@
 # Project Root
 
 .idea/
+.junie/
 .vscode/
 .github/
 .next/

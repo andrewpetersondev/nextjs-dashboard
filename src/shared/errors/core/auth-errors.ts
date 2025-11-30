@@ -9,7 +9,7 @@ export const AUTH_ERRORS = {
   } as const satisfies AppErrorDefinition,
   // Auth semantics (distinct from generic validation)
   unauthorized: {
-    description: "Invalid credentials",
+    description: "Unauthorized",
     layer: "AUTH",
     retryable: false,
     severity: "WARN",
