@@ -36,22 +36,3 @@ export const validateUuidResult = (
   }
   return Ok(v);
 };
-
-/**
- * Type guard to check if a value is a valid UUID string
- */
-export function isUuid(value: unknown): value is string {
-  return typeof value === "string" && UUID_REGEX.test(value);
-}
-
-/**
- * Throwing wrapper for UUID validation (for legacy/ergonomic use).
- * Prefers Result-based validateUuidResult for composability.
- */
-export function validateUuid(value: unknown, label = "id"): string {
-  const r = validateUuidResult(value, label);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-}
