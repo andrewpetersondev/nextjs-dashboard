@@ -9,11 +9,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import type { Period, RevenueId } from "@/shared/branding/domain-brands";
-import {
-  REVENUE_SOURCES,
-  type RevenueSource,
-} from "../../../features/revenues/types";
+import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
+import type { Period, RevenueId } from "@/shared/branding/brands";
 import { invoices } from "./invoices";
 
 export const calculationSourceEnum = pgEnum(

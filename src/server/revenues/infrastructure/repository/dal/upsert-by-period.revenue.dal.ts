@@ -5,8 +5,8 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/server/revenues/domain/entities/entity";
-import type { Period } from "@/shared/branding/domain-brands";
-import { toPeriod } from "@/shared/branding/id-converters";
+import type { Period } from "@/shared/branding/brands";
+import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { upsertRevenue } from "./upsert.revenue.dal";
 

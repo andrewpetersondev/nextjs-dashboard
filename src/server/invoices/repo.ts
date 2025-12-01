@@ -10,7 +10,7 @@ import type {
 } from "@/server/invoices/entity";
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
-import type { InvoiceId } from "@/shared/branding/domain-brands";
+import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 

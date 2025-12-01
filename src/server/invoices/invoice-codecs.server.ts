@@ -15,13 +15,13 @@ import type {
   InvoiceFormDto,
   IsoDateString,
 } from "@/features/invoices/lib/dto";
-import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
+import { toInvoiceStatus } from "@/features/invoices/lib/invoice-status.mapper";
 import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
-import { toCustomerId } from "@/shared/branding/id-converters";
+import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

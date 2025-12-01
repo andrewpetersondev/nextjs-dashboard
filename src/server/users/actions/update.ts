@@ -19,7 +19,7 @@ import { validateForm } from "@/server/forms/validate-form";
 import { readUserDal } from "@/server/users/dal/read";
 import { updateUserDal } from "@/server/users/dal/update";
 import type { UserUpdatePatch } from "@/server/users/types/types";
-import { toUserIdResult } from "@/shared/branding/id-converters";
+import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
 import {
   formError,

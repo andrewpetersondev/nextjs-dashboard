@@ -1,7 +1,7 @@
 import "server-only";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
-import { toUserId } from "@/shared/branding/id-converters";
+import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**
  * Maps database/entity representation to transport-safe AuthUserTransport.

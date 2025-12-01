@@ -6,7 +6,7 @@ import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { deleteUserDal } from "@/server/users/dal/delete";
-import { toUserId } from "@/shared/branding/id-converters";
+import { toUserId } from "@/shared/branding/converters/id-converters";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { logger } from "@/shared/logging/infra/logging.client";

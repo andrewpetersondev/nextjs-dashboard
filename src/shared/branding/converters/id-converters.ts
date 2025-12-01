@@ -12,20 +12,22 @@
  * See also: `toCustomerIdResult` / `toCustomerId` pattern used below.
  */
 
+import type {
+  CustomerId,
+  InvoiceId,
+  Period,
+  RevenueId,
+  SessionId,
+  UserId,
+} from "@/shared/branding/brands";
 import {
-  type CustomerId,
   createCustomerId,
   createInvoiceId,
-  createPeriod,
   createRevenueId,
   createSessionId,
   createUserId,
-  type InvoiceId,
-  type Period,
-  type RevenueId,
-  type SessionId,
-  type UserId,
-} from "@/shared/branding/domain-brands";
+} from "@/shared/branding/factories/id-factories";
+import { createPeriod } from "@/shared/branding/factories/period-factory";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result.types";
 

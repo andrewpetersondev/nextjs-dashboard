@@ -1,6 +1,6 @@
 import "server-only";
 
-import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
+import { toInvoiceStatus } from "@/features/invoices/lib/invoice-status.mapper";
 import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type {
   InvoiceEntity,
@@ -11,7 +11,7 @@ import {
   toCustomerId,
   toInvoiceId,
   toPeriod,
-} from "@/shared/branding/id-converters";
+} from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

@@ -7,7 +7,7 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import type { UserId } from "@/shared/branding/domain-brands";
+import type { UserId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infra/logging.client";
 

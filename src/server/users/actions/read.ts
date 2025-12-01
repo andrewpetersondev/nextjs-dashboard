@@ -4,7 +4,7 @@ import type { UserDto } from "@/features/users/lib/dto";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchUserById } from "@/server/users/dal/fetch-user-by-id";
-import { toUserId } from "@/shared/branding/id-converters";
+import { toUserId } from "@/shared/branding/converters/id-converters";
 import { logger } from "@/shared/logging/infra/logging.client";
 
 /**

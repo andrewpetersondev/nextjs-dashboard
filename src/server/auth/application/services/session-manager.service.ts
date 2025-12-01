@@ -17,7 +17,7 @@ import {
   buildSessionCookieOptions,
   timeLeftMs,
 } from "@/server/auth/domain/session/utils";
-import type { UserId } from "@/shared/branding/domain-brands";
+import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

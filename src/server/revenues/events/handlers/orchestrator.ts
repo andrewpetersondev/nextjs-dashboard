@@ -3,7 +3,7 @@ import type { InvoiceDto } from "@/features/invoices/lib/dto";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { ProcessInvoiceEventUseCase } from "@/server/revenues/application/use-cases/events/process-invoice-event.use-case";
-import type { Period } from "@/shared/branding/domain-brands";
+import type { Period } from "@/shared/branding/brands";
 
 /**
  * Processes an invoice event by delegating to the ProcessInvoiceEventUseCase.

@@ -37,3 +37,15 @@ export const validateUuidResult = (
   }
   return Ok(v);
 };
+
+/**
+ * Create a UUID validator for a specific label (Result-based).
+ */
+export const uuidValidatorFor =
+  (label: string) =>
+  (value: unknown): Result<string, AppError> => {
+    const r = validateUuidResult(value, label);
+    return r.ok
+      ? Ok(r.value)
+      : Err(new AppError("validation", { message: r.error.message }));
+  };

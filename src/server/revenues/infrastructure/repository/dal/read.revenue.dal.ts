@@ -4,7 +4,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/server/revenues/infrastructure/mappers/revenue.mapper";
-import type { RevenueId } from "@/shared/branding/domain-brands";
+import type { RevenueId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
 export async function readRevenue(

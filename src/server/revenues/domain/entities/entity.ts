@@ -1,6 +1,6 @@
 import "server-only";
 import type { RevenueSource } from "@/features/revenues/types";
-import type { Period, RevenueId } from "@/shared/branding/domain-brands";
+import type { Period, RevenueId } from "@/shared/branding/brands";
 import type { Cents } from "@/shared/money/types";
 
 /**

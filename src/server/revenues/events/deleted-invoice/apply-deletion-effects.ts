@@ -4,7 +4,7 @@ import type { RevenueService } from "@/server/revenues/application/services/reve
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterRemoval } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";
 import { updateRevenueRecord } from "@/server/revenues/events/process-invoice/revenue-mutations";
-import type { Period } from "@/shared/branding/domain-brands";
+import type { Period } from "@/shared/branding/brands";
 import type { LogMetadata } from "../../application/cross-cutting/logging";
 
 /**

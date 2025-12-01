@@ -5,7 +5,7 @@ import type { LogMetadata } from "@/server/revenues/application/cross-cutting/lo
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { upsertRevenue } from "@/server/revenues/events/process-invoice/upsert-revenue";
 import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
-import type { Period } from "@/shared/branding/domain-brands";
+import type { Period } from "@/shared/branding/brands";
 
 /**
  * Options for processing an invoice for revenue.

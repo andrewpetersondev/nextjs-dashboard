@@ -9,7 +9,7 @@ import {
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { adjustRevenueForStatusChange } from "@/server/revenues/events/handlers/adjust-revenue-for-status-change";
 import { processInvoiceForRevenue } from "@/server/revenues/events/process-invoice/process-invoice-for-revenue";
-import type { Period } from "@/shared/branding/domain-brands";
+import type { Period } from "@/shared/branding/brands";
 
 type HandleStatusChangeParams = Readonly<{
   context: string;

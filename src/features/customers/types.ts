@@ -1,4 +1,4 @@
-import type { CustomerId } from "@/shared/branding/domain-brands";
+import type { CustomerId } from "@/shared/branding/brands";
 
 /**
  * Customer field for select options.

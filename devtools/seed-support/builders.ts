@@ -1,5 +1,5 @@
-import type { Period } from "@/shared/branding/domain-brands";
-import { toCustomerId } from "@/shared/branding/id-converters";
+import type { Period } from "@/shared/branding/brands";
+import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,

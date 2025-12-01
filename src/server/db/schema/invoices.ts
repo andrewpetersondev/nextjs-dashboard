@@ -13,11 +13,7 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "@/features/invoices/lib/types";
-import type {
-  CustomerId,
-  InvoiceId,
-  Period,
-} from "@/shared/branding/domain-brands";
+import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 

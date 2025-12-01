@@ -7,7 +7,7 @@ import type {
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
-import type { InvoiceId } from "@/shared/branding/domain-brands";
+import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 

@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { UserId } from "@/shared/branding/domain-brands";
+import type { UserId } from "@/shared/branding/brands";
 
 export type FlatEncryptPayload = {
   expiresAt: number;

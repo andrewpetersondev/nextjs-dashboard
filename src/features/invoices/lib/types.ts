@@ -1,8 +1,4 @@
-import type {
-  CustomerId,
-  InvoiceId,
-  Period,
-} from "@/shared/branding/domain-brands";
+import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 
 /** Allowed invoice status values (immutable tuple for precise type inference). */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;

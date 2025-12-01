@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
-import type { CustomerId } from "@/shared/branding/domain-brands";
+import type { CustomerId } from "@/shared/branding/brands";
 import { invoices } from "./invoices";
 
 export const customers = pgTable("customers", {

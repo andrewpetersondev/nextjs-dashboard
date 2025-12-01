@@ -55,3 +55,13 @@ export function validatePeriodResult(input: unknown): Result<Date, AppError> {
     }),
   );
 }
+
+/**
+ * Validate and transform a period value (Result-based).
+ */
+export const periodValidator = (value: unknown): Result<Date, AppError> => {
+  const r = validatePeriodResult(value);
+  return r.ok
+    ? Ok(r.value)
+    : Err(new AppError("validation", { message: r.error.message }));
+};

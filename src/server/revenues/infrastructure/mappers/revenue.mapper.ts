@@ -8,7 +8,10 @@ import {
 } from "@/server/revenues/infrastructure/mappers/number";
 
 import { toRevenueSource } from "@/server/revenues/infrastructure/mappers/revenue-source.mapper";
-import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
+import {
+  toPeriod,
+  toRevenueId,
+} from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { isDateValid } from "@/shared/utils/date/guards";
 
