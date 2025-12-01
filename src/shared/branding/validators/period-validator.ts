@@ -6,6 +6,12 @@ import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
 
 /**
+ * Validate and transform a period value (Result-based).
+ */
+export const periodValidator = (value: unknown): Result<Date, AppError> =>
+  validatePeriodResult(value);
+
+/**
  * Result-based normalization into a first-of-month UTC Date.
  */
 export function validatePeriodResult(input: unknown): Result<Date, AppError> {
@@ -21,14 +27,12 @@ export function validatePeriodResult(input: unknown): Result<Date, AppError> {
   }
 
   if (typeof input === "string") {
-    // Try yyyy-MM format first
     const parsedMonth = parse(input, "yyyy-MM", new Date());
 
     if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === input) {
       return Ok(toFirstDayOfMonthUtc(parsedMonth));
     }
 
-    // Try yyyy-MM-dd format (must be first day of month)
     const parsedDay = parse(input, "yyyy-MM-dd", new Date());
 
     if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === input) {
@@ -55,13 +59,3 @@ export function validatePeriodResult(input: unknown): Result<Date, AppError> {
     }),
   );
 }
-
-/**
- * Validate and transform a period value (Result-based).
- */
-export const periodValidator = (value: unknown): Result<Date, AppError> => {
-  const r = validatePeriodResult(value);
-  return r.ok
-    ? Ok(r.value)
-    : Err(new AppError("validation", { message: r.error.message }));
-};

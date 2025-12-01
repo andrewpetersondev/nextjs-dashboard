@@ -9,6 +9,14 @@ export const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
+ * Create a UUID validator for a specific label (Result-based).
+ */
+export const uuidValidatorFor =
+  (label: string) =>
+  (value: unknown): Result<string, AppError> =>
+    validateUuidResult(value, label);
+
+/**
  * Validate if the input is a properly formatted UUID. (Result-based)
  */
 export const validateUuidResult = (
@@ -37,15 +45,3 @@ export const validateUuidResult = (
   }
   return Ok(v);
 };
-
-/**
- * Create a UUID validator for a specific label (Result-based).
- */
-export const uuidValidatorFor =
-  (label: string) =>
-  (value: unknown): Result<string, AppError> => {
-    const r = validateUuidResult(value, label);
-    return r.ok
-      ? Ok(r.value)
-      : Err(new AppError("validation", { message: r.error.message }));
-  };

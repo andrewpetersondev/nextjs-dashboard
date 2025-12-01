@@ -1,13 +1,20 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
 import { PERIOD_BRAND, type Period } from "@/shared/branding/brands";
-
 import { periodValidator } from "@/shared/branding/validators/period-validator";
 import { brandWith } from "@/shared/branding/validators/validator-combinators";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result.types";
 
 /**
- * Generic factory for creating branded period validators (Result-based).
+ * Create a validator that produces branded period values.
+ *
+ * Accepts `Date` or strings in `yyyy-MM` or `yyyy-MM-01` format.
+ * Normalizes to the first day of the month in UTC.
+ *
+ * @typeParam B - The brand symbol.
+ * @typeParam T - The branded type extending `Brand<Date, B>`.
+ * @param brandSymbol - The unique symbol for this brand.
+ * @returns A validator function that accepts `unknown` and returns `Result<T, AppError>`.
  */
 export const createBrandedPeriodValidator = <
   B extends symbol,
@@ -24,6 +31,15 @@ export const createBrandedPeriodValidator = <
   return (value: unknown): Result<T, AppError> => internalCreator(value);
 };
 
+/**
+ * Validate and create a branded `Period` from unknown input.
+ *
+ * Accepts `Date` instances or strings in `yyyy-MM` or `yyyy-MM-01` format.
+ * Returns the first day of the month in UTC.
+ *
+ * @param value - The input value to validate and normalize.
+ * @returns `Result<Period, AppError>` on success or validation failure.
+ */
 export const createPeriod = createBrandedPeriodValidator<
   typeof PERIOD_BRAND,
   Period

@@ -24,8 +24,34 @@ export const brandWith =
   };
 
 /**
+ * Chain two validators, passing success value to the next.
+ * Stops on first error.
+ *
+ * @typeParam A - Input type for the first validator.
+ * @typeParam B - Output/intermediate type.
+ * @param first - First validator to apply.
+ * @param second - Second validator to apply to the result of the first.
+ * @returns A function that applies both validators in sequence.
+ */
+export const chain =
+  <A, B>(
+    first: (x: A) => Result<B, AppError>,
+    second: (x: B) => Result<B, AppError>,
+  ) =>
+  (x: A): Result<B, AppError> => {
+    const r1 = first(x);
+    return r1.ok ? second(r1.value) : r1;
+  };
+
+/**
  * Compose validators left-to-right.
  * Stops on first error; passes success value to the next.
+ *
+ * @typeParam A - Input type for the first validator.
+ * @typeParam B - Output type after composition.
+ * @param v1 - First validator (accepts unknown).
+ * @param v2 - Second validator (accepts result of first).
+ * @returns A function that composes both validators.
  */
 export const compose =
   <A, B>(
