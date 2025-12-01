@@ -1,7 +1,6 @@
-// File: src/shared/core/result/sync/result-transform.ts
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, type Result } from "@/shared/result/result";
+import { Err } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Applies a transformation function to the value of a successful `Result`,

@@ -1,8 +1,6 @@
-// File: src/shared/core/result/async/result-map-async.ts
-// Purpose: Adapter-first async map utilities (now `AppError`-centric).
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok, type Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Asynchronously maps a successful `Result` to a new value using the provided function.

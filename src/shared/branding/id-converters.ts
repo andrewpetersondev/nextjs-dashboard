@@ -13,7 +13,8 @@ import {
   type UserId,
 } from "@/shared/branding/domain-brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { Result } from "@/shared/result/result";
+
+import type { Result } from "@/shared/result/result.types";
 
 // --- New: Result-returning converters (thin wrappers over factories) ---
 

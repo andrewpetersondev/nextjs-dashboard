@@ -3,7 +3,8 @@ import type {
   FormResult,
   FormSuccess,
 } from "@/shared/forms/domain/types/form-result.types";
-import type { Result } from "@/shared/result/result";
+
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Type guard: checks if the form result is successful.

@@ -1,7 +1,5 @@
-// File: src/shared/core/result/sync/result-match.ts
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { Result } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Extracts the value from a successful `Result` or throws the associated error if unsuccessful.

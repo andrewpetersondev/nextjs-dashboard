@@ -23,7 +23,8 @@ import type {
 } from "@/server/invoices/entity";
 import { toCustomerId } from "@/shared/branding/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok, type Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Maps branded Entity to plain DTO.

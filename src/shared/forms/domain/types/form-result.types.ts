@@ -1,6 +1,7 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { DenseFieldErrorMap } from "@/shared/forms/domain/types/error-maps.types";
-import type { Result } from "@/shared/result/result";
+
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Represents a successful form submission payload.

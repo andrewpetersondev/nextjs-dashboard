@@ -1,18 +1,6 @@
-// File: src/shared/core/result/async/result-async.ts
-// Purpose: Adapter-first async Result helpers (no default AppError). Callers must pass mappers.
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok, type Result } from "@/shared/result/result";
-
-/**
- * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
- *
- * @typeParam Tvalue - The type of the value the promise resolves to.
- * @example
- * ```ts
- * const fetchData: AsyncThunk<string> = async () => "Hello, World!";
- * ```
- */
-export type AsyncThunk<Tvalue> = () => Promise<Tvalue>;
+import { Err, Ok } from "@/shared/result/result";
+import type { AsyncThunk, Result } from "@/shared/result/result.types";
 
 /**
  * Executes an asynchronous function and wraps the result in a Result object.

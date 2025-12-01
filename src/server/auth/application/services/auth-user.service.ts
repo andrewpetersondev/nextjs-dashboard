@@ -16,8 +16,8 @@ import { getAppDb } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import type { Result } from "@/shared/result/result";
 import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * AuthUserService orchestrates authentication and user creation logic.

@@ -1,13 +1,6 @@
-// File: src/shared/core/result/sync/result-collect.ts
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import {
-  Err,
-  type ErrType,
-  Ok,
-  type OkType,
-  type Result,
-} from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { ErrType, OkType, Result } from "@/shared/result/result.types";
 
 /**
  * Collects all successful results from the provided array, returning a combined `Result`.

@@ -1,7 +1,6 @@
-// File: src/shared/core/result/iter/result-collect-iter.ts
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok, type Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Iterates over the source, yielding values from successful results until an error result is encountered.

@@ -1,8 +1,6 @@
-// File: src/shared/core/result/sync/result-tap.ts
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { Result } from "@/shared/result/result";
 import { Err } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Executes a provided function if the `Result` is successful (`ok`), passing its value.

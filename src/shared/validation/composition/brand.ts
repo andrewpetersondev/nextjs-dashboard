@@ -1,5 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Ok, type Result } from "@/shared/result/result";
+import { Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Apply a branding function to a validated value.

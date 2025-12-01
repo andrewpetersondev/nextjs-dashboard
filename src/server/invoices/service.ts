@@ -10,7 +10,8 @@ import { toInvoiceId } from "@/shared/branding/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 import { CENTS_IN_DOLLAR } from "@/shared/money/types";
-import { Err, Ok, type Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 export class InvoiceService {
   private readonly repo: InvoiceRepository;

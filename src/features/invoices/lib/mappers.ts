@@ -3,7 +3,8 @@ import {
   type InvoiceStatus,
 } from "@/features/invoices/lib/types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { Result } from "@/shared/result/result";
+
+import type { Result } from "@/shared/result/result.types";
 import { validateEnumResult } from "@/shared/validation/domain/enum";
 
 /**

@@ -1,6 +1,7 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok, type Result } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 import { brandWith } from "@/shared/validation/composition/brand";
 import { validatePeriodResult } from "@/shared/validation/domain/period";
 import { validateUuidResult } from "@/shared/validation/primitives/uuid";

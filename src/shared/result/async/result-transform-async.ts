@@ -1,8 +1,6 @@
-// File: src/shared/core/result/async/result-transform-async.ts
-// Purpose: Adapter-first async flatMap utilities (no default AppError).
-
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, type Result } from "@/shared/result/result";
+import { Err } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Applies an asynchronous function to the successful value in a `Result` and flattens the resulting `Result`.

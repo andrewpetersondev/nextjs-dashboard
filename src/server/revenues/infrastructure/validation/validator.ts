@@ -5,7 +5,8 @@ import {
 } from "@/features/revenues/constants/date";
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { Result } from "@/shared/result/result";
+
+import type { Result } from "@/shared/result/result.types";
 import { validateEnumResult } from "@/shared/validation/domain/enum";
 
 /**
