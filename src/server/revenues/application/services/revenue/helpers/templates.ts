@@ -8,21 +8,20 @@ import type { Period } from "@/shared/branding/domain-brands";
 import { toPeriod } from "@/shared/branding/id-converters";
 
 export interface TemplateAndPeriods {
-  readonly template: readonly { readonly period: Date }[];
-  readonly startPeriod: Period;
   readonly endPeriod: Period;
+  readonly startPeriod: Period;
+  readonly template: readonly { readonly period: Date }[];
 }
 
 export function buildTemplateAndPeriods(): TemplateAndPeriods {
-  //  const { startDate, endDate, duration } = calculateDateRange();
   const { startDate, duration } = calculateDateRange();
 
-  //  logger.info("buildTemplateAndPeriods", { endDate });
+  const durationResult = toIntervalDuration(duration);
+  if (!durationResult.ok) {
+    throw new Error("Invalid interval duration");
+  }
 
-  const template = generateMonthsTemplate(
-    startDate,
-    toIntervalDuration(duration),
-  );
+  const template = generateMonthsTemplate(startDate, durationResult.value);
 
   if (template.length === 0) {
     throw new Error("Template generation failed: no months generated");
@@ -46,9 +45,12 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
 
 export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
   const { startDate, duration } = calculateDateRange();
-  const template = generateMonthsTemplate(
-    startDate,
-    toIntervalDuration(duration),
-  );
+
+  const durationResult = toIntervalDuration(duration);
+  if (!durationResult.ok) {
+    throw new Error("Invalid interval duration");
+  }
+
+  const template = generateMonthsTemplate(startDate, durationResult.value);
   return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
 }

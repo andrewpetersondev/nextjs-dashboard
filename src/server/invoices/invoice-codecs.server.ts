@@ -16,11 +16,14 @@ import type {
   IsoDateString,
 } from "@/features/invoices/lib/dto";
 import { toInvoiceStatus } from "@/features/invoices/lib/mappers";
+import type { InvoiceStatus } from "@/features/invoices/lib/types";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/server/invoices/entity";
 import { toCustomerId } from "@/shared/branding/id-converters";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok, type Result } from "@/shared/result/result";
 
 /**
  * Maps branded Entity to plain DTO.
@@ -57,14 +60,19 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
  */
 export function dtoToCreateInvoiceEntity(
   dto: InvoiceFormDto,
-): InvoiceFormEntity {
-  return {
+): Result<InvoiceFormEntity, AppError> {
+  const statusResult = toInvoiceStatus(dto.status);
+  if (!statusResult.ok) {
+    return Err(statusResult.error);
+  }
+
+  return Ok({
     amount: dto.amount,
     customerId: toCustomerId(dto.customerId),
     date: new Date(dto.date as IsoDateString), // YYYY-MM-DD → Date (UTC midnight)
     sensitiveData: dto.sensitiveData,
-    status: toInvoiceStatus(dto.status),
-  };
+    status: statusResult.value,
+  });
 }
 
 /**
@@ -74,8 +82,17 @@ export function dtoToCreateInvoiceEntity(
  */
 export function partialDtoToCreateInvoiceEntity(
   dto: Partial<InvoiceFormDto>,
-): Partial<InvoiceFormEntity> {
-  return {
+): Result<Partial<InvoiceFormEntity>, AppError> {
+  let statusValue: InvoiceStatus | undefined;
+  if (dto.status !== undefined) {
+    const statusResult = toInvoiceStatus(dto.status);
+    if (!statusResult.ok) {
+      return Err(statusResult.error);
+    }
+    statusValue = statusResult.value;
+  }
+
+  return Ok({
     ...(dto.amount !== undefined && { amount: dto.amount }),
     ...(dto.customerId !== undefined && {
       customerId: toCustomerId(dto.customerId),
@@ -86,6 +103,6 @@ export function partialDtoToCreateInvoiceEntity(
     ...(dto.sensitiveData !== undefined && {
       sensitiveData: dto.sensitiveData,
     }),
-    ...(dto.status !== undefined && { status: toInvoiceStatus(dto.status) }),
-  };
+    ...(statusValue !== undefined && { status: statusValue }),
+  });
 }

@@ -2,13 +2,17 @@ import {
   INVOICE_STATUSES,
   type InvoiceStatus,
 } from "@/features/invoices/lib/types";
-import { validateEnum } from "@/shared/validation/domain/enum";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result";
+import { validateEnumResult } from "@/shared/validation/domain/enum";
 
 /**
  * Validates and converts a value to an InvoiceStatus
  * @param status - The status value to validate
- * @returns A validated InvoiceStatus
+ * @returns Result<InvoiceStatus, AppError>
  */
-export const toInvoiceStatus = (status: unknown): InvoiceStatus => {
-  return validateEnum(status, INVOICE_STATUSES, "InvoiceStatus");
+export const toInvoiceStatus = (
+  status: unknown,
+): Result<InvoiceStatus, AppError> => {
+  return validateEnumResult(status, INVOICE_STATUSES, "InvoiceStatus");
 };

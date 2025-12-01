@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
+import type { InvoiceFormDto } from "@/features/invoices/lib/dto";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
@@ -33,6 +33,7 @@ const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
 /**
  * Server action for creating a new invoice.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function createInvoiceAction(
   _prevState: FormResult<CreateInvoiceOutput>,
   formData: FormData,
@@ -51,7 +52,22 @@ export async function createInvoiceAction(
     if (parsed.success) {
       const repo = new InvoiceRepository(getAppDb());
       const service = new InvoiceService(repo);
-      const invoice: InvoiceDto = await service.createInvoice(parsed.data);
+      const result = await service.createInvoice(parsed.data);
+
+      if (!result.ok) {
+        return formError<CreateInvoiceFieldNames>({
+          fieldErrors: {
+            amount: [],
+            customerId: [],
+            date: [],
+            sensitiveData: [],
+            status: [],
+          },
+          message: toInvoiceErrorMessage(result.error),
+        });
+      }
+
+      const invoice = result.value;
 
       const { EventBus } = await import("@/server/events/event-bus");
       await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {

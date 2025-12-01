@@ -26,18 +26,3 @@ export const validateEnumResult = <T extends string>(
     }),
   );
 };
-
-/**
- * Generic enum validation (throw-based wrapper for backward compatibility)
- */
-export const validateEnum = <T extends string>(
-  value: unknown,
-  enumValues: readonly T[],
-  enumName: string,
-): T => {
-  const r = validateEnumResult(value, enumValues, enumName);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-};

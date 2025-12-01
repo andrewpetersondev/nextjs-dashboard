@@ -39,7 +39,11 @@ export async function deleteInvoiceAction(
     // Create service instance with injected repository
     const service = new InvoiceService(repo);
     // Call service with validated ID to delete the invoice
-    const invoice = await service.deleteInvoice(id);
+    const deleteResult = await service.deleteInvoice(id);
+    if (!deleteResult.ok) {
+      throw deleteResult.error;
+    }
+    const invoice = deleteResult.value;
 
     // Emit base event with all context.
     const { EventBus } = await import("@/server/events/event-bus");

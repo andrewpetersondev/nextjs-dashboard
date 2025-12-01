@@ -4,23 +4,27 @@ import {
   type IntervalDuration,
 } from "@/features/revenues/constants/date";
 import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
-import { validateEnum } from "@/shared/validation/domain/enum";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result";
+import { validateEnumResult } from "@/shared/validation/domain/enum";
 
 /**
  * Validates and converts a value to an IntervalDuration
  * @param duration - The duration value to validate
- * @returns A validated IntervalDuration
- * @throws {AppError} If the duration is invalid
+ * @returns Result<IntervalDuration, AppError>
  */
-export const toIntervalDuration = (duration: unknown): IntervalDuration => {
-  return validateEnum(duration, INTERVAL_DURATIONS, "IntervalDuration");
+export const toIntervalDuration = (
+  duration: unknown,
+): Result<IntervalDuration, AppError> => {
+  return validateEnumResult(duration, INTERVAL_DURATIONS, "IntervalDuration");
 };
 /**
  * Validates and converts a value to a RevenueSource
  * @param source - The source value to validate
- * @returns A validated RevenueSource
- * @throws {AppError} If the source is invalid
+ * @returns Result<RevenueSource, AppError>
  */
-export const toRevenueSource = (source: unknown): RevenueSource => {
-  return validateEnum(source, REVENUE_SOURCES, "RevenueSource");
+export const toRevenueSource = (
+  source: unknown,
+): Result<RevenueSource, AppError> => {
+  return validateEnumResult(source, REVENUE_SOURCES, "RevenueSource");
 };

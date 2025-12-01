@@ -14,18 +14,16 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
         metadata: { id },
       });
     }
-    // Dependency injection: pass repository to service
     const repo = new InvoiceRepository(getAppDb());
-    // Create service instance with injected repository
     const service = new InvoiceService(repo);
-    // Call service with validated DTO to retrieve complete InvoiceDto
-    const invoice: InvoiceDto = await service.readInvoice(id);
-    if (!invoice) {
-      throw new AppError("notFound", {
-        message: `Invoice with ID ${id} not found`,
+    const result = await service.readInvoice(id);
+    if (!result.ok) {
+      throw new AppError(result.error.code, {
+        message: result.error.message,
+        metadata: result.error.metadata,
       });
     }
-    return invoice;
+    return result.value;
   } catch (error) {
     throw new AppError("database", {
       message: INVOICE_MSG.dbError,

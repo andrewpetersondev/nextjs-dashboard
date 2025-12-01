@@ -12,23 +12,31 @@ import {
   toInvoiceId,
   toPeriod,
 } from "@/shared/branding/id-converters";
-
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok, type Result } from "@/shared/result/result";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthLocal } from "@/shared/utils/date/normalize";
 
 /**
  * Maps raw database row to branded Entity.
  */
-export function rawDbToInvoiceEntity(row: InvoiceRow): InvoiceEntity {
-  return {
+export function rawDbToInvoiceEntity(
+  row: InvoiceRow,
+): Result<InvoiceEntity, AppError> {
+  const statusResult = toInvoiceStatus(row.status);
+  if (!statusResult.ok) {
+    return Err(statusResult.error);
+  }
+
+  return Ok({
     amount: row.amount,
     customerId: toCustomerId(row.customerId),
     date: row.date,
     id: toInvoiceId(row.id),
     revenuePeriod: toPeriod(row.revenuePeriod),
     sensitiveData: row.sensitiveData,
-    status: toInvoiceStatus(row.status),
-  };
+    status: statusResult.value,
+  });
 }
 
 /**
@@ -40,17 +48,19 @@ export function rawDbToInvoiceEntity(row: InvoiceRow): InvoiceEntity {
  */
 export function invoiceFormEntityToServiceEntity(
   formEntity: InvoiceFormEntity,
-): InvoiceServiceEntity {
-  // Validate the existing Date object
+): Result<InvoiceServiceEntity, AppError> {
   if (!isDateValid(formEntity.date)) {
-    throw new Error(`Invalid date in form entity: ${formEntity.date}`);
+    return Err(
+      new AppError("validation", {
+        message: `Invalid date in form entity: ${formEntity.date}`,
+      }),
+    );
   }
 
-  // Derive revenue period from the validated date
   const derivedRevenuePeriod = toFirstDayOfMonthLocal(formEntity.date);
 
-  return {
+  return Ok({
     ...formEntity,
     revenuePeriod: toPeriod(derivedRevenuePeriod),
-  };
+  });
 }

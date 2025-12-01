@@ -71,6 +71,8 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
  * @param formData - FormData from the client
  * @returns FormResult with data, errors, message, and success
  */
+
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function updateInvoiceAction(
   _prevState: FormResult<UpdateInvoiceOutput>,
   id: string,
@@ -114,13 +116,32 @@ export async function updateInvoiceAction(
     }
 
     const service = new InvoiceService(new InvoiceRepository(getAppDb()));
-    const previousInvoice = await service.readInvoice(id);
-    const updatedInvoice = await service.updateInvoice(id, parsed.data);
+
+    const previousResult = await service.readInvoice(id);
+    if (!previousResult.ok) {
+      return handleActionError(id, previousResult.error);
+    }
+    const previousInvoice = previousResult.value;
+
+    const updateResult = await service.updateInvoice(id, parsed.data);
+    if (!updateResult.ok) {
+      return handleActionError(id, updateResult.error);
+    }
+    const updatedInvoice = updateResult.value;
 
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
     revalidatePath(ROUTES.dashboard.root);
 
-    return formOk(updatedInvoice, INVOICE_MSG.updateSuccess);
+    return formOk(
+      {
+        amount: updatedInvoice.amount,
+        customerId: updatedInvoice.customerId,
+        date: updatedInvoice.date,
+        sensitiveData: updatedInvoice.sensitiveData,
+        status: updatedInvoice.status,
+      },
+      INVOICE_MSG.updateSuccess,
+    );
   } catch (error) {
     return handleActionError(id, error);
   }
