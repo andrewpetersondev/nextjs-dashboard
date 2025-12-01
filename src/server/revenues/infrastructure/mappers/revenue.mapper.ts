@@ -65,8 +65,21 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   }
   try {
     validateRevenueRow(revenueRow);
+
+    const sourceResult = toRevenueSource(revenueRow.calculationSource);
+    const calculationSource: RevenueEntity["calculationSource"] =
+      typeof sourceResult === "object" && "ok" in sourceResult
+        ? sourceResult.ok
+          ? sourceResult.value
+          : (() => {
+              throw new AppError("validation", {
+                message: `Invalid calculationSource: ${sourceResult.error.message}`,
+              });
+            })()
+        : sourceResult;
+
     return {
-      calculationSource: toRevenueSource(revenueRow.calculationSource),
+      calculationSource,
       createdAt: revenueRow.createdAt,
       id: toRevenueId(revenueRow.id),
       invoiceCount: revenueRow.invoiceCount,

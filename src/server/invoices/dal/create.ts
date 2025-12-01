@@ -45,6 +45,10 @@ export async function createInvoiceDal(
       });
     }
 
-    return rawDbToInvoiceEntity(createdInvoice);
+    const result = rawDbToInvoiceEntity(createdInvoice);
+    if (!result.ok) {
+      throw result.error;
+    }
+    return result.value;
   });
 }

@@ -41,6 +41,9 @@ export async function deleteInvoiceDal(
     });
   }
 
-  // Convert raw database row to InvoiceEntity and return
-  return rawDbToInvoiceEntity(deletedInvoice);
+  const result = rawDbToInvoiceEntity(deletedInvoice);
+  if (!result.ok) {
+    throw result.error;
+  }
+  return result.value;
 }

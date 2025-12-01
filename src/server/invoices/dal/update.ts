@@ -25,25 +25,25 @@ export async function updateInvoiceDal(
   id: InvoiceId,
   updateData: Partial<InvoiceFormEntity>,
 ): Promise<InvoiceEntity> {
-  // Ensure db, id, and updateData are not empty
   if (!(db && id && updateData)) {
     throw new AppError("validation", {
       message: INVOICE_MSG.invalidInput,
     });
   }
 
-  // db operations
   const [updated] = await db
     .update(invoices)
     .set(updateData)
     .where(eq(invoices.id, id))
     .returning();
 
-  // Check if update was successful
   if (!updated) {
     throw new AppError("database", { message: INVOICE_MSG.updateFailed });
   }
 
-  // Convert raw database row to InvoiceEntity
-  return rawDbToInvoiceEntity(updated);
+  const result = rawDbToInvoiceEntity(updated);
+  if (!result.ok) {
+    throw result.error;
+  }
+  return result.value;
 }

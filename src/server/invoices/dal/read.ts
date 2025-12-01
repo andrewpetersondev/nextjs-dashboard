@@ -20,7 +20,6 @@ export async function readInvoiceDal(
   db: AppDatabase,
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
-  // Basic validation of parameters
   if (!(db && id)) {
     throw new AppError("validation", {
       message: INVOICE_MSG.invalidInput,
@@ -28,10 +27,8 @@ export async function readInvoiceDal(
     });
   }
 
-  // Fetch invoice by ID
   const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
-  // Check if invoice exists
   if (!data) {
     throw new AppError("database", {
       message: INVOICE_MSG.notFound,
@@ -39,6 +36,10 @@ export async function readInvoiceDal(
     });
   }
 
-  // Convert raw database row to InvoiceEntity
-  return rawDbToInvoiceEntity(data);
+  const result = rawDbToInvoiceEntity(data);
+  if (!result.ok) {
+    throw result.error;
+  }
+
+  return result.value;
 }
