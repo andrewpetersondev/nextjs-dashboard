@@ -3,7 +3,7 @@ import { eq, sql } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 
 export async function fetchTotalPaidInvoicesDal(
   db: AppDatabase,

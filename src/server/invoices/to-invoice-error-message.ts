@@ -3,7 +3,7 @@ import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
-} from "@/shared/i18n/messages/invoice-messages";
+} from "@/shared/i18n/invoice-messages";
 import { translator } from "@/shared/i18n/translator";
 
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));

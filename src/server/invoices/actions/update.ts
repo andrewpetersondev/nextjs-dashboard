@@ -23,7 +23,7 @@ import {
   formOk,
 } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

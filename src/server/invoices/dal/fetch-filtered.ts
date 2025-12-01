@@ -5,7 +5,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 import { ITEMS_PER_PAGE } from "@/shared/ui/pagination.constants";
 
 /**

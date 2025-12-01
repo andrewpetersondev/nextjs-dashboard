@@ -1,7 +1,7 @@
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
-} from "@/shared/i18n/messages/invoice-messages";
+} from "@/shared/i18n/invoice-messages";
 
 // Single-locale dictionary (en) with compile-time completeness check
 export const enInvoices = {

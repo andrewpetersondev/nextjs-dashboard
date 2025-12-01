@@ -11,7 +11,7 @@ import { InvoiceService } from "@/server/invoices/service";
 import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-message";
 import type { InvoiceActionResult } from "@/server/invoices/types";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 import { logger } from "@/shared/logging/infra/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

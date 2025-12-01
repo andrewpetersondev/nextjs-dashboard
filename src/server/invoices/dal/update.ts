@@ -9,7 +9,7 @@ import type {
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceId } from "@/shared/branding/domain-brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/messages/invoice-messages";
+import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
 
 /**
  * Updates an invoice in the database.
