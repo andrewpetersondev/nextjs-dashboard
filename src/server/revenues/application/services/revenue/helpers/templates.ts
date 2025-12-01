@@ -2,7 +2,7 @@ import "server-only";
 import { generateMonthsTemplate } from "@/features/revenues/lib/data/template.client";
 import { calculateDateRange } from "@/features/revenues/lib/date/range";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { toIntervalDuration } from "@/server/revenues/infrastructure/validation/validator";
+import { toIntervalDuration } from "@/server/revenues/infrastructure/mappers/interval-duration.mapper";
 import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import type { Period } from "@/shared/branding/domain-brands";
 import { toPeriod } from "@/shared/branding/id-converters";

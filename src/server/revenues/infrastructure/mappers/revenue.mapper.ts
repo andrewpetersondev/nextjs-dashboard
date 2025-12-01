@@ -6,7 +6,8 @@ import {
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/server/revenues/infrastructure/mappers/number";
-import { toRevenueSource } from "@/server/revenues/infrastructure/validation/validator";
+
+import { toRevenueSource } from "@/server/revenues/infrastructure/mappers/revenue-source.mapper";
 import { toPeriod, toRevenueId } from "@/shared/branding/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { isDateValid } from "@/shared/utils/date/guards";

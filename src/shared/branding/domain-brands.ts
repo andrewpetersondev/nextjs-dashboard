@@ -1,10 +1,10 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
+import { validatePeriodResult } from "@/shared/branding/validate-period-result";
+import { validateUuidResult } from "@/shared/branding/validate-uuid-result";
+import { brandWith } from "@/shared/branding/validator-combinators";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
-import { brandWith } from "@/shared/validation/composition/brand";
-import { validatePeriodResult } from "@/shared/validation/domain/period";
-import { validateUuidResult } from "@/shared/validation/primitives/uuid";
 
 // Unique symbols for each domain concept
 export const CUSTOMER_ID_BRAND = Symbol("CustomerId");
