@@ -14,7 +14,7 @@ import { createAuthUserService } from "@/server/auth/application/services/factor
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { validateForm } from "@/server/forms/validate-form";
-import { mapAppErrorToFormPayload } from "@/shared/errors/adapters/forms/form-error.adapter";
+import { adaptAppErrorToFormPayload } from "@/shared/errors/adapters/forms/form-error.adapter";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
@@ -122,7 +122,7 @@ export async function signupAction(
     );
 
     const { message, fieldErrors } =
-      mapAppErrorToFormPayload<SignupField>(error);
+      adaptAppErrorToFormPayload<SignupField>(error);
 
     return formError<SignupField>({
       code: error.code,
