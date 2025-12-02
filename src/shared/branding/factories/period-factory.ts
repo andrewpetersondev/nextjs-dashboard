@@ -7,6 +7,13 @@ import type { Result } from "@/shared/result/result.types";
 import { isDateValid } from "@/shared/utils/date/guards";
 import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
 
+/**
+ * Validates a period value and normalizes it to the first day of the month in UTC.
+ * Accepts Date instances, "yyyy-MM" strings, or "yyyy-MM-dd" strings (where day must be 01).
+ *
+ * @param value - The value to validate (Date, "yyyy-MM", or "yyyy-MM-01")
+ * @returns A Result containing the normalized Date or an AppError
+ */
 const validatePeriod = (value: unknown): Result<Date, AppError> => {
   if (value instanceof Date) {
     if (!isDateValid(value)) {
@@ -51,6 +58,13 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
   );
 };
 
+/**
+ * Creates a validated and branded Period from an unknown value.
+ * The resulting Period is normalized to the first day of the month in UTC.
+ *
+ * @param value - The value to convert (Date, "yyyy-MM", or "yyyy-MM-01")
+ * @returns A Result containing the branded Period or an AppError
+ */
 export const createPeriod = (value: unknown): Result<Period, AppError> => {
   const result = validatePeriod(value);
   if (!result.ok) {

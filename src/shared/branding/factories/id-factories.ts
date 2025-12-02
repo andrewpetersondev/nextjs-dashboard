@@ -18,6 +18,13 @@ import type { Result } from "@/shared/result/result.types";
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/**
+ * Validates that a value is a non-empty string matching the UUID v4 format.
+ *
+ * @param value - The value to validate
+ * @param label - A human-readable label for error messages
+ * @returns A Result containing the trimmed UUID string or an AppError
+ */
 const validateUuid = (
   value: unknown,
   label: string,
@@ -45,68 +52,76 @@ const validateUuid = (
   return Ok(v);
 };
 
-export const createCustomerId = (
-  value: unknown,
-): Result<CustomerId, AppError> => {
-  const result = validateUuid(value, "CustomerId");
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(
-    createBrand<string, typeof CUSTOMER_ID_BRAND>(CUSTOMER_ID_BRAND)(
-      result.value,
-    ),
-  );
+/**
+ * Creates a factory function that validates and brands UUID strings.
+ *
+ * @param brand - The brand symbol to apply
+ * @param label - A human-readable label for error messages
+ * @typeParam S - The brand symbol type
+ * @typeParam B - The branded ID type
+ * @returns A factory function that creates branded IDs from unknown values
+ */
+const createIdFactory = <S extends symbol, B>(brand: S, label: string) => {
+  return (value: unknown): Result<B, AppError> => {
+    const result = validateUuid(value, label);
+    if (!result.ok) {
+      return result;
+    }
+    return Ok(createBrand<string, S>(brand)(result.value) as B);
+  };
 };
 
-export const createInvoiceId = (
-  value: unknown,
-): Result<InvoiceId, AppError> => {
-  const result = validateUuid(value, "InvoiceId");
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(
-    createBrand<string, typeof INVOICE_ID_BRAND>(INVOICE_ID_BRAND)(
-      result.value,
-    ),
-  );
-};
+/**
+ * Creates a validated and branded CustomerId from an unknown value.
+ *
+ * @param value - The value to convert (must be a valid UUID)
+ * @returns A Result containing the branded CustomerId or an AppError
+ */
+export const createCustomerId = createIdFactory<
+  typeof CUSTOMER_ID_BRAND,
+  CustomerId
+>(CUSTOMER_ID_BRAND, "CustomerId");
 
-export const createRevenueId = (
-  value: unknown,
-): Result<RevenueId, AppError> => {
-  const result = validateUuid(value, "RevenueId");
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(
-    createBrand<string, typeof REVENUE_ID_BRAND>(REVENUE_ID_BRAND)(
-      result.value,
-    ),
-  );
-};
+/**
+ * Creates a validated and branded InvoiceId from an unknown value.
+ *
+ * @param value - The value to convert (must be a valid UUID)
+ * @returns A Result containing the branded InvoiceId or an AppError
+ */
+export const createInvoiceId = createIdFactory<
+  typeof INVOICE_ID_BRAND,
+  InvoiceId
+>(INVOICE_ID_BRAND, "InvoiceId");
 
-export const createSessionId = (
-  value: unknown,
-): Result<SessionId, AppError> => {
-  const result = validateUuid(value, "SessionId");
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(
-    createBrand<string, typeof SESSION_ID_BRAND>(SESSION_ID_BRAND)(
-      result.value,
-    ),
-  );
-};
+/**
+ * Creates a validated and branded RevenueId from an unknown value.
+ *
+ * @param value - The value to convert (must be a valid UUID)
+ * @returns A Result containing the branded RevenueId or an AppError
+ */
+export const createRevenueId = createIdFactory<
+  typeof REVENUE_ID_BRAND,
+  RevenueId
+>(REVENUE_ID_BRAND, "RevenueId");
 
-export const createUserId = (value: unknown): Result<UserId, AppError> => {
-  const result = validateUuid(value, "UserId");
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(
-    createBrand<string, typeof USER_ID_BRAND>(USER_ID_BRAND)(result.value),
-  );
-};
+/**
+ * Creates a validated and branded SessionId from an unknown value.
+ *
+ * @param value - The value to convert (must be a valid UUID)
+ * @returns A Result containing the branded SessionId or an AppError
+ */
+export const createSessionId = createIdFactory<
+  typeof SESSION_ID_BRAND,
+  SessionId
+>(SESSION_ID_BRAND, "SessionId");
+
+/**
+ * Creates a validated and branded UserId from an unknown value.
+ *
+ * @param value - The value to convert (must be a valid UUID)
+ * @returns A Result containing the branded UserId or an AppError
+ */
+export const createUserId = createIdFactory<typeof USER_ID_BRAND, UserId>(
+  USER_ID_BRAND,
+  "UserId",
+);
