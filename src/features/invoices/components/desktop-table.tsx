@@ -5,8 +5,8 @@ import {
   UpdateInvoice,
 } from "@/features/invoices/components/buttons";
 import { InvoiceStatusComponent } from "@/features/invoices/components/status";
+import type { InvoiceListFilter } from "@/features/invoices/domain/types";
 import { formatDateLocalized } from "@/features/invoices/lib/date.utils";
-import type { InvoiceListFilter } from "@/features/invoices/lib/types";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 
 export const DesktopTable = ({

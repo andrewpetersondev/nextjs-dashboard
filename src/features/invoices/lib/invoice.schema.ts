@@ -3,8 +3,8 @@ import {
   MAX_INVOICE_AMOUNT_USD,
   MAX_SENSITIVE_DATA_LENGTH,
   MIN_SENSITIVE_DATA_LENGTH,
-} from "@/features/invoices/lib/constants";
-import { INVOICE_STATUSES } from "@/features/invoices/lib/types";
+} from "@/features/invoices/domain/constants";
+import { INVOICE_STATUSES } from "@/features/invoices/domain/types";
 
 const amountCodec = z.codec(
   z.string(), // input schema: expects a string (from formData)

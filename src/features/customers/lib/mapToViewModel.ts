@@ -1,7 +1,7 @@
 import type {
   CustomerAggregatesServerDto,
   FormattedCustomersTableRow,
-} from "@/features/customers/types";
+} from "@/features/customers/domain/types";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 
 export const toFormattedCustomersTableRow = (

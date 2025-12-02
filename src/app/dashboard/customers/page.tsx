@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { CustomersTable } from "@/features/customers/components/CustomersTable";
-import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import type { FormattedCustomersTableRow } from "@/features/customers/domain/types";
 
-import { readFilteredCustomersAction } from "@/server/customers/actions/read-filtered";
+import { readFilteredCustomersAction } from "@/server/customers/application/actions/read-filtered";
 
 interface CustomersSearchParams {
   query?: string;

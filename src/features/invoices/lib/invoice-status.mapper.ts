@@ -1,4 +1,4 @@
-import { INVOICE_STATUSES } from "@/features/invoices/lib/types";
+import { INVOICE_STATUSES } from "@/features/invoices/domain/types";
 import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 
 /**

@@ -3,7 +3,7 @@ import { type JSX, Suspense } from "react";
 import { CreateInvoice } from "@/features/invoices/components/buttons";
 import { Pagination } from "@/features/invoices/components/pagination";
 import { InvoicesTable } from "@/features/invoices/components/table";
-import { readInvoicesPagesAction } from "@/server/invoices/actions/read-pages";
+import { readInvoicesPagesAction } from "@/server/invoices/application/actions/read-pages";
 import { H1 } from "@/ui/atoms/typography/headings";
 import {
   InvoicesSearchSkeleton,

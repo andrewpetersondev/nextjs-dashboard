@@ -9,7 +9,10 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { REVENUE_SOURCES, type RevenueSource } from "@/features/revenues/types";
+import {
+  REVENUE_SOURCES,
+  type RevenueSource,
+} from "@/features/revenues/domain/types";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 import { invoices } from "./invoices";
 

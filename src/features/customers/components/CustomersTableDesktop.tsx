@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { CustomersTableDesktopRow } from "@/features/customers/components/CustomersTableDesktopRow";
-import { CUSTOMER_TABLE_HEADERS } from "@/features/customers/constants";
-import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { CUSTOMER_TABLE_HEADERS } from "@/features/customers/domain/constants";
+import type { FormattedCustomersTableRow } from "@/features/customers/domain/types";
 
 /**
  * Table column definitions for customer data.

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import { CUSTOMER_LABELS } from "@/features/customers/constants";
-import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import { CUSTOMER_LABELS } from "@/features/customers/domain/constants";
+import type { FormattedCustomersTableRow } from "@/features/customers/domain/types";
 import { IMAGE_SIZES } from "@/shared/presentation/ui/images.tokens";
 
 /**

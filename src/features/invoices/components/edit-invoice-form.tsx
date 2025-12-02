@@ -1,6 +1,6 @@
 "use client";
 import { type JSX, useActionState, useId } from "react";
-import type { CustomerField } from "@/features/customers/types";
+import type { CustomerField } from "@/features/customers/domain/types";
 import { CustomerSelect } from "@/features/invoices/components/customer-select";
 import { InvoiceAmountInput } from "@/features/invoices/components/invoice-amount-input";
 import { InvoiceDate } from "@/features/invoices/components/invoice-date";
@@ -14,7 +14,7 @@ import {
   UpdateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { ServerMessage } from "@/features/users/components/server-message";
-import { updateInvoiceAction } from "@/server/invoices/actions/update";
+import { updateInvoiceAction } from "@/server/invoices/application/actions/update";
 import type { DenseFieldErrorMap } from "@/shared/application/forms/domain/types/error-maps.types";
 import type { FieldError } from "@/shared/application/forms/domain/types/field-error.types";
 import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";

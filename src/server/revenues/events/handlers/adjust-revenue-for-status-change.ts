@@ -1,9 +1,9 @@
 import "server-only";
-import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import type { InvoiceDto } from "@/features/invoices/domain/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { adjustRevenueForStatusChangeCore } from "@/server/revenues/events/handlers/core/core";
 import type { MetadataBase } from "@/server/revenues/events/handlers/core/types";
-import { withErrorHandling } from "@/server/revenues/shared/errors/error-handling";
+import { withErrorHandling } from "@/server/revenues/infrastructure/errors/error-handling";
 
 /**
  * Adjusts revenue when an invoice's status or amount changes between two states.

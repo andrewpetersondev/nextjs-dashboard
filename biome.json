@@ -364,7 +364,7 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/server/**", "!@/server/*/actions/**"],
+                    "group": ["@/server/**", "!@/server/*/*/actions/**"],
                     "message": "Components may import only server actions from their matching feature: @/server/<feature>/actions/**"
                   }
                 ]

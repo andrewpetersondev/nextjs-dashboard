@@ -1,7 +1,7 @@
 import "server-only";
 import { isValid, parseISO } from "date-fns";
-import { ISO_YEAR_MONTH_REGEX } from "@/features/invoices/lib/constants";
-import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import { ISO_YEAR_MONTH_REGEX } from "@/features/invoices/domain/constants";
+import type { InvoiceDto } from "@/features/invoices/domain/dto";
 import { dateToPeriod } from "@/features/revenues/domain/period";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";

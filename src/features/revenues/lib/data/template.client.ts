@@ -1,9 +1,9 @@
-import type { IntervalDuration } from "@/features/revenues/constants/date";
+import type { IntervalDuration } from "@/features/revenues/domain/constants";
+import type { RollingMonthData } from "@/features/revenues/domain/types";
 import {
   createMonthTemplateFromIndex,
   getIntervalCount,
 } from "@/features/revenues/lib/date/range";
-import type { RollingMonthData } from "@/features/revenues/types";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.

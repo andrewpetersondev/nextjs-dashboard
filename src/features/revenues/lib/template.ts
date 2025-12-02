@@ -1,5 +1,5 @@
-import { MONTH_ORDER } from "@/features/revenues/constants/date";
-import type { RollingMonthData } from "@/features/revenues/types";
+import { MONTH_ORDER } from "@/features/revenues/domain/constants";
+import type { RollingMonthData } from "@/features/revenues/domain/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
 /**

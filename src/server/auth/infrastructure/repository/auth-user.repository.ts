@@ -14,7 +14,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,
   userDbRowToEntity,
-} from "@/server/users/mapping/user.mappers";
+} from "@/server/users/infrastructure/mappers/user.mapper";
 import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
 import { logger as defaultLogger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 

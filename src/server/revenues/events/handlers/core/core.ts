@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import type { InvoiceDto } from "@/features/invoices/domain/dto";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { detectChange } from "@/server/revenues/events/handlers/core/detect-change";
 import { dispatchChange } from "@/server/revenues/events/handlers/core/dispatch-change";

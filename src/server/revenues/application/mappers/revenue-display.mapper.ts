@@ -5,7 +5,7 @@ import {
   MIN_REVENUE_MONTHS,
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
-} from "@/features/revenues/constants/date";
+} from "@/features/revenues/domain/constants";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";

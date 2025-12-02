@@ -1,5 +1,6 @@
 import "server-only";
-import { INTERVAL_DURATIONS } from "@/features/revenues/constants/date";
+
+import { INTERVAL_DURATIONS } from "@/features/revenues/domain/constants";
 import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 
 /**

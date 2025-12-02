@@ -4,9 +4,9 @@ import {
   MONTHS_IN_YEAR,
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
-} from "@/features/revenues/constants/date";
+} from "@/features/revenues/domain/constants";
+import type { RollingMonthData } from "@/features/revenues/domain/types";
 import { createMonthTemplateData } from "@/features/revenues/lib/template";
-import type { RollingMonthData } from "@/features/revenues/types";
 
 /**
  * Calculates a specific month date from rolling start date with offset.

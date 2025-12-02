@@ -2,7 +2,7 @@ import "server-only";
 import type {
   RevenueStatisticsDto,
   SimpleRevenueDto,
-} from "@/features/revenues/dto/types";
+} from "@/features/revenues/domain/types";
 import {
   monthAbbreviationFromNumber,
   validateMonthNumber,

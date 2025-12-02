@@ -1,7 +1,7 @@
 import { type JSX, useId } from "react";
 import { CustomersTableDesktop } from "@/features/customers/components/CustomersTableDesktop";
 import { CustomersTableMobile } from "@/features/customers/components/CustomersTableMobile";
-import type { FormattedCustomersTableRow } from "@/features/customers/types";
+import type { FormattedCustomersTableRow } from "@/features/customers/domain/types";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Search } from "@/ui/molecules/search-box";
 

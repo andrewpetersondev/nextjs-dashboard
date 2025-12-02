@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceStatus } from "@/features/invoices/lib/types";
+import type { InvoiceStatus } from "@/features/invoices/domain/types";
 
 /**
  * Domain guard: checks if an invoice status is eligible for revenue.

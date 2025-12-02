@@ -1,6 +1,6 @@
 import "server-only";
+import { createDefaultRevenueData } from "@/server/revenues/application/utils/template";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { createDefaultRevenueData } from "@/server/revenues/shared/utils/template";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
 export function mergeWithTemplate(

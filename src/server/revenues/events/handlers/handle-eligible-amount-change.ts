@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceStatus } from "@/features/invoices/lib/types";
+import type { InvoiceStatus } from "@/features/invoices/domain/types";
 import type { RevenueService } from "@/server/revenues/application/services/revenue/revenue.service";
 import { applyDeltaToBucket } from "@/server/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterAmountChange } from "@/server/revenues/domain/calculations/revenue-aggregate.calculation";

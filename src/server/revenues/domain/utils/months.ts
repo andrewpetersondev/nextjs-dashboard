@@ -4,7 +4,7 @@ import {
   MIN_MONTH_NUMBER,
   MONTH_ORDER,
   type MonthName,
-} from "@/features/revenues/constants/date";
+} from "@/features/revenues/domain/constants";
 
 export function validateMonthNumber(monthNumber: number, period: Date): void {
   if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {

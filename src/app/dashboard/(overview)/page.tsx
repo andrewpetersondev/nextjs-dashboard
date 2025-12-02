@@ -5,15 +5,15 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/features/auth/lib/auth.roles";
-import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/lib/constants";
+import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/domain/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/application/actions/verify-session-optimistic.action";
-import { readTotalCustomersCountAction } from "@/server/customers/actions/read-total-count";
+import { readTotalCustomersCountAction } from "@/server/customers/application/actions/read-total-count";
 import { getAppDb } from "@/server/db/db.connection";
 import {
   readInvoicesSummary,
   readLatestInvoices,
-} from "@/server/invoices/queries";
+} from "@/server/invoices/domain/queries";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";

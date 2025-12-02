@@ -1,4 +1,4 @@
-import type { MonthName } from "@/features/revenues/constants/date";
+import type { MonthName } from "@/features/revenues/domain/constants";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 
 /**

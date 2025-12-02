@@ -1,4 +1,4 @@
-import type { RevenueStatistics } from "@/features/revenues/types";
+import type { RevenueStatistics } from "@/features/revenues/domain/types";
 
 /**
  * Creates an empty statistics object when no revenue data exists.

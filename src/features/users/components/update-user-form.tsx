@@ -5,7 +5,7 @@ import { UserInfoPanel } from "@/features/users/components/user-info-panel";
 import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import type { UserDto } from "@/features/users/lib/dto";
 import { EditUserFormSchema } from "@/features/users/lib/user.schema";
-import { updateUserAction } from "@/server/users/actions/update";
+import { updateUserAction } from "@/server/users/application/actions/update";
 import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
 import { createInitialFailedFormStateFromSchema } from "@/shared/application/forms/infrastructure/create-initial-form-state";
 
