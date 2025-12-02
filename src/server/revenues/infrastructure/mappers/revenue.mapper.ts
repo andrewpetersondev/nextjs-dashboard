@@ -1,4 +1,5 @@
 import "server-only";
+import { isValid } from "date-fns";
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import { validateCondition } from "@/server/revenues/infrastructure/mappers/assert.condition";
@@ -6,14 +7,12 @@ import {
   isNonNegativeInteger,
   isNonNegativeNumber,
 } from "@/server/revenues/infrastructure/mappers/number";
-
 import { toRevenueSource } from "@/server/revenues/infrastructure/mappers/revenue-source.mapper";
 import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import { isDateValid } from "@/shared/utils/date/guards";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.
@@ -36,11 +35,11 @@ function validateRevenueRow(revenueRow: RevenueRow): void {
     "Invalid revenue row: missing required field 'calculationSource'",
   );
   validateCondition(
-    isDateValid(revenueRow.createdAt),
+    isValid(revenueRow.createdAt),
     "Invalid revenue row: 'createdAt' must be a Date",
   );
   validateCondition(
-    isDateValid(revenueRow.updatedAt),
+    isValid(revenueRow.updatedAt),
     "Invalid revenue row: 'updatedAt' must be a Date",
   );
   validateCondition(

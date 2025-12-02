@@ -4,8 +4,17 @@ import { PERIOD_BRAND, type Period } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
-import { isDateValid } from "@/shared/utils/date/guards";
-import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
+
+/**
+ * Normalizes a Date to the first day of its month in UTC.
+ * Throws ValidationError if the provided date is invalid.
+ */
+function toFirstDayOfMonthUtc(date: Date): Date {
+  if (!isValid(date)) {
+    throw new AppError("validation", { message: "Invalid Date" });
+  }
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+}
 
 /**
  * Validates a period value and normalizes it to the first day of the month in UTC.
@@ -16,7 +25,7 @@ import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
  */
 const validatePeriod = (value: unknown): Result<Date, AppError> => {
   if (value instanceof Date) {
-    if (!isDateValid(value)) {
+    if (!isValid(value)) {
       return Err(
         new AppError("validation", {
           message: "Invalid period: Date instance is not valid",

@@ -1,12 +1,3 @@
-import { format } from "date-fns";
-
-/**
- * Formats a Date as yyyy-MM (UTC-based string useful for keys).
- */
-export function formatYearMonthUtc(date: Date): string {
-  return format(date, "yyyy-MM");
-}
-
 /**
  * Returns the current date in ISO format (YYYY-MM-DD).
  * This is useful for setting default values in forms or APIs.
@@ -26,10 +17,8 @@ export function getTodayIsoDate(): string {
  * @returns A formatted date string in the specified locale
  *
  * @example
- * ```typescript
  * formatDateToLocal("2025-08-12") // Returns "Aug 12, 2025" for en-US locale
  * formatDateToLocal("2025-08-12", "de-DE") // Returns "12. Aug. 2025" for German locale
- * ```
  */
 export const formatDateLocalized = (
   dateStr: string,

@@ -1,5 +1,5 @@
 import "server-only";
-
+import { isValid } from "date-fns";
 import { toInvoiceStatus } from "@/features/invoices/lib/invoice-status.mapper";
 import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type {
@@ -15,8 +15,15 @@ import {
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
-import { isDateValid } from "@/shared/utils/date/guards";
-import { toFirstDayOfMonthLocal } from "@/shared/utils/date/normalize";
+
+/**
+ * Converts a date to the first day of the same month.
+ * @param date - The input date
+ * @returns A new Date object representing the first day of the month
+ */
+function toFirstDayOfMonthLocal(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
 
 /**
  * Maps raw database row to branded Entity.
@@ -50,7 +57,7 @@ export function rawDbToInvoiceEntity(
 export function invoiceFormEntityToServiceEntity(
   formEntity: InvoiceFormEntity,
 ): Result<InvoiceServiceEntity, AppError> {
-  if (!isDateValid(formEntity.date)) {
+  if (!isValid(formEntity.date)) {
     return Err(
       new AppError("validation", {
         message: `Invalid date in form entity: ${formEntity.date}`,

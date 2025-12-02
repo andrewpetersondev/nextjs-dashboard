@@ -28,9 +28,30 @@ import {
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
 import { logger } from "@/shared/logging/infra/logging.client";
-import { diffShallowPatch } from "@/shared/utils/object/diff";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
+
+/**
+ * Computes a shallow difference between a base object and a candidate patch.
+ *
+ * @typeParam T - A record-like shape of comparable fields.
+ * @param base - The source object to compare against.
+ * @param patch - Candidate values to apply; only differing keys are returned.
+ * @returns A partial object containing only keys whose values differ from `base`.
+ */
+function diffShallowPatch<T extends Record<string, unknown>>(
+  base: T,
+  patch: Partial<T>,
+): Partial<T> {
+  const out: Partial<T> = {};
+  for (const key of Object.keys(patch) as Array<keyof T>) {
+    const nextVal = patch[key];
+    if (nextVal !== undefined && base[key] !== nextVal) {
+      out[key] = nextVal;
+    }
+  }
+  return out;
+}
 
 /**
  * Validates user ID format and returns error result if invalid.

@@ -5,7 +5,9 @@ import {
   PasswordSchema,
   UsernameSchema,
 } from "@/features/auth/lib/auth.schema";
-import { toUndefinedIfEmptyString } from "@/shared/utils/string/normalize";
+
+const toUndefinedIfEmptyString = (v: unknown) =>
+  typeof v === "string" && v.trim() === "" ? undefined : v;
 
 /**
  * Utility to create optional, preprocessed edit fields.

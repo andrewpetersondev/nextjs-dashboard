@@ -7,6 +7,7 @@ import { InvoiceDate } from "@/features/invoices/components/invoice-date";
 import { InvoiceServerMessage } from "@/features/invoices/components/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/features/invoices/components/invoice-status-radio-group";
 import { SensitiveData } from "@/features/invoices/components/sensitve-data";
+import { getTodayIsoDate } from "@/features/invoices/lib/date.utils";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
@@ -18,7 +19,6 @@ import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import { getFieldErrors } from "@/shared/forms/use-cases/get-field-errors";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/timings.tokens";
-import { getTodayIsoDate } from "@/shared/utils/date/format";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";

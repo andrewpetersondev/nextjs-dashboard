@@ -14,7 +14,8 @@ import type {
   FormSuccess,
 } from "@/shared/forms/domain/types/form-result.types";
 import { Err, Ok } from "@/shared/result/result";
-import { freeze } from "@/shared/utils/object/freeze";
+
+const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
 
 /**
  * Create a successful form result.
