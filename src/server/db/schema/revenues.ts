@@ -12,7 +12,7 @@ import {
 import {
   REVENUE_SOURCES,
   type RevenueSource,
-} from "@/features/revenues/domain/types";
+} from "@/modules/revenues/domain/types";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 import { invoices } from "./invoices";
 

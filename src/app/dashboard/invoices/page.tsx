@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { CreateInvoice } from "@/features/invoices/components/buttons";
-import { Pagination } from "@/features/invoices/components/pagination";
-import { InvoicesTable } from "@/features/invoices/components/table";
-import { readInvoicesPagesAction } from "@/server/invoices/application/actions/read-pages";
+import { CreateInvoice } from "@/modules/invoices/components/buttons";
+import { Pagination } from "@/modules/invoices/components/pagination";
+import { InvoicesTable } from "@/modules/invoices/components/table";
+import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-pages";
 import { H1 } from "@/ui/atoms/typography/headings";
 import {
   InvoicesSearchSkeleton,

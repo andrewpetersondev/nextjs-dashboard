@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { Pagination } from "@/features/invoices/components/pagination";
-import { CreateUser } from "@/features/users/components/buttons";
-import { UsersTable } from "@/features/users/components/users-table";
-import { readUsersPagesAction } from "@/server/users/application/actions/read-pages";
+import { Pagination } from "@/modules/invoices/components/pagination";
+import { CreateUser } from "@/modules/users/components/buttons";
+import { UsersTable } from "@/modules/users/components/users-table";
+import { readUsersPagesAction } from "@/modules/users/server/application/actions/read-pages";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { InvoicesSearchSkeleton } from "@/ui/feedback/skeleton/skeletons";
 import { Search } from "@/ui/molecules/search-box";

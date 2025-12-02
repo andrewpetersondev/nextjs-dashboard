@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
+import { createSessionManager } from "@/modules/auth/server/application/services/factories/session-manager.factory";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,

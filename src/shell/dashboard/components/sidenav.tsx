@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { JSX } from "react";
-import { LogoutForm } from "@/features/auth/components/logout-form";
+import { LogoutForm } from "@/modules/auth/components/logout-form";
 import { ROUTES } from "@/shared/routes/routes";
 import { NavLinksWrapper } from "@/shell/dashboard/components/nav-links-wrapper";
 import { AcmeLogo } from "@/ui/brand/acme-logo";

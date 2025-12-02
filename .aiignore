@@ -38,10 +38,10 @@ vitest.config.ts
 src/app/api/
 src/app/dashboard/
 
-src/features/customers/
-src/features/invoices/
-src/features/revenues/
-src/features/users/
+# src/features/customers/
+# src/features/invoices/
+# src/features/revenues/
+# src/features/users/
 
 src/server/customers/
 src/server/events/
@@ -50,19 +50,15 @@ src/server/repository/
 src/server/revenues/
 src/server/users/
 
-src/shared/branding/
-src/shared/http/
-src/shared/i18n/
-src/shared/money/
-src/shared/routes/
-src/shared/ui/
+# src/shared/branding/
+# src/shared/http/
+# src/shared/i18n/
+# src/shared/money/
+# src/shared/routes/
 
-src/shell/
-src/ui/
+# src/shell/
+# src/ui/
 
-ui
-app
-shell
 
 # Patterns and Extensions
 

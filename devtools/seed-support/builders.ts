@@ -3,8 +3,8 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/domain/auth.roles";
-import type { PasswordHash } from "@/features/auth/domain/password.types";
+} from "@/modules/auth/domain/auth.roles";
+import type { PasswordHash } from "@/modules/auth/domain/password.types";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { invoices } from "../../src/server/db/schema/invoices";

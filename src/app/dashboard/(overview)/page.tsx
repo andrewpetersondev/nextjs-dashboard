@@ -4,16 +4,16 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/domain/auth.roles";
-import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/domain/constants";
-import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
-import { verifySessionOptimistic } from "@/server/auth/application/actions/verify-session-optimistic.action";
-import { readTotalCustomersCountAction } from "@/server/customers/application/actions/read-total-count";
-import { getAppDb } from "@/server/db/db.connection";
+} from "@/modules/auth/domain/auth.roles";
+import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
+import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-count";
+import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/constants";
 import {
   readInvoicesSummary,
   readLatestInvoices,
-} from "@/server/invoices/domain/queries";
+} from "@/modules/invoices/server/domain/queries";
+import { getValidUserRole } from "@/modules/users/lib/get-valid-user-role";
+import { getAppDb } from "@/server/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";

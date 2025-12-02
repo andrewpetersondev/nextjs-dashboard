@@ -1,15 +1,15 @@
 import type { JSX } from "react";
-import { AuthFormDivider } from "@/features/auth/components/auth-form-divider";
-import { AuthFormSocialSection } from "@/features/auth/components/auth-form-social-section";
-import { AuthSwitchLink } from "@/features/auth/components/auth-switch-link";
-import { Heading } from "@/features/auth/components/heading";
-import { SignupForm } from "@/features/auth/components/signup-form";
+import { AuthFormDivider } from "@/modules/auth/components/auth-form-divider";
+import { AuthFormSocialSection } from "@/modules/auth/components/auth-form-social-section";
+import { AuthSwitchLink } from "@/modules/auth/components/auth-switch-link";
+import { Heading } from "@/modules/auth/components/heading";
+import { SignupForm } from "@/modules/auth/components/signup-form";
 import {
   AUTH_DIVIDER_LABEL,
   SIGNUP_HEADING,
-} from "@/features/auth/domain/auth.constants";
-import { demoUserActionAdapter } from "@/server/auth/application/actions/demo-user.action";
-import { signupAction } from "@/server/auth/application/actions/signup.action";
+} from "@/modules/auth/domain/auth.constants";
+import { demoUserActionAdapter } from "@/modules/auth/server/application/actions/demo-user.action";
+import { signupAction } from "@/modules/auth/server/application/actions/signup.action";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {

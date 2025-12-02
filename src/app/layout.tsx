@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
-import { SessionRefresh } from "@/features/auth/components/session-refresh";
+import { SessionRefresh } from "@/modules/auth/components/session-refresh";
 import { notoSans } from "@/ui/styles/fonts";
 
 /**

@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { ADMIN_ROLE } from "@/features/auth/domain/auth.roles";
-import { SESSION_COOKIE_NAME } from "@/server/auth/domain/session/constants";
-import { createSessionJwtAdapter } from "@/server/auth/infrastructure/adapters/session-jwt.adapter";
+import { ADMIN_ROLE } from "@/modules/auth/domain/auth.roles";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/server/domain/session/constants";
+import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/adapters/session-jwt.adapter";
 import {
   isAdminRoute as isAdminRouteHelper,
   isProtectedRoute as isProtectedRouteHelper,

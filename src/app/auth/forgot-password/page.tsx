@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Heading } from "@/features/auth/components/heading";
+import { Heading } from "@/modules/auth/components/heading";
 
 export default function Page(): JSX.Element {
   return (

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
-import type { CustomerField } from "@/features/customers/domain/types";
-import { EditInvoiceForm } from "@/features/invoices/components/edit-invoice-form";
-import type { InvoiceDto } from "@/features/invoices/domain/dto";
-import { readCustomersAction } from "@/server/customers/application/actions/read";
-import { readInvoiceByIdAction } from "@/server/invoices/application/actions/read-by-id";
+import type { CustomerField } from "@/modules/customers/domain/types";
+import { readCustomersAction } from "@/modules/customers/server/application/actions/read";
+import { EditInvoiceForm } from "@/modules/invoices/components/edit-invoice-form";
+import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { readInvoiceByIdAction } from "@/modules/invoices/server/application/actions/read-by-id";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 

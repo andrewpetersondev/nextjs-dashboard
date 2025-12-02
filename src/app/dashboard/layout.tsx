@@ -1,5 +1,5 @@
 import type { FC, JSX, ReactNode } from "react";
-import { logoutAction } from "@/server/auth/application/actions/logout.action";
+import { logoutAction } from "@/modules/auth/server/application/actions/logout.action";
 import { SideNav } from "@/shell/dashboard/components/sidenav";
 
 const ROOT_LAYOUT_CLASS =
