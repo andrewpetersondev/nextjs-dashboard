@@ -1,46 +1,60 @@
-import { type Brand, createBrand } from "@/shared/branding/brand";
+import { format, isValid, parse } from "date-fns";
+import { createBrand } from "@/shared/branding/brand";
 import { PERIOD_BRAND, type Period } from "@/shared/branding/brands";
-import { periodValidator } from "@/shared/branding/validators/period-validator";
-import { brandWith } from "@/shared/branding/validators/validator-combinators";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
+import { isDateValid } from "@/shared/utils/date/guards";
+import { toFirstDayOfMonthUtc } from "@/shared/utils/date/normalize";
 
-/**
- * Create a validator that produces branded period values.
- *
- * Accepts `Date` or strings in `yyyy-MM` or `yyyy-MM-01` format.
- * Normalizes to the first day of the month in UTC.
- *
- * @typeParam B - The brand symbol.
- * @typeParam T - The branded type extending `Brand<Date, B>`.
- * @param brandSymbol - The unique symbol for this brand.
- * @returns A validator function that accepts `unknown` and returns `Result<T, AppError>`.
- */
-export const createBrandedPeriodValidator = <
-  B extends symbol,
-  T extends Brand<Date, B>,
->(
-  brandSymbol: B,
-) => {
-  const brandFn = createBrand<Date, B>(brandSymbol);
-  const internalCreator = brandWith<Date, T>(
-    periodValidator,
-    ((value: Date) => brandFn(value) as T) as (value: Date) => T,
+const validatePeriod = (value: unknown): Result<Date, AppError> => {
+  if (value instanceof Date) {
+    if (!isDateValid(value)) {
+      return Err(
+        new AppError("validation", {
+          message: "Invalid period: Date instance is not valid",
+        }),
+      );
+    }
+    return Ok(toFirstDayOfMonthUtc(value));
+  }
+
+  if (typeof value === "string") {
+    const parsedMonth = parse(value, "yyyy-MM", new Date());
+    if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === value) {
+      return Ok(toFirstDayOfMonthUtc(parsedMonth));
+    }
+
+    const parsedDay = parse(value, "yyyy-MM-dd", new Date());
+    if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === value) {
+      if (parsedDay.getUTCDate() !== 1) {
+        return Err(
+          new AppError("validation", {
+            message: `Invalid period: date must be the first day of the month, got "${value}"`,
+          }),
+        );
+      }
+      return Ok(toFirstDayOfMonthUtc(parsedDay));
+    }
+
+    return Err(
+      new AppError("validation", {
+        message: `Invalid period: "${value}". Expected "yyyy-MM" or "yyyy-MM-01"`,
+      }),
+    );
+  }
+
+  return Err(
+    new AppError("validation", {
+      message: `Invalid period: unsupported input type ${typeof value}`,
+    }),
   );
-
-  return (value: unknown): Result<T, AppError> => internalCreator(value);
 };
 
-/**
- * Validate and create a branded `Period` from unknown input.
- *
- * Accepts `Date` instances or strings in `yyyy-MM` or `yyyy-MM-01` format.
- * Returns the first day of the month in UTC.
- *
- * @param value - The input value to validate and normalize.
- * @returns `Result<Period, AppError>` on success or validation failure.
- */
-export const createPeriod = createBrandedPeriodValidator<
-  typeof PERIOD_BRAND,
-  Period
->(PERIOD_BRAND);
+export const createPeriod = (value: unknown): Result<Period, AppError> => {
+  const result = validatePeriod(value);
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(createBrand<Date, typeof PERIOD_BRAND>(PERIOD_BRAND)(result.value));
+};

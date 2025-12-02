@@ -1,4 +1,4 @@
-import { type Brand, createBrand } from "@/shared/branding/brand";
+import { createBrand } from "@/shared/branding/brand";
 import {
   CUSTOMER_ID_BRAND,
   type CustomerId,
@@ -11,88 +11,102 @@ import {
   USER_ID_BRAND,
   type UserId,
 } from "@/shared/branding/brands";
-import { uuidValidatorFor } from "@/shared/branding/validators/uuid-validator";
-import { brandWith } from "@/shared/branding/validators/validator-combinators";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
-/**
- * Create a validator that produces branded ID values from UUID input.
- *
- * @typeParam B - The brand symbol.
- * @typeParam T - The branded type extending `Brand<string, B>`.
- * @param brandSymbol - The unique symbol for this brand.
- * @param label - Human-readable label used in error messages.
- * @returns A validator function that accepts `unknown` and returns `Result<T, AppError>`.
- */
-export const createBrandedIdValidator = <
-  B extends symbol,
-  T extends Brand<string, B>,
->(
-  brandSymbol: B,
-  label: string,
-) => {
-  const brandFn = createBrand<string, B>(brandSymbol);
-  const validator = uuidValidatorFor(label);
-  const internalCreator = brandWith<string, T>(
-    validator,
-    ((value: string) => brandFn(value) as T) as (value: string) => T,
-  );
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  return (value: unknown): Result<T, AppError> => internalCreator(value);
+const validateUuid = (
+  value: unknown,
+  label: string,
+): Result<string, AppError> => {
+  if (typeof value !== "string") {
+    return Err(
+      new AppError("validation", {
+        message: `Invalid ${label}: expected string, got ${typeof value}`,
+      }),
+    );
+  }
+  const v = value.trim();
+  if (v.length === 0) {
+    return Err(
+      new AppError("validation", { message: `${label} cannot be empty` }),
+    );
+  }
+  if (!UUID_REGEX.test(v)) {
+    return Err(
+      new AppError("validation", {
+        message: `Invalid ${label}: "${value}". Must be a valid UUID.`,
+      }),
+    );
+  }
+  return Ok(v);
 };
 
-/**
- * Validate and create a branded `CustomerId` from unknown input.
- *
- * @param value - The input value (expected to be a UUID string).
- * @returns `Result<CustomerId, AppError>` on success or validation failure.
- */
-export const createCustomerId = createBrandedIdValidator<
-  typeof CUSTOMER_ID_BRAND,
-  CustomerId
->(CUSTOMER_ID_BRAND, "CustomerId");
+export const createCustomerId = (
+  value: unknown,
+): Result<CustomerId, AppError> => {
+  const result = validateUuid(value, "CustomerId");
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(
+    createBrand<string, typeof CUSTOMER_ID_BRAND>(CUSTOMER_ID_BRAND)(
+      result.value,
+    ),
+  );
+};
 
-/**
- * Validate and create a branded `InvoiceId` from unknown input.
- *
- * @param value - The input value (expected to be a UUID string).
- * @returns `Result<InvoiceId, AppError>` on success or validation failure.
- */
-export const createInvoiceId = createBrandedIdValidator<
-  typeof INVOICE_ID_BRAND,
-  InvoiceId
->(INVOICE_ID_BRAND, "InvoiceId");
+export const createInvoiceId = (
+  value: unknown,
+): Result<InvoiceId, AppError> => {
+  const result = validateUuid(value, "InvoiceId");
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(
+    createBrand<string, typeof INVOICE_ID_BRAND>(INVOICE_ID_BRAND)(
+      result.value,
+    ),
+  );
+};
 
-/**
- * Validate and create a branded `RevenueId` from unknown input.
- *
- * @param value - The input value (expected to be a UUID string).
- * @returns `Result<RevenueId, AppError>` on success or validation failure.
- */
-export const createRevenueId = createBrandedIdValidator<
-  typeof REVENUE_ID_BRAND,
-  RevenueId
->(REVENUE_ID_BRAND, "RevenueId");
+export const createRevenueId = (
+  value: unknown,
+): Result<RevenueId, AppError> => {
+  const result = validateUuid(value, "RevenueId");
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(
+    createBrand<string, typeof REVENUE_ID_BRAND>(REVENUE_ID_BRAND)(
+      result.value,
+    ),
+  );
+};
 
-/**
- * Validate and create a branded `SessionId` from unknown input.
- *
- * @param value - The input value (expected to be a UUID string).
- * @returns `Result<SessionId, AppError>` on success or validation failure.
- */
-export const createSessionId = createBrandedIdValidator<
-  typeof SESSION_ID_BRAND,
-  SessionId
->(SESSION_ID_BRAND, "SessionId");
+export const createSessionId = (
+  value: unknown,
+): Result<SessionId, AppError> => {
+  const result = validateUuid(value, "SessionId");
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(
+    createBrand<string, typeof SESSION_ID_BRAND>(SESSION_ID_BRAND)(
+      result.value,
+    ),
+  );
+};
 
-/**
- * Validate and create a branded `UserId` from unknown input.
- *
- * @param value - The input value (expected to be a UUID string).
- * @returns `Result<UserId, AppError>` on success or validation failure.
- */
-export const createUserId = createBrandedIdValidator<
-  typeof USER_ID_BRAND,
-  UserId
->(USER_ID_BRAND, "UserId");
+export const createUserId = (value: unknown): Result<UserId, AppError> => {
+  const result = validateUuid(value, "UserId");
+  if (!result.ok) {
+    return result;
+  }
+  return Ok(
+    createBrand<string, typeof USER_ID_BRAND>(USER_ID_BRAND)(result.value),
+  );
+};

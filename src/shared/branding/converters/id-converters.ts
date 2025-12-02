@@ -47,15 +47,6 @@ export const toCustomerIdResult = (
 ): Result<CustomerId, AppError> => createCustomerId(value);
 
 /**
- * Validate and convert an arbitrary value into a branded `UserId`.
- *
- * @param value - The input value to validate and convert.
- * @returns A `Result<UserId, AppError>` representing success or an `AppError`.
- */
-export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
-  createUserId(value);
-
-/**
  * Validate and convert an arbitrary value into a branded `InvoiceId`.
  *
  * @param value - The input value to validate and convert.
@@ -64,6 +55,17 @@ export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
 export const toInvoiceIdResult = (
   value: unknown,
 ): Result<InvoiceId, AppError> => createInvoiceId(value);
+
+/**
+ * Normalize and validate an input into a branded `Period`.
+ *
+ * Accepts `Date | string` input in the factory; the result indicates success or an `AppError`.
+ *
+ * @param value - The input value to normalize and validate.
+ * @returns A `Result<Period, AppError>` representing success or an `AppError`.
+ */
+export const toPeriodResult = (value: unknown): Result<Period, AppError> =>
+  createPeriod(value);
 
 /**
  * Validate and convert an arbitrary value into a branded `RevenueId`.
@@ -86,15 +88,13 @@ export const toSessionIdResult = (
 ): Result<SessionId, AppError> => createSessionId(value);
 
 /**
- * Normalize and validate an input into a branded `Period`.
+ * Validate and convert an arbitrary value into a branded `UserId`.
  *
- * Accepts `Date | string` input in the factory; the result indicates success or an `AppError`.
- *
- * @param value - The input value to normalize and validate.
- * @returns A `Result<Period, AppError>` representing success or an `AppError`.
+ * @param value - The input value to validate and convert.
+ * @returns A `Result<UserId, AppError>` representing success or an `AppError`.
  */
-export const toPeriodResult = (value: unknown): Result<Period, AppError> =>
-  createPeriod(value);
+export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
+  createUserId(value);
 
 /**
  * Validate and convert a string to a branded `CustomerId`.
@@ -121,20 +121,7 @@ export const toCustomerId = (id: string): CustomerId => {
   }
   throw r.error;
 };
-/**
- * Validate and convert a string to a branded `UserId`.
- *
- * @param id - The input string to convert.
- * @returns The branded `UserId` when validation succeeds.
- * @throws {AppError} When validation fails.
- */
-export const toUserId = (id: string): UserId => {
-  const r = toUserIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-};
+
 /**
  * Validate and convert a string to a branded `InvoiceId`.
  *
@@ -144,20 +131,6 @@ export const toUserId = (id: string): UserId => {
  */
 export const toInvoiceId = (id: string): InvoiceId => {
   const r = toInvoiceIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-};
-/**
- * Validate and convert a string to a branded `RevenueId`.
- *
- * @param id - The input string to convert.
- * @returns The branded `RevenueId` when validation succeeds.
- * @throws {AppError} When validation fails.
- */
-export const toRevenueId = (id: string): RevenueId => {
-  const r = toRevenueIdResult(id);
   if (r.ok) {
     return r.value;
   }
@@ -181,3 +154,33 @@ export function toPeriod(input: Date | string): Period {
   }
   throw r.error;
 }
+
+/**
+ * Validate and convert a string to a branded `RevenueId`.
+ *
+ * @param id - The input string to convert.
+ * @returns The branded `RevenueId` when validation succeeds.
+ * @throws {AppError} When validation fails.
+ */
+export const toRevenueId = (id: string): RevenueId => {
+  const r = toRevenueIdResult(id);
+  if (r.ok) {
+    return r.value;
+  }
+  throw r.error;
+};
+
+/**
+ * Validate and convert a string to a branded `UserId`.
+ *
+ * @param id - The input string to convert.
+ * @returns The branded `UserId` when validation succeeds.
+ * @throws {AppError} When validation fails.
+ */
+export const toUserId = (id: string): UserId => {
+  const r = toUserIdResult(id);
+  if (r.ok) {
+    return r.value;
+  }
+  throw r.error;
+};
