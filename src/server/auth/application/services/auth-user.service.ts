@@ -13,11 +13,11 @@ import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
+import type { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { normalizeToAppError } from "@/shared/infrastructure/errors/normalizers/app-error.normalizer";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
 
 /**
  * AuthUserService orchestrates authentication and user creation logic.

@@ -7,7 +7,7 @@ import {
   monthAbbreviationFromNumber,
   validateMonthNumber,
 } from "@/server/revenues/domain/utils/months";
-import { convertCentsToDollars } from "@/shared/money/convert";
+import { convertCentsToDollars } from "@/shared/utilities/money/convert";
 
 export function mapEntityToSimpleRevenueDto(
   entity: {

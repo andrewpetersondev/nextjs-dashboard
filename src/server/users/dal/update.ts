@@ -9,8 +9,8 @@ import {
 } from "@/server/users/mapping/user.mappers";
 import type { UserUpdatePatch } from "@/server/users/types/types";
 import type { UserId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Updates a user in the database with the provided patch.

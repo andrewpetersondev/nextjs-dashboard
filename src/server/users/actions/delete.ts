@@ -6,10 +6,10 @@ import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
 import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { deleteUserDal } from "@/server/users/dal/delete";
+import { formError } from "@/shared/application/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Deletes a user by ID, revalidates and redirects.

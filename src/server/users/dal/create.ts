@@ -8,8 +8,8 @@ import {
   userDbRowToEntity,
   userEntityToDto,
 } from "@/server/users/mapping/user.mappers";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Inserts a new user record into the database.

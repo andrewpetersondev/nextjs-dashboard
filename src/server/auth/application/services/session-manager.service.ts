@@ -17,12 +17,12 @@ import {
   buildSessionCookieOptions,
   timeLeftMs,
 } from "@/server/auth/domain/session/utils";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
 import type { UserId } from "@/shared/branding/brands";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import type { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { normalizeToAppError } from "@/shared/infrastructure/errors/normalizers/app-error.normalizer";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
 
 export interface SessionUser {
   readonly id: UserId;

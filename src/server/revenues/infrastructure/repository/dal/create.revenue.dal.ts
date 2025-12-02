@@ -4,7 +4,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/server/revenues/domain/entities/entity";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 export async function createRevenue(

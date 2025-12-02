@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 export async function deleteRevenue(
   db: AppDatabase,

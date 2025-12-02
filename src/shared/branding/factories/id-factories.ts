@@ -1,3 +1,5 @@
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
 import { createBrand } from "@/shared/branding/brand";
 import {
   CUSTOMER_ID_BRAND,
@@ -11,9 +13,7 @@ import {
   USER_ID_BRAND,
   type UserId,
 } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

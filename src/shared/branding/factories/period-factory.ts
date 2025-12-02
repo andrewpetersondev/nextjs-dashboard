@@ -1,9 +1,9 @@
 import { format, isValid, parse } from "date-fns";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
 import { createBrand } from "@/shared/branding/brand";
 import { PERIOD_BRAND, type Period } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

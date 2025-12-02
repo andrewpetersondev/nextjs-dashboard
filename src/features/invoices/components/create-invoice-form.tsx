@@ -14,11 +14,11 @@ import {
   CreateInvoiceSchema,
 } from "@/features/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/server/invoices/actions/create";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import { getFieldErrors } from "@/shared/forms/use-cases/get-field-errors";
-import { ALERT_AUTO_HIDE_MS } from "@/shared/ui/timings.tokens";
+import type { FieldError } from "@/shared/application/forms/domain/types/field-error.types";
+import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
+import { createInitialFailedFormState } from "@/shared/application/forms/infrastructure/create-initial-form-state";
+import { getFieldErrors } from "@/shared/application/forms/use-cases/get-field-errors";
+import { ALERT_AUTO_HIDE_MS } from "@/shared/presentation/ui/timings.tokens";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";

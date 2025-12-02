@@ -1,7 +1,7 @@
 // `src/ui/atoms/select-menu.tsx`
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
+import type { FieldError } from "@/shared/application/forms/domain/types/field-error.types";
 
 type GenericSelectMenu = <T extends { id: string; name: string }>(
   props: SelectMenuProps<T>,

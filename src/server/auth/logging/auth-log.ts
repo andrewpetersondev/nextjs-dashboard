@@ -6,9 +6,9 @@ import type {
   AuthLogPayload,
   AuthOperation,
 } from "@/server/auth/logging/auth-logging.types";
-import type { LogLevel } from "@/shared/config/env-schemas";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as rootLogger } from "@/shared/logging/infra/logging.client";
+import type { LogLevel } from "@/shared/infrastructure/config/env-schemas";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import { logger as rootLogger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Creates a standardized auth log payload.

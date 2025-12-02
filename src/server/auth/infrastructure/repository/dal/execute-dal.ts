@@ -1,8 +1,8 @@
 import "server-only";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AuthLogBase } from "@/server/auth/logging/auth-logging.types";
-import { normalizePgError } from "@/shared/errors/adapters/postgres/postgres-error.adapter";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import { normalizePgError } from "@/shared/infrastructure/errors/adapters/postgres/postgres-error.adapter";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
 
 interface DalContextLite {
   identifiers: Record<string, string | number>;

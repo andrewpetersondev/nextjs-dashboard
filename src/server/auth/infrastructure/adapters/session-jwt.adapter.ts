@@ -12,7 +12,7 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-server";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
   new TextEncoder();

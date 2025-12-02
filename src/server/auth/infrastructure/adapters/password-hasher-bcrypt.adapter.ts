@@ -6,7 +6,7 @@ import {
 } from "@/features/auth/lib/password.types";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { SALT_ROUNDS } from "@/server/auth/domain/session/constants";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/infrastructure/errors/factories/app-error.factory";
 
 const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);

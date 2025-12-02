@@ -1,10 +1,10 @@
 "use server";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {

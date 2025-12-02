@@ -12,7 +12,7 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Maps a raw revenue row from the database to a RevenueEntity object.

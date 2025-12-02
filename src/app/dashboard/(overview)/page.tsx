@@ -14,7 +14,7 @@ import {
   readInvoicesSummary,
   readLatestInvoices,
 } from "@/server/invoices/queries";
-import { formatCurrency } from "@/shared/money/convert";
+import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";

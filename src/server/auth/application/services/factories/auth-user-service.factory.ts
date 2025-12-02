@@ -7,8 +7,8 @@ import { AuthUserRepositoryAdapter } from "@/server/auth/infrastructure/adapters
 import { BcryptPasswordHasherAdapter } from "@/server/auth/infrastructure/adapters/password-hasher-bcrypt.adapter";
 import { AuthUserRepositoryImpl } from "@/server/auth/infrastructure/repository/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as defaultLogger } from "@/shared/logging/infra/logging.client";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import { logger as defaultLogger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Composition root that builds an `AuthUserService` with concrete adapters.

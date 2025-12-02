@@ -1,17 +1,17 @@
 import "server-only";
 import type { InvoiceDto, InvoiceFormDto } from "@/features/invoices/lib/dto";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import {
   dtoToCreateInvoiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/server/invoices/invoice-codecs.server";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/mapper";
 import type { InvoiceRepository } from "@/server/invoices/repo";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
 import { toInvoiceId } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
-import { CENTS_IN_DOLLAR } from "@/shared/money/types";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
 
 export class InvoiceService {
   private readonly repo: InvoiceRepository;

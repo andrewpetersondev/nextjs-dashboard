@@ -13,14 +13,14 @@ import {
   createEmptyDenseFieldErrorMap,
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/factories/create-error-map.factory";
+} from "@/shared/application/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
-import { logger } from "@/shared/logging/infra/logging.client";
+} from "@/shared/application/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
+import { deriveFieldNamesFromSchema } from "@/shared/application/forms/infrastructure/zod/derive-field-names-from-schema";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 type CreateUserFormData = {
   readonly email: string | undefined;

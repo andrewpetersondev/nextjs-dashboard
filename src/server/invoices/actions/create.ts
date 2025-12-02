@@ -1,6 +1,8 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import type { InvoiceFormDto } from "@/features/invoices/lib/dto";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
+import { translator } from "@/features/invoices/lib/i18n/translator";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
@@ -18,14 +20,12 @@ import { toInvoiceErrorMessage } from "@/server/invoices/to-invoice-error-messag
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
-import { translator } from "@/shared/i18n/translator";
-import { logger } from "@/shared/logging/infra/logging.client";
+} from "@/shared/application/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
+import { deriveFieldNamesFromSchema } from "@/shared/application/forms/infrastructure/zod/derive-field-names-from-schema";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/application/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { isZodErrorInstance } from "@/shared/application/forms/infrastructure/zod/zod-guards";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);

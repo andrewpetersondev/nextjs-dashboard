@@ -1,6 +1,6 @@
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Creates a factory function that validates enum values.

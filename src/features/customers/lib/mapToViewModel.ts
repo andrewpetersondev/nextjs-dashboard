@@ -2,7 +2,7 @@ import type {
   CustomerAggregatesServerDto,
   FormattedCustomersTableRow,
 } from "@/features/customers/types";
-import { formatCurrency } from "@/shared/money/convert";
+import { formatCurrency } from "@/shared/utilities/money/convert";
 
 export const toFormattedCustomersTableRow = (
   row: CustomerAggregatesServerDto,

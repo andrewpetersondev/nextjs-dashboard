@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceOutput,
@@ -13,18 +14,17 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceRepository } from "@/server/invoices/repo";
 import { InvoiceService } from "@/server/invoices/service";
-import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/domain/factories/create-error-map.factory";
+} from "@/shared/application/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
-import { logger } from "@/shared/logging/infra/logging.client";
+} from "@/shared/application/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Publish "invoice updated" domain event

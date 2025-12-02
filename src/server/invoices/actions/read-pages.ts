@@ -1,10 +1,10 @@
 "use server";
 
 import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchInvoicesPagesDal } from "@/server/invoices/dal/fetch-pages";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Server action to fetch the total number of invoice pages for pagination.

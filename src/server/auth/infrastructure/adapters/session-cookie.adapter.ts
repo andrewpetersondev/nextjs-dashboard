@@ -2,7 +2,7 @@ import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME } from "@/server/auth/domain/session/constants";
-import { logger } from "@/shared/logging/infra/logging.client";
+import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Adapter for managing session cookies using Next.js cookie store.

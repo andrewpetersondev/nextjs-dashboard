@@ -13,8 +13,8 @@ import {
 } from "@/server/auth/domain/session/constants";
 import type { FlatEncryptPayload } from "@/server/auth/domain/session/types";
 import type { UserId } from "@/shared/branding/brands";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as realLogger } from "@/shared/logging/infra/logging.client";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import { logger as realLogger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 class InMemoryCookie implements SessionPort {
   private value?: string;

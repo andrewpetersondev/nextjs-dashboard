@@ -1,5 +1,5 @@
 import type { MonthName } from "@/features/revenues/constants/date";
-import type { Dollars } from "@/shared/money/types";
+import type { Dollars } from "@/shared/utilities/money/types";
 
 /**
  * Statistical metrics data transfer object with dollar-converted values.

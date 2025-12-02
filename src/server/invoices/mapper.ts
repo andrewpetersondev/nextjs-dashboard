@@ -7,14 +7,14 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/entity";
+import { Err, Ok } from "@/shared/application/result/result";
+import type { Result } from "@/shared/application/result/result.types";
 import {
   toCustomerId,
   toInvoiceId,
   toPeriod,
 } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Converts a date to the first day of the same month.

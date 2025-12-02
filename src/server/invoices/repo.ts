@@ -1,5 +1,6 @@
 import "server-only";
 import type { InvoiceDto } from "@/features/invoices/lib/dto";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import { createInvoiceDal } from "@/server/invoices/dal/create";
 import { deleteInvoiceDal } from "@/server/invoices/dal/delete";
 import { readInvoiceDal } from "@/server/invoices/dal/read";
@@ -11,8 +12,7 @@ import type {
 import { entityToInvoiceDto } from "@/server/invoices/invoice-codecs.server";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Repository for managing invoice data.

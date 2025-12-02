@@ -15,8 +15,8 @@ import {
   newUserDbRowToEntity,
   userDbRowToEntity,
 } from "@/server/users/mapping/user.mappers";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as defaultLogger } from "@/shared/logging/infra/logging.client";
+import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import { logger as defaultLogger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
 
 /**
  * Repository for user authentication flows (signup/login).

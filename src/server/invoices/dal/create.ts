@@ -1,4 +1,5 @@
 import "server-only";
+import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
@@ -8,8 +9,7 @@ import type {
 } from "@/server/invoices/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/mapper";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
-import { INVOICE_MSG } from "@/shared/i18n/invoice-messages";
+import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
 
 /**
  * Creates a new invoice in the database.
