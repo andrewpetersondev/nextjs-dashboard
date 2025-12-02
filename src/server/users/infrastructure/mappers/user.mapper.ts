@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserDto } from "@/features/users/lib/dto";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { NewUserRow, UserRow } from "@/server/db/schema/users";
 import type { UserEntity } from "@/server/users/domain/entity";

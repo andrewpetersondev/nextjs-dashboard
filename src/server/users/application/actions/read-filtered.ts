@@ -1,6 +1,6 @@
 "use server";
 
-import type { UserDto } from "@/features/users/lib/dto";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchFilteredUsers } from "@/server/users/infrastructure/dal/fetch-filtered-users";
 

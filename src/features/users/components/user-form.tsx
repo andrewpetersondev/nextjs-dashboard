@@ -1,7 +1,7 @@
 import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
 import { ServerMessage } from "@/features/users/components/server-message";
 import { UserFields } from "@/features/users/components/user-fields";
-import type { UserDto } from "@/features/users/lib/dto";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { H1 } from "@/ui/atoms/typography/headings";

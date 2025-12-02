@@ -1,8 +1,8 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
+import type { PasswordHash } from "@/features/auth/domain/password.types";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
-import type { UserRole } from "./src/features/auth/lib/auth.roles";
-import type { PasswordHash } from "./src/features/auth/lib/password.types";
 
 export default defineConfig({
   e2e: {

@@ -1,7 +1,7 @@
 "use client";
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { Button } from "@/ui/atoms/button";

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 
 // Minimal user payload embedded into session tokens.

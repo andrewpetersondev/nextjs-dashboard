@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";

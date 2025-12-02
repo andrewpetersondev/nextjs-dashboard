@@ -1,7 +1,7 @@
 "use client";
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
-import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
+import { USERS_DASHBOARD_PATH } from "@/features/users/domain/user.constants";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { createUserAction } from "@/server/users/application/actions/create";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";

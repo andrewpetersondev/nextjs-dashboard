@@ -2,8 +2,8 @@
 import { type JSX, useActionState } from "react";
 import { UserForm } from "@/features/users/components/user-form";
 import { UserInfoPanel } from "@/features/users/components/user-info-panel";
-import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
-import type { UserDto } from "@/features/users/lib/dto";
+import { USERS_DASHBOARD_PATH } from "@/features/users/domain/user.constants";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import { EditUserFormSchema } from "@/features/users/lib/user.schema";
 import { updateUserAction } from "@/server/users/application/actions/update";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";

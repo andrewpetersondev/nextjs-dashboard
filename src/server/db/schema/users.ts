@@ -13,8 +13,8 @@ import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
-import type { PasswordHash } from "@/features/auth/lib/password.types";
+} from "@/features/auth/domain/auth.roles";
+import type { PasswordHash } from "@/features/auth/domain/password.types";
 import type { UserId } from "@/shared/branding/brands";
 import { sessions } from "./sessions";
 

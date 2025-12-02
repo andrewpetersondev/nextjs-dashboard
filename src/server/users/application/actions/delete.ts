@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
-import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
+import { USERS_DASHBOARD_PATH } from "@/features/users/domain/user.constants";
+import { USER_ERROR_MESSAGES } from "@/features/users/domain/user.messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { deleteUserDal } from "@/server/users/infrastructure/dal/delete";
 import { toUserId } from "@/shared/branding/converters/id-converters";

@@ -1,7 +1,7 @@
 import "server-only";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
-import type { PasswordHash } from "@/features/auth/lib/password.types";
-import type { UserDto } from "@/features/users/lib/dto";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
+import type { PasswordHash } from "@/features/auth/domain/password.types";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import {

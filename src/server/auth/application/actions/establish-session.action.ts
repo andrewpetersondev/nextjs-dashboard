@@ -1,6 +1,6 @@
 // src/server/auth/application/actions/establish-session.action.ts
 "use server";
-import type { SessionUser } from "@/features/auth/sessions/session-action.types";
+import type { SessionUser } from "@/features/auth/domain/sessions/session-action.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppError } from "@/shared/errors/core/app-error.class";

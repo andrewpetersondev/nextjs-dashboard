@@ -1,6 +1,6 @@
 import "server-only";
 import { count, ilike, or } from "drizzle-orm";
-import { ITEMS_PER_PAGE_USERS } from "@/features/users/lib/constants";
+import { ITEMS_PER_PAGE_USERS } from "@/features/users/domain/user.constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error.class";

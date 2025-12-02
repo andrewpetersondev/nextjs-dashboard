@@ -5,7 +5,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
+} from "@/features/auth/domain/auth.roles";
 import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 import { ErrorMessage } from "@/ui/forms/error-message";

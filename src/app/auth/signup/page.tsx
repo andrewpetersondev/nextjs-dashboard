@@ -7,7 +7,7 @@ import { SignupForm } from "@/features/auth/components/signup-form";
 import {
   AUTH_DIVIDER_LABEL,
   SIGNUP_HEADING,
-} from "@/features/auth/lib/auth.constants";
+} from "@/features/auth/domain/auth.constants";
 import { demoUserActionAdapter } from "@/server/auth/application/actions/demo-user.action";
 import { signupAction } from "@/server/auth/application/actions/signup.action";
 import { ROUTES } from "@/shared/routes/routes";

@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserDto } from "@/features/users/lib/dto";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import {

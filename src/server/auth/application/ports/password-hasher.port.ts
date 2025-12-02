@@ -1,5 +1,5 @@
 import "server-only";
-import type { PasswordHash } from "@/features/auth/lib/password.types";
+import type { PasswordHash } from "@/features/auth/domain/password.types";
 
 export interface PasswordHasherPort {
   hash(raw: string): Promise<PasswordHash>;

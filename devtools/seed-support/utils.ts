@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import {
   asPasswordHash,
   type PasswordHash,
-} from "../../src/features/auth/lib/password.types";
+} from "@/features/auth/domain/password.types";
 import { SEED_CONFIG } from "./constants";
 
 /**

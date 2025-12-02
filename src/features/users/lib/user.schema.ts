@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/features/auth/lib/auth.roles";
+import { USER_ROLES } from "@/features/auth/domain/auth.roles";
 import {
   EmailSchema,
   PasswordSchema,

@@ -1,9 +1,9 @@
 // src/server/auth/application/services/auth-user.service.ts
 import "server-only";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
+import { asPasswordHash } from "@/features/auth/domain/password.types";
 import { createRandomPassword } from "@/features/auth/lib/auth.password";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
-import { asPasswordHash } from "@/features/auth/lib/password.types";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import type { AuthUserRepositoryPort } from "@/server/auth/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";

@@ -1,6 +1,6 @@
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,

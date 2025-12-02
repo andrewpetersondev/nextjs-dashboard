@@ -4,7 +4,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
+} from "@/features/auth/domain/auth.roles";
 import { ITEMS_PER_PAGE_INVOICES } from "@/features/invoices/domain/constants";
 import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { verifySessionOptimistic } from "@/server/auth/application/actions/verify-session-optimistic.action";

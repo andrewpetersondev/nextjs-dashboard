@@ -6,12 +6,12 @@ import {
   AUTH_GOOGLE_ENDPOINT,
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
-} from "@/features/auth/lib/auth.constants";
+} from "@/features/auth/domain/auth.constants";
 import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/features/auth/lib/auth.roles";
+} from "@/features/auth/domain/auth.roles";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 
 interface AuthFormSocialSectionProps {

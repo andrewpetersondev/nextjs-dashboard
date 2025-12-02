@@ -1,6 +1,6 @@
 // src/server/auth/infrastructure/repository/dal/demo-user-counter.ts
 import "server-only";
-import type { UserRole } from "@/features/auth/lib/auth.roles";
+import type { UserRole } from "@/features/auth/domain/auth.roles";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";

@@ -1,5 +1,5 @@
-import { USER_ROLE, type UserRole } from "@/features/auth/lib/auth.roles";
-import type { PasswordHash } from "@/features/auth/lib/password.types";
+import { USER_ROLE, type UserRole } from "@/features/auth/domain/auth.roles";
+import type { PasswordHash } from "@/features/auth/domain/password.types";
 import { users } from "../../src/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";

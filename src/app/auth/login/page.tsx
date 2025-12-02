@@ -7,7 +7,7 @@ import { LoginForm } from "@/features/auth/components/login-form";
 import {
   AUTH_DIVIDER_LABEL,
   LOGIN_HEADING,
-} from "@/features/auth/lib/auth.constants";
+} from "@/features/auth/domain/auth.constants";
 import { demoUserActionAdapter } from "@/server/auth/application/actions/demo-user.action";
 import { loginAction } from "@/server/auth/application/actions/login.action";
 import { ROUTES } from "@/shared/routes/routes";

@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { asPasswordHash } from "@/features/auth/lib/password.types";
-import { USERS_DASHBOARD_PATH } from "@/features/users/lib/constants";
-import type { UserDto } from "@/features/users/lib/dto";
+import { asPasswordHash } from "@/features/auth/domain/password.types";
+import { USERS_DASHBOARD_PATH } from "@/features/users/domain/user.constants";
+import type { UserDto } from "@/features/users/domain/user.dto";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
-} from "@/features/users/lib/messages";
+} from "@/features/users/domain/user.messages";
 import {
   type EditUserFormFieldNames,
   EditUserFormSchema,

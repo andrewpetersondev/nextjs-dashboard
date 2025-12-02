@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { AUTH_REFRESH_ENDPOINT } from "@/features/auth/lib/auth.constants";
+import { AUTH_REFRESH_ENDPOINT } from "@/features/auth/domain/auth.constants";
 import {
   SESSION_KICKOFF_TIMEOUT_MS,
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
-} from "@/features/auth/sessions/session.constants";
+} from "@/features/auth/domain/sessions/session.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,

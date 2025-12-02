@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import {
   asPasswordHash,
   type PasswordHash,
-} from "@/features/auth/lib/password.types";
+} from "@/features/auth/domain/password.types";
 import type { PasswordHasherPort } from "@/server/auth/application/ports/password-hasher.port";
 import { SALT_ROUNDS } from "@/server/auth/domain/session/constants";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

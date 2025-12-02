@@ -1,10 +1,10 @@
 "use server";
-import { asPasswordHash } from "@/features/auth/lib/password.types";
-import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
+import { asPasswordHash } from "@/features/auth/domain/password.types";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
-} from "@/features/users/lib/messages";
+} from "@/features/users/domain/user.messages";
+import { getValidUserRole } from "@/features/users/lib/get-valid-user-role";
 import { toUserRole } from "@/features/users/lib/to-user-role";
 import { CreateUserFormSchema } from "@/features/users/lib/user.schema";
 import { getAppDb } from "@/server/db/db.connection";

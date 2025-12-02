@@ -22,7 +22,7 @@ import {
   USERNAME_MAX_LENGTH_ERROR,
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
-} from "@/features/auth/lib/auth.constants";
+} from "@/features/auth/domain/auth.constants";
 
 /**
  * Validate and normalize a username.
