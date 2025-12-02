@@ -4,13 +4,13 @@ import type {
   CustomerAggregatesServerDto,
   CustomerSelectServerDto,
 } from "@/features/customers/domain/types";
-import { fetchCustomersSelectDal } from "@/server/customers/infrastructure/dal/fetch-customers-select";
-import { fetchFilteredCustomersDal } from "@/server/customers/infrastructure/dal/fetch-filtered-customers";
-import { fetchTotalCustomersCountDal } from "@/server/customers/infrastructure/dal/fetch-total-count";
 import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
-} from "@/server/customers/infrastructure/mappers";
+} from "@/server/customers/infrastructure/adapters/customer.mapper";
+import { fetchCustomersSelectDal } from "@/server/customers/infrastructure/repository/dal/fetch-customers-select";
+import { fetchFilteredCustomersDal } from "@/server/customers/infrastructure/repository/dal/fetch-filtered-customers";
+import { fetchTotalCustomersCountDal } from "@/server/customers/infrastructure/repository/dal/fetch-total-count";
 import type { AppDatabase } from "@/server/db/db.connection";
 
 /**

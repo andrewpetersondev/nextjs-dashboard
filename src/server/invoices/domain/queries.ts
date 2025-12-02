@@ -2,10 +2,10 @@
 
 import type { InvoiceListFilter } from "@/features/invoices/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { fetchLatestInvoicesDal } from "@/server/invoices/infrastructure/dal/fetch-latest";
-import { fetchTotalInvoicesCountDal } from "@/server/invoices/infrastructure/dal/fetch-total-count";
-import { fetchTotalPaidInvoicesDal } from "@/server/invoices/infrastructure/dal/fetch-total-paid";
-import { fetchTotalPendingInvoicesDal } from "@/server/invoices/infrastructure/dal/fetch-total-pending";
+import { fetchLatestInvoicesDal } from "@/server/invoices/infrastructure/repository/dal/fetch-latest";
+import { fetchTotalInvoicesCountDal } from "@/server/invoices/infrastructure/repository/dal/fetch-total-count";
+import { fetchTotalPaidInvoicesDal } from "@/server/invoices/infrastructure/repository/dal/fetch-total-paid";
+import { fetchTotalPendingInvoicesDal } from "@/server/invoices/infrastructure/repository/dal/fetch-total-pending";
 
 export type InvoicesSummary = {
   totalInvoices: number;

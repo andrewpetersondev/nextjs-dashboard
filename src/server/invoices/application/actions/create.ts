@@ -16,7 +16,7 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceService } from "@/server/invoices/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/server/invoices/application/utils/error-messages";
-import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
+import { InvoiceRepository } from "@/server/invoices/infrastructure/repository/repository";
 import {
   formError,
   formOk,

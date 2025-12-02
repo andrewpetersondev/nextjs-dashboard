@@ -3,7 +3,7 @@
 import "@/server/revenues/events/bootstrap/revenue-events.bootstrap";
 import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { fetchInvoicesPagesDal } from "@/server/invoices/infrastructure/dal/fetch-pages";
+import { fetchInvoicesPagesDal } from "@/server/invoices/infrastructure/repository/dal/fetch-pages";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

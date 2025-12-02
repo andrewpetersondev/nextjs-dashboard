@@ -2,7 +2,7 @@
 
 import type { InvoiceListFilter } from "@/features/invoices/domain/types";
 import { getAppDb } from "@/server/db/db.connection";
-import { fetchFilteredInvoicesDal } from "@/server/invoices/infrastructure/dal/fetch-filtered";
+import { fetchFilteredInvoicesDal } from "@/server/invoices/infrastructure/repository/dal/fetch-filtered";
 
 /**
  * Server action to fetch filtered invoices for the invoices table.

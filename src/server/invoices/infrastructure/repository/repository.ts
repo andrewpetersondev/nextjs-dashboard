@@ -5,11 +5,11 @@ import type {
   InvoiceFormPartialEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/domain/entity";
-import { entityToInvoiceDto } from "@/server/invoices/infrastructure/codecs/invoice-codecs";
-import { createInvoiceDal } from "@/server/invoices/infrastructure/dal/create";
-import { deleteInvoiceDal } from "@/server/invoices/infrastructure/dal/delete";
-import { readInvoiceDal } from "@/server/invoices/infrastructure/dal/read";
-import { updateInvoiceDal } from "@/server/invoices/infrastructure/dal/update";
+import { entityToInvoiceDto } from "@/server/invoices/infrastructure/adapters/codecs/invoice-codecs";
+import { createInvoiceDal } from "@/server/invoices/infrastructure/repository/dal/create";
+import { deleteInvoiceDal } from "@/server/invoices/infrastructure/repository/dal/delete";
+import { readInvoiceDal } from "@/server/invoices/infrastructure/repository/dal/read";
+import { updateInvoiceDal } from "@/server/invoices/infrastructure/repository/dal/update";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";

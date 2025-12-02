@@ -7,7 +7,7 @@ import type {
   InvoiceEntity,
   InvoiceServiceEntity,
 } from "@/server/invoices/domain/entity";
-import { rawDbToInvoiceEntity } from "@/server/invoices/infrastructure/mappers/invoice.mapper";
+import { rawDbToInvoiceEntity } from "@/server/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

@@ -1,7 +1,7 @@
 "use server";
 
 import type { CustomerField } from "@/features/customers/domain/types";
-import { createCustomersRepository } from "@/server/customers/infrastructure/repository";
+import { createCustomersRepository } from "@/server/customers/infrastructure/repository/customer.repository";
 import { getAppDb } from "@/server/db/db.connection";
 
 /**

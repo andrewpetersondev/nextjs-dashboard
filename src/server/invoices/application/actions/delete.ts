@@ -10,7 +10,7 @@ import {
 import { InvoiceService } from "@/server/invoices/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/server/invoices/application/utils/error-messages";
 import type { InvoiceActionResult } from "@/server/invoices/domain/types";
-import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
+import { InvoiceRepository } from "@/server/invoices/infrastructure/repository/repository";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";

@@ -13,7 +13,7 @@ import {
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceService } from "@/server/invoices/application/services/invoice.service";
-import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
+import { InvoiceRepository } from "@/server/invoices/infrastructure/repository/repository";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   selectSparseFieldErrors,
