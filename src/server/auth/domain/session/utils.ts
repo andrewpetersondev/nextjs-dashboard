@@ -8,7 +8,7 @@ import {
   SESSION_COOKIE_SAMESITE,
   SESSION_COOKIE_SECURE_FALLBACK,
 } from "@/server/auth/domain/session/constants";
-import { isProd } from "@/shared/infrastructure/config/env-shared";
+import { isProd } from "@/shared/config/env-shared";
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 export function absoluteLifetime(user?: {

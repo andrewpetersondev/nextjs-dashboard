@@ -6,13 +6,13 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/features/auth/sessions/session.constants";
-import { getPublicNodeEnv } from "@/shared/infrastructure/config/env-public";
+import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
-} from "@/shared/infrastructure/http/http-headers";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+} from "@/shared/http/http-headers";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 // Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;

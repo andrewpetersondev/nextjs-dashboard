@@ -6,7 +6,7 @@ import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceEntity } from "@/server/invoices/domain/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/infrastructure/mappers/invoice.mapper";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Deletes an invoice by ID.

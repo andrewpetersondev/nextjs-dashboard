@@ -5,8 +5,8 @@ import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
-import { ITEMS_PER_PAGE } from "@/shared/presentation/pagination/pagination.constants";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
 
 /**
  * Fetches filtered invoices with pagination and customer information.

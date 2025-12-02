@@ -1,7 +1,7 @@
 import type { UserRole } from "@/features/auth/lib/auth.roles";
 import { USER_ROLES } from "@/features/auth/lib/auth.roles";
-import type { Result } from "@/shared/application/result/result.types";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Validates and converts an unknown value to a valid UserRole (Result-based).

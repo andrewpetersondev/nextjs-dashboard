@@ -12,7 +12,7 @@ import { readInvoiceDal } from "@/server/invoices/infrastructure/dal/read";
 import { updateInvoiceDal } from "@/server/invoices/infrastructure/dal/update";
 import { BaseRepository } from "@/server/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Repository for managing invoice data.

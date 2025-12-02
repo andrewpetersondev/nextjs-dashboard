@@ -9,7 +9,7 @@ import {
   HEADER_VARY,
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
-} from "@/shared/infrastructure/http/http-headers";
+} from "@/shared/http/http-headers";
 
 export async function POST(): Promise<NextResponse> {
   const outcome = await createSessionManager().rotate();

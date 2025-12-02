@@ -9,7 +9,7 @@ import type {
 } from "@/server/invoices/domain/entity";
 import { rawDbToInvoiceEntity } from "@/server/invoices/infrastructure/mappers/invoice.mapper";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**
  * Creates a new invoice in the database.

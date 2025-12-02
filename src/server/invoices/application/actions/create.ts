@@ -20,12 +20,12 @@ import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
 import {
   formError,
   formOk,
-} from "@/shared/application/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/shared/application/forms/infrastructure/zod/derive-field-names-from-schema";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/application/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { isZodErrorInstance } from "@/shared/application/forms/infrastructure/zod/zod-guards";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+} from "@/shared/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);

@@ -6,8 +6,8 @@ import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/e
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import { makeIntegrityError } from "@/shared/infrastructure/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.

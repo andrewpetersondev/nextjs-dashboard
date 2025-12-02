@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noProcessEnv: <env config> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config> */
-import { getDatabaseEnv } from "@/shared/infrastructure/config/env-shared";
+import { getDatabaseEnv } from "@/shared/config/env-shared";
 import { ToolingEnvShape } from "./env-cli.schema";
 
 // Build a normalized object from process.env (use UPPER_SNAKE names)

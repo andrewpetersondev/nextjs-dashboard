@@ -9,7 +9,7 @@ import type { RevenueEntity } from "@/server/revenues/domain/entities/entity";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/server/revenues/infrastructure/repository/interface";
 import type { Period } from "@/shared/branding/brands";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export class GetRollingYearRevenuesUseCase {
   private readonly repository: RevenueRepositoryInterface;

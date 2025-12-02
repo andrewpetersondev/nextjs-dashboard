@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import { CUSTOMER_LABELS } from "@/features/customers/domain/constants";
 import type { FormattedCustomersTableRow } from "@/features/customers/domain/types";
-import { IMAGE_SIZES } from "@/shared/presentation/ui/images.tokens";
+import { IMAGE_SIZES } from "@/ui/images.tokens";
 
 /**
  * Props for the CustomerMobileCard component.

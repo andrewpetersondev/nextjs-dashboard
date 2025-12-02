@@ -4,7 +4,7 @@ import {
   type InvoiceMessageId,
 } from "@/features/invoices/lib/i18n/invoice-messages";
 import { translator } from "@/features/invoices/lib/i18n/translator";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));
 

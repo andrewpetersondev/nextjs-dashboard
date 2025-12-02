@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DatabaseEnvironmentSchema } from "@/shared/infrastructure/config/env-schemas";
+import { DatabaseEnvironmentSchema } from "@/shared/config/env-schemas";
 
 export const ToolingEnvShape = z.object({
   cypressBaseUrl: z.url(),

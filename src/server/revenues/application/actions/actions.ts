@@ -9,7 +9,7 @@ import {
 import { RevenueStatisticsService } from "@/server/revenues/application/services/statistics/statistics.service";
 import type { RevenueActionResult } from "@/server/revenues/application/types/action-result";
 import { RevenueRepository } from "@/server/revenues/infrastructure/repository/repository";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

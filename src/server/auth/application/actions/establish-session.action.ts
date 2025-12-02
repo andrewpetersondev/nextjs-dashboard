@@ -3,9 +3,9 @@
 import type { SessionUser } from "@/features/auth/sessions/session-action.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
 import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
-import { Err, Ok } from "@/shared/application/result/result";
-import type { Result } from "@/shared/application/result/result.types";
-import type { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Establishes a session for a user by setting `jwt cookie`.

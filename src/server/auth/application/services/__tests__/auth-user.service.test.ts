@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { LoggingClientContract } from "@/shared/infrastructure/logging/core/logger.contracts";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { AuthUserRepositoryPort } from "../../ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";

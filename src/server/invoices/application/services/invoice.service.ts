@@ -10,10 +10,10 @@ import {
 } from "@/server/invoices/infrastructure/codecs/invoice-codecs";
 import { invoiceFormEntityToServiceEntity } from "@/server/invoices/infrastructure/mappers/invoice.mapper";
 import type { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
-import { Err, Ok } from "@/shared/application/result/result";
-import type { Result } from "@/shared/application/result/result.types";
 import { toInvoiceId } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
 
 export class InvoiceService {

@@ -8,8 +8,8 @@ import {
   userEntityToDto,
 } from "@/server/users/infrastructure/mappers/user.mapper";
 import type { UserId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Retrieves a user from the database by branded UserId.

@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 
 /**
  * Props for InvoiceServerMessage component.

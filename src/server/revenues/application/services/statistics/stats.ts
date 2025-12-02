@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueStatistics } from "@/features/revenues/domain/types";
 import { createEmptyStatistics } from "@/features/revenues/lib/data/statistics";
 import type { RevenueDisplayEntity } from "@/server/revenues/domain/entities/entity.client";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,

@@ -19,15 +19,15 @@ import { validateForm } from "@/server/forms/validate-form";
 import type { UserUpdatePatch } from "@/server/users/domain/types";
 import { readUserDal } from "@/server/users/infrastructure/dal/read";
 import { updateUserDal } from "@/server/users/infrastructure/dal/update";
-import { createEmptyDenseFieldErrorMap } from "@/shared/application/forms/domain/factories/create-error-map.factory";
+import { toUserIdResult } from "@/shared/branding/converters/id-converters";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/application/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/application/forms/infrastructure/zod/resolve-canonical-field-names";
-import { toUserIdResult } from "@/shared/branding/converters/id-converters";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+} from "@/shared/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
+import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 

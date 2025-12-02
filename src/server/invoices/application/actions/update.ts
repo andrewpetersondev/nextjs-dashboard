@@ -14,17 +14,17 @@ import {
 } from "@/server/events/invoice/invoice-event.types";
 import { InvoiceService } from "@/server/invoices/application/services/invoice.service";
 import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
+import { AppError } from "@/shared/errors/core/app-error.class";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/application/forms/domain/factories/create-error-map.factory";
+} from "@/shared/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/application/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/application/forms/domain/types/form-result.types";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+} from "@/shared/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 // Publish "invoice updated" domain event

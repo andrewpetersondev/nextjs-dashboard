@@ -2,8 +2,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/features/invoices/domain/types";
-import { IMAGE_SIZES } from "@/shared/presentation/ui/images.tokens";
 import { formatCurrency } from "@/shared/utilities/money/convert";
+import { IMAGE_SIZES } from "@/ui/images.tokens";
 
 export interface LatestInvoiceItemProps {
   readonly invoice: InvoiceListFilter;

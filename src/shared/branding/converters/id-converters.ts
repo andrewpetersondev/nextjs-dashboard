@@ -12,7 +12,6 @@
  * See also: `toCustomerIdResult` / `toCustomerId` pattern used below.
  */
 
-import type { Result } from "@/shared/application/result/result.types";
 import type {
   CustomerId,
   InvoiceId,
@@ -29,7 +28,8 @@ import {
   createUserId,
 } from "@/shared/branding/factories/id-factories";
 import { createPeriod } from "@/shared/branding/factories/period-factory";
-import type { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Validate and convert an arbitrary value into a branded `CustomerId`.

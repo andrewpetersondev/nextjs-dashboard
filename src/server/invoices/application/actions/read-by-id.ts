@@ -4,7 +4,7 @@ import { INVOICE_MSG } from "@/features/invoices/lib/i18n/invoice-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { InvoiceService } from "@/server/invoices/application/services/invoice.service";
 import { InvoiceRepository } from "@/server/invoices/infrastructure/repository";
-import { AppError } from "@/shared/infrastructure/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error.class";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {

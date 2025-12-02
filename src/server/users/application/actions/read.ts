@@ -5,7 +5,7 @@ import { USER_ERROR_MESSAGES } from "@/features/users/lib/messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { fetchUserById } from "@/server/users/infrastructure/dal/fetch-user-by-id";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { logger } from "@/shared/infrastructure/logging/infrastructure/logging.client";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Fetches a user by plain string id for UI consumption.
