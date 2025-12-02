@@ -3,46 +3,40 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 /**
- * Asynchronously maps a successful `Result` to a new value using the provided function.
+ * Async maps successful Result to new value.
  *
- * @typeParam Tvalue - The type of the original value in the `Result`.
- * @typeParam Tnext - The type of the transformed value after applying the function.
- * @typeParam Terror - The type of the error, extending `AppError`.
- * @param fn - An async function to transform the value if the `Result` is successful.
- * @returns A `Promise` resolving to either a transformed `Result` or the original error.
+ * @typeParam T - Original value type.
+ * @typeParam T2 - Transformed value type.
+ * @typeParam E - Error type extending AppError.
+ * @param fn - Async function to transform value.
+ * @returns Promise resolving to transformed Result or original error.
  */
 export const mapOkAsync =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror extends AppError>(
-      fn: (v: Tvalue) => Promise<Tnext>,
-    ) =>
+    <T, T2, E extends AppError>(fn: (v: T) => Promise<T2>) =>
     /* @__PURE__ */
-    async (r: Result<Tvalue, Terror>): Promise<Result<Tnext, Terror>> =>
+    async (r: Result<T, E>): Promise<Result<T2, E>> =>
       r.ok ? Ok(await fn(r.value)) : r;
 
 /**
- * A utility function for safely transforming the value of a `Result` asynchronously.
- * If the `Result` is an error, the transformation is skipped. Errors from the async
- * operation can be required mapped to a custom error type.
+ * Safely transforms Result value asynchronously, mapping thrown errors.
  *
- * @typeParam Tvalue - The type of the input value in the `Result`.
- * @typeParam Tnext - The type of the output value after transformation.
- * @typeParam Terror - The type of the error contained in the original `Result`.
- * @typeParam Tsideerror - The type of a side error thrown during transformation.
- * @param fn - An async function to transform the contained value on success.
- * @param mapError - An required function to map any exceptions thrown during `fn` execution.
- * @returns A `Promise` resolving to a new `Result` with transformed value or propagated error.
+ * @typeParam T - Input value type.
+ * @typeParam T2 - Output value type.
+ * @typeParam E - Original error type.
+ * @typeParam E2 - Side error type from transformation.
+ * @param fn - Async function to transform value.
+ * @param mapError - Maps exceptions during execution.
+ * @returns Promise resolving to new Result with transformed value or error.
  */
 export const mapOkAsyncSafe =
   /* @__PURE__ */
-    <Tvalue, Tnext, Terror extends AppError, Tsideerror extends AppError>(
-      fn: (v: Tvalue) => Promise<Tnext>,
-      mapError: (e: unknown) => Tsideerror,
+    <T, T2, E extends AppError, E2 extends AppError>(
+      fn: (v: T) => Promise<T2>,
+      mapError: (e: unknown) => E2,
     ) =>
     /* @__PURE__ */
-    async (
-      r: Result<Tvalue, Terror>,
-    ): Promise<Result<Tnext, Terror | Tsideerror>> => {
+    async (r: Result<T, E>): Promise<Result<T2, E | E2>> => {
       if (!r.ok) {
         return r;
       }
@@ -55,49 +49,40 @@ export const mapOkAsyncSafe =
     };
 
 /**
- * Maps an error in an asynchronous `Result` with a provided transformation function.
+ * Maps error in async Result with transformation function.
  *
- * @typeParam Tvalue - The type of the success value.
- * @typeParam Terror1 - The type of the original error.
- * @typeParam Terror2 - The type of the transformed error.
- * @param fn - A function that transforms the original error into a new error asynchronously.
- * @returns A new `Result` with the error transformed by `fn` if the original `Result` is an error.
+ * @typeParam T - Success value type.
+ * @typeParam E - Original error type.
+ * @typeParam E2 - Transformed error type.
+ * @param fn - Transforms original error to new error asynchronously.
+ * @returns New Result with transformed error or original value.
  */
 export const mapErrorAsync =
   /* @__PURE__ */
-    <Tvalue, Terror1 extends AppError, Terror2 extends AppError>(
-      fn: (e: Terror1) => Promise<Terror2>,
-    ) =>
+    <T, E extends AppError, E2 extends AppError>(fn: (e: E) => Promise<E2>) =>
     /* @__PURE__ */
-    async (r: Result<Tvalue, Terror1>): Promise<Result<Tvalue, Terror2>> =>
+    async (r: Result<T, E>): Promise<Result<T, E2>> =>
       r.ok ? r : Err(await fn(r.error));
 
 /**
- * A utility function to safely transform errors in an asynchronous context.
+ * Safely transforms errors asynchronously, handling unexpected errors.
  *
- * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror1 - The type of the initial error (extends `AppError`).
- * @typeParam Terror2 - The type of the transformed error (extends `AppError`).
- * @typeParam Tsideerror - The type of side-error from the `mapError` function (extends `AppError`).
- * @param fn - An async function that maps `Terror1` to `Terror2`.
- * @param mapError - Required function to handle unexpected errors.
- * @returns A `Promise` resolving to a `Result` containing the transformed error or successful value.
+ * @typeParam T - Successful result value type.
+ * @typeParam E - Initial error type extending AppError.
+ * @typeParam E2 - Transformed error type extending AppError.
+ * @typeParam E3 - Side-error type from mapError function.
+ * @param fn - Async function mapping E to E2.
+ * @param mapError - Handles unexpected errors.
+ * @returns Promise resolving to Result with transformed error or value.
  */
 export const mapErrorAsyncSafe =
   /* @__PURE__ */
-    <
-      Tvalue,
-      Terror1 extends AppError,
-      Terror2 extends AppError,
-      Tsideerror extends AppError,
-    >(
-      fn: (e: Terror1) => Promise<Terror2>,
-      mapError: (e: unknown) => Tsideerror,
+    <T, E extends AppError, E2 extends AppError, E3 extends AppError>(
+      fn: (e: E) => Promise<E2>,
+      mapError: (e: unknown) => E3,
     ) =>
     /* @__PURE__ */
-    async (
-      r: Result<Tvalue, Terror1>,
-    ): Promise<Result<Tvalue, Terror2 | Tsideerror>> => {
+    async (r: Result<T, E>): Promise<Result<T, E2 | E3>> => {
       if (r.ok) {
         return Ok(r.value);
       }
