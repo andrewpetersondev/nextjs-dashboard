@@ -5,7 +5,7 @@ import type {
   AuthLogLayer,
   AuthLogPayload,
   AuthOperation,
-} from "@/server/auth/logging/auth-logging.types";
+} from "@/features/auth/domain/logging/auth-logging.types";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as rootLogger } from "@/shared/logging/infrastructure/logging.client";

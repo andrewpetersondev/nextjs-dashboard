@@ -1,8 +1,8 @@
 // src/server/auth/infrastructure/repository/dal/demo-user-counter.ts
 import "server-only";
 import type { UserRole } from "@/features/auth/domain/auth.roles";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";

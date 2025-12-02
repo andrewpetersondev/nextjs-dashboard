@@ -1,6 +1,8 @@
 // src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
+import { TransactionLogger } from "@/features/auth/domain/logging/transaction-logger";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
@@ -8,8 +10,6 @@ import type {
 } from "@/server/auth/domain/auth.types";
 import { getUserByEmailDal } from "@/server/auth/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/server/auth/infrastructure/repository/dal/insert-user.dal";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
-import { TransactionLogger } from "@/server/auth/logging/transaction-logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import {
   newUserDbRowToEntity,

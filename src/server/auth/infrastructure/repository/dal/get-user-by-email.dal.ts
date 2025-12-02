@@ -1,8 +1,8 @@
 // src/server/auth/infrastructure/repository/dal/get-user-by-email.dal.ts
 import "server-only";
 import { eq } from "drizzle-orm";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import { executeDalOrThrow } from "@/server/auth/infrastructure/repository/dal/execute-dal";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

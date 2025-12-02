@@ -1,6 +1,6 @@
 // src/server/auth/logging/transaction-logger.ts
 import "server-only";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 
 /**
  * Lightweight transaction logger for auth-related DAL transactions.

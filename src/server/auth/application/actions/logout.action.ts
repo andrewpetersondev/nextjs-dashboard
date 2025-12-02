@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 
 export async function logoutAction(): Promise<void> {

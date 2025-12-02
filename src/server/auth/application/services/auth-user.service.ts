@@ -1,6 +1,7 @@
 // src/server/auth/application/services/auth-user.service.ts
 import "server-only";
 import type { UserRole } from "@/features/auth/domain/auth.roles";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import { asPasswordHash } from "@/features/auth/domain/password.types";
 import { createRandomPassword } from "@/features/auth/lib/auth.password";
 import type { LoginData, SignupData } from "@/features/auth/lib/auth.schema";
@@ -11,7 +12,6 @@ import { hasRequiredSignupFields } from "@/server/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/server/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/server/auth/domain/auth.types";
 import { demoUserCounter } from "@/server/auth/infrastructure/repository/dal/demo-user-counter";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";

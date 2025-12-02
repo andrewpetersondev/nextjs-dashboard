@@ -1,9 +1,9 @@
 "use server";
 import { redirect } from "next/navigation";
 import type { UserRole } from "@/features/auth/domain/auth.roles";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import { executeAuthPipeline } from "@/server/auth/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/server/auth/application/services/factories/auth-user-service.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 import { getAppDb } from "@/server/db/db.connection";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";

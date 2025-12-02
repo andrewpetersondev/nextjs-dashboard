@@ -2,9 +2,9 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { LOGIN_PATH } from "@/features/auth/domain/auth.constants";
+import { AuthLog, logAuth } from "@/features/auth/domain/logging/auth-log";
 import type { SessionVerificationResult } from "@/features/auth/domain/sessions/session-payload.types";
 import { createSessionManager } from "@/server/auth/application/services/factories/session-manager.factory";
-import { AuthLog, logAuth } from "@/server/auth/logging/auth-log";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
