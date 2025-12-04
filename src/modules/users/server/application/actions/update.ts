@@ -17,8 +17,8 @@ import {
 import type { UserUpdatePatch } from "@/modules/users/server/domain/types";
 import { readUserDal } from "@/modules/users/server/infrastructure/dal/read";
 import { updateUserDal } from "@/modules/users/server/infrastructure/dal/update";
-import { getAppDb } from "@/server/db/db.connection";
-import { validateForm } from "@/server/forms/validate-form";
+import { getAppDb } from "@/server-core/db/db.connection";
+import { validateForm } from "@/server-core/forms/validate-form";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
 import {

@@ -13,7 +13,7 @@ import { updateRevenue } from "@/modules/revenues/server/infrastructure/reposito
 import { upsertRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/upsert.revenue.dal";
 import { upsertRevenueByPeriod } from "@/modules/revenues/server/infrastructure/repository/dal/upsert-by-period.revenue.dal";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
-import type { AppDatabase } from "@/server/db/db.connection";
+import type { AppDatabase } from "@/server-core/db/db.connection";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
 export class RevenueRepository implements RevenueRepositoryInterface {

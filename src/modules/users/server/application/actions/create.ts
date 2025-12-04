@@ -8,7 +8,7 @@ import { getValidUserRole } from "@/modules/users/lib/get-valid-user-role";
 import { toUserRole } from "@/modules/users/lib/to-user-role";
 import { CreateUserFormSchema } from "@/modules/users/lib/user.schema";
 import { createUserDal } from "@/modules/users/server/infrastructure/dal/create";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import {
   createEmptyDenseFieldErrorMap,
   selectSparseFieldErrors,

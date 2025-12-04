@@ -6,7 +6,7 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/modules/invoices/server/domain/entity";
-import type { InvoiceRow } from "@/server/db/schema/invoices";
+import type { InvoiceRow } from "@/server-core/db/schema/invoices";
 import {
   toCustomerId,
   toInvoiceId,

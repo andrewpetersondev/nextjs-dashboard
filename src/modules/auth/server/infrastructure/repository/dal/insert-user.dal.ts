@@ -4,8 +4,8 @@ import "server-only";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { AuthSignupPayload } from "@/modules/auth/server/domain/auth.types";
 import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
-import type { AppDatabase } from "@/server/db/db.connection";
-import { type NewUserRow, users } from "@/server/db/schema";
+import type { AppDatabase } from "@/server-core/db/db.connection";
+import { type NewUserRow, users } from "@/server-core/db/schema";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 

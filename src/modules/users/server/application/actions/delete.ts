@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import { deleteUserDal } from "@/modules/users/server/infrastructure/dal/delete";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";

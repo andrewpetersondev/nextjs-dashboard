@@ -12,11 +12,11 @@ import {
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server/events/invoice/invoice-event.types";
+} from "@/server-core/events/invoice/invoice-event.types";
 import {
   formError,
   formOk,
@@ -69,7 +69,7 @@ export async function createInvoiceAction(
 
       const invoice = result.value;
 
-      const { EventBus } = await import("@/server/events/event-bus");
+      const { EventBus } = await import("@/server-core/events/event-bus");
       await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
         eventId: crypto.randomUUID(),
         eventTimestamp: new Date().toISOString(),

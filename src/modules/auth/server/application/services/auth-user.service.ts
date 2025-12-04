@@ -12,7 +12,7 @@ import { toAuthUserTransport } from "@/modules/auth/server/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/server/domain/auth.types";
 import { demoUserCounter } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter";
 import { toUserRole } from "@/modules/users/lib/to-user-role";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

@@ -5,7 +5,7 @@ import { fetchLatestInvoicesDal } from "@/modules/invoices/server/infrastructure
 import { fetchTotalInvoicesCountDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-total-count";
 import { fetchTotalPaidInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-total-paid";
 import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-total-pending";
-import type { AppDatabase } from "@/server/db/db.connection";
+import type { AppDatabase } from "@/server-core/db/db.connection";
 
 export type InvoicesSummary = {
   totalInvoices: number;

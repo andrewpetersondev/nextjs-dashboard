@@ -7,7 +7,7 @@ import {
   isNonNegativeNumber,
 } from "@/modules/revenues/server/infrastructure/mappers/number";
 import { toRevenueSource } from "@/modules/revenues/server/infrastructure/mappers/revenue-source.mapper";
-import type { RevenueRow } from "@/server/db/schema/revenues";
+import type { RevenueRow } from "@/server-core/db/schema/revenues";
 import {
   toPeriod,
   toRevenueId,

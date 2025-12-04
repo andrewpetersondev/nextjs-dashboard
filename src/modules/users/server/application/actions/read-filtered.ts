@@ -2,7 +2,7 @@
 
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { fetchFilteredUsers } from "@/modules/users/server/infrastructure/dal/fetch-filtered-users";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 
 /**
  * Server action to fetch filtered users for the users table.

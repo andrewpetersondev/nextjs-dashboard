@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
-import { customers } from "@/server/db/schema/customers";
-import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { invoices } from "@/server/db/schema/invoices";
-import { revenues } from "@/server/db/schema/revenues";
-import { users } from "@/server/db/schema/users";
+import { customers } from "@/server-core/db/schema/customers";
+import { demoUserCounters } from "@/server-core/db/schema/demo-users";
+import { invoices } from "@/server-core/db/schema/invoices";
+import { revenues } from "@/server-core/db/schema/revenues";
+import { users } from "@/server-core/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { firstRow } from "./pg-utils";
 

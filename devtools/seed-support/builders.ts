@@ -5,9 +5,9 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/auth.roles";
 import type { PasswordHash } from "@/modules/auth/domain/password.types";
+import type { invoices } from "@/server-core/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
-import type { invoices } from "../../src/server/db/schema/invoices";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods } from "./seed-shared";
 import {

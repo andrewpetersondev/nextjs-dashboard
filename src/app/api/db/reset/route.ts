@@ -2,8 +2,8 @@ import "server-only";
 
 import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
-import { getAppDb } from "@/server/db/db.connection";
-import { schema } from "@/server/db/schema";
+import { getAppDb } from "@/server-core/db/db.connection";
+import { schema } from "@/server-core/db/schema";
 
 export async function GET() {
   try {

@@ -10,7 +10,7 @@ import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repos
 import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/delete";
 import { readInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/read";
 import { updateInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/update";
-import { BaseRepository } from "@/server/repository/base-repository";
+import { BaseRepository } from "@/server-core/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

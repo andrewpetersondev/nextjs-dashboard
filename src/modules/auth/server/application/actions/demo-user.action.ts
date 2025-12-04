@@ -4,7 +4,7 @@ import type { UserRole } from "@/modules/auth/domain/auth.roles";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";

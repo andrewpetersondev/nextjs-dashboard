@@ -3,7 +3,7 @@
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import { fetchUserById } from "@/modules/users/server/infrastructure/dal/fetch-user-by-id";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 

@@ -2,9 +2,9 @@ import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/server/domain/messages";
 import type { CustomerAggregatesRowRaw } from "@/modules/customers/server/domain/types";
-import type { AppDatabase } from "@/server/db/db.connection";
-import { customers } from "@/server/db/schema/customers";
-import { invoices } from "@/server/db/schema/invoices";
+import type { AppDatabase } from "@/server-core/db/db.connection";
+import { customers } from "@/server-core/db/schema/customers";
+import { invoices } from "@/server-core/db/schema/invoices";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**

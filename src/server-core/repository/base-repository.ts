@@ -1,5 +1,5 @@
 import "server-only";
-import type { AppDatabase } from "@/server/db/db.connection";
+import type { AppDatabase } from "@/server-core/db/db.connection";
 
 /**
  * Generic base repository for CRUD operations.

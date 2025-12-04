@@ -4,7 +4,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/server/domain/entities/entity";
-import type { AppDatabase } from "@/server/db/db.connection";
+import type { AppDatabase } from "@/server-core/db/db.connection";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";

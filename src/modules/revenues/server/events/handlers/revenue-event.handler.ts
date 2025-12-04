@@ -4,9 +4,9 @@ import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/server/events
 import { processInvoiceUpdated } from "@/modules/revenues/server/events/handlers/invoice-update.handlers";
 import { processInvoiceEvent } from "@/modules/revenues/server/events/handlers/orchestrator";
 import { processInvoiceForRevenue } from "@/modules/revenues/server/events/process-invoice/process-invoice-for-revenue";
-import { EventBus } from "@/server/events/event-bus";
-import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
+import { EventBus } from "@/server-core/events/event-bus";
+import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
+import { INVOICE_EVENTS } from "@/server-core/events/invoice/invoice-event.types";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

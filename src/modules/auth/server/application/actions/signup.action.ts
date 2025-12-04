@@ -12,8 +12,8 @@ import { executeAuthPipeline } from "@/modules/auth/server/application/actions/a
 import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { getAppDb } from "@/server/db/db.connection";
-import { validateForm } from "@/server/forms/validate-form";
+import { getAppDb } from "@/server-core/db/db.connection";
+import { validateForm } from "@/server-core/forms/validate-form";
 import { adaptAppErrorToFormPayload } from "@/shared/errors/adapters/forms/form-error.adapter";
 import { formError } from "@/shared/forms/domain/factories/create-form-result.factory";
 import type { FormResult } from "@/shared/forms/domain/types/form-result.types";

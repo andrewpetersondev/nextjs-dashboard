@@ -3,7 +3,7 @@ import { RevenueService } from "@/modules/revenues/server/application/services/r
 import { RevenueEventHandler } from "@/modules/revenues/server/events/handlers/revenue-event.handler";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/repository";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 declare global {

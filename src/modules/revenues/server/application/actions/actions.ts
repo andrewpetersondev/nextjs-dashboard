@@ -8,7 +8,7 @@ import {
 import { RevenueStatisticsService } from "@/modules/revenues/server/application/services/statistics/statistics.service";
 import type { RevenueActionResult } from "@/modules/revenues/server/application/types/action-result";
 import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/repository";
-import { getAppDb } from "@/server/db/db.connection";
+import { getAppDb } from "@/server-core/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

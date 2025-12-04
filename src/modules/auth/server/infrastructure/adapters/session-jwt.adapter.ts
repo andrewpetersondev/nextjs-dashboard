@@ -11,7 +11,7 @@ import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
   SESSION_SECRET,
-} from "@/server/config/env-server";
+} from "@/server-core/config/env-server";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =

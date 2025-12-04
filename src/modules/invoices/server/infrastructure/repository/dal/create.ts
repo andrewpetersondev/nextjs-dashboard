@@ -5,9 +5,9 @@ import type {
   InvoiceServiceEntity,
 } from "@/modules/invoices/server/domain/entity";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
-import type { AppDatabase } from "@/server/db/db.connection";
-import { invoices } from "@/server/db/schema/invoices";
-import { revenues } from "@/server/db/schema/revenues";
+import type { AppDatabase } from "@/server-core/db/db.connection";
+import { invoices } from "@/server-core/db/schema/invoices";
+import { revenues } from "@/server-core/db/schema/revenues";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
