@@ -4,7 +4,6 @@ import type { AppDatabase } from "@/server-core/db/db.connection";
 import { invoices } from "@/server-core/db/schema/invoices";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
-import { DASHBOARD_ERROR_MESSAGES } from "@/shell/dashboard/error-messages";
 
 /**
  * Fetches the total number of invoices.
@@ -31,7 +30,7 @@ export async function fetchTotalInvoicesCountDal(
 
     throw new AppError("database", {
       cause,
-      message: DASHBOARD_ERROR_MESSAGES.fetchDashboardCards,
+      message: "Failed to fetch dashboard cards.",
       metadata,
     });
   }
