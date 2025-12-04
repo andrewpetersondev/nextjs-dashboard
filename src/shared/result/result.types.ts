@@ -54,6 +54,8 @@ export type Result<T, E extends AppError> = OkResult<T> | ErrResult<E>;
 /**
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
  *
+ * This type is independent of the Result pattern and can be used with any async operation.
+ *
  * @typeParam T - The type of the value the promise resolves to.
  * @example
  * const fetchData: AsyncThunk<string> = async () => "Hello, World!";
