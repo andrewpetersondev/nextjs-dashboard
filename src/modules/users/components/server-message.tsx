@@ -1,9 +1,9 @@
 import type { JSX } from "react";
+import { isAppError } from "@/shared/errors/guards/error.guards";
 import type {
   FormResult,
   FormSuccess,
-} from "@/modules/forms/domain/types/form-result.types";
-import { isAppError } from "@/shared/errors/guards/error.guards";
+} from "@/shared/forms/types/form-result.types";
 
 /**
  * Extracts message and success status from various result types.

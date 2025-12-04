@@ -1,17 +1,6 @@
 "use server";
 import { asPasswordHash } from "@/modules/auth/domain/password.types";
 import {
-  createEmptyDenseFieldErrorMap,
-  selectSparseFieldErrors,
-  toDenseFieldErrorMap,
-} from "@/modules/forms/domain/factories/create-error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/modules/forms/infrastructure/zod/derive-field-names-from-schema";
-import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/user.messages";
@@ -20,6 +9,17 @@ import { toUserRole } from "@/modules/users/lib/to-user-role";
 import { CreateUserFormSchema } from "@/modules/users/lib/user.schema";
 import { createUserDal } from "@/modules/users/server/infrastructure/dal/create";
 import { getAppDb } from "@/server-core/db/db.connection";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import {
+  createEmptyDenseFieldErrorMap,
+  selectSparseFieldErrors,
+  toDenseFieldErrorMap,
+} from "@/shared/forms/utilities/factories/create-error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 type CreateUserFormData = {

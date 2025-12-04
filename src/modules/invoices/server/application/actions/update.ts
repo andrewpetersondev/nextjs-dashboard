@@ -1,14 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import {
-  selectSparseFieldErrors,
-  toDenseFieldErrorMap,
-} from "@/modules/forms/domain/factories/create-error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
 import {
@@ -24,6 +15,15 @@ import {
   INVOICE_EVENTS,
 } from "@/server-core/events/invoice/invoice-event.types";
 import { AppError } from "@/shared/errors/core/app-error.class";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import {
+  selectSparseFieldErrors,
+  toDenseFieldErrorMap,
+} from "@/shared/forms/utilities/factories/create-error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

@@ -147,27 +147,6 @@
         "noParameterAssign": "on",
         "noParameterProperties": "on",
         "noProcessEnv": "on",
-        "noRestrictedImports": {
-          "level": "error",
-          "options": {
-            "patterns": [
-              {
-                "group": [
-                  "@/shared/config/env-shared",
-                  "../shared/config/env-shared",
-                  "../../shared/config/env-shared",
-                  "../../../shared/config/env-shared",
-                  "src/shared/config/env-shared"
-                ],
-                "message": "env-shared.ts can only be imported from env-next.ts and env-node.ts."
-              },
-              {
-                "group": ["node:process"],
-                "message": "Do not import node:process. Use the global `process` instead."
-              }
-            ]
-          }
-        },
         "noShoutyConstants": "on",
         "noSubstr": "on",
         "noUnusedTemplateLiteral": "on",
@@ -227,21 +206,6 @@
   },
   "overrides": [
     {
-      "includes": [
-        "devtools/**/*.{ts,tsx,js,cjs,mjs}",
-        "cypress.config.*",
-        "scripts/**/*.{ts,tsx,js,cjs,mjs}",
-        "src/db/**/*.{ts,tsx,js,cjs,mjs}"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noNodejsModules": "off"
-          }
-        }
-      }
-    },
-    {
       "includes": ["src/shared/**/*.{ts,tsx}"],
       "linter": {
         "rules": {
@@ -252,64 +216,20 @@
                 "patterns": [
                   {
                     "group": ["../**"],
-                    "message": "src/shared can only import within src/shared (or npm packages)."
+                    "message": "src/shared may only import from src/shared (or node_modules)."
                   },
                   {
-                    "group": ["@/features/**", "@/server/**", "@/ui/**"],
-                    "message": "src/shared cannot import from features, server, or ui."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "src/app/**/*.{ts,tsx}",
-        "src/features/**/*.{ts,tsx}",
-        "src/ui/**/*.{ts,tsx}",
-        "cypress/e2e/**/*.{ts,tsx}"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
                     "group": [
-                      "@/devtools/**",
-                      "../devtools/**",
-                      "../../devtools/**",
-                      "src/devtools/**"
+                      "@/app/**",
+                      "@/modules/**",
+                      "@/server-core/**",
+                      "@/shell/**"
                     ],
-                    "message": "Client/browser code must not import from devtools/**."
+                    "message": "src/shared cannot import from application-layer modules."
                   }
                 ]
               }
             }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "src/shared/config/env/public-env.client.ts",
-        "src/shared/config/env/env-shared.ts",
-        "src/server/config/env-next.ts",
-        "devtools/config/env-node.ts"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noProcessGlobal": "off"
-          },
-          "style": {
-            "noProcessEnv": "off",
-            "noRestrictedImports": "off"
           }
         }
       }
@@ -324,7 +244,12 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/features/**", "@/server/**"],
+                    "group": [
+                      "@/app/**",
+                      "@/modules/**",
+                      "@/server-core/**",
+                      "@/shell/**"
+                    ],
                     "message": "src/ui can import only from src/ui and src/shared (and npm packages)."
                   }
                 ]
@@ -335,7 +260,7 @@
       }
     },
     {
-      "includes": ["src/features/**/*.{ts,tsx}"],
+      "includes": ["src/modules/**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "style": {
@@ -344,28 +269,8 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/server/**", "../server/**", "../**/server/**"],
-                    "message": "src/features can import from src/features and src/shared, but not from src/server."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["src/features/*/components/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": ["@/server/**", "!@/server/*/*/actions/**"],
-                    "message": "Components may import only server actions from their matching feature: @/server/<feature>/actions/**"
+                    "group": ["@/app/**", "@/shell/**"],
+                    "message": "src/modules cannot import from src/app or src/shell."
                   }
                 ]
               }
@@ -395,19 +300,6 @@
       }
     },
     {
-      "includes": ["src/server/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "off",
-              "options": {}
-            }
-          }
-        }
-      }
-    },
-    {
       "includes": ["src/shared/config/**/*.ts"],
       "linter": {
         "rules": {
@@ -428,7 +320,7 @@
                       "../../shared/logging/logger.shared",
                       "../../shared/logging/logger.shared.ts"
                     ],
-                    "message": "config should not import the logger. references will be undefined at initialization time."
+                    "message": "config should not import the logger — it initializes too early."
                   }
                 ]
               }

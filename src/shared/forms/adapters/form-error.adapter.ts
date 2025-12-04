@@ -1,7 +1,7 @@
-import type { DenseFieldErrorMap } from "@/modules/forms/domain/types/error-maps.types";
-import type { FormErrorPayload } from "@/modules/forms/domain/types/form-result.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { getFieldErrors } from "@/shared/errors/guards/form-error.guards";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+import type { FormErrorPayload } from "@/shared/forms/types/form-result.types";
 
 /**
  * Adapts an AppError to a form payload with field errors and a message.

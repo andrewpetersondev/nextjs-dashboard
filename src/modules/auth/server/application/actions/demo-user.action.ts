@@ -4,9 +4,9 @@ import type { UserRole } from "@/modules/auth/domain/auth.roles";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { formError } from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
 import { getAppDb } from "@/server-core/db/db.connection";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { ROUTES } from "@/shared/routes/routes";
 
 const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";

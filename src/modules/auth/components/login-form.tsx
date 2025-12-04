@@ -8,10 +8,10 @@ import {
   LOGIN_FIELDS_LIST,
   type LoginField,
 } from "@/modules/auth/lib/auth.schema";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
-import { createInitialFailedFormState } from "@/modules/forms/infrastructure/create-initial-form-state";
-import { getFieldErrors } from "@/modules/forms/use-cases/get-field-errors";
-import { getFieldValues } from "@/modules/forms/use-cases/get-field-values";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
+import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 

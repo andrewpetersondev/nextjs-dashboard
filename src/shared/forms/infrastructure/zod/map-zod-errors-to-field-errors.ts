@@ -1,9 +1,9 @@
 import { z } from "zod";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/modules/forms/domain/factories/create-error-map.factory";
-import type { DenseFieldErrorMap } from "@/modules/forms/domain/types/error-maps.types";
+} from "@/shared/forms/utilities/factories/create-error-map.factory";
 
 /**
  * Build dense errors aligned to allowed fields from a {@link z.ZodError}.

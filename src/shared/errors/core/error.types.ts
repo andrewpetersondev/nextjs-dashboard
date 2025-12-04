@@ -1,12 +1,12 @@
 import type {
-  FieldErrors,
-  FormErrors,
-} from "@/modules/forms/domain/types/field-error.types";
-import type {
   AppErrorLayer,
   Severity,
 } from "@/shared/errors/core/error-definition.types";
 import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+import type {
+  FieldErrors,
+  FormErrors,
+} from "@/shared/forms/types/field-error.types";
 
 /**
  * Generic error metadata container.

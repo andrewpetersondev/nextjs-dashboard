@@ -1,8 +1,8 @@
 import type { z } from "zod";
-import { createEmptyDenseFieldErrorMap } from "@/modules/forms/domain/factories/create-error-map.factory";
-import type { DenseFieldErrorMap } from "@/modules/forms/domain/types/error-maps.types";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
 import { AppError } from "@/shared/errors/core/app-error.class";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { createEmptyDenseFieldErrorMap } from "@/shared/forms/utilities/factories/create-error-map.factory";
 import { Err } from "@/shared/result/result";
 
 /**

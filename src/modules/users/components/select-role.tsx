@@ -6,8 +6,8 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/domain/auth.roles";
-import { ErrorMessage } from "@/modules/forms/components/error-message";
-import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
+import { ErrorMessage } from "@/shared/forms/components/error-message";
+import type { FieldError } from "@/shared/forms/types/field-error.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 
 /**

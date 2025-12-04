@@ -1,13 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import {
-  formError,
-  formOk,
-} from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
-import { deriveFieldNamesFromSchema } from "@/modules/forms/infrastructure/zod/derive-field-names-from-schema";
-import { mapZodErrorToDenseFieldErrors } from "@/modules/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { isZodErrorInstance } from "@/modules/forms/infrastructure/zod/zod-guards";
 import type { InvoiceFormDto } from "@/modules/invoices/domain/dto";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
@@ -25,6 +17,14 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server-core/events/invoice/invoice-event.types";
+import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import {
+  formError,
+  formOk,
+} from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

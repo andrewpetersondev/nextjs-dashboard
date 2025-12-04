@@ -2,8 +2,8 @@
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/modules/auth/domain/auth.roles";
-import { formError } from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { Button } from "@/ui/atoms/button";
 
 interface DemoFormProps {

@@ -1,5 +1,5 @@
-import type { SparseFieldValueMap } from "@/modules/forms/domain/types/error-maps.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { SparseFieldValueMap } from "@/shared/forms/types/error-maps.types";
 
 /**
  * Safely extract echoed field values from an AppError.

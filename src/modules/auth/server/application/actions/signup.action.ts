@@ -12,11 +12,11 @@ import { executeAuthPipeline } from "@/modules/auth/server/application/actions/a
 import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { formError } from "@/modules/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
-import { validateForm } from "@/modules/forms/server/validate-form";
 import { getAppDb } from "@/server-core/db/db.connection";
-import { adaptAppErrorToFormPayload } from "@/shared/errors/adapters/forms/form-error.adapter";
+import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
+import { validateForm } from "@/shared/forms/server/validate-form";
+import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;
