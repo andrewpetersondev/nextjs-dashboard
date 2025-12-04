@@ -1,4 +1,3 @@
-// File: src/shared/config/env-schemas.ts
 import { z } from "zod";
 
 export const NODE_ENVIRONMENT_TUPLE = [

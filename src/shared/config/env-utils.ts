@@ -1,6 +1,11 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <usage in env config is acceptable> */
 /** biome-ignore-all lint/style/noProcessEnv: <usage in env config is acceptable> */
 
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
+
 /**
  * Type-safe env accessor.
  */
@@ -19,16 +24,41 @@ const ENV_VARIABLES_TUPLE = [
 export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
 
 /**
- * Get a required env var value or throw.
+ * Get a required env var value as a Result.
+ *
+ * @param key - The environment variable key to retrieve.
+ * @returns A Result containing the trimmed string value or an AppError if missing/empty.
  */
-export function getEnvVariable<K extends EnvVariables>(key: K): string {
+export function getEnvVariableResult<K extends EnvVariables>(
+  key: K,
+): Result<string, AppError> {
   console.log(`Retrieving env var: ${key}`);
   const value = process.env[key];
   if (!value || value.trim() === "") {
     console.log(`Env var ${key} is missing or empty`);
-    throw new Error(`Missing required environment variable: ${key}`);
+    return Err(
+      makeValidationError({
+        message: `Missing required environment variable: ${key}`,
+        metadata: { key },
+      }),
+    );
   }
-  return value.trim();
+  return Ok(value.trim());
+}
+
+/**
+ * Get a required env var value or throw.
+ *
+ * @param key - The environment variable key to retrieve.
+ * @returns The trimmed string value.
+ * @throws {Error} When the environment variable is missing or empty.
+ */
+export function getEnvVariable<K extends EnvVariables>(key: K): string {
+  const result = getEnvVariableResult(key);
+  if (result.ok) {
+    return result.value;
+  }
+  throw new Error(result.error.message);
 }
 
 /**
@@ -49,12 +79,14 @@ export function mapEnvVars<const T extends Record<string, EnvVariables>>(
 }
 
 /**
- * Validate required environment variables at startup.
- * Throws if any are missing or empty.
+ * Validate required environment variables as a Result.
+ *
+ * @param requiredVars - Array of environment variable keys to validate.
+ * @returns A Result containing void on success or an AppError listing missing variables.
  */
-export function validateEnv(
+export function validateEnvResult(
   requiredVars: readonly EnvVariables[] = ENV_VARIABLES_TUPLE,
-): void {
+): Result<void, AppError> {
   const missing: EnvVariables[] = [];
   for (const key of requiredVars) {
     const value = process.env[key];
@@ -65,9 +97,31 @@ export function validateEnv(
   if (missing.length > 0) {
     const errorMessage = `Missing required environment variables: ${missing.join(", ")}`;
     console.error(`❌ ${errorMessage}`);
-    throw new Error(errorMessage);
+    return Err(
+      makeValidationError({
+        message: errorMessage,
+        metadata: { missing },
+      }),
+    );
   }
   console.info("✅ Environment variables validated successfully");
+  return Ok(undefined);
+}
+
+/**
+ * Validate required environment variables at startup.
+ * Throws if any are missing or empty.
+ *
+ * @param requiredVars - Array of environment variable keys to validate.
+ * @throws {Error} When any required environment variables are missing or empty.
+ */
+export function validateEnv(
+  requiredVars: readonly EnvVariables[] = ENV_VARIABLES_TUPLE,
+): void {
+  const result = validateEnvResult(requiredVars);
+  if (!result.ok) {
+    throw new Error(result.error.message);
+  }
 }
 
 /**

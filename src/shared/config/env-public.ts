@@ -1,4 +1,3 @@
-// src/shared/config/env-public.ts
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
@@ -14,6 +13,13 @@ import {
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeInfrastructureError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Check if process.env is available (server-side).
@@ -23,45 +29,101 @@ function hasProcessEnv(): boolean {
 }
 
 /**
- * Resolve and validate NEXT_PUBLIC_NODE_ENV.
- * - Requires NEXT_PUBLIC_NODE_ENV to be set and valid ("development" | "test" | "production")
+ * Resolve and validate NEXT_PUBLIC_NODE_ENV as a Result.
+ *
+ * @returns A Result containing the validated NodeEnvironment or an AppError.
  */
-export function getPublicNodeEnv(): NodeEnvironment {
+export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!hasProcessEnv()) {
-    throw new Error("process.env is not available in this environment");
+    return Err(
+      makeInfrastructureError({
+        message: "process.env is not available in this environment",
+      }),
+    );
   }
   const raw = process.env.NEXT_PUBLIC_NODE_ENV;
   if (!raw) {
-    throw new Error(
-      "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
+    return Err(
+      makeValidationError({
+        message: "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
+        metadata: { key: "NEXT_PUBLIC_NODE_ENV" },
+      }),
     );
   }
   const result = NodeEnvironmentSchema.safeParse(raw.trim());
   if (!result.success) {
-    throw new Error(`Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`);
+    return Err(
+      makeValidationError({
+        message: `Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`,
+        metadata: { raw, zodError: result.error.issues },
+      }),
+    );
   }
-  return result.data;
+  return Ok(result.data);
+}
+
+/**
+ * Resolve and validate NEXT_PUBLIC_NODE_ENV.
+ * - Requires NEXT_PUBLIC_NODE_ENV to be set and valid ("development" | "test" | "production")
+ *
+ * @returns The validated NodeEnvironment.
+ * @throws {Error} When NEXT_PUBLIC_NODE_ENV is invalid or missing.
+ */
+export function getPublicNodeEnv(): NodeEnvironment {
+  const result = getPublicNodeEnvResult();
+  if (result.ok) {
+    return result.value;
+  }
+  throw new Error(result.error.message);
+}
+
+/**
+ * Resolve and validate NEXT_PUBLIC_LOG_LEVEL as a Result.
+ *
+ * @returns A Result containing the validated LogLevel or an AppError.
+ */
+export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
+  if (!hasProcessEnv()) {
+    return Err(
+      makeInfrastructureError({
+        message: "process.env is not available in this environment",
+      }),
+    );
+  }
+  const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
+  if (!raw) {
+    return Err(
+      makeValidationError({
+        message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
+        metadata: { key: "NEXT_PUBLIC_LOG_LEVEL" },
+      }),
+    );
+  }
+  const result = LogLevelSchema.safeParse(raw.trim());
+  if (!result.success) {
+    return Err(
+      makeValidationError({
+        message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
+        metadata: { raw, zodError: result.error.issues },
+      }),
+    );
+  }
+  return Ok(result.data);
 }
 
 /**
  * Resolve and validate NEXT_PUBLIC_LOG_LEVEL.
  * - Requires NEXT_PUBLIC_LOG_LEVEL to be set and valid
+ *
+ * @returns The validated LogLevel.
+ * @throws {Error} When NEXT_PUBLIC_LOG_LEVEL is invalid or missing.
  */
 export function getPublicLogLevel(): LogLevel {
-  if (!hasProcessEnv()) {
-    throw new Error("process.env is not available in this environment");
+  const result = getPublicLogLevelResult();
+  if (result.ok) {
+    return result.value;
   }
-  const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
-  if (!raw) {
-    throw new Error(
-      "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
-    );
-  }
-  const result = LogLevelSchema.safeParse(raw.trim());
-  if (!result.success) {
-    throw new Error(`Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`);
-  }
-  return result.data;
+  throw new Error(result.error.message);
 }
 
 /**
