@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     env: {
       // Load test environment variables
+      // biome-ignore lint/style/useNamingConvention: <ignore for now>
       NODE_ENV: "test",
     },
     // Default to node environment for server-side tests

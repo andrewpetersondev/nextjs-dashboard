@@ -72,7 +72,7 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
  * @returns FormResult with data, errors, message, and success
  */
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function updateInvoiceAction(
   _prevState: FormResult<UpdateInvoiceOutput>,
   id: string,

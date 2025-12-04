@@ -33,7 +33,7 @@ const fields = SIGNUP_FIELDS_LIST;
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,

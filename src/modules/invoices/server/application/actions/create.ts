@@ -33,7 +33,7 @@ const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
 /**
  * Server action for creating a new invoice.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function createInvoiceAction(
   _prevState: FormResult<CreateInvoiceOutput>,
   formData: FormData,

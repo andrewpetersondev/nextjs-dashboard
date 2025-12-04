@@ -15,7 +15,7 @@ public
 storage
 
 .gitignore
-biome.json
+# biome.json
 cypress.config.ts
 drizzle.config.ts
 eslint.config.mjs

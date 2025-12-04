@@ -119,7 +119,7 @@ export class SessionManager {
     }
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
   async rotate(): Promise<UpdateSessionResult> {
     try {
       const current = await this.cookie.get();
