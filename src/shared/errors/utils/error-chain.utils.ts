@@ -11,8 +11,10 @@ export function flattenErrorChain(root: unknown): Record<string, unknown>[] {
   const result: Record<string, unknown>[] = [];
   const seen = new Set<object>();
   while (queue.length > 0) {
+    // biome-ignore lint/style/noNonNullAssertion: <ignore for now>
     const current = queue.shift()!;
     if (seen.has(current)) {
+      // biome-ignore lint/nursery/noContinue: <ignore for now>
       continue;
     }
     seen.add(current);

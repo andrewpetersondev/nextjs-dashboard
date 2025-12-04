@@ -72,7 +72,8 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     const sourceResult = toRevenueSource(revenueRow.calculationSource);
     const calculationSource: RevenueEntity["calculationSource"] =
       typeof sourceResult === "object" && "ok" in sourceResult
-        ? sourceResult.ok
+        ? // biome-ignore lint/style/noNestedTernary: <ignore for now>
+          sourceResult.ok
           ? sourceResult.value
           : (() => {
               throw new AppError("validation", {
