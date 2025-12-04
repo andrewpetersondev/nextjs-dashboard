@@ -2,7 +2,6 @@ import { AppError } from "@/shared/errors/core/app-error.class";
 import type {
   AppErrorOptions,
   DatabaseErrorMetadata,
-  FormErrorMetadata,
 } from "@/shared/errors/core/error.types";
 import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
 
@@ -19,9 +18,7 @@ export function makeAppError(
 /**
  * Convenience factory for validation errors with form metadata.
  */
-export function makeValidationError(
-  options: AppErrorOptions & { metadata: FormErrorMetadata },
-): AppError {
+export function makeValidationError(options: AppErrorOptions = {}): AppError {
   return makeAppError("validation", options);
 }
 
@@ -68,12 +65,4 @@ export function makeDatabaseError(
  */
 export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
   return makeAppError("integrity", options);
-}
-
-/**
- * Type guard for narrowing to `AppError`.
- * @remarks use `AppError.isAppError(error)` instead.
- */
-export function isAppError(error: unknown): error is AppError {
-  return AppError.isAppError(error);
 }

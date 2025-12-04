@@ -1,5 +1,10 @@
 // src/shared/errors/utils/serialization.utils.ts
 import { isDev } from "@/shared/config/env-shared";
+import { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result.types";
+import { tryCatch } from "@/shared/result/sync/result-sync";
+
+const JSON_PREVIEW_MAX_LENGTH = 100;
 
 function isSerializable(value: unknown): boolean {
   try {
@@ -8,6 +13,52 @@ function isSerializable(value: unknown): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Safely stringify a value to JSON, returning a Result.
+ *
+ * @param value - The value to stringify.
+ * @param replacer - Optional replacer function for JSON.stringify.
+ * @param space - Optional space parameter for JSON.stringify.
+ * @returns A Result containing the JSON string or an AppError.
+ */
+export function safeStringifyResult(
+  value: unknown,
+  replacer?: (key: string, val: unknown) => unknown,
+  space?: string | number,
+): Result<string, AppError> {
+  return tryCatch(
+    () => JSON.stringify(value, replacer, space),
+    (error) =>
+      new AppError("validation", {
+        message: "Failed to stringify value to JSON",
+        metadata: { error: String(error) },
+      }),
+  );
+}
+
+/**
+ * Safely parse a JSON string, returning a Result.
+ *
+ * @typeParam T - The expected type of the parsed value.
+ * @param json - The JSON string to parse.
+ * @returns A Result containing the parsed value or an AppError.
+ */
+export function safeParseJsonResult<T = unknown>(
+  json: string,
+): Result<T, AppError> {
+  return tryCatch(
+    () => JSON.parse(json) as T,
+    (error) =>
+      new AppError("validation", {
+        message: "Failed to parse JSON string",
+        metadata: {
+          error: String(error),
+          jsonPreview: json.slice(0, JSON_PREVIEW_MAX_LENGTH),
+        },
+      }),
+  );
 }
 
 export function safeStringifyUnknown(value: unknown): string {

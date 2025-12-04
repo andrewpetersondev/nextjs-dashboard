@@ -3,7 +3,7 @@ import type {
   FormResult,
   FormSuccess,
 } from "@/modules/forms/domain/types/form-result.types";
-import { isAppError } from "@/shared/errors/factories/app-error.factory";
+import { isAppError } from "@/shared/errors/guards/error.guards";
 
 /**
  * Extracts message and success status from various result types.

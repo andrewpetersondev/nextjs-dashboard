@@ -1,7 +1,7 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { ErrorMetadata } from "@/shared/errors/core/error.types";
-import { isAppError } from "@/shared/errors/factories/app-error.factory";
+import { isAppError } from "@/shared/errors/guards/error.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,
