@@ -6,11 +6,11 @@ import type {
 } from "@/modules/invoices/domain/entity";
 import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
 import { entityToInvoiceDto } from "@/modules/invoices/server/infrastructure/adapters/codecs/invoice-codecs";
+import { BaseRepository } from "@/modules/invoices/server/infrastructure/repository/base-repository";
 import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/create";
 import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/delete";
 import { readInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/read";
 import { updateInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/update";
-import { BaseRepository } from "@/server-core/repository/base-repository";
 import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

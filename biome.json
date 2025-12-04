@@ -328,6 +328,31 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "src/ui/**/*.{ts,tsx}",
+        "src/shell/**/*.{ts,tsx}",
+        "src/modules/**/components/**/*.{ts,tsx}",
+        "src/modules/**/hooks/**/*.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/server-core/db/schema/**"],
+                    "message": "Client/UI code cannot import sensitive DB schema files from server-core. Use types or DTOs instead."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "root": true,
