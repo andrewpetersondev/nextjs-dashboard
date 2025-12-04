@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { CustomersTableMobileRow } from "@/modules/customers/components/CustomersTableMobileRow";
+import { CustomersTableMobileRow } from "@/modules/customers/components/customers-table-mobile-row";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 
 /**

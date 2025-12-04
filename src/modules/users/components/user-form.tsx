@@ -1,12 +1,12 @@
 import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
+import { FormActionRow } from "@/modules/forms/components/form-action-row";
+import { FormSubmitButton } from "@/modules/forms/components/form-submit-button";
 import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
 import { ServerMessage } from "@/modules/users/components/server-message";
 import { UserFields } from "@/modules/users/components/user-fields";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { H1 } from "@/ui/atoms/typography/headings";
-import { FormActionRow } from "@/ui/forms/form-action-row";
-import { FormSubmitButton } from "@/ui/forms/form-submit-button";
 import { TYPING_MS } from "@/ui/timings.tokens";
 
 // Make the form generic over field names to support both create and edit flows

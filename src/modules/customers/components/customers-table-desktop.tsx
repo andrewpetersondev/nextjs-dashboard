@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { CustomersTableDesktopRow } from "@/modules/customers/components/CustomersTableDesktopRow";
+import { CustomersTableDesktopRow } from "@/modules/customers/components/customers-table-desktop-row";
 import { CUSTOMER_TABLE_HEADERS } from "@/modules/customers/domain/constants";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 

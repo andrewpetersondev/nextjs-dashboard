@@ -6,9 +6,9 @@
 
 import { type JSX, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
+import { ErrorMessage } from "@/modules/forms/components/error-message";
 import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
-import { ErrorMessage } from "@/ui/forms/error-message";
 
 /**
  * Props for the CustomerSelect component.

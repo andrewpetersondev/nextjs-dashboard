@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
-import { FieldErrorComponent } from "@/ui/forms/field-error-component";
+import { FieldErrorComponent } from "@/modules/forms/components/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 /**

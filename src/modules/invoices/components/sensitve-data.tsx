@@ -1,7 +1,7 @@
 import { type JSX, useId } from "react";
+import { ErrorMessage } from "@/modules/forms/components/error-message";
 import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import { Label } from "@/ui/atoms/label";
-import { ErrorMessage } from "@/ui/forms/error-message";
 
 /**
  * Controlled component because it has a default value of ""

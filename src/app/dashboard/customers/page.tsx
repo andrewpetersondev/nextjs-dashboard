@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { CustomersTable } from "@/modules/customers/components/CustomersTable";
+import { CustomersTable } from "@/modules/customers/components/customers-table";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 
 import { readFilteredCustomersAction } from "@/modules/customers/server/application/actions/read-filtered";

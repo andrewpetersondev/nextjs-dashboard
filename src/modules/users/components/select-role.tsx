@@ -6,9 +6,9 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/domain/auth.roles";
+import { ErrorMessage } from "@/modules/forms/components/error-message";
 import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
-import { ErrorMessage } from "@/ui/forms/error-message";
 
 /**
  * Role option type for select menu.
