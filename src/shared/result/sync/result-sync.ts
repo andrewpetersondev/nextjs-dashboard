@@ -3,18 +3,20 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 /**
- * Executes a function and catches any thrown errors, mapping them to a specified error type.
+ * Executes a synchronous function and converts thrown values into a mapped `Err`.
  *
- * @typeParam Tvalue - The type of the value returned by the function.
- * @typeParam Terror - The type of the error returned by the mapping function.
+ * @typeParam Tv - The return value type of the function.
+ * @typeParam Te - The error type produced by `mapError`, must extend `AppError`.
  * @param fn - The function to execute.
- * @param mapError - A callback to convert thrown errors into a specific error type.
- * @returns A `Result` object containing either the value or the mapped error.
+ * @param mapError - A callback that maps any thrown value to a `Te` error.
+ * @returns A `Result<Tv, Te>` which is `Ok` with the function return value or `Err` with the mapped error.
+ * @example
+ * const res = tryCatch(() => compute(), (e) => ({ code: 'ERR', message: String(e) }));
  */
-export function tryCatch<Tvalue, Terror extends AppError>(
-  fn: () => Tvalue,
-  mapError: (e: unknown) => Terror,
-): Result<Tvalue, Terror> {
+export function tryCatch<Tv, Te extends AppError>(
+  fn: () => Tv,
+  mapError: (e: unknown) => Te,
+): Result<Tv, Te> {
   try {
     return Ok(fn());
   } catch (e) {
@@ -23,45 +25,56 @@ export function tryCatch<Tvalue, Terror extends AppError>(
 }
 
 /**
- * Creates a `Result` object from a potentially nullable value.
+ * Constructs a `Result` from a nullable value.
  *
- * @typeParam Tvalue - The type of the expected value.
- * @typeParam Terror - The type of error to return, extending `AppError`.
- * @param v - The value which may be `null` or `undefined`.
- * @param onNull - A callback that returns an error when the value is `null` or `undefined`.
- * @returns A `Result` containing a value if `v` is non-null, otherwise an error.
+ * @typeParam Tv - The expected non-null value type.
+ * @typeParam Te - The error type produced by `onNull`, must extend `AppError`.
+ * @param v - The value that may be `null` or `undefined`.
+ * @param onNull - A callback that produces a `Te` error when `v` is `null` or `undefined`.
+ * @returns `Ok(v)` when `v` is non-null/undefined, otherwise `Err(onNull())`.
  * @example
- * const result = fromNullable(value, () => new AppError('Value is null or undefined'));
+ * const res = fromNullable(value, () => ({ code: 'MISSING', message: 'value missing' }));
  */
-export const fromNullable = <Tvalue, Terror extends AppError>(
-  v: Tvalue | null | undefined,
-  onNull: () => Terror,
-): Result<Tvalue, Terror> => (v == null ? Err(onNull()) : Ok(v));
+export const fromNullable = <Tv, Te extends AppError>(
+  v: Tv | null | undefined,
+  onNull: () => Te,
+): Result<Tv, Te> => (v == null ? Err(onNull()) : Ok(v));
 
 /**
- * Creates a `Result` based on the evaluation of a predicate function.
+ * Builds a `Result` by testing a value against a predicate.
  *
- * @typeParam Tvalue - The type of the input value to evaluate.
- * @typeParam Terror - The type of the error to return.
- * @param value - The value to be checked against the predicate.
- * @param predicate - A function that returns `true` if the value satisfies a condition.
- * @param onFail - A function that generates an error when the predicate fails.
- * @returns A `Result` containing the value if the predicate passes, or an error otherwise.
+ * @typeParam Tv - The input value type.
+ * @typeParam Te - The error type produced by `onFail`, must extend `AppError`.
+ * @param value - The value to validate with `predicate`.
+ * @param predicate - A function that returns `true` when the value satisfies the condition.
+ * @param onFail - A function that produces a `Te` error when the predicate returns `false`.
+ * @returns `Ok(value)` if `predicate(value)` is `true`, otherwise `Err(onFail(value))`.
  */
-export const fromPredicate = <Tvalue, Terror extends AppError>(
-  value: Tvalue,
-  predicate: (v: Tvalue) => boolean,
-  onFail: (v: Tvalue) => Terror,
-): Result<Tvalue, Terror> =>
-  predicate(value) ? Ok(value) : Err(onFail(value));
+export const fromPredicate = <Tv, Te extends AppError>(
+  value: Tv,
+  predicate: (v: Tv) => boolean,
+  onFail: (v: Tv) => Te,
+): Result<Tv, Te> => (predicate(value) ? Ok(value) : Err(onFail(value)));
 
-// Guard-based variant
+/**
+ * Guard-based variant of `fromPredicate` that narrows the value type when the guard passes.
+ *
+ * @typeParam Ti - The input value type.
+ * @typeParam To - The narrowed output type when `guard` returns `true`; must extend `Ti`.
+ * @typeParam Te - The error type produced by `onFail`, must extend `AppError`.
+ * @param value - The value to test with the type guard.
+ * @param guard - A type guard that asserts `value` is `To`.
+ * @param onFail - A function that produces a `Te` error when the guard fails.
+ * @returns `Ok(value)` typed as `To` when the guard passes, otherwise `Err(onFail(value))`.
+ * @example
+ * const res = fromGuard<unknown, string, AppError>(val, (v): v is string => typeof v === 'string', v => ({ code: 'TYPE', message: 'not a string' }));
+ */
 export const fromGuard = /* @__PURE__ */ <
-  Tin,
-  Tout extends Tin,
-  Terror extends AppError,
+  Ti,
+  To extends Ti,
+  Te extends AppError,
 >(
-  value: Tin,
-  guard: (v: Tin) => v is Tout,
-  onFail: (v: Tin) => Terror,
-): Result<Tout, Terror> => (guard(value) ? Ok(value) : Err(onFail(value)));
+  value: Ti,
+  guard: (v: Ti) => v is To,
+  onFail: (v: Ti) => Te,
+): Result<To, Te> => (guard(value) ? Ok(value) : Err(onFail(value)));

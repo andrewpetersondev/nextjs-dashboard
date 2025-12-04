@@ -34,8 +34,6 @@ export function createInitialFailedFormState<T extends string>(
  * @typeParam S - The Zod schema describing the shape of the form.
  * @param schema - The Zod object schema used to determine the form fields.
  * @returns An initial failed form state with all fields initialized.
- * @public
- * TODO: EVALUATE BY 10/11/2025
  */
 export function createInitialFailedFormStateFromSchema<
   S extends z.ZodObject<z.ZodRawShape>,

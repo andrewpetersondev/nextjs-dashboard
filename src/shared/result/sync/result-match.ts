@@ -4,15 +4,13 @@ import type { Result } from "@/shared/result/result.types";
 /**
  * Extracts the value from a successful `Result` or throws the associated error if unsuccessful.
  *
- * @typeParam Tvalue - The type of the value in case of success.
- * @typeParam Terror - The type of the error, extending `AppError`.
+ * @typeParam T - The type of the value in case of success.
+ * @typeParam E - The type of the error, extending `AppError`.
  * @param r - A `Result` object containing either a success value or an error.
- * @returns The value of type `Tvalue` if the result is successful.
- * @throws The error of type `Terror` if the result is unsuccessful.
+ * @returns The contained value of type `T` when `r.ok` is true.
+ * @throws The error of type `E` when `r.ok` is false.
  */
-export const unwrapOrThrow = <Tvalue, Terror extends AppError>(
-  r: Result<Tvalue, Terror>,
-): Tvalue => {
+export const unwrapOrThrow = <T, E extends AppError>(r: Result<T, E>): T => {
   if (r.ok) {
     return r.value;
   }
@@ -22,66 +20,73 @@ export const unwrapOrThrow = <Tvalue, Terror extends AppError>(
 /**
  * Returns the value from a `Result` if `ok`, otherwise returns the provided fallback.
  *
- * @typeParam Tvalue - The type of the successful result value.
- * @typeParam Terror - The type of the error, extending `AppError`.
+ * @typeParam T - The type of the successful result value.
+ * @typeParam E - The type of the error, extending `AppError`.
  * @param fallback - The default value to return if the `Result` is not `ok`.
- * @returns The value from the `Result` or the fallback value.
+ * @returns A function that accepts a `Result<T, E>` and returns `T` or the `fallback`.
  * @example
- * const result = unwrapOr(42)(someResult);
+ * const valueOr42 = unwrapOr(42);
+ * const result = valueOr42(someResult);
  */
 export const unwrapOr =
   /* @__PURE__ */
-    <Tvalue, Terror extends AppError>(fallback: Tvalue) =>
+    <T, E extends AppError>(fallback: T) =>
     /* @__PURE__ */
-    (r: Result<Tvalue, Terror>): Tvalue =>
+    (r: Result<T, E>): T =>
       r.ok ? r.value : fallback;
 
 /**
  * Returns the value of a successful `Result` or computes a fallback value using the provided function.
  *
- * @typeParam Tvalue - The type of the successful value contained in the `Result`.
- * @typeParam Terror - The type of the error contained in the `Result`, extending `AppError`.
- * @param fallback - A function that computes a fallback value based on the `Terror`.
- * @returns The value if the `Result` is successful, otherwise the value returned by the `fallback` function.
+ * @typeParam T - The type of the successful value contained in the `Result`.
+ * @typeParam E - The type of the error contained in the `Result`, extending `AppError`.
+ * @param fallback - A function that computes a fallback value from the error `E`.
+ * @returns A function that accepts a `Result<T, E>` and returns `T` either from the result or computed via `fallback`.
  * @example
- * ```ts
- * const result = unwrapOrElse((error) => defaultValue)(someResult);
- * ```
+ * const valueFromErr = unwrapOrElse((err) => defaultValue);
+ * const result = valueFromErr(someResult);
  */
 export const unwrapOrElse =
   /* @__PURE__ */
-    <Tvalue, Terror extends AppError>(fallback: (e: Terror) => Tvalue) =>
+    <T, E extends AppError>(fallback: (e: E) => T) =>
     /* @__PURE__ */
-    (r: Result<Tvalue, Terror>): Tvalue =>
+    (r: Result<T, E>): T =>
       r.ok ? r.value : fallback(r.error);
 
 /**
  * Matches a `Result` and applies the appropriate callback based on its state.
  *
- * @typeParam Tvalue - The type of the successful result's value.
- * @typeParam Terror - The type of the error, extending `AppError`.
- * @typeParam Tout - The return type of the callback functions.
+ * @typeParam T - The type of the successful result's value.
+ * @typeParam E - The type of the error, extending `AppError`.
+ * @typeParam O - The return type of the callback functions.
  * @param r - The `Result` object to match.
- * @param onOk - Callback invoked with the value if `r` is successful.
- * @param onErr - Callback invoked with the error if `r` is an error.
- * @returns The result of the invoked callback.
+ * @param onOk - Callback invoked with the value when `r` is `Ok`.
+ * @param onErr - Callback invoked with the error when `r` is `Err`.
+ * @returns The return value of either `onOk` or `onErr`.
  * @example
- * const result = Result.ok(42);
- * const message = matchResult(result, value => `Value is ${value}`, err => `Error: ${err.message}`);
+ * const message = matchResult(result, v => `Value: ${v}`, e => `Error: ${e.message}`);
  */
-export const matchResult = /* @__PURE__ */ <
-  Tvalue,
-  Terror extends AppError,
-  Tout,
->(
-  r: Result<Tvalue, Terror>,
-  onOk: (v: Tvalue) => Tout,
-  onErr: (e: Terror) => Tout,
-): Tout => (r.ok ? onOk(r.value) : onErr(r.error));
+export const matchResult = /* @__PURE__ */ <T, E extends AppError, O>(
+  r: Result<T, E>,
+  onOk: (v: T) => O,
+  onErr: (e: E) => O,
+): O => (r.ok ? onOk(r.value) : onErr(r.error));
 
-// Exhaustive match with constant outputs
+/**
+ * Exhaustive match that returns a constant output based on the `Result` state.
+ *
+ * @typeParam T - The type of the successful result's value.
+ * @typeParam E - The type of the error, extending `AppError`.
+ * @typeParam O - The constant output type for both branches.
+ * @param onOk - Constant value to return when `r` is `Ok`.
+ * @param onErr - Constant value to return when `r` is `Err`.
+ * @returns A function that accepts a `Result<T, E>` and returns either `onOk` or `onErr`.
+ * @example
+ * const toBool = matchTo(true, false);
+ * const flag = toBool(result);
+ */
 export const matchTo =
   /* @__PURE__ */
-    <Tvalue, Terror extends AppError, Tout>(onOk: Tout, onErr: Tout) =>
-    (r: Result<Tvalue, Terror>): Tout =>
+    <T, E extends AppError, O>(onOk: O, onErr: O) =>
+    (r: Result<T, E>): O =>
       r.ok ? onOk : onErr;
