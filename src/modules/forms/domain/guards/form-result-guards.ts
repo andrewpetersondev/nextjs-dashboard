@@ -1,8 +1,8 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/types/form-result.types";
+} from "@/modules/forms/domain/types/form-result.types";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result.types";
 
 /**

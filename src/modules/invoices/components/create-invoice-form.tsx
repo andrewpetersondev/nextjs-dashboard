@@ -1,6 +1,10 @@
 "use client";
 import { type JSX, useActionState, useEffect, useId, useState } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
+import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
+import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
+import { createInitialFailedFormState } from "@/modules/forms/infrastructure/create-initial-form-state";
+import { getFieldErrors } from "@/modules/forms/use-cases/get-field-errors";
 import { CustomerSelect } from "@/modules/invoices/components/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/components/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/components/invoice-date";
@@ -14,10 +18,6 @@ import {
   CreateInvoiceSchema,
 } from "@/modules/invoices/lib/invoice.schema";
 import { createInvoiceAction } from "@/modules/invoices/server/application/actions/create";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import { getFieldErrors } from "@/shared/forms/use-cases/get-field-errors";
 import { Label } from "@/ui/atoms/label";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";

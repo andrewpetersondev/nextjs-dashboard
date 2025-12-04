@@ -3,6 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { asPasswordHash } from "@/modules/auth/domain/password.types";
 import { hashWithSaltRounds } from "@/modules/auth/server/infrastructure/adapters/password-hasher-bcrypt.adapter";
+import { createEmptyDenseFieldErrorMap } from "@/modules/forms/domain/factories/create-error-map.factory";
+import {
+  formError,
+  formOk,
+} from "@/modules/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
+import { resolveCanonicalFieldNamesFromSchema } from "@/modules/forms/infrastructure/zod/resolve-canonical-field-names";
+import { validateForm } from "@/modules/forms/server/validate-form";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
@@ -18,15 +26,7 @@ import {
 import { readUserDal } from "@/modules/users/server/infrastructure/dal/read";
 import { updateUserDal } from "@/modules/users/server/infrastructure/dal/update";
 import { getAppDb } from "@/server-core/db/db.connection";
-import { validateForm } from "@/server-core/forms/validate-form";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
-import {
-  formError,
-  formOk,
-} from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

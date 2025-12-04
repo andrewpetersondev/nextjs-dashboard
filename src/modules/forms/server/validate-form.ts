@@ -1,22 +1,22 @@
 import "server-only";
 import type { z } from "zod";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/domain/factories/create-error-map.factory";
+import { createEmptyDenseFieldErrorMap } from "@/modules/forms/domain/factories/create-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/domain/factories/create-form-result.factory";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
+} from "@/modules/forms/domain/factories/create-form-result.factory";
+import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
+import { mapZodErrorToDenseFieldErrors } from "@/modules/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { resolveCanonicalFieldNamesFromSchema } from "@/modules/forms/infrastructure/zod/resolve-canonical-field-names";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod/zod-guards";
-import { resolveRawFieldPayload } from "@/shared/forms/use-cases/resolve-field-payload";
+} from "@/modules/forms/infrastructure/zod/zod-guards";
+import { resolveRawFieldPayload } from "@/modules/forms/use-cases/resolve-field-payload";
 import {
   type FormValidationOptions,
   resolveFormValidationOptions,
-} from "@/shared/forms/use-cases/resolve-form-validation-options";
+} from "@/modules/forms/use-cases/resolve-form-validation-options";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

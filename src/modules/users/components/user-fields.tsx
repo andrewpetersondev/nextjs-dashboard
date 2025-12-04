@@ -5,10 +5,10 @@ import {
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { useId } from "react";
+import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import { SelectRole } from "@/modules/users/components/select-role";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import type { CreateUserFormFieldNames } from "@/modules/users/lib/user.schema";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import { Label } from "@/ui/atoms/label";
 import { InputField } from "@/ui/molecules/input-field";
 

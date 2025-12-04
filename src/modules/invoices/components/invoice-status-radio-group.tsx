@@ -1,7 +1,7 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
+import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
 import { ErrorMessage } from "@/ui/forms/error-message";
 
 /**

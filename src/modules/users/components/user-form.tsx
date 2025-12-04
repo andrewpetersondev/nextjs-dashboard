@@ -1,9 +1,9 @@
 import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
+import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
+import type { FormResult } from "@/modules/forms/domain/types/form-result.types";
 import { ServerMessage } from "@/modules/users/components/server-message";
 import { UserFields } from "@/modules/users/components/user-fields";
 import type { UserDto } from "@/modules/users/domain/user.dto";
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
-import type { FormResult } from "@/shared/forms/domain/types/form-result.types";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { FormActionRow } from "@/ui/forms/form-action-row";
 import { FormSubmitButton } from "@/ui/forms/form-submit-button";

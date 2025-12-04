@@ -1,4 +1,4 @@
-import type { FieldError } from "@/shared/forms/domain/types/field-error.types";
+import type { FieldError } from "@/modules/forms/domain/types/field-error.types";
 
 /**
  * A sparse map of field errors, where only fields with errors are present.

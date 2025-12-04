@@ -2,17 +2,17 @@
  * Factories for creating form results and form errors.
  */
 
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/domain/types/error-maps.types";
+} from "@/modules/forms/domain/types/error-maps.types";
 import type {
   FormResult,
   FormSuccess,
-} from "@/shared/forms/domain/types/form-result.types";
+} from "@/modules/forms/domain/types/form-result.types";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
 import { Err, Ok } from "@/shared/result/result";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
