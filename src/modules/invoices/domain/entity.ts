@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 

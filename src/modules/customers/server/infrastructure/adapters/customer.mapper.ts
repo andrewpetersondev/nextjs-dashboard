@@ -1,13 +1,11 @@
 import "server-only";
 
 import type {
+  CustomerAggregatesRowRaw,
   CustomerAggregatesServerDto,
+  CustomerSelectRowRaw,
   CustomerSelectServerDto,
 } from "@/modules/customers/domain/types";
-import type {
-  CustomerAggregatesRowRaw,
-  CustomerSelectRowRaw,
-} from "@/modules/customers/server/domain/types";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
 
 /**

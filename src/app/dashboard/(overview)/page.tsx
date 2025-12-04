@@ -11,7 +11,7 @@ import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/constants";
 import {
   readInvoicesSummary,
   readLatestInvoices,
-} from "@/modules/invoices/server/domain/queries";
+} from "@/modules/invoices/domain/queries";
 import { getValidUserRole } from "@/modules/users/lib/get-valid-user-role";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";

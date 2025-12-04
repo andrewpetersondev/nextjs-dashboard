@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { asPasswordHash } from "@/modules/auth/domain/password.types";
 import { hashWithSaltRounds } from "@/modules/auth/server/infrastructure/adapters/password-hasher-bcrypt.adapter";
+import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import {
@@ -14,7 +15,6 @@ import {
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/modules/users/lib/user.schema";
-import type { UserUpdatePatch } from "@/modules/users/server/domain/types";
 import { readUserDal } from "@/modules/users/server/infrastructure/dal/read";
 import { updateUserDal } from "@/modules/users/server/infrastructure/dal/update";
 import { getAppDb } from "@/server-core/db/db.connection";

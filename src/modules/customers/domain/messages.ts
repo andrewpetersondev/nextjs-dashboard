@@ -1,5 +1,3 @@
-import "server-only";
-
 /**
  * Centralized error messages for the server/customers layer.
  * Keeps DAL/Repo decoupled from feature-level messages.

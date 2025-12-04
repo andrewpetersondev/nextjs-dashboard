@@ -1,7 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
+import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import type { UserDto } from "@/modules/users/domain/user.dto";
-import type { UserUpdatePatch } from "@/modules/users/server/domain/types";
 import {
   userDbRowToEntity,
   userEntityToDto,

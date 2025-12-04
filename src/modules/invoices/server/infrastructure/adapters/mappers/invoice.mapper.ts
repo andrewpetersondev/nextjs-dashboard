@@ -1,11 +1,11 @@
 import "server-only";
 import { isValid } from "date-fns";
-import { toInvoiceStatus } from "@/modules/invoices/lib/invoice-status.mapper";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
   InvoiceServiceEntity,
-} from "@/modules/invoices/server/domain/entity";
+} from "@/modules/invoices/domain/entity";
+import { toInvoiceStatus } from "@/modules/invoices/lib/invoice-status.mapper";
 import type { InvoiceRow } from "@/server-core/db/schema/invoices";
 import {
   toCustomerId,

@@ -1,10 +1,10 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
 import type {
   InvoiceFormPartialEntity,
   InvoiceServiceEntity,
-} from "@/modules/invoices/server/domain/entity";
+} from "@/modules/invoices/domain/entity";
+import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
 import { entityToInvoiceDto } from "@/modules/invoices/server/infrastructure/adapters/codecs/invoice-codecs";
 import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/create";
 import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/delete";

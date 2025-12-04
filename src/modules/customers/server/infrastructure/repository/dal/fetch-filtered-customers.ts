@@ -1,7 +1,7 @@
 import "server-only";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
-import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/server/domain/messages";
-import type { CustomerAggregatesRowRaw } from "@/modules/customers/server/domain/types";
+import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
+import type { CustomerAggregatesRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { customers } from "@/server-core/db/schema/customers";
 import { invoices } from "@/server-core/db/schema/invoices";
