@@ -1,5 +1,3 @@
-// src/server/auth/logging/auth-log.ts
-import "server-only";
 import type {
   AuthLogKind,
   AuthLogLayer,

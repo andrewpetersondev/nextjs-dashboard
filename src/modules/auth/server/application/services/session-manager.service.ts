@@ -1,22 +1,22 @@
 import "server-only";
 import type { UserRole } from "@/modules/auth/domain/auth.roles";
-import type {
-  SessionPort,
-  SessionTokenCodecPort,
-} from "@/modules/auth/server/application/ports/session.port";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/server/domain/session/constants";
-import { userIdCodec } from "@/modules/auth/server/domain/session/schema";
-import type { UpdateSessionResult } from "@/modules/auth/server/domain/session/types";
+} from "@/modules/auth/domain/sessions/session.constants";
+import { userIdCodec } from "@/modules/auth/domain/sessions/session.schemas";
 import {
   absoluteLifetime,
   buildSessionCookieOptions,
   timeLeftMs,
-} from "@/modules/auth/server/domain/session/utils";
+} from "@/modules/auth/domain/sessions/session.utils";
+import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
+import type {
+  SessionPort,
+  SessionTokenCodecPort,
+} from "@/modules/auth/server/application/ports/session.port";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";

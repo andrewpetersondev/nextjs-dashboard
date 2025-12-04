@@ -1,5 +1,3 @@
-// Switch to Zod 4.1 Codecs for bidirectional userId transformation and tighten types with .pipe()
-import "server-only";
 import { z } from "zod";
 import { roleSchema } from "@/modules/users/lib/user.schema";
 import type { UserId } from "@/shared/branding/brands";

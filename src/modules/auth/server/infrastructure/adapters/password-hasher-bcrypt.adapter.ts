@@ -4,8 +4,8 @@ import {
   asPasswordHash,
   type PasswordHash,
 } from "@/modules/auth/domain/password.types";
+import { SALT_ROUNDS } from "@/modules/auth/domain/sessions/session.constants";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
-import { SALT_ROUNDS } from "@/modules/auth/server/domain/session/constants";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 const genSalt = async (rounds: number): Promise<string> =>

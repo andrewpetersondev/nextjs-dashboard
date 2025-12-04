@@ -1,7 +1,7 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/server/domain/session/constants";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/domain/sessions/session.constants";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

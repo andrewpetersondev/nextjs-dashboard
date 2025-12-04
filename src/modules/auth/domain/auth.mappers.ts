@@ -1,5 +1,4 @@
-import "server-only";
-import type { AuthUserTransport } from "@/modules/auth/server/domain/auth.types";
+import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
 import { toUserRole } from "@/modules/users/lib/to-user-role";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 

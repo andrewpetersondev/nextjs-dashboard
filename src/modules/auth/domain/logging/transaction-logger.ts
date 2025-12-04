@@ -1,5 +1,3 @@
-// src/server/auth/logging/transaction-logger.ts
-import "server-only";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 
 /**

@@ -1,4 +1,3 @@
-import "server-only";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
@@ -7,7 +6,7 @@ import {
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
   SESSION_COOKIE_SECURE_FALLBACK,
-} from "@/modules/auth/server/domain/session/constants";
+} from "@/modules/auth/domain/sessions/session.constants";
 import { isProd } from "@/shared/config/env-shared";
 
 /** Compute absolute lifetime status from immutable sessionStart. */

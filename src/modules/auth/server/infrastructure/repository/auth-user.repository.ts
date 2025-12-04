@@ -1,13 +1,13 @@
 // src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import { TransactionLogger } from "@/modules/auth/domain/logging/transaction-logger";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/server/domain/auth.types";
+} from "@/modules/auth/domain/auth.types";
+import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
+import { TransactionLogger } from "@/modules/auth/domain/logging/transaction-logger";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/repository/dal/insert-user.dal";
 import {

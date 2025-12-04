@@ -5,8 +5,8 @@ import {
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/modules/auth/server/domain/session/constants";
-import type { FlatEncryptPayload } from "@/modules/auth/server/domain/session/types";
+} from "@/modules/auth/domain/sessions/session.constants";
+import type { FlatEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

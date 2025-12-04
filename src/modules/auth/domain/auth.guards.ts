@@ -1,4 +1,3 @@
-import "server-only";
 import type { SignupData } from "@/modules/auth/lib/auth.schema";
 
 /**

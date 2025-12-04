@@ -1,5 +1,3 @@
-// src/server/auth/logging/auth-logging.types.ts
-import "server-only";
 import type { LogOperationMetadata } from "@/shared/logging/core/logger.types";
 
 export type AuthLogLayer =

@@ -1,8 +1,8 @@
 // src/server/auth/infrastructure/repository/dal/insert-user.dal.ts
 import "server-only";
 
+import type { AuthSignupPayload } from "@/modules/auth/domain/auth.types";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import type { AuthSignupPayload } from "@/modules/auth/server/domain/auth.types";
 import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type NewUserRow, users } from "@/server-core/db/schema";

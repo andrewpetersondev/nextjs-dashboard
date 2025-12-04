@@ -3,7 +3,7 @@ import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/server/domain/auth.types";
+} from "@/modules/auth/domain/auth.types";
 
 export interface AuthUserRepositoryPort<Trepo = unknown> {
   withTransaction<Tresult>(
