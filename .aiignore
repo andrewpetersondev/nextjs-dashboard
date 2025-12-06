@@ -1,64 +1,86 @@
-# Project Files
-
+# ======================================================
+# PROJECT / IDE FILES
+# ======================================================
 .github
 .idea
 .junie
-.next
 .vscode
 
+# ======================================================
+# TOOLING
+# ======================================================
+.gitignore
+# biome.json
+devtools
+drizzle
+eslint.config.mjs
+
+# ======================================================
+# TESTING
+# ======================================================
 # cypress
+# cypress.config.ts
 cypress/screenshots
 cypress/videos
 cypress/downloads
-# devtools
-# docs
-drizzle
-node_modules
-public
-
-# src
-
-storage
-
-.env
-.env.*
-.env*
-.gitignore
-# biome.json
-# cypress.config.ts
-# drizzle.config.ts
-eslint.config.mjs
-# next.config.ts
-next-env.d.ts
-# package.json
-pnpm-lock.yaml
-postcss.config.mjs
-tsconfig.tsbuildinfo
 # vitest.config.ts
 # vitest.setup.ts
 
+# ======================================================
+# DOCUMENTATION & STORAGE
+# ======================================================
+# docs
+storage
 
-# Patterns and Extensions
+# ======================================================
+# NEXT.JS PROJECT CODE
+# ======================================================
+public
+# src
 
-*.txt
+# ======================================================
+# BUILD / OUTPUT FILES
+# ======================================================
+.next
+node_modules
+next-env.d.ts
+pnpm-lock.yaml
+tsconfig.tsbuildinfo
+
+
+# ======================================================
+# PATTERNS & EXTENSIONS
+# ======================================================
+.env
+.env.*
+.env*
 *.js
 *.map
-*.yaml
 *.sh
+*.txt
+*.yaml
+
+# ======================================================
+# DOCKER
+# ======================================================
 Dockerfile
 Dockerfile.*
+
+# ======================================================
+# OPTIONAL EXAMPLES / TEST PATTERNS
+# ======================================================
 # examples/
 # __tests__/
-#*.cy.ts
+# *.cy.ts
 # *.cy.tsx
-# *.tsx
 # *.test.*
 # *.test.ts
-# *.md
+# *.tsx
 
 
-# Other
-
+# ======================================================
+# OTHER STUFF
+# ======================================================
 .vite
 build
 coverage
