@@ -18,8 +18,10 @@ import { ServerMessage } from "@/modules/users/components/server-message";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type {
+  DenseFieldErrorMap,
+  FieldError,
+} from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";

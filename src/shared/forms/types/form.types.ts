@@ -1,4 +1,21 @@
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { NonEmptyArray } from "@/shared/forms/types/form-utils.types";
+
+/**
+ * Represents an error associated with a field as a non-empty array of messages.
+ *
+ * @typeParam T - The type of error message, defaults to string.
+ */
+export type FieldError<T = string> = NonEmptyArray<T>;
+
+/**
+ * Represents all field errors in a form, mapping field names to arrays of error messages.
+ */
+export type FieldErrors = Readonly<Record<string, readonly string[]>>;
+
+/**
+ * Represents general form-level errors as an array of strings.
+ */
+export type FormErrors = readonly string[];
 
 /**
  * A sparse map of field errors, where only fields with errors are present.

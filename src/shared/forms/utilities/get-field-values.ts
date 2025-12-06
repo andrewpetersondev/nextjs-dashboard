@@ -1,5 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { SparseFieldValueMap } from "@/shared/forms/types/error-maps.types";
+
+import type { SparseFieldValueMap } from "@/shared/forms/types/form.types";
 
 /**
  * Safely extract echoed field values from an AppError.

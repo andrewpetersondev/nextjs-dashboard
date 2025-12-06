@@ -1,5 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+
+import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
 import { isFormValidationError } from "@/shared/forms/utilities/guards/form-result-guards";
 
 /**

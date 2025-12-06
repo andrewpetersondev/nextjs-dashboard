@@ -2,7 +2,7 @@ import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { FieldError } from "@/shared/forms/types/form.types";
 
 /**
  * Props for InvoiceStatusRadioGroup.

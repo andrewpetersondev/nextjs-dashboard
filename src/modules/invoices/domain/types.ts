@@ -1,6 +1,7 @@
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+
+import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
 
 /** Allowed invoice status values (immutable tuple for precise type inference). */
 export const INVOICE_STATUSES = ["pending", "paid"] as const;

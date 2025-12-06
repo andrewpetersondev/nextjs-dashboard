@@ -1,4 +1,5 @@
 // `src/features/users/components/select-role.tsx`
+
 import type React from "react";
 import { useId } from "react";
 import {
@@ -7,7 +8,7 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/auth.roles";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { FieldError } from "@/shared/forms/types/form.types";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 
 /**

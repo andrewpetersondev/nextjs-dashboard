@@ -5,8 +5,8 @@
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/types/error-maps.types";
-import { isNonEmptyArray } from "@/shared/forms/types/field-error.types";
+} from "@/shared/forms/types/form.types";
+import { isNonEmptyArray } from "@/shared/forms/types/form-utils.types";
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).

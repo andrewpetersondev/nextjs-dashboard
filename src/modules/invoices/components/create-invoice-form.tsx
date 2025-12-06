@@ -17,7 +17,7 @@ import { createInvoiceAction } from "@/modules/invoices/server/application/actio
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { Label } from "@/ui/atoms/label";

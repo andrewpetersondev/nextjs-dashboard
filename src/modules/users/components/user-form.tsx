@@ -4,7 +4,7 @@ import { UserFields } from "@/modules/users/components/user-fields";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { TYPING_MS } from "@/ui/timings.tokens";

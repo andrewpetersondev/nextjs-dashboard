@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { isAppError } from "@/shared/errors/guards/error.guards";
 import type {
   FormResult,
-  FormSuccess,
+  FormSuccessPayload,
 } from "@/shared/forms/types/form-result.types";
 
 /**
@@ -24,7 +24,9 @@ type ServerMessageProps<Tdata> = Readonly<{
  * Type guard to check if a value is FormSuccess.
  * FormSuccess has `data` and `message` properties.
  */
-function isFormSuccess<Tdata>(value: unknown): value is FormSuccess<Tdata> {
+function isFormSuccess<Tdata>(
+  value: unknown,
+): value is FormSuccessPayload<Tdata> {
   if (typeof value !== "object" || value === null) {
     return false;
   }

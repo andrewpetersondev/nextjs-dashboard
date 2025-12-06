@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import { AppError } from "@/shared/errors/core/app-error.class";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { createEmptyDenseFieldErrorMap } from "@/shared/forms/utilities/factories/create-error-map.factory";
 import { Err } from "@/shared/result/result";

@@ -1,6 +1,6 @@
 import { type JSX, useId } from "react";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
-import type { FieldError } from "@/shared/forms/types/field-error.types";
+import type { FieldError } from "@/shared/forms/types/form.types";
 import { Label } from "@/ui/atoms/label";
 
 /**

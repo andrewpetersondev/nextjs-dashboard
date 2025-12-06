@@ -1,7 +1,7 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import type {
   FormResult,
-  FormSuccess,
+  FormSuccessPayload,
 } from "@/shared/forms/types/form-result.types";
 import type { Result } from "@/shared/result/result.types";
 
@@ -14,7 +14,7 @@ import type { Result } from "@/shared/result/result.types";
  */
 export const isFormOk = <T>(
   r: FormResult<T>,
-): r is Result<FormSuccess<T>, never> => r.ok;
+): r is Result<FormSuccessPayload<T>, never> => r.ok;
 
 /**
  * Type guard: checks if the form result is an error.

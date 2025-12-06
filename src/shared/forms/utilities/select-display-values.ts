@@ -1,4 +1,4 @@
-import type { SparseFieldValueMap } from "@/shared/forms/types/error-maps.types";
+import type { SparseFieldValueMap } from "@/shared/forms/types/form.types";
 
 /**
  * Extracts a sparse map of user-displayable string values from a raw object.

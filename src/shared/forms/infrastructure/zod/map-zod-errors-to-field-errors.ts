@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,

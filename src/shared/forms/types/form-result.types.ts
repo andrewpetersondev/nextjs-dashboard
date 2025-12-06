@@ -1,5 +1,5 @@
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/error-maps.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
 import type { Result } from "@/shared/result/result.types";
 
 /**
@@ -8,28 +8,15 @@ import type { Result } from "@/shared/result/result.types";
  * @typeParam T - The type of the data returned on success.
  *
  * @example
- * const success: FormSuccess<User> = {
+ * const success: FormSuccessPayload<User> = {
  *   data: { id: "1", name: "Alice" },
  *   message: "User created successfully."
  * };
  */
-export interface FormSuccess<T> {
+export interface FormSuccessPayload<T> {
   readonly data: T;
   readonly message: string;
 }
-
-/**
- * Result type for form submissions, using standard Result.
- *
- * @typeParam T - The type of the data returned on success.
- *
- * @example
- * const result: FormResult<User> = ok({
- *   data: { id: "1", name: "Alice" },
- *   message: "User created successfully."
- * });
- */
-export type FormResult<T> = Result<FormSuccess<T>, AppError>;
 
 /**
  * Payload for form errors, including field-specific errors and a general message.
@@ -49,3 +36,16 @@ export type FormErrorPayload<T extends string> = {
   fieldErrors: DenseFieldErrorMap<T, string>;
   message: string;
 };
+
+/**
+ * Result type for form submissions, using standard Result.
+ *
+ * @typeParam T - The type of the data returned on success.
+ *
+ * @example
+ * const result: FormResult<User> = ok({
+ *   data: { id: "1", name: "Alice" },
+ *   message: "User created successfully."
+ * });
+ */
+export type FormResult<T> = Result<FormSuccessPayload<T>, AppError>;

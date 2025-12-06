@@ -8,10 +8,10 @@ import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/types/error-maps.types";
+} from "@/shared/forms/types/form.types";
 import type {
   FormResult,
-  FormSuccess,
+  FormSuccessPayload,
 } from "@/shared/forms/types/form-result.types";
 import { Err, Ok } from "@/shared/result/result";
 
@@ -23,10 +23,10 @@ const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
  * @typeParam T - Payload type carried by the success result.
  * @param data - The payload value.
  * @param message - Human-readable success message.
- * @returns A frozen {@link FormResult} containing an {@link FormSuccess} with the given data and message.
+ * @returns A frozen {@link FormResult} containing an {@link FormSuccessPayload} with the given data and message.
  */
 export const formOk = <T>(data: T, message: string): FormResult<T> => {
-  const value = freeze<FormSuccess<T>>({ data, message });
+  const value = freeze<FormSuccessPayload<T>>({ data, message });
   return Ok(value);
 };
 
