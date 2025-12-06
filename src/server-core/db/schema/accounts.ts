@@ -8,6 +8,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
+/**
+ * This table is not implemented yet.
+ * @alpha
+ */
 export const accounts = pgTable(
   "account",
   {

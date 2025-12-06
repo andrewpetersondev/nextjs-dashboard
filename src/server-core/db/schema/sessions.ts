@@ -3,6 +3,10 @@ import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { UserId } from "@/shared/branding/brands";
 import { users } from "./users";
 
+/**
+ * This table is not implemented yet.
+ * @alpha
+ */
 export const sessions = pgTable(
   "session",
   {
