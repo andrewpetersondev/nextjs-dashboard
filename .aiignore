@@ -1,81 +1,60 @@
-.idea
-.next
+# Project Files
+
 .github
+.idea
+.junie
+.next
 .vscode
 
-cypress
+# cypress
 cypress/screenshots
 cypress/videos
 cypress/downloads
-devtools
-docs
+# devtools
+# docs
 drizzle
 node_modules
 public
+
+# src
+
 storage
-
-.gitignore
-# biome.json
-cypress.config.ts
-drizzle.config.ts
-eslint.config.mjs
-next.config.ts
-next-env.d.ts
-package.json
-pnpm-lock.yaml
-postcss.config.mjs
-tsconfig.tsbuildinfo
-vitest.config.ts
-
 
 .env
 .env.*
 .env*
-*.txt
-
-# Optional: source exclusions (comment to re-enable)
-
-src/app/api/
-src/app/dashboard/
-
-# src/features/customers/
-# src/features/invoices/
-# src/features/revenues/
-# src/features/users/
-
-src/server/customers/
-src/server/events/
-src/server/invoices/
-src/server/repository/
-src/server/revenues/
-src/server/users/
-
-# src/shared/branding/
-# src/shared/http/
-# src/shared/i18n/
-# src/shared/money/
-# src/shared/routes/
-
-# src/shell/
-# src/ui/
+.gitignore
+# biome.json
+# cypress.config.ts
+# drizzle.config.ts
+eslint.config.mjs
+# next.config.ts
+next-env.d.ts
+# package.json
+pnpm-lock.yaml
+postcss.config.mjs
+tsconfig.tsbuildinfo
+# vitest.config.ts
+# vitest.setup.ts
 
 
 # Patterns and Extensions
 
-examples/
-__tests__/
-*.cy.ts
-*.cy.tsx
-*.tsx
-*.test.*
-*.test.ts
-*.md
+*.txt
 *.js
 *.map
 *.yaml
 *.sh
 Dockerfile
 Dockerfile.*
+# examples/
+# __tests__/
+#*.cy.ts
+# *.cy.tsx
+# *.tsx
+# *.test.*
+# *.test.ts
+# *.md
 
 
 # Other
