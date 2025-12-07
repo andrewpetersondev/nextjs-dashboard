@@ -4,6 +4,7 @@ import {
   getIntervalCount,
 } from "@/modules/revenues/domain/time/range";
 import type { RollingMonthData } from "@/modules/revenues/domain/types";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.
@@ -19,7 +20,9 @@ export function generateMonthsTemplate(
   const intervalCount = getIntervalCount(duration);
 
   if (intervalCount <= 0) {
-    throw new Error(`Invalid interval count: ${intervalCount}`);
+    throw makeValidationError({
+      message: `Invalid interval count: ${intervalCount}`,
+    });
   }
 
   const template = Array.from({ length: intervalCount }, (_, index) => {
@@ -27,7 +30,9 @@ export function generateMonthsTemplate(
   });
 
   if (template.length === 0) {
-    throw new Error("Failed to generate a template: an empty array created");
+    throw makeValidationError({
+      message: "Failed to generate a template: an empty array created",
+    });
   }
 
   return template;
