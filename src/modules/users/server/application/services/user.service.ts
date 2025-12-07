@@ -3,11 +3,11 @@ import type { PasswordHasherPort } from "@/modules/auth/server/application/ports
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserProps } from "@/modules/users/domain/user.entity";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
-import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
 import type {
-  CreateUserInput,
-  UpdateUserInput,
-} from "@/modules/users/server/application/user.input";
+  CreateUserData,
+  EditUserData,
+} from "@/modules/users/domain/user.schema";
+import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
 import { userEntityToDto } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
@@ -32,7 +32,7 @@ export class UserService {
     this.logger = logger.child({ scope: "user-service" });
   }
 
-  async createUser(input: CreateUserInput): Promise<Result<UserDto, AppError>> {
+  async createUser(input: CreateUserData): Promise<Result<UserDto, AppError>> {
     try {
       // Hash password before sending to repo
       const hashedPassword = await this.hasher.hash(input.password);
@@ -72,7 +72,7 @@ export class UserService {
 
   async updateUser(
     id: UserId,
-    patch: UpdateUserInput,
+    patch: EditUserData,
   ): Promise<Result<UserDto, AppError>> {
     try {
       let finalPatch: UserPersistencePatch;

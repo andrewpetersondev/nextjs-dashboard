@@ -12,7 +12,7 @@ import {
   readInvoicesSummary,
   readLatestInvoices,
 } from "@/modules/invoices/server/application/actions/queries";
-import { getValidUserRole } from "@/modules/users/domain/role.utils";
+import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
@@ -37,7 +37,7 @@ export default async function Page(): Promise<JSX.Element> {
       readTotalCustomersCountAction(),
     ]);
 
-  const role: UserRole = getValidUserRole(session?.role);
+  const role: UserRole = coerceUserRole(session?.role);
 
   const dashboardData = {
     cards: {

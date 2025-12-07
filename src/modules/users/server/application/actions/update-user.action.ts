@@ -6,12 +6,11 @@ import {
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/user.messages";
 import {
+  type EditUserData,
   type EditUserFormFieldNames,
   EditUserFormSchema,
-  type EditUserFormValues,
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
-import type { UpdateUserInput } from "@/modules/users/server/application/user.input";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
@@ -67,13 +66,8 @@ function notFoundResult<F extends string>(
  */
 function buildPatch(
   existing: DiffableUserFields,
-  data: {
-    username?: string | null;
-    email?: string | null;
-    role?: UserDto["role"] | null;
-    password?: string | null;
-  },
-): UpdateUserInput {
+  data: EditUserData,
+): EditUserData {
   const nextUsername =
     typeof data.username === "string" && data.username.trim().length > 0
       ? data.username.trim()
@@ -116,7 +110,7 @@ export async function updateUserAction(
   formData: FormData,
 ): Promise<FormResult<unknown>> {
   const fields = resolveCanonicalFieldNamesFromSchema<
-    EditUserFormValues,
+    EditUserData,
     EditUserFormFieldNames
   >(EditUserFormSchema);
 

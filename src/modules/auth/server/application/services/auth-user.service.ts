@@ -10,7 +10,7 @@ import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
 import { demoUserCounter } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter";
-import { toUserRole } from "@/modules/users/domain/role.utils";
+import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { getAppDb } from "@/server-core/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
@@ -146,7 +146,7 @@ export class AuthUserService {
         txRepo.signup({
           email: input.email,
           password: passwordHash,
-          role: toUserRole("user"),
+          role: parseUserRole("USER"),
           username: input.username,
         }),
       );

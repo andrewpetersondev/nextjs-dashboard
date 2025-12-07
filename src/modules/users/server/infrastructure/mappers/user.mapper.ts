@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
-import { toUserRole } from "@/modules/users/domain/role.utils";
+import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import type { NewUserRow, UserRow } from "@/server-core/db/schema/users";
 import { toUserId } from "@/shared/branding/converters/id-converters";
@@ -14,7 +14,7 @@ export function userEntityToDto(entity: UserEntity): UserDto {
   return {
     email: String(entity.email),
     id: String(entity.id),
-    role: toUserRole(entity.role) as UserDto["role"],
+    role: parseUserRole(entity.role) as UserDto["role"],
     username: String(entity.username),
   };
 }
@@ -42,7 +42,7 @@ export function userDbRowToEntity(row: UserRow): UserEntity {
     email: row.email,
     id: toUserId(row.id),
     password: row.password,
-    role: toUserRole(row.role),
+    role: parseUserRole(row.role),
     sensitiveData: row.sensitiveData,
     username: row.username,
   };
@@ -80,7 +80,7 @@ export function newUserDbRowToEntity(row: NewUserRow): UserEntity {
     email: row.email,
     id: toUserId(row.id),
     password: row.password,
-    role: toUserRole(row.role),
+    role: parseUserRole(row.role),
     sensitiveData: row.sensitiveData,
     username: row.username,
   };

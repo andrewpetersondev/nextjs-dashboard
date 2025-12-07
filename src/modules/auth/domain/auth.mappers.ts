@@ -1,5 +1,5 @@
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
-import { toUserRole } from "@/modules/users/domain/role.utils";
+import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**
@@ -20,7 +20,7 @@ export const toAuthUserTransport = (src: {
   return {
     email: src.email,
     id: toUserId(src.id),
-    role: toUserRole(src.role),
+    role: parseUserRole(src.role),
     username: src.username,
   };
 };

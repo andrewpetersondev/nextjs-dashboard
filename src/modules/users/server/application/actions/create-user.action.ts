@@ -1,10 +1,13 @@
 "use server";
-import { getValidUserRole } from "@/modules/users/domain/role.utils";
+import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/user.messages";
-import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
+import {
+  type CreateUserFormInput,
+  CreateUserFormSchema,
+} from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
@@ -19,17 +22,12 @@ import {
   formOk,
 } from "@/shared/forms/utilities/factories/create-form-result.factory";
 
-type CreateUserFormData = {
-  readonly email: string | undefined;
-  readonly password: string | undefined;
-  readonly role: string | undefined;
-  readonly username: string | undefined;
-};
-
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;
 
-function pickCreateUserFormData(formData: FormData): CreateUserFormData {
+function pickCreateUserFormData(
+  formData: FormData,
+): Partial<CreateUserFormInput> {
   return {
     email: toOptionalString(formData.get("email")),
     password: toOptionalString(formData.get("password")),
@@ -53,7 +51,7 @@ export async function createUserAction(
     const parsed = CreateUserFormSchema.safeParse({
       email: raw.email,
       password: raw.password,
-      role: getValidUserRole(raw.role),
+      role: coerceUserRole(raw.role),
       username: raw.username,
     });
 

@@ -69,11 +69,12 @@ export const EditUserFormSchema = z.strictObject({
 
 // UI/view-model types derived from the shared schema
 
-// Zod Input (pre-parse)
-export type CreateUserInput = z.input<typeof CreateUserFormSchema>;
-export type CreateUserFormFieldNames = keyof CreateUserInput;
-export type EditUserInput = z.input<typeof EditUserFormSchema>;
-export type EditUserFormFieldNames = keyof EditUserInput;
+// Zod Input (pre-parse) - Raw form values
+export type CreateUserFormInput = z.input<typeof CreateUserFormSchema>;
+export type CreateUserFormFieldNames = keyof CreateUserFormInput;
+export type EditUserFormInput = z.input<typeof EditUserFormSchema>;
+export type EditUserFormFieldNames = keyof EditUserFormInput;
 
-// Zod Output (post-parse)
-export type EditUserFormValues = z.output<typeof EditUserFormSchema>;
+// Zod Output (post-parse) - Validated domain data
+export type CreateUserData = z.output<typeof CreateUserFormSchema>;
+export type EditUserData = z.output<typeof EditUserFormSchema>;
