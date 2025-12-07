@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { readCustomersAction } from "@/modules/customers/server/application/actions/read";
-import { EditInvoiceForm } from "@/modules/invoices/components/edit-invoice-form";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import { readInvoiceByIdAction } from "@/modules/invoices/server/application/actions/read-by-id";
+import { EditInvoiceForm } from "@/modules/invoices/ui/components/form/edit-invoice-form";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 

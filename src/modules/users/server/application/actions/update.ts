@@ -14,7 +14,7 @@ import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
   type EditUserFormValues,
-} from "@/modules/users/lib/user.schema";
+} from "@/modules/users/domain/user.schema";
 import { readUserDal } from "@/modules/users/server/infrastructure/dal/read";
 import { updateUserDal } from "@/modules/users/server/infrastructure/dal/update";
 import { getAppDb } from "@/server-core/db/db.connection";

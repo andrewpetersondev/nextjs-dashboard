@@ -5,7 +5,7 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/modules/invoices/domain/entity";
-import { toInvoiceStatus } from "@/modules/invoices/lib/invoice-status.mapper";
+import { toInvoiceStatus } from "@/modules/invoices/domain/invoice-status.mapper";
 import type { InvoiceRow } from "@/server-core/db/schema/invoices";
 import {
   toCustomerId,

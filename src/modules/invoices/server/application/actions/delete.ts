@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceActionResult } from "@/modules/invoices/domain/types";
-import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";

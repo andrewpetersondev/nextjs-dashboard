@@ -12,7 +12,7 @@ import {
   readInvoicesSummary,
   readLatestInvoices,
 } from "@/modules/invoices/domain/queries";
-import { getValidUserRole } from "@/modules/users/lib/get-valid-user-role";
+import { getValidUserRole } from "@/modules/users/domain/get-valid-user-role";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";

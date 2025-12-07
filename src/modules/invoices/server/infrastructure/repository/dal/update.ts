@@ -4,7 +4,7 @@ import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/modules/invoices/domain/entity";
-import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
+import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { invoices } from "@/server-core/db/schema/invoices";

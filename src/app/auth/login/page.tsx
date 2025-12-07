@@ -1,15 +1,15 @@
 import type { JSX } from "react";
-import { AuthFormDivider } from "@/modules/auth/components/auth-form-divider";
-import { AuthFormSocialSection } from "@/modules/auth/components/auth-form-social-section";
-import { AuthSwitchLink } from "@/modules/auth/components/auth-switch-link";
-import { Heading } from "@/modules/auth/components/heading";
-import { LoginForm } from "@/modules/auth/components/login-form";
 import {
   AUTH_DIVIDER_LABEL,
   LOGIN_HEADING,
 } from "@/modules/auth/domain/auth.constants";
 import { demoUserActionAdapter } from "@/modules/auth/server/application/actions/demo-user.action";
 import { loginAction } from "@/modules/auth/server/application/actions/login.action";
+import { AuthFormDivider } from "@/modules/auth/ui/components/auth-form-divider";
+import { AuthFormSocialSection } from "@/modules/auth/ui/components/auth-form-social-section";
+import { AuthSwitchLink } from "@/modules/auth/ui/components/auth-switch-link";
+import { Heading } from "@/modules/auth/ui/components/heading";
+import { LoginForm } from "@/modules/auth/ui/components/login-form";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {

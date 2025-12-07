@@ -1,6 +1,6 @@
 import "server-only";
-import { generateMonthsTemplate } from "@/modules/revenues/lib/data/template.client";
-import { calculateDateRange } from "@/modules/revenues/lib/date/range";
+import { generateMonthsTemplate } from "@/modules/revenues/domain/data/template.client";
+import { calculateDateRange } from "@/modules/revenues/domain/date/range";
 import { createDefaultRevenueData } from "@/modules/revenues/server/application/utils/template";
 import type { RevenueDisplayEntity } from "@/modules/revenues/server/domain/entities/entity.client";
 import { toIntervalDuration } from "@/modules/revenues/server/infrastructure/mappers/interval-duration.mapper";

@@ -1,14 +1,14 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import type { InvoiceFormDto } from "@/modules/invoices/domain/dto";
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
-import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
-import { translator } from "@/modules/invoices/lib/i18n/translator";
+import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
   CreateInvoiceSchema,
-} from "@/modules/invoices/lib/invoice.schema";
+} from "@/modules/invoices/domain/invoice.schema";
+import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";

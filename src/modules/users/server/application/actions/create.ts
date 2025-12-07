@@ -1,12 +1,12 @@
 "use server";
 import { asPasswordHash } from "@/modules/auth/domain/password.types";
+import { getValidUserRole } from "@/modules/users/domain/get-valid-user-role";
+import { toUserRole } from "@/modules/users/domain/to-user-role";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/user.messages";
-import { getValidUserRole } from "@/modules/users/lib/get-valid-user-role";
-import { toUserRole } from "@/modules/users/lib/to-user-role";
-import { CreateUserFormSchema } from "@/modules/users/lib/user.schema";
+import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
 import { createUserDal } from "@/modules/users/server/infrastructure/dal/create";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";

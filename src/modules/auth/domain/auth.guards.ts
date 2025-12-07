@@ -1,4 +1,4 @@
-import type { SignupData } from "@/modules/auth/lib/auth.schema";
+import type { SignupData } from "@/modules/auth/domain/auth.schema";
 
 /**
  * Type guard to ensure all required signup fields are present and non-empty.

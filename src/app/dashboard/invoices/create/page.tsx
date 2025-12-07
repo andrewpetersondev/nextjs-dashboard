@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { JSX } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { readCustomersAction } from "@/modules/customers/server/application/actions/read";
-import { CreateInvoiceForm } from "@/modules/invoices/components/create-invoice-form";
+import { CreateInvoiceForm } from "@/modules/invoices/ui/components/form/create-invoice-form";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>

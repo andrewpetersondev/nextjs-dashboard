@@ -4,7 +4,7 @@ import type {
   InvoiceFormPartialEntity,
   InvoiceServiceEntity,
 } from "@/modules/invoices/domain/entity";
-import { INVOICE_MSG } from "@/modules/invoices/lib/i18n/invoice-messages";
+import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { entityToInvoiceDto } from "@/modules/invoices/server/infrastructure/adapters/codecs/invoice-codecs";
 import { BaseRepository } from "@/modules/invoices/server/infrastructure/repository/base-repository";
 import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/create";

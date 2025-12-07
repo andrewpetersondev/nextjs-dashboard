@@ -2,8 +2,8 @@ import "server-only";
 import {
   INVOICE_MSG,
   type InvoiceMessageId,
-} from "@/modules/invoices/lib/i18n/invoice-messages";
-import { translator } from "@/modules/invoices/lib/i18n/translator";
+} from "@/modules/invoices/domain/i18n/invoice-messages";
+import { translator } from "@/modules/invoices/domain/i18n/translator";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { roleSchema } from "@/modules/users/lib/user.schema";
+import { roleSchema } from "@/modules/users/domain/user.schema";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
