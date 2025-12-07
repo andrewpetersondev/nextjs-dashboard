@@ -27,12 +27,12 @@ nextjs-dashboard/
 ├── public/                 # Static assets
 ├── src/                    # Application source
 │   ├── app/                # App router
-│   ├── features/           # auth, customers, invoices, revenues, users
-│   ├── server/             # auth, config, customers, db, errors, evets, forms, invoices, logging, repository, revenues, users
-│   ├── shared/             # config, core, domain, forms, http, i18n, logging, money, routes, ui, utils
+│   ├── modules/           # auth, customers, invoices, revenues, users
+│   ├── server-core/        # config, db, events
+│   ├── shared/             # branding, config, errors, forms, http,  logging, result, routes, utilities
 │   ├── shell/              # dashbaord-wide components/screens/
 │   ├── ui/                 # atoms, brand, feedback, forms, molecules, navigation, styles
-│   ├── middleware.ts       # Route protection
+│   ├── proxy.ts       # Route protection
 └── ...
 ```
 
