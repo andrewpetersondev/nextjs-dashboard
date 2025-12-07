@@ -4,33 +4,51 @@ import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/fa
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
 import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-duration.mapper";
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
-import type { Period } from "@/shared/branding/brands";
+import type {
+  RollingMonthData,
+  TemplateAndPeriods,
+} from "@/modules/revenues/domain/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
-interface TemplateAndPeriods {
-  readonly endPeriod: Period;
-  readonly startPeriod: Period;
-  readonly template: readonly { readonly period: Date }[];
-}
-
-export function buildTemplateAndPeriods(): TemplateAndPeriods {
+/**
+ * Private helper to compute the validated template.
+ * @returns The generated template.
+ */
+function getValidatedTemplate(): readonly RollingMonthData[] {
   const { startDate, duration } = calculateDateRange();
 
   const durationResult = toIntervalDuration(duration);
   if (!durationResult.ok) {
-    throw new Error("Invalid interval duration");
+    throw makeValidationError({
+      message: "Invalid interval duration",
+    });
   }
 
   const template = generateMonthsTemplate(startDate, durationResult.value);
 
   if (template.length === 0) {
-    throw new Error("Template generation failed: no months generated");
+    throw makeValidationError({
+      message: "Template generation failed: no months generated",
+    });
   }
+
+  return template;
+}
+
+/**
+ * Builds a template and periods for the revenue dashboard.
+ * @returns The template and associated periods.
+ */
+export function buildTemplateAndPeriods(): TemplateAndPeriods {
+  const template = getValidatedTemplate();
 
   const firstMonth = template[0];
   const lastMonth = template.at(-1);
   if (!(firstMonth && lastMonth)) {
-    throw new Error("Template generation failed: invalid month data");
+    throw makeValidationError({
+      message: "Template generation failed: invalid month data",
+    });
   }
 
   const startDatePeriod = firstMonth.period;
@@ -43,20 +61,23 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
   };
 }
 
+/**
+ * Builds default revenue display entities from a fresh template.
+ * @returns Array of default revenue display entities.
+ */
 export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
-  const { startDate, duration } = calculateDateRange();
-
-  const durationResult = toIntervalDuration(duration);
-  if (!durationResult.ok) {
-    throw new Error("Invalid interval duration");
-  }
-
-  const template = generateMonthsTemplate(startDate, durationResult.value);
+  const template = getValidatedTemplate();
   return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
 }
 
+/**
+ * Merges existing revenue display entities with a template, filling gaps with defaults.
+ * @param template - The rolling month template.
+ * @param displayEntities - Existing revenue display entities.
+ * @returns Merged array of revenue display entities.
+ */
 export function mergeWithTemplate(
-  template: readonly { readonly period: Date }[],
+  template: readonly RollingMonthData[],
   displayEntities: readonly RevenueDisplayEntity[],
 ): RevenueDisplayEntity[] {
   const dataLookup = new Map<number, RevenueDisplayEntity>(

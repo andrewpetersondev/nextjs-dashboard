@@ -7,7 +7,7 @@ import {
 } from "@/modules/revenues/domain/constants";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
@@ -17,7 +17,7 @@ export function createRevenueDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
-    throw new AppError("validation", {
+    throw makeValidationError({
       message: "Invalid revenue entity: expected non-null object",
     });
   }
@@ -31,14 +31,14 @@ export function createRevenueDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw new AppError("validation", {
+      throw makeValidationError({
         message: "Invalid year extracted from period",
         metadata: { period: revenueEntity.period, yearNumber },
       });
     }
 
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw new AppError("validation", {
+      throw makeValidationError({
         message: "Invalid month number extracted from period",
         metadata: { monthNumber, period: revenueEntity.period },
       });
@@ -46,7 +46,7 @@ export function createRevenueDisplayEntity(
 
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
-      throw new AppError("validation", {
+      throw makeValidationError({
         message: "Invalid month name computed from month number",
         metadata: { monthNumber },
       });
@@ -59,10 +59,10 @@ export function createRevenueDisplayEntity(
       year: yearNumber,
     };
   } catch (error) {
-    if (error instanceof AppError) {
+    if (error instanceof Error && error.name === "AppError") {
       throw error;
     }
-    throw new AppError("validation", {
+    throw makeValidationError({
       cause: error instanceof Error ? error : undefined,
       message: `Failed to create display entity: ${
         error instanceof Error ? error.message : "Unknown error"

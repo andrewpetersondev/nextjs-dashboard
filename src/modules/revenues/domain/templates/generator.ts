@@ -7,12 +7,10 @@ import type { RollingMonthData } from "@/modules/revenues/domain/types";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.
- *
- * @param startDate - The start date
- * @param duration - The period type ('year' or 'month')
- * @returns Array of RollingMonthData objects for the specified period
- * @throws Error if interval count is invalid or template generation fails
- *
+ * @param startDate - The start date.
+ * @param duration - The period type ('year' or 'month').
+ * @returns Array of RollingMonthData objects for the specified period.
+ * @throws Error if interval count is invalid or template generation fails.
  */
 export function generateMonthsTemplate(
   startDate: Date,

@@ -11,6 +11,11 @@ function nonZeroAmounts(
     .map((entity) => entity.totalAmount);
 }
 
+/**
+ * Computes revenue statistics from display entities.
+ * @param revenueData - Array of revenue display entities.
+ * @returns Computed statistics or empty if no data.
+ */
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,
 ): RevenueStatistics {

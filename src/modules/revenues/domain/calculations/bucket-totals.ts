@@ -5,10 +5,10 @@ import type { InvoiceStatus } from "@/modules/invoices/domain/types";
  * Also supports amount change during the move.
  */
 type MoveBetweenArgs = Readonly<{
-  readonly fromStatus: InvoiceStatus;
-  readonly toStatus: InvoiceStatus;
-  readonly previousAmount: number;
   readonly currentAmount: number;
+  readonly fromStatus: InvoiceStatus;
+  readonly previousAmount: number;
+  readonly toStatus: InvoiceStatus;
 }>;
 
 function clampNonNegative(value: number): number {

@@ -1,3 +1,6 @@
+/**
+ * Aggregate data for revenue calculations.
+ */
 export type RevenueAggregate = Readonly<{
   readonly invoiceCount: number;
   readonly totalAmount: number;
@@ -5,6 +8,10 @@ export type RevenueAggregate = Readonly<{
 
 /**
  * Computes the aggregate when adding an eligible invoice.
+ * @param currentCount - Current invoice count.
+ * @param currentTotal - Current total amount.
+ * @param addedAmount - Amount to add.
+ * @returns Updated aggregate.
  */
 export function computeAggregateAfterAdd(
   currentCount: number,
@@ -20,6 +27,10 @@ export function computeAggregateAfterAdd(
 /**
  * Computes the aggregate when removing an invoice that is no longer eligible.
  * Applies a floor at 0 to avoid negative values.
+ * @param existingCount - Existing invoice count.
+ * @param existingTotal - Existing total amount.
+ * @param removedAmount - Amount to remove.
+ * @returns Updated aggregate.
  */
 export function computeAggregateAfterRemoval(
   existingCount: number,
@@ -35,6 +46,11 @@ export function computeAggregateAfterRemoval(
 /**
  * Computes the aggregate when the amount of an already-eligible invoice changes.
  * Note: No clamping is applied here to preserve existing behavior.
+ * @param currentCount - Current invoice count.
+ * @param currentTotal - Current total amount.
+ * @param previousAmount - Previous amount.
+ * @param currentAmount - New amount.
+ * @returns Updated aggregate.
  */
 export function computeAggregateAfterAmountChange(
   currentCount: number,

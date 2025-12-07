@@ -2,8 +2,7 @@ import type { RevenueStatistics } from "@/modules/revenues/domain/types";
 
 /**
  * Creates an empty statistics object when no revenue data exists.
- *
- * @returns RevenueStatistics object with all zero values
+ * @returns RevenueStatistics object with all zero values.
  */
 export function createEmptyStatistics(): RevenueStatistics {
   return {

@@ -95,3 +95,9 @@ export interface RevenueChartDto {
   readonly statistics: RevenueStatisticsDto;
   readonly year: number;
 }
+
+export interface TemplateAndPeriods {
+  readonly endPeriod: Period;
+  readonly startPeriod: Period;
+  readonly template: readonly RollingMonthData[];
+}
