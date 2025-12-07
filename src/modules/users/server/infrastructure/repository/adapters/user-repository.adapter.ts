@@ -1,8 +1,11 @@
 import "server-only";
-import type { UserEntity } from "@/modules/users/domain/entity";
-import type { UserUpdatePatch } from "@/modules/users/domain/types";
+import type {
+  CreateUserProps,
+  UserEntity,
+} from "@/modules/users/domain/user.entity";
 import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
 import type { UserRepositoryImpl } from "@/modules/users/server/infrastructure/repository/user.repository";
+import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 
 export class UserRepositoryAdapter
@@ -23,16 +26,11 @@ export class UserRepositoryAdapter
     });
   }
 
-  create(input: {
-    email: string;
-    password: string;
-    role: string;
-    username: string;
-  }): Promise<UserEntity | null> {
+  create(input: CreateUserProps): Promise<UserEntity | null> {
     return this.repo.create(input);
   }
 
-  update(id: UserId, patch: UserUpdatePatch): Promise<UserEntity | null> {
+  update(id: UserId, patch: UserPersistencePatch): Promise<UserEntity | null> {
     return this.repo.update(id, patch);
   }
 

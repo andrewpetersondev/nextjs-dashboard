@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
@@ -11,7 +11,7 @@ import {
   type EditUserFormValues,
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
-import type { UserServiceUpdateInput } from "@/modules/users/server/application/services/user.service";
+import type { UpdateUserInput } from "@/modules/users/server/application/user.input";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
@@ -73,7 +73,7 @@ function buildPatch(
     role?: UserDto["role"] | null;
     password?: string | null;
   },
-): UserServiceUpdateInput {
+): UpdateUserInput {
   const nextUsername =
     typeof data.username === "string" && data.username.trim().length > 0
       ? data.username.trim()

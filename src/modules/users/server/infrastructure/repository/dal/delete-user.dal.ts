@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "@/modules/users/domain/entity";
+import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
@@ -9,38 +9,37 @@ import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
- * Retrieves a user from the database by branded UserId.
+ * Deletes a user by branded UserId.
  * Maps the raw DB row to UserEntity, then to UserDto for safe return.
- * @param db - The database instance.
- * @param id - The user's branded UserId.
- * @returns The user as UserDto, or null if not found.
+ * @param db - Database instance (Drizzle)
+ * @param userId - UserId (branded)
+ * @returns UserDto if deleted, otherwise null
  */
-export async function readUserDal(
+export async function deleteUserDal(
   db: AppDatabase,
-  id: UserId, // Use branded UserId for strict typing
+  userId: UserId, // Use branded UserId for strict typing
 ): Promise<UserEntity | null> {
   try {
     // Fetch raw DB row, not UserEntity
-    const [userRow] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
+    const [deletedRow] = await db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning();
 
-    if (!userRow) {
+    if (!deletedRow) {
       return null;
     }
 
-    // Map raw DB row to UserEntity for type safety (brands id/role)
-    return userDbRowToEntity(userRow);
+    // Map raw DB row to UserEntity for type safety
+    return userDbRowToEntity(deletedRow);
   } catch (error) {
-    logger.error("Failed to read user by ID.", {
-      context: "readUserDal",
+    logger.error("Failed to delete user.", {
+      context: "deleteUserDal",
       error,
-      id,
+      userId,
     });
     throw new AppError("database", {
-      message: "Failed to read user by ID.",
+      message: "An unexpected error occurred. Please try again.",
     });
   }
 }

@@ -1,23 +1,21 @@
 import "server-only";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
-import type { UserUpdatePatch } from "@/modules/users/domain/types";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { CreateUserProps } from "@/modules/users/domain/user.entity";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
+import type {
+  CreateUserInput,
+  UpdateUserInput,
+} from "@/modules/users/server/application/user.input";
 import { userEntityToDto } from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
-
-/**
- * Input type for updating a user via service, allowing raw password string.
- */
-export type UserServiceUpdateInput = Omit<UserUpdatePatch, "password"> & {
-  password?: string;
-};
 
 export class UserService {
   private readonly repo: UserRepositoryPort;
@@ -34,20 +32,19 @@ export class UserService {
     this.logger = logger.child({ scope: "user-service" });
   }
 
-  async createUser(input: {
-    username: string;
-    email: string;
-    password: string;
-    role: string;
-  }): Promise<Result<UserDto, AppError>> {
+  async createUser(input: CreateUserInput): Promise<Result<UserDto, AppError>> {
     try {
       // Hash password before sending to repo
       const hashedPassword = await this.hasher.hash(input.password);
 
-      const user = await this.repo.create({
-        ...input,
+      const creationParams: CreateUserProps = {
+        email: input.email,
         password: hashedPassword,
-      });
+        role: input.role,
+        username: input.username,
+      };
+
+      const user = await this.repo.create(creationParams);
 
       if (!user) {
         return Err(
@@ -75,18 +72,18 @@ export class UserService {
 
   async updateUser(
     id: UserId,
-    patch: UserServiceUpdateInput,
+    patch: UpdateUserInput,
   ): Promise<Result<UserDto, AppError>> {
     try {
-      let finalPatch: UserUpdatePatch;
+      let finalPatch: UserPersistencePatch;
 
       if (patch.password) {
         finalPatch = {
           ...patch,
           password: await this.hasher.hash(patch.password),
-        } as UserUpdatePatch;
+        } as UserPersistencePatch;
       } else {
-        finalPatch = { ...patch } as UserUpdatePatch;
+        finalPatch = { ...patch } as UserPersistencePatch;
       }
 
       const updated = await this.repo.update(id, finalPatch);

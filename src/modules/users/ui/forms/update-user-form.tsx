@@ -1,6 +1,6 @@
 "use client";
 import { type JSX, useActionState } from "react";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/server/application/actions/update";
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";

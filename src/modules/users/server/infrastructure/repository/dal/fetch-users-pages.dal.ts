@@ -13,7 +13,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
  * @param query - Search query for username or email.
  * @returns Number of pages as a number.
  */
-export async function fetchUsersPages(
+export async function fetchUsersPagesDal(
   db: AppDatabase,
   query: string,
 ): Promise<number> {

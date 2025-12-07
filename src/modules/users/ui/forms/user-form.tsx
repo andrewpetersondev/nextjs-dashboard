@@ -1,5 +1,5 @@
 import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { UserFields } from "@/modules/users/ui/forms/user-fields";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";

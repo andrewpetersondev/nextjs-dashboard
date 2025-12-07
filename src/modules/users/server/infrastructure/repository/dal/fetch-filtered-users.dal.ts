@@ -1,7 +1,7 @@
 import "server-only";
 import { asc, ilike, or } from "drizzle-orm";
-import type { UserEntity } from "@/modules/users/domain/entity";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
+import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
@@ -16,7 +16,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
  * @param currentPage - Current page number (1-based).
  * @returns Array of UserDto for the page.
  */
-export async function fetchFilteredUsers(
+export async function fetchFilteredUsersDal(
   db: AppDatabase,
   query: string,
   currentPage: number,

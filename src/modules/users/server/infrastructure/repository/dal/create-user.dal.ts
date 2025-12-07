@@ -1,10 +1,11 @@
 import "server-only";
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
-import type { UserEntity } from "@/modules/users/domain/entity";
+import type {
+  CreateUserProps,
+  UserEntity,
+} from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
-import { users } from "@/server-core/db/schema/users";
+import { type NewUserRow, users } from "@/server-core/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
@@ -16,24 +17,21 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
  */
 export async function createUserDal(
   db: AppDatabase,
-  {
-    username,
-    email,
-    password,
-    role,
-  }: {
-    username: string;
-    email: string;
-    password: PasswordHash;
-    role: UserRole;
-  },
+  params: CreateUserProps,
 ): Promise<UserEntity | null> {
+  const { username, email, password, role } = params;
+
   try {
-    const [userRow] = await db
-      .insert(users)
-      .values({ email, password, role, username })
-      .returning();
-    // --- Map raw DB row to UserEntity ---
+    // Explicitly type the insert object as NewUserRow (schema type)
+    // This ensures we match the shape required by Drizzle's $inferInsert
+    const newUser: NewUserRow = {
+      email,
+      password,
+      role,
+      username,
+    };
+
+    const [userRow] = await db.insert(users).values(newUser).returning();
     return userRow ? userDbRowToEntity(userRow) : null;
   } catch (error) {
     logger.error("Failed to create a user in the database.", {

@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { readFilteredUsersAction } from "@/modules/users/server/application/actions/read-filtered";
 import {
   DeleteUserButton,

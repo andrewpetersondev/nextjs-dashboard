@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "@/modules/users/domain/entity";
+import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
@@ -9,37 +9,34 @@ import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
- * Deletes a user by branded UserId.
+ * Fetches a user by their branded UserId.
  * Maps the raw DB row to UserEntity, then to UserDto for safe return.
  * @param db - Database instance (Drizzle)
- * @param userId - UserId (branded)
- * @returns UserDto if deleted, otherwise null
+ * @param id - UserId (branded)
+ * @returns UserDto if found, otherwise null
  */
-export async function deleteUserDal(
+export async function fetchUserByIdDal(
   db: AppDatabase,
-  userId: UserId, // Use branded UserId for strict typing
+  id: UserId, // Use branded UserId for strict typing
 ): Promise<UserEntity | null> {
   try {
     // Fetch raw DB row, not UserEntity
-    const [deletedRow] = await db
-      .delete(users)
-      .where(eq(users.id, userId))
-      .returning();
+    const [userRow] = await db.select().from(users).where(eq(users.id, id));
 
-    if (!deletedRow) {
+    if (!userRow) {
       return null;
     }
 
     // Map raw DB row to UserEntity for type safety
-    return userDbRowToEntity(deletedRow);
+    return userDbRowToEntity(userRow);
   } catch (error) {
-    logger.error("Failed to delete user.", {
-      context: "deleteUserDal",
+    logger.error("Failed to fetch user by id.", {
+      context: "fetchUserById",
       error,
-      userId,
+      id,
     });
     throw new AppError("database", {
-      message: "An unexpected error occurred. Please try again.",
+      message: "Failed to fetch user by id.",
     });
   }
 }

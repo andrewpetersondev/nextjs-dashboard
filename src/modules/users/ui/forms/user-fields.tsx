@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { useId } from "react";
-import type { UserDto } from "@/modules/users/domain/user.dto";
+import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserFormFieldNames } from "@/modules/users/domain/user.schema";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import type { FieldError } from "@/shared/forms/types/form.types";
