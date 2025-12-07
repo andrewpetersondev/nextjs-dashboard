@@ -47,10 +47,6 @@ export const AUTH_ENDPOINTS = {
   google: "/api/auth/google",
 } as const satisfies Record<OauthProvider, `/${string}`>;
 
-// Backwards-compatible named constants (preserved)
-export const AUTH_GOOGLE_ENDPOINT = AUTH_ENDPOINTS.google;
-export const AUTH_GITHUB_ENDPOINT = AUTH_ENDPOINTS.github;
-
 // Headings
 export const SIGNUP_HEADING = "Sign up for an account" as const;
 export const LOGIN_HEADING = "Log in to your account" as const;

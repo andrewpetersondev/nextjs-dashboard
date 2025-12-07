@@ -1,7 +1,6 @@
 import type { FC, JSX } from "react";
 import {
-  AUTH_GITHUB_ENDPOINT,
-  AUTH_GOOGLE_ENDPOINT,
+  AUTH_ENDPOINTS,
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
 } from "@/modules/auth/domain/auth.constants";
@@ -57,13 +56,13 @@ export const AuthFormSocialSection: FC<AuthFormSocialSectionProps> = ({
     <div className="mt-6 grid grid-cols-2 gap-4">
       <SocialLoginButton
         data-cy="auth-social-google-button"
-        href={AUTH_GOOGLE_ENDPOINT}
+        href={AUTH_ENDPOINTS.google}
         mode={mode}
         provider="google"
       />
       <SocialLoginButton
         data-cy="auth-social-github-button"
-        href={AUTH_GITHUB_ENDPOINT}
+        href={AUTH_ENDPOINTS.github}
         mode={mode}
         provider="github"
       />

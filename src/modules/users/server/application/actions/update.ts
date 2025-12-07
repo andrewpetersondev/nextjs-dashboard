@@ -1,8 +1,8 @@
 "use server";
-
+import bcryptjs from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { asPasswordHash } from "@/modules/auth/domain/password.types";
-import { hashWithSaltRounds } from "@/modules/auth/server/infrastructure/adapters/password-hasher-bcrypt.adapter";
+import { SALT_ROUNDS } from "@/modules/auth/domain/sessions/session.constants";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
@@ -127,6 +127,18 @@ async function buildPatch(
 
   return { ...diff, ...(password ? { password } : {}) };
 }
+
+const genSalt = async (rounds: number): Promise<string> =>
+  bcryptjs.genSalt(rounds);
+
+/**
+ * Hashes a password with configured salt rounds.
+ * for legacy compatibility - prefer using BcryptPasswordHasherAdapter instead.
+ */
+const hashWithSaltRounds = async (password: string): Promise<string> => {
+  const salt = await genSalt(SALT_ROUNDS);
+  return bcryptjs.hash(password, salt);
+};
 
 /**
  * Updates an existing user (admin only).

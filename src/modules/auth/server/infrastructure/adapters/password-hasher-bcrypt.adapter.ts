@@ -12,26 +12,6 @@ const genSalt = async (rounds: number): Promise<string> =>
   bcryptjs.genSalt(rounds);
 
 /**
- * Hashes a password with configured salt rounds.
- * Exported for legacy compatibility - prefer using BcryptPasswordHasherAdapter instead.
- */
-export const hashWithSaltRounds = async (password: string): Promise<string> => {
-  const salt = await genSalt(SALT_ROUNDS);
-  return bcryptjs.hash(password, salt);
-};
-
-/**
- * Compares a plain password with a hashed password.
- * Exported for legacy compatibility - prefer using BcryptPasswordHasherAdapter instead.
- */
-export async function compareHash(
-  plainPassword: string,
-  hashedPassword: string,
-): Promise<boolean> {
-  return await bcryptjs.compare(plainPassword, hashedPassword);
-}
-
-/**
  * Bcrypt-based password hashing adapter.
  * Implements secure password hashing using bcryptjs with configurable salt rounds.
  *
@@ -43,7 +23,8 @@ export async function compareHash(
 export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
   async hash(raw: string): Promise<PasswordHash> {
     try {
-      const hashed = await hashWithSaltRounds(raw);
+      const salt = await genSalt(SALT_ROUNDS);
+      const hashed = await bcryptjs.hash(raw, salt);
       return asPasswordHash(hashed);
     } catch (err) {
       throw makeAppError("infrastructure", {
@@ -56,7 +37,7 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherPort {
 
   async compare(raw: string, hash: PasswordHash): Promise<boolean> {
     try {
-      return await compareHash(raw, String(hash));
+      return await bcryptjs.compare(raw, String(hash));
     } catch (err) {
       throw makeAppError("infrastructure", {
         cause: err,
