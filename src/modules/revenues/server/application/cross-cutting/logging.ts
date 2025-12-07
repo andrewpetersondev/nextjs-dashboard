@@ -10,7 +10,7 @@ type JsonPrimitive = string | number | boolean | null;
 /**
  * JSON-serializable value used for structured logs.
  */
-export type LogValue =
+type LogValue =
   | JsonPrimitive
   | readonly LogValue[]
   | { readonly [key: string]: LogValue };

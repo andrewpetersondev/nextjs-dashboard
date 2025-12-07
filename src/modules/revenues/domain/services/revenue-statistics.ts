@@ -2,26 +2,16 @@ import "server-only";
 import { createEmptyStatistics } from "@/modules/revenues/domain/data/statistics";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,
 ): RevenueStatistics {
   if (!revenueData || revenueData.length === 0) {
-    logger.debug("No revenue data available, returning empty statistics", {
-      context: "RevenueStatisticsService.calculateStatistics",
-    });
     return createEmptyStatistics();
   }
 
   const nonZeroRevenues = nonZeroAmounts(revenueData);
   if (nonZeroRevenues.length === 0) {
-    logger.debug(
-      "No non-zero revenue data available, returning empty statistics",
-      {
-        context: "RevenueStatisticsService.calculateStatistics",
-      },
-    );
     return createEmptyStatistics();
   }
 

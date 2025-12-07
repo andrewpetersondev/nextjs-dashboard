@@ -1,9 +1,9 @@
 import "server-only";
 import { createEmptyStatistics } from "@/modules/revenues/domain/data/statistics";
+import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
+import { computeStatistics } from "@/modules/revenues/domain/services/revenue-statistics";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
-import { computeStatistics } from "@/modules/revenues/server/application/services/statistics/stats";
 import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/server/application/use-cases/queries/get-rolling-year-revenues.use-case";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export class GetRevenueStatisticsUseCase {

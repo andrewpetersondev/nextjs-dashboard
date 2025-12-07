@@ -12,7 +12,7 @@ const processedEventIds: Set<string> = new Set();
 /**
  * Checks whether the given eventId has already been processed in this process.
  */
-export function hasProcessedEvent(eventId: string | undefined | null): boolean {
+function hasProcessedEvent(eventId: string | undefined | null): boolean {
   if (!eventId) {
     return false;
   }
@@ -22,7 +22,7 @@ export function hasProcessedEvent(eventId: string | undefined | null): boolean {
 /**
  * Marks the given eventId as processed in this process.
  */
-export function markEventProcessed(eventId: string | undefined | null): void {
+function markEventProcessed(eventId: string | undefined | null): void {
   if (!eventId) {
     return;
   }

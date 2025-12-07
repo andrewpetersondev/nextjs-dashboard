@@ -1,5 +1,5 @@
 import "server-only";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
+import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { RevenueId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

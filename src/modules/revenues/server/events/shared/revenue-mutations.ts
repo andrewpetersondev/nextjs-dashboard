@@ -1,7 +1,7 @@
 import "server-only";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import type { UpdateRevenueArgs } from "@/modules/revenues/server/events/process-invoice/types";
+import type { UpdateRevenueArgs } from "@/modules/revenues/server/events/shared/types";
 import { toRevenueId } from "@/shared/branding/converters/id-converters";
 
 /**

@@ -1,12 +1,12 @@
 import "server-only";
 import { isValid } from "date-fns";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
-import { validateCondition } from "@/modules/revenues/server/infrastructure/mappers/assert.condition";
+import { toRevenueSource } from "@/modules/revenues/server/infrastructure/mappers/revenue-source.mapper";
 import {
   isNonNegativeInteger,
   isNonNegativeNumber,
-} from "@/modules/revenues/server/infrastructure/mappers/number";
-import { toRevenueSource } from "@/modules/revenues/server/infrastructure/mappers/revenue-source.mapper";
+  validateCondition,
+} from "@/modules/revenues/server/infrastructure/utils/validation";
 import type { RevenueRow } from "@/server-core/db/schema/revenues";
 import {
   toPeriod,

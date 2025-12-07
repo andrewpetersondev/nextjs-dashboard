@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/server/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceEvent } from "@/modules/revenues/server/events/handlers/orchestrator";
-import { processInvoiceForRevenue } from "@/modules/revenues/server/events/process-invoice/process-invoice-for-revenue";
+import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";
 import { processInvoiceUpdated } from "@/modules/revenues/server/events/updated-invoice/invoice-update.handlers";
 import { EventBus } from "@/server-core/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
@@ -79,7 +79,7 @@ export class RevenueEventHandler {
       this.revenueService,
       "handleInvoiceCreated",
       (invoice, period) =>
-        processInvoiceForRevenue(this.revenueService, invoice, period),
+        processInvoiceUpsert(this.revenueService, invoice, period),
     );
   }
 

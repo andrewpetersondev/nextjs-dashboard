@@ -18,8 +18,8 @@ import {
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { processInvoiceForRevenue } from "@/modules/revenues/server/events/process-invoice/process-invoice-for-revenue";
-import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
+import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";
+import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import type {
   ChangeType,
   CoreArgs,
@@ -185,7 +185,7 @@ async function handleNoExistingRevenue(
   const { revenueService, currentInvoice, period, context, meta } = args;
   logInfo(context, "No existing revenue record was found for a period", meta);
   if (isStatusEligibleForRevenue(currentInvoice.status)) {
-    await processInvoiceForRevenue(revenueService, currentInvoice, period, {
+    await processInvoiceUpsert(revenueService, currentInvoice, period, {
       context,
     });
   }
@@ -478,7 +478,7 @@ async function handleAmountChange({
   period,
   revenueService,
 }: HandleAmountChangeParams): Promise<void> {
-  await processInvoiceForRevenue(revenueService, invoice, period, {
+  await processInvoiceUpsert(revenueService, invoice, period, {
     context,
     isUpdate: true,
     previousAmount,

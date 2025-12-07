@@ -4,6 +4,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { createRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/create.revenue.dal";
 import { deleteRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/delete.revenue.dal";
 import { findRevenuesByDateRange } from "@/modules/revenues/server/infrastructure/repository/dal/find-by-date-range.revenue.dal";
@@ -12,7 +13,6 @@ import { readRevenue } from "@/modules/revenues/server/infrastructure/repository
 import { updateRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/update.revenue.dal";
 import { upsertRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/upsert.revenue.dal";
 import { upsertRevenueByPeriod } from "@/modules/revenues/server/infrastructure/repository/dal/upsert-by-period.revenue.dal";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 

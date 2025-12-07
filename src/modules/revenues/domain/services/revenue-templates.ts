@@ -7,7 +7,7 @@ import { toIntervalDuration } from "@/modules/revenues/server/infrastructure/map
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
-export interface TemplateAndPeriods {
+interface TemplateAndPeriods {
   readonly endPeriod: Period;
   readonly startPeriod: Period;
   readonly template: readonly { readonly period: Date }[];
@@ -53,4 +53,18 @@ export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
 
   const template = generateMonthsTemplate(startDate, durationResult.value);
   return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
+}
+
+export function mergeWithTemplate(
+  template: readonly { readonly period: Date }[],
+  displayEntities: readonly RevenueDisplayEntity[],
+): RevenueDisplayEntity[] {
+  const dataLookup = new Map<number, RevenueDisplayEntity>(
+    displayEntities.map((e) => [e.period.getTime(), e] as const),
+  );
+  return template.map(
+    (t) =>
+      dataLookup.get(t.period.getTime()) ??
+      createDefaultRevenueData(toPeriod(t.period)),
+  );
 }

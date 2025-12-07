@@ -8,12 +8,12 @@ import {
   type LogMetadata,
   logInfo,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
-import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
+import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import type {
   CreateNewOptions,
   UpdateExistingOptions,
   UpsertArgs,
-} from "@/modules/revenues/server/events/process-invoice/types";
+} from "@/modules/revenues/server/events/shared/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
 /**
