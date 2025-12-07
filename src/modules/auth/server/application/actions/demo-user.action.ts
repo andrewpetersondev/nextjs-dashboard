@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 
 /**
  * API/UI

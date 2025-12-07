@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { ADMIN_ROLE } from "@/modules/auth/domain/auth.roles";
+import { ADMIN_ROLE } from "@/modules/auth/domain/roles/auth.roles";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/domain/sessions/session.constants";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/adapters/session-jwt.adapter";
 import {

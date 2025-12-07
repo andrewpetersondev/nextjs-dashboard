@@ -1,5 +1,5 @@
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
-import { USER_ROLES } from "@/modules/auth/domain/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import type { Result } from "@/shared/result/result.types";
 

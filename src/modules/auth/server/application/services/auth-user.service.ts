@@ -1,13 +1,12 @@
-// src/server/auth/application/services/auth-user.service.ts
 import "server-only";
 import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
-import { createRandomPassword } from "@/modules/auth/domain/auth.password";
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
 import type { LoginData, SignupData } from "@/modules/auth/domain/auth.schema";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import { asPasswordHash } from "@/modules/auth/domain/password.types";
+import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
+import { createRandomPassword } from "@/modules/auth/domain/password/password-generator";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
 import { demoUserCounter } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter";

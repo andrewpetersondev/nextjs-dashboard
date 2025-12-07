@@ -1,6 +1,6 @@
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
   ONE_SECOND_MS,
   SESSION_DURATION_MS,

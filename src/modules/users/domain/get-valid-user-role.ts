@@ -2,7 +2,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/auth.roles";
+} from "@/modules/auth/domain/roles/auth.roles";
 
 /**
  * Validates and returns a user role, defaulting to guest if invalid.

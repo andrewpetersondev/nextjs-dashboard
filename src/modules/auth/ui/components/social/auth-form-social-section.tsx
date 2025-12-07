@@ -8,7 +8,7 @@ import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/domain/auth.roles";
+} from "@/modules/auth/domain/roles/auth.roles";
 import { DemoForm } from "@/modules/auth/ui/components/forms/demo-form";
 import { SocialLoginButton } from "@/modules/auth/ui/components/social/social-login-button";
 import type { FormResult } from "@/shared/forms/types/form-result.types";

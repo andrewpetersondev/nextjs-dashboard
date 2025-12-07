@@ -9,12 +9,12 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/auth.roles";
-import type { PasswordHash } from "@/modules/auth/domain/password.types";
+} from "@/modules/auth/domain/roles/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import { sessions } from "./sessions";
 

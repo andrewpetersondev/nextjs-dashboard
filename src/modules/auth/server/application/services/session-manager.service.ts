@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,

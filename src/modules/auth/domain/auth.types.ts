@@ -1,5 +1,5 @@
-import type { UserRole } from "@/modules/auth/domain/auth.roles";
-import type { PasswordHash } from "@/modules/auth/domain/password.types";
+import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 
 /**

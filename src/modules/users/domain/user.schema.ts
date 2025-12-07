@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/modules/auth/domain/auth.roles";
 import {
   EmailSchema,
   PasswordSchema,
   UsernameSchema,
 } from "@/modules/auth/domain/auth.schema";
+import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
 
 const toUndefinedIfEmptyString = (v: unknown) =>
   typeof v === "string" && v.trim() === "" ? undefined : v;

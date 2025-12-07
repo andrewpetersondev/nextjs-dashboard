@@ -3,7 +3,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/auth.roles";
+} from "@/modules/auth/domain/roles/auth.roles";
 import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
 import { H6 } from "@/ui/atoms/typography/headings";

@@ -1,10 +1,10 @@
+import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/domain/auth.roles";
-import type { PasswordHash } from "@/modules/auth/domain/password.types";
+} from "@/modules/auth/domain/roles/auth.roles";
 import type { invoices } from "@/server-core/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";

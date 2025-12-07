@@ -1,7 +1,7 @@
 "use server";
 import bcryptjs from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { asPasswordHash } from "@/modules/auth/domain/password.types";
+import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
 import { SALT_ROUNDS } from "@/modules/auth/domain/sessions/session.constants";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
