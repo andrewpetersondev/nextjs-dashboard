@@ -6,7 +6,7 @@ import type {
   MetadataBase,
   MetadataWithPeriod,
   PeriodArg,
-} from "@/modules/revenues/server/events/handlers/core/types";
+} from "@/modules/revenues/server/events/updated-invoice/types";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

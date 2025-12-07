@@ -1,9 +1,9 @@
 import "server-only";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/server/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
-import { processInvoiceUpdated } from "@/modules/revenues/server/events/handlers/invoice-update.handlers";
 import { processInvoiceEvent } from "@/modules/revenues/server/events/handlers/orchestrator";
 import { processInvoiceForRevenue } from "@/modules/revenues/server/events/process-invoice/process-invoice-for-revenue";
+import { processInvoiceUpdated } from "@/modules/revenues/server/events/updated-invoice/invoice-update.handlers";
 import { EventBus } from "@/server-core/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server-core/events/invoice/invoice-event.types";

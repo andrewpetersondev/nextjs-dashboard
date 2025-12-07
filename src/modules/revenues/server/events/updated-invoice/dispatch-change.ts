@@ -1,17 +1,17 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import { handleEligibleAmountChange } from "@/modules/revenues/server/events/updated-invoice/handle-eligible-amount-change";
+import { handleEligibleStatusChange } from "@/modules/revenues/server/events/updated-invoice/handle-eligible-status-change";
+import { handleNoExistingRevenue } from "@/modules/revenues/server/events/updated-invoice/handle-no-existing-revenue";
+import { handleTransitionFromEligibleToIneligible } from "@/modules/revenues/server/events/updated-invoice/handle-transition-from-eligible-to-ineligible";
+import { handleTransitionFromIneligibleToEligible } from "@/modules/revenues/server/events/updated-invoice/handle-transition-from-ineligible-to-eligible";
+import { logNoAffectingChanges } from "@/modules/revenues/server/events/updated-invoice/log-no-affecting-changes";
 import type {
   ChangeType,
   MetadataWithPeriod,
   PeriodArg,
-} from "@/modules/revenues/server/events/handlers/core/types";
-import { handleEligibleAmountChange } from "@/modules/revenues/server/events/handlers/handle-eligible-amount-change";
-import { handleEligibleStatusChange } from "@/modules/revenues/server/events/handlers/handle-eligible-status-change";
-import { handleNoExistingRevenue } from "@/modules/revenues/server/events/handlers/handle-no-existing-revenue";
-import { handleTransitionFromEligibleToIneligible } from "@/modules/revenues/server/events/handlers/handle-transition-from-eligible-to-ineligible";
-import { handleTransitionFromIneligibleToEligible } from "@/modules/revenues/server/events/handlers/handle-transition-from-ineligible-to-eligible";
-import { logNoAffectingChanges } from "@/modules/revenues/server/events/handlers/log-no-affecting-changes";
+} from "@/modules/revenues/server/events/updated-invoice/types";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
 export async function dispatchChange(

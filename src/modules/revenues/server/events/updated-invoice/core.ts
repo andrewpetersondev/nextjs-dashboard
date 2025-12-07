@@ -1,10 +1,10 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { detectChange } from "@/modules/revenues/server/events/handlers/core/detect-change";
-import { dispatchChange } from "@/modules/revenues/server/events/handlers/core/dispatch-change";
-import { preparePeriodAndMeta } from "@/modules/revenues/server/events/handlers/core/prepare-period-and-meta";
-import type { MetadataBase } from "@/modules/revenues/server/events/handlers/core/types";
+import { detectChange } from "@/modules/revenues/server/events/updated-invoice/detect-change";
+import { dispatchChange } from "@/modules/revenues/server/events/updated-invoice/dispatch-change";
+import { preparePeriodAndMeta } from "@/modules/revenues/server/events/updated-invoice/prepare-period-and-meta";
+import type { MetadataBase } from "@/modules/revenues/server/events/updated-invoice/types";
 
 export interface CoreArgs {
   readonly baseMeta: MetadataBase;

@@ -6,8 +6,8 @@ import {
   logNoRelevantChange,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { adjustRevenueForStatusChange } from "@/modules/revenues/server/events/handlers/adjust-revenue-for-status-change";
 import { processInvoiceForRevenue } from "@/modules/revenues/server/events/process-invoice/process-invoice-for-revenue";
+import { adjustRevenueForStatusChange } from "@/modules/revenues/server/events/updated-invoice/adjust-revenue-for-status-change";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import type { Period } from "@/shared/branding/brands";
 

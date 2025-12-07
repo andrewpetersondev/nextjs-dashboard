@@ -4,8 +4,8 @@ import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucke
 import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import type { MetadataWithPeriod } from "@/modules/revenues/server/events/handlers/core/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
+import type { MetadataWithPeriod } from "@/modules/revenues/server/events/updated-invoice/types";
 
 interface Args {
   readonly revenueService: RevenueService;

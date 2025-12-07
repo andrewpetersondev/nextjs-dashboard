@@ -3,8 +3,8 @@ import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
 import { computeAggregateAfterAmountChange } from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import type { MetadataWithPeriod } from "@/modules/revenues/server/events/handlers/core/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
+import type { MetadataWithPeriod } from "@/modules/revenues/server/events/updated-invoice/types";
 
 interface Args {
   readonly revenueService: RevenueService;
@@ -35,11 +35,6 @@ export async function handleEligibleAmountChange(args: Args): Promise<void> {
     meta,
   } = args;
   const amountDifference = currentAmount - previousAmount;
-  //  logInfo(
-  //    context,
-  //    "Invoice amount changed while remaining eligible for revenue",
-  //    { ...meta, amountDifference, currentAmount, previousAmount },
-  //  );
   const aggregate = computeAggregateAfterAmountChange(
     currentCount,
     currentTotal,

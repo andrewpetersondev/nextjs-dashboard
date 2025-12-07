@@ -1,6 +1,6 @@
 import "server-only";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
-import type { MetadataWithPeriod } from "@/modules/revenues/server/events/handlers/core/types";
+import type { MetadataWithPeriod } from "@/modules/revenues/server/events/updated-invoice/types";
 
 export function logNoAffectingChanges(
   context: string,
