@@ -1,7 +1,7 @@
 import "server-only";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { RevenueId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
 export class DeleteRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;
@@ -12,7 +12,7 @@ export class DeleteRevenueUseCase {
 
   async execute(id: RevenueId): Promise<void> {
     if (!id) {
-      throw new AppError("validation", { message: "Revenue ID is required" });
+      throw makeValidationError({ message: "Revenue ID is required" });
     }
     await this.repository.delete(id);
   }

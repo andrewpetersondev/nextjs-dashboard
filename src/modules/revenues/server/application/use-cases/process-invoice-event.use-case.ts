@@ -58,10 +58,7 @@ export class ProcessInvoiceEventUseCase {
       });
 
       if (!executed) {
-        //        logInfo(context, "Duplicate event detected, skipping processing", {
-        //          eventId: event.eventId,
-        //          invoiceId: event.invoice.id,
-        //        });
+        // Log that the event was skipped due to idempotency?
       }
     } catch (error) {
       handleEventError(context, event, error);

@@ -5,10 +5,21 @@ import {
   mapToStatisticsDto,
 } from "@/modules/revenues/server/application/mappers/revenue-dto.mapper";
 import { RevenueStatisticsService } from "@/modules/revenues/server/application/services/revenue-statistics.service";
-import type { RevenueActionResult } from "@/modules/revenues/server/application/types/action-result";
 import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+
+/**
+ * Standard discriminated union type for revenue operation results.
+ *
+ * Provides a consistent success / error response structure across all revenue
+ * actions and services. Enables type-safe error handling and result processing.
+ *
+ * @template T - The type of data returned on successful operations
+ */
+type RevenueActionResult<T> =
+  | { readonly error: string; readonly success: false }
+  | { readonly data: T; readonly success: true };
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.

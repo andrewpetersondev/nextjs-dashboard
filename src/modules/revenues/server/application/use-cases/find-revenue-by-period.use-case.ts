@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { Period } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
 export class FindRevenueByPeriodUseCase {
   private readonly repository: RevenueRepositoryInterface;
@@ -13,7 +13,7 @@ export class FindRevenueByPeriodUseCase {
 
   async execute(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
-      throw new AppError("validation", { message: "Period is required" });
+      throw makeValidationError({ message: "Period is required" });
     }
     return await this.repository.findByPeriod(period);
   }

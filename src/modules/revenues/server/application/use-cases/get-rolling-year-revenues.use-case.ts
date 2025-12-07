@@ -20,9 +20,7 @@ export class GetRollingYearRevenuesUseCase {
 
   async execute(): Promise<RevenueDisplayEntity[]> {
     try {
-      //      logger.info("buildTemplateAndPeriods execute");
-
-      const { template, startPeriod, endPeriod } = buildTemplateAndPeriods();
+      const { endPeriod, startPeriod, template } = buildTemplateAndPeriods();
 
       const displayEntities = await this.fetchDisplayEntities(
         startPeriod,
@@ -30,8 +28,6 @@ export class GetRollingYearRevenuesUseCase {
       );
 
       const result = mergeWithTemplate(template, displayEntities);
-
-      //      logger.info("buildTemplateAndPeriods execute", result);
 
       return result;
     } catch (error) {
