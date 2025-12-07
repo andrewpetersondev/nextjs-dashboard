@@ -1,10 +1,3 @@
-/**
- * Define auth form schemas and typed field lists.
- *
- * Centralizes Zod schemas for username, email, password, and form objects.
- * Field-name arrays are derived from schema shapes to keep UI and types in sync.
- */
-
 import { z } from "zod";
 import {
   EMAIL_ERROR,
@@ -23,6 +16,7 @@ import {
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
 } from "@/modules/auth/domain/auth.constants";
+import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 
 /**
  * Validate and normalize a username.
@@ -114,20 +108,7 @@ export type LoginField = keyof LoginData;
 /** Valid signup field name union. */
 export type SignupField = keyof SignupData;
 
-/**
- * Derive a frozen, readonly tuple of keys from a Zod object schema.
- *
- * Runtime and type-safe
- * Always in sync with schema
- * Prevents accidental mutation
- */
-export function schemaKeys<const T extends z.ZodRawShape>(
-  schema: z.ZodObject<T>,
-): readonly (keyof T)[] {
-  return Object.freeze(Object.keys(schema.shape) as readonly (keyof T)[]);
-}
-
 // --- Auto-synced, immutable field name lists ---
 
-export const LOGIN_FIELDS_LIST = schemaKeys(LoginSchema);
-export const SIGNUP_FIELDS_LIST = schemaKeys(SignupSchema);
+export const LOGIN_FIELDS_LIST = getSchemaKeys(LoginSchema);
+export const SIGNUP_FIELDS_LIST = getSchemaKeys(SignupSchema);

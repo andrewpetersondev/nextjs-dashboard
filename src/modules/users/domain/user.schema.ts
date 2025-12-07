@@ -5,6 +5,7 @@ import {
   UsernameSchema,
 } from "@/modules/auth/domain/auth.schema";
 import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
+import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 
 const toUndefinedIfEmptyString = (v: unknown) =>
   typeof v === "string" && v.trim() === "" ? undefined : v;
@@ -78,3 +79,9 @@ export type EditUserFormFieldNames = keyof EditUserFormInput;
 // Zod Output (post-parse) - Validated domain data
 export type CreateUserData = z.output<typeof CreateUserFormSchema>;
 export type EditUserData = z.output<typeof EditUserFormSchema>;
+
+export type CreateUserFormField = keyof CreateUserData;
+export type EditUserFormField = keyof EditUserData;
+
+export const CREATE_USER_FIELDS_LIST = getSchemaKeys(CreateUserFormSchema);
+export const EDIT_USER_FIELDS_LIST = getSchemaKeys(EditUserFormSchema);
