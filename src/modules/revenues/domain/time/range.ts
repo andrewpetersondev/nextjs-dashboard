@@ -11,8 +11,8 @@ import type { RollingMonthData } from "@/modules/revenues/domain/types";
 /**
  * Calculates a specific month date from rolling start date with offset.
  *
- * @param startDate - The rolling period start date
  * @param monthOffset - Offset from start date (0-11)
+ * @param startDate - The rolling period start date
  */
 export function calculateMonthDateFromStart(
   startDate: Date,
@@ -25,15 +25,15 @@ export function calculateMonthDateFromStart(
 /**
  * Calculates the date range for the rolling 12-month period.
  *
- * @returns startDate - First day of the month 12 months ago
- * @returns endDate - Last day of the current month
  * @returns duration - String "year" indicating the period type
+ * @returns endDate - Last day of the current month
+ * @returns startDate - First day of the month 12 months ago
  *
  */
 export function calculateDateRange(): {
+  duration: "year";
   endDate: Date;
   startDate: Date;
-  duration: "year";
 } {
   const now = new Date();
 
@@ -58,10 +58,10 @@ export function calculateDateRange(): {
  */
 export function getIntervalCount(period: IntervalDuration): number {
   switch (period) {
-    case "year":
-      return MONTHS_IN_YEAR;
     case "month":
       return SINGLE_MONTH_INTERVAL;
+    case "year":
+      return MONTHS_IN_YEAR;
     default:
       return MONTHS_IN_YEAR; // Default to 12 months if the period is not recognized
   }
@@ -70,15 +70,17 @@ export function getIntervalCount(period: IntervalDuration): number {
 /**
  * Creates a month template for a specific index in the rolling period.
  *
- * @param rollingStartDate - The start date of the rolling period
  * @param monthIndex - The index of the month in the rolling period (0-11)
+ * @param rollingStartDate - The start date of the rolling period
  * @returns RollingMonthData object for the specified month
  */
 export function createMonthTemplateFromIndex(
   rollingStartDate: Date,
   monthIndex: number,
 ): RollingMonthData {
+  const calendarMonthIndex = getMonth(
+    calculateMonthDateFromStart(rollingStartDate, monthIndex),
+  );
   const monthDate = calculateMonthDateFromStart(rollingStartDate, monthIndex);
-  const calendarMonthIndex = getMonth(monthDate);
   return createMonthTemplateData(monthIndex, monthDate, calendarMonthIndex);
 }

@@ -40,17 +40,17 @@ export function extractPeriodFromInvoice(invoice: InvoiceDto): Period | null {
  */
 export function validateInvoicePeriodForRevenue(
   invoice: InvoiceDto | undefined,
-): { readonly valid: boolean; readonly reason?: string } {
+): { readonly reason?: string; readonly valid: boolean } {
   if (!invoice) {
     return { reason: "Invoice is undefined", valid: false } as const;
   }
 
-  if (!invoice.id) {
-    return { reason: "Invoice ID is missing", valid: false } as const;
-  }
-
   if (!invoice.date) {
     return { reason: "Invoice date is missing", valid: false } as const;
+  }
+
+  if (!invoice.id) {
+    return { reason: "Invoice ID is missing", valid: false } as const;
   }
 
   if (!invoice.status) {

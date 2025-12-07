@@ -53,7 +53,7 @@ export function moveBetweenBuckets(
   current: BucketTotals,
   args: MoveBetweenArgs,
 ): BucketTotals {
-  const { fromStatus, toStatus, previousAmount, currentAmount } = args;
+  const { currentAmount, fromStatus, previousAmount, toStatus } = args;
   let next: BucketTotals = current;
   // remove previous amount from the originating bucket
   next = applyDeltaToBucket(next, fromStatus, -previousAmount);

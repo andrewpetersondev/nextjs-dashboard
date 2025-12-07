@@ -31,9 +31,9 @@ function makeDefaultRevenueEntity(p: Period): RevenueEntity {
 /**
  * Creates month template data with validated month name lookup.
  * Client-safe equivalent for features.
+ * @param calendarMonthIndex - Calendar month index (0-11).
  * @param displayOrder - Display order index.
  * @param monthDate - Date for the month.
- * @param calendarMonthIndex - Calendar month index (0-11).
  * @returns RollingMonthData object.
  */
 export function createMonthTemplateData(
@@ -49,8 +49,10 @@ export function createMonthTemplateData(
   }
 
   const monthNumber = calendarMonthIndex + 1;
+  const period = toPeriod(
+    `${monthDate.getFullYear()}-${String(monthNumber).padStart(2, "0")}`,
+  );
   const year = monthDate.getFullYear();
-  const period = toPeriod(`${year}-${String(monthNumber).padStart(2, "0")}`);
 
   return {
     displayOrder,

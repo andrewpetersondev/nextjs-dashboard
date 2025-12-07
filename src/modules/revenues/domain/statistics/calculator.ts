@@ -28,16 +28,20 @@ export function computeStatistics(
     return createEmptyStatistics();
   }
 
+  const average = Math.round(
+    revenueData.reduce((sum, value) => sum + value.totalAmount, 0) /
+      nonZeroRevenues.length,
+  );
   const maximum = Math.max(...nonZeroRevenues);
   const minimum = Math.min(...nonZeroRevenues);
+  const monthsWithData = nonZeroRevenues.length;
   const total = revenueData.reduce((sum, value) => sum + value.totalAmount, 0);
-  const average = Math.round(total / nonZeroRevenues.length);
 
   return {
     average,
     maximum,
     minimum,
-    monthsWithData: nonZeroRevenues.length,
+    monthsWithData,
     total,
   } satisfies RevenueStatistics;
 }

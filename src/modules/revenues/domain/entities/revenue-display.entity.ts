@@ -8,8 +8,8 @@ import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.e
  * original entity data for complete context in UI components.
  *
  * @prop month - Three-letter month abbreviation (e.g., "Jan", "Feb")
- * @prop year - The year in YYYY format
  * @prop monthNumber - Calendar month number (1-12)
+ * @prop year - The year in YYYY format
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
   readonly month: MonthName;

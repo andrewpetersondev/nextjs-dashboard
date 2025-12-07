@@ -8,9 +8,9 @@ export type RevenueAggregate = Readonly<{
 
 /**
  * Computes the aggregate when adding an eligible invoice.
+ * @param addedAmount - Amount to add.
  * @param currentCount - Current invoice count.
  * @param currentTotal - Current total amount.
- * @param addedAmount - Amount to add.
  * @returns Updated aggregate.
  */
 export function computeAggregateAfterAdd(
@@ -46,10 +46,10 @@ export function computeAggregateAfterRemoval(
 /**
  * Computes the aggregate when the amount of an already-eligible invoice changes.
  * Note: No clamping is applied here to preserve existing behavior.
+ * @param currentAmount - New amount.
  * @param currentCount - Current invoice count.
  * @param currentTotal - Current total amount.
  * @param previousAmount - Previous amount.
- * @param currentAmount - New amount.
  * @returns Updated aggregate.
  */
 export function computeAggregateAfterAmountChange(

@@ -16,7 +16,7 @@ import { makeValidationError } from "@/shared/errors/factories/app-error.factory
  * @returns The generated template.
  */
 function getValidatedTemplate(): readonly RollingMonthData[] {
-  const { startDate, duration } = calculateDateRange();
+  const { duration, startDate } = calculateDateRange();
 
   const durationResult = toIntervalDuration(duration);
   if (!durationResult.ok) {
@@ -51,8 +51,8 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
     });
   }
 
-  const startDatePeriod = firstMonth.period;
   const endDatePeriod = lastMonth.period;
+  const startDatePeriod = firstMonth.period;
 
   return {
     endPeriod: toPeriod(endDatePeriod),
@@ -72,8 +72,8 @@ export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
 
 /**
  * Merges existing revenue display entities with a template, filling gaps with defaults.
- * @param template - The rolling month template.
  * @param displayEntities - Existing revenue display entities.
+ * @param template - The rolling month template.
  * @returns Merged array of revenue display entities.
  */
 export function mergeWithTemplate(

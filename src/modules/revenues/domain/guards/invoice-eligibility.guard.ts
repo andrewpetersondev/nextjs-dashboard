@@ -7,8 +7,8 @@ import { validateInvoicePeriodForRevenue } from "@/modules/revenues/domain/polic
  * Result of an eligibility check.
  */
 export type EligibilityResult =
-  | { readonly eligible: true }
-  | { readonly eligible: false; readonly reason: string };
+  | { readonly eligible: false; readonly reason: string }
+  | { readonly eligible: true };
 
 /**
  * Checks if an invoice is eligible for revenue calculation.

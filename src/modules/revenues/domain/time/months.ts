@@ -7,14 +7,6 @@ import {
 } from "@/modules/revenues/domain/constants";
 import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 
-export function validateMonthNumber(monthNumber: number, period: Date): void {
-  if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
-    throw makeValidationError({
-      message: `Invalid month number ${monthNumber} in period ${period}`,
-    });
-  }
-}
-
 export function monthAbbreviationFromNumber(monthNumber: number): MonthName {
   const abbr = MONTH_ORDER[monthNumber - 1];
   if (!abbr) {
@@ -23,4 +15,12 @@ export function monthAbbreviationFromNumber(monthNumber: number): MonthName {
     });
   }
   return abbr;
+}
+
+export function validateMonthNumber(monthNumber: number, period: Date): void {
+  if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
+    throw makeValidationError({
+      message: `Invalid month number ${monthNumber} in period ${period}`,
+    });
+  }
 }
