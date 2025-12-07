@@ -16,7 +16,7 @@ import {
   logMissingPrevious,
   logNoRelevantChange,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
-import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
+import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/server/application/cross-cutting/period-extraction";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
@@ -400,7 +400,7 @@ function preparePeriodAndMeta(
   context: string,
   baseMeta: MetadataBase,
 ): { readonly period: PeriodArg; readonly meta: MetadataWithPeriod } | null {
-  const period = extractAndValidatePeriod(currentInvoice, context);
+  const period = extractAndValidatePeriodWithLogging(currentInvoice, context);
   if (!period) {
     return null;
   }

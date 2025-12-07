@@ -6,8 +6,6 @@ import { dateToPeriod } from "@/modules/revenues/domain/time/period";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
-// TODO: THIS FILE HAS A NEAR DUPLICATE AT REVENUES/APPLICATION/POLICIES
-
 /**
  * Domain policy: safely extract the Period (first-of-month DATE) from an invoice date.
  * Pure function without logging or application concerns.

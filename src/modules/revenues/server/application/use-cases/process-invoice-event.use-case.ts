@@ -6,7 +6,7 @@ import {
   handleEventError,
   logInfo,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
-import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
+import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/server/application/cross-cutting/period-extraction";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import type { Period } from "@/shared/branding/brands";
@@ -46,7 +46,7 @@ export class ProcessInvoiceEventUseCase {
           return;
         }
 
-        const period = extractAndValidatePeriod(
+        const period = extractAndValidatePeriodWithLogging(
           invoice,
           context,
           event.eventId,
