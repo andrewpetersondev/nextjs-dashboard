@@ -52,7 +52,7 @@ export function DeleteUser({ id }: { id: string }): JSX.Element {
   return (
     <form action={deleteUserFormAction}>
       {/* Hidden input for userId */}
-      <input name="userId" type="hidden" value={id} />
+      <input name="id" type="hidden" value={id} />
       <button
         className="rounded-md border p-2 hover:bg-bg-hover"
         data-cy="delete-item-button"
