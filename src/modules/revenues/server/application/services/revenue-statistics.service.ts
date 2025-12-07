@@ -2,8 +2,8 @@ import "server-only";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
-import { GetRevenueStatisticsUseCase } from "@/modules/revenues/server/application/use-cases/queries/get-revenue-statistics.use-case";
-import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/server/application/use-cases/queries/get-rolling-year-revenues.use-case";
+import { GetRevenueStatisticsUseCase } from "@/modules/revenues/server/application/use-cases/get-revenue-statistics.use-case";
+import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/server/application/use-cases/get-rolling-year-revenues.use-case";
 
 /**
  * Service for calculating revenue statistics.

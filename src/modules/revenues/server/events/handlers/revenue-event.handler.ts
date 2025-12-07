@@ -1,5 +1,5 @@
 import "server-only";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/server/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceEvent } from "@/modules/revenues/server/events/handlers/orchestrator";
 import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";

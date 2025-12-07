@@ -5,7 +5,7 @@ import {
   mapEntityToSimpleRevenueDto,
   mapToStatisticsDto,
 } from "@/modules/revenues/server/application/mappers/revenue-dto.mapper";
-import { RevenueStatisticsService } from "@/modules/revenues/server/application/services/statistics/statistics.service";
+import { RevenueStatisticsService } from "@/modules/revenues/server/application/services/revenue-statistics.service";
 import type { RevenueActionResult } from "@/modules/revenues/server/application/types/action-result";
 import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/repository";
 import { getAppDb } from "@/server-core/db/db.connection";

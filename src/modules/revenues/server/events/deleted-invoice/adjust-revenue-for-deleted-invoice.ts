@@ -4,7 +4,7 @@ import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucke
 import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
 import { isEligibleDeletion } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { periodKey } from "@/modules/revenues/domain/period";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { ApplyDeletionOptions } from "@/modules/revenues/server/events/deleted-invoice/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import { withErrorHandling } from "@/modules/revenues/server/infrastructure/errors/error-handling";

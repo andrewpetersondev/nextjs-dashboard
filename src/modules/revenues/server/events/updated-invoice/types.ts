@@ -1,7 +1,7 @@
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import type { LogMetadata } from "@/modules/revenues/server/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { Period } from "@/shared/branding/brands";
 
 export type ChangeType =

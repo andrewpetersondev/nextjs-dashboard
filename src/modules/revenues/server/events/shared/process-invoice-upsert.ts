@@ -2,7 +2,7 @@ import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import { periodKey } from "@/modules/revenues/domain/period";
 import type { LogMetadata } from "@/modules/revenues/server/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { ProcessOptions } from "@/modules/revenues/server/events/shared/types";
 import { upsertRevenue } from "@/modules/revenues/server/events/shared/upsert-revenue";
 import { withErrorHandling } from "@/modules/revenues/server/infrastructure/errors/error-handling";

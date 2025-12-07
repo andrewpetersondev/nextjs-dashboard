@@ -7,7 +7,7 @@ import {
   logInfo,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import type { Period } from "@/shared/branding/brands";
 
@@ -27,11 +27,6 @@ export class ProcessInvoiceEventUseCase {
     const context = `RevenueEventHandler.${contextMethod}`;
 
     try {
-      //      logInfo(context, `Processing invoice ${contextMethod} event`, {
-      //        eventId: event.eventId,
-      //        invoiceId: event.invoice.id,
-      //      });
-
       const { executed } = await withIdempotency(event.eventId, async () => {
         await this.processOnce(event, contextMethod);
         const invoice = event.invoice;
@@ -58,15 +53,6 @@ export class ProcessInvoiceEventUseCase {
           return;
         }
         await processor(invoice, period);
-        //        logInfo(
-        //          context,
-        //          `Successfully processed invoice ${contextMethod} event`,
-        //          {
-        //            eventId: event.eventId,
-        //            invoiceId: invoice.id,
-        //            period: periodKey(period),
-        //          },
-        //        );
       });
 
       if (!executed) {

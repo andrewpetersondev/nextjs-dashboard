@@ -2,7 +2,7 @@ import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
 import { generateYaxis } from "@/modules/revenues/domain/display/y-axis";
 import type { SimpleRevenueDto } from "@/modules/revenues/domain/types";
-import { getRevenueChartAction } from "@/modules/revenues/server/application/actions/actions";
+import { getRevenueChartAction } from "@/modules/revenues/server/application/actions/revenue.actions";
 import { H2, H3 } from "@/ui/atoms/typography/headings";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not to long>

@@ -5,10 +5,10 @@ import type {
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
-import { CreateRevenueUseCase } from "@/modules/revenues/server/application/use-cases/commands/create-revenue.use-case";
-import { DeleteRevenueUseCase } from "@/modules/revenues/server/application/use-cases/commands/delete-revenue.use-case";
-import { UpdateRevenueUseCase } from "@/modules/revenues/server/application/use-cases/commands/update-revenue.use-case";
-import { FindRevenueByPeriodUseCase } from "@/modules/revenues/server/application/use-cases/queries/find-revenue-by-period.use-case";
+import { CreateRevenueUseCase } from "@/modules/revenues/server/application/use-cases/create-revenue.use-case";
+import { DeleteRevenueUseCase } from "@/modules/revenues/server/application/use-cases/delete-revenue.use-case";
+import { FindRevenueByPeriodUseCase } from "@/modules/revenues/server/application/use-cases/find-revenue-by-period.use-case";
+import { UpdateRevenueUseCase } from "@/modules/revenues/server/application/use-cases/update-revenue.use-case";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
 /**

@@ -17,7 +17,7 @@ import {
   logNoRelevantChange,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
-import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import type {
