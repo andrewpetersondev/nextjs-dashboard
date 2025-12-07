@@ -1,7 +1,15 @@
 import "server-only";
-import { createEmptyStatistics } from "@/modules/revenues/domain/data/statistics";
-import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
+import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
+import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/factory";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
+
+function nonZeroAmounts(
+  revenueData: readonly RevenueDisplayEntity[],
+): number[] {
+  return revenueData
+    .filter((entity) => entity.totalAmount > 0)
+    .map((entity) => entity.totalAmount);
+}
 
 export function computeStatistics(
   revenueData: readonly RevenueDisplayEntity[] | undefined | null,
@@ -27,12 +35,4 @@ export function computeStatistics(
     monthsWithData: nonZeroRevenues.length,
     total,
   } satisfies RevenueStatistics;
-}
-
-export function nonZeroAmounts(
-  revenueData: readonly RevenueDisplayEntity[],
-): number[] {
-  return revenueData
-    .filter((entity) => entity.totalAmount > 0)
-    .map((entity) => entity.totalAmount);
 }

@@ -1,9 +1,9 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
-import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
-import { isEligibleDeletion } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
-import { periodKey } from "@/modules/revenues/domain/period";
+import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucket-totals";
+import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculations/revenue-aggregate";
+import { checkDeletionEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
+import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { ApplyDeletionOptions } from "@/modules/revenues/server/events/deleted-invoice/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
@@ -65,7 +65,10 @@ export async function adjustRevenueForDeletedInvoice(
     context,
     "Adjusting revenue for deleted invoice",
     async () => {
-      if (!isEligibleDeletion(invoice, context, metadata)) {
+      const eligibility = checkDeletionEligibility(invoice);
+      if (!eligibility.eligible) {
+        // Log the reason why it was skipped, preserving original logging intent
+        /* logInfo(context, eligibility.reason, { ...metadata }); */
         return;
       }
       await applyDeletionEffects({

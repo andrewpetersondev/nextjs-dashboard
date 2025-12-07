@@ -5,7 +5,7 @@ import {
   ROLLING_START_OFFSET_MONTHS,
   SINGLE_MONTH_INTERVAL,
 } from "@/modules/revenues/domain/constants";
-import { createMonthTemplateData } from "@/modules/revenues/domain/template";
+import { createMonthTemplateData } from "@/modules/revenues/domain/templates/factory";
 import type { RollingMonthData } from "@/modules/revenues/domain/types";
 
 /**

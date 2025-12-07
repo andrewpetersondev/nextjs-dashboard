@@ -2,8 +2,8 @@ import "server-only";
 import {
   applyDeltaToBucket,
   type BucketTotals,
-} from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
+} from "@/modules/revenues/domain/calculations/bucket-totals";
+import { checkStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility.guard";
 import {
   type LogMetadata,
   logInfo,
@@ -54,7 +54,7 @@ async function updateExistingRevenue(
   } = options;
 
   const isDiff = isDiffUpdate(isUpdate, previousAmount);
-  const eligible = isStatusEligibleForRevenue(invoice.status);
+  const eligible = checkStatusEligibleForRevenue(invoice.status);
 
   let amountDelta: number;
   switch (true) {
@@ -101,7 +101,7 @@ async function updateExistingRevenue(
     totalPendingAmount: existing.totalPendingAmount,
   };
 
-  const nextBuckets = isStatusEligibleForRevenue(invoice.status)
+  const nextBuckets = checkStatusEligibleForRevenue(invoice.status)
     ? applyDeltaToBucket(currentBuckets, invoice.status, amountDelta)
     : currentBuckets;
 
@@ -178,7 +178,7 @@ export async function upsertRevenue(args: UpsertArgs): Promise<void> {
   }
 
   // No existing revenue record for the period. Only create if invoice is eligible.
-  if (!isStatusEligibleForRevenue(invoice.status)) {
+  if (!checkStatusEligibleForRevenue(invoice.status)) {
     logInfo(
       context,
       "Invoice status not eligible for revenue; skipping create",

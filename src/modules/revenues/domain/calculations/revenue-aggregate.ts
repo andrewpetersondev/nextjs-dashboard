@@ -1,11 +1,3 @@
-import "server-only";
-
-/**
- * Pure domain helpers for computing revenue aggregate adjustments.
- * These functions encapsulate the arithmetic for invoice count and total amount
- * updates, keeping handlers thin and intention-revealing.
- */
-
 export type RevenueAggregate = Readonly<{
   readonly invoiceCount: number;
   readonly totalAmount: number;

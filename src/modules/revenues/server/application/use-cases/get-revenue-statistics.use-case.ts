@@ -1,7 +1,7 @@
 import "server-only";
-import { createEmptyStatistics } from "@/modules/revenues/domain/data/statistics";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
-import { computeStatistics } from "@/modules/revenues/domain/services/revenue-statistics";
+import { computeStatistics } from "@/modules/revenues/domain/statistics/calculator";
+import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/factory";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
 import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/server/application/use-cases/get-rolling-year-revenues.use-case";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

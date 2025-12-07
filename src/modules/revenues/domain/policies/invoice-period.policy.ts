@@ -2,7 +2,7 @@ import "server-only";
 import { isValid, parseISO } from "date-fns";
 import { ISO_YEAR_MONTH_REGEX } from "@/modules/invoices/domain/constants";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { dateToPeriod } from "@/modules/revenues/domain/period";
+import { dateToPeriod } from "@/modules/revenues/domain/time/period";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 

@@ -3,14 +3,14 @@ import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import {
   applyDeltaToBucket,
   moveBetweenBuckets,
-} from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
+} from "@/modules/revenues/domain/calculations/bucket-totals";
 import {
   computeAggregateAfterAdd,
   computeAggregateAfterAmountChange,
   computeAggregateAfterRemoval,
-} from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
-import { periodKey } from "@/modules/revenues/domain/period";
+} from "@/modules/revenues/domain/calculations/revenue-aggregate";
+import { checkStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility.guard";
+import { periodKey } from "@/modules/revenues/domain/time/period";
 import {
   logInfo,
   logMissingPrevious,
@@ -45,8 +45,8 @@ function detectChange(
   previousInvoice: InvoiceDto,
   currentInvoice: InvoiceDto,
 ): ChangeType {
-  const prevEligible = isStatusEligibleForRevenue(previousInvoice.status);
-  const currEligible = isStatusEligibleForRevenue(currentInvoice.status);
+  const prevEligible = checkStatusEligibleForRevenue(previousInvoice.status);
+  const currEligible = checkStatusEligibleForRevenue(currentInvoice.status);
   if (prevEligible && !currEligible) {
     return "eligible-to-ineligible";
   }
@@ -184,7 +184,7 @@ async function handleNoExistingRevenue(
 ): Promise<void> {
   const { revenueService, currentInvoice, period, context, meta } = args;
   logInfo(context, "No existing revenue record was found for a period", meta);
-  if (isStatusEligibleForRevenue(currentInvoice.status)) {
+  if (checkStatusEligibleForRevenue(currentInvoice.status)) {
     await processInvoiceUpsert(revenueService, currentInvoice, period, {
       context,
     });

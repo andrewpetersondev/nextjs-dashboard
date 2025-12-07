@@ -1,6 +1,6 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { periodKey } from "@/modules/revenues/domain/period";
+import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { LogMetadata } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import type { ProcessOptions } from "@/modules/revenues/server/events/shared/types";

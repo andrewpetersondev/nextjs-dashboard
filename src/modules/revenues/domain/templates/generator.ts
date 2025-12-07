@@ -2,7 +2,7 @@ import type { IntervalDuration } from "@/modules/revenues/domain/constants";
 import {
   createMonthTemplateFromIndex,
   getIntervalCount,
-} from "@/modules/revenues/domain/date/range";
+} from "@/modules/revenues/domain/time/range";
 import type { RollingMonthData } from "@/modules/revenues/domain/types";
 
 /**

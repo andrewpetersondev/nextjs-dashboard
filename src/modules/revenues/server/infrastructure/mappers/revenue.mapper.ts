@@ -1,6 +1,6 @@
 import "server-only";
 import { isValid } from "date-fns";
-import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { toRevenueSource } from "@/modules/revenues/server/infrastructure/mappers/revenue-source.mapper";
 import {
   isNonNegativeInteger,

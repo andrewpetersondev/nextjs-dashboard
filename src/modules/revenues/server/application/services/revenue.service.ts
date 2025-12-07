@@ -3,7 +3,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { CreateRevenueUseCase } from "@/modules/revenues/server/application/use-cases/create-revenue.use-case";
 import { DeleteRevenueUseCase } from "@/modules/revenues/server/application/use-cases/delete-revenue.use-case";

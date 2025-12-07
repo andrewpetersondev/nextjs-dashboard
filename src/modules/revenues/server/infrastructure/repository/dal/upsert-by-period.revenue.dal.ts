@@ -3,7 +3,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/revenue.entity";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";

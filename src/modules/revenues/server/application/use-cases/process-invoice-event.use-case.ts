@@ -1,6 +1,6 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { isInvoiceEligibleForRevenue } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
+import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { withIdempotency } from "@/modules/revenues/server/application/cross-cutting/idempotency";
 import {
   handleEventError,
@@ -32,13 +32,15 @@ export class ProcessInvoiceEventUseCase {
         const invoice = event.invoice;
 
         // Eligibility guard
-        if (!isInvoiceEligibleForRevenue(invoice, contextMethod)) {
+        const eligibility = checkInvoiceEligibility(invoice);
+        if (!eligibility.eligible) {
           logInfo(
             context,
-            "Invoice not eligible for revenue calculation, skipping",
+            `Invoice not eligible for revenue calculation: ${eligibility.reason}`,
             {
               eventId: event.eventId,
               invoiceId: invoice.id,
+              reason: eligibility.reason,
             },
           );
           return;

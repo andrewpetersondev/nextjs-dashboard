@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import type {
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";

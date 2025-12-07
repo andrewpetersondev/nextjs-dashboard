@@ -1,6 +1,6 @@
 import "server-only";
 import { and, desc, gte, lte } from "drizzle-orm";
-import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowsToEntities } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";

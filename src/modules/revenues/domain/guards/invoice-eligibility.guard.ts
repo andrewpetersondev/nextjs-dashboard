@@ -1,91 +1,68 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
+import { checkStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility.guard";
 import { validateInvoicePeriodForRevenue } from "@/modules/revenues/domain/policies/invoice-period.policy";
-import {
-  type LogMetadata,
-  logError,
-  logInfo,
-} from "@/modules/revenues/server/application/cross-cutting/logging";
+
+/**
+ * Result of an eligibility check.
+ */
+export type EligibilityResult =
+  | { readonly eligible: true }
+  | { readonly eligible: false; readonly reason: string };
 
 /**
  * Checks if an invoice is eligible for revenue calculation.
+ * Pure domain logic.
  */
-export function isInvoiceEligibleForRevenue(
+export function checkInvoiceEligibility(
   invoice: InvoiceDto,
-  contextMethod: string,
-): boolean {
-  const context = `RevenueEventHandler.${contextMethod}`;
-
-  try {
-    // Validate the invoice
-    const validationResult = validateInvoicePeriodForRevenue(invoice);
-
-    if (!validationResult.valid) {
-      //      logInfo(
-      //        context,
-      //        `Invoice not eligible for revenue: ${validationResult.reason}`,
-      //        {
-      //          invoice: invoice.id ?? null,
-      //          reason: validationResult.reason ?? null,
-      //        },
-      //      );
-      return false;
-    }
-
-    // Check if the invoice has a valid amount
-    if (!invoice.amount || invoice.amount <= 0) {
-      //      logInfo(context, "Invoice has zero or negative amount, skipping", {
-      //        invoice: invoice.id ?? null,
-      //      });
-      return false;
-    }
-
-    // Check if the invoice has a valid status
-    if (!isStatusEligibleForRevenue(invoice.status)) {
-      logInfo(
-        context,
-        `Invoice status ${invoice.status} not eligible for revenue`,
-        {
-          invoice: invoice.id,
-          status: invoice.status,
-        },
-      );
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    logError(context, "Error checking invoice eligibility for revenue", error, {
-      invoice: invoice.id ?? null,
-    });
-    return false;
+): EligibilityResult {
+  // Validate the invoice structure and period
+  const validationResult = validateInvoicePeriodForRevenue(invoice);
+  if (!validationResult.valid) {
+    return {
+      eligible: false,
+      reason: validationResult.reason ?? "Invalid invoice structure",
+    };
   }
+
+  // Check if the invoice has a valid amount
+  if (!invoice.amount || invoice.amount <= 0) {
+    return { eligible: false, reason: "Invoice has zero or negative amount" };
+  }
+
+  // Check if the invoice has a valid status
+  if (!checkStatusEligibleForRevenue(invoice.status)) {
+    return {
+      eligible: false,
+      reason: `Invoice status ${invoice.status} not eligible for revenue`,
+    };
+  }
+
+  return { eligible: true };
 }
 
 /**
  * Checks if an invoice is eligible for deletion.
  */
-export function isEligibleDeletion(
+export function checkDeletionEligibility(
   invoice: InvoiceDto,
-  context: string,
-  metadata: LogMetadata,
-): boolean {
-  if (!isStatusEligibleForRevenue(invoice.status)) {
-    logInfo(
-      context,
-      "Deleted invoice was not eligible for revenue, no adjustment needed",
-      { ...metadata, status: invoice.status },
-    );
-    return false;
+): EligibilityResult {
+  if (!checkStatusEligibleForRevenue(invoice.status)) {
+    return {
+      eligible: false,
+      reason: "Deleted invoice was not eligible for revenue",
+    };
   }
   if (invoice.amount <= 0) {
-    logInfo(
-      context,
-      "Deleted invoice had an invalid amount, no adjustment needed",
-      { ...metadata, amount: invoice.amount },
-    );
-    return false;
+    return {
+      eligible: false,
+      reason: "Deleted invoice had an invalid amount",
+    };
   }
-  return true;
+  return { eligible: true };
 }
+
+// Deprecated wrapper to maintain some compatibility during refactor if strictly needed,
+// but better to remove the server logging entirely from this file.
+// I will remove the functions that imported logging.

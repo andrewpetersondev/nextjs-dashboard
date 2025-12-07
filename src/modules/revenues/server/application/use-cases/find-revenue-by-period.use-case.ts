@@ -1,5 +1,5 @@
 import "server-only";
-import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { Period } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
