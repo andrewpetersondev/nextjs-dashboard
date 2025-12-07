@@ -1,8 +1,8 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/server/domain/guards/revenue-eligibility";
 import type {
   MetadataWithPeriod,
   PeriodArg,

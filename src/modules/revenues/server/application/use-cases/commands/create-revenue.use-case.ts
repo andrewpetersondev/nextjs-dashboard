@@ -2,7 +2,7 @@ import "server-only";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
-} from "@/modules/revenues/server/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

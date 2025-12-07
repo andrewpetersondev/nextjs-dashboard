@@ -1,7 +1,9 @@
 "use server";
 import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
-import { getValidUserRole } from "@/modules/users/domain/get-valid-user-role";
-import { toUserRole } from "@/modules/users/domain/to-user-role";
+import {
+  getValidUserRole,
+  toUserRole,
+} from "@/modules/users/domain/role.utils";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,

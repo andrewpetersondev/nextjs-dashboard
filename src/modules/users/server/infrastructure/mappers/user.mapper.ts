@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { UserEntity } from "@/modules/users/domain/entity";
-import { toUserRole } from "@/modules/users/domain/to-user-role";
+import { toUserRole } from "@/modules/users/domain/role.utils";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import type { NewUserRow, UserRow } from "@/server-core/db/schema/users";
 import { toUserId } from "@/shared/branding/converters/id-converters";

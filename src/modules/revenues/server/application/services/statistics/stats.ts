@@ -1,7 +1,7 @@
 import "server-only";
 import { createEmptyStatistics } from "@/modules/revenues/domain/data/statistics";
+import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
 import type { RevenueStatistics } from "@/modules/revenues/domain/types";
-import type { RevenueDisplayEntity } from "@/modules/revenues/server/domain/entities/entity.client";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export function computeStatistics(

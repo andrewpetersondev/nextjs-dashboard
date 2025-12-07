@@ -2,7 +2,7 @@ import "server-only";
 import type {
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/server/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import type { RevenueId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";

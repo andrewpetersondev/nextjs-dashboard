@@ -6,7 +6,7 @@ import type {
 import {
   monthAbbreviationFromNumber,
   validateMonthNumber,
-} from "@/modules/revenues/server/domain/utils/months";
+} from "@/modules/revenues/domain/utils/months";
 import { convertCentsToDollars } from "@/shared/utilities/money/convert";
 
 export function mapEntityToSimpleRevenueDto(

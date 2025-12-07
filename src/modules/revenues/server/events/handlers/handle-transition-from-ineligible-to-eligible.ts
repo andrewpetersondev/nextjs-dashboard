@@ -1,9 +1,9 @@
 import "server-only";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
+import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
+import { computeAggregateAfterAdd } from "@/modules/revenues/domain/calculations/revenue-aggregate.calculation";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { applyDeltaToBucket } from "@/modules/revenues/server/domain/calculations/bucket-totals.calculation";
-import { computeAggregateAfterAdd } from "@/modules/revenues/server/domain/calculations/revenue-aggregate.calculation";
 import type { MetadataWithPeriod } from "@/modules/revenues/server/events/handlers/core/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
 

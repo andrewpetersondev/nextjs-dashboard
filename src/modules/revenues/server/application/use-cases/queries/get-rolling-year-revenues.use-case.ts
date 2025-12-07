@@ -1,12 +1,12 @@
 import "server-only";
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
 import { mapRevenueEntityToDisplayEntity } from "@/modules/revenues/server/application/mappers/revenue-display.mapper";
 import { mergeWithTemplate } from "@/modules/revenues/server/application/services/revenue/helpers/merge";
 import {
   buildDefaultsFromFreshTemplate,
   buildTemplateAndPeriods,
 } from "@/modules/revenues/server/application/services/revenue/helpers/templates";
-import type { RevenueEntity } from "@/modules/revenues/server/domain/entities/entity";
-import type { RevenueDisplayEntity } from "@/modules/revenues/server/domain/entities/entity.client";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/server/infrastructure/repository/interface";
 import type { Period } from "@/shared/branding/brands";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

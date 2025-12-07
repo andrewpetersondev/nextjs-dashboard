@@ -6,8 +6,8 @@ import {
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
 } from "@/modules/revenues/domain/constants";
-import type { RevenueEntity } from "@/modules/revenues/server/domain/entities/entity";
-import type { RevenueDisplayEntity } from "@/modules/revenues/server/domain/entities/entity.client";
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/entity";
+import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/entity.client";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**

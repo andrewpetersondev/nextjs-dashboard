@@ -1,5 +1,5 @@
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
-import { toUserRole } from "@/modules/users/domain/to-user-role";
+import { toUserRole } from "@/modules/users/domain/role.utils";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**

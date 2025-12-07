@@ -1,8 +1,8 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { isEligibleDeletion } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { periodKey } from "@/modules/revenues/domain/period";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { isEligibleDeletion } from "@/modules/revenues/server/domain/guards/invoice-eligibility.guard";
 import { applyDeletionEffects } from "@/modules/revenues/server/events/deleted-invoice/apply-deletion-effects";
 import { withErrorHandling } from "@/modules/revenues/server/infrastructure/errors/error-handling";
 import type { Period } from "@/shared/branding/brands";

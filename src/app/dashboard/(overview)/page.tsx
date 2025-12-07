@@ -11,8 +11,8 @@ import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/constants";
 import {
   readInvoicesSummary,
   readLatestInvoices,
-} from "@/modules/invoices/domain/queries";
-import { getValidUserRole } from "@/modules/users/domain/get-valid-user-role";
+} from "@/modules/invoices/server/application/actions/queries";
+import { getValidUserRole } from "@/modules/users/domain/role.utils";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";

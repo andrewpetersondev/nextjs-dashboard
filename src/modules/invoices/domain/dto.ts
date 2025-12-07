@@ -25,3 +25,12 @@ export interface InvoiceDto {
  * Excludes id and revenuePeriod which are generated/derived on server.
  */
 export type InvoiceFormDto = Omit<InvoiceDto, "id" | "revenuePeriod">;
+
+/**
+ * DTO for the invoices summary card.
+ */
+export type InvoicesSummary = {
+  totalInvoices: number;
+  totalPaid: number;
+  totalPending: number;
+};

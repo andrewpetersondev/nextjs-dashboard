@@ -3,7 +3,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/server/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/entity";
 import { createRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/create.revenue.dal";
 import { deleteRevenue } from "@/modules/revenues/server/infrastructure/repository/dal/delete.revenue.dal";
 import { findRevenuesByDateRange } from "@/modules/revenues/server/infrastructure/repository/dal/find-by-date-range.revenue.dal";

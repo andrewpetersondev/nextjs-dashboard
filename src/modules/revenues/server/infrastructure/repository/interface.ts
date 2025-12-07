@@ -3,7 +3,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
-} from "@/modules/revenues/server/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/entity";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
 /**

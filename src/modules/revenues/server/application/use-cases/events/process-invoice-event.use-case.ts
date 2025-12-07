@@ -1,5 +1,6 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { isInvoiceEligibleForRevenue } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { withIdempotency } from "@/modules/revenues/server/application/cross-cutting/idempotency";
 import {
   handleEventError,
@@ -7,7 +8,6 @@ import {
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import { extractAndValidatePeriod } from "@/modules/revenues/server/application/policies/invoice-period.policy";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import { isInvoiceEligibleForRevenue } from "@/modules/revenues/server/domain/guards/invoice-eligibility.guard";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import type { Period } from "@/shared/branding/brands";
 

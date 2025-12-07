@@ -2,7 +2,7 @@ import "server-only";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
-} from "@/modules/revenues/server/domain/entities/entity";
+} from "@/modules/revenues/domain/entities/entity";
 import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";

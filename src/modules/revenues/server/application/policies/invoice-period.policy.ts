@@ -1,7 +1,7 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { extractPeriodFromInvoice as extractPeriodFromInvoiceDomain } from "@/modules/revenues/domain/policies/invoice-period.policy";
 import { logError } from "@/modules/revenues/server/application/cross-cutting/logging";
-import { extractPeriodFromInvoice as extractPeriodFromInvoiceDomain } from "@/modules/revenues/server/domain/policies/invoice-period.policy";
 import type { Period } from "@/shared/branding/brands";
 
 // TODO: THIS FILE HAS A NEAR DUPLICATE AT REVENUES/DOMAIN/POLICIES

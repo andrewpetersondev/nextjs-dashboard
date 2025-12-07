@@ -1,15 +1,15 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import {
+  applyDeltaToBucket,
+  type BucketTotals,
+} from "@/modules/revenues/domain/calculations/bucket-totals.calculation";
+import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
+import {
   type LogMetadata,
   logInfo,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
-import {
-  applyDeltaToBucket,
-  type BucketTotals,
-} from "@/modules/revenues/server/domain/calculations/bucket-totals.calculation";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/server/domain/guards/revenue-eligibility";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/process-invoice/revenue-mutations";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";

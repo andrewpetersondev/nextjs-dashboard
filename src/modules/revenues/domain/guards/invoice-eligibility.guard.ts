@@ -1,12 +1,12 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import { isStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility";
+import { validateInvoicePeriodForRevenue } from "@/modules/revenues/domain/policies/invoice-period.policy";
 import {
   type LogMetadata,
   logError,
   logInfo,
 } from "@/modules/revenues/server/application/cross-cutting/logging";
-import { isStatusEligibleForRevenue } from "@/modules/revenues/server/domain/guards/revenue-eligibility";
-import { validateInvoicePeriodForRevenue } from "@/modules/revenues/server/domain/policies/invoice-period.policy";
 
 /**
  * Checks if an invoice is eligible for revenue calculation.
