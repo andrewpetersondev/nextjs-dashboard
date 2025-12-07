@@ -6,7 +6,6 @@ import { deleteUserAction } from "@/modules/users/server/application/actions/del
  */
 export async function deleteUserFormAction(formData: FormData): Promise<void> {
   "use server";
-  // TODO: WHEN DID ID GET IN THE FORM?
   const id = formData.get("id");
   if (typeof id !== "string" || !id) {
     // Invalid userId; nothing to do.

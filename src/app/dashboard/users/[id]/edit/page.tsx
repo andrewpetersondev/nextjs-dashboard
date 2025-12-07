@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { readUserAction } from "@/modules/users/server/application/actions/read";
-import { UpdateUserForm } from "@/modules/users/ui/components/update-user-form";
+import { UpdateUserForm } from "@/modules/users/ui/forms/update-user-form";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 

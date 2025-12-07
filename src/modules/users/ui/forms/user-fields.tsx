@@ -7,7 +7,7 @@ import type { JSX } from "react";
 import { useId } from "react";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import type { CreateUserFormFieldNames } from "@/modules/users/domain/user.schema";
-import { SelectRole } from "@/modules/users/ui/components/select-role";
+import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import { Label } from "@/ui/atoms/label";
 import { InputField } from "@/ui/molecules/input-field";
@@ -85,7 +85,7 @@ export function UserFields({
       )}
       <div className="mb-4">
         <Label htmlFor="role" text="Role" />
-        <SelectRole
+        <UserRoleSelect
           dataCy="user-role-select"
           defaultValue={values.role}
           disabled={disabled}

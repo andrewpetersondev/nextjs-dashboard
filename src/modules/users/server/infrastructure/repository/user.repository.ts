@@ -66,7 +66,7 @@ export class UserRepositoryImpl {
     return await fetchFilteredUsers(this.db, query, page);
   }
 
-  async count(query: string): Promise<number> {
+  async getPageCount(query: string): Promise<number> {
     return await fetchUsersPages(this.db, query);
   }
 }

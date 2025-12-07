@@ -1,7 +1,7 @@
 import { type JSX, type ReactNode, useEffect, useMemo, useState } from "react";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
-import { UserFields } from "@/modules/users/ui/components/user-fields";
+import { UserFields } from "@/modules/users/ui/forms/user-fields";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import type { FieldError } from "@/shared/forms/types/form.types";

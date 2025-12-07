@@ -48,7 +48,7 @@ export class UserRepositoryAdapter
     return this.repo.findMany(query, page);
   }
 
-  count(query: string): Promise<number> {
-    return this.repo.count(query);
+  getPageCount(query: string): Promise<number> {
+    return this.repo.getPageCount(query);
   }
 }

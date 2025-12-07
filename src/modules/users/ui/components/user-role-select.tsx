@@ -1,5 +1,3 @@
-// `src/features/users/components/select-role.tsx`
-
 import type React from "react";
 import { useId } from "react";
 import {
@@ -45,7 +43,7 @@ interface SelectRoleProps
  * @param onChange - Handler for role selection changes.
  * @param props - Additional props for the SelectMenu component.
  */
-export const SelectRole: React.FC<SelectRoleProps> = ({
+export const UserRoleSelect: React.FC<SelectRoleProps> = ({
   error,
   value,
   onChange,

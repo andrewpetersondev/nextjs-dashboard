@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { Pagination } from "@/modules/invoices/ui/components/table/pagination";
-import { readUsersPagesAction } from "@/modules/users/server/application/actions/read-pages";
-import { CreateUser } from "@/modules/users/ui/components/buttons";
-import { UsersTable } from "@/modules/users/ui/components/users-table";
+import { fetchUsersPageCountAction } from "@/modules/users/server/application/actions/read-pages";
+import { CreateUserLink } from "@/modules/users/ui/components/user-action-buttons";
+import { UsersTable } from "@/modules/users/ui/tables/users-table";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { InvoicesSearchSkeleton } from "@/ui/feedback/skeleton/skeletons";
 import { Search } from "@/ui/molecules/search-box";
@@ -36,7 +36,7 @@ export default async function Page(
 
   const currentPage: number = Number(searchParams?.page) || 1;
 
-  const totalPages: number = await readUsersPagesAction(query);
+  const totalPages: number = await fetchUsersPageCountAction(query);
 
   return (
     <main className="w-full">
@@ -47,7 +47,7 @@ export default async function Page(
         <Suspense fallback={<InvoicesSearchSkeleton />}>
           <Search placeholder="Search users..." />
         </Suspense>
-        <CreateUser />
+        <CreateUserLink />
       </div>
       <Suspense
         fallback={<div>Loading users...</div>}

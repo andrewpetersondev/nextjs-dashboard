@@ -1,7 +1,10 @@
 import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { readFilteredUsersAction } from "@/modules/users/server/application/actions/read-filtered";
-import { DeleteUser, UpdateUser } from "@/modules/users/ui/components/buttons";
+import {
+  DeleteUserButton,
+  UpdateUserLink,
+} from "@/modules/users/ui/components/user-action-buttons";
 
 /**
  * UsersTable component.
@@ -37,8 +40,8 @@ export async function UsersTable({
             </div>
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex justify-end gap-2">
-                <UpdateUser id={user.id} />
-                <DeleteUser id={user.id} />
+                <UpdateUserLink id={user.id} />
+                <DeleteUserButton id={user.id} />
               </div>
             </div>
           </div>

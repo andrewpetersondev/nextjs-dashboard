@@ -169,9 +169,9 @@ export class UserService {
     }
   }
 
-  async countUsers(query: string): Promise<number> {
+  async getUserPageCount(query: string): Promise<number> {
     try {
-      return await this.repo.count(query);
+      return await this.repo.getPageCount(query);
     } catch (err) {
       this.logger.error("Failed to count users", {
         error: err,

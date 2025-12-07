@@ -1,7 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-
 import { deleteUserFormAction } from "@/modules/users/server/application/actions/delete-form";
 
 /**
@@ -10,7 +9,7 @@ import { deleteUserFormAction } from "@/modules/users/server/application/actions
  * and shows only a plus icon on smaller screens.
  * @returns {JSX.Element} A Link component styled as a button.
  */
-export function CreateUser(): JSX.Element {
+export function CreateUserLink(): JSX.Element {
   return (
     <Link
       className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
@@ -29,7 +28,7 @@ export function CreateUser(): JSX.Element {
  * @param {string} props.id - The ID of the user to be updated
  * @returns {JSX.Element} A Link component styled as a button with an edit icon
  */
-export function UpdateUser({ id }: { id: string }): JSX.Element {
+export function UpdateUserLink({ id }: { id: string }): JSX.Element {
   return (
     <Link
       className="rounded-md border p-2 hover:bg-bg-hover"
@@ -48,7 +47,7 @@ export function UpdateUser({ id }: { id: string }): JSX.Element {
  * @param {string} props.id - The ID of the user to be deleted
  * @returns {JSX.Element} A form with a submit button styled with a delete icon
  */
-export function DeleteUser({ id }: { id: string }): JSX.Element {
+export function DeleteUserButton({ id }: { id: string }): JSX.Element {
   return (
     <form action={deleteUserFormAction}>
       {/* Hidden input for userId */}

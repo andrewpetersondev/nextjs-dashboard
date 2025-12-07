@@ -23,5 +23,5 @@ export interface UserRepositoryPort<Trepo = unknown> {
 
   findMany(query: string, page: number): Promise<UserEntity[]>;
 
-  count(query: string): Promise<number>;
+  getPageCount(query: string): Promise<number>;
 }

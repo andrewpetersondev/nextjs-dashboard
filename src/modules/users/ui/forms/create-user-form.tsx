@@ -2,7 +2,7 @@
 import { type JSX, useActionState } from "react";
 import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
 import { createUserAction } from "@/modules/users/server/application/actions/create";
-import { UserForm } from "@/modules/users/ui/components/user-form";
+import { UserForm } from "@/modules/users/ui/forms/user-form";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
