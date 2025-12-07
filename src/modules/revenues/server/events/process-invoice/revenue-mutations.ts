@@ -1,33 +1,8 @@
 import "server-only";
-import {
-  type LogMetadata,
-  logInfo,
-} from "@/modules/revenues/server/application/cross-cutting/logging";
+import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue/revenue.service";
+import type { UpdateRevenueArgs } from "@/modules/revenues/server/events/process-invoice/types";
 import { toRevenueId } from "@/shared/branding/converters/id-converters";
-
-/**
- * Arguments for updating a revenue record.
- * @remarks
- * Use this object to keep the public API within max-params constraints and
- * ensure strict, self-documented typing.
- */
-export type UpdateRevenueArgs = Readonly<{
-  /** Revenue id to update (string form) */
-  readonly revenueId: string;
-  /** New invoice count for the period */
-  readonly invoiceCount: number;
-  /** New total revenue amount for the period */
-  readonly totalAmount: number;
-  /** New total paid amount for the period */
-  readonly totalPaidAmount: number;
-  /** New total pending amount for the period */
-  readonly totalPendingAmount: number;
-  /** Logging context */
-  readonly context: string;
-  /** Optional structured metadata for logs */
-  readonly metadata?: LogMetadata;
-}>;
 
 /**
  * Updates a revenue record with new invoice count and revenue values
