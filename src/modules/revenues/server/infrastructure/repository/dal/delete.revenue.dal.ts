@@ -3,14 +3,25 @@ import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { revenues } from "@/server-core/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeDatabaseError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 
+/**
+ * Deletes a revenue record from the database.
+ * @param db - The database connection.
+ * @param id - The revenue ID to delete.
+ * @throws Error if the ID is invalid or deletion fails.
+ */
 export async function deleteRevenue(
   db: AppDatabase,
   id: RevenueId,
 ): Promise<void> {
   if (!id) {
-    throw new AppError("validation", { message: "Revenue ID is required" });
+    throw makeValidationError({
+      message: "Revenue ID is required",
+    });
   }
 
   const result = await db
@@ -19,7 +30,7 @@ export async function deleteRevenue(
     .returning();
 
   if (!result) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to delete revenue record",
     });
   }

@@ -4,15 +4,24 @@ import type {
   RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { AppDatabase } from "@/server-core/db/db.connection";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
+/**
+ * Creates a new revenue record in the database.
+ * @param db - The database connection.
+ * @param revenue - The revenue data to create.
+ * @returns The created revenue entity.
+ * @throws Error if revenue data is invalid.
+ */
 export async function createRevenue(
   db: AppDatabase,
   revenue: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenue) {
-    throw new AppError("validation", { message: "Revenue data is required" });
+    throw makeValidationError({
+      message: "Revenue data is required",
+    });
   }
   return await upsertRevenue(db, revenue);
 }

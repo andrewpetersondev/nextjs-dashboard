@@ -7,19 +7,31 @@ import type {
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
+/**
+ * Upserts a revenue record by period.
+ * @param db - The database connection.
+ * @param period - The period.
+ * @param revenue - The updatable fields.
+ * @returns The upserted revenue entity.
+ * @throws Error if inputs are invalid.
+ */
 export async function upsertRevenueByPeriod(
   db: AppDatabase,
   period: Period,
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!period) {
-    throw new AppError("validation", { message: "Period is required" });
+    throw makeValidationError({
+      message: "Period is required",
+    });
   }
   if (!revenue) {
-    throw new AppError("validation", { message: "Revenue data is required" });
+    throw makeValidationError({
+      message: "Revenue data is required",
+    });
   }
 
   const now = new Date();

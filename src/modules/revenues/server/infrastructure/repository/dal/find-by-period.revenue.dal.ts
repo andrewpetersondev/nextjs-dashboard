@@ -6,14 +6,26 @@ import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeDatabaseError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 
+/**
+ * Finds a revenue record by period.
+ * @param db - The database connection.
+ * @param period - The period to search for.
+ * @returns The revenue entity or null if not found.
+ * @throws Error if period is invalid or mapping fails.
+ */
 export async function findRevenueByPeriod(
   db: AppDatabase,
   period: Period,
 ): Promise<RevenueEntity | null> {
   if (!period) {
-    throw new AppError("validation", { message: "Period is required" });
+    throw makeValidationError({
+      message: "Period is required",
+    });
   }
 
   const data: RevenueRow | undefined = await db
@@ -29,7 +41,7 @@ export async function findRevenueByPeriod(
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to convert revenue record",
     });
   }

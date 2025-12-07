@@ -6,15 +6,26 @@ import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeDatabaseError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 
+/**
+ * Finds revenue records within a date range.
+ * @param db - The database connection.
+ * @param endPeriod - The end period.
+ * @param startPeriod - The start period.
+ * @returns Array of revenue entities.
+ * @throws Error if periods are invalid or retrieval fails.
+ */
 export async function findRevenuesByDateRange(
   db: AppDatabase,
   startPeriod: Period,
   endPeriod: Period,
 ): Promise<RevenueEntity[]> {
   if (!(startPeriod && endPeriod)) {
-    throw new AppError("validation", {
+    throw makeValidationError({
       message: "Start and end periods are required",
     });
   }
@@ -31,7 +42,7 @@ export async function findRevenuesByDateRange(
     .orderBy(desc(revenues.period))) as RevenueRow[];
 
   if (!revenueRows) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to retrieve revenue records",
     });
   }

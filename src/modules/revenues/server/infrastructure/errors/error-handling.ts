@@ -6,7 +6,13 @@ import {
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 
 /**
- * Wraps a function with standardized error handling
+ * Wraps a function with standardized error handling.
+ * @param context - The logging context.
+ * @param operation - The operation name.
+ * @param fn - The function to execute.
+ * @param metadata - Optional metadata for logging.
+ * @returns The result of the function.
+ * @throws Error if the function fails.
  */
 export async function withErrorHandling<T>(
   context: string,

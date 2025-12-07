@@ -8,15 +8,26 @@ import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeDatabaseError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 
+/**
+ * Updates a revenue record.
+ * @param db - The database connection.
+ * @param id - The revenue ID.
+ * @param revenue - The updatable fields.
+ * @returns The updated revenue entity.
+ * @throws Error if inputs are invalid or update fails.
+ */
 export async function updateRevenue(
   db: AppDatabase,
   id: RevenueId,
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!(id && revenue)) {
-    throw new AppError("validation", {
+    throw makeValidationError({
       message: "Revenue ID and data are required",
     });
   }
@@ -37,14 +48,14 @@ export async function updateRevenue(
     .returning()) as RevenueRow[];
 
   if (!data) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to update revenue record",
     });
   }
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to convert updated revenue record",
     });
   }

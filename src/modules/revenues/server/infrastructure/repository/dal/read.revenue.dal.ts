@@ -5,14 +5,26 @@ import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { type RevenueRow, revenues } from "@/server-core/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import {
+  makeDatabaseError,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 
+/**
+ * Reads a revenue record by ID.
+ * @param db - The database connection.
+ * @param id - The revenue ID.
+ * @returns The revenue entity.
+ * @throws Error if ID is invalid or record not found.
+ */
 export async function readRevenue(
   db: AppDatabase,
   id: RevenueId,
 ): Promise<RevenueEntity> {
   if (!id) {
-    throw new AppError("validation", { message: "Revenue ID is required" });
+    throw makeValidationError({
+      message: "Revenue ID is required",
+    });
   }
 
   const data: RevenueRow | undefined = await db
@@ -23,12 +35,14 @@ export async function readRevenue(
     .then((rows) => rows[0]);
 
   if (!data) {
-    throw new AppError("database", { message: "Revenue record not found" });
+    throw makeDatabaseError({
+      message: "Revenue record not found",
+    });
   }
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw new AppError("database", {
+    throw makeDatabaseError({
       message: "Failed to convert revenue record",
     });
   }
