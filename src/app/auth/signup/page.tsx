@@ -5,11 +5,11 @@ import {
 } from "@/modules/auth/domain/auth.constants";
 import { demoUserActionAdapter } from "@/modules/auth/server/application/actions/demo-user.action";
 import { signupAction } from "@/modules/auth/server/application/actions/signup.action";
-import { AuthFormDivider } from "@/modules/auth/ui/components/auth-form-divider";
-import { AuthFormSocialSection } from "@/modules/auth/ui/components/auth-form-social-section";
-import { AuthSwitchLink } from "@/modules/auth/ui/components/auth-switch-link";
-import { Heading } from "@/modules/auth/ui/components/heading";
-import { SignupForm } from "@/modules/auth/ui/components/signup-form";
+import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";
+import { AuthFormDivider } from "@/modules/auth/ui/components/shared/auth-form-divider";
+import { AuthSwitchLink } from "@/modules/auth/ui/components/shared/auth-switch-link";
+import { Heading } from "@/modules/auth/ui/components/shared/heading";
+import { AuthFormSocialSection } from "@/modules/auth/ui/components/social/auth-form-social-section";
 import { ROUTES } from "@/shared/routes/routes";
 
 export default function Page(): JSX.Element {

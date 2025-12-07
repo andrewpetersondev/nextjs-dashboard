@@ -10,8 +10,8 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/domain/auth.roles";
-import { DemoForm } from "@/modules/auth/ui/components/demo-form";
-import { SocialLoginButton } from "@/modules/auth/ui/components/social-login-button";
+import { DemoForm } from "@/modules/auth/ui/components/forms/demo-form";
+import { SocialLoginButton } from "@/modules/auth/ui/components/social/social-login-button";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 
 interface AuthFormSocialSectionProps {

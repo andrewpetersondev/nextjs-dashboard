@@ -9,9 +9,9 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/modules/auth/domain/auth.schema";
-import { AuthActionsRow } from "@/modules/auth/ui/components/auth-actions-row";
-import { AuthServerMessage } from "@/modules/auth/ui/components/auth-server-message";
-import { AuthSubmitButton } from "@/modules/auth/ui/components/auth-submit-button";
+import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
+import { AuthServerMessage } from "@/modules/auth/ui/components/shared/auth-server-message";
+import { AuthSubmitButton } from "@/modules/auth/ui/components/shared/auth-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";

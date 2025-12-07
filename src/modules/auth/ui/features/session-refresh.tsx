@@ -6,6 +6,7 @@ import {
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
+import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,
@@ -20,25 +21,6 @@ const INTERVAL_MS = SESSION_REFRESH_PING_MS;
 const kickoffTimeout = SESSION_KICKOFF_TIMEOUT_MS;
 // Add a small random jitter so multiple tabs don’t sync up perfectly.
 const JITTER_MS = SESSION_REFRESH_JITTER_MS;
-
-type RefreshOutcome =
-  | { refreshed: false; reason: "no_cookie" }
-  | { refreshed: false; reason: "invalid_or_missing_user" }
-  | {
-      refreshed: false;
-      reason: "absolute_lifetime_exceeded";
-      ageMs: number;
-      maxMs: number;
-      userId?: string;
-    }
-  | { refreshed: false; reason: "not_needed"; timeLeftMs: number }
-  | {
-      refreshed: true;
-      reason: "rotated";
-      expiresAt: number;
-      userId: string;
-      role: string;
-    };
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export function SessionRefresh(): null {
@@ -81,7 +63,7 @@ export function SessionRefresh(): null {
 
         const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
         if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
-          const outcome = (await res.json()) as RefreshOutcome;
+          const outcome = (await res.json()) as UpdateSessionResult;
           switch (getPublicNodeEnv()) {
             case "production":
               logger.error("[session-refresh] outcome:", outcome);

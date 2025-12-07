@@ -131,15 +131,3 @@ export function schemaKeys<const T extends z.ZodRawShape>(
 
 export const LOGIN_FIELDS_LIST = schemaKeys(LoginSchema);
 export const SIGNUP_FIELDS_LIST = schemaKeys(SignupSchema);
-
-// Explicit, readonly field name lists; avoids unsafe `Object.keys(... as ...)`
-//export const SIGNUP_FIELDS_LIST = [
-//  "email",
-//  "password",
-//  "username",
-//] as const satisfies readonly SignupField[];
-
-//export const LOGIN_FIELDS_LIST = [
-//  "email",
-//  "password",
-//] as const satisfies readonly LoginField[];

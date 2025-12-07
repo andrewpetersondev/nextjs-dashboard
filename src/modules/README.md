@@ -1,7 +1,6 @@
-# Features Folder
+# Modules Folder
 
-This folder contains feature-specific modules, including UI components, domain types, and business logic for each
-application feature. Code here is intended for feature isolation and reusability within the app.
+This folder contains feature-specific modules, including UI components, domain types, and business logic for each application feature. Code here is intended for feature isolation and reusability within the app.
 
 ## Structure
 
@@ -11,16 +10,10 @@ application feature. Code here is intended for feature isolation and reusability
 - `revenues/`: Revenue feature components, domain, DTOs, and utilities.
 - `users/`: User management UI and logic.
 
-## Guidelines
+## Module Structure
 
-- Only feature-specific logic and UI belong here; do not include shared/core/server code.
-- All exports must have explicit parameter and return types.
-- Treat inputs as immutable; avoid in-place mutations.
-- Use type-only imports and avoid barrel files.
-- Document all public functions/types with TSDoc.
-- Follow strict TypeScript and coding style instructions.
+Each module is organized as a vertical slice with the following structure:
 
-## How to Extend
-
-- Add new features as separate folders with clear boundaries.
-- For shared logic, use `shared/`; for server-side code, use `server/`.
+- `domain/`: Shared business logic, types, constants, and validation schemas.
+- `server/`: Backend logic split into `application` (actions, services) and `infrastructure` (data access, adapters).
+- `ui/`: Frontend React components, hooks, and view logic.
