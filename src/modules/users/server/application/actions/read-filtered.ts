@@ -1,7 +1,6 @@
 "use server";
-
 import type { UserDto } from "@/modules/users/domain/user.dto";
-import { fetchFilteredUsers } from "@/modules/users/server/infrastructure/dal/fetch-filtered-users";
+import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 
 /**
@@ -12,5 +11,6 @@ export async function readFilteredUsersAction(
   currentPage = 1,
 ): Promise<UserDto[]> {
   const db = getAppDb();
-  return await fetchFilteredUsers(db, query, currentPage);
+  const service = createUserService(db);
+  return await service.findUsers(query, currentPage);
 }

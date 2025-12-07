@@ -1,6 +1,5 @@
 "use server";
-
-import { fetchUsersPages } from "@/modules/users/server/infrastructure/dal/fetch-users-pages";
+import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 
 /**
@@ -8,5 +7,6 @@ import { getAppDb } from "@/server-core/db/db.connection";
  */
 export async function readUsersPagesAction(query = ""): Promise<number> {
   const db = getAppDb();
-  return await fetchUsersPages(db, query);
+  const service = createUserService(db);
+  return await service.countUsers(query);
 }

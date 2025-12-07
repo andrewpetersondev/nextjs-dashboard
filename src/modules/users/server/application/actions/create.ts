@@ -1,15 +1,11 @@
 "use server";
-import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
-import {
-  getValidUserRole,
-  toUserRole,
-} from "@/modules/users/domain/role.utils";
+import { getValidUserRole } from "@/modules/users/domain/role.utils";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/user.messages";
 import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
-import { createUserDal } from "@/modules/users/server/infrastructure/dal/create";
+import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
@@ -22,7 +18,6 @@ import {
   formError,
   formOk,
 } from "@/shared/forms/utilities/factories/create-form-result.factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 type CreateUserFormData = {
   readonly email: string | undefined;
@@ -73,30 +68,25 @@ export async function createUserAction(
     }
 
     const { username, email, password, role } = parsed.data;
-    const user = await createUserDal(db, {
+
+    const service = createUserService(db);
+    const result = await service.createUser({
       email,
-      password: asPasswordHash(password),
-      role: toUserRole(role),
+      password,
+      role,
       username,
     });
 
-    if (!user) {
-      logger.warn("User creation returned empty result", {
-        context: "createUserAction",
-        safeMeta: { email, username },
-      });
+    if (!result.ok) {
       return formError({
         fieldErrors: createEmptyDenseFieldErrorMap(allowed),
-        message: USER_ERROR_MESSAGES.createFailed,
+        message: result.error.message || USER_ERROR_MESSAGES.createFailed,
       });
     }
 
-    return formOk(user, USER_SUCCESS_MESSAGES.createSuccess);
+    return formOk(result.value, USER_SUCCESS_MESSAGES.createSuccess);
   } catch (error) {
-    logger.error(USER_ERROR_MESSAGES.unexpected, {
-      context: "createUserAction",
-      error,
-    });
+    // Catch generic unexpected errors not caught by service
     return formError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),
       message: USER_ERROR_MESSAGES.unexpected,

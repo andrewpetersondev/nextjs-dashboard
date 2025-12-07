@@ -1,5 +1,4 @@
 "use server";
-
 import { deleteUserAction } from "@/modules/users/server/application/actions/delete";
 
 /**

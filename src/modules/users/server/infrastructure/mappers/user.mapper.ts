@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { UserEntity } from "@/modules/users/domain/entity";
 import { toUserRole } from "@/modules/users/domain/role.utils";
 import type { UserDto } from "@/modules/users/domain/user.dto";

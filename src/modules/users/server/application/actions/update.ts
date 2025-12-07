@@ -1,9 +1,5 @@
 "use server";
-import bcryptjs from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
-import { SALT_ROUNDS } from "@/modules/auth/domain/sessions/session.constants";
-import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import {
@@ -15,8 +11,8 @@ import {
   EditUserFormSchema,
   type EditUserFormValues,
 } from "@/modules/users/domain/user.schema";
-import { readUserDal } from "@/modules/users/server/infrastructure/dal/read";
-import { updateUserDal } from "@/modules/users/server/infrastructure/dal/update";
+import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
+import type { UserServiceUpdateInput } from "@/modules/users/server/application/services/user.service";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
@@ -27,17 +23,11 @@ import {
   formError,
   formOk,
 } from "@/shared/forms/utilities/factories/create-form-result.factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 
 /**
  * Computes a shallow difference between a base object and a candidate patch.
- *
- * @typeParam T - A record-like shape of comparable fields.
- * @param base - The source object to compare against.
- * @param patch - Candidate values to apply; only differing keys are returned.
- * @returns A partial object containing only keys whose values differ from `base`.
  */
 function diffShallowPatch<T extends Record<string, unknown>>(
   base: T,
@@ -53,9 +43,6 @@ function diffShallowPatch<T extends Record<string, unknown>>(
   return out;
 }
 
-/**
- * Validates user ID format and returns error result if invalid.
- */
 function idInvalidResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
@@ -65,9 +52,6 @@ function idInvalidResult<F extends string>(
   });
 }
 
-/**
- * Returns error result when user is not found.
- */
 function notFoundResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
@@ -79,14 +63,9 @@ function notFoundResult<F extends string>(
 
 /**
  * Builds a typed patch object from form input and existing user data.
- *
- * @remarks
- * - Only includes fields that have meaningful changes
- * - Trims and normalizes string inputs
- * - Validates role against allowed enum values
- * - Hashes password if provided and non-empty
+ * Returns a patch suitable for the Service (raw password).
  */
-async function buildPatch(
+function buildPatch(
   existing: DiffableUserFields,
   data: {
     username?: string | null;
@@ -94,8 +73,7 @@ async function buildPatch(
     role?: UserDto["role"] | null;
     password?: string | null;
   },
-): Promise<UserUpdatePatch> {
-  // Normalize inputs and enforce types
+): UserServiceUpdateInput {
   const nextUsername =
     typeof data.username === "string" && data.username.trim().length > 0
       ? data.username.trim()
@@ -120,39 +98,18 @@ async function buildPatch(
 
   const diff = diffShallowPatch<DiffableUserFields>(existing, candidate);
 
+  // Pass raw password to service; service handles hashing
   const password =
     typeof data.password === "string" && data.password.length > 0
-      ? asPasswordHash(await hashWithSaltRounds(data.password))
+      ? data.password
       : undefined;
 
   return { ...diff, ...(password ? { password } : {}) };
 }
 
-const genSalt = async (rounds: number): Promise<string> =>
-  bcryptjs.genSalt(rounds);
-
-/**
- * Hashes a password with configured salt rounds.
- * for legacy compatibility - prefer using BcryptPasswordHasherAdapter instead.
- */
-const hashWithSaltRounds = async (password: string): Promise<string> => {
-  const salt = await genSalt(SALT_ROUNDS);
-  return bcryptjs.hash(password, salt);
-};
-
 /**
  * Updates an existing user (admin only).
- *
- * Type-safe server action with:
- * - ID validation
- * - Schema-based form validation
- * - Shallow diff to prevent unnecessary updates
- * - Automatic password hashing
- * - Cache revalidation
- *
- * @returns FormResult<unknown> wrapping FormSuccess<UserDto>  AppError
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not my focus>
 export async function updateUserAction(
   id: string,
   _prevState: FormResult<unknown>,
@@ -163,13 +120,11 @@ export async function updateUserAction(
     EditUserFormFieldNames
   >(EditUserFormSchema);
 
-  // Validate user ID
   const idRes = toUserIdResult(id);
   if (!idRes.ok) {
     return idInvalidResult(fields);
   }
 
-  // Validate form data against schema
   const validated = await validateForm(formData, EditUserFormSchema, fields);
 
   if (!validated.ok) {
@@ -178,15 +133,16 @@ export async function updateUserAction(
 
   try {
     const db = getAppDb();
+    const service = createUserService(db);
 
-    // Read existing user
-    const existing = await readUserDal(db, idRes.value);
+    // Read existing user via service
+    const existing = await service.findUserById(idRes.value);
     if (!existing) {
       return notFoundResult(fields);
     }
 
-    // Build typed patch from validated data and existing user
-    const patch = await buildPatch(
+    // Build typed patch
+    const patch = buildPatch(
       {
         email: existing.email,
         role: existing.role,
@@ -195,30 +151,23 @@ export async function updateUserAction(
       validated.value.data,
     );
 
-    // If no changes, return success with current user
     if (Object.keys(patch).length === 0) {
       return formOk(existing, USER_SUCCESS_MESSAGES.noChanges);
     }
 
-    // Apply patch to database
-    const updated = await updateUserDal(db, idRes.value, patch);
-    if (!updated) {
+    // Apply patch via service
+    const result = await service.updateUser(idRes.value, patch);
+
+    if (!result.ok) {
       return formError<EditUserFormFieldNames>({
         fieldErrors: createEmptyDenseFieldErrorMap(fields),
-        message: USER_ERROR_MESSAGES.updateFailed,
+        message: result.error.message || USER_ERROR_MESSAGES.updateFailed,
       });
     }
 
-    // Revalidate cache and return success
     revalidatePath(USERS_DASHBOARD_PATH);
-    return formOk(updated, USER_SUCCESS_MESSAGES.updateSuccess);
+    return formOk(result.value, USER_SUCCESS_MESSAGES.updateSuccess);
   } catch (error: unknown) {
-    logger.error(USER_ERROR_MESSAGES.unexpected, {
-      context: "updateUserAction",
-      error,
-      id,
-    });
-
     return formError<EditUserFormFieldNames>({
       fieldErrors: createEmptyDenseFieldErrorMap(fields),
       message: USER_ERROR_MESSAGES.unexpected,
