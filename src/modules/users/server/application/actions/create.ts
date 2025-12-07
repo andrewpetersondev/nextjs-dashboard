@@ -85,7 +85,7 @@ export async function createUserAction(
     }
 
     return formOk(result.value, USER_SUCCESS_MESSAGES.createSuccess);
-  } catch (error) {
+  } catch (_error: unknown) {
     // Catch generic unexpected errors not caught by service
     return formError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),

@@ -1,13 +1,13 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Deletes a user by ID, revalidates and redirects.
@@ -20,8 +20,8 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
     const result = await service.deleteUser(toUserId(id));
 
     if (result.ok) {
-      revalidatePath(USERS_DASHBOARD_PATH);
-      redirect(USERS_DASHBOARD_PATH);
+      revalidatePath(ROUTES.dashboard.users);
+      redirect(ROUTES.dashboard.users);
     }
 
     return formError<"_root">({
@@ -32,7 +32,7 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
       },
       message: USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
     });
-  } catch (error) {
+  } catch (_error: unknown) {
     return formError<"_root">({
       fieldErrors: { _root: [USER_ERROR_MESSAGES.unexpected] },
       message: USER_ERROR_MESSAGES.unexpected,

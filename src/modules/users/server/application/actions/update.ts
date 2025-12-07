@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import {
   USER_ERROR_MESSAGES,
@@ -23,6 +22,7 @@ import {
   formError,
   formOk,
 } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 
@@ -165,9 +165,9 @@ export async function updateUserAction(
       });
     }
 
-    revalidatePath(USERS_DASHBOARD_PATH);
+    revalidatePath(ROUTES.dashboard.users);
     return formOk(result.value, USER_SUCCESS_MESSAGES.updateSuccess);
-  } catch (error: unknown) {
+  } catch (_error: unknown) {
     return formError<EditUserFormFieldNames>({
       fieldErrors: createEmptyDenseFieldErrorMap(fields),
       message: USER_ERROR_MESSAGES.unexpected,

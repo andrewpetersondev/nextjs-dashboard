@@ -1,6 +1,5 @@
 "use client";
 import { type JSX, useActionState } from "react";
-import { USERS_DASHBOARD_PATH } from "@/modules/users/domain/user.constants";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/server/application/actions/update";
@@ -8,6 +7,7 @@ import { UserForm } from "@/modules/users/ui/components/user-form";
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { ROUTES } from "@/shared/routes/routes";
 
 export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =
@@ -26,7 +26,7 @@ export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
   return (
     <UserForm
       action={action}
-      cancelHref={USERS_DASHBOARD_PATH}
+      cancelHref={ROUTES.dashboard.users}
       description="Admins can edit any profile."
       extraContent={<UserInfoPanel user={user} />}
       initialValues={{
