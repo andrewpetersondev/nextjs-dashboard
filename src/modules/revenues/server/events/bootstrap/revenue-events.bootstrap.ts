@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
 import { RevenueEventHandler } from "@/modules/revenues/server/events/handlers/revenue-event.handler";
-import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/repository";
+import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
