@@ -1,6 +1,6 @@
 import "server-only";
+import type { UserEntity } from "@/modules/users/domain/entity";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
-import type { UserDto } from "@/modules/users/domain/user.dto";
 import type { UserId } from "@/shared/branding/brands";
 
 export interface UserRepositoryPort<Trepo = unknown> {
@@ -9,19 +9,19 @@ export interface UserRepositoryPort<Trepo = unknown> {
   ): Promise<Tresult>;
 
   create(input: {
-    username: string;
     email: string;
     password: string;
     role: string;
-  }): Promise<UserDto | null>;
+    username: string;
+  }): Promise<UserEntity | null>;
 
-  update(id: UserId, patch: UserUpdatePatch): Promise<UserDto | null>;
+  update(id: UserId, patch: UserUpdatePatch): Promise<UserEntity | null>;
 
-  delete(id: UserId): Promise<UserDto | null>;
+  delete(id: UserId): Promise<UserEntity | null>;
 
-  findById(id: UserId): Promise<UserDto | null>;
+  findById(id: UserId): Promise<UserEntity | null>;
 
-  findMany(query: string, page: number): Promise<UserDto[]>;
+  findMany(query: string, page: number): Promise<UserEntity[]>;
 
   count(query: string): Promise<number>;
 }

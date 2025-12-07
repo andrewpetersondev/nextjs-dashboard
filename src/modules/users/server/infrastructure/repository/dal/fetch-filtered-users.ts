@@ -1,11 +1,8 @@
 import "server-only";
 import { asc, ilike, or } from "drizzle-orm";
+import type { UserEntity } from "@/modules/users/domain/entity";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
-import type { UserDto } from "@/modules/users/domain/user.dto";
-import {
-  userDbRowToEntity,
-  userEntityToDto,
-} from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error.class";
@@ -23,7 +20,7 @@ export async function fetchFilteredUsers(
   db: AppDatabase,
   query: string,
   currentPage: number,
-): Promise<UserDto[]> {
+): Promise<UserEntity[]> {
   // Calculate offset using constant for items per page
   const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
   try {
@@ -41,8 +38,8 @@ export async function fetchFilteredUsers(
       .limit(ITEMS_PER_PAGE_USERS)
       .offset(offset);
 
-    // Map each raw row to UserEntity, then to UserDto
-    return userRows.map((row) => userEntityToDto(userDbRowToEntity(row)));
+    // Map each raw row to UserEntity
+    return userRows.map((row) => userDbRowToEntity(row));
   } catch (error) {
     logger.error("Failed to fetch filtered users", {
       context: "fetchFilteredUsers",

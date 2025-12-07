@@ -1,11 +1,8 @@
 import "server-only";
 import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
-import type { UserDto } from "@/modules/users/domain/user.dto";
-import {
-  userDbRowToEntity,
-  userEntityToDto,
-} from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import type { UserEntity } from "@/modules/users/domain/entity";
+import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error.class";
@@ -30,15 +27,14 @@ export async function createUserDal(
     password: PasswordHash;
     role: UserRole;
   },
-): Promise<UserDto | null> {
+): Promise<UserEntity | null> {
   try {
     const [userRow] = await db
       .insert(users)
       .values({ email, password, role, username })
       .returning();
-    // --- Map raw DB row to UserEntity before mapping to DTO ---
-    const user = userRow ? userDbRowToEntity(userRow) : null;
-    return user ? userEntityToDto(user) : null;
+    // --- Map raw DB row to UserEntity ---
+    return userRow ? userDbRowToEntity(userRow) : null;
   } catch (error) {
     logger.error("Failed to create a user in the database.", {
       context: "createUserDal",

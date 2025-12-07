@@ -1,8 +1,8 @@
 import "server-only";
 import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserEntity } from "@/modules/users/domain/entity";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
-import type { UserDto } from "@/modules/users/domain/user.dto";
 import { createUserDal } from "@/modules/users/server/infrastructure/repository/dal/create";
 import { deleteUserDal } from "@/modules/users/server/infrastructure/repository/dal/delete";
 import { fetchFilteredUsers } from "@/modules/users/server/infrastructure/repository/dal/fetch-filtered-users";
@@ -41,7 +41,7 @@ export class UserRepositoryImpl {
     email: string;
     password: string;
     role: string;
-  }): Promise<UserDto | null> {
+  }): Promise<UserEntity | null> {
     return await createUserDal(this.db, {
       email: input.email,
       password: input.password as PasswordHash,
@@ -50,19 +50,19 @@ export class UserRepositoryImpl {
     });
   }
 
-  async update(id: UserId, patch: UserUpdatePatch): Promise<UserDto | null> {
+  async update(id: UserId, patch: UserUpdatePatch): Promise<UserEntity | null> {
     return await updateUserDal(this.db, id, patch);
   }
 
-  async delete(id: UserId): Promise<UserDto | null> {
+  async delete(id: UserId): Promise<UserEntity | null> {
     return await deleteUserDal(this.db, id);
   }
 
-  async findById(id: UserId): Promise<UserDto | null> {
+  async findById(id: UserId): Promise<UserEntity | null> {
     return await fetchUserById(this.db, id);
   }
 
-  async findMany(query: string, page: number): Promise<UserDto[]> {
+  async findMany(query: string, page: number): Promise<UserEntity[]> {
     return await fetchFilteredUsers(this.db, query, page);
   }
 

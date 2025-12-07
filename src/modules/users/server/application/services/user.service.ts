@@ -4,6 +4,7 @@ import type { UserUpdatePatch } from "@/modules/users/domain/types";
 import type { UserDto } from "@/modules/users/domain/user.dto";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
+import { userEntityToDto } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
@@ -61,7 +62,7 @@ export class UserService {
         logging: { email: input.email, username: input.username },
       });
 
-      return Ok(user);
+      return Ok(userEntityToDto(user));
     } catch (err) {
       const error = normalizeToAppError(err, "unexpected");
       this.logger.error("User creation failed", {
@@ -103,7 +104,7 @@ export class UserService {
         logging: { userId: id },
       });
 
-      return Ok(updated);
+      return Ok(userEntityToDto(updated));
     } catch (err) {
       const error = normalizeToAppError(err, "unexpected");
       this.logger.error("User update failed", {
@@ -131,7 +132,7 @@ export class UserService {
         logging: { userId: id },
       });
 
-      return Ok(deleted);
+      return Ok(userEntityToDto(deleted));
     } catch (err) {
       const error = normalizeToAppError(err, "unexpected");
       this.logger.error("User deletion failed", {
@@ -144,7 +145,8 @@ export class UserService {
 
   async findUserById(id: UserId): Promise<UserDto | null> {
     try {
-      return await this.repo.findById(id);
+      const user = await this.repo.findById(id);
+      return user ? userEntityToDto(user) : null;
     } catch (err) {
       this.logger.error(USER_ERROR_MESSAGES.readFailed, {
         error: err,
@@ -156,7 +158,8 @@ export class UserService {
 
   async findUsers(query: string, page: number): Promise<UserDto[]> {
     try {
-      return await this.repo.findMany(query, page);
+      const users = await this.repo.findMany(query, page);
+      return users.map(userEntityToDto);
     } catch (err) {
       this.logger.error("Failed to fetch filtered users", {
         error: err,

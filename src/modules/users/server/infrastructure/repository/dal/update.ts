@@ -1,11 +1,8 @@
 import "server-only";
 import { eq } from "drizzle-orm";
+import type { UserEntity } from "@/modules/users/domain/entity";
 import type { UserUpdatePatch } from "@/modules/users/domain/types";
-import type { UserDto } from "@/modules/users/domain/user.dto";
-import {
-  userDbRowToEntity,
-  userEntityToDto,
-} from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
@@ -24,7 +21,7 @@ export async function updateUserDal(
   db: AppDatabase,
   id: UserId,
   patch: UserUpdatePatch,
-): Promise<UserDto | null> {
+): Promise<UserEntity | null> {
   // Defensive: No update if patch is empty
   if (Object.keys(patch).length === 0) {
     return null;
@@ -42,10 +39,7 @@ export async function updateUserDal(
     }
 
     // Map raw DB row to UserEntity (brands id/role)
-    const userEntity = userDbRowToEntity(userRow);
-
-    // Map to DTO for safe return to client
-    return userEntityToDto(userEntity);
+    return userDbRowToEntity(userRow);
   } catch (error) {
     logger.error("Failed to update user.", {
       context: "updateUserDal",

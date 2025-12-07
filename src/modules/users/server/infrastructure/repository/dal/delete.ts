@@ -1,10 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserDto } from "@/modules/users/domain/user.dto";
-import {
-  userDbRowToEntity,
-  userEntityToDto,
-} from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import type { UserEntity } from "@/modules/users/domain/entity";
+import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { users } from "@/server-core/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
@@ -21,7 +18,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 export async function deleteUserDal(
   db: AppDatabase,
   userId: UserId, // Use branded UserId for strict typing
-): Promise<UserDto | null> {
+): Promise<UserEntity | null> {
   try {
     // Fetch raw DB row, not UserEntity
     const [deletedRow] = await db
@@ -34,10 +31,7 @@ export async function deleteUserDal(
     }
 
     // Map raw DB row to UserEntity for type safety
-    const deletedEntity = userDbRowToEntity(deletedRow);
-
-    // Map to DTO for safe return to client
-    return userEntityToDto(deletedEntity);
+    return userDbRowToEntity(deletedRow);
   } catch (error) {
     logger.error("Failed to delete user.", {
       context: "deleteUserDal",
