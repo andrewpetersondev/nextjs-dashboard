@@ -11,7 +11,7 @@ export function ForgotPasswordLink(): JSX.Element {
     <div className="text-sm/6">
       <Link
         className="font-semibold text-text-secondary hover:text-text-hover"
-        href="/forgot-password"
+        href="/auth/forgot-password"
       >
         Forgot password?
       </Link>

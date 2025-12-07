@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import type { UserRole } from "@/modules/auth/domain/auth.roles";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
+import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
+import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
 import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
@@ -21,22 +23,23 @@ async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
   const requestId = crypto.randomUUID();
+  const { ip, userAgent } = await getRequestMetadata();
+  const tracker = new PerformanceTracker();
 
   logAuth(
     "info",
     "Demo user creation started",
     AuthLog.action.demoUser.start(),
     {
-      additionalData: { role },
+      additionalData: { ip, role, userAgent },
       requestId,
     },
   );
 
   const service = createAuthUserService(getAppDb());
 
-  const sessionResult = await executeAuthPipeline(
-    role,
-    service.createDemoUser.bind(service),
+  const sessionResult = await tracker.measure("authentication", () =>
+    executeAuthPipeline(role, service.createDemoUser.bind(service)),
   );
 
   if (!sessionResult.ok) {
@@ -47,6 +50,10 @@ async function createDemoUserInternal(
       "Demo user creation failed",
       AuthLog.action.demoUser.error(error, { role }),
       {
+        additionalData: {
+          ...tracker.getMetrics(),
+          ip,
+        },
         requestId,
       },
     );
@@ -62,6 +69,9 @@ async function createDemoUserInternal(
     "Demo user created successfully",
     AuthLog.action.demoUser.success({ role }),
     {
+      additionalData: {
+        ...tracker.getMetrics(),
+      },
       requestId,
     },
   );
