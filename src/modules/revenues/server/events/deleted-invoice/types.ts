@@ -4,12 +4,12 @@ import type { RevenueService } from "@/modules/revenues/server/application/servi
 import type { Period } from "@/shared/branding/brands";
 
 /**
- * Options required to apply deletion effects to revenue records.
+ * Arguments for applying deletion effects to revenue records.
  */
-export type ApplyDeletionOptions = Readonly<{
-  revenueService: RevenueService;
-  invoice: InvoiceDto;
-  period: Period;
+export type ApplyDeletionEffectsArgs = Readonly<{
   context: string;
+  invoice: InvoiceDto;
   metadata: LogMetadata;
+  period: Period;
+  revenueService: RevenueService;
 }>;

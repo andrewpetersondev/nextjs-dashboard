@@ -4,13 +4,33 @@ import type { RevenueService } from "@/modules/revenues/server/application/servi
 import type { Period } from "@/shared/branding/brands";
 
 /**
- * Options for creating a brand new revenue record for a period.
+ * Arguments for creating a new revenue record.
  */
-export type CreateNewOptions = Readonly<{
-  revenueService: RevenueService;
+export type CreateRevenueArgs = Readonly<{
   context: string;
+  invoiceCount: number;
   metadata: LogMetadata;
   period: Period;
+  revenueService: RevenueService;
+  totalAmount: number;
+  totalPaidAmount: number;
+  totalPendingAmount: number;
+}>;
+
+/**
+ * Options for processing invoice upsert operations.
+ */
+export type ProcessInvoiceOptions = Readonly<{
+  context?: string;
+  isUpdate?: boolean;
+  previousAmount?: number;
+}>;
+
+/**
+ * Existing revenue record data.
+ */
+export type ExistingRevenueData = Readonly<{
+  id: string;
   invoiceCount: number;
   totalAmount: number;
   totalPaidAmount: number;
@@ -18,59 +38,35 @@ export type CreateNewOptions = Readonly<{
 }>;
 
 /**
- * Options for processing an invoice for revenue.
- * - isUpdate: when true, indicates this call is for an updated invoice and may include previousAmount for diffing.
+ * Arguments for updating an existing revenue record.
  */
-export type ProcessOptions = Readonly<{
-  context?: string;
-  isUpdate?: boolean;
-  previousAmount?: number;
-}>;
-
-/**
- * Options for updating an existing revenue record when processing an invoice.
- */
-export type UpdateExistingOptions = Readonly<{
-  revenueService: RevenueService;
+export type UpdateExistingRevenueArgs = Readonly<{
   context: string;
-  existing: {
-    readonly id: string;
-    readonly invoiceCount: number;
-    readonly totalAmount: number;
-    readonly totalPaidAmount: number;
-    readonly totalPendingAmount: number;
-  };
+  existing: ExistingRevenueData;
   invoice: InvoiceDto;
-  metadata: LogMetadata;
   isUpdate: boolean;
+  metadata: LogMetadata;
   previousAmount?: number;
+  revenueService: RevenueService;
 }>;
 
 /**
  * Arguments for updating a revenue record.
- *
- * - revenueId: string form of the revenue id
- * - invoiceCount: new invoice count for the period
- * - totalAmount: new total revenue amount for the period
- * - totalPaidAmount: new total paid amount for the period
- * - totalPendingAmount: new total pending amount for the period
- * - context: logging context
- * - metadata: structured metadata for logs
  */
-export type UpdateRevenueArgs = Readonly<{
-  readonly revenueId: string;
-  readonly invoiceCount: number;
-  readonly totalAmount: number;
-  readonly totalPaidAmount: number;
-  readonly totalPendingAmount: number;
-  readonly context: string;
-  readonly metadata?: LogMetadata;
+export type UpdateRevenueRecordArgs = Readonly<{
+  context: string;
+  invoiceCount: number;
+  metadata?: LogMetadata;
+  revenueId: string;
+  totalAmount: number;
+  totalPaidAmount: number;
+  totalPendingAmount: number;
 }>;
 
 /**
- * Arguments used when upserting a revenue record for a given period.
+ * Arguments for upserting revenue.
  */
-export type UpsertArgs = Readonly<{
+export type UpsertRevenueArgs = Readonly<{
   context: string;
   invoice: InvoiceDto;
   isUpdate: boolean;

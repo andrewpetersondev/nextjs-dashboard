@@ -1,24 +1,24 @@
 import "server-only";
 import { logInfo } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
-import type { UpdateRevenueArgs } from "@/modules/revenues/server/events/shared/types";
+import type { UpdateRevenueRecordArgs } from "@/modules/revenues/server/events/shared/types";
 import { toRevenueId } from "@/shared/branding/converters/id-converters";
 
 /**
- * Updates a revenue record with new invoice count and revenue values
+ * Updates a revenue record with new values.
  */
 export async function updateRevenueRecord(
   revenueService: RevenueService,
-  args: UpdateRevenueArgs,
+  args: UpdateRevenueRecordArgs,
 ): Promise<void> {
   const {
-    revenueId,
+    context,
     invoiceCount,
+    metadata,
+    revenueId,
     totalAmount,
     totalPaidAmount,
     totalPendingAmount,
-    context,
-    metadata,
   } = args;
 
   logInfo(context, "Updating revenue record", {

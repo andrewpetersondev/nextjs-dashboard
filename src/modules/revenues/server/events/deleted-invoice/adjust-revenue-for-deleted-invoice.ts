@@ -5,20 +5,19 @@ import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculat
 import { checkDeletionEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { RevenueService } from "@/modules/revenues/server/application/services/revenue.service";
-import type { ApplyDeletionOptions } from "@/modules/revenues/server/events/deleted-invoice/types";
+import type { ApplyDeletionEffectsArgs } from "@/modules/revenues/server/events/deleted-invoice/types";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import { withErrorHandling } from "@/modules/revenues/server/infrastructure/errors/error-handling";
 import type { Period } from "@/shared/branding/brands";
 
 /**
  * Applies deletion effects to revenue records.
- * - If there is no existing revenue record for the period, it logs a message and returns.
- * - If there is an existing revenue record, it updates the invoice count and revenue amount accordingly.
  */
 async function applyDeletionEffects(
-  options: ApplyDeletionOptions,
+  args: ApplyDeletionEffectsArgs,
 ): Promise<void> {
-  const { revenueService, invoice, period, context, metadata } = options;
+  const { context, invoice, metadata, period, revenueService } = args;
+
   const existingRevenue = await revenueService.findByPeriod(period);
   if (!existingRevenue) {
     return;
@@ -52,7 +51,7 @@ async function applyDeletionEffects(
 }
 
 /**
- * Adjusts revenue for a deleted invoice
+ * Adjusts revenue for a deleted invoice.
  */
 export async function adjustRevenueForDeletedInvoice(
   revenueService: RevenueService,
@@ -67,8 +66,6 @@ export async function adjustRevenueForDeletedInvoice(
     async () => {
       const eligibility = checkDeletionEligibility(invoice);
       if (!eligibility.eligible) {
-        // Log the reason why it was skipped, preserving original logging intent
-        /* logInfo(context, eligibility.reason, { ...metadata }); */
         return;
       }
       await applyDeletionEffects({

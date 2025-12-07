@@ -3,7 +3,7 @@ import type { RevenueService } from "@/modules/revenues/server/application/servi
 import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/server/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceEvent } from "@/modules/revenues/server/events/handlers/orchestrator";
 import { processInvoiceUpsert } from "@/modules/revenues/server/events/shared/process-invoice-upsert";
-import { processInvoiceUpdated } from "@/modules/revenues/server/events/updated-invoice/invoice-update.handlers";
+import { processInvoiceUpdated } from "@/modules/revenues/server/events/updated-invoice/handlers/invoice-update.handlers";
 import { EventBus } from "@/server-core/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server-core/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server-core/events/invoice/invoice-event.types";

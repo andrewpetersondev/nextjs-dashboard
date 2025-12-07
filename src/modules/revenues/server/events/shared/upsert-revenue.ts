@@ -10,14 +10,14 @@ import {
 } from "@/modules/revenues/server/application/cross-cutting/logging";
 import { updateRevenueRecord } from "@/modules/revenues/server/events/shared/revenue-mutations";
 import type {
-  CreateNewOptions,
-  UpdateExistingOptions,
-  UpsertArgs,
+  CreateRevenueArgs,
+  UpdateExistingRevenueArgs,
+  UpsertRevenueArgs,
 } from "@/modules/revenues/server/events/shared/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 
 /**
- * Type guard indicating whether we are updating an existing invoice amount (diff update).
+ * Checks if this is a diff update operation.
  */
 function isDiffUpdate(
   isUpdate: boolean,
@@ -27,9 +27,9 @@ function isDiffUpdate(
 }
 
 /**
- * Creates metadata pointing to an existing revenue record for logging/observability.
+ * Builds metadata including existing revenue ID.
  */
-function buildExistingMeta(
+function buildExistingMetadata(
   metadata: LogMetadata,
   revenueId: string,
 ): LogMetadata {
@@ -37,50 +37,93 @@ function buildExistingMeta(
 }
 
 /**
- * Updates an existing revenue record either by adding a new invoice or diffing an updated one.
+ * Computes the amount delta for the update.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
+function computeAmountDelta(
+  eligible: boolean,
+  isDiff: boolean,
+  currentAmount: number,
+  previousAmount?: number,
+): number {
+  if (!eligible) {
+    return 0;
+  }
+  if (isDiff && previousAmount !== undefined) {
+    return currentAmount - previousAmount;
+  }
+  return isDiff ? 0 : currentAmount;
+}
+
+/**
+ * Computes the new invoice count.
+ */
+function computeInvoiceCount(
+  existingCount: number,
+  isDiff: boolean,
+  eligible: boolean,
+): number {
+  if (isDiff) {
+    return existingCount;
+  }
+  return eligible ? existingCount + 1 : existingCount;
+}
+
+/**
+ * Creates a new revenue record.
+ */
+async function createNewRevenue(args: CreateRevenueArgs): Promise<void> {
+  const {
+    context,
+    invoiceCount,
+    metadata,
+    period,
+    revenueService,
+    totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
+  } = args;
+
+  logInfo(context, "Creating a new revenue record", metadata);
+
+  await revenueService.create({
+    calculationSource: "invoice_event",
+    createdAt: new Date(),
+    invoiceCount,
+    period: toPeriod(period),
+    totalAmount,
+    totalPaidAmount,
+    totalPendingAmount,
+    updatedAt: new Date(),
+  });
+}
+
+/**
+ * Updates an existing revenue record.
+ */
 async function updateExistingRevenue(
-  options: UpdateExistingOptions,
+  args: UpdateExistingRevenueArgs,
 ): Promise<void> {
   const {
-    revenueService,
     context,
     existing,
     invoice,
-    metadata,
     isUpdate,
+    metadata,
     previousAmount,
-  } = options;
+    revenueService,
+  } = args;
 
   const isDiff = isDiffUpdate(isUpdate, previousAmount);
   const eligible = checkStatusEligibleForRevenue(invoice.status);
+  const amountDelta = computeAmountDelta(
+    eligible,
+    isDiff,
+    invoice.amount,
+    previousAmount,
+  );
+  const newCount = computeInvoiceCount(existing.invoiceCount, isDiff, eligible);
 
-  let amountDelta: number;
-  switch (true) {
-    case eligible && isDiff:
-      amountDelta = invoice.amount - (previousAmount as number);
-      break;
-    case eligible && !isDiff:
-      amountDelta = invoice.amount;
-      break;
-    default:
-      amountDelta = 0;
-  }
-
-  let newCount: number;
-  switch (true) {
-    case isDiff:
-      newCount = existing.invoiceCount;
-      break;
-    case !isDiff && eligible:
-      newCount = existing.invoiceCount + 1;
-      break;
-    default:
-      newCount = existing.invoiceCount;
-  }
-
-  const baseMeta = buildExistingMeta(metadata, existing.id);
+  const baseMeta = buildExistingMetadata(metadata, existing.id);
   const detailMeta: LogMetadata = isDiff
     ? {
         amountDifference: amountDelta,
@@ -92,7 +135,7 @@ async function updateExistingRevenue(
     context,
     isDiff
       ? "Updating existing revenue record for updated invoice"
-      : "Updating the existing revenue record for a new invoice",
+      : "Updating existing revenue record for new invoice",
     { ...baseMeta, ...detailMeta },
   );
 
@@ -101,7 +144,7 @@ async function updateExistingRevenue(
     totalPendingAmount: existing.totalPendingAmount,
   };
 
-  const nextBuckets = checkStatusEligibleForRevenue(invoice.status)
+  const nextBuckets = eligible
     ? applyDeltaToBucket(currentBuckets, invoice.status, amountDelta)
     : currentBuckets;
 
@@ -117,44 +160,17 @@ async function updateExistingRevenue(
 }
 
 /**
- * Creates a new revenue record for the given period with the invoice amount.
+ * Upserts a revenue record for the invoice's period.
  */
-async function createNewRevenue(options: CreateNewOptions): Promise<void> {
+export async function upsertRevenue(args: UpsertRevenueArgs): Promise<void> {
   const {
-    revenueService,
     context,
-    metadata,
-    period,
-    invoiceCount,
-    totalAmount,
-    totalPaidAmount,
-    totalPendingAmount,
-  } = options;
-  logInfo(context, "Creating a new revenue record", metadata);
-  await revenueService.create({
-    calculationSource: "invoice_event",
-    createdAt: new Date(),
-    invoiceCount,
-    period: toPeriod(period),
-    totalAmount,
-    totalPaidAmount,
-    totalPendingAmount,
-    updatedAt: new Date(),
-  });
-}
-
-/**
- * Upserts a revenue record for the invoice's period, updating if it exists or creating otherwise.
- */
-export async function upsertRevenue(args: UpsertArgs): Promise<void> {
-  const {
-    revenueService,
     invoice,
-    period,
-    context,
-    metadata,
     isUpdate,
+    metadata,
+    period,
     previousAmount,
+    revenueService,
   } = args;
 
   const existingRevenue = await revenueService.findByPeriod(period);
@@ -177,7 +193,6 @@ export async function upsertRevenue(args: UpsertArgs): Promise<void> {
     return;
   }
 
-  // No existing revenue record for the period. Only create if invoice is eligible.
   if (!checkStatusEligibleForRevenue(invoice.status)) {
     logInfo(
       context,
