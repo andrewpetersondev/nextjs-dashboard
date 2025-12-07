@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { CreateUserForm } from "@/modules/users/ui/forms/create-user-form";
+import { ROUTES } from "@/shared/routes/routes";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
@@ -18,12 +19,12 @@ export default function Page(): JSX.Element {
       <Breadcrumbs
         breadcrumbs={[
           {
-            href: "/dashboard/users",
+            href: ROUTES.dashboard.users,
             label: "Users",
           },
           {
             active: true,
-            href: "/dashboard/users/create",
+            href: `${ROUTES.dashboard.createUser}`,
             label: "Create User",
           },
         ]}
