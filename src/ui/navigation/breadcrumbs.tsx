@@ -6,9 +6,9 @@ import type { JSX } from "react";
  * Represents a single breadcrumb item.
  */
 interface Breadcrumb {
-  label: string;
-  href: string;
   active?: boolean;
+  href: string;
+  label: string;
 }
 
 const BREADCRUMB_SEPARATOR = "/";
@@ -24,7 +24,7 @@ export const Breadcrumbs = ({
   breadcrumbs: readonly Breadcrumb[];
 }): JSX.Element => (
   <nav aria-label="Breadcrumb" className="mb-6 block">
-    <ol className={clsx("flex text-xl md:text-2xl")}>
+    <ol className="flex text-xl md:text-2xl">
       {breadcrumbs.map((breadcrumb, index) => {
         const isActive = Boolean(breadcrumb.active);
         return (

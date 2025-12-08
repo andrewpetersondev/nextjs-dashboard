@@ -22,16 +22,17 @@ const kickoffTimeout = SESSION_KICKOFF_TIMEOUT_MS;
 // Add a small random jitter so multiple tabs don’t sync up perfectly.
 const JITTER_MS = SESSION_REFRESH_JITTER_MS;
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 function useSessionRefresh(): void {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickoffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inFlightRef = useRef(false);
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
   useEffect(() => {
     let aborted = false;
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore for now>
     const ping = async (): Promise<void> => {
       if (aborted || inFlightRef.current) {
         return;

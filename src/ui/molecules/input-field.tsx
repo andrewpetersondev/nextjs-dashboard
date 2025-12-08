@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
+import { Label } from "@/ui/atoms/label";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
@@ -6,13 +7,13 @@ import { InputFieldCard } from "@/ui/molecules/input-field-card";
  * Props for the InputField component.
  */
 interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
-  id: string;
-  label: string;
-  icon?: ReactNode;
-  // Accept dense errors (readonly string[]) to match FormState failure shape
-  error?: readonly string[] | undefined;
   dataCy?: string;
   describedById?: string;
+  // Accept dense errors (readonly string[]) to match FormState failure shape
+  error?: readonly string[] | undefined;
+  icon?: ReactNode;
+  id: string;
+  label: string;
 }
 
 /**
@@ -36,10 +37,8 @@ export function InputField(props: InputFieldProps): JSX.Element {
   return (
     <InputFieldCard>
       <div>
-        <label className="block font-medium text-sm/6" htmlFor={id}>
-          {label}
-        </label>
-        <div className="mt-2 flex items-center">
+        <Label htmlFor={id} text={label} />
+        <div className="flex items-center">
           <input
             aria-describedby={
               hasError ? (describedById ?? `${id}-errors`) : undefined

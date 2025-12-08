@@ -1,6 +1,5 @@
-// `src/ui/atoms/select-menu.tsx`
-
 import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { clsx } from "clsx";
 import React from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
 
@@ -17,23 +16,28 @@ type SelectMenuComponent = GenericSelectMenu & { displayName?: string };
 export interface SelectMenuProps<
   T extends { id: string; name: string } = { id: string; name: string },
 > {
-  options: T[];
-  value?: string | undefined;
-  defaultValue?: string;
-  id: string;
-  name: string;
-  placeholder?: string;
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   className?: string;
   dataCy?: string;
+  defaultValue?: string;
   disabled?: boolean;
-  required?: boolean;
   error?: FieldError;
   /**
    * Optional id of the element that describes the select (e.g. the error container).
    * If not provided, falls back to `${name}-error`.
    */
   errorId?: string;
+  /**
+   * Optional icon component to display on the left side.
+   * Defaults to UserCircleIcon.
+   */
+  icon?: React.ComponentType<React.ComponentProps<"svg">>;
+  id: string;
+  name: string;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: T[];
+  placeholder?: string;
+  required?: boolean;
+  value?: string | undefined;
 }
 
 /**
@@ -44,28 +48,33 @@ export interface SelectMenuProps<
 // biome-ignore lint/style/useExportsLast: <this follows convention>
 export const SelectMenu: SelectMenuComponent = React.memo(
   function SelectMenuInner<T extends { id: string; name: string }>({
-    options,
-    value,
-    defaultValue,
-    id,
-    name,
-    placeholder = "Select an option",
-    onChange,
     className = "",
     dataCy,
+    defaultValue,
     disabled = false,
-    required,
     error,
     errorId,
+    icon: Icon = UserCircleIcon,
+    id,
+    name,
+    onChange,
+    options,
+    placeholder = "Select an option",
+    required,
+    value,
   }: SelectMenuProps<T>): React.ReactElement {
+    const errorDescriptionId =
+      error && error.length > 0 ? (errorId ?? `${name}-error`) : undefined;
+
     return (
       <div className="relative">
         <select
-          aria-describedby={
-            error && error.length > 0 ? (errorId ?? `${name}-error`) : undefined
-          }
+          aria-describedby={errorDescriptionId}
           aria-label={placeholder}
-          className={`peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary ${className}`}
+          className={clsx(
+            "peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary",
+            className,
+          )}
           data-cy={dataCy}
           defaultValue={value === undefined ? defaultValue : undefined}
           // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
@@ -86,7 +95,7 @@ export const SelectMenu: SelectMenuComponent = React.memo(
             </option>
           ))}
         </select>
-        <UserCircleIcon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary" />
+        <Icon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary" />
       </div>
     );
   },
