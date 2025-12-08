@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-pages";
 import { CreateInvoice } from "@/modules/invoices/ui/components/buttons";
-import { Pagination } from "@/modules/invoices/ui/components/table/pagination";
-import { InvoicesTable } from "@/modules/invoices/ui/components/table/table";
-import { H1 } from "@/ui/atoms/typography/headings";
 import {
   InvoicesSearchSkeleton,
   InvoicesTableSkeleton,
-} from "@/ui/feedback/skeleton/skeletons";
+} from "@/modules/invoices/ui/components/invoices.skeletons";
+import { Pagination } from "@/modules/invoices/ui/components/table/pagination";
+import { InvoicesTable } from "@/modules/invoices/ui/components/table/table";
+import { H1 } from "@/ui/atoms/typography/headings";
 import { Search } from "@/ui/molecules/search-box";
 
 interface InvoicesSearchParams {
