@@ -1,36 +1,31 @@
 "use client";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
 import Link from "next/link";
-import {
-  type ReadonlyURLSearchParams,
-  usePathname,
-  useSearchParams,
-} from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { JSX } from "react";
 import { generatePagination } from "@/ui/pagination/generate-pagination";
+import { cn } from "@/ui/utils/cn";
 
-const PaginationNumber = ({
+function PaginationNumber({
+  page,
   href,
   isActive,
-  page,
   position,
 }: {
-  href: string;
-  isActive: boolean;
   page: number | string;
-  position?: "first" | "last" | "middle" | "single" | undefined;
-}): JSX.Element => {
-  const className: string = clsx(
-    "flex h-10 w-10 items-center justify-center border",
+  href: string;
+  position?: "first" | "last" | "middle" | "single";
+  isActive: boolean;
+}) {
+  const className = cn(
+    "flex h-10 w-10 items-center justify-center text-sm border",
     {
       "hover:bg-bg-hover": !isActive && position !== "middle",
       "rounded-l-md": position === "first" || position === "single",
       "rounded-r-md": position === "last" || position === "single",
-      "text-text-secondary": position === "middle",
-      "z-10 border-bg-active border-2 border-bg-focus text-text-active":
-        isActive,
+      "text-text-disabled": position === "middle",
+      "z-10 bg-bg-active border-bg-active text-text-inverse": isActive,
     },
   );
 
@@ -41,9 +36,9 @@ const PaginationNumber = ({
       {page}
     </Link>
   );
-};
+}
 
-const PaginationArrow = ({
+function PaginationArrow({
   href,
   direction,
   isDisabled,
@@ -51,18 +46,18 @@ const PaginationArrow = ({
   href: string;
   direction: "left" | "right";
   isDisabled?: boolean;
-}): JSX.Element => {
-  const className: string = clsx(
+}) {
+  const className = cn(
     "flex h-10 w-10 items-center justify-center rounded-md border",
     {
-      "hover:bg-bg-disabled": !isDisabled,
-      "ml-2 md:ml-4": direction === "right",
-      "mr-2 md:mr-4": direction === "left",
+      "hover:bg-bg-hover": !isDisabled,
+      "ml-2": direction === "right",
+      "mr-2": direction === "left",
       "pointer-events-none text-text-disabled": isDisabled,
     },
   );
 
-  const icon: JSX.Element =
+  const icon =
     direction === "left" ? (
       <ArrowLeftIcon className="w-4" />
     ) : (
@@ -76,26 +71,24 @@ const PaginationArrow = ({
       {icon}
     </Link>
   );
-};
+}
 
-export const Pagination = ({
+export function Pagination({
   totalPages,
 }: {
   totalPages: number;
-}): JSX.Element => {
-  const pathname: string = usePathname();
-  const searchParams: ReadonlyURLSearchParams = useSearchParams();
-  const currentPage: number = Number(searchParams.get("page")) || 1;
-  const allPages: (string | number)[] = generatePagination(
-    currentPage,
-    totalPages,
-  );
+}): JSX.Element {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
 
-  const createPageUrl = (pageNumber: number | string): string => {
+  const createPageUrl = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
+
+  const allPages = generatePagination(currentPage, totalPages);
 
   return (
     <div className="inline-flex">
@@ -106,7 +99,7 @@ export const Pagination = ({
       />
 
       <div className="-space-x-px flex">
-        {allPages.map((page: string | number, index: number): JSX.Element => {
+        {allPages.map((page, index) => {
           let position: "first" | "last" | "single" | "middle" | undefined;
 
           if (index === 0) {
@@ -126,7 +119,10 @@ export const Pagination = ({
             <PaginationNumber
               href={createPageUrl(page)}
               isActive={currentPage === page}
-              key={page}
+              key={`${page}-${
+                // biome-ignore lint/suspicious/noArrayIndexKey: <unique enough>
+                index
+              }`} // Use index to handle duplicate ellipses if any
               page={page}
               position={position}
             />
@@ -141,4 +137,4 @@ export const Pagination = ({
       />
     </div>
   );
-};
+}

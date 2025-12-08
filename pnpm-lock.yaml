@@ -56,6 +56,9 @@ importers:
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
+      tailwind-merge:
+        specifier: ^3.4.0
+        version: 3.4.0
       use-debounce:
         specifier: ^10.0.6
         version: 10.0.6(react@19.2.1)
@@ -3426,6 +3429,9 @@ packages:
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
+
+  tailwind-merge@3.4.0:
+    resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
 
   tailwindcss@4.1.17:
     resolution: {integrity: sha512-j9Ee2YjuQqYT9bbRTfTZht9W/ytp5H+jJpZKiYdP/bpnXARAuELt9ofP0lPnmHjbga7SNQIxdTAXCmtKVYjN+Q==}
@@ -7166,6 +7172,8 @@ snapshots:
   symbol-tree@3.2.4: {}
 
   systeminformation@5.27.7: {}
+
+  tailwind-merge@3.4.0: {}
 
   tailwindcss@4.1.17: {}
 

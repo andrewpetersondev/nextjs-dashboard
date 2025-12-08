@@ -6,10 +6,10 @@ import {
   InvoicesSearchSkeleton,
   InvoicesTableSkeleton,
 } from "@/modules/invoices/ui/components/invoices.skeletons";
-import { Pagination } from "@/modules/invoices/ui/components/table/pagination";
 import { InvoicesTable } from "@/modules/invoices/ui/components/table/table";
 import { H1 } from "@/ui/atoms/typography/headings";
 import { Search } from "@/ui/molecules/search-box";
+import { Pagination } from "@/ui/pagination/pagination";
 
 interface InvoicesSearchParams {
   query?: string;
