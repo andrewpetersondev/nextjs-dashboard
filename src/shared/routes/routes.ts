@@ -14,15 +14,15 @@ type RoutesShape = Readonly<{
     signup: StaticPath;
   }>;
   dashboard: Readonly<{
-    root: StaticPath;
-    customers: StaticPath;
-    invoices: StaticPath;
-    users: StaticPath;
     createInvoice: DynamicBuilder;
+    createUser: DynamicBuilder;
+    customers: StaticPath;
     invoice: (id: string) => StaticPath;
     invoiceEdit: (id: string) => StaticPath;
-    createUser: DynamicBuilder;
+    invoices: StaticPath;
+    root: StaticPath;
     userEdit: (id: string) => StaticPath;
+    users: StaticPath;
   }>;
   root: StaticPath;
 }>;
