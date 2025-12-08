@@ -15,7 +15,7 @@ import {
   USERNAME_MAX_LENGTH_ERROR,
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
-} from "@/modules/auth/domain/auth.constants";
+} from "@/modules/auth/domain/schema/auth-schema.constants";
 import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 
 /**
