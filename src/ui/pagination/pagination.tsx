@@ -8,15 +8,15 @@ import { generatePagination } from "@/ui/pagination/generate-pagination";
 import { cn } from "@/ui/utils/cn";
 
 function PaginationNumber({
-  page,
   href,
   isActive,
+  page,
   position,
 }: {
-  page: number | string;
   href: string;
-  position?: "first" | "last" | "middle" | "single";
   isActive: boolean;
+  page: number | string;
+  position?: "first" | "last" | "middle" | "single";
 }) {
   const className = cn(
     "flex h-10 w-10 items-center justify-center text-sm border",
@@ -39,12 +39,12 @@ function PaginationNumber({
 }
 
 function PaginationArrow({
-  href,
   direction,
+  href,
   isDisabled,
 }: {
-  href: string;
   direction: "left" | "right";
+  href: string;
   isDisabled?: boolean;
 }) {
   const className = cn(

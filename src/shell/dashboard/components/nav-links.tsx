@@ -5,7 +5,6 @@ import {
   LockClosedIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
@@ -14,6 +13,7 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
 import { ROUTES } from "@/shared/routes/routes";
+import { cn } from "@/ui/utils/cn";
 
 /** Navigation link paths */
 const NAV_LINKS = {
@@ -29,9 +29,9 @@ type NavLinksProps = {
 };
 
 type NavLink = {
-  name: string;
   href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
+  name: string;
 };
 
 /**
@@ -65,7 +65,7 @@ export function NavLinks({ role }: NavLinksProps): JSX.Element {
         return (
           <Link
             aria-current={pathname === link.href ? "page" : undefined}
-            className={clsx(
+            className={cn(
               "flex h-[48px] grow items-center justify-center gap-2 rounded-md p-3 hover:bg-bg-hover hover:text-text-hover md:flex-none md:justify-start md:p-2 md:px-3",
               pathname === link.href
                 ? "border-2 border-bg-active text-text-active"
