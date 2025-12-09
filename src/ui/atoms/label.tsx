@@ -1,4 +1,5 @@
 import type { JSX, LabelHTMLAttributes } from "react";
+import { cn } from "@/ui/utils/cn";
 
 interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   dataCy?: string;
@@ -11,13 +12,13 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 export function Label({
   text,
   htmlFor,
-  className = "",
+  className,
   dataCy,
   ...rest
 }: LabelProps): JSX.Element {
   return (
     <label
-      className={`mb-2 block font-medium text-sm ${className}`}
+      className={cn("mb-2 block font-medium text-sm", className)}
       data-cy={dataCy}
       htmlFor={htmlFor}
       {...rest}

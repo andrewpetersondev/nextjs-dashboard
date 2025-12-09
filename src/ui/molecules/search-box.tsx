@@ -10,6 +10,7 @@ import { type ChangeEvent, type JSX, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Label } from "@/ui/atoms/label";
 import { DEBOUNCE_MS } from "@/ui/timings.tokens";
+import { cn } from "@/ui/utils/cn";
 
 /**
  * Search component for filtering data.
@@ -37,7 +38,12 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
       <input
         aria-label={placeholder}
         autoComplete="off"
-        className="peer block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-[color:var(--color-text-primary)] text-sm outline-2 transition-colors duration-200 placeholder:text-[color:var(--color-text-disabled)] hover:border-[color:var(--color-text-hover)] focus:border-[color:var(--color-text-focus)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:ring-opacity-20"
+        className={cn(
+          "peer block w-full rounded-md border border-[color:var(--color-text-active)] bg-[color:var(--color-bg-primary)] py-[9px] pl-10 text-[color:var(--color-text-primary)] text-sm outline-2 transition-colors duration-200",
+          "placeholder:text-[color:var(--color-text-disabled)]",
+          "hover:border-[color:var(--color-text-hover)]",
+          "focus:border-[color:var(--color-text-focus)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-bg-focus)] focus:ring-opacity-20",
+        )}
         defaultValue={searchParams.get("query")?.toString()}
         id={inputId}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {

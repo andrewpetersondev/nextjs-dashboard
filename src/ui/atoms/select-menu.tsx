@@ -1,7 +1,7 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { clsx } from "clsx";
 import React from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
+import { cn } from "@/ui/utils/cn";
 
 type GenericSelectMenu = <T extends { id: string; name: string }>(
   props: SelectMenuProps<T>,
@@ -48,7 +48,7 @@ export interface SelectMenuProps<
 // biome-ignore lint/style/useExportsLast: <this follows convention>
 export const SelectMenu: SelectMenuComponent = React.memo(
   function SelectMenuInner<T extends { id: string; name: string }>({
-    className = "",
+    className,
     dataCy,
     defaultValue,
     disabled = false,
@@ -71,7 +71,7 @@ export const SelectMenu: SelectMenuComponent = React.memo(
         <select
           aria-describedby={errorDescriptionId}
           aria-label={placeholder}
-          className={clsx(
+          className={cn(
             "peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary",
             className,
           )}

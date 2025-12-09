@@ -1,6 +1,6 @@
-import { clsx } from "clsx";
 import Link from "next/link";
 import type { JSX } from "react";
+import { cn } from "@/ui/utils/cn";
 
 /**
  * Represents a single breadcrumb item.
@@ -30,9 +30,7 @@ export const Breadcrumbs = ({
         return (
           <li
             aria-current={isActive ? "page" : undefined}
-            className={clsx(
-              isActive ? "text-text-active" : "text-text-primary",
-            )}
+            className={cn(isActive ? "text-text-active" : "text-text-primary")}
             key={`${breadcrumb.href}-${index}`}
           >
             <Link
