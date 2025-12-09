@@ -4,6 +4,10 @@ import type { JSX, ReactNode } from "react";
 import { SessionRefresh } from "@/modules/auth/ui/features/session-refresh";
 import { notoSans } from "@/ui/styles/fonts";
 
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
 /**
  * Root layout component.
  * Wraps the entire application.
@@ -20,11 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}): JSX.Element {
+export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html className="scheme-light-dark h-full" lang="en">
       <body

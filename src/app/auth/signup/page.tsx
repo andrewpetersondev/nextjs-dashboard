@@ -12,22 +12,28 @@ import { Heading } from "@/modules/auth/ui/components/shared/heading";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/social/auth-form-social-section";
 import { ROUTES } from "@/shared/routes/routes";
 
-export default function Page(): JSX.Element {
+function SignupCard(): JSX.Element {
+  return (
+    <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+      <SignupForm action={signupAction} />
+      <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
+      <AuthFormSocialSection
+        demoAdminText="Sign Up as Demo Admin"
+        demoUserAction={demoUserActionAdapter}
+        demoUserText="Sign Up as Demo User"
+        mode="signup"
+      />
+    </div>
+  );
+}
+
+export default function SignupPage(): JSX.Element {
   return (
     <main className="h-full">
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <Heading text={SIGNUP_HEADING} />
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-            <SignupForm action={signupAction} />
-            <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
-            <AuthFormSocialSection
-              demoAdminText="Sign Up as Demo Admin"
-              demoUserAction={demoUserActionAdapter}
-              demoUserText="Sign Up as Demo User"
-              mode="signup"
-            />
-          </div>
+          <SignupCard />
           <AuthSwitchLink
             href={ROUTES.auth.login}
             linkText="Log in here"

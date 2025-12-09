@@ -14,13 +14,12 @@ import type {
 } from "@/shared/logging/redaction/redaction.types";
 import { buildSensitiveSet } from "@/shared/logging/redaction/redaction.utils";
 
+type Visitor = (value: unknown, depth: number, keyHint?: string) => unknown;
+
 /**
  * Create a visit function (closure over config + seen set).
  */
-function createVisit(
-  cfg: InternalConfig,
-  seen: WeakSet<object>,
-): (value: unknown, depth: number, keyHint?: string) => unknown {
+function createVisit(cfg: InternalConfig, seen: WeakSet<object>): Visitor {
   return function visit(
     value: unknown,
     depth: number,
@@ -92,7 +91,7 @@ function buildConfig(options?: RedactOptions): InternalConfig {
 /**
  * Create a fresh visitor for each redaction run.
  */
-function makeVisitor(cfg: InternalConfig) {
+function makeVisitor(cfg: InternalConfig): () => Visitor {
   return () => {
     const seen = new WeakSet<object>();
     return createVisit(cfg, seen);

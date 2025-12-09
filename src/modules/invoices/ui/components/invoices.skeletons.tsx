@@ -70,12 +70,10 @@ export function InvoicesTableSkeleton(): JSX.Element {
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-bg-accent p-2 md:pt-0">
           <div className="md:hidden">
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
+            {Array.from({ length: 6 }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <skeletons are static>
+              <InvoicesMobileSkeleton key={i} />
+            ))}
           </div>
           <table className="hidden min-w-full text-text-primary md:table">
             <thead className="rounded-lg text-left font-normal text-sm">
@@ -104,12 +102,10 @@ export function InvoicesTableSkeleton(): JSX.Element {
               </tr>
             </thead>
             <tbody className="bg-bg-accent">
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
+              {Array.from({ length: 6 }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <skeletons are static>
+                <TableRowSkeleton key={i} />
+              ))}
             </tbody>
           </table>
         </div>

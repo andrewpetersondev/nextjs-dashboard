@@ -15,73 +15,74 @@ import {
 } from "@/shared/http/http-headers";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
-// Base cadence to check for refresh opportunities (20 seconds).
 const INTERVAL_MS = SESSION_REFRESH_PING_MS;
-// Small startup delay to avoid racing the initial page load.
 const kickoffTimeout = SESSION_KICKOFF_TIMEOUT_MS;
-// Add a small random jitter so multiple tabs don’t sync up perfectly.
 const JITTER_MS = SESSION_REFRESH_JITTER_MS;
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
+/**
+ * Checks if the session needs a refresh and performs the request.
+ * @returns Promise that resolves when the check is complete.
+ */
+async function performSessionPing(): Promise<void> {
+  if (document.hidden) {
+    return;
+  }
+  if (
+    typeof navigator !== "undefined" &&
+    "onLine" in navigator &&
+    !navigator.onLine
+  ) {
+    return;
+  }
+
+  try {
+    const res = await fetch(AUTH_REFRESH_ENDPOINT, {
+      cache: "no-store",
+      credentials: "include",
+      method: "POST",
+    });
+
+    // Backward-compat: older servers may still send 204.
+    if (res.status === HTTP_STATUS_NO_CONTENT) {
+      return;
+    }
+
+    const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
+    if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
+      const outcome = (await res.json()) as UpdateSessionResult;
+      // Log based on environment
+      const env = getPublicNodeEnv();
+      if (env === "development") {
+        logger.debug("[session-refresh] outcome:", outcome);
+      } else {
+        logger.error("[session-refresh] outcome:", outcome);
+      }
+    }
+  } catch {
+    // Ignore transient network errors
+  }
+}
+
 function useSessionRefresh(): void {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const kickoffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inFlightRef = useRef(false);
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
   useEffect(() => {
     let aborted = false;
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore for now>
     const ping = async (): Promise<void> => {
       if (aborted || inFlightRef.current) {
-        return;
-      }
-      if (document.hidden) {
-        return;
-      }
-      if (
-        typeof navigator !== "undefined" &&
-        "onLine" in navigator &&
-        !navigator.onLine
-      ) {
         return;
       }
 
       inFlightRef.current = true;
       try {
-        const res = await fetch(AUTH_REFRESH_ENDPOINT, {
-          cache: "no-store",
-          credentials: "include",
-          method: "POST",
-        });
-
-        // Backward-compat: older servers may still send 204.
-        if (res.status === HTTP_STATUS_NO_CONTENT) {
-          return;
-        }
-
-        const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
-        if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
-          const outcome = (await res.json()) as UpdateSessionResult;
-          switch (getPublicNodeEnv()) {
-            case "production":
-              logger.error("[session-refresh] outcome:", outcome);
-              break;
-            case "development":
-              logger.debug("[session-refresh] outcome:", outcome);
-              break;
-            case "test":
-              logger.error("[session-refresh] outcome:", outcome);
-              break;
-            default:
-              logger.error("[session-refresh] outcome:", outcome);
-          }
-        }
-      } catch {
-        // Ignore transient network errors
+        await performSessionPing();
       } finally {
-        inFlightRef.current = false;
+        if (!aborted) {
+          inFlightRef.current = false;
+        }
       }
     };
 

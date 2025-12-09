@@ -6,12 +6,12 @@ import {
   type LoginField,
 } from "@/modules/auth/domain/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
-import { AuthServerMessage } from "@/modules/auth/ui/components/shared/auth-server-message";
 import { AuthSubmitButton } from "@/modules/auth/ui/components/shared/auth-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
+import { FormAlert } from "@/ui/molecules/form-alert";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 
@@ -96,10 +96,18 @@ export const LoginForm: FC<LoginFormProps> = ({
       </form>
       {state.ok
         ? state.value.message && (
-            <AuthServerMessage message={state.value.message} />
+            <FormAlert
+              dataCy="auth-server-message"
+              message={state.value.message}
+              type="success"
+            />
           )
         : state.error.message && (
-            <AuthServerMessage message={state.error.message} />
+            <FormAlert
+              dataCy="auth-server-message"
+              message={state.error.message}
+              type="error"
+            />
           )}
     </>
   );
