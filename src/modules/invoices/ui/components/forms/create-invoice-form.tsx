@@ -7,7 +7,7 @@ import {
   type CreateInvoiceOutput,
   CreateInvoiceSchema,
 } from "@/modules/invoices/domain/invoice.schema";
-import { createInvoiceAction } from "@/modules/invoices/server/application/actions/create";
+import { createInvoiceAction } from "@/modules/invoices/server/application/actions/create-invoice.action";
 import { CustomerSelect } from "@/modules/invoices/ui/components/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";

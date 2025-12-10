@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-pages";
+import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-invoices-pages.action";
 import { CreateInvoiceLink } from "@/modules/invoices/ui/components/invoice-links";
 import {
   InvoicesSearchSkeleton,

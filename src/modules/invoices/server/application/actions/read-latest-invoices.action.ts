@@ -1,0 +1,10 @@
+import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
+import { fetchLatestInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-latest";
+import type { AppDatabase } from "@/server-core/db/db.connection";
+
+export async function readLatestInvoicesAction(
+  db: AppDatabase,
+  limit = 5,
+): Promise<InvoiceListFilter[]> {
+  return await fetchLatestInvoicesDal(db, limit);
+}

@@ -6,12 +6,10 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
 import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
-import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-count";
+import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/constants";
-import {
-  readInvoicesSummary,
-  readLatestInvoices,
-} from "@/modules/invoices/server/application/actions/queries";
+import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
+import { readLatestInvoicesAction } from "@/modules/invoices/server/application/actions/read-latest-invoices.action";
 import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
@@ -32,8 +30,8 @@ export default async function Page(): Promise<JSX.Element> {
   const [session, invoicesSummary, latestInvoices, totalCustomers] =
     await Promise.all([
       verifySessionOptimistic(),
-      readInvoicesSummary(db),
-      readLatestInvoices(db, ITEMS_PER_PAGE_INVOICES),
+      readInvoicesSummaryAction(db),
+      readLatestInvoicesAction(db, ITEMS_PER_PAGE_INVOICES),
       readTotalCustomersCountAction(),
     ]);
 
