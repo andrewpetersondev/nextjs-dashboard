@@ -1,13 +1,13 @@
-import type { JSX } from "react";
+import type { ComponentType, JSX } from "react";
 import { H3 } from "@/ui/atoms/headings";
 
 interface StatCardProps {
-  icon: React.ComponentType<{ className: string }>;
+  icon: ComponentType<{ className: string }>;
   title: string;
   value: number | string;
 }
 
-export function StatCard({
+export function StatCardAtom({
   icon: Icon,
   title,
   value,

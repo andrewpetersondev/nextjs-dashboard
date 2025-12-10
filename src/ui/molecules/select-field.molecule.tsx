@@ -18,7 +18,7 @@ interface SelectFieldProps<T extends { id: string; name: string }>
  * Reusable select field with label, card styling, and error display.
  * Mirrors the structure of InputField for consistency.
  */
-export function SelectField<T extends { id: string; name: string }>(
+export function SelectFieldMolecule<T extends { id: string; name: string }>(
   props: SelectFieldProps<T>,
 ): JSX.Element {
   const { id, label, error, dataCy, describedById, ...rest } = props;

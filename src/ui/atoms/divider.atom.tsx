@@ -12,7 +12,7 @@ interface DividerProps {
  * Divider
  * A horizontal rule that can optionally contain a centered label.
  */
-export const Divider: FC<DividerProps> = ({
+export const DividerAtom: FC<DividerProps> = ({
   label,
   className,
 }: DividerProps) => {

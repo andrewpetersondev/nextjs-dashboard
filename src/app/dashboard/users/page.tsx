@@ -5,7 +5,7 @@ import { fetchUsersPageCountAction } from "@/modules/users/server/application/ac
 import { CreateUserLink } from "@/modules/users/ui/components/user-action-buttons";
 import { UsersTable } from "@/modules/users/ui/tables/users-table";
 import { H1 } from "@/ui/atoms/headings";
-import { Search } from "@/ui/molecules/search-box";
+import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";
 
 interface UsersSearchParams {
@@ -45,7 +45,7 @@ export default async function Page(
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Suspense fallback={<InvoicesSearchSkeleton />}>
-          <Search placeholder="Search users..." />
+          <SearchBoxMolecule placeholder="Search users..." />
         </Suspense>
         <CreateUserLink />
       </div>

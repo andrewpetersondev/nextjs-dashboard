@@ -8,7 +8,7 @@ import {
 } from "@/modules/invoices/ui/components/invoices.skeletons";
 import { InvoicesTable } from "@/modules/invoices/ui/components/table/table";
 import { H1 } from "@/ui/atoms/headings";
-import { Search } from "@/ui/molecules/search-box";
+import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";
 
 interface InvoicesSearchParams {
@@ -49,7 +49,7 @@ export default async function Page(
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Suspense fallback={<InvoicesSearchSkeleton />}>
-          <Search placeholder="Search invoices..." />
+          <SearchBoxMolecule placeholder="Search invoices..." />
         </Suspense>
         <CreateInvoice />
       </div>

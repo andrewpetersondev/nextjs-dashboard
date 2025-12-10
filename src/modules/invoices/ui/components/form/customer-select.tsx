@@ -9,7 +9,7 @@ import { type JSX, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
-import { SelectField } from "@/ui/molecules/select-field";
+import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 
 /**
  * Props for the CustomerSelect component.
@@ -35,7 +35,7 @@ export const CustomerSelect = ({
   const id = useId();
 
   return (
-    <SelectField
+    <SelectFieldMolecule
       defaultValue=""
       error={error}
       icon={UserCircleIcon}

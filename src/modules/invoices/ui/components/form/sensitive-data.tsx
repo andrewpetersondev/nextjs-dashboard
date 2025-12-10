@@ -1,7 +1,7 @@
 import { KeyIcon } from "@heroicons/react/24/outline";
 import { type JSX, useId } from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 /**
@@ -21,7 +21,7 @@ export function SensitiveData({
 }: SensitiveDataProps): JSX.Element {
   const sensitiveDataId = useId();
   return (
-    <InputField
+    <InputFieldMolecule
       dataCy="sensitive-data-input"
       defaultValue={value}
       disabled={disabled}

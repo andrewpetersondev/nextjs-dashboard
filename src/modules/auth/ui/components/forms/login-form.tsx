@@ -13,7 +13,7 @@ import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
@@ -58,7 +58,7 @@ export const LoginForm: FC<LoginFormProps> = ({
         className="space-y-6"
         data-cy="login-form"
       >
-        <InputField
+        <InputFieldMolecule
           autoComplete="email"
           autoFocus={true}
           dataCy="login-email-input"
@@ -75,7 +75,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           required={true}
           type="email"
         />
-        <InputField
+        <InputFieldMolecule
           autoComplete="current-password"
           dataCy="login-password-input"
           describedById={`${passwordId}-errors`}

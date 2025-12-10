@@ -17,7 +17,7 @@ import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
@@ -61,7 +61,7 @@ export const SignupForm: FC<SignupFormProps> = ({
         className="space-y-6"
         data-cy="signup-form"
       >
-        <InputField
+        <InputFieldMolecule
           autoComplete="username"
           autoFocus={true}
           dataCy="signup-username-input"
@@ -75,7 +75,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           required={true}
           type="text"
         />
-        <InputField
+        <InputFieldMolecule
           autoComplete="email"
           dataCy="signup-email-input"
           defaultValue={values?.email}
@@ -91,7 +91,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           required={true}
           type="email"
         />
-        <InputField
+        <InputFieldMolecule
           autoComplete="new-password"
           dataCy="signup-password-input"
           describedById={`${passwordId}-errors`}

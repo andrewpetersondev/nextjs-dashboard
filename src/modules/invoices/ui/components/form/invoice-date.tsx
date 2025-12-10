@@ -1,6 +1,6 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 /**
@@ -31,7 +31,7 @@ export function InvoiceDate({
   ...rest
 }: InvoiceDateProps): JSX.Element {
   return (
-    <InputField
+    <InputFieldMolecule
       defaultValue={defaultValue}
       icon={<CalendarDaysIcon className={INPUT_ICON_CLASS} />}
       id={id}

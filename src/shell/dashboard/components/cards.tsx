@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import type { DashboardCardData } from "@/shell/dashboard/types";
-import { StatCard } from "@/ui/atoms/stat-card";
+import { StatCardAtom } from "@/ui/atoms/stat-card.atom";
 
 /**
  * Card types for dashboard.
@@ -31,22 +31,22 @@ interface CardWrapperProps {
 export function CardWrapper({ data }: CardWrapperProps): JSX.Element {
   return (
     <>
-      <StatCard
+      <StatCardAtom
         icon={ICON_MAP.collected}
         title="Collected"
         value={data.totalPaid}
       />
-      <StatCard
+      <StatCardAtom
         icon={ICON_MAP.pending}
         title="Pending"
         value={data.totalPending}
       />
-      <StatCard
+      <StatCardAtom
         icon={ICON_MAP.invoices}
         title="Total Invoices"
         value={data.totalInvoices}
       />
-      <StatCard
+      <StatCardAtom
         icon={ICON_MAP.customers}
         title="Total Customers"
         value={data.totalCustomers}

@@ -1,7 +1,7 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 interface InvoiceAmountInputProps
@@ -19,7 +19,7 @@ export const InvoiceAmountInput = ({
   ...props
 }: InvoiceAmountInputProps): JSX.Element => {
   return (
-    <InputField
+    <InputFieldMolecule
       dataCy={dataCy}
       error={error}
       icon={<CurrencyDollarIcon className={INPUT_ICON_CLASS} />}

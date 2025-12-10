@@ -3,7 +3,7 @@ import type { FormattedCustomersTableRow } from "@/modules/customers/domain/type
 import { CustomersTableDesktop } from "@/modules/customers/ui/components/customers-table-desktop";
 import { CustomersTableMobile } from "@/modules/customers/ui/components/customers-table-mobile";
 import { H1 } from "@/ui/atoms/headings";
-import { Search } from "@/ui/molecules/search-box";
+import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 
 interface CustomersTableProps {
   customers: FormattedCustomersTableRow[];
@@ -23,7 +23,7 @@ export function CustomersTable({
       <H1 className="mb-8" id={headingId}>
         Customers
       </H1>
-      <Search placeholder="Search customers..." />
+      <SearchBoxMolecule placeholder="Search customers..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">

@@ -9,7 +9,7 @@ import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserFormFieldNames } from "@/modules/users/domain/user.schema";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { InputField } from "@/ui/molecules/input-field";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <1 line over limit>
 export function UserFields({
@@ -31,7 +31,7 @@ export function UserFields({
 
   return (
     <>
-      <InputField
+      <InputFieldMolecule
         autoComplete="username"
         dataCy="user-username-input"
         defaultValue={values.username}
@@ -47,7 +47,7 @@ export function UserFields({
         type="text"
       />
 
-      <InputField
+      <InputFieldMolecule
         autoComplete="email"
         dataCy="user-email-input"
         defaultValue={values.email}
@@ -65,7 +65,7 @@ export function UserFields({
       />
 
       {showPassword && (
-        <InputField
+        <InputFieldMolecule
           autoComplete="off"
           dataCy="user-password-input"
           describedById="user-password-errors"

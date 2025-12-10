@@ -30,7 +30,7 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
  * @param props.rest -  ...rest - Additional input attributes (e.g., type, placeholder, etc.).
  * @returns Rendered input field with label, icon, and error handling.
  */
-export function InputField(props: InputFieldProps): JSX.Element {
+export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
   const { id, label, icon, error, dataCy, describedById, className, ...rest } =
     props;
 

@@ -15,7 +15,11 @@ import { cn } from "@/ui/utils/cn";
 /**
  * Search component for filtering data.
  */
-export function Search({ placeholder }: { placeholder: string }): JSX.Element {
+export function SearchBoxMolecule({
+  placeholder,
+}: {
+  placeholder: string;
+}): JSX.Element {
   const searchParams: ReadonlyURLSearchParams = useSearchParams();
   const pathname: string = usePathname();
   const { replace } = useRouter();
