@@ -13,7 +13,7 @@ import { InvoiceAmountInput } from "@/modules/invoices/ui/components/form/invoic
 import { InvoiceDate } from "@/modules/invoices/ui/components/form/invoice-date";
 import { InvoiceServerMessage } from "@/modules/invoices/ui/components/form/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/form/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitve-data";
+import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitive-data";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";

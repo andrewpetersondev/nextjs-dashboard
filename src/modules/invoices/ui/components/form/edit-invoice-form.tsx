@@ -12,7 +12,7 @@ import { CustomerSelect } from "@/modules/invoices/ui/components/form/customer-s
 import { InvoiceAmountInput } from "@/modules/invoices/ui/components/form/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/ui/components/form/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/form/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitve-data";
+import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitive-data";
 import { useAutoHideAlert } from "@/modules/invoices/ui/hooks/useAutoHideAlert";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
