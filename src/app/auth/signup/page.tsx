@@ -1,40 +1,21 @@
 import type { JSX } from "react";
-import {
-  AUTH_DIVIDER_LABEL,
-  SIGNUP_HEADING,
-} from "@/modules/auth/domain/auth.constants";
-import { demoUserActionAdapter } from "@/modules/auth/server/application/actions/demo-user.action";
-import { signupAction } from "@/modules/auth/server/application/actions/signup.action";
-import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";
-import { AuthFormDivider } from "@/modules/auth/ui/components/shared/auth-form-divider";
-import { AuthSwitchLink } from "@/modules/auth/ui/components/shared/auth-switch-link";
-import { Heading } from "@/modules/auth/ui/components/shared/heading";
-import { AuthFormSocialSection } from "@/modules/auth/ui/components/social/auth-form-social-section";
+import { SIGNUP_HEADING } from "@/modules/auth/domain/auth.constants";
+import { SignupCard } from "@/modules/auth/ui/components/signup-card";
 import { ROUTES } from "@/shared/routes/routes";
-
-function SignupCard(): JSX.Element {
-  return (
-    <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-      <SignupForm action={signupAction} />
-      <AuthFormDivider label={AUTH_DIVIDER_LABEL} />
-      <AuthFormSocialSection
-        demoAdminText="Sign Up as Demo Admin"
-        demoUserAction={demoUserActionAdapter}
-        demoUserText="Sign Up as Demo User"
-        mode="signup"
-      />
-    </div>
-  );
-}
+import { LinkPrompt } from "@/ui/molecules/link-prompt";
+import { PageHeader } from "@/ui/molecules/page-header";
 
 export default function SignupPage(): JSX.Element {
   return (
     <main className="h-full">
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <Heading text={SIGNUP_HEADING} />
+        <PageHeader
+          logoSrc="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+          title={SIGNUP_HEADING}
+        />
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <SignupCard />
-          <AuthSwitchLink
+          <LinkPrompt
             href={ROUTES.auth.login}
             linkText="Log in here"
             prompt="Already a member?"
