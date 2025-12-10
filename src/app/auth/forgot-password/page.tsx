@@ -1,13 +1,12 @@
 import type { JSX } from "react";
-import { Heading } from "@/modules/auth/ui/components/shared/heading";
+import { AuthPageWrapper } from "@/modules/auth/ui/components/shared/auth-page-wrapper";
 
-export default function Page(): JSX.Element {
+export default function ForgotPasswordPage(): JSX.Element {
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Heading text="Forgot your password?" />
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+    <AuthPageWrapper title="Forgot your password?">
+      <div className="flex flex-col items-center justify-center">
         <h2>Forgot Password Page</h2>
       </div>
-    </div>
+    </AuthPageWrapper>
   );
 }
