@@ -12,12 +12,9 @@ import type {
 } from "@/modules/auth/domain/schema/auth.schema";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
-import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
-import { getAppDb } from "@/server-core/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -31,17 +28,10 @@ import type { Result } from "@/shared/result/result.types";
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
-  private readonly logger: LoggingClientContract;
 
-  constructor(
-    repo: AuthUserRepositoryPort,
-    hasher: PasswordHasherPort,
-    logger: LoggingClientContract,
-  ) {
+  constructor(repo: AuthUserRepositoryPort, hasher: PasswordHasherPort) {
     this.repo = repo;
     this.hasher = hasher;
-    // Create a child logger for this service instance with "service" scope
-    this.logger = logger.child({ scope: "service" });
   }
 
   /**
@@ -57,13 +47,8 @@ export class AuthUserService {
   ): Promise<Result<AuthUserTransport, AppError>> {
     const requestId = crypto.randomUUID();
     try {
-      const db = getAppDb();
-      const counter = await demoUserCounterDal(
-        db,
-        role,
-        this.logger,
-        requestId,
-      );
+      const counter = await this.repo.incrementDemoUserCounter(role);
+
       if (!counter || counter <= 0) {
         const error = normalizeToAppError(
           new Error("invalid_counter"),

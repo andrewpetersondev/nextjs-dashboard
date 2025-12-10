@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { AuthUserRepositoryPort } from "../../ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { AuthUserService } from "../auth-user.service";
@@ -8,11 +7,11 @@ import { AuthUserService } from "../auth-user.service";
 describe("AuthUserService", () => {
   let mockRepo: AuthUserRepositoryPort;
   let mockHasher: PasswordHasherPort;
-  let mockLogger: LoggingClientContract;
   let service: AuthUserService;
 
   beforeEach(() => {
     mockRepo = {
+      incrementDemoUserCounter: vi.fn(),
       login: vi.fn(),
       signup: vi.fn(),
       withTransaction: vi.fn((fn) => fn(mockRepo)),
@@ -23,20 +22,7 @@ describe("AuthUserService", () => {
       hash: vi.fn(),
     };
 
-    mockLogger = {
-      child: vi.fn().mockReturnThis(),
-      debug: vi.fn(),
-      error: vi.fn(),
-      errorWithDetails: vi.fn(),
-      info: vi.fn(),
-      operation: vi.fn(),
-      trace: vi.fn(),
-      warn: vi.fn(),
-      withContext: vi.fn().mockReturnThis(),
-      withRequest: vi.fn().mockReturnThis(),
-    } as unknown as LoggingClientContract;
-
-    service = new AuthUserService(mockRepo, mockHasher, mockLogger);
+    service = new AuthUserService(mockRepo, mockHasher);
   });
 
   describe("signup", () => {

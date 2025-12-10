@@ -4,6 +4,7 @@ import type {
   AuthSignupPayload,
   AuthUserEntity,
 } from "@/modules/auth/domain/auth.types";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { AuthUserRepositoryImpl } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
 
@@ -34,6 +35,10 @@ export class AuthUserRepositoryAdapter
     input: AuthSignupPayload,
   ): ReturnType<AuthUserRepositoryImpl["signup"]> {
     return this.repo.signup(input);
+  }
+
+  incrementDemoUserCounter(role: UserRole): Promise<number> {
+    return this.repo.incrementDemoUserCounter(role);
   }
 
   login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {

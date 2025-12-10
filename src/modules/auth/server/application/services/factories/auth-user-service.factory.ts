@@ -26,5 +26,5 @@ export function createAuthUserService(
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =
     new AuthUserRepositoryAdapter(repo);
   const hasherPort: PasswordHasherPort = new BcryptPasswordHasherAdapter();
-  return new AuthUserService(repoPort, hasherPort, logger);
+  return new AuthUserService(repoPort, hasherPort);
 }

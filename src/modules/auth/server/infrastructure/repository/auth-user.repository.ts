@@ -1,4 +1,3 @@
-// src/server/auth/infrastructure/repository/auth-user.repository.ts
 import "server-only";
 import { randomUUID } from "node:crypto";
 import type {
@@ -8,6 +7,8 @@ import type {
 } from "@/modules/auth/domain/auth.types";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { TransactionLogger } from "@/modules/auth/domain/logging/transaction-logger";
+import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/repository/dal/insert-user.dal";
 import {
@@ -105,6 +106,13 @@ export class AuthUserRepositoryImpl {
     );
 
     return newUserDbRowToEntity(row);
+  }
+
+  /**
+   * Increments the demo user counter.
+   */
+  async incrementDemoUserCounter(role: UserRole): Promise<number> {
+    return await demoUserCounterDal(this.db, role, this.logger, this.requestId);
   }
 
   /**
