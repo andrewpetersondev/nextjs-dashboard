@@ -9,14 +9,14 @@ const SOCIAL_BUTTON_CLASSES =
   "flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus";
 
 interface SocialLoginButtonProps {
-  /** Social provider name */
-  provider: OauthProvider;
+  /** Cypress test id */
+  dataCy?: string;
   /** OAuth endpoint or login URL */
   href: string;
   /** Mode for ARIA label */
   mode?: "signup" | "login";
-  /** Cypress test id */
-  dataCy?: string;
+  /** Social provider name */
+  provider: OauthProvider;
 }
 
 const providerIcons: Record<OauthProvider, ReactNode> = {
