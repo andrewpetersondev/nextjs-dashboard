@@ -112,11 +112,9 @@ export const SignupForm: FC<SignupFormProps> = ({
         <SubmitButtonMolecule
           data-cy="signup-submit-button"
           fullWidth={true}
-          loadingText="Loading..."
+          label="Sign Up"
           pending={pending}
-        >
-          Sign Up
-        </SubmitButtonMolecule>
+        />
       </form>
       {state.ok
         ? state.value.message && (

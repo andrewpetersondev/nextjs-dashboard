@@ -96,11 +96,9 @@ export const LoginForm: FC<LoginFormProps> = ({
         <SubmitButtonMolecule
           data-cy="login-submit-button"
           fullWidth={true}
-          loadingText="Loading..."
+          label="Log In"
           pending={pending}
-        >
-          Log In
-        </SubmitButtonMolecule>
+        />
       </form>
       {state.ok
         ? state.value.message && (

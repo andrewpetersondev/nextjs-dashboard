@@ -76,9 +76,7 @@ export function UserForm({
           values={initialValues}
         />
         <FormActionRow cancelHref={cancelHref}>
-          <SubmitButtonMolecule pending={pending}>
-            {submitLabel}
-          </SubmitButtonMolecule>
+          <SubmitButtonMolecule label={submitLabel} pending={pending} />
         </FormActionRow>
       </form>
       <ServerMessage showAlert={showAlert} state={state} />

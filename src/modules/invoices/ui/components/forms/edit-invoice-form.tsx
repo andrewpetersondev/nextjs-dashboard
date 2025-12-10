@@ -105,25 +105,19 @@ export const EditInvoiceForm = ({
     FormResult<UpdateInvoiceOutput>,
     FormData
   >(createWrappedUpdateAction(invoice.id), initialState);
-  // Build a view-model for the UI:
-  // - Before submit: use the provided invoice (required fields)
-  // - After successful submit: merge the server-validated patch into the existing view
   const currentInvoice: EditInvoiceViewModel =
     state.ok && state.value.data
       ? ({ ...invoice, ...state.value.data } as EditInvoiceViewModel)
       : invoice;
 
-  // Extract message from either success or error state
   const message = state.ok ? state.value.message : state.error.message;
 
   const showAlert = useAutoHideAlert(message || "");
 
-  // Extract field errors from AppError metadata
   const stateFieldErrors = state.ok
     ? undefined
     : getFieldErrors<UpdateInvoiceFieldNames>(state.error);
 
-  // Prefer externally provided dense errors; fall back to state errors or empty from initial state
   const emptyErrors = initialState.ok
     ? undefined
     : getFieldErrors<UpdateInvoiceFieldNames>(initialState.error);
@@ -146,10 +140,9 @@ export const EditInvoiceForm = ({
         <FormActionRow cancelHref="/dashboard/invoices">
           <SubmitButtonMolecule
             data-cy="edit-invoice-submit-button"
+            label="Edit Invoice"
             pending={pending}
-          >
-            Edit Invoice
-          </SubmitButtonMolecule>
+          />
         </FormActionRow>
       </form>
       <ServerMessage showAlert={showAlert} state={state} />

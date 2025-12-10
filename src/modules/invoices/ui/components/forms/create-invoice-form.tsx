@@ -110,10 +110,9 @@ export const CreateInvoiceForm = ({
         <FormActionRow cancelHref="/dashboard/invoices">
           <SubmitButtonMolecule
             data-cy="create-invoice-submit-button"
+            label="Create Invoice"
             pending={pending}
-          >
-            Create Invoice
-          </SubmitButtonMolecule>
+          />
         </FormActionRow>
       </form>
       <InvoiceServerMessage showAlert={showAlert} state={state} />
