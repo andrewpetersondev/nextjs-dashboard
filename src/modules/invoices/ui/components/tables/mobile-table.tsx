@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import { formatDateLocalized } from "@/modules/invoices/domain/date.utils";
-import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
+import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
+import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import {
   DeleteInvoiceButton,
   UpdateInvoiceLink,
@@ -56,7 +56,7 @@ export const MobileTable = ({
                 <p className="font-medium text-xl">
                   {formatCurrency(invoice.amount)}
                 </p>
-                <p>{formatDateLocalized(invoice.date.toISOString())}</p>
+                <p>{formatInvoiceDateLocalized(invoice.date.toISOString())}</p>
               </div>
               <div className="flex justify-end gap-2">
                 <UpdateInvoiceLink id={invoice.id} />

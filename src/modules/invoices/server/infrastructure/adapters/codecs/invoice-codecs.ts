@@ -1,18 +1,18 @@
 import "server-only";
 import {
-  toIsoDateString,
-  toPeriodFirstDayString,
-} from "@/modules/invoices/domain/codecs";
+  encodeInvoiceDateToIso,
+  encodePeriodToFirstDay,
+} from "@/modules/invoices/domain/invoice.codecs";
 import type {
   InvoiceDto,
   InvoiceFormDto,
   IsoDateString,
-} from "@/modules/invoices/domain/dto";
+} from "@/modules/invoices/domain/invoice.dto";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
 } from "@/modules/invoices/domain/invoice.entity";
-import { toInvoiceStatus } from "@/modules/invoices/domain/invoice-status.mapper";
+import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.class";
@@ -28,8 +28,8 @@ import type { Result } from "@/shared/result/result.types";
  * - revenuePeriod is YYYY-MM-01 (first-of-month date)
  */
 export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
-  const isoDate = toIsoDateString(entity.date); // YYYY-MM-DD
-  const periodAsFirstDay = toPeriodFirstDayString(entity.revenuePeriod); // YYYY-MM-01
+  const isoDate = encodeInvoiceDateToIso(entity.date); // YYYY-MM-DD
+  const periodAsFirstDay = encodePeriodToFirstDay(entity.revenuePeriod); // YYYY-MM-01
 
   return {
     amount: entity.amount,
@@ -55,7 +55,7 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
 export function dtoToCreateInvoiceEntity(
   dto: InvoiceFormDto,
 ): Result<InvoiceFormEntity, AppError> {
-  const statusResult = toInvoiceStatus(dto.status);
+  const statusResult = validateInvoiceStatus(dto.status);
   if (!statusResult.ok) {
     return Err(statusResult.error);
   }
@@ -79,7 +79,7 @@ export function partialDtoToCreateInvoiceEntity(
 ): Result<Partial<InvoiceFormEntity>, AppError> {
   let statusValue: InvoiceStatus | undefined;
   if (dto.status !== undefined) {
-    const statusResult = toInvoiceStatus(dto.status);
+    const statusResult = validateInvoiceStatus(dto.status);
     if (!statusResult.ok) {
       return Err(statusResult.error);
     }

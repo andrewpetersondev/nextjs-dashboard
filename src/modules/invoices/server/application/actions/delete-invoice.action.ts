@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
 import { getAppDb } from "@/server-core/db/db.connection";

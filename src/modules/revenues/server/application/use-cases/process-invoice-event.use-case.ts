@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import { withIdempotency } from "@/modules/revenues/server/application/cross-cutting/idempotency";
 import {

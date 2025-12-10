@@ -5,7 +5,7 @@ import type {
   InvoiceFormEntity,
   InvoiceServiceEntity,
 } from "@/modules/invoices/domain/invoice.entity";
-import { toInvoiceStatus } from "@/modules/invoices/domain/invoice-status.mapper";
+import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceRow } from "@/server-core/db/schema/invoices";
 import {
   toCustomerId,
@@ -31,7 +31,7 @@ function toFirstDayOfMonthLocal(date: Date): Date {
 export function rawDbToInvoiceEntity(
   row: InvoiceRow,
 ): Result<InvoiceEntity, AppError> {
-  const statusResult = toInvoiceStatus(row.status);
+  const statusResult = validateInvoiceStatus(row.status);
   if (!statusResult.ok) {
     return Err(statusResult.error);
   }

@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { extractPeriodFromInvoice } from "@/modules/revenues/domain/policies/invoice-period.policy";
 import { logError } from "@/modules/revenues/server/application/cross-cutting/logging";
 import type { Period } from "@/shared/branding/brands";

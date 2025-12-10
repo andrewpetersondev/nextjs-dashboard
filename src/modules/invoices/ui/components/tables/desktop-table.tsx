@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
-import { formatDateLocalized } from "@/modules/invoices/domain/date.utils";
-import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
+import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
+import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import {
   DeleteInvoiceButton,
   UpdateInvoiceLink,
@@ -63,7 +63,7 @@ export const DesktopTable = ({
                 {formatCurrency(invoice.amount)}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
-                {formatDateLocalized(invoice.date.toISOString())}
+                {formatInvoiceDateLocalized(invoice.date.toISOString())}
               </td>
               <td className="whitespace-nowrap px-3 py-3">
                 <InvoiceStatusComponent status={invoice.status} />

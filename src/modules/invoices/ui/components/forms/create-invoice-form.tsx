@@ -1,7 +1,7 @@
 "use client";
 import { type JSX, useActionState, useEffect, useId, useRef } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
-import { getTodayIsoDate } from "@/modules/invoices/domain/date.utils";
+import { getCurrentIsoDate } from "@/modules/invoices/domain/invoice.date-utils";
 import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
@@ -43,7 +43,7 @@ function CreateInvoiceFormFields({
     <>
       <InvoiceDate
         data-cy="date-input"
-        defaultValue={getTodayIsoDate()}
+        defaultValue={getCurrentIsoDate()}
         disabled={disabled}
         id={dateId}
         name="date"

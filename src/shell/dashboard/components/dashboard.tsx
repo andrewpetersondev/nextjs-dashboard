@@ -1,5 +1,5 @@
 import { type JSX, Suspense } from "react";
-import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
+import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { LatestInvoicesSkeleton } from "@/modules/invoices/ui/components/invoices.skeletons";
 import { LatestInvoices } from "@/modules/invoices/ui/components/latest/latest-invoices";
 import { RevenueChart } from "@/modules/revenues/ui/components/revenue-chart";
