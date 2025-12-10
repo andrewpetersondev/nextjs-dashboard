@@ -39,18 +39,20 @@ export const CustomerSelect = ({
   return (
     <div className="mb-4">
       <Label htmlFor={id} text="Choose customer" />
-      <SelectMenu
-        defaultValue=""
-        error={error}
-        errorId={errorId}
-        icon={UserCircleIcon}
-        id={id}
-        name="customerId"
-        options={[...customers]}
-        placeholder="Select a customer"
-        required={true}
-        {...props}
-      />
+      <div className="flex items-center [&>div]:flex-1">
+        <SelectMenu
+          defaultValue=""
+          error={error}
+          errorId={errorId}
+          id={id}
+          name="customerId"
+          options={[...customers]}
+          placeholder="Select a customer"
+          required={true}
+          {...props}
+        />
+        <UserCircleIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+      </div>
       <ErrorMessage
         dataCy={props.dataCy ? `${props.dataCy}-error` : undefined}
         error={error}
