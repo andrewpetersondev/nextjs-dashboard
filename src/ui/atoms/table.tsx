@@ -4,7 +4,7 @@ import { cn } from "@/ui/utils/cn";
 /**
  * A responsive table container that forwards the ref to the underlying table element.
  */
-// biome-ignore lint/style/useExportsLast: <explanation>
+// biome-ignore lint/style/useExportsLast: <investigate later>
 export function Table({
   className,
   ref,
