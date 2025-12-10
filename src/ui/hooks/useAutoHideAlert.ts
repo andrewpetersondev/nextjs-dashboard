@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 

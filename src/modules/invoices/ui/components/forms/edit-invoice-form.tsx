@@ -13,7 +13,6 @@ import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoi
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
-import { useAutoHideAlert } from "@/modules/invoices/ui/hooks/useAutoHideAlert";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type {
@@ -24,6 +23,7 @@ import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { ROUTES } from "@/shared/routes/routes";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
+import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";
 import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
