@@ -15,7 +15,7 @@ import { createInitialFailedFormState } from "@/shared/forms/infrastructure/crea
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
-import { FormAlert } from "@/ui/molecules/form-alert"; // Add this
+import { FormAlert } from "@/ui/molecules/form-alert";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";

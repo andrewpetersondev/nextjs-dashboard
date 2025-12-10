@@ -14,13 +14,13 @@ import { SocialLoginButton } from "@/modules/auth/ui/components/social/social-lo
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 
 interface AuthFormSocialSectionProps {
-  readonly demoUserText: string;
   readonly demoAdminText: string;
-  readonly mode: "login" | "signup";
   readonly demoUserAction: (
     _prevState: FormResult<never>,
     formData: FormData,
   ) => Promise<FormResult<never>>;
+  readonly demoUserText: string;
+  readonly mode: "login" | "signup";
 }
 
 /**
