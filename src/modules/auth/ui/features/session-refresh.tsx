@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/domain/auth.constants";
 import {
   SESSION_KICKOFF_TIMEOUT_MS,
   SESSION_REFRESH_JITTER_MS,
   SESSION_REFRESH_PING_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
 import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
+import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/ui/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
   CONTENT_TYPE_JSON,

@@ -1,4 +1,5 @@
 import { type FC, type JSX, memo, type ReactNode } from "react";
+import type { OauthProvider } from "@/modules/auth/ui/auth-ui.constants";
 import {
   GitHubIcon,
   GoogleIcon,
@@ -7,11 +8,9 @@ import {
 const SOCIAL_BUTTON_CLASSES =
   "flex w-full items-center justify-center gap-3 rounded-md bg-bg-primary px-3 py-2 text-sm font-semibold text-text-primary ring-1 ring-bg-accent hover:bg-bg-accent focus-visible:ring-2 focus-visible:ring-bg-focus";
 
-type Provider = "google" | "github";
-
 interface SocialLoginButtonProps {
   /** Social provider name */
-  provider: Provider;
+  provider: OauthProvider;
   /** OAuth endpoint or login URL */
   href: string;
   /** Mode for ARIA label */
@@ -20,7 +19,7 @@ interface SocialLoginButtonProps {
   dataCy?: string;
 }
 
-const providerIcons: Record<Provider, ReactNode> = {
+const providerIcons: Record<OauthProvider, ReactNode> = {
   github: <GitHubIcon />,
   google: <GoogleIcon />,
 };

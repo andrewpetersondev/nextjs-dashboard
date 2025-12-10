@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { LOGIN_HEADING } from "@/modules/auth/domain/auth.constants";
+import { LOGIN_HEADING } from "@/modules/auth/ui/auth.tokens";
 import { LoginCard } from "@/modules/auth/ui/components/login-card";
 import { AuthPageWrapper } from "@/modules/auth/ui/components/shared/auth-page-wrapper";
 import { ROUTES } from "@/shared/routes/routes";
