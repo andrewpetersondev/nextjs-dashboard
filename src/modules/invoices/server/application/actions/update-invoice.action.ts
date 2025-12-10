@@ -6,7 +6,7 @@ import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
-} from "@/modules/invoices/domain/invoice.schema";
+} from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
 import { getAppDb } from "@/server-core/db/db.connection";

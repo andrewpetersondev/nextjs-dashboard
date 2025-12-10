@@ -6,7 +6,7 @@ import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoiceOutput,
   UpdateInvoiceSchema,
-} from "@/modules/invoices/domain/invoice.schema";
+} from "@/modules/invoices/domain/schema/invoice.schema";
 import { updateInvoiceAction } from "@/modules/invoices/server/application/actions/update-invoice.action";
 import { CustomerSelect } from "@/modules/invoices/ui/components/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoice-amount-input";

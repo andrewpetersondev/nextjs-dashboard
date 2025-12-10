@@ -1,11 +1,4 @@
-/**
- * @file
- * Codec functions for the Invoice domain model.
- * - These functions specify how to cross the domain boundary.
- */
-
 import "server-only";
-
 import {
   toIsoDateString,
   toPeriodFirstDayString,
@@ -18,9 +11,9 @@ import type {
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
-} from "@/modules/invoices/domain/entity";
+} from "@/modules/invoices/domain/invoice.entity";
 import { toInvoiceStatus } from "@/modules/invoices/domain/invoice-status.mapper";
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";

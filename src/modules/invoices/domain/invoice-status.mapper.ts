@@ -1,4 +1,4 @@
-import { INVOICE_STATUSES } from "@/modules/invoices/domain/types";
+import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 
 /**

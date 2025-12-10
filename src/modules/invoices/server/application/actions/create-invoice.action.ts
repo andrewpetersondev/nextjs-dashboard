@@ -6,7 +6,7 @@ import {
   type CreateInvoiceFieldNames,
   type CreateInvoiceOutput,
   CreateInvoiceSchema,
-} from "@/modules/invoices/domain/invoice.schema";
+} from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";

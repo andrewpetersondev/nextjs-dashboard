@@ -12,7 +12,7 @@ import {
 import {
   INVOICE_STATUSES,
   type InvoiceStatus,
-} from "@/modules/invoices/domain/types";
+} from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 import { customers } from "./customers";
 import { revenues } from "./revenues";

@@ -1,7 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { InvoiceEntity } from "@/modules/invoices/domain/entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import type { InvoiceEntity } from "@/modules/invoices/domain/invoice.entity";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 import { invoices } from "@/server-core/db/schema/invoices";

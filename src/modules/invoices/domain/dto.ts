@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 
 /** Transport aliases (unambiguous formats) */
 export type IsoDateString = string; // YYYY-MM-DD

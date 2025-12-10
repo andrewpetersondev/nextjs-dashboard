@@ -1,12 +1,5 @@
-import type { InvoiceDto } from "@/modules/invoices/domain/dto";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
-
-import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
-
-/** Allowed invoice status values (immutable tuple for precise type inference). */
-export const INVOICE_STATUSES = ["pending", "paid"] as const;
-/** String-literal union of the allowed invoice statuses derived from INVOICE_STATUSES. */
-export type InvoiceStatus = (typeof INVOICE_STATUSES)[number];
 
 /**
  * Row for invoice table queries (with customer info).
@@ -24,14 +17,3 @@ export type InvoiceListFilter = Readonly<{
   sensitiveData: string;
   status: InvoiceStatus;
 }>;
-
-/**
- * Result type for invoice actions (create, read, update, delete).
- * Used in Server Actions.
- */
-export type InvoiceActionResult = {
-  data?: InvoiceDto;
-  errors?: DenseFieldErrorMap<string, string>;
-  message?: string;
-  success: boolean;
-};

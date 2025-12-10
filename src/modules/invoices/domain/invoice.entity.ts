@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 
 /**

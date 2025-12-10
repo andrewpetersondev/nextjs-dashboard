@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 
 /**
  * Domain guard: checks if an invoice status is eligible for revenue.
