@@ -10,14 +10,14 @@ import {
   SignupSchema,
 } from "@/modules/auth/domain/schema/auth.schema";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
-import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
-import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { getRequestMetadata } from "@/shared/http/request-metadata";
+import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
 const fields = SIGNUP_FIELDS_LIST;

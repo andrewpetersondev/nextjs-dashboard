@@ -1,5 +1,3 @@
-// src/server/auth/application/actions/utils/performance-tracker.ts
-
 /**
  * Utility for measuring durations of asynchronous phases and aggregating metrics.
  *

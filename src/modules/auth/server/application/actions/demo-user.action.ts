@@ -4,12 +4,12 @@ import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
-import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
-import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { getRequestMetadata } from "@/shared/http/request-metadata";
+import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

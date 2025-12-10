@@ -1,3 +1,5 @@
+// TODO: MAKE THIS FILE GENERIC FOR ALL MODULES THEN MOVE TO SERVER-CORE
+
 import "server-only";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { AuthLogBase } from "@/modules/auth/domain/logging/auth-logging.types";
