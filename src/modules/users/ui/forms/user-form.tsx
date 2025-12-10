@@ -3,10 +3,10 @@ import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { UserFields } from "@/modules/users/ui/forms/user-fields";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { H1 } from "@/ui/atoms/headings";
+import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { TYPING_MS } from "@/ui/styles/timings.tokens";
 
 // Make the form generic over field names to support both create and edit flows
@@ -76,7 +76,9 @@ export function UserForm({
           values={initialValues}
         />
         <FormActionRow cancelHref={cancelHref}>
-          <FormSubmitButton pending={pending}>{submitLabel}</FormSubmitButton>
+          <SubmitButtonMolecule pending={pending}>
+            {submitLabel}
+          </SubmitButtonMolecule>
         </FormActionRow>
       </form>
       <ServerMessage showAlert={showAlert} state={state} />

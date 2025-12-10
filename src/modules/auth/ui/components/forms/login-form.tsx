@@ -6,7 +6,6 @@ import {
   type LoginField,
 } from "@/modules/auth/domain/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
-import { AuthSubmitButton } from "@/modules/auth/ui/components/shared/auth-submit-button";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
@@ -14,6 +13,7 @@ import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
+import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
@@ -93,9 +93,14 @@ export const LoginForm: FC<LoginFormProps> = ({
         <FormRowWrapper>
           <AuthActionsRow />
         </FormRowWrapper>
-        <AuthSubmitButton data-cy="login-submit-button" pending={pending}>
+        <SubmitButtonMolecule
+          data-cy="login-submit-button"
+          fullWidth={true}
+          loadingText="Loading..."
+          pending={pending}
+        >
           Log In
-        </AuthSubmitButton>
+        </SubmitButtonMolecule>
       </form>
       {state.ok
         ? state.value.message && (

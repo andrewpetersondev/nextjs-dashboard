@@ -16,7 +16,6 @@ import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-
 import { useAutoHideAlert } from "@/modules/invoices/ui/hooks/useAutoHideAlert";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type {
   DenseFieldErrorMap,
@@ -25,6 +24,7 @@ import type {
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
+import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
@@ -144,12 +144,12 @@ export const EditInvoiceForm = ({
           pending={pending}
         />
         <FormActionRow cancelHref="/dashboard/invoices">
-          <FormSubmitButton
+          <SubmitButtonMolecule
             data-cy="edit-invoice-submit-button"
             pending={pending}
           >
             Edit Invoice
-          </FormSubmitButton>
+          </SubmitButtonMolecule>
         </FormActionRow>
       </form>
       <ServerMessage showAlert={showAlert} state={state} />
