@@ -1,4 +1,3 @@
-// src/server/auth/application/services/factories/auth-user-service.factory.ts
 import "server-only";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
@@ -14,8 +13,8 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  * Composition root that builds an `AuthUserService` with concrete adapters.
  *
  * @param db - Database connection used by the repository implementation.
- * @param logger -
- * @param requestId
+ * @param logger - Optional logger; defaults to the shared logger.
+ * @param requestId - Optional request ID for tracing.
  * @returns A configured `AuthUserService`.
  */
 export function createAuthUserService(
