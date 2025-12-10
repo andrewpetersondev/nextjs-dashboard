@@ -1,6 +1,9 @@
 import type { JSX } from "react";
-import { Label } from "@/ui/atoms/label";
-import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
+import { LabelAtom } from "@/ui/atoms/label.atom";
+import {
+  SelectMenuAtom,
+  type SelectMenuProps,
+} from "@/ui/atoms/select-menu.atom";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
@@ -26,8 +29,8 @@ export function SelectField<T extends { id: string; name: string }>(
   return (
     <InputFieldCard>
       <div>
-        <Label htmlFor={id} text={label} />
-        <SelectMenu
+        <LabelAtom htmlFor={id} text={label} />
+        <SelectMenuAtom
           dataCy={dataCy}
           error={error}
           errorId={errorId}

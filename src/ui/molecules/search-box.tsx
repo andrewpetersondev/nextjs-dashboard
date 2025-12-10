@@ -8,7 +8,7 @@ import {
 } from "next/navigation";
 import { type ChangeEvent, type JSX, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { Label } from "@/ui/atoms/label";
+import { LabelAtom } from "@/ui/atoms/label.atom";
 import { DEBOUNCE_MS } from "@/ui/styles/timings.tokens";
 import { cn } from "@/ui/utils/cn";
 
@@ -34,7 +34,7 @@ export function Search({ placeholder }: { placeholder: string }): JSX.Element {
 
   return (
     <div className="relative flex flex-1 shrink-0">
-      <Label className="sr-only" htmlFor={inputId} text="Search" />
+      <LabelAtom className="sr-only" htmlFor={inputId} text="Search" />
       <input
         aria-label={placeholder}
         autoComplete="off"

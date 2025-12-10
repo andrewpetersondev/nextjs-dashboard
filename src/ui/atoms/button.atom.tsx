@@ -19,7 +19,7 @@ const VARIANTS = {
     "bg-bg-accent text-text-accent hover:bg-bg-hover hover:text-text-hover",
 } as const;
 
-export function Button({
+export function ButtonAtom({
   children,
   className,
   variant = "primary", // Default to primary

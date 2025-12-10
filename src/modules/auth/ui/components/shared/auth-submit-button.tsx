@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
-import { Button } from "@/ui/atoms/button";
+import { ButtonAtom } from "@/ui/atoms/button.atom";
 import { cn } from "@/ui/utils/cn";
 
 interface AuthSubmitButtonProps
@@ -22,7 +22,7 @@ export function AuthSubmitButton({
   ...props
 }: AuthSubmitButtonProps): JSX.Element {
   return (
-    <Button
+    <ButtonAtom
       aria-disabled={pending}
       className={cn("w-full", className)}
       data-cy={dataCy}
@@ -32,6 +32,6 @@ export function AuthSubmitButton({
       {...props}
     >
       {pending ? "Loading..." : children}
-    </Button>
+    </ButtonAtom>
   );
 }

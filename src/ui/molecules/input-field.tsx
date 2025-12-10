@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
-import { Label } from "@/ui/atoms/label";
+import { LabelAtom } from "@/ui/atoms/label.atom";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 import { cn } from "@/ui/utils/cn";
@@ -39,7 +39,7 @@ export function InputField(props: InputFieldProps): JSX.Element {
   return (
     <InputFieldCard>
       <div>
-        <Label htmlFor={id} text={label} />
+        <LabelAtom htmlFor={id} text={label} />
         <div className="flex items-center">
           <input
             aria-describedby={

@@ -45,7 +45,7 @@ export interface SelectMenuProps<
  * @template T - The type of the option object.
  */
 // biome-ignore lint/style/useExportsLast: <this follows convention>
-export const SelectMenu: SelectMenuComponent = React.memo(
+export const SelectMenuAtom: SelectMenuComponent = React.memo(
   function SelectMenuInner<T extends { id: string; name: string }>({
     className,
     dataCy,
@@ -103,4 +103,4 @@ export const SelectMenu: SelectMenuComponent = React.memo(
   },
 ) as unknown as SelectMenuComponent;
 
-SelectMenu.displayName = "SelectMenu";
+SelectMenuAtom.displayName = "SelectMenu";

@@ -7,8 +7,8 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { Label } from "@/ui/atoms/label";
-import { SelectMenu } from "@/ui/atoms/select-menu";
+import { LabelAtom } from "@/ui/atoms/label.atom";
+import { SelectMenuAtom } from "@/ui/atoms/select-menu.atom";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
 import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
@@ -58,9 +58,9 @@ export const UserRoleSelect: React.FC<SelectRoleProps> = ({
   return (
     <InputFieldCard>
       <div>
-        <Label htmlFor={id} text="Role" />
+        <LabelAtom htmlFor={id} text="Role" />
         <div className="flex items-center [&>div]:flex-1">
-          <SelectMenu
+          <SelectMenuAtom
             dataCy={dataCy}
             defaultValue={defaultValue}
             disabled={disabled}

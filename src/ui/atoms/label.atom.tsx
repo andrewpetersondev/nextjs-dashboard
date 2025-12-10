@@ -9,7 +9,7 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 /**
  * Accessible and reusable label component.
  */
-export function Label({
+export function LabelAtom({
   text,
   htmlFor,
   className,

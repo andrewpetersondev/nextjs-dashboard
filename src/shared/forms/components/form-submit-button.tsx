@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, JSX, ReactNode } from "react";
-import { Button } from "@/ui/atoms/button";
+import { ButtonAtom } from "@/ui/atoms/button.atom";
 
 interface FormSubmitButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -28,7 +28,7 @@ export function FormSubmitButton({
   ...props
 }: FormSubmitButtonProps): JSX.Element {
   return (
-    <Button
+    <ButtonAtom
       aria-disabled={pending}
       className={`flex justify-center rounded-md bg-bg-active px-3 py-1.5 font-semibold text-sm/6 text-text-primary shadow-sm hover:bg-bg-hover focus-visible:outline-2 focus-visible:outline-bg-focus focus-visible:outline-offset-2 ${className}`}
       data-cy={dataCy}
@@ -37,6 +37,6 @@ export function FormSubmitButton({
       {...props}
     >
       {children}
-    </Button>
+    </ButtonAtom>
   );
 }
