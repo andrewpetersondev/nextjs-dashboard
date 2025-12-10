@@ -1,5 +1,5 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import type React from "react";
+import type { JSX } from "react";
 import { useId } from "react";
 import {
   GUEST_ROLE,
@@ -7,6 +7,7 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
 import type { FieldError } from "@/shared/forms/types/form.types";
+import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 
 /**
@@ -17,15 +18,6 @@ interface RoleOption {
   name: string;
 }
 
-interface SelectRoleProps {
-  dataCy?: string;
-  defaultValue?: UserRole;
-  disabled?: boolean;
-  error?: FieldError;
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  value?: UserRole;
-}
-
 const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
   (role) => role !== (GUEST_ROLE as UserRole),
 ).map((role) => ({
@@ -34,40 +26,39 @@ const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
 }));
 
 /**
- * Accessible and reusable role select component.
+ * Props for the UserRoleSelect component.
+ */
+export interface UserRoleSelectProps
+  extends Omit<SelectMenuProps<RoleOption>, "id" | "name" | "options"> {
+  readonly dataCy?: string;
+  readonly error?: FieldError;
+}
+
+/**
+ * Accessible role dropdown for user forms.
+ * Ensures a valid role is selected before submission.
  * @param error - Validation errors for the role field.
- * @param value - The selected user role.
- * @param onChange - Handler for role selection changes.
+ * @param dataCy - Test identifier for the component.
  * @param props - Additional props for the SelectMenu component.
  */
-export const UserRoleSelect: React.FC<SelectRoleProps> = ({
-  error,
-  value,
-  defaultValue,
-  onChange,
-  disabled,
+export const UserRoleSelect = ({
   dataCy,
-}) => {
+  error,
+  ...props
+}: UserRoleSelectProps): JSX.Element => {
   const id = useId();
 
   return (
-    <div className="flex items-center [&>div]:flex-1">
-      <SelectFieldMolecule
-        dataCy={dataCy}
-        defaultValue={defaultValue}
-        disabled={disabled}
-        error={error}
-        id={id}
-        label="Choose Role"
-        name="role"
-        onChange={onChange}
-        options={ROLE_OPTIONS}
-        placeholder="Select a role"
-        value={value}
-      />
-      <span aria-hidden="true">
-        <UserCircleIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
-      </span>
-    </div>
+    <SelectFieldMolecule
+      dataCy={dataCy}
+      error={error}
+      icon={UserCircleIcon}
+      id={id}
+      label="Choose Role"
+      name="role"
+      options={ROLE_OPTIONS}
+      placeholder="Select a role"
+      {...props}
+    />
   );
 };
