@@ -90,7 +90,11 @@ function CreateUserFormFields({
         type="password"
       />
 
-      <UserRoleSelect dataCy="user-role-select" error={errors?.role} />
+      <UserRoleSelect
+        dataCy="user-role-select"
+        defaultValue=""
+        error={errors?.role}
+      />
     </>
   );
 }
