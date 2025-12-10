@@ -114,11 +114,7 @@ export function ServerMessage<Tdata>({
         <div
           aria-live={success ? "polite" : "assertive"}
           className={`${baseStyles} ${visibilityStyles} ${semanticStyles}`}
-          data-cy={
-            success
-              ? "create-user-success-message"
-              : "create-user-error-message"
-          }
+          data-cy={success ? "server-message-success" : "server-message-error"}
           data-testid={
             success ? "server-message-success" : "server-message-error"
           }

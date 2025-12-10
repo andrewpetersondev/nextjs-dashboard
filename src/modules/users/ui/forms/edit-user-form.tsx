@@ -15,7 +15,6 @@ import {
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/server/application/actions/update-user.action";
-import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
@@ -25,6 +24,7 @@ import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
+import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { TYPING_MS } from "@/ui/styles/timings.tokens";
 

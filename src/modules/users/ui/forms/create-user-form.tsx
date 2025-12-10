@@ -4,50 +4,45 @@ import {
   LockClosedIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import {
-  type JSX,
-  useActionState,
-  useEffect,
-  useId,
-  useMemo,
-  useState,
-} from "react";
+import { type JSX, useActionState, useId } from "react";
 import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
 import { createUserAction } from "@/modules/users/server/application/actions/create-user.action";
-import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FieldError } from "@/shared/forms/types/form.types";
+import { useFormMessage } from "@/shared/forms/hooks/use-form-message";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
+import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
-import { TYPING_MS } from "@/ui/styles/timings.tokens";
 
-type CreateUserFieldErrors = Partial<
-  Record<"email" | "password" | "role" | "username", FieldError>
->;
+type CreateUserFieldNames = "email" | "password" | "role" | "username";
+
+const INITIAL_STATE = createInitialFailedFormState<CreateUserFieldNames>(
+  Object.keys(CreateUserFormSchema.shape) as readonly CreateUserFieldNames[],
+);
 
 function CreateUserFormFields({
   disabled = false,
   errors,
 }: {
   disabled?: boolean;
-  errors?: CreateUserFieldErrors;
+  errors?: Partial<Record<CreateUserFieldNames, readonly string[]>>;
 }): JSX.Element {
   const emailId = useId();
   const passwordId = useId();
   const usernameId = useId();
 
   return (
-    <>
+    <div className="space-y-6">
       <InputFieldMolecule
         autoComplete="username"
         dataCy="user-username-input"
         disabled={disabled}
-        error={errors?.username}
+        error={errors?.username as readonly [string, ...string[]] | undefined}
         icon={
           <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
         }
@@ -62,7 +57,7 @@ function CreateUserFormFields({
         autoComplete="email"
         dataCy="user-email-input"
         disabled={disabled}
-        error={errors?.email}
+        error={errors?.email as readonly [string, ...string[]] | undefined}
         icon={
           <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
         }
@@ -78,7 +73,7 @@ function CreateUserFormFields({
         autoComplete="off"
         dataCy="user-password-input"
         disabled={disabled}
-        error={errors?.password}
+        error={errors?.password as readonly [string, ...string[]] | undefined}
         icon={
           <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
         }
@@ -93,39 +88,24 @@ function CreateUserFormFields({
       <UserRoleSelect
         dataCy="user-role-select"
         defaultValue=""
-        error={errors?.role}
+        disabled={disabled}
+        error={errors?.role as readonly [string, ...string[]] | undefined}
       />
-    </>
+    </div>
   );
 }
 
 export function CreateUserForm(): JSX.Element {
-  const [showAlert, setShowAlert] = useState(false);
-  const initialState =
-    createInitialFailedFormStateFromSchema(CreateUserFormSchema);
-
   const [state, action, pending] = useActionState<
     FormResult<unknown>,
     FormData
-  >(createUserAction, initialState);
+  >(createUserAction, INITIAL_STATE);
 
-  const message = useMemo<string | undefined>(() => {
-    return state.ok ? state.value.message : state.error.message;
-  }, [state]);
-
-  useEffect(() => {
-    if (message) {
-      setShowAlert(true);
-      const timer = setTimeout(() => setShowAlert(false), TYPING_MS);
-      return () => clearTimeout(timer);
-    }
-    setShowAlert(false);
-    return;
-  }, [message]);
+  const showAlert = useFormMessage(state);
 
   const fieldErrors = state.ok
     ? undefined
-    : (state.error?.metadata?.fieldErrors as CreateUserFieldErrors | undefined);
+    : getFieldErrors<CreateUserFieldNames>(state.error);
 
   return (
     <div>

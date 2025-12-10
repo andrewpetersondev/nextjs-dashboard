@@ -1,5 +1,5 @@
 "use client";
-import { type JSX, useActionState, useEffect, useId, useState } from "react";
+import { type JSX, useActionState, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { getTodayIsoDate } from "@/modules/invoices/domain/date.utils";
 import {
@@ -11,103 +11,115 @@ import { createInvoiceAction } from "@/modules/invoices/server/application/actio
 import { CustomerSelect } from "@/modules/invoices/ui/components/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
-import { InvoiceServerMessage } from "@/modules/invoices/ui/components/forms/invoice-server-message";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
+import { useFormMessage } from "@/shared/forms/hooks/use-form-message";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
+import { ROUTES } from "@/shared/routes/routes";
+import { H1 } from "@/ui/atoms/headings";
+import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
-import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 
 const INITIAL_STATE = createInitialFailedFormState<CreateInvoiceFieldNames>(
   Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
 );
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <TODO FIX LATER>
-export const CreateInvoiceForm = ({
+function CreateInvoiceFormFields({
+  customers,
+  disabled = false,
+  errors,
+}: {
+  customers: CustomerField[];
+  disabled?: boolean;
+  errors?: Partial<Record<CreateInvoiceFieldNames, readonly string[]>>;
+}): JSX.Element {
+  const amountId = useId();
+  const dateId = useId();
+
+  return (
+    <>
+      <InvoiceDate
+        data-cy="date-input"
+        defaultValue={getTodayIsoDate()}
+        disabled={disabled}
+        id={dateId}
+        name="date"
+      />
+
+      <SensitiveData
+        data-cy="sensitive-data-input"
+        disabled={disabled}
+        error={
+          errors?.sensitiveData as readonly [string, ...string[]] | undefined
+        }
+      />
+
+      <CustomerSelect
+        customers={customers}
+        dataCy="customer-select"
+        defaultValue=""
+        disabled={disabled}
+        error={errors?.customerId as readonly [string, ...string[]] | undefined}
+      />
+
+      <InvoiceAmountInput
+        dataCy="amount-input"
+        disabled={disabled}
+        error={errors?.amount as readonly [string, ...string[]] | undefined}
+        id={amountId}
+        label="Choose an amount"
+        name="amount"
+        placeholder="Enter USD amount"
+        step="0.01"
+        type="number"
+      />
+
+      <InvoiceStatusRadioGroup
+        data-cy="invoice-status-radio-group"
+        disabled={disabled}
+        error={errors?.status as readonly [string, ...string[]] | undefined}
+        name="status"
+        value="pending"
+      />
+    </>
+  );
+}
+
+export function CreateInvoiceForm({
   customers,
 }: {
   customers: CustomerField[];
-}): JSX.Element => {
+}): JSX.Element {
   const [state, action, pending] = useActionState<
     FormResult<CreateInvoiceOutput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 
-  const [showAlert, setShowAlert] = useState(false);
+  const showAlert = useFormMessage(state);
 
-  // Extract message from either success or error state
-  const message = state.ok ? state.value.message : state.error.message;
-
-  useEffect(() => {
-    if (!message) {
-      setShowAlert(false);
-      return;
-    }
-    setShowAlert(true);
-    const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
-    return () => clearTimeout(timer);
-  }, [message]);
-
-  const dateId = useId();
-  const amountId = useId();
-
-  // Extract field errors from AppError metadata
   const fieldErrors = state.ok
     ? undefined
     : getFieldErrors<CreateInvoiceFieldNames>(state.error);
 
   return (
-    <section>
+    <div>
+      <H1>Create Invoice</H1>
+      <section>
+        <p>Create a new invoice for a customer.</p>
+      </section>
       <form action={action}>
         <div className="space-y-6">
-          <InvoiceDate
-            data-cy="date-input"
-            defaultValue={getTodayIsoDate()}
-            disabled={pending}
-            id={dateId}
-            name="date"
-          />
-
-          <SensitiveData
-            data-cy="sensitive-data-input"
-            disabled={pending}
-            error={fieldErrors?.sensitiveData as FieldError | undefined}
-          />
-
-          <CustomerSelect
+          <CreateInvoiceFormFields
             customers={customers}
-            dataCy="customer-select"
-            defaultValue=""
             disabled={pending}
-            error={fieldErrors?.customerId as FieldError | undefined}
-          />
-
-          <InvoiceAmountInput
-            dataCy="amount-input"
-            disabled={pending}
-            error={fieldErrors?.amount as FieldError | undefined}
-            id={amountId}
-            label="Choose an amount"
-            name="amount"
-            placeholder="Enter USD amount"
-            step="0.01"
-            type="number"
-          />
-
-          <InvoiceStatusRadioGroup
-            data-cy="invoice-status-radio-group"
-            disabled={pending}
-            error={fieldErrors?.status as FieldError | undefined}
-            name="status"
-            value="pending"
+            errors={fieldErrors}
           />
         </div>
 
-        <FormActionRow cancelHref="/dashboard/invoices">
+        <FormActionRow cancelHref={ROUTES.dashboard.invoices}>
           <SubmitButtonMolecule
             data-cy="create-invoice-submit-button"
             label="Create Invoice"
@@ -115,7 +127,7 @@ export const CreateInvoiceForm = ({
           />
         </FormActionRow>
       </form>
-      <InvoiceServerMessage showAlert={showAlert} state={state} />
-    </section>
+      <ServerMessage showAlert={showAlert} state={state} />
+    </div>
   );
-};
+}
