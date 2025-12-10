@@ -4,7 +4,6 @@ import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { readUserAction } from "@/modules/users/server/application/actions/read-user.action";
 import { EditUserForm } from "@/modules/users/ui/forms/edit-user-form";
-import { H1 } from "@/ui/atoms/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditUserPageParams {
@@ -48,12 +47,6 @@ export default async function Page(
           },
         ]}
       />
-
-      <H1>edit user form </H1>
-
-      <section>
-        <p>Admins can edit any profile.</p>
-      </section>
 
       <EditUserForm user={user} />
     </main>

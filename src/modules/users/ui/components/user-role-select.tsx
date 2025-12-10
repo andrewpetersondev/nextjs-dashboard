@@ -7,10 +7,7 @@ import {
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { LabelAtom } from "@/ui/atoms/label.atom";
-import { SelectMenuAtom } from "@/ui/atoms/select-menu.atom";
-import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
-import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
+import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 
 /**
  * Role option type for select menu.
@@ -52,40 +49,25 @@ export const UserRoleSelect: React.FC<SelectRoleProps> = ({
   dataCy,
 }) => {
   const id = useId();
-  const errorId = `${id}-errors`;
-  const hasError = Array.isArray(error) && error.length > 0;
 
   return (
-    <InputFieldCardWrapper>
-      <div>
-        <LabelAtom htmlFor={id} text="Role" />
-        <div className="flex items-center [&>div]:flex-1">
-          <SelectMenuAtom
-            dataCy={dataCy}
-            defaultValue={defaultValue}
-            disabled={disabled}
-            error={error}
-            errorId={errorId}
-            id={id}
-            name="role"
-            onChange={onChange}
-            options={ROLE_OPTIONS}
-            placeholder="Select a role"
-            value={value}
-          />
-          <span aria-hidden="true">
-            <UserCircleIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
-          </span>
-        </div>
-        {hasError && (
-          <FieldErrorComponent
-            dataCy={dataCy ? `${dataCy}-errors` : undefined}
-            error={error}
-            id={errorId}
-            label="Role error:"
-          />
-        )}
-      </div>
-    </InputFieldCardWrapper>
+    <div className="flex items-center [&>div]:flex-1">
+      <SelectFieldMolecule
+        dataCy={dataCy}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        error={error}
+        id={id}
+        label="Choose Role"
+        name="role"
+        onChange={onChange}
+        options={ROLE_OPTIONS}
+        placeholder="Select a role"
+        value={value}
+      />
+      <span aria-hidden="true">
+        <UserCircleIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+      </span>
+    </div>
   );
 };
