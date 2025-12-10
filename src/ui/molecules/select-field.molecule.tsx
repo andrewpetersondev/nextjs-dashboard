@@ -4,8 +4,8 @@ import {
   SelectMenuAtom,
   type SelectMenuProps,
 } from "@/ui/atoms/select-menu.atom";
+import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
-import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 interface SelectFieldProps<T extends { id: string; name: string }>
   extends SelectMenuProps<T> {
@@ -27,7 +27,7 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
   const errorId = describedById ?? `${id}-errors`;
 
   return (
-    <InputFieldCard>
+    <InputFieldCardWrapper>
       <div>
         <LabelAtom htmlFor={id} text={label} />
         <SelectMenuAtom
@@ -46,6 +46,6 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
           />
         )}
       </div>
-    </InputFieldCard>
+    </InputFieldCardWrapper>
   );
 }

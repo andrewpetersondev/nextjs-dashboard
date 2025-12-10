@@ -9,8 +9,8 @@ import {
 import type { FieldError } from "@/shared/forms/types/form.types";
 import { LabelAtom } from "@/ui/atoms/label.atom";
 import { SelectMenuAtom } from "@/ui/atoms/select-menu.atom";
+import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
-import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 /**
  * Role option type for select menu.
@@ -56,7 +56,7 @@ export const UserRoleSelect: React.FC<SelectRoleProps> = ({
   const hasError = Array.isArray(error) && error.length > 0;
 
   return (
-    <InputFieldCard>
+    <InputFieldCardWrapper>
       <div>
         <LabelAtom htmlFor={id} text="Role" />
         <div className="flex items-center [&>div]:flex-1">
@@ -86,6 +86,6 @@ export const UserRoleSelect: React.FC<SelectRoleProps> = ({
           />
         )}
       </div>
-    </InputFieldCard>
+    </InputFieldCardWrapper>
   );
 };

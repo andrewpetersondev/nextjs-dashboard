@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from "react";
 
-export function FormInputWrapper({
+export function FormRowWrapper({
   children,
 }: {
   children: ReactNode;

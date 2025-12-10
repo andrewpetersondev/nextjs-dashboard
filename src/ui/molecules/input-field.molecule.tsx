@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
 import { LabelAtom } from "@/ui/atoms/label.atom";
+import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
-import { InputFieldCard } from "@/ui/molecules/input-field-card";
 import { cn } from "@/ui/utils/cn";
 
 /**
@@ -37,7 +37,7 @@ export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
   const hasError = Array.isArray(error) && error.length > 0;
 
   return (
-    <InputFieldCard>
+    <InputFieldCardWrapper>
       <div>
         <LabelAtom htmlFor={id} text={label} />
         <div className="flex items-center">
@@ -69,6 +69,6 @@ export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
           />
         )}
       </div>
-    </InputFieldCard>
+    </InputFieldCardWrapper>
   );
 }

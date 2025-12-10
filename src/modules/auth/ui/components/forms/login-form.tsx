@@ -7,12 +7,12 @@ import {
 } from "@/modules/auth/domain/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { AuthSubmitButton } from "@/modules/auth/ui/components/shared/auth-submit-button";
+import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormAlert } from "@/ui/molecules/form-alert";
-import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
@@ -90,9 +90,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           required={true}
           type="password"
         />
-        <FormInputWrapper>
+        <FormRowWrapper>
           <AuthActionsRow />
-        </FormInputWrapper>
+        </FormRowWrapper>
         <AuthSubmitButton data-cy="login-submit-button" pending={pending}>
           Log In
         </AuthSubmitButton>

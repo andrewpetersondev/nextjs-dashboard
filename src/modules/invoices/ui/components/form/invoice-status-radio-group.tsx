@@ -3,7 +3,7 @@ import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { InputFieldCard } from "@/ui/molecules/input-field-card";
+import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 
 /**
  * Props for InvoiceStatusRadioGroup.
@@ -46,7 +46,7 @@ export const InvoiceStatusRadioGroup = ({
   const errorMessageId = useId();
 
   return (
-    <InputFieldCard>
+    <InputFieldCardWrapper>
       <fieldset>
         <legend className="mb-2 block font-medium text-sm">
           Set the invoice status
@@ -83,6 +83,6 @@ export const InvoiceStatusRadioGroup = ({
           label="Invoice status error"
         />
       </fieldset>
-    </InputFieldCard>
+    </InputFieldCardWrapper>
   );
 };
