@@ -1,7 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-
 import { deleteInvoiceFormAction } from "@/modules/invoices/server/application/actions/delete-form-action";
 
 /**
@@ -16,7 +15,7 @@ const CREATE_INVOICE_ROUTE = "/dashboard/invoices/create";
 /**
  * Renders a Link to create a new invoice.
  */
-export const CreateInvoice = (): JSX.Element => (
+export const CreateInvoiceLink = (): JSX.Element => (
   <Link
     aria-label="Create Invoice"
     className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
@@ -32,7 +31,7 @@ export const CreateInvoice = (): JSX.Element => (
  * Renders a Link to update an invoice.
  * @param props - Component props
  */
-export const UpdateInvoice = ({
+export const UpdateInvoiceLink = ({
   id,
 }: Readonly<InvoiceActionProps>): JSX.Element => (
   <Link
@@ -50,7 +49,7 @@ export const UpdateInvoice = ({
  * Renders a form button to delete an invoice.
  * @param props - Component props
  */
-export const DeleteInvoice = ({
+export const DeleteInvoiceButton = ({
   id,
 }: Readonly<InvoiceActionProps>): JSX.Element => (
   <form action={deleteInvoiceFormAction}>

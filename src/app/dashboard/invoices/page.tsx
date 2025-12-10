@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-pages";
-import { CreateInvoice } from "@/modules/invoices/ui/components/buttons";
+import { CreateInvoiceLink } from "@/modules/invoices/ui/components/invoice-links";
 import {
   InvoicesSearchSkeleton,
   InvoicesTableSkeleton,
@@ -51,7 +51,7 @@ export default async function Page(
         <Suspense fallback={<InvoicesSearchSkeleton />}>
           <SearchBoxMolecule placeholder="Search invoices..." />
         </Suspense>
-        <CreateInvoice />
+        <CreateInvoiceLink />
       </div>
       <Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
         <InvoicesTable currentPage={currentPage} query={query} />

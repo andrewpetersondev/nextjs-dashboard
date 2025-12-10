@@ -3,9 +3,9 @@ import type { JSX } from "react";
 import { formatDateLocalized } from "@/modules/invoices/domain/date.utils";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
 import {
-  DeleteInvoice,
-  UpdateInvoice,
-} from "@/modules/invoices/ui/components/buttons";
+  DeleteInvoiceButton,
+  UpdateInvoiceLink,
+} from "@/modules/invoices/ui/components/invoice-links";
 import { InvoiceStatusComponent } from "@/modules/invoices/ui/components/tables/status";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 
@@ -59,8 +59,8 @@ export const MobileTable = ({
                 <p>{formatDateLocalized(invoice.date.toISOString())}</p>
               </div>
               <div className="flex justify-end gap-2">
-                <UpdateInvoice id={invoice.id} />
-                <DeleteInvoice id={invoice.id} />
+                <UpdateInvoiceLink id={invoice.id} />
+                <DeleteInvoiceButton id={invoice.id} />
               </div>
             </div>
           </div>
