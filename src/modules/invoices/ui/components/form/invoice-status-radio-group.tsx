@@ -3,6 +3,7 @@ import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
 import type { FieldError } from "@/shared/forms/types/form.types";
+import { InputFieldCard } from "@/ui/molecules/input-field-card";
 
 /**
  * Props for InvoiceStatusRadioGroup.
@@ -45,41 +46,43 @@ export const InvoiceStatusRadioGroup = ({
   const errorMessageId = useId();
 
   return (
-    <fieldset className="mb-4">
-      <legend className="mb-2 block font-medium text-sm">
-        Set the invoice status
-      </legend>
-      <div className="rounded-md border border-bg-accent px-[14px] py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
-        <div className="flex gap-4">
-          {options.map((opt) => (
-            <div className="flex items-center" key={opt.value}>
-              <input
-                aria-describedby={hasError ? `${name}-error` : undefined}
-                className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
-                defaultChecked={value === opt.value}
-                disabled={disabled}
-                id={opt.value}
-                name={name}
-                type="radio"
-                value={opt.value}
-                {...props}
-              />
-              <label
-                className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 font-medium text-text-primary text-xs"
-                htmlFor={opt.value}
-              >
-                {opt.label} {opt.icon}
-              </label>
-            </div>
-          ))}
+    <InputFieldCard>
+      <fieldset>
+        <legend className="mb-2 block font-medium text-sm">
+          Set the invoice status
+        </legend>
+        <div className="rounded-md border border-bg-accent px-[14px] py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
+          <div className="flex gap-4">
+            {options.map((opt) => (
+              <div className="flex items-center" key={opt.value}>
+                <input
+                  aria-describedby={hasError ? `${name}-error` : undefined}
+                  className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
+                  defaultChecked={value === opt.value}
+                  disabled={disabled}
+                  id={opt.value}
+                  name={name}
+                  type="radio"
+                  value={opt.value}
+                  {...props}
+                />
+                <label
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 font-medium text-text-primary text-xs"
+                  htmlFor={opt.value}
+                >
+                  {opt.label} {opt.icon}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <ErrorMessage
-        dataCy="invoice-status-error"
-        error={error}
-        id={errorMessageId}
-        label="Invoice status error"
-      />
-    </fieldset>
+        <ErrorMessage
+          dataCy="invoice-status-error"
+          error={error}
+          id={errorMessageId}
+          label="Invoice status error"
+        />
+      </fieldset>
+    </InputFieldCard>
   );
 };

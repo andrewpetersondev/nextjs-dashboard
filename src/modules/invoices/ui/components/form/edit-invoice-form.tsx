@@ -49,7 +49,7 @@ function FormFields({
 }): JSX.Element {
   const invoiceAmountInputId = useId();
   return (
-    <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+    <div className="space-y-6">
       <InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
 
       <SensitiveData

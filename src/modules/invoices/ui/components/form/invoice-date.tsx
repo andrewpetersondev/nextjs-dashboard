@@ -1,4 +1,7 @@
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
+import { InputField } from "@/ui/molecules/input-field";
+import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 /**
  * Uncontrolled date input component for invoice forms.
@@ -28,24 +31,18 @@ export function InvoiceDate({
   ...rest
 }: InvoiceDateProps): JSX.Element {
   return (
-    <div className="mb-4">
-      <label className="block font-medium text-sm" htmlFor={id}>
-        {label}
-      </label>
-      <div className="relative mt-2 rounded-md">
-        <input
-          className="block w-full rounded-md border-0 px-4 py-2 text-text-primary outline-2 ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm"
-          defaultValue={defaultValue}
-          id={id}
-          max={max}
-          min={min}
-          name={name}
-          required={required}
-          type="date"
-          value={value}
-          {...rest}
-        />
-      </div>
-    </div>
+    <InputField
+      defaultValue={defaultValue}
+      icon={<CalendarDaysIcon className={INPUT_ICON_CLASS} />}
+      id={id}
+      label={label}
+      max={max}
+      min={min}
+      name={name}
+      required={required}
+      type="date"
+      value={value}
+      {...rest}
+    />
   );
 }

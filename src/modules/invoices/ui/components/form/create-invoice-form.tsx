@@ -63,7 +63,7 @@ export const CreateInvoiceForm = ({
   return (
     <section>
       <form action={action}>
-        <div className="rounded-md bg-bg-secondary p-4 md:p-6">
+        <div className="space-y-6">
           <InvoiceDate
             data-cy="date-input"
             defaultValue={getTodayIsoDate()}
