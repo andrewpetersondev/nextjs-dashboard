@@ -5,9 +5,8 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
-import { ErrorMessage } from "@/shared/forms/components/error-message";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
+import { SelectField } from "@/ui/molecules/select-field";
 
 /**
  * Role option type for select menu.
@@ -26,13 +25,12 @@ const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
 }));
 
 // --- Define SelectRoleProps ---
-interface SelectRoleProps
-  extends Omit<
-    SelectMenuProps<RoleOption>,
-    "options" | "id" | "name" | "value"
-  > {
+interface SelectRoleProps {
   error?: FieldError;
   value?: UserRole;
+  defaultValue?: UserRole;
+  disabled?: boolean;
+  dataCy?: string;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -46,32 +44,26 @@ interface SelectRoleProps
 export const UserRoleSelect: React.FC<SelectRoleProps> = ({
   error,
   value,
+  defaultValue,
   onChange,
-  ...props
+  disabled,
+  dataCy,
 }) => {
-  const idBase = useId();
-  const selectId = `${idBase}-role-select`;
-  const errorId = `${idBase}-role-error`;
+  const id = useId();
 
   return (
-    <div>
-      <SelectMenu
-        error={error}
-        errorId={errorId}
-        id={selectId}
-        name="role"
-        onChange={onChange}
-        options={ROLE_OPTIONS}
-        placeholder="Select a role"
-        value={value as string | undefined}
-        {...props}
-      />
-      <ErrorMessage
-        dataCy="users-select-role"
-        error={error}
-        id={errorId}
-        label="Select role error"
-      />
-    </div>
+    <SelectField
+      dataCy={dataCy}
+      defaultValue={defaultValue}
+      disabled={disabled}
+      error={error}
+      id={id}
+      label="Role"
+      name="role"
+      onChange={onChange}
+      options={ROLE_OPTIONS}
+      placeholder="Select a role"
+      value={value}
+    />
   );
 };

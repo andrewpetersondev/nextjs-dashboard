@@ -9,7 +9,6 @@ import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserFormFieldNames } from "@/modules/users/domain/user.schema";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import type { FieldError } from "@/shared/forms/types/form.types";
-import { Label } from "@/ui/atoms/label";
 import { InputField } from "@/ui/molecules/input-field";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <1 line over limit>
@@ -67,7 +66,7 @@ export function UserFields({
 
       {showPassword && (
         <InputField
-          autoComplete={isEdit ? "new-password" : "new-password"}
+          autoComplete="off"
           dataCy="user-password-input"
           describedById="user-password-errors"
           disabled={disabled}
@@ -83,15 +82,12 @@ export function UserFields({
           type="password"
         />
       )}
-      <div className="mb-4">
-        <Label htmlFor="role" text="Role" />
-        <UserRoleSelect
-          dataCy="user-role-select"
-          defaultValue={values.role}
-          disabled={disabled}
-          error={errors?.role}
-        />
-      </div>
+      <UserRoleSelect
+        dataCy="user-role-select"
+        defaultValue={values.role}
+        disabled={disabled}
+        error={errors?.role}
+      />
     </>
   );
 }
