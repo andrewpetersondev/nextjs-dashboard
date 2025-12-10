@@ -6,7 +6,7 @@ import {
   DeleteInvoice,
   UpdateInvoice,
 } from "@/modules/invoices/ui/components/buttons";
-import { InvoiceStatusComponent } from "@/modules/invoices/ui/components/table/status";
+import { InvoiceStatusComponent } from "@/modules/invoices/ui/components/tables/status";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 
 export const DesktopTable = ({

@@ -6,7 +6,7 @@ import {
   InvoicesSearchSkeleton,
   InvoicesTableSkeleton,
 } from "@/modules/invoices/ui/components/invoices.skeletons";
-import { InvoicesTable } from "@/modules/invoices/ui/components/table/table";
+import { InvoicesTable } from "@/modules/invoices/ui/components/tables/table";
 import { H1 } from "@/ui/atoms/headings";
 import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";

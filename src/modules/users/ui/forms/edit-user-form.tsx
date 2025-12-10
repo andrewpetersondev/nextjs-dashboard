@@ -9,7 +9,7 @@ import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastru
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
-export function UpdateUserForm({ user }: { user: UserDto }): JSX.Element {
+export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
   const initialState =
     createInitialFailedFormStateFromSchema(EditUserFormSchema);
 

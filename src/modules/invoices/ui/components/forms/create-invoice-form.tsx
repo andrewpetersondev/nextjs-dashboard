@@ -8,12 +8,12 @@ import {
   CreateInvoiceSchema,
 } from "@/modules/invoices/domain/invoice.schema";
 import { createInvoiceAction } from "@/modules/invoices/server/application/actions/create";
-import { CustomerSelect } from "@/modules/invoices/ui/components/form/customer-select";
-import { InvoiceAmountInput } from "@/modules/invoices/ui/components/form/invoice-amount-input";
-import { InvoiceDate } from "@/modules/invoices/ui/components/form/invoice-date";
-import { InvoiceServerMessage } from "@/modules/invoices/ui/components/form/invoice-server-message";
-import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/form/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitive-data";
+import { CustomerSelect } from "@/modules/invoices/ui/components/forms/customer-select";
+import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoice-amount-input";
+import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
+import { InvoiceServerMessage } from "@/modules/invoices/ui/components/forms/invoice-server-message";
+import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
+import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";

@@ -8,11 +8,11 @@ import {
   UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/invoice.schema";
 import { updateInvoiceAction } from "@/modules/invoices/server/application/actions/update";
-import { CustomerSelect } from "@/modules/invoices/ui/components/form/customer-select";
-import { InvoiceAmountInput } from "@/modules/invoices/ui/components/form/invoice-amount-input";
-import { InvoiceDate } from "@/modules/invoices/ui/components/form/invoice-date";
-import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/form/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/ui/components/form/sensitive-data";
+import { CustomerSelect } from "@/modules/invoices/ui/components/forms/customer-select";
+import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoice-amount-input";
+import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
+import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
+import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import { useAutoHideAlert } from "@/modules/invoices/ui/hooks/useAutoHideAlert";
 import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
