@@ -1,8 +1,7 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import {
-  GUEST_ROLE,
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
@@ -11,19 +10,13 @@ import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 
 /**
- * Role option type for select menu.
+ * Represents a role option for the select menu.
+ * @template T - The role type.
  */
 interface RoleOption {
   id: UserRole;
-  name: string;
+  name: UserRole;
 }
-
-const ROLE_OPTIONS: RoleOption[] = USER_ROLES.filter(
-  (role) => role !== (GUEST_ROLE as UserRole),
-).map((role) => ({
-  id: role,
-  name: role.charAt(0).toUpperCase() + role.slice(1),
-}));
 
 /**
  * Props for the UserRoleSelect component.
@@ -48,6 +41,15 @@ export const UserRoleSelect = ({
 }: UserRoleSelectProps): JSX.Element => {
   const id = useId();
 
+  const roleOptions = useMemo(
+    (): RoleOption[] =>
+      USER_ROLES.map((role) => ({
+        id: role,
+        name: role,
+      })),
+    [],
+  );
+
   return (
     <SelectFieldMolecule
       dataCy={dataCy}
@@ -56,7 +58,7 @@ export const UserRoleSelect = ({
       id={id}
       label="Choose Role"
       name="role"
-      options={ROLE_OPTIONS}
+      options={roleOptions}
       placeholder="Select a role"
       {...props}
     />

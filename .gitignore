@@ -1,9 +1,7 @@
 # Project Root
 
 .idea/
-.junie/
 .vscode/
-.github/
 .next/
 node_modules/
 storage/
